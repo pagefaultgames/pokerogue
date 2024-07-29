@@ -59,4 +59,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postSummonSwordOfRuin": "Unheilsschwert von {{pokemonNameWithAffix}} schwächt {{statName} aller Pokémon im Umkreis!",
   "postSummonTabletsOfRuin": "Unheilstafeln von {{pokemonNameWithAffix}} schwächt {{statName}} aller Pokémon im Umkreis!",
   "postSummonBeadsOfRuin": "Unheilsjuwelen von {{pokemonNameWithAffix}} schwächt {{statName}} aller Pokémon im Umkreis!",
+  "preventBerryUse": "{{pokemonNameWithAffix}} is too\nnervous to eat berries!",
 } as const;

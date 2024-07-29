@@ -59,4 +59,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postSummonSwordOfRuin": "L’Épée du Fléau de {{pokemonNameWithAffix}}\naffaiblit la {{statName}} des Pokémon alentour !",
   "postSummonTabletsOfRuin": "Le Bois du Fléau de {{pokemonNameWithAffix}}\naffaiblit l’{{statName}} des Pokémon alentour !",
   "postSummonBeadsOfRuin": "Les Perles du Fléau de {{pokemonNameWithAffix}}\naffaiblissent la {{statName}} des Pokémon alentour !",
+  "preventBerryUse": "{{pokemonNameWithAffix}} is too\nnervous to eat berries!",
 } as const;

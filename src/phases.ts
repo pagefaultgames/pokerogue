@@ -20,7 +20,7 @@ import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
-import { getPokemonMessage, getPokemonNameWithAffix } from "./messages";
+import { getPokemonNameWithAffix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
@@ -2410,7 +2410,7 @@ export class BerryPhase extends FieldPhase {
         pokemon.getOpponents().map((opp) => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
 
         if (cancelled.value) {
-          pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is too\nnervous to eat berries!"));
+          pokemon.scene.queueMessage(i18next.t("abilityTriggers:preventBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
         } else {
           this.scene.unshiftPhase(
             new CommonAnimPhase(this.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM)
