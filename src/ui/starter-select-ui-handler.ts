@@ -346,7 +346,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.filterBar.addFilter("Type", new DropDown(this.scene, 0, 0, typeOptions, this.updateStarters, DropDownType.MULTI, 0.5));
     this.filterBar.defaultTypeVals = this.filterBar.getVals(DropDownColumn.TYPES);
 
-    // Unlocks filter
+    // shiny filter
     const shiny1Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
     shiny1Sprite.setTint(getVariantTint(0));
     const shiny2Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
@@ -354,22 +354,32 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const shiny3Sprite = this.scene.add.sprite(0, 0, "shiny_star_small");
     shiny3Sprite.setTint(getVariantTint(2));
 
-    const unlocksOptions = [
+    const shinyOptions = [
       new DropDownOption(this.scene, "SHINY3", null, shiny3Sprite),
       new DropDownOption(this.scene, "SHINY2", null, shiny2Sprite),
       new DropDownOption(this.scene, "SHINY", null, shiny1Sprite),
       new DropDownOption(this.scene, "NORMAL", "Normal"),
       new DropDownOption(this.scene, "UNCAUGHT", "Not Caught"),
-      new DropDownOption(this.scene, "PASSIVEUNLOCKED", "Passive Unlocked"),
-      new DropDownOption(this.scene, "PASSIVELOCKED", "Passive Locked"),];
+    ];
 
-    this.filterBar.addFilter("Unlocks", new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.MULTI));
-    this.filterBar.defaultUnlockVals = this.filterBar.getVals(DropDownColumn.UNLOCKS);
+    this.filterBar.addFilter("Shiny", new DropDown(this.scene, 0, 0, shinyOptions, this.updateStarters, DropDownType.MULTI));
+    this.filterBar.defaultShinyVals = this.filterBar.getVals(DropDownColumn.SHINY);
+
+
+    // passive filter
+    const passiveOptions = [
+      new DropDownOption(this.scene, "PASSIVEUNLOCKED", "Passive Unlocked"),
+      new DropDownOption(this.scene, "PASSIVELOCKED", "Passive Locked"),
+    ];
+
+    this.filterBar.addFilter("Passive", new DropDown(this.scene, 0, 0, passiveOptions, this.updateStarters, DropDownType.MULTI));
+    this.filterBar.defaultPassiveVals = this.filterBar.getVals(DropDownColumn.PASSIVE);
 
     // win filter
     const winOptions = [
       new DropDownOption(this.scene, "WIN", "has won"),
-      new DropDownOption(this.scene, "NOTWIN", "hasn't won yet")];
+      new DropDownOption(this.scene, "NOTWIN", "hasn't won yet"),
+    ];
     this.filterBar.addFilter("Win", new DropDown(this.scene, 0, 0, winOptions, this.updateStarters, DropDownType.MULTI));
     this.filterBar.defaultWinVals = this.filterBar.getVals(DropDownColumn.WIN);
 
@@ -1950,7 +1960,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
       const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
-      const fitsShiny = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(variant => {
+      const fitsShiny = this.filterBar.getVals(DropDownColumn.SHINY).some(variant => {
         if (variant === "SHINY3") {
           return isVariant3Caught;
         } else if (variant === "SHINY2") {
@@ -1963,7 +1973,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           return isUncaught;
         }
       });
-      const fitsPassive = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(variant => {
+      const fitsPassive = this.filterBar.getVals(DropDownColumn.PASSIVE).some(variant => {
         if (variant === "PASSIVEUNLOCKED") {
           return isPassiveUnlocked;
         } else if (variant === "PASSIVELOCKED") {

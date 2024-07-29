@@ -7,7 +7,8 @@ import { addWindow, WindowVariant } from "./ui-theme";
 export enum DropDownColumn {
   GEN,
   TYPES,
-  UNLOCKS,
+  SHINY,
+  PASSIVE,
   WIN,
   SORT
 }
@@ -22,7 +23,8 @@ export class FilterBar extends Phaser.GameObjects.Container {
   private lastCursor: number = -1;
   public defaultGenVals: any[] = [];
   public defaultTypeVals: any[] = [];
-  public defaultUnlockVals: any[] = [];
+  public defaultShinyVals: any[] = [];
+  public defaultPassiveVals: any[] = [];
   public defaultWinVals: any[] = [];
   public defaultSortVals: any[] = [];
 
@@ -57,7 +59,8 @@ export class FilterBar extends Phaser.GameObjects.Container {
   updateFilterLabels(): void {
     const genVals = this.getVals(DropDownColumn.GEN);
     const typeVals = this.getVals(DropDownColumn.TYPES);
-    const unlockVals = this.getVals(DropDownColumn.UNLOCKS);
+    const shinyVals = this.getVals(DropDownColumn.SHINY);
+    const passiveVals = this.getVals(DropDownColumn.PASSIVE);
     const winVals = this.getVals(DropDownColumn.WIN);
     const sortVals = this.getVals(DropDownColumn.SORT);
 
@@ -79,11 +82,18 @@ export class FilterBar extends Phaser.GameObjects.Container {
       this.labels[DropDownColumn.TYPES].setTint(onColor);
     }
 
-    // if unlockVals and defaultUnlockVals has same elements, set the label to White else set it to Green
-    if (unlockVals.length === this.defaultUnlockVals.length && unlockVals.every((value, index) => value === this.defaultUnlockVals[index])) {
-      this.labels[DropDownColumn.UNLOCKS].setTint(offColor);
+    // if shinyVals and defaultShinyVals has same elements, set the label to White else set it to Green
+    if (shinyVals.length === this.defaultShinyVals.length && shinyVals.every((value, index) => value === this.defaultShinyVals[index])) {
+      this.labels[DropDownColumn.SHINY].setTint(offColor);
     } else {
-      this.labels[DropDownColumn.UNLOCKS].setTint(onColor);
+      this.labels[DropDownColumn.SHINY].setTint(onColor);
+    }
+
+    // if passiveVals and defaultPassiveVals has same elements, set the label to White else set it to Green
+    if (passiveVals.length === this.defaultPassiveVals.length && passiveVals.every((value, index) => value === this.defaultPassiveVals[index])) {
+      this.labels[DropDownColumn.PASSIVE].setTint(offColor);
+    } else {
+      this.labels[DropDownColumn.PASSIVE].setTint(onColor);
     }
 
     // if winVals and defaultWinVals has same elements, set the label to White else set it to Green
