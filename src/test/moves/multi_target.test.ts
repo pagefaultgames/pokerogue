@@ -164,14 +164,16 @@ function leaveOneEnemyPokemon(game: GameManager) {
 
 function beforeTrial(phaserGame: Phaser.Game, single: boolean = false) {
   const game = new GameManager(phaserGame);
-  game.override.battleType("double");
-  game.override.moveset([Moves.EARTHQUAKE, Moves.HYPER_VOICE, Moves.SURF, Moves.SPLASH]);
-  game.override.ability(Abilities.BALL_FETCH);
-  game.override.enemyMoveset(SPLASH_ONLY);
-  game.override.disableCrits();
-  game.override.startingLevel(50);
-  game.override.enemyLevel(40);
-  game.override.enemySpecies(Species.EEVEE);
+  game.override
+    .battleType("double")
+    .moveset([Moves.EARTHQUAKE, Moves.HYPER_VOICE, Moves.SURF, Moves.SPLASH])
+    .ability(Abilities.BALL_FETCH)
+    .passiveAbility(Abilities.UNNERVE)
+    .enemyMoveset(SPLASH_ONLY)
+    .disableCrits()
+    .startingLevel(50)
+    .enemyLevel(40)
+    .enemySpecies(Species.EEVEE);
   return game;
 }
 
