@@ -6,6 +6,7 @@ import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 import { Element } from "json-stable-stringify";
 import { Moves } from "#enums/moves";
+import { SubstituteTag } from "./battler-tags";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
@@ -694,7 +695,7 @@ export abstract class BattleAnim {
       return false;
     }
 
-    private getGraphicFrameData(scene: BattleScene, frames: AnimFrame[]): Map<integer, Map<AnimFrameTarget, GraphicFrameData>> {
+    private getGraphicFrameData(scene: BattleScene, frames: AnimFrame[], onSubstitute?: boolean): Map<integer, Map<AnimFrameTarget, GraphicFrameData>> {
       const ret: Map<integer, Map<AnimFrameTarget, GraphicFrameData>> = new Map([
         [AnimFrameTarget.GRAPHIC, new Map<AnimFrameTarget, GraphicFrameData>() ],
         [AnimFrameTarget.USER, new Map<AnimFrameTarget, GraphicFrameData>() ],
@@ -705,12 +706,15 @@ export abstract class BattleAnim {
       const user = !isOppAnim ? this.user : this.target;
       const target = !isOppAnim ? this.target : this.user;
 
+      const targetSubstitute = (!!onSubstitute && user !== target) ? target.getTag(SubstituteTag) : null;
+
       const userInitialX = user.x;
       const userInitialY = user.y;
       const userHalfHeight = user.getSprite().displayHeight / 2;
-      const targetInitialX = target.x;
-      const targetInitialY = target.y;
-      const targetHalfHeight = target.getSprite().displayHeight / 2;
+
+      const targetInitialX = targetSubstitute?.sprite?.x ?? target.x;
+      const targetInitialY = targetSubstitute?.sprite?.y ?? target.y;
+      const targetHalfHeight = (targetSubstitute?.sprite ?? target.getSprite()).displayHeight / 2;
 
       let g = 0;
       let u = 0;
@@ -748,7 +752,7 @@ export abstract class BattleAnim {
       return ret;
     }
 
-    play(scene: BattleScene, callback?: Function) {
+    play(scene: BattleScene, onSubstitute?: boolean, callback?: Function) {
       const isOppAnim = this.isOppAnim();
       const user = !isOppAnim ? this.user : this.target;
       const target = !isOppAnim ? this.target : this.user;
@@ -760,8 +764,10 @@ export abstract class BattleAnim {
         return;
       }
 
+      const targetSubstitute = (!!onSubstitute && user !== target) ? target.getTag(SubstituteTag) : null;
+
       const userSprite = user.getSprite();
-      const targetSprite = target.getSprite();
+      const targetSprite = targetSubstitute?.sprite ?? target.getSprite();
 
       const spriteCache: SpriteCache = {
         [AnimFrameTarget.GRAPHIC]: [],
@@ -776,9 +782,18 @@ export abstract class BattleAnim {
         userSprite.setAlpha(1);
         userSprite.pipelineData["tone"] = [ 0.0, 0.0, 0.0, 0.0 ];
         userSprite.setAngle(0);
-        targetSprite.setPosition(0, 0);
-        targetSprite.setScale(1);
-        targetSprite.setAlpha(1);
+        if (!targetSubstitute) {
+          targetSprite.setPosition(0, 0);
+          targetSprite.setScale(1);
+          targetSprite.setAlpha(1);
+        } else {
+          targetSprite.setPosition(
+            target.x - target.getSubstituteOffset()[0],
+            target.y - target.getSubstituteOffset()[1]
+          );
+          targetSprite.setScale(target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1));
+          targetSprite.setAlpha(1);
+        }
         targetSprite.pipelineData["tone"] = [ 0.0, 0.0, 0.0, 0.0 ];
         targetSprite.setAngle(0);
         if (!this.isHideUser()) {
@@ -808,8 +823,8 @@ export abstract class BattleAnim {
 
       const userInitialX = user.x;
       const userInitialY = user.y;
-      const targetInitialX = target.x;
-      const targetInitialY = target.y;
+      const targetInitialX = targetSubstitute?.sprite?.x ?? target.x;
+      const targetInitialY = targetSubstitute?.sprite?.y ?? target.y;
 
       this.srcLine = [ userFocusX, userFocusY, targetFocusX, targetFocusY ];
       this.dstLine = [ userInitialX, userInitialY, targetInitialX, targetInitialY ];
@@ -827,7 +842,7 @@ export abstract class BattleAnim {
           }
 
           const spriteFrames = anim.frames[f];
-          const frameData = this.getGraphicFrameData(scene, anim.frames[f]);
+          const frameData = this.getGraphicFrameData(scene, anim.frames[f], onSubstitute);
           let u = 0;
           let t = 0;
           let g = 0;
@@ -840,24 +855,34 @@ export abstract class BattleAnim {
               const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
               const spriteSource = isUser ? userSprite : targetSprite;
               if ((isUser ? u : t) === sprites.length) {
-                const sprite = scene.addPokemonSprite(isUser ? user : target, 0, 0, spriteSource.texture, spriteSource.frame.name, true);
-                [ "spriteColors", "fusionSpriteColors" ].map(k => sprite.pipelineData[k] = (isUser ? user : target).getSprite().pipelineData[k]);
-                sprite.setPipelineData("spriteKey", (isUser ? user : target).getBattleSpriteKey());
-                sprite.setPipelineData("shiny", (isUser ? user : target).shiny);
-                sprite.setPipelineData("variant", (isUser ? user : target).variant);
-                sprite.setPipelineData("ignoreFieldPos", true);
-                spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
-                scene.field.add(sprite);
-                sprites.push(sprite);
+                if (!isUser && !!targetSubstitute) {
+                  const sprite = scene.addPokemonSprite(isUser ? user : target, 0, 0, spriteSource.texture, spriteSource.frame.name, true);
+                  [ "spriteColors", "fusionSpriteColors" ].map(k => sprite.pipelineData[k] = (isUser ? user : target).getSprite().pipelineData[k]);
+                  sprite.setPipelineData("spriteKey", (isUser ? user : target).getBattleSpriteKey());
+                  sprite.setPipelineData("shiny", (isUser ? user : target).shiny);
+                  sprite.setPipelineData("variant", (isUser ? user : target).variant);
+                  sprite.setPipelineData("ignoreFieldPos", true);
+                  spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
+                  scene.field.add(sprite);
+                  sprites.push(sprite);
+                } else {
+                  const sprite = scene.addFieldSprite(spriteSource.x, spriteSource.y, spriteSource.texture);
+                  spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
+                  scene.field.add(sprite);
+                  sprites.push(sprite);
+                }
               }
 
               const spriteIndex = isUser ? u++ : t++;
               const pokemonSprite = sprites[spriteIndex];
               const graphicFrameData = frameData.get(frame.target).get(spriteIndex);
-              pokemonSprite.setPosition(graphicFrameData.x, graphicFrameData.y - ((spriteSource.height / 2) * (spriteSource.parentContainer.scale - 1)));
+              const spriteSourceScale = (isUser || !targetSubstitute)
+                ? spriteSource.parentContainer.scale
+                : target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1);
+              pokemonSprite.setPosition(graphicFrameData.x, graphicFrameData.y - ((spriteSource.height / 2) * (spriteSourceScale - 1)));
 
               pokemonSprite.setAngle(graphicFrameData.angle);
-              pokemonSprite.setScale(graphicFrameData.scaleX * spriteSource.parentContainer.scale,  graphicFrameData.scaleY * spriteSource.parentContainer.scale);
+              pokemonSprite.setScale(graphicFrameData.scaleX * spriteSourceScale,  graphicFrameData.scaleY * spriteSourceScale);
 
               pokemonSprite.setData("locked", frame.locked);
 

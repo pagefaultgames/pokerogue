@@ -155,5 +155,8 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} est blessé\npar la capacité {{moveName}} !",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} sacrifie des PV\net lance une malédiction sur {{pokemonName}} !",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} est touché par la malédiction !",
-  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!"
+  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
+  "battlerTagsSubstituteOnAdd": "{{pokemonNameWithAffix}}\ncrée un clone !",
+  "battlerTagsSubstituteOnHit": "Le clone subit les dégâts à la place\nde {{pokemonNameWithAffix}} !",
+  "battlerTagsSubstituteOnRemove": "Le clone de {{pokemonNameWithAffix}}\ndisparait…"
 } as const;

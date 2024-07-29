@@ -147,5 +147,8 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}}\n受到了{{moveName}}的伤害！",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}削减了自己的体力，\n并诅咒了{{pokemonName}}！",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}\n正受到诅咒！",
-  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}}蓄力了{{stockpiledCount}}次！"
+  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}}蓄力了{{stockpiledCount}}次！",
+  "battlerTagsSubstituteOnAdd": "{{pokemonNameWithAffix}}的\n替身出现了！",
+  "battlerTagsSubstituteOnHit": "替身代替{{pokemonNameWithAffix}}\n承受了攻击！",
+  "battlerTagsSubstituteOnRemove": "{{pokemonNameWithAffix}}的\n替身消失了……"
 } as const;

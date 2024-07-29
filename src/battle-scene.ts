@@ -66,6 +66,8 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
+import { PokemonAnimPhase } from "./pokemon-anim-phase";
+import { PokemonAnimType } from "./enums/pokemon-anim-type";
 import i18next from "i18next";
 import {TrainerType} from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
@@ -950,10 +952,12 @@ export default class BattleScene extends SceneBase {
     this.enemyModifierBar.removeAll(true);
 
     for (const p of this.getParty()) {
+      p.destroySubstitute();
       p.destroy();
     }
     this.party = [];
     for (const p of this.getEnemyParty()) {
+      p.destroySubstitute();
       p.destroy();
     }
 
@@ -2580,6 +2584,16 @@ export default class BattleScene extends SceneBase {
     }
 
     return false;
+  }
+
+  triggerPokemonBattleAnim(pokemon: Pokemon, battleAnimType: PokemonAnimType, fieldAssets?: Phaser.GameObjects.Sprite[], delayed: boolean = false): boolean {
+    const phase: Phase = new PokemonAnimPhase(this, battleAnimType, pokemon, fieldAssets);
+    if (delayed) {
+      this.pushPhase(phase);
+    } else {
+      this.unshiftPhase(phase);
+    }
+    return true;
   }
 
   validateAchvs(achvType: Constructor<Achv>, ...args: unknown[]): void {

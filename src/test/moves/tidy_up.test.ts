@@ -9,6 +9,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { SubstituteTag } from "#app/data/battler-tags.js";
 
 
 describe("Moves - Tidy Up", () => {
@@ -90,7 +91,7 @@ describe("Moves - Tidy Up", () => {
 
   }, 20000);
 
-  it.skip("substitutes are cleared", async() => {
+  it("substitutes are cleared", async() => {
     game.override.moveset([Moves.SUBSTITUTE, Moves.TIDY_UP]);
     game.override.enemyMoveset([Moves.SUBSTITUTE, Moves.SUBSTITUTE, Moves.SUBSTITUTE, Moves.SUBSTITUTE]);
 
@@ -100,8 +101,12 @@ describe("Moves - Tidy Up", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     game.doAttack(getMovePosition(game.scene, 0, Moves.TIDY_UP));
     await game.phaseInterceptor.to(MoveEndPhase);
-    // TODO: check for subs here once the move is implemented
 
+    const pokemon = [ game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon() ];
+    pokemon.forEach(p => {
+      expect(p).toBeDefined();
+      expect(p.getTag(SubstituteTag)).toBeUndefined();
+    });
   }, 20000);
 
   it("user's stats are raised with no traps set", async() => {

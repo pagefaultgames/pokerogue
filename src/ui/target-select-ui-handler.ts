@@ -7,6 +7,7 @@ import { getMoveTargets } from "../data/move";
 import {Button} from "#enums/buttons";
 import { Moves } from "#enums/moves";
 import Pokemon from "#app/field/pokemon.js";
+import { SubstituteTag } from "#app/data/battler-tags.js";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
@@ -107,7 +108,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     if (this.targetFlashTween) {
       this.targetFlashTween.stop();
       for (const pokemon of multipleTargets) {
-        pokemon.setAlpha(1);
+        pokemon.setAlpha(!!pokemon.getTag(SubstituteTag) ? 0.5 : 1);
       }
     }
 
@@ -153,7 +154,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetFlashTween = null;
     }
     for (const pokemon of this.targetsHighlighted) {
-      pokemon.setAlpha(1);
+      pokemon.setAlpha(!!pokemon.getTag(SubstituteTag) ? 0.5 : 1);
     }
 
     if (this.targetBattleInfoMoveTween.length >= 1) {
