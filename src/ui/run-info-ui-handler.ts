@@ -20,6 +20,7 @@ import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { allAbilities } from "../data/ability";
 import { getVariantTint } from "#app/data/variant";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
+import {modifierSortFunc} from "../modifier/modifier";
 
 /*
 enum Page {
@@ -28,6 +29,7 @@ enum Page {
   HALL_OF_FAME
 }
 */
+
 
 export enum RunVictory {
   DEFEATED,
@@ -44,7 +46,7 @@ export default class GameInfoUiHandler extends UiHandler {
   private runResultContainer: Phaser.GameObjects.Container;
   private runInfoContainer: Phaser.GameObjects.Container;
   private partyContainer: Phaser.GameObjects.Container;
-  private partyModifierContainer: Phaser.GameObjects.Container;
+  private partyHeldItemsContainer: Phaser.GameObjects.Container;
   private statsBgWidth: integer;
   private partyContainerHeight: integer;
   private partyContainerWidth: integer;
@@ -52,6 +54,8 @@ export default class GameInfoUiHandler extends UiHandler {
   private hallofFameContainer: Phaser.GameObjects.Container;
 
   private partyInfo: Phaser.GameObjects.Container[];
+  private partyVisibility: Boolean;
+  private modifiersModule: any;
 
   private statValues: Phaser.GameObjects.Text[];
 
@@ -59,10 +63,10 @@ export default class GameInfoUiHandler extends UiHandler {
     super(scene, Mode.RUN_INFO);
   }
 
-  	setup() {
+  	async setup() {
  		//const page = 0;
  		this.gameStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
-
+    this.modifiersModule = await import("../modifier/modifier");
     this.gameStatsContainer.setVisible(false);
  	}
 
@@ -76,10 +80,16 @@ export default class GameInfoUiHandler extends UiHandler {
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
+    const downButtonContainer = this.scene.add.container(0, 0);
+    const downButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {fontSize:"34px"});
+    const downButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "KEY_ARROW_DOWN.png");
+    downButtonContainer.add([downButtonText, downButtonElement]);
+    downButtonContainer.setPositionRelative(headerBg, 275, 10);
     const headerText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:runInfo"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
     this.gameStatsContainer.add(headerBg);
+    this.gameStatsContainer.add(downButtonContainer);
     this.gameStatsContainer.add(headerText);
 
     const run = args[0];
@@ -95,6 +105,8 @@ export default class GameInfoUiHandler extends UiHandler {
     this.parseRunResult(this.runInfo, this.victory);
 
     this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 23);
+    this.partyHeldItemsContainer = this.scene.add.container(this.statsBgWidth-10, 23);
+    this.partyHeldItemsContainer.setVisible(false);
 
     this.setCursor(0);
 
@@ -105,9 +117,11 @@ export default class GameInfoUiHandler extends UiHandler {
 
     const partyData = this.runInfo.party;
     this.parsePartyInfo(partyData);
+    this.showParty(true);
 
     this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
+    this.getUi().bringToTop(this.hallofFameContainer);
     this.getUi().bringToTop(this.gameStatsContainer);
     this.gameStatsContainer.setVisible(true);
 
@@ -124,6 +138,39 @@ export default class GameInfoUiHandler extends UiHandler {
   async parseRunResult(runData: any, runResult: boolean) {
     const runResultText = addBBCodeTextObject(this.scene, 6, 4, `${(runResult ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated")+" - Wave "+runData.waveIndex)}`, TextStyle.WINDOW, {fontSize : "65px", lineSpacing: 0.1});
     this.runResultContainer.add(runResultText);
+
+    if (runResult) {
+      this.hallofFameContainer = this.scene.add.container(0, 0);
+      //const hallofFameBg = new Phaser.GameObjects.Image(this.scene, 0, 0, "hall_of_fame.png");
+      const hallofFameBg = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height, 0x005460);
+      this.hallofFameContainer.add(hallofFameBg);
+      const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText"), TextStyle.WINDOW);
+      hallofFameText.setPosition(this.scene.game.canvas.width/2, 120);
+      this.hallofFameContainer.add(hallofFameText);
+      runData.party.forEach((poke, i) => {
+        const pokemon = poke.toPokemon(this.scene);
+        const pokemonSprite = this.scene.addPokemonSprite(pokemon, 0, 0, 0, 0);
+        console.log(pokemonSprite);        
+        pokemonSprite.play(pokemon.getSpriteKey(true));
+        pokemonSprite.setPipelineData("teraColor", getTypeRgb(pokemon.getTeraType()));
+        pokemonSprite.setPipelineData("ignoreTimeTint", true);
+        pokemonSprite.setPipelineData("spriteKey", pokemon.getSpriteKey());
+        pokemonSprite.setPipelineData("shiny", pokemon.shiny);
+        pokemonSprite.setPipelineData("variant", pokemon.variant);
+        [ "spriteColors", "fusionSpriteColors" ].map(k => {
+          delete pokemonSprite.pipelineData[`${k}Base`];
+          if (pokemon.summonData?.speciesForm) {
+            k += "Base";
+          }
+        pokemonSprite.pipelineData[k] = pokemon.getSprite().pipelineData[k];
+        });
+        this.hallofFameContainer.add(pokemonSprite);
+        pokemon.destroy();
+      });
+      this.hallofFameContainer.setVisible(false);
+
+      this.gameStatsContainer.add(this.hallofFameContainer);
+    }
 
     if (!runResult) {
       const enemyContainer = this.scene.add.container(0, 0);
@@ -174,9 +221,9 @@ export default class GameInfoUiHandler extends UiHandler {
       } else if (runData.battleType === BattleType.TRAINER) {
         const tObj = runData.trainer.toTrainer(this.scene);
         const tObjSpriteKey = tObj.config.getSpriteKey(runData.trainer.variant === TrainerVariant.FEMALE, false);
-        const tObjSprite = this.scene.add.sprite(3, 75, tObjSpriteKey);
+        const tObjSprite = this.scene.add.sprite(0, 0, tObjSpriteKey);
         if (runData.trainer.variant === TrainerVariant.DOUBLE) {
-          const doubleContainer = this.scene.add.container(5, 80);
+          const doubleContainer = this.scene.add.container(5, 8);
           tObjSprite.setPosition(-3, -3);
           const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
           const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
@@ -187,7 +234,7 @@ export default class GameInfoUiHandler extends UiHandler {
           enemyContainer.add(doubleContainer);
         } else {
           tObjSprite.setScale(0.25, 0.25);
-          tObjSprite.setPosition(6, 82);
+          tObjSprite.setPosition(9, 23);
           enemyContainer.add(tObjSprite);
         }
 
@@ -198,10 +245,11 @@ export default class GameInfoUiHandler extends UiHandler {
           }
         });
 
+        const enemyPartyContainer = this.scene.add.container(0, 0);
         runData.enemyParty.forEach((enemyData, e) => {
           const pokemonRowHeight = Math.floor(e/3);
-          const enemyIconContainer = this.scene.add.container(8+((e%3)*12), 66);
-          enemyIconContainer.setScale(0.5);
+          const enemyIconContainer = this.scene.add.container(0, 0);
+          enemyIconContainer.setScale(0.6);
           const isBoss = enemyData.boss;
           enemyData.boss = false;
           const enemy = enemyData.toPokemon(this.scene);
@@ -216,17 +264,19 @@ export default class GameInfoUiHandler extends UiHandler {
               enemySprite2.setTint(teraColor.color);
             }
           }
-          enemyIcon.setPosition(34+(24 * (e%3)), 0+(35*pokemonRowHeight));
-          const enemyLevel = addTextObject(this.scene, (26*(e%3))+44, 26+(35*pokemonRowHeight), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
+          enemyIcon.setPosition(39*(e%3), (35*pokemonRowHeight));
+          const enemyLevel = addTextObject(this.scene, 43*(e%3), (27*(pokemonRowHeight+1)), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
           enemyLevel.setShadow(0, 0, null);
           enemyLevel.setStroke("#424242", 14);
-          enemyLevel.setOrigin(1, 0);
+          enemyLevel.setOrigin(0, 0);
 
           enemyIconContainer.add(enemyIcon);
           enemyIconContainer.add(enemyLevel);
-          enemyContainer.add(enemyIconContainer);
+          enemyPartyContainer.add(enemyIconContainer);
           enemy.destroy();
         });
+        enemyPartyContainer.setPosition(25, 18);
+        enemyContainer.add(enemyPartyContainer);
       }
       this.runResultContainer.add(enemyContainer);
     }
@@ -302,14 +352,12 @@ export default class GameInfoUiHandler extends UiHandler {
 
 
     if (runData.modifiers.length) {
-      const modifiersModule = await import("../modifier/modifier");
-
       let visibleModifierIndex = 0;
 
       const modifierIconsContainer = this.scene.add.container(8, (runData.gameMode === GameModes.CHALLENGE) ? 20 : 15);
       modifierIconsContainer.setScale(0.45);
       for (const m of runData.modifiers) {
-        const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
+        const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
         if (modifier instanceof PokemonHeldItemModifier) {
           continue;
         }
@@ -345,7 +393,7 @@ export default class GameInfoUiHandler extends UiHandler {
     this.gameStatsContainer.add(this.runInfoContainer);
   }
 
- 	parsePartyInfo(party: any) {
+ 	parsePartyInfo(party: any): void {
 
     const currentLanguage = i18next.resolvedLanguage;
  		const windowHeight = ((this.scene.game.canvas.height / 6) - 23)/6;
@@ -417,12 +465,14 @@ export default class GameInfoUiHandler extends UiHandler {
       pokeStatText2.appendText(speed);
       pokeStatTextContainer.add(pokeStatText2);
 
+      const marksContainer = this.scene.add.container(0, 0);
+
       if (pokemon.fusionSpecies) {
         const splicedIcon = this.scene.add.image(0, 0, "icon_spliced");
         splicedIcon.setScale(0.35);
         splicedIcon.setOrigin(0, 0);
         pokemon.shiny ? splicedIcon.setPositionRelative(pokeInfoTextContainer, 35, 0) : splicedIcon.setPositionRelative(pokeInfoTextContainer, 28, 0);
-        iconContainer.add(splicedIcon);
+        marksContainer.add(splicedIcon);
         this.getUi().bringToTop(splicedIcon);
       }
 
@@ -434,7 +484,7 @@ export default class GameInfoUiHandler extends UiHandler {
         shinyStar.setScale(0.65);
         shinyStar.setPositionRelative(pokeInfoTextContainer, 28, 0);
         shinyStar.setTint(getVariantTint(!doubleShiny ? pokemon.getVariant() : pokemon.variant));
-        iconContainer.add(shinyStar);
+        marksContainer.add(shinyStar);
         this.getUi().bringToTop(shinyStar);
 
         if (doubleShiny) {
@@ -443,7 +493,7 @@ export default class GameInfoUiHandler extends UiHandler {
           fusionShinyStar.setScale(0.5);
           fusionShinyStar.setPosition(shinyStar.x, shinyStar.y);
           fusionShinyStar.setTint(getVariantTint(pokemon.fusionVariant));
-          iconContainer.add(fusionShinyStar);
+          marksContainer.add(fusionShinyStar);
           this.getUi().bringToTop(fusionShinyStar);
         }
       }
@@ -477,18 +527,109 @@ export default class GameInfoUiHandler extends UiHandler {
         pokemonMoveLabels[m].setText(move ? move.name : "-");
     	}
 
+      const heldItemsScale = (this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS) ? 0.25 : 0.5;
+      const heldItemsContainer = this.scene.add.container(-82, 6);
+      const heldItemsList = [];
+      if (this.runInfo.modifiers.length) {
+        for (const m of this.runInfo.modifiers) {
+          const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
+          if (modifier instanceof PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
+            modifier.stackCount = m.stackCount;
+            heldItemsList.push(modifier);
+          }
+        }
+        if (heldItemsList.length > 0) {
+          (heldItemsList as PokemonHeldItemModifier[]).sort(modifierSortFunc);
+          let row = 0;
+          for (const [index, item] of heldItemsList.entries()) {
+            if ( index > 36 ) { 
+              const overflowIcon = addTextObject(this.scene, 182, 4, "+", TextStyle.WINDOW);
+              heldItemsContainer.add(overflowIcon);
+              break;
+            }
+            const itemIcon = item.getIcon(this.scene, true);
+            //itemIcon.setFrame(item.type.iconImage);
+            itemIcon.setScale(heldItemsScale);
+            itemIcon.setPosition((index%19)*10, row*10);
+            heldItemsContainer.add(itemIcon);
+            if (index !== 0 && index%18 == 0) {
+              row++;
+            }
+          }
+        }
+      }
+      heldItemsContainer.setName("heldItems");
+      heldItemsContainer.setVisible("false");
+
       pokemonInfoContainer.add(pokemonInfoWindow);
       iconContainer.add(icon);
       pokemonInfoContainer.add(iconContainer);
+      marksContainer.setName("PkmnMarks");
+      pokemonInfoContainer.add(marksContainer);
+      movesetContainer.setName("PkmnMoves"); 
       pokemonInfoContainer.add(movesetContainer);
+      pokeInfoTextContainer.setName("PkmnInfoText");
       pokemonInfoContainer.add(pokeInfoTextContainer);
+      pokeStatTextContainer.setName("PkmnStatsText");
       pokemonInfoContainer.add(pokeStatTextContainer);
-
+      pokemonInfoContainer.add(heldItemsContainer);
+      pokemonInfoContainer.setName("PkmnInfo");
       this.partyContainer.add(pokemonInfoContainer);
       pokemon.destroy();
  		});
     this.gameStatsContainer.add(this.partyContainer);
  	}
+
+  async parsePartyHeldItems(id: integer): Phaser.GameObjects.Container {
+    
+    //tempContainer.setVisible(false);
+    return tempContainer; 
+  }
+
+  showParty(partyVisible: boolean): void {
+    const allContainers = this.partyContainer.getAll("name", "PkmnInfo");
+    allContainers.forEach((c: Phaser.GameObjects.Container) => {
+      c.getByName("PkmnMoves").setVisible(partyVisible);
+      c.getByName("PkmnInfoText").setVisible(partyVisible);
+      c.getByName("PkmnStatsText").setVisible(partyVisible);
+      c.getByName("PkmnMarks").setVisible(partyVisible);
+      c.getByName("heldItems").setVisible(!partyVisible);
+      this.partyVisibility = partyVisible; 
+    });
+  }
+
+  showHallofFame(visibility: boolean): void {
+    this.hallofFameContainer = this.scene.add.container(0, 0);
+      //const hallofFameBg = new Phaser.GameObjects.Image(this.scene, 0, 0, "hall_of_fame.png");
+      const hallofFameBg = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height, 0x005460);
+      this.hallofFameContainer.add(hallofFameBg);
+      const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText"), TextStyle.WINDOW);
+      hallofFameText.setPosition(this.scene.game.canvas.width/2, 120);
+      this.hallofFameContainer.add(hallofFameText);
+      this.runInfo.party.forEach((poke, i) => {
+        const pokemon = poke.toPokemon(this.scene);
+        const pokemonSprite = this.scene.initPokemonSprite(this.scene.add.sprite(56, -106, pokemon.getSpriteKey(true)), null, false, true);
+        this.hallofFameContainer.add(pokemonSprite);       
+        pokemonSprite.play(pokemon.getSpriteKey(true));
+        pokemonSprite.setPipelineData("teraColor", getTypeRgb(pokemon.getTeraType()));
+        pokemonSprite.setPipelineData("ignoreTimeTint", true);
+        pokemonSprite.setPipelineData("spriteKey", pokemon.getSpriteKey());
+        pokemonSprite.setPipelineData("shiny", pokemon.shiny);
+        pokemonSprite.setPipelineData("variant", pokemon.variant);
+        [ "spriteColors", "fusionSpriteColors" ].map(k => {
+          delete pokemonSprite.pipelineData[`${k}Base`];
+          if (pokemon.summonData?.speciesForm) {
+            k += "Base";
+          }
+      pokemonSprite.pipelineData[k] = pokemon.getSprite().pipelineData[k];
+      });
+      console.log(pokemonSprite);
+      pokemon.destroy();
+    });
+    this.hallofFameContainer.setVisible(visibility);
+
+    this.gameStatsContainer.add(this.hallofFameContainer);
+  }
 
  	processInput(button: Button): boolean {
     const ui = this.getUi();
@@ -501,6 +642,7 @@ export default class GameInfoUiHandler extends UiHandler {
       this.runInfoContainer.removeAll(true);
       this.runResultContainer.removeAll(true);
       this.partyContainer.removeAll(true);
+      this.partyHeldItemsContainer.removeAll(true);
       this.gameStatsContainer.removeAll(true);
       super.clear();
       this.gameStatsContainer.setVisible(false);
@@ -508,15 +650,21 @@ export default class GameInfoUiHandler extends UiHandler {
     } else {
       switch (button) {
       case Button.DOWN:
-      case Button.UP:
-        break;
-      }
-    }
-    if (button === Button.STATS) {
-      if (this.partyContainer.visible) {
-        this.partyContainer.setVisible(false);
+        if (this.partyVisibility) {
+        this.showParty(false);
+        this.partyHeldItemsContainer.setVisible(true);
       } else {
-        this.partyContainer.setVisible(true);
+        this.showParty(true);
+        this.partyHeldItemsContainer.setVisible(false);
+      }
+      break;
+      case Button.UP:
+        if (this.victory) {
+          this.hallofFameContainer.visible ? this.showHallofFame(false) : this.showHallofFame(true);
+          //this.hallofFameContainer.visible ? this.hallofFameContainer.setVisible(false) : this.hallofFameContainer.setVisible(true);
+          break;
+        }
+        break;
       }
     }
     if (success) {
