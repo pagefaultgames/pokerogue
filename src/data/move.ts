@@ -1638,9 +1638,14 @@ export class HitHealAttr extends MoveEffectAttr {
       message = i18next.t("battle:regainHealth", {pokemonName: getPokemonNameWithAffix(user)});
     }
     if (reverseDrain) {
-      user.turnData.damageTaken += healAmount;
-      healAmount = healAmount * -1;
-      message = null;
+      if (user.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
+        healAmount = 0;
+        message = null;
+      } else {
+        user.turnData.damageTaken += healAmount;
+        healAmount = healAmount * -1;
+        message = null;
+      }
     }
     user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(), healAmount, message, false, true));
     return true;
