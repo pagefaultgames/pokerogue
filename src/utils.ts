@@ -576,6 +576,9 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
  */
 export function setTNCsVisible(visible: boolean): void {
   const links = document.getElementById("tnc-links");
+  if (!links) {
+    return;
+  }
 
   if (!visible) {
     links.style.display = "none";
