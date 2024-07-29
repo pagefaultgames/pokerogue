@@ -65,6 +65,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { applyChallenges, ChallengeType } from "./data/challenge";
+import {setTNCsVisible} from "./utils";
 
 const { t } = i18next;
 
@@ -79,6 +80,7 @@ export class LoginPhase extends Phase {
 
   start(): void {
     super.start();
+    setTNCsVisible(true);
 
     const hasSession = !!Utils.getCookie(Utils.sessionIdKey);
 
@@ -188,6 +190,7 @@ export class TitlePhase extends Phase {
 
   start(): void {
     super.start();
+    setTNCsVisible(true);
 
     this.scene.ui.clearText();
     this.scene.ui.fadeIn(250);
@@ -402,13 +405,8 @@ export class TitlePhase extends Phase {
     });
   }
 
-  hideTNCs(): void {
-    const links = document.getElementById("tnc-links");
-    links.style.display = "none";
-  }
-
   end(): void {
-    this.hideTNCs();
+    setTNCsVisible(false);
 
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();

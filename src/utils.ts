@@ -567,3 +567,12 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
   }
   return null;
 }
+
+export function setTNCsVisible(visible: boolean): void {
+  const links = document.getElementById("tnc-links");
+  if (!visible) {
+    links.style.display = "none";
+  } else {
+    links.style.display = "";
+  }
+}
