@@ -8,7 +8,8 @@ import {
   LoginPhase,
   NewBattlePhase,
   SelectStarterPhase,
-  TitlePhase, TurnInitPhase,
+  SelectTargetPhase,
+  TitlePhase, TurnEndPhase, TurnInitPhase,
   TurnStartPhase,
 } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
@@ -170,6 +171,15 @@ export default class GameManager {
     this.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
+
+    // Confirm target selection if move is multi-target
+    this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
+      const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
+      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition].getMove();
+      if (move.isMultiTarget()) {
+        handler.processInput(Button.ACTION);
+      }
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnEndPhase));
   }
 
   /**

@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
-import * as Overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -29,7 +29,7 @@ describe("Abilities - Sand Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEOWSCARADA);
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
@@ -76,7 +76,7 @@ describe("Abilities - Sand Veil", () => {
 
       await game.phaseInterceptor.to(MoveEndPhase, false);
 
-      expect(leadPokemon[0].hp).toBe(leadPokemon[0].getMaxHp());
+      expect(leadPokemon[0].isFullHp()).toBe(true);
       expect(leadPokemon[1].hp).toBeLessThan(leadPokemon[1].getMaxHp());
     }, TIMEOUT
   );

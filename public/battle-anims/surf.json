@@ -1186,6 +1186,41 @@
           "volume": 100,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
+        },
+        {
+          "frameIndex": 0,
+          "resourceName": "PRAS- Surf FG",
+          "bgX": -10,
+          "bgY": 365,
+          "opacity": 0,
+          "duration": 2,
+          "eventType": "AnimTimedAddBgEvent"
+        },
+        {
+          "frameIndex": 0,
+          "resourceName": "",
+          "bgX": 400,
+          "bgY": 340,
+          "duration": 45,
+          "eventType": "AnimTimedUpdateBgEvent"
+        }
+      ],
+      "1": [
+          {
+          "frameIndex": 1,
+          "resourceName": "",
+          "opacity": 200,
+          "duration": 6,
+          "eventType": "AnimTimedUpdateBgEvent"
+        }
+      ],
+      "30": [
+        {
+          "frameIndex": 30,
+          "resourceName": "",
+          "opacity": 0,
+          "duration": 15,
+          "eventType": "AnimTimedUpdateBgEvent"
         }
       ]
     },
@@ -2379,6 +2414,41 @@
           "volume": 100,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
+        },
+        {
+          "frameIndex": 0,
+          "resourceName": "PRAS- Surf FG Opp - Copie",
+          "bgX": -50,
+          "bgY": 0,
+          "opacity": 0,
+          "duration": 2,
+          "eventType": "AnimTimedAddBgEvent"
+        },
+        {
+          "frameIndex": 0,
+          "resourceName": "",
+          "bgX": -600,
+          "bgY": 200,
+          "duration": 45,
+          "eventType": "AnimTimedUpdateBgEvent"
+        }
+      ],
+      "1": [
+        {
+          "frameIndex": 1,
+          "resourceName": "",
+          "opacity": 200,
+          "duration": 6,
+          "eventType": "AnimTimedUpdateBgEvent"
+        }
+      ],
+      "30": [
+        {
+          "frameIndex": 30,
+          "resourceName": "",
+          "opacity": 0,
+          "duration": 15,
+          "eventType": "AnimTimedUpdateBgEvent"
         }
       ]
     },
