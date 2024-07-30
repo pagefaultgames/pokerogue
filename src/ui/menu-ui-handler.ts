@@ -6,7 +6,7 @@ import { addWindow } from "./ui-theme";
 import MessageUiHandler from "./message-ui-handler";
 import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { Tutorial, handleTutorial } from "../tutorial";
-import { updateUserInfo } from "../account";
+import { loggedInUser, updateUserInfo } from "../account";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
@@ -14,9 +14,8 @@ import BgmBar from "#app/ui/bgm-bar";
 
 enum MenuOptions {
   GAME_SETTINGS,
-  ACHIEVEMENTS,
   STATS,
-  VOUCHERS,
+  LINKS,
   EGG_LIST,
   EGG_GACHA,
   MANAGE_DATA,
@@ -30,6 +29,20 @@ let wikiUrl = "https://wiki.pokerogue.net/start";
 const discordUrl = "https://discord.gg/uWpTfdKG49";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 const redditUrl = "https://www.reddit.com/r/pokerogue";
+const links = [
+  ["Privacy Policy", "https://app.termly.io/policy-viewer/policy.html?policyUUID=bc96778b-3f04-4d25-bafc-0deba53e8bec"],
+  ["Cookie Disclaimer", "https://app.termly.io/policy-viewer/policy.html?policyUUID=8b523c05-7ec2-4646-9534-5bd61b386e2a"],
+  ["Terms & Conditions", "https://app.termly.io/policy-viewer/policy.html?policyUUID=b01e092a-9721-477f-8356-45576702ff9e"],
+  ["Acceptable Use Policy", "https://app.termly.io/policy-viewer/policy.html?policyUUID=3b5d1928-3f5b-4ee1-b8df-2d6c276b0bcc"]
+]
+function goToWebpage(urlIndex: integer) {
+  const link = document.createElement("a");
+  link.href = links[urlIndex][1];
+  link.target = "_blank"
+  link.rel = "noreferrer noopener"
+  link.click();
+  link.remove();
+}
 
 export default class MenuUiHandler extends MessageUiHandler {
   private menuContainer: Phaser.GameObjects.Container;
@@ -46,6 +59,8 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   protected manageDataConfig: OptionSelectConfig;
   protected communityConfig: OptionSelectConfig;
+  protected accountStatsConfig: OptionSelectConfig;
+  protected legalLinksConfig: OptionSelectConfig;
 
   public bgmBar: BgmBar;
 
@@ -147,7 +162,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       });
     };
 
-    if (Utils.isLocal) {
+    if (Utils.isLocal || Utils.isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
@@ -178,7 +193,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true
     });
-    if (Utils.isLocal) {
+    if (Utils.isLocal || Utils.isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
@@ -189,27 +204,103 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       });
     }
-    manageDataOptions.push(
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:exportData"),
+      handler: () => {
+        this.scene.gameData.tryExportData(GameDataType.SYSTEM);
+        return true;
+      }
+    },
+    {
+      label: i18next.t("menuUiHandler:cancel"),
+      handler: () => {
+        this.scene.ui.revertMode();
+        return true;
+      },
+      keepOpen: true
+    });
+
+    this.manageDataConfig = {
+      xOffset: 98,
+      options: manageDataOptions
+    };
+
+    const accountOptions: OptionSelectItem[] = [
       {
-        label: i18next.t("menuUiHandler:exportData"),
+        label: "Stats",
         handler: () => {
-          this.scene.gameData.tryExportData(GameDataType.SYSTEM);
+          ui.setOverlayMode(Mode.GAME_STATS);
           return true;
-        },
-        keepOpen: true
+        }
+      },
+      {
+        label: "Achievements",
+        handler: () => {
+          ui.setOverlayMode(Mode.ACHIEVEMENTS);
+          return true;
+        }
+      },
+      {
+        label: "Vouchers",
+        handler: () => {
+          ui.setOverlayMode(Mode.VOUCHERS);
+          return true;
+        }
       },
       {
         label: i18next.t("menuUiHandler:cancel"),
         handler: () => {
           this.scene.ui.revertMode();
           return true;
-        }
+        },
+        keepOpen: true
       }
-    );
-
-    this.manageDataConfig = {
+    ]
+    
+    this.accountStatsConfig = {
       xOffset: 98,
-      options: manageDataOptions
+      options: accountOptions
+    };
+
+    const siteOptions: OptionSelectItem[] = [
+      {
+        label: "Consent Preferences",
+        handler: () => {
+          const consentLink = document.querySelector(".termly-display-preferences") as HTMLInputElement;
+          const clickEvent = new MouseEvent("click", {
+            view: window,
+            bubbles: true,
+            cancelable: true
+          });
+          consentLink.dispatchEvent(clickEvent);
+          consentLink.focus();
+          return true;
+        },
+        keepOpen: true
+      }
+    ]
+    for (var i = 0; i < links.length; i++) {
+      siteOptions.push({
+        label: links[i][0],
+        handler: () => {
+          window.open(links[i][1], "_blank").focus();
+          return true;
+        },
+        keepOpen: true
+      })
+    }
+    siteOptions.push({
+      label: i18next.t("menuUiHandler:cancel"),
+      handler: () => {
+        this.scene.ui.revertMode();
+        return true;
+      },
+      keepOpen: true
+    })
+
+    this.legalLinksConfig = {
+      xOffset: 98,
+      options: siteOptions
     };
 
     const communityOptions: OptionSelectItem[] = [
@@ -305,16 +396,12 @@ export default class MenuUiHandler extends MessageUiHandler {
         ui.setOverlayMode(Mode.SETTINGS);
         success = true;
         break;
-      case MenuOptions.ACHIEVEMENTS:
-        ui.setOverlayMode(Mode.ACHIEVEMENTS);
-        success = true;
-        break;
       case MenuOptions.STATS:
-        ui.setOverlayMode(Mode.GAME_STATS);
+        ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.accountStatsConfig);
         success = true;
         break;
-      case MenuOptions.VOUCHERS:
-        ui.setOverlayMode(Mode.VOUCHERS);
+      case MenuOptions.LINKS:
+        ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.legalLinksConfig);
         success = true;
         break;
       case MenuOptions.EGG_LIST:
@@ -333,6 +420,51 @@ export default class MenuUiHandler extends MessageUiHandler {
         success = true;
         break;
       case MenuOptions.MANAGE_DATA:
+        if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === i18next.t("menuUiHandler:linkDiscord") || o.label === i18next.t("menuUiHandler:unlinkDiscord"))) {
+          this.manageDataConfig.options.splice(this.manageDataConfig.options.length-1,0,
+            {
+              label: loggedInUser.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
+              handler: () => {
+                if (loggedInUser?.discordId === "") {
+                  const token = Utils.getCookie(Utils.sessionIdKey);
+                  const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
+                  const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
+                  const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&state=${token}&prompt=none`;
+                  window.open(discordUrl, "_self");
+                  return true;
+                } else {
+                  Utils.apiPost("/auth/discord/logout", undefined, undefined, true).then(res => {
+                    if (!res.ok) {
+                      console.error(`Unlink failed (${res.status}: ${res.statusText})`);
+                    }
+                    updateUserInfo().then(() => this.scene.reset(true, true));
+                  });
+                  return true;
+                }
+              }
+            },
+            {
+              label: loggedInUser?.googleId === "" ? i18next.t("menuUiHandler:linkGoogle") : i18next.t("menuUiHandler:unlinkGoogle"),
+              handler: () => {
+                if (loggedInUser?.googleId === "") {
+                  const token = Utils.getCookie(Utils.sessionIdKey);
+                  const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
+                  const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+                  const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&response_type=code&redirect_uri=${redirectUri}&scope=openid&state=${token}`;
+                  window.open(googleUrl, "_self");
+                  return true;
+                } else {
+                  Utils.apiPost("/auth/google/logout", undefined, undefined, true).then(res => {
+                    if (!res.ok) {
+                      console.error(`Unlink failed (${res.status}: ${res.statusText})`);
+                    }
+                    updateUserInfo().then(() => this.scene.reset(true, true));
+                  });
+                  return true;
+                }
+              }
+            });
+        }
         ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.manageDataConfig);
         success = true;
         break;
@@ -381,7 +513,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             if (!res.ok) {
               console.error(`Log out failed (${res.status}: ${res.statusText})`);
             }
-            Utils.setCookie(Utils.sessionIdKey, "");
+            Utils.removeCookie(Utils.sessionIdKey);
             updateUserInfo().then(() => this.scene.reset(true, true));
           });
         };

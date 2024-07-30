@@ -19,22 +19,25 @@ export function getPokemonMessage(pokemon: Pokemon, content: string): string {
  * @returns {string} ex: "Wild Gengar", "Ectoplasma sauvage"
  */
 export function getPokemonNameWithAffix(pokemon: Pokemon): string {
+  if (pokemon.scene.currentBattle == null) {
+    return pokemon.getNameToRender()
+  }
   switch (pokemon.scene.currentBattle.battleSpec) {
   case BattleSpec.DEFAULT:
     return !pokemon.isPlayer()
       ? pokemon.hasTrainer()
         ? i18next.t("battle:foePokemonWithAffix", {
-          pokemonName: pokemon.name,
+          pokemonName: pokemon.getNameToRender(),
         })
         : i18next.t("battle:wildPokemonWithAffix", {
-          pokemonName: pokemon.name,
+          pokemonName: pokemon.getNameToRender(),
         })
-      : pokemon.name;
+      : pokemon.getNameToRender();
   case BattleSpec.FINAL_BOSS:
     return !pokemon.isPlayer()
-      ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.name })
-      : pokemon.name;
+      ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.getNameToRender() })
+      : pokemon.getNameToRender();
   default:
-    return pokemon.name;
+    return pokemon.getNameToRender();
   }
 }

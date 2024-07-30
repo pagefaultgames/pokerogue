@@ -21,12 +21,13 @@ export interface OptionSelectConfig {
 
 export interface OptionSelectItem {
   label: string;
-  handler: () => boolean;
+  handler: (s?: any) => boolean;
   onHover?: () => void;
   keepOpen?: boolean;
   overrideSound?: boolean;
   item?: string;
   itemArgs?: any[];
+  specialData?: any;
 }
 
 const scrollUpLabel = "↑";
@@ -179,7 +180,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
         }
       }
       const option = this.config?.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
-      if (option?.handler()) {
+      if (option?.handler(option.specialData)) {
         if (!option.keepOpen) {
           this.clear();
         }
