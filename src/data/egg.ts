@@ -66,7 +66,7 @@ export interface IEggOptions {
 export class Egg {
 
   ////
-  // #region Privat properties
+  // #region Private properties
   ////
 
   private _id: number;
@@ -182,7 +182,7 @@ export class Egg {
   }
 
   ////
-  // #region Public methodes
+  // #region Public methods
   ////
 
   public isManaphyEgg(): boolean {
@@ -281,7 +281,7 @@ export class Egg {
   ////
 
   ////
-  // #region Private methodes
+  // #region Private methods
   ////
 
   private rollEggMoveIndex() {

@@ -28,7 +28,7 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
             label: i18next.t("partyUiHandler:SUMMARY"),
             handler: () => {
               args[0]();
-              return false;
+              return true;
             },
           }, {
             label: i18next.t("menu:yes"),
