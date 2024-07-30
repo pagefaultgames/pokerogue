@@ -162,18 +162,6 @@ export class BlockRecoilDamageAttr extends AbAttr {
   }
 }
 
-export class DoubleBattleChanceAbAttr extends AbAttr {
-  constructor() {
-    super(false);
-  }
-
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const doubleChance = (args[0] as Utils.IntegerHolder);
-    doubleChance.value = Math.max(doubleChance.value / 2, 1);
-    return true;
-  }
-}
-
 export class PostBattleInitAbAttr extends AbAttr {
   applyPostBattleInit(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -3774,18 +3762,6 @@ export class WeightMultiplierAbAttr extends AbAttr {
   }
 }
 
-export class SyncEncounterNatureAbAttr extends AbAttr {
-  constructor() {
-    super(false);
-  }
-
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    (args[0] as Pokemon).setNature(pokemon.getNature());
-
-    return true;
-  }
-}
-
 export class MoveAbilityBypassAbAttr extends AbAttr {
   private moveIgnoreFunc: (pokemon: Pokemon, move: Move) => boolean;
 
@@ -4363,7 +4339,6 @@ export function initAbilities() {
     new Ability(Abilities.EFFECT_SPORE, 3)
       .attr(EffectSporeAbAttr),
     new Ability(Abilities.SYNCHRONIZE, 3)
-      .attr(SyncEncounterNatureAbAttr)
       .unimplemented(),
     new Ability(Abilities.CLEAR_BODY, 3)
       .attr(ProtectStatAbAttr)
@@ -4385,7 +4360,6 @@ export function initAbilities() {
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(Abilities.ILLUMINATE, 3)
       .attr(ProtectStatAbAttr, BattleStat.ACC)
-      .attr(DoubleBattleChanceAbAttr)
       .ignorable(),
     new Ability(Abilities.TRACE, 3)
       .attr(PostSummonCopyAbilityAbAttr)
@@ -4493,8 +4467,7 @@ export function initAbilities() {
           return true;
         }
         return false;
-      })
-      .attr(DoubleBattleChanceAbAttr),
+      }),
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
@@ -4595,8 +4568,7 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonMoldBreaker", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.SUPER_LUCK, 4)
-      .attr(BonusCritAbAttr)
-      .partial(),
+      .attr(BonusCritAbAttr),
     new Ability(Abilities.AFTERMATH, 4)
       .attr(PostFaintContactDamageAbAttr,4)
       .bypassFaint(),

@@ -16,7 +16,7 @@ import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { allMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, modifierTypes } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
-import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
+import { BlockItemTheftAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig } from "./battle";
 import { GameMode, GameModes, getGameMode } from "./game-mode";
@@ -1060,7 +1060,6 @@ export default class BattleScene extends SceneBase {
         } else if (trainerConfigs[trainerType].hasDouble) {
           const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
           this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
-          playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
           doubleTrainer = !Utils.randSeedInt(doubleChance.value);
           // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
           if (trainerConfigs[trainerType].trainerTypeDouble && ![ TrainerType.TATE, TrainerType.LIZA ].includes(trainerType)) {
@@ -1076,7 +1075,6 @@ export default class BattleScene extends SceneBase {
       if (newBattleType === BattleType.WILD && !this.gameMode.isWaveFinal(newWaveIndex)) {
         const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
         this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
-        playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
         newDouble = !Utils.randSeedInt(doubleChance.value);
       } else if (newBattleType === BattleType.TRAINER) {
         newDouble = newTrainer.variant === TrainerVariant.DOUBLE;
