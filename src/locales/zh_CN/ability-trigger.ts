@@ -36,7 +36,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "forewarn": "{{pokemonNameWithAffix}}读取了\n{{moveName}}！",
   "frisk": "{{pokemonNameWithAffix}}察觉到了\n{{opponentName}}的{{opponentAbilityName}}！",
   "postWeatherLapseHeal": "{{pokemonNameWithAffix}}因{{abilityName}}\n回复了少许HP！",
-  "postWeatherLapseDamage": "{{pokemonNameWithAffix}}\n因{abilityName}}而受到了伤害！",
+  "postWeatherLapseDamage": "{{pokemonNameWithAffix}}\n因{{abilityName}}而受到了伤害！",
   "postTurnLootCreateEatenBerry": "{{pokemonNameWithAffix}}\n收获了{{berryName}}！",
   "postTurnHeal": "{{pokemonNameWithAffix}}因{{abilityName}}\n回复了少许HP！",
   "fetchBall": "{{pokemonNameWithAffix}}\n捡回了{{pokeballName}}！",

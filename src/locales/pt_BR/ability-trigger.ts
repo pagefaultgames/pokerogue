@@ -22,7 +22,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postDefendAbilityGive": "{{pokemonNameWithAffix}} deu a seu alvo\na habilidade {{abilityName}}!",
   "postDefendMoveDisable": "{{moveName}} de {{pokemonNameWithAffix}}\nfoi desabilitado!",
   "pokemonTypeChange": "{{pokemonNameWithAffix}} se transformou no tipo {{moveType}}!",
-  "postAttackStealHeldItem": "{{pokemonNameWithAffix}} roubou\n{{stolenItemType}} de {defenderName}}!",
+  "postAttackStealHeldItem": "{{pokemonNameWithAffix}} roubou\n{{stolenItemType}} de {{defenderName}}!",
   "postDefendStealHeldItem": "{{pokemonNameWithAffix}} roubou\n{{stolenItemType}} de {{attackerName}}!",
   "copyFaintedAllyAbility": "A habilidade {{abilityName}} de {{pokemonNameWithAffix}} foi tomada!",
   "intimidateImmunity": "{{abilityName}} de {{pokemonNameWithAffix}} previniu-o(a) de ser intimidado(a)!",
