@@ -2,9 +2,9 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const pokemonForm: SimpleTranslationEntries = {
   // Battle forms
-  "mega": "Mega {{pokemonName}}",
-  "mega-x": "Mega {{pokemonName}} X",
-  "mega-y": "Mega {{pokemonName}} Y",
+  "mega": "超级 {{pokemonName}}",
+  "mega-x": "超级 {{pokemonName}} X",
+  "mega-y": "超级 {{pokemonName}} Y",
   "primal": "原始回归{{pokemonName}}",
   "gigantamax": "超极巨{{pokemonName}}",
   "eternamax": "无极巨{{pokemonName}}",
@@ -53,7 +53,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "castformSunny": "晴天",
   "castformRainy": "雨天",
   "castformSnowy": "雪天",
-  "deoxysNormal": "Normal",
+  "deoxysNormal": "普通",
   // 4G
   "burmyPlant": "草木蓑衣",
   "burmySandy": "砂土蓑衣",
