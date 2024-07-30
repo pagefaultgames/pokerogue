@@ -616,6 +616,8 @@ export class GameData {
     runHistoryData[timestamp] = {};
     runHistoryData[timestamp]["entry"] = runEntry;
     runHistoryData[timestamp]["victory"] = victory;
+    //Not implemented at the moment, but leaving room for future work
+    runHistoryData[timestamp]["favorite"] = false;
 
     localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), true));
 
