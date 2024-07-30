@@ -1,11 +1,12 @@
 import BattleScene, { bypassLogin } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from "./utils";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr } from "./data/move";
+import { Moves } from "./data/enums/moves";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr  } from "./data/move";
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier, PokemonResetNegativeStatStageModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -16,57 +17,53 @@ import { EvolutionPhase } from "./evolution-phase";
 import { Phase } from "./phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { biomeLinks, getBiomeName } from "./data/biomes";
+import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
-import { getPokemonNameWithAffix } from "./messages";
+import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
+import { BattlerTagType } from "./data/enums/battler-tag-type";
+import { getPokemonMessage, getPokemonPrefix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
+import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
-import { CheckTrappedAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr, IgnoreMoveEffectsAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr, AddSecondStrikeAbAttr } from "./data/ability";
+import { ArenaTagType } from "./data/enums/arena-tag-type";
+import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IgnoreOpponentEvasionAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, HealFromBerryUseAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
-import { ChallengeAchv, HealAchv, LevelAchv, achvs } from "./system/achv";
+import { BattleSpec } from "./enums/battle-spec";
+import { Species } from "./data/enums/species";
+import { HealAchv, LevelAchv, achvs } from "./system/achv";
 import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
+import { TrainerType } from "./data/enums/trainer-type";
 import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
-import { clientSessionId, loggedInUser, updateUserInfo } from "./account";
-import { SessionSaveData } from "./system/game-data";
+import { loggedInUser, updateUserInfo } from "./account";
+import { PlayerGender, SessionSaveData, saveRunHistory } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
-import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue, miscDialogue } from "./data/dialogue";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
-import { SettingKeys } from "./system/settings/settings";
+import { Setting } from "./system/settings";
 import { Tutorial, handleTutorial } from "./tutorial";
 import { TerrainType } from "./data/terrain";
 import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
 import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
-import { GameMode, GameModes, getGameMode } from "./game-mode";
+import { GameModes, gameModes } from "./game-mode";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import i18next from "./plugins/i18n";
-import Overrides from "#app/overrides";
+import { Abilities } from "./data/enums/abilities";
+import * as Overrides from "./overrides";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Type } from "./data/type";
-import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
-import { Abilities } from "#enums/abilities";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattleSpec } from "#enums/battle-spec";
-import { BattleStyle } from "#enums/battle-style";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { Biome } from "#enums/biome";
-import { ExpNotification } from "#enums/exp-notification";
-import { Moves } from "#enums/moves";
-import { PlayerGender } from "#enums/player-gender";
-import { Species } from "#enums/species";
-import { TrainerType } from "#enums/trainer-type";
-import { applyChallenges, ChallengeType } from "./data/challenge";
+import { MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./battle-scene-events";
+import { runCount } from "./ui/run-history-ui-handler";
 
-const { t } = i18next;
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -95,14 +92,7 @@ export class LoginPhase extends Phase {
           this.scene.playSound("menu_open");
 
           const loadData = () => {
-            updateUserInfo().then(success => {
-              if (!success[0]) {
-                Utils.removeCookie(Utils.sessionIdKey);
-                this.scene.reset(true, true);
-                return;
-              }
-              this.scene.gameData.loadSystem().then(() => this.end());
-            });
+            updateUserInfo().then(() => this.scene.gameData.loadSystem().then(() => this.end()));
           };
 
           this.scene.ui.setMode(Mode.LOGIN_FORM, {
@@ -116,36 +106,16 @@ export class LoginPhase extends Phase {
                   buttonActions: [
                     () => {
                       this.scene.ui.playSelect();
-                      updateUserInfo().then(success => {
-                        if (!success[0]) {
-                          Utils.removeCookie(Utils.sessionIdKey);
-                          this.scene.reset(true, true);
-                          return;
-                        }
-                        this.end();
-                      } );
+                      updateUserInfo().then(() => this.end());
                     }, () => {
                       this.scene.unshiftPhase(new LoginPhase(this.scene, false));
                       this.end();
                     }
                   ]
                 });
-              }, () => {
-                const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
-                const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
-                const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&prompt=none`;
-                window.open(discordUrl, "_self");
-              }, () => {
-                const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
-                const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-                const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&redirect_uri=${redirectUri}&response_type=code&scope=openid`;
-                window.open(googleUrl, "_self");
               }
             ]
           });
-        } else if (statusCode === 401) {
-          Utils.removeCookie(Utils.sessionIdKey);
-          this.scene.reset(true, true);
         } else {
           this.scene.unshiftPhase(new UnavailablePhase(this.scene));
           super.end();
@@ -157,7 +127,7 @@ export class LoginPhase extends Phase {
             this.end();
           } else {
             this.scene.ui.setMode(Mode.MESSAGE);
-            this.scene.ui.showText(t("menu:failedToLoadSaveData"));
+            this.scene.ui.showText(i18next.t("menu:failedToLoadSaveData"));
           }
         });
       }
@@ -178,7 +148,7 @@ export class LoginPhase extends Phase {
 export class TitlePhase extends Phase {
   private loaded: boolean;
   private lastSessionData: SessionSaveData;
-  public gameMode: GameModes;
+  private gameMode: GameModes;
 
   constructor(scene: BattleScene) {
     super(scene);
@@ -212,7 +182,7 @@ export class TitlePhase extends Phase {
     const options: OptionSelectItem[] = [];
     if (loggedInUser.lastSessionSlot > -1) {
       options.push({
-        label: i18next.t("continue", null, { ns: "menu"}),
+        label: i18next.t("menu:continue"),
         handler: () => {
           this.loadSaveSlot(this.lastSessionData ? -1 : loggedInUser.lastSessionSlot);
           return true;
@@ -231,21 +201,14 @@ export class TitlePhase extends Phase {
         if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
           const options: OptionSelectItem[] = [
             {
-              label: GameMode.getModeName(GameModes.CLASSIC),
+              label: gameModes[GameModes.CLASSIC].getName(),
               handler: () => {
                 setModeAndEnd(GameModes.CLASSIC);
                 return true;
               }
             },
             {
-              label: GameMode.getModeName(GameModes.CHALLENGE),
-              handler: () => {
-                setModeAndEnd(GameModes.CHALLENGE);
-                return true;
-              }
-            },
-            {
-              label: GameMode.getModeName(GameModes.ENDLESS),
+              label: gameModes[GameModes.ENDLESS].getName(),
               handler: () => {
                 setModeAndEnd(GameModes.ENDLESS);
                 return true;
@@ -254,7 +217,7 @@ export class TitlePhase extends Phase {
           ];
           if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
             options.push({
-              label: GameMode.getModeName(GameModes.SPLICED_ENDLESS),
+              label: gameModes[GameModes.SPLICED_ENDLESS].getName(),
               handler: () => {
                 setModeAndEnd(GameModes.SPLICED_ENDLESS);
                 return true;
@@ -300,14 +263,6 @@ export class TitlePhase extends Phase {
         return true;
       },
       keepOpen: true
-    },
-    {
-      label: i18next.t("menu:settings"),
-      handler: () => {
-        this.scene.ui.setOverlayMode(Mode.SETTINGS);
-        return true;
-      },
-      keepOpen: true
     });
     const config: OptionSelectConfig = {
       options: options,
@@ -343,7 +298,7 @@ export class TitlePhase extends Phase {
       this.scene.sessionSlotId = slotId;
 
       const generateDaily = (seed: string) => {
-        this.scene.gameMode = getGameMode(GameModes.DAILY);
+        this.scene.gameMode = gameModes[GameModes.DAILY];
 
         this.scene.setSeed(seed);
         this.scene.resetSeed(1);
@@ -405,12 +360,7 @@ export class TitlePhase extends Phase {
   end(): void {
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
-      this.scene.gameMode = getGameMode(this.gameMode);
-      if (this.gameMode === GameModes.CHALLENGE) {
-        this.scene.pushPhase(new SelectChallengePhase(this.scene));
-      } else {
-        this.scene.pushPhase(new SelectStarterPhase(this.scene));
-      }
+      this.scene.pushPhase(new SelectStarterPhase(this.scene, this.gameMode));
       this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene));
     } else {
       this.scene.playBgm();
@@ -419,7 +369,7 @@ export class TitlePhase extends Phase {
     this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
 
     if (this.loaded) {
-      const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle()).length;
+      const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted()).length;
 
       this.scene.pushPhase(new SummonPhase(this.scene, 0, true, true));
       if (this.scene.currentBattle.double && availablePartyMembers > 1) {
@@ -517,19 +467,19 @@ export class SelectGenderPhase extends Phase {
       this.scene.ui.setMode(Mode.OPTION_SELECT, {
         options: [
           {
-            label: i18next.t("settings:boy"),
+            label: i18next.t("menu:boy"),
             handler: () => {
               this.scene.gameData.gender = PlayerGender.MALE;
-              this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 0);
+              this.scene.gameData.saveSetting(Setting.Player_Gender, 0);
               this.scene.gameData.saveSystem().then(() => this.end());
               return true;
             }
           },
           {
-            label: i18next.t("settings:girl"),
+            label: i18next.t("menu:girl"),
             handler: () => {
               this.scene.gameData.gender = PlayerGender.FEMALE;
-              this.scene.gameData.saveSetting(SettingKeys.Player_Gender, 1);
+              this.scene.gameData.saveSetting(Setting.Player_Gender, 1);
               this.scene.gameData.saveSystem().then(() => this.end());
               return true;
             }
@@ -545,24 +495,13 @@ export class SelectGenderPhase extends Phase {
   }
 }
 
-export class SelectChallengePhase extends Phase {
-  constructor(scene: BattleScene) {
-    super(scene);
-  }
-
-  start() {
-    super.start();
-
-    this.scene.playBgm("menu");
-
-    this.scene.ui.setMode(Mode.CHALLENGE_SELECT);
-  }
-}
-
 export class SelectStarterPhase extends Phase {
+  private gameMode: GameModes;
 
-  constructor(scene: BattleScene) {
+  constructor(scene: BattleScene, gameMode: GameModes) {
     super(scene);
+
+    this.gameMode = gameMode;
   }
 
   start() {
@@ -579,71 +518,59 @@ export class SelectStarterPhase extends Phase {
           return this.end();
         }
         this.scene.sessionSlotId = slotId;
-        this.initBattle(starters);
+
+        const party = this.scene.getParty();
+        const loadPokemonAssets: Promise<void>[] = [];
+        starters.forEach((starter: Starter, i: integer) => {
+          if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
+            starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as Species);
+          }
+          const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
+          let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
+          if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
+            starterFormIndex = Overrides.STARTER_FORM_OVERRIDE;
+          }
+          let starterGender = starter.species.malePercent !== null
+            ? !starterProps.female ? Gender.MALE : Gender.FEMALE
+            : Gender.GENDERLESS;
+          if (Overrides.GENDER_OVERRIDE !== null) {
+            starterGender = Overrides.GENDER_OVERRIDE;
+          }
+          const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
+          const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
+          starterPokemon.tryPopulateMoveset(starter.moveset);
+          if (starter.passive) {
+            starterPokemon.passive = true;
+          }
+          starterPokemon.luck = this.scene.gameData.getDexAttrLuck(this.scene.gameData.dexData[starter.species.speciesId].caughtAttr);
+          if (starter.pokerus) {
+            starterPokemon.pokerus = true;
+          }
+          if (this.scene.gameMode.isSplicedOnly) {
+            starterPokemon.generateFusionSpecies(true);
+          }
+          starterPokemon.setVisible(false);
+          party.push(starterPokemon);
+          loadPokemonAssets.push(starterPokemon.loadAssets());
+        });
+        overrideModifiers(this.scene);
+        overrideHeldItems(this.scene, party[0]);
+        Promise.all(loadPokemonAssets).then(() => {
+          SoundFade.fadeOut(this.scene, this.scene.sound.get("menu"), 500, true);
+          this.scene.time.delayedCall(500, () => this.scene.playBgm());
+          if (this.scene.gameMode.isClassic) {
+            this.scene.gameData.gameStats.classicSessionsPlayed++;
+          } else {
+            this.scene.gameData.gameStats.endlessSessionsPlayed++;
+          }
+          this.scene.newBattle();
+          this.scene.arena.init();
+          this.scene.sessionPlayTime = 0;
+          this.scene.lastSavePlayTime = 0;
+          this.end();
+        });
       });
-    });
-  }
-
-  /**
-   * Initialize starters before starting the first battle
-   * @param starters {@linkcode Pokemon} with which to start the first battle
-   */
-  initBattle(starters: Starter[]) {
-    const party = this.scene.getParty();
-    const loadPokemonAssets: Promise<void>[] = [];
-    starters.forEach((starter: Starter, i: integer) => {
-      if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
-        starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as Species);
-      }
-      const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
-      let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
-      if (
-        starter.species.speciesId in Overrides.STARTER_FORM_OVERRIDES &&
-        starter.species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]]
-      ) {
-        starterFormIndex = Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId];
-      }
-
-      let starterGender = starter.species.malePercent !== null
-        ? !starterProps.female ? Gender.MALE : Gender.FEMALE
-        : Gender.GENDERLESS;
-      if (Overrides.GENDER_OVERRIDE !== null) {
-        starterGender = Overrides.GENDER_OVERRIDE;
-      }
-      const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-      const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
-      starterPokemon.tryPopulateMoveset(starter.moveset);
-      if (starter.passive) {
-        starterPokemon.passive = true;
-      }
-      starterPokemon.luck = this.scene.gameData.getDexAttrLuck(this.scene.gameData.dexData[starter.species.speciesId].caughtAttr);
-      if (starter.pokerus) {
-        starterPokemon.pokerus = true;
-      }
-      if (this.scene.gameMode.isSplicedOnly) {
-        starterPokemon.generateFusionSpecies(true);
-      }
-      starterPokemon.setVisible(false);
-      applyChallenges(this.scene.gameMode, ChallengeType.STARTER_MODIFY, starterPokemon);
-      party.push(starterPokemon);
-      loadPokemonAssets.push(starterPokemon.loadAssets());
-    });
-    overrideModifiers(this.scene);
-    overrideHeldItems(this.scene, party[0]);
-    Promise.all(loadPokemonAssets).then(() => {
-      SoundFade.fadeOut(this.scene, this.scene.sound.get("menu"), 500, true);
-      this.scene.time.delayedCall(500, () => this.scene.playBgm());
-      if (this.scene.gameMode.isClassic) {
-        this.scene.gameData.gameStats.classicSessionsPlayed++;
-      } else {
-        this.scene.gameData.gameStats.endlessSessionsPlayed++;
-      }
-      this.scene.newBattle();
-      this.scene.arena.init();
-      this.scene.sessionPlayTime = 0;
-      this.scene.lastSavePlayTime = 0;
-      this.end();
-    });
+    }, this.gameMode);
   }
 }
 
@@ -657,7 +584,7 @@ export class BattlePhase extends Phase {
     const tintSprites = this.scene.currentBattle.trainer.getTintSprites();
     for (let i = 0; i < sprites.length; i++) {
       const visible = !trainerSlot || !i === (trainerSlot === TrainerSlot.TRAINER) || sprites.length < 2;
-      [sprites[i], tintSprites[i]].map(sprite => {
+      [ sprites[i], tintSprites[i] ].map(sprite => {
         if (visible) {
           sprite.x = trainerSlot || sprites.length < 2 ? 0 : i ? 16 : -16;
         }
@@ -698,19 +625,11 @@ export abstract class FieldPhase extends BattlePhase {
     const playerField = this.scene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
     const enemyField = this.scene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
 
-    // We shuffle the list before sorting so speed ties produce random results
-    let orderedTargets: Pokemon[] = playerField.concat(enemyField);
-    // We seed it with the current turn to prevent an inconsistency where it
-    // was varying based on how long since you last reloaded
-    this.scene.executeWithSeedOffset(() => {
-      orderedTargets = Utils.randSeedShuffle(orderedTargets);
-    }, this.scene.currentBattle.turn, this.scene.waveSeed);
-
-    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
+    let orderedTargets: Pokemon[] = playerField.concat(enemyField).sort((a: Pokemon, b: Pokemon) => {
       const aSpeed = a?.getBattleStat(Stat.SPD) || 0;
       const bSpeed = b?.getBattleStat(Stat.SPD) || 0;
 
-      return bSpeed - aSpeed;
+      return aSpeed < bSpeed ? 1 : aSpeed > bSpeed ? -1 : !this.scene.randBattleSeedInt(2) ? -1 : 1;
     });
 
     const speedReversed = new Utils.BooleanHolder(false);
@@ -814,8 +733,6 @@ export class EncounterPhase extends BattlePhase {
 
     this.scene.initSession();
 
-    this.scene.eventTarget.dispatchEvent(new EncounterPhaseEvent());
-
     // Failsafe if players somehow skip floor 200 in classic mode
     if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
       this.scene.unshiftPhase(new GameOverPhase(this.scene));
@@ -869,7 +786,7 @@ export class EncounterPhase extends BattlePhase {
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
 
-      console.log(getPokemonNameWithAffix(enemyPokemon), enemyPokemon.species.speciesId, enemyPokemon.stats);
+      console.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
     });
 
     if (this.scene.getParty().filter(p => p.isShiny()).length === 6) {
@@ -879,11 +796,9 @@ export class EncounterPhase extends BattlePhase {
     if (battle.battleType === BattleType.TRAINER) {
       loadEnemyAssets.push(battle.trainer.loadAssets().then(() => battle.trainer.initSprite()));
     } else {
-      // This block only applies for double battles to init the boss segments (idk why it's split up like this)
       if (battle.enemyParty.filter(p => p.isBoss()).length > 1) {
         for (const enemyPokemon of battle.enemyParty) {
-          // If the enemy pokemon is a boss and wasn't populated from data source, then set it up
-          if (enemyPokemon.isBoss() && !enemyPokemon.isPopulatedFromDataSource) {
+          if (enemyPokemon.isBoss()) {
             enemyPokemon.setBoss(true, Math.ceil(enemyPokemon.bossSegments * (enemyPokemon.getSpeciesForm().baseTotal / totalBst)));
             enemyPokemon.initBattleInfo();
           }
@@ -956,7 +871,7 @@ export class EncounterPhase extends BattlePhase {
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.arenaPlayer, this.scene.trainer].flat(),
+      targets: [ this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.arenaPlayer, this.scene.trainer ].flat(),
       x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 2 + (enemyField.length) ? value + 300 : value - 300,
       duration: 2000,
       onComplete: () => {
@@ -971,21 +886,21 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-      return i18next.t("battle:bossAppeared", { bossName: getPokemonNameWithAffix(enemyField[0])});
+      return i18next.t("battle:bossAppeared", {bossName: enemyField[0].name});
     }
 
     if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
       if (this.scene.currentBattle.double) {
-        return i18next.t("battle:trainerAppearedDouble", { trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true) });
+        return i18next.t("battle:trainerAppearedDouble", {trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)});
 
       } else {
-        return i18next.t("battle:trainerAppeared", { trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true) });
+        return i18next.t("battle:trainerAppeared", {trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)});
       }
     }
 
     return enemyField.length === 1
-      ? i18next.t("battle:singleWildAppeared", { pokemonName: enemyField[0].getNameToRender() })
-      : i18next.t("battle:multiWildAppeared", { pokemonName1: enemyField[0].getNameToRender(), pokemonName2: enemyField[1].getNameToRender() });
+      ? i18next.t("battle:singleWildAppeared", {pokemonName: enemyField[0].name})
+      : i18next.t("battle:multiWildAppeared", {pokemonName1: enemyField[0].name, pokemonName2: enemyField[1].name});
   }
 
   doEncounterCommon(showEncounterMessage: boolean = true) {
@@ -1015,7 +930,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.currentBattle.started = true;
         this.scene.playBgm(undefined);
         this.scene.pbTray.showPbTray(this.scene.getParty());
-        this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
+			  this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
           const availablePartyMembers = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
@@ -1037,15 +952,14 @@ export class EncounterPhase extends BattlePhase {
       if (!encounterMessages?.length) {
         doSummon();
       } else {
-        let message: string;
-        this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
-
         const showDialogueAndSummon = () => {
-          this.scene.ui.showDialogue(message, trainer.getName(TrainerSlot.NONE, true), null, () => {
+          let message: string;
+          this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
+          this.scene.ui.showDialogue(message, trainer.getName(TrainerSlot.NONE,true), null, () => {
             this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doSummon()));
           });
         };
-        if (this.scene.currentBattle.trainer.config.hasCharSprite && !this.scene.ui.shouldSkipDialogue(message)) {
+        if (this.scene.currentBattle.trainer.config.hasCharSprite) {
           this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(trainer.getKey(), getCharVariantFromDialogue(encounterMessages[0])).then(() => showDialogueAndSummon()));
         } else {
           showDialogueAndSummon();
@@ -1064,21 +978,7 @@ export class EncounterPhase extends BattlePhase {
     });
 
     if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
-      enemyField.map(p => this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
-        // if there is not a player party, we can't continue
-        if (!this.scene.getParty()?.length) {
-          return false;
-        }
-        // how many player pokemon are on the field ?
-        const pokemonsOnFieldCount = this.scene.getParty().filter(p => p.isOnField()).length;
-        // if it's a 2vs1, there will never be a 2nd pokemon on our field even
-        const requiredPokemonsOnField = Math.min(this.scene.getParty().filter((p) => !p.isFainted()).length, 2);
-        // if it's a double, there should be 2, otherwise 1
-        if (this.scene.currentBattle.double) {
-          return pokemonsOnFieldCount === requiredPokemonsOnField;
-        }
-        return pokemonsOnFieldCount === 1;
-      }));
+      enemyField.map(p => this.scene.pushPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
         enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
@@ -1086,7 +986,7 @@ export class EncounterPhase extends BattlePhase {
     }
 
     if (!this.loaded) {
-      const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
+      const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());
 
       if (!availablePartyMembers[0].isOnField()) {
         this.scene.pushPhase(new SummonPhase(this.scene, 0));
@@ -1116,6 +1016,7 @@ export class EncounterPhase extends BattlePhase {
         }
       }
     }
+
     handleTutorial(this.scene, Tutorial.Access_Menu).then(() => super.end());
   }
 
@@ -1140,10 +1041,6 @@ export class NextEncounterPhase extends EncounterPhase {
     super(scene);
   }
 
-  start() {
-    super.start();
-  }
-
   doEncounter(): void {
     this.scene.playBgm(undefined, true);
 
@@ -1158,7 +1055,7 @@ export class NextEncounterPhase extends EncounterPhase {
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.lastEnemyTrainer].flat(),
+      targets: [ this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.lastEnemyTrainer ].flat(),
       x: "+=300",
       duration: 2000,
       onComplete: () => {
@@ -1201,7 +1098,7 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, enemyField].flat(),
+      targets: [ this.scene.arenaEnemy, enemyField ].flat(),
       x: "+=300",
       duration: 2000,
       onComplete: () => {
@@ -1223,9 +1120,6 @@ export class PostSummonPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
-    if (pokemon.status?.effect === StatusEffect.TOXIC) {
-      pokemon.status.turnCount = 0;
-    }
     this.scene.arena.applyTags(ArenaTrapTag, pokemon);
     applyPostSummonAbAttrs(PostSummonAbAttr, pokemon).then(() => this.end());
   }
@@ -1267,7 +1161,7 @@ export class SelectBiomePhase extends BattlePhase {
         let biomeChoices: Biome[];
         this.scene.executeWithSeedOffset(() => {
           biomeChoices = (!Array.isArray(biomeLinks[currentBiome])
-            ? [biomeLinks[currentBiome] as Biome]
+            ? [ biomeLinks[currentBiome] as Biome ]
             : biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
             .filter((b, i) => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
             .map(b => Array.isArray(b) ? b[0] : b);
@@ -1322,7 +1216,7 @@ export class SwitchBiomePhase extends BattlePhase {
     }
 
     this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, this.scene.lastEnemyTrainer],
+      targets: [ this.scene.arenaEnemy, this.scene.lastEnemyTrainer ],
       x: "+=300",
       duration: 2000,
       onComplete: () => {
@@ -1340,7 +1234,7 @@ export class SwitchBiomePhase extends BattlePhase {
         this.scene.arenaPlayerTransition.setVisible(true);
 
         this.scene.tweens.add({
-          targets: [this.scene.arenaPlayer, this.scene.arenaBgTransition, this.scene.arenaPlayerTransition],
+          targets: [ this.scene.arenaPlayer, this.scene.arenaBgTransition, this.scene.arenaPlayerTransition ],
           duration: 1000,
           delay: 1000,
           ease: "Sine.easeInOut",
@@ -1386,38 +1280,25 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   */
   preSummon(): void {
     const partyMember = this.getPokemon();
-    // If the Pokemon about to be sent out is fainted or illegal under a challenge, switch to the first non-fainted legal Pokemon
-    if (!partyMember.isAllowedInBattle()) {
-      console.warn("The Pokemon about to be sent out is fainted or illegal under a challenge. Attempting to resolve...");
-
-      // First check if they're somehow still in play, if so remove them.
-      if (partyMember.isOnField()) {
-        partyMember.hideInfo();
-        partyMember.setVisible(false);
-        this.scene.field.remove(partyMember);
-        this.scene.triggerPokemonFormChange(partyMember, SpeciesFormChangeActiveTrigger, true);
-      }
-
+    // If the Pokemon about to be sent out is fainted, switch to the first non-fainted Pokemon
+    if (partyMember.isFainted()) {
+      console.warn("The Pokemon about to be sent out is fainted. Attempting to resolve...");
       const party = this.getParty();
 
       // Find the first non-fainted Pokemon index above the current one
-      const legalIndex = party.findIndex((p, i) => i > this.partyMemberIndex && p.isAllowedInBattle());
-      if (legalIndex === -1) {
+      const nonFaintedIndex = party.findIndex((p, i) => i > this.partyMemberIndex && !p.isFainted());
+      if (nonFaintedIndex === -1) {
         console.error("Party Details:\n", party);
-        console.error("All available Pokemon were fainted or illegal!");
-        this.scene.clearPhaseQueue();
-        this.scene.unshiftPhase(new GameOverPhase(this.scene));
-        this.end();
-        return;
+        throw new Error("All available Pokemon were fainted!");
       }
 
-      // Swaps the fainted Pokemon and the first non-fainted legal Pokemon in the party
-      [party[this.partyMemberIndex], party[legalIndex]] = [party[legalIndex], party[this.partyMemberIndex]];
-      console.warn("Swapped %s %O with %s %O", getPokemonNameWithAffix(partyMember), partyMember, getPokemonNameWithAffix(party[0]), party[0]);
+      // Swaps the fainted Pokemon and the first non-fainted Pokemon in the party
+      [party[this.partyMemberIndex], party[nonFaintedIndex]] = [party[nonFaintedIndex], party[this.partyMemberIndex]];
+      console.warn("Swapped %s %O with %s %O", partyMember?.name, partyMember, party[0]?.name, party[0]);
     }
 
     if (this.player) {
-      this.scene.ui.showText(i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(this.getPokemon()) }));
+      this.scene.ui.showText(i18next.t("battle:playerGo", { pokemonName: this.getPokemon().name }));
       if (this.player) {
         this.scene.pbTray.hide();
       }
@@ -1437,7 +1318,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       this.scene.time.delayedCall(750, () => this.summon());
     } else {
       const trainerName = this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
-      const pokemonName = this.getPokemon().getNameToRender();
+      const pokemonName = this.getPokemon().name;
       const message = i18next.t("battle:trainerSendOut", { trainerName, pokemonName });
 
       this.scene.pbTrayEnemy.hide();
@@ -1456,7 +1337,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     if (this.fieldIndex === 1) {
       pokemon.setFieldPosition(FieldPosition.RIGHT, 0);
     } else {
-      const availablePartyMembers = this.getParty().filter(p => p.isAllowedInBattle()).length;
+      const availablePartyMembers = this.getParty().filter(p => !p.isFainted()).length;
       pokemon.setFieldPosition(!this.scene.currentBattle.double || availablePartyMembers === 1 ? FieldPosition.CENTER : FieldPosition.LEFT);
     }
 
@@ -1534,6 +1415,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     if (!this.loaded || this.scene.currentBattle.battleType === BattleType.TRAINER || (this.scene.currentBattle.waveIndex % 10) === 1) {
       this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+
       this.queuePostSummon();
     }
   }
@@ -1556,25 +1438,12 @@ export class SwitchSummonPhase extends SummonPhase {
 
   private lastPokemon: Pokemon;
 
-  /**
-   * Constructor for creating a new SwitchSummonPhase
-   * @param scene {@linkcode BattleScene} the scene the phase is associated with
-   * @param fieldIndex integer representing position on the battle field
-   * @param slotIndex integer for the index of pokemon (in party of 6) to switch into
-   * @param doReturn boolean whether to render "comeback" dialogue
-   * @param batonPass boolean if the switch is from baton pass
-   * @param player boolean if the switch is from the player
-   */
   constructor(scene: BattleScene, fieldIndex: integer, slotIndex: integer, doReturn: boolean, batonPass: boolean, player?: boolean) {
     super(scene, fieldIndex, player !== undefined ? player : true);
 
     this.slotIndex = slotIndex;
     this.doReturn = doReturn;
     this.batonPass = batonPass;
-  }
-
-  start(): void {
-    super.start();
   }
 
   preSummon(): void {
@@ -1604,10 +1473,10 @@ export class SwitchSummonPhase extends SummonPhase {
     }
 
     this.scene.ui.showText(this.player ?
-      i18next.t("battle:playerComeBack", { pokemonName: getPokemonNameWithAffix(pokemon) }) :
+      i18next.t("battle:playerComeBack", { pokemonName: pokemon.name }) :
       i18next.t("battle:trainerComeBack", {
         trainerName: this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
-        pokemonName: getPokemonNameWithAffix(pokemon)
+        pokemonName: pokemon.name
       })
     );
     this.scene.playSound("pb_rel");
@@ -1638,7 +1507,7 @@ export class SwitchSummonPhase extends SummonPhase {
         const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
           && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
         if (batonPassModifier && !this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedPokemon.id)) {
-          this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedPokemon, false);
+          this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedPokemon, false, false);
         }
       }
     }
@@ -1647,17 +1516,12 @@ export class SwitchSummonPhase extends SummonPhase {
       party[this.fieldIndex] = switchedPokemon;
       const showTextAndSummon = () => {
         this.scene.ui.showText(this.player ?
-          i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(switchedPokemon) }) :
+          i18next.t("battle:playerGo", { pokemonName: switchedPokemon.name }) :
           i18next.t("battle:trainerGo", {
             trainerName: this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
-            pokemonName: this.getPokemon().getNameToRender()
+            pokemonName: this.getPokemon().name
           })
         );
-        // Ensure improperly persisted summon data (such as tags) is cleared upon switching
-        if (!this.batonPass) {
-          party[this.fieldIndex].resetBattleData();
-          party[this.fieldIndex].resetSummonData();
-        }
         this.summon();
       };
       if (this.player) {
@@ -1678,16 +1542,11 @@ export class SwitchSummonPhase extends SummonPhase {
     super.onEnd();
 
     const pokemon = this.getPokemon();
-
-    const moveId = this.lastPokemon?.scene.currentBattle.lastMove;
+    const moveId = pokemon.scene.currentBattle.turnCommands[this.fieldIndex]?.move?.move;
     const lastUsedMove = moveId ? allMoves[moveId] : undefined;
 
-    const currentCommand = pokemon.scene.currentBattle.turnCommands[this.fieldIndex]?.command;
-    const lastPokemonIsForceSwitchedAndNotFainted = lastUsedMove?.hasAttr(ForceSwitchOutAttr) && !this.lastPokemon.isFainted();
-
     // Compensate for turn spent summoning
-    // Or compensate for force switch move if switched out pokemon is not fainted
-    if (currentCommand === Command.POKEMON || lastPokemonIsForceSwitchedAndNotFainted) {
+    if (pokemon.scene.currentBattle.turnCommands[this.fieldIndex]?.command === Command.POKEMON || !!lastUsedMove?.findAttr(attr => attr instanceof ForceSwitchOutAttr)) { //check if hard switch OR pivot move was used
       pokemon.battleSummonData.turnCount--;
     }
 
@@ -1763,7 +1622,7 @@ export class ToggleDoublePositionPhase extends BattlePhase {
 
     const playerPokemon = this.scene.getPlayerField().find(p => p.isActive(true));
     if (playerPokemon) {
-      playerPokemon.setFieldPosition(this.double && this.scene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
+      playerPokemon.setFieldPosition(this.double && this.scene.getParty().filter(p => !p.isFainted()).length > 1 ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
         if (playerPokemon.getFieldIndex() === 1) {
           const party = this.scene.getParty();
           party[1] = party[0];
@@ -1793,11 +1652,6 @@ export class CheckSwitchPhase extends BattlePhase {
 
     const pokemon = this.scene.getPlayerField()[this.fieldIndex];
 
-    if (this.scene.battleStyle === BattleStyle.SET) {
-      super.end();
-      return;
-    }
-
     if (this.scene.field.getAll().indexOf(pokemon) === -1) {
       this.scene.unshiftPhase(new SummonMissingPhase(this.scene, this.fieldIndex));
       super.end();
@@ -1814,7 +1668,7 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
-    this.scene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon") }), null, () => {
+    this.scene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? pokemon.name : i18next.t("battle:pokemon") }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
@@ -1834,7 +1688,7 @@ export class SummonMissingPhase extends SummonPhase {
   }
 
   preSummon(): void {
-    this.scene.ui.showText(i18next.t("battle:sendOutPokemon", { pokemonName: getPokemonNameWithAffix(this.getPokemon()) }));
+    this.scene.ui.showText(i18next.t("battle:sendOutPokemon", { pokemonName: this.getPokemon().name}));
     this.scene.time.delayedCall(250, () => this.summon());
   }
 }
@@ -1862,34 +1716,6 @@ export class TurnInitPhase extends FieldPhase {
 
   start() {
     super.start();
-
-    this.scene.getPlayerField().forEach(p => {
-      // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
-      if (p.isOnField() && !p.isAllowedInBattle()) {
-        this.scene.queueMessage(i18next.t("challenges:illegalEvolution", { "pokemon": p.name }), null, true);
-
-        const allowedPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
-
-        if (!allowedPokemon.length) {
-          // If there are no longer any legal pokemon in the party, game over.
-          this.scene.clearPhaseQueue();
-          this.scene.unshiftPhase(new GameOverPhase(this.scene));
-        } else if (allowedPokemon.length >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !allowedPokemon[0].isActive(true))) {
-          // If there is at least one pokemon in the back that is legal to switch in, force a switch.
-          p.switchOut(false, true);
-        } else {
-          // If there are no pokemon in the back but we're not game overing, just hide the pokemon.
-          // This should only happen in double battles.
-          p.hideInfo();
-          p.setVisible(false);
-          this.scene.field.remove(p);
-          this.scene.triggerPokemonFormChange(p, SpeciesFormChangeActiveTrigger, true);
-        }
-        if (allowedPokemon.length === 1 && this.scene.currentBattle.double) {
-          this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
-        }
-      }
-    });
 
     //this.scene.pushPhase(new MoveAnimTestPhase(this.scene));
     this.scene.eventTarget.dispatchEvent(new TurnInitEvent());
@@ -1925,15 +1751,9 @@ export class CommandPhase extends FieldPhase {
     super.start();
 
     if (this.fieldIndex) {
-      // If we somehow are attempting to check the right pokemon but there's only one pokemon out
-      // Switch back to the center pokemon. This can happen rarely in double battles with mid turn switching
-      if (this.scene.getPlayerField().filter(p => p.isActive()).length === 1) {
-        this.fieldIndex = FieldPosition.CENTER;
-      } else {
-        const allyCommand = this.scene.currentBattle.turnCommands[this.fieldIndex - 1];
-        if (allyCommand.command === Command.BALL || allyCommand.command === Command.RUN) {
-          this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: allyCommand.command, skip: true };
-        }
+      const allyCommand = this.scene.currentBattle.turnCommands[this.fieldIndex - 1];
+      if (allyCommand.command === Command.BALL || allyCommand.command === Command.RUN) {
+        this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: allyCommand.command, skip: true };
       }
     }
 
@@ -1947,7 +1767,7 @@ export class CommandPhase extends FieldPhase {
 
     while (moveQueue.length && moveQueue[0]
       && moveQueue[0].move && (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move)
-        || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(playerPokemon, moveQueue[0].ignorePP))) {
+      || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(playerPokemon, moveQueue[0].ignorePP))) {
       moveQueue.shift();
     }
 
@@ -1977,18 +1797,15 @@ export class CommandPhase extends FieldPhase {
     case Command.FIGHT:
       let useStruggle = false;
       if (cursor === -1 ||
-          playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
-          (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) {
+            playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
+           (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) {
         const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor].moveId : Moves.NONE : Moves.STRUGGLE;
         const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
         const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
         if (!moveId) {
-          turnCommand.targets = [this.fieldIndex];
+          turnCommand.targets = [ this.fieldIndex ];
         }
-        console.log(moveTargets, getPokemonNameWithAffix(playerPokemon));
-        if (moveTargets.targets.length > 1 && moveTargets.multiple) {
-          this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
-        }
+        console.log(moveTargets, playerPokemon.name);
         if (moveTargets.targets.length <= 1 || moveTargets.multiple) {
           turnCommand.move.targets = moveTargets.targets;
         } else if (playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
@@ -2104,7 +1921,7 @@ export class CommandPhase extends FieldPhase {
           }
           this.scene.ui.showText(
             i18next.t("battle:noEscapePokemon", {
-              pokemonName: getPokemonNameWithAffix(this.scene.getPokemonById(trapTag.sourceId)),
+              pokemonName: this.scene.getPokemonById(trapTag.sourceId).name,
               moveName: trapTag.getMoveName(),
               escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee")
             }),
@@ -2168,15 +1985,6 @@ export class CommandPhase extends FieldPhase {
   }
 }
 
-/**
- * Phase for determining an enemy AI's action for the next turn.
- * During this phase, the enemy decides whether to switch (if it has a trainer)
- * or to use a move from its moveset.
- *
- * For more information on how the Enemy AI works, see docs/enemy-ai.md
- * @see {@linkcode Pokemon.getMatchupScore}
- * @see {@linkcode EnemyPokemon.getNextMove}
- */
 export class EnemyCommandPhase extends FieldPhase {
   protected fieldIndex: integer;
 
@@ -2195,15 +2003,6 @@ export class EnemyCommandPhase extends FieldPhase {
 
     const trainer = battle.trainer;
 
-    /**
-     * If the enemy has a trainer, decide whether or not the enemy should switch
-     * to another member in its party.
-     *
-     * This block compares the active enemy Pokemon's {@linkcode Pokemon.getMatchupScore | matchup score}
-     * against the active player Pokemon with the enemy party's other non-fainted Pokemon. If a party
-     * member's matchup score is 3x the active enemy's score (or 2x for "boss" trainers),
-     * the enemy will switch to that Pokemon.
-     */
     if (trainer && !enemyPokemon.getMoveQueue().length) {
       const opponents = enemyPokemon.getOpponents();
 
@@ -2225,7 +2024,7 @@ export class EnemyCommandPhase extends FieldPhase {
             const index = trainer.getNextSummonIndex(enemyPokemon.trainerSlot, partyMemberScores);
 
             battle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
-              { command: Command.POKEMON, cursor: index, args: [false] };
+              { command: Command.POKEMON, cursor: index, args: [ false ] };
 
             battle.enemySwitchCounter++;
 
@@ -2235,7 +2034,6 @@ export class EnemyCommandPhase extends FieldPhase {
       }
     }
 
-    /** Select a move to use (and a target to use it against, if applicable) */
     const nextMove = enemyPokemon.getNextMove();
 
     this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
@@ -2257,13 +2055,13 @@ export class SelectTargetPhase extends PokemonPhase {
 
     const turnCommand = this.scene.currentBattle.turnCommands[this.fieldIndex];
     const move = turnCommand.move?.move;
-    this.scene.ui.setMode(Mode.TARGET_SELECT, this.fieldIndex, move, (targets: BattlerIndex[]) => {
+    this.scene.ui.setMode(Mode.TARGET_SELECT, this.fieldIndex, move, (cursor: integer) => {
       this.scene.ui.setMode(Mode.MESSAGE);
-      if (targets.length < 1) {
+      if (cursor === -1) {
         this.scene.currentBattle.turnCommands[this.fieldIndex] = null;
         this.scene.unshiftPhase(new CommandPhase(this.scene, this.fieldIndex));
       } else {
-        turnCommand.targets = targets;
+        turnCommand.targets = [ cursor ];
       }
       if (turnCommand.command === Command.BALL && this.fieldIndex) {
         this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
@@ -2288,7 +2086,6 @@ export class TurnStartPhase extends FieldPhase {
 
     this.scene.getField(true).filter(p => p.summonData).map(p => {
       const bypassSpeed = new Utils.BooleanHolder(false);
-      applyAbAttrs(BypassSpeedChanceAbAttr, p, null, bypassSpeed);
       this.scene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
       battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
     });
@@ -2312,10 +2109,10 @@ export class TurnStartPhase extends FieldPhase {
         const aPriority = new Utils.IntegerHolder(aMove.priority);
         const bPriority = new Utils.IntegerHolder(bMove.priority);
 
-        applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a), null, aMove, aPriority);
-        applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b), null, bMove, bPriority);
+        applyMoveAttrs(IncrementMovePriorityAttr,this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a),null,aMove,aPriority);
+        applyMoveAttrs(IncrementMovePriorityAttr,this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b),null,bMove,bPriority);
 
-        applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a), null, aMove, aPriority);
+		    applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a), null, aMove, aPriority);
         applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b), null, bMove, bPriority);
 
         if (aPriority.value !== bPriority.value) {
@@ -2333,8 +2130,6 @@ export class TurnStartPhase extends FieldPhase {
       return aIndex < bIndex ? -1 : aIndex > bIndex ? 1 : 0;
     });
 
-    let orderIndex = 0;
-
     for (const o of moveOrder) {
 
       const pokemon = field[o];
@@ -2347,7 +2142,6 @@ export class TurnStartPhase extends FieldPhase {
       switch (turnCommand.command) {
       case Command.FIGHT:
         const queuedMove = turnCommand.move;
-        pokemon.turnData.order = orderIndex++;
         if (!queuedMove) {
           continue;
         }
@@ -2379,7 +2173,7 @@ export class TurnStartPhase extends FieldPhase {
               return;
             }
           });
-            // if only one pokemon is alive, use that one
+          // if only one pokemon is alive, use that one
           if (playerActivePokemon.length > 1) {
             // find which active pokemon has faster speed
             const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD) ? playerActivePokemon[0] : playerActivePokemon[1];
@@ -2394,7 +2188,9 @@ export class TurnStartPhase extends FieldPhase {
     }
 
 
-    this.scene.pushPhase(new WeatherEffectPhase(this.scene));
+    if (this.scene.arena.weather) {
+      this.scene.pushPhase(new WeatherEffectPhase(this.scene, this.scene.arena.weather));
+    }
 
     for (const o of order) {
       if (field[o].status && field[o].status.isPostTurn()) {
@@ -2405,11 +2201,6 @@ export class TurnStartPhase extends FieldPhase {
     this.scene.pushPhase(new BerryPhase(this.scene));
     this.scene.pushPhase(new TurnEndPhase(this.scene));
 
-    /**
-     * this.end() will call shiftPhase(), which dumps everything from PrependQueue (aka everything that is unshifted()) to the front
-     * of the queue and dequeues to start the next phase
-     * this is important since stuff like SwitchSummon, AttemptRun, AttemptCapture Phases break the "flow" and should take precedence
-     */
     this.end();
   }
 }
@@ -2429,7 +2220,7 @@ export class BerryPhase extends FieldPhase {
         pokemon.getOpponents().map((opp) => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
 
         if (cancelled.value) {
-          pokemon.scene.queueMessage(i18next.t("abilityTriggers:preventBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+          pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is too\nnervous to eat berries!"));
         } else {
           this.scene.unshiftPhase(
             new CommonAnimPhase(this.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM)
@@ -2443,7 +2234,6 @@ export class BerryPhase extends FieldPhase {
                 berryModifier.consumed = false;
               }
             }
-            this.scene.eventTarget.dispatchEvent(new BerryUsedEvent(berryModifier)); // Announce a berry was used
           }
 
           this.scene.updateModifiers(pokemon.isPlayer());
@@ -2472,7 +2262,7 @@ export class TurnEndPhase extends FieldPhase {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
 
       if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
-        this.scene.pushPhase(new MessagePhase(this.scene, i18next.t("battle:notDisabled", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: allMoves[pokemon.summonData.disabledMove].name })));
+        this.scene.pushPhase(new MessagePhase(this.scene, i18next.t("battle:notDisabled", { pokemonName: `${getPokemonPrefix(pokemon)}${pokemon.name}`, moveName: allMoves[pokemon.summonData.disabledMove].name })));
         pokemon.summonData.disabledMove = Moves.NONE;
       }
 
@@ -2480,7 +2270,7 @@ export class TurnEndPhase extends FieldPhase {
 
       if (this.scene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
         this.scene.unshiftPhase(new PokemonHealPhase(this.scene, pokemon.getBattlerIndex(),
-          Math.max(pokemon.getMaxHp() >> 4, 1), i18next.t("battle:turnEndHpRestore", { pokemonName: getPokemonNameWithAffix(pokemon) }), true));
+          Math.max(pokemon.getMaxHp() >> 4, 1), getPokemonMessage(pokemon, "'s HP was restored."), true));
       }
 
       if (!pokemon.isPlayer()) {
@@ -2489,8 +2279,6 @@ export class TurnEndPhase extends FieldPhase {
       }
 
       applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
-
-      this.scene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
 
       this.scene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);
 
@@ -2539,7 +2327,7 @@ export class BattleEndPhase extends BattlePhase {
       }
     }
 
-    for (const pokemon of this.scene.getParty().filter(p => p.isAllowedInBattle())) {
+    for (const pokemon of this.scene.getParty().filter(p => !p.isFainted())) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
     }
 
@@ -2583,10 +2371,6 @@ export class CommonAnimPhase extends PokemonPhase {
 
     this.anim = anim;
     this.targetIndex = targetIndex;
-  }
-
-  setAnimation(anim: CommonAnim) {
-    this.anim = anim;
   }
 
   start() {
@@ -2640,11 +2424,6 @@ export class MovePhase extends BattlePhase {
       if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
       }
-      if (this.pokemon.isActive(true) && this.move.ppUsed >= this.move.getMovePp()) { // if the move PP was reduced from Spite or otherwise, the move fails
-        this.fail();
-        this.showMoveText();
-        this.showFailedText();
-      }
       return this.end();
     }
 
@@ -2664,36 +2443,22 @@ export class MovePhase extends BattlePhase {
     if (moveTarget) {
       const oldTarget = moveTarget.value;
       this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, this.move.moveId, moveTarget));
-      this.pokemon.getOpponents().forEach(p => {
-        const redirectTag = p.getTag(CenterOfAttentionTag) as CenterOfAttentionTag;
-        if (redirectTag && (!redirectTag.powder || (!this.pokemon.isOfType(Type.GRASS) && !this.pokemon.hasAbility(Abilities.OVERCOAT)))) {
-          moveTarget.value = p.getBattlerIndex();
-        }
-      });
       //Check if this move is immune to being redirected, and restore its target to the intended target if it is.
-      if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) || this.move.getMove().hasAttr(BypassRedirectAttr))) {
+      if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) || this.move.getMove().getAttrs(BypassRedirectAttr).length)) {
         //If an ability prevented this move from being redirected, display its ability pop up.
-        if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) && !this.move.getMove().hasAttr(BypassRedirectAttr)) && oldTarget !== moveTarget.value) {
+        if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) && !this.move.getMove().getAttrs(BypassRedirectAttr).length) && oldTarget !== moveTarget.value) {
           this.scene.unshiftPhase(new ShowAbilityPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr)));
         }
         moveTarget.value = oldTarget;
-      }
+	    }
       this.targets[0] = moveTarget.value;
     }
 
-    // Check for counterattack moves to switch target
     if (this.targets.length === 1 && this.targets[0] === BattlerIndex.ATTACKER) {
       if (this.pokemon.turnData.attacksReceived.length) {
-        const attack = this.pokemon.turnData.attacksReceived[0];
-        this.targets[0] = attack.sourceBattlerIndex;
-
-        // account for metal burst and comeuppance hitting remaining targets in double battles
-        // counterattack will redirect to remaining ally if original attacker faints
-        if (this.scene.currentBattle.double && this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER)) {
-          if (this.scene.getField()[this.targets[0]].hp === 0) {
-            const opposingField = this.pokemon.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
-            this.targets[0] = opposingField.find(p => p.hp > 0)?.getBattlerIndex();
-          }
+        const attacker = this.pokemon.turnData.attacksReceived.length ? this.pokemon.scene.getPokemonById(this.pokemon.turnData.attacksReceived[0].sourceId) : null;
+        if (attacker?.isActive(true)) {
+          this.targets[0] = attacker.getBattlerIndex();
         }
       }
       if (this.targets[0] === BattlerIndex.ATTACKER) {
@@ -2771,7 +2536,7 @@ export class MovePhase extends BattlePhase {
         this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
       }
 
-      if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
+      if (!allMoves[this.move.moveId].getAttrs(CopyMoveAttr).length) {
         this.scene.currentBattle.lastMove = this.move.moveId;
       }
 
@@ -2787,16 +2552,6 @@ export class MovePhase extends BattlePhase {
           failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
         }
       }
-
-      /**
-       * Trigger pokemon type change before playing the move animation
-       * Will still change the user's type when using Roar, Whirlwind, Trick-or-Treat, and Forest's Curse,
-       * regardless of whether the move successfully executes or not.
-       */
-      if (success || [Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)) {
-        applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
-      }
-
       if (success) {
         this.scene.unshiftPhase(this.getEffectPhase());
       } else {
@@ -2811,7 +2566,7 @@ export class MovePhase extends BattlePhase {
         this.scene.getPlayerField().forEach(pokemon => {
           applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
         });
-        this.scene.getEnemyField().forEach(pokemon => {
+        this.scene.getEnemyParty().forEach(pokemon => {
           applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
         });
       }
@@ -2844,12 +2599,12 @@ export class MovePhase extends BattlePhase {
       }
 
       if (activated) {
-        this.scene.queueMessage(getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
+        this.scene.queueMessage(getPokemonMessage(this.pokemon, getStatusEffectActivationText(this.pokemon.status.effect)));
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.getBattlerIndex(), undefined, CommonAnim.POISON + (this.pokemon.status.effect - 1)));
         doMove();
       } else {
         if (healed) {
-          this.scene.queueMessage(getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
+          this.scene.queueMessage(getPokemonMessage(this.pokemon, getStatusEffectHealText(this.pokemon.status.effect)));
           this.pokemon.resetStatus();
           this.pokemon.updateInfo();
         }
@@ -2865,13 +2620,10 @@ export class MovePhase extends BattlePhase {
   }
 
   showMoveText(): void {
-    if (this.move.getMove().hasAttr(ChargeAttr)) {
+    if (this.move.getMove().getAttrs(ChargeAttr).length) {
       const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
       if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER) {
-        this.scene.queueMessage(i18next.t("battle:useMove", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
-          moveName: this.move.getName()
-        }), 500);
+        this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
         return;
       }
     }
@@ -2880,10 +2632,7 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    this.scene.queueMessage(i18next.t("battle:useMove", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
-      moveName: this.move.getName()
-    }), 500);
+    this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
     applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents().find(() => true), this.move.getMove());
   }
 
@@ -2912,7 +2661,7 @@ export class MoveEffectPhase extends PokemonPhase {
     // of the left Pokemon and gets hit unless this is checked.
     if (targets.includes(battlerIndex) && this.move.getMove().moveTarget === MoveTarget.ALL_NEAR_OTHERS) {
       const i = targets.indexOf(battlerIndex);
-      targets.splice(i, i + 1);
+      targets.splice(i,i+1);
     }
     this.targets = targets;
   }
@@ -2928,10 +2677,9 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     const overridden = new Utils.BooleanHolder(false);
-    const move = this.move.getMove();
 
     // Assume single target for override
-    applyMoveAttrs(OverrideMoveEffectAttr, user, this.getTarget(), move, overridden, this.move.virtual).then(() => {
+    applyMoveAttrs(OverrideMoveEffectAttr, user, this.getTarget(), this.move.getMove(), overridden, this.move.virtual).then(() => {
 
       if (overridden.value) {
         return this.end();
@@ -2942,95 +2690,86 @@ export class MoveEffectPhase extends PokemonPhase {
       if (user.turnData.hitsLeft === undefined) {
         const hitCount = new Utils.IntegerHolder(1);
         // Assume single target for multi hit
-        applyMoveAttrs(MultiHitAttr, user, this.getTarget(), move, hitCount);
-        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, null, move, targets.length, hitCount, new Utils.IntegerHolder(0));
-        if (move instanceof AttackMove && !move.hasAttr(FixedDamageAttr)) {
+        applyMoveAttrs(MultiHitAttr, user, this.getTarget(), this.move.getMove(), hitCount);
+        if (this.move.getMove() instanceof AttackMove && !this.move.getMove().getAttrs(FixedDamageAttr).length) {
           this.scene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, hitCount, new Utils.IntegerHolder(0));
         }
         user.turnData.hitsLeft = user.turnData.hitCount = hitCount.value;
       }
 
       const moveHistoryEntry = { move: this.move.moveId, targets: this.targets, result: MoveResult.PENDING, virtual: this.move.virtual };
+      user.pushMoveHistory(moveHistoryEntry);
 
-      const targetHitChecks = Object.fromEntries(targets.map(p => [p.getBattlerIndex(), this.hitCheck(p)]));
+      const targetHitChecks = Object.fromEntries(targets.map(p => [ p.getBattlerIndex(), this.hitCheck(p) ]));
       const activeTargets = targets.map(t => t.isActive(true));
-      if (!activeTargets.length || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]])) {
-        this.stopMultiHit();
+      if (!activeTargets.length || (!this.move.getMove().getAttrs(VariableTargetAttr).length && !this.move.getMove().isMultiTarget() && !targetHitChecks[this.targets[0]])) {
+        user.turnData.hitCount = 1;
+        user.turnData.hitsLeft = 1;
         if (activeTargets.length) {
-          this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(this.getTarget()) }));
+          this.scene.queueMessage(getPokemonMessage(user, "'s\nattack missed!"));
           moveHistoryEntry.result = MoveResult.MISS;
-          applyMoveAttrs(MissEffectAttr, user, null, move);
+          applyMoveAttrs(MissEffectAttr, user, null, this.move.getMove());
         } else {
           this.scene.queueMessage(i18next.t("battle:attackFailed"));
           moveHistoryEntry.result = MoveResult.FAIL;
         }
-        user.pushMoveHistory(moveHistoryEntry);
         return this.end();
       }
 
       const applyAttrs: Promise<void>[] = [];
 
       // Move animation only needs one target
-      new MoveAnim(move.id as Moves, user, this.getTarget()?.getBattlerIndex()).play(this.scene, () => {
+      new MoveAnim(this.move.getMove().id as Moves, user, this.getTarget()?.getBattlerIndex()).play(this.scene, () => {
         for (const target of targets) {
           if (!targetHitChecks[target.getBattlerIndex()]) {
-            this.stopMultiHit(target);
-            this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+            user.turnData.hitCount = 1;
+            user.turnData.hitsLeft = 1;
+            this.scene.queueMessage(getPokemonMessage(user, "'s\nattack missed!"));
             if (moveHistoryEntry.result === MoveResult.PENDING) {
               moveHistoryEntry.result = MoveResult.MISS;
             }
-            user.pushMoveHistory(moveHistoryEntry);
-            applyMoveAttrs(MissEffectAttr, user, null, move);
+            applyMoveAttrs(MissEffectAttr, user, null, this.move.getMove());
             continue;
           }
 
-          const isProtected = !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
+          const isProtected = !this.move.getMove().hasFlag(MoveFlags.IGNORE_PROTECT) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
 
-          const firstHit = (user.turnData.hitsLeft === user.turnData.hitCount);
-          const firstTarget = (moveHistoryEntry.result === MoveResult.PENDING);
-
-          if (firstHit) {
-            user.pushMoveHistory(moveHistoryEntry);
-          }
+          const firstHit = moveHistoryEntry.result !== MoveResult.SUCCESS;
 
           moveHistoryEntry.result = MoveResult.SUCCESS;
 
-          const hitResult = !isProtected ? target.apply(user, move) : HitResult.NO_EFFECT;
+          const hitResult = !isProtected ? target.apply(user, this.move) : HitResult.NO_EFFECT;
 
-          const lastHit = (user.turnData.hitsLeft === 1 || !this.getTarget()?.isActive());
-
-          if (lastHit) {
-            this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
-          }
+          this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
 
           applyAttrs.push(new Promise(resolve => {
-            applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.PRE_APPLY && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit),
-              user, target, move).then(() => {
+            applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.PRE_APPLY && (!attr.firstHitOnly || firstHit),
+              user, target, this.move.getMove()).then(() => {
               if (hitResult !== HitResult.FAIL) {
-                const chargeEffect = !!move.getAttrs(ChargeAttr).find(ca => ca.usedChargeEffect(user, this.getTarget(), move));
+                const chargeEffect = !!this.move.getMove().getAttrs(ChargeAttr).find(ca => (ca as ChargeAttr).usedChargeEffect(user, this.getTarget(), this.move.getMove()));
                 // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
-                Utils.executeIf(!chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_APPLY
-                    && attr.selfTarget && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit), user, target, move)).then(() => {
+                Utils.executeIf(!chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_APPLY
+                  && (attr as MoveEffectAttr).selfTarget && (!attr.firstHitOnly || firstHit), user, target, this.move.getMove())).then(() => {
                   if (hitResult !== HitResult.NO_EFFECT) {
                     applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_APPLY
-                      && !(attr as MoveEffectAttr).selfTarget && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit), user, target, this.move.getMove()).then(() => {
-                      if (hitResult < HitResult.NO_EFFECT && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr)) {
+                      && !(attr as MoveEffectAttr).selfTarget && (!attr.firstHitOnly || firstHit), user, target, this.move.getMove()).then(() => {
+                      if (hitResult < HitResult.NO_EFFECT) {
                         const flinched = new Utils.BooleanHolder(false);
                         user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
                         if (flinched.value) {
                           target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
                         }
                       }
-                      Utils.executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT
-                          && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit) && (!attr.firstTargetOnly || firstTarget), user, target, this.move.getMove()).then(() => {
-                        return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move.getMove(), hitResult).then(() => {
+                      Utils.executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT && (!attr.firstHitOnly || firstHit),
+                        user, target, this.move.getMove()).then(() => {
+                        return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult).then(() => {
                           if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
                             user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
                           }
                         })).then(() => {
-                          applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move.getMove(), hitResult).then(() => {
+                          applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move, hitResult).then(() => {
                             if (this.move.getMove() instanceof AttackMove) {
-                              this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
+                              this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target.getFieldIndex());
                             }
                             resolve();
                           });
@@ -3039,7 +2778,7 @@ export class MoveEffectPhase extends PokemonPhase {
                       ).then(() => resolve());
                     });
                   } else {
-                    applyMoveAttrs(NoEffectAttr, user, null, move).then(() => resolve());
+                    applyMoveAttrs(NoEffectAttr, user, null, this.move.getMove()).then(() => resolve());
                   }
                 });
               } else {
@@ -3048,17 +2787,14 @@ export class MoveEffectPhase extends PokemonPhase {
             });
           }));
         }
-        // Trigger effect which should only apply one time on the last hit after all targeted effects have already applied
-        const postTarget = (user.turnData.hitsLeft === 1 || !this.getTarget()?.isActive()) ?
-          applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_TARGET, user, null, move) :
-          null;
+        // Trigger effect which should only apply one time after all targeted effects have already applied
+        const postTarget = applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_TARGET,
+          user, null, this.move.getMove());
 
-        if (!!postTarget) {
-          if (applyAttrs.length) { // If there is a pending asynchronous move effect, do this after
-            applyAttrs[applyAttrs.length - 1]?.then(() => postTarget);
-          } else { // Otherwise, push a new asynchronous move effect
-            applyAttrs.push(postTarget);
-          }
+        if (applyAttrs.length) { // If there is a pending asynchronous move effect, do this after
+          applyAttrs[applyAttrs.length - 1]?.then(() => postTarget);
+        } else { // Otherwise, push a new asynchronous move effect
+          applyAttrs.push(postTarget);
         }
 
         Promise.allSettled(applyAttrs).then(() => this.end());
@@ -3067,18 +2803,13 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   end() {
-    const move = this.move.getMove();
-    move.type = move.defaultType;
     const user = this.getUserPokemon();
     if (user) {
       if (--user.turnData.hitsLeft >= 1 && this.getTarget()?.isActive()) {
         this.scene.unshiftPhase(this.getNewHitPhase());
       } else {
-        // Queue message for number of hits made by multi-move
-        // If multi-hit attack only hits once, still want to render a message
         const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
-        if (hitsTotal > 1 || user.turnData.hitsLeft > 0) {
-          // If there are multiple hits, or if there are hits of the multi-hit move left
+        if (hitsTotal > 1) {
           this.scene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
         }
         this.scene.applyModifiers(HitHealModifier, this.player, user);
@@ -3096,13 +2827,9 @@ export class MoveEffectPhase extends PokemonPhase {
 
     const user = this.getUserPokemon();
 
-    // Hit check only calculated on first hit for multi-hit moves unless flag is set to check all hits.
-    // However, if an ability with the MaxMultiHitAbAttr, namely Skill Link, is present, act as a normal
-    // multi-hit move and proceed with all hits
+    // Hit check only calculated on first hit for multi-hit moves
     if (user.turnData.hitsLeft < user.turnData.hitCount) {
-      if (!this.move.getMove().hasFlag(MoveFlags.CHECK_ALL_HITS) || user.hasAbilityWithAttr(MaxMultiHitAbAttr)) {
-        return true;
-      }
+      return true;
     }
 
     if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
@@ -3110,29 +2837,62 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     // If the user should ignore accuracy on a target, check who the user targeted last turn and see if they match
-    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
+    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().slice(1).find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
       return true;
     }
 
-    if (target.getTag(BattlerTagType.ALWAYS_GET_HIT)) {
-      return true;
-    }
-
-    const hiddenTag = target.getTag(SemiInvulnerableTag);
-    if (hiddenTag && !this.move.getMove().getAttrs(HitsTagAttr).some(hta => hta.tagType === hiddenTag.tagType)) {
+    const hiddenTag = target.getTag(HiddenTag);
+    if (hiddenTag && !this.move.getMove().getAttrs(HitsTagAttr).filter(hta => (hta as HitsTagAttr).tagType === hiddenTag.tagType).length) {
       return false;
     }
 
-    const moveAccuracy = this.move.getMove().calculateBattleAccuracy(user, target);
+    const moveAccuracy = new Utils.NumberHolder(this.move.getMove().accuracy);
 
-    if (moveAccuracy === -1) {
+    applyMoveAttrs(VariableAccuracyAttr, user, target, this.move.getMove(), moveAccuracy);
+
+    if (moveAccuracy.value === -1) {
       return true;
     }
 
-    const accuracyMultiplier = user.getAccuracyMultiplier(target, this.move.getMove());
+    const isOhko = !!this.move.getMove().getAttrs(OneHitKOAccuracyAttr).length;
+
+    if (!isOhko) {
+      user.scene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
+    }
+
+    if (this.scene.arena.weather?.weatherType === WeatherType.FOG) {
+      moveAccuracy.value = Math.floor(moveAccuracy.value * 0.9);
+    }
+
+    if (!isOhko && this.scene.arena.getTag(ArenaTagType.GRAVITY)) {
+      moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
+    }
+
+    const userAccuracyLevel = new Utils.IntegerHolder(user.summonData.battleStats[BattleStat.ACC]);
+    const targetEvasionLevel = new Utils.IntegerHolder(target.summonData.battleStats[BattleStat.EVA]);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, userAccuracyLevel);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, user, null, targetEvasionLevel);
+    applyAbAttrs(IgnoreOpponentEvasionAbAttr, user, null, targetEvasionLevel);
+    applyMoveAttrs(IgnoreOpponentStatChangesAttr, user, target, this.move.getMove(), targetEvasionLevel);
+    this.scene.applyModifiers(TempBattleStatBoosterModifier, this.player, TempBattleStat.ACC, userAccuracyLevel);
+
     const rand = user.randSeedInt(100, 1);
 
-    return rand <= moveAccuracy * accuracyMultiplier;
+    const accuracyMultiplier = new Utils.NumberHolder(1);
+    if (userAccuracyLevel.value !== targetEvasionLevel.value) {
+      accuracyMultiplier.value = userAccuracyLevel.value > targetEvasionLevel.value
+        ? (3 + Math.min(userAccuracyLevel.value - targetEvasionLevel.value, 6)) / 3
+        : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
+    }
+
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, user, BattleStat.ACC, accuracyMultiplier, this.move.getMove());
+
+    const evasionMultiplier = new Utils.NumberHolder(1);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this.getTarget(), BattleStat.EVA, evasionMultiplier);
+
+    accuracyMultiplier.value /= evasionMultiplier.value;
+
+    return rand <= moveAccuracy.value * accuracyMultiplier.value;
   }
 
   getUserPokemon(): Pokemon {
@@ -3148,28 +2908,6 @@ export class MoveEffectPhase extends PokemonPhase {
 
   getTarget(): Pokemon {
     return this.getTargets().find(() => true);
-  }
-
-  removeTarget(target: Pokemon): void {
-    const targetIndex = this.targets.findIndex(ind => ind === target.getBattlerIndex());
-    if (targetIndex !== -1) {
-      this.targets.splice(this.targets.findIndex(ind => ind === target.getBattlerIndex()), 1);
-    }
-  }
-
-  stopMultiHit(target?: Pokemon): void {
-    /** If given a specific target, remove the target from subsequent strikes */
-    if (target) {
-      this.removeTarget(target);
-    }
-    /**
-     * If no target specified, or the specified target was the last of this move's
-     * targets, completely cancel all subsequent strikes.
-    */
-    if (!target || this.targets.length === 0 ) {
-      this.getUserPokemon().turnData.hitCount = 1;
-      this.getUserPokemon().turnData.hitsLeft = 1;
-    }
   }
 
   getNewHitPhase() {
@@ -3220,7 +2958,7 @@ export class MoveAnimTestPhase extends BattlePhase {
     }
 
     initMoveAnim(this.scene, moveId).then(() => {
-      loadMoveAnimAssets(this.scene, [moveId], true)
+      loadMoveAnimAssets(this.scene, [ moveId ], true)
         .then(() => {
           new MoveAnim(moveId, player ? this.scene.getPlayerPokemon() : this.scene.getEnemyPokemon(), (player !== (allMoves[moveId] instanceof SelfStatusMove) ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).getBattlerIndex()).play(this.scene, () => {
             if (player) {
@@ -3246,18 +2984,11 @@ export class ShowAbilityPhase extends PokemonPhase {
   start() {
     super.start();
 
-    const pokemon = this.getPokemon();
-
-    this.scene.abilityBar.showAbility(pokemon, this.passive);
-    if (pokemon.battleData) {
-      pokemon.battleData.abilityRevealed = true;
-    }
+    this.scene.abilityBar.showAbility(this.getPokemon(), this.passive);
 
     this.end();
   }
 }
-
-export type StatChangeCallback = (target: Pokemon, changed: BattleStat[], relativeChanges: number[]) => void;
 
 export class StatChangePhase extends PokemonPhase {
   private stats: BattleStat[];
@@ -3266,10 +2997,8 @@ export class StatChangePhase extends PokemonPhase {
   private showMessage: boolean;
   private ignoreAbilities: boolean;
   private canBeCopied: boolean;
-  private onChange: StatChangeCallback;
 
-
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true, onChange: StatChangeCallback = null) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true) {
     super(scene, battlerIndex);
 
     this.selfTarget = selfTarget;
@@ -3278,7 +3007,6 @@ export class StatChangePhase extends PokemonPhase {
     this.showMessage = showMessage;
     this.ignoreAbilities = ignoreAbilities;
     this.canBeCopied = canBeCopied;
-    this.onChange = onChange;
   }
 
   start() {
@@ -3320,8 +3048,6 @@ export class StatChangePhase extends PokemonPhase {
     const battleStats = this.getPokemon().summonData.battleStats;
     const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats[stat] + levels.value, 6) : Math.max(battleStats[stat] + levels.value, -6)) - battleStats[stat]);
 
-    this.onChange?.(this.getPokemon(), filteredStats, relLevels);
-
     const end = () => {
       if (this.showMessage) {
         const messages = this.getStatChangeMessages(filteredStats, levels.value, relLevels);
@@ -3342,21 +3068,6 @@ export class StatChangePhase extends PokemonPhase {
 
       applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget);
 
-      // Look for any other stat change phases; if this is the last one, do White Herb check
-      const existingPhase = this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex);
-      if (!(existingPhase instanceof StatChangePhase)) {
-        // Apply White Herb if needed
-        const whiteHerb = this.scene.applyModifier(PokemonResetNegativeStatStageModifier, this.player, pokemon) as PokemonResetNegativeStatStageModifier;
-        // If the White Herb was applied, consume it
-        if (whiteHerb) {
-          --whiteHerb.stackCount;
-          if (whiteHerb.stackCount <= 0) {
-            this.scene.removeModifier(whiteHerb);
-          }
-          this.scene.updateModifiers(this.player);
-        }
-      }
-
       pokemon.updateInfo();
 
       handleTutorial(this.scene, Tutorial.Stat_Change).then(() => super.end());
@@ -3371,10 +3082,7 @@ export class StatChangePhase extends PokemonPhase {
       const tileWidth = 156 * this.scene.field.scale * pokemon.getSpriteScale();
       const tileHeight = 316 * this.scene.field.scale * pokemon.getSpriteScale();
 
-      // On increase, show the red sprite located at ATK
-      // On decrease, show the blue sprite located at SPD
-      const spriteColor = levels.value >= 1 ? BattleStat[BattleStat.ATK].toLowerCase() : BattleStat[BattleStat.SPD].toLowerCase();
-      const statSprite = this.scene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor);
+      const statSprite = this.scene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", filteredStats.length > 1 ? "mix" : BattleStat[filteredStats[0]].toLowerCase());
       statSprite.setPipeline(this.scene.fieldSpritePipeline);
       statSprite.setAlpha(0);
       statSprite.setScale(6);
@@ -3419,7 +3127,7 @@ export class StatChangePhase extends PokemonPhase {
   }
 
   aggregateStatChanges(random: boolean = false): void {
-    const isAccEva = [BattleStat.ACC, BattleStat.EVA].some(s => this.stats.includes(s));
+    const isAccEva = [ BattleStat.ACC, BattleStat.EVA ].some(s => this.stats.includes(s));
     let existingPhase: StatChangePhase;
     if (this.stats.length === 1) {
       while ((existingPhase = (this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex && p.stats.length === 1
@@ -3439,7 +3147,7 @@ export class StatChangePhase extends PokemonPhase {
       }
     }
     while ((existingPhase = (this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex && p.selfTarget === this.selfTarget
-      && ([BattleStat.ACC, BattleStat.EVA].some(s => p.stats.includes(s)) === isAccEva)
+      && ([ BattleStat.ACC, BattleStat.EVA ].some(s => p.stats.includes(s)) === isAccEva)
       && p.levels === this.levels && p.showMessage === this.showMessage && p.ignoreAbilities === this.ignoreAbilities) as StatChangePhase))) {
       this.stats.push(...existingPhase.stats);
       if (!this.scene.tryRemovePhase(p => p === existingPhase)) {
@@ -3466,13 +3174,12 @@ export class StatChangePhase extends PokemonPhase {
 
       if (relLevelStats.length > 1) {
         statsFragment = relLevelStats.length >= 5
-          ? i18next.t("battle:stats")
-          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(", ")}${relLevelStats.length > 2 ? "," : ""} ${i18next.t("battle:statsAnd")} ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
-        messages.push(getBattleStatLevelChangeDescription(getPokemonNameWithAffix(this.getPokemon()), statsFragment, Math.abs(parseInt(rl)), levels >= 1,relLevelStats.length));
+          ? "stats"
+          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(", ")}${relLevelStats.length > 2 ? "," : ""} and ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
       } else {
         statsFragment = getBattleStatName(relLevelStats[0]);
-        messages.push(getBattleStatLevelChangeDescription(getPokemonNameWithAffix(this.getPokemon()), statsFragment, Math.abs(parseInt(rl)), levels >= 1,relLevelStats.length));
       }
+      messages.push(getPokemonMessage(this.getPokemon(), `'s ${statsFragment} ${getBattleStatLevelChangeDescription(Math.abs(parseInt(rl)), levels >= 1)}!`));
     });
 
     return messages;
@@ -3482,22 +3189,12 @@ export class StatChangePhase extends PokemonPhase {
 export class WeatherEffectPhase extends CommonAnimPhase {
   public weather: Weather;
 
-  constructor(scene: BattleScene) {
-    super(scene, undefined, undefined, CommonAnim.SUNNY + ((scene?.arena?.weather?.weatherType || WeatherType.NONE) - 1));
-    this.weather = scene?.arena?.weather;
+  constructor(scene: BattleScene, weather: Weather) {
+    super(scene, undefined, undefined, CommonAnim.SUNNY + (weather.weatherType - 1));
+    this.weather = weather;
   }
 
   start() {
-    // Update weather state with any changes that occurred during the turn
-    this.weather = this.scene?.arena?.weather;
-
-    if (!this.weather) {
-      this.end();
-      return;
-    }
-
-    this.setAnimation(CommonAnim.SUNNY + (this.weather.weatherType - 1));
-
     if (this.weather.isDamaging()) {
 
       const cancelled = new Utils.BooleanHolder(false);
@@ -3562,7 +3259,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         }
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect - 1), pokemon).play(this.scene, () => {
-          this.scene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText));
+          this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectObtainText(this.statusEffect, this.sourceText)));
           if (pokemon.status.isPostTurn()) {
             this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, this.battlerIndex));
           }
@@ -3571,7 +3268,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         return;
       }
     } else if (pokemon.status.effect === this.statusEffect) {
-      this.scene.queueMessage(getStatusEffectOverlapText(this.statusEffect, getPokemonNameWithAffix(pokemon)));
+      this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectOverlapText(this.statusEffect)));
     }
     this.end();
   }
@@ -3588,10 +3285,9 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       pokemon.status.incrementTurn();
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
-      applyAbAttrs(BlockStatusDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        this.scene.queueMessage(getStatusEffectActivationText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
+        this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
         let damage: integer = 0;
         switch (pokemon.status.effect) {
         case StatusEffect.POISON:
@@ -3605,7 +3301,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
           break;
         }
         if (damage) {
-          // Set preventEndure flag to avoid pokemon surviving thanks to focus band, sturdy, endure ...
+		  // Set preventEndure flag to avoid pokemon surviving thanks to focus band, sturdy, endure ...
           this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage, false, true));
           pokemon.updateInfo();
         }
@@ -3615,14 +3311,6 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       }
     } else {
       this.end();
-    }
-  }
-
-  override end() {
-    if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-      this.scene.initFinalBossPhaseTwo(this.getPokemon());
-    } else {
-      super.end();
     }
   }
 }
@@ -3680,9 +3368,7 @@ export class DamagePhase extends PokemonPhase {
     super.start();
 
     if (this.damageResult === HitResult.ONE_HIT_KO) {
-      if (this.scene.moveAnimations) {
-        this.scene.toggleInvert(true);
-      }
+      this.scene.toggleInvert(true);
       this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
         this.scene.toggleInvert(false);
         this.applyDamage();
@@ -3732,12 +3418,34 @@ export class DamagePhase extends PokemonPhase {
     }
   }
 
-  override end() {
-    if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-      this.scene.initFinalBossPhaseTwo(this.getPokemon());
-    } else {
-      super.end();
+  end() {
+    switch (this.scene.currentBattle.battleSpec) {
+    case BattleSpec.FINAL_BOSS:
+      const pokemon = this.getPokemon();
+      if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
+        this.scene.fadeOutBgm(Utils.fixedInt(2000), false);
+        this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.species.name, null, () => {
+          this.scene.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
+          pokemon.generateAndPopulateMoveset(1);
+          this.scene.setFieldScale(0.75);
+          this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+          this.scene.currentBattle.double = true;
+          const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());
+          if (availablePartyMembers.length > 1) {
+            this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, true));
+            if (!availablePartyMembers[1].isOnField()) {
+              this.scene.pushPhase(new SummonPhase(this.scene, 1));
+            }
+          }
+
+          super.end();
+        });
+        return;
+      }
+      break;
     }
+
+    super.end();
   }
 }
 
@@ -3773,18 +3481,11 @@ export class FaintPhase extends PokemonPhase {
   doFaint(): void {
     const pokemon = this.getPokemon();
 
-    // Track total times pokemon have been KO'd for supreme overlord/last respects
-    if (pokemon.isPlayer()) {
-      this.scene.currentBattle.playerFaints += 1;
-    } else {
-      this.scene.currentBattle.enemyFaints += 1;
-    }
-
-    this.scene.queueMessage(i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, true);
+    this.scene.queueMessage(getPokemonMessage(pokemon, " fainted!"), null, true);
 
     if (pokemon.turnData?.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
-      applyPostFaintAbAttrs(PostFaintAbAttr, pokemon, this.scene.getPokemonById(lastAttack.sourceId), new PokemonMove(lastAttack.move).getMove(), lastAttack.result);
+      applyPostFaintAbAttrs(PostFaintAbAttr, pokemon, this.scene.getPokemonById(lastAttack.sourceId), new PokemonMove(lastAttack.move), lastAttack.result);
     }
 
     const alivePlayField = this.scene.getField(true);
@@ -3794,7 +3495,7 @@ export class FaintPhase extends PokemonPhase {
       if (defeatSource?.isOnField()) {
         applyPostVictoryAbAttrs(PostVictoryAbAttr, defeatSource);
         const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
-        const pvattrs = pvmove.getAttrs(PostVictoryStatChangeAttr);
+        const pvattrs = pvmove.getAttrs(PostVictoryStatChangeAttr) as PostVictoryStatChangeAttr[];
         if (pvattrs.length) {
           for (const pvattr of pvattrs) {
             pvattr.applyPostVictory(defeatSource, defeatSource, pvmove);
@@ -3804,14 +3505,15 @@ export class FaintPhase extends PokemonPhase {
     }
 
     if (this.player) {
-      const nonFaintedLegalPartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
-      const nonFaintedPartyMemberCount = nonFaintedLegalPartyMembers.length;
+      const nonFaintedPartyMembers = this.scene.getParty().filter(p => !p.isFainted());
+      const nonFaintedPartyMemberCount = nonFaintedPartyMembers.length;
       if (!nonFaintedPartyMemberCount) {
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
-      } else if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double) {
-        this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
-      } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount()) {
+      } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !nonFaintedPartyMembers[0].isActive(true))) {
         this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
+      }
+      if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double) {
+        this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
       }
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
@@ -3941,9 +3643,7 @@ export class VictoryPhase extends PokemonPhase {
           expMultiplier = Overrides.XP_MULTIPLIER_OVERRIDE;
         }
         const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
-        const modifierBonusExp = new Utils.NumberHolder(1);
-        this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, modifierBonusExp);
-        pokemonExp.value *= modifierBonusExp.value;
+        this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
         partyMemberExp.push(Math.floor(pokemonExp.value));
       }
 
@@ -4044,24 +3744,27 @@ export class TrainerVictoryPhase extends BattlePhase {
     const trainerType = this.scene.currentBattle.trainer.config.trainerType;
     if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
       if (!this.scene.validateVoucher(vouchers[TrainerType[trainerType]]) && this.scene.currentBattle.trainer.config.isBoss) {
-        this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][vouchers[TrainerType[trainerType]].voucherType]));
+        this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, [ modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM ][vouchers[TrainerType[trainerType]].voucherType]));
       }
     }
 
     this.scene.ui.showText(i18next.t("battle:trainerDefeated", { trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true) }), null, () => {
       const victoryMessages = this.scene.currentBattle.trainer.getVictoryMessages();
-      let message: string;
-      this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(victoryMessages), this.scene.currentBattle.waveIndex);
-
       const showMessage = () => {
-        const originalFunc = showMessageOrEnd;
-        showMessageOrEnd = () => this.scene.ui.showDialogue(message, this.scene.currentBattle.trainer.getName(), null, originalFunc);
+        let message: string;
+        this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(victoryMessages), this.scene.currentBattle.waveIndex);
+        const messagePages = message.split(/\$/g).map(m => m.trim());
+
+        for (let p = messagePages.length - 1; p >= 0; p--) {
+          const originalFunc = showMessageOrEnd;
+          showMessageOrEnd = () => this.scene.ui.showDialogue(messagePages[p], this.scene.currentBattle.trainer.getName(), null, originalFunc);
+        }
 
         showMessageOrEnd();
       };
       let showMessageOrEnd = () => this.end();
       if (victoryMessages?.length) {
-        if (this.scene.currentBattle.trainer.config.hasCharSprite && !this.scene.ui.shouldSkipDialogue(message)) {
+        if (this.scene.currentBattle.trainer.config.hasCharSprite) {
           const originalFunc = showMessageOrEnd;
           showMessageOrEnd = () => this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => originalFunc()));
           this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(this.scene.currentBattle.trainer.getKey(), getCharVariantFromDialogue(victoryMessages[0])).then(() => showMessage()));
@@ -4090,10 +3793,6 @@ export class MoneyRewardPhase extends BattlePhase {
     const moneyAmount = new Utils.IntegerHolder(this.scene.getWaveMoneyAmount(this.moneyMultiplier));
 
     this.scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
-
-    if (this.scene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {
-      moneyAmount.value *= 2;
-    }
 
     this.scene.addMoney(moneyAmount.value);
 
@@ -4125,7 +3824,7 @@ export class ModifierRewardPhase extends BattlePhase {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound("item_fanfare");
-        this.scene.ui.showText(i18next.t("battle:rewardGain", { modifierName: newModifier.type.name }), null, () => resolve(), null, true);
+        this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => resolve(), null, true);
       });
     });
   }
@@ -4143,7 +3842,7 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
         this.scene.playSound("level_up_fanfare");
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.fadeIn(250).then(() => {
-          this.scene.ui.showText(i18next.t("battle:rewardGain", { modifierName: newModifier.type.name }), null, () => {
+          this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
             this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
             resolve();
           }, null, true, 1500);
@@ -4168,11 +3867,7 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound("level_up_fanfare");
         this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(i18next.t("battle:beatModeFirstTime", {
-          speciesName: this.species.name,
-          gameMode: this.scene.gameMode.getName(),
-          newModifier: newModifier.type.name
-        }), null, () => {
+        this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
           resolve();
         }, null, true, 1500);
       });
@@ -4203,7 +3898,7 @@ export class GameOverPhase extends BattlePhase {
     } else if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
     } else {
-      this.scene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
+      this.scene.ui.showText("Would you like to retry from the start of the battle?", null, () => {
         this.scene.ui.setMode(Mode.CONFIRM, () => {
           this.scene.ui.fadeOut(1250).then(() => {
             this.scene.reset();
@@ -4211,7 +3906,7 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.loadSession(this.scene, this.scene.sessionSlotId).then(() => {
               this.scene.pushPhase(new EncounterPhase(this.scene, true));
 
-              const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle()).length;
+              const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted()).length;
 
               this.scene.pushPhase(new SummonPhase(this.scene, 0));
               if (this.scene.currentBattle.double && availablePartyMembers > 1) {
@@ -4253,6 +3948,15 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
           }
         }
+
+        this.scene.gameData.getSession(this.scene.sessionSlotId).then(sessionData => {
+          if (sessionData) {
+            this.scene.gameData.saveRunHistory(this.scene, sessionData, this.victory, true);
+          }
+        }).catch(err => {
+          console.error(err);
+        });
+
         const fadeDuration = this.victory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
         const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
@@ -4262,10 +3966,6 @@ export class GameOverPhase extends BattlePhase {
           this.scene.setFieldScale(1, true);
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
-
-          if (this.victory && this.scene.gameMode.isChallenge) {
-            this.scene.gameMode.challenges.forEach(c => this.scene.validateAchvs(ChallengeAchv, c));
-          }
 
           const clear = (endCardPhase?: EndCardPhase) => {
             if (newClear) {
@@ -4284,27 +3984,19 @@ export class GameOverPhase extends BattlePhase {
           };
 
           if (this.victory && this.scene.gameMode.isClassic) {
-            const message = miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1];
-
-            if (!this.scene.ui.shouldSkipDialogue(message)) {
-              this.scene.ui.fadeIn(500).then(() => {
-                this.scene.charSprite.showCharacter(`rival_${this.scene.gameData.gender === PlayerGender.FEMALE ? "m" : "f"}`, getCharVariantFromDialogue(miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1])).then(() => {
-                  this.scene.ui.showDialogue(message, this.scene.gameData.gender === PlayerGender.FEMALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameFemale, null, () => {
-                    this.scene.ui.fadeOut(500).then(() => {
-                      this.scene.charSprite.hide().then(() => {
-                        const endCardPhase = new EndCardPhase(this.scene);
-                        this.scene.unshiftPhase(endCardPhase);
-                        clear(endCardPhase);
-                      });
+            this.scene.ui.fadeIn(500).then(() => {
+              this.scene.charSprite.showCharacter(`rival_${this.scene.gameData.gender === PlayerGender.FEMALE ? "m" : "f"}`, getCharVariantFromDialogue(miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1])).then(() => {
+                this.scene.ui.showDialogue(miscDialogue.ending[this.scene.gameData.gender === PlayerGender.FEMALE ? 0 : 1], this.scene.gameData.gender === PlayerGender.FEMALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameFemale, null, () => {
+                  this.scene.ui.fadeOut(500).then(() => {
+                    this.scene.charSprite.hide().then(() => {
+                      const endCardPhase = new EndCardPhase(this.scene);
+                      this.scene.unshiftPhase(endCardPhase);
+                      clear(endCardPhase);
                     });
                   });
                 });
               });
-            } else {
-              const endCardPhase = new EndCardPhase(this.scene);
-              this.scene.unshiftPhase(endCardPhase);
-              clear(endCardPhase);
-            }
+            });
           } else {
             clear();
           }
@@ -4317,7 +4009,7 @@ export class GameOverPhase extends BattlePhase {
     If Offline, execute offlineNewClear(), a localStorage implementation of newClear daily run checks */
     if (this.victory) {
       if (!Utils.isLocal) {
-        Utils.apiFetch(`savedata/session/newclear?slot=${this.scene.sessionSlotId}&clientSessionId=${clientSessionId}`, true)
+        Utils.apiFetch(`savedata/newclear?slot=${this.scene.sessionSlotId}`, true)
           .then(response => response.json())
           .then(newClear => doGameOver(newClear));
       } else {
@@ -4373,7 +4065,7 @@ export class EndCardPhase extends Phase {
     this.endCard.setScale(0.5);
     this.scene.field.add(this.endCard);
 
-    this.text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, i18next.t("battle:congratulations"), TextStyle.SUMMARY, { fontSize: "128px" });
+    this.text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, "Congratulations!", TextStyle.SUMMARY, { fontSize: "128px" });
     this.text.setOrigin(0.5);
     this.scene.field.add(this.text);
 
@@ -4403,7 +4095,7 @@ export class UnlockPhase extends Phase {
       this.scene.gameData.unlocks[this.unlockable] = true;
       this.scene.playSound("level_up_fanfare");
       this.scene.ui.setMode(Mode.MESSAGE);
-      this.scene.ui.showText(i18next.t("battle:unlockedSomething", { unlockedThing: getUnlockableName(this.unlockable) }), null, () => {
+      this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
         this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
         this.end();
       }, null, true, 1500);
@@ -4468,20 +4160,19 @@ export class SwitchPhase extends BattlePhase {
 
   start() {
     super.start();
-    const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());
 
     // Skip modal switch if impossible
-    if (this.isModal && (!availablePartyMembers.filter(p => !p.isActive(true)).length || (!this.scene.currentBattle.started && availablePartyMembers.length === 1))) {
+    if (this.isModal && !this.scene.getParty().filter(p => !p.isFainted() && !p.isActive(true)).length) {
       return super.end();
     }
 
     // Check if there is any space still in field
-    if (this.isModal && this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
+    if (this.isModal && this.scene.getPlayerField().filter(p => !p.isFainted() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
       return super.end();
     }
 
-    // Override field index to 0 in case of double battle where 2/3 remaining legal party members fainted at once
-    const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || availablePartyMembers.length > 1 ? this.fieldIndex : 0;
+    // Override field index to 0 in case of double battle where 2/3 remaining party members fainted at once
+    const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => !p.isFainted()).length > 1 ? this.fieldIndex : 0;
 
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
@@ -4508,7 +4199,7 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
     const exp = new Utils.NumberHolder(this.expValue);
     this.scene.applyModifiers(ExpBoosterModifier, true, exp);
     exp.value = Math.floor(exp.value);
-    this.scene.ui.showText(i18next.t("battle:expGain", { pokemonName: getPokemonNameWithAffix(pokemon), exp: exp.value }), null, () => {
+    this.scene.ui.showText(i18next.t("battle:expGain", { pokemonName: pokemon.name, exp: exp.value }), null, () => {
       const lastLevel = pokemon.level;
       pokemon.addExp(exp.value);
       const newLevel = pokemon.level;
@@ -4546,20 +4237,20 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     this.scene.unshiftPhase(new HidePartyExpBarPhase(this.scene));
     pokemon.updateInfo();
 
-    if (this.scene.expParty === ExpNotification.SKIP) {
+    if (this.scene.expParty === 2) { // 2 - Skip - no level up frame nor message
       this.end();
-    } else if (this.scene.expParty === ExpNotification.ONLY_LEVEL_UP) {
+    } else if (this.scene.expParty === 1) { // 1 - Only level up - we display the level up in the small frame instead of a message
       if (newLevel > lastLevel) { // this means if we level up
         // instead of displaying the exp gain in the small frame, we display the new level
         // we use the same method for mode 0 & 1, by giving a parameter saying to display the exp or the level
-        this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === ExpNotification.ONLY_LEVEL_UP, newLevel).then(() => {
+        this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === 1, newLevel).then(() => {
           setTimeout(() => this.end(), 800 / Math.pow(2, this.scene.expGainsSpeed));
         });
       } else {
         this.end();
       }
     } else if (this.scene.expGainsSpeed < 3) {
-      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, false, newLevel).then(() => {
+      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === 1, newLevel).then(() => {
         setTimeout(() => this.end(), 500 / Math.pow(2, this.scene.expGainsSpeed));
       });
     } else {
@@ -4606,16 +4297,16 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     const prevStats = pokemon.stats.slice(0);
     pokemon.calculateStats();
     pokemon.updateInfo();
-    if (this.scene.expParty === ExpNotification.DEFAULT) {
+    if (this.scene.expParty === 0) { // 0 - default - the normal exp gain display, nothing changed
       this.scene.playSound("level_up_fanfare");
-      this.scene.ui.showText(i18next.t("battle:levelUp", { pokemonName: getPokemonNameWithAffix(this.getPokemon()), level: this.level }), null, () => this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end()), null, true);
-    } else if (this.scene.expParty === ExpNotification.SKIP) {
+      this.scene.ui.showText(i18next.t("battle:levelUp", { pokemonName: this.getPokemon().name, level: this.level }), null, () => this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end()), null, true);
+    } else if (this.scene.expParty === 2) { // 2 - Skip - no level up frame nor message
       this.end();
-    } else {
+    } else { // 1 - Only level up - we display the level up in the small frame instead of a message
       // we still want to display the stats if activated
       this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end());
     }
-    if (this.lastLevel < 100) { // this feels like an unnecessary optimization
+    if (this.level <= 100) {
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
       for (const lm of levelMoves) {
         this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm[1]));
@@ -4662,11 +4353,11 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     if (emptyMoveIndex > -1) {
       pokemon.setMove(emptyMoveIndex, this.moveId);
       initMoveAnim(this.scene, this.moveId).then(() => {
-        loadMoveAnimAssets(this.scene, [this.moveId], true)
+        loadMoveAnimAssets(this.scene, [ this.moveId ], true)
           .then(() => {
             this.scene.ui.setMode(messageMode).then(() => {
               this.scene.playSound("level_up_fanfare");
-              this.scene.ui.showText(i18next.t("battle:learnMove", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
+              this.scene.ui.showText(i18next.t("battle:learnMove", { pokemonName: pokemon.name, moveName: move.name }), null, () => {
                 this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
                 this.end();
               }, messageMode === Mode.EVOLUTION_SCENE ? 1000 : null, true);
@@ -4675,15 +4366,15 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       });
     } else {
       this.scene.ui.setMode(messageMode).then(() => {
-        this.scene.ui.showText(i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
-          this.scene.ui.showText(i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
+        this.scene.ui.showText(i18next.t("battle:learnMovePrompt", { pokemonName: pokemon.name, moveName: move.name }), null, () => {
+          this.scene.ui.showText(i18next.t("battle:learnMoveLimitReached", { pokemonName: pokemon.name }), null, () => {
             this.scene.ui.showText(i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name }), null, () => {
               const noHandler = () => {
                 this.scene.ui.setMode(messageMode).then(() => {
                   this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
                     this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
                       this.scene.ui.setMode(messageMode);
-                      this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => this.end(), null, true);
+                      this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: pokemon.name, moveName: move.name }), null, () => this.end(), null, true);
                     }, () => {
                       this.scene.ui.setMode(messageMode);
                       this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
@@ -4702,7 +4393,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                     }
                     this.scene.ui.setMode(messageMode).then(() => {
                       this.scene.ui.showText(i18next.t("battle:countdownPoof"), null, () => {
-                        this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
+                        this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: pokemon.name, moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
                           this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
                             pokemon.setMove(moveIndex, Moves.NONE);
                             this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
@@ -4744,7 +4435,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
   }
 
   start() {
-    if (!this.skipAnim && (this.revive || this.getPokemon().hp) && !this.getPokemon().isFullHp()) {
+    if (!this.skipAnim && (this.revive || this.getPokemon().hp) && this.getPokemon().getHpRatio() < 1) {
       super.start();
     } else {
       this.end();
@@ -4759,11 +4450,12 @@ export class PokemonHealPhase extends CommonAnimPhase {
       return;
     }
 
+    const fullHp = pokemon.getHpRatio() >= 1;
+
     const hasMessage = !!this.message;
-    const healOrDamage = (!pokemon.isFullHp() || this.hpHealed < 0);
     let lastStatusEffect = StatusEffect.NONE;
 
-    if (healOrDamage) {
+    if (!fullHp || this.hpHealed < 0) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive) {
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
@@ -4797,7 +4489,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
       pokemon.resetStatus();
       pokemon.updateInfo().then(() => super.end());
     } else if (this.showFullHpMessage) {
-      this.message = i18next.t("battle:hpIsFull", { pokemonName: getPokemonNameWithAffix(pokemon) });
+      this.message = getPokemonMessage(pokemon, "'s\nHP is full!");
     }
 
     if (this.message) {
@@ -4805,10 +4497,10 @@ export class PokemonHealPhase extends CommonAnimPhase {
     }
 
     if (this.healStatus && lastStatusEffect && !hasMessage) {
-      this.scene.queueMessage(getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)));
+      this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(lastStatusEffect)));
     }
 
-    if (!healOrDamage && !lastStatusEffect) {
+    if (fullHp && !lastStatusEffect) {
       super.end();
     }
   }
@@ -4938,9 +4630,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                     });
                   }
                 },
-                onComplete: () => {
-                  this.catch();
-                }
+                onComplete: () => this.catch()
               });
             };
 
@@ -4981,6 +4671,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
   catch() {
     const pokemon = this.getPokemon() as EnemyPokemon;
+    this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
 
     const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
@@ -5004,9 +4695,8 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     this.scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
-    this.scene.ui.showText(i18next.t("battle:pokemonCaught", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
+    this.scene.ui.showText(i18next.t("battle:pokemonCaught", { pokemonName: pokemon.name }), null, () => {
       const end = () => {
-        this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
         this.scene.pokemonInfoContainer.hide();
         this.removePb();
         this.end();
@@ -5035,19 +4725,12 @@ export class AttemptCapturePhase extends PokemonPhase {
           }
         });
       };
-      Promise.all([pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon)]).then(() => {
+      Promise.all([ pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon) ]).then(() => {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
-            this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
-              this.scene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
+            this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.name }), null, () => {
+              this.scene.pokemonInfoContainer.makeRoomForConfirmUi();
               this.scene.ui.setMode(Mode.CONFIRM, () => {
-                const newPokemon = this.scene.addPlayerPokemon(pokemon.species, pokemon.level, pokemon.abilityIndex, pokemon.formIndex, pokemon.gender, pokemon.shiny, pokemon.variant, pokemon.ivs, pokemon.nature, pokemon);
-                this.scene.ui.setMode(Mode.SUMMARY, newPokemon, 0, SummaryUiMode.DEFAULT, () => {
-                  this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-                    promptRelease();
-                  });
-                }, false);
-              }, () => {
                 this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
@@ -5062,7 +4745,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                   removePokemon();
                   end();
                 });
-              }, "fullParty");
+              });
             });
           };
           promptRelease();
@@ -5106,7 +4789,7 @@ export class AttemptRunPhase extends PokemonPhase {
       this.scene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
       this.scene.tweens.add({
-        targets: [this.scene.arenaEnemy, enemyField].flat(),
+        targets: [ this.scene.arenaEnemy, enemyField ].flat(),
         alpha: 0,
         duration: 250,
         ease: "Sine.easeIn",
@@ -5147,8 +4830,6 @@ export class SelectModifierPhase extends BattlePhase {
 
     if (!this.rerollCount) {
       this.updateSeed();
-    } else {
-      this.scene.reroll = false;
     }
 
     const party = this.scene.getParty();
@@ -5174,43 +4855,33 @@ export class SelectModifierPhase extends BattlePhase {
       let cost: integer;
       switch (rowCursor) {
       case 0:
-        switch (cursor) {
-        case 0:
+        if (!cursor) {
           const rerollCost = this.getRerollCost(typeOptions, this.scene.lockModifierTiers);
           if (this.scene.money < rerollCost) {
             this.scene.ui.playError();
             return false;
           } else {
-            this.scene.reroll = true;
             this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1, typeOptions.map(o => o.type.tier)));
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
-            if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
-              this.scene.money -= rerollCost;
-              this.scene.updateMoneyText();
-              this.scene.animateMoneyChanged(false);
-            }
+            this.scene.money -= rerollCost;
+            this.scene.updateMoneyText();
             this.scene.playSound("buy");
           }
-          break;
-        case 1:
-          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, itemQuantity: integer, toSlotIndex: integer) => {
+        } else if (cursor === 1) {
+          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, toSlotIndex: integer) => {
             if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
-              const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                    && m.isTransferrable && m.pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
-              const itemModifier = itemModifiers[itemIndex];
-              this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity);
+              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers)).then(() => {
+                const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+                    && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
+                const itemModifier = itemModifiers[itemIndex];
+                this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, true);
+              });
             } else {
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
             }
           }, PartyUiHandler.FilterItemMaxStacks);
-          break;
-        case 2:
-          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
-          });
-          break;
-        case 3:
+        } else {
           this.scene.lockModifierTiers = !this.scene.lockModifierTiers;
           const uiHandler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
           uiHandler.setRerollCost(this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
@@ -5230,7 +4901,7 @@ export class SelectModifierPhase extends BattlePhase {
         break;
       }
 
-      if (cost && (this.scene.money < cost) && !Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+      if (cost && this.scene.money < cost) {
         this.scene.ui.playError();
         return false;
       }
@@ -5240,11 +4911,8 @@ export class SelectModifierPhase extends BattlePhase {
         if (cost) {
           result.then(success => {
             if (success) {
-              if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
-                this.scene.money -= cost;
-                this.scene.updateMoneyText();
-                this.scene.animateMoneyChanged(false);
-              }
+              this.scene.money -= cost;
+              this.scene.updateMoneyText();
               this.scene.playSound("buy");
               (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
             } else {
@@ -5324,10 +4992,8 @@ export class SelectModifierPhase extends BattlePhase {
 
   getRerollCost(typeOptions: ModifierTypeOption[], lockRarities: boolean): integer {
     let baseValue = 0;
-    if (Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
-      return baseValue;
-    } else if (lockRarities) {
-      const tierValues = [50, 125, 300, 750, 2000];
+    if (lockRarities) {
+      const tierValues = [ 50, 125, 300, 750, 2000 ];
       for (const opt of typeOptions) {
         baseValue += tierValues[opt.type.tier];
       }
@@ -5359,19 +5025,14 @@ export class EggLapsePhase extends Phase {
     super.start();
 
     const eggsToHatch: Egg[] = this.scene.gameData.eggs.filter((egg: Egg) => {
-      return Overrides.EGG_IMMEDIATE_HATCH_OVERRIDE ? true : --egg.hatchWaves < 1;
+      return Overrides.IMMEDIATE_HATCH_EGGS_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
 
-    let eggCount: integer = eggsToHatch.length;
-
-    if (eggCount) {
+    if (eggsToHatch.length) {
       this.scene.queueMessage(i18next.t("battle:eggHatching"));
 
       for (const egg of eggsToHatch) {
-        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, eggCount));
-        if (eggCount > 0) {
-          eggCount--;
-        }
+        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg));
       }
 
     }
@@ -5511,7 +5172,7 @@ export class ScanIvsPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
-    this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
+    this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: pokemon.name }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.clearText();
@@ -5547,7 +5208,7 @@ export class TrainerMessageTestPhase extends BattlePhase {
         continue;
       }
       const config = trainerConfigs[type];
-      [config.encounterMessages, config.femaleEncounterMessages, config.victoryMessages, config.femaleVictoryMessages, config.defeatMessages, config.femaleDefeatMessages]
+      [ config.encounterMessages, config.femaleEncounterMessages, config.victoryMessages, config.femaleVictoryMessages, config.defeatMessages, config.femaleDefeatMessages ]
         .map(messages => {
           if (messages?.length) {
             testMessages.push(...messages);
