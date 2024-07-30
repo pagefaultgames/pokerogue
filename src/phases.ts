@@ -398,7 +398,7 @@ export class TitlePhase extends Phase {
           var data = parseSlotData(i)
           return {
             //label: `${i18next.t("menuUiHandler:slot", {slotNumber: i+1})}`,
-            label: (data ? data.description : `${i+1}`),
+            label: (data ? `${i18next.t("menuUiHandler:slot", {slotNumber: i+1})}${data.description.substring(1)}` : `${i18next.t("menuUiHandler:slot", {slotNumber: i+1})}`),
             handler: () => {
               callback(i);
               this.scene.ui.revertMode();
