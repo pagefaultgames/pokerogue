@@ -571,7 +571,7 @@ export default class Move implements Localizable {
    * @param target {@linkcode Pokemon} the Pokemon receiving the move
    * @returns boolean
    */
-  checkFlag(flag: MoveFlags, user: Pokemon, target: Pokemon): boolean {
+  checkFlag(flag: MoveFlags, user: Pokemon, target: Pokemon | null): boolean {
     // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
     switch (flag) {
     case MoveFlags.MAKES_CONTACT:
@@ -2400,7 +2400,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
     });
   }
 
-  usedChargeEffect(user: Pokemon, target: Pokemon, move: Move): boolean {
+  usedChargeEffect(user: Pokemon, target: Pokemon | null, move: Move): boolean {
     if (!this.chargeEffect) {
       return false;
     }
@@ -5824,7 +5824,7 @@ export function applyMoveAttrs(attrType: Constructor<MoveAttr>, user: Pokemon, t
   return applyMoveAttrsInternal((attr: MoveAttr) => attr instanceof attrType, user, target, move, args);
 }
 
-export function applyFilteredMoveAttrs(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): Promise<void> {
+export function applyFilteredMoveAttrs(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon | null, move: Move, ...args: any[]): Promise<void> {
   return applyMoveAttrsInternal(attrFilter, user, target, move, args);
 }
 

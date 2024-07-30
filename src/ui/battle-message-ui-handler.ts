@@ -153,7 +153,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     super.clear();
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
     this.hideNameText();
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }

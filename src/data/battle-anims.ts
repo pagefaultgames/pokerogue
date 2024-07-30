@@ -668,7 +668,7 @@ interface SpriteCache {
 }
 
 export abstract class BattleAnim {
-  public user: Pokemon;
+  public user: Pokemon | null;
   public target: Pokemon;
   public sprites: Phaser.GameObjects.Sprite[];
   public bgSprite: Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle;
@@ -676,13 +676,13 @@ export abstract class BattleAnim {
   private srcLine: number[];
   private dstLine: number[];
 
-  constructor(user: Pokemon, target: Pokemon) {
-    this.user = user;
+  constructor(user?: Pokemon, target: Pokemon) {
+    this.user = user ?? null;
     this.target = target;
     this.sprites = [];
   }
 
-    abstract getAnim(): AnimConfig;
+    abstract getAnim(): AnimConfig | null;
 
     abstract isOppAnim(): boolean;
 
@@ -980,16 +980,16 @@ export abstract class BattleAnim {
 }
 
 export class CommonBattleAnim extends BattleAnim {
-  public commonAnim: CommonAnim;
+  public commonAnim: CommonAnim | null;
 
-  constructor(commonAnim: CommonAnim, user: Pokemon, target?: Pokemon) {
+  constructor(commonAnim: CommonAnim | null, user: Pokemon, target?: Pokemon) {
     super(user, target || user);
 
     this.commonAnim = commonAnim;
   }
 
-  getAnim(): AnimConfig {
-    return commonAnims.get(this.commonAnim);
+  getAnim(): AnimConfig | null {
+    return this.commonAnim ? commonAnims.get(this.commonAnim) ?? null : null;
   }
 
   isOppAnim(): boolean {

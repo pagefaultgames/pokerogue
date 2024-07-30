@@ -271,10 +271,10 @@ export default class UI extends Phaser.GameObjects.Container {
     return handler.processInput(button);
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void {
+  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void {
     if (prompt && text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
-      let showMessageAndCallback = () => callback();
+      let showMessageAndCallback = () => callback && callback();
       for (let p = messagePages.length - 1; p >= 0; p--) {
         const originalFunc = showMessageAndCallback;
         showMessageAndCallback = () => this.showText(messagePages[p], null, originalFunc, null, true);
@@ -290,18 +290,18 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  showDialogue(text: string, name: string, delay: integer = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
+  showDialogue(text: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
     // First get the gender of the player (default male) (also used if UNSET)
     let playerGenderPrefix = "PGM";
     if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
       playerGenderPrefix = "PGF";
     }
     // Add the prefix to the text
-    const localizationKey = playerGenderPrefix + text;
+    const localizationKey: string = playerGenderPrefix + text;
 
     // Get localized dialogue (if available)
     let hasi18n = false;
-    if (i18next.exists(localizationKey as ParseKeys) ) {
+    if (i18next.exists(localizationKey) ) {
       text = i18next.t(localizationKey as ParseKeys);
       hasi18n = true;
 

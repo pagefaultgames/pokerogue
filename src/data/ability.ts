@@ -2371,7 +2371,7 @@ export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
 }
 
 export class PreStatChangeAbAttr extends AbAttr {
-  applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+  applyPreStatChange(pokemon: Pokemon | null, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -4063,14 +4063,14 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
 
 async function applyAbAttrsInternal<TAttr extends AbAttr>(
   attrType: Constructor<TAttr>,
-  pokemon: Pokemon,
+  pokemon: Pokemon | null,
   applyFunc: AbAttrApplyFunc<TAttr>,
   args: any[],
   showAbilityInstant: boolean = false,
   quiet: boolean = false,
 ) {
   for (const passive of [false, true]) {
-    if (!pokemon.canApplyAbility(passive)) {
+    if (!pokemon?.canApplyAbility(passive)) {
       continue;
     }
 
@@ -4194,7 +4194,7 @@ export function applyPreSwitchOutAbAttrs(attrType: Constructor<PreSwitchOutAbAtt
 }
 
 export function applyPreStatChangeAbAttrs(attrType: Constructor<PreStatChangeAbAttr>,
-  pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  pokemon: Pokemon | null, stat: BattleStat, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PreStatChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreStatChange(pokemon, passive, stat, cancelled, args), args);
 }
 
@@ -4215,7 +4215,7 @@ export function applyPreApplyBattlerTagAbAttrs(attrType: Constructor<PreApplyBat
 }
 
 export function applyPreWeatherEffectAbAttrs(attrType: Constructor<PreWeatherEffectAbAttr>,
-  pokemon: Pokemon, weather: Weather, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, weather: Weather | null, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PreWeatherDamageAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreWeatherEffect(pokemon, passive, weather, cancelled, args), args, true);
 }
 
@@ -4230,7 +4230,7 @@ export function applyPostWeatherChangeAbAttrs(attrType: Constructor<PostWeatherC
 }
 
 export function applyPostWeatherLapseAbAttrs(attrType: Constructor<PostWeatherLapseAbAttr>,
-  pokemon: Pokemon, weather: Weather, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, weather: Weather | null, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostWeatherLapseAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostWeatherLapse(pokemon, passive, weather, args), args);
 }
 

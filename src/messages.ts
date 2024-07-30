@@ -18,7 +18,10 @@ export function getPokemonMessage(pokemon: Pokemon, content: string): string {
  * @param pokemon {@linkcode Pokemon} name and battle context will be retrieved from this instance
  * @returns {string} ex: "Wild Gengar", "Ectoplasma sauvage"
  */
-export function getPokemonNameWithAffix(pokemon: Pokemon): string {
+export function getPokemonNameWithAffix(pokemon: Pokemon | undefined): string {
+  if (!pokemon) {
+    return "Missigno";
+  } // TODO: little easter-egg, lol
   switch (pokemon.scene.currentBattle.battleSpec) {
   case BattleSpec.DEFAULT:
     return !pokemon.isPlayer()

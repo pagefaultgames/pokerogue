@@ -782,9 +782,9 @@ export default class BattleScene extends SceneBase {
     return activeOnly ? this.infoToggles.filter(t => t?.isActive()) : this.infoToggles;
   }
 
-  getPokemonById(pokemonId: integer): Pokemon | undefined {
+  getPokemonById(pokemonId: integer): Pokemon {
     const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
-    return findInParty(this.getParty()) || findInParty(this.getEnemyParty());
+    return findInParty(this.getParty()) || findInParty(this.getEnemyParty())!; // TODO: is this bang correct?
   }
 
   addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
@@ -2155,7 +2155,7 @@ export default class BattleScene extends SceneBase {
    * @param promptDelay optional param for MessagePhase constructor
    * @param defer boolean for which queue to add it to, false -> add to PhaseQueuePrepend, true -> nextCommandPhaseQueue
    */
-  queueMessage(message: string, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, defer?: boolean) {
+  queueMessage(message: string, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null, defer?: boolean | null) {
     const phase = new MessagePhase(this, message, callbackDelay, prompt, promptDelay);
     if (!defer) {
       // adds to the end of PhaseQueuePrepend
