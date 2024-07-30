@@ -380,6 +380,7 @@ export default class BattleScene extends SceneBase {
       origin: { x: 0, y: 0 }
     }, true);
 
+    //@ts-ignore (the defined types in the package are incromplete...)
     transition.transit({
       mode: "blinds",
       ease: "Cubic.easeInOut",
