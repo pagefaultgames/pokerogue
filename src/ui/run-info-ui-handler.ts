@@ -407,8 +407,8 @@ export default class GameInfoUiHandler extends UiHandler {
       const pSpecies = pokemon.species;
       const pNature = getNatureName(pokemon.nature);
       const pName = pokemon.fusionSpecies ? pokemon.name : pSpecies.name;
-      const passiveLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:passive") : i18next.t("starterSelectUiHandler:passive").charAt(0);
-      const abilityLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:ability") : i18next.t("starterSelectUiHandler:ability").charAt(0);
+      const passiveLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:passive") : (i18next.t("starterSelectUiHandler:passive") as string).charAt(0);
+      const abilityLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:ability") : (i18next.t("starterSelectUiHandler:ability") as string).charAt(0);
       const pPassiveInfo = pokemon.passive ? `${passiveLabel+": "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]].name}` : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
       const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
@@ -565,11 +565,11 @@ export default class GameInfoUiHandler extends UiHandler {
     const allContainers = this.partyContainer.getAll("name", "PkmnInfo");
     allContainers.forEach((c: Phaser.GameObjects.Container) => {
       console.log(c.getByName("PkmnMoves"));
-      c.getByName("PkmnMoves").setVisible(partyVisible);
-      c.getByName("PkmnInfoText").setVisible(partyVisible);
-      c.getByName("PkmnStatsText").setVisible(partyVisible);
-      c.getByName("PkmnMarks").setVisible(partyVisible);
-      c.getByName("heldItems").setVisible(!partyVisible);
+      (c.getByName("PkmnMoves") as Phaser.GameObjects.Container).setVisible(partyVisible);
+      (c.getByName("PkmnInfoText") as Phaser.GameObjects.Container).setVisible(partyVisible);
+      (c.getByName("PkmnStatsText") as Phaser.GameObjects.Container).setVisible(partyVisible);
+      (c.getByName("PkmnMarks") as Phaser.GameObjects.Container).setVisible(partyVisible);
+      (c.getByName("heldItems") as Phaser.GameObjects.Container).setVisible(!partyVisible);
       this.partyVisibility = partyVisible;
     });
   }
