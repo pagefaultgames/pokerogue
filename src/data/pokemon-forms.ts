@@ -180,7 +180,7 @@ export class SpeciesFormChange {
     return true;
   }
 
-  findTrigger(triggerType: Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger {
+  findTrigger(triggerType: Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger | null {
     if (!this.trigger.hasTriggerType(triggerType)) {
       return null;
     }
@@ -188,7 +188,7 @@ export class SpeciesFormChange {
     const trigger = this.trigger;
 
     if (trigger instanceof SpeciesFormChangeCompoundTrigger) {
-      return trigger.triggers.find(t => t.hasTriggerType(triggerType));
+      return trigger.triggers.find(t => t.hasTriggerType(triggerType)) ?? null;
     }
 
     return trigger;
@@ -197,11 +197,11 @@ export class SpeciesFormChange {
 
 export class SpeciesFormChangeCondition {
   public predicate: SpeciesFormChangeConditionPredicate;
-  public enforceFunc: SpeciesFormChangeConditionEnforceFunc;
+  public enforceFunc: SpeciesFormChangeConditionEnforceFunc | null;
 
   constructor(predicate: SpeciesFormChangeConditionPredicate, enforceFunc?: SpeciesFormChangeConditionEnforceFunc) {
     this.predicate = predicate;
-    this.enforceFunc = enforceFunc;
+    this.enforceFunc = enforceFunc ?? null;
   }
 }
 
@@ -331,7 +331,7 @@ export abstract class SpeciesFormChangeMoveTrigger extends SpeciesFormChangeTrig
 export class SpeciesFormChangePreMoveTrigger extends SpeciesFormChangeMoveTrigger {
   canChange(pokemon: Pokemon): boolean {
     const command = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
-    return command?.move && this.movePredicate(command.move.move) === this.used;
+    return !!command?.move && this.movePredicate(command.move.move) === this.used;
   }
 }
 
