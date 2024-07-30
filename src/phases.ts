@@ -2557,9 +2557,9 @@ export class NewBattlePhase extends BattlePhase {
 
 export class CommonAnimPhase extends PokemonPhase {
   private anim: CommonAnim;
-  private targetIndex: integer;
+  private targetIndex: integer | undefined;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, targetIndex: BattlerIndex, anim: CommonAnim) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, targetIndex: BattlerIndex | undefined, anim: CommonAnim) {
     super(scene, battlerIndex);
 
     this.anim = anim;
@@ -4712,7 +4712,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
   private healStatus: boolean;
   private preventFullHeal: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, hpHealed: integer, message: string, showFullHpMessage: boolean, skipAnim: boolean = false, revive: boolean = false, healStatus: boolean = false, preventFullHeal: boolean = false) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, hpHealed: integer, message: string | null, showFullHpMessage: boolean, skipAnim: boolean = false, revive: boolean = false, healStatus: boolean = false, preventFullHeal: boolean = false) {
     super(scene, battlerIndex, undefined, CommonAnim.HEALTH_UP);
 
     this.hpHealed = hpHealed;

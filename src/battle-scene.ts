@@ -2191,7 +2191,10 @@ export default class BattleScene extends SceneBase {
     return Math.floor(moneyValue / 10) * 10;
   }
 
-  addModifier(modifier: Modifier, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean): Promise<boolean> {
+  addModifier(modifier: Modifier | null, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean): Promise<boolean> {
+    if (!modifier) {
+      return Promise.resolve(false);
+    }
     return new Promise(resolve => {
       let success = false;
       const soundName = modifier.type.soundName;

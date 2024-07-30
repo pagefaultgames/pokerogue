@@ -435,7 +435,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.species.forms[this.formIndex].formKey;
   }
 
-  getFusionFormKey(): string {
+  getFusionFormKey(): string | null {
     if (!this.fusionSpecies) {
       return null;
     }

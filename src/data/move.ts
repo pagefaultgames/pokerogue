@@ -5806,7 +5806,7 @@ const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target
 
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
-function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<void> {
+function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon | null, move: Move, args: any[]): Promise<void> {
   return new Promise(resolve => {
     const attrPromises: Promise<boolean>[] = [];
     const moveAttrs = move.attrs.filter(a => attrFilter(a));
@@ -5820,7 +5820,7 @@ function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, targe
   });
 }
 
-export function applyMoveAttrs(attrType: Constructor<MoveAttr>, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): Promise<void> {
+export function applyMoveAttrs(attrType: Constructor<MoveAttr>, user: Pokemon, target: Pokemon | null, move: Move, ...args: any[]): Promise<void> {
   return applyMoveAttrsInternal((attr: MoveAttr) => attr instanceof attrType, user, target, move, args);
 }
 

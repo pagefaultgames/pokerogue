@@ -25,12 +25,12 @@ export enum ArenaTagSide {
 export abstract class ArenaTag {
   public tagType: ArenaTagType;
   public turnCount: integer;
-  public sourceMove: Moves;
-  public sourceId: integer;
+  public sourceMove: Moves | undefined;
+  public sourceId: integer | undefined;
   public side: ArenaTagSide;
 
 
-  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId?: integer, side: ArenaTagSide = ArenaTagSide.BOTH) {
+  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId?: integer, side: ArenaTagSide = ArenaTagSide.BOTH) {
     this.tagType = tagType;
     this.turnCount = turnCount;
     this.sourceMove = sourceMove;
@@ -56,7 +56,7 @@ export abstract class ArenaTag {
     return this.turnCount < 1 || !!(--this.turnCount);
   }
 
-  getMoveName(): string {
+  getMoveName(): string | null {
     return this.sourceMove
       ? allMoves[this.sourceMove].name
       : null;
@@ -75,9 +75,14 @@ export class MistTag extends ArenaTag {
   onAdd(arena: Arena, quiet: boolean = false): void {
     super.onAdd(arena);
 
-    const source = arena.scene.getPokemonById(this.sourceId);
-    if (!quiet) {
-      arena.scene.queueMessage(i18next.t("arenaTag:mistOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(source) }));
+    if (this.sourceId) {
+      const source = arena.scene.getPokemonById(this.sourceId);
+
+      if (!quiet && source) {
+        arena.scene.queueMessage(i18next.t("arenaTag:mistOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(source) }));
+      } else if (!quiet) {
+        console.warn("Failed to get source for MistTag onAdd");
+      }
     }
   }
 
@@ -280,8 +285,14 @@ class MatBlockTag extends ConditionalProtectTag {
   }
 
   onAdd(arena: Arena) {
-    const source = arena.scene.getPokemonById(this.sourceId);
-    arena.scene.queueMessage(i18next.t("arenaTag:matBlockOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(source) }));
+    if (this.sourceId) {
+      const source = arena.scene.getPokemonById(this.sourceId);
+      if (source) {
+        arena.scene.queueMessage(i18next.t("arenaTag:matBlockOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(source) }));
+      } else {
+        console.warn("Failed to get source for MatBlockTag onAdd");
+      }
+    }
   }
 }
 
@@ -317,10 +328,16 @@ class WishTag extends ArenaTag {
   }
 
   onAdd(arena: Arena): void {
-    const user = arena.scene.getPokemonById(this.sourceId);
-    this.battlerIndex = user.getBattlerIndex();
-    this.triggerMessage = i18next.t("arenaTag:wishTagOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(user) });
-    this.healHp = Math.max(Math.floor(user.getMaxHp() / 2), 1);
+    if (this.sourceId) {
+      const user = arena.scene.getPokemonById(this.sourceId);
+      if (user) {
+        this.battlerIndex = user.getBattlerIndex();
+        this.triggerMessage = i18next.t("arenaTag:wishTagOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(user) });
+        this.healHp = Math.max(Math.floor(user.getMaxHp() / 2), 1);
+      } else {
+        console.warn("Failed to get source for WishTag onAdd");
+      }
+    }
   }
 
   onRemove(arena: Arena): void {
@@ -556,7 +573,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
 class DelayedAttackTag extends ArenaTag {
   public targetIndex: BattlerIndex;
 
-  constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, targetIndex: BattlerIndex) {
+  constructor(tagType: ArenaTagType, sourceMove: Moves | undefined, sourceId: integer, targetIndex: BattlerIndex) {
     super(tagType, 3, sourceMove, sourceId);
 
     this.targetIndex = targetIndex;
@@ -791,7 +808,7 @@ class HappyHourTag extends ArenaTag {
   }
 }
 
-export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
+export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
   switch (tagType) {
   case ArenaTagType.MIST:
     return new MistTag(turnCount, sourceId, side);
