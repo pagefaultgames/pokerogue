@@ -1638,9 +1638,14 @@ export class HitHealAttr extends MoveEffectAttr {
       message = i18next.t("battle:regainHealth", {pokemonName: getPokemonNameWithAffix(user)});
     }
     if (reverseDrain) {
-      user.turnData.damageTaken += healAmount;
-      healAmount = healAmount * -1;
-      message = null;
+      if (user.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
+        healAmount = 0;
+        message = null;
+      } else {
+        user.turnData.damageTaken += healAmount;
+        healAmount = healAmount * -1;
+        message = null;
+      }
     }
     user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(), healAmount, message, false, true));
     return true;
@@ -2148,6 +2153,12 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    // Special edge case for shield dust blocking Sparkling Aria curing burn
+    const moveTargets = getMoveTargets(user, move.id);
+    if (target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && move.id === Moves.SPARKLING_ARIA && moveTargets.targets.length === 1) {
       return false;
     }
 
@@ -2856,7 +2867,12 @@ export class BeatUpAttr extends VariablePowerAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
-    const allyIndex = user.turnData.hitCount - user.turnData.hitsLeft;
+
+    const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+    const allyCount = party.filter(pokemon => {
+      return pokemon.id === user.id || !pokemon.status?.effect;
+    }).length;
+    const allyIndex = (user.turnData.hitCount - user.turnData.hitsLeft) % allyCount;
     power.value = beatUpFunc(user, allyIndex);
     return true;
   }
