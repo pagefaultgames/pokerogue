@@ -297,6 +297,8 @@ export class GameData {
 
   public gameStats: GameStats;
 
+  public runHistory: RunHistoryData;
+
   public unlocks: Unlocks;
 
   public achvUnlocks: AchvUnlocks;
@@ -607,7 +609,7 @@ export class GameData {
     //Arbitrary limit of 25 entries per User --> Can increase or decrease
     if (timestamps.length >= 25) {
       const oldestTimestamp = Math.min.apply(Math, timestampsNo);
-      delete this.scene.gameData.runHistory[oldestTimestamp.toString()];
+      delete runHistoryData[oldestTimestamp.toString()];
     }
 
     const timestamp = (runEntry.timestamp).toString();
