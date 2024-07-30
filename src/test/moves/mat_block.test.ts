@@ -5,12 +5,12 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, CommandPhase } from "#app/phases.js";
+import { BerryPhase, CommandPhase, TurnEndPhase } from "#app/phases.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 
 const TIMEOUT = 20 * 1000;
 
-describe("Moves - Quick Guard", () => {
+describe("Moves - Mat Block", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -29,10 +29,10 @@ describe("Moves - Quick Guard", () => {
 
     game.override.battleType("double");
 
-    game.override.moveset([Moves.QUICK_GUARD, Moves.SPLASH, Moves.FOLLOW_ME]);
+    game.override.moveset([Moves.MAT_BLOCK, Moves.SPLASH]);
 
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset(Array(4).fill(Moves.QUICK_ATTACK));
+    game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
     game.override.enemyAbility(Abilities.INSOMNIA);
 
     game.override.startingLevel(100);
@@ -40,13 +40,13 @@ describe("Moves - Quick Guard", () => {
   });
 
   test(
-    "should protect the user and allies from priority moves",
+    "should protect the user and allies from attack moves",
     async () => {
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.doAttack(getMovePosition(game.scene, 0, Moves.MAT_BLOCK));
 
       await game.phaseInterceptor.to(CommandPhase);
 
@@ -59,16 +59,15 @@ describe("Moves - Quick Guard", () => {
   );
 
   test(
-    "should protect the user and allies from Prankster-boosted moves",
+    "should not protect the user and allies from status moves",
     async () => {
-      game.override.enemyAbility(Abilities.PRANKSTER);
       game.override.enemyMoveset(Array(4).fill(Moves.GROWL));
 
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.doAttack(getMovePosition(game.scene, 0, Moves.MAT_BLOCK));
 
       await game.phaseInterceptor.to(CommandPhase);
 
@@ -76,30 +75,33 @@ describe("Moves - Quick Guard", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.summonData.battleStats[BattleStat.ATK]).toBe(0));
+      leadPokemon.forEach(p => expect(p.summonData.battleStats[BattleStat.ATK]).toBe(-2));
     }, TIMEOUT
   );
 
   test(
-    "should stop subsequent hits of a multi-hit priority move",
+    "should fail when used after the first turn",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.WATER_SHURIKEN));
-
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerField();
-      const enemyPokemon = game.scene.getEnemyField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
-
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(CommandPhase);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.FOLLOW_ME));
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      const leadStartingHp = leadPokemon.map(p => p.hp);
+
+      await game.phaseInterceptor.to(CommandPhase, false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.MAT_BLOCK));
+      await game.phaseInterceptor.to(CommandPhase);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.MAT_BLOCK));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-      enemyPokemon.forEach(p => expect(p.turnData.hitCount).toBe(1));
-    }
+      expect(leadPokemon.some((p, i) => p.hp < leadStartingHp[i])).toBeTruthy();
+    }, TIMEOUT
   );
 });

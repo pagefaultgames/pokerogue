@@ -10,7 +10,7 @@ import { BattleStat } from "#app/data/battle-stat.js";
 
 const TIMEOUT = 20 * 1000;
 
-describe("Moves - Quick Guard", () => {
+describe("Moves - Wide Guard", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -29,10 +29,10 @@ describe("Moves - Quick Guard", () => {
 
     game.override.battleType("double");
 
-    game.override.moveset([Moves.QUICK_GUARD, Moves.SPLASH, Moves.FOLLOW_ME]);
+    game.override.moveset([Moves.WIDE_GUARD, Moves.SPLASH, Moves.SURF]);
 
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset(Array(4).fill(Moves.QUICK_ATTACK));
+    game.override.enemyMoveset(Array(4).fill(Moves.SWIFT));
     game.override.enemyAbility(Abilities.INSOMNIA);
 
     game.override.startingLevel(100);
@@ -40,13 +40,13 @@ describe("Moves - Quick Guard", () => {
   });
 
   test(
-    "should protect the user and allies from priority moves",
+    "should protect the user and allies from multi-target attack moves",
     async () => {
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.doAttack(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
@@ -59,16 +59,15 @@ describe("Moves - Quick Guard", () => {
   );
 
   test(
-    "should protect the user and allies from Prankster-boosted moves",
+    "should protect the user and allies from multi-target status moves",
     async () => {
-      game.override.enemyAbility(Abilities.PRANKSTER);
       game.override.enemyMoveset(Array(4).fill(Moves.GROWL));
 
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.doAttack(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
@@ -81,25 +80,46 @@ describe("Moves - Quick Guard", () => {
   );
 
   test(
-    "should stop subsequent hits of a multi-hit priority move",
+    "should not protect the user and allies from single-target moves",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.WATER_SHURIKEN));
+      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+
+      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+
+      const leadPokemon = game.scene.getPlayerField();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
+
+      await game.phaseInterceptor.to(CommandPhase);
+
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+
+      expect(leadPokemon.some(p => p.hp < p.getMaxHp())).toBeTruthy();
+    }, TIMEOUT
+  );
+
+  test(
+    "should protect the user from its ally's multi-target move",
+    async () => {
+      game.override.enemyMoveset(Array(4).fill(Moves.SPLASH));
 
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.doAttack(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.FOLLOW_ME));
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SURF));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-      enemyPokemon.forEach(p => expect(p.turnData.hitCount).toBe(1));
-    }
+      expect(leadPokemon[0].hp).toBe(leadPokemon[0].getMaxHp());
+      enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(p.getMaxHp()));
+    }, TIMEOUT
   );
 });

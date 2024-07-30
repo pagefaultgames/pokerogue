@@ -60,6 +60,27 @@ describe("Moves - Crafty Shield", () => {
   );
 
   test(
+    "should not protect the user and allies from attack moves",
+    async () => {
+      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+
+      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+
+      const leadPokemon = game.scene.getPlayerField();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
+
+      await game.phaseInterceptor.to(CommandPhase);
+
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+
+      expect(leadPokemon.some(p => p.hp < p.getMaxHp())).toBeTruthy();
+    }, TIMEOUT
+  );
+
+  test(
     "should protect the user and allies from moves that ignore other protection",
     async () => {
       game.override.enemySpecies(Species.DUSCLOPS);
