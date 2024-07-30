@@ -6,7 +6,7 @@ export const arenaTag: SimpleTranslationEntries = {
   "arenaOnRemove": "Der Effekt von {{moveName}} lässt nach!",
   "arenaOnRemovePlayer": "Der Effekt von {{moveName}} lässt auf deiner Seite nach!",
   "arenaOnRemoveEnemy": "Der Effekt von {{moveName}} lässt auf der Seite des Gegners nach!",
-  "mistOnAdd": "Pokémon, die auf der Seite von {{pokemonNameWithAffix} kämpfen, werden in Weißnebel gehüllt!!",
+  "mistOnAdd": "Pokémon, die auf der Seite von {{pokemonNameWithAffix}} kämpfen, werden in Weißnebel gehüllt!!",
   "mistApply": "Der Weißnebel verhindert die Senkung von Statuswerten!",
   "reflectOnAdd": "Reflektor stärkt Pokémon gegen physische Attacken!",
   "reflectOnAddPlayer": "Reflektor stärkt Pokémon auf deiner Seite gegen physische Attacken!",
