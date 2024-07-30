@@ -219,7 +219,7 @@ export class EvolutionPhase extends Phase {
                         this.scene.time.delayedCall(900, () => {
                           evolutionHandler.canCancel = false;
 
-                          this.pokemon.evolve(this.evolution).then(() => {
+                          this.pokemon.evolve(this.evolution, this.pokemon.species).then(() => {
                             const levelMoves = this.pokemon.getLevelMoves(this.lastLevel + 1, true);
                             for (const lm of levelMoves) {
                               this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.scene.getParty().indexOf(this.pokemon), lm[1]));
