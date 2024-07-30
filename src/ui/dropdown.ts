@@ -6,12 +6,15 @@ import i18next from "i18next";
 
 export enum DropDownState {
     ON = 0,
-    OFF
+    OFF = 1,
+    INCLUDE = 2,
+    EXCLUDE = 3,
 }
 
 export enum DropDownType {
     MULTI = 0,
-    SINGLE
+    SINGLE = 1,
+    TRI = 2
 }
 
 export enum SortDirection {
@@ -26,11 +29,30 @@ export class DropDownOption extends Phaser.GameObjects.Container {
   public sprite?: Phaser.GameObjects.Sprite;
   public val: any;
   public dir: SortDirection = SortDirection.ASC;
+  public offStateLabel: string; // label for OFF state in TRI dropdown
+  public includeStateLabel: string; // label for INCLUDE state in TRI dropdown
+  public excludeStateLabel: string; // label for EXCLUDE state in TRI dropdown
+  private onColor = 0x55ff55;
+  private offColor = 0x272727;
+  private includeColor = 0x55ff55;
+  private excludeColor = 0xff5555;
 
-  constructor(scene: SceneBase, val: any, text: string, sprite?: Phaser.GameObjects.Sprite, state: DropDownState = DropDownState.ON) {
+
+  constructor(scene: SceneBase, val: any, text: string | string[], sprite?: Phaser.GameObjects.Sprite, state: DropDownState = DropDownState.ON) {
     super(scene);
     this.val = val;
+    this.state = state;
     if (text) {
+      if (Array.isArray(text)) {
+        this.offStateLabel = text[0];
+        this.includeStateLabel = text[1];
+        this.excludeStateLabel = text[2];
+        text = text[0];
+      } else {
+        this.offStateLabel = undefined;
+        this.includeStateLabel = undefined;
+        this.excludeStateLabel = undefined;
+      }
       this.text = addTextObject(scene, 0, 0, text, TextStyle.TOOLTIP_CONTENT);
       this.text.setOrigin(0, 0.5);
       this.add(this.text);
@@ -40,11 +62,10 @@ export class DropDownOption extends Phaser.GameObjects.Container {
       this.sprite = sprite.setOrigin(0, 0.5);
       this.add(this.sprite);
     }
-    this.state = state;
   }
 
   public setupToggle(type: DropDownType): void {
-    if (type === DropDownType.MULTI) {
+    if (type === DropDownType.MULTI || type === DropDownType.TRI) {
       this.toggle = this.scene.add.sprite(0, 0, "candy");
       this.toggle.setScale(0.3);
       this.toggle.setOrigin(0, 0.5);
@@ -57,18 +78,54 @@ export class DropDownOption extends Phaser.GameObjects.Container {
     this.add(this.toggle);
   }
 
-  public setOptionState(state: DropDownState): DropDownState {
-    this.state = state % 2;
-    if (this.state === DropDownState.OFF) {
-      this.toggle.setTint(0x272727);
-    } else {
-      this.toggle.setTint(0x55ff55);
+  public setOptionState(type: DropDownType, state: DropDownState): DropDownState {
+    this.state = state;
+    // if type is MULTI or SINGLE, set the color of the toggle based on the state
+    if (type === DropDownType.MULTI || type === DropDownType.SINGLE) {
+      if (this.state === DropDownState.OFF) {
+        this.toggle.setTint(this.offColor);
+      } else if (this.state === DropDownState.ON) {
+        this.toggle.setTint(this.onColor);
+      }
+    } else if (type === DropDownType.TRI) {
+      if (this.state === DropDownState.OFF) {
+        this.text.setText(this.offStateLabel);
+        this.toggle.setTint(this.offColor);
+      } else if (this.state === DropDownState.INCLUDE) {
+        this.text.setText(this.includeStateLabel);
+        this.toggle.setTint(this.includeColor);
+      } else if (this.state === DropDownState.EXCLUDE) {
+        this.text.setText(this.excludeStateLabel);
+        this.toggle.setTint(this.excludeColor);
+      }
     }
     return this.state;
   }
 
-  public toggleOptionState(): DropDownState {
-    return this.setOptionState(this.state + 1);
+  public toggleOptionState(type: DropDownType): DropDownState {
+    if (type === DropDownType.TRI) {
+      switch (this.state) {
+      case DropDownState.OFF:
+        this.state = DropDownState.INCLUDE;
+        break;
+      case DropDownState.INCLUDE:
+        this.state = DropDownState.EXCLUDE;
+        break;
+      case DropDownState.EXCLUDE:
+        this.state = DropDownState.OFF;
+        break;
+      }
+    } else {
+      switch (this.state) {
+      case DropDownState.ON:
+        this.state = DropDownState.OFF;
+        break;
+      case DropDownState.OFF:
+        this.state = DropDownState.ON;
+        break;
+      }
+    }
+    return this.setOptionState(type, this.state);
   }
 
   public setDirection(dir: SortDirection): void {
@@ -117,7 +174,7 @@ export class DropDown extends Phaser.GameObjects.Container {
       if (type === DropDownType.SINGLE && option.state === DropDownState.OFF) {
         option.toggle.setVisible(false);
       }
-      option.setOptionState(option.state);
+      option.setOptionState(type, option.state);
 
       option.width = optionWidth;
       option.y = index * optionHeight + index * optionSpacing + optionPaddingY;
@@ -130,8 +187,13 @@ export class DropDown extends Phaser.GameObjects.Container {
         option.sprite.x = cursorOffset + optionPaddingX + 3 + 8;
         option.sprite.y = optionHeight / 2;
       }
-      option.toggle.x = cursorOffset + optionPaddingX + 3 + (type === DropDownType.MULTI ? 0 : 3);
-      option.toggle.y = optionHeight / 2 + (type === DropDownType.MULTI ? 0 : 1);
+      if (type === DropDownType.SINGLE) {
+        option.toggle.x = cursorOffset + optionPaddingX + 3 + 3;
+        option.toggle.y = optionHeight / 2 + 1;
+      } else {
+        option.toggle.x = cursorOffset + optionPaddingX + 3;
+        option.toggle.y = optionHeight / 2;
+      }
     });
     this.window = addWindow(scene, 0, 0, optionWidth, options[options.length - 1].y + optionHeight + optionPaddingY, false, false, null, null, WindowVariant.XTHIN);
     this.add(this.window);
@@ -164,37 +226,39 @@ export class DropDown extends Phaser.GameObjects.Container {
 
   toggleOptionState(): void {
     if (this.dropDownType === DropDownType.MULTI) {
-      const newState = this.options[this.cursor].toggleOptionState();
-
+      const newState = this.options[this.cursor].toggleOptionState(this.dropDownType);
       if (this.cursor === 0) {
         this.options.forEach((option, index) => {
           if (index !== this.cursor) {
-            option.setOptionState(newState);
+            option.setOptionState(this.dropDownType, newState);
           }
         });
       } else {
         if (this.checkForAllOff()) {
-          this.options[0].setOptionState(DropDownState.OFF);
+          this.options[0].setOptionState(this.dropDownType, DropDownState.OFF);
         } else if (this.checkForAllOn()) {
-          this.options[0].setOptionState(DropDownState.ON);
+          this.options[0].setOptionState(this.dropDownType, DropDownState.ON);
         } else {
-          this.options[0].setOptionState(DropDownState.OFF);
+          this.options[0].setOptionState(this.dropDownType, DropDownState.OFF);
         }
       }
-    } else {
+    } else if (this.dropDownType === DropDownType.SINGLE) {
       if (this.options[this.cursor].state === DropDownState.OFF) {
         this.options.forEach((option) => {
-          option.setOptionState(DropDownState.OFF);
+          option.setOptionState(this.dropDownType, DropDownState.OFF);
           option.setDirection(SortDirection.ASC);
           option.toggle.setVisible(false);
         });
-        this.options[this.cursor].setOptionState(DropDownState.ON);
+        this.options[this.cursor].setOptionState(this.dropDownType, DropDownState.ON);
         this.options[this.cursor].setDirection(this.lastDir);
         this.options[this.cursor].toggle.setVisible(true);
       } else {
         this.options[this.cursor].toggleDirection();
         this.lastDir = this.options[this.cursor].dir;
       }
+    } else if (this.dropDownType === DropDownType.TRI) {
+      this.options[this.cursor].toggleOptionState(this.dropDownType);
+      this.autoSize();
     }
     this.onChange();
   }
@@ -220,6 +284,11 @@ export class DropDown extends Phaser.GameObjects.Container {
   getVals(): any[] {
     if (this.dropDownType === DropDownType.MULTI) {
       return this.options.filter((option, i) => i > 0 && option.state === DropDownState.ON).map((option) => option.val);
+    // in TRI dropdown, if state is ON, return the "ON" with the value, if state is OFF, return the "OFF" with the value, if state is TRI, return the "TRI" with the value
+    } else if (this.dropDownType === DropDownType.TRI) {
+      return this.options.filter((option, i) => option.state === DropDownState.OFF || option.state === DropDownState.INCLUDE || option.state === DropDownState.EXCLUDE).map((option) => {
+        return {val: option.val, state: option.state};
+      });
     } else {
       return this.options.filter((option, i) => option.state === DropDownState.ON).map((option) => {
         return {val: option.val, dir: option.dir};

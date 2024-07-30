@@ -327,7 +327,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // set gen filter to all off except for the I GEN
     for (const option of genOptions) {
       if (option.val !== 1) {
-        option.setOptionState(DropDownState.OFF);
+        option.setOptionState(DropDownType.MULTI ,DropDownState.OFF);
       }
     }
 
@@ -346,7 +346,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.filterBar.addFilter(i18next.t("filterBar:typeFilter"), new DropDown(this.scene, 0, 0, typeOptions, this.updateStarters, DropDownType.MULTI, 0.5));
     this.filterBar.defaultTypeVals = this.filterBar.getVals(DropDownColumn.TYPES);
 
-    // Unlocks filter
+    // shiny filter
     const shiny1Sprite = this.scene.add.sprite(0, 0, "shiny_icons");
     shiny1Sprite.setOrigin(0.15, 0.2);
     shiny1Sprite.setScale(0.6);
@@ -363,24 +363,32 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     shiny3Sprite.setFrame(getVariantIcon(2));
     shiny3Sprite.setTint(getVariantTint(2));
 
-    const unlocksOptions = [
+    const shinyOptions = [
       new DropDownOption(this.scene, "SHINY3", null, shiny3Sprite),
       new DropDownOption(this.scene, "SHINY2", null, shiny2Sprite),
       new DropDownOption(this.scene, "SHINY", null, shiny1Sprite),
       new DropDownOption(this.scene, "NORMAL", i18next.t("filterBar:normal")),
       new DropDownOption(this.scene, "UNCAUGHT", i18next.t("filterBar:uncaught")),
-      new DropDownOption(this.scene, "PASSIVEUNLOCKED", i18next.t("filterBar:passiveUnlocked")),
-      new DropDownOption(this.scene, "PASSIVELOCKED", i18next.t("filterBar:passiveLocked"))];
+    ];
 
-    this.filterBar.addFilter(i18next.t("filterBar:unlocksFilter"), new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.MULTI));
-    this.filterBar.defaultUnlockVals = this.filterBar.getVals(DropDownColumn.UNLOCKS);
+    this.filterBar.addFilter("Owned", new DropDown(this.scene, 0, 0, shinyOptions, this.updateStarters, DropDownType.MULTI));
+    this.filterBar.defaultShinyVals = this.filterBar.getVals(DropDownColumn.SHINY);
 
-    // win filter
-    const winOptions = [
-      new DropDownOption(this.scene, "WIN", i18next.t("filterBar:hasWon")),
-      new DropDownOption(this.scene, "NOTWIN", i18next.t("filterBar:hasNotWon"))];
-    this.filterBar.addFilter(i18next.t("filterBar:winFilter"), new DropDown(this.scene, 0, 0, winOptions, this.updateStarters, DropDownType.MULTI));
-    this.filterBar.defaultWinVals = this.filterBar.getVals(DropDownColumn.WIN);
+
+    // unlocks filter
+    const unlocksOptions = [
+      new DropDownOption(this.scene, "PASSIVE", ["Passive", i18next.t("filterBar:passiveUnlocked"), i18next.t("filterBar:passiveLocked")], null, DropDownState.OFF),
+    ];
+
+    this.filterBar.addFilter(i18next.t("filterBar:unlocksFilter"), new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.TRI));
+    this.filterBar.defaultUnlocksVals = this.filterBar.getVals(DropDownColumn.UNLOCKS);
+
+    // misc filter
+    const miscOptions = [
+      new DropDownOption(this.scene, "WIN", ["Win", "Win - Yes", "Win - No"], null, DropDownState.OFF),
+    ];
+    this.filterBar.addFilter("Misc", new DropDown(this.scene, 0, 0, miscOptions, this.updateStarters, DropDownType.TRI));
+    this.filterBar.defaultMiscVals = this.filterBar.getVals(DropDownColumn.MISC);
 
     // sort filter
     const sortOptions = [
@@ -1956,11 +1964,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const isCaught = !!(caughtVariants & DexAttr.NON_SHINY);
       const isUncaught = !isCaught && !isVariantCaught && !isVariant2Caught && !isVariant3Caught;
       const isPassiveUnlocked = this.scene.gameData.starterData[container.species.speciesId].passiveAttr > 0;
-
+      const isWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0;
+      const isNotWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0;
+      const isUndefined = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === undefined;
 
       const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
+
       const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
-      const fitsShiny = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(variant => {
+
+      const fitsShiny = this.filterBar.getVals(DropDownColumn.SHINY).some(variant => {
         if (variant === "SHINY3") {
           return isVariant3Caught;
         } else if (variant === "SHINY2") {
@@ -1973,22 +1985,26 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           return isUncaught;
         }
       });
-      const fitsPassive = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(variant => {
-        if (variant === "PASSIVEUNLOCKED") {
+
+      const fitsPassive = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(unlocks => {
+        if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.INCLUDE) {
           return isPassiveUnlocked;
-        } else if (variant === "PASSIVELOCKED") {
+        } else if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.EXCLUDE) {
           return !isPassiveUnlocked;
+        } else if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.OFF) {
+          return true;
         }
       });
-      const isWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0;
-      const isNotWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0;
-      const isUndefined = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === undefined;
 
-      const fitsWin = this.filterBar.getVals(DropDownColumn.WIN).some(win => {
-        if (win === "WIN") {
+      const fitsWin = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
+        if (container.species.speciesId < 10) {
+        }
+        if (misc.val === "WIN" && misc.state === DropDownState.INCLUDE) {
           return isWin;
-        } else if (win === "NOTWIN") {
+        } else if (misc.val === "WIN" && misc.state === DropDownState.EXCLUDE) {
           return isNotWin || isUndefined;
+        } else if (misc.val === "WIN" && misc.state === DropDownState.OFF) {
+          return true;
         }
       });
 
