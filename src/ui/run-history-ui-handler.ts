@@ -325,39 +325,6 @@ class RunEntry extends Phaser.GameObjects.Container {
     });
 
     this.add(pokemonIconsContainer);
-
-    //Display Score - only visible for Daily Mode
-    //Display Personal Best - only visible for Endless Modes
-    switch (data.gameMode) {
-    case GameModes.ENDLESS:
-    case GameModes.SPLICED_ENDLESS:
-      if (this.scene.gameData.gameStats.highestEndlessWave === data.waveIndex) {
-        const personalBestText = addTextObject(this.scene, 255, 5, `${i18next.t("runHistory:personalBest")}`, TextStyle.WINDOW, {fontSize: "44px"});
-        personalBestText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
-        this.add(personalBestText);
-      }
-      break;
-    case GameModes.CHALLENGE:
-      const allChallenges = data.challenges;
-      for (let i = 0; i < allChallenges.length; i++) {
-        const runChallenge = allChallenges[i];
-        const challengeLabel = addTextObject(this.scene, 270, 5, "", TextStyle.WINDOW, {fontSize: "40px"});
-        if (runChallenge.id === Challenges.SINGLE_GENERATION && runChallenge.value !== 0) {
-          const genValue = i18next.t(`runHistory:challengeMonoGen${runChallenge.value.toString()}` as const);
-          challengeLabel.appendText(genValue, false);
-        }
-        if (runChallenge.id === Challenges.SINGLE_TYPE && runChallenge.value !== 0) {
-          const typeValue = i18next.t(`pokemonInfo:Type.${Type[runChallenge.value-1]}` as const);
-          if (challengeLabel.text) {
-            challengeLabel.appendText(typeValue);
-          } else {
-            challengeLabel.appendText(typeValue, false);
-          }
-        }
-        this.add(challengeLabel);
-      }
-      break;
-    }
   }
 }
 

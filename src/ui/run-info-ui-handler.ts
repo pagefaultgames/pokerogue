@@ -46,7 +46,6 @@ export default class GameInfoUiHandler extends UiHandler {
   private runResultContainer: Phaser.GameObjects.Container;
   private runInfoContainer: Phaser.GameObjects.Container;
   private partyContainer: Phaser.GameObjects.Container;
-  private partyHeldItemsContainer: Phaser.GameObjects.Container;
   private statsBgWidth: integer;
   private partyContainerHeight: integer;
   private partyContainerWidth: integer;
@@ -105,8 +104,6 @@ export default class GameInfoUiHandler extends UiHandler {
     this.parseRunResult(this.runInfo, this.victory);
 
     this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 23);
-    this.partyHeldItemsContainer = this.scene.add.container(this.statsBgWidth-10, 23);
-    this.partyHeldItemsContainer.setVisible(false);
 
     this.setCursor(0);
 
@@ -120,11 +117,14 @@ export default class GameInfoUiHandler extends UiHandler {
     this.showParty(true);
 
     this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
-
-    this.getUi().bringToTop(this.hallofFameContainer);
     this.getUi().bringToTop(this.gameStatsContainer);
     this.gameStatsContainer.setVisible(true);
 
+    if (this.victory) {
+      this.createHallofFame();
+      this.getUi().bringToTop(this.hallofFameContainer);
+    }
+    
     this.setCursor(0);
 
     this.getUi().add(this.gameStatsContainer);
@@ -140,36 +140,12 @@ export default class GameInfoUiHandler extends UiHandler {
     this.runResultContainer.add(runResultText);
 
     if (runResult) {
-      this.hallofFameContainer = this.scene.add.container(0, 0);
-      //const hallofFameBg = new Phaser.GameObjects.Image(this.scene, 0, 0, "hall_of_fame.png");
-      const hallofFameBg = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height, 0x005460);
-      this.hallofFameContainer.add(hallofFameBg);
-      const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText"), TextStyle.WINDOW);
-      hallofFameText.setPosition(this.scene.game.canvas.width/2, 120);
-      this.hallofFameContainer.add(hallofFameText);
-      runData.party.forEach((poke, i) => {
-        const pokemon = poke.toPokemon(this.scene);
-        const pokemonSprite = this.scene.addPokemonSprite(pokemon, 0, 0, 0, 0);
-        console.log(pokemonSprite);        
-        pokemonSprite.play(pokemon.getSpriteKey(true));
-        pokemonSprite.setPipelineData("teraColor", getTypeRgb(pokemon.getTeraType()));
-        pokemonSprite.setPipelineData("ignoreTimeTint", true);
-        pokemonSprite.setPipelineData("spriteKey", pokemon.getSpriteKey());
-        pokemonSprite.setPipelineData("shiny", pokemon.shiny);
-        pokemonSprite.setPipelineData("variant", pokemon.variant);
-        [ "spriteColors", "fusionSpriteColors" ].map(k => {
-          delete pokemonSprite.pipelineData[`${k}Base`];
-          if (pokemon.summonData?.speciesForm) {
-            k += "Base";
-          }
-        pokemonSprite.pipelineData[k] = pokemon.getSprite().pipelineData[k];
-        });
-        this.hallofFameContainer.add(pokemonSprite);
-        pokemon.destroy();
-      });
-      this.hallofFameContainer.setVisible(false);
-
-      this.gameStatsContainer.add(this.hallofFameContainer);
+      const hallofFameInstructionContainer = this.scene.add.container(0, 0);
+      const upButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHallOfFame"), TextStyle.WINDOW, {fontSize:"65px"});
+      const upButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, "keyboard", "KEY_ARROW_UP.png");
+      hallofFameInstructionContainer.add([upButtonText, upButtonElement]);
+      hallofFameInstructionContainer.setPosition(12, 25);
+      this.runResultContainer.add(hallofFameInstructionContainer);
     }
 
     if (!runResult) {
@@ -580,12 +556,6 @@ export default class GameInfoUiHandler extends UiHandler {
     this.gameStatsContainer.add(this.partyContainer);
  	}
 
-  async parsePartyHeldItems(id: integer): Phaser.GameObjects.Container {
-    
-    //tempContainer.setVisible(false);
-    return tempContainer; 
-  }
-
   showParty(partyVisible: boolean): void {
     const allContainers = this.partyContainer.getAll("name", "PkmnInfo");
     allContainers.forEach((c: Phaser.GameObjects.Container) => {
@@ -598,36 +568,41 @@ export default class GameInfoUiHandler extends UiHandler {
     });
   }
 
-  showHallofFame(visibility: boolean): void {
+  createHallofFame(): void {  
     this.hallofFameContainer = this.scene.add.container(0, 0);
-      //const hallofFameBg = new Phaser.GameObjects.Image(this.scene, 0, 0, "hall_of_fame.png");
-      const hallofFameBg = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height, 0x005460);
-      this.hallofFameContainer.add(hallofFameBg);
-      const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText"), TextStyle.WINDOW);
-      hallofFameText.setPosition(this.scene.game.canvas.width/2, 120);
-      this.hallofFameContainer.add(hallofFameText);
-      this.runInfo.party.forEach((poke, i) => {
-        const pokemon = poke.toPokemon(this.scene);
-        const pokemonSprite = this.scene.initPokemonSprite(this.scene.add.sprite(56, -106, pokemon.getSpriteKey(true)), null, false, true);
-        this.hallofFameContainer.add(pokemonSprite);       
-        pokemonSprite.play(pokemon.getSpriteKey(true));
-        pokemonSprite.setPipelineData("teraColor", getTypeRgb(pokemon.getTeraType()));
-        pokemonSprite.setPipelineData("ignoreTimeTint", true);
-        pokemonSprite.setPipelineData("spriteKey", pokemon.getSpriteKey());
-        pokemonSprite.setPipelineData("shiny", pokemon.shiny);
-        pokemonSprite.setPipelineData("variant", pokemon.variant);
-        [ "spriteColors", "fusionSpriteColors" ].map(k => {
-          delete pokemonSprite.pipelineData[`${k}Base`];
-          if (pokemon.summonData?.speciesForm) {
-            k += "Base";
-          }
-      pokemonSprite.pipelineData[k] = pokemon.getSprite().pipelineData[k];
-      });
-      console.log(pokemonSprite);
-      pokemon.destroy();
-    });
-    this.hallofFameContainer.setVisible(visibility);
+    //Thank you Hayuna for the code
+    const hallofFameBg = this.scene.add.image(0, 0, "hall_of_fame");
+    hallofFameBg.setPosition(159, 89);
+    hallofFameBg.setSize(this.scene.game.canvas.width, this.scene.game.canvas.height+10);
+    this.hallofFameContainer.add(hallofFameBg);
+    const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText"), TextStyle.WINDOW);
+    hallofFameText.setPosition(85, 145);
+    this.hallofFameContainer.add(hallofFameText);
+    this.runInfo.party.forEach((p, i) => {
+      const species = p.toPokemon(this.scene);
+      const row = i % 2;
+      const id = species.id;
+      const shiny = species.shiny;
+      const formIndex = species.formIndex;
+      const variant = species.variant;
+      const pokemonSprite: Phaser.GameObjects.Sprite = this.scene.add.sprite(60 + 40 * i, 40 + row  * 60, "pkmn__sub");
+      pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
+      this.hallofFameContainer.add(pokemonSprite);
+      const speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
+      speciesLoaded.set(id, false);
 
+      const female = species.gender === 1;
+      species.species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
+        speciesLoaded.set(id, true);
+        pokemonSprite.play(species.species.getSpriteKey(female, formIndex, shiny, variant));
+        pokemonSprite.setPipelineData("shiny", shiny);
+        pokemonSprite.setPipelineData("variant", variant);
+        pokemonSprite.setPipelineData("spriteKey", species.species.getSpriteKey(female, formIndex, shiny, variant));
+        pokemonSprite.setVisible(true);
+      });
+      species.destroy();
+    });
+    this.hallofFameContainer.setVisible(false);
     this.gameStatsContainer.add(this.hallofFameContainer);
   }
 
@@ -642,8 +617,8 @@ export default class GameInfoUiHandler extends UiHandler {
       this.runInfoContainer.removeAll(true);
       this.runResultContainer.removeAll(true);
       this.partyContainer.removeAll(true);
-      this.partyHeldItemsContainer.removeAll(true);
       this.gameStatsContainer.removeAll(true);
+      this.hallofFameContainer.removeAll(true);
       super.clear();
       this.gameStatsContainer.setVisible(false);
       ui.revertMode();
@@ -660,8 +635,13 @@ export default class GameInfoUiHandler extends UiHandler {
       break;
       case Button.UP:
         if (this.victory) {
-          this.hallofFameContainer.visible ? this.showHallofFame(false) : this.showHallofFame(true);
-          //this.hallofFameContainer.visible ? this.hallofFameContainer.setVisible(false) : this.hallofFameContainer.setVisible(true);
+          if (!this.hallofFameContainer.visible) {
+            this.hallofFameContainer.setVisible(true);
+            break;
+          } else {
+            this.hallofFameContainer.setVisible(false);
+            break;
+          }
           break;
         }
         break;
