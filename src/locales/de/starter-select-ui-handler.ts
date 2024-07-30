@@ -7,7 +7,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "Mit diesen Pokémon losziehen?",
-  "invalidParty": "This is not a valid starting party!",
+  "invalidParty": "Das ist kein gültiges Team!",
   "gen1": "I",
   "gen2": "II",
   "gen3": "III",
@@ -23,6 +23,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "nature": "Wesen:",
   "eggMoves": "Ei-Attacken",
   "addToParty": "Zum Team hinzufügen",
+  "removeFromParty": "Aus Team entfernen",
   "toggleIVs": "DVs anzeigen/verbergen",
   "manageMoves": "Attacken ändern",
   "manageNature": "Wesen ändern",

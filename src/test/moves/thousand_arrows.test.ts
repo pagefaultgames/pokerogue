@@ -1,16 +1,15 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { Abilities } from "#app/enums/abilities.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import {
   BerryPhase,
   MoveEffectPhase
 } from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { Abilities } from "#app/enums/abilities.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -30,12 +29,12 @@ describe("Moves - Thousand Arrows", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.TOGETIC);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.THOUSAND_ARROWS ]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.TOGETIC);
+    game.override.startingLevel(100);
+    game.override.enemyLevel(100);
+    game.override.moveset([ Moves.THOUSAND_ARROWS ]);
+    game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
   });
 
   it(
@@ -61,8 +60,8 @@ describe("Moves - Thousand Arrows", () => {
   it(
     "move should hit and ground targets with Levitate",
     async () => {
-      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
-      vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.LEVITATE);
+      game.override.enemySpecies(Species.SNORLAX);
+      game.override.enemyAbility(Abilities.LEVITATE);
 
       await game.startBattle([ Species.ILLUMISE ]);
 
@@ -84,7 +83,7 @@ describe("Moves - Thousand Arrows", () => {
   it(
     "move should hit and ground targets under the effects of Magnet Rise",
     async () => {
-      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
+      game.override.enemySpecies(Species.SNORLAX);
 
       await game.startBattle([ Species.ILLUMISE ]);
 
