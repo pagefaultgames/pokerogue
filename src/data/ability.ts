@@ -1,4 +1,4 @@
-import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
+import Pokemon, { HitResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
@@ -286,7 +286,7 @@ export class BlockItemTheftAbAttr extends AbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]) {
     return i18next.t("abilityTriggers:blockItemTheft", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName
     });
   }
 }
@@ -405,7 +405,7 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
         if (!simulated) {
           const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
           pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
-            Math.max(Math.floor(pokemon.getMaxHp() / 4), 1), i18next.t("abilityTriggers:typeImmunityHeal", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName}), true));
+            Math.max(Math.floor(pokemon.getMaxHp() / 4), 1), i18next.t("abilityTriggers:typeImmunityHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }), true));
         }
       }
       return true;
@@ -485,7 +485,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:nonSuperEffectiveImmunity", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName
     });
   }
 }
@@ -777,7 +777,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:postDefendTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName,
       typeName: i18next.t(`pokemonInfo:Type.${Type[pokemon.getTypes(true)[0]]}`)
     });
   }
@@ -901,7 +901,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:postDefendContactDamage", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName
     });
   }
 }
@@ -999,7 +999,7 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:postDefendAbilityGive", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName
     });
   }
 }
@@ -1083,9 +1083,8 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
    *             [1]: {@linkcode Moves } Move used by the ability user.
    */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    //Disable showAbility during getTargetBenefitScore
-    const showAbility = args[4];
-    this.showAbility = showAbility;
+    // Disable showAbility during getTargetBenefitScore
+    this.showAbility = args[4];
     if ((args[0] as Utils.NumberHolder).value <= 0 || (args[1] as Move).id === Moves.ORDER_UP) {
       return false;
     }
@@ -1797,7 +1796,7 @@ export class IntimidateImmunityAbAttr extends AbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:intimidateImmunity", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName
     });
   }
 }
@@ -2148,6 +2147,49 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Removes supplied status effects from the user's field.
+ */
+export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAttr {
+  private statusEffect: StatusEffect[];
+
+  /**
+   * @param statusEffect - The status effects to be removed from the user's field.
+   */
+  constructor(...statusEffect: StatusEffect[]) {
+    super(false);
+
+    this.statusEffect = statusEffect;
+  }
+
+  /**
+   * Removes supplied status effect from the user's field when user of the ability is summoned.
+   *
+   * @param pokemon - The Pokémon that triggered the ability.
+   * @param passive - n/a
+   * @param args - n/a
+   * @returns A boolean or a promise that resolves to a boolean indicating the result of the ability application.
+   */
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    const party = pokemon instanceof PlayerPokemon ? pokemon.scene.getPlayerField() : pokemon.scene.getEnemyField();
+    const allowedParty = party.filter(p => p.isAllowedInBattle());
+
+    if (allowedParty.length < 1) {
+      return false;
+    }
+
+    for (const pokemon of allowedParty) {
+      if (this.statusEffect.includes(pokemon.status?.effect)) {
+        pokemon.scene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
+        pokemon.resetStatus(false);
+        pokemon.updateInfo();
+      }
+    }
+
+    return true;
+  }
+}
+
 
 /** Attempt to copy the stat changes on an ally pokemon */
 export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
@@ -2354,8 +2396,8 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:protectStat", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
-      statName: this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : "stats", // TODO : Change "stats" to i18next.t("battle:stats") after PR#2600 merged to 'main'
+      abilityName,
+      statName: this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : i18next.t("battle:stats")
     });
   }
 }
@@ -2399,17 +2441,33 @@ export class PreSetStatusAbAttr extends AbAttr {
   }
 }
 
-export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
+/**
+ * Provides immunity to status effects to specified targets.
+ */
+export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   private immuneEffects: StatusEffect[];
 
+  /**
+   * @param immuneEffects - The status effects to which the Pokémon is immune.
+   */
   constructor(...immuneEffects: StatusEffect[]) {
     super();
 
     this.immuneEffects = immuneEffects;
   }
 
+  /**
+   * Applies immunity to supplied status effects.
+   *
+   * @param pokemon - The Pokémon to which the status is being applied.
+   * @param passive - n/a
+   * @param effect - The status effect being applied.
+   * @param cancelled - A holder for a boolean value indicating if the status application was cancelled.
+   * @param args - n/a
+   * @returns A boolean indicating the result of the status application.
+   */
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (!this.immuneEffects.length || this.immuneEffects.indexOf(effect) > -1) {
+    if (this.immuneEffects.length < 1 || this.immuneEffects.includes(effect)) {
       cancelled.value = true;
       return true;
     }
@@ -2421,15 +2479,27 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
     return this.immuneEffects.length ?
       i18next.t("abilityTriggers:statusEffectImmunityWithName", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        abilityName: abilityName,
+        abilityName,
         statusEffectName: getStatusEffectDescriptor(args[0] as StatusEffect)
       }) :
       i18next.t("abilityTriggers:statusEffectImmunity", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        abilityName: abilityName,
+        abilityName
       });
   }
 }
+
+/**
+ * Provides immunity to status effects to the user.
+ * @extends PreSetStatusEffectImmunityAbAttr
+ */
+export class StatusEffectImmunityAbAttr extends PreSetStatusEffectImmunityAbAttr { }
+
+/**
+ * Provides immunity to status effects to the user's field.
+ * @extends PreSetStatusEffectImmunityAbAttr
+ */
+export class UserFieldStatusEffectImmunityAbAttr extends PreSetStatusEffectImmunityAbAttr { }
 
 export class PreApplyBattlerTagAbAttr extends AbAttr {
   applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
@@ -2437,7 +2507,10 @@ export class PreApplyBattlerTagAbAttr extends AbAttr {
   }
 }
 
-export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
+/**
+ * Provides immunity to BattlerTags {@linkcode BattlerTag} to specified targets.
+ */
+export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   private immuneTagType: BattlerTagType;
 
   constructor(immuneTagType: BattlerTagType) {
@@ -2458,11 +2531,23 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:battlerTagImmunity", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
+      abilityName,
       battlerTagName: (args[0] as BattlerTag).getDescriptor()
     });
   }
 }
+
+/**
+ * Provides immunity to BattlerTags {@linkcode BattlerTag} to the user.
+ * @extends PreApplyBattlerTagImmunityAbAttr
+ */
+export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr { }
+
+/**
+ * Provides immunity to BattlerTags {@linkcode BattlerTag} to the user's field.
+ * @extends PreApplyBattlerTagImmunityAbAttr
+ */
+export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr { }
 
 export class BlockCritAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -2844,7 +2929,7 @@ export class PostWeatherLapseHealAbAttr extends PostWeatherLapseAbAttr {
       const scene = pokemon.scene;
       const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        Math.max(Math.floor(pokemon.getMaxHp() / (16 / this.healFactor)), 1), i18next.t("abilityTriggers:postWeatherLapseHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }), true));
+        Math.max(Math.floor(pokemon.getMaxHp() / (16 / this.healFactor)), 1), i18next.t("abilityTriggers:postWeatherLapseHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }), true));
       return true;
     }
 
@@ -2863,8 +2948,11 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
 
   applyPostWeatherLapse(pokemon: Pokemon, passive: boolean, weather: Weather, args: any[]): boolean {
     const scene = pokemon.scene;
+    if (pokemon.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
+      return false;
+    }
     const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
-    scene.queueMessage(i18next.t("abilityTriggers:postWeatherLapseDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }));
+    scene.queueMessage(i18next.t("abilityTriggers:postWeatherLapseDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }));
     pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / (16 / this.damageFactor)), HitResult.OTHER);
     return true;
   }
@@ -2938,7 +3026,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
         const scene = pokemon.scene;
         const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
         scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-          Math.max(Math.floor(pokemon.getMaxHp() / 8), 1), i18next.t("abilityTriggers:poisonHeal", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName: abilityName}), true));
+          Math.max(Math.floor(pokemon.getMaxHp() / 8), 1), i18next.t("abilityTriggers:poisonHeal", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName }), true));
         return true;
       }
     }
@@ -3031,10 +3119,11 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
     ) as BerryModifier | undefined;
 
     if (!berryModifier) {
+      const newBerry = new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1);
       if (pokemon.isPlayer()) {
-        pokemon.scene.addModifier(new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1));
+        pokemon.scene.addModifier(newBerry);
       } else {
-        pokemon.scene.addEnemyModifier(new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1));
+        pokemon.scene.addEnemyModifier(newBerry);
       }
     } else if (berryModifier.stackCount < berryModifier.getMaxHeldItemCount(pokemon)) {
       berryModifier.stackCount++;
@@ -3095,7 +3184,7 @@ export class PostTurnHealAbAttr extends PostTurnAbAttr {
       const scene = pokemon.scene;
       const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        Math.max(Math.floor(pokemon.getMaxHp() / 16), 1), i18next.t("abilityTriggers:postTurnHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }), true));
+        Math.max(Math.floor(pokemon.getMaxHp() / 16), 1), i18next.t("abilityTriggers:postTurnHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }), true));
       return true;
     }
 
@@ -3139,7 +3228,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     let hadEffect: boolean = false;
     for (const opp of pokemon.getOpponents()) {
-      if (opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) {
+      if ((opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
         opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER);
         pokemon.scene.queueMessage(i18next.t("abilityTriggers:badDreams", {pokemonName: getPokemonNameWithAffix(opp)}));
         hadEffect = true;
@@ -3347,7 +3436,7 @@ export class HealFromBerryUseAbAttr extends AbAttr {
         pokemon.scene,
         pokemon.getBattlerIndex(),
         Math.max(Math.floor(pokemon.getMaxHp() * this.healPercent), 1),
-        i18next.t("abilityTriggers:healFromBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }),
+        i18next.t("abilityTriggers:healFromBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }),
         true
       )
     );
@@ -3422,7 +3511,7 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return i18next.t("abilityTriggers:arenaTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName });
+    return i18next.t("abilityTriggers:arenaTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName });
   }
 }
 
@@ -3528,7 +3617,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
     if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
       const cancelled = new Utils.BooleanHolder(false);
       pokemon.scene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled));
-      if (cancelled.value) {
+      if (cancelled.value || attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
         return false;
       }
       attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
@@ -3540,7 +3629,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return i18next.t("abilityTriggers:postFaintContactDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName });
+    return i18next.t("abilityTriggers:postFaintContactDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName });
   }
 }
 
@@ -3560,7 +3649,7 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return i18next.t("abilityTriggers:postFaintHpDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName });
+    return i18next.t("abilityTriggers:postFaintHpDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName });
   }
 }
 
@@ -3918,7 +4007,7 @@ export class IceFaceBlockPhysicalAbAttr extends ReceivedMoveDamageMultiplierAbAt
    * @returns {string} - The trigger message.
    */
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName: abilityName });
+    return i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName });
   }
 }
 
@@ -3993,7 +4082,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
       pokemon.scene.setPhaseQueueSplice();
 
       let result = applyFunc(attr, passive);
-      // TODO Remove this when promises get reworked PR#924
+      // TODO Remove this when promises get reworked
       if (result instanceof Promise) {
         result = await result;
       }
@@ -4719,10 +4808,10 @@ export function initAbilities() {
     new Ability(Abilities.REFRIGERATE, 6)
       .attr(MoveTypeChangeAttr, Type.ICE, 1.2, (user, target, move) => move.type === Type.NORMAL),
     new Ability(Abilities.SWEET_VEIL, 6)
-      .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable()
-      .partial(),
+      .partial(), // Mold Breaker ally should not be affected by Sweet Veil
     new Ability(Abilities.STANCE_CHANGE, 6)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -5017,7 +5106,8 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonNeutralizingGas", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .partial(),
     new Ability(Abilities.PASTEL_VEIL, 8)
-      .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.HUNGER_SWITCH, 8)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1)

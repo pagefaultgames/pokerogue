@@ -2,6 +2,7 @@ import BattleScene from "#app/battle-scene.js";
 import { SceneBase } from "#app/scene-base.js";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow, WindowVariant } from "./ui-theme";
+import i18next from "i18next";
 
 export enum DropDownState {
     ON = 0,
@@ -165,7 +166,7 @@ export class DropDown extends Phaser.GameObjects.Container {
     this.cursorObj.setVisible(false);
 
     if (this.dropDownType === DropDownType.MULTI) {
-      this.options.unshift(new DropDownOption(scene, "ALL", "All", null, this.checkForAllOn() ? DropDownState.ON : DropDownState.OFF));
+      this.options.unshift(new DropDownOption(scene, "ALL", i18next.t("filterBar:all"), null, this.checkForAllOn() ? DropDownState.ON : DropDownState.OFF));
     }
 
     options.forEach((option, index) => {

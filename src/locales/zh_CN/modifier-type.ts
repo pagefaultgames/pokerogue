@@ -153,7 +153,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "复活种子", description: "受到技能攻击伤害濒死时，\n恢复该宝可梦的HP至1/2。" },
 
-    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+    "WHITE_HERB": { name: "白色香草", description: "当携带它的宝可梦能力降低时，\n仅能回到之前的状态１次。" },
 
     "ETHER": { name: "PP单项小补剂" },
     "MAX_ETHER": { name: "PP单项全补剂" },
@@ -184,7 +184,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "安抚之铃" },
 
-    "SCOPE_LENS": { name: "焦点镜", description: "能看见弱点的镜片。携带它的宝可梦的招式 会变得容易击中要害。" },
+    "SCOPE_LENS": { name: "焦点镜", description: "能看见弱点的镜片。携带它的宝可梦的招式\n会变得容易击中要害。" },
     "LEEK": { name: "大葱", description: "非常长且坚硬的茎。让大葱鸭携带后，\n招式会变得容易击中要害。" },
 
     "EVIOLITE": { name: "进化奇石", description: "携带后，还能进化的宝可梦的\n防御和特防就会提高。" },
@@ -220,8 +220,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "吃剩的东西", description: "携带后，在每个回合结束时恢复\n最大HP的1/16。" },
     "SHELL_BELL": { name: "贝壳之铃", description: "携带后，在攻击对方成功造成伤害时，\n携带者的HP会恢复其所造成伤害的1/8。" },
 
-    "TOXIC_ORB": { name: "剧毒宝珠", description: "触碰后会放出毒的神奇宝珠。携带后，在战斗时会变成剧毒状态。" },
-    "FLAME_ORB": { name: "火焰宝珠", description: "触碰后会放出热量的神奇宝珠。携带后，在战斗时会变成灼伤状态。" },
+    "TOXIC_ORB": { name: "剧毒宝珠", description: "触碰后会放出毒的神奇宝珠。\n携带后，在战斗时会变成剧毒状态。" },
+    "FLAME_ORB": { name: "火焰宝珠", description: "触碰后会放出热量的神奇宝珠。\n携带后，在战斗时会变成灼伤状态。" },
 
     "BATON": { name: "接力棒", description: "允许在切换宝可梦时保留能力变化, 对陷阱\n同样生效。" },
 
@@ -247,10 +247,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_FUSED_CHANCE": { name: "融合硬币", description: "增加1%野生融合宝可梦出现概率。" },
   },
   SpeciesBoosterItem: {
-    "LIGHT_BALL": { name: "电气球", description: "让皮卡丘携带后，攻击和特攻就会提高的神奇之球。" },
-    "THICK_CLUB": { name: "粗骨头", description: "某种坚硬的骨头。让卡拉卡拉或嘎啦嘎啦携带后，攻击就会提高。" },
-    "METAL_POWDER": { name: "金属粉", description: "让百变怪携带后，防御就会提高的神奇粉末。非常细腻坚硬。" },
-    "QUICK_POWDER": { name: "速度粉", description: "让百变怪携带后，速度就会提高的神奇粉末。非常细腻坚硬。" }
+    "LIGHT_BALL": { name: "电气球", description: "让皮卡丘携带后，\n攻击和特攻就会提高的神奇之球。" },
+    "THICK_CLUB": { name: "粗骨头", description: "某种坚硬的骨头。\n让卡拉卡拉或嘎啦嘎啦携带后，攻击就会提高。" },
+    "METAL_POWDER": { name: "金属粉", description: "让百变怪携带后，防御就会提高的神奇粉末。\n非常细腻坚硬。" },
+    "QUICK_POWDER": { name: "速度粉", description: "让百变怪携带后，速度就会提高的神奇粉末。\n非常细腻坚硬。" }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "力量强化",

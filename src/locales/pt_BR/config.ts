@@ -2,6 +2,7 @@ import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
 import { arenaFlyout } from "./arena-flyout";
+import { arenaTag } from "./arena-tag";
 import { battle } from "./battle";
 import { battleInfo } from "./battle-info";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
@@ -24,6 +25,7 @@ import {
 } from "./dialogue";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
+import { filterBar } from "./filter-bar";
 import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
@@ -50,11 +52,13 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
+import { moveTriggers } from "./move-trigger";
 
 export const ptBrConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   arenaFlyout: arenaFlyout,
+  arenaTag: arenaTag,
   battle: battle,
   battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
@@ -77,6 +81,7 @@ export const ptBrConfig = {
   PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
   egg: egg,
   fightUiHandler: fightUiHandler,
+  filterBar: filterBar,
   gameMode: gameMode,
   gameStatsUiHandler: gameStatsUiHandler,
   growth: growth,
@@ -105,5 +110,6 @@ export const ptBrConfig = {
   voucher: voucher,
   weather: weather,
   partyUiHandler: partyUiHandler,
-  modifierSelectUiHandler: modifierSelectUiHandler
+  modifierSelectUiHandler: modifierSelectUiHandler,
+  moveTriggers: moveTriggers
 };
