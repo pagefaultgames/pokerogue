@@ -3830,10 +3830,10 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
    * Removes the appropriate `BattlerTagType` when hit by an attack and is in its defense form.
    *
    * @param {Pokemon} pokemon The Pokémon with the ability.
-   * @param {boolean} passive Whether the ability is passive.
+   * @param {boolean} passive n/a
    * @param {Pokemon} attacker The attacking Pokémon.
    * @param {PokemonMove} move The move being used.
-   * @param {Utils.BooleanHolder} cancelled A holder for whether the move was cancelled.
+   * @param {Utils.BooleanHolder} cancelled n/a
    * @param {any[]} args Additional arguments.
    * @returns {boolean} Whether the immunity was applied.
    */
@@ -3854,7 +3854,7 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
    * Gets the message triggered when the Pokémon avoids damage using the form-changing ability.
    * @param {Pokemon} pokemon The Pokémon with the ability.
    * @param {string} abilityName The name of the ability.
-   * @param {...any} args Additional arguments.
+   * @param {...any} args n/a
    * @returns {string} The trigger message.
    */
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
