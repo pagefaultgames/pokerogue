@@ -279,7 +279,7 @@ export class TrainerConfig {
    * @param trainerTypeToDeriveFrom - The trainer type to derive from. (If null, the this.trainerType property will be used.)
    * @returns {TrainerType} - The derived trainer type.
    */
-  getDerivedType(trainerTypeToDeriveFrom: TrainerType = null): TrainerType {
+  getDerivedType(trainerTypeToDeriveFrom: TrainerType | null = null): TrainerType {
     let trainerType = trainerTypeToDeriveFrom ? trainerTypeToDeriveFrom : this.trainerType;
     switch (trainerType) {
     case TrainerType.RIVAL_2:
@@ -352,7 +352,7 @@ export class TrainerConfig {
       this.nameFemale = i18next.t("trainerNames:rival_female");
     } else {
       // Otherwise, assign the provided female name.
-      this.nameFemale = nameFemale;
+      this.nameFemale = nameFemale ?? "";
     }
 
     // Indicate that this trainer configuration includes genders.
@@ -615,7 +615,7 @@ export class TrainerConfig {
     this.setVictoryBgm("victory_gym");
     this.setGenModifiersFunc(party => {
       const waveIndex = party[0].scene.currentBattle.waveIndex;
-      return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyTypes.length ? specialtyTypes : null);
+      return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyTypes.length ? specialtyTypes : undefined);
     });
 
     return this;
@@ -649,7 +649,7 @@ export class TrainerConfig {
 
     // Set species filter and specialty types if provided, otherwise filter by base total.
     if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) && p.baseTotal >= 450);
+      this.setSpeciesFilter(p => specialtyTypes.some(t => p.isOfType(t)) && p.baseTotal >= 450);
       this.setSpecialtyTypes(...specialtyTypes);
     } else {
       this.setSpeciesFilter(p => p.baseTotal >= 450);
@@ -671,7 +671,7 @@ export class TrainerConfig {
     this.setStaticParty();
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("victory_gym");
-    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyTypes.length ? specialtyTypes : null));
+    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyTypes.length ? specialtyTypes : undefined));
 
     return this;
   }
@@ -785,7 +785,7 @@ export class TrainerConfig {
         const frameNames = scene.anims.generateFrameNames(trainerKey, {zeroPad: 4,suffix: ".png",start: 1,end: 128});
         const partnerFrameNames = isDouble
           ? scene.anims.generateFrameNames(partnerTrainerKey, {zeroPad: 4,suffix: ".png",start: 1,end: 128})
-          : null;
+          : "";
         console.warn = originalWarn;
         if (!(scene.anims.exists(trainerKey))) {
           scene.anims.create({
@@ -871,7 +871,7 @@ function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, types?: T
   for (let t = 0; t < Math.min(count, party.length); t++) {
     const randomIndex = Utils.randSeedItem(partyMemberIndexes);
     partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
-    ret.push(modifierTypes.TERA_SHARD().generateType(null, [Utils.randSeedItem(types ? types : party[randomIndex].getTypes())]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier);
+    ret.push(modifierTypes.TERA_SHARD().generateType([], [Utils.randSeedItem(types ? types : party[randomIndex].getTypes())])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier); // TODO: is the bang correct?
   }
   return ret;
 }
@@ -1465,7 +1465,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesFilter(species => species.baseTotal >= 540)
     .setGenModifiersFunc(party => {
       const starter = party[0];
-      return [modifierTypes.TERA_SHARD().generateType(null, [starter.species.type1]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(starter) as PersistentModifier];
+      return [modifierTypes.TERA_SHARD().generateType([], [starter.species.type1])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(starter) as PersistentModifier]; // TODO: is the bang correct?
     }),
   [TrainerType.RIVAL_5]: new TrainerConfig(++t).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setBoss().setStaticParty().setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.RIVAL).setBattleBgm("battle_rival_3").setMixedBattleBgm("battle_rival_3").setPartyTemplates(trainerPartyTemplates.RIVAL_5)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT, Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA, Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA, Species.RILLABOOM, Species.CINDERACE, Species.INTELEON, Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL], TrainerSlot.TRAINER, true,
@@ -1481,7 +1481,7 @@ export const trainerConfigs: TrainerConfigs = {
     }))
     .setGenModifiersFunc(party => {
       const starter = party[0];
-      return [modifierTypes.TERA_SHARD().generateType(null, [starter.species.type1]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(starter) as PersistentModifier];
+      return [modifierTypes.TERA_SHARD().generateType([], [starter.species.type1])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(starter) as PersistentModifier]; //TODO: is the bang correct?
     }),
   [TrainerType.RIVAL_6]: new TrainerConfig(++t).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setBoss().setStaticParty().setMoneyMultiplier(3).setEncounterBgm("final").setBattleBgm("battle_rival_3").setMixedBattleBgm("battle_rival_3").setPartyTemplates(trainerPartyTemplates.RIVAL_6)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT, Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA, Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA, Species.RILLABOOM, Species.CINDERACE, Species.INTELEON, Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL], TrainerSlot.TRAINER, true,
@@ -1507,7 +1507,7 @@ export const trainerConfigs: TrainerConfigs = {
     }))
     .setGenModifiersFunc(party => {
       const starter = party[0];
-      return [modifierTypes.TERA_SHARD().generateType(null, [starter.species.type1]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(starter) as PersistentModifier];
+      return [modifierTypes.TERA_SHARD().generateType([], [starter.species.type1])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(starter) as PersistentModifier]; // TODO: is the bang correct?
     }),
 
   [TrainerType.ROCKET_BOSS_GIOVANNI_1]: new TrainerConfig(t = TrainerType.ROCKET_BOSS_GIOVANNI_1).setName("Giovanni").initForEvilTeamLeader("Rocket Boss",[]).setMixedBattleBgm("battle_rocket_boss").setVictoryBgm("victory_team_plasma")

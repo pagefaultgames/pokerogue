@@ -38,7 +38,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   private menuBg: Phaser.GameObjects.NineSlice;
   protected optionSelectText: Phaser.GameObjects.Text;
 
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
 
   protected ignoredMenuOptions: MenuOptions[];
   protected menuOptions: MenuOptions[];
@@ -50,7 +50,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
 
   constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode);
+    super(scene, mode ?? Mode.MESSAGE);
 
     this.ignoredMenuOptions = !bypassLogin
       ? [ ]
@@ -61,7 +61,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   setup() {
     const ui = this.getUi();
     // wiki url directs based on languges available on wiki
-    const lang = i18next.resolvedLanguage.substring(0,2);
+    const lang = i18next.resolvedLanguage?.substring(0,2) ?? "en";
     if (["de", "fr", "ko", "zh"].includes(lang)) {
       wikiUrl = `https://wiki.pokerogue.net/${lang}:start`;
     }
@@ -116,7 +116,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.menuContainer.add(this.menuMessageBoxContainer);
 
-    const manageDataOptions = [];
+    const manageDataOptions: any[] = []; // TODO: proper type
 
     const confirmSlot = (message: string, slotFilter: (i: integer) => boolean, callback: (i: integer) => void) => {
       ui.revertMode();
@@ -128,7 +128,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               handler: () => {
                 callback(i);
                 ui.revertMode();
-                ui.showText(null, 0);
+                ui.showText("", 0);
                 return true;
               }
             };
@@ -136,7 +136,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             label: i18next.t("menuUiHandler:cancel"),
             handler: () => {
               ui.revertMode();
-              ui.showText(null, 0);
+              ui.showText("", 0);
               return true;
             }
           }]),
@@ -228,7 +228,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: "Wiki",
         handler: () => {
-          window.open(wikiUrl, "_blank").focus();
+          window.open(wikiUrl, "_blank")?.focus();
           return true;
         },
         keepOpen: true
@@ -236,7 +236,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: "Discord",
         handler: () => {
-          window.open(discordUrl, "_blank").focus();
+          window.open(discordUrl, "_blank")?.focus();
           return true;
         },
         keepOpen: true
@@ -244,7 +244,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: "GitHub",
         handler: () => {
-          window.open(githubUrl, "_blank").focus();
+          window.open(githubUrl, "_blank")?.focus();
           return true;
         },
         keepOpen: true
@@ -252,7 +252,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: "Reddit",
         handler: () => {
-          window.open(redditUrl, "_blank").focus();
+          window.open(redditUrl, "_blank")?.focus();
           return true;
         },
         keepOpen: true
@@ -348,7 +348,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === i18next.t("menuUiHandler:linkDiscord") || o.label === i18next.t("menuUiHandler:unlinkDiscord"))) {
           this.manageDataConfig.options.splice(this.manageDataConfig.options.length-1,0,
             {
-              label: loggedInUser.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
+              label: loggedInUser?.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
               handler: () => {
                 if (loggedInUser?.discordId === "") {
                   const token = Utils.getCookie(Utils.sessionIdKey);
@@ -404,7 +404,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
               ui.setOverlayMode(Mode.CONFIRM, () => this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true)), () => {
                 ui.revertMode();
-                ui.showText(null, 0);
+                ui.showText("", 0);
               }, false, -98);
             });
           } else {
@@ -429,7 +429,7 @@ export default class MenuUiHandler extends MessageUiHandler {
           ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
             ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
               ui.revertMode();
-              ui.showText(null, 0);
+              ui.showText("", 0);
             }, false, -98);
           });
         } else {
