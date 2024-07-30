@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "지니게 하면 {{moveType}}타입 기술의 위력이 20% 상승한다.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "포켓몬 1마리의 레벨이 기본 1만큼, 사탕단지의 개수에 따라 최대 {{levels}}까지 상승한다.",
+      description: "포켓몬 1마리의 레벨이 {{levels}}만큼 상승한다.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "자신의 모든 포켓몬의 레벨이 기본 1씩, 사탕단지의 개수에 따라 최대 {{levels}}까지 상승한다.",
+      description: "자신의 모든 포켓몬의 레벨이 {{levels}}만큼 상승한다.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "지니게 하면 {{statName}} 종족값을 10% 올려준다. 개체값이 높을수록 더 많이 누적시킬 수 있다.",
@@ -101,7 +101,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TmModifierTypeWithInfo": {
       name: "No.{{moveId}} {{moveName}}",
-      description: "포켓몬에게 {{moveName}}를(을) 가르침.\n(C 또는 Shift를 꾹 눌러 정보 확인)",
+      description: "포켓몬에게 {{moveName}}[[를]] 가르침.\n(C 또는 Shift를 꾹 눌러 정보 확인)",
     },
     "EvolutionItemModifierType": {
       description: "어느 특정 포켓몬을 진화시킨다.",
@@ -153,7 +153,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "부활의씨앗", description: "포켓몬이 공격을 받고 쓰러지려 할 때 HP를 절반 회복한다." },
 
-    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+    "WHITE_HERB": { name: "하양허브", description: "지니게 한 포켓몬의 능력이 떨어졌을 때 원래 상태로 돌아온다." },
 
     "ETHER": { name: "PP에이드" },
     "MAX_ETHER": { name: "PP회복" },
