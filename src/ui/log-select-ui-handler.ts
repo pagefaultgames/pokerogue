@@ -285,7 +285,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     this.remove(this.loadingLabel, true);
     var lbl = `???`
     lbl = data.title
-    if (this.slotId) {
+    if (this.slotId != undefined) {
       lbl = `[${this.slotId + 1}] ${lbl}`
     }
     console.log(data, this.slotId, this.autoSlot, lbl)
