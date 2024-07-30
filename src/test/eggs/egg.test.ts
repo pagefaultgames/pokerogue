@@ -303,4 +303,11 @@ describe("Egg Generation Tests", () => {
     expect(result1).toBe(expectedTier1);
     expect(result2).toBe(expectedTier2);
   });
+
+  it("should generate an epic shiny from pokemon with a different form", () => {
+    const scene = game.scene;
+    const egg = new Egg({scene, isShiny: true, variantTier: VariantTier.EPIC, species: Species.MIRAIDON});
+
+    expect(egg.variantTier).toBe(VariantTier.EPIC);
+  });
 });

@@ -22,4 +22,10 @@ export const challenges: TranslationEntries = {
     "desc": "你只能使用{{type}}\n属性的宝可梦",
     "desc_default": "你只能使用所选\n属性的宝可梦"
   },
+  "freshStart": {
+    "name": "初次尝试",
+    "desc": "你只能使用御三家，就像是你第一次玩宝可梦肉鸽一样。",
+    "value.0": "关闭",
+    "value.1": "开启",
+  },
 } as const;

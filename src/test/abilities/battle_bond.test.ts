@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { Status, StatusEffect } from "#app/data/status-effect.js";
+import { QuietFormChangePhase } from "#app/form-change-phase.js";
+import { TurnEndPhase } from "#app/phases.js";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import Overrides from "#app/overrides";
-import { Moves } from "#enums/moves";
-import { Abilities } from "#enums/abilities";
-import { Species } from "#enums/species";
-import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { TurnEndPhase } from "#app/phases.js";
-import { QuietFormChangePhase } from "#app/form-change-phase.js";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -28,19 +27,19 @@ describe("Abilities - BATTLE BOND", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BATTLE_BOND);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.battleType("single");
+    game.override.ability(Abilities.BATTLE_BOND);
+    game.override.moveset([moveToUse]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
   test(
     "check if fainted pokemon switches to base form on arena reset",
     async () => {
-      const baseForm = 1,
-        ashForm = 2;
-      vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(4);
-      vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
+      const baseForm = 1;
+      const ashForm = 2;
+      game.override.startingWave(4);
+      game.override.starterForms({
         [Species.GRENINJA]: ashForm,
       });
 

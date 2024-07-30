@@ -1241,14 +1241,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
-    immuneTags.forEach(tag => {
-      if (move !== undefined) {
-        const hitsTagAttrs = move.getAttrs(HitsTagAttr).filter(attr => attr.tagType === tag.tagType);
-        if (hitsTagAttrs.length === 0) {
-          multiplier = 0;
-        }
+    for (const tag of immuneTags) {
+      if (move && !move.getAttrs(HitsTagAttr).some(attr => attr.tagType === tag.tagType)) {
+        multiplier = 0;
+        break;
       }
-    });
+    }
 
     return multiplier;
   }
@@ -1774,7 +1772,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (opponents.length === 1) {
       return opponents[0].name;
     }
-    return this.isPlayer() ? "the opposing team" : "your team";
+    return this.isPlayer() ? i18next.t("arenaTag:opposingTeam") : i18next.t("arenaTag:yourTeam");
   }
 
   getAlly(): Pokemon {
@@ -1854,6 +1852,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.arena.applyTagsForSide(ArenaTagType.QUICK_GUARD, defendingSide, cancelled, this, move.priority);
       this.scene.arena.applyTagsForSide(ArenaTagType.WIDE_GUARD, defendingSide, cancelled, this, move.moveTarget);
       this.scene.arena.applyTagsForSide(ArenaTagType.MAT_BLOCK, defendingSide, cancelled, this, move.category);
+      this.scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
+    }
+
+    // Apply exceptional condition of Crafty Shield if the move used is Curse
+    if (move.id === Moves.CURSE) {
+      const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
       this.scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
     }
 
@@ -1949,7 +1953,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         const targetCount = getMoveTargets(source, move.id).targets.length;
-        const targetMultiplier = targetCount > 1 ? 0.75 : 1;
+        const targetMultiplier = targetCount > 1 ? 0.75 : 1; // 25% damage debuff on multi-target hits (even if it's immune)
 
         applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
         applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
@@ -2080,7 +2084,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           source.turnData.damageDealt += damage.value;
           source.turnData.currDamageDealt = damage.value;
           this.battleData.hitCount++;
-          const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id, attackingPosition: source.getBattlerIndex() };
+          const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
           this.turnData.attacksReceived.unshift(attackResult);
           if (source.isPlayer() && !this.isPlayer()) {
             this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
@@ -2282,7 +2286,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   lapseTags(lapseType: BattlerTagLapseType): void {
     const tags = this.summonData.tags;
-    tags.filter(t => lapseType === BattlerTagLapseType.FAINT || ((t.lapseType.some(lType => lType === lapseType)) && !(t.lapse(this, lapseType)))).forEach(t => {
+    tags.filter(t => lapseType === BattlerTagLapseType.FAINT || ((t.lapseTypes.some(lType => lType === lapseType)) && !(t.lapse(this, lapseType)))).forEach(t => {
       t.onRemove(this);
       tags.splice(tags.indexOf(t), 1);
     });
@@ -3097,6 +3101,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getBattleInfo(): BattleInfo {
     return this.battleInfo;
   }
+
+  /**
+   * Checks whether or not the Pokemon's root form has the same ability
+   * @param abilityIndex the given ability index we are checking
+   * @returns true if the abilities are the same
+   */
+  hasSameAbilityInRootForm(abilityIndex: number): boolean {
+    const currentAbilityIndex = this.abilityIndex;
+    const rootForm = getPokemonSpecies(this.species.getRootSpeciesId());
+    return rootForm.getAbility(abilityIndex) === rootForm.getAbility(currentAbilityIndex);
+  }
 }
 
 export default interface Pokemon {
@@ -3303,9 +3318,10 @@ export class PlayerPokemon extends Pokemon {
     });
   }
 
-  evolve(evolution: SpeciesFormEvolution): Promise<void> {
+  evolve(evolution: SpeciesFormEvolution, preEvolution: PokemonSpeciesForm): Promise<void> {
     return new Promise(resolve => {
       this.pauseEvolutions = false;
+      // Handles Nincada evolving into Ninjask + Shedinja
       this.handleSpecialEvolutions(evolution);
       const isFusion = evolution instanceof FusionSpeciesFormEvolution;
       if (!isFusion) {
@@ -3323,16 +3339,26 @@ export class PlayerPokemon extends Pokemon {
       }
       this.generateName();
       if (!isFusion) {
-        // Prevent pokemon with an illegal ability value from breaking things too badly
         const abilityCount = this.getSpeciesForm().getAbilityCount();
-        if (this.abilityIndex >= abilityCount) {
+        const preEvoAbilityCount = preEvolution.getAbilityCount();
+        if ([0, 1, 2].includes(this.abilityIndex)) {
+          // Handles cases where a Pokemon with 3 abilities evolves into a Pokemon with 2 abilities (ie: Eevee -> any Eeveelution)
+          if (this.abilityIndex === 2 && preEvoAbilityCount === 3 && abilityCount === 2) {
+            this.abilityIndex = 1;
+          }
+        } else { // Prevent pokemon with an illegal ability value from breaking things
           console.warn("this.abilityIndex is somehow an illegal value, please report this");
           console.warn(this.abilityIndex);
           this.abilityIndex = 0;
         }
       } else { // Do the same as above, but for fusions
         const abilityCount = this.getFusionSpeciesForm().getAbilityCount();
-        if (this.fusionAbilityIndex >= abilityCount) {
+        const preEvoAbilityCount = preEvolution.getAbilityCount();
+        if ([0, 1, 2].includes(this.fusionAbilityIndex)) {
+          if (this.fusionAbilityIndex === 2 && preEvoAbilityCount === 3 && abilityCount === 2) {
+            this.fusionAbilityIndex = 1;
+          }
+        } else {
           console.warn("this.fusionAbilityIndex is somehow an illegal value, please report this");
           console.warn(this.fusionAbilityIndex);
           this.fusionAbilityIndex = 0;
@@ -3379,7 +3405,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionLuck = this.fusionLuck;
 
         this.scene.getParty().push(newPokemon);
-        newPokemon.evolve(!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution));
+        newPokemon.evolve((!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution)), evoSpecies);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
           && m.pokemonId === this.id, true) as PokemonHeldItemModifier[];
         modifiers.forEach(m => {
@@ -3995,7 +4021,7 @@ export interface AttackMoveResult {
   damage: integer;
   critical: boolean;
   sourceId: integer;
-  attackingPosition: BattlerIndex;
+  sourceBattlerIndex: BattlerIndex;
 }
 
 export class PokemonSummonData {
@@ -4042,6 +4068,7 @@ export class PokemonTurnData {
   public currDamageDealt: integer = 0;
   public damageTaken: integer = 0;
   public attacksReceived: AttackMoveResult[] = [];
+  public order: number;
 }
 
 export enum AiType {

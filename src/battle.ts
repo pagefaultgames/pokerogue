@@ -16,30 +16,30 @@ import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
 
 export enum BattleType {
-    WILD,
-    TRAINER,
-    CLEAR
+  WILD,
+  TRAINER,
+  CLEAR
 }
 
 export enum BattlerIndex {
-    ATTACKER = -1,
-    PLAYER,
-    PLAYER_2,
-    ENEMY,
-    ENEMY_2
+  ATTACKER = -1,
+  PLAYER,
+  PLAYER_2,
+  ENEMY,
+  ENEMY_2
 }
 
 export interface TurnCommand {
-    command: Command;
-    cursor?: integer;
-    move?: QueuedMove;
-    targets?: BattlerIndex[];
-    skip?: boolean;
-    args?: any[];
+  command: Command;
+  cursor?: integer;
+  move?: QueuedMove;
+  targets?: BattlerIndex[];
+  skip?: boolean;
+  args?: any[];
 }
 
 interface TurnCommands {
-    [key: integer]: TurnCommand
+  [key: integer]: TurnCommand
 }
 
 export default class Battle {
@@ -294,7 +294,7 @@ export default class Battle {
           if (pokemon.species.speciesId === Species.TAPU_KOKO || pokemon.species.speciesId === Species.TAPU_LELE || pokemon.species.speciesId === Species.TAPU_BULU || pokemon.species.speciesId === Species.TAPU_FINI) {
             return "battle_legendary_tapu";
           }
-          if (pokemon.species.speciesId === Species.COSMOG || pokemon.species.speciesId === Species.COSMOEM || pokemon.species.speciesId === Species.SOLGALEO || pokemon.species.speciesId === Species.LUNALA) {
+          if ([ Species.COSMOG, Species.COSMOEM, Species.SOLGALEO, Species.LUNALA ].includes(pokemon.species.speciesId)) {
             return "battle_legendary_sol_lun";
           }
           if (pokemon.species.speciesId === Species.NECROZMA) {
@@ -308,7 +308,7 @@ export default class Battle {
               return "battle_legendary_ultra_nec";
             }
           }
-          if (pokemon.species.speciesId === Species.NIHILEGO || pokemon.species.speciesId === Species.BUZZWOLE || pokemon.species.speciesId === Species.PHEROMOSA || pokemon.species.speciesId === Species.XURKITREE || pokemon.species.speciesId === Species.CELESTEELA || pokemon.species.speciesId === Species.KARTANA || pokemon.species.speciesId === Species.GUZZLORD || pokemon.species.speciesId === Species.POIPOLE || pokemon.species.speciesId === Species.NAGANADEL || pokemon.species.speciesId === Species.STAKATAKA || pokemon.species.speciesId === Species.BLACEPHALON) {
+          if ([ Species.NIHILEGO, Species.BUZZWOLE, Species.PHEROMOSA, Species.XURKITREE, Species.CELESTEELA, Species.KARTANA, Species.GUZZLORD, Species.POIPOLE, Species.NAGANADEL, Species.STAKATAKA, Species.BLACEPHALON ].includes(pokemon.species.speciesId)) {
             return "battle_legendary_ub";
           }
           if (pokemon.species.speciesId === Species.ZACIAN || pokemon.species.speciesId === Species.ZAMAZENTA) {
@@ -444,7 +444,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[]): Get
 }
 
 export interface FixedBattleConfigs {
-    [key: integer]: FixedBattleConfig
+  [key: integer]: FixedBattleConfig
 }
 /**
  * Youngster/Lass on 5

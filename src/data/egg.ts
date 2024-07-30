@@ -66,7 +66,7 @@ export interface IEggOptions {
 export class Egg {
 
   ////
-  // #region Privat properties
+  // #region Private properties
   ////
 
   private _id: number;
@@ -166,12 +166,12 @@ export class Egg {
     if (eggOptions.species) {
       this._tier = this.getEggTierFromSpeciesStarterValue();
       this._hatchWaves = eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
-      // If species has no variant, set variantTier to common. This needs to
-      // be done because species with no variants get filtered at rollSpecies but since the
-      // species is set the check never happens
-      if (!getPokemonSpecies(this.species).hasVariants()) {
-        this._variantTier = VariantTier.COMMON;
-      }
+    }
+    // If species has no variant, set variantTier to common. This needs to
+    // be done because species with no variants get filtered at rollSpecies but if the
+    // species is set via options or the legendary gacha pokemon gets choosen the check never happens
+    if (this._species && !getPokemonSpecies(this._species).hasVariants()) {
+      this._variantTier = VariantTier.COMMON;
     }
     // Needs this._tier so it needs to be generated afer the tier override if bought from same species
     this._eggMoveIndex = eggOptions.eggMoveIndex ?? this.rollEggMoveIndex();
@@ -182,7 +182,7 @@ export class Egg {
   }
 
   ////
-  // #region Public methodes
+  // #region Public methods
   ////
 
   public isManaphyEgg(): boolean {
@@ -281,7 +281,7 @@ export class Egg {
   ////
 
   ////
-  // #region Private methodes
+  // #region Private methods
   ////
 
   private rollEggMoveIndex() {
