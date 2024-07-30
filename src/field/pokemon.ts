@@ -3313,7 +3313,10 @@ export class PlayerPokemon extends Pokemon {
     });
   }
 
-  getPossibleEvolution(evolution: SpeciesFormEvolution): Promise<Pokemon> {
+  getPossibleEvolution(evolution: SpeciesFormEvolution | null): Promise<Pokemon> {
+    if (!evolution) {
+      return new Promise(resolve => resolve(this));
+    }
     return new Promise(resolve => {
       const evolutionSpecies = getPokemonSpecies(evolution.speciesId);
       const isFusion = evolution instanceof FusionSpeciesFormEvolution;
@@ -3334,7 +3337,10 @@ export class PlayerPokemon extends Pokemon {
     });
   }
 
-  evolve(evolution: SpeciesFormEvolution, preEvolution: PokemonSpeciesForm): Promise<void> {
+  evolve(evolution: SpeciesFormEvolution | null, preEvolution: PokemonSpeciesForm): Promise<void> {
+    if (!evolution) {
+      return new Promise(resolve => resolve());
+    }
     return new Promise(resolve => {
       this.pauseEvolutions = false;
       // Handles Nincada evolving into Ninjask + Shedinja
