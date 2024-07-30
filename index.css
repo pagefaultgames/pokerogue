@@ -159,6 +159,7 @@ input:-internal-autofill-selected {
   width: 100%;
   position: fixed;
   top: 1rem;
+  left: 0;
   align-items: center;
   gap: 10%;
   padding: 0 1rem;
