@@ -53,6 +53,7 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
 import { moveTriggers } from "./move-trigger";
+import { runHistory } from "./run-history-ui-handler";
 
 export const ptBrConfig = {
   ability: ability,
@@ -111,5 +112,6 @@ export const ptBrConfig = {
   weather: weather,
   partyUiHandler: partyUiHandler,
   modifierSelectUiHandler: modifierSelectUiHandler,
-  moveTriggers: moveTriggers
+  moveTriggers: moveTriggers,
+  runHistory: runHistory,
 };

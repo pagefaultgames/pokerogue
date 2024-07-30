@@ -25,6 +25,10 @@ export const runHistory: SimpleTranslationEntries = {
   "SPDshortened":"Vel.",
   "runInfo":"Run Info",
   "money":"Money",
+  "runLength":"Run Length",
+  "viewHeldItems":"Held Items",
+  "hallofFameText":"Welcome to the Hall of Fame!",
+  "viewHallOfFame":"View Hall of Fame!"
 } as const;
 
 //Mode Information found in game-mode.ts
