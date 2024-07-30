@@ -1239,6 +1239,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             });
           if (this.speciesStarterMoves.length > 1) { // this lets you change the pokemon moves
             const showSwapOptions = (moveset: StarterMoveset) => {
+
+              this.blockInput = true;
+
               ui.setMode(Mode.STARTER_SELECT).then(() => {
                 ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
                   this.moveInfoOverlay.show(allMoves[moveset[0]]);
@@ -1248,6 +1251,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       const option: OptionSelectItem = {
                         label: allMoves[m].name,
                         handler: () => {
+                          this.blockInput = true;
                           ui.setMode(Mode.STARTER_SELECT).then(() => {
                             ui.showText(`${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`, null, () => {
                               const possibleMoves = this.speciesStarterMoves.filter((sm: Moves) => sm !== m);
@@ -1282,6 +1286,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                 maxOptions: 8,
                                 yOffset: 19
                               });
+                              this.blockInput = false;
                             });
                           });
                           return true;
@@ -1307,6 +1312,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     maxOptions: 8,
                     yOffset: 19
                   });
+                  this.blockInput = false;
                 });
               });
             };
@@ -1324,6 +1330,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (this.canCycleNature) {
             // if we could cycle natures, enable the improved nature menu
             const showNatureOptions = () => {
+
+              this.blockInput = true;
+
               ui.setMode(Mode.STARTER_SELECT).then(() => {
                 ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
                   const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
@@ -1341,6 +1350,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                           ui.setMode(Mode.STARTER_SELECT);
                           // set nature for starter
                           this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, n, undefined);
+                          this.blockInput = false;
                           return true;
                         }
                       };
@@ -1350,6 +1360,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       handler: () => {
                         this.clearText();
                         ui.setMode(Mode.STARTER_SELECT);
+                        this.blockInput = false;
                         return true;
                       }
                     }),
