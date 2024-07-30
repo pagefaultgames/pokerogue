@@ -1,4 +1,4 @@
-import { AchievementTranslationEntries } from "#app/plugins/i18n.js";
+import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
 
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {
@@ -26,7 +26,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "DamageAchv": {
-    description: "한 번의 공격만으로 {{damageAmount}} 대미지",
+    description: "한 번의 공격만으로 {{damageAmount}} 데미지",
   },
   "250_DMG": {
     name: "강타자",
@@ -263,6 +263,10 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "MONO_FAIRY": {
     name: "설마 자시안으로?",
+  },
+  "FRESH_START": {
+    name: "첫트!",
+    description: "새 출발 챌린지 모드 클리어."
   },
 } as const;
 

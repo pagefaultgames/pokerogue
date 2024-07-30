@@ -1,4 +1,4 @@
-import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/plugins/i18n";
+import {DialogueTranslationEntries, SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
@@ -381,6 +381,186 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "你的精神讓我沉淪！",
       3: "好像是我暈船了…"
     },
+  },
+  "rocket_grunt": {
+    "encounter": {
+      1: "Prepare for trouble!"
+    },
+    "victory": {
+      1: "Team Rocket blasting off again!"
+    },
+  },
+  "magma_grunt": {
+    "encounter": {
+      1: " If you get in the way of Team Magma, don’t expect any mercy!"
+    },
+    "victory": {
+      1: "Huh? I lost?!"
+    },
+  },
+  "aqua_grunt": {
+    "encounter": {
+      1: "No one who crosses Team Aqua gets any mercy, not even kids!"
+    },
+    "victory": {
+      1: "You're kidding me!"
+    },
+  },
+  "galactic_grunt": {
+    "encounter": {
+      1: "Don't mess with Team Galactic!"
+    },
+    "victory": {
+      1: "Shut down..."
+    },
+  },
+  "plasma_grunt": {
+    "encounter": {
+      1: "We won't tolerate people who have different ideas!"
+    },
+    "victory": {
+      1: "Plasmaaaaaaaaa!"
+    },
+  },
+  "flare_grunt": {
+    "encounter": {
+      1: "Fashion is most important to us!"
+    },
+    "victory": {
+      1: "The future doesn't look bright for me."
+    },
+  },
+  "rocket_boss_giovanni_1": {
+    "encounter": {
+      1: "So! I must say, I am impressed you got here!"
+    },
+    "victory": {
+      1: "WHAT! This cannot be!"
+    },
+    "defeat": {
+      1: "Mark my words. Not being able to measure your own strength shows that you are still a child."
+    }
+  },
+  "rocket_boss_giovanni_2": {
+    "encounter": {
+      1: "My old associates need me... Are you going to get in my way?"
+    },
+    "victory": {
+      1: "How is this possible...?\nThe precious dream of Team Rocket has become little more than an illusion..."
+    },
+    "defeat": {
+      1: "Team Rocket will be reborn again, and I will rule the world!"
+    }
+  },
+  "magma_boss_maxie_1": {
+    "encounter": {
+      1: "I will bury you by my own hand. I hope you appreciate this honor!"
+    },
+    "victory": {
+      1: "Ugh! You are... quite capable...\nI fell behind, but only by an inch..."
+    },
+    "defeat": {
+      1: "Team Magma will prevail!"
+    }
+  },
+  "magma_boss_maxie_2": {
+    "encounter": {
+      1: "You are the final obstacle remaining between me and my goals.\nBrace yourself for my ultimate attack! Fuhahaha!"
+    },
+    "victory": {
+      1: "This... This is not.. Ngh..."
+    },
+    "defeat": {
+      1: "And now... I will transform this planet to a land ideal for humanity."
+    }
+  },
+  "aqua_boss_archie_1": {
+    "encounter": {
+      1: "I'm leader of Team Aqua, so I'm afraid it's the rope's end for you."
+    },
+    "victory": {
+      1: "Let's meet again somewhere. I'll be sure to remember that face."
+    },
+    "defeat": {
+      1: "Brilliant! My team won't hold back now!"
+    }
+  },
+  "aqua_boss_archie_2": {
+    "encounter": {
+      1: "I've been waiting so long for this day to come.\nThis is the true power of my team!"
+    },
+    "victory": {
+      1: "Like I figured..."
+    },
+    "defeat": {
+      1: "I'll return everything in this world to its original, pure state!!"
+    }
+  },
+  "galactic_boss_cyrus_1": {
+    "encounter": {
+      1: "You were compelled to come here by such vacuous sentimentality\nI will make you regret paying heed to your heart!"
+    },
+    "victory": {
+      1: "Interesting. And quite curious."
+    },
+    "defeat": {
+      1: "I will create my new world..."
+    }
+  },
+  "galactic_boss_cyrus_2": {
+    "encounter": {
+      1: "So we meet again. It seems our fates have become intertwined.\nBut here and now, I will finally break that bond!"
+    },
+    "victory": {
+      1: "How? How? HOW?!"
+    },
+    "defeat": {
+      1: "Farewell."
+    }
+  },
+  "plasma_boss_ghetsis_1": {
+    "encounter": {
+      1: "I won't allow anyone to stop me! No matter who does what!"
+    },
+    "victory": {
+      1: "How can this be? I'm the creator of Team Plasma! I'm perfect!"
+    },
+    "defeat": {
+      1: "I am the perfect ruler of a perfect new world! Mwa ha ha!"
+    }
+  },
+  "plasma_boss_ghetsis_2": {
+    "encounter": {
+      1: "Come now! I want to see your face at the moment you lose all hope!"
+    },
+    "victory": {
+      1: "My calculations... No! My careful schemes! The world should be mine!"
+    },
+    "defeat": {
+      1: "Kyurem! Use Absofusion!"
+    }
+  },
+  "flare_boss_lysandre_1": {
+    "encounter": {
+      1: "Do you want to stop me? Show me in battle."
+    },
+    "victory": {
+      1: "You are here to stop me. But I ask you to wait. "
+    },
+    "defeat": {
+      1: "Pokemon...Shall no longer exist."
+    }
+  },
+  "flare_boss_lysandre_2": {
+    "encounter": {
+      1: "The future you want, or the future I want... Let us see which one is more deserving, shall we?"
+    },
+    "victory": {
+      1: "Whaugh!"
+    },
+    "defeat": {
+      1: "Fools with no vision will continue to befoul this beautiful world."
+    }
   },
   "brock": {
     "encounter": {
@@ -2007,6 +2187,32 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "你被我的風暴捲入了！祝你下次好運！",
     }
   },
+  "alder": {
+    "encounter": {
+      1: "準備好和合眾最強的訓練家交手吧！"
+    },
+    "victory": {
+      1: "精彩！簡直就是天下無雙！"
+    },
+    "defeat": {
+      1: `戰鬥結束後，我的心像是吹過了溫和的風…
+	  	$真是厲害！`
+    }
+  },
+  "kieran": {
+    "encounter": {
+      1: `我的努力讓我越來越強！
+	  	$所以我不會輸。`
+    },
+    "victory": {
+      1: `不可能…
+	  	$真是一場有趣又激動人心的戰鬥啊！`
+    },
+    "defeat": {
+      1: `哇塞，好一場戰鬥！
+	  	$你得多練練了。`
+    }
+  },
   "rival": {
     "encounter": {
       1: "@c{smile}嘿，我在找你呢！我知道你急著上路，\n但至少說個再見吧…$@c{smile_eclosed}所以你終於要開始追逐夢想了？\n我幾乎不敢相信。$@c{serious_smile_fists}來都來了，來一場對戰怎麼樣？\n畢竟，我想看看你是不是準備周全了。$@c{serious_mopen_fists}不要手下留情，我想讓你全力以赴！",
@@ -2110,7 +2316,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_6_female": {
     "encounter": {
-      1: "@c{smile_ehalf}又只有我們兩個人了。$@c{smile_eclosed}你知道嗎，我在心裡想啊想，\n想了好久……$@c{smile_ehalf}這一切背後是有什麼原因嗎，\n為什麼一切現在看起來都這麼奇怪……$@c{smile}你有你的夢想，而我內心有這個抱負……$我不禁感覺這一切背後有一個更龐大的力量，$掌控者我們所做的一切，你和我之間。$@c{smile_eclosed}}我想我注定要推動你……到你的極限。$@c{smile_ehalf}我不清楚我是否一直做得很好，\n但到現在為止，我已經盡力了。$這個奇怪而可怕的地方……\n一切看起來都那麼清晰……$這是世界早已記錄的一切。$@c{smile_eclosed}我好像記不清我們一起度過的日子了。$@c{smile_ehalf}那些回憶到底是真的嗎？\n怎麼感覺這麼久遠……$@c{angry_mopen}你得繼續前進，不然的話，這一切將永無止境。\n你是唯一能做到這件事的。$@c{smile_ehalf}}我……不知道這一切意味著什麼……\n但我明白$@c{neutral}如果你現在不能就此擊敗我，\n你將毫無機會可言。",
+      1: "@c{smile_ehalf}又只有我們兩個人了。$@c{smile_eclosed}你知道嗎，我在心裡想啊想，\n想了好久……$@c{smile_ehalf}這一切背後是有什麼原因嗎，\n為什麼一切現在看起來都這麼奇怪……$@c{smile}你有你的夢想，而我內心有這個抱負……$我不禁感覺這一切背後有一個更龐大的力量，$掌控者我們所做的一切，你和我之間。$@c{smile_eclosed}我想我注定要推動你……到你的極限。$@c{smile_ehalf}我不清楚我是否一直做得很好，\n但到現在為止，我已經盡力了。$這個奇怪而可怕的地方……\n一切看起來都那麼清晰……$這是世界早已記錄的一切。$@c{smile_eclosed}我好像記不清我們一起度過的日子了。$@c{smile_ehalf}那些回憶到底是真的嗎？\n怎麼感覺這麼久遠……$@c{angry_mopen}你得繼續前進，不然的話，這一切將永無止境。\n你是唯一能做到這件事的。$@c{smile_ehalf}我……不知道這一切意味著什麼……\n但我明白$@c{neutral}如果你現在不能就此擊敗我，\n你將毫無機會可言。",
     },
     "victory": {
       1: "@c{smile_ehalf}我……\n我想我完成了我的使命……$@c{smile_eclosed}答應我……在你拯救世界之後\n……要……平安到家。$@c{smile_ehalf}……謝謝你。",

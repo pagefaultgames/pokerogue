@@ -17,7 +17,7 @@ export default class EggCounterContainer extends Phaser.GameObjects.Container {
   private battleScene: BattleScene;
   private eggCount: integer;
   private eggCountWindow: Phaser.GameObjects.NineSlice;
-  private eggCountText: Phaser.GameObjects.Text;
+  public eggCountText: Phaser.GameObjects.Text;
 
   /**
    * @param {BattleScene} scene - The scene to which this container belongs.
@@ -49,6 +49,7 @@ export default class EggCounterContainer extends Phaser.GameObjects.Container {
     eggSprite.setScale(0.32);
 
     this.eggCountText = addTextObject(this.battleScene, 28, 13, `${this.eggCount}`, TextStyle.MESSAGE, { fontSize: "66px" });
+    this.eggCountText.setName("text-egg-count");
 
     this.add(eggSprite);
     this.add(this.eggCountText);
@@ -69,7 +70,7 @@ export default class EggCounterContainer extends Phaser.GameObjects.Container {
    */
   private onEggCountChanged(event: Event): void {
     const eggCountChangedEvent = event as EggCountChangedEvent;
-    if (!eggCountChangedEvent) {
+    if (!eggCountChangedEvent || !this.eggCountText?.data) {
       return;
     }
 

@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Increases the power of a Pokémon's {{moveType}}-type moves by 20%.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Increases a Pokémon's level by 1.",
+      description: "Increases a Pokémon's level by {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Increases all party members' level by 1.",
+      description: "Increases all party members' level by {{levels}}.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "Increases the holder's base {{statName}} by 10%. The higher your IVs, the higher the stack limit.",
@@ -151,7 +151,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Sacred Ash" },
 
-    "REVIVER_SEED": { name: "Reviver Seed", description: "Revives the holder for 1/2 HP upon fainting." },
+    "REVIVER_SEED": { name: "Reviver Seed", description: "Revives the holder for 1/2 HP upon fainting from a direct hit." },
+
+    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
 
     "ETHER": { name: "Ether" },
     "MAX_ETHER": { name: "Max Ether" },
@@ -181,6 +183,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Golden Egg" },
 
     "SOOTHE_BELL": { name: "Soothe Bell" },
+
+    "SCOPE_LENS": { name: "Scope Lens", description: "It's a lens for scoping out weak points. It boosts the holder's critical-hit ratio."},
+    "LEEK": { name: "Leek", description: "This very long and stiff stalk of leek boosts the critical-hit ratio of Farfetch'd's moves."},
+
+    "EVIOLITE": { name: "Eviolite", description: "This mysterious evolutionary lump boosts the Defense and Sp. Def stats when held by a Pokémon that can still evolve." },
 
     "SOUL_DEW": { name: "Soul Dew", description: "Increases the influence of a Pokémon's nature on its stats by 10% (additive)." },
 
@@ -239,6 +246,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ENDURE_CHANCE": { name: "Endure Token" },
     "ENEMY_FUSED_CHANCE": { name: "Fusion Token", description: "Adds a 1% chance that a wild Pokémon will be a fusion." },
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Light Ball", description: "It's a mysterious orb that boosts Pikachu's Attack and Sp. Atk stats." },
+    "THICK_CLUB": { name: "Thick Club", description: "This hard bone of unknown origin boosts Cubone or Marowak's Attack stat." },
+    "METAL_POWDER": { name: "Metal Powder", description: "Extremely fine yet hard, this odd powder boosts Ditto's Defense stat." },
+    "QUICK_POWDER": { name: "Quick Powder", description: "Extremely fine yet hard, this odd powder boosts Ditto's Speed stat." }
+  },
   TempBattleStatBoosterItem: {
     "x_attack": "X Attack",
     "x_defense": "X Defense",
@@ -248,6 +261,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_accuracy": "X Accuracy",
     "dire_hit": "Dire Hit",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "Attack",
+    "DEF": "Defense",
+    "SPATK": "Sp. Atk",
+    "SPDEF": "Sp. Def",
+    "SPD": "Speed",
+    "ACC": "Accuracy",
+    "CRIT": "Critical Hit Ratio",
+    "EVA": "Evasiveness",
+    "DEFAULT": "???",
+  },
+
   AttackTypeBoosterItem: {
     "silk_scarf": "Silk Scarf",
     "black_belt": "Black Belt",

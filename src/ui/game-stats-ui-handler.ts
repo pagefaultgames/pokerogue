@@ -8,7 +8,7 @@ import * as Utils from "../utils";
 import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
 import {Button} from "#enums/buttons";
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
 
 interface DisplayStat {
   label_key?: string;

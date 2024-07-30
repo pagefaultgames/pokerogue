@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/interfaces/locales";
 
 export const move: MoveTranslationEntries = {
   pound: {
@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "Cañón Dinamax",
-    effect: "El usuario ataca emitiendo un rayo desde su núcleo. El daño infligido se duplica si el objetivo supera el nivel 200.",
+    effect: "El usuario ataca emitiendo un rayo desde su núcleo. Inflinge hasta el doble de daño si el objetivo tiene más niveles de lo normal."
   },
   snipeShot: {
     name: "Disparo Certero",

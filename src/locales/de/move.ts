@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/interfaces/locales";
 
 export const move: MoveTranslationEntries = {
   "pound": {
@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   "dynamaxCannon": {
     name: "Dynamax-Kanone",
-    effect: "Der Anwender schießt einen Strahl aus seinem Kern ab. Dynamaximierte Ziele erleiden doppelten Schaden."
+    effect: "Der Anwender schießt einen Strahl aus seinem Kern ab. Verursacht bis zu doppelt so viel Schaden, wenn das Level des Gegners höher als die Levelgrenze ist."
   },
   "snipeShot": {
     name: "Präzisionsschuss",

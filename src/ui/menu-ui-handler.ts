@@ -6,12 +6,13 @@ import { addWindow } from "./ui-theme";
 import MessageUiHandler from "./message-ui-handler";
 import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { Tutorial, handleTutorial } from "../tutorial";
-import { updateUserInfo } from "../account";
-import i18next from "../plugins/i18n";
+import { loggedInUser, updateUserInfo } from "../account";
+import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
+import BgmBar from "#app/ui/bgm-bar";
 
-export enum MenuOptions {
+enum MenuOptions {
   GAME_SETTINGS,
   ACHIEVEMENTS,
   STATS,
@@ -21,16 +22,18 @@ export enum MenuOptions {
   MANAGE_DATA,
   COMMUNITY,
   SAVE_AND_QUIT,
-  LOG_OUT
+  LOG_OUT,
 }
 
-const wikiUrl = "https://wiki.pokerogue.net";
+let wikiUrl = "https://wiki.pokerogue.net/start";
 const discordUrl = "https://discord.gg/uWpTfdKG49";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
+const redditUrl = "https://www.reddit.com/r/pokerogue";
 
 export default class MenuUiHandler extends MessageUiHandler {
   private menuContainer: Phaser.GameObjects.Container;
   private menuMessageBoxContainer: Phaser.GameObjects.Container;
+  private menuOverlay: Phaser.GameObjects.Rectangle;
 
   private menuBg: Phaser.GameObjects.NineSlice;
   protected optionSelectText: Phaser.GameObjects.Text;
@@ -43,6 +46,9 @@ export default class MenuUiHandler extends MessageUiHandler {
   protected manageDataConfig: OptionSelectConfig;
   protected communityConfig: OptionSelectConfig;
 
+  public bgmBar: BgmBar;
+
+
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
@@ -54,12 +60,28 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
+    // wiki url directs based on languges available on wiki
+    const lang = i18next.resolvedLanguage.substring(0,2);
+    if (["de", "fr", "ko", "zh"].includes(lang)) {
+      wikiUrl = `https://wiki.pokerogue.net/${lang}:start`;
+    }
+
+    this.bgmBar = new BgmBar(this.scene);
+    this.bgmBar.setup();
+
+    ui.bgmBar = this.bgmBar;
 
     this.menuContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
-
+    this.menuContainer.setName("menu");
     this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
+    this.menuOverlay = new Phaser.GameObjects.Rectangle(this.scene, -1, -1, this.scene.scaledCanvas.width, this.scene.scaledCanvas.height, 0xffffff, 0.3);
+    this.menuOverlay.setName("menu-overlay");
+    this.menuOverlay.setOrigin(0,0);
+    this.menuContainer.add(this.menuOverlay);
+
     const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
+    menuMessageText.setName("menu-message");
     menuMessageText.setWordWrapWidth(1224);
     menuMessageText.setOrigin(0, 0);
 
@@ -78,6 +100,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     ui.add(this.menuContainer);
 
     this.menuMessageBoxContainer = this.scene.add.container(0, 130);
+    this.menuMessageBoxContainer.setName("menu-message-box");
     this.menuMessageBoxContainer.setVisible(false);
     this.menuContainer.add(this.menuMessageBoxContainer);
 
@@ -86,6 +109,8 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuMessageBoxContainer.add(menuMessageBox);
 
     this.menuMessageBoxContainer.add(menuMessageText);
+
+    this.menuContainer.add(this.bgmBar);
 
     this.message = menuMessageText;
 
@@ -121,7 +146,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       });
     };
 
-    if (Utils.isLocal) {
+    if (Utils.isLocal || Utils.isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
@@ -152,7 +177,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true
     });
-    if (Utils.isLocal) {
+    if (Utils.isLocal || Utils.isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
@@ -163,23 +188,36 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       });
     }
-    manageDataOptions.push(
-      {
-        label: i18next.t("menuUiHandler:exportData"),
-        handler: () => {
-          this.scene.gameData.tryExportData(GameDataType.SYSTEM);
-          return true;
-        },
-        keepOpen: true
-      },
-      {
-        label: i18next.t("menuUiHandler:cancel"),
-        handler: () => {
-          this.scene.ui.revertMode();
-          return true;
-        }
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:exportData"),
+      handler: () => {
+        this.scene.gameData.tryExportData(GameDataType.SYSTEM);
+        return true;
       }
-    );
+    },
+    {
+      label: "Consent Preferences",
+      handler: () => {
+        const consentLink = document.querySelector(".termly-display-preferences") as HTMLInputElement;
+        const clickEvent = new MouseEvent("click", {
+          view: window,
+          bubbles: true,
+          cancelable: true
+        });
+        consentLink.dispatchEvent(clickEvent);
+        consentLink.focus();
+        return true;
+      },
+      keepOpen: true
+    },
+    {
+      label: i18next.t("menuUiHandler:cancel"),
+      handler: () => {
+        this.scene.ui.revertMode();
+        return true;
+      },
+      keepOpen: true
+    });
 
     this.manageDataConfig = {
       xOffset: 98,
@@ -212,6 +250,14 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       },
       {
+        label: "Reddit",
+        handler: () => {
+          window.open(redditUrl, "_blank").focus();
+          return true;
+        },
+        keepOpen: true
+      },
+      {
         label: i18next.t("menuUiHandler:cancel"),
         handler: () => {
           this.scene.ui.revertMode();
@@ -231,6 +277,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
+
     super.show(args);
 
     this.menuContainer.setVisible(true);
@@ -243,6 +290,9 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.scene.playSound("menu_open");
 
     handleTutorial(this.scene, Tutorial.Menu);
+
+    this.bgmBar.toggleBgmBar(true);
+
 
     return true;
   }
@@ -285,6 +335,7 @@ export default class MenuUiHandler extends MessageUiHandler {
           ui.setOverlayMode(Mode.EGG_LIST);
           success = true;
         } else {
+          ui.showText(i18next.t("menuUiHandler:noEggs"), null, () => ui.showText(""), Utils.fixedInt(1500));
           error = true;
         }
         break;
@@ -294,6 +345,51 @@ export default class MenuUiHandler extends MessageUiHandler {
         success = true;
         break;
       case MenuOptions.MANAGE_DATA:
+        if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === i18next.t("menuUiHandler:linkDiscord") || o.label === i18next.t("menuUiHandler:unlinkDiscord"))) {
+          this.manageDataConfig.options.splice(this.manageDataConfig.options.length-1,0,
+            {
+              label: loggedInUser.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
+              handler: () => {
+                if (loggedInUser?.discordId === "") {
+                  const token = Utils.getCookie(Utils.sessionIdKey);
+                  const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
+                  const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
+                  const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&state=${token}&prompt=none`;
+                  window.open(discordUrl, "_self");
+                  return true;
+                } else {
+                  Utils.apiPost("/auth/discord/logout", undefined, undefined, true).then(res => {
+                    if (!res.ok) {
+                      console.error(`Unlink failed (${res.status}: ${res.statusText})`);
+                    }
+                    updateUserInfo().then(() => this.scene.reset(true, true));
+                  });
+                  return true;
+                }
+              }
+            },
+            {
+              label: loggedInUser?.googleId === "" ? i18next.t("menuUiHandler:linkGoogle") : i18next.t("menuUiHandler:unlinkGoogle"),
+              handler: () => {
+                if (loggedInUser?.googleId === "") {
+                  const token = Utils.getCookie(Utils.sessionIdKey);
+                  const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
+                  const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+                  const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&response_type=code&redirect_uri=${redirectUri}&scope=openid&state=${token}`;
+                  window.open(googleUrl, "_self");
+                  return true;
+                } else {
+                  Utils.apiPost("/auth/google/logout", undefined, undefined, true).then(res => {
+                    if (!res.ok) {
+                      console.error(`Unlink failed (${res.status}: ${res.statusText})`);
+                    }
+                    updateUserInfo().then(() => this.scene.reset(true, true));
+                  });
+                  return true;
+                }
+              }
+            });
+        }
         ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.manageDataConfig);
         success = true;
         break;
@@ -325,7 +421,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             if (!res.ok) {
               console.error(`Log out failed (${res.status}: ${res.statusText})`);
             }
-            Utils.setCookie(Utils.sessionIdKey, "");
+            Utils.removeCookie(Utils.sessionIdKey);
             updateUserInfo().then(() => this.scene.reset(true, true));
           });
         };
@@ -399,6 +495,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   clear() {
     super.clear();
     this.menuContainer.setVisible(false);
+    this.bgmBar.toggleBgmBar(false);
     this.eraseCursor();
   }
 

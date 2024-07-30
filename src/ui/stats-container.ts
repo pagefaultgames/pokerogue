@@ -26,7 +26,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    this.setName("container-stats");
+    this.setName("stats");
     const ivChartBgData = new Array(6).fill(null).map((_, i: integer) => [ ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
 
     const ivChartBg = this.scene.add.polygon(48, 44, ivChartBgData, 0xd8e0f0, 0.625);

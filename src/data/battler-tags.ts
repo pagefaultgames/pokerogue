@@ -1,6 +1,6 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
-import { getPokemonMessage, getPokemonNameWithAffix } from "../messages";
+import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangeCallback, StatChangePhase } from "../phases";
+import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
@@ -17,6 +17,7 @@ import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import i18next from "#app/plugins/i18n.js";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -30,14 +31,14 @@ export enum BattlerTagLapseType {
 
 export class BattlerTag {
   public tagType: BattlerTagType;
-  public lapseType: BattlerTagLapseType;
-  public turnCount: integer;
+  public lapseTypes: BattlerTagLapseType[];
+  public turnCount: number;
   public sourceMove: Moves;
-  public sourceId?: integer;
+  public sourceId?: number;
 
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer, sourceMove: Moves, sourceId?: integer) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: number, sourceMove: Moves, sourceId?: number) {
     this.tagType = tagType;
-    this.lapseType = lapseType;
+    this.lapseTypes = Array.isArray(lapseType) ? lapseType : [ lapseType ];
     this.turnCount = turnCount;
     this.sourceMove = sourceMove;
     this.sourceId = sourceId;
@@ -91,30 +92,34 @@ export interface TerrainBattlerTag {
   terrainTypes: TerrainType[];
 }
 
+/**
+ * BattlerTag that represents the "recharge" effects of moves like Hyper Beam.
+ */
 export class RechargingTag extends BattlerTag {
   constructor(sourceMove: Moves) {
-    super(BattlerTagType.RECHARGING, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
+    super(BattlerTagType.RECHARGING, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 2, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
+    // Queue a placeholder move for the Pokemon to "use" next turn
     pokemon.getMoveQueue().push({ move: Moves.NONE, targets: [] });
   }
 
+  /** Cancels the source's move this turn and queues a "__ must recharge!" message */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    super.lapse(pokemon, lapseType);
-
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " must\nrecharge!"));
-    (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
-    pokemon.getMoveQueue().shift();
-
-    return true;
+    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsRechargingLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+      (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
+      pokemon.getMoveQueue().shift();
+    }
+    return super.lapse(pokemon, lapseType);
   }
 }
 
 export class TrappedTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer, sourceMove: Moves, sourceId: integer) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: number, sourceMove: Moves, sourceId: number) {
     super(tagType, lapseType, turnCount, sourceMove, sourceId);
   }
 
@@ -134,11 +139,14 @@ export class TrappedTag extends BattlerTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` was freed\nfrom ${this.getMoveName()}!`));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsTrappedOnRemove", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      moveName: this.getMoveName()
+    }));
   }
 
   getDescriptor(): string {
-    return "trapping";
+    return i18next.t("battlerTags:trappedDesc");
   }
 
   isSourceLinked(): boolean {
@@ -146,13 +154,16 @@ export class TrappedTag extends BattlerTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, " can no\nlonger escape!");
+    return i18next.t("battle:battlerTagsTrappedOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
 }
 
+/**
+ * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Flinch Flinch} status condition
+ */
 export class FlinchedTag extends BattlerTag {
   constructor(sourceMove: Moves) {
-    super(BattlerTagType.FLINCHED, BattlerTagLapseType.PRE_MOVE, 0, sourceMove);
+    super(BattlerTagType.FLINCHED, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 0, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -165,17 +176,23 @@ export class FlinchedTag extends BattlerTag {
     return !pokemon.isMax();
   }
 
+  /**
+   * Cancels the Pokemon's next Move on the turn this tag is applied
+   * @param pokemon The {@linkcode Pokemon} with this tag
+   * @param lapseType The {@linkcode BattlerTagLapseType lapse type} used for this function call
+   * @returns `false` (This tag is always removed after applying its effects)
+   */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    super.lapse(pokemon, lapseType);
+    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
+      (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsFlinchedLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    }
 
-    (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " flinched!"));
-
-    return true;
+    return super.lapse(pokemon, lapseType);
   }
 
   getDescriptor(): string {
-    return "flinching";
+    return i18next.t("battlerTags:flinchedDesc");
   }
 }
 
@@ -196,17 +213,16 @@ export class InterruptedTag extends BattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    super.lapse(pokemon, lapseType);
     (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
-    return true;
+    return super.lapse(pokemon, lapseType);
   }
 }
 
 /**
- * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition)}
+ * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition) Confusion} status condition
  */
 export class ConfusedTag extends BattlerTag {
-  constructor(turnCount: integer, sourceMove: Moves) {
+  constructor(turnCount: number, sourceMove: Moves) {
     super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount, sourceMove);
   }
 
@@ -218,26 +234,26 @@ export class ConfusedTag extends BattlerTag {
     super.onAdd(pokemon);
 
     pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " became\nconfused!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsConfusedOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " snapped\nout of confusion!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsConfusedOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   onOverlap(pokemon: Pokemon): void {
     super.onOverlap(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is\nalready confused!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsConfusedOnOverlap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = lapseType !== BattlerTagLapseType.CUSTOM && super.lapse(pokemon, lapseType);
 
     if (ret) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is\nconfused!"));
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsConfusedLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
 
       // 1/3 chance of hitting self with a 40 base power move
@@ -245,7 +261,7 @@ export class ConfusedTag extends BattlerTag {
         const atk = pokemon.getBattleStat(Stat.ATK);
         const def = pokemon.getBattleStat(Stat.DEF);
         const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
-        pokemon.scene.queueMessage("It hurt itself in its\nconfusion!");
+        pokemon.scene.queueMessage(i18next.t("battle:battlerTagsConfusedLapseHurtItself"));
         pokemon.damageAndUpdate(damage);
         pokemon.battleData.hitCount++;
         (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
@@ -256,7 +272,7 @@ export class ConfusedTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return "confusion";
+    return i18next.t("battlerTags:confusedDesc");
   }
 }
 
@@ -266,7 +282,7 @@ export class ConfusedTag extends BattlerTag {
  * @see {@linkcode apply}
  */
 export class DestinyBondTag extends BattlerTag {
-  constructor(sourceMove: Moves, sourceId: integer) {
+  constructor(sourceMove: Moves, sourceId: number) {
     super(BattlerTagType.DESTINY_BOND, BattlerTagLapseType.PRE_MOVE, 1, sourceMove, sourceId);
   }
 
@@ -292,21 +308,24 @@ export class DestinyBondTag extends BattlerTag {
       return false;
     }
 
-    const targetMessage = getPokemonMessage(pokemon, "");
-
     if (pokemon.isBossImmune()) {
-      pokemon.scene.queueMessage(`${targetMessage} is unaffected\nby the effects of Destiny Bond.`);
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsDestinyBondLapseIsBoss", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       return false;
     }
 
-    pokemon.scene.queueMessage(`${getPokemonMessage(source, ` took\n${targetMessage} down with it!`)}`);
+    pokemon.scene.queueMessage(
+      i18next.t("battle:battlerTagsDestinyBondLapse", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(source),
+        pokemonNameWithAffix2: getPokemonNameWithAffix(pokemon)
+      })
+    );
     pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, false, true);
     return false;
   }
 }
 
 export class InfatuatedTag extends BattlerTag {
-  constructor(sourceMove: integer, sourceId: integer) {
+  constructor(sourceMove: number, sourceId: number) {
     super(BattlerTagType.INFATUATED, BattlerTagLapseType.MOVE, 1, sourceMove, sourceId);
   }
 
@@ -317,24 +336,34 @@ export class InfatuatedTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` fell in love\nwith ${pokemon.scene.getPokemonById(this.sourceId).name}!`));
+    pokemon.scene.queueMessage(
+      i18next.t("battle:battlerTagsInfatuatedOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId))
+      })
+    );
   }
 
   onOverlap(pokemon: Pokemon): void {
     super.onOverlap(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is\nalready in love!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsInfatuatedOnOverlap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is in love\nwith ${pokemon.scene.getPokemonById(this.sourceId).name}!`));
+      pokemon.scene.queueMessage(
+        i18next.t("battle:battlerTagsInfatuatedLapse", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId))
+        })
+      );
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.ATTRACT));
 
       if (pokemon.randSeedInt(2)) {
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is\nimmobilized by love!"));
+        pokemon.scene.queueMessage(i18next.t("battle:battlerTagsInfatuatedLapseImmobilize", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
         (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
       }
     }
@@ -345,7 +374,7 @@ export class InfatuatedTag extends BattlerTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " got over\nits infatuation."));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsInfatuatedOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   isSourceLinked(): boolean {
@@ -353,14 +382,14 @@ export class InfatuatedTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return "infatuation";
+    return i18next.t("battlerTags:infatuatedDesc");
   }
 }
 
 export class SeedTag extends BattlerTag {
-  private sourceIndex: integer;
+  private sourceIndex: number;
 
-  constructor(sourceId: integer) {
+  constructor(sourceId: number) {
     super(BattlerTagType.SEEDED, BattlerTagLapseType.TURN_END, 1, Moves.LEECH_SEED, sourceId);
   }
 
@@ -380,7 +409,7 @@ export class SeedTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " was seeded!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsSeededOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
     this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId).getBattlerIndex();
   }
 
@@ -400,7 +429,7 @@ export class SeedTag extends BattlerTag {
           const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr, false);
           pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(),
             !reverseDrain ? damage : damage * -1,
-            !reverseDrain ? getPokemonMessage(pokemon, "'s health is\nsapped by Leech Seed!") : getPokemonMessage(source, "'s Leech Seed\nsucked up the liquid ooze!"),
+            !reverseDrain ? i18next.t("battle:battlerTagsSeededLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }) : i18next.t("battle:battlerTagsSeededLapseShed", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
             false, true));
         }
       }
@@ -410,7 +439,7 @@ export class SeedTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return "seeding";
+    return i18next.t("battlerTags:seedDesc");
   }
 }
 
@@ -422,20 +451,20 @@ export class NightmareTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " began\nhaving a Nightmare!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsNightmareOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   onOverlap(pokemon: Pokemon): void {
     super.onOverlap(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is\nalready locked in a Nightmare!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsNightmareOnOverlap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is locked\nin a Nightmare!"));
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsNightmareLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.CURSE)); // TODO: Update animation type
 
       const cancelled = new Utils.BooleanHolder(false);
@@ -450,32 +479,28 @@ export class NightmareTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return "nightmares";
+    return i18next.t("battlerTags:nightmareDesc");
   }
 }
 
 export class FrenzyTag extends BattlerTag {
-  constructor(sourceMove: Moves, sourceId: integer) {
-    super(BattlerTagType.FRENZY, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
+  constructor(turnCount: number, sourceMove: Moves, sourceId: number) {
+    super(BattlerTagType.FRENZY, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
-  }
-}
-
-export class ChargingTag extends BattlerTag {
-  constructor(sourceMove: Moves, sourceId: integer) {
-    super(BattlerTagType.CHARGING, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
+    if (this.turnCount < 2) { // Only add CONFUSED tag if a disruption occurs on the final confusion-inducing turn of FRENZY
+      pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
+    }
   }
 }
 
 export class EncoreTag extends BattlerTag {
   public moveId: Moves;
 
-  constructor(sourceId: integer) {
+  constructor(sourceId: number) {
     super(BattlerTagType.ENCORE, BattlerTagLapseType.AFTER_MOVE, 3, Moves.ENCORE, sourceId);
   }
 
@@ -527,7 +552,7 @@ export class EncoreTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " got\nan Encore!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsEncoreOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
 
     const movePhase = pokemon.scene.findPhase(m => m instanceof MovePhase && m.pokemon === pokemon);
     if (movePhase) {
@@ -543,17 +568,22 @@ export class EncoreTag extends BattlerTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s Encore\nended!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsEncoreOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 }
 
 export class HelpingHandTag extends BattlerTag {
-  constructor(sourceId: integer) {
+  constructor(sourceId: number) {
     super(BattlerTagType.HELPING_HAND, BattlerTagLapseType.TURN_END, 1, Moves.HELPING_HAND, sourceId);
   }
 
   onAdd(pokemon: Pokemon): void {
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon.scene.getPokemonById(this.sourceId), ` is ready to\nhelp ${pokemon.name}!`));
+    pokemon.scene.queueMessage(
+      i18next.t("battle:battlerTagsHelpingHandOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId)),
+        pokemonName: getPokemonNameWithAffix(pokemon)
+      })
+    );
   }
 }
 
@@ -562,7 +592,7 @@ export class HelpingHandTag extends BattlerTag {
  * @extends TrappedTag
  */
 export class IngrainTag extends TrappedTag {
-  constructor(sourceId: integer) {
+  constructor(sourceId: number) {
     super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, Moves.INGRAIN, sourceId);
   }
 
@@ -581,19 +611,51 @@ export class IngrainTag extends TrappedTag {
     const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret) {
-      pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(), Math.floor(pokemon.getMaxHp() / 16),
-        getPokemonMessage(pokemon, " absorbed\nnutrients with its roots!"), true));
+      pokemon.scene.unshiftPhase(
+        new PokemonHealPhase(
+          pokemon.scene,
+          pokemon.getBattlerIndex(),
+          Math.floor(pokemon.getMaxHp() / 16),
+          i18next.t("battle:battlerTagsIngrainLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+          true
+        )
+      );
     }
 
     return ret;
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, " planted its roots!");
+    return i18next.t("battle:battlerTagsIngrainOnTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
 
   getDescriptor(): string {
-    return "roots";
+    return i18next.t("battlerTags:ingrainDesc");
+  }
+}
+
+/**
+ * Octolock traps the target pokemon and reduces its DEF and SPDEF by one stage at the
+ * end of each turn.
+ */
+export class OctolockTag extends TrappedTag {
+  constructor(sourceId: number) {
+    super(BattlerTagType.OCTOLOCK, BattlerTagLapseType.TURN_END, 1, Moves.OCTOLOCK, sourceId);
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.getTag(BattlerTagType.OCTOLOCK);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+
+    if (shouldLapse) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.DEF, BattleStat.SPDEF], -1));
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -605,15 +667,23 @@ export class AquaRingTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " surrounded\nitself with a veil of water!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsAquaRingOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret) {
-      pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
-        Math.floor(pokemon.getMaxHp() / 16), `${this.getMoveName()} restored\n${pokemon.name}\'s HP!`, true));
+      pokemon.scene.unshiftPhase(
+        new PokemonHealPhase(
+          pokemon.scene,
+          pokemon.getBattlerIndex(),
+          Math.floor(pokemon.getMaxHp() / 16),
+          i18next.t("battle:battlerTagsAquaRingLapse", {
+            moveName: this.getMoveName(),
+            pokemonName: getPokemonNameWithAffix(pokemon)
+          }),
+          true));
     }
 
     return ret;
@@ -659,7 +729,7 @@ export class DrowsyTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " grew drowsy!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsDrowsyOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -672,14 +742,14 @@ export class DrowsyTag extends BattlerTag {
   }
 
   getDescriptor(): string {
-    return "drowsiness";
+    return i18next.t("battlerTags:drowsyDesc");
   }
 }
 
 export abstract class DamagingTrapTag extends TrappedTag {
   private commonAnim: CommonAnim;
 
-  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: integer, sourceMove: Moves, sourceId: integer) {
+  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: number, sourceMove: Moves, sourceId: number) {
     super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
 
     this.commonAnim = commonAnim;
@@ -702,7 +772,12 @@ export abstract class DamagingTrapTag extends TrappedTag {
     const ret = super.lapse(pokemon, lapseType);
 
     if (ret) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is hurt\nby ${this.getMoveName()}!`));
+      pokemon.scene.queueMessage(
+        i18next.t("battle:battlerTagsDamagingTrapLapse", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          moveName: this.getMoveName()
+        })
+      );
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, this.commonAnim));
 
       const cancelled = new Utils.BooleanHolder(false);
@@ -718,123 +793,148 @@ export abstract class DamagingTrapTag extends TrappedTag {
 }
 
 export class BindTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.BIND, CommonAnim.BIND, turnCount, Moves.BIND, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, ` was squeezed by\n${pokemon.scene.getPokemonById(this.sourceId).name}'s ${this.getMoveName()}!`);
+    return i18next.t("battle:battlerTagsBindOnTrap", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId)),
+      moveName: this.getMoveName()
+    });
   }
 }
 
 export class WrapTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.WRAP, CommonAnim.WRAP, turnCount, Moves.WRAP, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, ` was Wrapped\nby ${pokemon.scene.getPokemonById(this.sourceId).name}!`);
+    return i18next.t("battle:battlerTagsWrapOnTrap", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId))
+    });
   }
 }
 
 export abstract class VortexTrapTag extends DamagingTrapTag {
-  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: integer, sourceMove: Moves, sourceId: integer) {
+  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: number, sourceMove: Moves, sourceId: number) {
     super(tagType, commonAnim, turnCount, sourceMove, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, " was trapped\nin the vortex!");
+    return i18next.t("battle:battlerTagsVortexOnTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
 }
 
 export class FireSpinTag extends VortexTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.FIRE_SPIN, CommonAnim.FIRE_SPIN, turnCount, Moves.FIRE_SPIN, sourceId);
   }
 }
 
 export class WhirlpoolTag extends VortexTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.WHIRLPOOL, CommonAnim.WHIRLPOOL, turnCount, Moves.WHIRLPOOL, sourceId);
   }
 }
 
 export class ClampTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.CLAMP, CommonAnim.CLAMP, turnCount, Moves.CLAMP, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon.scene.getPokemonById(this.sourceId), ` Clamped\n${pokemon.name}!`);
+    return i18next.t("battle:battlerTagsClampOnTrap", {
+      sourcePokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId)),
+      pokemonName: getPokemonNameWithAffix(pokemon),
+    });
   }
 }
 
 export class SandTombTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.SAND_TOMB, CommonAnim.SAND_TOMB, turnCount, Moves.SAND_TOMB, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, ` became trapped\nby ${this.getMoveName()}!`);
+    return i18next.t("battle:battlerTagsSandTombOnTrap", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      moveName: this.getMoveName()
+    });
   }
 }
 
 export class MagmaStormTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.MAGMA_STORM, CommonAnim.MAGMA_STORM, turnCount, Moves.MAGMA_STORM, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, " became trapped\nby swirling magma!");
+    return i18next.t("battle:battlerTagsMagmaStormOnTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
 }
 
 export class SnapTrapTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.SNAP_TRAP, CommonAnim.SNAP_TRAP, turnCount, Moves.SNAP_TRAP, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, " got trapped\nby a snap trap!");
+    return i18next.t("battle:battlerTagsSnapTrapOnTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
 }
 
 export class ThunderCageTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.THUNDER_CAGE, CommonAnim.THUNDER_CAGE, turnCount, Moves.THUNDER_CAGE, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon.scene.getPokemonById(this.sourceId), ` trapped\n${getPokemonNameWithAffix(pokemon)}!`);
+    return i18next.t("battle:battlerTagsThunderCageOnTrap", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      sourcePokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId))
+    });
   }
 }
 
 export class InfestationTag extends DamagingTrapTag {
-  constructor(turnCount: integer, sourceId: integer) {
+  constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.INFESTATION, CommonAnim.INFESTATION, turnCount, Moves.INFESTATION, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, ` has been afflicted \nwith an infestation by ${getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId))}!`);
+    return i18next.t("battle:battlerTagsInfestationOnTrap", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      sourcePokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId))
+    });
   }
 }
 
 
 export class ProtectedTag extends BattlerTag {
   constructor(sourceMove: Moves, tagType: BattlerTagType = BattlerTagType.PROTECTED) {
-    super(tagType, BattlerTagLapseType.CUSTOM, 0, sourceMove);
+    super(tagType, BattlerTagLapseType.TURN_END, 0, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, "\nprotected itself!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsProtectedOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
       new CommonBattleAnim(CommonAnim.PROTECT, pokemon).play(pokemon.scene);
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, "\nprotected itself!"));
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsProtectedLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+
+      // Stop multi-hit moves early
+      const effectPhase = pokemon.scene.getCurrentPhase();
+      if (effectPhase instanceof MoveEffectPhase) {
+        effectPhase.stopMultiHit(pokemon);
+      }
       return true;
     }
 
@@ -843,9 +943,9 @@ export class ProtectedTag extends BattlerTag {
 }
 
 export class ContactDamageProtectedTag extends ProtectedTag {
-  private damageRatio: integer;
+  private damageRatio: number;
 
-  constructor(sourceMove: Moves, damageRatio: integer) {
+  constructor(sourceMove: Moves, damageRatio: number) {
     super(sourceMove, BattlerTagType.SPIKY_SHIELD);
 
     this.damageRatio = damageRatio;
@@ -867,7 +967,9 @@ export class ContactDamageProtectedTag extends ProtectedTag {
       const effectPhase = pokemon.scene.getCurrentPhase();
       if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
         const attacker = effectPhase.getPokemon();
-        attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+        if (!attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
+          attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+        }
       }
     }
 
@@ -877,9 +979,9 @@ export class ContactDamageProtectedTag extends ProtectedTag {
 
 export class ContactStatChangeProtectedTag extends ProtectedTag {
   private stat: BattleStat;
-  private levels: integer;
+  private levels: number;
 
-  constructor(sourceMove: Moves, tagType: BattlerTagType, stat: BattleStat, levels: integer) {
+  constructor(sourceMove: Moves, tagType: BattlerTagType, stat: BattleStat, levels: number) {
     super(sourceMove, tagType);
 
     this.stat = stat;
@@ -959,12 +1061,12 @@ export class EnduringTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " braced\nitself!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsEnduringOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, " endured\nthe hit!"));
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsEnduringLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       return true;
     }
 
@@ -979,7 +1081,7 @@ export class SturdyTag extends BattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, " endured\nthe hit!"));
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsSturdyLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       return true;
     }
 
@@ -988,7 +1090,7 @@ export class SturdyTag extends BattlerTag {
 }
 
 export class PerishSongTag extends BattlerTag {
-  constructor(turnCount: integer) {
+  constructor(turnCount: number) {
     super(BattlerTagType.PERISH_SONG, BattlerTagLapseType.TURN_END, turnCount, Moves.PERISH_SONG);
   }
 
@@ -1000,7 +1102,12 @@ export class PerishSongTag extends BattlerTag {
     const ret = super.lapse(pokemon, lapseType);
 
     if (ret) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, `\'s perish count fell to ${this.turnCount}.`));
+      pokemon.scene.queueMessage(
+        i18next.t("battle:battlerTagsPerishSongLapse", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          turnCount: this.turnCount
+        })
+      );
     } else {
       pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, true, true);
     }
@@ -1009,10 +1116,37 @@ export class PerishSongTag extends BattlerTag {
   }
 }
 
+/**
+ * Applies the "Center of Attention" volatile status effect, the effect applied by Follow Me, Rage Powder, and Spotlight.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Center_of_attention | Center of Attention}
+ */
+export class CenterOfAttentionTag extends BattlerTag {
+  public powder: boolean;
+
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.CENTER_OF_ATTENTION, BattlerTagLapseType.TURN_END, 1, sourceMove);
+
+    this.powder = (this.sourceMove === Moves.RAGE_POWDER);
+  }
+
+  /** "Center of Attention" can't be added if an ally is already the Center of Attention. */
+  canAdd(pokemon: Pokemon): boolean {
+    const activeTeam = pokemon.isPlayer() ? pokemon.scene.getPlayerField() : pokemon.scene.getEnemyField();
+
+    return !activeTeam.find(p => p.getTag(BattlerTagType.CENTER_OF_ATTENTION));
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsCenterOfAttentionOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+}
+
 export class AbilityBattlerTag extends BattlerTag {
   public ability: Abilities;
 
-  constructor(tagType: BattlerTagType, ability: Abilities, lapseType: BattlerTagLapseType, turnCount: integer) {
+  constructor(tagType: BattlerTagType, ability: Abilities, lapseType: BattlerTagLapseType, turnCount: number) {
     super(tagType, lapseType, turnCount, undefined);
 
     this.ability = ability;
@@ -1044,7 +1178,7 @@ export class TruantTag extends AbilityBattlerTag {
     if (lastMove && lastMove.move !== Moves.NONE) {
       (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
       pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id, passive));
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is\nloafing around!"));
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsTruantLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
     }
 
     return true;
@@ -1059,7 +1193,7 @@ export class SlowStartTag extends AbilityBattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " can't\nget it going!"), null, false, null, true);
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsSlowStartOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, false, null, true);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1073,7 +1207,7 @@ export class SlowStartTag extends AbilityBattlerTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " finally\ngot its act together!"), null, false, null);
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsSlowStartOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, false, null);
   }
 }
 
@@ -1100,7 +1234,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
 
     const stats = [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ];
     let highestStat: Stat;
-    stats.map(s => pokemon.getBattleStat(s)).reduce((highestValue: integer, value: integer, i: integer) => {
+    stats.map(s => pokemon.getBattleStat(s)).reduce((highestValue: number, value: number, i: number) => {
       if (value > highestValue) {
         highestStat = stats[i];
         return value;
@@ -1119,13 +1253,13 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
       break;
     }
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, `'s ${getStatName(highestStat)}\nwas heightened!`), null, false, null, true);
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsHighestStatBoostOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), statName: getStatName(highestStat) }), null, false, null, true);
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.scene.queueMessage(`The effects of ${getPokemonMessage(pokemon, `'s\n${allAbilities[this.ability].name} wore off!`)}`);
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsHighestStatBoostOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: allAbilities[this.ability].name }));
   }
 }
 
@@ -1165,8 +1299,8 @@ export class TerrainHighestStatBoostTag extends HighestStatBoostTag implements T
   }
 }
 
-export class HideSpriteTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves) {
+export class SemiInvulnerableTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, turnCount: number, sourceMove: Moves) {
     super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount, sourceMove);
   }
 
@@ -1187,8 +1321,11 @@ export class HideSpriteTag extends BattlerTag {
 
 export class TypeImmuneTag extends BattlerTag {
   public immuneType: Type;
-  constructor(tagType: BattlerTagType, sourceMove: Moves, immuneType: Type, length: number) {
-    super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
+
+  constructor(tagType: BattlerTagType, sourceMove: Moves, immuneType: Type, length: number = 1) {
+    super(tagType, BattlerTagLapseType.TURN_END, length, sourceMove);
+
+    this.immuneType = immuneType;
   }
 
   /**
@@ -1204,6 +1341,18 @@ export class TypeImmuneTag extends BattlerTag {
 export class MagnetRisenTag extends TypeImmuneTag {
   constructor(tagType: BattlerTagType, sourceMove: Moves) {
     super(tagType, sourceMove, Type.GROUND, 5);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsMagnetRisenOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsMagnetRisenOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 }
 
@@ -1244,7 +1393,7 @@ export class CritBoostTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is getting\npumped!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsCritBoostOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1254,26 +1403,14 @@ export class CritBoostTag extends BattlerTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " relaxed."));
-  }
-}
-
-export class AlwaysCritTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
-    super(BattlerTagType.ALWAYS_CRIT, BattlerTagLapseType.TURN_END, 2, sourceMove);
-  }
-}
-
-export class IgnoreAccuracyTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
-    super(BattlerTagType.IGNORE_ACCURACY, BattlerTagLapseType.TURN_END, 2, sourceMove);
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsCritBoostOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 }
 
 export class SaltCuredTag extends BattlerTag {
-  private sourceIndex: integer;
+  private sourceIndex: number;
 
-  constructor(sourceId: integer) {
+  constructor(sourceId: number) {
     super(BattlerTagType.SALT_CURED, BattlerTagLapseType.TURN_END, 1, Moves.SALT_CURE, sourceId);
   }
 
@@ -1289,7 +1426,7 @@ export class SaltCuredTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is being salt cured!"));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsSaltCuredOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
     this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId).getBattlerIndex();
   }
 
@@ -1306,7 +1443,12 @@ export class SaltCuredTag extends BattlerTag {
         const pokemonSteelOrWater = pokemon.isOfType(Type.STEEL) || pokemon.isOfType(Type.WATER);
         pokemon.damageAndUpdate(Math.max(Math.floor(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), 1));
 
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is hurt by ${this.getMoveName()}!`));
+        pokemon.scene.queueMessage(
+          i18next.t("battle:battlerTagsSaltCuredLapse", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            moveName: this.getMoveName()
+          })
+        );
       }
     }
 
@@ -1315,9 +1457,9 @@ export class SaltCuredTag extends BattlerTag {
 }
 
 export class CursedTag extends BattlerTag {
-  private sourceIndex: integer;
+  private sourceIndex: number;
 
-  constructor(sourceId: integer) {
+  constructor(sourceId: number) {
     super(BattlerTagType.CURSED, BattlerTagLapseType.TURN_END, 1, Moves.CURSE, sourceId);
   }
 
@@ -1332,8 +1474,6 @@ export class CursedTag extends BattlerTag {
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
-
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " has been cursed!"));
     this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId).getBattlerIndex();
   }
 
@@ -1348,11 +1488,22 @@ export class CursedTag extends BattlerTag {
 
       if (!cancelled.value) {
         pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / 4), 1));
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is hurt by the ${this.getMoveName()}!`));
+        pokemon.scene.queueMessage(i18next.t("battle:battlerTagsCursedLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       }
     }
 
     return ret;
+  }
+}
+
+/**
+ * Battler tag for effects that ground the source, allowing Ground-type moves to hit them. Encompasses two tag types:
+ * @item `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
+ * @item `ROOSTED`: One-turn grounding effects (i.e. from Roost)
+ */
+export class GroundedTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
+    super(tagType, lapseType, 1, sourceMove);
   }
 }
 
@@ -1407,7 +1558,96 @@ export class IceFaceTag extends BattlerTag {
   }
 }
 
-export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
+
+/**
+ * Battler tag enabling the Stockpile mechanic. This tag handles:
+ * - Stack tracking, including max limit enforcement (which is replicated in Stockpile for redundancy).
+ *
+ * - Stat changes on adding a stack. Adding a stockpile stack attempts to raise the pokemon's DEF and SPDEF by +1.
+ *
+ * - Stat changes on removal of (all) stacks.
+ *   - Removing stacks decreases DEF and SPDEF, independently, by one stage for each stack that successfully changed
+ *     the stat when added.
+ */
+export class StockpilingTag extends BattlerTag {
+  public stockpiledCount: number = 0;
+  public statChangeCounts: { [BattleStat.DEF]: number; [BattleStat.SPDEF]: number } = {
+    [BattleStat.DEF]: 0,
+    [BattleStat.SPDEF]: 0
+  };
+
+  constructor(sourceMove: Moves = Moves.NONE) {
+    super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  }
+
+  private onStatsChanged: StatChangeCallback = (_, statsChanged, statChanges) => {
+    const defChange = statChanges[statsChanged.indexOf(BattleStat.DEF)] ?? 0;
+    const spDefChange = statChanges[statsChanged.indexOf(BattleStat.SPDEF)] ?? 0;
+
+    if (defChange) {
+      this.statChangeCounts[BattleStat.DEF]++;
+    }
+
+    if (spDefChange) {
+      this.statChangeCounts[BattleStat.SPDEF]++;
+    }
+  };
+
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.stockpiledCount = source.stockpiledCount || 0;
+    this.statChangeCounts = {
+      [ BattleStat.DEF ]: source.statChangeCounts?.[ BattleStat.DEF ] ?? 0,
+      [ BattleStat.SPDEF ]: source.statChangeCounts?.[ BattleStat.SPDEF ] ?? 0,
+    };
+  }
+
+  /**
+   * Adds a stockpile stack to a pokemon, up to a maximum of 3 stacks. Note that onOverlap defers to this method.
+   *
+   * If a stack is added, a message is displayed and the pokemon's DEF and SPDEF are increased by 1.
+   * For each stat, an internal counter is incremented (by 1) if the stat was successfully changed.
+   */
+  onAdd(pokemon: Pokemon): void {
+    if (this.stockpiledCount < 3) {
+      this.stockpiledCount++;
+
+      pokemon.scene.queueMessage(i18next.t("battle:battlerTagsStockpilingOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        stockpiledCount: this.stockpiledCount
+      }));
+
+      // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
+      pokemon.scene.unshiftPhase(new StatChangePhase(
+        pokemon.scene, pokemon.getBattlerIndex(), true,
+        [BattleStat.SPDEF, BattleStat.DEF], 1, true, false, true, this.onStatsChanged
+      ));
+    }
+  }
+
+  onOverlap(pokemon: Pokemon): void {
+    this.onAdd(pokemon);
+  }
+
+  /**
+   * Removing the tag removes all stacks, and the pokemon's DEF and SPDEF are decreased by
+   * one stage for each stack which had successfully changed that particular stat during onAdd.
+   */
+  onRemove(pokemon: Pokemon): void {
+    const defChange = this.statChangeCounts[BattleStat.DEF];
+    const spDefChange = this.statChangeCounts[BattleStat.SPDEF];
+
+    if (defChange) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.DEF], -defChange, true, false, true));
+    }
+
+    if (spDefChange) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.SPDEF], -spDefChange, true, false, true));
+    }
+  }
+}
+
+export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
     return new RechargingTag(sourceMove);
@@ -1424,9 +1664,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
   case BattlerTagType.NIGHTMARE:
     return new NightmareTag();
   case BattlerTagType.FRENZY:
-    return new FrenzyTag(sourceMove, sourceId);
+    return new FrenzyTag(turnCount, sourceMove, sourceId);
   case BattlerTagType.CHARGING:
-    return new ChargingTag(sourceMove, sourceId);
+    return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
   case BattlerTagType.ENCORE:
     return new EncoreTag(sourceId);
   case BattlerTagType.HELPING_HAND:
@@ -1479,6 +1719,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new SturdyTag(sourceMove);
   case BattlerTagType.PERISH_SONG:
     return new PerishSongTag(turnCount);
+  case BattlerTagType.CENTER_OF_ATTENTION:
+    return new CenterOfAttentionTag(sourceMove);
   case BattlerTagType.TRUANT:
     return new TruantTag();
   case BattlerTagType.SLOW_START:
@@ -1491,23 +1733,25 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
   case BattlerTagType.UNDERGROUND:
   case BattlerTagType.UNDERWATER:
   case BattlerTagType.HIDDEN:
-    return new HideSpriteTag(tagType, turnCount, sourceMove);
+    return new SemiInvulnerableTag(tagType, turnCount, sourceMove);
   case BattlerTagType.FIRE_BOOST:
     return new TypeBoostTag(tagType, sourceMove, Type.FIRE, 1.5, false);
   case BattlerTagType.CRIT_BOOST:
     return new CritBoostTag(tagType, sourceMove);
   case BattlerTagType.ALWAYS_CRIT:
-    return new AlwaysCritTag(sourceMove);
+  case BattlerTagType.IGNORE_ACCURACY:
+    return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
   case BattlerTagType.NO_CRIT:
     return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
-  case BattlerTagType.IGNORE_ACCURACY:
-    return new IgnoreAccuracyTag(sourceMove);
+  case BattlerTagType.ALWAYS_GET_HIT:
+  case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
+    return new BattlerTag(tagType, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
   case BattlerTagType.BYPASS_SLEEP:
     return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
   case BattlerTagType.IGNORE_FLYING:
-    return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
-  case BattlerTagType.GROUNDED:
-    return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount - 1, sourceMove);
+    return new GroundedTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
+  case BattlerTagType.ROOSTED:
+    return new GroundedTag(tagType, BattlerTagLapseType.TURN_END, sourceMove);
   case BattlerTagType.SALT_CURED:
     return new SaltCuredTag(sourceId);
   case BattlerTagType.CURSED:
@@ -1522,6 +1766,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
     return new IceFaceTag(sourceMove);
+  case BattlerTagType.STOCKPILING:
+    return new StockpilingTag(sourceMove);
+  case BattlerTagType.OCTOLOCK:
+    return new OctolockTag(sourceId);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

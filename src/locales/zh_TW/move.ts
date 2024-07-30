@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/interfaces/locales";
 
 export const move: MoveTranslationEntries = {
   pound: { name: "拍擊", effect: "使用長長的尾巴或手等拍打\n對手進行攻擊" },
@@ -2861,7 +2861,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "極巨炮",
-    effect: "將凝縮在體內的能量從核心\n放出進行攻擊",
+    effect: "將凝縮在體內的能量從核心放出進行攻擊，\n對手等級比當前波次的等級上限越高，造成的傷害越高，最多兩倍。",
   },
   snipeShot: {
     name: "狙擊",
