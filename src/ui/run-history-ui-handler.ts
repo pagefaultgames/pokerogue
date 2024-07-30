@@ -10,8 +10,6 @@ import i18next from "i18next";
 import {Button} from "../enums/buttons";
 import { BattleType } from "../battle";
 import { TrainerVariant } from "../field/trainer";
-import { Challenges } from "#enums/challenges";
-import { Type } from "../data/type";
 import { RunHistoryData } from "../system/game-data";
 
 

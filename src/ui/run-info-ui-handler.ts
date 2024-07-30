@@ -21,6 +21,7 @@ import { allAbilities } from "../data/ability";
 import { getVariantTint } from "#app/data/variant";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import {modifierSortFunc} from "../modifier/modifier";
+import { Species } from "#enums/species";
 
 /*
 enum Page {
@@ -38,7 +39,7 @@ export enum RunVictory {
 
 export default class GameInfoUiHandler extends UiHandler {
   private runInfo: SessionSaveData;
-  private victory: Boolean;
+  private victory: boolean;
 
   private gameStatsContainer: Phaser.GameObjects.Container;
   private statsContainer: Phaser.GameObjects.Container;
@@ -46,6 +47,7 @@ export default class GameInfoUiHandler extends UiHandler {
   private runResultContainer: Phaser.GameObjects.Container;
   private runInfoContainer: Phaser.GameObjects.Container;
   private partyContainer: Phaser.GameObjects.Container;
+  private partyHeldItemsContainer: Phaser.GameObjects.Container;
   private statsBgWidth: integer;
   private partyContainerHeight: integer;
   private partyContainerWidth: integer;
@@ -110,7 +112,7 @@ export default class GameInfoUiHandler extends UiHandler {
     this.runInfoContainer = this.scene.add.container(0, 89);
     const runInfoWindow = addWindow(this.scene, 0, 0, this.statsBgWidth-11, 90);
     this.runInfoContainer.add(runInfoWindow);
- 		this.parseRunInfo(this.runInfo, this.victory);
+ 		this.parseRunInfo(this.runInfo);
 
     const partyData = this.runInfo.party;
     this.parsePartyInfo(partyData);
@@ -124,7 +126,7 @@ export default class GameInfoUiHandler extends UiHandler {
       this.createHallofFame();
       this.getUi().bringToTop(this.hallofFameContainer);
     }
-    
+
     this.setCursor(0);
 
     this.getUi().add(this.gameStatsContainer);
@@ -269,7 +271,7 @@ export default class GameInfoUiHandler extends UiHandler {
       break;
     case GameModes.SPLICED_ENDLESS:
       modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
-      if (runData.waveIndex === gameData.gameStats.highestEndlessWave) {
+      if (runData.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
         modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
         modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
       }
@@ -510,7 +512,7 @@ export default class GameInfoUiHandler extends UiHandler {
         for (const m of this.runInfo.modifiers) {
           const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
           if (modifier instanceof PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
-            modifier.stackCount = m.stackCount;
+            modifier.stackCount = m["stackCount"];
             heldItemsList.push(modifier);
           }
         }
@@ -518,7 +520,7 @@ export default class GameInfoUiHandler extends UiHandler {
           (heldItemsList as PokemonHeldItemModifier[]).sort(modifierSortFunc);
           let row = 0;
           for (const [index, item] of heldItemsList.entries()) {
-            if ( index > 36 ) { 
+            if ( index > 36 ) {
               const overflowIcon = addTextObject(this.scene, 182, 4, "+", TextStyle.WINDOW);
               heldItemsContainer.add(overflowIcon);
               break;
@@ -528,21 +530,21 @@ export default class GameInfoUiHandler extends UiHandler {
             itemIcon.setScale(heldItemsScale);
             itemIcon.setPosition((index%19)*10, row*10);
             heldItemsContainer.add(itemIcon);
-            if (index !== 0 && index%18 == 0) {
+            if (index !== 0 && index%18 === 0) {
               row++;
             }
           }
         }
       }
       heldItemsContainer.setName("heldItems");
-      heldItemsContainer.setVisible("false");
+      heldItemsContainer.setVisible(false);
 
       pokemonInfoContainer.add(pokemonInfoWindow);
       iconContainer.add(icon);
       pokemonInfoContainer.add(iconContainer);
       marksContainer.setName("PkmnMarks");
       pokemonInfoContainer.add(marksContainer);
-      movesetContainer.setName("PkmnMoves"); 
+      movesetContainer.setName("PkmnMoves");
       pokemonInfoContainer.add(movesetContainer);
       pokeInfoTextContainer.setName("PkmnInfoText");
       pokemonInfoContainer.add(pokeInfoTextContainer);
@@ -559,16 +561,17 @@ export default class GameInfoUiHandler extends UiHandler {
   showParty(partyVisible: boolean): void {
     const allContainers = this.partyContainer.getAll("name", "PkmnInfo");
     allContainers.forEach((c: Phaser.GameObjects.Container) => {
+      console.log(c.getByName("PkmnMoves"));
       c.getByName("PkmnMoves").setVisible(partyVisible);
       c.getByName("PkmnInfoText").setVisible(partyVisible);
       c.getByName("PkmnStatsText").setVisible(partyVisible);
       c.getByName("PkmnMarks").setVisible(partyVisible);
       c.getByName("heldItems").setVisible(!partyVisible);
-      this.partyVisibility = partyVisible; 
+      this.partyVisibility = partyVisible;
     });
   }
 
-  createHallofFame(): void {  
+  createHallofFame(): void {
     this.hallofFameContainer = this.scene.add.container(0, 0);
     //Thank you Hayuna for the code
     const hallofFameBg = this.scene.add.image(0, 0, "hall_of_fame");
@@ -626,13 +629,11 @@ export default class GameInfoUiHandler extends UiHandler {
       switch (button) {
       case Button.DOWN:
         if (this.partyVisibility) {
-        this.showParty(false);
-        this.partyHeldItemsContainer.setVisible(true);
-      } else {
-        this.showParty(true);
-        this.partyHeldItemsContainer.setVisible(false);
-      }
-      break;
+          this.showParty(false);
+        } else {
+          this.showParty(true);
+        }
+        break;
       case Button.UP:
         if (this.victory) {
           if (!this.hallofFameContainer.visible) {
