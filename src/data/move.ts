@@ -1435,10 +1435,10 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
  */
 export class FlameBurstAttr extends MoveEffectAttr {
   /**
-   * @param user - The Pokémon using the move.
+   * @param user - n/a
    * @param target - The target Pokémon.
-   * @param move - The move being used.
-   * @param args - Additional arguments.
+   * @param move - n/a
+   * @param args - n/a
    * @returns A boolean indicating whether the effect was successfully applied.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
