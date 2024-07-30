@@ -14,9 +14,8 @@ import BgmBar from "#app/ui/bgm-bar";
 
 enum MenuOptions {
   GAME_SETTINGS,
-  ACHIEVEMENTS,
   STATS,
-  VOUCHERS,
+  LINKS,
   EGG_LIST,
   EGG_GACHA,
   MANAGE_DATA,
@@ -30,6 +29,20 @@ let wikiUrl = "https://wiki.pokerogue.net/start";
 const discordUrl = "https://discord.gg/uWpTfdKG49";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 const redditUrl = "https://www.reddit.com/r/pokerogue";
+const links = [
+  ["Privacy Policy", "https://app.termly.io/policy-viewer/policy.html?policyUUID=bc96778b-3f04-4d25-bafc-0deba53e8bec"],
+  ["Cookie Disclaimer", "https://app.termly.io/policy-viewer/policy.html?policyUUID=8b523c05-7ec2-4646-9534-5bd61b386e2a"],
+  ["Terms & Conditions", "https://app.termly.io/policy-viewer/policy.html?policyUUID=b01e092a-9721-477f-8356-45576702ff9e"],
+  ["Acceptable Use Policy", "https://app.termly.io/policy-viewer/policy.html?policyUUID=3b5d1928-3f5b-4ee1-b8df-2d6c276b0bcc"]
+]
+function goToWebpage(urlIndex: integer) {
+  const link = document.createElement("a");
+  link.href = links[urlIndex][1];
+  link.target = "_blank"
+  link.rel = "noreferrer noopener"
+  link.click();
+  link.remove();
+}
 
 export default class MenuUiHandler extends MessageUiHandler {
   private menuContainer: Phaser.GameObjects.Container;
@@ -46,6 +59,8 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   protected manageDataConfig: OptionSelectConfig;
   protected communityConfig: OptionSelectConfig;
+  protected accountStatsConfig: OptionSelectConfig;
+  protected legalLinksConfig: OptionSelectConfig;
 
   public bgmBar: BgmBar;
 
@@ -197,21 +212,6 @@ export default class MenuUiHandler extends MessageUiHandler {
       }
     },
     {
-      label: "Consent Preferences",
-      handler: () => {
-        const consentLink = document.querySelector(".termly-display-preferences") as HTMLInputElement;
-        const clickEvent = new MouseEvent("click", {
-          view: window,
-          bubbles: true,
-          cancelable: true
-        });
-        consentLink.dispatchEvent(clickEvent);
-        consentLink.focus();
-        return true;
-      },
-      keepOpen: true
-    },
-    {
       label: i18next.t("menuUiHandler:cancel"),
       handler: () => {
         this.scene.ui.revertMode();
@@ -223,6 +223,84 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.manageDataConfig = {
       xOffset: 98,
       options: manageDataOptions
+    };
+
+    const accountOptions: OptionSelectItem[] = [
+      {
+        label: "Stats",
+        handler: () => {
+          ui.setOverlayMode(Mode.GAME_STATS);
+          return true;
+        }
+      },
+      {
+        label: "Achievements",
+        handler: () => {
+          ui.setOverlayMode(Mode.ACHIEVEMENTS);
+          return true;
+        }
+      },
+      {
+        label: "Vouchers",
+        handler: () => {
+          ui.setOverlayMode(Mode.VOUCHERS);
+          return true;
+        }
+      },
+      {
+        label: i18next.t("menuUiHandler:cancel"),
+        handler: () => {
+          this.scene.ui.revertMode();
+          return true;
+        },
+        keepOpen: true
+      }
+    ]
+    
+    this.accountStatsConfig = {
+      xOffset: 98,
+      options: accountOptions
+    };
+
+    const siteOptions: OptionSelectItem[] = [
+      {
+        label: "Consent Preferences",
+        handler: () => {
+          const consentLink = document.querySelector(".termly-display-preferences") as HTMLInputElement;
+          const clickEvent = new MouseEvent("click", {
+            view: window,
+            bubbles: true,
+            cancelable: true
+          });
+          consentLink.dispatchEvent(clickEvent);
+          consentLink.focus();
+          return true;
+        },
+        keepOpen: true
+      }
+    ]
+    for (var i = 0; i < links.length; i++) {
+      siteOptions.push({
+        label: links[i][0],
+        handler: () => {
+          window.open(links[i][1], "_blank").focus();
+          return true;
+        },
+        keepOpen: true
+      })
+    }
+    siteOptions.push({
+      label: i18next.t("menuUiHandler:cancel"),
+      handler: () => {
+        this.scene.ui.revertMode();
+        return true;
+      },
+      keepOpen: true
+    })
+
+    this.legalLinksConfig = {
+      xOffset: 98,
+      options: siteOptions
     };
 
     const communityOptions: OptionSelectItem[] = [
@@ -318,16 +396,12 @@ export default class MenuUiHandler extends MessageUiHandler {
         ui.setOverlayMode(Mode.SETTINGS);
         success = true;
         break;
-      case MenuOptions.ACHIEVEMENTS:
-        ui.setOverlayMode(Mode.ACHIEVEMENTS);
-        success = true;
-        break;
       case MenuOptions.STATS:
-        ui.setOverlayMode(Mode.GAME_STATS);
+        ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.accountStatsConfig);
         success = true;
         break;
-      case MenuOptions.VOUCHERS:
-        ui.setOverlayMode(Mode.VOUCHERS);
+      case MenuOptions.LINKS:
+        ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.legalLinksConfig);
         success = true;
         break;
       case MenuOptions.EGG_LIST:

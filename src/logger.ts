@@ -1262,14 +1262,12 @@ function printItemNoNewline(inData: string, indent: string, item: ItemData) {
  * Sets the name, author, and label for a file.
  * @param title The display name of the file.
  * @param authors The author(s) of the file.
- * @todo Add label field.
  */
 export function setFileInfo(title: string, authors: string[], label: string) {
   console.log("Setting file " + rarityslot[1] + " to " + title + " / [" + authors.join(", ") + "]")
   var fileID = rarityslot[1] as string
   var drpd = JSON.parse(localStorage.getItem(fileID)) as DRPD;
   drpd = updateLog(drpd)
-  drpd.title = title;
   for (var i = 0; i < authors.length; i++) {
     while (authors[i][0] == " ") {
       authors[i] = authors[i].substring(1)
@@ -1284,6 +1282,7 @@ export function setFileInfo(title: string, authors: string[], label: string) {
       i--;
     }
   }
+  drpd.title = title;
   drpd.authors = authors;
   drpd.label = label;
   localStorage.setItem(fileID, JSON.stringify(drpd))
