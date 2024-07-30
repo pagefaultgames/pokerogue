@@ -116,7 +116,7 @@ export function randSeedWeightedItem<T>(items: T[]): T {
     : Phaser.Math.RND.weightedPick(items);
 }
 
-export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T {
+export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T | null {
   if (!items.length) {
     return null;
   }
@@ -266,16 +266,16 @@ export function formatStat(stat: integer, forHp: boolean = false): string {
   return formatLargeNumber(stat, forHp ? 100000 : 1000000);
 }
 
-export function getEnumKeys(enumType): string[] {
+export function getEnumKeys(enumType: Enumerator): string[] {
   return Object.values(enumType).filter(v => isNaN(parseInt(v.toString()))).map(v => v.toString());
 }
 
-export function getEnumValues(enumType): integer[] {
+export function getEnumValues(enumType: Enumerator): integer[] {
   return Object.values(enumType).filter(v => !isNaN(parseInt(v.toString()))).map(v => parseInt(v.toString()));
 }
 
-export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T> {
-  return condition ? promiseFunc() : new Promise<T>(resolve => resolve(null));
+export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
+  return condition ? promiseFunc() : new Promise<T | null>(resolve => resolve(null));
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
@@ -452,7 +452,7 @@ export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
 }
 
 export function rgbHexToRgba(hex: string) {
-  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
+  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i) ?? ["0", "0", "0", "0"];
   return {
     r: parseInt(color[1], 16),
     g: parseInt(color[2], 16),
