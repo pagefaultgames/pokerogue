@@ -353,7 +353,7 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Window_Type,
     label: i18next.t("settings:windowType"),
-    options: new Array(6).fill(null).map((_, i) => {
+    options: new Array(5).fill(null).map((_, i) => {
       const windowType = (i + 1).toString();
       return {
         value: windowType,
