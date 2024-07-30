@@ -34,8 +34,8 @@ describe("Moves - CLANGOROUS_SOUL", () => {
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.CLANGOROUS_SOUL, Moves.CLANGOROUS_SOUL, Moves.CLANGOROUS_SOUL, Moves.CLANGOROUS_SOUL ]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
+    game.override.moveset([Moves.CLANGOROUS_SOUL]);
+    game.override.enemyMoveset([Moves.SPLASH]);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Clangorous_Soul_(move)

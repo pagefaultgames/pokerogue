@@ -34,8 +34,8 @@ describe("Moves - FILLET AWAY", () => {
     vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
     vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
     vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.FILLET_AWAY, Moves.FILLET_AWAY, Moves.FILLET_AWAY, Moves.FILLET_AWAY ]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
+    game.override.moveset([Moves.FILLET_AWAY]);
+    game.override.enemyMoveset([Moves.SPLASH]);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/fillet_away_(move)
