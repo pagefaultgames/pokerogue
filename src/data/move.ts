@@ -7267,7 +7267,7 @@ export function initMoves() {
     new AttackMove(Moves.STORM_THROW, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
       .attr(CritOnlyAttr),
     new AttackMove(Moves.FLAME_BURST, Type.FIRE, MoveCategory.SPECIAL, 70, 100, 15, -1, 0, 5)
-      .partial(),
+      .attr(FlameBurstAttr),
     new AttackMove(Moves.SLUDGE_WAVE, Type.POISON, MoveCategory.SPECIAL, 95, 100, 10, 10, 0, 5)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_OTHERS),
