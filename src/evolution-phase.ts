@@ -53,7 +53,7 @@ export class EvolutionPhase extends Phase {
         return this.end();
       }
 
-      this.scene.fadeOutBgm(null, false);
+      this.scene.fadeOutBgm(undefined, false);
 
       const evolutionHandler = this.scene.ui.getHandler() as EvolutionSceneHandler;
 
@@ -195,7 +195,7 @@ export class EvolutionPhase extends Phase {
                           this.scene.ui.showText(i18next.t("menu:stoppedEvolving", { pokemonName: preName }), null, () => {
                             this.scene.ui.showText(i18next.t("menu:pauseEvolutionsQuestion", { pokemonName: preName }), null, () => {
                               const end = () => {
-                                this.scene.ui.showText(null, 0);
+                                this.scene.ui.showText("", 0);
                                 this.scene.playBgm();
                                 evolvedPokemon.destroy();
                                 this.end();
