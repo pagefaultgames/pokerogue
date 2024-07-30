@@ -23,4 +23,10 @@ export const challenges: TranslationEntries = {
     "desc_default": "Du kannst nur Pokémon des gewählten Typs verwenden."
     // types in pokemon-info
   },
+  "freshStart": {
+    "name": "Neuanfang",
+    "desc": "Du kannst nur die ursprünglichen Starter verwenden, genau so, als hättest du gerade erst mit Pokérogue begonnen.",
+    "value.0": "Aus",
+    "value.1": "An",
+  }
 } as const;

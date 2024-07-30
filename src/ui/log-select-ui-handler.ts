@@ -285,7 +285,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     this.remove(this.loadingLabel, true);
     var lbl = `???`
     lbl = data.title
-    if (this.slotId) {
+    if (this.slotId != undefined) {
       lbl = `[${this.slotId + 1}] ${lbl}`
     }
     console.log(data, this.slotId, this.autoSlot, lbl)
@@ -310,7 +310,6 @@ class SessionSlot extends Phaser.GameObjects.Container {
         return;
       const iconContainer = this.scene.add.container(26 * i, 0);
       iconContainer.setScale(0.75);
-      console.log(p.id, Utils.getEnumKeys(Species)[Utils.getEnumValues(Species).indexOf(p.id)])
 
       //if (Utils.getEnumValues(Species)[p.id] == undefined)
         //return;
@@ -318,7 +317,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
       //if (getPokemonSpecies(Utils.getEnumValues(Species)[p.id]) == undefined)
         //return;
 
-      const icon = this.scene.addPkIcon(allSpecies[Utils.getEnumValues(Species).indexOf(p.id)], 0, 0, 0, 0, 0);
+      const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[allSpecies[Utils.getEnumValues(Species).indexOf(p.id)].speciesId]), 0, 0, 0, 0, 0);
 
       const text = addTextObject(this.scene, 32, 20, ``, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, null);

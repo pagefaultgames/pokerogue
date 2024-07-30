@@ -2,7 +2,7 @@ import BattleScene from "../battle-scene";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 import { VariantTier } from "../enums/variant-tiers";
 import * as Utils from "../utils";
-import * as Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import { pokemonPrevolutions } from "./pokemon-evolutions";
 import { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
@@ -166,12 +166,12 @@ export class Egg {
     if (eggOptions.species) {
       this._tier = this.getEggTierFromSpeciesStarterValue();
       this._hatchWaves = eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
-      // If species has no variant, set variantTier to common. This needs to
-      // be done because species with no variants get filtered at rollSpecies but since the
-      // species is set the check never happens
-      if (!getPokemonSpecies(this.species).hasVariants()) {
-        this._variantTier = VariantTier.COMMON;
-      }
+    }
+    // If species has no variant, set variantTier to common. This needs to
+    // be done because species with no variants get filtered at rollSpecies but if the
+    // species is set via options or the legendary gacha pokemon gets choosen the check never happens
+    if (this._species && !getPokemonSpecies(this._species).hasVariants()) {
+      this._variantTier = VariantTier.COMMON;
     }
     // Needs this._tier so it needs to be generated afer the tier override if bought from same species
     this._eggMoveIndex = eggOptions.eggMoveIndex ?? this.rollEggMoveIndex();
@@ -212,7 +212,7 @@ export class Egg {
     let abilityIndex = undefined;
     if (pokemonSpecies.abilityHidden && (this._overrideHiddenAbility
       || (this._sourceType === EggSourceType.SAME_SPECIES_EGG && !Utils.randSeedInt(SAME_SPECIES_EGG_HA_RATE)))) {
-      abilityIndex = pokemonSpecies.ability2 ? 2 : 1;
+      abilityIndex = 2;
     }
 
     // This function has way to many optional parameters

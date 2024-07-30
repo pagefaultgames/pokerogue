@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   "dynamaxCannon": {
     name: "Dynamax Cannon",
-    effect: "The user unleashes a strong beam from its core. This move deals twice the damage if the target is over level 200."
+    effect: "The user unleashes a strong beam from its core. Deals up to twice the damage if the target is overly leveled."
   },
   "snipeShot": {
     name: "Snipe Shot",

@@ -16,6 +16,13 @@ const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i
   value: "Mute",
   label: i18next.t("settings:mute")
 });
+const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {
+  const value = ((i + 1) * 10).toString();
+  return {
+    value,
+    label: value,
+  };
+});
 const OFF_ON: SettingOption[] = [
   {
     value: "Off",
@@ -106,7 +113,8 @@ export const SettingKeys = {
   ShowAutosaves: "SHOW_AUTOSAVES",
   TitleScreenContinueMode: "TITLE_SCREEN_QUICKLOAD",
   BiomePanels: "BIOME_PANELS",
-  DailyShinyLuck: "DAILY_LUCK"
+  DailyShinyLuck: "DAILY_LUCK",
+  Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
 };
 
 /**
@@ -170,19 +178,6 @@ export const Setting: Array<Setting> = [
     type: SettingType.GENERAL,
   },
   {
-    key: SettingKeys.LazyReloads,
-    label: "Lazy Reloads",
-    options: [{
-      label: "Off",
-      value: "Off"
-    }, {
-      label: "On",
-      value: "On"
-    }],
-    default: 0,
-    type: SettingType.GENERAL,
-  },
-  {
     key: SettingKeys.FancyBiome,
     label: "Fancy Title Screen",
     options: [{
@@ -193,28 +188,6 @@ export const Setting: Array<Setting> = [
       value: "On"
     }],
     default: 0,
-    type: SettingType.GENERAL,
-  },
-  {
-    key: SettingKeys.TitleScreenContinueMode,
-    label: "Quick Load",
-    options: [{
-      label: "Off",
-      value: "Off" // Shows "Continue" button on the home screen
-    }, {
-      label: "Daily",
-      value: "Daily" // Shows the last played Daily Run, or the last run if there are no Daily Runs
-    }, {
-      label: "Dailies",
-      value: "Dailies" // Shows all Daily Runs, or the last run if there are no Daily Runs
-    }, {
-      label: "Latest",
-      value: "Latest" // Shows the last run
-    }, {
-      label: "Both",
-      value: "Both" // Shows the last run and the last Daily Run, or only the last played game if it is a Daily Run
-    }],
-    default: 1,
     type: SettingType.GENERAL,
   },
   {
@@ -380,7 +353,7 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Window_Type,
     label: i18next.t("settings:windowType"),
-    options: new Array(5).fill(null).map((_, i) => {
+    options: new Array(6).fill(null).map((_, i) => {
       const windowType = (i + 1).toString();
       return {
         value: windowType,
@@ -593,9 +566,8 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Show_BGM_Bar,
     label: i18next.t("settings:showBgmBar"),
     options: OFF_ON,
-    default: 0,
-    type: SettingType.DISPLAY,
-    requireReload: true
+    default: 1,
+    type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.BiomePanels,
@@ -661,7 +633,14 @@ export const Setting: Array<Setting> = [
     type: SettingType.AUDIO,
     requireReload: true
   },
-
+  {
+    key: SettingKeys.Shop_Overlay_Opacity,
+    label: i18next.t("settings:shopOverlayOpacity"),
+    options: SHOP_OVERLAY_OPACITY_OPTIONS,
+    default: 7,
+    type: SettingType.DISPLAY,
+    requireReload: false
+  },
 ];
 
 /**
@@ -903,6 +882,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
         return false;
       }
     }
+    break;
+  case SettingKeys.Shop_Overlay_Opacity:
+    scene.updateShopOverlayOpacity(parseInt(Setting[index].options[value].value) * .01);
     break;
   }
 

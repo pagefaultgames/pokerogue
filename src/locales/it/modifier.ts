@@ -5,6 +5,7 @@ export const modifier: SimpleTranslationEntries = {
   "turnHealApply": "{{pokemonNameWithAffix}} restored a little HP using\nits {{typeName}}!",
   "hitHealApply": "{{pokemonNameWithAffix}} restored a little HP using\nits {{typeName}}!",
   "pokemonInstantReviveApply": "{{pokemonNameWithAffix}} was revived\nby its {{typeName}}!",
+  "pokemonResetNegativeStatStageApply": "{{pokemonNameWithAffix}}'s lowered stats were restored\nby its {{typeName}}!",
   "moneyInterestApply": "You received interest of ₽{{moneyAmount}}\nfrom the {{typeName}}!",
   "turnHeldItemTransferApply": "{{pokemonNameWithAffix}}'s {{itemName}} was absorbed\nby {{pokemonName}}'s {{typeName}}!",
   "contactHeldItemTransferApply": "{{pokemonNameWithAffix}}'s {{itemName}} was snatched\nby {{pokemonName}}'s {{typeName}}!",
