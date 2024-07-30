@@ -10,7 +10,7 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
-    this.scene.input.gamepad.on("down", this.gamepadButtonDown, this);
+    this.scene.input.gamepad?.on("down", this.gamepadButtonDown, this);
   }
   setup() {
     super.setup();

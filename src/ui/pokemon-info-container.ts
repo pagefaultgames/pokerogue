@@ -81,7 +81,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   setup(): void {
     this.setName("pkmn-info");
     const currentLanguage = i18next.resolvedLanguage;
-    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage?.includes(lang)) ?? "en";
     const textSettings = languageSettings[langSettingKey];
     const infoBg = addWindow(this.scene, 0, 0, this.infoWindowWidth, 132);
     infoBg.setOrigin(0.5, 0.5);
@@ -243,7 +243,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonFormText.setText(formName.length > this.numCharsBeforeCutoff ? formName.substring(0, this.numCharsBeforeCutoff - 3) + "..." : formName);
         if (formName.length > this.numCharsBeforeCutoff) {
           this.pokemonFormText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.pokemonFormText.width, this.pokemonFormText.height), Phaser.Geom.Rectangle.Contains);
-          this.pokemonFormText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, pokemon.species.forms?.[pokemon.formIndex]?.formName, true));
+          this.pokemonFormText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", pokemon.species.forms?.[pokemon.formIndex]?.formName, true));
           this.pokemonFormText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
         } else {
           this.pokemonFormText.disableInteractive();
@@ -302,7 +302,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         const shinyDescriptor = doubleShiny || baseVariant ?
           `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
           : "";
-        this.pokemonShinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
+        this.pokemonShinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
         this.pokemonShinyIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
 
         const newShiny = BigInt(Math.pow(2, (pokemon.shiny ? 1 : 0)));
@@ -324,11 +324,11 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       }
 
       const starterSpeciesId = pokemon.species.getRootSpeciesId();
-      const originalIvs: integer[] = this.scene.gameData.dexData[starterSpeciesId].caughtAttr
+      const originalIvs: integer[] | null = this.scene.gameData.dexData[starterSpeciesId].caughtAttr
         ? this.scene.gameData.dexData[starterSpeciesId].ivs
         : null;
 
-      this.statsContainer.updateIvs(pokemon.ivs, originalIvs);
+      this.statsContainer.updateIvs(pokemon.ivs, originalIvs ?? undefined);
 
       this.scene.tweens.add({
         targets: this,
