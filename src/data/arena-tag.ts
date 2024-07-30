@@ -220,7 +220,7 @@ abstract class ConditionalProtectTag extends ArenaTag {
 
     const target = args[1] as Pokemon;
     if ((this.side === ArenaTagSide.PLAYER) === target.isPlayer()
-      && this.protectConditionFunc(...args.slice(2))) {
+         && this.protectConditionFunc(...args.slice(2))) {
       (args[0] as Utils.BooleanHolder).value = true;
       new CommonBattleAnim(CommonAnim.PROTECT, target).play(arena.scene);
       arena.scene.queueMessage(i18next.t("arenaTag:conditionalProtectApply", { moveName: super.getMoveName(), pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
@@ -289,7 +289,7 @@ class MatBlockTag extends ConditionalProtectTag {
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Crafty_Shield_(move) Crafty Shield}
  * Condition: The incoming move is a Status move, is not a hazard, and does
  * not target all Pokemon or sides of the field.
- */
+*/
 class CraftyShieldTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.CRAFTY_SHIELD, Moves.CRAFTY_SHIELD, sourceId, side,

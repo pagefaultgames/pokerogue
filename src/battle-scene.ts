@@ -85,18 +85,18 @@ const expSpriteKeys: string[] = [];
 
 export let starterColors: StarterColors;
 interface StarterColors {
-  [key: string]: [string, string]
+    [key: string]: [string, string]
 }
 
 export interface PokeballCounts {
-  [pb: string]: integer;
+    [pb: string]: integer;
 }
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
 export interface InfoToggle {
-  toggleInfo(force?: boolean): void;
-  isActive(): boolean;
+    toggleInfo(force?: boolean): void;
+    isActive(): boolean;
 }
 
 export default class BattleScene extends SceneBase {
@@ -143,17 +143,17 @@ export default class BattleScene extends SceneBase {
   public skipSeenDialogues: boolean = false;
 
   /**
-   * Defines the experience gain display mode.
-   *
-   * @remarks
-   * The `expParty` can have several modes:
-   * - `0` - Default: The normal experience gain display, nothing changed.
-   * - `1` - Level Up Notification: Displays the level up in the small frame instead of a message.
-   * - `2` - Skip: No level up frame nor message.
-   *
-   * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
-   * @default 0 - Uses the default normal experience gain display.
-   */
+     * Defines the experience gain display mode.
+     *
+     * @remarks
+     * The `expParty` can have several modes:
+     * - `0` - Default: The normal experience gain display, nothing changed.
+     * - `1` - Level Up Notification: Displays the level up in the small frame instead of a message.
+     * - `2` - Skip: No level up frame nor message.
+     *
+     * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
+     * @default 0 - Uses the default normal experience gain display.
+     */
   public expParty: ExpNotification = 0;
   public hpBarSpeed: integer = 0;
   public fusionPaletteSwaps: boolean = true;
@@ -169,9 +169,9 @@ export default class BattleScene extends SceneBase {
   public battleStyle: integer = BattleStyle.SWITCH;
 
   /**
-   * Defines whether or not to show type effectiveness hints
-   * - true: No hints
-   * - false: Show hints for moves
+  * Defines whether or not to show type effectiveness hints
+  * - true: No hints
+  * - false: Show hints for moves
    */
   public typeHints: boolean = false;
 
@@ -2301,7 +2301,7 @@ export default class BattleScene extends SceneBase {
         const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
         newItemModifier.pokemonId = target.id;
         const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
-          && (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
+                    && (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
         let removeOld = true;
         if (matchingModifier) {
           const maxStackCount = matchingModifier.getMaxStackCount(target.scene);
@@ -2405,8 +2405,8 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Removes all modifiers from enemy of PersistentModifier type
-   */
+    * Removes all modifiers from enemy of PersistentModifier type
+    */
   clearEnemyModifiers(): void {
     const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PersistentModifier);
     for (const m of modifiersToRemove) {
@@ -2416,8 +2416,8 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Removes all modifiers from enemy of PokemonHeldItemModifier type
-   */
+    * Removes all modifiers from enemy of PokemonHeldItemModifier type
+    */
   clearEnemyHeldItemModifiers(): void {
     const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier);
     for (const m of modifiersToRemove) {

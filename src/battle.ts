@@ -16,30 +16,30 @@ import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
 
 export enum BattleType {
-  WILD,
-  TRAINER,
-  CLEAR
+    WILD,
+    TRAINER,
+    CLEAR
 }
 
 export enum BattlerIndex {
-  ATTACKER = -1,
-  PLAYER,
-  PLAYER_2,
-  ENEMY,
-  ENEMY_2
+    ATTACKER = -1,
+    PLAYER,
+    PLAYER_2,
+    ENEMY,
+    ENEMY_2
 }
 
 export interface TurnCommand {
-  command: Command;
-  cursor?: integer;
-  move?: QueuedMove;
-  targets?: BattlerIndex[];
-  skip?: boolean;
-  args?: any[];
+    command: Command;
+    cursor?: integer;
+    move?: QueuedMove;
+    targets?: BattlerIndex[];
+    skip?: boolean;
+    args?: any[];
 }
 
 interface TurnCommands {
-  [key: integer]: TurnCommand
+    [key: integer]: TurnCommand
 }
 
 export default class Battle {
@@ -444,7 +444,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[]): Get
 }
 
 export interface FixedBattleConfigs {
-  [key: integer]: FixedBattleConfig
+    [key: integer]: FixedBattleConfig
 }
 /**
  * Youngster/Lass on 5
