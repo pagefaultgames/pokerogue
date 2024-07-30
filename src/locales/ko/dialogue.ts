@@ -393,14 +393,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rocket_admin": {
     "encounter": {
-      1: "Oh? You managed to get this far? You must be quite the trainer.",
-      2: "That's quite enough of you playing hero, kid.",
-      3: "I'll show you how scary an angry adult can be!"
+      1: "어라 어라… 결국 여기까지 오셨습니까? 꽤 우수한 트레이너인가 보군요.",
+      2: "영웅 놀이는 여기까지랍니다, 꼬마야.",
+      3: "어른이 화를 내면 무섭다는 걸 보여 드리죠!"
     },
     "victory": {
-      1: "No! Forgive me Giovanni!",
-      2: "How could this be?",
-      3: "Urgh... You were too strong..."
+      1: "크으… 비주기님 용서해 주세요…!",
+      2: "어떻게 이런 일이…",
+      3: "아아… 넌 너무 강하다…"
     },
   },
   "magma_grunt": {
@@ -413,14 +413,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "magma_admin": {
     "encounter": {
-      1: "Hehehe! So you've come all the way here! But you're too late!",
-      2: "You're going to meddle in Team Magma's affairs? You're so cute you're disgusting! I'll put you down kiddy!",
-      3: "I'm going to give you a little taste of pain! Resign yourself to it!"
+      1: "……아하… ……역시 왔네…그치만 안타깝게 됐어……다 끝났거든",
+      2: "……남은……내 일은……너를……막는 것",
+      3: "……너랑……인게이지……하고 싶어……아하하하"
     },
     "victory": {
-      1: "Hehehe... So I lost...",
-      2: "You're disgustingly strong!",
-      3: "Ahahaha! Ouch!"
+      1: "……룰루리",
+      2: "……재밌쪄",
+      3: "…하아하아……으…하아하아…"
     },
   },
   "aqua_grunt": {
@@ -433,14 +433,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "aqua_admin": {
     "encounter": {
-      1: "I'm a cut above the grunts you've seen so far. I'm going to puvlerize you!",
-      2: "Hahn? What's this? Who's this spoiled brat?",
-      3: "What are you doing here? Did you follow us?"
+      1: "각오하는 게 좋을 거야! 네 얼굴이 눈물로 범벅이 되게 해주겠어!",
+      2: "아앙? 뭐야? 이 건방진 꼬맹이는…",
+      3: "…아니 넌!? 일부러 여기까지 쫓아온 거야?"
     },
     "victory": {
-      1: "So I lost too...",
-      2: "Ahhh?! Did I go too easy on you?!",
-      3: "Wh-what was that?"
+      1: "하아… 하아…완전 지쳤어",
+      2: "크윽…!? 너무 봐줬나…!",
+      3: "뭐…뭐라고!?"
     },
   },
   "galactic_grunt": {
@@ -453,14 +453,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "galactic_admin": {
     "encounter": {
-      1: "I'm one of Team Galactic's Commanders.",
-      2: "Anything that opposes Team Galactic must be crushed! Even the very thought of opposition will not be tolerated!",
-      3: "What's the matter? Don't tell me you're shaking?"
+      1: "나는 갤럭시단에 있는 간부 중의 한 명.",
+      2: "갤럭시단을 방해한다면 일말의 가능성도 모두 제거한다!!",
+      3: "왜 그래? 설마 떨고 있는 거야?"
     },
     "victory": {
-      1: "This can't be?! I lost?! You... you uppity brat!",
-      2: "You, my friend, are tough!",
-      3: "Losing to some child... Being careless cost me too much."
+      1: "설마! 내가 졌다고!? 건방진 아이로구나!!",
+      2: "…역시 강해!",
+      3: "어린아이에게 지다니… 방심이란 무섭구나."
     },
   },
   "plasma_grunt": {
@@ -473,14 +473,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "plasma_sage": {
     "encounter": {
-      1: "You could become a threat to Team Plasma, so we will eliminate you here!",
-      2: "Oh, for crying out loud... I didn't expect to have to fight!",
-      3: "You're an impressive Trainer to have made it this far."
+      1: "너는 플라스마단에게 있어 불안요소가 될 것이다. 여기서 제거하겠다!",
+      2: "이런 이런… 내가 싸워야만 하다니.",
+      3: "여기까지 오다니 대단한 트레이너군."
     },
     "victory": {
-      1: "Ghetsis...",
-      2: "It's bitter cold. I'm shivering. I'm suffering.",
-      3: "Hmph. You're a smarter Trainer than I expected."
+      1: "게치스…",
+      2: "그건 그렇고 춥구먼. 나는 떨고 있다. 괴롭지만 살아 있다.",
+      3: "흐음. 의외로 똑똑한 트레이너군."
     },
   },
   "flare_grunt": {
@@ -493,14 +493,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "flare_admin": {
     "encounter": {
-      1: "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
-      2: "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
-      3: "I've been waiting for you! I need to do a little research on you! Come, let us begin!"
+      1: "왔다! 왔구나! 자! 자! 아직 끝나지 않았다!",
+      2: "너 강하구나. 에너지를 얼마나 갖고 있지?",
+      3: "기다리고 있었어! 너를 조사하겠다. 자 시작한다!"
     },
     "victory": {
-      1: "You're quite strong. Oh yes-very strong, indeed.",
-      2: "Ding-ding-ding! Yup, you did it! To the victor goes the spoils!",
-      3: "Wonderful! Amazing! You have tremendous skill and bravery!"
+      1: "강하구나, 너는. 응, 정말 강해, 너는.",
+      2: "그렇지만 보스의 꿈이 이루어져 아름다운 세상이 태어날 것이다!",
+      3: "굉장하구나 너! 아주 굉장해! 나는 너를 인정하겠다"
     },
   },
   "rocket_boss_giovanni_1": {
