@@ -3013,6 +3013,10 @@ export class MoveEffectPhase extends PokemonPhase {
             hasHit = true;
           }
 
+          if (hitResult === HitResult.NO_EFFECT) {
+            moveHistoryEntry.result = MoveResult.FAIL;
+          }
+
           const lastHit = (user.turnData.hitsLeft === 1 || !this.getTarget()?.isActive());
 
           if (lastHit) {
