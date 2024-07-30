@@ -46,6 +46,7 @@ import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
+import RenameFormUiHandler from "./rename-form-ui-handler";
 import LogNameFormUiHandler from "./log-name-form-ui-handler";
 import LogSelectUiHandler from "./log-select-ui-handler";
 
@@ -87,7 +88,8 @@ export enum Mode {
   OUTDATED,
   CHALLENGE_SELECT,
   NAME_LOG,
-  LOG_HANDLER
+  LOG_HANDLER,
+  RENAME_POKEMON
 }
 
 const transitionModes = [
@@ -125,7 +127,8 @@ const noTransitionModes = [
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
-  Mode.OUTDATED
+  Mode.OUTDATED,
+  Mode.RENAME_POKEMON
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -188,7 +191,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new OutdatedModalUiHandler(scene),
       new GameChallengesUiHandler(scene),
       new LogNameFormUiHandler(scene),
-      new LogSelectUiHandler(scene)
+      new LogSelectUiHandler(scene),
+      new RenameFormUiHandler(scene),
     ];
   }
 

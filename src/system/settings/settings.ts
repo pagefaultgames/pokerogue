@@ -16,6 +16,13 @@ const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i
   value: "Mute",
   label: i18next.t("settings:mute")
 });
+const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {
+  const value = ((i + 1) * 10).toString();
+  return {
+    value,
+    label: value,
+  };
+});
 const OFF_ON: SettingOption[] = [
   {
     value: "Off",
@@ -106,7 +113,8 @@ export const SettingKeys = {
   ShowAutosaves: "SHOW_AUTOSAVES",
   TitleScreenContinueMode: "TITLE_SCREEN_QUICKLOAD",
   BiomePanels: "BIOME_PANELS",
-  DailyShinyLuck: "DAILY_LUCK"
+  DailyShinyLuck: "DAILY_LUCK",
+  Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
 };
 
 /**
@@ -593,9 +601,34 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Show_BGM_Bar,
     label: i18next.t("settings:showBgmBar"),
     options: OFF_ON,
+    default: 1,
+    type: SettingType.DISPLAY
+  },
+  {
+    key: SettingKeys.BiomePanels,
+    label: "Biome Panels",
+    options: [{
+      label: "Off",
+      value: "Off"
+    }, {
+      label: "On",
+      value: "On"
+    }],
     default: 0,
     type: SettingType.DISPLAY,
-    requireReload: true
+  },
+  {
+    key: SettingKeys.ShowAutosaves,
+    label: "Show Autosaves",
+    options: [{
+      label: "Off",
+      value: "Off"
+    }, {
+      label: "On",
+      value: "On"
+    }],
+    default: 0,
+    type: SettingType.DISPLAY,
   },
   {
     key: SettingKeys.BiomePanels,
@@ -661,7 +694,14 @@ export const Setting: Array<Setting> = [
     type: SettingType.AUDIO,
     requireReload: true
   },
-
+  {
+    key: SettingKeys.Shop_Overlay_Opacity,
+    label: i18next.t("settings:shopOverlayOpacity"),
+    options: SHOP_OVERLAY_OPACITY_OPTIONS,
+    default: 7,
+    type: SettingType.DISPLAY,
+    requireReload: false
+  },
 ];
 
 /**
@@ -903,6 +943,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
         return false;
       }
     }
+    break;
+  case SettingKeys.Shop_Overlay_Opacity:
+    scene.updateShopOverlayOpacity(parseInt(Setting[index].options[value].value) * .01);
     break;
   }
 
