@@ -266,12 +266,12 @@ export function formatStat(stat: integer, forHp: boolean = false): string {
   return formatLargeNumber(stat, forHp ? 100000 : 1000000);
 }
 
-export function getEnumKeys(enumType: Enumerator): string[] {
-  return Object.values(enumType).filter(v => isNaN(parseInt(v.toString()))).map(v => v.toString());
+export function getEnumKeys(enumType: any): string[] {
+  return Object.values(enumType).filter(v => isNaN(parseInt(v!.toString()))).map(v => v!.toString());
 }
 
-export function getEnumValues(enumType: Enumerator): integer[] {
-  return Object.values(enumType).filter(v => !isNaN(parseInt(v.toString()))).map(v => parseInt(v.toString()));
+export function getEnumValues(enumType: any): integer[] {
+  return Object.values(enumType).filter(v => !isNaN(parseInt(v!.toString()))).map(v => parseInt(v!.toString()));
 }
 
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {

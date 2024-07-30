@@ -21,7 +21,7 @@ export default class FightUiHandler extends UiHandler {
   private powerText: Phaser.GameObjects.Text;
   private accuracyLabel: Phaser.GameObjects.Text;
   private accuracyText: Phaser.GameObjects.Text;
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
   private moveCategoryIcon: Phaser.GameObjects.Sprite;
 
   protected fieldIndex: integer = 0;
@@ -273,7 +273,7 @@ export default class FightUiHandler extends UiHandler {
 
     const moveColors = opponents.map((opponent) => {
       return opponent.getMoveEffectiveness(pokemon, pokemonMove);
-    }).sort((a, b) => b - a).map((effectiveness) => {
+    }).filter((eff) => !!eff).sort((a, b) => b - a).map((effectiveness) => {
       return getTypeDamageMultiplierColor(effectiveness, "offense");
     });
 

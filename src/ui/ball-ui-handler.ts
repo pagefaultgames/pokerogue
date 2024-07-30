@@ -13,7 +13,7 @@ export default class BallUiHandler extends UiHandler {
   private pokeballSelectBg: Phaser.GameObjects.NineSlice;
   private countsText: Phaser.GameObjects.Text;
 
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.BALL);

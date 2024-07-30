@@ -194,7 +194,7 @@ export class TitlePhase extends Phase {
 
     this.scene.playBgm("title", true);
 
-    this.scene.gameData.getSession(loggedInUser.lastSessionSlot).then(sessionData => {
+    this.scene.gameData.getSession(loggedInUser?.lastSessionSlot ?? 0).then(sessionData => { // TODO: is `0` as default correct?
       if (sessionData) {
         this.lastSessionData = sessionData;
         const biomeKey = getBiomeKey(sessionData.arena.biome);
@@ -210,11 +210,11 @@ export class TitlePhase extends Phase {
 
   showOptions(): void {
     const options: OptionSelectItem[] = [];
-    if (loggedInUser.lastSessionSlot > -1) {
+    if (loggedInUser && loggedInUser.lastSessionSlot > -1) {
       options.push({
         label: i18next.t("continue", {ns: "menu"}),
         handler: () => {
-          this.loadSaveSlot(this.lastSessionData ? -1 : loggedInUser.lastSessionSlot);
+          this.loadSaveSlot(this.lastSessionData || !loggedInUser ? -1 : loggedInUser.lastSessionSlot);
           return true;
         }
       });
@@ -318,7 +318,7 @@ export class TitlePhase extends Phase {
   }
 
   loadSaveSlot(slotId: integer): void {
-    this.scene.sessionSlotId = slotId > -1 ? slotId : loggedInUser.lastSessionSlot;
+    this.scene.sessionSlotId = slotId > -1 || !loggedInUser ? slotId : loggedInUser.lastSessionSlot;
     this.scene.ui.setMode(Mode.MESSAGE);
     this.scene.gameData.loadSession(this.scene, slotId, slotId === -1 ? this.lastSessionData : undefined).then((success: boolean) => {
       if (success) {
@@ -393,7 +393,7 @@ export class TitlePhase extends Phase {
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
       if (!Utils.isLocal) {
         fetchDailyRunSeed().then(seed => {
-          generateDaily(seed);
+          generateDaily(seed ?? "");
         }).catch(err => {
           console.error("Failed to load daily run:\n", err);
         });
@@ -3505,7 +3505,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
 
           const damage = Math.ceil(pokemon.getMaxHp() / 16);
 
-          this.scene.queueMessage(getWeatherDamageMessage(this.weather?.weatherType ?? WeatherType.NONE, pokemon));
+          this.scene.queueMessage(getWeatherDamageMessage(this.weather?.weatherType ?? WeatherType.NONE, pokemon) ?? "");
           pokemon.damageAndUpdate(damage, HitResult.EFFECTIVE, false, false, true);
         };
 
@@ -3518,7 +3518,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
       }
     }
 
-    this.scene.ui.showText(getWeatherLapseMessage(this.weather.weatherType), null, () => {
+    this.scene.ui.showText(getWeatherLapseMessage(this.weather.weatherType) ?? "", null, () => {
       this.executeForAll((pokemon: Pokemon) => applyPostWeatherLapseAbAttrs(PostWeatherLapseAbAttr, pokemon, this.weather));
 
       super.start();

@@ -34,7 +34,7 @@ export default class PokemonData {
   public nature: Nature;
   public natureOverride: Nature | -1;
   public moveset: PokemonMove[];
-  public status: Status;
+  public status?: Status;
   public friendship: integer;
   public metLevel: integer;
   public metBiome: Biome | -1;
