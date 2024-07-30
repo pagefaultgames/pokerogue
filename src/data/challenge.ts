@@ -419,7 +419,7 @@ export class SingleGenerationChallenge extends Challenge {
       const speciesToCheck = [pokemon.speciesId];
       while (speciesToCheck.length) {
         const checking = speciesToCheck.pop();
-        if (pokemonEvolutions.hasOwnProperty(checking) && checkPokemonEvolutions) {
+        if (checking && pokemonEvolutions.hasOwnProperty(checking) && checkPokemonEvolutions) {
           pokemonEvolutions[checking].forEach(e => {
             speciesToCheck.push(e.speciesId);
             generations.push(getPokemonSpecies(e.speciesId).generation);
@@ -549,13 +549,13 @@ export class SingleTypeChallenge extends Challenge {
       const speciesToCheck = [pokemon.speciesId];
       while (speciesToCheck.length) {
         const checking = speciesToCheck.pop();
-        if (pokemonEvolutions.hasOwnProperty(checking) && checkPokemonEvolutions) {
+        if (checking && pokemonEvolutions.hasOwnProperty(checking) && checkPokemonEvolutions) {
           pokemonEvolutions[checking].forEach(e => {
             speciesToCheck.push(e.speciesId);
             types.push(getPokemonSpecies(e.speciesId).type1, getPokemonSpecies(e.speciesId).type2);
           });
         }
-        if (pokemonFormChanges.hasOwnProperty(checking) && checkPokemonForms) {
+        if (checking && pokemonFormChanges.hasOwnProperty(checking) && checkPokemonForms) {
           pokemonFormChanges[checking].forEach(f1 => {
             getPokemonSpecies(checking).forms.forEach(f2 => {
               if (f1.formKey === f2.formKey) {
@@ -579,6 +579,7 @@ export class SingleTypeChallenge extends Challenge {
       valid.value = false;
       return true;
     }
+    return false;
   }
 
   /**
