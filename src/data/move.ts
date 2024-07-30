@@ -1435,6 +1435,39 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Applies damage to the target's ally equal to 1/16 of that ally's max HP.
+ * @extends MoveEffectAttr
+ */
+export class FlameBurstAttr extends MoveEffectAttr {
+  /**
+   * @param user - n/a
+   * @param target - The target Pokémon.
+   * @param move - n/a
+   * @param args - n/a
+   * @returns A boolean indicating whether the effect was successfully applied.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    const targetAlly = target.getAlly();
+    const cancelled = new Utils.BooleanHolder(false);
+
+    if (targetAlly) {
+      applyAbAttrs(BlockNonDirectDamageAbAttr, targetAlly, cancelled);
+    }
+
+    if (cancelled.value || !targetAlly) {
+      return false;
+    }
+
+    targetAlly.damageAndUpdate(Math.max(1, Math.floor(1/16 * targetAlly.getMaxHp())), HitResult.OTHER);
+    return true;
+  }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    return target.getAlly() ? -5 : 0;
+  }
+}
+
 export class SacrificialFullRestoreAttr extends SacrificialAttr {
   constructor() {
     super();
@@ -7292,7 +7325,7 @@ export function initMoves() {
     new AttackMove(Moves.STORM_THROW, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
       .attr(CritOnlyAttr),
     new AttackMove(Moves.FLAME_BURST, Type.FIRE, MoveCategory.SPECIAL, 70, 100, 15, -1, 0, 5)
-      .partial(),
+      .attr(FlameBurstAttr),
     new AttackMove(Moves.SLUDGE_WAVE, Type.POISON, MoveCategory.SPECIAL, 95, 100, 10, 10, 0, 5)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_OTHERS),
