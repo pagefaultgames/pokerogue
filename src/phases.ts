@@ -734,7 +734,7 @@ export abstract class PokemonPhase extends FieldPhase {
   public player: boolean;
   public fieldIndex: integer;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex | integer) {
+  constructor(scene: BattleScene, battlerIndex?: BattlerIndex | integer) {
     super(scene);
 
     if (battlerIndex === undefined) {
@@ -2556,13 +2556,13 @@ export class NewBattlePhase extends BattlePhase {
 }
 
 export class CommonAnimPhase extends PokemonPhase {
-  private anim: CommonAnim;
+  private anim: CommonAnim | null;
   private targetIndex: integer | undefined;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, targetIndex: BattlerIndex | undefined, anim: CommonAnim) {
+  constructor(scene: BattleScene, battlerIndex?: BattlerIndex, targetIndex?: BattlerIndex | undefined, anim?: CommonAnim) {
     super(scene, battlerIndex);
 
-    this.anim = anim;
+    this.anim = anim ?? null;
     this.targetIndex = targetIndex;
   }
 

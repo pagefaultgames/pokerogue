@@ -25,8 +25,8 @@ import { TrainerType } from "#enums/trainer-type";
 export class Arena {
   public scene: BattleScene;
   public biomeType: Biome;
-  public weather: Weather;
-  public terrain: Terrain;
+  public weather: Weather | null;
+  public terrain: Terrain | null;
   public tags: ArenaTag[];
   public bgm: string;
   public ignoreAbilities: boolean;
@@ -121,7 +121,7 @@ export class Arena {
         }
       }
 
-      ret = getPokemonSpecies(species);
+      ret = getPokemonSpecies(species!);
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
         switch (true) {
@@ -314,7 +314,7 @@ export class Arena {
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
-    this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType, this.weather?.turnsLeft));
+    this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType ?? WeatherType.NONE, this.weather?.turnsLeft ?? 0));
 
     if (this.weather) {
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
@@ -339,7 +339,7 @@ export class Arena {
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
     this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
-    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType,this.terrain?.terrainType, this.terrain?.turnsLeft));
+    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType,this.terrain?.terrainType ?? TerrainType.NONE, this.terrain?.turnsLeft ?? 0));
 
     if (this.terrain) {
       if (!ignoreAnim) {
@@ -578,11 +578,11 @@ export class Arena {
     return true;
   }
 
-  getTag(tagType: ArenaTagType | Constructor<ArenaTag>): ArenaTag {
+  getTag(tagType: ArenaTagType | Constructor<ArenaTag>): ArenaTag | undefined {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }
 
-  getTagOnSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide): ArenaTag {
+  getTagOnSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide): ArenaTag | undefined {
     return typeof(tagType) === "string"
       ? this.tags.find(t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side))
       : this.tags.find(t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
@@ -720,6 +720,9 @@ export class Arena {
       return 0.000;
     case Biome.SNOWY_FOREST:
       return 3.047;
+    default:
+      console.warn(`missing bgm loop-point for biome "${Biome[this.biomeType]}" (=${this.biomeType})`);
+      return 0;
     }
   }
 }
@@ -773,12 +776,12 @@ export class ArenaBase extends Phaser.GameObjects.Container {
 
     this.player = player;
 
-    this.base = scene.addFieldSprite(0, 0, "plains_a", null, 1);
+    this.base = scene.addFieldSprite(0, 0, "plains_a", undefined, 1);
     this.base.setOrigin(0, 0);
 
     this.props = !player ?
       new Array(3).fill(null).map(() => {
-        const ret = scene.addFieldSprite(0, 0, "plains_b", null, 1);
+        const ret = scene.addFieldSprite(0, 0, "plains_b", undefined, 1);
         ret.setOrigin(0, 0);
         ret.setVisible(false);
         return ret;
