@@ -248,6 +248,7 @@ class RunEntry extends Phaser.GameObjects.Container {
           const enemyIconContainer = this.scene.add.container(65+(e*25),-8);
           enemyIconContainer.setScale(0.75);
           enemyData.boss = false;
+          enemyData["player"] = true;
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
           const enemyLevel = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });

@@ -162,6 +162,7 @@ export default class GameInfoUiHandler extends UiHandler {
           const enemyData = runData.enemyParty[0];
           const bossStatus = enemyData.boss;
           enemyData.boss = false;
+          enemyData["player"] = true;
           //addPokemonIcon() throws an error if the Pokemon used is a boss
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
@@ -180,6 +181,7 @@ export default class GameInfoUiHandler extends UiHandler {
             const enemyIconContainer = this.scene.add.container(0, 0);
             const bossStatus = enemyData.boss;
             enemyData.boss = false;
+            enemyData["player"] = true;
             const enemy = enemyData.toPokemon(this.scene);
             const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
             const enemyLevel = addTextObject(this.scene, 36, 26, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "44px", color: "#f8f8f8" });
@@ -230,6 +232,7 @@ export default class GameInfoUiHandler extends UiHandler {
           enemyIconContainer.setScale(0.6);
           const isBoss = enemyData.boss;
           enemyData.boss = false;
+          enemyData["player"] = true;
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
           const enemySprite1 = enemyIcon.list[0] as Phaser.GameObjects.Sprite;
