@@ -1437,7 +1437,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       this.scene.time.delayedCall(750, () => this.summon());
     } else {
       const trainerName = this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
-      const pokemonName = getPokemonNameWithAffix(this.getPokemon());
+      const pokemonName = this.getPokemon().getNameToRender();
       const message = i18next.t("battle:trainerSendOut", { trainerName, pokemonName });
 
       this.scene.pbTrayEnemy.hide();
@@ -5019,7 +5019,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       Promise.all([pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon)]).then(() => {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
-            this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
+            this.scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
               this.scene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
               this.scene.ui.setMode(Mode.CONFIRM, () => {
                 const newPokemon = this.scene.addPlayerPokemon(pokemon.species, pokemon.level, pokemon.abilityIndex, pokemon.formIndex, pokemon.gender, pokemon.shiny, pokemon.variant, pokemon.ivs, pokemon.nature, pokemon);
