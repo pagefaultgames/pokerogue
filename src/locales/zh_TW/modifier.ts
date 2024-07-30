@@ -10,4 +10,5 @@ export const modifier: SimpleTranslationEntries = {
   "turnHeldItemTransferApply": "{{pokemonNameWithAffix}}的{{itemName}}被\n{{pokemonName}}的{{typeName}}吸收了！",
   "contactHeldItemTransferApply": "{{pokemonNameWithAffix}}的{{itemName}}被\n{{pokemonName}}的{{typeName}}奪取了！",
   "enemyTurnHealApply": "{{pokemonNameWithAffix}}\n回復了一些體力！",
+  "bypassSpeedChanceApply": "{{pokemonName}}用了{{itemName}}後，行動變快了！",
 } as const;
