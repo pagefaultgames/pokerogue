@@ -631,32 +631,6 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY,
   },
   {
-    key: SettingKeys.BiomePanels,
-    label: "Biome Panels",
-    options: [{
-      label: "Off",
-      value: "Off"
-    }, {
-      label: "On",
-      value: "On"
-    }],
-    default: 0,
-    type: SettingType.DISPLAY,
-  },
-  {
-    key: SettingKeys.ShowAutosaves,
-    label: "Show Autosaves",
-    options: [{
-      label: "Off",
-      value: "Off"
-    }, {
-      label: "On",
-      value: "On"
-    }],
-    default: 0,
-    type: SettingType.DISPLAY,
-  },
-  {
     key: SettingKeys.Master_Volume,
     label: i18next.t("settings:masterVolume"),
     options: VOLUME_OPTIONS,
