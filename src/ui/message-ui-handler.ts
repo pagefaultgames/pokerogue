@@ -5,7 +5,7 @@ import * as Utils from "../utils";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent;
-  protected textCallbackTimer: Phaser.Time.TimerEvent;
+  protected textCallbackTimer: Phaser.Time.TimerEvent | null;
   public pendingPrompt: boolean;
 
   public message: Phaser.GameObjects.Text;
@@ -17,15 +17,15 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     this.pendingPrompt = false;
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  showDialogue(text: string, name: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+  showDialogue(text: string, name: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  private showTextInternal(text: string, delay: integer, callback: Function, callbackDelay: integer, prompt: boolean, promptDelay: integer) {
+  private showTextInternal(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
     if (delay === null || delay === undefined) {
       delay = 20;
     }
@@ -33,7 +33,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     const delayMap = new Map<integer, integer>();
     const soundMap = new Map<integer, string>();
     const actionPattern = /@(c|d|s)\{(.*?)\}/;
-    let actionMatch: RegExpExecArray;
+    let actionMatch: RegExpExecArray | null;
     while ((actionMatch = actionPattern.exec(text))) {
       switch (actionMatch[1]) {
       case "c":
@@ -151,7 +151,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     }
   }
 
-  showPrompt(callback: Function, callbackDelay: integer) {
+  showPrompt(callback?: Function | null, callbackDelay?: integer | null) {
     const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
     const textLinesCount = wrappedTextLines.length;
     const lastTextLine = wrappedTextLines[wrappedTextLines.length - 1];

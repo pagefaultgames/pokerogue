@@ -565,7 +565,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return this.getMaxHeldItemCount(pokemon);
   }
 
-  abstract getMaxHeldItemCount(pokemon: Pokemon): integer;
+  abstract getMaxHeldItemCount(pokemon?: Pokemon): integer;
 }
 
 export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModifier {
@@ -2293,7 +2293,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     const transferredModifierTypes: ModifierTypes.ModifierType[] = [];
     const itemModifiers = pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
         && m.pokemonId === targetPokemon.id && m.isTransferrable, targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
-    let highestItemTier = itemModifiers.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
+    let highestItemTier = itemModifiers.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier ?? 0, highestTier), 0);
     let tierItemModifiers = itemModifiers.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
 
     const heldItemTransferPromises: Promise<void>[] = [];
@@ -2786,7 +2786,7 @@ export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, player: 
     let itemModifier: PokemonHeldItemModifier;
     if (modifierType instanceof ModifierTypes.ModifierTypeGenerator) {
       const pregenArgs = "type" in item ? [item.type] : undefined;
-      itemModifier = modifierType.generateType([], pregenArgs).withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
+      itemModifier = modifierType.generateType([], pregenArgs)?.withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
     } else {
       itemModifier = modifierType.withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
     }
