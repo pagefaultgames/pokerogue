@@ -53,11 +53,11 @@ export class ModifierType {
   public tier: ModifierTier;
   protected newModifierFunc: NewModifierFunc;
 
-  constructor(localeKey: string, iconImage: string, newModifierFunc: NewModifierFunc, group?: string, soundName?: string) {
-    this.localeKey = localeKey;
-    this.iconImage = iconImage;
-    this.group = group || "";
-    this.soundName = soundName || "restore";
+  constructor(localeKey: string | null, iconImage: string | null, newModifierFunc: NewModifierFunc, group?: string, soundName?: string) {
+    this.localeKey = localeKey ?? "";
+    this.iconImage = iconImage ?? "";
+    this.group = group ?? "";
+    this.soundName = soundName ?? "restore";
     this.newModifierFunc = newModifierFunc;
   }
 

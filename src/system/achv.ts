@@ -6,6 +6,7 @@ import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
 import { ParseKeys } from "i18next";
 import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge } from "#app/data/challenge.js";
+import { ConditionFn } from "#app/@types/common.js";
 
 export enum AchvTier {
   COMMON,
@@ -27,9 +28,9 @@ export class Achv {
   public hasParent: boolean;
   public parentId: string;
 
-  private conditionFunc: (scene: BattleScene, args?: any[]) => boolean;
+  private conditionFunc: ConditionFn | undefined;
 
-  constructor(localizationKey:string, name: string, description: string, iconImage: string, score: integer, conditionFunc?: (scene: BattleScene, args: any[]) => boolean) {
+  constructor(localizationKey:string, name: string, description: string, iconImage: string, score: integer, conditionFunc?: ConditionFn) {
     this.name = name;
     this.description = description;
     this.iconImage = iconImage;

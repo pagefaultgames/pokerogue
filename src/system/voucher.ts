@@ -3,8 +3,7 @@ import i18next from "i18next";
 import { Achv, AchvTier, achvs, getAchievementDescription } from "./achv";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
-
-type ConditionFn = (scene: BattleScene, args?: any[]) => boolean;
+import { ConditionFn } from "#app/@types/common.js";
 
 export enum VoucherType {
   REGULAR,

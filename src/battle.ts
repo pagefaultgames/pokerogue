@@ -39,7 +39,7 @@ export interface TurnCommand {
 }
 
 interface TurnCommands {
-    [key: integer]: TurnCommand
+    [key: integer]: TurnCommand | null
 }
 
 export default class Battle {
@@ -81,7 +81,7 @@ export default class Battle {
       : trainer?.getPartyLevels(this.waveIndex);
     this.enemyParty = [];
     this.seenEnemyPartyMemberIds = new Set<integer>();
-    this.double = double;
+    this.double = double ?? false;
     this.enemySwitchCounter = 0;
     this.turn = 0;
     this.playerParticipantIds = new Set<integer>();
@@ -159,6 +159,7 @@ export default class Battle {
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
     this.postBattleLoot.push(...enemyPokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferrable, false).map(i => {
       const ret = i as PokemonHeldItemModifier;
+      //@ts-ignore - this is awful to fix/change
       ret.pokemonId = null;
       return ret;
     }));
@@ -177,7 +178,7 @@ export default class Battle {
     const userLocale = navigator.language || "en-US";
     const formattedMoneyAmount = moneyAmount.value.toLocaleString(userLocale);
     const message = i18next.t("battle:moneyPickedUp", { moneyAmount: formattedMoneyAmount });
-    scene.queueMessage(message, null, true);
+    scene.queueMessage(message, undefined, true);
 
     scene.currentBattle.moneyScattered = 0;
   }
@@ -200,16 +201,16 @@ export default class Battle {
     scene.updateScoreText();
   }
 
-  getBgmOverride(scene: BattleScene): string {
+  getBgmOverride(scene: BattleScene): string | null {
     const battlers = this.enemyParty.slice(0, this.getBattlerCount());
     if (this.battleType === BattleType.TRAINER) {
-      if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages()?.length) {
-        return `encounter_${this.trainer.getEncounterBgm()}`;
+      if (!this.started && this.trainer?.config.encounterBgm && this.trainer?.getEncounterMessages()?.length) {
+        return `encounter_${this.trainer?.getEncounterBgm()}`;
       }
       if (scene.musicPreference === 0) {
-        return this.trainer.getBattleBgm();
+        return this.trainer?.getBattleBgm() ?? null;
       } else {
-        return this.trainer.getMixedBattleBgm();
+        return this.trainer?.getMixedBattleBgm() ?? null;
       }
     } else if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS) {
       return "end_summit";
@@ -382,7 +383,7 @@ export default class Battle {
 
 export class FixedBattle extends Battle {
   constructor(scene: BattleScene, waveIndex: integer, config: FixedBattleConfig) {
-    super(scene.gameMode, waveIndex, config.battleType, config.battleType === BattleType.TRAINER ? config.getTrainer(scene) : null, config.double);
+    super(scene.gameMode, waveIndex, config.battleType, config.battleType === BattleType.TRAINER ? config.getTrainer(scene) : undefined, config.double);
     if (config.getEnemyParty) {
       this.enemyParty = config.getEnemyParty(scene);
     }
