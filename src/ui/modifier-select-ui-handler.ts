@@ -10,6 +10,7 @@ import {Button} from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
+import Overrides from "#app/overrides";
 import i18next from "i18next";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
@@ -136,7 +137,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.player = args[0];
 
-    const partyHasHeldItem = this.player && !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true)).length;
+    const partyHasHeldItem = this.player && !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferrable).length;
     const canLockRarities = !!this.scene.findModifier(m => m instanceof LockModifierTiersModifier);
 
     this.transferButtonContainer.setVisible(false);
@@ -726,9 +727,10 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
   updateCostText(): void {
     const scene = this.scene as BattleScene;
-    const textStyle = this.modifierTypeOption.cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
+    const cost = Overrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
+    const textStyle = cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
-    const formattedMoney = Utils.formatMoney(scene.moneyFormat, this.modifierTypeOption.cost);
+    const formattedMoney = Utils.formatMoney(scene.moneyFormat, cost);
 
     this.itemCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney }));
     this.itemCostText.setColor(getTextColor(textStyle, false, scene.uiTheme));

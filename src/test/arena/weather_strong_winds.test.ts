@@ -1,15 +1,14 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { allMoves } from "#app/data/move.js";
 import {
   TurnStartPhase,
 } from "#app/phases";
-import { Moves } from "#enums/moves";
+import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
-import { allMoves } from "#app/data/move.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Weather - Strong Winds", () => {
   let phaserGame: Phaser.Game;
@@ -27,15 +26,15 @@ describe("Weather - Strong Winds", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(10);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.TAILLOW);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DELTA_STREAM);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.THUNDERBOLT, Moves.ICE_BEAM, Moves.ROCK_SLIDE]);
+    game.override.battleType("single");
+    game.override.startingLevel(10);
+    game.override.enemySpecies(Species.TAILLOW);
+    game.override.enemyAbility(Abilities.DELTA_STREAM);
+    game.override.moveset([Moves.THUNDERBOLT, Moves.ICE_BEAM, Moves.ROCK_SLIDE]);
   });
 
   it("electric type move is not very effective on Rayquaza", async () => {
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RAYQUAZA);
+    game.override.enemySpecies(Species.RAYQUAZA);
 
     await game.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon();

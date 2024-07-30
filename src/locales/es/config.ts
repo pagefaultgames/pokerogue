@@ -1,8 +1,12 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
+import { arenaFlyout } from "./arena-flyout";
+import { arenaTag } from "./arena-tag";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
+import { battleInfo } from "./battle-info";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
+import { battlerTags } from "./battler-tags";
 import { berry } from "./berry";
 import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
@@ -20,6 +24,7 @@ import {
 } from "./dialogue";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
+import { filterBar } from "./filter-bar";
 import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
@@ -31,8 +36,10 @@ import { move } from "./move";
 import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
+import { pokemonForm } from "./pokemon-form";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
+import { pokemonSummary } from "./pokemon-summary";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
@@ -45,12 +52,17 @@ import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "./settings.js";
 import { common } from "./common.js";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
+import { moveTriggers } from "./move-trigger";
 
 export const esConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
+  arenaFlyout: arenaFlyout,
+  arenaTag: arenaTag,
   battle: battle,
+  battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
+  battlerTags: battlerTags,
   berry: berry,
   bgmName: bgmName,
   biome: biome,
@@ -69,6 +81,7 @@ export const esConfig = {
   PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
   egg: egg,
   fightUiHandler: fightUiHandler,
+  filterBar: filterBar,
   gameMode: gameMode,
   gameStatsUiHandler: gameStatsUiHandler,
   growth: growth,
@@ -80,8 +93,10 @@ export const esConfig = {
   nature: nature,
   pokeball: pokeball,
   pokemon: pokemon,
+  pokemonForm: pokemonForm,
   pokemonInfo: pokemonInfo,
   pokemonInfoContainer: pokemonInfoContainer,
+  pokemonSummary: pokemonSummary,
   saveSlotSelectUiHandler: saveSlotSelectUiHandler,
   settings: settings,
   splashMessages: splashMessages,
@@ -95,5 +110,6 @@ export const esConfig = {
   voucher: voucher,
   weather: weather,
   partyUiHandler: partyUiHandler,
-  modifierSelectUiHandler: modifierSelectUiHandler
+  modifierSelectUiHandler: modifierSelectUiHandler,
+  moveTriggers: moveTriggers
 };

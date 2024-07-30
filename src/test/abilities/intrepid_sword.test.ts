@@ -1,13 +1,12 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import {Abilities} from "#enums/abilities";
-import {Species} from "#enums/species";
+import { BattleStat } from "#app/data/battle-stat";
 import {
   CommandPhase,
 } from "#app/phases";
-import {BattleStat} from "#app/data/battle-stat";
+import GameManager from "#app/test/utils/gameManager";
+import { Abilities } from "#enums/abilities";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Abilities - Intrepid Sword", () => {
@@ -26,10 +25,10 @@ describe("Abilities - Intrepid Sword", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.ZACIAN);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTREPID_SWORD);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTREPID_SWORD);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.ZACIAN);
+    game.override.enemyAbility(Abilities.INTREPID_SWORD);
+    game.override.ability(Abilities.INTREPID_SWORD);
   });
 
   it("INTREPID SWORD on player", async() => {
