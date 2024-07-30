@@ -61,7 +61,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "使一只宝可梦的等级提升{{levels}}级。",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "使一只寶可夢的等級提升{{levels}}級。",
+      description: "使一只宝可梦的等级提升{{levels}}级。",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "增加10%持有者的{{statName}}，\n个体值越高堆叠上限越高。",
@@ -72,7 +72,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AllPokemonFullReviveModifierType": {
       description: "复活所有濒死的宝可梦，\n并完全回复HP。",
     },
-    "MoneyRewardModifierType": {
+    "MoneyRewardModifierType": { 
       description: "获得{{moneyMultiplier}}金钱(₽{{moneyAmount}})。",
       extra: {
         "small": "少量",
@@ -153,7 +153,462 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "复活种子", description: "受到技能攻击伤害濒死时，\n恢复该宝可梦的HP至1/2。" },
 
-    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+    "WHITE_HERB": { name: "白色香草", description: "一种宝可梦携带物。它可以在战斗中恢复任何下降的属性。import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
+
+export const modifierType: ModifierTypeTranslationEntries = {
+ModifierType: {
+"AddPokeballModifierType": {
+name: "{{modifierCount}}x {{pokeballName}}"
+description: "Obtain {{pokeballName}} x{{modifierCount}} (Already have: {{pokeballAmount}})\nCatch Rate Multiplier: {{catchRate}}."
+},
+"AddVoucherModifierType": {
+name: "{{modifierCount}}x {{voucherTypeName}}",
+description: "Get {{voucherTypeName}} x{{modifierCount}}."
+},
+"PokemonHeldItemModifierType": {
+extra: {
+    \"inoperable\": \"{{pokemonName}} cannot hold this item!\"
+tooMany": "{{pokemonName}} already has too many of this item!
+}
+},
+"PokemonHpRestoreModifierType": {
+description: "Restores the Pokémon's HP by {{restorePoints}} or {{restorePercent}}% of its maximum HP, whichever is greater."
+extra: {
+fully": "Fully restore a Pokémon's HP.
+fullyWithStatus": "Fully restore a Pokémon's HP and cure all negative status effects.
+}
+},
+"PokemonReviveModifierType": {
+description: "Revives a Pokémon and restores {{restorePercent}}% of its HP."
+},
+"PokemonStatusHealModifierType": {
+description: "Removes all negative statuses from one Pokémon."
+ }
+"PokemonPpRestoreModifierType":
+description: "Restores {{restorePoints}} PP to a Pokémon's move."
+extra: {
+        \"fully\": \"Fully restores the PP of one of a Pokémon's moves.\",
+}
+},
+"PokemonAllMovePpRestoreModifierType": {
+description: "Restores {{restorePoints}} PP to all moves of a Pokémon."
+extra: {
+        \"fully\": \"Fully restores all PP for all of a Pokémon's moves.\",
+}
+},
+"PokemonPpUpModifierType": {
+description: "Select a move of a Pokemon to use\nIncrease its PP maximum by 20% of its base (up to 3 times)."
+},
+"PokemonNatureChangeModifierType": {
+name: "{{natureName}} Mint",
+description: "Changes a Pokémon's nature to {{natureName}} and permanently unlocks that nature for that Pokémon.",
+},
+"DoubleBattleChanceBoosterModifierType": {
+description: \"The probability of the next {{battleCount}} battles being doubles is doubled.\"
+},
+"TempBattleStatBoosterModifierType": {
+description: "Boosts all team Pokémon's {{tempBattleStatName}} by 1 level for 5 battles."
+},
+"AttackTypeBoosterModifierType": {
+description: "The power of a Pokémon's {{moveType}} type move increases by 20%."
+},
+"PokemonLevelIncrementModifierType": {
+description: "Increases a Pokémon's level by {{levels}}."
+},
+"AllPokemonLevelIncrementModifierType": {
+description: \"Raise a Pokémon's level by {{levels}} levels.\"
+},
+"PokemonBaseStatBoosterModifierType":
+description: "Increases the holder's {{statName}} by 10%, with a higher cap the higher the holder's individual values."
+},
+"AllPokemonFullHpRestoreModifierType": {
+description: \"Fully restores the HP of all Pokémon.\"
+ },
+"AllPokemonFullReviveModifierType": {
+description: "Revives all fainted Pokémon and fully restores their HP."
+},
+"MoneyRewardModifierType": {
+description: \"Earn {{moneyMultiplier}} money (₽{{moneyAmount}}).\"
+extra: {
+small": "Little
+moderate": "Moderate
+large": "large
+},
+},
+"ExpBoosterModifierType": {
+description: \"Experience gain increased by {{boostPercent}}%.\"
+},
+"PokemonExpBoosterModifierType": {
+description: "Holder gains {{boostPercent}}% more experience points."
+},
+"PokemonFriendshipBoosterModifierType": {
+description: \"Increases affection gained by 50% in each battle.\"
+ }
+"PokemonMoveAccuracyBoosterModifierType": {
+description: "Increases the accuracy of the move by {{accuracyAmount}} (max 100)."
+},
+"PokemonMultiHitModifierType": {
+description: \"Deals 2/3/4 hits of damage at 40/25/12.5% of damage\"
+ }
+"TmModifierType": {
+name: "TM Modifier - {{moveId}} - {{moveName}}",
+Teach a Pokémon {{moveName}}.
+ },
+"TmModifierTypeWithInfo": {
+name: "TM Move - {{moveId}} - {{moveName}}",
+description: "Teach a Pokémon {{moveName}}\n(Hold C or Shift for more information)."
+}
+"EvolutionItemModifierType": {
+description: "Enables the evolution of certain Pokémon."
+},
+"FormChangeItemModifierType": {
+description: "Allows certain Pokémon to change their form."
+}
+"FusePokemonModifierType": {
+description: "Fuse two Pokémon (changes their abilities, splits base stats,\nshares types, and shares a move pool)."
+},
+"TerastallizeModifierType": {
+name: \"{{teraType}} Tera Shard\"
+description: \"The holder can Terastallize into {{teraType}} for 10 battles.\"
+},
+"ContactHeldItemTransferChanceModifierType": {
+description: \"Has a {{chancePercent}}% chance of stealing an opponent's item when attacking.\"
+},
+"TurnHeldItemTransferModifierType": {
+description: "The holder gains a held item from the opponent each turn."
+},
+"EnemyAttackStatusEffectChanceModifierType": {
+Has a {{chancePercent}}% chance to inflict {{statusEffect}} when attacking.
+ },
+"EnemyEndureChanceModifierType": {
+description: "Increases the enemy's chance by {{chancePercent}}% to not faint this turn."
+},
+
+"RARE_CANDY": { name: "Rare Candy" },
+"RARER_CANDY": { name: "Rare Candy" }
+
+"MEGA_BRACELET": { name: "Mega Bracelet", description: "Allows a Pokemon holding a Mega Stone to Mega Evolve in battle." }
+"DYNAMAX_BAND": { name: "Dynamax Band", description: "Allows a Pokemon battling with Gigantamax mushrooms to undergo Gigantamax evolution." },
+"TERA_ORB": { name: "Tera Orb", description: "Allows a Pokemon battling with Tera Shards to undergo Terastallization." },
+
+"MAP": { name: "Map", description: "Has a chance to allow you to choose your destination when switching regions."},
+
+"POTION": { name: "Potion" },
+"SUPER_POTION": { name: "Super Potion" },
+"HYPER_POTION": { name: "Hyper Potion" },
+"MAX_POTION": { name: "Max Potion" },
+"FULL_RESTORE": { name: "Full Restore" },
+
+"REVIVE": { name: "Revive Fragment" }
+"MAX_REVIVE": { name: "Max Revive" }
+
+"FULL_HEAL": { name: "Potion of Full Healing" },
+
+"SACRED_ASH": { name: "Sacred Ash" },
+
+"REVIVER_SEED": { name: "Reviver Seed", description: "When this Pokémon is about to faint from a move, it restores the Pokémon's HP to 1/2." },
+
+"WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It restores all reduced stats to their normal levels during battle." },
+
+"ETHER": { name: "PP Single-Item Minor Replenisher" },
+"MAX_ETHER": { name: "PP Single-Item Full Replenisher" },
+
+"ELIXIR": { name: "PP Max Elixir" },
+"MAX_ELIXIR": { name: "PP Max Restorer" },
+
+"PP_UP": { name: "PP Up" },
+"PP_MAX": { name: "Max PP Up" },
+
+"LURE": { name: "Insect Attractant Perfume" }
+"SUPER_LURE": { name: "Silver Perfume" }
+"MAX_LURE": { name: "Golden Lure" }
+
+"MEMORY_MUSHROOM": { name: "Memory Mushroom", description: "Recalls a forgotten move of a Pokémon." }
+
+"EXP_SHARE": { name: "Experience Share", description: "Pokémon not participating in battle gain 20% of the experience points earned." },
+"EXP_BALANCE": { name: "Balanced Experience Share", description: "Experience points are distributed more evenly among the lower-level Pokémon in the party." },
+
+"OVAL_CHARM": { name: "Oval Charm", description: "When multiple Pokémon participate in battle, each gains an additional 10% of total experience points earned." },
+
+"EXP_CHARM": { name: "Exp. Share" },
+"SUPER_EXP_CHARM": { name: "Super Experience Charm" },
+"GOLDEN_EXP_CHARM": { name: "Golden Experience Charm" },
+
+"LUCKY_EGG": { name: "Lucky Egg" },
+"GOLDEN_EGG": { name: "Golden Egg" },
+
+"SOOTHE_BELL": { name: "Soothing Bell" }
+
+"SCOPE_LENS": { name: "Scope Lens", description: "A lens that reveals weak spots. Boosts the critical-hit ratio of the Pokémon holding it." }
+"LEEK": { name: "Leek", description: "A very long and sturdy stalk. Carrying it makes it easier for Farfetch'd to land critical hits with its moves." }
+
+"EVIOLITE": { name: "Eviolite", description: "If carried by a Pokémon that can still evolve, its Defense and Special Defense stats will increase." }
+
+"SOUL_DEW": { name: "Soul Dew", description: "Increases the effect of the Pokémon's nature by 10% (additive)." },
+
+"NUGGET": { name: "Nugget" },
+"BIG_NUGGET": { name: "Giant Nugget" },
+"RELIC_GOLD": { name: "Ancient Gold Coin" },
+
+"AMULET_COIN": { name: "Amulet Coin", description: "Increases the amount of money obtained by 20%." },
+"GOLDEN_PUNCH": { name: "Golden Punch", description: "Converts 50% of the damage dealt into money." },
+"COIN_CASE": { name: "Coin Case", description: "Receive 10% interest on your gold every 10 battles." },
+
+"LOCK_CAPSULE": { name: "Lock Capsule", description: "Allows you to lock the rarity of items when refreshing the shop." },
+
+"GRIP_CLAW": { name: "Grip Claw" },
+"WIDE_LENS": { name: "Wide Lens" },
+
+"MULTI_LENS": { name: "Multi-Lens" }
+
+"HEALING_CHARM": { name: "Healing Charm", description: "Increases HP recovery by 10% (excluding resurrection)." }
+"CANDY_JAR": { name: "Candy Jar", description: "Upgrades provided by magical candies increase by 1 level." },
+
+"BERRY_POUCH": { name: "Berry Pouch", description: "Has a 30% chance of not consuming a Berry when used." },
+
+"FOCUS_BAND": { name: "Focus Band", description: "When a Pokemon holding this item is about to faint from an attack, it has a 10% chance to instead retain 1 HP and not faint." },
+
+"QUICK_CLAW": { name: "Quick Claw", description: "Has a 10% chance to allow the user to move first, ignoring speed, but not priority moves." },
+
+"KINGS_ROCK": { name: "King's Rock", description: "Using any move that normally would not inflict flinch has a 10% chance to cause the target to flinch." },
+
+"LEFTOVERS": { name: "Leftovers", description: "When held, restores 1/16 of the maximum HP at the end of each turn." },
+"SHELL_BELL": { name: "Shell Bell", description: "When held, the holder's HP will recover 1/8 of the damage inflicted on the opponent upon a successful attack." },
+
+"TOXIC_ORB": { name: "Toxic Orb", description: "A mysterious orb that releases poison upon touch. When held, the bearer will become poisoned during battle." },
+"FLAME_ORB": { name: "Flame Orb", description: "A mystical orb that emits heat when touched. Carrying it inflicts a burn status in battle." },
+
+"BATON": { name: "Baton Pass", description: "Allows the Pokémon to pass any stat changes to the next Pokémon switched in. Also works on traps." },
+
+"SHINY_CHARM": { name: "Shiny Charm", description: "Significantly increases the chances of encountering a shiny Pokémon in the wild." },
+"ABILITY_CHARM": { name: "Ability Charm", description: "Significantly increases the chances of encountering a wild Pokémon with a hidden ability." },
+
+"IV_SCANNER": { name: "Individual Value Scanner", description: "Allows scanning of wild Pokémon's Individual Values. For each additional one owned,\nit reveals two more IVs, prioritizing the highest ones." },
+
+"DNA_SPLICERS": { name: "DNA Splicers" },
+
+"MINI_BLACK_HOLE": { name: "Mini Black Hole" }
+
+"GOLDEN_POKEBALL": { name: "Golden Pokeball", description: "Adds an extra item option after each battle." }
+
+"ENEMY_DAMAGE_BOOSTER": { name: "Damage Coin", description: "Deals 5% extra damage (multiplicative)." },
+"ENEMY_DAMAGE_REDUCTION": { name: "Defense Coin", description: "Receives 2.5% less damage (multiplicative)." },
+"ENEMY_HEAL": { name: "Healing Coin", description: "Restores 2% of maximum HP per turn." },
+"ENEMY_ATTACK_POISON_CHANCE": { name: "Poisonous Coin" },
+"ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Paralysis Coin" }
+"ENEMY_ATTACK_BURN_CHANCE": { name: "Burning Coin" }
+"ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Potion Coin", description: "Increases the chance of healing abnormal status effects by 2.5% per turn." },
+"ENEMY_ENDURE_CHANCE": { name: "Endure Coin" },
+"ENEMY_FUSED_CHANCE": { name: "Fusion Coin", description: "Increases the 1% chance of encountering a wild fused Pokémon." },
+}
+SpeciesBoosterItem: {
+"LIGHT_BALL": { name: "Light Ball", description: "A mystical orb that raises Pikachu's Attack and Special Attack when carried." },
+"THICK_CLUB": { name: "Thick Club", description: "A kind of hard bone. When carried by Carracosta or Marowak, its attack power increases." },
+"METAL_POWDER": { name: "Metal Powder", description: "A magical powder that increases the defense of Ditto when carried. It is very fine and hard." },
+"QUICK_POWDER": { name: "Quick Powder", description: "A mysterious powder that enhances the Speed of Ditto when carried. It is very fine and hard." }
+}
+TempBattleStatBoosterItem: {
+"x_attack": "Strength Boost",
+x_defense": "Defense Boost
+x_sp_atk": "Special Attack Boost
+x_sp_def": "Special Defense Boost
+x_speed": "Speed Boost
+x_accuracy": "Critical Hit Enhancement
+dire_hit": "Vital Point Attack
+},
+
+TempBattleStatBoosterStatName: {
+ATK": "Attack
+DEF": "Defense
+SPATK": "Special Attack
+SPDEF": "Special Defense
+SPD": "Speed
+ACC": "Accuracy
+CRIT": "Critical Hit
+EVA": "Evasion
+"DEFAULT": "???",
+},
+
+AttackTypeBoosterItem:
+silk_scarf": "Silk Scarf
+black_belt": "black belt
+sharp_beak": "sharp beak
+poison_barb": "Poison Barb
+soft_sand": "Soft Sand
+hard_stone": "Hard Stone
+silver_powder": "Silver Powder
+spell_tag": "Curse Tag
+metal_coat": "Metal Coat
+charcoal": "charcoal
+mystic_water": "mystic water
+miracle_seed": "Miracle Seed
+magnet": "Magnet
+twisted_spoon": "twisted spoon
+never_melt_ice": "never-melting ice
+dragon_fang: Dragon Fang
+black_glasses: Black Glasses
+fairy_feather": "Fairy Feather
+}
+BaseStatBoosterItem:
+hp_up": "HP Booster
+protein": "Attack Enhancer
+iron": "Defense Enhancer
+calcium": "Special Attack Power Up
+zinc": "Special Defense Power Up
+carbos": "Carbos
+}
+EvolutionItem: {
+"NONE": "None",
+
+LINKING_CORD": "Linking Cord
+SUN_STONE": "Sun Stone
+MOON_STONE": "Moon Stone
+LEAF_STONE": "Leaf Stone
+FIRE_STONE": "Fire Stone
+WATER_STONE": "Water Stone
+THUNDER_STONE": "Thunder Stone
+ICE_STONE": "Ice Stone
+DUSK_STONE": "Dusk Stone
+DAWN_STONE": "Dawn Stone
+SHINY_STONE": "Shiny Stone
+CRACKED_POT": "Cracked Pot
+SWEET_APPLE": "Sweet Apple
+TART_APPLE": "Sour Apple
+STRAWBERRY_SWEET": "Strawberry Candy Decor
+UNREMARKABLE_TEACUP": "Ordinary Teacup
+
+CHIPPED_POT": "Chipped Teapot
+BLACK_AUGURITE": "Black Augurite
+GALARICA_CUFF": "Galarica Cuff Bracelet
+GALARICA_WREATH": "Galarica Wreath
+PEAT_BLOCK": "Peat Block
+AUSPICIOUS_ARMOR": "Celebratory Armor
+MALICIOUS_ARMOR": "Curse Armor
+MASTERPIECE_TEACUP": "Masterpiece Teacup
+METAL_ALLOY": "Metal Alloy
+SCROLL_OF_DARKNESS": "Scroll of Darkness
+SCROLL_OF_WATERS": "Scroll of Waters
+SYRUPY_APPLE": "Syrupy Apple
+},
+FormChangeItem: {
+NONE": "None
+
+ABOMASITE": "Abomasite
+ABSOLITE": "Absolite
+AERODACTYLITE": "Aerodactylite
+AGGRONITE": "Aggronite
+ALAKAZITE": "Alakazite
+ALTARIANITE": "Altaria's Evolution Stone
+AMPHAROSITE": "Ampharos's Evolution Stone
+AUDINITE": "Audinite Evolution Stone
+BANETTITE": "Banettite Evolution Stone
+BEEDRILLITE": "Beedrillite
+BLASTOISINITE": "Blastoisinite
+BLAZIKENITE": "Blazenite
+CAMERUPTITE": "Cameruptite
+CHARIZARDITE_X": "Charizardite X
+CHARIZARDITE_Y": "Charizardite Y
+DIANCITE": "Diancite
+GALLADITE": "Galladite
+GARCHOMPITE": "Garchompite
+GARDEVOIRITE": "Gardevoirite
+GENGARITE": "Gengarite
+GLALITITE": "Glalitite
+GYARADOSITE": "Gyaradosite
+HERACRONITE": "Heracronite
+HOUNDOOMINITE": "Houndoomite
+KANGASKHANITE": "Kangaskhanite
+LATIASITE": "Latiasite
+LATIOSITE": "Latiosite
+LOPUNNITE": "Lopunny Evolution Stone
+LUCARIONITE": "Lucario Evolution Stone
+MANECTITE": "Manectricite
+MAWILITE": "Mawilite
+MEDICHAMITE": "Medichamite
+METAGROSSITE": "Metagrossite
+MEWTWONITE_X": "Mewtwonite X
+MEWTWONITE_Y": "Mewtwonite Y
+PIDGEOTITE": "Pidgeotite
+PINSIRITE": "Pinsirite
+RAYQUAZITE": "Rayquaza's Mega Stone
+SABLENITE": "Sableye's Mega Stone
+SALAMENCITE": "Salamence Evolution Stone
+SCEPTILITE": "Sceptile Evolution Stone
+SCIZORITE": "Scizorite
+SHARPEDONITE": "Sharpedonite
+SLOWBRONITE": "Slowbro Evolution Stone
+STEELIXITE": "Steelix Evolution Stone
+SWAMPERTITE": "Swampertite
+TYRANITARITE": "Tyranitarite
+VENUSAURITE": "Venusaurite
+
+BLUE_ORB": "Blue Orb
+RED_ORB": "Vermilion Orb
+SHARP_METEORITE": "Sharp Meteorite
+HARD_METEORITE: "Hard Meteorite"
+SMOOTH_METEORITE: "Smooth Meteorite"
+ADAMANT_CRYSTAL": "Adamant Crystal
+LUSTROUS_GLOBE": "Lustrous Globe
+GRISEOUS_CORE": "Large White Jade Gem
+REVEAL_GLASS": "Revealing Mirror
+GRACIDEA": "Gracidea Flower
+MAX_MUSHROOMS": "Gigantamax Mushrooms
+DARK_STONE": "Dark Stone
+LIGHT_STONE": "Light Stone
+PRISON_BOTTLE": "Bottle Cap
+N_LUNARIZER": "Lunarizer
+N_SOLARIZER": "Necrozma Solarizer
+RUSTED_SWORD": "Rusted Sword
+Rusted Shield
+Icy Reins of Unity
+SHADOW_REINS_OF_UNITY: "Unity's Shadow Reins"
+WELLSPRING_MASK: "Wellspring Mask"
+HEARTHFLAME_MASK": "Hearthflame Mask
+CORNERSTONE_MASK": "Cornerstone Mask
+SHOCK_DRIVE": "Shock Drive
+BURN_DRIVE": "Burn Drive
+CHILL_DRIVE": "Freeze Tape
+DOUSE_DRIVE": "Water Flow Tape
+
+FIST_PLATE": "Fist Plate
+SKY_PLATE": "Sky Plate
+TOXIC_PLATE": "Toxic Plate
+EARTH_PLATE": "Earth Plate
+STONE_PLATE": "Stone Plate
+INSECT_PLATE": "Insect Plate
+SPOOKY_PLATE": "Ghost Plate
+IRON_PLATE": "Iron Plate
+FLAME_PLATE": "Fire Plate
+SPLASH_PLATE": "Splash Plate
+MEADOW_PLATE": "Emerald Plate
+ZAP_PLATE": "Zap Plate
+MIND_PLATE": "Mind Plate
+ICICLE_PLATE": "Icicle Plate
+DRACO_PLATE": "Dragon Plate
+DREAD_PLATE": "Dread Plate
+PIXIE_PLATE": "Pixie Plate
+BLANK_PLATE": "Blank Plate
+LEGEND_PLATE": "Legend Plate
+FIGHTING_MEMORY": "Fighting Memory Disc
+FLYING_MEMORY": "Flying Memory Disk
+POISON_MEMORY": "Poison Memory Disk
+GROUND_MEMORY": "Ground Memory Disc
+ROCK_MEMORY": "Rock Memory Disc
+BUG_MEMORY": "Bug Memory Disk
+GHOST_MEMORY": "Ghost Memory Disk
+STEEL_MEMORY": "Steel Memory Disk
+FIRE_MEMORY": "Fire Memory Disk
+WATER_MEMORY": "Water Memory Disc
+GRASS_MEMORY": "Grass Memory Disc
+ELECTRIC_MEMORY": "Electric Memory Disk
+PSYCHIC_MEMORY": "Psychic Memory Disk
+ICE_MEMORY": "Ice Memory Disc
+DRAGON_MEMORY": "Dragon Memory Disc
+DARK_MEMORY": "Dark Memory Disc
+FAIRY_MEMORY": "Fairy Memory Disc 
+BLANK_MEMORY": "Blank Memory Disk 
+}
+} as const;" },
 
     "ETHER": { name: "PP单项小补剂" },
     "MAX_ETHER": { name: "PP单项全补剂" },
