@@ -230,7 +230,7 @@ export default class BattleScene extends SceneBase {
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlayShown: boolean = false;
-  private shopOverlayOpacity: number = .80;
+  private shopOverlayOpacity: number = .8;
 
   public modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
@@ -1056,7 +1056,7 @@ export default class BattleScene extends SceneBase {
           playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
           doubleTrainer = !Utils.randSeedInt(doubleChance.value);
           // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
-          if (trainerConfigs[trainerType].trainerTypeDouble && !(trainerType === TrainerType.TATE || trainerType === TrainerType.LIZA)) {
+          if (trainerConfigs[trainerType].trainerTypeDouble && ![ TrainerType.TATE, TrainerType.LIZA ].includes(trainerType)) {
             doubleTrainer = false;
           }
         }
