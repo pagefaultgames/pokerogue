@@ -4392,12 +4392,6 @@ export class ProtectAttr extends AddBattlerTagAttr {
   }
 }
 
-export class EndureAttr extends ProtectAttr {
-  constructor() {
-    super(BattlerTagType.ENDURING);
-  }
-}
-
 export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.IGNORE_ACCURACY, true, false, 2);
@@ -6514,7 +6508,7 @@ export function initMoves() {
       .attr(HitHealAttr)
       .triageMove(),
     new SelfStatusMove(Moves.ENDURE, Type.NORMAL, -1, 10, -1, 4, 2)
-      .attr(EndureAttr),
+      .attr(ProtectAttr, BattlerTagType.ENDURING),
     new StatusMove(Moves.CHARM, Type.FAIRY, 100, 20, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.ATK, -2),
     new AttackMove(Moves.ROLLOUT, Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, 0, 2)
