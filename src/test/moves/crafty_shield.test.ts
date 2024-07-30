@@ -62,7 +62,7 @@ describe("Moves - Crafty Shield", () => {
   test(
     "should protect the user and allies from moves that ignore other protection",
     async () => {
-      game.override.enemySpecies(Species.DUSCLOPS)
+      game.override.enemySpecies(Species.DUSCLOPS);
       game.override.enemyMoveset(Array(4).fill(Moves.CURSE));
 
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);

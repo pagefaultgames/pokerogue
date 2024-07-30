@@ -264,7 +264,7 @@ const QuickGuardConditionFunc: ProtectConditionFunc = (arena, moveId) => {
     applyAbAttrs(IncrementMovePriorityAbAttr, attacker, null, move, priority);
   }
   return priority.value > 0;
-}
+};
 
 /**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Guard_(move) Quick Guard}
@@ -294,7 +294,7 @@ const WideGuardConditionFunc: ProtectConditionFunc = (arena, moveId) : boolean =
     return true;
   }
   return false;
-}
+};
 
 /**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Wide_Guard_(move) Wide Guard}
@@ -317,7 +317,7 @@ class WideGuardTag extends ConditionalProtectTag {
 const MatBlockConditionFunc: ProtectConditionFunc = (arena, moveId) : boolean => {
   const move = allMoves[moveId];
   return move.category !== MoveCategory.STATUS;
-}
+};
 
 /**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Mat_Block_(move) Mat Block}
