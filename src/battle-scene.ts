@@ -387,7 +387,6 @@ export default class BattleScene extends SceneBase {
       duration: 1250,
     });
     transition.once("complete", () => {
-      this.textures.remove("loading_bg");
       transition.destroy();
     });
 
