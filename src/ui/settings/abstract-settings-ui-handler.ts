@@ -264,6 +264,12 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       case Button.CYCLE_SHINY:
         success = this.navigationContainer.navigate(button);
         break;
+      case Button.ACTION:
+        const setting: Setting = this.settings[cursor];
+        if (setting?.activatable) {
+          success = this.activateSetting(setting);
+        }
+        break;
       }
     }
 
@@ -273,6 +279,19 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     }
 
     return success;
+  }
+
+  /**
+   * Activate the specified setting if it is activatable.
+   * @param setting The setting to activate.
+   * @returns Whether the setting was successfully activated.
+   */
+  activateSetting(setting: Setting): boolean {
+    switch (setting.key) {
+    case SettingKeys.Move_Touch_Controls:
+      this.scene.inputController.moveTouchControlsHandler.enableConfigurationMode(this.getUi(), this.scene);
+      return true;
+    }
   }
 
   /**

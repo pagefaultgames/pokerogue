@@ -65,6 +65,10 @@ export interface Setting {
   default: number
   type: SettingType
   requireReload?: boolean
+  /** Whether the setting can be activated or not */
+  activatable?: boolean
+  /** Determines whether the setting should be hidden from the UI */
+  hidden?: () => boolean
 }
 
 /**
@@ -105,6 +109,7 @@ export const SettingKeys = {
   SE_Volume: "SE_VOLUME",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
 };
 
@@ -543,13 +548,27 @@ export const Setting: Array<Setting> = [
     requireReload: true
   },
   {
+    key: SettingKeys.Move_Touch_Controls,
+    label: i18next.t("settings:moveTouchControls"),
+    options: [
+      {
+        value: "Configure",
+        label: i18next.t("settings:change")
+      }
+    ],
+    default: 0,
+    type: SettingType.GENERAL,
+    activatable: true,
+    hidden: () => !hasTouchscreen()
+  },
+  {
     key: SettingKeys.Shop_Overlay_Opacity,
     label: i18next.t("settings:shopOverlayOpacity"),
     options: SHOP_OVERLAY_OPACITY_OPTIONS,
     default: 7,
     type: SettingType.DISPLAY,
     requireReload: false
-  },
+  }
 ];
 
 /**
