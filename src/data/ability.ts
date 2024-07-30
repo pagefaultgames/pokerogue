@@ -2540,21 +2540,15 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
 
 /**
  * Provides immunity to BattlerTags {@linkcode BattlerTag} to the user.
+ * @extends PreApplyBattlerTagImmunityAbAttr
  */
-export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr {
-  constructor(immuneTagType: BattlerTagType) {
-    super(immuneTagType);
-  }
-}
+export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr { }
 
 /**
  * Provides immunity to BattlerTags {@linkcode BattlerTag} to the user's field.
+ * @extends PreApplyBattlerTagImmunityAbAttr
  */
-export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr {
-  constructor(immuneTagType: BattlerTagType) {
-    super(immuneTagType);
-  }
-}
+export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr { }
 
 export class BlockCritAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
