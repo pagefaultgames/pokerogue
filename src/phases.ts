@@ -389,6 +389,36 @@ export class TitlePhase extends Phase {
     this.scene.arenaBg.setTexture(`${getBiomeKey(sessionData.arena.biome)}_bg`);
   }
 
+  confirmSlot = (message: string, slotFilter: (i: integer) => boolean, callback: (i: integer) => void) => {
+    const p = this;
+    this.scene.ui.revertMode();
+    this.scene.ui.showText(message, null, () => {
+      const config: OptionSelectConfig = {
+        options: new Array(5).fill(null).map((_, i) => i).filter(slotFilter).map(i => {
+          var data = parseSlotData(i)
+          return {
+            //label: `${i18next.t("menuUiHandler:slot", {slotNumber: i+1})}`,
+            label: (data ? data.description : `${i+1}`),
+            handler: () => {
+              callback(i);
+              this.scene.ui.revertMode();
+              this.scene.ui.showText(null, 0);
+              return true;
+            }
+          };
+        }).concat([{
+          label: i18next.t("menuUiHandler:cancel"),
+          handler: () => {
+            p.callEnd()
+            return true
+          }
+        }]),
+        //xOffset: 98
+      };
+      this.scene.ui.setOverlayMode(Mode.MENU_OPTION_SELECT, config);
+    });
+  };
+
   start(): void {
     super.start();
     //console.log(LoggerTools.importDocument(JSON.stringify(LoggerTools.newDocument())))
@@ -682,6 +712,14 @@ export class TitlePhase extends Phase {
               }
             }
           ];
+          options.push({
+            label: i18next.t("menuUiHandler:importSession"),
+            handler: () => {
+              this.confirmSlot(i18next.t("menuUiHandler:importSlotSelect"), () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
+              return true;
+            },
+            keepOpen: true
+          })
           if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
             options.push({
               label: GameMode.getModeName(GameModes.SPLICED_ENDLESS),
@@ -741,16 +779,18 @@ export class TitlePhase extends Phase {
         return true;
       }
     })
+    if (false) {
+      options.push({
+        label: i18next.t("menu:dailyRun"),
+        handler: () => {
+          this.scene.biomeChangeMode = false
+          this.setupDaily();
+          return true;
+        },
+        keepOpen: true
+      })
+    }
     options.push({
-      label: i18next.t("menu:dailyRun"),
-      handler: () => {
-        this.scene.biomeChangeMode = false
-        this.setupDaily();
-        return true;
-      },
-      keepOpen: true
-    },
-    {
       label: i18next.t("menu:settings"),
       handler: () => {
         this.scene.biomeChangeMode = false
