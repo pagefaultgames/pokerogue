@@ -40,10 +40,10 @@ describe("Moves - Roost", () => {
     async () => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       const enemyStartingHp = enemyPokemon.hp;

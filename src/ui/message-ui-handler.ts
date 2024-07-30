@@ -4,7 +4,7 @@ import { Mode } from "./ui";
 import * as Utils from "../utils";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
-  protected textTimer: Phaser.Time.TimerEvent;
+  protected textTimer: Phaser.Time.TimerEvent | null;
   protected textCallbackTimer: Phaser.Time.TimerEvent | null;
   public pendingPrompt: boolean;
 
@@ -99,7 +99,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       this.textTimer = this.scene.time.addEvent({
         delay: delay,
         callback: () => {
-          const charIndex = text.length - this.textTimer.repeatCount;
+          const charIndex = text.length - (this.textTimer?.repeatCount ?? 0);
           const charVar = charVarMap.get(charIndex);
           const charSound = soundMap.get(charIndex);
           const charDelay = delayMap.get(charIndex);
@@ -111,7 +111,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
             if (charSound) {
               this.scene.playSound(charSound);
             }
-            if (callback && !this.textTimer.repeatCount) {
+            if (callback && !this.textTimer?.repeatCount) {
               if (callbackDelay && !prompt) {
                 this.textCallbackTimer = this.scene.time.delayedCall(callbackDelay, () => {
                   if (this.textCallbackTimer) {
@@ -126,11 +126,11 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
             }
           };
           if (charDelay) {
-            this.textTimer.paused = true;
+            this.textTimer!.paused = true; // TODO: is the bang correct?
             this.scene.tweens.addCounter({
               duration: Utils.getFrameMs(charDelay),
               onComplete: () => {
-                this.textTimer.paused = false;
+                this.textTimer!.paused = false; // TODO: is the bang correct?
                 advance();
               }
             });

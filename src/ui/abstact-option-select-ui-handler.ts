@@ -36,16 +36,16 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected optionSelectText: Phaser.GameObjects.Text;
   protected optionSelectIcons: Phaser.GameObjects.Sprite[];
 
-  protected config: OptionSelectConfig;
+  protected config: OptionSelectConfig | null;
 
   protected blockInput: boolean;
 
   protected scrollCursor: integer = 0;
 
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
 
   constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode);
+    super(scene, mode ?? Mode.MESSAGE);
   }
 
   abstract getWindowWidth(): integer;
@@ -91,7 +91,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
 
-    if (this.config?.options.length > this.config?.maxOptions) {
+    if (this.config?.options && this.config?.options.length > (this.config?.maxOptions ?? 0)) {
       this.optionSelectText.setText(this.getOptionsWithScroll().map(o => o.label).join("\n"));
     }
 
@@ -118,8 +118,10 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
           itemOverlayIcon.setPositionRelative(this.optionSelectText, 6, 7 + 16 * i);
 
-          itemIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[0])));
-          itemOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[1])));
+          if (option.itemArgs) {
+            itemIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[0])));
+            itemOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[1])));
+          }
         }
       }
     });

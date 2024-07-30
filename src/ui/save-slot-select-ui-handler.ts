@@ -316,9 +316,11 @@ class SessionSlot extends Phaser.GameObjects.Container {
       if (modifier instanceof PokemonHeldItemModifier) {
         continue;
       }
-      const icon = modifier.getIcon(this.scene, false);
-      icon.setPosition(24 * visibleModifierIndex, 0);
-      modifierIconsContainer.add(icon);
+      const icon = modifier?.getIcon(this.scene, false);
+      if (icon) {
+        icon.setPosition(24 * visibleModifierIndex, 0);
+        modifierIconsContainer.add(icon);
+      }
       if (++visibleModifierIndex === 12) {
         break;
       }

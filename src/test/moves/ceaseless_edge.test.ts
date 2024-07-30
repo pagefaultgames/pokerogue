@@ -48,10 +48,10 @@ describe("Moves - Ceaseless Edge", () => {
     async () => {
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       const enemyStartingHp = enemyPokemon.hp;
@@ -77,10 +77,10 @@ describe("Moves - Ceaseless Edge", () => {
       game.override.startingHeldItems([{name: "MULTI_LENS"}]);
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       const enemyStartingHp = enemyPokemon.hp;
@@ -108,10 +108,10 @@ describe("Moves - Ceaseless Edge", () => {
 
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.CEASELESS_EDGE));

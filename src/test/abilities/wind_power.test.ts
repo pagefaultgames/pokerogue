@@ -36,7 +36,7 @@ describe("Abilities - Wind Power", () => {
 
   it("it becomes charged when hit by wind moves", async () => {
     await game.startBattle([Species.MAGIKARP]);
-    const shiftry = game.scene.getEnemyPokemon();
+    const shiftry = game.scene.getEnemyPokemon()!;
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
@@ -51,7 +51,7 @@ describe("Abilities - Wind Power", () => {
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
-    const shiftry = game.scene.getPlayerPokemon();
+    const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
@@ -66,8 +66,8 @@ describe("Abilities - Wind Power", () => {
     game.override.ability(Abilities.WIND_POWER);
 
     await game.startBattle([Species.SHIFTRY]);
-    const magikarp = game.scene.getEnemyPokemon();
-    const shiftry = game.scene.getPlayerPokemon();
+    const magikarp = game.scene.getEnemyPokemon()!;
+    const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
     expect(magikarp.getTag(BattlerTagType.CHARGED)).toBeUndefined();
@@ -84,7 +84,7 @@ describe("Abilities - Wind Power", () => {
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
-    const shiftry = game.scene.getPlayerPokemon();
+    const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 

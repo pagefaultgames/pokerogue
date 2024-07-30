@@ -41,7 +41,7 @@ describe("Moves - Stockpile", () => {
     it("Gains a stockpile stack and increases DEF and SPDEF by 1 on each use, fails at max stacks (3)", { timeout: 10000 }, async () => {
       await game.startBattle([Species.ABOMASNOW]);
 
-      const user = game.scene.getPlayerPokemon();
+      const user = game.scene.getPlayerPokemon()!;
 
       // Unfortunately, Stockpile stacks are not directly queryable (i.e. there is no pokemon.getStockpileStacks()),
       // we just have to know that they're implemented as a BattlerTag.
@@ -82,7 +82,7 @@ describe("Moves - Stockpile", () => {
     it("Gains a stockpile stack even if DEF and SPDEF are at +6", { timeout: 10000 }, async () => {
       await game.startBattle([Species.ABOMASNOW]);
 
-      const user = game.scene.getPlayerPokemon();
+      const user = game.scene.getPlayerPokemon()!;
 
       user.summonData.battleStats[BattleStat.DEF] = 6;
       user.summonData.battleStats[BattleStat.SPDEF] = 6;

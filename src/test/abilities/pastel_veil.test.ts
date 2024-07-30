@@ -55,7 +55,7 @@ describe("Abilities - Pastel Veil", () => {
 
   it("it heals the poisoned status condition of allies if user is sent out into battle", async () => {
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.GALAR_PONYTA]);
-    const ponyta = game.scene.getParty().find(p => p.species.speciesId === Species.GALAR_PONYTA);
+    const ponyta = game.scene.getParty().find(p => p.species.speciesId === Species.GALAR_PONYTA)!;
 
     vi.spyOn(ponyta, "getAbility").mockReturnValue(allAbilities[Abilities.PASTEL_VEIL]);
 
@@ -70,7 +70,7 @@ describe("Abilities - Pastel Veil", () => {
     const poisonedMon = game.scene.getPlayerField().find(p => p.status?.effect === StatusEffect.POISON);
 
     await game.phaseInterceptor.to(CommandPhase);
-    game.doAttack(getMovePosition(game.scene, (poisonedMon.getBattlerIndex() as BattlerIndex.PLAYER | BattlerIndex.PLAYER_2), Moves.SPLASH));
+    game.doAttack(getMovePosition(game.scene, (poisonedMon!.getBattlerIndex() as BattlerIndex.PLAYER | BattlerIndex.PLAYER_2), Moves.SPLASH));
     game.doSwitchPokemon(2);
     await game.phaseInterceptor.to(TurnEndPhase);
 

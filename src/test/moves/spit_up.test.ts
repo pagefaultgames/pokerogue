@@ -45,7 +45,7 @@ describe("Moves - Spit Up", () => {
 
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
       const stockpilingTag = pokemon.getTag(StockpilingTag);
@@ -69,7 +69,7 @@ describe("Moves - Spit Up", () => {
 
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
@@ -94,7 +94,7 @@ describe("Moves - Spit Up", () => {
 
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
       pokemon.addTag(BattlerTagType.STOCKPILING);
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -118,7 +118,7 @@ describe("Moves - Spit Up", () => {
   it("fails without stacks", { timeout: 10000 }, async () => {
     await game.startBattle([Species.ABOMASNOW]);
 
-    const pokemon = game.scene.getPlayerPokemon();
+    const pokemon = game.scene.getPlayerPokemon()!;
 
     const stockpilingTag = pokemon.getTag(StockpilingTag);
     expect(stockpilingTag).toBeUndefined();
@@ -137,7 +137,7 @@ describe("Moves - Spit Up", () => {
     it("decreases stats based on stored values (both boosts equal)", { timeout: 10000 }, async () => {
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
       const stockpilingTag = pokemon.getTag(StockpilingTag);
@@ -166,7 +166,7 @@ describe("Moves - Spit Up", () => {
     it("decreases stats based on stored values (different boosts)", { timeout: 10000 }, async () => {
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
       const stockpilingTag = pokemon.getTag(StockpilingTag);

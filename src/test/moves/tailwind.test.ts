@@ -82,8 +82,8 @@ describe("Abilities - Wind Rider", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const ally = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const ally = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     const allySpd = ally.getStat(Stat.SPD);
     const enemySpd = enemy.getStat(Stat.SPD);

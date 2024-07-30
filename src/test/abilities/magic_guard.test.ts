@@ -54,10 +54,10 @@ describe("Abilities - Magic Guard", () => {
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
@@ -82,10 +82,10 @@ describe("Abilities - Magic Guard", () => {
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
@@ -110,10 +110,10 @@ describe("Abilities - Magic Guard", () => {
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
@@ -136,12 +136,12 @@ describe("Abilities - Magic Guard", () => {
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect (leadPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       await game.phaseInterceptor.to(TurnEndPhase);
@@ -164,12 +164,12 @@ describe("Abilities - Magic Guard", () => {
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect (leadPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       const toxicStartCounter = enemyPokemon.status.turnCount;
@@ -196,12 +196,12 @@ describe("Abilities - Magic Guard", () => {
     game.scene.arena.tags.push(newTag);
 
     await game.startBattle([Species.MAGIKARP]);
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).toBeDefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon).toBeDefined();
 
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -224,12 +224,12 @@ describe("Abilities - Magic Guard", () => {
     game.scene.arena.tags.push(enemyTag);
 
     await game.startBattle([Species.MAGIKARP]);
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).toBeDefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon).toBeDefined();
 
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -253,12 +253,12 @@ describe("Abilities - Magic Guard", () => {
       vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.CURSE]);
       vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MAGIC_GUARD);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect (leadPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.CURSE));
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       await game.phaseInterceptor.to(TurnEndPhase);
@@ -279,7 +279,7 @@ describe("Abilities - Magic Guard", () => {
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.HIGH_JUMP_KICK]);
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).toBeDefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.HIGH_JUMP_KICK));
@@ -300,7 +300,7 @@ describe("Abilities - Magic Guard", () => {
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAKE_DOWN]);
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).toBeDefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TAKE_DOWN));
@@ -319,7 +319,7 @@ describe("Abilities - Magic Guard", () => {
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STRUGGLE]);
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).toBeDefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.STRUGGLE));
@@ -339,7 +339,7 @@ describe("Abilities - Magic Guard", () => {
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STEEL_BEAM]);
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).toBeDefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.STEEL_BEAM));
@@ -368,7 +368,7 @@ describe("Abilities - Magic Guard", () => {
     vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BELLY_DRUM]);
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).toBeDefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
@@ -392,7 +392,7 @@ describe("Abilities - Magic Guard", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).toBeDefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
@@ -416,10 +416,10 @@ describe("Abilities - Magic Guard", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).toBeDefined();
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon).toBeDefined();
     enemyPokemon.hp = 1;
 
@@ -443,10 +443,10 @@ describe("Abilities - Magic Guard", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).toBeDefined();
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon).toBeDefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
@@ -469,10 +469,10 @@ describe("Abilities - Magic Guard", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).toBeDefined();
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon).toBeDefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.ABSORB));
@@ -494,7 +494,7 @@ describe("Abilities - Magic Guard", () => {
     vi.spyOn(overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(WeatherType.SUNNY);
 
     await game.startBattle([Species.MAGIKARP]);
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).toBeDefined();
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);

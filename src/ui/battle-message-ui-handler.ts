@@ -147,6 +147,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
         }
       }
     }
+
+    return false;
   }
 
   clear() {
@@ -180,7 +182,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
       this.awaitingActionInput = true;
       this.onActionInput = () => {
         if (!showTotals) {
-          return this.promptLevelUpStats(partyMemberIndex, null, true).then(() => resolve());
+          return this.promptLevelUpStats(partyMemberIndex, [], true).then(() => resolve());
         } else {
           this.levelUpStatsContainer.setVisible(false);
           resolve();
@@ -206,8 +208,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
                 highestIv = ivs[s];
               }
             });
-            shownStats.push(shownStat);
-            statsPool.splice(statsPool.indexOf(shownStat), 1);
+            shownStats.push(shownStat!); // TODO: is the bang correct?
+            statsPool.splice(statsPool.indexOf(shownStat!), 1); // TODO: is the bang correct?
           }
         } else {
           shownStats = stats;

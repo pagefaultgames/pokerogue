@@ -52,14 +52,14 @@ export class TimedEventManager {
     let multiplier = 1;
     const shinyEvents = timedEvents.filter((te) => te.eventType === EventType.SHINY && this.isActive(te));
     shinyEvents.forEach((se) => {
-      multiplier *= se.shinyMultiplier;
+      multiplier *= se.shinyMultiplier ?? 1;
     });
 
     return multiplier;
   }
 
-  getEventBannerFilename(): string {
-    return timedEvents.find((te: TimedEvent) => this.isActive(te)).bannerFilename ?? null;
+  getEventBannerFilename(): string | null {
+    return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerFilename ?? null;
   }
 }
 
@@ -68,7 +68,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   private eventTimerText: Phaser.GameObjects.Text;
   private banner: Phaser.GameObjects.Image;
   private bannerShadow: Phaser.GameObjects.Rectangle;
-  private eventTimer: NodeJS.Timeout;
+  private eventTimer: NodeJS.Timeout | null;
 
   constructor(scene: BattleScene, x: number, y: number, event?: TimedEvent) {
     super(scene, x, y);
@@ -77,7 +77,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    this.banner = new Phaser.GameObjects.Image(this.scene, 29, 64, this.event.bannerFilename);
+    this.banner = new Phaser.GameObjects.Image(this.scene, 29, 64, this.event!.bannerFilename!); // TODO: are the bangs correct here?
     this.banner.setName("img-event-banner");
     this.banner.setOrigin(0, 0);
     this.banner.setScale(0.07);
@@ -97,7 +97,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
       this.scene,
       this.banner.x + 8,
       this.banner.y + 100,
-      this.timeToGo(this.event.endDate),
+      this.timeToGo(this.event!.endDate), // TODO: is the bang correct here?
       TextStyle.WINDOW
     );
     this.eventTimerText.setName("text-event-timer");
@@ -118,7 +118,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
 
   clear() {
     this.setVisible(false);
-    clearInterval(this.eventTimer);
+    this.eventTimer && clearInterval(this.eventTimer);
     this.eventTimer = null;
   }
 
@@ -145,6 +145,6 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   updateCountdown() {
-    this.eventTimerText.setText(this.timeToGo(this.event.endDate));
+    this.eventTimerText.setText(this.timeToGo(this.event!.endDate)); // TODO: is the bang correct here?
   }
 }

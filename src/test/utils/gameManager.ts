@@ -282,7 +282,7 @@ export default class GameManager {
       await waitUntil(() => this.scene.ui?.getMode() === Mode.TITLE);
       await this.scene.gameData.tryExportData(GameDataType.SESSION, 0);
       await waitUntil(() => localStorage.hasOwnProperty("toExport"));
-      return resolve(localStorage.getItem("toExport"));
+      return resolve(localStorage.getItem("toExport") ?? "");
     });
   }
 

@@ -44,8 +44,8 @@ describe("Moves - Purify", () => {
     async () => {
       await game.startBattle();
 
-      const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon();
-      const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon();
+      const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+      const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon()!;
 
       playerPokemon.hp = playerPokemon.getMaxHp() - 1;
       enemyPokemon.status = new Status(StatusEffect.BURN);
@@ -64,7 +64,7 @@ describe("Moves - Purify", () => {
     async () => {
       await game.startBattle();
 
-      const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon();
+      const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon()!;
 
       playerPokemon.hp = playerPokemon.getMaxHp() - 1;
       const playerInitialHp = playerPokemon.hp;

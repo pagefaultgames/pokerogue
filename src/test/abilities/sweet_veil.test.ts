@@ -97,7 +97,7 @@ describe("Abilities - Sweet Veil", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const drowsyMon = game.scene.getPlayerField().find(p => !!p.getTag(BattlerTagType.DROWSY));
+    const drowsyMon = game.scene.getPlayerField().find(p => !!p.getTag(BattlerTagType.DROWSY))!;
 
     await game.phaseInterceptor.to(CommandPhase);
     game.doAttack(getMovePosition(game.scene, (drowsyMon.getBattlerIndex() as BattlerIndex.PLAYER | BattlerIndex.PLAYER_2), Moves.SPLASH));

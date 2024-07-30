@@ -42,7 +42,7 @@ describe("Moves - Thousand Arrows", () => {
     async () => {
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THOUSAND_ARROWS));
 
@@ -65,7 +65,7 @@ describe("Moves - Thousand Arrows", () => {
 
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THOUSAND_ARROWS));
 
@@ -87,9 +87,9 @@ describe("Moves - Thousand Arrows", () => {
 
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      enemyPokemon.addTag(BattlerTagType.MAGNET_RISEN, null, Moves.MAGNET_RISE);
+      enemyPokemon.addTag(BattlerTagType.MAGNET_RISEN, undefined, Moves.MAGNET_RISE);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THOUSAND_ARROWS));
 

@@ -42,7 +42,7 @@ describe("Moves - Fusion Flare", () => {
       Species.RESHIRAM,
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, fusionFlare));
 

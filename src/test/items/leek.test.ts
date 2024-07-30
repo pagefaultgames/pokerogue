@@ -57,7 +57,7 @@ describe("Items - Leek", () => {
       Species.FARFETCHD
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
@@ -77,7 +77,7 @@ describe("Items - Leek", () => {
       Species.GALAR_FARFETCHD
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
@@ -97,7 +97,7 @@ describe("Items - Leek", () => {
       Species.SIRFETCHD
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
@@ -187,7 +187,7 @@ describe("Items - Leek", () => {
       Species.PIKACHU
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);

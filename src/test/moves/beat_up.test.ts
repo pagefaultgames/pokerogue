@@ -43,8 +43,8 @@ describe("Moves - Beat Up", () => {
     async () => {
       await game.startBattle([Species.MAGIKARP, Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.PIKACHU, Species.EEVEE]);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       let enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BEAT_UP));
@@ -67,7 +67,7 @@ describe("Moves - Beat Up", () => {
     async () => {
       await game.startBattle([Species.MAGIKARP, Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.PIKACHU, Species.EEVEE]);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
 
       game.scene.getParty()[1].trySetStatus(StatusEffect.BURN);
 
@@ -85,8 +85,8 @@ describe("Moves - Beat Up", () => {
       vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
       await game.startBattle([Species.MAGIKARP, Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.PIKACHU, Species.EEVEE]);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       let enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BEAT_UP));

@@ -77,8 +77,8 @@ describe("Moves - Gastro Acid", () => {
     await game.startBattle();
 
     // Force player to be slower to enable Core Enforcer to proc its suppression effect
-    game.scene.getPlayerPokemon().stats[Stat.SPD] = 1;
-    game.scene.getEnemyPokemon().stats[Stat.SPD] = 2;
+    game.scene.getPlayerPokemon()!.stats[Stat.SPD] = 1;
+    game.scene.getEnemyPokemon()!.stats[Stat.SPD] = 2;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.CORE_ENFORCER));
 
@@ -88,6 +88,6 @@ describe("Moves - Gastro Acid", () => {
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
-    expect(game.scene.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   }, TIMEOUT);
 });

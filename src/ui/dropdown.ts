@@ -29,9 +29,9 @@ export class DropDownOption extends Phaser.GameObjects.Container {
   public sprite?: Phaser.GameObjects.Sprite;
   public val: any;
   public dir: SortDirection = SortDirection.ASC;
-  public offStateLabel: string; // label for OFF state in TRI dropdown
-  public includeStateLabel: string; // label for INCLUDE state in TRI dropdown
-  public excludeStateLabel: string; // label for EXCLUDE state in TRI dropdown
+  public offStateLabel?: string; // label for OFF state in TRI dropdown
+  public includeStateLabel?: string; // label for INCLUDE state in TRI dropdown
+  public excludeStateLabel?: string; // label for EXCLUDE state in TRI dropdown
   private onColor = 0x55ff55;
   private offColor = 0x272727;
   private includeColor = 0x55ff55;
@@ -89,13 +89,13 @@ export class DropDownOption extends Phaser.GameObjects.Container {
       }
     } else if (type === DropDownType.TRI) {
       if (this.state === DropDownState.OFF) {
-        this.text.setText(this.offStateLabel);
+        this.text.setText(this.offStateLabel ?? []);
         this.toggle.setTint(this.offColor);
       } else if (this.state === DropDownState.INCLUDE) {
-        this.text.setText(this.includeStateLabel);
+        this.text.setText(this.includeStateLabel ?? []);
         this.toggle.setTint(this.includeColor);
       } else if (this.state === DropDownState.EXCLUDE) {
-        this.text.setText(this.excludeStateLabel);
+        this.text.setText(this.excludeStateLabel ?? []);
         this.toggle.setTint(this.excludeColor);
       }
     }
@@ -166,7 +166,7 @@ export class DropDown extends Phaser.GameObjects.Container {
     this.cursorObj.setVisible(false);
 
     if (this.dropDownType === DropDownType.MULTI) {
-      this.options.unshift(new DropDownOption(scene, "ALL", i18next.t("filterBar:all"), null, this.checkForAllOn() ? DropDownState.ON : DropDownState.OFF));
+      this.options.unshift(new DropDownOption(scene, "ALL", i18next.t("filterBar:all"), undefined, this.checkForAllOn() ? DropDownState.ON : DropDownState.OFF));
     }
 
     options.forEach((option, index) => {
@@ -195,7 +195,7 @@ export class DropDown extends Phaser.GameObjects.Container {
         option.toggle.y = optionHeight / 2;
       }
     });
-    this.window = addWindow(scene, 0, 0, optionWidth, options[options.length - 1].y + optionHeight + optionPaddingY, false, false, null, null, WindowVariant.XTHIN);
+    this.window = addWindow(scene, 0, 0, optionWidth, options[options.length - 1].y + optionHeight + optionPaddingY, false, false, undefined, undefined, WindowVariant.XTHIN);
     this.add(this.window);
     this.add(options);
     this.add(this.cursorObj);
@@ -301,9 +301,9 @@ export class DropDown extends Phaser.GameObjects.Container {
     let x = 0;
     for (let i = 0; i < this.options.length; i++) {
       if (this.options[i].sprite) {
-        if (this.options[i].sprite.displayWidth > maxWidth) {
-          maxWidth = this.options[i].sprite.displayWidth;
-          x = this.options[i].sprite.x;
+        if (this.options[i].sprite!.displayWidth > maxWidth) {
+          maxWidth = this.options[i].sprite!.displayWidth;
+          x = this.options[i].sprite!.x;
         }
       } else {
         if (this.options[i].text.displayWidth > maxWidth) {
