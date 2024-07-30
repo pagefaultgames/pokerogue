@@ -2290,7 +2290,7 @@ export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
    * @returns {boolean} Returns true if the weather clears, otherwise false.
    */
   applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
-    const weatherType = pokemon.scene.arena.weather.weatherType;
+    const weatherType = pokemon.scene.arena.weather?.weatherType;
     let turnOffWeather = false;
 
     // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
@@ -2685,7 +2685,7 @@ export class IncrementMovePriorityAbAttr extends AbAttr {
 export class IgnoreContactAbAttr extends AbAttr { }
 
 export class PreWeatherEffectAbAttr extends AbAttr {
-  applyPreWeatherEffect(pokemon: Pokemon, passive: boolean, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+  applyPreWeatherEffect(pokemon: Pokemon, passive: boolean, weather: Weather | null, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -2907,7 +2907,7 @@ export class PostWeatherLapseAbAttr extends AbAttr {
     this.weatherTypes = weatherTypes;
   }
 
-  applyPostWeatherLapse(pokemon: Pokemon, passive: boolean, weather: Weather, args: any[]): boolean | Promise<boolean> {
+  applyPostWeatherLapse(pokemon: Pokemon, passive: boolean, weather: Weather | null, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 
@@ -3572,7 +3572,7 @@ export class PostFaintClearWeatherAbAttr extends PostFaintAbAttr {
    * @returns {boolean} Returns true if the weather clears, otherwise false.
    */
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    const weatherType = pokemon.scene.arena.weather.weatherType;
+    const weatherType = pokemon.scene.arena.weather?.weatherType;
     let turnOffWeather = false;
 
     // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
