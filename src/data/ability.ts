@@ -4548,8 +4548,7 @@ export function initAbilities() {
     new Ability(Abilities.MAGIC_GUARD, 4)
       .attr(BlockNonDirectDamageAbAttr),
     new Ability(Abilities.NO_GUARD, 4)
-      .attr(AlwaysHitAbAttr)
-      .attr(DoubleBattleChanceAbAttr),
+      .attr(AlwaysHitAbAttr),
     new Ability(Abilities.STALL, 4)
       .unimplemented(),
     new Ability(Abilities.TECHNICIAN, 4)
