@@ -377,6 +377,15 @@ class SessionSlot extends Phaser.GameObjects.Container {
     const modifierIconsContainer = this.scene.add.container(148, 30);
     modifierIconsContainer.setScale(0.5);
     let visibleModifierIndex = 0;
+    let numberOfModifiers = 0
+    const itemDisplayLimit = 9
+    for (const m of data.modifiers) {
+      const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
+      if (modifier instanceof PokemonHeldItemModifier) {
+        continue;
+      }
+      numberOfModifiers++;
+    }
     for (const m of data.modifiers) {
       const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
       if (modifier instanceof PokemonHeldItemModifier) {
@@ -385,11 +394,42 @@ class SessionSlot extends Phaser.GameObjects.Container {
       const icon = modifier.getIcon(this.scene, false);
       icon.setPosition(24 * visibleModifierIndex, 0);
       modifierIconsContainer.add(icon);
-      if (++visibleModifierIndex === 12) {
+      if (++visibleModifierIndex === (numberOfModifiers == itemDisplayLimit ? itemDisplayLimit : itemDisplayLimit - 1)) {
         break;
       }
     }
-
+    if (numberOfModifiers > itemDisplayLimit) {
+      var plusText = addTextObject(this.scene, 24 * visibleModifierIndex + 20, 4, `+${numberOfModifiers - visibleModifierIndex}`, TextStyle.PARTY, { fontSize: "80px", color: "#f8f8f8" });
+      plusText.setShadow(0, 0, null);
+      plusText.setStroke("#424242", 14);
+      plusText.setOrigin(1, 0);
+      modifierIconsContainer.add(plusText);
+    }
+    var spacing = 20
+    if (data.enemyParty.length == 4) {
+      spacing = 17
+    }
+    if (data.enemyParty.length == 5) {
+      spacing = 12
+    }
+    if (data.enemyParty.length == 6) {
+      spacing = 10
+    }
+    data.enemyParty.forEach((p, i) => {
+      const iconContainer = this.scene.add.container(24 * 9 + 1 + i*spacing, -1);
+      const pokemon = p.toPokemon(this.scene);
+      const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
+      iconContainer.add(icon);
+      pokemon.destroy();
+      modifierIconsContainer.add(iconContainer);
+    })
+    if (true) {
+      const vsLabel = addTextObject(this.scene, 24 * 9 + 20, 15, `vs`, TextStyle.PARTY, { fontSize: "80px", color: "#f8f8f8" });
+      vsLabel.setShadow(0, 0, null);
+      vsLabel.setStroke("#424242", 14);
+      vsLabel.setOrigin(1, 0);
+      modifierIconsContainer.add(vsLabel);
+    }
     this.add(modifierIconsContainer);
   }
 

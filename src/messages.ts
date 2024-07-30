@@ -19,6 +19,9 @@ export function getPokemonMessage(pokemon: Pokemon, content: string): string {
  * @returns {string} ex: "Wild Gengar", "Ectoplasma sauvage"
  */
 export function getPokemonNameWithAffix(pokemon: Pokemon): string {
+  if (pokemon.scene.currentBattle == null) {
+    return pokemon.getNameToRender()
+  }
   switch (pokemon.scene.currentBattle.battleSpec) {
   case BattleSpec.DEFAULT:
     return !pokemon.isPlayer()
