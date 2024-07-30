@@ -1,12 +1,13 @@
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "../utils/gameManager";
-import * as Overrides from "#app/overrides";
+import Overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, MessagePhase } from "#app/phases.js";
+import { BerryPhase, MessagePhase } from "#app/phases";
+import { StatusEffect } from "#app/data/status-effect";
 
 const TIMEOUT = 20 * 1000;
 
@@ -26,7 +27,7 @@ describe("Moves - Focus Punch", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FOCUS_PUNCH]);
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GROUDON);
@@ -37,7 +38,7 @@ describe("Moves - Focus Punch", () => {
   });
 
   it(
-    "move should deal damage at the end of turn if uninterrupted",
+    "should deal damage at the end of turn if uninterrupted",
     async () => {
       await game.startBattle([Species.CHARIZARD]);
 
@@ -65,7 +66,7 @@ describe("Moves - Focus Punch", () => {
   );
 
   it(
-    "move should fail if the user is hit",
+    "should fail if the user is hit",
     async () => {
       vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
 
@@ -95,7 +96,7 @@ describe("Moves - Focus Punch", () => {
   );
 
   it(
-    "move should be cancelled if the user is asleep",
+    "should be cancelled if the user is asleep",
     async () => {
       vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.SLEEP);
 
@@ -121,7 +122,7 @@ describe("Moves - Focus Punch", () => {
   );
 
   it(
-    "move should be cancelled if the user falls asleep mid-turn",
+    "should be cancelled if the user falls asleep mid-turn",
     async () => {
       vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPORE, Moves.SPORE, Moves.SPORE, Moves.SPORE]);
 
