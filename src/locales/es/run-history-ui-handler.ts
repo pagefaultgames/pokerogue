@@ -21,9 +21,14 @@ export const runHistory: SimpleTranslationEntries = {
   "challengeMonoGen8":"Gen VIII",
   "challengeMonoGen9":"Gen IX",
   "playerItems":"Player Items",
+  "personalBest":"Personal Best!",
   "SPDshortened":"Vel.",
   "runInfo":"Run Info",
   "money":"Money",
+  "runLength":"Run Length",
+  "viewHeldItems":"Held Items",
+  "hallofFameText":"Welcome to the Hall of Fame!",
+  "viewHallOfFame":"View Hall of Fame!"
 } as const;
 
 //Mode Information found in game-mode.ts
