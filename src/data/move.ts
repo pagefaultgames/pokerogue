@@ -4410,20 +4410,6 @@ export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
   }
 }
 
-export class ReceiveDoubleDamageAttr extends AddBattlerTagAttr {
-  constructor() {
-    super(BattlerTagType.RECEIVE_DOUBLE_DAMAGE, true, false, 0, 0, true);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    return true;
-  }
-}
-
 export class FaintCountdownAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.PERISH_SONG, false, true, 4);
