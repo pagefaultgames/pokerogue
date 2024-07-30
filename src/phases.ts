@@ -2332,7 +2332,7 @@ export class TurnStartPhase extends FieldPhase {
     });
 
     let orderIndex = 0;
-    
+
     for (const o of moveOrder) {
 
       const pokemon = field[o];

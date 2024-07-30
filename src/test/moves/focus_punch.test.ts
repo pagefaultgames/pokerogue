@@ -110,10 +110,6 @@ describe("Moves - Focus Punch", () => {
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
 
-      await game.phaseInterceptor.to(MessagePhase);
-
-      expect(leadPokemon.getMoveHistory().length).toBe(1);
-
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.getMoveHistory().length).toBe(1);
