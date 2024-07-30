@@ -341,7 +341,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
     const key = playerGenderPrefix + text;
 
-    if (i18next.exists(key as ParseKeys) ) {
+    if (i18next.exists(key) ) {
       if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[key] === true) {
         return true;
       }
@@ -371,8 +371,8 @@ export default class UI extends Phaser.GameObjects.Container {
 
   update(): void {
     if (this.tooltipContainer.visible) {
-      const reverse = this.scene.game.input.mousePointer.x >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
-      this.tooltipContainer.setPosition(!reverse ? this.scene.game.input.mousePointer.x / 6 + 2 : this.scene.game.input.mousePointer.x / 6 - this.tooltipBg.width - 2, this.scene.game.input.mousePointer.y / 6 + 2);
+      const reverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.x >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
+      this.tooltipContainer.setPosition(!reverse ? this.scene.game.input.mousePointer!.x / 6 + 2 : this.scene.game.input.mousePointer!.x / 6 - this.tooltipBg.width - 2, this.scene.game.input.mousePointer!.y / 6 + 2); // TODO: are these bangs correct?
     }
   }
 
@@ -507,7 +507,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
       const doRevertMode = () => {
         this.getHandler().clear();
-        this.mode = this.modeChain.pop();
+        this.mode = this.modeChain.pop() ?? Mode.MESSAGE;
         const touchControls = document.getElementById("touchControls");
         if (touchControls) {
           touchControls.dataset.uiMode = Mode[this.mode];

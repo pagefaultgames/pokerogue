@@ -21,7 +21,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  showDialogue(text: string, name: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
+  showDialogue(text: string, name?: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
