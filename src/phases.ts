@@ -2987,7 +2987,9 @@ export class MoveEffectPhase extends PokemonPhase {
           const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
           const hasConditionalProtectApplied = new Utils.BooleanHolder(false);
           const bypassIgnoreProtect = new Utils.BooleanHolder(false);
-          this.scene.arena.applyTagsForSide(ConditionalProtectTag, targetSide, hasConditionalProtectApplied, user, target, move.id, bypassIgnoreProtect);
+          if (!this.move.getMove().isAllyTarget()) {
+            this.scene.arena.applyTagsForSide(ConditionalProtectTag, targetSide, hasConditionalProtectApplied, user, target, move.id, bypassIgnoreProtect);
+          }
 
           const isProtected = (bypassIgnoreProtect.value || !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target))
             && (hasConditionalProtectApplied.value || target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType)));
