@@ -327,7 +327,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // set gen filter to all off except for the I GEN
     for (const option of genOptions) {
       if (option.val !== 1) {
-        option.setOptionState(DropDownState.OFF);
+        option.setOptionState(DropDownType.MULTI ,DropDownState.OFF);
       }
     }
 
@@ -362,26 +362,24 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(this.scene, "UNCAUGHT", "Not Caught"),
     ];
 
-    this.filterBar.addFilter("Shiny", new DropDown(this.scene, 0, 0, shinyOptions, this.updateStarters, DropDownType.MULTI));
+    this.filterBar.addFilter("Owned", new DropDown(this.scene, 0, 0, shinyOptions, this.updateStarters, DropDownType.MULTI));
     this.filterBar.defaultShinyVals = this.filterBar.getVals(DropDownColumn.SHINY);
 
 
-    // passive filter
-    const passiveOptions = [
-      new DropDownOption(this.scene, "PASSIVEUNLOCKED", "Passive Unlocked"),
-      new DropDownOption(this.scene, "PASSIVELOCKED", "Passive Locked"),
+    // unlocks filter
+    const unlocksOptions = [
+      new DropDownOption(this.scene, "PASSIVE", ["Passive", "Passive Unlocked", "Passive Locked"], null, DropDownState.OFF),
     ];
 
-    this.filterBar.addFilter("Passive", new DropDown(this.scene, 0, 0, passiveOptions, this.updateStarters, DropDownType.MULTI));
-    this.filterBar.defaultPassiveVals = this.filterBar.getVals(DropDownColumn.PASSIVE);
+    this.filterBar.addFilter("Unlocks", new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.TRI));
+    this.filterBar.defaultUnlocksVals = this.filterBar.getVals(DropDownColumn.UNLOCKS);
 
-    // win filter
-    const winOptions = [
-      new DropDownOption(this.scene, "WIN", "has won"),
-      new DropDownOption(this.scene, "NOTWIN", "hasn't won yet"),
+    // misc filter
+    const miscOptions = [
+      new DropDownOption(this.scene, "WIN", ["Win", "Win - Yes", "Win - No"], null, DropDownState.OFF),
     ];
-    this.filterBar.addFilter("Win", new DropDown(this.scene, 0, 0, winOptions, this.updateStarters, DropDownType.MULTI));
-    this.filterBar.defaultWinVals = this.filterBar.getVals(DropDownColumn.WIN);
+    this.filterBar.addFilter("Misc", new DropDown(this.scene, 0, 0, miscOptions, this.updateStarters, DropDownType.TRI));
+    this.filterBar.defaultMiscVals = this.filterBar.getVals(DropDownColumn.MISC);
 
     // sort filter
     const sortOptions = [
@@ -1956,10 +1954,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const isCaught = !!(caughtVariants & DexAttr.NON_SHINY);
       const isUncaught = !isCaught && !isVariantCaught && !isVariant2Caught && !isVariant3Caught;
       const isPassiveUnlocked = this.scene.gameData.starterData[container.species.speciesId].passiveAttr > 0;
-
+      const isWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0;
+      const isNotWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0;
+      const isUndefined = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === undefined;
 
       const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
+
       const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
+
       const fitsShiny = this.filterBar.getVals(DropDownColumn.SHINY).some(variant => {
         if (variant === "SHINY3") {
           return isVariant3Caught;
@@ -1973,22 +1975,26 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           return isUncaught;
         }
       });
-      const fitsPassive = this.filterBar.getVals(DropDownColumn.PASSIVE).some(variant => {
-        if (variant === "PASSIVEUNLOCKED") {
+
+      const fitsPassive = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(unlocks => {
+        if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.INCLUDE) {
           return isPassiveUnlocked;
-        } else if (variant === "PASSIVELOCKED") {
+        } else if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.EXCLUDE) {
           return !isPassiveUnlocked;
+        } else if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.OFF) {
+          return true;
         }
       });
-      const isWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0;
-      const isNotWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0;
-      const isUndefined = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === undefined;
 
-      const fitsWin = this.filterBar.getVals(DropDownColumn.WIN).some(win => {
-        if (win === "WIN") {
+      const fitsWin = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
+        if (container.species.speciesId < 10) {
+        }
+        if (misc.val === "WIN" && misc.state === DropDownState.INCLUDE) {
           return isWin;
-        } else if (win === "NOTWIN") {
+        } else if (misc.val === "WIN" && misc.state === DropDownState.EXCLUDE) {
           return isNotWin || isUndefined;
+        } else if (misc.val === "WIN" && misc.state === DropDownState.OFF) {
+          return true;
         }
       });
 

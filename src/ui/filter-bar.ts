@@ -8,8 +8,8 @@ export enum DropDownColumn {
   GEN,
   TYPES,
   SHINY,
-  PASSIVE,
-  WIN,
+  UNLOCKS,
+  MISC,
   SORT
 }
 
@@ -24,8 +24,8 @@ export class FilterBar extends Phaser.GameObjects.Container {
   public defaultGenVals: any[] = [];
   public defaultTypeVals: any[] = [];
   public defaultShinyVals: any[] = [];
-  public defaultPassiveVals: any[] = [];
-  public defaultWinVals: any[] = [];
+  public defaultUnlocksVals: any[] = [];
+  public defaultMiscVals: any[] = [];
   public defaultSortVals: any[] = [];
 
   constructor(scene: BattleScene, x: number, y: number, width: number, height: number) {
@@ -60,50 +60,50 @@ export class FilterBar extends Phaser.GameObjects.Container {
     const genVals = this.getVals(DropDownColumn.GEN);
     const typeVals = this.getVals(DropDownColumn.TYPES);
     const shinyVals = this.getVals(DropDownColumn.SHINY);
-    const passiveVals = this.getVals(DropDownColumn.PASSIVE);
-    const winVals = this.getVals(DropDownColumn.WIN);
+    const unlocksVals = this.getVals(DropDownColumn.UNLOCKS);
+    const miscVals = this.getVals(DropDownColumn.MISC);
     const sortVals = this.getVals(DropDownColumn.SORT);
 
     // onColor is Yellow, offColor is White
     const onColor = 0xffef5c;
     const offColor = 0xffffff;
 
-    // if genVals and defaultGenVals has same elements, set the label to White else set it to Green
+    // if genVals and defaultGenVals has same elements, set the label to offColor else set it to onColor
     if (genVals.length === this.defaultGenVals.length && genVals.every((value, index) => value === this.defaultGenVals[index])) {
       this.labels[DropDownColumn.GEN].setTint(offColor);
     } else {
       this.labels[DropDownColumn.GEN].setTint(onColor);
     }
 
-    // if typeVals and defaultTypeVals has same elements, set the label to White else set it to Green
+    // if typeVals and defaultTypeVals has same elements, set the label to offColor else set it to onColor
     if (typeVals.length === this.defaultTypeVals.length && typeVals.every((value, index) => value === this.defaultTypeVals[index])) {
       this.labels[DropDownColumn.TYPES].setTint(offColor);
     } else {
       this.labels[DropDownColumn.TYPES].setTint(onColor);
     }
 
-    // if shinyVals and defaultShinyVals has same elements, set the label to White else set it to Green
+    // if shinyVals and defaultShinyVals has same elements, set the label to offColor else set it to onColor
     if (shinyVals.length === this.defaultShinyVals.length && shinyVals.every((value, index) => value === this.defaultShinyVals[index])) {
       this.labels[DropDownColumn.SHINY].setTint(offColor);
     } else {
       this.labels[DropDownColumn.SHINY].setTint(onColor);
     }
 
-    // if passiveVals and defaultPassiveVals has same elements, set the label to White else set it to Green
-    if (passiveVals.length === this.defaultPassiveVals.length && passiveVals.every((value, index) => value === this.defaultPassiveVals[index])) {
-      this.labels[DropDownColumn.PASSIVE].setTint(offColor);
+    // if unlocksVals and defaultUnlocksVals has same elements, set the label to offColor else set it to onColor
+    if (unlocksVals.every((value, index) => value["val"] === this.defaultUnlocksVals[index]["val"] && value["state"] === this.defaultUnlocksVals[index]["state"])) {
+      this.labels[DropDownColumn.UNLOCKS].setTint(offColor);
     } else {
-      this.labels[DropDownColumn.PASSIVE].setTint(onColor);
+      this.labels[DropDownColumn.UNLOCKS].setTint(onColor);
     }
 
-    // if winVals and defaultWinVals has same elements, set the label to White else set it to Green
-    if (winVals.length === this.defaultWinVals.length && winVals.every((value, index) => value === this.defaultWinVals[index])) {
-      this.labels[DropDownColumn.WIN].setTint(offColor);
+    // if miscVals and defaultMiscVals has same elements, set the label to offColor else set it to onColor
+    if (miscVals.every((value, index) => value["val"] === this.defaultMiscVals[index]["val"] && value["state"] === this.defaultMiscVals[index]["state"])) {
+      this.labels[DropDownColumn.MISC].setTint(offColor);
     } else {
-      this.labels[DropDownColumn.WIN].setTint(onColor);
+      this.labels[DropDownColumn.MISC].setTint(onColor);
     }
 
-    // if sortVals and defaultSortVals has same value and dir, set the label to White else set it to Green
+    // if sortVals and defaultSortVals has same value and dir, set the label to offColor else set it to onColor
     if (sortVals[0]["dir"] === this.defaultSortVals[0]["dir"] && sortVals[0]["val"] === this.defaultSortVals[0]["val"]) {
       this.labels[DropDownColumn.SORT].setTint(offColor);
     } else {
