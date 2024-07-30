@@ -16,7 +16,7 @@ export class Voucher {
   public voucherType: VoucherType;
   public description: string;
 
-  private conditionFunc: (scene: BattleScene, args: any[]) => boolean;
+  private conditionFunc: (scene: BattleScene, args?: any[]) => boolean;
 
   constructor(voucherType: VoucherType, description: string, conditionFunc?: (scene: BattleScene, args: any[]) => boolean) {
     this.description = description;
@@ -24,7 +24,7 @@ export class Voucher {
     this.conditionFunc = conditionFunc;
   }
 
-  validate(scene: BattleScene, args: any[]): boolean {
+  validate(scene: BattleScene, args?: any[]): boolean {
     return !this.conditionFunc || this.conditionFunc(scene, args);
   }
 

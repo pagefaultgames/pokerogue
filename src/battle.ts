@@ -47,8 +47,8 @@ export default class Battle {
   public waveIndex: integer;
   public battleType: BattleType;
   public battleSpec: BattleSpec;
-  public trainer: Trainer;
-  public enemyLevels: integer[];
+  public trainer: Trainer | null;
+  public enemyLevels: integer[] | undefined;
   public enemyParty: EnemyPokemon[];
   public seenEnemyPartyMemberIds: Set<integer>;
   public double: boolean;
@@ -62,23 +62,23 @@ export default class Battle {
   public escapeAttempts: integer;
   public lastMove: Moves;
   public battleSeed: string;
-  private battleSeedState: string;
+  private battleSeedState: string | null;
   public moneyScattered: number;
-  public lastUsedPokeball: PokeballType;
+  public lastUsedPokeball: PokeballType | null;
   public playerFaints: number; // The amount of times pokemon on the players side have fainted
   public enemyFaints: number; // The amount of times pokemon on the enemies side have fainted
 
   private rngCounter: integer = 0;
 
-  constructor(gameMode: GameMode, waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean) {
+  constructor(gameMode: GameMode, waveIndex: integer, battleType: BattleType, trainer?: Trainer, double?: boolean) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
-    this.trainer = trainer;
+    this.trainer = trainer ?? null;
     this.initBattleSpec();
     this.enemyLevels = battleType !== BattleType.TRAINER
       ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
-      : trainer.getPartyLevels(this.waveIndex);
+      : trainer?.getPartyLevels(this.waveIndex);
     this.enemyParty = [];
     this.seenEnemyPartyMemberIds = new Set<integer>();
     this.double = double;

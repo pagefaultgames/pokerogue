@@ -27,7 +27,7 @@ export class Achv {
   public hasParent: boolean;
   public parentId: string;
 
-  private conditionFunc: (scene: BattleScene, args: any[]) => boolean;
+  private conditionFunc: (scene: BattleScene, args?: any[]) => boolean;
 
   constructor(localizationKey:string, name: string, description: string, iconImage: string, score: integer, conditionFunc?: (scene: BattleScene, args: any[]) => boolean) {
     this.name = name;
@@ -63,7 +63,7 @@ export class Achv {
     return this;
   }
 
-  validate(scene: BattleScene, args: any[]): boolean {
+  validate(scene: BattleScene, args?: any[]): boolean {
     return !this.conditionFunc || this.conditionFunc(scene, args);
   }
 
