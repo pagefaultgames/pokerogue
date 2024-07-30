@@ -1650,7 +1650,7 @@ export class SwitchSummonPhase extends SummonPhase {
           i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(switchedPokemon) }) :
           i18next.t("battle:trainerGo", {
             trainerName: this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
-            pokemonName: getPokemonNameWithAffix(this.getPokemon())
+            pokemonName: this.getPokemon().getNameToRender()
           })
         );
         // Ensure improperly persisted summon data (such as tags) is cleared upon switching
