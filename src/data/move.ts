@@ -5879,62 +5879,6 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const moveHistory = target.getLastXMoves();
-      return !!moveHistory.length;
-    };
-  }
-}
-
-/**
- * Attribute used for Conversion 2, to convert the user's type to a random type that resists the target's last used move.
- * Fails if the user already has ALL types that resist the target's last used move.
- * Fails if the opponent has not used a move yet
- * Fails if the type is unknown or stellar
- *
- * TODO:
- * If a move has its type changed (e.g. {@linkcode Moves.HIDDEN_POWER}), it will check the new type.
- */
-export class ResistLastMoveTypeAttr extends MoveEffectAttr {
-  constructor() {
-    super(true);
-  }
-  /**
-   * User changes its type to a random type that resists the target's last used move
-   * @param {Pokemon} user Pokemon that used the move and will change types
-   * @param {Pokemon} target Opposing pokemon that recently used a move
-   * @param {Move} move Move being used
-   * @param {any[]} args Unused
-   * @returns {boolean} true if the function succeeds
-   */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    const [targetMove] = target.getLastXMoves(1); // target's most recent move
-    if (!targetMove) {
-      return false;
-    }
-
-    const moveData = allMoves[targetMove.move];
-    if (moveData.type === Type.STELLAR || moveData.type === Type.UNKNOWN) {
-      return false;
-    }
-    const userTypes = user.getTypes();
-    const validTypes = getTypeResistances(moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
-    if (!validTypes.length) {
-      return false;
-    }
-    const type = validTypes[user.randSeedInt(validTypes.length)];
-    user.summonData.types = [ type ];
-    user.scene.queueMessage(i18next.t("battle:transformedIntoType", {pokemonName: getPokemonNameWithAffix(user), type: Utils.toReadableString(Type[type])}));
-    user.updateInfo();
-
-    return true;
-  }
-
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => {
-      const moveHistory = target.getLastXMoves();
       return moveHistory.length !== 0;
     };
   }
