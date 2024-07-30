@@ -38,7 +38,7 @@ describe("Moves - BELLY DRUM", () => {
     vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
   });
 
-  //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Belly_Drum_(move)
+  // Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Belly_Drum_(move)
 
   test("Belly Drum raises the user's Attack to its max, at the cost of 1/2 of its maximum HP",
     async() => {
@@ -64,7 +64,7 @@ describe("Moves - BELLY DRUM", () => {
       expect(leadPokemon).toBeDefined();
       const HpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
-      //Here - BattleStat.SPD -> 0 and BattleStat.SPATK -> 3
+      // Here - BattleStat.ATK -> -3 and BattleStat.SPATK -> 6
       leadPokemon.summonData.battleStats[BattleStat.ATK] = -3;
       leadPokemon.summonData.battleStats[BattleStat.SPATK] = 6;
 
@@ -77,7 +77,7 @@ describe("Moves - BELLY DRUM", () => {
     }, TIMEOUT
   );
 
-  test("Belly Drum fails if all stats involved are at max",
+  test("Belly Drum fails if the pokemon's attack stat is at its maximum",
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
