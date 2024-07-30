@@ -34,6 +34,7 @@ import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { BattlerIndex } from "#app/battle.js";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
+import { OverridesHelper } from "./overridesHelper";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -44,6 +45,7 @@ export default class GameManager {
   public phaseInterceptor: PhaseInterceptor;
   public textInterceptor: TextInterceptor;
   public inputsHandler: InputsHandler;
+  public readonly override: OverridesHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -59,6 +61,7 @@ export default class GameManager {
     this.phaseInterceptor = new PhaseInterceptor(this.scene);
     this.textInterceptor = new TextInterceptor(this.scene);
     this.gameWrapper.setScene(this.scene);
+    this.override = new OverridesHelper(this);
   }
 
   /**

@@ -7,7 +7,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "使用这些宝可梦开始游戏吗？",
-  "invalidParty": "此为无效队伍！",
+  "invalidParty": "初始队伍不可用！",
   "gen1": "I",
   "gen2": "II",
   "gen3": "III",

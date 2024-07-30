@@ -1588,8 +1588,6 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
 
-    // if doReturn === False OR slotIndex !== -1 (slotIndex is valid) and the pokemon doesn't exist/is false
-    // then switchAndSummon(), manually pick pokemon to switch into
     if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? this.scene.getParty() : this.scene.getEnemyParty())[this.slotIndex])) {
       if (this.player) {
         return this.switchAndSummon();
@@ -2316,6 +2314,8 @@ export class TurnStartPhase extends FieldPhase {
       return aIndex < bIndex ? -1 : aIndex > bIndex ? 1 : 0;
     });
 
+    let orderIndex = 0;
+
     for (const o of moveOrder) {
 
       const pokemon = field[o];
@@ -2328,6 +2328,7 @@ export class TurnStartPhase extends FieldPhase {
       switch (turnCommand.command) {
       case Command.FIGHT:
         const queuedMove = turnCommand.move;
+        pokemon.turnData.order = orderIndex++;
         if (!queuedMove) {
           continue;
         }
@@ -2665,13 +2666,14 @@ export class MovePhase extends BattlePhase {
     if (this.targets.length === 1 && this.targets[0] === BattlerIndex.ATTACKER) {
       if (this.pokemon.turnData.attacksReceived.length) {
         const attack = this.pokemon.turnData.attacksReceived[0];
-        this.targets[0] = attack.attackingPosition;
+        this.targets[0] = attack.sourceBattlerIndex;
 
         // account for metal burst and comeuppance hitting remaining targets in double battles
         // counterattack will redirect to remaining ally if original attacker faints
         if (this.scene.currentBattle.double && this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER)) {
-          if (!this.scene.getEnemyField()[this.targets[0]]) {
-            this.targets[0] = this.scene.getEnemyField().find(p => p.isActive(true)).getBattlerIndex();
+          if (this.scene.getField()[this.targets[0]].hp === 0) {
+            const opposingField = this.pokemon.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
+            this.targets[0] = opposingField.find(p => p.hp > 0)?.getBattlerIndex();
           }
         }
       }
@@ -3321,7 +3323,7 @@ export class StatChangePhase extends PokemonPhase {
 
       applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget);
 
-      //Look for any other stat change phases; if this is the last one, do White Herb check
+      // Look for any other stat change phases; if this is the last one, do White Herb check
       const existingPhase = this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex);
       if (!(existingPhase instanceof StatChangePhase)) {
         // Apply White Herb if needed
