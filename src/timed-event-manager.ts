@@ -64,15 +64,15 @@ export class TimedEventManager {
 }
 
 export class TimedEventDisplay extends Phaser.GameObjects.Container {
-  private event: TimedEvent;
+  private event: TimedEvent | null;
   private eventTimerText: Phaser.GameObjects.Text;
   private banner: Phaser.GameObjects.Image;
   private bannerShadow: Phaser.GameObjects.Rectangle;
   private eventTimer: NodeJS.Timeout;
 
-  constructor(scene: BattleScene, x: number, y: number, event: TimedEvent) {
+  constructor(scene: BattleScene, x: number, y: number, event?: TimedEvent) {
     super(scene, x, y);
-    this.event = event;
+    this.event = event ?? null;
     this.setVisible(false);
   }
 
