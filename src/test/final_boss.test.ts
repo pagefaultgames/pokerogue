@@ -6,7 +6,6 @@ import { Mode } from "#app/ui/ui.js";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "./utils/gameManager";
 import { generateStarter } from "./utils/gameManagerUtils";
-import { Button } from "#app/enums/buttons.js";
 
 const FINAL_WAVE = {
   CLASSIC: 200,
@@ -42,13 +41,19 @@ describe("Final Boss", () => {
       selectStarterPhase.initBattle(starters);
     });
 
-    game.onNextPrompt("EncounterPhase", Mode.MESSAGE, () => {
-      const uiHandler = game.scene.ui.getHandler();
-      uiHandler.processInput(Button.ACTION);
+    game.onNextPrompt("EncounterPhase", Mode.MESSAGE, async () => {
+      // This will skip all entry dialogue (I can't figure out a way to sequentially handle the 8 chained messages via 1 prompt handler)
+      game.setMode(Mode.MESSAGE);
+      const encounterPhase = game.scene.getCurrentPhase() as EncounterPhase;
+
+      // No need to end phase, this will do it for you
+      encounterPhase.doEncounterCommon(false);
     });
 
     await game.phaseInterceptor.to(EncounterPhase, true);
-    // expect(game.scene.getEnemyPokemon().species.speciesId).toBe(Species.ETERNATUS);
+
+    const { speciesId } = game.scene.getEnemyPokemon().species;
+    expect(speciesId, `Expected ${Species[Species.ETERNATUS]} but found ${Species[speciesId]}`).toBe(Species.ETERNATUS);
   });
 
   it("should change form on direct hit down to last boss fragment", () => {});
