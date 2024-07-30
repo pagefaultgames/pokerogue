@@ -229,6 +229,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: "Stats",
         handler: () => {
+          ui.revertMode()
           ui.setOverlayMode(Mode.GAME_STATS);
           return true;
         }
@@ -236,6 +237,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: "Achievements",
         handler: () => {
+          ui.revertMode()
           ui.setOverlayMode(Mode.ACHIEVEMENTS);
           return true;
         }
@@ -243,6 +245,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: "Vouchers",
         handler: () => {
+          ui.revertMode()
           ui.setOverlayMode(Mode.VOUCHERS);
           return true;
         }
