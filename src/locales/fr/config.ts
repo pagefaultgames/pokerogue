@@ -24,6 +24,7 @@ import {
 } from "./dialogue";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
+import { filterBar } from "./filter-bar";
 import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
@@ -51,6 +52,7 @@ import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "./settings.js";
 import { common } from "./common.js";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
+import { moveTriggers } from "./move-trigger";
 
 export const frConfig = {
   ability: ability,
@@ -79,6 +81,7 @@ export const frConfig = {
   PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
   egg: egg,
   fightUiHandler: fightUiHandler,
+  filterBar: filterBar,
   gameMode: gameMode,
   gameStatsUiHandler: gameStatsUiHandler,
   growth: growth,
@@ -107,5 +110,6 @@ export const frConfig = {
   voucher: voucher,
   weather: weather,
   partyUiHandler: partyUiHandler,
-  modifierSelectUiHandler: modifierSelectUiHandler
+  modifierSelectUiHandler: modifierSelectUiHandler,
+  moveTriggers: moveTriggers
 };
