@@ -433,7 +433,9 @@ export interface DRPD {
    */
   waves: Wave[],
   /** The Pokemon that the player started with. Daily runs will have 3. @see PokeData */
-  starters?: PokeData[]
+  starters?: PokeData[],
+  /** The RNG seed of the run. */
+  seed?: string
 }
 /**
  * Imports a string as a DRPD.
@@ -479,6 +481,7 @@ export function printDRPD(inData: string, indent: string, drpd: DRPD): string {
   inData += indent + "{"
   inData += "\n" + indent + "  \"version\": \"" + drpd.version + "\""
   inData += ",\n" + indent + "  \"title\": \"" + drpd.title + "\""
+  inData += ",\n" + indent + "  \"seed\": \"" + drpd.seed + "\""
   inData += ",\n" + indent + "  \"authors\": [\"" + drpd.authors.join("\", \"") + "\"]"
   inData += ",\n" + indent + "  \"date\": \"" + drpd.date + "\""
   inData += ",\n" + indent + "  \"label\": \"" + drpd.label + "\""
@@ -1668,6 +1671,7 @@ export function logPokemon(scene: BattleScene, floor: integer = undefined, slot:
   //wv.actions = []
   wv.clearActionsFlag = false;
   wv.shop = ""
+  drpd.seed = scene.seed
   console.log("--> ", drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }

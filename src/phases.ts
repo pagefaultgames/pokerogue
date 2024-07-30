@@ -593,6 +593,7 @@ export class TitlePhase extends Phase {
     var lastsave = this.getLastSave(); // Gets the last save you played
     var ls1 = this.getLastSave(false, true)
     var ls2 = this.getLastSavesOfEach()
+    this.scene.quickloadDisplayMode = "Both"
     switch (true) {
       case (this.scene.quickloadDisplayMode == "Daily" && this.getLastSave(false, true) != undefined):
         options.push({

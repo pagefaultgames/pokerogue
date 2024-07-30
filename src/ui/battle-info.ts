@@ -1009,7 +1009,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       ease: "Sine.easeInOut",
       alpha: visible && this.iconsActive ? 0 : (this.lastStatus == 0 ? 0 : 1)
     });
-    console.log(this.iconsActive, this.lastStatus, this.statusIndicator.visible, this.statusIndicator.alpha)
+    //console.log(this.iconsActive, this.lastStatus, this.statusIndicator.visible, this.statusIndicator.alpha)
   }
 
   /**

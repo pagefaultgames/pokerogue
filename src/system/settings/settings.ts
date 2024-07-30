@@ -178,19 +178,6 @@ export const Setting: Array<Setting> = [
     type: SettingType.GENERAL,
   },
   {
-    key: SettingKeys.LazyReloads,
-    label: "Lazy Reloads",
-    options: [{
-      label: "Off",
-      value: "Off"
-    }, {
-      label: "On",
-      value: "On"
-    }],
-    default: 0,
-    type: SettingType.GENERAL,
-  },
-  {
     key: SettingKeys.FancyBiome,
     label: "Fancy Title Screen",
     options: [{
@@ -201,28 +188,6 @@ export const Setting: Array<Setting> = [
       value: "On"
     }],
     default: 0,
-    type: SettingType.GENERAL,
-  },
-  {
-    key: SettingKeys.TitleScreenContinueMode,
-    label: "Quick Load",
-    options: [{
-      label: "Off",
-      value: "Off" // Shows "Continue" button on the home screen
-    }, {
-      label: "Daily",
-      value: "Daily" // Shows the last played Daily Run, or the last run if there are no Daily Runs
-    }, {
-      label: "Dailies",
-      value: "Dailies" // Shows all Daily Runs, or the last run if there are no Daily Runs
-    }, {
-      label: "Latest",
-      value: "Latest" // Shows the last run
-    }, {
-      label: "Both",
-      value: "Both" // Shows the last run and the last Daily Run, or only the last played game if it is a Daily Run
-    }],
-    default: 1,
     type: SettingType.GENERAL,
   },
   {
@@ -388,7 +353,7 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Window_Type,
     label: i18next.t("settings:windowType"),
-    options: new Array(5).fill(null).map((_, i) => {
+    options: new Array(6).fill(null).map((_, i) => {
       const windowType = (i + 1).toString();
       return {
         value: windowType,
