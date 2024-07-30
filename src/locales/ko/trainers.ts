@@ -19,14 +19,6 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "갤럭시단 보스",
   "plasma_boss": "플라스마단 보스",
   "flare_boss": "플레어단 보스",
-
-  "rocket_admin": "Team Rocket Admin",
-  "magma_admin": "Team Magma Admin",
-  "aqua_admin": "Team Aqua Admin",
-  "galactic_commander": "Team Galactic Commander",
-  "plasma_sage": "Team Plasma Sage",
-  "plasma_admin": "Team Plasma Admin",
-  "flare_admin": "Team Flare Admin",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -135,22 +127,22 @@ export const trainerClasses: SimpleTranslationEntries = {
   "youngster": "반바지 꼬마",
   "rocket_grunt": "로켓단 조무래기",
   "rocket_grunt_female": "로켓단 조무래기",
-  "rocket_admin": "Rocket Admin",
+  "rocket_admin": "로켓단 간부",
   "magma_grunt": "마그마단 조무래기",
   "magma_grunt_female": "마그마단 조무래기",
-  "magma_admin": "Magma Admin",
+  "magma_admin": "마그마단 간부",
   "aqua_grunt": "아쿠아단 조무래기",
   "aqua_grunt_female": "아쿠아단 조무래기",
-  "aqua_admin": "Aqua Admin",
+  "aqua_admin": "아쿠아단 간부",
   "galactic_grunt": "갤럭시단 조무래기",
   "galactic_grunt_female": "갤럭시단 조무래기",
-  "galactic_admin": "Galactic Admin",
+  "galactic_admin": "갤럭시단 간부",
   "plasma_grunt": "플라스마단 조무래기",
   "plasma_grunt_female": "플라스마단 조무래기",
-  "plasma_sage": "Plasma Sage",
+  "plasma_sage": "플라스마단 현인",
   "flare_grunt": "플레어단 조무래기",
   "flare_grunt_female": "플레어단 조무래기",
-  "flare_admin": "Flare Admin",
+  "flare_admin": "플레어단 간부",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -279,24 +271,6 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "단델",
   "rival": "핀",
   "rival_female": "아이비",
-
-  // Evil Team Admins
-  "archer": "Archer",
-  "ariana": "Ariana",
-  "proton": "Proton",
-  "petrel": "Petrel",
-  "tabitha": "Tabitha",
-  "courtney": "Courtney",
-  "shelly": "Shelly",
-  "matt": "Matt",
-  "mars": "Mars",
-  "jupiter": "Jupiter",
-  "saturn": "Saturn",
-  "zinzolin": "Zinzolin",
-  "colress": "Colress",
-  "xerosic": "Xerosic",
-  "bryony": "Bryony",
-
   "maxie": "마적",
   "archie": "아강",
   "cyrus": "태홍",

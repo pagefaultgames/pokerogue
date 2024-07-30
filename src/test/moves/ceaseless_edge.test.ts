@@ -1,18 +1,17 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
 import {
   MoveEffectPhase,
   TurnEndPhase
 } from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { allMoves } from "#app/data/move";
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
-import { Abilities } from "#app/enums/abilities";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -32,14 +31,14 @@ describe("Moves - Ceaseless Edge", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.RUN_AWAY);
-    vi.spyOn(overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.RUN_AWAY);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR ]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemyAbility(Abilities.RUN_AWAY);
+    game.override.enemyPassiveAbility(Abilities.RUN_AWAY);
+    game.override.startingLevel(100);
+    game.override.enemyLevel(100);
+    game.override.moveset([ Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR ]);
+    game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
     vi.spyOn(allMoves[Moves.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);
 
   });
@@ -75,7 +74,7 @@ describe("Moves - Ceaseless Edge", () => {
   test(
     "move should hit twice with multi lens and apply two layers of spikes",
     async () => {
-      vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS"}]);
+      game.override.startingHeldItems([{name: "MULTI_LENS"}]);
       await game.startBattle([ Species.ILLUMISE ]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
@@ -104,8 +103,8 @@ describe("Moves - Ceaseless Edge", () => {
   test(
     "trainer - move should hit twice, apply two layers of spikes, force switch opponent - opponent takes damage",
     async () => {
-      vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS"}]);
-      vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
+      game.override.startingHeldItems([{name: "MULTI_LENS"}]);
+      game.override.startingWave(5);
 
       await game.startBattle([ Species.ILLUMISE ]);
 
