@@ -17,6 +17,9 @@ import { Gender } from "./gender";
 import { pokemonEvolutions } from "./pokemon-evolutions";
 import { pokemonFormChanges } from "./pokemon-forms";
 
+/** A constant for the default max cost of the starting party before a run */
+const DEFAULT_PARTY_MAX_COST = 10;
+
 /**
  * An enum for all the challenge types. The parameter entries on these describe the
  * parameters to use when calling the applyChallenges function.
@@ -689,11 +692,11 @@ export class LowerStarterMaxCostChallenge extends Challenge {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    return (10 - overrideValue).toString();
+    return (DEFAULT_PARTY_MAX_COST - overrideValue).toString();
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
-    if (speciesStarters[pokemon.speciesId] > 10 - this.value) {
+    if (speciesStarters[pokemon.speciesId] > DEFAULT_PARTY_MAX_COST - this.value) {
       valid.value = false;
       return true;
     }
@@ -723,7 +726,7 @@ export class LowerStarterPointsChallenge extends Challenge {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    return (10 - overrideValue).toString();
+    return (DEFAULT_PARTY_MAX_COST - overrideValue).toString();
   }
 
   applyStarterPoints(points: Utils.NumberHolder): boolean {

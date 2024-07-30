@@ -264,6 +264,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "설마 자시안으로?",
   },
+  "FRESH_START": {
+    name: "첫트!",
+    description: "새 출발 챌린지 모드 클리어."
+  },
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)

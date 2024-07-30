@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import UI from "./ui/ui";
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from "./phases";
+import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase, SummonPhase, ToggleDoublePositionPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import { Constructor } from "#app/utils";
@@ -14,7 +14,7 @@ import { Arena, ArenaBase } from "./field/arena";
 import { GameData } from "./system/game-data";
 import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { allMoves } from "./data/move";
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from "./modifier/modifier-type";
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, modifierTypes } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
@@ -68,6 +68,7 @@ import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
 import {TrainerType} from "#enums/trainer-type";
+import { battleSpecDialogue } from "./data/dialogue";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -230,7 +231,7 @@ export default class BattleScene extends SceneBase {
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlayShown: boolean = false;
-  private shopOverlayOpacity: number = .80;
+  private shopOverlayOpacity: number = .8;
 
   public modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
@@ -1056,7 +1057,7 @@ export default class BattleScene extends SceneBase {
           playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
           doubleTrainer = !Utils.randSeedInt(doubleChance.value);
           // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
-          if (trainerConfigs[trainerType].trainerTypeDouble && !(trainerType === TrainerType.TATE || trainerType === TrainerType.LIZA)) {
+          if (trainerConfigs[trainerType].trainerTypeDouble && ![ TrainerType.TATE, TrainerType.LIZA ].includes(trainerType)) {
             doubleTrainer = false;
           }
         }
@@ -2618,5 +2619,34 @@ export default class BattleScene extends SceneBase {
       }) : []
     };
     (window as any).gameInfo = gameInfo;
+  }
+
+  /**
+   * Initialized the 2nd phase of the final boss (e.g. form-change for Eternatus)
+   * @param pokemon The (enemy) pokemon
+   */
+  initFinalBossPhaseTwo(pokemon: Pokemon): void {
+    if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
+      this.fadeOutBgm(Utils.fixedInt(2000), false);
+      this.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.species.name, null, () => {
+        this.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
+        pokemon.generateAndPopulateMoveset(1);
+        this.setFieldScale(0.75);
+        this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+        this.currentBattle.double = true;
+        const availablePartyMembers = this.getParty().filter((p) => p.isAllowedInBattle());
+        if (availablePartyMembers.length > 1) {
+          this.pushPhase(new ToggleDoublePositionPhase(this, true));
+          if (!availablePartyMembers[1].isOnField()) {
+            this.pushPhase(new SummonPhase(this, 1));
+          }
+        }
+
+        this.shiftPhase();
+      });
+      return;
+    }
+
+    this.shiftPhase();
   }
 }

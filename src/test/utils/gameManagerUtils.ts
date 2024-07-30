@@ -1,14 +1,14 @@
-// Function to convert Blob to string
-import {getDailyRunStarters} from "#app/data/daily-run";
-import {Gender} from "#app/data/gender";
-import {Species} from "#enums/species";
-import {Starter} from "#app/ui/starter-select-ui-handler";
-import {GameModes, getGameMode} from "#app/game-mode";
-import {getPokemonSpecies, getPokemonSpeciesForm} from "#app/data/pokemon-species";
-import {PlayerPokemon} from "#app/field/pokemon";
+import { getDailyRunStarters } from "#app/data/daily-run";
+import { Gender } from "#app/data/gender";
+import { Species } from "#enums/species";
+import { Starter } from "#app/ui/starter-select-ui-handler";
+import { GameModes, getGameMode } from "#app/game-mode";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { PlayerPokemon } from "#app/field/pokemon";
 import { Moves } from "#app/enums/moves";
 import BattleScene from "#app/battle-scene";
 
+/** Function to convert Blob to string */
 export function blobToString(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

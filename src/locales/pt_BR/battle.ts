@@ -13,7 +13,7 @@ export const battle: SimpleTranslationEntries = {
   "trainerGo": "{{trainerName}} escolheu {{pokemonName}}!",
   "switchQuestion": "Quer trocar\nde {{pokemonName}}?",
   "trainerDefeated": "Você derrotou\n{{trainerName}}!",
-  "moneyWon": "Você ganhou\n₽{{moneyAmount}} por ganhar!",
+  "moneyWon": "Você ganhou\n₽{{moneyAmount}} por vencer!",
   "moneyPickedUp": "Você pegou ₽{{moneyAmount}} do chão!",
   "pokemonCaught": "{{pokemonName}} foi capturado!",
   "addedAsAStarter": "{{pokemonName}} foi adicionado\naos seus iniciais!",
