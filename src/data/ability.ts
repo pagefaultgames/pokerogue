@@ -2155,7 +2155,6 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
   private statusEffect: StatusEffect[];
 
   /**
-   *
    * @param statusEffect - The status effects to be removed from the user's field.
    */
   constructor(...statusEffect: StatusEffect[]) {
@@ -2168,8 +2167,8 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
    * Removes supplied status effect from the user's field when user of the ability is summoned.
    *
    * @param pokemon - The Pokémon that triggered the ability.
-   * @param passive - Whether the ability is passive.
-   * @param args - Additional arguments for the ability.
+   * @param passive - n/a
+   * @param args - n/a
    * @returns A boolean or a promise that resolves to a boolean indicating the result of the ability application.
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
@@ -2462,10 +2461,10 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
    * Applies immunity to supplied status effects.
    *
    * @param pokemon - The Pokémon to which the status is being applied.
-   * @param passive - Whether the ability is passive.
+   * @param passive - n/a
    * @param effect - The status effect being applied.
    * @param cancelled - A holder for a boolean value indicating if the status application was cancelled.
-   * @param args - Additional arguments for the status application.
+   * @param args - n/a
    * @returns A boolean indicating the result of the status application.
    */
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
