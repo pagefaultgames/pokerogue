@@ -8,11 +8,11 @@ export const battlePokemonForm: SimpleTranslationEntries = {
   "gigantamax": "{{pokemonName}} Gigamax",
   "eternamax": "{{pokemonName}} Infinimax",
 
-  "megaChange": "{{preName}} Mega Evolved\ninto {{pokemonName}}!",
-  "gigantamaxChange": "{{preName}} Gigantamaxed\ninto {{pokemonName}}!",
-  "eternamaxChange": "{{preName}} Eternamaxed\ninto {{pokemonName}}!",
-  "revertChange": "{{pokemonName}} reverted\nto its original form!",
-  "formChange": "{{preName}} changed form!",
+  "megaChange": "{{preName}} méga-évolue\nen {{pokemonName}} !",
+  "gigantamaxChange": "{{preName}} se gigamaxe\nen {{pokemonName}} !",
+  "eternamaxChange": "{{preName}} devient\n{{pokemonName}} !",
+  "revertChange": "{{pokemonName}} retourne\nà sa forme initiale !",
+  "formChange": "{{preName}} change de forme !",
 } as const;
 
 export const pokemonForm: SimpleTranslationEntries = {
