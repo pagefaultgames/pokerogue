@@ -4097,8 +4097,8 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
    */
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
 
-    //[HitResult.EFFECTIVE, HitResult.SUPER_EFFECTIVE, HitResult.NOT_VERY_EFFECTIVE, HitResult.ONE_HIT_KO]
-    if (hitResult > 4) {
+    const breakIllusion: HitResult[] = [HitResult.EFFECTIVE, HitResult.SUPER_EFFECTIVE, HitResult.NOT_VERY_EFFECTIVE, HitResult.ONE_HIT_KO];
+    if (!breakIllusion.includes(hitResult)) {
       return false;
     }
     pokemon.breakIllusion();
