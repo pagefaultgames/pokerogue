@@ -4094,6 +4094,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
   args: any[],
   showAbilityInstant: boolean = false,
   quiet: boolean = false,
+  messages: string[] = undefined,
 ) {
   for (const passive of [false, true]) {
     if (!pokemon.canApplyAbility(passive)) {
@@ -4131,10 +4132,13 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
           }
         }
 
-        if (!quiet) {
-          const message = attr.getTriggerMessage(pokemon, ability.name, args);
-          if (message) {
+        const message = attr.getTriggerMessage(pokemon, ability.name, args);
+        if (message) {
+          if (!quiet) {
             pokemon.scene.queueMessage(message);
+          }
+          if (messages !== undefined) {
+            messages.push(message);
           }
         }
       }
@@ -4266,8 +4270,8 @@ export function applyPostTerrainChangeAbAttrs(attrType: Constructor<PostTerrainC
 }
 
 export function applyCheckTrappedAbAttrs(attrType: Constructor<CheckTrappedAbAttr>,
-  pokemon: Pokemon, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, trapped, otherPokemon, args), args);
+  pokemon: Pokemon, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, quiet: boolean, messages: string[], ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, trapped, otherPokemon, args), args, false, quiet, messages);
 }
 
 export function applyPostBattleAbAttrs(attrType: Constructor<PostBattleAbAttr>,
