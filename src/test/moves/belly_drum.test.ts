@@ -11,7 +11,9 @@ import { Species } from "#enums/species";
 import { BattleStat } from "#app/data/battle-stat";
 
 const TIMEOUT = 20 * 1000;
+// RATIO : HP Cost of Move
 const RATIO = 2;
+// PREDAMAGE : Amount of extra HP lost
 const PREDAMAGE = 15;
 
 describe("Moves - BELLY DRUM", () => {
@@ -46,12 +48,12 @@ describe("Moves - BELLY DRUM", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).toBeDefined();
-      const HpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp()-HpLost);
+      expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(6);
     }, TIMEOUT
   );
@@ -62,7 +64,7 @@ describe("Moves - BELLY DRUM", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).toBeDefined();
-      const HpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       // Here - BattleStat.ATK -> -3 and BattleStat.SPATK -> 6
       leadPokemon.summonData.battleStats[BattleStat.ATK] = -3;
@@ -71,7 +73,7 @@ describe("Moves - BELLY DRUM", () => {
       game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp()-HpLost);
+      expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(6);
       expect(leadPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(6);
     }, TIMEOUT
@@ -100,13 +102,13 @@ describe("Moves - BELLY DRUM", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon();
       expect(leadPokemon).toBeDefined();
-      const HpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
-      leadPokemon.hp = HpLost-PREDAMAGE;
+      const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
+      leadPokemon.hp = hpLost - PREDAMAGE;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      expect(leadPokemon.hp).toBe(HpLost-PREDAMAGE);
+      expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
     }, TIMEOUT
   );
