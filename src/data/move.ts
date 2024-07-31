@@ -3425,7 +3425,7 @@ export class SwallowHealAttr extends HealAttr {
 
 const hasStockpileStacksCondition: MoveConditionFunc = (user) => {
   const hasStockpilingTag = user.getTag(StockpilingTag);
-  return hasStockpilingTag !== null && hasStockpilingTag.stockpiledCount > 0;
+  return !!hasStockpilingTag && hasStockpilingTag.stockpiledCount > 0;
 };
 
 /**

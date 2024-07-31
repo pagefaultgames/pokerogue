@@ -86,5 +86,6 @@ export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: M
   const playerPokemon = scene.getPlayerField()[pokemonIndex];
   const moveSet = playerPokemon.getMoveset();
   const index = moveSet.findIndex((m) => m?.moveId === move);
+  console.log(`Move position for ${Moves[move]} (=${move}):`, index);
   return index;
 }

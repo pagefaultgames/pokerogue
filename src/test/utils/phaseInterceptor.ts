@@ -282,7 +282,7 @@ export default class PhaseInterceptor {
   setMode(mode: Mode, ...args: any[]): Promise<void> {
     const currentPhase = this.scene.getCurrentPhase();
     const instance = this.scene.ui;
-    console.log("setMode", mode, args);
+    console.log("setMode", `${Mode[mode]} (=${mode})`, "args:",args);
     const ret = this.originalSetMode.apply(instance, [mode, ...args]);
     if (!this.phases[currentPhase.constructor.name]) {
       throw new Error(`missing ${currentPhase.constructor.name} in phaseInterceptior PHASES list`);

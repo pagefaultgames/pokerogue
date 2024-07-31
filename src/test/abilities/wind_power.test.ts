@@ -38,7 +38,7 @@ describe("Abilities - Wind Power", () => {
     await game.startBattle([Species.MAGIKARP]);
     const shiftry = game.scene.getEnemyPokemon()!;
 
-    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeNull();
+    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.PETAL_BLIZZARD));
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -53,7 +53,7 @@ describe("Abilities - Wind Power", () => {
     await game.startBattle([Species.SHIFTRY]);
     const shiftry = game.scene.getPlayerPokemon()!;
 
-    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeNull();
+    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -69,7 +69,7 @@ describe("Abilities - Wind Power", () => {
     const magikarp = game.scene.getEnemyPokemon()!;
     const shiftry = game.scene.getPlayerPokemon()!;
 
-    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeNull();
+    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
     expect(magikarp.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
@@ -86,7 +86,7 @@ describe("Abilities - Wind Power", () => {
     await game.startBattle([Species.SHIFTRY]);
     const shiftry = game.scene.getPlayerPokemon()!;
 
-    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeNull();
+    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SANDSTORM));
 

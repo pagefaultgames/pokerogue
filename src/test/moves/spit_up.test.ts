@@ -60,7 +60,7 @@ describe("Moves - Spit Up", () => {
       expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
       expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveReturnedWith(expectedPower);
 
-      expect(pokemon.getTag(StockpilingTag)).toBeNull();
+      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
     it("2 stacks -> 200 power", { timeout: 10000 }, async () => {
@@ -85,7 +85,7 @@ describe("Moves - Spit Up", () => {
       expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
       expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveReturnedWith(expectedPower);
 
-      expect(pokemon.getTag(StockpilingTag)).toBeNull();
+      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
     it("3 stacks -> 300 power", { timeout: 10000 }, async () => {
@@ -111,7 +111,7 @@ describe("Moves - Spit Up", () => {
       expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
       expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveReturnedWith(expectedPower);
 
-      expect(pokemon.getTag(StockpilingTag)).toBeNull();
+      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
   });
 
@@ -121,7 +121,7 @@ describe("Moves - Spit Up", () => {
     const pokemon = game.scene.getPlayerPokemon()!;
 
     const stockpilingTag = pokemon.getTag(StockpilingTag)!;
-    expect(stockpilingTag).toBeNull();
+    expect(stockpilingTag).toBeUndefined();
 
     vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
@@ -160,7 +160,7 @@ describe("Moves - Spit Up", () => {
       expect(pokemon.summonData.battleStats[BattleStat.DEF]).toBe(0);
       expect(pokemon.summonData.battleStats[BattleStat.SPDEF]).toBe(0);
 
-      expect(pokemon.getTag(StockpilingTag)).toBeNull();
+      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
     it("decreases stats based on stored values (different boosts)", { timeout: 10000 }, async () => {
@@ -195,7 +195,7 @@ describe("Moves - Spit Up", () => {
       expect(pokemon.summonData.battleStats[BattleStat.DEF]).toBe(1);
       expect(pokemon.summonData.battleStats[BattleStat.SPDEF]).toBe(-2);
 
-      expect(pokemon.getTag(StockpilingTag)).toBeNull();
+      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
   });
 });

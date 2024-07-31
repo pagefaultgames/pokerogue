@@ -57,7 +57,7 @@ describe("Moves - Roost", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-      expect(enemyPokemon.getTag(BattlerTagType.ROOSTED)).toBeNull();
+      expect(enemyPokemon.getTag(BattlerTagType.ROOSTED)).toBeUndefined();
     }, TIMEOUT
   );
 });

@@ -48,7 +48,7 @@ describe("Moves - Thousand Arrows", () => {
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
       // Enemy should not be grounded before move effect is applied
-      expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeNull();
+      expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -71,7 +71,7 @@ describe("Moves - Thousand Arrows", () => {
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
       // Enemy should not be grounded before move effect is applied
-      expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeNull();
+      expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -95,7 +95,7 @@ describe("Moves - Thousand Arrows", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(enemyPokemon.getTag(BattlerTagType.MAGNET_RISEN)).toBeNull();
+      expect(enemyPokemon.getTag(BattlerTagType.MAGNET_RISEN)).toBeUndefined();
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     }

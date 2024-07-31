@@ -49,7 +49,7 @@ describe("Abilities - Ice Face", () => {
 
     expect(eiscue.isFullHp()).toBe(true);
     expect(eiscue.formIndex).toBe(noiceForm);
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeNull();
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
   });
 
   it("takes no damage from the first hit of multihit physical move and transforms to Noice", async () => {
@@ -66,7 +66,7 @@ describe("Abilities - Ice Face", () => {
     await game.phaseInterceptor.to(MoveEffectPhase);
     expect(eiscue.isFullHp()).toBe(true);
     expect(eiscue.formIndex).toBe(icefaceForm);
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeNull();
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
 
     // Second hit
     await game.phaseInterceptor.to(MoveEffectPhase);
@@ -77,7 +77,7 @@ describe("Abilities - Ice Face", () => {
 
     expect(eiscue.hp).lessThan(eiscue.getMaxHp());
     expect(eiscue.formIndex).toBe(noiceForm);
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeNull();
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
   });
 
   it("takes damage from special moves", async () => {
@@ -121,7 +121,7 @@ describe("Abilities - Ice Face", () => {
 
     expect(eiscue.isFullHp()).toBe(true);
     expect(eiscue.formIndex).toBe(noiceForm);
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeNull();
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -140,7 +140,7 @@ describe("Abilities - Ice Face", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     let eiscue = game.scene.getPlayerPokemon()!;
 
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeNull();
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
     expect(eiscue.formIndex).toBe(noiceForm);
     expect(eiscue.isFullHp()).toBe(true);
 
@@ -168,12 +168,12 @@ describe("Abilities - Ice Face", () => {
     await game.phaseInterceptor.to(QuietFormChangePhase);
 
     expect(eiscue.formIndex).toBe(noiceForm);
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeNull();
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(eiscue.formIndex).toBe(noiceForm);
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeNull();
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
   });
 
   it("persists form change when switched out", async () => {
@@ -186,7 +186,7 @@ describe("Abilities - Ice Face", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     let eiscue = game.scene.getPlayerPokemon()!;
 
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeNull();
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
     expect(eiscue.formIndex).toBe(noiceForm);
     expect(eiscue.isFullHp()).toBe(true);
 
@@ -197,7 +197,7 @@ describe("Abilities - Ice Face", () => {
     eiscue = game.scene.getParty()[1];
 
     expect(eiscue.formIndex).toBe(noiceForm);
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeNull();
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
   });
 
   it("reverts to Ice Face on arena reset", async () => {
@@ -213,7 +213,7 @@ describe("Abilities - Ice Face", () => {
     const eiscue = game.scene.getPlayerPokemon()!;
 
     expect(eiscue.formIndex).toBe(noiceForm);
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeNull();
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.ICE_BEAM));
     await game.doKillOpponents();

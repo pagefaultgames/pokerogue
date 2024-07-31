@@ -911,7 +911,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (!types.length || !includeTeraType) {
-      if (!ignoreOverride && this.summonData?.types) {
+      if (!ignoreOverride && this.summonData?.types && this.summonData.types.length !== 0) {
         this.summonData.types.forEach(t => types.push(t));
       } else {
         const speciesForm = this.getSpeciesForm(ignoreOverride);
@@ -1207,15 +1207,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns a multiplier for the type effectiveness
    */
   getAttackTypeEffectiveness(moveOrType: Move | Type, source?: Pokemon, ignoreStrongWinds: boolean = false, simulated: boolean = true): TypeDamageMultiplier {
-    let move: Move | undefined;
-    let moveType: Type;
-
-    if (moveOrType instanceof Move) {
-      move = moveOrType;
-      moveType = move.type;
-    } else {
-      moveType = moveOrType as Type;
-    }
+    const move = (moveOrType instanceof Move)
+      ? moveOrType
+      : undefined;
+    const moveType = (moveOrType instanceof Move)
+      ? move!.type // TODO: is this bang correct?
+      : moveOrType;
 
     if (moveType === Type.STELLAR) {
       return this.isTerastallized() ? 2 : 1;
