@@ -6877,69 +6877,6 @@
 					}
 				},
 				{
-					"filename": "absolite",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 8,
-						"y": 8,
-						"w": 16,
-						"h": 16
-					},
-					"frame": {
-						"x": 168,
-						"y": 406,
-						"w": 16,
-						"h": 16
-					}
-				},
-				{
-					"filename": "aerodactylite",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 8,
-						"y": 8,
-						"w": 16,
-						"h": 16
-					},
-					"frame": {
-						"x": 368,
-						"y": 300,
-						"w": 16,
-						"h": 16
-					}
-				},
-				{
-					"filename": "light_ball",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 7,
-						"y": 7,
-						"w": 18,
-						"h": 18
-					},
-					"frame": {
-						"x": 384,
-						"y": 307,
-						"w": 18,
-						"h": 18
-					}
-				},
-				{
 					"filename": "wl_burn_heal",
 					"rotated": false,
 					"trimmed": true,
@@ -8449,27 +8386,6 @@
 						"y": 392,
 						"w": 16,
 						"h": 16
-					}
-				},
-				{
-					"filename": "prism_scale",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 9,
-						"y": 8,
-						"w": 15,
-						"h": 15
-					},
-					"frame": {
-						"x": 297,
-						"y": 375,
-						"w": 15,
-						"h": 15
 					}
 				}
 			]
