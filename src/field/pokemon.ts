@@ -1837,7 +1837,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const cancelled = new Utils.BooleanHolder(false);
     const typeless = move.hasAttr(TypelessAttr);
-
     const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType)))
       ? this.getAttackTypeEffectiveness(move, source, false, false)
       : 1);
