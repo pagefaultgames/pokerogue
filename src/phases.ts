@@ -3527,12 +3527,12 @@ export class WeatherEffectPhase extends CommonAnimPhase {
 }
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
-  private statusEffect: StatusEffect;
+  private statusEffect: StatusEffect | undefined;
   private cureTurn: integer | null;
   private sourceText: string | null;
   private sourcePokemon: Pokemon | null;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, statusEffect: StatusEffect, cureTurn?: integer, sourceText?: string, sourcePokemon?: Pokemon) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, statusEffect?: StatusEffect, cureTurn?: integer | null, sourceText?: string, sourcePokemon?: Pokemon) {
     super(scene, battlerIndex);
 
     this.statusEffect = statusEffect;
@@ -3549,7 +3549,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
           pokemon.status!.cureTurn = this.cureTurn; // TODO: is this bang correct?
         }
         pokemon.updateInfo(true);
-        new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect - 1), pokemon).play(this.scene, () => {
+        new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(this.scene, () => {
           this.scene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined));
           if (pokemon.status?.isPostTurn()) {
             this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, this.battlerIndex));

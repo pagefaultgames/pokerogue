@@ -491,7 +491,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
 }
 
 export class PostDefendAbAttr extends AbAttr {
-  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -1545,7 +1545,7 @@ export class PostAttackAbAttr extends AbAttr {
    * applying the effect of any inherited class. This can be changed by providing a different {@link attackCondition} to the constructor. See {@link ConfusionOnStatusEffectAbAttr}
    * for an example of an effect that does not require a damaging move.
    */
-  applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
+  applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
     // When attackRequired is true, we require the move to be an attack move and to deal damage before checking secondary requirements.
     // If attackRequired is false, we always defer to the secondary requirements.
     if (this.attackCondition(pokemon, defender, move)) {
@@ -1558,7 +1558,7 @@ export class PostAttackAbAttr extends AbAttr {
   /**
    * This method is only called after {@link applyPostAttack} has already been applied. Use this for handling checks specific to the ability in question.
    */
-  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
+  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -2465,7 +2465,7 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
 }
 
 export class PreSetStatusAbAttr extends AbAttr {
-  applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+  applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect | undefined, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -4162,7 +4162,7 @@ export function applyPreDefendAbAttrs(attrType: Constructor<PreDefendAbAttr>,
 }
 
 export function applyPostDefendAbAttrs(attrType: Constructor<PostDefendAbAttr>,
-  pokemon: Pokemon, attacker: Pokemon, move: Move, hitResult: HitResult, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, attacker: Pokemon, move: Move, hitResult: HitResult | null, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostDefendAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostDefend(pokemon, passive, attacker, move, hitResult, args), args);
 }
 
@@ -4197,7 +4197,7 @@ export function applyPreAttackAbAttrs(attrType: Constructor<PreAttackAbAttr>,
 }
 
 export function applyPostAttackAbAttrs(attrType: Constructor<PostAttackAbAttr>,
-  pokemon: Pokemon, defender: Pokemon, move: Move, hitResult: HitResult, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, defender: Pokemon, move: Move, hitResult: HitResult | null, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostAttackAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostAttack(pokemon, passive, defender, move, hitResult, args), args);
 }
 
@@ -4232,7 +4232,7 @@ export function applyPostStatChangeAbAttrs(attrType: Constructor<PostStatChangeA
 }
 
 export function applyPreSetStatusAbAttrs(attrType: Constructor<PreSetStatusAbAttr>,
-  pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, effect: StatusEffect | undefined, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
   const simulated = args.length > 1 && args[1];
   return applyAbAttrsInternal<PreSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSetStatus(pokemon, passive, effect, cancelled, args), args, false, !simulated);
 }

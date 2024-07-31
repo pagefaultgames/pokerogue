@@ -2598,7 +2598,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
-  canSetStatus(effect: StatusEffect, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
+  canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
         return false;
@@ -2658,6 +2658,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return false;
       }
       break;
+    default:
+      return false;
     }
 
     const cancelled = new Utils.BooleanHolder(false);
@@ -2673,7 +2675,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  trySetStatus(effect: StatusEffect, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, cureTurn: integer = 0, sourceText: string | null = null): boolean {
+  trySetStatus(effect: StatusEffect | undefined, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, cureTurn: integer | null = 0, sourceText: string | null = null): boolean {
     if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
       return false;
     }
@@ -2716,6 +2718,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     statusCureTurn = statusCureTurn!; // tell TS compiler it's defined
+    effect = effect!; // If `effect` is undefined then `trySetStatus()` will have already returned early via the `canSetStatus()` call
     this.status = new Status(effect, 0, statusCureTurn?.value);
 
     if (effect !== StatusEffect.FAINT) {
