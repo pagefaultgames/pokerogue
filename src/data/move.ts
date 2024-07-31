@@ -717,10 +717,6 @@ export default class Move implements Localizable {
    * @returns The calculated power of the move.
    */
   calculateBattlePower(source: Pokemon, target: Pokemon): number {
-    if (this.category === MoveCategory.STATUS) {
-      return -1;
-    }
-
     const power = new Utils.NumberHolder(this.power);
     const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
 

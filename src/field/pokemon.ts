@@ -135,10 +135,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       // If abilityIndex is not provided, determine it based on species and hidden ability
       if (species.abilityHidden && hasHiddenAbility) {
         // If the species has a hidden ability and the hidden ability is present
-        this.abilityIndex = 2;
+        this.abilityIndex = species.ability2 ? 2 : 1; // Use ability index 2 if species has a second ability, otherwise use 1
       } else {
         // If there is no hidden ability or species does not have a hidden ability
-        this.abilityIndex = species.ability2 !== species.ability1 ? randAbilityIndex : 0; // Use random ability index if species has a second ability, otherwise use 0
+        this.abilityIndex = species.ability2 ? randAbilityIndex : 0; // Use random ability index if species has a second ability, otherwise use 0
       }
     }
     if (formIndex !== undefined) {
@@ -1836,7 +1836,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const types = this.getTypes(true, true);
 
     const cancelled = new Utils.BooleanHolder(false);
-    const power = move.calculateBattlePower(source, this);
     const typeless = move.hasAttr(TypelessAttr);
 
     const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType)))
@@ -1863,6 +1862,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     case MoveCategory.PHYSICAL:
     case MoveCategory.SPECIAL:
       const isPhysical = moveCategory === MoveCategory.PHYSICAL;
+      const power = move.calculateBattlePower(source, this);
       const sourceTeraType = source.getTeraType();
 
       if (!typeless) {

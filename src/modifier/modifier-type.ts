@@ -1440,8 +1440,7 @@ function hasMaximumBalls(party: Pokemon[], ballType: PokeballType): boolean {
 
 const modifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
-    new WeightedModifierType(modifierTypes.POKEBALL, 6),
-    new WeightedModifierType(modifierTypes.VOUCHER_PLUS, 50),
+    new WeightedModifierType(modifierTypes.VOUCHER_PLUS, 50), // TODO remove (for egg debugging)
     new WeightedModifierType(modifierTypes.POKEBALL, (party: Pokemon[]) => (hasMaximumBalls(party, PokeballType.POKEBALL)) ? 0 : 6, 6),
     new WeightedModifierType(modifierTypes.RARE_CANDY, 2),
     new WeightedModifierType(modifierTypes.POTION, (party: Pokemon[]) => {
