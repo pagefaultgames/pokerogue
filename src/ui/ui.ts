@@ -45,6 +45,8 @@ import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handl
 import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
+import BgmBar from "#app/ui/bgm-bar";
+import RenameFormUiHandler from "./rename-form-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -82,7 +84,8 @@ export enum Mode {
   SESSION_RELOAD,
   UNAVAILABLE,
   OUTDATED,
-  CHALLENGE_SELECT
+  CHALLENGE_SELECT,
+  RENAME_POKEMON
 }
 
 const transitionModes = [
@@ -118,7 +121,8 @@ const noTransitionModes = [
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
-  Mode.OUTDATED
+  Mode.OUTDATED,
+  Mode.RENAME_POKEMON
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -127,6 +131,7 @@ export default class UI extends Phaser.GameObjects.Container {
   public handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
+  public bgmBar: BgmBar;
   public savingIcon: SavingIconHandler;
 
   private tooltipContainer: Phaser.GameObjects.Container;
@@ -178,7 +183,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new SessionReloadModalUiHandler(scene),
       new UnavailableModalUiHandler(scene),
       new OutdatedModalUiHandler(scene),
-      new GameChallengesUiHandler(scene)
+      new GameChallengesUiHandler(scene),
+      new RenameFormUiHandler(scene),
     ];
   }
 
@@ -229,8 +235,8 @@ export default class UI extends Phaser.GameObjects.Container {
     (this.scene as BattleScene).uiContainer.add(this.tooltipContainer);
   }
 
-  getHandler(): UiHandler {
-    return this.handlers[this.mode];
+  getHandler<H extends UiHandler = UiHandler>(): H {
+    return this.handlers[this.mode] as H;
   }
 
   getMessageHandler(): BattleMessageUiHandler {
@@ -247,7 +253,6 @@ export default class UI extends Phaser.GameObjects.Container {
       battleScene?.processInfoButton(pressed);
       return true;
     }
-
     battleScene?.processInfoButton(false);
     return true;
   }

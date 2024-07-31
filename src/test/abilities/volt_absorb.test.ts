@@ -1,16 +1,15 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import { BattleStat } from "#app/data/battle-stat.js";
 import {
   TurnEndPhase,
 } from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import { BattleStat } from "#app/data/battle-stat.js";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Volt Absorb", () => {
@@ -29,19 +28,19 @@ describe("Abilities - Volt Absorb", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("single");
+    game.override.disableCrits();
   });
 
   it("does not activate when CHARGE is used", async () => {
     const moveToUse = Moves.CHARGE;
     const ability = Abilities.VOLT_ABSORB;
 
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.DUSKULL);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    game.override.moveset([moveToUse]);
+    game.override.ability(ability);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.override.enemySpecies(Species.DUSKULL);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
 
     await game.startBattle();
 

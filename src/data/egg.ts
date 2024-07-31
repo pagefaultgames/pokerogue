@@ -2,7 +2,7 @@ import BattleScene from "../battle-scene";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 import { VariantTier } from "../enums/variant-tiers";
 import * as Utils from "../utils";
-import * as Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import { pokemonPrevolutions } from "./pokemon-evolutions";
 import { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
@@ -66,7 +66,7 @@ export interface IEggOptions {
 export class Egg {
 
   ////
-  // #region Privat properties
+  // #region Private properties
   ////
 
   private _id: number;
@@ -140,8 +140,9 @@ export class Egg {
   constructor(eggOptions?: IEggOptions) {
     //if (eggOptions.tier && eggOptions.species) throw Error("Error egg can't have species and tier as option. only choose one of them.")
 
-    this._tier = eggOptions.tier ?? (Overrides.EGG_TIER_OVERRIDE ?? this.rollEggTier());
     this._sourceType = eggOptions.sourceType ?? undefined;
+    // Ensure _sourceType is defined before invoking rollEggTier(), as it is referenced
+    this._tier = eggOptions.tier ?? (Overrides.EGG_TIER_OVERRIDE ?? this.rollEggTier());
     // If egg was pulled, check if egg pity needs to override the egg tier
     if (eggOptions.pulled) {
       // Needs this._tier and this._sourceType to work
@@ -165,12 +166,12 @@ export class Egg {
     if (eggOptions.species) {
       this._tier = this.getEggTierFromSpeciesStarterValue();
       this._hatchWaves = eggOptions.hatchWaves ?? this.getEggTierDefaultHatchWaves();
-      // If species has no variant, set variantTier to common. This needs to
-      // be done because species with no variants get filtered at rollSpecies but since the
-      // species is set the check never happens
-      if (!getPokemonSpecies(this.species).hasVariants()) {
-        this._variantTier = VariantTier.COMMON;
-      }
+    }
+    // If species has no variant, set variantTier to common. This needs to
+    // be done because species with no variants get filtered at rollSpecies but if the
+    // species is set via options or the legendary gacha pokemon gets choosen the check never happens
+    if (this._species && !getPokemonSpecies(this._species).hasVariants()) {
+      this._variantTier = VariantTier.COMMON;
     }
     // Needs this._tier so it needs to be generated afer the tier override if bought from same species
     this._eggMoveIndex = eggOptions.eggMoveIndex ?? this.rollEggMoveIndex();
@@ -181,7 +182,7 @@ export class Egg {
   }
 
   ////
-  // #region Public methodes
+  // #region Public methods
   ////
 
   public isManaphyEgg(): boolean {
@@ -211,7 +212,7 @@ export class Egg {
     let abilityIndex = undefined;
     if (pokemonSpecies.abilityHidden && (this._overrideHiddenAbility
       || (this._sourceType === EggSourceType.SAME_SPECIES_EGG && !Utils.randSeedInt(SAME_SPECIES_EGG_HA_RATE)))) {
-      abilityIndex = pokemonSpecies.ability2 ? 2 : 1;
+      abilityIndex = 2;
     }
 
     // This function has way to many optional parameters
@@ -280,7 +281,7 @@ export class Egg {
   ////
 
   ////
-  // #region Private methodes
+  // #region Private methods
   ////
 
   private rollEggMoveIndex() {
@@ -371,7 +372,7 @@ export class Egg {
 
     // If this is the 10th egg without unlocking something new, attempt to force it.
     if (scene.gameData.unlockPity[this.tier] >= 9) {
-      const lockedPool = speciesPool.filter(s => !scene.gameData.dexData[s].caughtAttr);
+      const lockedPool = speciesPool.filter(s => !scene.gameData.dexData[s].caughtAttr && !scene.gameData.eggs.some(e => e.species === s));
       if (lockedPool.length) { // Skip this if everything is unlocked
         speciesPool = lockedPool;
       }
@@ -416,7 +417,7 @@ export class Egg {
       }
     }
 
-    if (!!scene.gameData.dexData[species].caughtAttr) {
+    if (!!scene.gameData.dexData[species].caughtAttr || scene.gameData.eggs.some(e => e.species === species)) {
       scene.gameData.unlockPity[this.tier] = Math.min(scene.gameData.unlockPity[this.tier] + 1, 10);
     } else {
       scene.gameData.unlockPity[this.tier] = 0;

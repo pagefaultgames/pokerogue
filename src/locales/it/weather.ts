@@ -40,5 +40,27 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "È apparsa una corrente d'aria misteriosa!",
   "strongWindsLapseMessage": "La corrente d'aria soffia intensamente.",
+  "strongWindsEffectMessage": "La corrente misteriosa indebolisce l’attacco!",
   "strongWindsClearMessage": "La corrente d'aria è cessata."
+};
+
+export const terrain: SimpleTranslationEntries = {
+  "misty": "Misty",
+  "mistyStartMessage": "Mist swirled around the battlefield!",
+  "mistyClearMessage": "The mist disappeared from the battlefield.",
+  "mistyBlockMessage": "{{pokemonNameWithAffix}} surrounds itself with a protective mist!",
+
+  "electric": "Electric",
+  "electricStartMessage": "An electric current ran across the battlefield!",
+  "electricClearMessage": "The electricity disappeared from the battlefield.",
+
+  "grassy": "Grassy",
+  "grassyStartMessage": "Grass grew to cover the battlefield!",
+  "grassyClearMessage": "The grass disappeared from the battlefield.",
+
+  "psychic": "Psychic",
+  "psychicStartMessage": "The battlefield got weird!",
+  "psychicClearMessage": "The weirdness disappeared from the battlefield!",
+
+  "defaultBlockMessage": "{{pokemonNameWithAffix}} is protected by the {{terrainName}} Terrain!"
 };

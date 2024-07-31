@@ -35,6 +35,7 @@ export interface ModifierTypeTranslationEntry {
 
 export interface ModifierTypeTranslationEntries {
     ModifierType: { [key: string]: ModifierTypeTranslationEntry },
+    SpeciesBoosterItem: { [key: string]: ModifierTypeTranslationEntry },
     AttackTypeBoosterItem: SimpleTranslationEntries,
     TempBattleStatBoosterItem: SimpleTranslationEntries,
     TempBattleStatBoosterStatName: SimpleTranslationEntries,
@@ -56,6 +57,20 @@ export interface BerryTranslationEntry {
 export interface BerryTranslationEntries {
     [key: string]: BerryTranslationEntry
   }
+
+export interface StatusEffectTranslationEntries {
+  [key: string]: StatusEffectTranslationEntry
+}
+
+export interface StatusEffectTranslationEntry {
+  name: string,
+  obtain: string,
+  obtainSource: string,
+  activation: string,
+  overlap: string,
+  heal: string
+  description: string,
+}
 
 export interface AchievementTranslationEntry {
     name?: string,

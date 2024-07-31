@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Aumenta la potencia de los movimientos de tipo {{moveType}} de un Pokémon en un 20%.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Aumenta el nivel de un Pokémon en 1.",
+      description: "Aumenta el nivel de un Pokémon en {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Aumenta el nivel de todos los miembros del equipo en 1.",
+      description: "Aumenta el nivel de todos los miembros del equipo en {{levels}}.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "Aumenta la est. {{statName}} base del portador en un 10%.\nCuanto mayores sean tus IVs, mayor será el límite de acumulación.",
@@ -151,7 +151,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Cen. Sagrada" },
 
-    "REVIVER_SEED": { name: "Semilla Revivir", description: "Revive al portador con la mitad de sus PS al debilitarse." },
+    "REVIVER_SEED": { name: "Semilla Revivir", description: "Revive al portador con la mitad de sus PS al debilitarse por un golpe directo." },
+
+    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
 
     "ETHER": { name: "Éter" },
     "MAX_ETHER": { name: "Éter Máx." },
@@ -181,6 +183,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Huevo Dorado" },
 
     "SOOTHE_BELL": { name: "Camp. Alivio" },
+
+    "SCOPE_LENS": { name: "Periscopio", description: "Aumenta la probabilidad de asestar un golpe crítico." },
+    "LEEK": { name: "Puerro", description: "Puerro muy largo y duro que aumenta la probabilidad de asestar un golpe crítico. Debe llevarlo Farfetch'd." },
+
+    "EVIOLITE": { name: "Mineral Evolutivo", description: "Roca misteriosa. El Pokémon portador aumentará su Defensa y su Defensa Especial si aún puede evolucionar." },
 
     "SOUL_DEW": { name: "Rocío bondad", description: "Aumenta la influencia de la naturaleza de un Pokémon en sus estadísticas en un 10% (aditivo)." },
 
@@ -238,6 +245,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Ficha Cura Total", description: "Agrega un 2.5% de probabilidad cada turno de curar un problema de estado." },
     "ENEMY_ENDURE_CHANCE": { name: "Ficha Aguante" },
     "ENEMY_FUSED_CHANCE": { name: "Ficha Fusión", description: "Agrega un 1% de probabilidad de que un Pokémon salvaje sea una fusión." },
+  },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Bola Luminosa", description: "Asombrosa esfera que aumenta el Ataque y el Ataque Especial. Debe llevarla Pikachu." },
+    "THICK_CLUB": { name: "Hueso Grueso", description: "Extraño tipo de hueso que potencia los ataques físicos. Debe llevarlo Cubone o Marowak." },
+    "METAL_POWDER": { name: "Polvo Metálico", description: "Polvo muy fino, pero a la vez poderoso, que aumenta la Defensa. Debe llevarlo Ditto." },
+    "QUICK_POWDER": { name: "Polvo Veloz", description: "Polvo muy fino, pero a la vez poderoso, que aumenta la Velocidad. Debe llevarlo Ditto." }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "Ataque X",
