@@ -2631,9 +2631,9 @@ export class GrowthStatChangeAttr extends StatChangeAttr {
 
 export class CutHpStatBoostAttr extends StatChangeAttr {
   private cutRatio: integer;
-  private message: ((user: Pokemon) => void) | undefined;
+  private messageCallback: ((user: Pokemon) => void) | undefined;
 
-  constructor(stat: BattleStat | BattleStat[], levels: integer, cutRatio: integer, messageCallback?: string) {
+  constructor(stat: BattleStat | BattleStat[], levels: integer, cutRatio: integer, messageCallback?: ((user: Pokemon) => void) | undefined) {
     super(stat, levels, true, null, true);
 
     this.cutRatio = cutRatio;
