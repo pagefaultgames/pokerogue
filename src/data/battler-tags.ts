@@ -330,7 +330,19 @@ export class InfatuatedTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return pokemon.isOppositeGender(pokemon.scene.getPokemonById(this.sourceId!)); // TODO: is that bang correct?
+    if (this.sourceId) {
+      const pkm = pokemon.scene.getPokemonById(this.sourceId);
+
+      if (pkm) {
+        return pokemon.isOppositeGender(pkm);
+      } else  {
+        console.warn("canAdd: this.sourceId is not a valid pokemon id!", this.sourceId);
+        return false;
+      }
+    } else {
+      console.warn("canAdd: this.sourceId is undefined");
+      return false;
+    }
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -339,7 +351,7 @@ export class InfatuatedTag extends BattlerTag {
     pokemon.scene.queueMessage(
       i18next.t("battle:battlerTagsInfatuatedOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!)) // TODO: is that bang correct?
+        sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!) ?? undefined) // TODO: is that bang correct?
       })
     );
   }
@@ -357,7 +369,7 @@ export class InfatuatedTag extends BattlerTag {
       pokemon.scene.queueMessage(
         i18next.t("battle:battlerTagsInfatuatedLapse", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!)) // TODO: is that bang correct?
+          sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!) ?? undefined) // TODO: is that bang correct?
         })
       );
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.ATTRACT));
@@ -410,7 +422,7 @@ export class SeedTag extends BattlerTag {
     super.onAdd(pokemon);
 
     pokemon.scene.queueMessage(i18next.t("battle:battlerTagsSeededOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-    this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId!).getBattlerIndex(); // TODO: is that bang correct?
+    this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId!)!.getBattlerIndex(); // TODO: are those bangs correct?
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -580,7 +592,7 @@ export class HelpingHandTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     pokemon.scene.queueMessage(
       i18next.t("battle:battlerTagsHelpingHandOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!)), // TODO: is that bang correct?
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
         pokemonName: getPokemonNameWithAffix(pokemon)
       })
     );
@@ -800,7 +812,7 @@ export class BindTag extends DamagingTrapTag {
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsBindOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!)), // TODO: is that bang correct?
+      sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
       moveName: this.getMoveName()
     });
   }
@@ -814,7 +826,7 @@ export class WrapTag extends DamagingTrapTag {
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsWrapOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!)), // TODO: is that bang correct?
+      sourcePokemonName: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
     });
   }
 }
@@ -848,7 +860,7 @@ export class ClampTag extends DamagingTrapTag {
 
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsClampOnTrap", {
-      sourcePokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!)), // TODO: is that bang correct?
+      sourcePokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
       pokemonName: getPokemonNameWithAffix(pokemon),
     });
   }
@@ -895,7 +907,7 @@ export class ThunderCageTag extends DamagingTrapTag {
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsThunderCageOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!)), // TODO: is that bang correct?
+      sourcePokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
     });
   }
 }
@@ -908,7 +920,7 @@ export class InfestationTag extends DamagingTrapTag {
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsInfestationOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!)), // TODO: is that bang correct?
+      sourcePokemonNameWithAffix: getPokemonNameWithAffix(pokemon.scene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
     });
   }
 }
@@ -1428,7 +1440,7 @@ export class SaltCuredTag extends BattlerTag {
     super.onAdd(pokemon);
 
     pokemon.scene.queueMessage(i18next.t("battle:battlerTagsSaltCuredOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-    this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId!).getBattlerIndex(); // TODO: is that bang correct?
+    this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId!)!.getBattlerIndex(); // TODO: are those bangs correct?
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1475,7 +1487,7 @@ export class CursedTag extends BattlerTag {
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
-    this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId!).getBattlerIndex(); // TODO: is that bang correct?
+    this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId!)!.getBattlerIndex(); // TODO: are those bangs correct?
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {

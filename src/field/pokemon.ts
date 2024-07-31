@@ -2133,7 +2133,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         if (damage) {
-          const attacker = this.scene.getPokemonById(source.id);
+          const attacker = this.scene.getPokemonById(source.id)!; // TODO: is this bang correct?
           destinyTag?.lapse(attacker, BattlerTagLapseType.CUSTOM);
         }
       }
