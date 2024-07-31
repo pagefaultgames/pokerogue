@@ -189,6 +189,7 @@ export interface RunHistoryData {
 export interface RunEntries {
   entry: SessionSaveData;
   victory: boolean;
+  favorite: boolean;
 }
 
 export type StarterMoveset = [ Moves ] | [ Moves, Moves ] | [ Moves, Moves, Moves ] | [ Moves, Moves, Moves, Moves ];
