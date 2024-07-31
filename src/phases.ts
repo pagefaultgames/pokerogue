@@ -3789,11 +3789,10 @@ export class FaintPhase extends PokemonPhase {
       const nonFaintedPartyMemberCount = nonFaintedLegalPartyMembers.length;
       if (!nonFaintedPartyMemberCount) {
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
-      } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !nonFaintedLegalPartyMembers[0].isActive(true))) {
-        this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
-      }
-      if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double) {
+      } else if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double) {
         this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
+      } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount()) {
+        this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
       }
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
