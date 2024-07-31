@@ -4376,7 +4376,7 @@ export function applyCheckTrappedAbAttrs(attrType: Constructor<CheckTrappedAbAtt
   return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, trapped, otherPokemon, args), args);
 }
 
-export function applyPostBattleAbAttrs(attrType: { new(...args: any[]): PostBattleAbAttr },
+export function applyPostBattleAbAttrs(attrType: Constructor<PostBattleAbAttr>,
   pokemon: Pokemon, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostBattleAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostBattle(pokemon, passive, args), args);
 }
