@@ -9,6 +9,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "poisonHeal": "{{abilityName}} de {{pokemonName}}\nrestaure un peu ses PV !",
   "trace": "{{pokemonName}} copie le talent {{abilityName}}\nde {{targetName}} !",
   "windPowerCharged": "{{pokemonName}} a été touché par la capacité {{moveName}} et se charge en électricité !",
+  "illusionBreak": "L’illusion de {{pokemonName}} se brise !",
   "quickDraw": "Tir Vif permet à {{pokemonName}}\nd’agir plus vite que d’habitude !",
   "blockItemTheft": "{{abilityName}} de {{pokemonNameWithAffix}}\nempêche son objet d’être volé !",
   "typeImmunityHeal": "{{abilityName}} de {{pokemonNameWithAffix}}\nrestaure un peu ses PV !",

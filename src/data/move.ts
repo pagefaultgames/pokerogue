@@ -5486,10 +5486,12 @@ export class AbilityChangeAttr extends MoveEffectAttr {
       return false;
     }
 
-    (this.selfTarget ? user : target).summonData.ability = this.ability;
-
-    user.scene.queueMessage(i18next.t("moveTriggers:acquiredAbility", {pokemonName: getPokemonNameWithAffix((this.selfTarget ? user : target)), abilityName: allAbilities[this.ability].name}));
-
+    const pokemon: Pokemon = this.selfTarget ? user : target;
+    pokemon.summonData.ability = this.ability;
+    if (pokemon.breakIllusion()) {
+      pokemon.scene.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix(pokemon) }));
+    }
+    user.scene.queueMessage(i18next.t("moveTriggers:acquiredAbility", {pokemonName: getPokemonNameWithAffix(pokemon), abilityName: allAbilities[this.ability].name}));
     return true;
   }
 
@@ -5641,7 +5643,8 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
 export class TransformAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      if (!super.apply(user, target, move, args)) {
+      if (!super.apply(user, target, move, args) || target.illusion.active || user.illusion.active) {
+        user.scene.queueMessage(i18next.t("battle:attackFailed"));
         return resolve(false);
       }
 

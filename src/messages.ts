@@ -18,23 +18,23 @@ export function getPokemonMessage(pokemon: Pokemon, content: string): string {
  * @param pokemon {@linkcode Pokemon} name and battle context will be retrieved from this instance
  * @returns {string} ex: "Wild Gengar", "Ectoplasma sauvage"
  */
-export function getPokemonNameWithAffix(pokemon: Pokemon): string {
+export function getPokemonNameWithAffix(pokemon: Pokemon, useIllusion: boolean = true): string {
   switch (pokemon.scene.currentBattle.battleSpec) {
   case BattleSpec.DEFAULT:
     return !pokemon.isPlayer()
       ? pokemon.hasTrainer()
         ? i18next.t("battle:foePokemonWithAffix", {
-          pokemonName: pokemon.getNameToRender(),
+          pokemonName: pokemon.getNameToRender(useIllusion),
         })
         : i18next.t("battle:wildPokemonWithAffix", {
-          pokemonName: pokemon.getNameToRender(),
+          pokemonName: pokemon.getNameToRender(useIllusion),
         })
-      : pokemon.getNameToRender();
+      : pokemon.getNameToRender(useIllusion);
   case BattleSpec.FINAL_BOSS:
     return !pokemon.isPlayer()
-      ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.getNameToRender() })
-      : pokemon.getNameToRender();
+      ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.getNameToRender(useIllusion) })
+      : pokemon.getNameToRender(useIllusion);
   default:
-    return pokemon.getNameToRender();
+    return pokemon.getNameToRender(useIllusion);
   }
 }
