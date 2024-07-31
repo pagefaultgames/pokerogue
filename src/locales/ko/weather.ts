@@ -15,12 +15,12 @@ export const weather: SimpleTranslationEntries = {
   "sandstormStartMessage": "모래바람이 불기 시작했다!",
   "sandstormLapseMessage": "모래바람이 세차게 분다",
   "sandstormClearMessage": "모래바람이 가라앉았다!",
-  "sandstormDamageMessage": "모래바람이\n{{pokemonPrefix}}{{pokemonName}}[[를]] 덮쳤다!",
+  "sandstormDamageMessage": "모래바람이\n{{pokemonNameWithAffix}}[[를]] 덮쳤다!",
 
   "hailStartMessage": "싸라기눈이 내리기 시작했다!",
   "hailLapseMessage": "싸라기눈이 계속 내리고 있다",
   "hailClearMessage": "싸라기눈이 그쳤다!",
-  "hailDamageMessage": "싸라기눈이\n{{pokemonPrefix}}{{pokemonName}}[[를]] 덮쳤다!",
+  "hailDamageMessage": "싸라기눈이\n{{pokemonNameWithAffix}}[[를]] 덮쳤다!",
 
   "snowStartMessage": "눈이 내리기 시작했다!",
   "snowLapseMessage": "눈이 계속 내리고 있다",

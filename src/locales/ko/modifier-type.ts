@@ -93,11 +93,15 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "기술의 명중률이 {{accuracyAmount}} 증가 (최대 100)",
     },
     "PokemonMultiHitModifierType": {
-      description: "공격이 가진 갯수에 따라 60/75/82.5%의 위력으로 한번 더 명중",
+      description: "지닌 개수(최대 3개)마다 추가 공격을 하는 대신, 공격력이 60%(1개)/75%(2개)/82.5%(3개)만큼 감소합니다.",
     },
     "TmModifierType": {
       name: "No.{{moveId}} {{moveName}}",
       description: "포켓몬에게 {{moveName}}[[를]] 가르침",
+    },
+    "TmModifierTypeWithInfo": {
+      name: "No.{{moveId}} {{moveName}}",
+      description: "포켓몬에게 {{moveName}}를(을) 가르침\n(C 또는 Shift를 꾹 눌러 정보 확인)",
     },
     "EvolutionItemModifierType": {
       description: "어느 특정 포켓몬을 진화",
@@ -230,10 +234,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_HEAL": { name: "회복 토큰", description: "매 턴 최대 체력의 2%를 회복" },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "독 토큰" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "마비 토큰" },
-    "ENEMY_ATTACK_SLEEP_CHANCE": { name: "잠듦 토큰" },
-    "ENEMY_ATTACK_FREEZE_CHANCE": { name: "얼음 토큰" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "화상 토큰" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "만병통치 토큰", description: "매 턴 상태이상에서 회복될 확률 10% 추가" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "만병통치 토큰", description: "매 턴 상태이상에서 회복될 확률 2.5% 추가" },
     "ENEMY_ENDURE_CHANCE": { name: "버티기 토큰" },
     "ENEMY_FUSED_CHANCE": { name: "합체 토큰", description: "야생 포켓몬이 합체할 확률 1% 추가" },
   },
@@ -365,7 +367,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "단단한운석",
     "SMOOTH_METEORITE": "부드러운운석",
     "ADAMANT_CRYSTAL": "큰금강옥",
-    "LUSTROUS_ORB": "큰백옥",
+    "LUSTROUS_GLOBE": "큰백옥",
     "GRISEOUS_CORE": "큰백금옥",
     "REVEAL_GLASS": "비추는거울",
     "GRACIDEA": "그라시데아꽃",

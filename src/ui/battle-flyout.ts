@@ -4,7 +4,9 @@ import * as Utils from "../utils";
 import BattleScene from "#app/battle-scene.js";
 import { UiTheme } from "#app/enums/ui-theme.js";
 import Move from "#app/data/move.js";
-import { BattleSceneEventType, MoveUsedEvent } from "#app/battle-scene-events.js";
+import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "#app/battle-scene-events.js";
+import { BerryType } from "#app/data/enums/berry-type.js";
+import { Moves } from "#app/data/enums/moves.js";
 
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {
@@ -53,7 +55,9 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   /** The array of {@linkcode MoveInfo} used to track moves for the {@linkcode Pokemon} linked to the flyout */
   private moveInfo: MoveInfo[] = new Array();
 
-  private readonly onMoveUsed = (event) => this.updateInfo(event);
+  // Stores callbacks in a variable so they can be unsubscribed from when destroyed
+  private readonly onMoveUsedEvent = (event: Event) => this.onMoveUsed(event);
+  private readonly onBerryUsedEvent = (event: Event) => this.onBerryUsed(event);
 
   constructor(scene: Phaser.Scene, player: boolean) {
     super(scene, 0, 0);
@@ -109,11 +113,12 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.name = `Flyout ${this.pokemon.name}`;
     this.flyoutParent.name = `Flyout Parent ${this.pokemon.name}`;
 
-    this.battleScene.eventTarget.addEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsed);
+    this.battleScene.eventTarget.addEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
+    this.battleScene.eventTarget.addEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
   }
 
   /** Sets and formats the text property for all {@linkcode Phaser.GameObjects.Text} in the flyoutText array */
-  setText() {
+  private setText() {
     for (let i = 0; i < this.flyoutText.length; i++) {
       const flyoutText = this.flyoutText[i];
       const moveInfo = this.moveInfo[i];
@@ -122,24 +127,43 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
         continue;
       }
 
-      const currentPp = Math.max(moveInfo.maxPp - moveInfo.ppUsed, 0);
+      const currentPp = moveInfo.maxPp - moveInfo.ppUsed;
       flyoutText.text = `${moveInfo.move.name}  ${currentPp}/${moveInfo.maxPp}`;
     }
   }
 
   /** Updates all of the {@linkcode MoveInfo} objects in the moveInfo array */
-  updateInfo(event: Event) {
+  private onMoveUsed(event: Event) {
     const moveUsedEvent = event as MoveUsedEvent;
-    if (!moveUsedEvent || moveUsedEvent.userId !== this.pokemon?.id) {
+    if (!moveUsedEvent
+      || moveUsedEvent.pokemonId !== this.pokemon?.id
+      || moveUsedEvent.move.id === Moves.STRUGGLE) { // Ignore Struggle
       return;
     }
 
     const foundInfo = this.moveInfo.find(x => x?.move.id === moveUsedEvent.move.id);
     if (foundInfo) {
-      foundInfo.ppUsed += moveUsedEvent.ppUsed;
+      foundInfo.ppUsed = Math.min(foundInfo.ppUsed + moveUsedEvent.ppUsed, foundInfo.maxPp);
     } else {
       this.moveInfo.push({move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed});
     }
+
+    this.setText();
+  }
+
+  private onBerryUsed(event: Event) {
+    const berryUsedEvent = event as BerryUsedEvent;
+    if (!berryUsedEvent
+      || berryUsedEvent.berryModifier.pokemonId !== this.pokemon?.id
+      || berryUsedEvent.berryModifier.berryType !== BerryType.LEPPA) { // We only care about Leppa berries
+      return;
+    }
+
+    const foundInfo = this.moveInfo.find(info => info.ppUsed === info.maxPp);
+    if (!foundInfo) { // This will only happen on a de-sync of PP tracking
+      return;
+    }
+    foundInfo.ppUsed = Math.max(foundInfo.ppUsed - 10, 0);
 
     this.setText();
   }
@@ -156,8 +180,9 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   }
 
   destroy(fromScene?: boolean): void {
-    this.battleScene.eventTarget.removeEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsed);
+    this.battleScene.eventTarget.removeEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
+    this.battleScene.eventTarget.removeEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
 
-    super.destroy();
+    super.destroy(fromScene);
   }
 }

@@ -5,6 +5,7 @@ import { battle } from "./battle";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { berry } from "./berry";
 import { biome } from "./biome";
+import { challenges } from "./challenges";
 import { commandUiHandler } from "./command-ui-handler";
 import {
   PGFbattleSpecDialogue,
@@ -35,6 +36,7 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { weather } from "./weather";
+import { partyUiHandler } from "./party-ui-handler";
 
 export const frConfig = {
   ability: ability,
@@ -44,6 +46,7 @@ export const frConfig = {
   battleMessageUiHandler: battleMessageUiHandler,
   berry: berry,
   biome: biome,
+  challenges: challenges,
   commandUiHandler: commandUiHandler,
   PGMdialogue: PGMdialogue,
   PGFdialogue: PGFdialogue,
@@ -73,5 +76,6 @@ export const frConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather
+  weather: weather,
+  partyUiHandler: partyUiHandler
 };

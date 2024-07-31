@@ -46,7 +46,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "PokemonNatureChangeModifierType": {
       name: "Hortelã {{natureName}}",
-      description: "Muda a natureza de um Pokémon para {{natureName}} e a desbloqueia permanentemente para seu inicial",
+      description: "Muda a natureza do Pokémon para {{natureName}} e a desbloqueia permanentemente",
     },
     "DoubleBattleChanceBoosterModifierType": {
       description: "Dobra as chances de encontrar uma batalha em dupla por {{battleCount}} batalhas",
@@ -99,6 +99,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "TM{{moveId}} - {{moveName}}",
       description: "Ensina {{moveName}} a um Pokémon",
     },
+    "TmModifierTypeWithInfo": {
+      name: "TM{{moveId}} - {{moveName}}",
+      description: "Ensina {{moveName}} a um Pokémon\n(Segure C ou Shift para mais informações)",
+    },
     "EvolutionItemModifierType": {
       description: "Faz certos Pokémon evoluírem",
     },
@@ -109,8 +113,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Combina dois Pokémon (transfere Habilidade, divide os atributos base e tipos, compartilha os movimentos)",
     },
     "TerastallizeModifierType": {
-      name: "{{teraType}} Fragmento Tera",
-      description: "{{teraType}} Terastalize um Pokémon por até 10 batalhas",
+      name: "Fragmento Tera {{teraType}}",
+      description: "Terastalize um Pokémon para o tipo {{teraType}} por 10 ondas",
     },
     "ContactHeldItemTransferChanceModifierType": {
       description: "Quando atacar, tem {{chancePercent}}% de chance de roubar um item do oponente",
@@ -230,10 +234,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_HEAL": { name: "Token de Recuperação", description: "Cura 2% dos PS máximos a cada turno" },
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Token de Veneno" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Token de Paralisia" },
-    "ENEMY_ATTACK_SLEEP_CHANCE": { name: "Token de Sono" },
-    "ENEMY_ATTACK_FREEZE_CHANCE": { name: "Token de Congelamento" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "Token de Queimadura" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Token de Cura Total", description: "Adiciona uma chance de 10% a cada turno de curar uma condição de status" },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Token de Cura Total", description: "Adiciona uma chance de 2.5% a cada turno de curar uma condição de status" },
     "ENEMY_ENDURE_CHANCE": { name: "Token de Persistência" },
     "ENEMY_FUSED_CHANCE": { name: "Token de Fusão", description: "Adiciona uma chance de 1% de que um Pokémon selvagem seja uma fusão" },
   },
@@ -365,7 +367,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "HARD_METEORITE": "Meteorito Duro",
     "SMOOTH_METEORITE": " Meteorito Liso",
     "ADAMANT_CRYSTAL": "Cristal Adamante",
-    "LUSTROUS_ORB": "Orbe Pérola",
+    "LUSTROUS_GLOBE": "Globo Brilhante",
     "GRISEOUS_CORE": "Núcleo Platinado",
     "REVEAL_GLASS": "Espelho da Verdade",
     "GRACIDEA": "Gracídea",

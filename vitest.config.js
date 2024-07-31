@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
 			},
 			threads: false,
 			trace: true,
+			restoreMocks: true,
 			environmentOptions: {
 				jsdom: {
 					resources: 'usable',

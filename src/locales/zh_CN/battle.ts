@@ -56,6 +56,9 @@ export const battle: SimpleTranslationEntries = {
   "skipItemQuestion": "你确定要跳过拾取道具吗？",
   "eggHatching": "咦？",
   "ivScannerUseQuestion": "对 {{pokemonName}} 使用个体值扫描仪？",
+  "wildPokemonWithAffix": "Wild {{pokemonName}}",
+  "foePokemonWithAffix": "Foe {{pokemonName}}",
+  "useMove": "{{pokemonNameWithAffix}} used {{moveName}}!",
   "drainMessage": "{{pokemonName}} had its\nenergy drained!",
   "regainHealth": "{{pokemonName}} regained\nhealth!"
 } as const;

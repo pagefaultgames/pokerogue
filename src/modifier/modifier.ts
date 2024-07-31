@@ -12,7 +12,8 @@ import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } fr
 import { getPokemonMessage } from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
-import { BerryType, getBerryEffectFunc, getBerryPredicate } from "../data/berry";
+import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
+import { BerryType } from "../data/enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
 import { VoucherType } from "../system/voucher";
@@ -21,16 +22,32 @@ import { Nature } from "#app/data/nature";
 import { BattlerTagType } from "#app/data/enums/battler-tag-type";
 import * as Overrides from "../overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
+import { Command } from "#app/ui/command-ui-handler.js";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
 const iconOverflowIndex = 24;
 
 export const modifierSortFunc = (a: Modifier, b: Modifier) => {
+  const itemNameMatch = a.type.name.localeCompare(b.type.name);
+  const typeNameMatch = a.constructor.name.localeCompare(b.constructor.name);
   const aId = a instanceof PokemonHeldItemModifier ? a.pokemonId : 4294967295;
   const bId = b instanceof PokemonHeldItemModifier ? b.pokemonId : 4294967295;
 
-  return aId < bId ? 1 : aId > bId ? -1 : 0;
+  //First sort by pokemonID
+  if (aId < bId) {
+    return 1;
+  } else if (aId>bId) {
+    return -1;
+  } else if (aId === bId) {
+    //Then sort by item type
+    if (typeNameMatch === 0) {
+      return itemNameMatch;
+      //Finally sort by item name
+    } else {
+      return typeNameMatch;
+    }
+  }
 };
 
 export class ModifierBar extends Phaser.GameObjects.Container {
@@ -48,18 +65,19 @@ export class ModifierBar extends Phaser.GameObjects.Container {
     this.removeAll(true);
 
     const visibleIconModifiers = modifiers.filter(m => m.isIconVisible(this.scene as BattleScene));
-
-    visibleIconModifiers.sort(modifierSortFunc);
+    const nonPokemonSpecificModifiers = visibleIconModifiers.filter(m => !(m as PokemonHeldItemModifier).pokemonId).sort(modifierSortFunc);
+    const pokemonSpecificModifiers = visibleIconModifiers.filter(m => (m as PokemonHeldItemModifier).pokemonId).sort(modifierSortFunc);
+    const sortedVisibleIconModifiers = nonPokemonSpecificModifiers.concat(pokemonSpecificModifiers);
 
     const thisArg = this;
 
-    visibleIconModifiers.forEach((modifier: PersistentModifier, i: integer) => {
+    sortedVisibleIconModifiers.forEach((modifier: PersistentModifier, i: integer) => {
       const icon = modifier.getIcon(this.scene as BattleScene);
       if (i >= iconOverflowIndex) {
         icon.setVisible(false);
       }
       this.add(icon);
-      this.setModifierIconPosition(icon, visibleIconModifiers.length);
+      this.setModifierIconPosition(icon, sortedVisibleIconModifiers.length);
       icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 24), Phaser.Geom.Rectangle.Contains);
       icon.on("pointerover", () => {
         (this.scene as BattleScene).ui.showTooltip(modifier.type.name, modifier.type.getDescription(this.scene as BattleScene));
@@ -775,6 +793,12 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
 
     if (!bypassSpeed.value && pokemon.randSeedInt(10) < this.getStackCount()) {
       bypassSpeed.value = true;
+      const isCommandFight = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command === Command.FIGHT;
+      const hasQuickClaw = this.type instanceof ModifierTypes.PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW";
+
+      if (isCommandFight && hasQuickClaw) {
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, " used its Quick Claw to move faster!"));
+      }
       return true;
     }
 
@@ -1122,13 +1146,11 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
         restorePoints = Math.floor(restorePoints * (args[1] as number));
       }
       if (this.fainted || this.healStatus) {
-        pokemon.resetStatus();
+        pokemon.resetStatus(true, true);
       }
       pokemon.hp = Math.min(pokemon.hp + Math.max(Math.ceil(Math.max(Math.floor((this.restorePercent * 0.01) * pokemon.getMaxHp()), restorePoints)), 1), pokemon.getMaxHp());
-
       return true;
     }
-
     return false;
   }
 }
@@ -1140,8 +1162,7 @@ export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    pokemon.resetStatus();
-
+    pokemon.resetStatus(true, true);
     return true;
   }
 }
@@ -2140,7 +2161,7 @@ export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
 }
 
 export class EnemyTurnHealModifier extends EnemyPersistentModifier {
-  private healPercent: number;
+  public healPercent: number;
 
   constructor(type: ModifierType, healPercent: number, stackCount?: integer) {
     super(type, stackCount);
@@ -2175,23 +2196,24 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
   }
 
   getMaxStackCount(scene: BattleScene): integer {
-    return 15;
+    return 10;
   }
 }
 
 export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifier {
   public effect: StatusEffect;
-  private chance: number;
+  public chance: number;
 
   constructor(type: ModifierType, effect: StatusEffect, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
     this.effect = effect;
-    this.chance = (chancePercent || 10) / 100;
+    //Hardcode temporarily
+    this.chance = .025 * ((this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON) ? 2 : 1);
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyAttackStatusEffectChanceModifier && modifier.effect === this.effect && modifier.chance === this.chance;
+    return modifier instanceof EnemyAttackStatusEffectChanceModifier && modifier.effect === this.effect;
   }
 
   clone(): EnemyAttackStatusEffectChanceModifier {
@@ -2210,19 +2232,24 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
 
     return false;
   }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 10;
+  }
 }
 
 export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier {
-  private chance: number;
+  public chance: number;
 
   constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.chance = (chancePercent || 10) / 100;
+    //Hardcode temporarily
+    this.chance = .025;
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyStatusEffectHealChanceModifier && modifier.chance === this.chance;
+    return modifier instanceof EnemyStatusEffectHealChanceModifier;
   }
 
   clone(): EnemyStatusEffectHealChanceModifier {
@@ -2244,19 +2271,24 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
 
     return false;
   }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 10;
+  }
 }
 
 export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
-  private chance: number;
+  public chance: number;
 
-  constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
-    super(type, stackCount);
+  constructor(type: ModifierType, chancePercent?: number, stackCount?: integer) {
+    super(type, stackCount || 10);
 
-    this.chance = (chancePercent || 2.5) / 100;
+    //Hardcode temporarily
+    this.chance = .02;
   }
 
   match(modifier: Modifier) {
-    return modifier instanceof EnemyEndureChanceModifier && modifier.chance === this.chance;
+    return modifier instanceof EnemyEndureChanceModifier;
   }
 
   clone() {

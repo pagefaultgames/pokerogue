@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const tutorial: SimpleTranslationEntries = {
-  "intro": `欢迎来到PokéRogue！这是一款以战斗为核心的融合了roguelite元素的宝可梦同人游戏。
+  "intro": `欢迎来到PokéRogue！这是一款以战斗为核心的\n融合了roguelite元素的宝可梦同人游戏。
     $本游戏未进行商业化，我们没有\nPokémon或Pokémon使用的版
     $权资产的所有权。
     $游戏仍在开发中，但已可完整游玩。如需报\n告错误，请通过 Discord 社区。

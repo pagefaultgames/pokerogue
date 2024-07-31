@@ -35,7 +35,7 @@ export default class FightUiHandler extends UiHandler {
     this.movesContainer = this.scene.add.container(18, -38.7);
     ui.add(this.movesContainer);
 
-    this.typeIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 57, -36,`types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}` , "unknown");
+    this.typeIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 57, -36,`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}` , "unknown");
     this.typeIcon.setVisible(false);
     ui.add(this.typeIcon);
 
@@ -168,7 +168,7 @@ export default class FightUiHandler extends UiHandler {
 
     if (hasMove) {
       const pokemonMove = moveset[cursor];
-      this.typeIcon.setTexture(`types${Utils.verifyLang(i18next.language) ? `_${i18next.language}` : ""}`, Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
+      this.typeIcon.setTexture(`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
       this.moveCategoryIcon.setTexture("categories", MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
 
       const power = pokemonMove.getMove().power;

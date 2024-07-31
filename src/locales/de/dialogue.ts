@@ -369,14 +369,26 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "firebreather": {
     "encounter": {
-      1: "My flames shall devour you!",
-      2: "My soul is on fire. I'll show you how hot it burns!",
-      3: "Step right up and take a look!"
+      1: "Meine Flammen werden dich verschlingen!",
+      2: "Meine Seele hat Feuer gefangen. Ich werde dir zeigen, wie heiß sie brennt!",
+      3: "Komm näher und sieh dir meine Flammen an!"
     },
     "victory": {
-      1: "I burned down to ashes...",
-      2: "Yow! That's hot!",
-      3: "Ow! I scorched the tip of my nose!"
+      1: "Verbrannt bis zur Asche...",
+      2: "Yow! Das ist heiß!",
+      3: "Auuu! Ich habe mir die Nasenspitze verbrannt!"
+    },
+  },
+  "sailor": {
+    "encounter": {
+      1: "Matrose, du gehst über Bord, wenn du verlierst!",
+      2: "Komm schon! Mein Stolz als Seemann steht auf dem Spiel!",
+      3: "Ahoj! Bist du seekrank?"
+    },
+    "victory": {
+      1: "Argh! Von einem Kind besiegt!",
+      2: "Dein Geist hat mich versenkt!",
+      3: "Ich glaube, ich bin der der seekrank ist..."
     },
   },
   "brock": {

@@ -48,7 +48,7 @@ export interface InterfaceConfig {
     custom?: MappingLayout;
 }
 
-const repeatInputDelayMillis = 250;
+const repeatInputDelayMillis = 500;
 
 // Phaser.Input.Gamepad.GamepadPlugin#refreshPads
 declare module "phaser" {
@@ -88,14 +88,12 @@ declare module "phaser" {
  * providing a unified interface for all input-related interactions.
  */
 export class InputsController {
-  private buttonKeys: Phaser.Input.Keyboard.Key[][];
   private gamepads: Array<Phaser.Input.Gamepad.Gamepad> = new Array();
   private scene: BattleScene;
   public events: Phaser.Events.EventEmitter;
 
   private buttonLock: Button;
   private interactions: Map<Button, Map<string, boolean>> = new Map();
-  private time: Phaser.Time.Clock;
   private configs: Map<string, InterfaceConfig> = new Map();
 
   public gamepadSupport: boolean = true;
@@ -122,8 +120,6 @@ export class InputsController {
 
   constructor(scene: BattleScene) {
     this.scene = scene;
-    this.time = this.scene.time;
-    this.buttonKeys = [];
     this.selectedDevice = {
       [Device.GAMEPAD]: null,
       [Device.KEYBOARD]: "default"
@@ -248,6 +244,9 @@ export class InputsController {
      * If an interaction is valid and should be processed, it emits an 'input_down' event with details of the interaction.
      */
   update(): void {
+    if (this.pauseUpdate) {
+      return;
+    }
     for (const b of Utils.getEnumValues(Button).reverse()) {
       if (
         this.interactions.hasOwnProperty(b) &&
@@ -258,8 +257,7 @@ export class InputsController {
         if (
           (!this.gamepadSupport && this.interactions[b].source === "gamepad") ||
                     (this.interactions[b].source === "gamepad" && this.interactions[b].sourceName && this.interactions[b].sourceName !== this.selectedDevice[Device.GAMEPAD]) ||
-                    (this.interactions[b].source === "keyboard" && this.interactions[b].sourceName && this.interactions[b].sourceName !== this.selectedDevice[Device.KEYBOARD]) ||
-                    this.pauseUpdate
+                    (this.interactions[b].source === "keyboard" && this.interactions[b].sourceName && this.interactions[b].sourceName !== this.selectedDevice[Device.KEYBOARD])
         ) {
           // Deletes the last interaction for a button if gamepad is disabled.
           this.delLastProcessedMovementTime(b as Button);
@@ -550,7 +548,8 @@ export class InputsController {
     if (!this.isButtonLocked(button)) {
       return false;
     }
-    if (this.time.now - this.interactions[button].pressTime >= repeatInputDelayMillis) {
+    const duration = Date.now() - this.interactions[button].pressTime;
+    if (duration >= repeatInputDelayMillis) {
       return true;
     }
   }
@@ -575,7 +574,7 @@ export class InputsController {
       return;
     }
     this.setButtonLock(button);
-    this.interactions[button].pressTime = this.time.now;
+    this.interactions[button].pressTime = Date.now();
     this.interactions[button].isPressed = true;
     this.interactions[button].source = source;
     this.interactions[button].sourceName = sourceName.toLowerCase();
@@ -635,7 +634,7 @@ export class InputsController {
         this.interactions[b].sourceName = null;
       }
     }
-    setTimeout(() => this.pauseUpdate = false, 500);
+    this.pauseUpdate = false;
   }
 
   /**

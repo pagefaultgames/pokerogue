@@ -101,6 +101,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "smasher": "테니스선수",
   "snow_worker": "작업원",
   "snow_worker_female": "작업원",
+  "sailor": "선원",
   "striker": "축구선수",
   "school_kid": "학원끝난 아이",
   "school_kid_female": "학원끝난 아이",

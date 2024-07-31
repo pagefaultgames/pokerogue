@@ -435,6 +435,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.SAILOR]: [
+    {
+      encounter: [
+        "dialogue:sailor.encounter.1",
+        "dialogue:sailor.encounter.2",
+        "dialogue:sailor.encounter.3",
+      ],
+      victory: [
+        "dialogue:sailor.victory.1",
+        "dialogue:sailor.victory.2",
+        "dialogue:sailor.victory.3",
+      ]
+    }
+  ],
   [TrainerType.BROCK]: {
     encounter: [
       "dialogue:brock.encounter.1",
