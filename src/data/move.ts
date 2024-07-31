@@ -1923,7 +1923,8 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
     if (target.status) {
       return false;
     }
-    if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) { // No idea what's going on here
+    //@ts-ignore - how can target.status.effect be checked when we return `false` before when it's defined?
+    if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) { // TODO: resolve ts-ignore
       const statusAfflictResult = target.trySetStatus(statusToApply, true, user);
       if (statusAfflictResult) {
         if (user.status) {
@@ -2772,7 +2773,7 @@ export class HpSplitAttr extends MoveEffectAttr {
         return resolve(false);
       }
 
-      const infoUpdates = [];
+      const infoUpdates: Promise<void>[] = [];
 
       const hpValue = Math.floor((target.hp + user.hp) / 2);
       if (user.hp < hpValue) {
@@ -2918,7 +2919,7 @@ export class BeatUpAttr extends VariablePowerAttr {
 }
 
 const doublePowerChanceMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
-  let message: string | null = null;
+  let message: string = "";
   user.scene.executeWithSeedOffset(() => {
     const rand = Utils.randSeedInt(100);
     if (rand < move.chance) {
@@ -4159,7 +4160,7 @@ export class DisableMoveAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move): boolean | void => { // TODO: Not sure what to do here
+    return (user, target, move): boolean => { // TODO: Not sure what to do here
       if (target.summonData.disabledMove || target.isMax()) {
         return false;
       }
@@ -4179,6 +4180,8 @@ export class DisableMoveAttr extends MoveEffectAttr {
 
         return true;
       }
+
+      return false;
     };
   }
 
@@ -6800,7 +6803,7 @@ export function initMoves() {
       .unimplemented(),
     new SelfStatusMove(Moves.REFRESH, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN)
-      .condition((user, target, move) => user.status && (user.status.effect === StatusEffect.PARALYSIS || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.BURN)),
+      .condition((user, target, move) => !!user.status && (user.status.effect === StatusEffect.PARALYSIS || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.BURN)),
     new SelfStatusMove(Moves.GRUDGE, Type.GHOST, -1, 5, -1, 0, 3)
       .unimplemented(),
     new SelfStatusMove(Moves.SNATCH, Type.DARK, -1, 10, -1, 4, 3)
@@ -7044,7 +7047,7 @@ export function initMoves() {
         if (user.status?.effect && isNonVolatileStatusEffect(user.status.effect)) {
           statusToApply = user.status.effect;
         }
-        return statusToApply && target.canSetStatus(statusToApply, false, false, user);
+        return !!statusToApply && target.canSetStatus(statusToApply, false, false, user);
       }
       ),
     new AttackMove(Moves.TRUMP_CARD, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
