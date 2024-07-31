@@ -24,6 +24,7 @@ import BattleScene from "#app/battle-scene.js";
 import {MoveAnim} from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
 import * as battleScene from "#app/battle-scene";
+import MockImage from "#app/test/utils/mocks/mocksContainer/mockImage.js";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -35,6 +36,7 @@ Object.defineProperty(window, "console", {
 
 InputText.prototype.setElement = () => null;
 InputText.prototype.resize = () => null;
+Phaser.GameObjects.Image = MockImage;
 window.URL.createObjectURL = (blob: Blob) => {
   blobToString(blob).then((data: string) => {
     localStorage.setItem("toExport", data);
@@ -86,7 +88,6 @@ export default class GameWrapper {
       frames: {},
     });
     Pokemon.prototype.enableMask = () => null;
-    localStorage.clear();
   }
 
   setScene(scene: BattleScene) {
@@ -121,7 +122,7 @@ export default class GameWrapper {
       pause: () => null,
       setRate: () => null,
       add: () => this.scene.sound,
-      get: () => this.scene.sound,
+      get: () => ({...this.scene.sound, totalDuration: 0}),
       getAllPlaying: () => [],
       manager: {
         game: this.game,
@@ -131,6 +132,13 @@ export default class GameWrapper {
       on: (evt, callback) => callback(),
       key: "",
     };
+
+    this.scene.cameras = {
+      main: {
+        setPostPipeline: () => null,
+        removePostPipeline: () => null,
+      },
+    }
 
     this.scene.tweens = {
       add: (data) => {

@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const pokemon: SimpleTranslationEntries = {
   "bulbasaur": "妙蛙種子",
@@ -987,7 +987,7 @@ export const pokemon: SimpleTranslationEntries = {
   "great_tusk": "雄偉牙",
   "scream_tail": "吼叫尾",
   "brute_bonnet": "猛惡菇",
-  "flutter_mane": "振翼發",
+  "flutter_mane": "振翼髮",
   "slither_wing": "爬地翅",
   "sandy_shocks": "沙鐵皮",
   "iron_treads": "鐵轍跡",

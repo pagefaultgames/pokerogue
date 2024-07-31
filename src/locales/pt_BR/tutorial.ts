@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const tutorial: SimpleTranslationEntries = {
   "intro": `Bem-vindo ao PokéRogue! Este é um jogo Pokémon feito por fãs focado em batalhas com elementos roguelite.

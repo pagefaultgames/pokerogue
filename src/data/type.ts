@@ -501,6 +501,101 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
   }
 }
 
+/**
+ * Retrieve the types resisting a given type
+ * @returns An array populated with Types, or an empty array if no resistances exist (Unknown or Stellar type)
+ */
+export function getTypeResistances(type: integer): Type[] {
+  switch (type) {
+  case Type.NORMAL:
+    return [Type.ROCK, Type.STEEL, Type.GHOST];
+  case Type.FIGHTING:
+    return [Type.FLYING, Type.POISON, Type.BUG, Type.PSYCHIC, Type.FAIRY, Type.GHOST];
+  case Type.FLYING:
+    return [Type.ROCK, Type.ELECTRIC, Type.STEEL];
+  case Type.POISON:
+    return [Type.POISON, Type.GROUND, Type.ROCK, Type.GHOST, Type.STEEL];
+  case Type.GROUND:
+    return [Type.BUG, Type.GRASS, Type.FLYING];
+  case Type.ROCK:
+    return [Type.FIGHTING, Type.GROUND, Type.STEEL];
+  case Type.BUG:
+    return [Type.FIGHTING, Type.FLYING, Type.POISON, Type.GHOST, Type.STEEL, Type.FIRE, Type.FAIRY];
+  case Type.GHOST:
+    return [Type.DARK, Type.NORMAL];
+  case Type.STEEL:
+    return [Type.STEEL, Type.FIRE, Type.WATER, Type.ELECTRIC];
+  case Type.FIRE:
+    return [Type.ROCK, Type.FIRE, Type.WATER, Type.DRAGON];
+  case Type.WATER:
+    return [Type.WATER, Type.GRASS, Type.DRAGON];
+  case Type.GRASS:
+    return [Type.FLYING, Type.POISON, Type.BUG, Type.STEEL, Type.FIRE, Type.GRASS, Type.DRAGON];
+  case Type.ELECTRIC:
+    return [Type.GRASS, Type.ELECTRIC, Type.DRAGON, Type.GROUND];
+  case Type.PSYCHIC:
+    return [Type.STEEL, Type.PSYCHIC];
+  case Type.ICE:
+    return [Type.STEEL, Type.FIRE, Type.WATER, Type.ICE];
+  case Type.DRAGON:
+    return [Type.STEEL, Type.FAIRY];
+  case Type.DARK:
+    return [Type.FIGHTING, Type.DARK, Type.FAIRY];
+  case Type.FAIRY:
+    return [Type.POISON, Type.STEEL, Type.FIRE];
+  case Type.UNKNOWN:
+  case Type.STELLAR:
+  default:
+    return [];
+  }
+}
+
+/**
+ * Retrieve the color corresponding to a specific damage multiplier
+ * @returns A color or undefined if the default color should be used
+ */
+export function getTypeDamageMultiplierColor(multiplier: TypeDamageMultiplier, side: "defense" | "offense"): string | undefined {
+  if (side === "offense") {
+    switch (multiplier) {
+    case 0:
+      return "#929292";
+    case 0.125:
+      return "#FF5500";
+    case 0.25:
+      return "#FF7400";
+    case 0.5:
+      return "#FE8E00";
+    case 1:
+      return undefined;
+    case 2:
+      return "#4AA500";
+    case 4:
+      return "#4BB400";
+    case 8:
+      return "#52C200";
+    }
+  } else if (side === "defense") {
+    switch (multiplier) {
+    case 0:
+      return "#B1B100";
+    case 0.125:
+      return "#2DB4FF";
+    case 0.25:
+      return "#00A4FF";
+    case 0.5:
+      return "#0093FF";
+    case 1:
+      return undefined;
+    case 2:
+      return "#FE8E00";
+    case 4:
+      return "#FF7400";
+    case 8:
+      return "#FF5500";
+    }
+  }
+}
+
 export function getTypeRgb(type: Type): [ integer, integer, integer ] {
   switch (type) {
   case Type.NORMAL:

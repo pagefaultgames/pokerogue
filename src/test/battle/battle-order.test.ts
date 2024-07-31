@@ -1,20 +1,20 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import {Abilities} from "#app/data/enums/abilities";
-import {Species} from "#app/data/enums/species";
+import Overrides from "#app/overrides";
 import {
-  CommandPhase, EnemyCommandPhase,
+  CommandPhase, EnemyCommandPhase, SelectTargetPhase,
   TurnStartPhase
 } from "#app/phases";
 import {Mode} from "#app/ui/ui";
 import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Moves} from "#app/data/enums/moves";
 import {Command} from "#app/ui/command-ui-handler";
 import {Stat} from "#app/data/pokemon-stat";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
-import {Button} from "#app/enums/buttons";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import {Button} from "#enums/buttons";
 
 
 describe("Battle order", () => {
@@ -33,11 +33,11 @@ describe("Battle order", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
+    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
+    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
   });
 
   it("opponent faster than player 50 vs 150", async() => {
@@ -55,7 +55,6 @@ describe("Battle order", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
     await game.phaseInterceptor.run(EnemyCommandPhase);
-    await game.phaseInterceptor.whenAboutToRun(TurnStartPhase);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getOrder();
     expect(order[0]).toBe(2);
@@ -77,7 +76,6 @@ describe("Battle order", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
     await game.phaseInterceptor.run(EnemyCommandPhase);
-    await game.phaseInterceptor.whenAboutToRun(TurnStartPhase);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getOrder();
     expect(order[0]).toBe(0);
@@ -85,8 +83,7 @@ describe("Battle order", () => {
   }, 20000);
 
   it("double - both opponents faster than player 50/50 vs 150/150", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
     await game.startBattle([
       Species.BULBASAUR,
       Species.BLASTOISE,
@@ -118,9 +115,7 @@ describe("Battle order", () => {
       const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
       handler.processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.runFrom(CommandPhase).to(EnemyCommandPhase);
-    await game.phaseInterceptor.run(EnemyCommandPhase);
-    await game.phaseInterceptor.whenAboutToRun(TurnStartPhase);
+    await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getOrder();
     expect(order.indexOf(0)).toBeGreaterThan(order.indexOf(2));
@@ -130,8 +125,7 @@ describe("Battle order", () => {
   }, 20000);
 
   it("double - speed tie except 1 - 100/100 vs 100/150", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
     await game.startBattle([
       Species.BULBASAUR,
       Species.BLASTOISE,
@@ -163,9 +157,7 @@ describe("Battle order", () => {
       const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
       handler.processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.runFrom(CommandPhase).to(EnemyCommandPhase);
-    await game.phaseInterceptor.run(EnemyCommandPhase);
-    await game.phaseInterceptor.whenAboutToRun(TurnStartPhase);
+    await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getOrder();
     expect(order.indexOf(3)).toBeLessThan(order.indexOf(0));
@@ -174,8 +166,7 @@ describe("Battle order", () => {
   }, 20000);
 
   it("double - speed tie 100/150 vs 100/150", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
     await game.startBattle([
       Species.BULBASAUR,
       Species.BLASTOISE,
@@ -207,9 +198,7 @@ describe("Battle order", () => {
       const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
       handler.processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.runFrom(CommandPhase).to(EnemyCommandPhase);
-    await game.phaseInterceptor.run(EnemyCommandPhase);
-    await game.phaseInterceptor.whenAboutToRun(TurnStartPhase);
+    await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getOrder();
     expect(order.indexOf(1)).toBeLessThan(order.indexOf(0));

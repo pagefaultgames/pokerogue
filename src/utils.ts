@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import { MoneyFormat } from "./enums/money-format";
+import { MoneyFormat } from "#enums/money-format";
 
 export const MissingTextureKey = "__MISSING";
 
@@ -288,18 +288,29 @@ export const isLocal = (
 export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port+1}`;
 
 // Set the server URL based on whether it's local or not
-export const serverUrl = isLocal ? localServerUrl : "";
-export const apiUrl = isLocal ? serverUrl : "https://api.pokerogue.net";
+export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
 export let isLocalServerConnected = true;
+
+export const isBeta = import.meta.env.MODE === "beta"; // this checks to see if the env mode is development. Technically this gives the same value for beta AND for dev envs
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
   expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
-  document.cookie = `${cName}=${cValue};SameSite=Strict;path=/;expires=${expiration.toUTCString()}`;
+  document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=${expiration.toUTCString()}`;
+}
+
+export function removeCookie(cName: string): void {
+  document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Max-Age=-1`;
+  document.cookie = `${cName}=;Secure;SameSite=Strict;Path=/;Max-Age=-1`; // legacy cookie without domain, for older cookies to prevent a login loop
 }
 
 export function getCookie(cName: string): string {
+  // check if there are multiple cookies with the same name and delete them
+  if (document.cookie.split(";").filter(c => c.includes(cName)).length > 1) {
+    removeCookie(cName);
+    return "";
+  }
   const name = `${cName}=`;
   const ca = document.cookie.split(";");
   for (let i = 0; i < ca.length; i++) {
@@ -361,6 +372,9 @@ export function apiPost(path: string, data?: any, contentType: string = "applica
   }) : new Promise(() => {});
 }
 
+/** Alias for the constructor of a class */
+export type Constructor<T> = new(...args: unknown[]) => T;
+
 export class BooleanHolder {
   public value: boolean;
 
@@ -391,6 +405,27 @@ export class FixedInt extends IntegerHolder {
 
 export function fixedInt(value: integer): integer {
   return new FixedInt(value) as unknown as integer;
+}
+
+/**
+ * Formats a string to title case
+ * @param unformattedText Text to be formatted
+ * @returns the formatted string
+ */
+export function formatText(unformattedText: string): string {
+  const text = unformattedText.split("_");
+  for (let i = 0; i < text.length; i++) {
+    text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1).toLowerCase();
+  }
+
+  return text.join(" ");
+}
+
+export function toCamelCaseString(unformattedText: string): string {
+  if (!unformattedText) {
+    return "";
+  }
+  return unformattedText.split(/[_ ]/).filter(f => f).map((f, i) => i ? `${f[0].toUpperCase()}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
 }
 
 export function rgbToHsv(r: integer, g: integer, b: integer) {
@@ -447,9 +482,9 @@ export function verifyLang(lang?: string): boolean {
   case "fr":
   case "de":
   case "it":
-  case "zh_CN":
-  case "zh_TW":
-  case "pt_BR":
+  case "zh-CN":
+  case "zh-TW":
+  case "pt-BR":
   case "ko":
     return true;
   default:
@@ -511,4 +546,24 @@ export function reverseValueToKeySetting(input) {
   return capitalizedWords.join("_");
 }
 
+/**
+ * Capitalize a string.
+ *
+ * @param str - The string to be capitalized.
+ * @param sep - The separator between the words of the string.
+ * @param lowerFirstChar - Whether the first character of the string should be lowercase or not.
+ * @param returnWithSpaces - Whether the returned string should have spaces between the words or not.
+ * @returns The capitalized string.
+ */
+export function capitalizeString(str: string, sep: string, lowerFirstChar: boolean = true, returnWithSpaces: boolean = false) {
+  if (str) {
+    const splitedStr = str.toLowerCase().split(sep);
 
+    for (let i = +lowerFirstChar; i < splitedStr?.length; i++) {
+      splitedStr[i] = splitedStr[i].charAt(0).toUpperCase() + splitedStr[i].substring(1);
+    }
+
+    return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
+  }
+  return null;
+}

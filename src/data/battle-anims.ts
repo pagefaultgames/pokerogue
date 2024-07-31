@@ -5,7 +5,7 @@ import Pokemon from "../field/pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 import { Element } from "json-stable-stringify";
-import { Moves } from "./enums/moves";
+import { Moves } from "#enums/moves";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {

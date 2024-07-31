@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/interfaces/locales";
 
 export const move: MoveTranslationEntries = {
   pound: {
@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   bouncyBubble: {
     name: "Bollaslurp",
-    effect: "Chi la usa colpisce il bersaglio con una raffica di bolle, per poi assorbirle e recuperare una quantità di PS pari alla metà del danno inferto.",
+    effect: "Chi la usa colpisce il bersaglio con una raffica di bolle, per poi assorbirle e recuperare una quantità di PS pari alla del danno inferto.",
   },
   buzzyBuzz: {
     name: "Elettrozap",
@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "Cannone Dynamax",
-    effect: "Il Pokémon attacca emettendo dal suo nucleo l'energia concentrata nel corpo.",
+    effect: "Il Pokémon attacca emettendo dal suo nucleo l'energia concentrata nel corpo. Se il bersaglio è overlivellato, i danni inflitti aumentano.",
   },
   snipeShot: {
     name: "Tiromirato",
