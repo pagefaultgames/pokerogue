@@ -89,13 +89,13 @@ export class DropDownOption extends Phaser.GameObjects.Container {
       }
     } else if (type === DropDownType.TRI) {
       if (this.state === DropDownState.OFF) {
-        this.text.setText(this.offStateLabel ?? []);
+        this.text.setText(this.offStateLabel!); // TODO: is this bang correct?
         this.toggle.setTint(this.offColor);
       } else if (this.state === DropDownState.INCLUDE) {
-        this.text.setText(this.includeStateLabel ?? []);
+        this.text.setText(this.includeStateLabel!); // TODO: is this bang correct?
         this.toggle.setTint(this.includeColor);
       } else if (this.state === DropDownState.EXCLUDE) {
-        this.text.setText(this.excludeStateLabel ?? []);
+        this.text.setText(this.excludeStateLabel!); // TODO: is this bang correct?
         this.toggle.setTint(this.excludeColor);
       }
     }

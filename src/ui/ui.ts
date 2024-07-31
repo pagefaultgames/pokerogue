@@ -507,7 +507,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
       const doRevertMode = () => {
         this.getHandler().clear();
-        this.mode = this.modeChain.pop() ?? Mode.MESSAGE;
+        this.mode = this.modeChain.pop()!; // TODO: is this bang correct?
         const touchControls = document.getElementById("touchControls");
         if (touchControls) {
           touchControls.dataset.uiMode = Mode[this.mode];

@@ -41,7 +41,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   protected localStorageKey: string;
 
   constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode ?? Mode.MESSAGE);
+    super(scene, mode!); // TODO: is this bang correct?
 
     this.reloadRequired = false;
     this.rowsToDisplay = 8;
@@ -180,7 +180,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     super.show(args);
     this.updateBindings();
 
-    const settings: object = localStorage.hasOwnProperty(this.localStorageKey) ? JSON.parse(localStorage.getItem(this.localStorageKey) ?? "") : {};
+    const settings: object = localStorage.hasOwnProperty(this.localStorageKey) ? JSON.parse(localStorage.getItem(this.localStorageKey)!) : {}; // TODO: is this bang correct?
 
     this.settings.forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting.key) ? settings[setting.key] : this.settings[s].default));
 

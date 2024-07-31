@@ -40,7 +40,7 @@ export class BattlerTag {
     this.tagType = tagType;
     this.lapseTypes = Array.isArray(lapseType) ? lapseType : [ lapseType ];
     this.turnCount = turnCount;
-    this.sourceMove = sourceMove ?? Moves.NONE;
+    this.sourceMove = sourceMove!; // TODO: is this bang correct?
     this.sourceId = sourceId;
   }
 
@@ -560,7 +560,7 @@ export class EncoreTag extends BattlerTag {
       if (movesetMove) {
         const lastMove = pokemon.getLastXMoves(1)[0];
         pokemon.scene.tryReplacePhase((m => m instanceof MovePhase && m.pokemon === pokemon),
-          new MovePhase(pokemon.scene, pokemon, lastMove.targets ?? [], movesetMove));
+          new MovePhase(pokemon.scene, pokemon, lastMove.targets!, movesetMove)); // TODO: is this bang correct?
       }
     }
   }

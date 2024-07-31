@@ -678,8 +678,8 @@ export abstract class BattleAnim {
   private dstLine: number[];
 
   constructor(user?: Pokemon, target?: Pokemon) {
-    this.user = user ?? null;
-    this.target = target ?? null;
+    this.user = user!; // TODO: is this bang correct?
+    this.target = target!; // TODO: is this bang correct?
     this.sprites = [];
   }
 
@@ -990,7 +990,7 @@ export class CommonBattleAnim extends BattleAnim {
   }
 
   getAnim(): AnimConfig | null {
-    return this.commonAnim ? commonAnims.get(this.commonAnim) ?? null : null;
+    return this.commonAnim ? commonAnims.get(this.commonAnim)! : null; // TODO: is this bang correct?
   }
 
   isOppAnim(): boolean {
@@ -1072,7 +1072,7 @@ export async function populateAnims() {
     let commonAnimId: CommonAnim | undefined;
     let chargeAnimId: ChargeAnim | undefined;
     if (!nameField.startsWith("name: Move:") && !(isOppMove = nameField.startsWith("name: OppMove:"))) {
-      const nameMatch = commonNamePattern.exec(nameField) ?? ["", "", ""];
+      const nameMatch = commonNamePattern.exec(nameField)!; // TODO: is this bang correct?
       const name = nameMatch[2].toLowerCase();
       if (commonAnimMatchNames.indexOf(name) > -1) {
         commonAnimId = commonAnimIds[commonAnimMatchNames.indexOf(name)];

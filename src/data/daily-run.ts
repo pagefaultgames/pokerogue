@@ -19,7 +19,7 @@ export function fetchDailyRunSeed(): Promise<string | null> {
         return;
       }
       return response.text();
-    }).then(seed => resolve(seed ?? null))
+    }).then(seed => resolve(seed!)) // TODO: is this bang correct?
       .catch(err => reject(err));
   });
 }

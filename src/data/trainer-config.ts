@@ -352,7 +352,7 @@ export class TrainerConfig {
       this.nameFemale = i18next.t("trainerNames:rival_female");
     } else {
       // Otherwise, assign the provided female name.
-      this.nameFemale = nameFemale ?? "";
+      this.nameFemale = nameFemale!; // TODO: is this bang correct?
     }
 
     // Indicate that this trainer configuration includes genders.

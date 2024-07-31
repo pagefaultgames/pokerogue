@@ -12,7 +12,7 @@ export class Status {
   constructor(effect: StatusEffect, turnCount: integer = 0, cureTurn?: integer) {
     this.effect = effect;
     this.turnCount = turnCount === undefined ? 0 : turnCount;
-    this.cureTurn = cureTurn ?? null;
+    this.cureTurn = cureTurn!; // TODO: is this bang correct?
   }
 
   incrementTurn(): void {

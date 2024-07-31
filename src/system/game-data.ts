@@ -411,7 +411,7 @@ export class GameData {
             this.initSystem(response, cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : null).then(resolve);
           });
       } else {
-        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`) ?? "", bypassLogin)).then(resolve);
+        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)).then(resolve); // TODO: is this bang correct?
       }
     });
   }
@@ -624,7 +624,7 @@ export class GameData {
   public saveSetting(setting: string, valueIndex: integer): boolean {
     let settings: object = {};
     if (localStorage.hasOwnProperty("settings")) {
-      settings = JSON.parse(localStorage.getItem("settings") ?? "{}");
+      settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
     }
 
     setSetting(this.scene, setting, valueIndex);
@@ -647,7 +647,7 @@ export class GameData {
     const key = deviceName.toLowerCase();  // Convert the gamepad name to lowercase to use as a key
     let mappingConfigs: object = {};  // Initialize an empty object to hold the mapping configurations
     if (localStorage.hasOwnProperty("mappingConfigs")) {// Check if 'mappingConfigs' exists in localStorage
-      mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs") ?? "{}");
+      mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs")!); // TODO: is this bang correct?
     }  // Parse the existing 'mappingConfigs' from localStorage
     if (!mappingConfigs[key]) {
       mappingConfigs[key] = {};
@@ -672,7 +672,7 @@ export class GameData {
       return false;
     }  // If 'mappingConfigs' does not exist, return false
 
-    const mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs") ?? "{}");  // Parse the existing 'mappingConfigs' from localStorage
+    const mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs")!);  // Parse the existing 'mappingConfigs' from localStorage // TODO: is this bang correct?
 
     for (const key of Object.keys(mappingConfigs)) {// Iterate over the keys of the mapping configurations
       this.scene.inputController.injectConfig(key, mappingConfigs[key]);
@@ -707,7 +707,7 @@ export class GameData {
     let settingsControls: object = {};  // Initialize an empty object to hold the gamepad settings
 
     if (localStorage.hasOwnProperty(localStoragePropertyName)) {  // Check if 'settingsControls' exists in localStorage
-      settingsControls = JSON.parse(localStorage.getItem(localStoragePropertyName) ?? "{}");  // Parse the existing 'settingsControls' from localStorage
+      settingsControls = JSON.parse(localStorage.getItem(localStoragePropertyName)!);  // Parse the existing 'settingsControls' from localStorage // TODO: is this bang correct?
     }
 
     if (device === Device.GAMEPAD) {
@@ -738,7 +738,7 @@ export class GameData {
       return false;
     }
 
-    const settings = JSON.parse(localStorage.getItem("settings") ?? "{}");
+    const settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
 
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting, settings[setting]);
@@ -753,7 +753,7 @@ export class GameData {
     if (!localStorage.hasOwnProperty("settingsGamepad")) {
       return false;
     }
-    const settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad") ?? "{}");
+    const settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad")!); // TODO: is this bang correct?
 
     for (const setting of Object.keys(settingsGamepad)) {
       setSettingGamepad(this.scene, setting as SettingGamepad, settingsGamepad[setting]);
@@ -766,7 +766,7 @@ export class GameData {
     const key = getDataTypeKey(GameDataType.TUTORIALS);
     let tutorials: object = {};
     if (localStorage.hasOwnProperty(key)) {
-      tutorials = JSON.parse(localStorage.getItem(key) ?? "{}");
+      tutorials = JSON.parse(localStorage.getItem(key)!); // TODO: is this bang correct?
     }
 
     Object.keys(Tutorial).map(t => t as Tutorial).forEach(t => {
@@ -792,7 +792,7 @@ export class GameData {
       return ret;
     }
 
-    const tutorials = JSON.parse(localStorage.getItem(key) ?? "{}");
+    const tutorials = JSON.parse(localStorage.getItem(key)!); // TODO: is this bang correct?
 
     for (const tutorial of Object.keys(tutorials)) {
       ret[tutorial] = tutorials[tutorial];
@@ -820,7 +820,7 @@ export class GameData {
       return ret;
     }
 
-    const dialogues = JSON.parse(localStorage.getItem(key) ?? "{}");
+    const dialogues = JSON.parse(localStorage.getItem(key)!); // TODO: is this bang correct?
 
     for (const dialogue of Object.keys(dialogues)) {
       ret[dialogue] = dialogues[dialogue];
@@ -1056,7 +1056,7 @@ export class GameData {
 
       if (sessionData.gameMode === GameModes.DAILY) {
         if (localStorage.hasOwnProperty("daily")) {
-          daily = JSON.parse(atob(localStorage.getItem("daily") ?? "{}"));
+          daily = JSON.parse(atob(localStorage.getItem("daily")!)); // TODO: is this bang correct?
           if (daily.includes(seed)) {
             return resolve(false);
           } else {
@@ -1177,10 +1177,10 @@ export class GameData {
         if (sync) {
           this.scene.ui.savingIcon.show();
         }
-        const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser?.username}`) ?? "", bypassLogin)) : this.getSessionSaveData(scene);
+        const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser?.username}`)!, bypassLogin)) : this.getSessionSaveData(scene); // TODO: is this bang correct?
 
         const maxIntAttrValue = Math.pow(2, 31);
-        const systemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`) ?? "", bypassLogin)) : this.getSystemSaveData();
+        const systemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)) : this.getSystemSaveData(); // TODO: is this bang correct?
 
         const request = {
           system: systemData,

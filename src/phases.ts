@@ -393,7 +393,7 @@ export class TitlePhase extends Phase {
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
       if (!Utils.isLocal) {
         fetchDailyRunSeed().then(seed => {
-          generateDaily(seed ?? "");
+          generateDaily(seed!); // TODO: is this bang correct?
         }).catch(err => {
           console.error("Failed to load daily run:\n", err);
         });
@@ -467,7 +467,7 @@ export class ReloadSessionPhase extends Phase {
   constructor(scene: BattleScene, systemDataStr?: string) {
     super(scene);
 
-    this.systemDataStr = systemDataStr ?? null;
+    this.systemDataStr = systemDataStr!; // TODO: is this bang correct?
   }
 
   start(): void {
@@ -654,8 +654,8 @@ export class BattlePhase extends Phase {
   }
 
   showEnemyTrainer(trainerSlot: TrainerSlot = TrainerSlot.NONE): void {
-    const sprites = this.scene.currentBattle.trainer?.getSprites() ?? [];
-    const tintSprites = this.scene.currentBattle.trainer?.getTintSprites() ?? [];
+    const sprites = this.scene.currentBattle.trainer?.getSprites()!; // TODO: is this bang correct?
+    const tintSprites = this.scene.currentBattle.trainer?.getTintSprites()!; // TODO: is this bang correct?
     for (let i = 0; i < sprites.length; i++) {
       const visible = !trainerSlot || !i === (trainerSlot === TrainerSlot.TRAINER) || sprites.length < 2;
       [sprites[i], tintSprites[i]].map(sprite => {
@@ -878,7 +878,7 @@ export class EncounterPhase extends BattlePhase {
     }
 
     if (battle.battleType === BattleType.TRAINER) {
-      loadEnemyAssets.push(battle.trainer?.loadAssets().then(() => battle.trainer?.initSprite()) ?? Promise.resolve());
+      loadEnemyAssets.push(battle.trainer?.loadAssets().then(() => battle.trainer?.initSprite())!); // TODO: is this bang correct?
     } else {
       // This block only applies for double battles to init the boss segments (idk why it's split up like this)
       if (battle.enemyParty.filter(p => p.isBoss()).length > 1) {
@@ -1048,7 +1048,7 @@ export class EncounterPhase extends BattlePhase {
           });
         };
         if (this.scene.currentBattle.trainer?.config.hasCharSprite && !this.scene.ui.shouldSkipDialogue(message)) {
-          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(trainer?.getKey() ?? "", getCharVariantFromDialogue(encounterMessages[0])).then(() => showDialogueAndSummon()));
+          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(trainer?.getKey()!, getCharVariantFromDialogue(encounterMessages[0])).then(() => showDialogueAndSummon())); // TODO: is this bang correct?
         } else {
           showDialogueAndSummon();
         }
@@ -2565,7 +2565,7 @@ export class CommonAnimPhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex?: BattlerIndex, targetIndex?: BattlerIndex | undefined, anim?: CommonAnim) {
     super(scene, battlerIndex);
 
-    this.anim = anim ?? null;
+    this.anim = anim!; // TODO: is this bang correct?
     this.targetIndex = targetIndex;
   }
 
@@ -2769,7 +2769,7 @@ export class MovePhase extends BattlePhase {
       } else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, this.move.getMove())) {
         success = false;
         if (failedText === null) {
-          failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain?.terrainType ?? TerrainType.NONE);
+          failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain?.terrainType!); // TODO: is this bang correct?
         }
       }
 
@@ -3117,7 +3117,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const accuracyMultiplier = user?.getAccuracyMultiplier(target, this.move.getMove());
     const rand = user?.randSeedInt(100, 1);
 
-    return !!rand && rand <= moveAccuracy * (accuracyMultiplier ?? 1); // TODO: fallback to `1` correct?
+    return !!rand && rand <= moveAccuracy * (accuracyMultiplier!); // TODO: is this bang correct?
   }
 
   getUserPokemon(): Pokemon | undefined {
@@ -3505,7 +3505,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
 
           const damage = Math.ceil(pokemon.getMaxHp() / 16);
 
-          this.scene.queueMessage(getWeatherDamageMessage(this.weather?.weatherType ?? WeatherType.NONE, pokemon) ?? "");
+          this.scene.queueMessage(getWeatherDamageMessage(this.weather?.weatherType!, pokemon)!); // TODO: are those bangs correct?
           pokemon.damageAndUpdate(damage, HitResult.EFFECTIVE, false, false, true);
         };
 
@@ -3518,7 +3518,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
       }
     }
 
-    this.scene.ui.showText(getWeatherLapseMessage(this.weather.weatherType) ?? "", null, () => {
+    this.scene.ui.showText(getWeatherLapseMessage(this.weather.weatherType)!, null, () => { // TODO: is this bang correct?
       this.executeForAll((pokemon: Pokemon) => applyPostWeatherLapseAbAttrs(PostWeatherLapseAbAttr, pokemon, this.weather));
 
       super.start();
@@ -3536,9 +3536,9 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
     super(scene, battlerIndex);
 
     this.statusEffect = statusEffect;
-    this.cureTurn = cureTurn ?? null;
-    this.sourceText = sourceText ?? null;
-    this.sourcePokemon = sourcePokemon ?? null; // For tracking which Pokemon caused the status effect
+    this.cureTurn = cureTurn!; // TODO: is this bang correct?
+    this.sourceText = sourceText!; // TODO: is this bang correct?
+    this.sourcePokemon = sourcePokemon!; // For tracking which Pokemon caused the status effect // TODO: is this bang correct?
   }
 
   start() {
@@ -3625,9 +3625,9 @@ export class MessagePhase extends Phase {
     super(scene);
 
     this.text = text;
-    this.callbackDelay = callbackDelay ?? null;
-    this.prompt = prompt ?? null;
-    this.promptDelay = promptDelay ?? null;
+    this.callbackDelay = callbackDelay!; // TODO: is this bang correct?
+    this.prompt = prompt!; // TODO: is this bang correct?
+    this.promptDelay = promptDelay!; // TODO: is this bang correct?
   }
 
   start() {
@@ -3735,7 +3735,7 @@ export class FaintPhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex, preventEndure?: boolean) {
     super(scene, battlerIndex);
 
-    this.preventEndure = preventEndure ?? false;
+    this.preventEndure = preventEndure!; // TODO: is this bang correct?
   }
 
   start() {
@@ -4023,14 +4023,14 @@ export class TrainerVictoryPhase extends BattlePhase {
 
     this.scene.playBgm(this.scene.currentBattle.trainer?.config.victoryBgm);
 
-    this.scene.unshiftPhase(new MoneyRewardPhase(this.scene, this.scene.currentBattle.trainer?.config.moneyMultiplier ?? 1));
+    this.scene.unshiftPhase(new MoneyRewardPhase(this.scene, this.scene.currentBattle.trainer?.config.moneyMultiplier!)); // TODO: is this bang correct?
 
-    const modifierRewardFuncs = this.scene.currentBattle.trainer?.config.modifierRewardFuncs ?? [];
+    const modifierRewardFuncs = this.scene.currentBattle.trainer?.config.modifierRewardFuncs!; // TODO: is this bang correct?
     for (const modifierRewardFunc of modifierRewardFuncs) {
       this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, modifierRewardFunc));
     }
 
-    const trainerType = this.scene.currentBattle.trainer?.config.trainerType ?? TrainerType.UNKNOWN;
+    const trainerType = this.scene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
     if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
       if (!this.scene.validateVoucher(vouchers[TrainerType[trainerType]]) && this.scene.currentBattle.trainer?.config.isBoss) {
         this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][vouchers[TrainerType[trainerType]].voucherType]));
@@ -4038,7 +4038,7 @@ export class TrainerVictoryPhase extends BattlePhase {
     }
 
     this.scene.ui.showText(i18next.t("battle:trainerDefeated", { trainerName: this.scene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) }), null, () => {
-      const victoryMessages = this.scene.currentBattle.trainer?.getVictoryMessages() ?? [];
+      const victoryMessages = this.scene.currentBattle.trainer?.getVictoryMessages()!; // TODO: is this bang correct?
       let message: string;
       this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(victoryMessages), this.scene.currentBattle.waveIndex);
       message = message!; // tell TS compiler it's defined now
@@ -4054,7 +4054,7 @@ export class TrainerVictoryPhase extends BattlePhase {
         if (this.scene.currentBattle.trainer?.config.hasCharSprite && !this.scene.ui.shouldSkipDialogue(message)) {
           const originalFunc = showMessageOrEnd;
           showMessageOrEnd = () => this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => originalFunc()));
-          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(this.scene.currentBattle.trainer?.getKey() ?? "", getCharVariantFromDialogue(victoryMessages[0])).then(() => showMessage()));
+          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(this.scene.currentBattle.trainer?.getKey()!, getCharVariantFromDialogue(victoryMessages[0])).then(() => showMessage())); // TODO: is this bang correct?
         } else {
           showMessage();
         }
@@ -4407,7 +4407,7 @@ export class PostGameOverPhase extends Phase {
   constructor(scene: BattleScene, endCardPhase?: EndCardPhase) {
     super(scene);
 
-    this.endCardPhase = endCardPhase ?? null;
+    this.endCardPhase = endCardPhase!; // TODO: is this bang correct?
   }
 
   start() {
@@ -5128,7 +5128,7 @@ export class SelectModifierPhase extends BattlePhase {
     super(scene);
 
     this.rerollCount = rerollCount;
-    this.modifierTiers = modifierTiers ?? [];
+    this.modifierTiers = modifierTiers!; // TODO: is this bang correct?
   }
 
   start() {

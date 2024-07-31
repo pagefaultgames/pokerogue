@@ -1411,7 +1411,7 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
   constructor(message: string | null, abilityCondition: Abilities) {
     super();
 
-    this.message = message ?? "";
+    this.message = message!; // TODO: is this bang correct?
     this.abilityCondition = abilityCondition;
   }
 
@@ -1650,7 +1650,7 @@ export class HitHealAttr extends MoveEffectAttr {
     super(true, MoveEffectTrigger.HIT);
 
     this.healRatio = healRatio!; // TODO: is this bang correct?
-    this.healStat = healStat ?? null;
+    this.healStat = healStat!; // TODO: is this bang correct?
   }
   /**
    * Heals the user the determined amount and possibly displays a message about regaining health.
@@ -1861,7 +1861,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
     super(selfTarget, MoveEffectTrigger.HIT);
 
     this.effect = effect;
-    this.cureTurn = cureTurn ?? null;
+    this.cureTurn = cureTurn!; // TODO: is this bang correct?
     this.overrideStatus = !!overrideStatus;
   }
 
@@ -2365,10 +2365,10 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
 
     this.chargeAnim = chargeAnim;
     this.chargeText = chargeText;
-    this.tagType = tagType ?? null;
+    this.tagType = tagType!; // TODO: is this bang correct?
     this.chargeEffect = chargeEffect;
     this.sameTurn = sameTurn;
-    this.followUpPriority = followUpPriority ?? null;
+    this.followUpPriority = followUpPriority!; // TODO: is this bang correct?
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
@@ -2391,7 +2391,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
             if (!movesetMove) { // account for any move that calls a ChargeAttr move when the ChargeAttr move does not exist in moveset
               movesetMove = new PokemonMove(move.id, 0, 0, true);
             }
-            user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], movesetMove, true), this.followUpPriority ?? undefined);
+            user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], movesetMove, true), this.followUpPriority!); // TODO: is this bang correct?
           }
           user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
           resolve(true);
@@ -2510,7 +2510,7 @@ export class StatChangeAttr extends MoveEffectAttr {
       ? [ stats as BattleStat ]
       : stats as BattleStat[];
     this.levels = levels;
-    this.condition = condition ?? null;
+    this.condition = condition!; // TODO: is this bang correct?
     this.showMessage = showMessage;
   }
 
@@ -2587,7 +2587,7 @@ export class PostVictoryStatChangeAttr extends MoveAttr {
       ? [ stats as BattleStat ]
       : stats as BattleStat[];
     this.levels = levels;
-    this.condition = condition ?? null;
+    this.condition = condition!; // TODO: is this bang correct?
     this.showMessage = showMessage;
   }
   applyPostVictory(user: Pokemon, target: Pokemon, move: Move): void {
@@ -2951,7 +2951,7 @@ export abstract class ConsecutiveUsePowerMultiplierAttr extends MovePowerMultipl
       let count = 0;
       let turnMove: TurnMove | undefined;
 
-      while (((turnMove = moveHistory.shift())?.move === move.id || (comboMoves.length && comboMoves.includes(turnMove?.move ?? Moves.NONE))) && (!resetOnFail || turnMove?.result === MoveResult.SUCCESS)) {
+      while (((turnMove = moveHistory.shift())?.move === move.id || (comboMoves.length && comboMoves.includes(turnMove?.move!))) && (!resetOnFail || turnMove?.result === MoveResult.SUCCESS)) { // TODO: is this bang correct?
         if (count < (limit - 1)) {
           count++;
         } else if (resetOnLimit) {
@@ -4148,7 +4148,7 @@ export class DisableMoveAttr extends MoveEffectAttr {
       }
 
       const disabledMove = target.getMoveset()[moveIndex];
-      target.summonData.disabledMove = disabledMove?.moveId ?? Moves.NONE;
+      target.summonData.disabledMove = disabledMove?.moveId!; // TODO: is this bang correct?
       target.summonData.disabledTurns = 4;
 
       user.scene.queueMessage(getPokemonMessage(target, `'s ${disabledMove?.getName()}\nwas disabled!`));
@@ -5029,7 +5029,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const firstMoveType = target.getMoveset()[0]?.getMove().type ?? Type.UNKNOWN;
+    const firstMoveType = target.getMoveset()[0]?.getMove().type!; // TODO: is this bang correct?
     user.summonData.types = [ firstMoveType ];
     user.scene.queueMessage(i18next.t("battle:transformedIntoType", {pokemonName: getPokemonNameWithAffix(user), type: i18next.t(`pokemonInfo:Type.${Type[firstMoveType]}`)}));
 
@@ -5043,7 +5043,7 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
   constructor(enemyMoveset?: boolean) {
     super();
 
-    this.enemyMoveset = enemyMoveset ?? null;
+    this.enemyMoveset = enemyMoveset!; // TODO: is this bang correct?
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5052,7 +5052,7 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
     if (moves.length) {
       const move = moves[user.randSeedInt(moves.length)];
       const moveIndex = moveset.findIndex(m => m?.moveId === move?.moveId);
-      const moveTargets = getMoveTargets(user, move?.moveId ?? Moves.NONE);
+      const moveTargets = getMoveTargets(user, move?.moveId!); // TODO: is this bang correct?
       if (!moveTargets.targets.length) {
         return false;
       }
@@ -5073,7 +5073,7 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
       }
       }
       const targets = selectTargets;
-      user.getMoveQueue().push({ move: move?.moveId ?? Moves.NONE, targets: targets, ignorePP: true });
+      user.getMoveQueue().push({ move: move?.moveId!, targets: targets, ignorePP: true }); // TODO: is this bang correct?
       user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, moveset[moveIndex]!, true)); // There's a PR to re-do the move(s) that use this Attr, gonna put `!` for now
       return true;
     }
@@ -5673,7 +5673,7 @@ export class TransformAttr extends MoveEffectAttr {
       user.summonData.fusionGender = target.getFusionGender();
       user.summonData.stats = [ user.stats[Stat.HP] ].concat(target.stats.slice(1));
       user.summonData.battleStats = target.summonData.battleStats.slice(0);
-      user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m?.moveId ?? Moves.NONE, m?.ppUsed, m?.ppUp));
+      user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m?.moveId!, m?.ppUsed, m?.ppUp)); // TODO: is this bang correct?
       user.summonData.types = target.getTypes();
 
       user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", {pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target)}));
@@ -6865,7 +6865,7 @@ export function initMoves() {
       .attr(FlinchAttr),
     new AttackMove(Moves.WEATHER_BALL, Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 3)
       .attr(WeatherBallTypeAttr)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType ?? WeatherType.NONE) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType!) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1) // TODO: is this bang correct?
       .ballBombMove(),
     new StatusMove(Moves.AROMATHERAPY, Type.GRASS, -1, 5, -1, 0, 3)
       .attr(PartyStatusCureAttr, i18next.t("moveTriggers:soothingAromaWaftedThroughArea"), Abilities.SAP_SIPPER)
@@ -7086,7 +7086,7 @@ export function initMoves() {
     new StatusMove(Moves.WORRY_SEED, Type.GRASS, 100, 10, -1, 0, 4)
       .attr(AbilityChangeAttr, Abilities.INSOMNIA),
     new AttackMove(Moves.SUCKER_PUNCH, Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, -1, 1, 4)
-      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move ?? Moves.NONE].category !== MoveCategory.STATUS),
+      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].category !== MoveCategory.STATUS), // TODO: is this bang correct?
     new StatusMove(Moves.TOXIC_SPIKES, Type.POISON, -1, 20, -1, 0, 4)
       .attr(AddArenaTrapTagAttr, ArenaTagType.TOXIC_SPIKES)
       .target(MoveTarget.ENEMY_SIDE),
@@ -7929,7 +7929,7 @@ export function initMoves() {
     new AttackMove(Moves.SMART_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 70, -1, 10, -1, 0, 7),
     new StatusMove(Moves.PURIFY, Type.POISON, -1, 20, -1, 0, 7)
       .condition(
-        (user: Pokemon, target: Pokemon, move: Move) => isNonVolatileStatusEffect(target.status?.effect ?? StatusEffect.NONE))
+        (user: Pokemon, target: Pokemon, move: Move) => isNonVolatileStatusEffect(target.status?.effect!)) // TODO: is this bang correct?
       .attr(HealAttr, 0.5)
       .attr(HealStatusEffectAttr, false, ...getNonVolatileStatusEffects())
       .triageMove(),
@@ -8651,7 +8651,7 @@ export function initMoves() {
       .slicingMove(),
     new AttackMove(Moves.HYDRO_STEAM, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
       .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType ?? WeatherType.NONE) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 1.5 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType!) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 1.5 : 1), // TODO: is this bang correct?
     new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.COLLISION_COURSE, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
@@ -8759,7 +8759,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.BURNING_BULWARK, Type.FIRE, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.BURNING_BULWARK),
     new AttackMove(Moves.THUNDERCLAP, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 5, -1, 1, 9)
-      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move ?? Moves.NONE].category !== MoveCategory.STATUS),
+      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].category !== MoveCategory.STATUS), // TODO: is this bang correct?
     new AttackMove(Moves.MIGHTY_CLEAVE, Type.ROCK, MoveCategory.PHYSICAL, 95, 100, 5, -1, 0, 9)
       .slicingMove()
       .ignoresProtect(),
@@ -8786,7 +8786,7 @@ export function initMoves() {
       .partial(),
     new AttackMove(Moves.UPPER_HAND, Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, 100, 3, 9)
       .attr(FlinchAttr)
-      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move ?? Moves.NONE].category !== MoveCategory.STATUS && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move ?? Moves.NONE].priority > 0 )
+      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].category !== MoveCategory.STATUS && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].priority > 0 ) // TODO: is this bang correct?
       //TODO: Should also apply when target move priority increased by ability ex. gale wings
       .partial(),
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)

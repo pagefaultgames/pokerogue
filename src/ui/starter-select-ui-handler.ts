@@ -275,8 +275,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
-    const currentLanguage = i18next.resolvedLanguage ?? "en";
-    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang)) ?? "en";
+    const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang))!; // TODO: is this bang correct?
     const textSettings = languageSettings[langSettingKey];
 
     this.starterSelectContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
@@ -1816,7 +1816,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   switchMoveHandler(i: number, newMove: Moves, move: Moves) {
     const speciesId = this.lastSpecies.speciesId;
-    const existingMoveIndex = this.starterMoveset?.indexOf(newMove) ?? -1;
+    const existingMoveIndex = this.starterMoveset?.indexOf(newMove)!; // TODO: is this bang correct?
     this.starterMoveset![i] = newMove; // TODO: is this bang correct?
     if (existingMoveIndex > -1) {
       this.starterMoveset![existingMoveIndex] = move; // TODO: is this bang correct?
@@ -2547,16 +2547,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const assetLoadCancelled = new Utils.BooleanHolder(false);
         this.assetLoadCancelled = assetLoadCancelled;
 
-        species.loadAssets(this.scene, female ?? false, formIndex, shiny, variant, true).then(() => { // TODO: is `false` the correct default?
+        species.loadAssets(this.scene, female!, formIndex, shiny, variant, true).then(() => { // TODO: is this bang correct?
           if (assetLoadCancelled.value) {
             return;
           }
           this.assetLoadCancelled = null;
           this.speciesLoaded.set(species.speciesId, true);
-          this.pokemonSprite.play(species.getSpriteKey(female ?? false, formIndex, shiny, variant)); // TODO: is `false` the correct default?
+          this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
           this.pokemonSprite.setPipelineData("shiny", shiny);
           this.pokemonSprite.setPipelineData("variant", variant);
-          this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female ?? false, formIndex, shiny, variant)); // TODO: is `false` the correct default?
+          this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
           this.pokemonSprite.setVisible(!this.statsMode);
         });
 
@@ -2564,7 +2564,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const isValidForChallenge = new Utils.BooleanHolder(true);
         Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), !!this.starterSpecies.length);
         const starterSprite = this.filteredStarterContainers[this.cursor].icon as Phaser.GameObjects.Sprite;
-        starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female ?? false, formIndex, shiny, variant)); // TODO: is `false` the correct default?
+        starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
         this.filteredStarterContainers[this.cursor].checkIconId(female, formIndex, shiny, variant);
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);

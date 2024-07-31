@@ -359,7 +359,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
     super();
 
     this.immuneType = immuneType;
-    this.condition = condition ?? null;
+    this.condition = condition!; // TODO: is this bang correct?
   }
 
   /**
@@ -1089,7 +1089,7 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
       return false;
     }
 
-    (args[0] as Utils.NumberHolder).value *= this.chanceMultiplier ?? 1;
+    (args[0] as Utils.NumberHolder).value *= this.chanceMultiplier!; // TODO: is this bang correct?
     (args[0] as Utils.NumberHolder).value = Math.min((args[0] as Utils.NumberHolder).value, 100);
     return true;
 
@@ -1516,7 +1516,7 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
 
     this.battleStat = battleStat;
     this.multiplier = multiplier;
-    this.condition = condition ?? null;
+    this.condition = condition!; // TODO: is this bang correct?
   }
 
   applyBattleStat(pokemon: Pokemon, passive: boolean, battleStat: BattleStat, statValue: Utils.NumberHolder, args: any[]): boolean | Promise<boolean> {
@@ -1569,7 +1569,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   constructor(stealCondition?: PokemonAttackCondition) {
     super();
 
-    this.stealCondition = stealCondition ?? null;
+    this.stealCondition = stealCondition!; // TODO: is this bang correct?
   }
 
   applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
@@ -1658,7 +1658,7 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   constructor(condition?: PokemonDefendCondition) {
     super();
 
-    this.condition = condition ?? null;
+    this.condition = condition!; // TODO: is this bang correct?
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
@@ -2409,7 +2409,7 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
   constructor(protectedStat?: BattleStat) {
     super();
 
-    this.protectedStat = protectedStat ?? null;
+    this.protectedStat = protectedStat!; // TODO: is this bang correct?
   }
 
   applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -2744,7 +2744,7 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
   constructor(affectsImmutable?: boolean) {
     super();
 
-    this.affectsImmutable = affectsImmutable ?? false;
+    this.affectsImmutable = affectsImmutable!; // TODO: is this bang correct?
   }
 
   applyPreWeatherEffect(pokemon: Pokemon, passive: boolean, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean {

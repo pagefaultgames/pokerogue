@@ -700,7 +700,7 @@ export default class BattleScene extends SceneBase {
 
   hasExpSprite(key: string): boolean {
     const keyMatch = /^pkmn__?(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?(?:_[1-3])?$/g.exec(key);
-    let k = keyMatch?.[4] ?? "";
+    let k = keyMatch?.[4]!; // TODO: is this bang correct?
     if (keyMatch?.[2]) {
       k += "s";
     }
@@ -2403,7 +2403,7 @@ export default class BattleScene extends SceneBase {
         if (isFinalBoss) {
           upgradeChance /= 8;
         }
-        const modifierChance = this.gameMode.getEnemyModifierChance(isBoss ?? false);
+        const modifierChance = this.gameMode.getEnemyModifierChance(isBoss!); // TODO: is this bang correct?
         let pokemonModifierChance = modifierChance;
         if (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer)
           pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i)); // eslint-disable-line

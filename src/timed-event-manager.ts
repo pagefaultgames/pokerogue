@@ -52,14 +52,14 @@ export class TimedEventManager {
     let multiplier = 1;
     const shinyEvents = timedEvents.filter((te) => te.eventType === EventType.SHINY && this.isActive(te));
     shinyEvents.forEach((se) => {
-      multiplier *= se.shinyMultiplier ?? 1;
+      multiplier *= se.shinyMultiplier!; // TODO: is this bang correct?
     });
 
     return multiplier;
   }
 
-  getEventBannerFilename(): string | null {
-    return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerFilename ?? null;
+  getEventBannerFilename(): string {
+    return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerFilename!; // TODO: is this bang correct?
   }
 }
 
@@ -72,7 +72,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
 
   constructor(scene: BattleScene, x: number, y: number, event?: TimedEvent) {
     super(scene, x, y);
-    this.event = event ?? null;
+    this.event = event!; // TODO: is this bang correct?
     this.setVisible(false);
   }
 

@@ -45,7 +45,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   private cursorObj: Phaser.GameObjects.Image | null;
 
   constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode ?? Mode.MESSAGE);
+    super(scene, mode!); // TODO: is this bang correct?
   }
 
   abstract getWindowWidth(): integer;

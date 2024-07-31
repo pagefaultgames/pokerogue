@@ -168,7 +168,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.nickname = dataSource.nickname;
       this.natureOverride = dataSource.natureOverride !== undefined ? dataSource.natureOverride : -1;
       this.moveset = dataSource.moveset;
-      this.status = dataSource.status ?? null;
+      this.status = dataSource.status!; // TODO: is this bang correct?
       this.friendship = dataSource.friendship !== undefined ? dataSource.friendship : this.species.baseFriendship;
       this.metLevel = dataSource.metLevel || 5;
       this.luck = dataSource.luck;
@@ -1676,7 +1676,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const move = this.getMoveset().length > moveIndex
       ? this.getMoveset()[moveIndex]
       : null;
-    return move?.isUsable(this, ignorePp) ?? false; // TODO: is `false` the correct default?
+    return move?.isUsable(this, ignorePp)!; // TODO: is this bang correct?
   }
 
   showInfo(): void {
@@ -2277,7 +2277,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (tagType instanceof Function
       ? this.summonData.tags.find(t => t instanceof tagType)
       : this.summonData.tags.find(t => t.tagType === tagType)
-    ) ?? null;
+    )!; // TODO: is this bang correct?
   }
 
   findTag(tagFilter: ((tag: BattlerTag) => boolean)) {
@@ -2689,7 +2689,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (asPhase) {
-      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText ?? undefined, sourcePokemon ?? undefined));
+      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText!, sourcePokemon!)); // TODO: are these bangs correct?
       return true;
     }
 
