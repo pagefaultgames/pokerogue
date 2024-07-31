@@ -958,7 +958,7 @@ export default class BattleScene extends SceneBase {
     }
 
     //@ts-ignore  - allowing `null` for currentBattle causes a lot of trouble
-    this.currentBattle = null;
+    this.currentBattle = null; // TODO: resolve ts-ignore
 
     this.biomeWaveText.setText(startingWave.toString());
     this.biomeWaveText.setVisible(false);
