@@ -274,6 +274,7 @@ export class Egg {
     case EggSourceType.GACHA_MOVE:
       return i18next.t("egg:gachaTypeMove");
     default:
+      console.warn("getEggTypeDescriptor case not defined. Returning default empty string");
       return "";
     }
   }

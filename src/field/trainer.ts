@@ -498,6 +498,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     case PartyMemberStrength.STRONGER:
       return 0.375;
     default:
+      console.warn("getPartyMemberModifierChanceMultiplier not defined. Using default 0");
       return 0;
     }
   }

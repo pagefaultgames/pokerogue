@@ -2655,8 +2655,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return false;
       }
       break;
-    default:
-      return false;
     }
 
     const cancelled = new Utils.BooleanHolder(false);
