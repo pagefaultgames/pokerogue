@@ -2631,23 +2631,22 @@ export class GrowthStatChangeAttr extends StatChangeAttr {
 
 export class CutHpStatBoostAttr extends StatChangeAttr {
   private cutRatio: integer;
-  private message: string;
+  private message: ((user: Pokemon) => void) | undefined;
 
-  constructor(stat: BattleStat | BattleStat[], levels: integer, cutRatio: integer, message?: string) {
+  constructor(stat: BattleStat | BattleStat[], levels: integer, cutRatio: integer, messageCallback?: string) {
     super(stat, levels, true, null, true);
 
     this.cutRatio = cutRatio;
-    this.message = message;
+    this.messageCallback = messageCallback;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       user.damageAndUpdate(Math.floor(user.getMaxHp() / this.cutRatio), HitResult.OTHER, false, true);
-      console.log(this.message);
       user.updateInfo().then(() => {
         const ret = super.apply(user, target, move, args);
-        if (this.message) {
-          user.scene.queueMessage(i18next.t(this.message, {pokemonName: getPokemonNameWithAffix(user), statName: getBattleStatName(this.stats[0])}));
+        if (this.messageCallback) {
+          this.messageCallback(user);
         }
         resolve(ret);
       });
@@ -6481,7 +6480,9 @@ export function initMoves() {
     new StatusMove(Moves.SWEET_KISS, Type.FAIRY, 75, 10, -1, 0, 2)
       .attr(ConfuseAttr),
     new SelfStatusMove(Moves.BELLY_DRUM, Type.NORMAL, -1, 10, -1, 0, 2)
-      .attr(CutHpStatBoostAttr, [BattleStat.ATK], 12, 2, "moveTriggers:cutOwnHpAndMaximizedStat"),
+      .attr(CutHpStatBoostAttr, [BattleStat.ATK], 12, 2, (user) => {
+        user.scene.queueMessage(i18next.t("moveTriggers:cutOwnHpAndMaximizedStat", {pokemonName: getPokemonNameWithAffix(user), statName: getBattleStatName(BattleStat.ATK)}));
+      }),
     new AttackMove(Moves.SLUDGE_BOMB, Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 30, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .ballBombMove(),
