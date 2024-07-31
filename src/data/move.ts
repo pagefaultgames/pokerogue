@@ -180,7 +180,7 @@ export default class Move implements Localizable {
    * @returns the first {@linkcode MoveAttr} element in attrs that makes the input function return true
    */
   findAttr(attrPredicate: (attr: MoveAttr) => boolean): MoveAttr {
-    return this.attrs.find(attrPredicate);
+    return this.attrs.find(attrPredicate)!; // TODO: is the bang correct?
   }
 
   /**
@@ -361,7 +361,7 @@ export default class Move implements Localizable {
    * @param makesContact The value (boolean) to set the flag to
    * @returns The {@linkcode Move} that called this function
    */
-  makesContact(makesContact?: boolean): this {
+  makesContact(makesContact: boolean = true): this { // TODO: is true the correct default?
     this.setFlag(MoveFlags.MAKES_CONTACT, makesContact);
     return this;
   }
@@ -372,7 +372,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.CURSE}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresProtect(ignoresProtect?: boolean): this {
+  ignoresProtect(ignoresProtect: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.IGNORE_PROTECT, ignoresProtect);
     return this;
   }
@@ -383,7 +383,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.NATURE_POWER}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresVirtual(ignoresVirtual?: boolean): this {
+  ignoresVirtual(ignoresVirtual: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.IGNORE_VIRTUAL, ignoresVirtual);
     return this;
   }
@@ -394,7 +394,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.UPROAR}
    * @returns The {@linkcode Move} that called this function
    */
-  soundBased(soundBased?: boolean): this {
+  soundBased(soundBased: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.SOUND_BASED, soundBased);
     return this;
   }
@@ -405,7 +405,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.TELEPORT}
    * @returns The {@linkcode Move} that called this function
    */
-  hidesUser(hidesUser?: boolean): this {
+  hidesUser(hidesUser: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.HIDE_USER, hidesUser);
     return this;
   }
@@ -416,7 +416,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.WHIRLWIND}
    * @returns The {@linkcode Move} that called this function
    */
-  hidesTarget(hidesTarget?: boolean): this {
+  hidesTarget(hidesTarget: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.HIDE_TARGET, hidesTarget);
     return this;
   }
@@ -427,7 +427,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.BITE}
    * @returns The {@linkcode Move} that called this function
    */
-  bitingMove(bitingMove?: boolean): this {
+  bitingMove(bitingMove: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.BITING_MOVE, bitingMove);
     return this;
   }
@@ -438,7 +438,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.WATER_PULSE}
    * @returns The {@linkcode Move} that called this function
    */
-  pulseMove(pulseMove?: boolean): this {
+  pulseMove(pulseMove: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.PULSE_MOVE, pulseMove);
     return this;
   }
@@ -449,7 +449,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.DRAIN_PUNCH}
    * @returns The {@linkcode Move} that called this function
    */
-  punchingMove(punchingMove?: boolean): this {
+  punchingMove(punchingMove: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.PUNCHING_MOVE, punchingMove);
     return this;
   }
@@ -460,7 +460,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.X_SCISSOR}
    * @returns The {@linkcode Move} that called this function
    */
-  slicingMove(slicingMove?: boolean): this {
+  slicingMove(slicingMove: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.SLICING_MOVE, slicingMove);
     return this;
   }
@@ -471,7 +471,7 @@ export default class Move implements Localizable {
    * @param recklessMove The value to set the flag to
    * @returns The {@linkcode Move} that called this function
    */
-  recklessMove(recklessMove?: boolean): this {
+  recklessMove(recklessMove: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.RECKLESS_MOVE, recklessMove);
     return this;
   }
@@ -482,7 +482,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.ELECTRO_BALL}
    * @returns The {@linkcode Move} that called this function
    */
-  ballBombMove(ballBombMove?: boolean): this {
+  ballBombMove(ballBombMove: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.BALLBOMB_MOVE, ballBombMove);
     return this;
   }
@@ -493,7 +493,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.STUN_SPORE}
    * @returns The {@linkcode Move} that called this function
    */
-  powderMove(powderMove?: boolean): this {
+  powderMove(powderMove: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.POWDER_MOVE, powderMove);
     return this;
   }
@@ -504,7 +504,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.PETAL_DANCE}
    * @returns The {@linkcode Move} that called this function
    */
-  danceMove(danceMove?: boolean): this {
+  danceMove(danceMove: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.DANCE_MOVE, danceMove);
     return this;
   }
@@ -515,7 +515,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.HURRICANE}
    * @returns The {@linkcode Move} that called this function
    */
-  windMove(windMove?: boolean): this {
+  windMove(windMove: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.WIND_MOVE, windMove);
     return this;
   }
@@ -526,7 +526,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.ABSORB}
    * @returns The {@linkcode Move} that called this function
    */
-  triageMove(triageMove?: boolean): this {
+  triageMove(triageMove: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.TRIAGE_MOVE, triageMove);
     return this;
   }
@@ -537,7 +537,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.SUNSTEEL_STRIKE}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresAbilities(ignoresAbilities?: boolean): this {
+  ignoresAbilities(ignoresAbilities: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.IGNORE_ABILITIES, ignoresAbilities);
     return this;
   }
@@ -548,7 +548,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.TRIPLE_AXEL}
    * @returns The {@linkcode Move} that called this function
    */
-  checkAllHits(checkAllHits?: boolean): this {
+  checkAllHits(checkAllHits: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.CHECK_ALL_HITS, checkAllHits);
     return this;
   }
@@ -559,7 +559,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.METAL_BURST}
    * @returns The {@linkcode Move} that called this function
    */
-  redirectCounter(redirectCounter?: boolean): this {
+  redirectCounter(redirectCounter: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.REDIRECT_COUNTER, redirectCounter);
     return this;
   }
@@ -870,7 +870,7 @@ export abstract class MoveAttr {
    * @param args Set of unique arguments needed by this attribute
    * @returns true if application of the ability succeeds
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+  apply(user: Pokemon | null, target: Pokemon | null, move: Move, args: any[]): boolean | Promise<boolean> {
     return true;
   }
 
@@ -878,7 +878,7 @@ export abstract class MoveAttr {
    * @virtual
    * @returns the {@linkcode MoveCondition} or {@linkcode MoveConditionFunc} for this {@linkcode Move}
    */
-  getCondition(): MoveCondition | MoveConditionFunc {
+  getCondition(): MoveCondition | MoveConditionFunc | null {
     return null;
   }
 
@@ -5822,7 +5822,7 @@ function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, targe
   });
 }
 
-export function applyMoveAttrs(attrType: Constructor<MoveAttr>, user: Pokemon, target: Pokemon | null, move: Move, ...args: any[]): Promise<void> {
+export function applyMoveAttrs(attrType: Constructor<MoveAttr>, user: Pokemon | null, target: Pokemon | null, move: Move, ...args: any[]): Promise<void> {
   return applyMoveAttrsInternal((attr: MoveAttr) => attr instanceof attrType, user, target, move, args);
 }
 

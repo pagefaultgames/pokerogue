@@ -42,7 +42,7 @@ export function getPokemonSpecies(species: Species | Species[]): PokemonSpecies 
 
 export function getPokemonSpeciesForm(species: Species, formIndex: integer): PokemonSpeciesForm {
   const retSpecies: PokemonSpecies = species >= 2000
-    ? allSpecies.find(s => s.speciesId === species)
+    ? allSpecies.find(s => s.speciesId === species)! // TODO: is the bang correct?
     : allSpecies[species - 1];
   if (formIndex < retSpecies.forms?.length) {
     return retSpecies.forms[formIndex];
@@ -267,7 +267,7 @@ export abstract class PokemonSpeciesForm {
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
-  getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer, back?: boolean): string {
+  getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean, variant: integer = 0, back?: boolean): string {
     if (formIndex === undefined || this instanceof PokemonForm) {
       formIndex = this.formIndex;
     }
@@ -281,7 +281,7 @@ export abstract class PokemonSpeciesForm {
     `${back ? "back__" : ""}${baseSpriteKey}`.split("__").map(p => config ? config = config[p] : null);
     const variantSet = config as VariantSet;
 
-    return `${back ? "back__" : ""}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? "shiny__" : ""}${baseSpriteKey}${shiny && variantSet && variantSet[variant || 0] === 2 ? `_${variant + 1}` : ""}`;
+    return `${back ? "back__" : ""}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? "shiny__" : ""}${baseSpriteKey}${shiny && variantSet && variantSet[variant] === 2 ? `_${variant + 1}` : ""}`;
   }
 
   getSpriteKey(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
@@ -535,7 +535,7 @@ export abstract class PokemonSpeciesForm {
     context?.drawImage(sourceImage, frame.cutX, frame.cutY, frame.width, frame.height, 0, 0, frame.width, frame.height);
     const imageData = context?.getImageData(frame.cutX, frame.cutY, frame.width, frame.height);
     const pixelData = imageData?.data;
-    const pixelColors = [];
+    const pixelColors: number[] = [];
 
     if (pixelData?.length !== undefined) {
       for (let i = 0; i < pixelData.length; i += 4) {
@@ -557,7 +557,7 @@ export abstract class PokemonSpeciesForm {
       }
     }
 
-    let paletteColors: Map<number, number>;
+    let paletteColors: Map<number, number> = new Map();
 
     const originalRandom = Math.random;
     Math.random = () => Phaser.Math.RND.realInRange(0, 1);
@@ -717,11 +717,11 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
             evolutionChance = Math.min(minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance), 1);
           }
         } else {
-          const preferredMinLevel = Math.max((ev.level - 1) + ev.wildDelay * this.getStrengthLevelDiff(strength), 1);
+          const preferredMinLevel = Math.max((ev.level - 1) + (ev.wildDelay ?? 0) * this.getStrengthLevelDiff(strength), 1);
           let evolutionLevel = Math.max(ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2), 1);
 
           if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
-            const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId).level;
+            const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId)!.level; // TODO: is the bang correct?
             if (prevolutionLevel > 1) {
               evolutionLevel = prevolutionLevel;
             }
@@ -754,15 +754,15 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
     for (const weight of evolutionPool.keys()) {
       if (randValue < weight) {
-        return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true, forTrainer, strength);
+        return getPokemonSpecies(evolutionPool.get(weight)!).getSpeciesForLevel(level, true, forTrainer, strength); // TODO: is the bang correct?
       }
     }
 
     return this.speciesId;
   }
 
-  getEvolutionLevels() {
-    const evolutionLevels = [];
+  getEvolutionLevels(): [Species, integer][] {
+    const evolutionLevels: [Species, integer][] = [];
 
     //console.log(Species[this.speciesId], pokemonEvolutions[this.speciesId])
 
@@ -782,8 +782,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return evolutionLevels;
   }
 
-  getPrevolutionLevels() {
-    const prevolutionLevels = [];
+  getPrevolutionLevels(): [Species, integer][] {
+    const prevolutionLevels: [Species, integer][] = [];
 
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
     for (const p of allEvolvingPokemon) {
@@ -805,18 +805,18 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
   // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
   getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): [Species, integer][] {
-    const ret = [];
+    const ret: [Species, integer][] = [];
     if (pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
       const prevolutionLevels = this.getPrevolutionLevels().reverse();
       const levelDiff = player ? 0 : forTrainer || isBoss ? forTrainer && isBoss ? 2.5 : 5 : 10;
       ret.push([ prevolutionLevels[0][0], 1 ]);
       for (let l = 1; l < prevolutionLevels.length; l++) {
         const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0]].find(e => e.speciesId === prevolutionLevels[l][0]);
-        ret.push([ prevolutionLevels[l][0], Math.min(Math.max(evolution.level + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution.wildDelay, 0.5) * 5) - 1, 2, evolution.level), currentLevel - 1) ]);
+        ret.push([ prevolutionLevels[l][0], Math.min(Math.max((evolution?.level ?? 0) + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay ?? 0), 0.5) * 5) - 1, 2, (evolution?.level ?? 0)), currentLevel - 1) ]);
       }
       const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
       const evolution = pokemonEvolutions[prevolutionLevels[prevolutionLevels.length - 1][0]].find(e => e.speciesId === this.speciesId);
-      ret.push([ this.speciesId, Math.min(Math.max(lastPrevolutionLevel + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution.wildDelay, 0.5) * 5), lastPrevolutionLevel + 1, evolution.level), currentLevel) ]);
+      ret.push([ this.speciesId, Math.min(Math.max(lastPrevolutionLevel + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay ?? 0), 0.5) * 5), lastPrevolutionLevel + 1, (evolution?.level ?? 0)), currentLevel) ]);
     } else {
       ret.push([ this.speciesId, 1 ]);
     }

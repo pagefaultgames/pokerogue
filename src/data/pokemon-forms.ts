@@ -313,7 +313,7 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return (!!pokemon.moveset.filter(m => m.moveId === this.move).length) === this.known;
+    return (!!pokemon.moveset.filter(m => !!m).filter(m => m.moveId === this.move).length) === this.known;
   }
 }
 

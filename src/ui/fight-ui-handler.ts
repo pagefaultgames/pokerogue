@@ -176,7 +176,7 @@ export default class FightUiHandler extends UiHandler {
     const hasMove = cursor < moveset.length;
 
     if (hasMove) {
-      const pokemonMove = moveset[cursor];
+      const pokemonMove = moveset[cursor]!; // TODO: is the bang correct?
       this.typeIcon.setTexture(`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
       this.moveCategoryIcon.setTexture("categories", MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
 
@@ -246,7 +246,7 @@ export default class FightUiHandler extends UiHandler {
       moveText.setName("text-empty-move");
 
       if (moveIndex < moveset.length) {
-        const pokemonMove = moveset[moveIndex];
+        const pokemonMove = moveset[moveIndex]!; // TODO is the bang correct?
         moveText.setText(pokemonMove.getName());
         moveText.setName(pokemonMove.getName());
         moveText.setColor(this.getMoveColor(pokemon, pokemonMove) ?? moveText.style.color);

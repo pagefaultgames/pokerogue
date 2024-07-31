@@ -1225,7 +1225,7 @@ export class PostSummonPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
-    if (pokemon.status.effect === StatusEffect.TOXIC) {
+    if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.turnCount = 0;
     }
     this.scene.arena.applyTags(ArenaTrapTag, pokemon);
@@ -1949,8 +1949,8 @@ export class CommandPhase extends FieldPhase {
     const moveQueue = playerPokemon.getMoveQueue();
 
     while (moveQueue.length && moveQueue[0]
-      && moveQueue[0].move && (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move)
-        || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(playerPokemon, moveQueue[0].ignorePP))) {
+      && moveQueue[0].move && (!playerPokemon.getMoveset().find(m => m?.moveId === moveQueue[0].move)
+        || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m?.moveId === moveQueue[0].move)]!.isUsable(playerPokemon, moveQueue[0].ignorePP))) { // TODO: is the bang correct?
       moveQueue.shift();
     }
 
@@ -1959,8 +1959,8 @@ export class CommandPhase extends FieldPhase {
       if (!queuedMove.move) {
         this.handleCommand(Command.FIGHT, -1, false);
       } else {
-        const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
-        if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP)) {
+        const moveIndex = playerPokemon.getMoveset().findIndex(m => m?.moveId === queuedMove.move);
+        if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex]!.isUsable(playerPokemon, queuedMove.ignorePP)) { // TODO: is the bang correct?
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1 });
         } else {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
@@ -1981,8 +1981,8 @@ export class CommandPhase extends FieldPhase {
       let useStruggle = false;
       if (cursor === -1 ||
           playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
-          (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) {
-        const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor].moveId : Moves.NONE : Moves.STRUGGLE;
+          (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m?.isUsable(playerPokemon)).length)) {
+        const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor]!.moveId : Moves.NONE : Moves.STRUGGLE; // TODO: is the bang correct?
         const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
         const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
         if (!moveId) {
@@ -2002,7 +2002,7 @@ export class CommandPhase extends FieldPhase {
         this.scene.currentBattle.turnCommands[this.fieldIndex] = turnCommand;
         success = true;
       } else if (cursor < playerPokemon.getMoveset().length) {
-        const move = playerPokemon.getMoveset()[cursor];
+        const move = playerPokemon.getMoveset()[cursor]!; //TODO: is this bang correct?
         this.scene.ui.setMode(Mode.MESSAGE);
 
         // Decides between a Disabled, Not Implemented, or No PP translation message
@@ -2147,9 +2147,9 @@ export class CommandPhase extends FieldPhase {
       return false;
     }
 
-    const moveIndex = pokemon.getMoveset().findIndex(m => m.moveId === encoreTag.moveId);
+    const moveIndex = pokemon.getMoveset().findIndex(m => m?.moveId === encoreTag.moveId);
 
-    if (moveIndex === -1 || !pokemon.getMoveset()[moveIndex].isUsable(pokemon)) {
+    if (moveIndex === -1 || !pokemon.getMoveset()[moveIndex]!.isUsable(pokemon)) { // TODO: is this bang correct?
       return false;
     }
 
@@ -2335,7 +2335,7 @@ export class TurnStartPhase extends FieldPhase {
         if (!queuedMove) {
           continue;
         }
-        const move = pokemon.getMoveset().find(m => m.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
+        const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
         if (pokemon.isPlayer()) {
           if (turnCommand.cursor === -1) {
             this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
@@ -3370,7 +3370,7 @@ export class StatChangePhase extends PokemonPhase {
 
       this.scene.playSound(`stat_${levels.value >= 1 ? "up" : "down"}`);
 
-      statSprite.setMask(new Phaser.Display.Masks.BitmapMask(this.scene, pokemonMaskSprite));
+      statSprite.setMask(new Phaser.Display.Masks.BitmapMask(this.scene, pokemonMaskSprite ?? undefined));
 
       this.scene.tweens.add({
         targets: statSprite,
@@ -3546,12 +3546,12 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
     if (!pokemon?.status) {
       if (pokemon?.trySetStatus(this.statusEffect, false, this.sourcePokemon)) {
         if (this.cureTurn) {
-          pokemon.status.cureTurn = this.cureTurn;
+          pokemon.status!.cureTurn = this.cureTurn; // TODO: is this bang correct?
         }
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect - 1), pokemon).play(this.scene, () => {
           this.scene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined));
-          if (pokemon.status.isPostTurn()) {
+          if (pokemon.status?.isPostTurn()) {
             this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, this.battlerIndex));
           }
           this.end();
@@ -4691,7 +4691,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                     }
                     this.scene.ui.setMode(messageMode).then(() => {
                       this.scene.ui.showText(i18next.t("battle:countdownPoof"), null, () => {
-                        this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
+                        this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex]!.getName() }), null, () => { // TODO: is the bang correct?
                           this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
                             pokemon.setMove(moveIndex, Moves.NONE);
                             this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
@@ -5456,7 +5456,7 @@ export class PartyHealPhase extends BattlePhase {
       for (const pokemon of this.scene.getParty()) {
         pokemon.hp = pokemon.getMaxHp();
         pokemon.resetStatus();
-        for (const move of pokemon.moveset) {
+        for (const move of pokemon.moveset.filter(m => !!m)) {
           move.ppUsed = 0;
         }
         pokemon.updateInfo(true);

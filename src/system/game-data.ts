@@ -1669,7 +1669,7 @@ export class GameData {
     return dexAttr & DexAttr.SHINY ? dexAttr & DexAttr.VARIANT_3 ? 3 : dexAttr & DexAttr.VARIANT_2 ? 2 : 1 : 0;
   }
 
-  getNaturesForAttr(natureAttr: integer): Nature[] {
+  getNaturesForAttr(natureAttr: integer = 0): Nature[] {
     const ret: Nature[] = [];
     for (let n = 0; n < 25; n++) {
       if (natureAttr & Math.pow(2, n + 1)) {

@@ -1522,7 +1522,7 @@ export class PokemonPpRestoreModifier extends ConsumablePokemonMoveModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    const move = pokemon.getMoveset()[this.moveIndex];
+    const move = pokemon.getMoveset()[this.moveIndex]!; //TODO: is the bang correct?
     move.ppUsed = this.restorePoints > -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
 
     return true;
@@ -1540,7 +1540,7 @@ export class PokemonAllMovePpRestoreModifier extends ConsumablePokemonModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    for (const move of pokemon.getMoveset()) {
+    for (const move of pokemon.getMoveset().filter(m => !!m)) {
       move.ppUsed = this.restorePoints > -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
     }
 
@@ -1559,7 +1559,7 @@ export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    const move = pokemon.getMoveset()[this.moveIndex];
+    const move = pokemon.getMoveset()[this.moveIndex]!; // TODO: is the bang correct?
     move.ppUp = Math.min(move.ppUp + this.upPoints, 3);
 
     return true;
@@ -1661,7 +1661,7 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
       : null;
 
     if (!matchingEvolution && pokemon.isFusion()) {
-      matchingEvolution = pokemonEvolutions[pokemon.fusionSpecies.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
+      matchingEvolution = pokemonEvolutions[pokemon.fusionSpecies!.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem // TODO: is the bang correct?
         && (e.evoFormKey === null || (e.preFormKey || "") === pokemon.getFusionFormKey())
         && (!e.condition || e.condition.predicate(pokemon)));
       if (matchingEvolution) {

@@ -3428,7 +3428,7 @@ export class PlayerPokemon extends Pokemon {
     if (evoSpecies?.speciesId === Species.NINCADA && evolution.speciesId === Species.NINJASK) {
       const newEvolution = pokemonEvolutions[evoSpecies.speciesId][1];
 
-      if (newEvolution.condition.predicate(this)) {
+      if (newEvolution.condition?.predicate(this)) {
         const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, undefined, this.shiny, this.variant, this.ivs, this.nature);
         newPokemon.natureOverride = this.natureOverride;
         newPokemon.passive = this.passive;

@@ -120,7 +120,7 @@ export class Ability implements Localizable {
 type AbAttrApplyFunc<TAttr extends AbAttr> = (attr: TAttr, passive: boolean) => boolean | Promise<boolean>;
 type AbAttrCondition = (pokemon: Pokemon) => boolean;
 
-type PokemonAttackCondition = (user: Pokemon, target: Pokemon | null, move: Move) => boolean;
+type PokemonAttackCondition = (user: Pokemon | null, target: Pokemon | null, move: Move) => boolean;
 type PokemonDefendCondition = (target: Pokemon, user: Pokemon, move: Move) => boolean;
 type PokemonStatChangeCondition = (target: Pokemon, statsChanged: BattleStat[], levels: integer) => boolean;
 
@@ -240,7 +240,7 @@ export class PostBattleInitStatChangeAbAttr extends PostBattleInitAbAttr {
 type PreDefendAbAttrCondition = (pokemon: Pokemon, attacker: Pokemon, move: Move) => boolean;
 
 export class PreDefendAbAttr extends AbAttr {
-  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -1455,7 +1455,7 @@ export class FieldMovePowerBoostAbAttr extends AbAttr {
     this.powerMultiplier = powerMultiplier;
   }
 
-  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
+  applyPreAttack(pokemon: Pokemon | null, passive: boolean | null, defender: Pokemon | null, move: Move, args: any[]): boolean {
     if (this.condition(pokemon, defender, move)) {
       (args[0] as Utils.NumberHolder).value *= this.powerMultiplier;
 
@@ -2206,7 +2206,7 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
     }
 
     for (const pokemon of allowedParty) {
-      if (this.statusEffect.includes(pokemon.status?.effect)) {
+      if (pokemon.status && this.statusEffect.includes(pokemon.status.effect)) {
         pokemon.scene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
         pokemon.resetStatus(false);
         pokemon.updateInfo();
@@ -2270,7 +2270,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     pokemon.summonData.fusionGender = target.getFusionGender();
     pokemon.summonData.stats = [ pokemon.stats[Stat.HP] ].concat(target.stats.slice(1));
     pokemon.summonData.battleStats = target.summonData.battleStats.slice(0);
-    pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
+    pokemon.summonData.moveset = target.getMoveset().filter(m => !!m).map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
     pokemon.summonData.types = target.getTypes();
 
     pokemon.scene.playSound("PRSFX- Transform");
@@ -2674,7 +2674,7 @@ export class BlockStatusDamageAbAttr extends AbAttr {
    * @returns Returns true if status damage is blocked
    */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.effects.includes(pokemon.status?.effect)) {
+    if (pokemon.status && this.effects.includes(pokemon.status.effect)) {
       cancelled.value = true;
       return true;
     }
@@ -2802,7 +2802,7 @@ function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
 function getAnticipationCondition(): AbAttrCondition {
   return (pokemon: Pokemon) => {
     for (const opponent of pokemon.getOpponents()) {
-      for (const move of opponent.moveset) {
+      for (const move of opponent.moveset.filter(m => !!m)) {
         // move is super effective
         if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().type, opponent, true) >= 2) {
           return true;
@@ -2859,7 +2859,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
     let maxMove = "";
     let movePower = 0;
     for (const opponent of pokemon.getOpponents()) {
-      for (const move of opponent.moveset) {
+      for (const move of opponent.moveset.filter(m => !!m)) {
         if (move.getMove() instanceof StatusMove) {
           movePower = 1;
         } else if (move.getMove().hasAttr(OneHitKOAttr)) {
@@ -3050,7 +3050,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
    * @returns Returns true if healed from status, false if not
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
-    if (this.effects.includes(pokemon.status?.effect)) {
+    if (pokemon.status && this.effects.includes(pokemon.status.effect)) {
       if (!pokemon.isFullHp()) {
         const scene = pokemon.scene;
         const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
@@ -4156,7 +4156,7 @@ export function applyPostBattleInitAbAttrs(attrType: Constructor<PostBattleInitA
 }
 
 export function applyPreDefendAbAttrs(attrType: Constructor<PreDefendAbAttr>,
-  pokemon: Pokemon, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, ...args: any[]): Promise<void> {
   const simulated = args.length > 1 && args[1];
   return applyAbAttrsInternal<PreDefendAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreDefend(pokemon, passive, attacker, move, cancelled, args), args, false, simulated);
 }
@@ -4547,8 +4547,8 @@ export function initAbilities() {
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPD, 1)
       .ignorable(),
     new Ability(Abilities.RIVALRY, 4)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => user.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user.gender === target?.gender, 1.25, true)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => user.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user.gender !== target?.gender, 0.75),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => user?.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user?.gender === target?.gender, 1.25, true)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => user?.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user?.gender !== target?.gender, 0.75),
     new Ability(Abilities.STEADFAST, 4)
       .attr(FlinchStatChangeAbAttr, BattleStat.SPD, 1),
     new Ability(Abilities.SNOW_CLOAK, 4)
@@ -4721,9 +4721,9 @@ export function initAbilities() {
       .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.isFullHp(), 0.5)
       .ignorable(),
     new Ability(Abilities.TOXIC_BOOST, 5)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.PHYSICAL && (user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC), 1.5),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.PHYSICAL && (user?.status?.effect === StatusEffect.POISON || user?.status?.effect === StatusEffect.TOXIC), 1.5),
     new Ability(Abilities.FLARE_BOOST, 5)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.SPECIAL && user.status?.effect === StatusEffect.BURN, 1.5),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.SPECIAL && user?.status?.effect === StatusEffect.BURN, 1.5),
     new Ability(Abilities.HARVEST, 5)
       .attr(
         PostTurnLootAbAttr,
