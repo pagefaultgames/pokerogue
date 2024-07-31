@@ -1,16 +1,16 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const runHistory: SimpleTranslationEntries = {
-  "victory": "Victory!",
-  "defeatedWild": "Defeated by ",
-  "defeatedTrainer": "Defeated by ",
-  "defeatedTrainerDouble": "Defeated by Duo",
-  "defeatedRival": "Defeated by Rival",
-  "defeated":"Defeated",
-  "luck":"Luck",
-  "score":"Score",
-  "mode":"Mode",
-  "challengeRules":"Rule(s)",
+  "victory": "Sieg!",
+  "defeatedWild": "Besiegt durch ",
+  "defeatedTrainer": "Besiegt durch",
+  "defeatedTrainerDouble": "Besiegt durch Doppelkampf",
+  "defeatedRival": "Besiegt durch Rivale",
+  "defeated":"Besiegt",
+  "luck":"Glück",
+  "score":"Punkte",
+  "mode":"Modus",
+  "challengeRules":"Regeln",
   "challengeMonoGen1":"Gen I",
   "challengeMonoGen2":"Gen II",
   "challengeMonoGen3":"Gen III",
@@ -20,15 +20,15 @@ export const runHistory: SimpleTranslationEntries = {
   "challengeMonoGen7":"Gen VII",
   "challengeMonoGen8":"Gen VIII",
   "challengeMonoGen9":"Gen IX",
-  "playerItems":"Player Items",
-  "personalBest":"Personal Best!",
-  "SPDshortened":"Vel.",
-  "runInfo":"Run Info",
-  "money":"Money",
-  "runLength":"Run Length",
-  "viewHeldItems":"Held Items",
-  "hallofFameText":"Welcome to the Hall of Fame!",
-  "viewHallOfFame":"View Hall of Fame!"
+  "playerItems":"Spielergegenstände",
+  "personalBest":"Persönlicher Bestwert!",
+  "SPDshortened":"Geschw.",
+  "runInfo":"Durchlauf Info.",
+  "money":"Geld",
+  "runLength":"Länge des Durchlaufs,
+  "viewHeldItems":"Getragene Items",
+  "hallofFameText":"Willkommen in der Ruhmeshalle",
+  "viewHallOfFame":"Ruhmeshalle ansehen!"
 } as const;
 
 //Mode Information found in game-mode.ts
