@@ -2938,10 +2938,10 @@ export class MoveEffectPhase extends PokemonPhase {
       const moveHistoryEntry = { move: this.move.moveId, targets: this.targets, result: MoveResult.PENDING, virtual: this.move.virtual };
 
       const targetHitChecks = Object.fromEntries(targets.map(p => [p.getBattlerIndex(), this.hitCheck(p)]));
-      const activeTargets = targets.map(t => t.isActive(true));
-      if (!activeTargets.length || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]])) {
+      const hasActiveTargets = targets.some(t => t.isActive(true));
+      if (!hasActiveTargets || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]])) {
         this.stopMultiHit();
-        if (activeTargets.length) {
+        if (hasActiveTargets) {
           this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getTarget()? getPokemonNameWithAffix(this.getTarget()!) : "" }));
           moveHistoryEntry.result = MoveResult.MISS;
           applyMoveAttrs(MissEffectAttr, user, null, move);
@@ -3079,23 +3079,23 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
     }
 
-    const user = this.getUserPokemon();
+    const user = this.getUserPokemon()!; // TODO: is this bang correct?
 
     // Hit check only calculated on first hit for multi-hit moves unless flag is set to check all hits.
     // However, if an ability with the MaxMultiHitAbAttr, namely Skill Link, is present, act as a normal
     // multi-hit move and proceed with all hits
-    if (user && user.turnData.hitsLeft < user.turnData.hitCount) {
+    if (user.turnData.hitsLeft < user.turnData.hitCount) {
       if (!this.move.getMove().hasFlag(MoveFlags.CHECK_ALL_HITS) || user.hasAbilityWithAttr(MaxMultiHitAbAttr)) {
         return true;
       }
     }
 
-    if (user?.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
+    if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
       return true;
     }
 
     // If the user should ignore accuracy on a target, check who the user targeted last turn and see if they match
-    if (user?.getTag(BattlerTagType.IGNORE_ACCURACY) && (user?.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
+    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
       return true;
     }
 
@@ -3114,10 +3114,10 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
     }
 
-    const accuracyMultiplier = user?.getAccuracyMultiplier(target, this.move.getMove());
-    const rand = user?.randSeedInt(100, 1);
+    const accuracyMultiplier = user.getAccuracyMultiplier(target, this.move.getMove());
+    const rand = user.randSeedInt(100, 1);
 
-    return !!rand && rand <= moveAccuracy * (accuracyMultiplier!); // TODO: is this bang correct?
+    return rand <= moveAccuracy * (accuracyMultiplier!); // TODO: is this bang correct?
   }
 
   getUserPokemon(): Pokemon | undefined {
