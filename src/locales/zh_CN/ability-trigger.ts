@@ -59,4 +59,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postSummonSwordOfRuin": "{{pokemonNameWithAffix}}的灾祸之剑\n令周围的宝可梦的{{statName}}减弱了！",
   "postSummonTabletsOfRuin": "{{pokemonNameWithAffix}}的灾祸之简\n令周围的宝可梦的{{statName}}减弱了！",
   "postSummonBeadsOfRuin": "{{pokemonNameWithAffix}}的灾祸之玉\n令周围的宝可梦的{{statName}}减弱了！",
+  "preventBerryUse": "{{pokemonNameWithAffix}}因太紧张\n而无法食用树果！",
 } as const;
