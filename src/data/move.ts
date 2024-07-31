@@ -3837,26 +3837,18 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
 
       switch (form) {
       case 1: // Wellspring Mask
-        move.type = Type.WATER;
-        break;
-      case 2: // Hearthflame Mask
-        move.type = Type.FIRE;
-        break;
-      case 3: // Cornerstone Mask
-        move.type = Type.ROCK;
-        break;
-      case 4: // Teal Mask Tera
-        move.type = Type.GRASS;
-        break;
       case 5: // Wellspring Mask Tera
         move.type = Type.WATER;
         break;
+      case 2: // Hearthflame Mask
       case 6: // Hearthflame Mask Tera
         move.type = Type.FIRE;
         break;
+      case 3: // Cornerstone Mask
       case 7: // Cornerstone Mask Tera
         move.type = Type.ROCK;
         break;
+      case 4: // Teal Mask Tera
       default:
         move.type = Type.GRASS;
         break;
