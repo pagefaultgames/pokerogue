@@ -15,7 +15,6 @@ import EggCounterContainer from "./ui/egg-counter-container";
 import { EggCountChangedEvent } from "./events/egg";
 import { getPokemonNameWithAffix } from "./messages";
 
-
 export class EggSkipPhase extends Phase {
   private eggs: Egg[];
   private newEggMoves: integer[];
@@ -592,6 +591,7 @@ export class EggSummaryPhase extends Phase {
   private hiddenAbilityIcons: Phaser.GameObjects.Image[];
   private pokeballIcons: Phaser.GameObjects.Image[];
   private eggMoveIcons: Phaser.GameObjects.Image[];
+  private infoContainers: PokemonInfoContainer[];
   constructor(scene: BattleScene, pokemonHatchedContainer: PlayerPokemon[], newEggMoves: integer[]) {
     super(scene);
     this.pokemonHatched = pokemonHatchedContainer;
@@ -601,11 +601,6 @@ export class EggSummaryPhase extends Phase {
   start() {
     super.start();
 
-    // extra debug pokemon to test icons
-    this.pokemonHatched.push(this.scene.addPlayerPokemon(getPokemonSpecies(Species.LUGIA), 1, undefined, undefined, undefined, true));
-    this.pokemonHatched.push(this.scene.addPlayerPokemon(getPokemonSpecies(Species.REGIROCK), 1, 2, undefined, undefined, true));
-    this.pokemonHatched.push(this.scene.addPlayerPokemon(getPokemonSpecies(Species.PIDGEY), 1, 2, undefined, undefined, true));
-    this.pokemonHatched.push(this.scene.addPlayerPokemon(getPokemonSpecies(Species.REGIROCK), 1, undefined, undefined, undefined, false));
     // 55 pokemon total now
     // for (let i = 0; i < 44; i++) {
     //   this.pokemonHatched.push(this.scene.addPlayerPokemon(getPokemonSpecies(Species.PIKACHU), 1, undefined, undefined, undefined, false));
@@ -692,6 +687,14 @@ export class EggSummaryPhase extends Phase {
         ret.setScale(size / scale_size);
         ret.setVisible(true);
         ret.setTint(0.5);
+        this.eggHatchContainer.add(ret);
+        return ret;
+      });
+
+      this.infoContainers = new Array(this.pokemonHatched.length).fill(null).map((_, i) => {
+        const ret = new PokemonInfoContainer(this.scene);
+        ret.setup();
+        ret.show(this.pokemonHatched[i]);
         this.eggHatchContainer.add(ret);
         return ret;
       });
@@ -799,7 +802,7 @@ export class EggSummaryPhase extends Phase {
     return new Promise<void>(resolve => {
       console.log("set caught");
       if (this.showMessages) {
-        this.infoContainer.show(pokemon, false, 4);
+        // this.infoContainer.show(pokemon, false, 4);
       }
       // this.scene.ui.showText(`${this.pokemonHatched[0].name}`, 0);
       this.scene.gameData.setPokemonCaught(pokemon, true, true, this.showMessages).then(() => {

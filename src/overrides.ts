@@ -30,7 +30,8 @@ import { type ModifierOverride, type ModifierTypeKeys } from "./modifier/modifie
  * ```
  */
 const overrides = {
-  EGG_IMMEDIATE_HATCH_OVERRIDE: true
+  EGG_IMMEDIATE_HATCH_OVERRIDE: true,
+  EGG_FREE_GACHA_PULLS_OVERRIDE: true
 } satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
