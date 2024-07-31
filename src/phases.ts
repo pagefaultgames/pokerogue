@@ -3122,7 +3122,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
   getUserPokemon(): Pokemon | undefined {
     if (this.battlerIndex > BattlerIndex.ENEMY_2) {
-      return this.scene.getPokemonById(this.battlerIndex);
+      return this.scene.getPokemonById(this.battlerIndex) ?? undefined;
     }
     return (this.player ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.fieldIndex];
   }

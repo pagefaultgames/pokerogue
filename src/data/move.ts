@@ -2492,7 +2492,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
           resolve(true);
         });
       } else {
-        user.scene.ui.showText(i18next.t("moveTriggers:tookMoveAttack", {pokemonName: getPokemonNameWithAffix(user.scene.getPokemonById(target.id)), moveName: move.name}), null, () => resolve(true));
+        user.scene.ui.showText(i18next.t("moveTriggers:tookMoveAttack", {pokemonName: getPokemonNameWithAffix(user.scene.getPokemonById(target.id) ?? undefined), moveName: move.name}), null, () => resolve(true));
       }
     });
   }
