@@ -97,7 +97,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
           fragB = fragB.slice(1);
         } else {
           const newCharMatch = new RegExp(`[^${lastCharA}]`).exec(fragB);
-          if (newCharMatch?.index > 0) {
+          if (newCharMatch?.index !== undefined && newCharMatch.index > 0) {
             fragB = fragB.slice(newCharMatch.index);
           }
         }
@@ -125,7 +125,7 @@ export abstract class PokemonSpeciesForm {
   public formIndex: integer;
   public generation: integer;
   public type1: Type;
-  public type2: Type;
+  public type2: Type | null;
   public height: number;
   public weight: number;
   public ability1: Abilities;
@@ -139,7 +139,7 @@ export abstract class PokemonSpeciesForm {
   public genderDiffs: boolean;
   public isStarterSelectable: boolean;
 
-  constructor(type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
+  constructor(type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
     catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs: boolean, isStarterSelectable: boolean) {
     this.type1 = type1;
@@ -297,10 +297,10 @@ export abstract class PokemonSpeciesForm {
    * @returns species id if no additional forms, index with formkey if a pokemon with a form
    */
   getVariantDataIndex(formIndex?: integer) {
-    let formkey = null;
-    let variantDataIndex: integer|string = this.speciesId;
+    let formkey: string | null = null;
+    let variantDataIndex: integer | string = this.speciesId;
     const species = getPokemonSpecies(this.speciesId);
-    if (species.forms.length > 0) {
+    if (species.forms.length > 0 && formIndex !== undefined) {
       formkey = species.forms[formIndex]?.formKey;
       if (formkey) {
         variantDataIndex = `${this.speciesId}-${formkey}`;
@@ -311,7 +311,7 @@ export abstract class PokemonSpeciesForm {
 
   getIconAtlasKey(formIndex?: integer, shiny?: boolean, variant?: integer): string {
     const variantDataIndex = this.getVariantDataIndex(formIndex);
-    const isVariant = shiny && variantData[variantDataIndex] && variantData[variantDataIndex][variant];
+    const isVariant = shiny && variantData[variantDataIndex] && (variant !== undefined && variantData[variantDataIndex][variant]);
     return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
   }
 
@@ -324,7 +324,7 @@ export abstract class PokemonSpeciesForm {
 
     let ret = this.speciesId.toString();
 
-    const isVariant = shiny && variantData[variantDataIndex] && variantData[variantDataIndex][variant];
+    const isVariant = shiny && variantData[variantDataIndex] && (variant !== undefined && variantData[variantDataIndex][variant]);
 
     if (shiny && !isVariant) {
       ret += "s";
@@ -382,7 +382,7 @@ export abstract class PokemonSpeciesForm {
     let ret = speciesId.toString();
     const forms = getPokemonSpecies(speciesId).forms;
     if (forms.length) {
-      if (formIndex >= forms.length) {
+      if (formIndex !== undefined && formIndex >= forms.length) {
         console.warn(`Attempted accessing form with index ${formIndex} of species ${getPokemonSpecies(speciesId).getName()} with only ${forms.length || 0} forms`);
         formIndex = Math.min(formIndex, forms.length - 1);
       }
@@ -478,7 +478,7 @@ export abstract class PokemonSpeciesForm {
         let config = variantData;
         spritePath.split("/").map(p => config ? config = config[p] : null);
         const variantSet = config as VariantSet;
-        if (variantSet && variantSet[variant] === 1) {
+        if (variantSet && (variant !== undefined && variantSet[variant] === 1)) {
           const populateVariantColors = (key: string): Promise<void> => {
             return new Promise(resolve => {
               if (variantColorCache.hasOwnProperty(key)) {
@@ -507,7 +507,7 @@ export abstract class PokemonSpeciesForm {
 
   cry(scene: BattleScene, soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound {
     const cryKey = this.getCryKey(this.formIndex);
-    let cry = scene.sound.get(cryKey) as AnySound;
+    let cry: AnySound | null = scene.sound.get(cryKey) as AnySound;
     if (cry?.pendingRemove) {
       cry = null;
     }
@@ -532,27 +532,29 @@ export abstract class PokemonSpeciesForm {
     const frame = sourceFrame;
     canvas.width = frame.width;
     canvas.height = frame.height;
-    context.drawImage(sourceImage, frame.cutX, frame.cutY, frame.width, frame.height, 0, 0, frame.width, frame.height);
-    const imageData = context.getImageData(frame.cutX, frame.cutY, frame.width, frame.height);
-    const pixelData = imageData.data;
+    context?.drawImage(sourceImage, frame.cutX, frame.cutY, frame.width, frame.height, 0, 0, frame.width, frame.height);
+    const imageData = context?.getImageData(frame.cutX, frame.cutY, frame.width, frame.height);
+    const pixelData = imageData?.data;
+    const pixelColors = [];
 
-    for (let i = 0; i < pixelData.length; i += 4) {
-      if (pixelData[i + 3]) {
-        const pixel = pixelData.slice(i, i + 4);
-        const [ r, g, b, a ] = pixel;
-        if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b)) {
-          spriteColors.push([ r, g, b, a ]);
+    if (pixelData?.length !== undefined) {
+      for (let i = 0; i < pixelData.length; i += 4) {
+        if (pixelData[i + 3]) {
+          const pixel = pixelData.slice(i, i + 4);
+          const [ r, g, b, a ] = pixel;
+          if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b)) {
+            spriteColors.push([ r, g, b, a ]);
+          }
         }
       }
-    }
 
-    const pixelColors = [];
-    for (let i = 0; i < pixelData.length; i += 4) {
-      const total = pixelData.slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
-      if (!total) {
-        continue;
+      for (let i = 0; i < pixelData.length; i += 4) {
+        const total = pixelData.slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
+        if (!total) {
+          continue;
+        }
+        pixelColors.push(argbFromRgba({ r: pixelData[i], g: pixelData[i + 1], b: pixelData[i + 2], a: pixelData[i + 3] }));
       }
-      pixelColors.push(argbFromRgba({ r: pixelData[i], g: pixelData[i + 1], b: pixelData[i + 2], a: pixelData[i + 3] }));
     }
 
     let paletteColors: Map<number, number>;
@@ -577,15 +579,15 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   public mythical: boolean;
   public species: string;
   public growthRate: GrowthRate;
-  public malePercent: number;
+  public malePercent: number | null;
   public genderDiffs: boolean;
   public canChangeForm: boolean;
   public forms: PokemonForm[];
 
   constructor(id: Species, generation: integer, subLegendary: boolean, legendary: boolean, mythical: boolean, species: string,
-    type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
+    type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
-    catchRate: integer, baseFriendship: integer, baseExp: integer, growthRate: GrowthRate, malePercent: number,
+    catchRate: integer, baseFriendship: integer, baseExp: integer, growthRate: GrowthRate, malePercent: number | null,
     genderDiffs: boolean, canChangeForm?: boolean, ...forms: PokemonForm[]) {
     super(type1, type2, height, weight, ability1, ability2, abilityHidden, baseTotal, baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd,
       catchRate, baseFriendship, baseExp, genderDiffs, false);
@@ -614,7 +616,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   getName(formIndex?: integer): string {
     if (formIndex !== undefined && this.forms.length) {
       const form = this.forms[formIndex];
-      let key: string;
+      let key: string | null;
       switch (form.formKey) {
       case SpeciesFormKey.MEGA:
       case SpeciesFormKey.PRIMAL:
@@ -626,6 +628,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       default:
         if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
           key = "gigantamax";
+        } else {
+          key = null;
         }
       }
 
@@ -853,7 +857,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   getFormSpriteKey(formIndex?: integer) {
-    if (this.forms.length && formIndex >= this.forms.length) {
+    if (this.forms.length && (formIndex !== undefined && formIndex >= this.forms.length)) {
       console.warn(`Attempted accessing form with index ${formIndex} of species ${this.getName()} with only ${this.forms.length || 0} forms`);
       formIndex = Math.min(formIndex, this.forms.length - 1);
     }
@@ -866,14 +870,14 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 export class PokemonForm extends PokemonSpeciesForm {
   public formName: string;
   public formKey: string;
-  public formSpriteKey: string;
+  public formSpriteKey: string | null;
 
   // This is a collection of form keys that have in-run form changes, but should still be separately selectable from the start screen
   private starterSelectableKeys: string[] = ["10", "50", "10-pc", "50-pc", "red", "orange", "yellow", "green", "blue", "indigo", "violet"];
 
-  constructor(formName: string, formKey: string, type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
+  constructor(formName: string, formKey: string, type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
-    catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs?: boolean, formSpriteKey?: string, isStarterSelectable?: boolean, ) {
+    catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs?: boolean, formSpriteKey?: string | null, isStarterSelectable?: boolean, ) {
     super(type1, type2, height, weight, ability1, ability2, abilityHidden, baseTotal, baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd,
       catchRate, baseFriendship, baseExp, !!genderDiffs, (!!isStarterSelectable || !formKey));
     this.formName = formName;

@@ -59,26 +59,26 @@ export type EvolutionConditionEnforceFunc = (p: Pokemon) => void;
 
 export class SpeciesFormEvolution {
   public speciesId: Species;
-  public preFormKey: string;
-  public evoFormKey: string;
+  public preFormKey: string | null;
+  public evoFormKey: string | null;
   public level: integer;
-  public item: EvolutionItem;
-  public condition: SpeciesEvolutionCondition;
-  public wildDelay: SpeciesWildEvolutionDelay;
+  public item: EvolutionItem | null;
+  public condition: SpeciesEvolutionCondition | null;
+  public wildDelay: SpeciesWildEvolutionDelay | null;
 
-  constructor(speciesId: Species, preFormKey: string, evoFormKey: string, level: integer, item: EvolutionItem, condition: SpeciesEvolutionCondition, wildDelay?: SpeciesWildEvolutionDelay) {
+  constructor(speciesId: Species, preFormKey: string | null, evoFormKey: string | null, level: integer, item: EvolutionItem | null, condition: SpeciesEvolutionCondition | null, wildDelay?: SpeciesWildEvolutionDelay | null) {
     this.speciesId = speciesId;
     this.preFormKey = preFormKey;
     this.evoFormKey = evoFormKey;
     this.level = level;
     this.item = item || EvolutionItem.NONE;
     this.condition = condition;
-    this.wildDelay = wildDelay || SpeciesWildEvolutionDelay.NONE;
+    this.wildDelay = wildDelay ?? SpeciesWildEvolutionDelay.NONE;
   }
 }
 
 export class SpeciesEvolution extends SpeciesFormEvolution {
-  constructor(speciesId: Species, level: integer, item: EvolutionItem, condition: SpeciesEvolutionCondition, wildDelay?: SpeciesWildEvolutionDelay) {
+  constructor(speciesId: Species, level: integer, item: EvolutionItem | null, condition: SpeciesEvolutionCondition | null, wildDelay?: SpeciesWildEvolutionDelay | null) {
     super(speciesId, null, null, level, item, condition, wildDelay);
   }
 }
@@ -95,7 +95,7 @@ export class FusionSpeciesFormEvolution extends SpeciesFormEvolution {
 
 export class SpeciesEvolutionCondition {
   public predicate: EvolutionConditionPredicate;
-  public enforceFunc: EvolutionConditionEnforceFunc;
+  public enforceFunc: EvolutionConditionEnforceFunc | undefined;
 
   constructor(predicate: EvolutionConditionPredicate, enforceFunc?: EvolutionConditionEnforceFunc) {
     this.predicate = predicate;
