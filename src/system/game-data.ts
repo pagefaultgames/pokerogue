@@ -571,8 +571,12 @@ export class GameData {
 
   public async getRunHistoryData(scene: BattleScene): Promise<Object> {
     if (!Utils.isLocal) {
+      /**
+       * Networking Code
+       *
       const response = await Utils.apiFetch("savedata/runHistory", true);
       const data = await response.json();
+      */
       if (localStorage.hasOwnProperty(`runHistoryData_${loggedInUser.username}`)) {
         let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`);
         if (cachedResponse) {
@@ -622,6 +626,9 @@ export class GameData {
 
     localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), true));
 
+    /**
+     * Networking Code
+     *
     if (!Utils.isLocal) {
       try {
         Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
@@ -631,6 +638,7 @@ export class GameData {
         return false;
       }
     }
+    */
   }
 
   parseSystemData(dataStr: string): SystemSaveData {
