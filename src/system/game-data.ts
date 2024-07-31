@@ -584,14 +584,19 @@ export class GameData {
         }
         const cachedRHData = cachedResponse ?? {};
         //check to see whether cachedData or serverData is more up-to-date
+        /**
+       * Networking Code
+       *
         if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
           return cachedRHData;
         }
+        */
+        return cachedRHData;
       } else {
         localStorage.setItem(`runHistoryData_${loggedInUser.username}`, JSON.parse(encrypt("", true)));
         return {};
       }
-      return data;
+      //return data;
     } else {
       let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`);
       if (cachedResponse) {
@@ -639,6 +644,7 @@ export class GameData {
       }
     }
     */
+    return true;
   }
 
   parseSystemData(dataStr: string): SystemSaveData {
