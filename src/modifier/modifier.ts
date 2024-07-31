@@ -9,7 +9,7 @@ import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from "../data/type";
 import { EvolutionPhase } from "../evolution-phase";
 import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
-import {getPokemonMessage, getPokemonNameWithAffix} from "../messages";
+import { getPokemonNameWithAffix } from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
@@ -1088,7 +1088,7 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
       const hasQuickClaw = this.type instanceof ModifierTypes.PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW";
 
       if (isCommandFight && hasQuickClaw) {
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, " used its Quick Claw to move faster!"));
+        pokemon.scene.queueMessage(i18next.t("modifier:bypassSpeedChanceApply", { pokemonName: getPokemonNameWithAffix(pokemon), itemName: i18next.t("modifierType:ModifierType.QUICK_CLAW.name") }));
       }
       return true;
     }
@@ -1151,7 +1151,7 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
 
-    if (pokemon.getHpRatio() < 1) {
+    if (!pokemon.isFullHp()) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
         Math.max(Math.floor(pokemon.getMaxHp() / 16) * this.stackCount, 1), i18next.t("modifier:turnHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), true));
@@ -1242,7 +1242,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
 
-    if (pokemon.turnData.damageDealt && pokemon.getHpRatio() < 1) {
+    if (pokemon.turnData.damageDealt && !pokemon.isFullHp()) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
         Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount, 1), i18next.t("modifier:hitHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), true));
@@ -1388,6 +1388,47 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 1;
+  }
+}
+
+/**
+ * Modifier used for White Herb, which resets negative {@linkcode Stat} changes
+ * @extends PokemonHeldItemModifier
+ * @see {@linkcode apply}
+ */
+export class PokemonResetNegativeStatStageModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier) {
+    return modifier instanceof PokemonResetNegativeStatStageModifier;
+  }
+
+  clone() {
+    return new PokemonResetNegativeStatStageModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  /**
+   * Restores any negative stat stages of the mon to 0
+   * @param args args[0] is the {@linkcode Pokemon} whose stat stages are being checked
+   * @returns true if any stat changes were applied (item was used), false otherwise
+   */
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+    const loweredStats = pokemon.summonData.battleStats.filter(s => s < 0);
+    if (loweredStats.length) {
+      for (let s = 0; s < pokemon.summonData.battleStats.length; s++) {
+        pokemon.summonData.battleStats[s] = Math.max(0, pokemon.summonData.battleStats[s]);
+      }
+      pokemon.scene.queueMessage(i18next.t("modifier:pokemonResetNegativeStatStageApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }));
+      return true;
+    }
+    return false;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 2;
   }
 }
 
@@ -2520,7 +2561,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
 
-    if (pokemon.getHpRatio() < 1) {
+    if (!pokemon.isFullHp()) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
         Math.max(Math.floor(pokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, 1), i18next.t("modifier:enemyTurnHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), true, false, false, false, true));

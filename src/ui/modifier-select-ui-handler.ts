@@ -10,6 +10,7 @@ import {Button} from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
+import Overrides from "#app/overrides";
 import i18next from "i18next";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
@@ -726,9 +727,10 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
   updateCostText(): void {
     const scene = this.scene as BattleScene;
-    const textStyle = this.modifierTypeOption.cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
+    const cost = Overrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
+    const textStyle = cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
-    const formattedMoney = Utils.formatMoney(scene.moneyFormat, this.modifierTypeOption.cost);
+    const formattedMoney = Utils.formatMoney(scene.moneyFormat, cost);
 
     this.itemCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney }));
     this.itemCostText.setColor(getTextColor(textStyle, false, scene.uiTheme));

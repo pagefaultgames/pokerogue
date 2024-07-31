@@ -93,6 +93,8 @@ export default class SummaryUiHandler extends UiHandler {
   private moveCursorBlinkTimer: Phaser.Time.TimerEvent;
 
   private pokemon: PlayerPokemon;
+  private playerParty: boolean;
+  /**This is set to false when checking the summary of a freshly caught Pokemon as it is not part of a player's party yet but still needs to display its items**/
   private newMove: Move;
   private moveSelectFunction: Function;
   private transitioning: boolean;
@@ -102,6 +104,7 @@ export default class SummaryUiHandler extends UiHandler {
   private moveSelect: boolean;
   private moveCursor: integer;
   private selectedMoveIndex: integer;
+  private selectCallback: Function;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.SUMMARY);
@@ -269,9 +272,16 @@ export default class SummaryUiHandler extends UiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
+    /* args[] information
+    * args[0] : the Pokemon displayed in the Summary-UI
+    * args[1] : the summaryUiMode (defaults to 0)
+    * args[2] : the start page (defaults to Page.PROFILE)
+    * args[3] : contains the function executed when the user exits out of Summary UI
+    * args[4] : optional boolean used to determine if the Pokemon is part of the player's party or not (defaults to true, necessary for PR #2921 to display all relevant information)
+    */
     this.pokemon = args[0] as PlayerPokemon;
     this.summaryUiMode = args.length > 1 ? args[1] as SummaryUiMode : SummaryUiMode.DEFAULT;
-
+    this.playerParty = args[4] ?? true;
     this.scene.ui.bringToTop(this.summaryContainer);
 
     this.summaryContainer.setVisible(true);
@@ -368,6 +378,9 @@ export default class SummaryUiHandler extends UiHandler {
       const page = args.length < 2 ? Page.PROFILE : args[2] as Page;
       this.hideMoveEffect(true);
       this.setCursor(page);
+      if (args.length > 3) {
+        this.selectCallback = args[3];
+      }
       break;
     case SummaryUiMode.LEARN_MOVE:
       this.newMove = args[2] as Move;
@@ -397,7 +410,7 @@ export default class SummaryUiHandler extends UiHandler {
     }
 
     const ui = this.getUi();
-
+    const fromPartyMode = ui.handlers[Mode.PARTY].active;
     let success = false;
     let error = false;
 
@@ -485,7 +498,17 @@ export default class SummaryUiHandler extends UiHandler {
         if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
           this.hideMoveSelect();
         } else {
-          ui.setMode(Mode.PARTY);
+          if (this.selectCallback instanceof Function) {
+            const selectCallback = this.selectCallback;
+            this.selectCallback = null;
+            selectCallback();
+          }
+
+          if (!fromPartyMode) {
+            ui.setMode(Mode.MESSAGE);
+          } else {
+            ui.setMode(Mode.PARTY);
+          }
         }
         success = true;
       } else {
@@ -494,6 +517,8 @@ export default class SummaryUiHandler extends UiHandler {
         case Button.UP:
         case Button.DOWN:
           if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
+            break;
+          } else if (!fromPartyMode) {
             break;
           }
           const isDown = button === Button.DOWN;
@@ -837,7 +862,7 @@ export default class SummaryUiHandler extends UiHandler {
       });
 
       const itemModifiers = (this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-          && m.pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[])
+          && m.pokemonId === this.pokemon.id, this.playerParty) as PokemonHeldItemModifier[])
         .sort(modifierSortFunc);
 
       itemModifiers.forEach((item, i) => {

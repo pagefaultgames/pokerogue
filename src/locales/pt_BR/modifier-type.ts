@@ -153,6 +153,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "Semente Reanimadora", description: "Após desmaiar por um ataque direto, reanima com 50% de PS." },
 
+    "WHITE_HERB": { name: "Erva Branca", description: "Restaura quaisquer atributos diminuídos em batalha." },
+
     "ETHER": { name: "Éter" },
     "MAX_ETHER": { name: "Éter Máximo" },
 
@@ -182,8 +184,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Guizo" },
 
-    "SCOPE_LENS": { name: "Lentes de Mira", description: "Estas lentes facilitam o foco em pontos fracos. Aumenta a chance de acerto crítico de quem a segurar."},
-    "LEEK": { name: "Alho-poró", description: "Esse talo de alho-poró muito longo e rígido aumenta a taxa de acerto crítico dos movimentos do Farfetch'd."},
+    "SCOPE_LENS": { name: "Lentes de Mira", description: "Estas lentes facilitam o foco em pontos fracos. Aumenta a chance de acerto crítico de quem a segurar." },
+    "LEEK": { name: "Alho-poró", description: "Esse talo de alho-poró muito longo e rígido aumenta a taxa de acerto crítico dos movimentos do Farfetch'd." },
 
     "EVIOLITE": { name: "Eviolita", description: "Esse misterioso caroço evolutivo aumenta os atributos de Defesa e Def. Esp. quando segurado por um Pokémon que ainda pode evoluir." },
 

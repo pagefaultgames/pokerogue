@@ -172,43 +172,43 @@ export const PGMachv: AchievementTranslationEntries = {
 
   "MONO_GEN_ONE": {
     name: "最初的劲敌",
-    description: "完成仅限第一世代的挑战.",
+    description: "完成仅限第一世代的挑战",
   },
   "MONO_GEN_TWO": {
     name: "1.5世代",
-    description: "完成仅限第二世代的挑战.",
+    description: "完成仅限第二世代的挑战",
   },
   "MONO_GEN_THREE": {
     name: "“水太多了”",
-    description: "完成仅限第三世代的挑战.",
+    description: "完成仅限第三世代的挑战",
   },
   "MONO_GEN_FOUR": {
     name: "她真是最强冠军吗？",
-    description: "完成仅限第四世代的挑战.",
+    description: "完成仅限第四世代的挑战",
   },
   "MONO_GEN_FIVE": {
     name: "完全原创",
-    description: "完成仅限第五世代的挑战.",
+    description: "完成仅限第五世代的挑战",
   },
   "MONO_GEN_SIX": {
     name: "女大公",
-    description: "完成仅限第六世代的挑战.",
+    description: "完成仅限第六世代的挑战",
   },
   "MONO_GEN_SEVEN": {
     name: "首届冠军",
-    description: "完成仅限第七世代的挑战.",
+    description: "完成仅限第七世代的挑战",
   },
   "MONO_GEN_EIGHT": {
     name: "冠军时刻！",
-    description: "完成仅限第八世代的挑战.",
+    description: "完成仅限第八世代的挑战",
   },
   "MONO_GEN_NINE": {
     name: "她又放水了",
-    description: "完成仅限第九世代的挑战.",
+    description: "完成仅限第九世代的挑战",
   },
 
   "MonoType": {
-    description: "完成 {{type}} 单属性挑战.",
+    description: "完成 {{type}} 单属性挑战",
   },
   "MONO_NORMAL": {
     name: "异乎寻常的寻常",
@@ -264,6 +264,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "林克，醒醒！",
   },
+  "FRESH_START": {
+    name: "初次尝试！",
+    description: "完成初次尝试挑战"
+  }
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)

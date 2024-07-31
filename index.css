@@ -19,7 +19,19 @@ html {
 
 body {
   margin: 0;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
   background: #484050;
+}
+
+#links {
+  width: 90%;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: space-around;
 }
 
 #app {
@@ -193,6 +205,17 @@ input:-internal-autofill-selected {
   & > img {
     opacity: 50%;
   }
+}
+
+#tnc-links {
+  font-size: xx-small;
+  position: relative;
+}
+
+a {
+  color: #328cea;
+  margin-right: 4px;
+  margin-left: 4px;
 }
 
 /* Firefox old*/
