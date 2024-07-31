@@ -58,7 +58,7 @@ describe("Moves - Astonish", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-      expect(enemyPokemon.getTag(BattlerTagType.FLINCHED)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.FLINCHED)).toBeNull();
 
       await game.phaseInterceptor.to(CommandPhase, false);
 

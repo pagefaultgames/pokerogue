@@ -877,9 +877,9 @@ export default class SummaryUiHandler extends UiHandler {
         icon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
       });
 
-      const pkmLvl = this.pokemon?.level ?? 0;
-      const pkmLvlExp = this.pokemon?.levelExp ?? 0;
-      const pkmExp = this.pokemon?.exp ?? 0;
+      const pkmLvl = this.pokemon?.level!; // TODO: is this bang correct?
+      const pkmLvlExp = this.pokemon?.levelExp!; // TODO: is this bang correct?
+      const pkmExp = this.pokemon?.exp!; // TODO: is this bang correct?
       const pkmSpeciesGrowthRate = this.pokemon?.species.growthRate ?? 1;
       const relLvExp = getLevelRelExp(pkmLvl + 1, pkmSpeciesGrowthRate);
       const expRatio = pkmLvl < this.scene.getMaxExpLevel() ? pkmLvlExp / relLvExp : 0;
@@ -944,7 +944,7 @@ export default class SummaryUiHandler extends UiHandler {
         ppOverlay.setOrigin(0, 1);
         this.extraMoveRowContainer.add(ppOverlay);
 
-        const pp = Utils.padInt(this.newMove?.pp ?? 0, 2, "  ");
+        const pp = Utils.padInt(this.newMove?.pp!, 2, "  "); // TODO: is this bang correct?
         const ppText = addTextObject(this.scene, 173, 1, `${pp}/${pp}`, TextStyle.WINDOW);
         ppText.setOrigin(0, 1);
         this.extraMoveRowContainer.add(ppText);

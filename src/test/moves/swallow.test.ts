@@ -62,7 +62,7 @@ describe("Moves - Swallow", () => {
       expect(pokemon.heal).toHaveBeenCalledOnce();
       expect(pokemon.heal).toHaveReturnedWith(expectedHeal);
 
-      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
+      expect(pokemon.getTag(StockpilingTag)).toBeNull();
     });
 
     it("2 stacks -> 50% heal", { timeout: 10000 }, async () => {
@@ -90,7 +90,7 @@ describe("Moves - Swallow", () => {
       expect(pokemon.heal).toHaveBeenCalledOnce();
       expect(pokemon.heal).toHaveReturnedWith(expectedHeal);
 
-      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
+      expect(pokemon.getTag(StockpilingTag)).toBeNull();
     });
 
     it("3 stacks -> 100% heal", { timeout: 10000 }, async () => {
@@ -119,7 +119,7 @@ describe("Moves - Swallow", () => {
       expect(pokemon.heal).toHaveBeenCalledOnce();
       expect(pokemon.heal).toHaveReturnedWith(expect.closeTo(expectedHeal));
 
-      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
+      expect(pokemon.getTag(StockpilingTag)).toBeNull();
     });
   });
 
@@ -129,7 +129,7 @@ describe("Moves - Swallow", () => {
     const pokemon = game.scene.getPlayerPokemon()!;
 
     const stockpilingTag = pokemon.getTag(StockpilingTag)!;
-    expect(stockpilingTag).toBeUndefined();
+    expect(stockpilingTag).toBeNull();
 
     game.doAttack(0);
     await game.phaseInterceptor.to(TurnInitPhase);
@@ -160,7 +160,7 @@ describe("Moves - Swallow", () => {
       expect(pokemon.summonData.battleStats[BattleStat.DEF]).toBe(0);
       expect(pokemon.summonData.battleStats[BattleStat.SPDEF]).toBe(0);
 
-      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
+      expect(pokemon.getTag(StockpilingTag)).toBeNull();
     });
 
     it("decreases stats based on stored values (different boosts)", { timeout: 10000 }, async () => {
@@ -191,7 +191,7 @@ describe("Moves - Swallow", () => {
       expect(pokemon.summonData.battleStats[BattleStat.DEF]).toBe(1);
       expect(pokemon.summonData.battleStats[BattleStat.SPDEF]).toBe(-2);
 
-      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
+      expect(pokemon.getTag(StockpilingTag)).toBeNull();
     });
   });
 });

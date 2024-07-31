@@ -966,10 +966,10 @@ export class GameData {
           });
 
           scene.arena.weather = sessionData.arena.weather;
-          scene.arena.eventTarget.dispatchEvent(new WeatherChangedEvent(WeatherType.NONE, scene.arena.weather?.weatherType ?? WeatherType.NONE, scene.arena.weather?.turnsLeft ?? 0));
+          scene.arena.eventTarget.dispatchEvent(new WeatherChangedEvent(WeatherType.NONE, scene.arena.weather?.weatherType!, scene.arena.weather?.turnsLeft!)); // TODO: is this bang correct?
 
           scene.arena.terrain = sessionData.arena.terrain;
-          scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, scene.arena.terrain?.terrainType ?? TerrainType.NONE, scene.arena.terrain?.turnsLeft ?? 0));
+          scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, scene.arena.terrain?.terrainType!, scene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
           // TODO
           //scene.arena.tags = sessionData.arena.tags;
 

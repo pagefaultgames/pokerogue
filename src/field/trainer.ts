@@ -255,7 +255,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   genPartyMember(index: integer): EnemyPokemon {
     const battle = this.scene.currentBattle;
-    const level = battle.enemyLevels?.[index] ?? 0;
+    const level = battle.enemyLevels?.[index]!; // TODO: is this bang correct?
 
     let ret: EnemyPokemon;
 

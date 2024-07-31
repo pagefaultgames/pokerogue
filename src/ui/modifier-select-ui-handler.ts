@@ -725,7 +725,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   getPbAtlasKey(tierOffset: integer = 0) {
-    return getPokeballAtlasKey((this.modifierTypeOption.type?.tier ?? 0 + tierOffset) as integer as PokeballType);
+    return getPokeballAtlasKey((this.modifierTypeOption.type?.tier! + tierOffset) as integer as PokeballType); // TODO: is this bang correct?
   }
 
   updateCostText(): void {

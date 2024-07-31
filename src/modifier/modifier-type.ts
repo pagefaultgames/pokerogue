@@ -2086,7 +2086,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
 
   console.log(modifierType, !player ? "(enemy)" : "");
 
-  return new ModifierTypeOption(modifierType as ModifierType, upgradeCount ?? 0);
+  return new ModifierTypeOption(modifierType as ModifierType, upgradeCount!); // TODO: is this bang correct?
 }
 
 export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {

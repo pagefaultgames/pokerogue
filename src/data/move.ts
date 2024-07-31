@@ -1592,8 +1592,8 @@ export class BoostHealAttr extends HealAttr {
 
   constructor(normalHealRatio?: number, boostedHealRatio?: number, showAnim?: boolean, selfTarget?: boolean, condition?: MoveConditionFunc) {
     super(normalHealRatio, showAnim, selfTarget);
-    this.normalHealRatio = normalHealRatio ?? 0;
-    this.boostedHealRatio = boostedHealRatio ?? 0;
+    this.normalHealRatio = normalHealRatio!; // TODO: is this bang correct?
+    this.boostedHealRatio = boostedHealRatio!; // TODO: is this bang correct?
     this.condition = condition;
   }
 
@@ -1649,7 +1649,7 @@ export class HitHealAttr extends MoveEffectAttr {
   constructor(healRatio?: number | null, healStat?: Stat) {
     super(true, MoveEffectTrigger.HIT);
 
-    this.healRatio = healRatio ?? 0.5;
+    this.healRatio = healRatio!; // TODO: is this bang correct?
     this.healStat = healStat ?? null;
   }
   /**
@@ -1965,7 +1965,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
       const heldItems = this.getTargetHeldItems(target).filter(i => i.isTransferrable);
       if (heldItems.length) {
         const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
-        const highestItemTier = heldItems.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier ?? 0, highestTier), 0);
+        const highestItemTier = heldItems.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
         const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
         const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
         user.scene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
@@ -2825,7 +2825,7 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const ppMax = move.pp;
-    const ppUsed = user.moveset.find((m) => m?.moveId === move.id)?.ppUsed ?? 0;
+    const ppUsed = user.moveset.find((m) => m?.moveId === move.id)?.ppUsed!; // TODO: is the bang correct?
 
     let ppRemains = ppMax - ppUsed;
     /** Reduce to 0 to avoid negative numbers if user has 1PP before attack and target has Ability.PRESSURE */
@@ -3753,7 +3753,7 @@ export class VariableMoveTypeAttr extends MoveAttr {
 export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.ARCEUS) || [user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.SILVALLY)) {
-      const form = user.species.speciesId === Species.ARCEUS || user.species.speciesId === Species.SILVALLY ? user.formIndex : user.fusionSpecies?.formIndex ?? 0;
+      const form = user.species.speciesId === Species.ARCEUS || user.species.speciesId === Species.SILVALLY ? user.formIndex : user.fusionSpecies?.formIndex!; // TODO: is this bang correct?
 
       move.type = Type[Type[form]];
       return true;
@@ -4309,7 +4309,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     if (moveChance < 0) {
       moveChance = 100;
     }
-    return Math.floor(this.getTagTargetBenefitScore(user, target, move) ?? 0 * (moveChance / 100));
+    return Math.floor(this.getTagTargetBenefitScore(user, target, move)! * (moveChance / 100)); // TODO: is the bang correct?
   }
 }
 
@@ -4421,7 +4421,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
 
       while (moveHistory.length) {
         turnMove = moveHistory.shift();
-        if (!allMoves[turnMove?.move ?? 0].hasAttr(ProtectAttr) || turnMove?.result !== MoveResult.SUCCESS) {
+        if (!allMoves[turnMove?.move!].hasAttr(ProtectAttr) || turnMove?.result !== MoveResult.SUCCESS) { // TODO: is the bang correct?
           break;
         }
         timesUsed++;
@@ -4504,7 +4504,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
     super(true, MoveEffectTrigger.POST_APPLY);
 
     this.tagType = tagType;
-    this.turnCount = turnCount ?? 0;
+    this.turnCount = turnCount!; // TODO: is the bang correct?
     this.failOnOverlap = failOnOverlap;
     this.selfSideTarget = selfSideTarget;
   }
@@ -4695,13 +4695,13 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
     if (tagPlayerTemp) {
       for (const swapTagsType of tagPlayerTemp) {
         user.scene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.PLAYER, true);
-        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId ?? 0, ArenaTagSide.ENEMY, true);
+        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId!, ArenaTagSide.ENEMY, true); // TODO: is the bang correct?
       }
     }
     if (tagEnemyTemp) {
       for (const swapTagsType of tagEnemyTemp) {
         user.scene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.ENEMY, true);
-        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId ?? 0, ArenaTagSide.PLAYER, true);
+        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId!, ArenaTagSide.PLAYER, true); // TODO: is the bang correct?
       }
     }
 
@@ -5051,7 +5051,7 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
     const moves = moveset.filter(m => !m?.getMove().hasFlag(MoveFlags.IGNORE_VIRTUAL));
     if (moves.length) {
       const move = moves[user.randSeedInt(moves.length)];
-      const moveIndex = moveset.findIndex(m => m?.moveId === move?.moveId) ?? 0;
+      const moveIndex = moveset.findIndex(m => m?.moveId === move?.moveId);
       const moveTargets = getMoveTargets(user, move?.moveId ?? Moves.NONE);
       if (!moveTargets.targets.length) {
         return false;
@@ -5317,10 +5317,10 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
     // Null checks can be skipped due to condition function
     const lastMove = target.getLastXMoves().find(() => true);
     const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
-    const lastPpUsed = movesetMove?.ppUsed ?? 0;
-    movesetMove!.ppUsed = Math.min((movesetMove?.ppUsed ?? 0) + this.reduction, movesetMove?.getMovePp() ?? 0);
+    const lastPpUsed = movesetMove?.ppUsed!; // TODO: is the bang correct?
+    movesetMove!.ppUsed = Math.min((movesetMove?.ppUsed!) + this.reduction, movesetMove?.getMovePp()!); // TODO: is the bang correct?
 
-    const message = i18next.t("battle:ppReduced", {targetName: getPokemonNameWithAffix(target), moveName: movesetMove?.getName(), reduction: (movesetMove?.ppUsed ?? 0) - lastPpUsed});
+    const message = i18next.t("battle:ppReduced", {targetName: getPokemonNameWithAffix(target), moveName: movesetMove?.getName(), reduction: (movesetMove?.ppUsed!) - lastPpUsed}); // TODO: is the bang correct?
 
     user.scene.queueMessage(message);
 

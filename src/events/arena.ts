@@ -81,8 +81,8 @@ export class TagAddedEvent extends ArenaEvent {
 
     this.arenaTagType = arenaTagType;
     this.arenaTagSide = arenaTagSide;
-    this.arenaTagLayers = arenaTagLayers ?? 0;
-    this.arenaTagMaxLayers = arenaTagMaxLayers ?? 0;
+    this.arenaTagLayers = arenaTagLayers!; // TODO: is this bang correct?
+    this.arenaTagMaxLayers = arenaTagMaxLayers!; // TODO: is this bang correct?
   }
 }
 /**

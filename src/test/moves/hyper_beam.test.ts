@@ -59,7 +59,7 @@ describe("Moves - Hyper Beam", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
-      expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
+      expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeNull();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 

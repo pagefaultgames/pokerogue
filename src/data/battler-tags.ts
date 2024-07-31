@@ -556,7 +556,7 @@ export class EncoreTag extends BattlerTag {
 
     const movePhase = pokemon.scene.findPhase(m => m instanceof MovePhase && m.pokemon === pokemon);
     if (movePhase) {
-      const movesetMove = pokemon.getMoveset().filter(m => !!m).find(m => m.moveId === this.moveId);
+      const movesetMove = pokemon.getMoveset().find(m => m!.moveId === this.moveId); // TODO: is this bang correct?
       if (movesetMove) {
         const lastMove = pokemon.getLastXMoves(1)[0];
         pokemon.scene.tryReplacePhase((m => m instanceof MovePhase && m.pokemon === pokemon),

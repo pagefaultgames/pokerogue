@@ -99,7 +99,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       this.textTimer = this.scene.time.addEvent({
         delay: delay,
         callback: () => {
-          const charIndex = text.length - (this.textTimer?.repeatCount ?? 0);
+          const charIndex = text.length - (this.textTimer?.repeatCount!); // TODO: is this bang correct?
           const charVar = charVarMap.get(charIndex);
           const charSound = soundMap.get(charIndex);
           const charDelay = delayMap.get(charIndex);

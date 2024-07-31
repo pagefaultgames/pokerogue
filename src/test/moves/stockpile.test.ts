@@ -46,7 +46,7 @@ describe("Moves - Stockpile", () => {
       // Unfortunately, Stockpile stacks are not directly queryable (i.e. there is no pokemon.getStockpileStacks()),
       // we just have to know that they're implemented as a BattlerTag.
 
-      expect(user.getTag(StockpilingTag)).toBeUndefined();
+      expect(user.getTag(StockpilingTag)).toBeNull();
       expect(user.summonData.battleStats[BattleStat.DEF]).toBe(0);
       expect(user.summonData.battleStats[BattleStat.SPDEF]).toBe(0);
 
@@ -87,7 +87,7 @@ describe("Moves - Stockpile", () => {
       user.summonData.battleStats[BattleStat.DEF] = 6;
       user.summonData.battleStats[BattleStat.SPDEF] = 6;
 
-      expect(user.getTag(StockpilingTag)).toBeUndefined();
+      expect(user.getTag(StockpilingTag)).toBeNull();
       expect(user.summonData.battleStats[BattleStat.DEF]).toBe(6);
       expect(user.summonData.battleStats[BattleStat.SPDEF]).toBe(6);
 

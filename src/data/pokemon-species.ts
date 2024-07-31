@@ -717,7 +717,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
             evolutionChance = Math.min(minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance), 1);
           }
         } else {
-          const preferredMinLevel = Math.max((ev.level - 1) + (ev.wildDelay ?? 0) * this.getStrengthLevelDiff(strength), 1);
+          const preferredMinLevel = Math.max((ev.level - 1) + (ev.wildDelay!) * this.getStrengthLevelDiff(strength), 1); // TODO: is the bang correct?
           let evolutionLevel = Math.max(ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2), 1);
 
           if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
@@ -812,11 +812,11 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       ret.push([ prevolutionLevels[0][0], 1 ]);
       for (let l = 1; l < prevolutionLevels.length; l++) {
         const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0]].find(e => e.speciesId === prevolutionLevels[l][0]);
-        ret.push([ prevolutionLevels[l][0], Math.min(Math.max((evolution?.level ?? 0) + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay ?? 0), 0.5) * 5) - 1, 2, (evolution?.level ?? 0)), currentLevel - 1) ]);
+        ret.push([ prevolutionLevels[l][0], Math.min(Math.max((evolution?.level!) + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay!), 0.5) * 5) - 1, 2, (evolution?.level!)), currentLevel - 1) ]); // TODO: are those bangs correct?
       }
       const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
       const evolution = pokemonEvolutions[prevolutionLevels[prevolutionLevels.length - 1][0]].find(e => e.speciesId === this.speciesId);
-      ret.push([ this.speciesId, Math.min(Math.max(lastPrevolutionLevel + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay ?? 0), 0.5) * 5), lastPrevolutionLevel + 1, (evolution?.level ?? 0)), currentLevel) ]);
+      ret.push([ this.speciesId, Math.min(Math.max(lastPrevolutionLevel + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay!), 0.5) * 5), lastPrevolutionLevel + 1, (evolution?.level!)), currentLevel) ]); // TODO: are those bangs correct?
     } else {
       ret.push([ this.speciesId, 1 ]);
     }

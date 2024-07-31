@@ -347,7 +347,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   loadAssets(ignoreOverride: boolean = true): Promise<void> {
     return new Promise(resolve => {
-      const moveIds = this.getMoveset().filter(m => !!m).map(m => m.getMove().id);
+      const moveIds = this.getMoveset().map(m => m!.getMove().id); // TODO: is this bang correct?
       Promise.allSettled(moveIds.map(m => initMoveAnim(this.scene, m)))
         .then(() => {
           loadMoveAnimAssets(this.scene, moveIds);
@@ -1656,7 +1656,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         // Sqrt the weight of any damaging moves with overlapping types. This is about a 0.05 - 0.1 multiplier.
         // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights double if STAB.
         // Status moves remain unchanged on weight, this encourages 1-2
-        movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo?.moveId)).map(m => [m[0], this.moveset.some(mo => mo?.getMove().category !== MoveCategory.STATUS && mo?.getMove().type === allMoves[m[0]].type) ? Math.ceil(Math.sqrt(m[1])) : allMoves[m[0]].category !== MoveCategory.STATUS ? Math.ceil(m[1]/Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power ?? 0) > 1).length)/8,0.5) * (this.isOfType(allMoves[m[0]].type) ? 2 : 1)) : m[1]]);
+        movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo?.moveId)).map(m => [m[0], this.moveset.some(mo => mo?.getMove().category !== MoveCategory.STATUS && mo?.getMove().type === allMoves[m[0]].type) ? Math.ceil(Math.sqrt(m[1])) : allMoves[m[0]].category !== MoveCategory.STATUS ? Math.ceil(m[1]/Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power!) > 1).length)/8,0.5) * (this.isOfType(allMoves[m[0]].type) ? 2 : 1)) : m[1]]); // TODO: is this bang correct?
       } else { // Non-trainer pokemon just use normal weights
         movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo?.moveId));
       }
@@ -3573,8 +3573,8 @@ export class PlayerPokemon extends Pokemon {
   /** Returns a deep copy of this Pokemon's moveset array */
   copyMoveset(): PokemonMove[] {
     const newMoveset : PokemonMove[] = [];
-    this.moveset.filter(m => !!m).forEach(move =>
-      newMoveset.push(new PokemonMove(move.moveId, 0, move.ppUp, move.virtual)));
+    this.moveset.forEach(move =>
+      newMoveset.push(new PokemonMove(move!.moveId, 0, move!.ppUp, move!.virtual))); // TODO: are those bangs correct?
 
     return newMoveset;
   }
@@ -3723,7 +3723,7 @@ export class EnemyPokemon extends Pokemon {
       case AiType.SMART_RANDOM:
       case AiType.SMART:
         const moveScores = movePool.map(() => 0);
-        const moveTargets = Object.fromEntries(movePool.filter(m => !!m).map(m => [ m.moveId, this.getNextTargets(m.moveId) ]));
+        const moveTargets = Object.fromEntries(movePool.map(m => [ m!.moveId, this.getNextTargets(m!.moveId) ])); // TODO: are those bangs correct?
         for (const m in movePool) {
           const pokemonMove = movePool[m]!; // TODO: is the bang correct?
           const move = pokemonMove.getMove();
@@ -3790,7 +3790,7 @@ export class EnemyPokemon extends Pokemon {
             r++;
           }
         }
-        console.log(movePool.filter(m => !!m).map(m => m.getName()), moveScores, r, sortedMovePool.filter(m => !!m).map(m => m.getName()));
+        console.log(movePool.map(m => m!.getName()), moveScores, r, sortedMovePool.map(m => m!.getName())); // TODO: are those bangs correct?
         return { move: sortedMovePool[r]!.moveId, targets: moveTargets[sortedMovePool[r]!.moveId] };
       }
     }

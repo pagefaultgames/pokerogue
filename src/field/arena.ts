@@ -314,7 +314,7 @@ export class Arena {
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
-    this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType ?? WeatherType.NONE, this.weather?.turnsLeft ?? 0));
+    this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!)); // TODO: is this bang correct?
 
     if (this.weather) {
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
@@ -339,7 +339,7 @@ export class Arena {
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
     this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
-    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType,this.terrain?.terrainType ?? TerrainType.NONE, this.terrain?.turnsLeft ?? 0));
+    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType,this.terrain?.terrainType!, this.terrain?.turnsLeft!)); // TODO: are those bangs correct?
 
     if (this.terrain) {
       if (!ignoreAnim) {

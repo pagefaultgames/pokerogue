@@ -194,7 +194,7 @@ export class TitlePhase extends Phase {
 
     this.scene.playBgm("title", true);
 
-    this.scene.gameData.getSession(loggedInUser?.lastSessionSlot ?? 0).then(sessionData => { // TODO: is `0` as default correct?
+    this.scene.gameData.getSession(loggedInUser!.lastSessionSlot).then(sessionData => { // TODO: is this bang correct?
       if (sessionData) {
         this.lastSessionData = sessionData;
         const biomeKey = getBiomeKey(sessionData.arena.biome);
@@ -3061,7 +3061,7 @@ export class MoveEffectPhase extends PokemonPhase {
       } else {
         // Queue message for number of hits made by multi-move
         // If multi-hit attack only hits once, still want to render a message
-        const hitsTotal = user.turnData.hitCount ?? 0 - Math.max(user.turnData.hitsLeft ?? 0, 0);
+        const hitsTotal = user.turnData.hitCount! - Math.max(user.turnData.hitsLeft!, 0); // TODO: are those bangs correct?
         if (hitsTotal > 1 || (user.turnData.hitsLeft && user.turnData.hitsLeft > 0)) {
           // If there are multiple hits, or if there are hits of the multi-hit move left
           this.scene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
@@ -3306,7 +3306,7 @@ export class StatChangePhase extends PokemonPhase {
     }
 
     const battleStats = this.getPokemon().summonData.battleStats;
-    const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats?.[stat] ?? 0 + levels.value, 6) : Math.max(battleStats?.[stat] ?? 0 + levels.value, -6)) - (battleStats?.[stat] ?? 0));
+    const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats![stat] + levels.value, 6) : Math.max(battleStats![stat] + levels.value, -6)) - battleStats![stat]);
 
     this.onChange && this.onChange(this.getPokemon(), filteredStats, relLevels);
 
@@ -5456,8 +5456,8 @@ export class PartyHealPhase extends BattlePhase {
       for (const pokemon of this.scene.getParty()) {
         pokemon.hp = pokemon.getMaxHp();
         pokemon.resetStatus();
-        for (const move of pokemon.moveset.filter(m => !!m)) {
-          move.ppUsed = 0;
+        for (const move of pokemon.moveset) {
+          move!.ppUsed = 0; // TODO: is this bang correct?
         }
         pokemon.updateInfo(true);
       }
