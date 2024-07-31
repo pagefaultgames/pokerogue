@@ -2057,8 +2057,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   updateScroll = () => {
     const maxColumns = 9;
     const maxRows = 9;
-
-    const onScreenFirstIndex = this.scrollCursor * 9
+    const onScreenFirstIndex = this.scrollCursor * 9;
     const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + 81);
 
     this.starterSelectScrollBar.setPage(this.scrollCursor);
