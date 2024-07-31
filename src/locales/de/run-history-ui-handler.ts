@@ -25,7 +25,7 @@ export const runHistory: SimpleTranslationEntries = {
   "SPDshortened":"Geschw.",
   "runInfo":"Durchlauf Info.",
   "money":"Geld",
-  "runLength":"Länge des Durchlaufs,
+  "runLength":"Länge des Durchlaufs",
   "viewHeldItems":"Getragene Items",
   "hallofFameText":"Willkommen in der Ruhmeshalle",
   "viewHallOfFame":"Ruhmeshalle ansehen!"
