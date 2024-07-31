@@ -48,7 +48,7 @@ describe("Moves - Spit Up", () => {
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
 
@@ -73,7 +73,7 @@ describe("Moves - Spit Up", () => {
       pokemon.addTag(BattlerTagType.STOCKPILING);
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
 
@@ -99,7 +99,7 @@ describe("Moves - Spit Up", () => {
       pokemon.addTag(BattlerTagType.STOCKPILING);
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
 
@@ -120,7 +120,7 @@ describe("Moves - Spit Up", () => {
 
     const pokemon = game.scene.getPlayerPokemon()!;
 
-    const stockpilingTag = pokemon.getTag(StockpilingTag);
+    const stockpilingTag = pokemon.getTag(StockpilingTag)!;
     expect(stockpilingTag).toBeUndefined();
 
     vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
@@ -140,7 +140,7 @@ describe("Moves - Spit Up", () => {
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
 
       vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
@@ -169,7 +169,7 @@ describe("Moves - Spit Up", () => {
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
 
       // for the sake of simplicity (and because other tests cover the setup), set boost amounts directly

@@ -50,7 +50,7 @@ describe("Moves - Fusion Flare", () => {
 
     // Inflict freeze quietly and check if it was properly inflicted
     partyMember.trySetStatus(StatusEffect.FREEZE, false);
-    expect(partyMember.status.effect).toBe(StatusEffect.FREEZE);
+    expect(partyMember.status!.effect).toBe(StatusEffect.FREEZE);
 
     await game.toNextTurn();
 

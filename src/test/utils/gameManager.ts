@@ -178,7 +178,7 @@ export default class GameManager {
     // Confirm target selection if move is multi-target
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition].getMove();
+      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
       if (move.isMultiTarget()) {
         handler.processInput(Button.ACTION);
       }

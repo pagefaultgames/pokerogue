@@ -352,7 +352,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       }
 
       for (let m = 0; m < 4; m++) {
-        const move = m < pokemon.moveset.length ? pokemon.moveset[m].getMove() : null;
+        const move = m < pokemon.moveset.length && pokemon.moveset[m] ? pokemon.moveset[m]!.getMove() : null;
         this.pokemonMoveBgs[m].setFrame(Type[move ? move.type : Type.UNKNOWN].toString().toLowerCase());
         this.pokemonMoveLabels[m].setText(move ? move.name : "-");
         this.pokemonMovesContainers[m].setVisible(!!move);

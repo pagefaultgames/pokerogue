@@ -98,7 +98,7 @@ describe("Abilities - Magic Guard", () => {
        * - The Pokemon's CatchRateMultiplier should be 1.5
        */
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-      expect(getStatusEffectCatchRateMultiplier(leadPokemon.status.effect)).toBe(1.5);
+      expect(getStatusEffectCatchRateMultiplier(leadPokemon.status!.effect)).toBe(1.5);
     }, TIMEOUT
   );
 
@@ -153,7 +153,7 @@ describe("Abilities - Magic Guard", () => {
        * - The enemy Pokemon's hypothetical CatchRateMultiplier should be 1.5
        */
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-      expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status.effect)).toBe(1.5);
+      expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status!.effect)).toBe(1.5);
     }, TIMEOUT
   );
 
@@ -172,7 +172,7 @@ describe("Abilities - Magic Guard", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
-      const toxicStartCounter = enemyPokemon.status.turnCount;
+      const toxicStartCounter = enemyPokemon.status!.turnCount;
       //should be 0
 
       await game.phaseInterceptor.to(TurnEndPhase);
@@ -184,8 +184,8 @@ describe("Abilities - Magic Guard", () => {
        * - The enemy Pokemon's hypothetical CatchRateMultiplier should be 1.5
        */
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-      expect(enemyPokemon.status.turnCount).toBeGreaterThan(toxicStartCounter);
-      expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status.effect)).toBe(1.5);
+      expect(enemyPokemon.status!.turnCount).toBeGreaterThan(toxicStartCounter);
+      expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status!.effect)).toBe(1.5);
     }, TIMEOUT
   );
 
@@ -240,8 +240,8 @@ describe("Abilities - Magic Guard", () => {
     * - The player Pokemon (with Magic Guard) has not taken damage from poison
     * - The enemy Pokemon (without Magic Guard) has taken damage from poison
     */
-    expect(leadPokemon.status.effect).toBe(StatusEffect.POISON);
-    expect(enemyPokemon.status.effect).toBe(StatusEffect.POISON);
+    expect(leadPokemon.status!.effect).toBe(StatusEffect.POISON);
+    expect(enemyPokemon.status!.effect).toBe(StatusEffect.POISON);
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   }, TIMEOUT
@@ -405,7 +405,7 @@ describe("Abilities - Magic Guard", () => {
     * - The player Pokemon is asleep
     */
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-    expect(leadPokemon.status.effect).toBe(StatusEffect.SLEEP);
+    expect(leadPokemon.status!.effect).toBe(StatusEffect.SLEEP);
   }, TIMEOUT
   );
 

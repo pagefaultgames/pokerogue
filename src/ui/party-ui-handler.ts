@@ -315,7 +315,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               filterResult = this.FilterChallengeLegal(pokemon);
             }
             if (filterResult === null && this.partyUiMode === PartyUiMode.MOVE_MODIFIER) {
-              filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]);
+              filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]!); // TODO: is this bang correct?
             }
           } else {
             filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(pokemon, getTransferrableItemsFromPokemon(this.scene.getParty()[this.transferCursor])[this.transferOptionCursor]);
@@ -384,7 +384,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (option === PartyOption.UNSPLICE) {
           this.clearOptions();
           ui.playSelect();
-          this.showText(i18next.t("partyUiHandler:unspliceConfirmation", { fusionName: pokemon.fusionSpecies.name, pokemonName: pokemon.name }), null, () => {
+          this.showText(i18next.t("partyUiHandler:unspliceConfirmation", { fusionName: pokemon.fusionSpecies?.name, pokemonName: pokemon.name }), null, () => {
             ui.setModeWithoutClear(Mode.CONFIRM, () => {
               const fusionName = pokemon.name;
               pokemon.unfuse().then(() => {
@@ -859,7 +859,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         case PartyOption.MOVE_2:
         case PartyOption.MOVE_3:
         case PartyOption.MOVE_4:
-          const move = pokemon.moveset[option - PartyOption.MOVE_1];
+          const move = pokemon.moveset[option - PartyOption.MOVE_1]!; // TODO: is the bang correct?
           if (this.showMovePp) {
             const maxPP = move.getMovePp();
             const currPP = maxPP - move.ppUsed;

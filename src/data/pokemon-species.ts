@@ -28,14 +28,14 @@ export enum Region {
   PALDEA
 }
 
-export function getPokemonSpecies(species: Species): PokemonSpecies {
+export function getPokemonSpecies(species: Species | Species[]): PokemonSpecies {
   // If a special pool (named trainers) is used here it CAN happen that they have a array as species (which means choose one of those two). So we catch that with this code block
   if (Array.isArray(species)) {
     // Pick a random species from the list
     species = species[Math.floor(Math.random() * species.length)];
   }
   if (species >= 2000) {
-    return allSpecies.find(s => s.speciesId === species);
+    return allSpecies.find(s => s.speciesId === species)!; // TODO: is this bang correct?
   }
   return allSpecies[species - 1];
 }
