@@ -1072,9 +1072,9 @@ export class PreAttackAbAttr extends AbAttr {
  * @see {@linkcode apply}
  */
 export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
-  private chanceMultiplier: number | undefined;
+  private chanceMultiplier: number;
 
-  constructor(chanceMultiplier?: number) {
+  constructor(chanceMultiplier: number) {
     super(true);
     this.chanceMultiplier = chanceMultiplier;
   }
@@ -1089,7 +1089,7 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
       return false;
     }
 
-    (args[0] as Utils.NumberHolder).value *= this.chanceMultiplier!; // TODO: is this bang correct?
+    (args[0] as Utils.NumberHolder).value *= this.chanceMultiplier;
     (args[0] as Utils.NumberHolder).value = Math.min((args[0] as Utils.NumberHolder).value, 100);
     return true;
 
