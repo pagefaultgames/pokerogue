@@ -17,8 +17,6 @@ export function getBiomeName(biome: Biome | -1) {
     return i18next.t("biome:GRASS");
   case Biome.RUINS:
     return i18next.t("biome:RUINS");
-  case Biome.ABYSS:
-    return i18next.t("biome:ABYSS");
   case Biome.END:
     return i18next.t("biome:END");
   default:

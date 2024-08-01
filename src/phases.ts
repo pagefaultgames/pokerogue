@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier, PokemonResetNegativeStatStageModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier, PokemonResetNegativeStatStageModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -20,7 +20,7 @@ import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
-import { getPokemonMessage, getPokemonNameWithAffix } from "./messages";
+import { getPokemonNameWithAffix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
@@ -37,7 +37,7 @@ import { vouchers } from "./system/voucher";
 import { clientSessionId, loggedInUser, updateUserInfo } from "./account";
 import { SessionSaveData } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
-import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue, miscDialogue } from "./data/dialogue";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
 import { SettingKeys } from "./system/settings/settings";
@@ -1588,8 +1588,6 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
 
-    // if doReturn === False OR slotIndex !== -1 (slotIndex is valid) and the pokemon doesn't exist/is false
-    // then switchAndSummon(), manually pick pokemon to switch into
     if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? this.scene.getParty() : this.scene.getEnemyParty())[this.slotIndex])) {
       if (this.player) {
         return this.switchAndSummon();
@@ -2316,6 +2314,8 @@ export class TurnStartPhase extends FieldPhase {
       return aIndex < bIndex ? -1 : aIndex > bIndex ? 1 : 0;
     });
 
+    let orderIndex = 0;
+
     for (const o of moveOrder) {
 
       const pokemon = field[o];
@@ -2328,6 +2328,7 @@ export class TurnStartPhase extends FieldPhase {
       switch (turnCommand.command) {
       case Command.FIGHT:
         const queuedMove = turnCommand.move;
+        pokemon.turnData.order = orderIndex++;
         if (!queuedMove) {
           continue;
         }
@@ -2409,7 +2410,7 @@ export class BerryPhase extends FieldPhase {
         pokemon.getOpponents().map((opp) => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
 
         if (cancelled.value) {
-          pokemon.scene.queueMessage(getPokemonMessage(pokemon, " is too\nnervous to eat berries!"));
+          pokemon.scene.queueMessage(i18next.t("abilityTriggers:preventBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
         } else {
           this.scene.unshiftPhase(
             new CommonAnimPhase(this.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM)
@@ -2665,13 +2666,14 @@ export class MovePhase extends BattlePhase {
     if (this.targets.length === 1 && this.targets[0] === BattlerIndex.ATTACKER) {
       if (this.pokemon.turnData.attacksReceived.length) {
         const attack = this.pokemon.turnData.attacksReceived[0];
-        this.targets[0] = attack.attackingPosition;
+        this.targets[0] = attack.sourceBattlerIndex;
 
         // account for metal burst and comeuppance hitting remaining targets in double battles
         // counterattack will redirect to remaining ally if original attacker faints
         if (this.scene.currentBattle.double && this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER)) {
-          if (!this.scene.getEnemyField()[this.targets[0]]) {
-            this.targets[0] = this.scene.getEnemyField().find(p => p.isActive(true)).getBattlerIndex();
+          if (this.scene.getField()[this.targets[0]].hp === 0) {
+            const opposingField = this.pokemon.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
+            this.targets[0] = opposingField.find(p => p.hp > 0)?.getBattlerIndex();
           }
         }
       }
@@ -3321,7 +3323,7 @@ export class StatChangePhase extends PokemonPhase {
 
       applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget);
 
-      //Look for any other stat change phases; if this is the last one, do White Herb check
+      // Look for any other stat change phases; if this is the last one, do White Herb check
       const existingPhase = this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex);
       if (!(existingPhase instanceof StatChangePhase)) {
         // Apply White Herb if needed
@@ -3596,6 +3598,14 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       this.end();
     }
   }
+
+  override end() {
+    if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+      this.scene.initFinalBossPhaseTwo(this.getPokemon());
+    } else {
+      super.end();
+    }
+  }
 }
 
 export class MessagePhase extends Phase {
@@ -3703,34 +3713,12 @@ export class DamagePhase extends PokemonPhase {
     }
   }
 
-  end() {
-    switch (this.scene.currentBattle.battleSpec) {
-    case BattleSpec.FINAL_BOSS:
-      const pokemon = this.getPokemon();
-      if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
-        this.scene.fadeOutBgm(Utils.fixedInt(2000), false);
-        this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.species.name, null, () => {
-          this.scene.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
-          pokemon.generateAndPopulateMoveset(1);
-          this.scene.setFieldScale(0.75);
-          this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
-          this.scene.currentBattle.double = true;
-          const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
-          if (availablePartyMembers.length > 1) {
-            this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, true));
-            if (!availablePartyMembers[1].isOnField()) {
-              this.scene.pushPhase(new SummonPhase(this.scene, 1));
-            }
-          }
-
-          super.end();
-        });
-        return;
-      }
-      break;
+  override end() {
+    if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+      this.scene.initFinalBossPhaseTwo(this.getPokemon());
+    } else {
+      super.end();
     }
-
-    super.end();
   }
 }
 
@@ -5178,9 +5166,11 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1, typeOptions.map(o => o.type.tier)));
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
-            this.scene.money -= rerollCost;
-            this.scene.updateMoneyText();
-            this.scene.animateMoneyChanged(false);
+            if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+              this.scene.money -= rerollCost;
+              this.scene.updateMoneyText();
+              this.scene.animateMoneyChanged(false);
+            }
             this.scene.playSound("buy");
           }
           break;
@@ -5221,7 +5211,7 @@ export class SelectModifierPhase extends BattlePhase {
         break;
       }
 
-      if (cost && this.scene.money < cost) {
+      if (cost && (this.scene.money < cost) && !Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
         this.scene.ui.playError();
         return false;
       }
@@ -5231,9 +5221,11 @@ export class SelectModifierPhase extends BattlePhase {
         if (cost) {
           result.then(success => {
             if (success) {
-              this.scene.money -= cost;
-              this.scene.updateMoneyText();
-              this.scene.animateMoneyChanged(false);
+              if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+                this.scene.money -= cost;
+                this.scene.updateMoneyText();
+                this.scene.animateMoneyChanged(false);
+              }
               this.scene.playSound("buy");
               (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
             } else {
@@ -5313,7 +5305,9 @@ export class SelectModifierPhase extends BattlePhase {
 
   getRerollCost(typeOptions: ModifierTypeOption[], lockRarities: boolean): integer {
     let baseValue = 0;
-    if (lockRarities) {
+    if (Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+      return baseValue;
+    } else if (lockRarities) {
       const tierValues = [50, 125, 300, 750, 2000];
       for (const opt of typeOptions) {
         baseValue += tierValues[opt.type.tier];

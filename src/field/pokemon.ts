@@ -23,7 +23,7 @@ import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoo
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, WeakenMoveScreenTag } from "../data/arena-tag";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AddSecondStrikeAbAttr, IgnoreOpponentEvasionAbAttr } from "../data/ability";
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AddSecondStrikeAbAttr, IgnoreOpponentEvasionAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -135,10 +135,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       // If abilityIndex is not provided, determine it based on species and hidden ability
       if (species.abilityHidden && hasHiddenAbility) {
         // If the species has a hidden ability and the hidden ability is present
-        this.abilityIndex = species.ability2 ? 2 : 1; // Use ability index 2 if species has a second ability, otherwise use 1
+        this.abilityIndex = 2;
       } else {
         // If there is no hidden ability or species does not have a hidden ability
-        this.abilityIndex = species.ability2 ? randAbilityIndex : 0; // Use random ability index if species has a second ability, otherwise use 0
+        this.abilityIndex = species.ability2 !== species.ability1 ? randAbilityIndex : 0; // Use random ability index if species has a second ability, otherwise use 0
       }
     }
     if (formIndex !== undefined) {
@@ -1241,14 +1241,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
-    immuneTags.forEach(tag => {
-      if (move !== undefined) {
-        const hitsTagAttrs = move.getAttrs(HitsTagAttr).filter(attr => attr.tagType === tag.tagType);
-        if (hitsTagAttrs.length === 0) {
-          multiplier = 0;
-        }
+    for (const tag of immuneTags) {
+      if (move && !move.getAttrs(HitsTagAttr).some(attr => attr.tagType === tag.tagType)) {
+        multiplier = 0;
+        break;
       }
-    });
+    }
 
     return multiplier;
   }
@@ -1774,11 +1772,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (opponents.length === 1) {
       return opponents[0].name;
     }
-    return this.isPlayer() ? "the opposing team" : "your team";
+    return this.isPlayer() ? i18next.t("arenaTag:opposingTeam") : i18next.t("arenaTag:yourTeam");
   }
 
   getAlly(): Pokemon {
     return (this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.getFieldIndex() ? 0 : 1];
+  }
+
+  /**
+   * Gets the Pokémon on the allied field.
+   *
+   * @returns An array of Pokémon on the allied field.
+   */
+  getAlliedField(): Pokemon[] {
+    return this instanceof PlayerPokemon ? this.scene.getPlayerField() : this.scene.getEnemyField();
   }
 
   /**
@@ -1836,7 +1843,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const types = this.getTypes(true, true);
 
     const cancelled = new Utils.BooleanHolder(false);
+    const power = move.calculateBattlePower(source, this);
     const typeless = move.hasAttr(TypelessAttr);
+
     const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType)))
       ? this.getAttackTypeEffectiveness(move, source, false, false)
       : 1);
@@ -1857,11 +1866,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
     }
 
+    // Apply exceptional condition of Crafty Shield if the move used is Curse
+    if (move.id === Moves.CURSE) {
+      const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      this.scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
+    }
+
     switch (moveCategory) {
     case MoveCategory.PHYSICAL:
     case MoveCategory.SPECIAL:
       const isPhysical = moveCategory === MoveCategory.PHYSICAL;
-      const power = move.calculateBattlePower(source, this);
       const sourceTeraType = source.getTeraType();
 
       if (!typeless) {
@@ -1949,7 +1963,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         const targetCount = getMoveTargets(source, move.id).targets.length;
-        const targetMultiplier = targetCount > 1 ? 0.75 : 1;
+        const targetMultiplier = targetCount > 1 ? 0.75 : 1; // 25% damage debuff on multi-target hits (even if it's immune)
 
         applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
         applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
@@ -2080,7 +2094,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           source.turnData.damageDealt += damage.value;
           source.turnData.currDamageDealt = damage.value;
           this.battleData.hitCount++;
-          const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id, attackingPosition: source.getBattlerIndex() };
+          const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
           this.turnData.attacksReceived.unshift(attackResult);
           if (source.isPlayer() && !this.isPlayer()) {
             this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
@@ -2229,7 +2243,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const newTag = getBattlerTag(tagType, turnCount, sourceMove, sourceId);
 
     const cancelled = new Utils.BooleanHolder(false);
-    applyPreApplyBattlerTagAbAttrs(PreApplyBattlerTagAbAttr, this, newTag, cancelled);
+    applyPreApplyBattlerTagAbAttrs(BattlerTagImmunityAbAttr, this, newTag, cancelled);
+
+    const userField = this.getAlliedField();
+    userField.forEach(pokemon => applyPreApplyBattlerTagAbAttrs(UserFieldBattlerTagImmunityAbAttr, pokemon, newTag, cancelled));
 
     if (!cancelled.value && newTag.canAdd(this)) {
       this.summonData.tags.push(newTag);
@@ -2282,7 +2299,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   lapseTags(lapseType: BattlerTagLapseType): void {
     const tags = this.summonData.tags;
-    tags.filter(t => lapseType === BattlerTagLapseType.FAINT || ((t.lapseType.some(lType => lType === lapseType)) && !(t.lapse(this, lapseType)))).forEach(t => {
+    tags.filter(t => lapseType === BattlerTagLapseType.FAINT || ((t.lapseTypes.some(lType => lType === lapseType)) && !(t.lapse(this, lapseType)))).forEach(t => {
       t.onRemove(this);
       tags.splice(tags.indexOf(t), 1);
     });
@@ -2638,6 +2655,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const cancelled = new Utils.BooleanHolder(false);
     applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
+
+    const userField = this.getAlliedField();
+    userField.forEach(pokemon => applyPreSetStatusAbAttrs(UserFieldStatusEffectImmunityAbAttr, pokemon, effect, cancelled, quiet));
 
     if (cancelled.value) {
       return false;
@@ -4017,7 +4037,7 @@ export interface AttackMoveResult {
   damage: integer;
   critical: boolean;
   sourceId: integer;
-  attackingPosition: BattlerIndex;
+  sourceBattlerIndex: BattlerIndex;
 }
 
 export class PokemonSummonData {
@@ -4064,6 +4084,7 @@ export class PokemonTurnData {
   public currDamageDealt: integer = 0;
   public damageTaken: integer = 0;
   public attacksReceived: AttackMoveResult[] = [];
+  public order: number;
 }
 
 export enum AiType {
