@@ -127,16 +127,22 @@ export const trainerClasses: SimpleTranslationEntries = {
   "youngster": "반바지 꼬마",
   "rocket_grunt": "로켓단 조무래기",
   "rocket_grunt_female": "로켓단 조무래기",
+  "rocket_grunts": "Rocket Grunts",
   "magma_grunt": "마그마단 조무래기",
   "magma_grunt_female": "마그마단 조무래기",
+  "magma_grunts": "Magma Grunts",
   "aqua_grunt": "아쿠아단 조무래기",
   "aqua_grunt_female": "아쿠아단 조무래기",
+  "aqua_grunts": "Aqua Grunts",
   "galactic_grunt": "갤럭시단 조무래기",
   "galactic_grunt_female": "갤럭시단 조무래기",
+  "galactic_grunts": "Galactic Grunts",
   "plasma_grunt": "플라스마단 조무래기",
   "plasma_grunt_female": "플라스마단 조무래기",
+  "plasma_grunts": "Plasma Grunts",
   "flare_grunt": "플레어단 조무래기",
   "flare_grunt_female": "플레어단 조무래기",
+  "flare_grunts": "Flare Grunts",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
