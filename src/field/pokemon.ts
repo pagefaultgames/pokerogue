@@ -520,7 +520,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getFusionSpeciesForm(ignoreOverride?: boolean): PokemonSpeciesForm {
-    if (!ignoreOverride && this.summonData?.speciesForm) {
+    if (!ignoreOverride && this.summonData?.fusionSpeciesForm) {
       return this.summonData.fusionSpeciesForm;
     }
     if (!this.fusionSpecies?.forms?.length || this.fusionFormIndex >= this.fusionSpecies?.forms.length) {
