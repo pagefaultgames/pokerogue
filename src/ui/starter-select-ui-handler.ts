@@ -119,6 +119,8 @@ const starterCandyCosts: { passive: integer, costReduction: [integer, integer], 
   { passive: 10, costReduction: [3, 10], egg: 10 },  // 10
 ];
 
+export const VALUE_REDUCTION_MAX = 2;
+
 function getPassiveCandyCount(baseValue: integer): integer {
   return starterCandyCosts[baseValue - 1].passive;
 }
@@ -899,11 +901,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const starterData = this.scene.gameData.starterData[speciesId];
 
     return starterData.candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[starterData.valueReduction]
-        && starterData.valueReduction < 2;
+        && starterData.valueReduction < VALUE_REDUCTION_MAX;
   }
 
   /**
-   * Determines if an same species egg can be baught for the given species ID
+   * Determines if an same species egg can be bought for the given species ID
    * @param speciesId The ID of the species to check the value reduction of
    * @returns true if the user has enough candies
    */
@@ -952,15 +954,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       ],};
 
-    const passiveAvailable = this.isPassiveAvailable(species.speciesId);
-    // 'Only Passives' mode
+    const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
+    const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
+    const isSameSpeciesEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
+    // 'Passives Only' mode
     if (this.scene.candyUpgradeNotification === 1) {
-      if (passiveAvailable) {
+      if (isPassiveAvailable) {
         this.scene.tweens.chain(tweenChain).paused = startPaused;
       }
     // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
-      if (passiveAvailable || this.isValueReductionAvailable(species.speciesId)) {
+      if (isPassiveAvailable || isValueReductionAvailable || isSameSpeciesEggAvailable) {
         this.scene.tweens.chain(tweenChain).paused = startPaused;
       }
     }
@@ -979,16 +983,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       return;
     }
 
-    const passiveAvailable = this.isPassiveAvailable(species.speciesId);
-    // 'Only Passive Unlocks' mode
+    const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
+    const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
+    const isSameSpeciesEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
+
+    // 'Passives Only' mode
     if (this.scene.candyUpgradeNotification === 1) {
-      starter.candyUpgradeIcon.setVisible(slotVisible && passiveAvailable);
+      starter.candyUpgradeIcon.setVisible(slotVisible && isPassiveAvailable);
       starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
 
       // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
       starter.candyUpgradeIcon.setVisible(
-        slotVisible && ( passiveAvailable || this.isValueReductionAvailable(species.speciesId)));
+        slotVisible && ( isPassiveAvailable || isValueReductionAvailable || isSameSpeciesEggAvailable));
       starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
     }
   }
@@ -1441,7 +1448,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             }
             const valueReduction = starterData.valueReduction;
-            if (valueReduction < 2) {
+            if (valueReduction < VALUE_REDUCTION_MAX) {
               const reductionCost = getValueReductionCandyCounts(speciesStarters[this.lastSpecies.speciesId])[valueReduction];
               options.push({
                 label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
