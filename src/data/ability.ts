@@ -3813,16 +3813,16 @@ export class PostSummonStatChangeOnArenaAbAttr extends PostSummonStatChangeAbAtt
 export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
   private multiplier: number;
   private tagType: BattlerTagType;
-  private takesDamage: boolean;
-  private triggerMessage: (pokemon: Pokemon, abilityName: string) => string;
+  private recoilDamageFunc: (pokemon: Pokemon) => number;
+  private triggerMessageFunc: (pokemon: Pokemon, abilityName: string) => string;
 
-  constructor(condition: PokemonDefendCondition, multiplier: number, tagType: BattlerTagType, takesDamage: boolean, triggerMessage: (pokemon: Pokemon, abilityName: string) => string) {
+  constructor(condition: PokemonDefendCondition, multiplier: number, tagType: BattlerTagType, triggerMessageFunc: (pokemon: Pokemon, abilityName: string) => string, recoilDamageFunc?: (pokemon: Pokemon) => number) {
     super(condition, multiplier);
 
     this.multiplier = multiplier;
     this.tagType = tagType;
-    this.takesDamage = takesDamage;
-    this.triggerMessage = triggerMessage;
+    this.recoilDamageFunc = recoilDamageFunc;
+    this.triggerMessageFunc = triggerMessageFunc;
   }
 
   /**
@@ -3841,8 +3841,8 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
     if (this.condition(pokemon, attacker, move)) {
       (args[0] as Utils.NumberHolder).value = this.multiplier;
       pokemon.removeTag(this.tagType);
-      if (this.takesDamage) {
-        pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 8), HitResult.OTHER);
+      if (this.recoilDamageFunc) {
+        pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), HitResult.OTHER);
       }
       return true;
     }
@@ -3858,7 +3858,7 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
    * @returns {string} The trigger message.
    */
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return this.triggerMessage(pokemon, abilityName);
+    return this.triggerMessageFunc(pokemon, abilityName);
   }
 }
 
@@ -4779,8 +4779,9 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       // Add BattlerTagType.DISGUISE if the pokemon is in its disguised form
       .conditionalAttr(pokemon => pokemon.formIndex === 0, PostSummonAddBattlerTagAbAttr, BattlerTagType.DISGUISE, 0, false)
-      .attr(FormBlockDamageAbAttr, (target, user, move) => !!target.getTag(BattlerTagType.DISGUISE) && target.getAttackTypeEffectiveness(move.type, user) > 0, 0, BattlerTagType.DISGUISE, true,
-        (pokemon, abilityName) => i18next.t("abilityTriggers:disguiseAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }))
+      .attr(FormBlockDamageAbAttr, (target, user, move) => !!target.getTag(BattlerTagType.DISGUISE) && target.getAttackTypeEffectiveness(move.type, user) > 0, 0, BattlerTagType.DISGUISE,
+        (pokemon, abilityName) => i18next.t("abilityTriggers:disguiseAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }),
+        (pokemon) => Math.floor(pokemon.getMaxHp() / 8))
       .ignorable(),
     new Ability(Abilities.BATTLE_BOND, 7)
       .attr(PostVictoryFormChangeAbAttr, () => 2)
@@ -4927,7 +4928,7 @@ export function initAbilities() {
       .conditionalAttr(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW), PostSummonAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0)
       // When weather changes to HAIL or SNOW while pokemon is fielded, add BattlerTagType.ICE_FACE
       .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.ICE_FACE, 0, WeatherType.HAIL, WeatherType.SNOW)
-      .attr(FormBlockDamageAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE), 0, BattlerTagType.ICE_FACE, false,
+      .attr(FormBlockDamageAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE), 0, BattlerTagType.ICE_FACE,
         (pokemon, abilityName) => i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }))
       .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
