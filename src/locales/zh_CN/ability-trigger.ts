@@ -4,7 +4,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "blockRecoilDamage" : "{{pokemonName}}的{{abilityName}}\n抵消了反作用力！",
   "badDreams": "{{pokemonName}}被折磨着！",
   "costar": "{{pokemonName}}复制了{{allyName}}的能力变化！",
-  "iceFaceAvoidedDamage": "{{pokemonName}}因为{{abilityName}}\n避免了伤害！",
+  "iceFaceAvoidedDamage": "{{pokemonNameWithAffix}}因为{{abilityName}}\n避免了伤害！",
   "perishBody": "因为{{pokemonName}}的{{abilityName}}\n双方将在3回合后灭亡！",
   "poisonHeal": "{{pokemonName}}因{{abilityName}}\n回复了少许HP！",
   "trace": "{{pokemonName}}复制了{{targetName}}的\n{{abilityName}}！",

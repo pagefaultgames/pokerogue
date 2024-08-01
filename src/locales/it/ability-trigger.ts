@@ -4,7 +4,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "blockRecoilDamage" : "{{abilityName}} di {{pokemonName}}\nl'ha protetto dal contraccolpo!",
   "badDreams": "{{pokemonName}} è tormentato dagli incubi!",
   "costar": "{{pokemonName}} ha copiato le modifiche alle statistiche\ndel suo alleato {{allyName}}!",
-  "iceFaceAvoidedDamage": "{{pokemonName}} ha evitato\ni danni grazie a {{abilityName}}!",
+  "iceFaceAvoidedDamage": "{{pokemonNameWithAffix}} ha evitato\ni danni grazie a {{abilityName}}!",
   "perishBody": "{{abilityName}} di {{pokemonName}}\nmanderà KO entrambi i Pokémon dopo 3 turni!",
   "poisonHeal": "{{pokemonName}} recupera alcuni PS\ncon {{abilityName}}!",
   "trace": "L'abilità {{abilityName}} di {{targetName}}\nviene copiata da {{pokemonName}} con Traccia!",
