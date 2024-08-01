@@ -2268,6 +2268,28 @@ export class LockModifierTiersModifier extends PersistentModifier {
   }
 }
 
+export class RemoveHealShopModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof RemoveHealShopModifier;
+  }
+
+  clone(): RemoveHealShopModifier {
+    return new RemoveHealShopModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 1;
+  }
+}
+
 export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);

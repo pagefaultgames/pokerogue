@@ -1474,6 +1474,8 @@ export const modifierTypes = {
     }
     return new PokemonBaseStatTotalModifierType(Utils.randSeedInt(20));
   }),
+
+  MYSTERY_ENCOUNTER_BLACK_SLUDGE: () => new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_BLACK_SLUDGE", "black_sludge", (type, _args) => new Modifiers.RemoveHealShopModifier(type)),
 };
 
 interface ModifierPool {

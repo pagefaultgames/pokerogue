@@ -11,25 +11,22 @@ import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } f
 import { CommandPhase, MovePhase, SelectModifierPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import BattleScene from "#app/battle-scene";
-import * as Modifiers from "#app/modifier/modifier";
-import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
-import { Nature } from "#app/data/nature";
-import { BerryType } from "#enums/berry-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
 import { PokemonMove } from "#app/field/pokemon";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { PokemonBaseStatTotalModifier } from "#app/modifier/modifier";
+import { HitHealModifier, RemoveHealShopModifier, TurnHealModifier } from "#app/modifier/modifier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
+import { TrashToTreasureEncounter } from "#app/data/mystery-encounters/encounters/trash-to-treasure-encounter";
+import { ModifierTier } from "#app/modifier/modifier-tier";
 
-const namespace = "mysteryEncounter:theStrongStuff";
+const namespace = "mysteryEncounter:trashToTreasure";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
-describe("The Strong Stuff - Mystery Encounter", () => {
+describe("Trash to Treasure - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let scene: BattleScene;
@@ -48,7 +45,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.THE_STRONG_STUFF]],
+        [Biome.CAVE, [MysteryEncounterType.TRASH_TO_TREASURE]],
         [Biome.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ])
     );
@@ -61,23 +58,16 @@ describe("The Strong Stuff - Mystery Encounter", () => {
   });
 
   it("should have the correct properties", async () => {
-    await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
+    await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
 
-    expect(TheStrongStuffEncounter.encounterType).toBe(MysteryEncounterType.THE_STRONG_STUFF);
-    expect(TheStrongStuffEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
-    expect(TheStrongStuffEncounter.dialogue).toBeDefined();
-    expect(TheStrongStuffEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
-    expect(TheStrongStuffEncounter.options.length).toBe(2);
-  });
-
-  it("should not spawn outside of CAVE biome", async () => {
-    game.override.startingBiome(Biome.MOUNTAIN);
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_STRONG_STUFF);
+    expect(TrashToTreasureEncounter.encounterType).toBe(MysteryEncounterType.TRASH_TO_TREASURE);
+    expect(TrashToTreasureEncounter.encounterTier).toBe(MysteryEncounterTier.ULTRA);
+    expect(TrashToTreasureEncounter.dialogue).toBeDefined();
+    expect(TrashToTreasureEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
+    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
+    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
+    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(TrashToTreasureEncounter.options.length).toBe(2);
   });
 
   it("should not run below wave 10", async () => {
@@ -85,7 +75,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
     await game.runToMysteryEncounter();
 
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_STRONG_STUFF);
+    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.TRASH_TO_TREASURE);
   });
 
   it("should not run above wave 179", async () => {
@@ -96,34 +86,30 @@ describe("The Strong Stuff - Mystery Encounter", () => {
     expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
-  it("should initialize fully ", async () => {
+  it("should initialize fully", async () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
-    scene.currentBattle.mysteryEncounter = TheStrongStuffEncounter;
+    scene.currentBattle.mysteryEncounter = TrashToTreasureEncounter;
     const moveInitSpy = vi.spyOn(BattleAnims, "initMoveAnim");
     const moveLoadSpy = vi.spyOn(BattleAnims, "loadMoveAnimAssets");
 
-    const { onInit } = TheStrongStuffEncounter;
+    const { onInit } = TrashToTreasureEncounter;
 
-    expect(TheStrongStuffEncounter.onInit).toBeDefined();
+    expect(TrashToTreasureEncounter.onInit).toBeDefined();
 
-    TheStrongStuffEncounter.populateDialogueTokensFromRequirements(scene);
+    TrashToTreasureEncounter.populateDialogueTokensFromRequirements(scene);
     const onInitResult = onInit(scene);
 
-    expect(TheStrongStuffEncounter.enemyPartyConfigs).toEqual([
+    expect(TrashToTreasureEncounter.enemyPartyConfigs).toEqual([
       {
         levelAdditiveMultiplier: 1,
         disableSwitch: true,
         pokemonConfigs: [
           {
-            species: getPokemonSpecies(Species.SHUCKLE),
+            species: getPokemonSpecies(Species.GARBODOR),
             isBoss: true,
-            bossSegments: 5,
-            spriteScale: 1.5,
-            nature: Nature.BOLD,
-            moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
-            modifierTypes: expect.any(Array),
-            tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
-            mysteryEncounterBattleEffects: expect.any(Function)
+            formIndex: 1,
+            bossSegmentModifier: 1,
+            moveSet: [Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH],
           }
         ],
       }
@@ -133,9 +119,9 @@ describe("The Strong Stuff - Mystery Encounter", () => {
     expect(onInitResult).toBe(true);
   });
 
-  describe("Option 1 - Power Swap BSTs", () => {
+  describe("Option 1 - Dig for Valuables", () => {
     it("should have the correct properties", () => {
-      const option1 = TheStrongStuffEncounter.options[0];
+      const option1 = TrashToTreasureEncounter.options[0];
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
@@ -149,36 +135,38 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       });
     });
 
-    it("should lower stats of highest BST and raise stats for rest of party", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
-
-      const bstsPrior = scene.getParty().map(p => p.getSpeciesForm().getBaseStatTotal());
+    it("should give 2 Leftovers, 2 Shell Bell, and Black Sludge", async () => {
+      await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
+      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
 
-      const bstsAfter = scene.getParty().map(p => {
-        const baseStats = p.getSpeciesForm().baseStats.slice(0);
-        scene.applyModifiers(PokemonBaseStatTotalModifier, true, p, baseStats);
-        return baseStats.reduce((a, b) => a + b);
-      });
+      const leftovers = scene.findModifier(m => m instanceof TurnHealModifier) as TurnHealModifier;
+      expect(leftovers).toBeDefined();
+      expect(leftovers.stackCount).toBe(2);
 
-      expect(bstsAfter[0]).toEqual(bstsPrior[0] - 20 * 6);
-      expect(bstsAfter[1]).toEqual(bstsPrior[1] + 10 * 6);
-      expect(bstsAfter[2]).toEqual(bstsPrior[2] + 10 * 6);
+      const shellBell = scene.findModifier(m => m instanceof HitHealModifier) as HitHealModifier;
+      expect(shellBell).toBeDefined();
+      expect(shellBell.stackCount).toBe(2);
+
+      const blackSludge = scene.findModifier(m => m instanceof RemoveHealShopModifier) as RemoveHealShopModifier;
+      expect(blackSludge).toBeDefined();
+      expect(blackSludge.stackCount).toBe(1);
     });
 
     it("should leave encounter without battle", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
   });
 
-  describe("Option 2 - battle the Shuckle", () => {
+  describe("Option 2 - Battle Garbodor", () => {
     it("should have the correct properties", () => {
-      const option1 = TheStrongStuffEncounter.options[1];
+      const option1 = TrashToTreasureEncounter.options[1];
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
@@ -192,34 +180,27 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       });
     });
 
-    it("should start battle against Shuckle", async () => {
+    it("should start battle against Garbodor", async () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
-      await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
+      await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 2, null, true);
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
-      expect(enemyField[0].species.speciesId).toBe(Species.SHUCKLE);
-      expect(enemyField[0].summonData.battleStats).toEqual([0, 2, 0, 2, 0, 0, 0]);
-      const shuckleItems = scene.getModifiers(Modifiers.BerryModifier, false);
-      expect(shuckleItems.length).toBe(4);
-      expect(shuckleItems.find(m => m.berryType === BerryType.SITRUS)?.stackCount).toBe(1);
-      expect(shuckleItems.find(m => m.berryType === BerryType.GANLON)?.stackCount).toBe(1);
-      expect(shuckleItems.find(m => m.berryType === BerryType.APICOT)?.stackCount).toBe(1);
-      expect(shuckleItems.find(m => m.berryType === BerryType.LUM)?.stackCount).toBe(2);
-      expect(enemyField[0].moveset).toEqual([new PokemonMove(Moves.INFESTATION), new PokemonMove(Moves.SALT_CURE), new PokemonMove(Moves.GASTRO_ACID), new PokemonMove(Moves.HEAL_ORDER)]);
+      expect(enemyField[0].species.speciesId).toBe(Species.GARBODOR);
+      expect(enemyField[0].moveset).toEqual([new PokemonMove(Moves.PAYBACK), new PokemonMove(Moves.GUNK_SHOT), new PokemonMove(Moves.STOMPING_TANTRUM), new PokemonMove(Moves.DRAIN_PUNCH)]);
 
       // Should have used moves pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(2);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.GASTRO_ACID).length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.STEALTH_ROCK).length).toBe(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.TOXIC).length).toBe(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.AMNESIA).length).toBe(1);
     });
 
-    it("should have Soul Dew in rewards", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
+    it("should have 2 Rogue, 1 Ultra, 1 Great in rewards", async () => {
+      await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 2, null, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
@@ -228,8 +209,11 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(3);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("SOUL_DEW");
+      expect(modifierSelectHandler.options.length).toEqual(4);
+      expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ROGUE);
+      expect(modifierSelectHandler.options[1].modifierTypeOption.type.tier - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ROGUE);
+      expect(modifierSelectHandler.options[2].modifierTypeOption.type.tier - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ULTRA);
+      expect(modifierSelectHandler.options[3].modifierTypeOption.type.tier - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount).toEqual(ModifierTier.GREAT);
     });
   });
 });

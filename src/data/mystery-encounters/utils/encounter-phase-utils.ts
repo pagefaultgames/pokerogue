@@ -456,7 +456,6 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
       eggRewards.forEach(eggOptions => {
         const egg = new Egg(eggOptions);
         egg.addEggToGameData(scene);
-        // queueEncounterMessage(scene, `You gained a ${egg.getEggTypeDescriptor(scene)} Egg!`);
       });
     }
 

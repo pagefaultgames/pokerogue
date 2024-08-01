@@ -16,6 +16,7 @@ import { anOfferYouCantRefuseDialogue } from "#app/locales/en/mystery-encounters
 import { delibirdyDialogue } from "#app/locales/en/mystery-encounters/delibirdy-dialogue";
 import { absoluteAvariceDialogue } from "#app/locales/en/mystery-encounters/absolute-avarice-dialogue";
 import { aTrainersTestDialogue } from "#app/locales/en/mystery-encounters/a-trainers-test-dialogue";
+import { trashToTreasureDialogue } from "#app/locales/en/mystery-encounters/trash-to-treasure-dialogue";
 
 /**
  * Patterns that can be used:
@@ -57,4 +58,5 @@ export const mysteryEncounter = {
   delibirdy: delibirdyDialogue,
   absoluteAvarice: absoluteAvariceDialogue,
   aTrainersTest: aTrainersTestDialogue,
+  trashToTreasure: trashToTreasureDialogue
 } as const;

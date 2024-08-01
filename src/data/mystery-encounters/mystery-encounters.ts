@@ -19,6 +19,7 @@ import { AnOfferYouCantRefuseEncounter } from "#app/data/mystery-encounters/enco
 import { DelibirdyEncounter } from "#app/data/mystery-encounters/encounters/delibirdy-encounter";
 import { AbsoluteAvariceEncounter } from "#app/data/mystery-encounters/encounters/absolute-avarice-encounter";
 import { ATrainersTestEncounter } from "#app/data/mystery-encounters/encounters/a-trainers-test-encounter";
+import { TrashToTreasureEncounter } from "#app/data/mystery-encounters/encounters/trash-to-treasure-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -155,7 +156,8 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.MYSTERIOUS_CHEST,
   MysteryEncounterType.TRAINING_SESSION,
   MysteryEncounterType.DELIBIRDY,
-  MysteryEncounterType.A_TRAINERS_TEST
+  MysteryEncounterType.A_TRAINERS_TEST,
+  MysteryEncounterType.TRASH_TO_TREASURE
 ];
 
 /**
@@ -243,6 +245,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.DELIBIRDY] = DelibirdyEncounter;
   allMysteryEncounters[MysteryEncounterType.ABSOLUTE_AVARICE] = AbsoluteAvariceEncounter;
   allMysteryEncounters[MysteryEncounterType.A_TRAINERS_TEST] = ATrainersTestEncounter;
+  allMysteryEncounters[MysteryEncounterType.TRASH_TO_TREASURE] = TrashToTreasureEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {
