@@ -387,7 +387,6 @@ export default class BattleScene extends SceneBase {
       duration: 1250,
     });
     transition.once("complete", () => {
-      this.textures.remove("loading_bg");
       transition.destroy();
     });
 
@@ -1140,7 +1139,7 @@ export default class BattleScene extends SceneBase {
       }
       if (resetArenaState) {
         this.arena.resetArenaEffects();
-        playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
+        playerField.forEach((_, p) => this.pushPhase(new ReturnPhase(this, p)));
 
         for (const pokemon of this.getParty()) {
           // Only trigger form change when Eiscue is in Noice form (or Mimikyu is in Busted form)
@@ -1154,7 +1153,7 @@ export default class BattleScene extends SceneBase {
           applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
         }
 
-        this.unshiftPhase(new ShowTrainerPhase(this));
+        this.pushPhase(new ShowTrainerPhase(this));
       }
 
       for (const pokemon of this.getParty()) {

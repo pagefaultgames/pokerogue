@@ -55,8 +55,9 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postSummonNeutralizingGas": "{{pokemonNameWithAffix}}'s Neutralizing Gas filled the area!",
   "postSummonAsOneGlastrier": "{{pokemonNameWithAffix}} has two Abilities!",
   "postSummonAsOneSpectrier": "{{pokemonNameWithAffix}} has two Abilities!",
-  "postSummonVesselOfRuin": "{{pokemonNameWithAffix}}'s Vessel of Ruin lowered the {{statName}}\nof all surrounding Pokémon!",
-  "postSummonSwordOfRuin": "{{pokemonNameWithAffix}}'s Sword of Ruin lowered the {{statName}}\nof all surrounding Pokémon!",
-  "postSummonTabletsOfRuin": "{{pokemonNameWithAffix}}'s Tablets of Ruin lowered the {{statName}}\nof all surrounding Pokémon!",
-  "postSummonBeadsOfRuin": "{{pokemonNameWithAffix}}'s Beads of Ruin lowered the {{statName}}\nof all surrounding Pokémon!",
+  "postSummonVesselOfRuin": "{{pokemonNameWithAffix}}'s Vessel of Ruin lowered the {{statName}}\nof all surrounding PokÃ©mon!",
+  "postSummonSwordOfRuin": "{{pokemonNameWithAffix}}'s Sword of Ruin lowered the {{statName}}\nof all surrounding PokÃ©mon!",
+  "postSummonTabletsOfRuin": "{{pokemonNameWithAffix}}'s Tablets of Ruin lowered the {{statName}}\nof all surrounding PokÃ©mon!",
+  "postSummonBeadsOfRuin": "{{pokemonNameWithAffix}}'s Beads of Ruin lowered the {{statName}}\nof all surrounding PokÃ©mon!",
+  "preventBerryUse": "{{pokemonNameWithAffix}} is too\nnervous to eat berries!",
 } as const;

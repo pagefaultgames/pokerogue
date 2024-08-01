@@ -20,7 +20,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "loweredItsHead": "{{pokemonName}}\nbaisse la tête !",
   "isGlowing": "{{pokemonName}} est entouré\nd’une lumière intense !",
   "bellChimed": "Un grelot sonne !",
-  "foresawAnAttack": "{{pokemonName}\nprévoit une attaque !",
+  "foresawAnAttack": "{{pokemonName}}\nprévoit une attaque !",
   "hidUnderwater": "{{pokemonName}}\nse cache sous l’eau !",
   "soothingAromaWaftedThroughArea": "Une odeur apaisante flotte dans l’air !",
   "sprangUp": "{{pokemonName}}\nse propulse dans les airs !",

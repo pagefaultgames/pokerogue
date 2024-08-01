@@ -35,6 +35,7 @@ export function minifyJsonPlugin(basePath: string | string[], recursive?: boolea
 
   return {
     name: "flx-minify-json",
+    apply: "build",
     configResolved(config) {
       buildDir = config.build.outDir; // Read the build output directory from Vite config
     },

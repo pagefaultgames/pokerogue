@@ -106,85 +106,85 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "fisherman_female": {
     "encounter": {
-      1: "Woah! I've hooked a big one!",
-      2: "Line's in, ready to reel in success!",
-      3: "Ready to make waves!"
+      1: "¡Eh! ¡He pescado uno grande!",
+      2: "¡La caña está lista, para pescar la victoria!",
+      3: "¡Lista para hacer olas!"
     },
     "victory": {
-      1: "I'll be back with a stronger hook.",
-      2: "I'll reel in victory next time.",
-      3: "I'm just sharpening my hooks for the comeback!"
+      1: "Volveré con un pez más grande.",
+      2: "Pescaré la victoria a la siguiente...",
+      3: "¡Estoy afilando mis anzuelos para la próxima!"
     },
   },
   "swimmer": {
     "encounter": {
-      1: "Time to dive in!",
-      2: "Let's ride the waves of victory!",
-      3: "Ready to make a splash!",
+      1: "¡Listo para bucear!",
+      2: "¡Montemos las olas de la victoria!",
+      3: "¡Listo para darme un chapuzón!",
     },
     "victory": {
-      1: "Drenched in defeat!",
-      2: "A wave of defeat!",
-      3: "Back to shore, I guess.",
+      1: "¡Empapado en la derrota!",
+      2: "¡Las olas de la derrota!",
+      3: "Vuelta a la costa, supongo.",
     },
   },
   "backpacker": {
     "encounter": {
-      1: "Pack up, game on!",
-      2: "Let's see if you can keep pace!",
-      3: "Gear up, challenger!",
-      4: "I've spent 20 years trying to find myself… But where am I?"
+      1: "¡Recoge y vámonos!",
+      2: "¡Veamos si puedes mantener la velocidad!",
+      3: "¡Sube la marcha, entrenador!",
+      4: "Traté de encontrarme un sentido durante 20 años… ¿Pero dónde estoy?"
     },
     "victory": {
-      1: "Tripped up this time!",
-      2: "Oh, I think I'm lost.",
-      3: "Dead end!",
-      4: "Wait up a second! Hey! Don't you know who I am?"
+      1: "¡Tropecé esta vez!",
+      2: "Oh, creo que me perdí.",
+      3: "¡Punto muerto!",
+      4: "¡Un segundo! ¡Ey! ¿No sabes quién soy?"
     },
   },
   "ace_trainer": {
     "encounter": {
-      1: "You seem quite confident.",
-      2: "Your Pokémon… Show them to me…",
-      3: "Because I'm an Ace Trainer, people think I'm strong.",
-      4: "Are you aware of what it takes to be an Ace Trainer?"
+      1: "Pareces muy seguro en ti mismo.",
+      2: "Enséñame tus Pokémon…",
+      3: "Como soy un Entrenador Guay, la gente cree que soy fuerte.",
+      4: "¿Sabes lo que toma ser un Entrenador Guay?"
     },
     "victory": {
-      1: "Yes… You have good Pokémon…",
-      2: "What?! But I'm a battling genius!",
-      3: "Of course, you are the main character!",
-      4: "OK! OK! You could be an Ace Trainer!"
+      1: "Sí, tienes buenos Pokémon…",
+      2: "¡¿Cómo?! ¡Si soy un genio combatiendo!",
+      3: "Claro, ¡tienes el poder del guión!",
+      4: "¡OK! ¡OK! ¡Puedes ser un Entrenador Guay!"
     },
     "defeat": {
-      1: "I am devoting my body and soul to Pokémon battles!",
-      2: "All within my expectations… Nothing to be surprised about…",
-      3: "I thought I'd grow up to be a frail person who looked like they would break if you squeezed them too hard.",
-      4: "Of course I'm strong and don't lose. It's important that I win gracefully."
+      1: "¡Doy mi cuerpo y alma para los combates Pokémon.",
+      2: "Según mis expectativas… Nada de qué sorprenderse…",
+      3: "Pensé que crecería como persona frágil que parece que rompe a llorar si le hacen daño muy fuerte.",
+      4: "Por supuesto que soy fuerte y no pierdo. Es importante que gane con gracia."
     }
   },
   "parasol_lady": {
     "encounter": {
-      1: "Time to grace the battlefield with elegance and poise!",
+      1: "¡Tiempo de agradar al campo de batalla con elegancia y esmero!",
     },
     "victory": {
-      1: "My elegance remains unbroken!",
+      1: "¡Mi elegancia es indestructible!",
     }
   },
   "twins": {
     "encounter": {
-      1: "Get ready, because when we team up, it's double the trouble!",
-      2: "Two hearts, one strategy – let's see if you can keep up with our twin power!",
-      3: "Hope you're ready for double trouble, because we're about to bring the heat!"
+      1: "¡Prepárate, porque cuando somos juntas el problema es doble!",
+      2: "Dos almas, una estrategia – ¡veamos si eres capaz de seguir nuestro poder gemelo!",
+      3: "¡Espero que estés listo para el doble problema, porque traeremos mucha emoción!"
     },
     "victory": {
-      1: "We may have lost this round, but our bond remains unbreakable!",
-      2: "Our twin spirit won't be dimmed for long.",
-      3: "We'll come back stronger as a dynamic duo!"
+      1: "¡Aunque hayamos perdido esta ronda, nuestra unión es indestructible!",
+      2: "Nuestro espíritu gemelo no seguirá así por mucho tiempo.",
+      3: "¡Volveremos más fuertes como un dúo dinámico!"
     },
     "defeat": {
-      1: "Twin power reigns supreme!",
-      2: "Two hearts, one triumph!",
-      3: "Double the smiles, double the victory dance!"
+      1: "¡El poder gemelo triunfa como ninguno!",
+      2: "¡Dos almas, un triunfo!",
+      3: "¡Doble sonrisa, doble baile de victoria!"
     }
   },
   "cyclist": {
@@ -565,73 +565,73 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "brock": {
     "encounter": {
-      1: "My expertise on Rock-type Pokémon will take you down! Come on!",
-      2: "My rock-hard willpower will overwhelm you!",
-      3: "Allow me to show you the true strength of my Pokémon!"
+      1: "Mi conocimiento en Pokémon tipo Roca te aplastará. ¡Dalo todo!",
+      2: "¡Mi determinación tipo Roca te sorprenderá!",
+      3: "¡Permíteme enseñarte la verdadera fuerza de mis Pokémon!"
     },
     "victory": {
-      1: "Your Pokémon's strength have overcome my rock-hard defenses!",
-      2: "The world is huge! I'm glad to have had a chance to battle you.",
-      3: "Perhaps I should go back to pursuing my dream as a Pokémon Breeder…"
+      1: "¡La fuerza de mis Pokémon superó mi defensa dura como una roca!",
+      2: "¡El mundo es enorme! Me encantó tener una oportunidad para combatir contigo.",
+      3: "A lo mejor tendría que volver a mi sueño de ser un Criapokémon…"
     },
     "defeat": {
-      1: "The best offense is a good defense!\nThat's my way of doing things!",
-      2: "Come study rocks with me next time to better learn how to fight them!",
-      3: "Hah, all my traveling around the regions is paying off!"
+      1: "¡La mejor ofensa es una buena defensa!\n¡Esa es mi manera de hacer las cosas!",
+      2: "¡Ven preparado sobre las rocas para saber cómo luchar contra las mías!",
+      3: "Ja, ¡todos mis viajes por regiones se notan!"
     }
   },
   "misty": {
     "encounter": {
-      1: "My policy is an all out offensive with Water-type Pokémon!",
-      2: "Hiya, I'll show you the strength of my aquatic Pokémon!",
-      3: "My dream was to go on a journey and battle powerful trainers…\nWill you be a sufficient challenge?"
+      1: "¡Mi política es muy ofensiva con Pokémon tipo Agua!",
+      2: "Oye, ¡te enseñaré la auténtica fuerza de mis Pokémon tipo Agua!",
+      3: "Mi sueño era viajar conociendo Entrenadores fuertes…\n¿Serás suficiente desafío?"
     },
     "victory": {
-      1: "You really are strong… I'll admit that you are skilled…",
-      2: "Grrr… You know you just got lucky, right?!",
-      3: "Wow, you're too much! I can't believe you beat me!"
+      1: "Eres muy fuerte… Admito tu talento…",
+      2: "Grrr… ¡¿Solo tuviste suerte, sabes?!",
+      3: "¡Guau, eres demasiado! ¡No me creo que me hayas vencido!"
     },
     "defeat": {
-      1: "Was the mighty Misty too much for you?",
-      2: "I hope you saw my Pokémon's elegant swimming techniques!",
-      3: "Your Pokémon were no match for my pride and joys!"
+      1: "¿Fue la valiente Misty demasiado para ti?",
+      2: "¡Espero que hayas visto la elegancia en las técnicas de nado de mis Pokémon!",
+      3: "¡Tus Pokémon no fueron rival para mi orgullo y felicidad!"
     }
   },
   "lt_surge": {
     "encounter": {
-      1: "My Electric Pokémon saved me during the war! I'll show you how!",
-      2: "Ten-hut! I'll shock you into surrender!",
-      3: "I'll zap you just like I do to all my enemies in battle!"
+      1: "¡Mis Pokémon eléctricos me salvaron en la guerra! ¡Te enseñaré cómo!",
+      2: "¡10 voltios! ¡Te electrocutaré hasta la derrota!",
+      3: "¡Te electrocutaré como a todos mis enemigos en combate!"
     },
     "victory": {
-      1: "Whoa! Your team's the real deal, kid!",
-      2: "Aaargh, you're strong! Even my electric tricks lost against you.",
-      3: "That was an absolutely shocking loss!"
+      1: "¡Guau! ¡Tu equipo es lo mejor de lo mejor, chaval!",
+      2: "¡Aaargh, eres fuerte! Incluso mis trucos electrizantes fallaron.",
+      3: "¡Fue una derrota electrizante!"
     },
     "defeat": {
-      1: "Oh yeah! When it comes to Electric-type Pokémon, I'm number one in the world!",
-      2: "Hahaha! That was an electrifying battle, kid!",
-      3: "A Pokémon battle is war, and I have showed you first-hand combat!"
+      1: "¡Oh sí! Cuando se trata de Pokémon tipo Eléctrico, ¡soy el número uno!",
+      2: "¡Jajaja! ¡Menuda batalla electrizante, chaval!",
+      3: "Un combate Pokémon es la guerra, ¡y te he enseñado lo esencial, chaval!"
     }
   },
   "erika": {
     "encounter": {
-      1: "Ah, the weather is lovely here…\nOh, a battle? Very well then.",
-      2: "My Pokémon battling skills rival that of my flower arranging skills.",
-      3: "Oh, I hope the pleasant aroma of my Pokémon doesn't put me to sleep again…",
-      4: "Seeing flowers in a garden is so soothing."
+      1: "El tiempo es maravilloso aquí…\n¿Oh un combate? Perfecto, entonces.",
+      2: "Mis dotes como Entrenadora rivalizan mis dotes como florista.",
+      3: "Espero que el dulce aroma de mis Pokémon no me dé sueño…",
+      4: "Ver flores en un jardín es tan relajante."
     },
     "victory": {
-      1: "Oh! I concede defeat.",
-      2: "That match was most delightful.",
-      3: "Ah, it appears it is my loss…",
-      4: "Oh, my goodness."
+      1: "¡Oh! Reconozco mi derrota.",
+      2: "Este combate fue agradable.",
+      3: "Ah, es mi derrota…",
+      4: "Oh Dios mío."
     },
     "defeat": {
-      1: "I was afraid I would doze off…",
-      2: "Oh my, it seems my Grass Pokémon overwhelmed you.",
-      3: "That battle was such a soothing experience.",
-      4: "Oh… Is that all?"
+      1: "Tenía miedo de dormirme…",
+      2: "Oh, parece que mis Pokémon tipo planta te sobrecargaron.",
+      3: "Este combate fue una experiencia muy relajante.",
+      4: "Oh… ¿Eso es todo?"
     }
   },
   "janine": {
