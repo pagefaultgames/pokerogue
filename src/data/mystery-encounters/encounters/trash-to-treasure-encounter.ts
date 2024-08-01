@@ -8,7 +8,7 @@ import { ModifierRewardPhase } from "#app/phases";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Species } from "#enums/species";
-import { HitHealModifier, PokemonHeldItemModifier, RemoveHealShopModifier, TurnHealModifier } from "#app/modifier/modifier";
+import { HitHealModifier, PokemonHeldItemModifier, TurnHealModifier } from "#app/modifier/modifier";
 import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import i18next from "#app/plugins/i18n";
@@ -54,9 +54,6 @@ export const TrashToTreasureEncounter: IMysteryEncounter =
     .withQuery(`${namespace}.query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter;
-      const blackSludge = scene.findModifier(m => m instanceof RemoveHealShopModifier);
-      scene.removeModifier(blackSludge);
-      scene.updateModifiers(true, true);
 
       // Calculate boss mon
       const bossSpecies = getPokemonSpecies(Species.GARBODOR);
