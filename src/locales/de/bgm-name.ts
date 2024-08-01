@@ -79,11 +79,17 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_galactic_grunt": "BDSP Vs. Team Galaktik Rüpel",
   "battle_plasma_grunt": "SW Vs. Team Plasma Rüpel",
   "battle_flare_grunt": "XY Vs. Team Flare Rüpel",
+  "battle_aether_grunt": "SM Vs. Æther Foundation",
+  "battle_skull_grunt": "SM Vs. Team Skull Rüpel",
+  "battle_macro_grunt": "SWSH Vs. Trainer",
   "battle_rocket_boss": "USUM Vs. Giovanni",
   "battle_aqua_magma_boss": "ORAS Vs. Team Aqua & Magma Boss",
   "battle_galactic_boss": "BDSP Vs. Zyrus",
   "battle_plasma_boss": "S2W2 Vs. G-Cis",
   "battle_flare_boss": "XY Vs. Flordelis",
+  "battle_aether_boss": "SM Vs. Samantha",
+  "battle_skull_boss": "SM Vs. Bromley",
+  "battle_macro_boss": "SWSH Vs. Rose",
 
   // Biome Music
   "abyss": "PMD Erkundungsteam Himmel Dunkelkrater",

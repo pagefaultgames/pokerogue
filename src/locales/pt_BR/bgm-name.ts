@@ -84,6 +84,9 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_galactic_boss": "BDSP Batalha do Cyrus",
   "battle_plasma_boss": "B2W2 Batalha do Ghetsis",
   "battle_flare_boss": "XY Batalha do Lysandre",
+  "battle_aether_boss":  "SM Lusamine Battle",
+  "battle_skull_boss": "SM Guzma Battle",
+  "battle_macro_boss": "SWSH Rose Battle",
 
   // Biome Music
   "abyss": "PMD EoS Dark Crater",

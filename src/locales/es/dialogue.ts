@@ -431,6 +431,30 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Me temo que se me avecina un futuro oscuro..."
     },
   },
+  "aether_grunt": {
+    "encounter": {
+      1: "I'll fight you with all I have to wipe you out!"
+    },
+    "victory": {
+      1: "Hmph! You seem to have a lot of skill."
+    },
+  },
+  "skull_grunt": {
+    "encounter": {
+      1: "We're not bad-we're just hard!"
+    },
+    "victory": {
+      1: "Huh? Is it over already?"
+    },
+  },
+  "macro_grunt": {
+    "encounter": {
+      1: "It looks like this is the end of the line for you!"
+    },
+    "victory": {
+      1: "I have little choice but to respectfully retreat."
+    },
+  },
   "rocket_boss_giovanni_1": {
     "encounter": {
       1: "He de decir... estoy impresionado de que hayas llegado tan lejos."
@@ -561,6 +585,82 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Los idiotas sin ningún tipo de visión continuarán asediando este mundo."
+    }
+  },
+  "aether_boss_lusamine_1": {
+    "encounter": {
+      1: "You're going to startle my sweet beast! It looks like I'll need to silence you first."
+    },
+    "victory": {
+      1: "How.. how can you be so awful!"
+    },
+    "defeat": {
+      1: "Hmph..."
+    }
+  },
+  "aether_boss_lusamine_2": {
+    "encounter": {
+      1: `Why must you continue to pester me?! I am sick of you. Sick through and through!
+          $Enough with this useless talk.. with Nihilego's power I will show you how wrong you were to come here!`
+    },
+    "victory": {
+      1: "Aaauuuggghhhhhhhhh!!!"
+    },
+    "defeat": {
+      1: "All that I want is my precious beast! I don't care about any of the rest of you!"
+    }
+  },
+  "skull_boss_guzma_1": {
+    "encounter": {
+      1: `The hated boss who beats you down and beats you down and never lets up...
+          $Yeah. Big bad Guzma is here!`
+    },
+    "victory": {
+      1: "Tch. I'm gonna beat you down one of these days!"
+    },
+    "defeat": {
+      1: "And you came all the way out here just for that, huh?"
+    }
+  },
+  "skull_boss_guzma_2": {
+    "encounter": {
+      1: `Doesn't matter who I'm up against, I'm gonna beat them down!
+          $That's what big bad Guzma is all about!`
+    },
+    "victory": {
+      1: "Guzma!!! What is wrong with you?!"
+    },
+    "defeat": {
+      1: "Y'all are stupid!"
+    }
+  },
+  "macro_boss_rose_1": {
+    "encounter": {
+      1: `I must provide limitless energy to ensure everlasting prosperity for everyone...
+          $It is my purpose, my duty, my destiny!`
+    },
+    "victory": {
+      1: `You still don't understand, trainer...
+          $We... No, I am going to change the course of history!`
+    },
+    "defeat": {
+      1: "You still don't understand a thing!"
+    }
+  },
+  "macro_boss_rose_2": {
+    "encounter": {
+      1: `I'm committed to solving the energy problem in the Galar region—and, of course, around the world.
+          $My experience and accomplishments that made Macro Cosmos a success are proof my methods work.
+          $I don't intend to change my mind, even if I lose.`
+
+    },
+    "victory": {
+      1: `I'd forgotten how great Pokémon battles are! It's been so long since I battled...
+          $That sure was satisfying, I accept defeat for this battle.`
+    },
+    "defeat": {
+      1: `I suppose it must seem that I am doing something terrible. I don't expect you to understand.
+          $But I must provide the Galar region with limitless energy to ensure everlasting prosperity.`
     }
   },
   "brock": {
