@@ -1002,8 +1002,8 @@ export class EncounterPhase extends BattlePhase {
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
-      targets: [this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.currentBattle?.mysteryEncounter?.introVisuals, this.scene.arenaPlayer, this.scene.trainer].flat(),
-      x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 3 + (enemyField.length) ? value + 300 : value - 300,
+      targets: [this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.arenaPlayer, this.scene.trainer].flat(),
+      x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 2 + (enemyField.length) ? value + 300 : value - 300,
       duration: 2000,
       onComplete: () => {
         if (!this.tryOverrideForBattleSpec()) {
@@ -1011,6 +1011,19 @@ export class EncounterPhase extends BattlePhase {
         }
       }
     });
+
+    const encounterIntroVisuals = this.scene.currentBattle?.mysteryEncounter?.introVisuals;
+    if (encounterIntroVisuals) {
+      const enterFromRight = encounterIntroVisuals.enterFromRight;
+      if (enterFromRight) {
+        encounterIntroVisuals.x += 500;
+      }
+      this.scene.tweens.add({
+        targets: encounterIntroVisuals,
+        x: enterFromRight ? "-=200" : "+=300",
+        duration: 2000
+      });
+    }
   }
 
   getEncounterMessage(): string {
@@ -1106,8 +1119,6 @@ export class EncounterPhase extends BattlePhase {
       }
 
       const doEncounter = () => {
-        this.scene.playBgm(undefined);
-
         const doShowEncounterOptions = () => {
           this.scene.ui.clearText();
           this.scene.ui.getMessageHandler().hideNameText();
@@ -1264,7 +1275,17 @@ export class NextEncounterPhase extends EncounterPhase {
     }
     const nextEncounterVisuals = this.scene.currentBattle?.mysteryEncounter?.introVisuals;
     if (nextEncounterVisuals) {
-      moveTargets.push(nextEncounterVisuals);
+      const enterFromRight = nextEncounterVisuals.enterFromRight;
+      if (enterFromRight) {
+        nextEncounterVisuals.x += 500;
+        this.scene.tweens.add({
+          targets: nextEncounterVisuals,
+          x: "-=200",
+          duration: 2000
+        });
+      } else {
+        moveTargets.push(nextEncounterVisuals);
+      }
     }
     this.scene.tweens.add({
       targets: moveTargets.flat(),

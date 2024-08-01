@@ -1,5 +1,5 @@
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, initCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, loadCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { AttackTypeBoosterModifierType, modifierTypes, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
@@ -46,7 +46,7 @@ export const FieryFalloutEncounter: IMysteryEncounter =
     .withAutoHideIntroVisuals(false)
     .withIntroDialogue([
       {
-        text: `${namespace}:intro`,
+        text: `${namespace}.intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -75,8 +75,9 @@ export const FieryFalloutEncounter: IMysteryEncounter =
       // Load hidden Volcarona sprites
       encounter.spriteConfigs = [
         {
-          spriteKey: volcaronaSpecies.getSpriteId(false),
-          fileRoot: "pokemon",
+          spriteKey: null,
+          fileRoot: null,
+          species: Species.VOLCARONA,
           repeat: true,
           hidden: true,
           hasShadow: true,
@@ -84,8 +85,9 @@ export const FieryFalloutEncounter: IMysteryEncounter =
           startFrame: 20
         },
         {
-          spriteKey: volcaronaSpecies.getSpriteId(true ),
-          fileRoot: "pokemon",
+          spriteKey: null,
+          fileRoot: null,
+          species: Species.VOLCARONA,
           repeat: true,
           hidden: true,
           hasShadow: true,
@@ -94,7 +96,7 @@ export const FieryFalloutEncounter: IMysteryEncounter =
       ];
 
       // Load animations/sfx for Volcarona moves
-      initCustomMovesForEncounter(scene, [Moves.FIRE_SPIN, Moves.QUIVER_DANCE]);
+      loadCustomMovesForEncounter(scene, [Moves.FIRE_SPIN, Moves.QUIVER_DANCE]);
 
       scene.arena.trySetWeather(WeatherType.SUNNY, true);
 
@@ -115,28 +117,23 @@ export const FieryFalloutEncounter: IMysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}:title`)
-    .withDescription(`${namespace}:description`)
-    .withQuery(`${namespace}:query`)
+    .withTitle(`${namespace}.title`)
+    .withDescription(`${namespace}.description`)
+    .withQuery(`${namespace}.query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:1:label`,
-        buttonTooltip: `${namespace}:option:1:tooltip`,
+        buttonLabel: `${namespace}.option.1.label`,
+        buttonTooltip: `${namespace}.option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}:option:1:selected`,
+            text: `${namespace}.option.1.selected`,
           },
         ],
       },
       async (scene: BattleScene) => {
         // Pick battle
         const encounter = scene.currentBattle.mysteryEncounter;
-        setEncounterRewards(scene,
-          { fillRemaining: true },
-          null,
-          () => {
-            giveLeadPokemonCharcoal(scene);
-          });
+        setEncounterRewards(scene, { fillRemaining: true }, null, () => giveLeadPokemonCharcoal(scene));
 
         encounter.startOfBattleEffects.push(
           {
@@ -168,11 +165,11 @@ export const FieryFalloutEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:2:label`,
-        buttonTooltip: `${namespace}:option:2:tooltip`,
+        buttonLabel: `${namespace}.option.2.label`,
+        buttonTooltip: `${namespace}.option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}:option:2:selected`,
+            text: `${namespace}.option.2.selected`,
           },
         ],
       },
@@ -195,7 +192,7 @@ export const FieryFalloutEncounter: IMysteryEncounter =
           if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
             // Burn applied
             encounter.setDialogueToken("burnedPokemon", chosenPokemon.name);
-            queueEncounterMessage(scene, `${namespace}:option:2:target_burned`);
+            queueEncounterMessage(scene, `${namespace}.option.2.target_burned`);
           }
         }
 
@@ -209,12 +206,12 @@ export const FieryFalloutEncounter: IMysteryEncounter =
         .withPrimaryPokemonRequirement(new TypeRequirement(Type.FIRE, true, 1)) // Will set option3PrimaryName dialogue token automatically
         .withSecondaryPokemonRequirement(new TypeRequirement(Type.FIRE, true, 1)) // Will set option3SecondaryName dialogue token automatically
         .withDialogue({
-          buttonLabel: `${namespace}:option:3:label`,
-          buttonTooltip: `${namespace}:option:3:tooltip`,
-          disabledButtonTooltip: `${namespace}:option:3:disabled_tooltip`,
+          buttonLabel: `${namespace}.option.3.label`,
+          buttonTooltip: `${namespace}.option.3.tooltip`,
+          disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
           selected: [
             {
-              text: `${namespace}:option:3:selected`,
+              text: `${namespace}.option.3.selected`,
             },
           ],
         })
@@ -249,6 +246,6 @@ function giveLeadPokemonCharcoal(scene: BattleScene) {
     const charcoal = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]).type as AttackTypeBoosterModifierType;
     applyModifierTypeToPlayerPokemon(scene, leadPokemon, charcoal);
     scene.currentBattle.mysteryEncounter.setDialogueToken("leadPokemon", leadPokemon.name);
-    queueEncounterMessage(scene, `${namespace}:found_charcoal`);
+    queueEncounterMessage(scene, `${namespace}.found_charcoal`);
   }
 }

@@ -1,4 +1,4 @@
-export const offerYouCantRefuseDialogue = {
+export const anOfferYouCantRefuseDialogue = {
   intro: "You're stopped by a rich looking boy.",
   speaker: "Rich Boy",
   intro_dialogue: `Good day to you.

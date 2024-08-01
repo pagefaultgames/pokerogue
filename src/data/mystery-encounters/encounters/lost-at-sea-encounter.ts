@@ -31,14 +31,14 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withSceneWaveRangeRequirement(11, 179)
   .withIntroSpriteConfigs([
     {
-      fileRoot: "mystery-encounters",
       spriteKey: "buoy",
+      fileRoot: "mystery-encounters",
       hasShadow: false,
       x: 20,
       y: 3,
     },
   ])
-  .withIntroDialogue([{ text: `${namespace}:intro` }])
+  .withIntroDialogue([{ text: `${namespace}.intro` }])
   .withOnInit((scene: BattleScene) => {
     const { mysteryEncounter } = scene.currentBattle;
 
@@ -48,22 +48,22 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
     return true;
   })
-  .withTitle(`${namespace}:title`)
-  .withDescription(`${namespace}:description`)
-  .withQuery(`${namespace}:query`)
+  .withTitle(`${namespace}.title`)
+  .withDescription(`${namespace}.description`)
+  .withQuery(`${namespace}.query`)
   .withOption(
     // Option 1: Use a (non fainted) pokemon that can learn Surf to guide you back/
     new MysteryEncounterOptionBuilder()
       .withPokemonCanLearnMoveRequirement(OPTION_1_REQUIRED_MOVE)
       .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withDialogue({
-        buttonLabel: `${namespace}:option:1:label`,
-        disabledButtonLabel: `${namespace}:option:1:label_disabled`,
-        buttonTooltip: `${namespace}:option:1:tooltip`,
-        disabledButtonTooltip: `${namespace}:option:1:tooltip_disabled`,
+        buttonLabel: `${namespace}.option.1.label`,
+        disabledButtonLabel: `${namespace}.option.1.label_disabled`,
+        buttonTooltip: `${namespace}.option.1.tooltip`,
+        disabledButtonTooltip: `${namespace}.option.1.tooltip_disabled`,
         selected: [
           {
-            text: `${namespace}:option:1:selected`,
+            text: `${namespace}.option.1.selected`,
           },
         ],
       })
@@ -76,13 +76,13 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withPokemonCanLearnMoveRequirement(OPTION_2_REQUIRED_MOVE)
       .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withDialogue({
-        buttonLabel: `${namespace}:option:2:label`,
-        disabledButtonLabel: `${namespace}:option:2:label_disabled`,
-        buttonTooltip: `${namespace}:option:2:tooltip`,
-        disabledButtonTooltip: `${namespace}:option:2:tooltip_disabled`,
+        buttonLabel: `${namespace}.option.2.label`,
+        disabledButtonLabel: `${namespace}.option.2.label_disabled`,
+        buttonTooltip: `${namespace}.option.2.tooltip`,
+        disabledButtonTooltip: `${namespace}.option.2.tooltip_disabled`,
         selected: [
           {
-            text: `${namespace}:option:2:selected`,
+            text: `${namespace}.option.2.selected`,
           },
         ],
       })
@@ -92,11 +92,11 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withSimpleOption(
     // Option 3: Wander aimlessly
     {
-      buttonLabel: `${namespace}:option:3:label`,
-      buttonTooltip: `${namespace}:option:3:tooltip`,
+      buttonLabel: `${namespace}.option.3.label`,
+      buttonTooltip: `${namespace}.option.3.tooltip`,
       selected: [
         {
-          text: `${namespace}:option:3:selected`,
+          text: `${namespace}.option.3.selected`,
         },
       ],
     },
@@ -116,7 +116,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   )
   .withOutroDialogue([
     {
-      text: `${namespace}:outro`,
+      text: `${namespace}.outro`,
     },
   ])
   .build();

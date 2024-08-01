@@ -47,23 +47,26 @@ export const DelibirdyEncounter: IMysteryEncounter =
     ))
     .withIntroSpriteConfigs([
       {
-        spriteKey: Species.DELIBIRD.toString(),
-        fileRoot: "pokemon",
+        spriteKey: null,
+        fileRoot: null,
+        species: Species.DELIBIRD,
         hasShadow: true,
         repeat: true,
         startFrame: 38,
         scale: 0.94
       },
       {
-        spriteKey: Species.DELIBIRD.toString(),
-        fileRoot: "pokemon",
+        spriteKey: null,
+        fileRoot: null,
+        species: Species.DELIBIRD,
         hasShadow: true,
         repeat: true,
         scale: 1.06
       },
       {
-        spriteKey: Species.DELIBIRD.toString(),
-        fileRoot: "pokemon",
+        spriteKey: null,
+        fileRoot: null,
+        species: Species.DELIBIRD,
         hasShadow: true,
         repeat: true,
         startFrame: 65,
@@ -74,15 +77,15 @@ export const DelibirdyEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}:intro`,
+        text: `${namespace}.intro`,
       }
     ])
-    .withTitle(`${namespace}:title`)
-    .withDescription(`${namespace}:description`)
-    .withQuery(`${namespace}:query`)
+    .withTitle(`${namespace}.title`)
+    .withDescription(`${namespace}.description`)
+    .withQuery(`${namespace}.query`)
     .withOutroDialogue([
       {
-        text: `${namespace}:outro`,
+        text: `${namespace}.outro`,
       }
     ])
     .withOption(
@@ -90,11 +93,11 @@ export const DelibirdyEncounter: IMysteryEncounter =
         .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, 2.75) // Must have money to spawn
         .withDialogue({
-          buttonLabel: `${namespace}:option:1:label`,
-          buttonTooltip: `${namespace}:option:1:tooltip`,
+          buttonLabel: `${namespace}.option.1.label`,
+          buttonTooltip: `${namespace}.option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}:option:1:selected`,
+              text: `${namespace}.option.1.selected`,
             },
           ],
         })
@@ -127,12 +130,12 @@ export const DelibirdyEncounter: IMysteryEncounter =
         .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withPrimaryPokemonRequirement(new HeldItemRequirement(OPTION_2_ALLOWED_MODIFIERS))
         .withDialogue({
-          buttonLabel: `${namespace}:option:2:label`,
-          buttonTooltip: `${namespace}:option:2:tooltip`,
-          secondOptionPrompt: `${namespace}:option:2:select_prompt`,
+          buttonLabel: `${namespace}.option.2.label`,
+          buttonTooltip: `${namespace}.option.2.tooltip`,
+          secondOptionPrompt: `${namespace}.option.2.select_prompt`,
           selected: [
             {
-              text: `${namespace}:option:2:selected`,
+              text: `${namespace}.option.2.selected`,
             },
           ],
         })
@@ -222,12 +225,12 @@ export const DelibirdyEncounter: IMysteryEncounter =
         .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withPrimaryPokemonRequirement(new HeldItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true))
         .withDialogue({
-          buttonLabel: `${namespace}:option:3:label`,
-          buttonTooltip: `${namespace}:option:3:tooltip`,
-          secondOptionPrompt: `${namespace}:option:3:select_prompt`,
+          buttonLabel: `${namespace}.option.3.label`,
+          buttonTooltip: `${namespace}.option.3.tooltip`,
+          secondOptionPrompt: `${namespace}.option.3.select_prompt`,
           selected: [
             {
-              text: `${namespace}:option:3:selected`,
+              text: `${namespace}.option.3.selected`,
             },
           ],
         })
@@ -261,7 +264,7 @@ export const DelibirdyEncounter: IMysteryEncounter =
             // If pokemon meets primary pokemon reqs, it can be selected
             const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}:invalid_selection`);
+              return getEncounterText(scene, `${namespace}.invalid_selection`);
             }
 
             return null;

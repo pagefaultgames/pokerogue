@@ -1,4 +1,4 @@
-export const pokemonSalesmanDialogue = {
+export const thePokemonSalesmanDialogue = {
   intro: "A chipper elderly man approaches you.",
   speaker: "Gentleman",
   intro_dialogue: "Hello there! Have I got a deal just for YOU!",

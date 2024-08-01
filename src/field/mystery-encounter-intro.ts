@@ -1,10 +1,11 @@
 import { GameObjects } from "phaser";
 import BattleScene from "../battle-scene";
 import IMysteryEncounter from "../data/mystery-encounters/mystery-encounter";
+import { Species } from "#enums/species";
+import { isNullOrUndefined } from "#app/utils";
+import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 type KnownFileRoot =
-  | "trainer"
-  | "pokemon"
   | "arenas"
   | "battle_anims"
   | "cg"
@@ -33,6 +34,8 @@ export class MysteryEncounterSpriteConfig {
   spriteKey: string;
   /** Refer to [/public/images](../../public/images) directorty for all folder names */
   fileRoot: KnownFileRoot & string | string;
+  /** Optional replacement for `spriteKey`/`fileRoot`. Just know this defaults to male/genderless, form 0, no shiny */
+  species?: Species;
   /** Enable shadow. Defaults to `false` */
   hasShadow?: boolean = false;
   /** Disable animation. Defaults to `false` */
@@ -69,15 +72,26 @@ export class MysteryEncounterSpriteConfig {
 export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
   public encounter: IMysteryEncounter;
   public spriteConfigs: MysteryEncounterSpriteConfig[];
+  public enterFromRight: boolean;
 
   constructor(scene: BattleScene, encounter: IMysteryEncounter) {
     super(scene, -72, 76);
     this.encounter = encounter;
+    this.enterFromRight = encounter.enterIntroVisualsFromRight ?? false;
     // Shallow copy configs to allow visual config updates at runtime without dirtying master copy of Encounter
     this.spriteConfigs = encounter.spriteConfigs.map(config => {
-      return {
+      const result = {
         ...config
       };
+
+      if (!isNullOrUndefined(result.species)) {
+        const keys = getSpriteKeysFromSpecies(result.species);
+        result.spriteKey = keys.spriteKey;
+        result.fileRoot = keys.fileRoot;
+        result.isPokemon = true;
+      }
+
+      return result;
     });
     if (!this.spriteConfigs) {
       return;
@@ -90,9 +104,10 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       return ret;
     };
 
-    const getItemSprite = (spriteKey: string) => {
+    const getItemSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
       const icon = this.scene.add.sprite(-19, 2, "items", spriteKey);
       icon.setOrigin(0.5, 1);
+      icon.setPipeline(this.scene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow, yShadowOffset: yShadow ?? 0 });
       return icon;
     };
 
@@ -114,7 +129,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         sprite = getSprite(spriteKey, hasShadow, yShadow);
         tintSprite = getSprite(spriteKey);
       } else {
-        sprite = getItemSprite(spriteKey);
+        sprite = getItemSprite(spriteKey, hasShadow, yShadow);
         tintSprite = getItemSprite(spriteKey);
       }
 

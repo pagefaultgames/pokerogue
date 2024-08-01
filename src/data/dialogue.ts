@@ -665,6 +665,76 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.BUCK]: [
+    {
+      encounter: [
+        "dialogue:stat_trainer_buck.encounter.1",
+        "dialogue:stat_trainer_buck.encounter.2"
+      ],
+      victory: [
+        "dialogue:stat_trainer_buck.victory.1"
+      ],
+      defeat: [
+        "dialogue:stat_trainer_buck.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.CHERYL]: [
+    {
+      encounter: [
+        "dialogue:stat_trainer_cheryl.encounter.1",
+        "dialogue:stat_trainer_cheryl.encounter.2"
+      ],
+      victory: [
+        "dialogue:stat_trainer_cheryl.victory.1"
+      ],
+      defeat: [
+        "dialogue:stat_trainer_cheryl.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.MARLEY]: [
+    {
+      encounter: [
+        "dialogue:stat_trainer_marley.encounter.1",
+        "dialogue:stat_trainer_marley.encounter.2"
+      ],
+      victory: [
+        "dialogue:stat_trainer_marley.victory.1"
+      ],
+      defeat: [
+        "dialogue:stat_trainer_marley.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.MIRA]: [
+    {
+      encounter: [
+        "dialogue:stat_trainer_mira.encounter.1",
+        "dialogue:stat_trainer_mira.encounter.2"
+      ],
+      victory: [
+        "dialogue:stat_trainer_mira.victory.1"
+      ],
+      defeat: [
+        "dialogue:stat_trainer_mira.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.RILEY]: [
+    {
+      encounter: [
+        "dialogue:stat_trainer_riley.encounter.1",
+        "dialogue:stat_trainer_riley.encounter.2"
+      ],
+      victory: [
+        "dialogue:stat_trainer_riley.victory.1"
+      ],
+      defeat: [
+        "dialogue:stat_trainer_riley.defeat.1"
+      ]
+    }
+  ],
   [TrainerType.BROCK]: {
     encounter: [
       "dialogue:brock.encounter.1",

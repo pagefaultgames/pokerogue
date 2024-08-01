@@ -66,10 +66,10 @@ describe("The Strong Stuff - Mystery Encounter", () => {
     expect(TheStrongStuffEncounter.encounterType).toBe(MysteryEncounterType.THE_STRONG_STUFF);
     expect(TheStrongStuffEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(TheStrongStuffEncounter.dialogue).toBeDefined();
-    expect(TheStrongStuffEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
-    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}:title`);
-    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}:description`);
-    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}:query`);
+    expect(TheStrongStuffEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
+    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
+    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
+    expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
     expect(TheStrongStuffEncounter.options.length).toBe(2);
   });
 
@@ -139,11 +139,11 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}:option:1:label`,
-        buttonTooltip: `${namespace}:option:1:tooltip`,
+        buttonLabel: `${namespace}.option.1.label`,
+        buttonTooltip: `${namespace}.option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}:option:1:selected`,
+            text: `${namespace}.option.1.selected`,
           },
         ],
       });
@@ -182,11 +182,11 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}:option:2:label`,
-        buttonTooltip: `${namespace}:option:2:tooltip`,
+        buttonLabel: `${namespace}.option.2.label`,
+        buttonTooltip: `${namespace}.option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}:option:2:selected`,
+            text: `${namespace}.option.2.selected`,
           },
         ],
       });

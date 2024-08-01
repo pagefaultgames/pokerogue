@@ -49,26 +49,26 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}:intro`,
+        text: `${namespace}.intro`,
       },
       {
-        text: `${namespace}:intro_dialogue`,
-        speaker: `${namespace}:speaker`,
+        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}.speaker`,
       },
     ])
-    .withTitle(`${namespace}:title`)
-    .withDescription(`${namespace}:description`)
-    .withQuery(`${namespace}:query`)
+    .withTitle(`${namespace}.title`)
+    .withDescription(`${namespace}.description`)
+    .withQuery(`${namespace}.query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, 2) // Wave scaling money multiplier of 2
         .withDialogue({
-          buttonLabel: `${namespace}:option:1:label`,
-          buttonTooltip: `${namespace}:option:1:tooltip`,
+          buttonLabel: `${namespace}.option.1.label`,
+          buttonTooltip: `${namespace}.option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}:option:selected`,
+              text: `${namespace}.option.selected`,
             },
           ],
         })
@@ -127,13 +127,13 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
           if (randSeedInt(10) < 8) {
             if (chosenPokemon.trySetStatus(StatusEffect.TOXIC)) {
               // Toxic applied
-              queueEncounterMessage(scene, `${namespace}:bad_poison`);
+              queueEncounterMessage(scene, `${namespace}.bad_poison`);
             } else {
               // Pokemon immune or something else prevents status
-              queueEncounterMessage(scene, `${namespace}:damage_only`);
+              queueEncounterMessage(scene, `${namespace}.damage_only`);
             }
           } else {
-            queueEncounterMessage(scene, `${namespace}:damage_only`);
+            queueEncounterMessage(scene, `${namespace}.damage_only`);
           }
 
           setEncounterExp(scene, [chosenPokemon.id], 100);
@@ -147,11 +147,11 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
         .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, 5) // Wave scaling money multiplier of 5
         .withDialogue({
-          buttonLabel: `${namespace}:option:2:label`,
-          buttonTooltip: `${namespace}:option:2:tooltip`,
+          buttonLabel: `${namespace}.option.2.label`,
+          buttonTooltip: `${namespace}.option.2.tooltip`,
           selected: [
             {
-              text: `${namespace}:option:selected`,
+              text: `${namespace}.option.selected`,
             },
           ],
         })
@@ -178,7 +178,7 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
             // If pokemon meets primary pokemon reqs, it can be selected
             const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}:invalid_selection`);
+              return getEncounterText(scene, `${namespace}.invalid_selection`);
             }
 
             return null;
@@ -207,13 +207,13 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
           if (randSeedInt(10) < 2) {
             if (chosenPokemon.trySetStatus(StatusEffect.POISON)) {
               // Poison applied
-              queueEncounterMessage(scene, `${namespace}:poison`);
+              queueEncounterMessage(scene, `${namespace}.poison`);
             } else {
               // Pokemon immune or something else prevents status
-              queueEncounterMessage(scene, `${namespace}:no_bad_effects`);
+              queueEncounterMessage(scene, `${namespace}.no_bad_effects`);
             }
           } else {
-            queueEncounterMessage(scene, `${namespace}:no_bad_effects`);
+            queueEncounterMessage(scene, `${namespace}.no_bad_effects`);
           }
 
           setEncounterExp(scene, [chosenPokemon.id], 100);
@@ -224,12 +224,12 @@ export const ShadyVitaminDealerEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:3:label`,
-        buttonTooltip: `${namespace}:option:3:tooltip`,
+        buttonLabel: `${namespace}.option.3.label`,
+        buttonTooltip: `${namespace}.option.3.tooltip`,
         selected: [
           {
-            text: `${namespace}:option:3:selected`,
-            speaker: `${namespace}:speaker`
+            text: `${namespace}.option.3.selected`,
+            speaker: `${namespace}.speaker`
           }
         ]
       },

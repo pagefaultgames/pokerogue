@@ -60,13 +60,16 @@ export interface IEggOptions {
   /** Defines if the egg will hatch with the hidden ability of this species.
    *  If no hidden ability exist, a random one will get choosen.
    */
-  overrideHiddenAbility?: boolean
+  overrideHiddenAbility?: boolean,
+
+  /** If Egg is of {@link EggSourceType.EVENT}, can customize the message displayed for where the egg was obtained */
+  eventEggTypeDescriptor?: string;
 }
 
 export class Egg {
 
   ////
-  // #region Privat properties
+  // #region Private properties
   ////
 
   private _id: number;
@@ -81,6 +84,8 @@ export class Egg {
   private _eggMoveIndex: number;
 
   private _overrideHiddenAbility: boolean;
+
+  private _eventEggTypeDescriptor: string;
 
   ////
   // #endregion
@@ -179,6 +184,8 @@ export class Egg {
       this.increasePullStatistic(eggOptions.scene);
       this.addEggToGameData(eggOptions.scene);
     }
+
+    this._eventEggTypeDescriptor = eggOptions.eventEggTypeDescriptor ?? null;
   }
 
   ////
@@ -273,6 +280,8 @@ export class Egg {
       return i18next.t("egg:gachaTypeShiny");
     case EggSourceType.GACHA_MOVE:
       return i18next.t("egg:gachaTypeMove");
+    case EggSourceType.EVENT:
+      return this._eventEggTypeDescriptor ?? i18next.t("egg:eventType");
     }
   }
 

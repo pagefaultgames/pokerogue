@@ -4,7 +4,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MoneyRequirement } from "../mystery-encounter-requirements";
-import { catchPokemon, getRandomSpeciesByStarterTier } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { catchPokemon, getRandomSpeciesByStarterTier, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
 import { Species } from "#enums/species";
 import { PokeballType } from "#app/data/pokeball";
@@ -25,8 +25,8 @@ const MAX_POKEMON_PRICE_MULTIPLIER = 6;
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/36 | GitHub Issue #36}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const PokemonSalesmanEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.POKEMON_SALESMAN)
+export const ThePokemonSalesmanEncounter: IMysteryEncounter =
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_POKEMON_SALESMAN)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
     .withSceneWaveRangeRequirement(10, 180)
     .withSceneRequirement(new MoneyRequirement(null, MAX_POKEMON_PRICE_MULTIPLIER)) // Some costs may not be as significant, this is the max you'd pay
@@ -40,16 +40,16 @@ export const PokemonSalesmanEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}:intro`,
+        text: `${namespace}.intro`,
       },
       {
-        text: `${namespace}:intro_dialogue`,
-        speaker: `${namespace}:speaker`,
+        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}.speaker`,
       },
     ])
-    .withTitle(`${namespace}:title`)
-    .withDescription(`${namespace}:description`)
-    .withQuery(`${namespace}:query`)
+    .withTitle(`${namespace}.title`)
+    .withDescription(`${namespace}.description`)
+    .withQuery(`${namespace}.query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter;
 
@@ -66,17 +66,16 @@ export const PokemonSalesmanEncounter: IMysteryEncounter =
         // If no HA mon found or you roll 1%, give shiny Magikarp
         species = getPokemonSpecies(Species.MAGIKARP);
         const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = scene.addPlayerPokemon(species, 5, hiddenIndex, species.formIndex, null, true);
+        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, null, true, null, null, null, null);
       } else {
         const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = scene.addPlayerPokemon(species, 5, hiddenIndex, species.formIndex);
+        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, null, null, null, null, null, null);
       }
 
-      const spriteKey = pokemon.getSpriteId();
-      const spriteRoot = pokemon.getSpriteAtlasPath();
+      const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(pokemon);
       encounter.spriteConfigs.push({
         spriteKey: spriteKey,
-        fileRoot: spriteRoot,
+        fileRoot: fileRoot,
         hasShadow: true,
         repeat: true,
         isPokemon: true
@@ -89,8 +88,8 @@ export const PokemonSalesmanEncounter: IMysteryEncounter =
         // Always max price for shiny (flip HA back to normal), and add special messaging
         priceMultiplier = MAX_POKEMON_PRICE_MULTIPLIER;
         pokemon.abilityIndex = 0;
-        encounter.dialogue.encounterOptionsDialogue.description = `${namespace}:description_shiny`;
-        encounter.options[0].dialogue.buttonTooltip = `${namespace}:option:1:tooltip_shiny`;
+        encounter.dialogue.encounterOptionsDialogue.description = `${namespace}.description_shiny`;
+        encounter.options[0].dialogue.buttonTooltip = `${namespace}.option.1.tooltip_shiny`;
       }
       const price = scene.getWaveMoneyAmount(priceMultiplier);
       encounter.setDialogueToken("purchasePokemon", pokemon.name);
@@ -110,11 +109,11 @@ export const PokemonSalesmanEncounter: IMysteryEncounter =
         .withHasDexProgress(true)
         .withSceneMoneyRequirement(null, MAX_POKEMON_PRICE_MULTIPLIER) // Wave scaling money multiplier of 2
         .withDialogue({
-          buttonLabel: `${namespace}:option:1:label`,
-          buttonTooltip: `${namespace}:option:1:tooltip`,
+          buttonLabel: `${namespace}.option.1.label`,
+          buttonTooltip: `${namespace}.option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}:option:1:selected_message`,
+              text: `${namespace}.option.1.selected_message`,
             }
           ],
         })
@@ -127,7 +126,7 @@ export const PokemonSalesmanEncounter: IMysteryEncounter =
           updatePlayerMoney(scene, -price, true, false);
 
           // Show dialogue
-          await showEncounterDialogue(scene, `${namespace}:option:1:selected_dialogue`, `${namespace}:speaker`);
+          await showEncounterDialogue(scene, `${namespace}.option.1.selected_dialogue`, `${namespace}.speaker`);
           await transitionMysteryEncounterIntroVisuals(scene);
 
           // "Catch" purchased pokemon
@@ -141,11 +140,11 @@ export const PokemonSalesmanEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:2:label`,
-        buttonTooltip: `${namespace}:option:2:tooltip`,
+        buttonLabel: `${namespace}.option.2.label`,
+        buttonTooltip: `${namespace}.option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}:option:2:selected`,
+            text: `${namespace}.option.2.selected`,
           },
         ],
       },
