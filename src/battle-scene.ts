@@ -1236,7 +1236,6 @@ export default class BattleScene extends SceneBase {
     case Species.PUMPKABOO:
     case Species.GOURGEIST:
     case Species.ORICORIO:
-    case Species.ROCKRUFF:
     case Species.MAGEARNA:
     case Species.ZARUDE:
     case Species.SQUAWKABILLY:
@@ -1259,6 +1258,26 @@ export default class BattleScene extends SceneBase {
     case Species.MEOWSTIC:
     case Species.INDEEDEE:
     case Species.BASCULEGION:
+    case Species.ROCKRUFF:
+      const funnynumber1 = Utils.randSeedInt(100, 1); // roll between 1 - 100
+      if (funnynumber1 <= 80) {
+      return 0;  // Normal form - 80% chance
+      } else if (funnynumber1 <= 100) {
+      return 1; // Own Tempo form - 20% chance
+      } else {
+      return "Blame Yda!" // just incase the random number goes haywire
+      }
+    case Species.LYCANROC:
+      const funnynumber2 = Utils.randSeedInt(100, 1); // roll between 1 - 100
+      if (funnynumber2 <= 40) {
+      return 0;  // Day Form - 40% chance
+      } else if (funnynumber2 <= 80) {
+      return 2; // Midnight Form - 40% chance
+      } else if (funnynumber2 <= 100) {
+      return 1; // Dusk Form - 20% chance
+      } else {
+      return "Blame flx!" // just incase the random number goes haywire
+      }
     case Species.OINKOLOGNE:
       return gender === Gender.FEMALE ? 1 : 0;
     case Species.TOXTRICITY:
@@ -1274,7 +1293,6 @@ export default class BattleScene extends SceneBase {
       case Species.BURMY:
       case Species.WORMADAM:
       case Species.ROTOM:
-      case Species.LYCANROC:
         return Utils.randSeedInt(species.forms.length);
       }
       return 0;
