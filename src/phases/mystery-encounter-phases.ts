@@ -3,7 +3,7 @@ import BattleScene from "../battle-scene";
 import { Phase } from "../phase";
 import { Mode } from "../ui/ui";
 import { transitionMysteryEncounterIntroVisuals, OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
-import { CheckSwitchPhase, NewBattlePhase, ReturnPhase, ScanIvsPhase, SelectModifierPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
+import { CheckSwitchPhase, NewBattlePhase, PostTurnStatusEffectPhase, ReturnPhase, ScanIvsPhase, SelectModifierPhase, SummonPhase, ToggleDoublePositionPhase } from "../phases";
 import MysteryEncounterOption, { OptionPhaseCallback } from "../data/mystery-encounters/mystery-encounter-option";
 import { getCharVariantFromDialogue } from "../data/dialogue";
 import { TrainerSlot } from "../data/trainer-config";
@@ -182,6 +182,11 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     field.forEach(pokemon => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
     });
+
+    // Remove any status tick phases
+    while (!!this.scene.findPhase(p => p instanceof PostTurnStatusEffectPhase)) {
+      this.scene.tryRemovePhase(p => p instanceof PostTurnStatusEffectPhase);
+    }
 
     super.end();
   }

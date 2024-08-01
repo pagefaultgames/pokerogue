@@ -257,6 +257,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_FUSED_CHANCE": { name: "Fusion Token", description: "Adds a 1% chance that a wild Pokémon will be a fusion." },
 
     "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { name: "Shuckle Juice" },
+    "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { name: "Black Sludge", description: "The stench is so powerful that healing items are no longer available to purchase in shops." },
   },
   SpeciesBoosterItem: {
     "LIGHT_BALL": { name: "Light Ball", description: "It's a mysterious orb that boosts Pikachu's Attack and Sp. Atk stats." },
