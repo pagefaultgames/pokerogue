@@ -8,7 +8,8 @@ import {
   LoginPhase,
   NewBattlePhase,
   SelectStarterPhase,
-  TitlePhase, TurnInitPhase,
+  SelectTargetPhase,
+  TitlePhase, TurnEndPhase, TurnInitPhase,
   TurnStartPhase,
 } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
@@ -33,6 +34,7 @@ import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { BattlerIndex } from "#app/battle.js";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
+import { OverridesHelper } from "./overridesHelper";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -43,6 +45,7 @@ export default class GameManager {
   public phaseInterceptor: PhaseInterceptor;
   public textInterceptor: TextInterceptor;
   public inputsHandler: InputsHandler;
+  public readonly override: OverridesHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -58,6 +61,7 @@ export default class GameManager {
     this.phaseInterceptor = new PhaseInterceptor(this.scene);
     this.textInterceptor = new TextInterceptor(this.scene);
     this.gameWrapper.setScene(this.scene);
+    this.override = new OverridesHelper(this);
   }
 
   /**
@@ -170,6 +174,15 @@ export default class GameManager {
     this.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
+
+    // Confirm target selection if move is multi-target
+    this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
+      const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
+      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition].getMove();
+      if (move.isMultiTarget()) {
+        handler.processInput(Button.ACTION);
+      }
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnEndPhase));
   }
 
   /**

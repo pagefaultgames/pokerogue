@@ -100,7 +100,7 @@ export async function initI18n(): Promise<void> {
     detection: {
       lookupLocalStorage: "prLang"
     },
-    debug: true,
+    debug: Number(import.meta.env.VITE_I18N_DEBUG) === 1,
     interpolation: {
       escapeValue: false,
     },
