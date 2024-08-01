@@ -40,5 +40,27 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "Un vent mystérieux se lève !",
   "strongWindsLapseMessage": "Le vent mystérieux souffle violemment !",
+  "strongWindsEffectMessage": "Le courant aérien mystérieux affaiblit l’attaque !",
   "strongWindsClearMessage": "Le vent mystérieux s’est dissipé…"
+};
+
+export const terrain: SimpleTranslationEntries = {
+  "misty": "Brumeux",
+  "mistyStartMessage": "La brume recouvre le terrain !",
+  "mistyClearMessage": "La brume qui recouvrait le terrain se dissipe…",
+  "mistyBlockMessage": "La brume enveloppe {{pokemonNameWithAffix}} !",
+
+  "electric": "Électrifié",
+  "electricStartMessage": "De l’électricité parcourt le terrain !",
+  "electricClearMessage": "L’électricité parcourant le terrain s’est dissipée…",
+
+  "grassy": "Herbu",
+  "grassyStartMessage": "Un beau gazon pousse sur le terrain !",
+  "grassyClearMessage": "Le gazon disparait…",
+
+  "psychic": "Psychique",
+  "psychicStartMessage": "Le sol se met à réagir de façon bizarre…",
+  "psychicClearMessage": "Le sol redevient normal !",
+
+  "defaultBlockMessage": "{{pokemonNameWithAffix}} est protégé\npar le Champ {{terrainName}} !"
 };

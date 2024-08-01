@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "Musique ",
+  "music": "Musique : ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "N2B2 - Vs. Maitre de Kanto",
   "battle_johto_champion": "N2B2 - Vs. Maitre de Johto",
@@ -110,9 +110,9 @@ export const bgmName: SimpleTranslationEntries = {
   "plains": "PDM EdS - Pic Céleste (prairie)",
   "power_plant": "PDM EdS - Plaines Élek",
   "ruins": "PDM EdS - Ruine Scellée",
-  "sea": "PDM EdS - Caverne Saline",
+  "sea": "Andr06 - Marine Mystique", // Name defined by the composer
   "seabed": "Firel - Seabed", // The composer thinks about a more creative name
-  "slum": "PDM EdS - Pic Céleste (côte)",
+  "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
   "snowy_forest": "PDM EdS - Pic Céleste (plaine enneigée)",
   "space": "Firel - Aether",
   "swamp": "PDM EdS - Mer Fermée",

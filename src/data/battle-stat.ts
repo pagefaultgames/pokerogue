@@ -1,4 +1,4 @@
-import i18next from "i18next";
+import i18next, {ParseKeys} from "i18next";
 
 export enum BattleStat {
   ATK,
@@ -32,7 +32,7 @@ export function getBattleStatName(stat: BattleStat) {
   }
 }
 
-export function getBattleStatLevelChangeDescription(pokemonNameWithAffix: string, stats: string, levels: integer, up: boolean) {
+export function getBattleStatLevelChangeDescription(pokemonNameWithAffix: string, stats: string, levels: integer, up: boolean, count: integer = 1) {
   const stringKey = (() => {
     if (up) {
       switch (levels) {
@@ -64,6 +64,5 @@ export function getBattleStatLevelChangeDescription(pokemonNameWithAffix: string
       }
     }
   })();
-
-  return i18next.t(stringKey, { pokemonNameWithAffix, stats });
+  return i18next.t(stringKey as ParseKeys, { pokemonNameWithAffix, stats, count });
 }

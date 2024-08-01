@@ -13,6 +13,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import i18next from "#app/plugins/i18n";
 
 export enum BattleType {
     WILD,
@@ -156,7 +157,7 @@ export default class Battle {
   }
 
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
-    this.postBattleLoot.push(...enemyPokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.getTransferrable(false), false).map(i => {
+    this.postBattleLoot.push(...enemyPokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferrable, false).map(i => {
       const ret = i as PokemonHeldItemModifier;
       ret.pokemonId = null;
       return ret;
@@ -173,7 +174,10 @@ export default class Battle {
 
     scene.addMoney(moneyAmount.value);
 
-    scene.queueMessage(`You picked up ₽${moneyAmount.value.toLocaleString("en-US")}!`, null, true);
+    const userLocale = navigator.language || "en-US";
+    const formattedMoneyAmount = moneyAmount.value.toLocaleString(userLocale);
+    const message = i18next.t("battle:moneyPickedUp", { moneyAmount: formattedMoneyAmount });
+    scene.queueMessage(message, null, true);
 
     scene.currentBattle.moneyScattered = 0;
   }
@@ -290,8 +294,19 @@ export default class Battle {
           if (pokemon.species.speciesId === Species.TAPU_KOKO || pokemon.species.speciesId === Species.TAPU_LELE || pokemon.species.speciesId === Species.TAPU_BULU || pokemon.species.speciesId === Species.TAPU_FINI) {
             return "battle_legendary_tapu";
           }
-          if (pokemon.species.speciesId === Species.COSMOG || pokemon.species.speciesId === Species.COSMOEM || pokemon.species.speciesId === Species.SOLGALEO || pokemon.species.speciesId === Species.LUNALA || pokemon.species.speciesId === Species.NECROZMA) {
+          if (pokemon.species.speciesId === Species.COSMOG || pokemon.species.speciesId === Species.COSMOEM || pokemon.species.speciesId === Species.SOLGALEO || pokemon.species.speciesId === Species.LUNALA) {
             return "battle_legendary_sol_lun";
+          }
+          if (pokemon.species.speciesId === Species.NECROZMA) {
+            if (pokemon.getFormKey() === "") {
+              return "battle_legendary_sol_lun";
+            }
+            if (pokemon.getFormKey() === "dusk-mane" || pokemon.getFormKey() === "dawn-wings") {
+              return "battle_legendary_dusk_dawn";
+            }
+            if (pokemon.getFormKey() === "ultra") {
+              return "battle_legendary_ultra_nec";
+            }
           }
           if (pokemon.species.speciesId === Species.NIHILEGO || pokemon.species.speciesId === Species.BUZZWOLE || pokemon.species.speciesId === Species.PHEROMOSA || pokemon.species.speciesId === Species.XURKITREE || pokemon.species.speciesId === Species.CELESTEELA || pokemon.species.speciesId === Species.KARTANA || pokemon.species.speciesId === Species.GUZZLORD || pokemon.species.speciesId === Species.POIPOLE || pokemon.species.speciesId === Species.NAGANADEL || pokemon.species.speciesId === Species.STAKATAKA || pokemon.species.speciesId === Species.BLACEPHALON) {
             return "battle_legendary_ub";

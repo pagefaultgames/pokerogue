@@ -51,7 +51,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
     description: "gelé",
     obtain: "{{pokemonNameWithAffix}} est\ngelé !",
     obtainSource: "{{pokemonNameWithAffix}} est\ngelé par {{sourceText}} !",
-    activation: "{{pokemonNameWithAffix}}est gelé !\nIl ne peut plus attaquer !",
+    activation: "{{pokemonNameWithAffix}} est gelé !\nIl ne peut plus attaquer !",
     overlap: "{{pokemonNameWithAffix}} est\ndéjà gelé.",
     heal: "{{pokemonNameWithAffix}} n’est\nplus gelé !"
   },
