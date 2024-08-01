@@ -957,6 +957,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
     const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
     const isSameSpeciesEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
+
     // 'Passives Only' mode
     if (this.scene.candyUpgradeNotification === 1) {
       if (isPassiveAvailable) {
