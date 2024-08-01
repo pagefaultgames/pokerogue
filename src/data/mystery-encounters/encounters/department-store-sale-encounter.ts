@@ -42,21 +42,21 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}:intro`,
+        text: `${namespace}.intro`,
       },
       {
-        text: `${namespace}:intro_dialogue`,
-        speaker: `${namespace}:speaker`,
+        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}.speaker`,
       },
     ])
     .withAutoHideIntroVisuals(false)
-    .withTitle(`${namespace}:title`)
-    .withDescription(`${namespace}:description`)
-    .withQuery(`${namespace}:query`)
+    .withTitle(`${namespace}.title`)
+    .withDescription(`${namespace}.description`)
+    .withQuery(`${namespace}.query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:1:label`,
-        buttonTooltip: `${namespace}:option:1:tooltip`,
+        buttonLabel: `${namespace}.option.1.label`,
+        buttonTooltip: `${namespace}.option.1.tooltip`,
       },
       async (scene: BattleScene) => {
         // Choose TMs
@@ -81,8 +81,8 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:2:label`,
-        buttonTooltip: `${namespace}:option:2:tooltip`,
+        buttonLabel: `${namespace}.option.2.label`,
+        buttonTooltip: `${namespace}.option.2.tooltip`,
       },
       async (scene: BattleScene) => {
         // Choose Vitamins
@@ -105,8 +105,8 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:3:label`,
-        buttonTooltip: `${namespace}:option:3:tooltip`,
+        buttonLabel: `${namespace}.option.3.label`,
+        buttonTooltip: `${namespace}.option.3.tooltip`,
       },
       async (scene: BattleScene) => {
         // Choose X Items
@@ -129,8 +129,8 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:4:label`,
-        buttonTooltip: `${namespace}:option:4:tooltip`,
+        buttonLabel: `${namespace}.option.4.label`,
+        buttonTooltip: `${namespace}.option.4.tooltip`,
       },
       async (scene: BattleScene) => {
         // Choose Pokeballs
@@ -157,7 +157,7 @@ export const DepartmentStoreSaleEncounter: IMysteryEncounter =
     )
     .withOutroDialogue([
       {
-        text: `${namespace}:outro`,
+        text: `${namespace}.outro`,
       }
     ])
     .build();

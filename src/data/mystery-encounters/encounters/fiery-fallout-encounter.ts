@@ -46,7 +46,7 @@ export const FieryFalloutEncounter: IMysteryEncounter =
     .withAutoHideIntroVisuals(false)
     .withIntroDialogue([
       {
-        text: `${namespace}:intro`,
+        text: `${namespace}.intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -117,28 +117,23 @@ export const FieryFalloutEncounter: IMysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}:title`)
-    .withDescription(`${namespace}:description`)
-    .withQuery(`${namespace}:query`)
+    .withTitle(`${namespace}.title`)
+    .withDescription(`${namespace}.description`)
+    .withQuery(`${namespace}.query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:1:label`,
-        buttonTooltip: `${namespace}:option:1:tooltip`,
+        buttonLabel: `${namespace}.option.1.label`,
+        buttonTooltip: `${namespace}.option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}:option:1:selected`,
+            text: `${namespace}.option.1.selected`,
           },
         ],
       },
       async (scene: BattleScene) => {
         // Pick battle
         const encounter = scene.currentBattle.mysteryEncounter;
-        setEncounterRewards(scene,
-          { fillRemaining: true },
-          null,
-          () => {
-            giveLeadPokemonCharcoal(scene);
-          });
+        setEncounterRewards(scene, { fillRemaining: true }, null, () => giveLeadPokemonCharcoal(scene));
 
         encounter.startOfBattleEffects.push(
           {
@@ -170,11 +165,11 @@ export const FieryFalloutEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:2:label`,
-        buttonTooltip: `${namespace}:option:2:tooltip`,
+        buttonLabel: `${namespace}.option.2.label`,
+        buttonTooltip: `${namespace}.option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}:option:2:selected`,
+            text: `${namespace}.option.2.selected`,
           },
         ],
       },
@@ -197,7 +192,7 @@ export const FieryFalloutEncounter: IMysteryEncounter =
           if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
             // Burn applied
             encounter.setDialogueToken("burnedPokemon", chosenPokemon.name);
-            queueEncounterMessage(scene, `${namespace}:option:2:target_burned`);
+            queueEncounterMessage(scene, `${namespace}.option.2.target_burned`);
           }
         }
 
@@ -211,12 +206,12 @@ export const FieryFalloutEncounter: IMysteryEncounter =
         .withPrimaryPokemonRequirement(new TypeRequirement(Type.FIRE, true, 1)) // Will set option3PrimaryName dialogue token automatically
         .withSecondaryPokemonRequirement(new TypeRequirement(Type.FIRE, true, 1)) // Will set option3SecondaryName dialogue token automatically
         .withDialogue({
-          buttonLabel: `${namespace}:option:3:label`,
-          buttonTooltip: `${namespace}:option:3:tooltip`,
-          disabledButtonTooltip: `${namespace}:option:3:disabled_tooltip`,
+          buttonLabel: `${namespace}.option.3.label`,
+          buttonTooltip: `${namespace}.option.3.tooltip`,
+          disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
           selected: [
             {
-              text: `${namespace}:option:3:selected`,
+              text: `${namespace}.option.3.selected`,
             },
           ],
         })
@@ -251,6 +246,6 @@ function giveLeadPokemonCharcoal(scene: BattleScene) {
     const charcoal = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]).type as AttackTypeBoosterModifierType;
     applyModifierTypeToPlayerPokemon(scene, leadPokemon, charcoal);
     scene.currentBattle.mysteryEncounter.setDialogueToken("leadPokemon", leadPokemon.name);
-    queueEncounterMessage(scene, `${namespace}:found_charcoal`);
+    queueEncounterMessage(scene, `${namespace}.found_charcoal`);
   }
 }

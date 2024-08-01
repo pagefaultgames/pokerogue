@@ -92,32 +92,32 @@ export const DarkDealEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}:intro`,
+        text: `${namespace}.intro`,
       },
       {
-        speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        speaker: `${namespace}.speaker`,
+        text: `${namespace}.intro_dialogue`,
       },
     ])
     .withSceneWaveRangeRequirement(30, 180) // waves 30 to 180
     .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
     .withCatchAllowed(true)
-    .withTitle(`${namespace}:title`)
-    .withDescription(`${namespace}:description`)
-    .withQuery(`${namespace}:query`)
+    .withTitle(`${namespace}.title`)
+    .withDescription(`${namespace}.description`)
+    .withQuery(`${namespace}.query`)
     .withOption(
       new MysteryEncounterOptionBuilder()
         .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}:option:1:label`,
-          buttonTooltip: `${namespace}:option:1:tooltip`,
+          buttonLabel: `${namespace}.option.1.label`,
+          buttonTooltip: `${namespace}.option.1.tooltip`,
           selected: [
             {
-              speaker: `${namespace}:speaker`,
-              text: `${namespace}:option:1:selected_dialogue`,
+              speaker: `${namespace}.speaker`,
+              text: `${namespace}.option.1.selected_dialogue`,
             },
             {
-              text: `${namespace}:option:1:selected_message`,
+              text: `${namespace}.option.1.selected_message`,
             },
           ],
         })
@@ -164,12 +164,12 @@ export const DarkDealEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:2:label`,
-        buttonTooltip: `${namespace}:option:2:tooltip`,
+        buttonLabel: `${namespace}.option.2.label`,
+        buttonTooltip: `${namespace}.option.2.tooltip`,
         selected: [
           {
-            speaker: `${namespace}:speaker`,
-            text: `${namespace}:option:2:selected`,
+            speaker: `${namespace}.speaker`,
+            text: `${namespace}.option.2.selected`,
           },
         ],
       },
@@ -181,7 +181,7 @@ export const DarkDealEncounter: IMysteryEncounter =
     )
     .withOutroDialogue([
       {
-        text: `${namespace}:outro`
+        text: `${namespace}.outro`
       }
     ])
     .build();

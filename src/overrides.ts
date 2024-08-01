@@ -127,9 +127,9 @@ class DefaultOverrides {
   // -------------------------
 
   // 1 to 256, set to null to ignore
-  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = 256;
+  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = null;
   readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier = null;
-  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = MysteryEncounterType.A_TRAINERS_TEST;
+  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = null;
 
   // -------------------------
   // MODIFIER / ITEM OVERRIDES

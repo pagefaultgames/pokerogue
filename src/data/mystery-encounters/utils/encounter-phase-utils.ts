@@ -5,8 +5,8 @@ import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mys
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import Pokemon, { FieldPosition, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
-import { CustomModifierSettings, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
-import { BattleEndPhase, EggLapsePhase, ExpPhase, GameOverPhase, ModifierRewardPhase, MovePhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
+import { CustomModifierSettings, ModifierPoolType, ModifierType, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import { BattleEndPhase, EggLapsePhase, ExpPhase, GameOverPhase, MovePhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
 import { MysteryEncounterBattlePhase, MysteryEncounterBattleStartCleanupPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import PokemonData from "#app/system/pokemon-data";
 import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -29,6 +29,7 @@ import { Status, StatusEffect } from "#app/data/status-effect";
 import { TrainerConfig, trainerConfigs, TrainerSlot } from "#app/data/trainer-config";
 import PokemonSpecies from "#app/data/pokemon-species";
 import Overrides from "#app/overrides";
+import { Egg, IEggOptions } from "#app/data/egg";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -436,10 +437,10 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
  * Can have shop displayed or skipped
  * @param scene - Battle Scene
  * @param customShopRewards - adds a shop phase with the specified rewards / reward tiers
- * @param nonShopPlayerItemRewards - will add a non-shop reward phase for each specified item/modifier (can happen in addition to a shop)
+ * @param eggRewards
  * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before MysteryEncounterRewardsPhase)
  */
-export function setEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, nonShopPlayerItemRewards?: ModifierTypeFunc[], preRewardsCallback?: Function) {
+export function setEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, eggRewards?: IEggOptions[], preRewardsCallback?: Function) {
   scene.currentBattle.mysteryEncounter.doEncounterRewards = (scene: BattleScene) => {
     if (preRewardsCallback) {
       preRewardsCallback();
@@ -451,14 +452,12 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
       scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
     }
 
-    if (nonShopPlayerItemRewards?.length > 0) {
-      nonShopPlayerItemRewards.forEach((reward) => {
-        scene.unshiftPhase(new ModifierRewardPhase(scene, reward));
+    if (eggRewards) {
+      eggRewards.forEach(eggOptions => {
+        const egg = new Egg(eggOptions);
+        egg.addEggToGameData(scene);
+        // queueEncounterMessage(scene, `You gained a ${egg.getEggTypeDescriptor(scene)} Egg!`);
       });
-    } else {
-      while (!isNullOrUndefined(scene.findPhase(p => p instanceof ModifierRewardPhase))) {
-        scene.tryRemovePhase(p => p instanceof ModifierRewardPhase);
-      }
     }
 
     return true;

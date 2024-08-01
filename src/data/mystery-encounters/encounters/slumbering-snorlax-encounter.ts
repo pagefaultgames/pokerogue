@@ -44,7 +44,7 @@ export const SlumberingSnorlaxEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}:intro`,
+        text: `${namespace}.intro`,
       },
     ])
     .withOnInit((scene: BattleScene) => {
@@ -70,16 +70,16 @@ export const SlumberingSnorlaxEncounter: IMysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}:title`)
-    .withDescription(`${namespace}:description`)
-    .withQuery(`${namespace}:query`)
+    .withTitle(`${namespace}.title`)
+    .withDescription(`${namespace}.description`)
+    .withQuery(`${namespace}.query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:1:label`,
-        buttonTooltip: `${namespace}:option:1:tooltip`,
+        buttonLabel: `${namespace}.option.1.label`,
+        buttonTooltip: `${namespace}.option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}:option:1:selected`,
+            text: `${namespace}.option.1.selected`,
           },
         ],
       },
@@ -105,11 +105,11 @@ export const SlumberingSnorlaxEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:2:label`,
-        buttonTooltip: `${namespace}:option:2:tooltip`,
+        buttonLabel: `${namespace}.option.2.label`,
+        buttonTooltip: `${namespace}.option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}:option:2:selected`,
+            text: `${namespace}.option.2.selected`,
           },
         ],
       },
@@ -117,7 +117,7 @@ export const SlumberingSnorlaxEncounter: IMysteryEncounter =
         // Fall asleep waiting for Snorlax
         // Full heal party
         scene.unshiftPhase(new PartyHealPhase(scene, true));
-        queueEncounterMessage(scene, `${namespace}:option:2:rest_result`);
+        queueEncounterMessage(scene, `${namespace}.option.2.rest_result`);
         leaveEncounterWithoutBattle(scene);
       }
     )
@@ -126,12 +126,12 @@ export const SlumberingSnorlaxEncounter: IMysteryEncounter =
         .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES))
         .withDialogue({
-          buttonLabel: `${namespace}:option:3:label`,
-          buttonTooltip: `${namespace}:option:3:tooltip`,
-          disabledButtonTooltip: `${namespace}:option:3:disabled_tooltip`,
+          buttonLabel: `${namespace}.option.3.label`,
+          buttonTooltip: `${namespace}.option.3.tooltip`,
+          disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
           selected: [
             {
-              text: `${namespace}:option:3:selected`
+              text: `${namespace}.option.3.selected`
             }
           ]
         })

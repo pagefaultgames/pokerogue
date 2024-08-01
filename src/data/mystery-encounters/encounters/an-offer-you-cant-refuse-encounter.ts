@@ -21,8 +21,8 @@ const namespace = "mysteryEncounter:offerYouCantRefuse";
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/72 | GitHub Issue #72}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const OfferYouCantRefuseEncounter: IMysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.OFFER_YOU_CANT_REFUSE)
+export const AnOfferYouCantRefuseEncounter: IMysteryEncounter =
+  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180)
     .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
@@ -47,16 +47,16 @@ export const OfferYouCantRefuseEncounter: IMysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}:intro`,
+        text: `${namespace}.intro`,
       },
       {
-        text: `${namespace}:intro_dialogue`,
-        speaker: `${namespace}:speaker`,
+        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}.speaker`,
       },
     ])
-    .withTitle(`${namespace}:title`)
-    .withDescription(`${namespace}:description`)
-    .withQuery(`${namespace}:query`)
+    .withTitle(`${namespace}.title`)
+    .withDescription(`${namespace}.description`)
+    .withQuery(`${namespace}.query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter;
       const pokemon = getHighestStatTotalPlayerPokemon(scene, false);
@@ -89,12 +89,12 @@ export const OfferYouCantRefuseEncounter: IMysteryEncounter =
       new MysteryEncounterOptionBuilder()
         .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}:option:1:label`,
-          buttonTooltip: `${namespace}:option:1:tooltip`,
+          buttonLabel: `${namespace}.option.1.label`,
+          buttonTooltip: `${namespace}.option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}:option:1:selected`,
-              speaker: `${namespace}:speaker`,
+              text: `${namespace}.option.1.selected`,
+              speaker: `${namespace}.speaker`,
             },
           ],
         })
@@ -120,13 +120,13 @@ export const OfferYouCantRefuseEncounter: IMysteryEncounter =
           new AbilityRequirement(EXTORTION_ABILITIES))
         )
         .withDialogue({
-          buttonLabel: `${namespace}:option:2:label`,
-          buttonTooltip: `${namespace}:option:2:tooltip`,
-          disabledButtonTooltip: `${namespace}:option:2:tooltip_disabled`,
+          buttonLabel: `${namespace}.option.2.label`,
+          buttonTooltip: `${namespace}.option.2.tooltip`,
+          disabledButtonTooltip: `${namespace}.option.2.tooltip_disabled`,
           selected: [
             {
-              speaker: `${namespace}:speaker`,
-              text: `${namespace}:option:2:selected`,
+              speaker: `${namespace}.speaker`,
+              text: `${namespace}.option.2.selected`,
             },
           ],
         })
@@ -144,12 +144,12 @@ export const OfferYouCantRefuseEncounter: IMysteryEncounter =
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}:option:3:label`,
-        buttonTooltip: `${namespace}:option:3:tooltip`,
+        buttonLabel: `${namespace}.option.3.label`,
+        buttonTooltip: `${namespace}.option.3.tooltip`,
         selected: [
           {
-            speaker: `${namespace}:speaker`,
-            text: `${namespace}:option:3:selected`,
+            speaker: `${namespace}.speaker`,
+            text: `${namespace}.option.3.selected`,
           },
         ],
       },
