@@ -85,7 +85,7 @@ describe("Test Battle Phase", () => {
   it("newGame one-liner", async() => {
     await game.startBattle();
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("do attack wave 3 - single battle - regular - OHKO", async() => {
@@ -213,7 +213,7 @@ describe("Test Battle Phase", () => {
       Species.CHARIZARD,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("1vs1", async() => {
@@ -225,7 +225,7 @@ describe("Test Battle Phase", () => {
       Species.BLASTOISE,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("2vs2", async() => {
@@ -239,7 +239,7 @@ describe("Test Battle Phase", () => {
       Species.CHARIZARD,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("4vs2", async() => {
@@ -255,7 +255,7 @@ describe("Test Battle Phase", () => {
       Species.GABITE,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("kill opponent pokemon", async() => {

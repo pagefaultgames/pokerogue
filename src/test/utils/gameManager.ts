@@ -88,7 +88,7 @@ export default class GameManager {
    * Ends the current phase.
    */
   endPhase() {
-    this.scene.getCurrentPhase().end();
+    this.scene.getCurrentPhase()?.end();
   }
 
   /**
@@ -259,7 +259,7 @@ export default class GameManager {
    */
   isCurrentPhase(phaseTarget) {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
-    return this.scene.getCurrentPhase().constructor.name === targetName;
+    return this.scene.getCurrentPhase()?.constructor.name === targetName;
   }
 
   /**

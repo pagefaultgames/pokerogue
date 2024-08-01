@@ -1068,7 +1068,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         } else {
           this.scene.pushPhase(new TitlePhase(this.scene));
         }
-        this.scene.getCurrentPhase().end();
+        this.scene.getCurrentPhase()?.end();
         success = true;
       }
     } else if (this.startCursorObj.visible) { // this checks to see if the start button is selected

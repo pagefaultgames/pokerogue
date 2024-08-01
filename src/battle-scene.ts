@@ -192,7 +192,7 @@ export default class BattleScene extends SceneBase {
   private phaseQueuePrependSpliceIndex: integer;
   private nextCommandPhaseQueue: Phase[];
 
-  private currentPhase: Phase;
+  private currentPhase: Phase | null;
   private standbyPhase: Phase | null;
   public field: Phaser.GameObjects.Container;
   public fieldUI: Phaser.GameObjects.Container;
@@ -1965,7 +1965,7 @@ export default class BattleScene extends SceneBase {
   }
 
   /* Phase Functions */
-  getCurrentPhase(): Phase {
+  getCurrentPhase(): Phase | null {
     return this.currentPhase;
   }
 
@@ -2059,11 +2059,7 @@ export default class BattleScene extends SceneBase {
       this.conditionalQueue = [];
     }
 
-    const shiftedPhase = this.phaseQueue.shift();
-    if (shiftedPhase) {
-      this.currentPhase = shiftedPhase;
-    }
-
+    this.currentPhase = this.phaseQueue.shift() ?? null;
 
     // Check if there are any conditional phases queued
     if (this.conditionalQueue?.length) {
@@ -2081,7 +2077,7 @@ export default class BattleScene extends SceneBase {
       }
     }
 
-    this.currentPhase.start();
+    this.currentPhase?.start();
   }
 
   overridePhase(phase: Phase): boolean {

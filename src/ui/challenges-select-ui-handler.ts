@@ -258,7 +258,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       } else {
         this.scene.clearPhaseQueue();
         this.scene.pushPhase(new TitlePhase(this.scene));
-        this.scene.getCurrentPhase().end();
+        this.scene.getCurrentPhase()?.end();
       }
       success = true;
     } else if (button === Button.SUBMIT || button === Button.ACTION) {
@@ -267,7 +267,7 @@ export default class GameChallengesUiHandler extends UiHandler {
         const totalMinDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getMinDifficulty(), 0);
         if (totalDifficulty >= totalMinDifficulty) {
           this.scene.unshiftPhase(new SelectStarterPhase(this.scene));
-          this.scene.getCurrentPhase().end();
+          this.scene.getCurrentPhase()?.end();
           success = true;
         } else {
           success = false;
