@@ -4320,7 +4320,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   paldea_tauros: {
     fusionPrefix: "Taur",
-    fusionSuffix: "uros",
+    fusionSuffix: "auros",
   },
   paldea_wooper: {
     fusionPrefix: "Ax",
