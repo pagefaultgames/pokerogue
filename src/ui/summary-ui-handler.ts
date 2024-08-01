@@ -861,9 +861,7 @@ export default class SummaryUiHandler extends UiHandler {
         statsContainer.add(statValue);
       });
 
-      const itemModifiers = (this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-          && m.pokemonId === this.pokemon.id, this.playerParty) as PokemonHeldItemModifier[])
-        .sort(modifierSortFunc);
+      const itemModifiers = (this.pokemon.heldItems as PokemonHeldItemModifier[]).sort(modifierSortFunc);
 
       itemModifiers.forEach((item, i) => {
         const icon = item.getIcon(this.scene, true);
