@@ -297,7 +297,7 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
   constructor(type: ModifierTypes.ModifierType, battlesLeft?: integer, stackCount?: integer) {
     super(type, stackCount);
 
-    this.battlesLeft = battlesLeft ?? 0;
+    this.battlesLeft = battlesLeft!; // TODO: is this bang correct?
   }
 
   lapse(args: any[]): boolean {
@@ -531,7 +531,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   getPokemon(scene: BattleScene): Pokemon | undefined {
-    return this.pokemonId ? scene.getPokemonById(this.pokemonId) : undefined;
+    return this.pokemonId ? scene.getPokemonById(this.pokemonId) ?? undefined : undefined;
   }
 
   getScoreMultiplier(): number {
@@ -575,7 +575,7 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
   constructor(type: ModifierTypes.ModifierType, pokemonId: integer, battlesLeft?: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
 
-    this.battlesLeft = battlesLeft ?? 0;
+    this.battlesLeft = battlesLeft!; // TODO: is this bang correct?
   }
 
   lapse(args: any[]): boolean {
@@ -1540,8 +1540,8 @@ export class PokemonAllMovePpRestoreModifier extends ConsumablePokemonModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    for (const move of pokemon.getMoveset().filter(m => !!m)) {
-      move.ppUsed = this.restorePoints > -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
+    for (const move of pokemon.getMoveset()) {
+      move!.ppUsed = this.restorePoints > -1 ? Math.max(move!.ppUsed - this.restorePoints, 0) : 0; // TODO: are those bangs correct?
     }
 
     return true;
@@ -2293,7 +2293,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     const transferredModifierTypes: ModifierTypes.ModifierType[] = [];
     const itemModifiers = pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
         && m.pokemonId === targetPokemon.id && m.isTransferrable, targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
-    let highestItemTier = itemModifiers.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier ?? 0, highestTier), 0);
+    let highestItemTier = itemModifiers.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is this bang correct?
     let tierItemModifiers = itemModifiers.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
 
     const heldItemTransferPromises: Promise<void>[] = [];
@@ -2337,7 +2337,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
  * @see {@linkcode modifierTypes[MINI_BLACK_HOLE]}
  */
 export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
-  readonly isTransferrable: boolean = false;
+  readonly isTransferrable: boolean = true;
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }

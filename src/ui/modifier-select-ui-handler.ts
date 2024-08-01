@@ -590,7 +590,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
       this.itemContainer.add(this.itemTint);
     }
 
-    this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type?.name ?? "", TextStyle.PARTY, { align: "center" });
+    this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type?.name!, TextStyle.PARTY, { align: "center" }); // TODO: is this bang correct?
     this.itemText.setOrigin(0.5, 0);
     this.itemText.setAlpha(0);
     this.itemText.setTint(this.modifierTypeOption.type?.tier ? getModifierTierTextTint(this.modifierTypeOption.type?.tier) : undefined);
@@ -725,7 +725,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   getPbAtlasKey(tierOffset: integer = 0) {
-    return getPokeballAtlasKey((this.modifierTypeOption.type?.tier ?? 0 + tierOffset) as integer as PokeballType);
+    return getPokeballAtlasKey((this.modifierTypeOption.type?.tier! + tierOffset) as integer as PokeballType); // TODO: is this bang correct?
   }
 
   updateCostText(): void {

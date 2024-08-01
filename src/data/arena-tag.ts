@@ -770,7 +770,7 @@ class TailwindTag extends ArenaTag {
     }
 
     const source = arena.scene.getPokemonById(this.sourceId!); //TODO: this bang is questionable!
-    const party = source.isPlayer() ? source.scene.getPlayerField() : source.scene.getEnemyField();
+    const party = (source?.isPlayer() ? source.scene.getPlayerField() : source?.scene.getEnemyField()) ?? [];
 
     for (const pokemon of party) {
       // Apply the CHARGED tag to party members with the WIND_POWER ability

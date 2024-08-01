@@ -80,8 +80,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
   setup(): void {
     this.setName("pkmn-info");
-    const currentLanguage = i18next.resolvedLanguage;
-    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage?.includes(lang)) ?? "en";
+    const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage?.includes(lang))!; // TODO: is this bang correct?
     const textSettings = languageSettings[langSettingKey];
     const infoBg = addWindow(this.scene, 0, 0, this.infoWindowWidth, 132);
     infoBg.setOrigin(0.5, 0.5);
@@ -328,7 +328,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         ? this.scene.gameData.dexData[starterSpeciesId].ivs
         : null;
 
-      this.statsContainer.updateIvs(pokemon.ivs, originalIvs ?? undefined);
+      this.statsContainer.updateIvs(pokemon.ivs, originalIvs!); // TODO: is this bang correct?
 
       this.scene.tweens.add({
         targets: this,

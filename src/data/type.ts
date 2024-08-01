@@ -500,7 +500,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
     return 1;
   }
 
-  return 1;
+  return 0;
 }
 
 /**

@@ -96,7 +96,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       const gachaInfoContainer = this.scene.add.container(160, 46);
 
-      const currentLanguage = i18next.resolvedLanguage ?? "en";
+      const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
       let gachaTextStyle = TextStyle.WINDOW_ALT;
       let gachaX = 4;
       let gachaY = 0;
@@ -214,7 +214,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       { multiplier: multiplierOne, description: `25 ${i18next.t("egg:pulls")}`, icon: getVoucherTypeIcon(VoucherType.GOLDEN) }
     ];
 
-    const resolvedLanguage = i18next.resolvedLanguage ?? "en";
+    const resolvedLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
     const pullOptionsText = pullOptions.map(option =>{
       const desc = option.description.split(" ");
       if (desc[0].length < 2) {

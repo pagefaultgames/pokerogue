@@ -188,7 +188,7 @@ export class SpeciesFormChange {
     const trigger = this.trigger;
 
     if (trigger instanceof SpeciesFormChangeCompoundTrigger) {
-      return trigger.triggers.find(t => t.hasTriggerType(triggerType)) ?? null;
+      return trigger.triggers.find(t => t.hasTriggerType(triggerType))!; // TODO: is this bang correct?
     }
 
     return trigger;
@@ -201,7 +201,7 @@ export class SpeciesFormChangeCondition {
 
   constructor(predicate: SpeciesFormChangeConditionPredicate, enforceFunc?: SpeciesFormChangeConditionEnforceFunc) {
     this.predicate = predicate;
-    this.enforceFunc = enforceFunc ?? null;
+    this.enforceFunc = enforceFunc!; // TODO: is this bang correct?
   }
 }
 
@@ -313,7 +313,7 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return (!!pokemon.moveset.filter(m => !!m).filter(m => m.moveId === this.move).length) === this.known;
+    return (!!pokemon.moveset.filter(m => m?.moveId === this.move).length) === this.known;
   }
 }
 

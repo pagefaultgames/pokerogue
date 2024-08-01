@@ -359,7 +359,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
     super();
 
     this.immuneType = immuneType;
-    this.condition = condition ?? null;
+    this.condition = condition!; // TODO: is this bang correct?
   }
 
   /**
@@ -491,7 +491,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
 }
 
 export class PostDefendAbAttr extends AbAttr {
-  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -1516,7 +1516,7 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
 
     this.battleStat = battleStat;
     this.multiplier = multiplier;
-    this.condition = condition ?? null;
+    this.condition = condition!; // TODO: is this bang correct?
   }
 
   applyBattleStat(pokemon: Pokemon, passive: boolean, battleStat: BattleStat, statValue: Utils.NumberHolder, args: any[]): boolean | Promise<boolean> {
@@ -1545,7 +1545,7 @@ export class PostAttackAbAttr extends AbAttr {
    * applying the effect of any inherited class. This can be changed by providing a different {@link attackCondition} to the constructor. See {@link ConfusionOnStatusEffectAbAttr}
    * for an example of an effect that does not require a damaging move.
    */
-  applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
+  applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
     // When attackRequired is true, we require the move to be an attack move and to deal damage before checking secondary requirements.
     // If attackRequired is false, we always defer to the secondary requirements.
     if (this.attackCondition(pokemon, defender, move)) {
@@ -1558,7 +1558,7 @@ export class PostAttackAbAttr extends AbAttr {
   /**
    * This method is only called after {@link applyPostAttack} has already been applied. Use this for handling checks specific to the ability in question.
    */
-  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
+  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -1569,7 +1569,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   constructor(stealCondition?: PokemonAttackCondition) {
     super();
 
-    this.stealCondition = stealCondition ?? null;
+    this.stealCondition = stealCondition!; // TODO: is this bang correct?
   }
 
   applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
@@ -1658,7 +1658,7 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   constructor(condition?: PokemonDefendCondition) {
     super();
 
-    this.condition = condition ?? null;
+    this.condition = condition!; // TODO: is this bang correct?
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
@@ -2270,7 +2270,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     pokemon.summonData.fusionGender = target.getFusionGender();
     pokemon.summonData.stats = [ pokemon.stats[Stat.HP] ].concat(target.stats.slice(1));
     pokemon.summonData.battleStats = target.summonData.battleStats.slice(0);
-    pokemon.summonData.moveset = target.getMoveset().filter(m => !!m).map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
+    pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m!.moveId, m!.ppUsed, m!.ppUp)); // TODO: are those bangs correct?
     pokemon.summonData.types = target.getTypes();
 
     pokemon.scene.playSound("PRSFX- Transform");
@@ -2409,7 +2409,7 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
   constructor(protectedStat?: BattleStat) {
     super();
 
-    this.protectedStat = protectedStat ?? null;
+    this.protectedStat = protectedStat!; // TODO: is this bang correct?
   }
 
   applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -2465,7 +2465,7 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
 }
 
 export class PreSetStatusAbAttr extends AbAttr {
-  applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+  applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect | undefined, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -2541,6 +2541,7 @@ export class PreApplyBattlerTagAbAttr extends AbAttr {
  */
 export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   private immuneTagType: BattlerTagType;
+  private battlerTag: BattlerTag;
 
   constructor(immuneTagType: BattlerTagType) {
     super();
@@ -2551,6 +2552,7 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (tag.tagType === this.immuneTagType) {
       cancelled.value = true;
+      this.battlerTag = tag;
       return true;
     }
 
@@ -2561,7 +2563,7 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
     return i18next.t("abilityTriggers:battlerTagImmunity", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
-      battlerTagName: (args[0] as BattlerTag).getDescriptor()
+      battlerTagName: this.battlerTag.getDescriptor()
     });
   }
 }
@@ -2744,7 +2746,7 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
   constructor(affectsImmutable?: boolean) {
     super();
 
-    this.affectsImmutable = affectsImmutable ?? false;
+    this.affectsImmutable = affectsImmutable!; // TODO: is this bang correct?
   }
 
   applyPreWeatherEffect(pokemon: Pokemon, passive: boolean, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -2802,17 +2804,17 @@ function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
 function getAnticipationCondition(): AbAttrCondition {
   return (pokemon: Pokemon) => {
     for (const opponent of pokemon.getOpponents()) {
-      for (const move of opponent.moveset.filter(m => !!m)) {
+      for (const move of opponent.moveset) {
         // move is super effective
-        if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().type, opponent, true) >= 2) {
+        if (move!.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move!.getMove().type, opponent, true) >= 2) { // TODO: is this bang correct?
           return true;
         }
         // move is a OHKO
-        if (move.getMove().hasAttr(OneHitKOAttr)) {
+        if (move!.getMove().hasAttr(OneHitKOAttr)) { // TODO: is this bang correct?
           return true;
         }
         // edge case for hidden power, type is computed
-        if (move.getMove().id === Moves.HIDDEN_POWER) {
+        if (move!.getMove().id === Moves.HIDDEN_POWER) { // TODO: is this bang correct?
           const iv_val = Math.floor(((opponent.ivs[Stat.HP] & 1)
               +(opponent.ivs[Stat.ATK] & 1) * 2
               +(opponent.ivs[Stat.DEF] & 1) * 4
@@ -2859,22 +2861,22 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
     let maxMove = "";
     let movePower = 0;
     for (const opponent of pokemon.getOpponents()) {
-      for (const move of opponent.moveset.filter(m => !!m)) {
-        if (move.getMove() instanceof StatusMove) {
+      for (const move of opponent.moveset) {
+        if (move!.getMove() instanceof StatusMove) { // TODO: is this bang correct?
           movePower = 1;
-        } else if (move.getMove().hasAttr(OneHitKOAttr)) {
+        } else if (move!.getMove().hasAttr(OneHitKOAttr)) { // TODO: is this bang correct?
           movePower = 150;
-        } else if (move.getMove().id === Moves.COUNTER || move.getMove().id === Moves.MIRROR_COAT || move.getMove().id === Moves.METAL_BURST) {
+        } else if (move!.getMove().id === Moves.COUNTER || move!.getMove().id === Moves.MIRROR_COAT || move!.getMove().id === Moves.METAL_BURST) { // TODO: are those bangs correct?
           movePower = 120;
-        } else if (move.getMove().power === -1) {
+        } else if (move!.getMove().power === -1) { // TODO: is this bang correct?
           movePower = 80;
         } else {
-          movePower = move.getMove().power;
+          movePower = move!.getMove().power; // TODO: is this bang correct?
         }
 
         if (movePower > maxPowerSeen) {
           maxPowerSeen = movePower;
-          maxMove = move.getName();
+          maxMove = move!.getName(); // TODO: is this bang correct?
         }
       }
     }
@@ -4162,7 +4164,7 @@ export function applyPreDefendAbAttrs(attrType: Constructor<PreDefendAbAttr>,
 }
 
 export function applyPostDefendAbAttrs(attrType: Constructor<PostDefendAbAttr>,
-  pokemon: Pokemon, attacker: Pokemon, move: Move, hitResult: HitResult, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, attacker: Pokemon, move: Move, hitResult: HitResult | null, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostDefendAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostDefend(pokemon, passive, attacker, move, hitResult, args), args);
 }
 
@@ -4197,7 +4199,7 @@ export function applyPreAttackAbAttrs(attrType: Constructor<PreAttackAbAttr>,
 }
 
 export function applyPostAttackAbAttrs(attrType: Constructor<PostAttackAbAttr>,
-  pokemon: Pokemon, defender: Pokemon, move: Move, hitResult: HitResult, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, defender: Pokemon, move: Move, hitResult: HitResult | null, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostAttackAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostAttack(pokemon, passive, defender, move, hitResult, args), args);
 }
 
@@ -4232,7 +4234,7 @@ export function applyPostStatChangeAbAttrs(attrType: Constructor<PostStatChangeA
 }
 
 export function applyPreSetStatusAbAttrs(attrType: Constructor<PreSetStatusAbAttr>,
-  pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, effect: StatusEffect | undefined, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
   const simulated = args.length > 1 && args[1];
   return applyAbAttrsInternal<PreSetStatusAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSetStatus(pokemon, passive, effect, cancelled, args), args, false, !simulated);
 }
@@ -4841,7 +4843,7 @@ export function initAbilities() {
       .attr(MoveTypeChangeAttr, Type.ICE, 1.2, (user, target, move) => move.type === Type.NORMAL),
     new Ability(Abilities.SWEET_VEIL, 6)
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
+      .attr(UserFieldBattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable()
       .partial(), // Mold Breaker ally should not be affected by Sweet Veil
     new Ability(Abilities.STANCE_CHANGE, 6)

@@ -22,7 +22,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
   private cursorObj: Phaser.GameObjects.NineSlice | null;
 
   constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode ?? Mode.MESSAGE);
+    super(scene, mode!); // TODO: is this bang correct?
   }
 
   setup() {

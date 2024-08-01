@@ -73,7 +73,7 @@ export class SpeciesFormEvolution {
     this.level = level;
     this.item = item || EvolutionItem.NONE;
     this.condition = condition;
-    this.wildDelay = wildDelay ?? SpeciesWildEvolutionDelay.NONE;
+    this.wildDelay = wildDelay!; // TODO: is this bang correct?
   }
 }
 

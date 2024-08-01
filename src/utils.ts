@@ -452,7 +452,7 @@ export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
 }
 
 export function rgbHexToRgba(hex: string) {
-  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i) ?? ["0", "0", "0", "0"];
+  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i)!; // TODO: is this bang correct?
   return {
     r: parseInt(color[1], 16),
     g: parseInt(color[2], 16),

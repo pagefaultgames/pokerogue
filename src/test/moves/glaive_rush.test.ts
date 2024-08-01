@@ -50,7 +50,7 @@ describe("Moves - Glaive Rush", () => {
     await game.phaseInterceptor.to(DamagePhase);
     expect(enemy.hp).toBeLessThanOrEqual(1001 - (damageDealt * 3));
 
-  }, 20000);
+  }, 5000); // TODO: revert back to 20s
 
   it("always gets hit by attacks", async() => {
     await game.startBattle();

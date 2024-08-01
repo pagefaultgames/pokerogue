@@ -700,7 +700,7 @@ export default class BattleScene extends SceneBase {
 
   hasExpSprite(key: string): boolean {
     const keyMatch = /^pkmn__?(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?(?:_[1-3])?$/g.exec(key);
-    let k = keyMatch?.[4] ?? "";
+    let k = keyMatch?.[4]!; // TODO: is this bang correct?
     if (keyMatch?.[2]) {
       k += "s";
     }
@@ -782,9 +782,9 @@ export default class BattleScene extends SceneBase {
     return activeOnly ? this.infoToggles.filter(t => t?.isActive()) : this.infoToggles;
   }
 
-  getPokemonById(pokemonId: integer): Pokemon {
+  getPokemonById(pokemonId: integer): Pokemon | null {
     const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
-    return findInParty(this.getParty()) || findInParty(this.getEnemyParty())!; // TODO: is this bang correct?
+    return (findInParty(this.getParty()) || findInParty(this.getEnemyParty())) ?? null;
   }
 
   addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
@@ -958,7 +958,7 @@ export default class BattleScene extends SceneBase {
     }
 
     //@ts-ignore  - allowing `null` for currentBattle causes a lot of trouble
-    this.currentBattle = null;
+    this.currentBattle = null; // TODO: resolve ts-ignore
 
     this.biomeWaveText.setText(startingWave.toString());
     this.biomeWaveText.setVisible(false);
@@ -2403,7 +2403,7 @@ export default class BattleScene extends SceneBase {
         if (isFinalBoss) {
           upgradeChance /= 8;
         }
-        const modifierChance = this.gameMode.getEnemyModifierChance(isBoss ?? false);
+        const modifierChance = this.gameMode.getEnemyModifierChance(isBoss!); // TODO: is this bang correct?
         let pokemonModifierChance = modifierChance;
         if (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer)
           pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i)); // eslint-disable-line

@@ -140,13 +140,13 @@ export class Egg {
   constructor(eggOptions?: IEggOptions) {
     //if (eggOptions.tier && eggOptions.species) throw Error("Error egg can't have species and tier as option. only choose one of them.")
 
-    this._sourceType = eggOptions?.sourceType ?? undefined;
+    this._sourceType = eggOptions?.sourceType!; // TODO: is this bang correct?
     // Ensure _sourceType is defined before invoking rollEggTier(), as it is referenced
     this._tier = eggOptions?.tier ?? (Overrides.EGG_TIER_OVERRIDE ?? this.rollEggTier());
     // If egg was pulled, check if egg pity needs to override the egg tier
-    if (eggOptions?.pulled && eggOptions?.scene) {
+    if (eggOptions?.pulled) {
       // Needs this._tier and this._sourceType to work
-      this.checkForPityTierOverrides(eggOptions.scene);
+      this.checkForPityTierOverrides(eggOptions.scene!); // TODO: is this bang correct?
     }
 
     this._id = eggOptions?.id ?? Utils.randInt(EGG_SEED, EGG_SEED * this._tier);
@@ -158,7 +158,7 @@ export class Egg {
     // First roll shiny and variant so we can filter if species with an variant exist
     this._isShiny = eggOptions?.isShiny ?? (Overrides.EGG_SHINY_OVERRIDE || this.rollShiny());
     this._variantTier = eggOptions?.variantTier ?? (Overrides.EGG_VARIANT_OVERRIDE ?? this.rollVariant());
-    this._species = eggOptions?.species ?? this.rollSpecies(eggOptions!.scene!) ?? Species.BULBASAUR; // TODO: Are those bangs correct? Fall back to bulba?
+    this._species = eggOptions?.species ?? this.rollSpecies(eggOptions!.scene!)!; // TODO: Are those bangs correct?
 
     this._overrideHiddenAbility = eggOptions?.overrideHiddenAbility ?? false;
 
@@ -175,9 +175,9 @@ export class Egg {
     }
     // Needs this._tier so it needs to be generated afer the tier override if bought from same species
     this._eggMoveIndex = eggOptions?.eggMoveIndex ?? this.rollEggMoveIndex();
-    if (eggOptions?.pulled && eggOptions?.scene) {
-      this.increasePullStatistic(eggOptions.scene);
-      this.addEggToGameData(eggOptions.scene);
+    if (eggOptions?.pulled) {
+      this.increasePullStatistic(eggOptions.scene!); // TODO: is this bang correct?
+      this.addEggToGameData(eggOptions.scene!); // TODO: is this bang correct?
     }
   }
 
@@ -202,7 +202,7 @@ export class Egg {
     // Legacy egg wants to hatch. Generate missing properties
     if (!this._species) {
       this._isShiny = this.rollShiny();
-      this._species = this.rollSpecies(scene) ?? Species.BULBASAUR; // TODO: should this fall back to Bulb?
+      this._species = this.rollSpecies(scene!)!; // TODO: are these bangs correct?
     }
 
     const pokemonSpecies = getPokemonSpecies(this._species);
@@ -274,6 +274,7 @@ export class Egg {
     case EggSourceType.GACHA_MOVE:
       return i18next.t("egg:gachaTypeMove");
     default:
+      console.warn("getEggTypeDescriptor case not defined. Returning default empty string");
       return "";
     }
   }

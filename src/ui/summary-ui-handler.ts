@@ -23,8 +23,6 @@ import { Ability } from "../data/ability.js";
 import i18next from "i18next";
 import {modifierSortFunc} from "../modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
-import { Biome } from "#app/enums/biome.js";
-
 
 enum Page {
   PROFILE,
@@ -728,7 +726,7 @@ export default class SummaryUiHandler extends UiHandler {
         return typeIcon;
       };
 
-      const types = this.pokemon?.getTypes(false, false, true) ?? [];
+      const types = this.pokemon?.getTypes(false, false, true)!; // TODO: is this bang correct?
       profileContainer.add(getTypeIcon(0, types[0]));
       if (types.length > 1) {
         profileContainer.add(getTypeIcon(1, types[1]));
@@ -750,7 +748,7 @@ export default class SummaryUiHandler extends UiHandler {
 
       this.abilityContainer = {
         labelImage: this.scene.add.image(0, 0, "summary_profile_ability"),
-        ability: this.pokemon?.getAbility(true) ?? null,
+        ability: this.pokemon?.getAbility(true)!, // TODO: is this bang correct?
         nameText: null,
         descriptionText: null};
 
@@ -778,11 +776,11 @@ export default class SummaryUiHandler extends UiHandler {
         abilityInfo.labelImage.setOrigin(0, 0);
         profileContainer.add(abilityInfo.labelImage);
 
-        abilityInfo.nameText = addTextObject(this.scene, 7, 66, abilityInfo.ability?.name ?? "", TextStyle.SUMMARY_ALT);
+        abilityInfo.nameText = addTextObject(this.scene, 7, 66, abilityInfo.ability?.name!, TextStyle.SUMMARY_ALT); // TODO: is this bang correct?
         abilityInfo.nameText.setOrigin(0, 1);
         profileContainer.add(abilityInfo.nameText);
 
-        abilityInfo.descriptionText = addTextObject(this.scene, 7, 69, abilityInfo.ability?.description ?? "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1224 } });
+        abilityInfo.descriptionText = addTextObject(this.scene, 7, 69, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, { wordWrap: { width: 1224 } }); // TODO: is this bang correct?
         abilityInfo.descriptionText.setOrigin(0, 0);
         profileContainer.add(abilityInfo.descriptionText);
 
@@ -818,13 +816,13 @@ export default class SummaryUiHandler extends UiHandler {
       this.passiveContainer?.descriptionText?.setVisible(false);
 
       const closeFragment = getBBCodeFrag("", TextStyle.WINDOW_ALT);
-      const rawNature = Utils.toReadableString(Nature[this.pokemon?.getNature() ?? Nature.HARDY]);
-      const nature = `${getBBCodeFrag(Utils.toReadableString(getNatureName(this.pokemon?.getNature() ?? Nature.HARDY)), TextStyle.SUMMARY_RED)}${closeFragment}`;
+      const rawNature = Utils.toReadableString(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
+      const nature = `${getBBCodeFrag(Utils.toReadableString(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
 
       const memoString = i18next.t("pokemonSummary:memoString", {
         metFragment: i18next.t(`pokemonSummary:metFragment.${this.pokemon?.metBiome === -1? "apparently": "normal"}`, {
-          biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome ?? Biome.TOWN), TextStyle.SUMMARY_RED)}${closeFragment}`,
-          level: `${getBBCodeFrag(this.pokemon?.metLevel.toString() ?? "", TextStyle.SUMMARY_RED)}${closeFragment}`,
+          biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
+          level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
         }),
         natureFragment:
           i18next.exists(`pokemonSummary:natureFragment.${rawNature}`) ?
@@ -847,15 +845,15 @@ export default class SummaryUiHandler extends UiHandler {
         const rowIndex = s % 3;
         const colIndex = Math.floor(s / 3);
 
-        const natureStatMultiplier = getNatureStatMultiplier(this.pokemon?.getNature() ?? Nature.HARDY, s);
+        const natureStatMultiplier = getNatureStatMultiplier(this.pokemon?.getNature()!, s); // TODO: is this bang correct?
 
         const statLabel = addTextObject(this.scene, 27 + 115 * colIndex + (colIndex === 1 ?  5 : 0), 56 + 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
         statLabel.setOrigin(0.5, 0);
         statsContainer.add(statLabel);
 
         const statValueText = stat !== Stat.HP
-          ? Utils.formatStat(this.pokemon?.stats[s] ?? -1)
-          : `${Utils.formatStat(this.pokemon?.hp ?? -1, true)}/${Utils.formatStat(this.pokemon?.getMaxHp() ?? -1, true)}`;
+          ? Utils.formatStat(this.pokemon?.stats[s]!) // TODO: is this bang correct?
+          : `${Utils.formatStat(this.pokemon?.hp!, true)}/${Utils.formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
 
         const statValue = addTextObject(this.scene, 120 + 88 * colIndex, 56 + 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
         statValue.setOrigin(1, 0);
@@ -877,10 +875,10 @@ export default class SummaryUiHandler extends UiHandler {
         icon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
       });
 
-      const pkmLvl = this.pokemon?.level ?? 0;
-      const pkmLvlExp = this.pokemon?.levelExp ?? 0;
-      const pkmExp = this.pokemon?.exp ?? 0;
-      const pkmSpeciesGrowthRate = this.pokemon?.species.growthRate ?? 1;
+      const pkmLvl = this.pokemon?.level!; // TODO: is this bang correct?
+      const pkmLvlExp = this.pokemon?.levelExp!; // TODO: is this bang correct?
+      const pkmExp = this.pokemon?.exp!; // TODO: is this bang correct?
+      const pkmSpeciesGrowthRate = this.pokemon?.species.growthRate!; // TODO: is this bang correct?
       const relLvExp = getLevelRelExp(pkmLvl + 1, pkmSpeciesGrowthRate);
       const expRatio = pkmLvl < this.scene.getMaxExpLevel() ? pkmLvlExp / relLvExp : 0;
 
@@ -936,7 +934,7 @@ export default class SummaryUiHandler extends UiHandler {
 
       if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
         this.extraMoveRowContainer.setVisible(true);
-        const newMoveTypeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[this.newMove?.type ?? Type.UNKNOWN].toLowerCase());
+        const newMoveTypeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[this.newMove?.type!].toLowerCase()); // TODO: is this bang correct?
         newMoveTypeIcon.setOrigin(0, 1);
         this.extraMoveRowContainer.add(newMoveTypeIcon);
 
@@ -944,7 +942,7 @@ export default class SummaryUiHandler extends UiHandler {
         ppOverlay.setOrigin(0, 1);
         this.extraMoveRowContainer.add(ppOverlay);
 
-        const pp = Utils.padInt(this.newMove?.pp ?? 0, 2, "  ");
+        const pp = Utils.padInt(this.newMove?.pp!, 2, "  "); // TODO: is this bang correct?
         const ppText = addTextObject(this.scene, 173, 1, `${pp}/${pp}`, TextStyle.WINDOW);
         ppText.setOrigin(0, 1);
         this.extraMoveRowContainer.add(ppText);

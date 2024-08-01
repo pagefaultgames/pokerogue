@@ -213,6 +213,7 @@ export function getTerrainStartMessage(terrainType: TerrainType): string | null 
   case TerrainType.PSYCHIC:
     return i18next.t("terrain:psychicStartMessage");
   default:
+    console.warn("getTerrainStartMessage not defined. Using default null");
     return null;
   }
 }
@@ -228,6 +229,7 @@ export function getTerrainClearMessage(terrainType: TerrainType): string | null 
   case TerrainType.PSYCHIC:
     return i18next.t("terrain:psychicClearMessage");
   default:
+    console.warn("getTerrainClearMessage not defined. Using default null");
     return null;
   }
 }

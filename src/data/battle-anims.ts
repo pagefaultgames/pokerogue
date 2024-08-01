@@ -678,8 +678,8 @@ export abstract class BattleAnim {
   private dstLine: number[];
 
   constructor(user?: Pokemon, target?: Pokemon) {
-    this.user = user ?? null;
-    this.target = target ?? null;
+    this.user = user!; // TODO: is this bang correct?
+    this.target = target!; // TODO: is this bang correct?
     this.sprites = [];
   }
 
@@ -706,12 +706,12 @@ export abstract class BattleAnim {
       const user = !isOppAnim ? this.user : this.target;
       const target = !isOppAnim ? this.target : this.user;
 
-      const userInitialX = user?.x ?? 0;
-      const userInitialY = user?.y ?? 0;
-      const userHalfHeight = (user?.getSprite().displayHeight ?? 1) / 2;
-      const targetInitialX = target?.x ?? 0;
-      const targetInitialY = target?.y ?? 0;
-      const targetHalfHeight = (target?.getSprite().displayHeight ?? 1) / 2;
+      const userInitialX = user!.x; // TODO: is this bang correct?
+      const userInitialY = user!.y; // TODO: is this bang correct?
+      const userHalfHeight = user!.getSprite().displayHeight! / 2; // TODO: is this bang correct?
+      const targetInitialX = target!.x; // TODO: is this bang correct?
+      const targetInitialY = target!.y; // TODO: is this bang correct?
+      const targetHalfHeight = target!.getSprite().displayHeight! / 2; // TODO: is this bang correct?
 
       let g = 0;
       let u = 0;
@@ -815,12 +815,12 @@ export abstract class BattleAnim {
       this.srcLine = [ userFocusX, userFocusY, targetFocusX, targetFocusY ];
       this.dstLine = [ userInitialX, userInitialY, targetInitialX, targetInitialY ];
 
-      let r = anim?.frames.length ?? 0;
+      let r = anim!.frames.length; // TODO: is this bang correct?
       let f = 0;
 
       scene.tweens.addCounter({
         duration: Utils.getFrameMs(3),
-        repeat: anim?.frames.length ?? 0,
+        repeat: anim!.frames.length, // TODO: is this bang correct?
         onRepeat: () => {
           if (!f) {
             userSprite.setVisible(false);
@@ -990,7 +990,7 @@ export class CommonBattleAnim extends BattleAnim {
   }
 
   getAnim(): AnimConfig | null {
-    return this.commonAnim ? commonAnims.get(this.commonAnim) ?? null : null;
+    return this.commonAnim ? commonAnims.get(this.commonAnim)! : null; // TODO: is this bang correct?
   }
 
   isOppAnim(): boolean {
@@ -1072,7 +1072,7 @@ export async function populateAnims() {
     let commonAnimId: CommonAnim | undefined;
     let chargeAnimId: ChargeAnim | undefined;
     if (!nameField.startsWith("name: Move:") && !(isOppMove = nameField.startsWith("name: OppMove:"))) {
-      const nameMatch = commonNamePattern.exec(nameField) ?? ["", "", ""];
+      const nameMatch = commonNamePattern.exec(nameField)!; // TODO: is this bang correct?
       const name = nameMatch[2].toLowerCase();
       if (commonAnimMatchNames.indexOf(name) > -1) {
         commonAnimId = commonAnimIds[commonAnimMatchNames.indexOf(name)];

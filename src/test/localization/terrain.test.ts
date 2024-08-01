@@ -37,13 +37,13 @@ describe("terrain", () => {
       mockI18next();
 
       const text = getTerrainStartMessage(terrainType);
-      expect(text).toBe(undefined);
+      expect(text).toBeNull();
     });
 
     it("should return the clear text", () => {
       mockI18next();
       const text = getTerrainClearMessage(terrainType);
-      expect(text).toBe(undefined);
+      expect(text).toBeNull();
     });
 
     it("should return the block text", async () => {

@@ -54,9 +54,9 @@ export class ModifierType {
   protected newModifierFunc: NewModifierFunc | null;
 
   constructor(localeKey: string | null, iconImage: string | null, newModifierFunc: NewModifierFunc | null, group?: string, soundName?: string) {
-    this.localeKey = localeKey ?? "";
-    this.iconImage = iconImage ?? "";
-    this.group = group ?? "";
+    this.localeKey = localeKey!; // TODO: is this bang correct?
+    this.iconImage = iconImage!; // TODO: is this bang correct?
+    this.group = group!; // TODO: is this bang correct?
     this.soundName = soundName ?? "restore";
     this.newModifierFunc = newModifierFunc;
   }
@@ -111,7 +111,7 @@ export class ModifierType {
   }
 
   withIdFromFunc(func: ModifierTypeFunc): ModifierType {
-    this.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === func) ?? "";
+    this.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === func)!; // TODO: is this bang correct?
     return this;
   }
 
@@ -638,7 +638,7 @@ class AllPokemonFullHpRestoreModifierType extends ModifierType {
   constructor(localeKey: string, iconImage: string, descriptionKey?: string, newModifierFunc?: NewModifierFunc) {
     super(localeKey, iconImage, newModifierFunc || ((_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100, false)));
 
-    this.descriptionKey = descriptionKey ?? "";
+    this.descriptionKey = descriptionKey!; // TODO: is this bang correct?
   }
 
   getDescription(scene: BattleScene): string {
@@ -1156,7 +1156,7 @@ class WeightedModifierType {
 
   constructor(modifierTypeFunc: ModifierTypeFunc, weight: integer | WeightedModifierTypeWeightFunc, maxWeight?: integer) {
     this.modifierType = modifierTypeFunc();
-    this.modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc) ?? "";
+    this.modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc)!; // TODO: is this bang correct?
     this.weight = weight;
     this.maxWeight = maxWeight || (!(weight instanceof Function) ? weight : 0);
   }
@@ -1769,7 +1769,7 @@ const dailyStarterModifierPool: ModifierPool = {
 export function getModifierType(modifierTypeFunc: ModifierTypeFunc): ModifierType {
   const modifierType = modifierTypeFunc();
   if (!modifierType.id) {
-    modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc) ?? "";
+    modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc)!; // TODO: is this bang correct?
   }
   return modifierType;
 }
@@ -2086,7 +2086,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
 
   console.log(modifierType, !player ? "(enemy)" : "");
 
-  return new ModifierTypeOption(modifierType as ModifierType, upgradeCount ?? 0);
+  return new ModifierTypeOption(modifierType as ModifierType, upgradeCount!); // TODO: is this bang correct?
 }
 
 export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {

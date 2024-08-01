@@ -275,8 +275,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
-    const currentLanguage = i18next.resolvedLanguage ?? "en";
-    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang)) ?? "en";
+    const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang))!; // TODO: is this bang correct?
     const textSettings = languageSettings[langSettingKey];
 
     this.starterSelectContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
@@ -1816,7 +1816,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   switchMoveHandler(i: number, newMove: Moves, move: Moves) {
     const speciesId = this.lastSpecies.speciesId;
-    const existingMoveIndex = this.starterMoveset?.indexOf(newMove) ?? -1;
+    const existingMoveIndex = this.starterMoveset?.indexOf(newMove)!; // TODO: is this bang correct?
     this.starterMoveset![i] = newMove; // TODO: is this bang correct?
     if (existingMoveIndex > -1) {
       this.starterMoveset![existingMoveIndex] = move; // TODO: is this bang correct?
@@ -2057,76 +2057,83 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   updateScroll = () => {
     const maxColumns = 9;
     const maxRows = 9;
+    const onScreenFirstIndex = this.scrollCursor * 9;
+    const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + 81);
 
     this.starterSelectScrollBar.setPage(this.scrollCursor);
 
     let pokerusCursorIndex = 0;
     this.filteredStarterContainers.forEach((container, i) => {
-      const pos = calcStarterPosition(i, this.scrollCursor);
-      container.setPosition(pos.x, pos.y);
-
-      if (i < (maxRows + this.scrollCursor) * maxColumns && i >= this.scrollCursor * maxColumns) {
-        container.setVisible(true);
-      } else {
+      if (i < onScreenFirstIndex || i > onScreenLastIndex) {
         container.setVisible(false);
-      }
-
-      if (this.pokerusSpecies.includes(container.species)) {
-        this.pokerusCursorObjs[pokerusCursorIndex].setPosition(pos.x - 1, pos.y + 1);
-
-        if (i < (maxRows + this.scrollCursor) * maxColumns && i >= this.scrollCursor * maxColumns) {
-          this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
-        } else {
-          this.pokerusCursorObjs[pokerusCursorIndex].setVisible(false);
-        }
-        pokerusCursorIndex++;
-      }
-
-      if (this.starterSpecies.includes(container.species)) {
-        this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setPosition(pos.x - 1, pos.y + 1);
+        return;
+      } else {
+        const pos = calcStarterPosition(i, this.scrollCursor);
+        container.setPosition(pos.x, pos.y);
 
         if (i < (maxRows + this.scrollCursor) * maxColumns && i >= this.scrollCursor * maxColumns) {
-          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(true);
+          container.setVisible(true);
         } else {
-          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(false);
-        }
-      }
-
-      const speciesId = container.species.speciesId;
-      this.updateStarterValueLabel(container);
-
-      container.label.setVisible(true);
-      const speciesVariants = speciesId && this.scene.gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY
-        ? [ DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3 ].filter(v => !!(this.scene.gameData.dexData[speciesId].caughtAttr & v))
-        : [];
-      for (let v = 0; v < 3; v++) {
-        const hasVariant = speciesVariants.length > v;
-        container.shinyIcons[v].setVisible(hasVariant);
-        if (hasVariant) {
-          container.shinyIcons[v].setTint(getVariantTint(speciesVariants[v] === DexAttr.DEFAULT_VARIANT ? 0 : speciesVariants[v] === DexAttr.VARIANT_2 ? 1 : 2));
-        }
-      }
-
-      container.starterPassiveBgs.setVisible(!!this.scene.gameData.starterData[speciesId].passiveAttr);
-      container.hiddenAbilityIcon.setVisible(!!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
-      container.classicWinIcon.setVisible(this.scene.gameData.starterData[speciesId].classicWinCount > 0);
-
-      // 'Candy Icon' mode
-      if (this.scene.candyUpgradeDisplay === 0) {
-
-        if (!starterColors[speciesId]) {
-          // Default to white if no colors are found
-          starterColors[speciesId] = [ "ffffff", "ffffff" ];
+          container.setVisible(false);
         }
 
-        // Set the candy colors
-        container.candyUpgradeIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][0])));
-        container.candyUpgradeOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][1])));
+        if (this.pokerusSpecies.includes(container.species)) {
+          this.pokerusCursorObjs[pokerusCursorIndex].setPosition(pos.x - 1, pos.y + 1);
 
-        this.setUpgradeIcon(container);
-      } else if (this.scene.candyUpgradeDisplay === 1) {
-        container.candyUpgradeIcon.setVisible(false);
-        container.candyUpgradeOverlayIcon.setVisible(false);
+          if (i < (maxRows + this.scrollCursor) * maxColumns && i >= this.scrollCursor * maxColumns) {
+            this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
+          } else {
+            this.pokerusCursorObjs[pokerusCursorIndex].setVisible(false);
+          }
+          pokerusCursorIndex++;
+        }
+
+        if (this.starterSpecies.includes(container.species)) {
+          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setPosition(pos.x - 1, pos.y + 1);
+
+          if (i < (maxRows + this.scrollCursor) * maxColumns && i >= this.scrollCursor * maxColumns) {
+            this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(true);
+          } else {
+            this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(false);
+          }
+        }
+
+        const speciesId = container.species.speciesId;
+        this.updateStarterValueLabel(container);
+
+        container.label.setVisible(true);
+        const speciesVariants = speciesId && this.scene.gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY
+          ? [ DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3 ].filter(v => !!(this.scene.gameData.dexData[speciesId].caughtAttr & v))
+          : [];
+        for (let v = 0; v < 3; v++) {
+          const hasVariant = speciesVariants.length > v;
+          container.shinyIcons[v].setVisible(hasVariant);
+          if (hasVariant) {
+            container.shinyIcons[v].setTint(getVariantTint(speciesVariants[v] === DexAttr.DEFAULT_VARIANT ? 0 : speciesVariants[v] === DexAttr.VARIANT_2 ? 1 : 2));
+          }
+        }
+
+        container.starterPassiveBgs.setVisible(!!this.scene.gameData.starterData[speciesId].passiveAttr);
+        container.hiddenAbilityIcon.setVisible(!!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
+        container.classicWinIcon.setVisible(this.scene.gameData.starterData[speciesId].classicWinCount > 0);
+
+        // 'Candy Icon' mode
+        if (this.scene.candyUpgradeDisplay === 0) {
+
+          if (!starterColors[speciesId]) {
+            // Default to white if no colors are found
+            starterColors[speciesId] = [ "ffffff", "ffffff" ];
+          }
+
+          // Set the candy colors
+          container.candyUpgradeIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][0])));
+          container.candyUpgradeOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][1])));
+
+          this.setUpgradeIcon(container);
+        } else if (this.scene.candyUpgradeDisplay === 1) {
+          container.candyUpgradeIcon.setVisible(false);
+          container.candyUpgradeOverlayIcon.setVisible(false);
+        }
       }
     });
   };
@@ -2547,16 +2554,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const assetLoadCancelled = new Utils.BooleanHolder(false);
         this.assetLoadCancelled = assetLoadCancelled;
 
-        species.loadAssets(this.scene, female ?? false, formIndex, shiny, variant, true).then(() => { // TODO: is `false` the correct default?
+        species.loadAssets(this.scene, female!, formIndex, shiny, variant, true).then(() => { // TODO: is this bang correct?
           if (assetLoadCancelled.value) {
             return;
           }
           this.assetLoadCancelled = null;
           this.speciesLoaded.set(species.speciesId, true);
-          this.pokemonSprite.play(species.getSpriteKey(female ?? false, formIndex, shiny, variant)); // TODO: is `false` the correct default?
+          this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
           this.pokemonSprite.setPipelineData("shiny", shiny);
           this.pokemonSprite.setPipelineData("variant", variant);
-          this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female ?? false, formIndex, shiny, variant)); // TODO: is `false` the correct default?
+          this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
           this.pokemonSprite.setVisible(!this.statsMode);
         });
 
@@ -2564,7 +2571,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const isValidForChallenge = new Utils.BooleanHolder(true);
         Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), !!this.starterSpecies.length);
         const starterSprite = this.filteredStarterContainers[this.cursor].icon as Phaser.GameObjects.Sprite;
-        starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female ?? false, formIndex, shiny, variant)); // TODO: is `false` the correct default?
+        starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
         this.filteredStarterContainers[this.cursor].checkIconId(female, formIndex, shiny, variant);
         this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);

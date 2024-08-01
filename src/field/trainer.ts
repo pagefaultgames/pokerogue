@@ -255,7 +255,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   genPartyMember(index: integer): EnemyPokemon {
     const battle = this.scene.currentBattle;
-    const level = battle.enemyLevels?.[index] ?? 0;
+    const level = battle.enemyLevels?.[index]!; // TODO: is this bang correct?
 
     let ret: EnemyPokemon;
 
@@ -498,6 +498,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     case PartyMemberStrength.STRONGER:
       return 0.375;
     default:
+      console.warn("getPartyMemberModifierChanceMultiplier not defined. Using default 0");
       return 0;
     }
   }

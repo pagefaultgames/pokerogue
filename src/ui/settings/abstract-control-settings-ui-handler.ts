@@ -74,13 +74,13 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
    * @param mode - The UI mode.
    */
   constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode ?? Mode.MESSAGE);
+    super(scene, mode!); // TODO: is this bang correct?
     this.rowsToDisplay = 8;
   }
 
   getLocalStorageSetting(): object {
     // Retrieve the settings from local storage or use an empty object if none exist.
-    const settings: object = localStorage.hasOwnProperty(this.localStoragePropertyName) ? JSON.parse(localStorage.getItem(this.localStoragePropertyName) ?? "") : {};
+    const settings: object = localStorage.hasOwnProperty(this.localStoragePropertyName) ? JSON.parse(localStorage.getItem(this.localStoragePropertyName)!) : {}; // TODO: is this bang correct?
     return settings;
   }
 

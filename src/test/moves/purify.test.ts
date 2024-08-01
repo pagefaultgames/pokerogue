@@ -53,7 +53,7 @@ describe("Moves - Purify", () => {
       game.doAttack(getMovePosition(game.scene, 0, Moves.PURIFY));
       await game.phaseInterceptor.to(MoveEndPhase);
 
-      expect(enemyPokemon.status).toBe(undefined);
+      expect(enemyPokemon.status).toBeNull();
       expect(playerPokemon.isFullHp()).toBe(true);
     },
     TIMEOUT

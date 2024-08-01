@@ -12,7 +12,7 @@ export class Status {
   constructor(effect: StatusEffect, turnCount: integer = 0, cureTurn?: integer) {
     this.effect = effect;
     this.turnCount = turnCount === undefined ? 0 : turnCount;
-    this.cureTurn = cureTurn ?? null;
+    this.cureTurn = cureTurn!; // TODO: is this bang correct?
   }
 
   incrementTurn(): void {
@@ -24,7 +24,7 @@ export class Status {
   }
 }
 
-function getStatusEffectMessageKey(statusEffect: StatusEffect): string {
+function getStatusEffectMessageKey(statusEffect: StatusEffect | undefined): string {
   switch (statusEffect) {
   case StatusEffect.POISON:
     return "statusEffect:poison";
@@ -43,7 +43,7 @@ function getStatusEffectMessageKey(statusEffect: StatusEffect): string {
   }
 }
 
-export function getStatusEffectObtainText(statusEffect: StatusEffect, pokemonNameWithAffix: string, sourceText?: string): string {
+export function getStatusEffectObtainText(statusEffect: StatusEffect | undefined, pokemonNameWithAffix: string, sourceText?: string): string {
   if (!sourceText) {
     const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtain`as ParseKeys;
     return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });

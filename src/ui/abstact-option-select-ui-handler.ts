@@ -45,7 +45,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   private cursorObj: Phaser.GameObjects.Image | null;
 
   constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode ?? Mode.MESSAGE);
+    super(scene, mode!); // TODO: is this bang correct?
   }
 
   abstract getWindowWidth(): integer;
@@ -91,7 +91,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
 
-    if (this.config?.options && this.config?.options.length > (this.config?.maxOptions ?? 0)) {
+    if (this.config?.options && this.config?.options.length > (this.config?.maxOptions!)) { // TODO: is this bang correct?
       this.optionSelectText.setText(this.getOptionsWithScroll().map(o => o.label).join("\n"));
     }
 

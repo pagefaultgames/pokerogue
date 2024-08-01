@@ -32,9 +32,9 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
       [ "data", "sessionData", "sessionData1", "sessionData2", "sessionData3", "sessionData4" ].map(d => {
         if (localStorage.hasOwnProperty(d)) {
           if (localStorage.hasOwnProperty(`${d}_${loggedInUser?.username}`)) {
-            localStorage.setItem(`${d}_${loggedInUser?.username}_bak`, localStorage.getItem(`${d}_${loggedInUser?.username}`) ?? "");
+            localStorage.setItem(`${d}_${loggedInUser?.username}_bak`, localStorage.getItem(`${d}_${loggedInUser?.username}`)!); // TODO: is this bang correct?
           }
-          localStorage.setItem(`${d}_${loggedInUser?.username}`, localStorage.getItem(d) ?? "");
+          localStorage.setItem(`${d}_${loggedInUser?.username}`, localStorage.getItem(d)!); // TODO: is this bang correct?
           localStorage.removeItem(d);
         }
       });
