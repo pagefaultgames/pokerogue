@@ -4311,8 +4311,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "uplodocus",
   },
   hisui_avalugg: {
-    fusionPrefix: "Sér",
-    fusionSuffix: "awl",
+    fusionPrefix: "Sérac",
+    fusionSuffix: "crawl",
   },
   hisui_decidueye: {
     fusionPrefix: "Archéd",
