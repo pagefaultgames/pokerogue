@@ -5499,7 +5499,7 @@ export class ScanIvsPhase extends PokemonPhase {
     const uiTheme = (this.scene as BattleScene).uiTheme; // Assuming uiTheme is accessible
     for (let e = 0; e < enemyField.length; e++) {
       enemyIvs = enemyField[e].ivs;
-      const currentIvs = this.scene.gameData.dexData[enemyField[e].species.speciesId].ivs;
+      const currentIvs = this.scene.gameData.dexData[enemyField[e].species.getRootSpeciesId(false)].ivs;  // we are using getRootSpeciesId(false) here because we want to check against the baby form, not the mid form if it exists
       const ivsToShow = this.scene.ui.getMessageHandler().topIvs(enemyIvs, this.shownIvs);
       statsContainer = enemyField[e].getBattleInfo().getStatsValueContainer().list;
       statsContainerLabels = statsContainer.filter(m => m.name.indexOf("icon_stat_label") >= 0);
@@ -5515,7 +5515,7 @@ export class ScanIvsPhase extends PokemonPhase {
     }
 
     if (!this.scene.hideIvs) {
-      this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: pokemon.name }), null, () => {
+      this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
         this.scene.ui.setMode(Mode.CONFIRM, () => {
           this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.ui.clearText();
