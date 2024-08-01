@@ -95,10 +95,6 @@ input:-internal-autofill-selected {
   display: none;
 }
 
-#touchControls.configMode {
-  display: block !important;
-}
-
 #touchControls .active {
   opacity: var(--touch-control-opacity);
 }
@@ -140,21 +136,17 @@ input:-internal-autofill-selected {
 }
 
 /* Show cycle buttons only on STARTER_SELECT and on touch configuration panel */
-#touchControls:not(.configMode):not([data-ui-mode='STARTER_SELECT']) #apadCycleNature,
-#touchControls:not(.configMode):not([data-ui-mode='STARTER_SELECT']) #apadCycleAbility,
-#touchControls:not(.configMode):not([data-ui-mode='STARTER_SELECT']) #apadCycleGender,
-#touchControls:not(.configMode):not([data-ui-mode='STARTER_SELECT']) #apadCycleVariant {
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleNature,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleAbility,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleGender,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleVariant {
  display: none;
 }
 
 /* Configuration toolbar */
 
-#touchControls.configMode > #configToolbar {
-  display: flex;
-}
-
 #configToolbar {
-  display: none;
+  display: flex;
   flex-direction: column;
   width: 100%;
   position: fixed;
@@ -166,7 +158,7 @@ input:-internal-autofill-selected {
   z-index: 9
 }
 
-#configToolbar .buttonRow {
+#configToolbar .button-row {
   display: flex;
   justify-content: space-evenly;
   width: 100%;
@@ -178,7 +170,7 @@ input:-internal-autofill-selected {
   width: 100%;
 }
 
-#configToolbar .btn {
+#configToolbar .button {
   z-index: 3;
   background-color: var(--color-base);
   display: flex;
@@ -194,11 +186,11 @@ input:-internal-autofill-selected {
   user-select: none;
 }
 
-#configToolbar .btn:active {
+#configToolbar .button:active {
   opacity: var(--touch-control-opacity)
 }
 
-#configToolbar .orientationLabel {
+#configToolbar .orientation-label {
   font-size: var(--small-control-size);
   text-shadow: var(--color-dark) calc(var(--text-shadow-size) / 3) calc(var(--text-shadow-size) / 3);
   user-select: none;
@@ -218,7 +210,7 @@ input:-internal-autofill-selected {
 
 /* apad buttons */
 
-.apadBtn {
+.apad-button {
   background-color: var(--color-base);
   border-radius: 50%;
   display: flex;
@@ -232,35 +224,34 @@ input:-internal-autofill-selected {
   border-radius: 8px;
 }
 
-
-.apadSmall {
+.apad-small {
   width: var(--small-control-size);
   height: var(--small-control-size);
 }
 
-.apadLabel {
+.apad-label {
   user-select: none;
   height: 100%;
   margin-right: -2px;
 }
 
-.apadSmall > .apadLabel {
+.apad-small > .apad-label {
   font-size: var(--small-control-size);
   text-shadow: var(--color-dark) calc(var(--text-shadow-size) / 3) calc(var(--text-shadow-size) / 3);
 }
 
-.apadRectangle {
+.apad-rectangle {
   text-align: center;
   width: var(--rect-control-size);
   height: var(--small-control-size);
 }
 
-.apadSquare {
+.apad-square {
   width: var(--small-control-size);
   height: var(--small-control-size);
 }
 
-.apadCircle {
+.apad-circle {
   width: var(--controls-size);
   height: var(--controls-size);
   border-radius: 50%;

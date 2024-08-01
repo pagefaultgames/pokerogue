@@ -5,6 +5,20 @@ import { Scene } from "phaser";
 export const TOUCH_CONTROL_POSITIONS_LANDSCAPE = "touchControlPositionsLandscape";
 export const TOUCH_CONTROL_POSITIONS_PORTRAIT = "touchControlPositionsPortrait";
 
+const CONFIG_TOOLBAR: string = `<div id="configToolbar">
+			<div class="button-row">
+				<div id="resetButton" class="button">Reset</div>
+				<div id="saveButton" class="button">Save & close</div>
+				<div id="cancelButton" class="button">Cancel</div>
+			</div>
+			<div class="row">
+				<div class="orientation-label">Orientation:
+					<span id="orientation">Landscape</span>
+				</div>
+			</div>
+		</div>
+  `;
+
 type ControlPosition = { id: string, x: number, y: number };
 
 type ConfigurationEventListeners = {
@@ -53,7 +67,6 @@ export default class MoveTouchControlsHandler {
     this.touchControls = touchControls;
     this.inConfigurationMode = false;
     this.setPositions(this.getSavedPositionsOfCurrentOrientation() ?? []);
-    this.initToolbar();
     window.addEventListener("resize", (event) => {
       const screenSize = this.getScreenSize();
       if (screenSize.width > screenSize.height !== this.isLandscapeMode) {
@@ -82,8 +95,13 @@ export default class MoveTouchControlsHandler {
 
   /**
    * Initializes the toolbar of the configuration mode.
+   * Places its elements at the top of the touch controls and adds event listeners to them.
    */
-  private initToolbar() {
+  private createToolbar() {
+    const toolbar = document.createElement("div");
+    toolbar.id = "configToolbar";
+    toolbar.innerHTML = CONFIG_TOOLBAR;
+    document.querySelector("#touchControls").prepend(toolbar);
     const refs = this.getConfigToolbarRefs();
     if (!refs) {
       return;
@@ -302,7 +320,7 @@ export default class MoveTouchControlsHandler {
     this.overlay = container;
 
     // Display toolbar
-    document.querySelector("#touchControls").classList.add("configMode");
+    document.querySelector("#touchControls").classList.add("config-mode");
   }
 
   /**
@@ -315,9 +333,9 @@ export default class MoveTouchControlsHandler {
       return;
     }
     this.inConfigurationMode = true;
-
     this.touchControls.disable();
     this.createOverlay(ui, scene);
+    this.createToolbar();
     // Create event listeners with a delay to prevent the touchstart event from being triggered immediately.
     setTimeout(() => {
       // Remember the event listeners so they can be removed later.
@@ -338,9 +356,13 @@ export default class MoveTouchControlsHandler {
     touchmove.forEach((listener) => window.removeEventListener("touchmove", listener));
     touchend.forEach((listener) => window.removeEventListener("touchend", listener));
 
+    // Remove configuration toolbar
+    const toolbar = document.querySelector("#touchControls #configToolbar");
+    toolbar?.remove();
+
     // Remove overlay
     this.overlay?.destroy();
-    document.querySelector("#touchControls").classList.remove("configMode");
+    document.querySelector("#touchControls").classList.remove("config-mode");
     this.touchControls.enable();
   }
 

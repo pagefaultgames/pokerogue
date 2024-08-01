@@ -68,7 +68,7 @@ export interface Setting {
   /** Whether the setting can be activated or not */
   activatable?: boolean
   /** Determines whether the setting should be hidden from the UI */
-  hidden?: () => boolean
+  isHidden?: () => boolean
 }
 
 /**
@@ -559,7 +559,7 @@ export const Setting: Array<Setting> = [
     default: 0,
     type: SettingType.GENERAL,
     activatable: true,
-    hidden: () => !hasTouchscreen()
+    isHidden: () => !hasTouchscreen()
   },
   {
     key: SettingKeys.Shop_Overlay_Opacity,
