@@ -51,6 +51,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
+import BattleFlyout from "#app/ui/battle-flyout.js";
 
 export enum FieldPosition {
   CENTER,
@@ -87,6 +88,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
+
+  public flyout: BattleFlyout;
 
   public fusionSpecies: PokemonSpecies;
   public fusionFormIndex: integer;
@@ -3669,6 +3672,12 @@ export class EnemyPokemon extends Pokemon {
       : null;
     if (queuedMove) {
       if (queuedMove.isUsable(this, this.getMoveQueue()[0].ignorePP)) {
+        this.flyout.setText()
+        for (var i = 0; i < this.moveset.length; i++) {
+          if (this.moveset[i].moveId == queuedMove.moveId) {
+            this.flyout.setText(i)
+          }
+        }
         return { move: queuedMove.moveId, targets: this.getMoveQueue()[0].targets, ignorePP: this.getMoveQueue()[0].ignorePP };
       } else {
         this.getMoveQueue().shift();
@@ -3679,18 +3688,22 @@ export class EnemyPokemon extends Pokemon {
     const movePool = this.getMoveset().filter(m => m.isUsable(this));
     if (movePool.length) {
       if (movePool.length === 1) {
+        this.flyout.setText(this.getMoveset().indexOf(movePool[0]))
         return { move: movePool[0].moveId, targets: this.getNextTargets(movePool[0].moveId) };
       }
       const encoreTag = this.getTag(EncoreTag) as EncoreTag;
       if (encoreTag) {
         const encoreMove = movePool.find(m => m.moveId === encoreTag.moveId);
         if (encoreMove) {
+          this.flyout.setText(this.getMoveset().indexOf(encoreMove))
           return { move: encoreMove.moveId, targets: this.getNextTargets(encoreMove.moveId) };
         }
       }
       switch (this.aiType) {
       case AiType.RANDOM:
-        const moveId = movePool[this.scene.randBattleSeedInt(movePool.length)].moveId;
+        var i = this.scene.randBattleSeedInt(movePool.length)
+        const moveId = movePool[i].moveId;
+        this.flyout.setText(i)
         return { move: moveId, targets: this.getNextTargets(moveId) };
       case AiType.SMART_RANDOM:
       case AiType.SMART:
@@ -3763,10 +3776,11 @@ export class EnemyPokemon extends Pokemon {
           }
         }
         console.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
+        this.flyout.setText(movePool.indexOf(sortedMovePool[r]))
         return { move: sortedMovePool[r].moveId, targets: moveTargets[sortedMovePool[r].moveId] };
       }
     }
-
+    this.flyout.setText()
     return { move: Moves.STRUGGLE, targets: this.getNextTargets(Moves.STRUGGLE) };
   }
 

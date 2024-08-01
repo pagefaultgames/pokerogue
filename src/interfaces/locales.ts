@@ -20,7 +20,8 @@ export interface MoveTranslationEntries {
 
 export interface AbilityTranslationEntry {
     name: string,
-    description: string
+    description: string,
+    partial?: string
   }
 
 export interface AbilityTranslationEntries {

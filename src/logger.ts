@@ -68,6 +68,8 @@ export const rarityslot = [0, ""]
  * 
  * Its contents are printed to the current wave's actions list, separated by pipes `|`, when the turn begins playing out. */
 export const Actions = []
+/** Used for enemy attack prediction. Stored here so that it's universally available. */
+export const enemyPlan = []
 
 // Booleans
 export const isPreSwitch: Utils.BooleanHolder = new Utils.BooleanHolder(false);

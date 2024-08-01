@@ -1,5 +1,5 @@
 import { default as Pokemon } from "../field/pokemon";
-import { addTextObject, TextStyle } from "./text";
+import { addTextObject, setTextStyle, TextStyle } from "./text";
 import * as Utils from "../utils";
 import BattleScene from "#app/battle-scene.js";
 import Move from "#app/data/move.js";
@@ -8,6 +8,7 @@ import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { UiTheme } from "#enums/ui-theme";
 import { getPokemonNameWithAffix } from "#app/messages.js";
+import * as LoggerTools from "../logger";
 
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {
@@ -114,6 +115,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   initInfo(pokemon: Pokemon) {
     this.pokemon = pokemon;
 
+    pokemon.flyout = this;
+
     this.name = `Flyout ${getPokemonNameWithAffix(this.pokemon)}`;
     this.flyoutParent.name = `Flyout Parent ${getPokemonNameWithAffix(this.pokemon)}`;
 
@@ -122,17 +125,22 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   }
 
   /** Sets and formats the text property for all {@linkcode Phaser.GameObjects.Text} in the flyoutText array */
-  private setText() {
+  setText(highlight?: integer) {
+    var e = this.battleScene.getEnemyField()
+    console.log(this.moveInfo.map(v => v.move.name))
     for (let i = 0; i < this.flyoutText.length; i++) {
       const flyoutText = this.flyoutText[i];
       const moveInfo = this.moveInfo[i];
 
       if (!moveInfo) {
+        const mv = this.pokemon.getMoveset()[i]
+        flyoutText.text = `${highlight == i ? ">> " : ""}${mv.getName()}${highlight == i ? " <<" : ""}`;
+        flyoutText.text = `${highlight == i ? ">> " : ""}???${highlight == i ? " <<" : ""}`;
         continue;
       }
 
       const currentPp = moveInfo.maxPp - moveInfo.ppUsed;
-      flyoutText.text = `${moveInfo.move.name}  ${currentPp}/${moveInfo.maxPp}`;
+      flyoutText.text = `${highlight == i ? ">> " : ""}${moveInfo.move.name}  ${currentPp}/${moveInfo.maxPp}${highlight == i ? " <<" : ""}`;
     }
   }
 
@@ -149,7 +157,12 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     if (foundInfo) {
       foundInfo.ppUsed = Math.min(foundInfo.ppUsed + moveUsedEvent.ppUsed, foundInfo.maxPp);
     } else {
-      this.moveInfo.push({move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed});
+      var idx = this.pokemon.moveset.indexOf(this.pokemon.moveset.find((v) => (v.getMove().id == moveUsedEvent.move.id)))
+      if (idx == -1) {
+        this.moveInfo.push({move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed});
+      } else {
+        this.moveInfo[idx] = {move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed};
+      }
     }
 
     this.setText();
@@ -170,6 +183,15 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     foundInfo.ppUsed = Math.max(foundInfo.ppUsed - 10, 0);
 
     this.setText();
+  }
+
+  public revealMoves() {
+    return;
+    this.moveInfo = new Array<MoveInfo>(4);
+    this.pokemon.moveset.forEach((mv, idx) => {
+      this.moveInfo[idx] = {move: mv.getMove(), maxPp: mv.getMovePp(), ppUsed: mv.ppUsed}
+    })
+    this.setText()
   }
 
   /** Animates the flyout to either show or hide it by applying a fade and translation */

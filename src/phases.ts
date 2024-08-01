@@ -1697,6 +1697,7 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     enemyField.forEach((enemyPokemon, e) => {
+      enemyPokemon.flyout.revealMoves()
       if (enemyPokemon.isShiny()) {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
       }
@@ -2618,6 +2619,7 @@ export class CheckSwitchPhase extends BattlePhase {
           this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[2].text = "???"
           this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[3].text = "???"
           this.scene.getEnemyField()[i].getBattleInfo().flyoutMenu.flyoutText[2].setColor("#f8f8f8")
+          this.scene.getEnemyField()[i].flyout.setText()
         }
         //this.scene.pokemonInfoContainer.hide()
         this.end();
@@ -2776,20 +2778,47 @@ export class TurnInitPhase extends FieldPhase {
     //this.scene.pushPhase(new MoveAnimTestPhase(this.scene));
     this.scene.eventTarget.dispatchEvent(new TurnInitEvent());
 
-    this.scene.getField().forEach((pokemon, i) => {
-      if (pokemon?.isActive()) {
-        if (pokemon.isPlayer()) {
-          this.scene.currentBattle.addParticipant(pokemon as PlayerPokemon);
-        } else {
-          pokemon.usedInBattle = true;
-          pokemon.getBattleInfo().iconsActive = true
+    LoggerTools.enemyPlan[0] = ""
+    LoggerTools.enemyPlan[1] = ""
+    LoggerTools.enemyPlan[2] = ""
+    LoggerTools.enemyPlan[3] = ""
+
+    if (false) {
+      this.scene.getField().forEach((pokemon, i) => {
+        if (pokemon?.isActive()) {
+          if (pokemon.isPlayer()) {
+            this.scene.currentBattle.addParticipant(pokemon as PlayerPokemon);
+          } else {
+            pokemon.flyout.setText()
+            pokemon.usedInBattle = true;
+            pokemon.getBattleInfo().iconsActive = true
+          }
+          pokemon.resetTurnData();
+          this.scene.pushPhase(pokemon.isPlayer() ? new CommandPhase(this.scene, i) : new EnemyCommandPhase(this.scene, i - BattlerIndex.ENEMY));
         }
-
-        pokemon.resetTurnData();
-
-        this.scene.pushPhase(pokemon.isPlayer() ? new CommandPhase(this.scene, i) : new EnemyCommandPhase(this.scene, i - BattlerIndex.ENEMY));
-      }
-    });
+      });
+    } else {
+      this.scene.getField().forEach((pokemon, i) => {
+        if (pokemon?.isActive()) {
+          if (!pokemon.isPlayer()) {
+            pokemon.flyout.setText()
+            pokemon.usedInBattle = true;
+            pokemon.getBattleInfo().iconsActive = true
+            pokemon.resetTurnData();
+            this.scene.pushPhase(pokemon.isPlayer() ? new CommandPhase(this.scene, i) : new EnemyCommandPhase(this.scene, i - BattlerIndex.ENEMY));
+          }
+        }
+      });
+      this.scene.getField().forEach((pokemon, i) => {
+        if (pokemon?.isActive()) {
+          if (pokemon.isPlayer()) {
+            this.scene.currentBattle.addParticipant(pokemon as PlayerPokemon);
+            pokemon.resetTurnData();
+            this.scene.pushPhase(pokemon.isPlayer() ? new CommandPhase(this.scene, i) : new EnemyCommandPhase(this.scene, i - BattlerIndex.ENEMY));
+          }
+        }
+      });
+    }
 
     var Pt = this.scene.getEnemyParty()
     var Pt1 = []
@@ -3147,8 +3176,15 @@ export class EnemyCommandPhase extends FieldPhase {
 
             battle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
               { command: Command.POKEMON, cursor: index, args: [false] };
-
+            console.log(enemyPokemon.name + " selects:", "Switch to " + this.scene.getEnemyParty()[index].name)
             battle.enemySwitchCounter++;
+
+            LoggerTools.enemyPlan[this.fieldIndex*2] = "Switching out"
+            LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + this.scene.getEnemyParty()[index].name
+
+            enemyPokemon.flyout.setText()
+
+            this.scene.arenaFlyout.updateFieldText()
 
             return this.end();
           }
@@ -3157,11 +3193,37 @@ export class EnemyCommandPhase extends FieldPhase {
     }
 
     const nextMove = enemyPokemon.getNextMove();
+    const mv = new PokemonMove(nextMove.move)
 
     this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
       { command: Command.FIGHT, move: nextMove };
-
+    const targetLabels = ["Counter", "[PLAYER L]", "[PLAYER R]", "[ENEMY L]", "[ENEMY R]"]
+    this.scene.getParty().forEach((v, i, a) => {
+      if (v.isActive() && v.name) {
+        targetLabels[i + 1] = v.name
+      }
+    })
+    this.scene.getEnemyParty().forEach((v, i, a) => {
+      if (v.isActive() && v.name) {
+        targetLabels[i + 3] = v.name
+      }
+    })
+    if (this.fieldIndex == 0) {
+      targetLabels[3] = "Self"
+    }
+    if (this.fieldIndex == 1) {
+      targetLabels[4] = "Self"
+    }
+    if (targetLabels[1] == targetLabels[2]) {
+      targetLabels[1] += " (L)"
+      targetLabels[2] += " (R)"
+    }
+    console.log(enemyPokemon.name + " selects:", mv.getName() + " → " + nextMove.targets.map((m) => targetLabels[m + 1]))
     this.scene.currentBattle.enemySwitchCounter = Math.max(this.scene.currentBattle.enemySwitchCounter - 1, 0);
+
+    LoggerTools.enemyPlan[this.fieldIndex*2] = mv.getName()
+    LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + nextMove.targets.map((m) => targetLabels[m + 1])
+    this.scene.arenaFlyout.updateFieldText()
 
     this.end();
   }

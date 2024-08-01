@@ -348,6 +348,7 @@ export const ability: AbilityTranslationEntries = {
   drySkin: {
     name: "Dry Skin",
     description: "Restores HP in rain or when hit by Water-type moves. Reduces HP in harsh sunlight, and increases the damage received from Fire-type moves.",
+    partial: "Bypasses Heal Block."
   },
   download: {
     name: "Download",
@@ -460,6 +461,7 @@ export const ability: AbilityTranslationEntries = {
   iceBody: {
     name: "Ice Body",
     description: "The Pokémon gradually regains HP in snow.",
+    partial: "Bypasses Heal Block."
   },
   solidRock: {
     name: "Solid Rock",
@@ -488,6 +490,7 @@ export const ability: AbilityTranslationEntries = {
   flowerGift: {
     name: "Flower Gift",
     description: "Boosts the Attack and Sp. Def stats of itself and allies in harsh sunlight.",
+    partial: "Doesn't cause Cherrim to change forms."
   },
   badDreams: {
     name: "Bad Dreams",
@@ -556,6 +559,7 @@ export const ability: AbilityTranslationEntries = {
   harvest: {
     name: "Harvest",
     description: "May create another Berry after one is used.",
+    partial: "Activation chance not doubled in Harsh Sunlight."
   },
   telepathy: {
     name: "Telepathy",
@@ -668,6 +672,7 @@ export const ability: AbilityTranslationEntries = {
   cheekPouch: {
     name: "Cheek Pouch",
     description: "Restores HP as well when the Pokémon eats a Berry.",
+    partial: "Bypasses Heal Block."
   },
   protean: {
     name: "Protean",
@@ -836,6 +841,7 @@ export const ability: AbilityTranslationEntries = {
   disguise: {
     name: "Disguise",
     description: "Once per battle, the shroud that covers the Pokémon can protect it from an attack.",
+    partial: "Multi-Hit moves will heal this Pokemon instead of damaging it."
   },
   battleBond: {
     name: "Battle Bond",
@@ -844,10 +850,12 @@ export const ability: AbilityTranslationEntries = {
   powerConstruct: {
     name: "Power Construct",
     description: "Other Cells gather to aid when its HP becomes half or less. Then the Pokémon changes its form to Complete Forme.",
+    partial: "Doesn't account for Zygarde 10%."
   },
   corrosion: {
     name: "Corrosion",
     description: "The Pokémon can poison the target even if it's a Steel or Poison type.",
+    partial: "May not interact with Magic Bounce and its counterparts."
   },
   comatose: {
     name: "Comatose",
@@ -1024,6 +1032,7 @@ export const ability: AbilityTranslationEntries = {
   neutralizingGas: {
     name: "Neutralizing Gas",
     description: "If the Pokémon with Neutralizing Gas is in the battle, the effects of all Pokémon's Abilities will be nullified or will not be triggered.",
+    partial: "Weird interaction with some moves."
   },
   pastelVeil: {
     name: "Pastel Veil",
@@ -1124,14 +1133,17 @@ export const ability: AbilityTranslationEntries = {
   protosynthesis: {
     name: "Protosynthesis",
     description: "Boosts the Pokémon's most proficient stat in harsh sunlight or if the Pokémon is holding Booster Energy.",
+    partial: "Incorrectly accounts for modifiers other than stat stages."
   },
   quarkDrive: {
     name: "Quark Drive",
     description: "Boosts the Pokémon's most proficient stat on Electric Terrain or if the Pokémon is holding Booster Energy.",
+    partial: "Incorrectly accounts for modifiers other than stat stages."
   },
   goodAsGold: {
     name: "Good as Gold",
     description: "A body of pure, solid gold gives the Pokémon full immunity to other Pokémon's status moves.",
+    partial: "Some interactions need fixing."
   },
   vesselOfRuin: {
     name: "Vessel of Ruin",
@@ -1188,10 +1200,12 @@ export const ability: AbilityTranslationEntries = {
   earthEater: {
     name: "Earth Eater",
     description: "If hit by a Ground-type move, the Pokémon has its HP restored instead of taking damage.",
+    partial: "Bypasses Heal Block."
   },
   myceliumMight: {
     name: "Mycelium Might",
     description: "The Pokémon will always act more slowly when using status moves, but these moves will be unimpeded by the Ability of the target.",
+    partial: "Does not reduce the priority of status moves."
   },
   mindsEye: {
     name: "Mind's Eye",
@@ -1204,6 +1218,7 @@ export const ability: AbilityTranslationEntries = {
   hospitality: {
     name: "Hospitality",
     description: "When the Pokémon enters a battle, it showers its ally with hospitality, restoring a small amount of the ally's HP.",
+    partial: "Bypasses Heal Block."
   },
   toxicChain: {
     name: "Toxic Chain",

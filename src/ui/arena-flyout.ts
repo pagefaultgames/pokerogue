@@ -306,6 +306,12 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       }
       this.flyoutTextPlayer.text += "\n"
     }
+    if (true)
+    for (var i = 0; i < LoggerTools.enemyPlan.length; i++) {
+      if (LoggerTools.enemyPlan[i] != "") {
+        this.flyoutTextEnemy.text += LoggerTools.enemyPlan[i] + "\n"
+      }
+    }
   }
 
   /**
