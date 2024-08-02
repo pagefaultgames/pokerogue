@@ -3087,8 +3087,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "muku",
   },
   type_null: {
-    fusionPrefix: "Type",
-    fusionSuffix: "Null",
+    fusionPrefix: "Tipo",
+    fusionSuffix: "Nulo",
   },
   silvally: {
     fusionPrefix: "Sil",
