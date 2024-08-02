@@ -52,7 +52,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "addType": "Adesso {{pokemonName}} è anche\ndi tipo {{typeName}}!",
   "cannotUseMove": "{{pokemonName}} non può usare {{moveName}}!",
   "healHp": "{{pokemonName}} ha recuperato dei PS.",
-  "sacrificialFullRestore": "{{pokemonName} riceve i benefici\neffetti di Curardore!",
+  "sacrificialFullRestore": "{{pokemonName}} riceve i benefici\neffetti di Curardore!",
   "invertStats": "Le modifiche alle statistiche di {{pokemonName}}\nvengono invertite!",
   "resetStats": "Tutte le modifiche alle statistiche sono state annullate!",
   "faintCountdown": "{{pokemonName}}\nandrà KO dopo {{turnCount}} turni.",
