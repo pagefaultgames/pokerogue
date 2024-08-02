@@ -1,21 +1,17 @@
 import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
 import { Species } from "#app/enums/species";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases";
+import { BerryPhase, MoveEndPhase, MovePhase } from "#app/phases";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BattleStat } from "#app/data/battle-stat";
 import { allMoves, StealHeldItemChanceAttr } from "#app/data/move";
 import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
 import { StatusEffect } from "#app/data/status-effect";
 import { BerryType } from "#app/enums/berry-type";
-import { Mode } from "#app/ui/ui";
-import PartyUiHandler from "#app/ui/party-ui-handler";
-import { Button } from "#app/enums/buttons";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
 
@@ -36,13 +32,14 @@ describe("Moves - Substitute", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SUBSTITUTE, Moves.SWORDS_DANCE, Moves.TACKLE, Moves.SPLASH]);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.SPLASH));
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override
+      .battleType("single")
+      .moveset([Moves.SUBSTITUTE, Moves.SWORDS_DANCE, Moves.TACKLE, Moves.SPLASH])
+      .enemySpecies(Species.SNORLAX)
+      .enemyAbility(Abilities.INSOMNIA)
+      .enemyMoveset(Array(4).fill(Moves.SPLASH))
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   it(
@@ -63,7 +60,7 @@ describe("Moves - Substitute", () => {
   it(
     "should redirect enemy attack damage to the Substitute doll",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
 
       await game.startBattle([Species.SKARMORY]);
 
@@ -88,7 +85,7 @@ describe("Moves - Substitute", () => {
     "should fade after redirecting more damage than its remaining HP",
     async () => {
       // Giga Impact OHKOs Magikarp if substitute isn't up
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.GIGA_IMPACT));
+      game.override.enemyMoveset(Array(4).fill(Moves.GIGA_IMPACT));
       vi.spyOn(allMoves[Moves.GIGA_IMPACT], "accuracy", "get").mockReturnValue(100);
 
       await game.startBattle([Species.MAGIKARP]);
@@ -113,7 +110,7 @@ describe("Moves - Substitute", () => {
   it(
     "should block stat changes from status moves",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.CHARM));
+      game.override.enemyMoveset(Array(4).fill(Moves.CHARM));
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -131,7 +128,7 @@ describe("Moves - Substitute", () => {
   it(
     "should be bypassed by sound-based moves",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.ECHOED_VOICE));
+      game.override.enemyMoveset(Array(4).fill(Moves.ECHOED_VOICE));
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -154,8 +151,8 @@ describe("Moves - Substitute", () => {
   it(
     "should be bypassed by attackers with Infiltrator",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.TACKLE));
-      vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INFILTRATOR);
+      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyAbility(Abilities.INFILTRATOR);
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -198,8 +195,8 @@ describe("Moves - Substitute", () => {
   it(
     "should protect the user from flinching",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.FAKE_OUT));
-      vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1); // Ensures the Substitute will break
+      game.override.enemyMoveset(Array(4).fill(Moves.FAKE_OUT));
+      game.override.startingLevel(1); // Ensures the Substitute will break
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -220,7 +217,7 @@ describe("Moves - Substitute", () => {
     "should protect the user from being trapped",
     async () => {
       vi.spyOn(allMoves[Moves.SAND_TOMB], "accuracy", "get").mockReturnValue(100);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.SAND_TOMB));
+      game.override.enemyMoveset(Array(4).fill(Moves.SAND_TOMB));
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -240,7 +237,7 @@ describe("Moves - Substitute", () => {
     "should prevent the user's stats from being lowered",
     async () => {
       vi.spyOn(allMoves[Moves.LIQUIDATION], "chance", "get").mockReturnValue(100);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.LIQUIDATION));
+      game.override.enemyMoveset(Array(4).fill(Moves.LIQUIDATION));
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -259,7 +256,7 @@ describe("Moves - Substitute", () => {
   it(
     "should protect the user from being afflicted with status effects",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.NUZZLE));
+      game.override.enemyMoveset(Array(4).fill(Moves.NUZZLE));
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -278,9 +275,9 @@ describe("Moves - Substitute", () => {
   it(
     "should prevent the user's items from being stolen",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.THIEF));
+      game.override.enemyMoveset(Array(4).fill(Moves.THIEF));
       vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]); // give Thief 100% steal rate
-      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "BERRY", type: BerryType.SITRUS}]);
+      game.override.startingHeldItems([{name: "BERRY", type: BerryType.SITRUS}]);
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -299,8 +296,8 @@ describe("Moves - Substitute", () => {
   it(
     "should prevent the user's items from being removed",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.KNOCK_OFF]);
-      vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "BERRY", type: BerryType.SITRUS}]);
+      game.override.moveset([Moves.KNOCK_OFF]);
+      game.override.enemyHeldItems([{name: "BERRY", type: BerryType.SITRUS}]);
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -320,8 +317,8 @@ describe("Moves - Substitute", () => {
   it(
     "move effect should prevent the user's berries from being stolen and eaten",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.BUG_BITE));
-      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "BERRY", type: BerryType.SITRUS}]);
+      game.override.enemyMoveset(Array(4).fill(Moves.BUG_BITE));
+      game.override.startingHeldItems([{name: "BERRY", type: BerryType.SITRUS}]);
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -345,7 +342,7 @@ describe("Moves - Substitute", () => {
   it(
     "should prevent the user's stats from being reset by Clear Smog",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.CLEAR_SMOG));
+      game.override.enemyMoveset(Array(4).fill(Moves.CLEAR_SMOG));
 
       await game.startBattle([Species.BLASTOISE]);
 
@@ -364,7 +361,7 @@ describe("Moves - Substitute", () => {
   it(
     "should prevent the user from becoming confused",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.MAGICAL_TORQUE));
+      game.override.enemyMoveset(Array(4).fill(Moves.MAGICAL_TORQUE));
       vi.spyOn(allMoves[Moves.MAGICAL_TORQUE], "chance", "get").mockReturnValue(100);
 
       await game.startBattle([Species.BLASTOISE]);
@@ -382,10 +379,10 @@ describe("Moves - Substitute", () => {
     }
   );
 
-  it.skip(
+  it(
     "should transfer to the switched in Pokemon when the source uses Baton Pass",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SUBSTITUTE, Moves.BATON_PASS]);
+      game.override.moveset([Moves.SUBSTITUTE, Moves.BATON_PASS]);
 
       await game.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
@@ -393,21 +390,9 @@ describe("Moves - Substitute", () => {
 
       leadPokemon.addTag(BattlerTagType.SUBSTITUTE, null, null, leadPokemon.id);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BATON_PASS));
+      game.doSwitchPokemon(1, true);
 
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-
-      // TODO: Figure out how to navigate out of the Party UI
-      game.onNextPrompt("MoveEffectPhase", Mode.PARTY, () => {
-        const handler = game.scene.ui.getHandler() as PartyUiHandler;
-        handler.setCursor(1);
-        handler.processInput(Button.ACTION);
-        handler.setCursor(0);
-        handler.processInput(Button.ACTION);
-        handler.processInput(Button.ACTION);
-      });
-
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to(MovePhase, false);
 
       const switchedPokemon = game.scene.getPlayerPokemon();
       const subTag = switchedPokemon.getTag(SubstituteTag);
