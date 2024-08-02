@@ -90,10 +90,8 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     if (button === Button.ACTION || button === Button.CANCEL) {
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
-        if (this.runs[cursor]) {
+        if (this.runs[cursor].hasData) {
           this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, true);
-        } else {
-          return false;
         }
         success = true;
         return success;

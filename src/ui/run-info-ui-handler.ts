@@ -564,6 +564,7 @@ export default class GameInfoUiHandler extends UiHandler {
   showParty(partyVisible: boolean): void {
     const allContainers = this.partyContainer.getAll("name", "PkmnInfo");
     allContainers.forEach((c: Phaser.GameObjects.Container) => {
+      console.log(c.getByName("PkmnMoves"));
       (c.getByName("PkmnMoves") as Phaser.GameObjects.Container).setVisible(partyVisible);
       (c.getByName("PkmnInfoText") as Phaser.GameObjects.Container).setVisible(partyVisible);
       (c.getByName("PkmnStatsText") as Phaser.GameObjects.Container).setVisible(partyVisible);
@@ -623,9 +624,7 @@ export default class GameInfoUiHandler extends UiHandler {
       this.runResultContainer.removeAll(true);
       this.partyContainer.removeAll(true);
       this.gameStatsContainer.removeAll(true);
-      if (this.victory) {
-        this.hallofFameContainer.removeAll(true);
-      }
+      this.hallofFameContainer.removeAll(true);
       super.clear();
       this.gameStatsContainer.setVisible(false);
       ui.revertMode();

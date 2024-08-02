@@ -4,7 +4,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "GAME_SETTINGS": "게임 설정",
   "ACHIEVEMENTS": "업적",
   "STATS": "통계",
-  "RUN_HISTORY": "Run History",
+  "RUN_HISTORY": "플레이 이력",
   "VOUCHERS": "바우처",
   "EGG_LIST": "알 목록",
   "EGG_GACHA": "알 뽑기",

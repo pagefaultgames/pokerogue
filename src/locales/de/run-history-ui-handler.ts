@@ -3,7 +3,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 export const runHistory: SimpleTranslationEntries = {
   "victory": "Sieg!",
   "defeatedWild": "Besiegt durch ",
-  "defeatedTrainer": "Besiegt durch",
+  "defeatedTrainer": "Besiegt durch ",
   "defeatedTrainerDouble": "Besiegt durch Doppelkampf",
   "defeatedRival": "Besiegt durch Rivale",
   "defeated":"Besiegt",
@@ -23,9 +23,9 @@ export const runHistory: SimpleTranslationEntries = {
   "playerItems":"Spielergegenstände",
   "personalBest":"Persönlicher Bestwert!",
   "SPDshortened":"Geschw.",
-  "runInfo":"Durchlauf Info.",
+  "runInfo":"Durchlauf Informationen",
   "money":"Geld",
-  "runLength":"Länge des Durchlaufs",
+  "runLength":"Durchlauf Dauer",
   "viewHeldItems":"Getragene Items",
   "hallofFameText":"Willkommen in der Ruhmeshalle",
   "viewHallOfFame":"Ruhmeshalle ansehen!"
