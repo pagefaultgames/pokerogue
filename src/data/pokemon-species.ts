@@ -630,7 +630,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       }
 
       if (key) {
-        return i18next.t(`pokemonForm:${key}`, {pokemonName: this.name});
+        return i18next.t(`battlePokemonForm:${key}`, {pokemonName: this.name});
       }
     }
     return this.name;
