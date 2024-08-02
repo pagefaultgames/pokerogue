@@ -90,8 +90,10 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     if (button === Button.ACTION || button === Button.CANCEL) {
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
-        if (this.runs[cursor].hasData) {
+        if (this.runs[cursor]) {
           this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, true);
+        } else {
+          return false;
         }
         success = true;
         return success;
@@ -135,6 +137,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     if (timestamps.length > 1) {
       timestampsNo.sort((a, b) => a - b);
     }
+    console.log(timestamps);
     const entryCount = timestamps.length;
     for (let s = 0; s < entryCount; s++) {
       const entry = new RunEntry(this.scene, response, timestampsNo[s].toString(), s);
