@@ -64,15 +64,15 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   pidgey: {
     fusionPrefix: "Roucool",
-    fusionSuffix: "ucool",
+    fusionSuffix: "oucool",
   },
   pidgeotto: {
-    fusionPrefix: "Roucoup",
-    fusionSuffix: "ups",
+    fusionPrefix: "Roucou",
+    fusionSuffix: "oups",
   },
   pidgeot: {
     fusionPrefix: "Roucar",
-    fusionSuffix: "age",
+    fusionSuffix: "arnage",
   },
   rattata: {
     fusionPrefix: "Rattata",
@@ -112,7 +112,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   sandslash: {
     fusionPrefix: "Sabl",
-    fusionSuffix: "ireau",
+    fusionSuffix: "aireau",
   },
   nidoran_f: {
     fusionPrefix: "Nidoran",
@@ -147,12 +147,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "elfe",
   },
   vulpix: {
-    fusionPrefix: "Goupix",
-    fusionSuffix: "upix",
+    fusionPrefix: "Goup",
+    fusionSuffix: "oupix",
   },
   ninetales: {
-    fusionPrefix: "Feunar",
-    fusionSuffix: "unard",
+    fusionPrefix: "Feun",
+    fusionSuffix: "ard",
   },
   jigglypuff: {
     fusionPrefix: "Rond",
@@ -199,11 +199,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "omite",
   },
   diglett: {
-    fusionPrefix: "Taupiq",
+    fusionPrefix: "Taupiqu",
     fusionSuffix: "iqueur",
   },
   dugtrio: {
-    fusionPrefix: "Triopikeur",
+    fusionPrefix: "Triopik",
     fusionSuffix: "ikeur",
   },
   meowth: {
@@ -280,11 +280,11 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   weepinbell: {
     fusionPrefix: "Bous",
-    fusionSuffix: "ustiflor",
+    fusionSuffix: "tiflor",
   },
   victreebel: {
     fusionPrefix: "Emp",
-    fusionSuffix: "empiflor",
+    fusionSuffix: "iflor",
   },
   tentacool: {
     fusionPrefix: "Tentacool",
@@ -296,7 +296,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   geodude: {
     fusionPrefix: "Rac",
-    fusionSuffix: "illou",
+    fusionSuffix: "aillou",
   },
   graveler: {
     fusionPrefix: "Grav",
@@ -323,19 +323,19 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "adoss",
   },
   magnemite: {
-    fusionPrefix: "Magnéti",
+    fusionPrefix: "Magnét",
     fusionSuffix: "éti",
   },
   magneton: {
-    fusionPrefix: "Magnéton",
+    fusionPrefix: "Magnét",
     fusionSuffix: "éton",
   },
   farfetchd: {
     fusionPrefix: "Canart",
-    fusionSuffix: "anarticho",
+    fusionSuffix: "articho",
   },
   doduo: {
-    fusionPrefix: "Doduo",
+    fusionPrefix: "Dod",
     fusionSuffix: "uo",
   },
   dodrio: {
@@ -343,16 +343,16 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "odrio",
   },
   seel: {
-    fusionPrefix: "Otaria",
-    fusionSuffix: "otaria",
+    fusionPrefix: "Otar",
+    fusionSuffix: "aria",
   },
   dewgong: {
-    fusionPrefix: "Laman",
+    fusionPrefix: "Lamant",
     fusionSuffix: "antine",
   },
   grimer: {
     fusionPrefix: "Tad",
-    fusionSuffix: "tadmorv",
+    fusionSuffix: "admorv",
   },
   muk: {
     fusionPrefix: "Grotad",
@@ -360,7 +360,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   shellder: {
     fusionPrefix: "Kok",
-    fusionSuffix: "yas",
+    fusionSuffix: "iyas",
   },
   cloyster: {
     fusionPrefix: "Crus",
@@ -371,11 +371,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ominus",
   },
   haunter: {
-    fusionPrefix: "Spectrum",
+    fusionPrefix: "Spectr",
     fusionSuffix: "ectrum",
   },
   gengar: {
-    fusionPrefix: "Ec",
+    fusionPrefix: "Ectopl",
     fusionSuffix: "asma",
   },
   onix: {
@@ -383,7 +383,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "onix",
   },
   drowzee: {
-    fusionPrefix: "Sop",
+    fusionPrefix: "Sopor",
     fusionSuffix: "ifik",
   },
   hypno: {
@@ -391,7 +391,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "omade",
   },
   krabby: {
-    fusionPrefix: "Krabby",
+    fusionPrefix: "Krabb",
     fusionSuffix: "abby",
   },
   kingler: {
@@ -416,18 +416,18 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   cubone: {
     fusionPrefix: "Ossel",
-    fusionSuffix: "ait",
+    fusionSuffix: "elait",
   },
   marowak: {
     fusionPrefix: "Ossat",
-    fusionSuffix: "ossatueur",
+    fusionSuffix: "atueur",
   },
   hitmonlee: {
-    fusionPrefix: "Kic",
+    fusionPrefix: "Kick",
     fusionSuffix: "ee",
   },
   hitmonchan: {
-    fusionPrefix: "Tyg",
+    fusionPrefix: "Tygn",
     fusionSuffix: "ygnon",
   },
   lickitung: {
@@ -435,8 +435,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "elangue",
   },
   koffing: {
-    fusionPrefix: "Smogo",
-    fusionSuffix: "smogo",
+    fusionPrefix: "Smog",
+    fusionSuffix: "ogo",
   },
   weezing: {
     fusionPrefix: "Smogog",
@@ -452,14 +452,14 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   chansey: {
     fusionPrefix: "Lev",
-    fusionSuffix: "inard",
+    fusionSuffix: "einard",
   },
   tangela: {
-    fusionPrefix: "Saq",
+    fusionPrefix: "Saqu",
     fusionSuffix: "edeneu",
   },
   kangaskhan: {
-    fusionPrefix: "Kan",
+    fusionPrefix: "Kang",
     fusionSuffix: "ourex",
   },
   horsea: {
@@ -480,7 +480,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   staryu: {
     fusionPrefix: "Stari",
-    fusionSuffix: "stari",
+    fusionSuffix: "ari",
   },
   starmie: {
     fusionPrefix: "Staros",
@@ -492,10 +492,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   scyther: {
     fusionPrefix: "Inséc",
-    fusionSuffix: "insécateur",
+    fusionSuffix: "écateur",
   },
   jynx: {
-    fusionPrefix: "Lippoutou",
+    fusionPrefix: "Lippout",
     fusionSuffix: "ippoutou",
   },
   electabuzz: {
@@ -507,12 +507,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "agmar",
   },
   pinsir: {
-    fusionPrefix: "Scarab",
+    fusionPrefix: "Scarabr",
     fusionSuffix: "ute",
   },
   tauros: {
     fusionPrefix: "Taur",
-    fusionSuffix: "uros",
+    fusionSuffix: "auros",
   },
   magikarp: {
     fusionPrefix: "Magic",
@@ -523,7 +523,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "iator",
   },
   lapras: {
-    fusionPrefix: "Lok",
+    fusionPrefix: "Lokh",
     fusionSuffix: "ass",
   },
   ditto: {
@@ -532,11 +532,11 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   eevee: {
     fusionPrefix: "Év",
-    fusionSuffix: "évoli",
+    fusionSuffix: "oli",
   },
   vaporeon: {
-    fusionPrefix: "Aq",
-    fusionSuffix: "uali",
+    fusionPrefix: "Aqual",
+    fusionSuffix: "quali",
   },
   jolteon: {
     fusionPrefix: "Voltal",
@@ -575,7 +575,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "onflex",
   },
   articuno: {
-    fusionPrefix: "Art",
+    fusionPrefix: "Artik",
     fusionSuffix: "odin",
   },
   zapdos: {
@@ -583,7 +583,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ecthor",
   },
   moltres: {
-    fusionPrefix: "Sul",
+    fusionPrefix: "Sulf",
     fusionSuffix: "ulfura",
   },
   dratini: {
@@ -607,7 +607,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ew",
   },
   chikorita: {
-    fusionPrefix: "Germig",
+    fusionPrefix: "Germign",
     fusionSuffix: "ermignon",
   },
   bayleef: {
@@ -624,10 +624,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   quilava: {
     fusionPrefix: "Feur",
-    fusionSuffix: "urisson",
+    fusionSuffix: "isson",
   },
   typhlosion: {
-    fusionPrefix: "Typh",
+    fusionPrefix: "Typhl",
     fusionSuffix: "osion",
   },
   totodile: {
@@ -659,7 +659,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "arfang",
   },
   ledyba: {
-    fusionPrefix: "Coxy",
+    fusionPrefix: "Cox",
     fusionSuffix: "oxy",
   },
   ledian: {
@@ -680,7 +680,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   chinchou: {
     fusionPrefix: "Loup",
-    fusionSuffix: "upio",
+    fusionSuffix: "oupio",
   },
   lanturn: {
     fusionPrefix: "Lant",
@@ -696,7 +696,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   igglybuff: {
     fusionPrefix: "Toud",
-    fusionSuffix: "udoudou",
+    fusionSuffix: "oudoudou",
   },
   togepi: {
     fusionPrefix: "Togep",
@@ -715,8 +715,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "xatu",
   },
   mareep: {
-    fusionPrefix: "Wattouat",
-    fusionSuffix: "uat",
+    fusionPrefix: "Watt",
+    fusionSuffix: "ouat",
   },
   flaaffy: {
     fusionPrefix: "Lain",
@@ -783,7 +783,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "araiste",
   },
   espeon: {
-    fusionPrefix: "Men",
+    fusionPrefix: "Mental",
     fusionSuffix: "entali",
   },
   umbreon: {
@@ -807,7 +807,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "zarbi",
   },
   wobbuffet: {
-    fusionPrefix: "Qul",
+    fusionPrefix: "Qulb",
     fusionSuffix: "utoké",
   },
   girafarig: {
@@ -819,7 +819,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "epik",
   },
   forretress: {
-    fusionPrefix: "Foret",
+    fusionPrefix: "Foretr",
     fusionSuffix: "ess",
   },
   dunsparce: {
@@ -832,7 +832,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   steelix: {
     fusionPrefix: "Steel",
-    fusionSuffix: "elix",
+    fusionSuffix: "eelix",
   },
   snubbull: {
     fusionPrefix: "Sn",
@@ -847,7 +847,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ish",
   },
   scizor: {
-    fusionPrefix: "Ciz",
+    fusionPrefix: "Cizay",
     fusionSuffix: "yox",
   },
   shuckle: {
@@ -876,7 +876,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   magcargo: {
     fusionPrefix: "Volcar",
-    fusionSuffix: "od",
+    fusionSuffix: "opod",
   },
   swinub: {
     fusionPrefix: "Marc",
@@ -892,23 +892,23 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   remoraid: {
     fusionPrefix: "Rém",
-    fusionSuffix: "aid",
+    fusionSuffix: "oraid",
   },
   octillery: {
-    fusionPrefix: "Oc",
-    fusionSuffix: "ery",
+    fusionPrefix: "Oct",
+    fusionSuffix: "illery",
   },
   delibird: {
     fusionPrefix: "Cad",
-    fusionSuffix: "izo",
+    fusionSuffix: "oizo",
   },
   mantine: {
     fusionPrefix: "Déman",
     fusionSuffix: "émanta",
   },
   skarmory: {
-    fusionPrefix: "Air",
-    fusionSuffix: "irmure",
+    fusionPrefix: "Airm",
+    fusionSuffix: "ure",
   },
   houndour: {
     fusionPrefix: "Malos",
@@ -927,11 +927,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "anpy",
   },
   donphan: {
-    fusionPrefix: "Don",
+    fusionPrefix: "Donph",
     fusionSuffix: "onphan",
   },
   porygon2: {
-    fusionPrefix: "Por2",
+    fusionPrefix: "Pory2",
     fusionSuffix: "on2",
   },
   stantler: {
@@ -940,7 +940,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   smeargle: {
     fusionPrefix: "Queul",
-    fusionSuffix: "ior",
+    fusionSuffix: "orior",
   },
   tyrogue: {
     fusionPrefix: "Deb",
@@ -948,15 +948,15 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   hitmontop: {
     fusionPrefix: "Kap",
-    fusionSuffix: "era",
+    fusionSuffix: "oera",
   },
   smoochum: {
     fusionPrefix: "Lippouti",
-    fusionSuffix: "uti",
+    fusionSuffix: "outi",
   },
   elekid: {
     fusionPrefix: "Élekid",
-    fusionSuffix: "élekid",
+    fusionSuffix: "ekid",
   },
   magby: {
     fusionPrefix: "Magb",
@@ -967,7 +967,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "euh",
   },
   blissey: {
-    fusionPrefix: "Leup",
+    fusionPrefix: "Leuph",
     fusionSuffix: "orie",
   },
   raikou: {
@@ -987,11 +987,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ylex",
   },
   pupitar: {
-    fusionPrefix: "Ym",
-    fusionSuffix: "ymphect",
+    fusionPrefix: "Ymph",
+    fusionSuffix: "ect",
   },
   tyranitar: {
-    fusionPrefix: "Tyr",
+    fusionPrefix: "Tyran",
     fusionSuffix: "ocif",
   },
   lugia: {
@@ -999,7 +999,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ugia",
   },
   ho_oh: {
-    fusionPrefix: "Ho-Oh",
+    fusionPrefix: "Ho-",
     fusionSuffix: "-Oh",
   },
   celebi: {
@@ -1008,7 +1008,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   treecko: {
     fusionPrefix: "Arck",
-    fusionSuffix: "arcko",
+    fusionSuffix: "cko",
   },
   grovyle: {
     fusionPrefix: "Mass",
@@ -1019,8 +1019,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ungko",
   },
   torchic: {
-    fusionPrefix: "Poussif",
-    fusionSuffix: "ussifeu",
+    fusionPrefix: "Pouss",
+    fusionSuffix: "oussifeu",
   },
   combusken: {
     fusionPrefix: "Galif",
@@ -1039,7 +1039,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "obio",
   },
   swampert: {
-    fusionPrefix: "Lag",
+    fusionPrefix: "Lagg",
     fusionSuffix: "aggron",
   },
   poochyena: {
@@ -1051,7 +1051,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ahyèna",
   },
   zigzagoon: {
-    fusionPrefix: "Zig",
+    fusionPrefix: "Zigz",
     fusionSuffix: "aton",
   },
   linoone: {
@@ -1059,7 +1059,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "linéon",
   },
   wurmple: {
-    fusionPrefix: "Chenipot",
+    fusionPrefix: "Chenipott",
     fusionSuffix: "ipotte",
   },
   silcoon: {
@@ -1139,11 +1139,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "adra",
   },
   shroomish: {
-    fusionPrefix: "Balig",
+    fusionPrefix: "Balign",
     fusionSuffix: "alignon",
   },
   breloom: {
-    fusionPrefix: "Chapig",
+    fusionPrefix: "Chapign",
     fusionSuffix: "apignon",
   },
   slakoth: {
@@ -1155,7 +1155,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "oth",
   },
   slaking: {
-    fusionPrefix: "Monaf",
+    fusionPrefix: "Monafl",
     fusionSuffix: "èmit",
   },
   nincada: {
@@ -1188,7 +1188,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   hariyama: {
     fusionPrefix: "Har",
-    fusionSuffix: "ama",
+    fusionSuffix: "iyama",
   },
   azurill: {
     fusionPrefix: "Azur",
@@ -1199,7 +1199,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "inor",
   },
   skitty: {
-    fusionPrefix: "Skit",
+    fusionPrefix: "Skitt",
     fusionSuffix: "itty",
   },
   delcatty: {
@@ -1264,10 +1264,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   gulpin: {
     fusionPrefix: "Gloup",
-    fusionSuffix: "upti",
+    fusionSuffix: "oupti",
   },
   swalot: {
-    fusionPrefix: "Av",
+    fusionPrefix: "Aval",
     fusionSuffix: "out",
   },
   carvanha: {
@@ -1280,7 +1280,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   wailmer: {
     fusionPrefix: "Wailm",
-    fusionSuffix: "ilmer",
+    fusionSuffix: "ailmer",
   },
   wailord: {
     fusionPrefix: "Wailor",
@@ -1291,7 +1291,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "allot",
   },
   camerupt: {
-    fusionPrefix: "Cam",
+    fusionPrefix: "Camer",
     fusionSuffix: "upt",
   },
   torkoal: {
@@ -1304,7 +1304,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   grumpig: {
     fusionPrefix: "Gror",
-    fusionSuffix: "groret",
+    fusionSuffix: "roret",
   },
   spinda: {
     fusionPrefix: "Spin",
@@ -1464,7 +1464,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   clamperl: {
     fusionPrefix: "Coq",
-    fusionSuffix: "erl",
+    fusionSuffix: "iperl",
   },
   huntail: {
     fusionPrefix: "Serpan",
@@ -1475,7 +1475,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "yss",
   },
   relicanth: {
-    fusionPrefix: "Rel",
+    fusionPrefix: "Relican",
     fusionSuffix: "anth",
   },
   luvdisc: {
@@ -1532,10 +1532,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   groudon: {
     fusionPrefix: "Groud",
-    fusionSuffix: "udon",
+    fusionSuffix: "oudon",
   },
   rayquaza: {
-    fusionPrefix: "Rayq",
+    fusionPrefix: "Rayqu",
     fusionSuffix: "aza",
   },
   jirachi: {
@@ -1563,12 +1563,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "icram",
   },
   monferno: {
-    fusionPrefix: "Chim",
+    fusionPrefix: "Chimpen",
     fusionSuffix: "enfeu",
   },
   infernape: {
     fusionPrefix: "Simiab",
-    fusionSuffix: "az",
+    fusionSuffix: "abraz",
   },
   piplup: {
     fusionPrefix: "Tip",
@@ -1579,7 +1579,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "inplouf",
   },
   empoleon: {
-    fusionPrefix: "Pin",
+    fusionPrefix: "Pingo",
     fusionSuffix: "oléon",
   },
   starly: {
@@ -1599,7 +1599,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "unotor",
   },
   bibarel: {
-    fusionPrefix: "Cas",
+    fusionPrefix: "Cast",
     fusionSuffix: "orno",
   },
   kricketot: {
@@ -1639,11 +1639,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "arkos",
   },
   shieldon: {
-    fusionPrefix: "Dinoc",
+    fusionPrefix: "Dinocl",
     fusionSuffix: "oclier",
   },
   bastiodon: {
-    fusionPrefix: "Bas",
+    fusionPrefix: "Bast",
     fusionSuffix: "iodon",
   },
   burmy: {
@@ -1672,10 +1672,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   buizel: {
     fusionPrefix: "Mustéb",
-    fusionSuffix: "uée",
+    fusionSuffix: "ouée",
   },
   floatzel: {
-    fusionPrefix: "Mustéf",
+    fusionPrefix: "Mustéfl",
     fusionSuffix: "ott",
   },
   cherubi: {
@@ -1687,7 +1687,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "eriflor",
   },
   shellos: {
-    fusionPrefix: "San",
+    fusionPrefix: "Sanc",
     fusionSuffix: "oki",
   },
   gastrodon: {
@@ -1700,7 +1700,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   drifloon: {
     fusionPrefix: "Baud",
-    fusionSuffix: "udrive",
+    fusionSuffix: "audrive",
   },
   drifblim: {
     fusionPrefix: "Grodr",
@@ -1711,7 +1711,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "oreille",
   },
   lopunny: {
-    fusionPrefix: "Loc",
+    fusionPrefix: "Lock",
     fusionSuffix: "ockpin",
   },
   mismagius: {
@@ -1723,15 +1723,15 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "orboss",
   },
   glameow: {
-    fusionPrefix: "Chag",
+    fusionPrefix: "Chagl",
     fusionSuffix: "aglam",
   },
   purugly: {
-    fusionPrefix: "Chaf",
+    fusionPrefix: "Chaff",
     fusionSuffix: "eux",
   },
   chingling: {
-    fusionPrefix: "Koril",
+    fusionPrefix: "Korill",
     fusionSuffix: "orillon",
   },
   stunky: {
@@ -1768,7 +1768,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   spiritomb: {
     fusionPrefix: "Spir",
-    fusionSuffix: "omb",
+    fusionSuffix: "itomb",
   },
   gible: {
     fusionPrefix: "Grik",
@@ -1779,11 +1779,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "armache",
   },
   garchomp: {
-    fusionPrefix: "Carc",
+    fusionPrefix: "Carch",
     fusionSuffix: "acrok",
   },
   munchlax: {
-    fusionPrefix: "Goin",
+    fusionPrefix: "Goinf",
     fusionSuffix: "infrex",
   },
   riolu: {
@@ -1823,8 +1823,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ente",
   },
   finneon: {
-    fusionPrefix: "Écayon",
-    fusionSuffix: "écayon",
+    fusionPrefix: "Écay",
+    fusionSuffix: "ayon",
   },
   lumineon: {
     fusionPrefix: "Lumin",
@@ -1852,7 +1852,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   lickilicky: {
     fusionPrefix: "Coud",
-    fusionSuffix: "udlangue",
+    fusionSuffix: "oudlangue",
   },
   rhyperior: {
     fusionPrefix: "Rhinas",
@@ -1860,7 +1860,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   tangrowth: {
     fusionPrefix: "Boul",
-    fusionSuffix: "uldeneu",
+    fusionSuffix: "ouldeneu",
   },
   electivire: {
     fusionPrefix: "Élekab",
@@ -1879,11 +1879,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ega",
   },
   leafeon: {
-    fusionPrefix: "Phyl",
+    fusionPrefix: "Phyllal",
     fusionSuffix: "yllali",
   },
   glaceon: {
-    fusionPrefix: "Giv",
+    fusionPrefix: "Givral",
     fusionSuffix: "ivrali",
   },
   gliscor: {
@@ -1923,7 +1923,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "elf",
   },
   mesprit: {
-    fusionPrefix: "Créfol",
+    fusionPrefix: "Créfoll",
     fusionSuffix: "ollet",
   },
   azelf: {
@@ -1940,7 +1940,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   heatran: {
     fusionPrefix: "Heat",
-    fusionSuffix: "atran",
+    fusionSuffix: "eatran",
   },
   regigigas: {
     fusionPrefix: "Regig",
@@ -1951,7 +1951,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "atina",
   },
   cresselia: {
-    fusionPrefix: "Cres",
+    fusionPrefix: "Cress",
     fusionSuffix: "elia",
   },
   phione: {
@@ -1979,7 +1979,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ictini",
   },
   snivy: {
-    fusionPrefix: "Vip",
+    fusionPrefix: "Vipél",
     fusionSuffix: "erre",
   },
   servine: {
@@ -2000,15 +2000,15 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   emboar: {
     fusionPrefix: "Roit",
-    fusionSuffix: "iflam",
+    fusionSuffix: "oiflam",
   },
   oshawott: {
     fusionPrefix: "Moust",
-    fusionSuffix: "ustillon",
+    fusionSuffix: "oustillon",
   },
   dewott: {
     fusionPrefix: "Matel",
-    fusionSuffix: "utre",
+    fusionSuffix: "outre",
   },
   samurott: {
     fusionPrefix: "Clam",
@@ -2023,19 +2023,19 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "iradar",
   },
   lillipup: {
-    fusionPrefix: "Ponchiot",
+    fusionPrefix: "Ponch",
     fusionSuffix: "onchiot",
   },
   herdier: {
-    fusionPrefix: "Ponchien",
+    fusionPrefix: "Ponch",
     fusionSuffix: "onchien",
   },
   stoutland: {
     fusionPrefix: "Mast",
-    fusionSuffix: "uffe",
+    fusionSuffix: "ouffe",
   },
   purrloin: {
-    fusionPrefix: "Chac",
+    fusionPrefix: "Chacr",
     fusionSuffix: "acripan",
   },
   liepard: {
@@ -2075,7 +2075,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ana",
   },
   pidove: {
-    fusionPrefix: "Poic",
+    fusionPrefix: "Poich",
     fusionSuffix: "igeon",
   },
   tranquill: {
@@ -2083,7 +2083,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ombeau",
   },
   unfezant: {
-    fusionPrefix: "Déf",
+    fusionPrefix: "Défl",
     fusionSuffix: "isan",
   },
   blitzle: {
@@ -2107,8 +2107,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "alithe",
   },
   woobat: {
-    fusionPrefix: "Chov",
-    fusionSuffix: "urir",
+    fusionPrefix: "Chovs",
+    fusionSuffix: "ourir",
   },
   swoobat: {
     fusionPrefix: "Rhinol",
@@ -2123,27 +2123,27 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "inotaupe",
   },
   audino: {
-    fusionPrefix: "Nan",
-    fusionSuffix: "ïe",
+    fusionPrefix: "Nanm",
+    fusionSuffix: "ouïe",
   },
   timburr: {
     fusionPrefix: "Charp",
     fusionSuffix: "enti",
   },
   gurdurr: {
-    fusionPrefix: "Ouv",
+    fusionPrefix: "Ouvr",
     fusionSuffix: "ifier",
   },
   conkeldurr: {
-    fusionPrefix: "Bét",
-    fusionSuffix: "ef",
+    fusionPrefix: "Bétoch",
+    fusionSuffix: "ochef",
   },
   tympole: {
     fusionPrefix: "Triton",
     fusionSuffix: "itonde",
   },
   palpitoad: {
-    fusionPrefix: "Bat",
+    fusionPrefix: "Batr",
     fusionSuffix: "acné",
   },
   seismitoad: {
@@ -2159,7 +2159,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "aclée",
   },
   sewaddle: {
-    fusionPrefix: "Larveyet",
+    fusionPrefix: "Larveyett",
     fusionSuffix: "yette",
   },
   swadloon: {
@@ -2204,7 +2204,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   sandile: {
     fusionPrefix: "Masc",
-    fusionSuffix: "ïman",
+    fusionSuffix: "aïman",
   },
   krokorok: {
     fusionPrefix: "Escr",
@@ -2219,7 +2219,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ond",
   },
   darmanitan: {
-    fusionPrefix: "Darumac",
+    fusionPrefix: "Darumach",
     fusionSuffix: "acho",
   },
   maractus: {
@@ -2235,23 +2235,23 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "araque",
   },
   scraggy: {
-    fusionPrefix: "Baggig",
+    fusionPrefix: "Baggigu",
     fusionSuffix: "uane",
   },
   scrafty: {
-    fusionPrefix: "Baggaïd",
+    fusionPrefix: "Bagga",
     fusionSuffix: "aggaïd",
   },
   sigilyph: {
-    fusionPrefix: "Cryp",
+    fusionPrefix: "Crypt",
     fusionSuffix: "éro",
   },
   yamask: {
     fusionPrefix: "Tutaf",
-    fusionSuffix: "eh",
+    fusionSuffix: "afeh",
   },
   cofagrigus: {
-    fusionPrefix: "Tutan",
+    fusionPrefix: "Tutank",
     fusionSuffix: "afer",
   },
   tirtouga: {
@@ -2267,8 +2267,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "éapti",
   },
   archeops: {
-    fusionPrefix: "Aérop",
-    fusionSuffix: "yx",
+    fusionPrefix: "Aéropt",
+    fusionSuffix: "éryx",
   },
   trubbish: {
     fusionPrefix: "Miam",
@@ -2287,11 +2287,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ark",
   },
   minccino: {
-    fusionPrefix: "Chin",
+    fusionPrefix: "Chinch",
     fusionSuffix: "inchidou",
   },
   cinccino: {
-    fusionPrefix: "Pash",
+    fusionPrefix: "Pashm",
     fusionSuffix: "illa",
   },
   gothita: {
@@ -2307,7 +2307,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "idérella",
   },
   solosis: {
-    fusionPrefix: "Nuc",
+    fusionPrefix: "Nucl",
     fusionSuffix: "éos",
   },
   duosion: {
@@ -2315,7 +2315,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "éios",
   },
   reuniclus: {
-    fusionPrefix: "Sym",
+    fusionPrefix: "Symb",
     fusionSuffix: "ymbios",
   },
   ducklett: {
@@ -2323,8 +2323,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "aneton",
   },
   swanna: {
-    fusionPrefix: "Lak",
-    fusionSuffix: "ygne",
+    fusionPrefix: "Lakm",
+    fusionSuffix: "écygne",
   },
   vanillite: {
     fusionPrefix: "Sorbéb",
@@ -2336,7 +2336,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   vanilluxe: {
     fusionPrefix: "Sorboub",
-    fusionSuffix: "uboul",
+    fusionSuffix: "ouboul",
   },
   deerling: {
     fusionPrefix: "Viv",
@@ -2364,10 +2364,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   amoonguss: {
     fusionPrefix: "Gaul",
-    fusionSuffix: "ulet",
+    fusionSuffix: "aulet",
   },
   frillish: {
-    fusionPrefix: "Vis",
+    fusionPrefix: "Visk",
     fusionSuffix: "use",
   },
   jellicent: {
@@ -2407,7 +2407,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "iclic",
   },
   tynamo: {
-    fusionPrefix: "Anc",
+    fusionPrefix: "Anch",
     fusionSuffix: "anchwatt",
   },
   eelektrik: {
@@ -2415,8 +2415,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "éroie",
   },
   eelektross: {
-    fusionPrefix: "Oh",
-    fusionSuffix: "acre",
+    fusionPrefix: "Ohm",
+    fusionSuffix: "assacre",
   },
   elgyem: {
     fusionPrefix: "Lew",
@@ -2431,7 +2431,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "écire",
   },
   lampent: {
-    fusionPrefix: "Mélan",
+    fusionPrefix: "Mélanc",
     fusionSuffix: "olux",
   },
   chandelure: {
@@ -2443,11 +2443,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "enotte",
   },
   fraxure: {
-    fusionPrefix: "Inc",
+    fusionPrefix: "Incis",
     fusionSuffix: "isache",
   },
   haxorus: {
-    fusionPrefix: "Tran",
+    fusionPrefix: "Tranch",
     fusionSuffix: "anchodon",
   },
   cubchoo: {
@@ -2455,7 +2455,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "arhume",
   },
   beartic: {
-    fusionPrefix: "Polag",
+    fusionPrefix: "Polagr",
     fusionSuffix: "iffe",
   },
   cryogonal: {
@@ -2463,15 +2463,15 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "agel",
   },
   shelmet: {
-    fusionPrefix: "Escar",
+    fusionPrefix: "Escarg",
     fusionSuffix: "aume",
   },
   accelgor: {
-    fusionPrefix: "Limas",
-    fusionSuffix: "ed",
+    fusionPrefix: "Limasp",
+    fusionSuffix: "eed",
   },
   stunfisk: {
-    fusionPrefix: "Limon",
+    fusionPrefix: "Limond",
     fusionSuffix: "imonde",
   },
   mienfoo: {
@@ -2483,7 +2483,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ofouine",
   },
   druddigon: {
-    fusionPrefix: "Drak",
+    fusionPrefix: "Drakk",
     fusionSuffix: "armin",
   },
   golett: {
@@ -2508,22 +2508,22 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   rufflet: {
     fusionPrefix: "Fur",
-    fusionSuffix: "iglon",
+    fusionSuffix: "aiglon",
   },
   braviary: {
     fusionPrefix: "Guer",
-    fusionSuffix: "igle",
+    fusionSuffix: "aigle",
   },
   vullaby: {
-    fusionPrefix: "Vos",
-    fusionSuffix: "urno",
+    fusionPrefix: "Vost",
+    fusionSuffix: "ourno",
   },
   mandibuzz: {
     fusionPrefix: "Vaut",
     fusionSuffix: "utrice",
   },
   heatmor: {
-    fusionPrefix: "Af",
+    fusionPrefix: "Afl",
     fusionSuffix: "anoir",
   },
   durant: {
@@ -2531,7 +2531,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ermite",
   },
   deino: {
-    fusionPrefix: "Soloc",
+    fusionPrefix: "Soloch",
     fusionSuffix: "olochi",
   },
   zweilous: {
@@ -2571,7 +2571,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "uris",
   },
   reshiram: {
-    fusionPrefix: "Res",
+    fusionPrefix: "Resh",
     fusionSuffix: "iram",
   },
   zekrom: {
@@ -2599,11 +2599,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "esect",
   },
   chespin: {
-    fusionPrefix: "Maris",
+    fusionPrefix: "Mariss",
     fusionSuffix: "arisson",
   },
   quilladin: {
-    fusionPrefix: "Bog",
+    fusionPrefix: "Bogu",
     fusionSuffix: "érisse",
   },
   chesnaught: {
@@ -2615,12 +2615,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "unnec",
   },
   braixen: {
-    fusionPrefix: "Rous",
-    fusionSuffix: "ussil",
+    fusionPrefix: "Rouss",
+    fusionSuffix: "oussil",
   },
   delphox: {
     fusionPrefix: "Goupel",
-    fusionSuffix: "upelin",
+    fusionSuffix: "oupelin",
   },
   froakie: {
     fusionPrefix: "Gren",
@@ -2632,10 +2632,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   greninja: {
     fusionPrefix: "Amph",
-    fusionSuffix: "obi",
+    fusionSuffix: "inobi",
   },
   bunnelby: {
-    fusionPrefix: "Sap",
+    fusionPrefix: "Saper",
     fusionSuffix: "ereau",
   },
   diggersby: {
@@ -2643,12 +2643,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "arenne",
   },
   fletchling: {
-    fusionPrefix: "Pass",
-    fusionSuffix: "uge",
+    fusionPrefix: "Passer",
+    fusionSuffix: "ouge",
   },
   fletchinder: {
     fusionPrefix: "Brais",
-    fusionSuffix: "isillon",
+    fusionSuffix: "aisillon",
   },
   talonflame: {
     fusionPrefix: "Flambus",
@@ -2687,20 +2687,20 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "orges",
   },
   skiddo: {
-    fusionPrefix: "Cab",
-    fusionSuffix: "aine",
+    fusionPrefix: "Cabr",
+    fusionSuffix: "olaine",
   },
   gogoat: {
-    fusionPrefix: "Chev",
+    fusionPrefix: "Chevr",
     fusionSuffix: "evroum",
   },
   pancham: {
-    fusionPrefix: "Pandes",
-    fusionSuffix: "ègle",
+    fusionPrefix: "Pandesp",
+    fusionSuffix: "iègle",
   },
   pangoro: {
     fusionPrefix: "Pandar",
-    fusionSuffix: "are",
+    fusionSuffix: "arbare",
   },
   furfrou: {
     fusionPrefix: "Couaf",
@@ -2735,7 +2735,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "otine",
   },
   swirlix: {
-    fusionPrefix: "Sucroq",
+    fusionPrefix: "Sucroqu",
     fusionSuffix: "oquin",
   },
   slurpuff: {
@@ -2743,20 +2743,20 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "anaille",
   },
   inkay: {
-    fusionPrefix: "Sepiatop",
-    fusionSuffix: "op",
+    fusionPrefix: "Sepiat",
+    fusionSuffix: "atop",
   },
   malamar: {
     fusionPrefix: "Sepiatr",
-    fusionSuffix: "oce",
+    fusionSuffix: "atoce",
   },
   binacle: {
-    fusionPrefix: "Op",
+    fusionPrefix: "Oper",
     fusionSuffix: "ermine",
   },
   barbaracle: {
-    fusionPrefix: "Golg",
-    fusionSuffix: "athe",
+    fusionPrefix: "Golgop",
+    fusionSuffix: "opathe",
   },
   skrelp: {
     fusionPrefix: "Venal",
@@ -2764,10 +2764,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   dragalge: {
     fusionPrefix: "Krav",
-    fusionSuffix: "ech",
+    fusionSuffix: "arech",
   },
   clauncher: {
-    fusionPrefix: "Flin",
+    fusionPrefix: "Fling",
     fusionSuffix: "ingouste",
   },
   clawitzer: {
@@ -2780,11 +2780,11 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   heliolisk: {
     fusionPrefix: "Ig",
-    fusionSuffix: "olta",
+    fusionSuffix: "uolta",
   },
   tyrunt: {
     fusionPrefix: "Ptyr",
-    fusionSuffix: "idur",
+    fusionSuffix: "anidur",
   },
   tyrantrum: {
     fusionPrefix: "Rex",
@@ -2795,11 +2795,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "agara",
   },
   aurorus: {
-    fusionPrefix: "Drag",
+    fusionPrefix: "Dragm",
     fusionSuffix: "agmara",
   },
   sylveon: {
-    fusionPrefix: "Nym",
+    fusionPrefix: "Nymphal",
     fusionSuffix: "ymphali",
   },
   hawlucha: {
@@ -2823,36 +2823,36 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ucus",
   },
   goodra: {
-    fusionPrefix: "Mup",
+    fusionPrefix: "Mupl",
     fusionSuffix: "uplodocus",
   },
   klefki: {
-    fusionPrefix: "Trous",
-    fusionSuffix: "usselin",
+    fusionPrefix: "Trouss",
+    fusionSuffix: "ousselin",
   },
   phantump: {
     fusionPrefix: "Broc",
     fusionSuffix: "élôme",
   },
   trevenant: {
-    fusionPrefix: "Des",
-    fusionSuffix: "iande",
+    fusionPrefix: "Dessél",
+    fusionSuffix: "éliande",
   },
   pumpkaboo: {
-    fusionPrefix: "Pit",
-    fusionSuffix: "uille",
+    fusionPrefix: "Pitr",
+    fusionSuffix: "ouille",
   },
   gourgeist: {
-    fusionPrefix: "Ban",
-    fusionSuffix: "ye",
+    fusionPrefix: "Banshi",
+    fusionSuffix: "trouye",
   },
   bergmite: {
     fusionPrefix: "Grel",
     fusionSuffix: "elaçon",
   },
   avalugg: {
-    fusionPrefix: "Sér",
-    fusionSuffix: "awl",
+    fusionPrefix: "Sérac",
+    fusionSuffix: "crawl",
   },
   noibat: {
     fusionPrefix: "Son",
@@ -2863,11 +2863,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "erne",
   },
   xerneas: {
-    fusionPrefix: "Xer",
+    fusionPrefix: "Xern",
     fusionSuffix: "eas",
   },
   yveltal: {
-    fusionPrefix: "Yv",
+    fusionPrefix: "Yvel",
     fusionSuffix: "eltal",
   },
   zygarde: {
@@ -2875,7 +2875,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "arde",
   },
   diancie: {
-    fusionPrefix: "Dian",
+    fusionPrefix: "Dianc",
     fusionSuffix: "ancie",
   },
   hoopa: {
@@ -2887,20 +2887,20 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "anion",
   },
   rowlet: {
-    fusionPrefix: "Brin",
+    fusionPrefix: "Brind",
     fusionSuffix: "indibou",
   },
   dartrix: {
-    fusionPrefix: "Ef",
-    fusionSuffix: "efflèche",
+    fusionPrefix: "Eff",
+    fusionSuffix: "èche",
   },
   decidueye: {
     fusionPrefix: "Archéd",
-    fusionSuffix: "uc",
+    fusionSuffix: "éduc",
   },
   litten: {
     fusionPrefix: "Flamiaou",
-    fusionSuffix: "aou",
+    fusionSuffix: "iaou",
   },
   torracat: {
     fusionPrefix: "Matouf",
@@ -2923,16 +2923,16 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "oria",
   },
   pikipek: {
-    fusionPrefix: "Picas",
+    fusionPrefix: "Picass",
     fusionSuffix: "aut",
   },
   trumbeak: {
     fusionPrefix: "Picl",
-    fusionSuffix: "iron",
+    fusionSuffix: "airon",
   },
   toucannon: {
     fusionPrefix: "Baz",
-    fusionSuffix: "ucan",
+    fusionSuffix: "oucan",
   },
   yungoos: {
     fusionPrefix: "Mangl",
@@ -2963,11 +2963,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "inable",
   },
   oricorio: {
-    fusionPrefix: "Pl",
+    fusionPrefix: "Plum",
     fusionSuffix: "eline",
   },
   cutiefly: {
-    fusionPrefix: "Bom",
+    fusionPrefix: "Bomb",
     fusionSuffix: "ydou",
   },
   ribombee: {
@@ -2980,10 +2980,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   lycanroc: {
     fusionPrefix: "Loug",
-    fusionSuffix: "ugaroc",
+    fusionSuffix: "ougaroc",
   },
   wishiwashi: {
-    fusionPrefix: "Frous",
+    fusionPrefix: "Frouss",
     fusionSuffix: "ardine",
   },
   mareanie: {
@@ -2996,22 +2996,22 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   mudbray: {
     fusionPrefix: "Tib",
-    fusionSuffix: "udet",
+    fusionSuffix: "oudet",
   },
   mudsdale: {
-    fusionPrefix: "Bour",
-    fusionSuffix: "urrinos",
+    fusionPrefix: "Bourr",
+    fusionSuffix: "ourrinos",
   },
   dewpider: {
-    fusionPrefix: "Araq",
+    fusionPrefix: "Araqu",
     fusionSuffix: "aqua",
   },
   araquanid: {
-    fusionPrefix: "Taren",
+    fusionPrefix: "Tarenb",
     fusionSuffix: "ulle",
   },
   fomantis: {
-    fusionPrefix: "Miman",
+    fusionPrefix: "Mimant",
     fusionSuffix: "imantis",
   },
   lurantis: {
@@ -3023,7 +3023,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ododo",
   },
   shiinotic: {
-    fusionPrefix: "Lampig",
+    fusionPrefix: "Lampign",
     fusionSuffix: "ampignon",
   },
   salandit: {
@@ -3036,14 +3036,14 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   stufful: {
     fusionPrefix: "Noun",
-    fusionSuffix: "urson",
+    fusionSuffix: "ourson",
   },
   bewear: {
     fusionPrefix: "Chel",
     fusionSuffix: "elours",
   },
   bounsweet: {
-    fusionPrefix: "Croq",
+    fusionPrefix: "Croqu",
     fusionSuffix: "oquine",
   },
   steenee: {
@@ -3060,30 +3060,30 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   oranguru: {
     fusionPrefix: "Gourout",
-    fusionSuffix: "uroutan",
+    fusionSuffix: "ouroutan",
   },
   passimian: {
-    fusionPrefix: "Quar",
+    fusionPrefix: "Quart",
     fusionSuffix: "ermac",
   },
   wimpod: {
-    fusionPrefix: "Sov",
+    fusionPrefix: "Sovk",
     fusionSuffix: "ipou",
   },
   golisopod: {
-    fusionPrefix: "Sar",
+    fusionPrefix: "Sarm",
     fusionSuffix: "uraï",
   },
   sandygast: {
-    fusionPrefix: "Bac",
-    fusionSuffix: "ouh",
+    fusionPrefix: "Bacab",
+    fusionSuffix: "abouh",
   },
   palossand: {
     fusionPrefix: "Trép",
     fusionSuffix: "assable",
   },
   pyukumuku: {
-    fusionPrefix: "Con",
+    fusionPrefix: "Concomb",
     fusionSuffix: "ombaffe",
   },
   type_null: {
@@ -3091,8 +3091,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "e:0",
   },
   silvally: {
-    fusionPrefix: "Sil",
-    fusionSuffix: "ié",
+    fusionPrefix: "Silv",
+    fusionSuffix: "allié",
   },
   minior: {
     fusionPrefix: "Métén",
@@ -3104,27 +3104,27 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   turtonator: {
     fusionPrefix: "Boum",
-    fusionSuffix: "umata",
+    fusionSuffix: "oumata",
   },
   togedemaru: {
     fusionPrefix: "Toged",
     fusionSuffix: "aru",
   },
   mimikyu: {
-    fusionPrefix: "Mimiq",
+    fusionPrefix: "Mimiqu",
     fusionSuffix: "iqui",
   },
   bruxish: {
-    fusionPrefix: "Den",
+    fusionPrefix: "Dent",
     fusionSuffix: "icrisse",
   },
   drampa: {
     fusionPrefix: "Draïeul",
-    fusionSuffix: "eul",
+    fusionSuffix: "aïeul",
   },
   dhelmise: {
-    fusionPrefix: "Sin",
-    fusionSuffix: "ail",
+    fusionPrefix: "Sinis",
+    fusionSuffix: "istrail",
   },
   jangmo_o: {
     fusionPrefix: "Béb",
@@ -3132,11 +3132,11 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   hakamo_o: {
     fusionPrefix: "Écaïd",
-    fusionSuffix: "écaïd",
+    fusionSuffix: "aïd",
   },
   kommo_o: {
     fusionPrefix: "Ék",
-    fusionSuffix: "ïser",
+    fusionSuffix: "aïser",
   },
   tapu_koko: {
     fusionPrefix: "Tokor",
@@ -3176,18 +3176,18 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   buzzwole: {
     fusionPrefix: "Mousc",
-    fusionSuffix: "uscoto",
+    fusionSuffix: "ouscoto",
   },
   pheromosa: {
-    fusionPrefix: "Canc",
+    fusionPrefix: "Cancr",
     fusionSuffix: "elove",
   },
   xurkitree: {
-    fusionPrefix: "Câb",
-    fusionSuffix: "ère",
+    fusionPrefix: "Câbl",
+    fusionSuffix: "ifère",
   },
   celesteela: {
-    fusionPrefix: "Bam",
+    fusionPrefix: "Bamb",
     fusionSuffix: "oiselle",
   },
   kartana: {
@@ -3195,40 +3195,40 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ami",
   },
   guzzlord: {
-    fusionPrefix: "Eng",
-    fusionSuffix: "yran",
+    fusionPrefix: "Engl",
+    fusionSuffix: "outyran",
   },
   necrozma: {
-    fusionPrefix: "Nec",
+    fusionPrefix: "Necr",
     fusionSuffix: "ozma",
   },
   magearna: {
     fusionPrefix: "Magear",
-    fusionSuffix: "arna",
+    fusionSuffix: "earna",
   },
   marshadow: {
-    fusionPrefix: "Mars",
-    fusionSuffix: "ow",
+    fusionPrefix: "Marsh",
+    fusionSuffix: "adow",
   },
   poipole: {
     fusionPrefix: "Vém",
     fusionSuffix: "émini",
   },
   naganadel: {
-    fusionPrefix: "Mand",
+    fusionPrefix: "Mandr",
     fusionSuffix: "andrillon",
   },
   stakataka: {
-    fusionPrefix: "Ama-Am",
+    fusionPrefix: "Ama-",
     fusionSuffix: "-Ama",
   },
   blacephalon: {
-    fusionPrefix: "Pier",
+    fusionPrefix: "Pierr",
     fusionSuffix: "eknik",
   },
   zeraora: {
     fusionPrefix: "Zer",
-    fusionSuffix: "ora",
+    fusionSuffix: "aora",
   },
   meltan: {
     fusionPrefix: "Melt",
@@ -3243,7 +3243,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "empo",
   },
   thwackey: {
-    fusionPrefix: "Bad",
+    fusionPrefix: "Badab",
     fusionSuffix: "ouin",
   },
   rillaboom: {
@@ -3275,11 +3275,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "argus",
   },
   skwovet: {
-    fusionPrefix: "Rongour",
-    fusionSuffix: "and",
+    fusionPrefix: "Rongourm",
+    fusionSuffix: "ourmand",
   },
   greedent: {
-    fusionPrefix: "Rongr",
+    fusionPrefix: "Rongrig",
     fusionSuffix: "igou",
   },
   rookidee: {
@@ -3288,11 +3288,11 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   corvisquire: {
     fusionPrefix: "Bleus",
-    fusionSuffix: "useille",
+    fusionSuffix: "euseille",
   },
   corviknight: {
     fusionPrefix: "Corv",
-    fusionSuffix: "illus",
+    fusionSuffix: "aillus",
   },
   blipbug: {
     fusionPrefix: "Larvad",
@@ -3303,7 +3303,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "odôme",
   },
   orbeetle: {
-    fusionPrefix: "Ast",
+    fusionPrefix: "Astr",
     fusionSuffix: "onelle",
   },
   nickit: {
@@ -3311,7 +3311,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ilou",
   },
   thievul: {
-    fusionPrefix: "Roub",
+    fusionPrefix: "Roubl",
     fusionSuffix: "enard",
   },
   gossifleur: {
@@ -3319,7 +3319,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "icoton",
   },
   eldegoss: {
-    fusionPrefix: "Blan",
+    fusionPrefix: "Blanc",
     fusionSuffix: "ancoton",
   },
   wooloo: {
@@ -3331,7 +3331,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "uflon",
   },
   chewtle: {
-    fusionPrefix: "Kh",
+    fusionPrefix: "Khél",
     fusionSuffix: "ocrok",
   },
   drednaw: {
@@ -3347,8 +3347,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "udog",
   },
   rolycoly: {
-    fusionPrefix: "Charbi",
-    fusionSuffix: "charbi",
+    fusionPrefix: "Charb",
+    fusionSuffix: "arbi",
   },
   carkol: {
     fusionPrefix: "Wag",
@@ -3383,23 +3383,23 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "osier",
   },
   arrokuda: {
-    fusionPrefix: "Embroc",
+    fusionPrefix: "Embroch",
     fusionSuffix: "ochet",
   },
   barraskewda: {
-    fusionPrefix: "Has",
-    fusionSuffix: "uda",
+    fusionPrefix: "Hastac",
+    fusionSuffix: "acuda",
   },
   toxel: {
     fusionPrefix: "Tox",
-    fusionSuffix: "ap",
+    fusionSuffix: "izap",
   },
   toxtricity: {
     fusionPrefix: "Salar",
     fusionSuffix: "arsen",
   },
   sizzlipede: {
-    fusionPrefix: "Gril",
+    fusionPrefix: "Grillep",
     fusionSuffix: "attes",
   },
   centiskorch: {
@@ -3408,14 +3408,14 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   clobbopus: {
     fusionPrefix: "Poul",
-    fusionSuffix: "ulpaf",
+    fusionSuffix: "oulpaf",
   },
   grapploct: {
     fusionPrefix: "Krakos",
     fusionSuffix: "akos",
   },
   sinistea: {
-    fusionPrefix: "Théffroi",
+    fusionPrefix: "Théff",
     fusionSuffix: "éffroi",
   },
   polteageist: {
@@ -3432,26 +3432,26 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   hatterene: {
     fusionPrefix: "Sorc",
-    fusionSuffix: "ence",
+    fusionSuffix: "ilence",
   },
   impidimp: {
     fusionPrefix: "Grim",
     fusionSuffix: "alin",
   },
   morgrem: {
-    fusionPrefix: "Four",
-    fusionSuffix: "urbelin",
+    fusionPrefix: "Fourb",
+    fusionSuffix: "ourbelin",
   },
   grimmsnarl: {
-    fusionPrefix: "Ang",
-    fusionSuffix: "ath",
+    fusionPrefix: "Angol",
+    fusionSuffix: "iath",
   },
   obstagoon: {
     fusionPrefix: "Ix",
     fusionSuffix: "ixon",
   },
   perrserker: {
-    fusionPrefix: "Ber",
+    fusionPrefix: "Bers",
     fusionSuffix: "erkatt",
   },
   cursola: {
@@ -3475,7 +3475,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "èmy",
   },
   alcremie: {
-    fusionPrefix: "Charmilly",
+    fusionPrefix: "Charmill",
     fusionSuffix: "illy",
   },
   falinks: {
@@ -3491,8 +3491,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "issonille",
   },
   frosmoth: {
-    fusionPrefix: "Bel",
-    fusionSuffix: "ige",
+    fusionPrefix: "Beld",
+    fusionSuffix: "eneige",
   },
   stonjourner: {
     fusionPrefix: "Dol",
@@ -3516,7 +3516,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   copperajah: {
     fusionPrefix: "Pachyr",
-    fusionSuffix: "ah",
+    fusionSuffix: "adjah",
   },
   dracozolt: {
     fusionPrefix: "Galvagon",
@@ -3556,10 +3556,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   zamazenta: {
     fusionPrefix: "Zam",
-    fusionSuffix: "enta",
+    fusionSuffix: "azenta",
   },
   eternatus: {
-    fusionPrefix: "Éth",
+    fusionPrefix: "Éthern",
     fusionSuffix: "atos",
   },
   kubfu: {
@@ -3599,7 +3599,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "yllin",
   },
   kleavor: {
-    fusionPrefix: "Hac",
+    fusionPrefix: "Hachéc",
     fusionSuffix: "achécateur",
   },
   ursaluna: {
@@ -3611,7 +3611,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "agruel",
   },
   sneasler: {
-    fusionPrefix: "Farfurex",
+    fusionPrefix: "Farfur",
     fusionSuffix: "arfurex",
   },
   overqwil: {
@@ -3623,23 +3623,23 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "énus",
   },
   sprigatito: {
-    fusionPrefix: "Poussac",
+    fusionPrefix: "Poussach",
     fusionSuffix: "acha",
   },
   floragato: {
     fusionPrefix: "Matour",
-    fusionSuffix: "urgeon",
+    fusionSuffix: "ourgeon",
   },
   meowscarada: {
     fusionPrefix: "Miasc",
     fusionSuffix: "arade",
   },
   fuecoco: {
-    fusionPrefix: "Choc",
+    fusionPrefix: "Choch",
     fusionSuffix: "odile",
   },
   crocalor: {
-    fusionPrefix: "Crocog",
+    fusionPrefix: "Crocogr",
     fusionSuffix: "ogril",
   },
   skeledirge: {
@@ -3647,8 +3647,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "igator",
   },
   quaxly: {
-    fusionPrefix: "Coif",
-    fusionSuffix: "iffeton",
+    fusionPrefix: "Coiff",
+    fusionSuffix: "oiffeton",
   },
   quaxwell: {
     fusionPrefix: "Canarb",
@@ -3667,15 +3667,15 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "oin",
   },
   tarountula: {
-    fusionPrefix: "Tis",
+    fusionPrefix: "Tiss",
     fusionSuffix: "enboule",
   },
   spidops: {
-    fusionPrefix: "Fil",
+    fusionPrefix: "Filentr",
     fusionSuffix: "appe",
   },
   nymble: {
-    fusionPrefix: "Lill",
+    fusionPrefix: "Lilliter",
     fusionSuffix: "erelle",
   },
   lokix: {
@@ -3695,11 +3695,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "armotte",
   },
   tandemaus: {
-    fusionPrefix: "Com",
+    fusionPrefix: "Compagn",
     fusionSuffix: "agnol",
   },
   maushold: {
-    fusionPrefix: "Fam",
+    fusionPrefix: "Famign",
     fusionSuffix: "ignol",
   },
   fidough: {
@@ -3707,7 +3707,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "achiot",
   },
   dachsbun: {
-    fusionPrefix: "Brioc",
+    fusionPrefix: "Brioch",
     fusionSuffix: "ochien",
   },
   smoliv: {
@@ -3724,22 +3724,22 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   squawkabilly: {
     fusionPrefix: "Tap",
-    fusionSuffix: "oès",
+    fusionSuffix: "atoès",
   },
   nacli: {
     fusionPrefix: "Sel",
     fusionSuffix: "utin",
   },
   naclstack: {
-    fusionPrefix: "Amas",
+    fusionPrefix: "Amass",
     fusionSuffix: "assel",
   },
   garganacl: {
-    fusionPrefix: "Gigan",
+    fusionPrefix: "Gigans",
     fusionSuffix: "ansel",
   },
   charcadet: {
-    fusionPrefix: "Charbam",
+    fusionPrefix: "Charbamb",
     fusionSuffix: "ambin",
   },
   armarouge: {
@@ -3751,7 +3751,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "alame",
   },
   tadbulb: {
-    fusionPrefix: "Têtam",
+    fusionPrefix: "Têtamp",
     fusionSuffix: "ampoule",
   },
   bellibolt: {
@@ -3764,10 +3764,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   kilowattrel: {
     fusionPrefix: "Fulgul",
-    fusionSuffix: "iro",
+    fusionSuffix: "airo",
   },
   maschiff: {
-    fusionPrefix: "Gron",
+    fusionPrefix: "Grond",
     fusionSuffix: "ogue",
   },
   mabosstiff: {
@@ -3780,7 +3780,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   grafaiai: {
     fusionPrefix: "Tag-",
-    fusionSuffix: "ag",
+    fusionSuffix: "-Tag",
   },
   bramblin: {
     fusionPrefix: "Virov",
@@ -3791,7 +3791,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "orreur",
   },
   toedscool: {
-    fusionPrefix: "Terracool",
+    fusionPrefix: "Terrac",
     fusionSuffix: "erracool",
   },
   toedscruel: {
@@ -3811,15 +3811,15 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ilain",
   },
   rellor: {
-    fusionPrefix: "Léb",
+    fusionPrefix: "Léboul",
     fusionSuffix: "érou",
   },
   rabsca: {
-    fusionPrefix: "Bér",
+    fusionPrefix: "Béras",
     fusionSuffix: "asca",
   },
   flittle: {
-    fusionPrefix: "Flotil",
+    fusionPrefix: "Flotill",
     fusionSuffix: "otillon",
   },
   espathra: {
@@ -3840,15 +3840,15 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   wiglett: {
     fusionPrefix: "Taupik",
-    fusionSuffix: "upikeau",
+    fusionSuffix: "aupikeau",
   },
   wugtrio: {
-    fusionPrefix: "Triopikeau",
+    fusionPrefix: "Triopik",
     fusionSuffix: "opikeau",
   },
   bombirdier: {
-    fusionPrefix: "Les",
-    fusionSuffix: "aile",
+    fusionPrefix: "Lestomb",
+    fusionSuffix: "ombaile",
   },
   finizen: {
     fusionPrefix: "Dof",
@@ -3859,7 +3859,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "erdofin",
   },
   varoom: {
-    fusionPrefix: "Vrombi",
+    fusionPrefix: "Vromb",
     fusionSuffix: "ombi",
   },
   revavroom: {
@@ -3887,11 +3887,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ombe",
   },
   houndstone: {
-    fusionPrefix: "Tom",
+    fusionPrefix: "Tomb",
     fusionSuffix: "erro",
   },
   flamigo: {
-    fusionPrefix: "Flamen",
+    fusionPrefix: "Flamenr",
     fusionSuffix: "enroule",
   },
   cetoddle: {
@@ -3915,8 +3915,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "igon",
   },
   annihilape: {
-    fusionPrefix: "Cour",
-    fusionSuffix: "usinge",
+    fusionPrefix: "Courr",
+    fusionSuffix: "ousinge",
   },
   clodsire: {
     fusionPrefix: "Terrais",
@@ -3928,7 +3928,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   dudunsparce: {
     fusionPrefix: "Deus",
-    fusionSuffix: "usolourdo",
+    fusionSuffix: "eusolourdo",
   },
   kingambit: {
     fusionPrefix: "Scalper",
@@ -3943,27 +3943,27 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "eue",
   },
   brute_bonnet: {
-    fusionPrefix: "Fon",
+    fusionPrefix: "Fongus",
     fusionSuffix: "urie",
   },
   flutter_mane: {
     fusionPrefix: "Flott",
-    fusionSuffix: "e-Mèche",
+    fusionSuffix: "èche",
   },
   slither_wing: {
     fusionPrefix: "Ramp",
-    fusionSuffix: "iles",
+    fusionSuffix: "ailes",
   },
   sandy_shocks: {
-    fusionPrefix: "Pel",
+    fusionPrefix: "Pelag",
     fusionSuffix: "ablé",
   },
   iron_treads: {
-    fusionPrefix: "Roue-d",
+    fusionPrefix: "Rou",
     fusionSuffix: "ue-de-Fer",
   },
   iron_bundle: {
-    fusionPrefix: "Hot",
+    fusionPrefix: "Hott",
     fusionSuffix: "otte-de-Fer",
   },
   iron_hands: {
@@ -3971,7 +3971,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ume-de-Fer",
   },
   iron_jugulis: {
-    fusionPrefix: "Têtes-",
+    fusionPrefix: "Têt",
     fusionSuffix: "es-de-Fer",
   },
   iron_moth: {
@@ -3979,7 +3979,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ite-de-Fer",
   },
   iron_thorns: {
-    fusionPrefix: "Ép",
+    fusionPrefix: "Épin",
     fusionSuffix: "ine-de-Fer",
   },
   frigibax: {
@@ -3992,7 +3992,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   baxcalibur: {
     fusionPrefix: "Glaiv",
-    fusionSuffix: "ivodo",
+    fusionSuffix: "aivodo",
   },
   gimmighoul: {
     fusionPrefix: "Mord",
@@ -4003,7 +4003,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "omago",
   },
   wo_chien: {
-    fusionPrefix: "Chon",
+    fusionPrefix: "Chong",
     fusionSuffix: "ongjian",
   },
   chien_pao: {
@@ -4023,7 +4023,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "it-Lune",
   },
   iron_valiant: {
-    fusionPrefix: "Garde-d",
+    fusionPrefix: "Gard",
     fusionSuffix: "arde-de-Fer",
   },
   koraidon: {
@@ -4035,11 +4035,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "iraidon",
   },
   walking_wake: {
-    fusionPrefix: "Serpen",
-    fusionSuffix: "-Eau",
+    fusionPrefix: "Serpent",
+    fusionSuffix: "e-Eau",
   },
   iron_leaves: {
-    fusionPrefix: "Vert-",
+    fusionPrefix: "Ver",
     fusionSuffix: "ert-de-Fer",
   },
   dipplin: {
@@ -4047,11 +4047,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "our",
   },
   poltchageist: {
-    fusionPrefix: "Poltc",
+    fusionPrefix: "Poltch",
     fusionSuffix: "ageist",
   },
   sinistcha: {
-    fusionPrefix: "Théffroyab",
+    fusionPrefix: "Théffroyabl",
     fusionSuffix: "yable",
   },
   okidogi: {
@@ -4064,14 +4064,14 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   fezandipiti: {
     fusionPrefix: "Fav",
-    fusionSuffix: "anos",
+    fusionSuffix: "ianos",
   },
   ogerpon: {
     fusionPrefix: "Og",
     fusionSuffix: "erpon",
   },
   archaludon: {
-    fusionPrefix: "Pond",
+    fusionPrefix: "Pondr",
     fusionSuffix: "ondralugon",
   },
   hydrapple: {
@@ -4079,19 +4079,19 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "orochi",
   },
   gouging_fire: {
-    fusionPrefix: "Feu-P",
-    fusionSuffix: "erçant",
+    fusionPrefix: "Feu",
+    fusionSuffix: "eu-Perçant",
   },
   raging_bolt: {
     fusionPrefix: "Ir",
-    fusionSuffix: "udre",
+    fusionSuffix: "e-Foudre",
   },
   iron_boulder: {
-    fusionPrefix: "Roc-d",
+    fusionPrefix: "Roc",
     fusionSuffix: "oc-de-Fer",
   },
   iron_crown: {
-    fusionPrefix: "Chef-",
+    fusionPrefix: "Ch",
     fusionSuffix: "ef-de-Fer",
   },
   terapagos: {
@@ -4099,7 +4099,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "erapagos",
   },
   pecharunt: {
-    fusionPrefix: "Pêc",
+    fusionPrefix: "Pêch",
     fusionSuffix: "aminus",
   },
   alola_rattata: {
@@ -4120,15 +4120,15 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   alola_sandslash: {
     fusionPrefix: "Sabl",
-    fusionSuffix: "ireau",
+    fusionSuffix: "aireau",
   },
   alola_vulpix: {
     fusionPrefix: "Goupix",
-    fusionSuffix: "upix",
+    fusionSuffix: "oupix",
   },
   alola_ninetales: {
     fusionPrefix: "Feunar",
-    fusionSuffix: "unard",
+    fusionSuffix: "eunard",
   },
   alola_diglett: {
     fusionPrefix: "Taupiq",
@@ -4140,7 +4140,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   alola_meowth: {
     fusionPrefix: "Miaous",
-    fusionSuffix: "aouss",
+    fusionSuffix: "iaouss",
   },
   alola_persian: {
     fusionPrefix: "Per",
@@ -4148,7 +4148,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   alola_geodude: {
     fusionPrefix: "Rac",
-    fusionSuffix: "illou",
+    fusionSuffix: "aillou",
   },
   alola_graveler: {
     fusionPrefix: "Grav",
@@ -4172,7 +4172,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   alola_marowak: {
     fusionPrefix: "Ossat",
-    fusionSuffix: "ossatueur",
+    fusionSuffix: "atueur",
   },
   eternal_floette: {
     fusionPrefix: "Floet",
@@ -4211,7 +4211,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ime",
   },
   galar_articuno: {
-    fusionPrefix: "Art",
+    fusionPrefix: "Artik",
     fusionSuffix: "odin",
   },
   galar_zapdos: {
@@ -4219,7 +4219,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ecthor",
   },
   galar_moltres: {
-    fusionPrefix: "Sul",
+    fusionPrefix: "Sulf",
     fusionSuffix: "ulfura",
   },
   galar_slowking: {
@@ -4231,7 +4231,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "orayon",
   },
   galar_zigzagoon: {
-    fusionPrefix: "Zig",
+    fusionPrefix: "Zigz",
     fusionSuffix: "aton",
   },
   galar_linoone: {
@@ -4243,7 +4243,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ond",
   },
   galar_darmanitan: {
-    fusionPrefix: "Darumac",
+    fusionPrefix: "Darumach",
     fusionSuffix: "acho",
   },
   galar_yamask: {
@@ -4271,7 +4271,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ectrode",
   },
   hisui_typhlosion: {
-    fusionPrefix: "Typh",
+    fusionPrefix: "Typhl",
     fusionSuffix: "osion",
   },
   hisui_qwilfish: {
@@ -4300,14 +4300,14 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   hisui_braviary: {
     fusionPrefix: "Guer",
-    fusionSuffix: "igle",
+    fusionSuffix: "aigle",
   },
   hisui_sliggoo: {
     fusionPrefix: "Colim",
     fusionSuffix: "ucus",
   },
   hisui_goodra: {
-    fusionPrefix: "Mup",
+    fusionPrefix: "Mupl",
     fusionSuffix: "uplodocus",
   },
   hisui_avalugg: {
