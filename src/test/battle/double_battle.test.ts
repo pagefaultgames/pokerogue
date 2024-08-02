@@ -34,7 +34,7 @@ describe("Test Battle Phase", () => {
   it("3v2 edge case", async() => {
     game.override.battleType("double");
     game.override.enemySpecies(Species.SHEDINJA);
-    game.override.enemyMoveset([Moves.DESTINY_BOND]);
+    game.override.enemyMoveset([Moves.DESTINY_BOND,Moves.DESTINY_BOND,Moves.DESTINY_BOND,Moves.DESTINY_BOND]);
     game.override.enemyPassiveAbility(Abilities.PRANKSTER);
     game.override.moveset([Moves.AERIAL_ACE]);
     await game.startBattle([
