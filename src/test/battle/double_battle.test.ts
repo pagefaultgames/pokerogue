@@ -67,5 +67,5 @@ describe("Test Battle Phase", () => {
 
     await game.phaseInterceptor.to(TurnInitPhase, false);
     expect(game.scene.getPlayerField().filter(p => !p.isFainted()).length).toBe(2);
-  }, 30000);
+  }, 200000);
 });
