@@ -29,13 +29,14 @@ describe("Test Battle Phase", () => {
     game = new GameManager(phaserGame);
   });
 
-  it("3v2 edge case: double-battle player double faint same round and revive one, next double battle summon two", async() => {
+  // double-battle player's pokemon both fainted in same round, then revive one, and next double battle summons two player's pokemon successfully.
+  // (There were bugs that either only summon one when can summon two, player stuck in switchPhase etc)
+  it("3v2 edge case", async() => {
     game.override.battleType("double");
     game.override.enemySpecies(Species.SHEDINJA);
-    game.override.enemyMoveset([Moves.DESTINY_BOND,Moves.DESTINY_BOND,Moves.DESTINY_BOND,Moves.DESTINY_BOND]);
+    game.override.enemyMoveset([Moves.DESTINY_BOND]);
     game.override.enemyPassiveAbility(Abilities.PRANKSTER);
-    game.override.startingWave(6);
-    game.override.moveset([Moves.SHADOW_BALL,Moves.SHADOW_BALL,Moves.SHADOW_BALL,Moves.SHADOW_BALL]);
+    game.override.moveset([Moves.AERIAL_ACE]);
     await game.startBattle([
       Species.BULBASAUR,
       Species.CHARIZARD,
@@ -43,11 +44,11 @@ describe("Test Battle Phase", () => {
     ]);
     const enemyToCheck = game.scene.getEnemyField();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SHADOW_BALL));
+    game.doAttack(getMovePosition(game.scene, 0, Moves.AERIAL_ACE));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(enemyToCheck[0].getBattlerIndex());
 
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SHADOW_BALL));
+    game.doAttack(getMovePosition(game.scene, 1, Moves.AERIAL_ACE));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(enemyToCheck[1].getBattlerIndex());
 
