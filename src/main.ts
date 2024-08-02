@@ -8,14 +8,13 @@ import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
 import { LoadingScene } from "./loading-scene";
 
-async function enableApiMocking() {
-  if (Number(import.meta.env.VITE_MOCK_API) === 0) {
-    return;
+async function enableApiMocking(): Promise<ServiceWorkerRegistration | void> {
+  if (Number(import.meta.env.VITE_MOCK_API) === 1) {
+    const { worker } = await import("./mocks/msw/msw-browser");
+    return worker.start({ onUnhandledRequest: "bypass" });
   }
-  const { worker } = await import("./mocks/browser");
-  // `worker.start()` returns a Promise that resolves
-  // once the Service Worker is up and ready to intercept requests.
-  return worker.start({ onUnhandledRequest: "bypass" });
+
+  return Promise.resolve();
 }
 
 // Catch global errors and display them in an alert so users can report the issue.
@@ -128,9 +127,9 @@ declare module "phaser" {
        * @param x The relative x position
        * @param y The relative y position
        */
-      setPositionRelative(guideObject: any, x: number, y: number): void;
-    }
-    interface Text {
+			setPositionRelative(guideObject: any, x: number, y: number): void;
+		}
+		interface Text {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
@@ -173,8 +172,7 @@ enableApiMocking()
   .then((jsonResponse) => {
     startGame();
     game["manifest"] = jsonResponse.manifest;
-  })
-  .catch(() => {
+  }).catch(() => {
     // Manifest not found (likely local build)
     startGame();
   });

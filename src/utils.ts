@@ -270,12 +270,11 @@ export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${windo
 // Set the server URL based on whether it's local or not
 export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
-export const isLocalServerConnected = true;
+export let isLocalServerConnected = true;
 
 export const isBeta = import.meta.env.MODE === "beta"; // this checks to see if the env mode is development. Technically this gives the same value for beta AND for dev envs
 
 export function setCookie(cName: string, cValue: string): void {
-  console.log("setCookie: ", cName, cValue);
   const expiration = new Date();
   expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
   document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=${expiration.toUTCString()}`;
@@ -306,8 +305,22 @@ export function getCookie(cName: string): string {
   return "";
 }
 
+/**
+ * When locally running the game, "pings" the local server
+ * with a GET request to verify if a server is running,
+ * sets isLocalServerConnected based on results
+ */
+export function localPing() {
+  if (isLocal) {
+    apiFetch("game/titlestats")
+      .then(resolved => isLocalServerConnected = true,
+        rejected => isLocalServerConnected = false
+      );
+  }
+}
+
 export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
-  return new Promise((resolve, reject) => {
+  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
     const request = {};
     if (authed) {
       const sId = getCookie(sessionIdKey);
@@ -318,11 +331,11 @@ export function apiFetch(path: string, authed: boolean = false): Promise<Respons
     fetch(`${apiUrl}/${path}`, request)
       .then(response => resolve(response))
       .catch(err => reject(err));
-  });
+  }) : new Promise(() => {});
 }
 
 export function apiPost(path: string, data?: any, contentType: string = "application/json", authed: boolean = false): Promise<Response> {
-  return new Promise((resolve, reject) => {
+  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
     const headers = {
       "Accept": contentType,
       "Content-Type": contentType,
@@ -336,7 +349,7 @@ export function apiPost(path: string, data?: any, contentType: string = "applica
     fetch(`${apiUrl}/${path}`, { method: "POST", headers: headers, body: data })
       .then(response => resolve(response))
       .catch(err => reject(err));
-  });
+  }) : new Promise(() => {});
 }
 
 /** Alias for the constructor of a class */
