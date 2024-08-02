@@ -1966,6 +1966,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterContainer.forEach(container => {
       container.setVisible(false);
 
+      container.cost = this.scene.gameData.getSpeciesStarterValue(container.species.speciesId);
+
       // First, ensure you have the caught attributes for the species else default to bigint 0
       const caughtVariants = this.scene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
 
