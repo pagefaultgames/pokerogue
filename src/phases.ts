@@ -2171,6 +2171,15 @@ export class CommandPhase extends FieldPhase {
   }
 }
 
+/**
+ * Phase for determining an enemy AI's action for the next turn.
+ * During this phase, the enemy decides whether to switch (if it has a trainer)
+ * or to use a move from its moveset.
+ *
+ * For more information on how the Enemy AI works, see docs/enemy-ai.md
+ * @see {@linkcode Pokemon.getMatchupScore}
+ * @see {@linkcode EnemyPokemon.getNextMove}
+ */
 export class EnemyCommandPhase extends FieldPhase {
   protected fieldIndex: integer;
 
@@ -2189,6 +2198,15 @@ export class EnemyCommandPhase extends FieldPhase {
 
     const trainer = battle.trainer;
 
+    /**
+     * If the enemy has a trainer, decide whether or not the enemy should switch
+     * to another member in its party.
+     *
+     * This block compares the active enemy Pokemon's {@linkcode Pokemon.getMatchupScore | matchup score}
+     * against the active player Pokemon with the enemy party's other non-fainted Pokemon. If a party
+     * member's matchup score is 3x the active enemy's score (or 2x for "boss" trainers),
+     * the enemy will switch to that Pokemon.
+     */
     if (trainer && !enemyPokemon.getMoveQueue().length) {
       const opponents = enemyPokemon.getOpponents();
 
@@ -2220,6 +2238,7 @@ export class EnemyCommandPhase extends FieldPhase {
       }
     }
 
+    /** Select a move to use (and a target to use it against, if applicable) */
     const nextMove = enemyPokemon.getNextMove();
 
     this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
@@ -4457,9 +4476,10 @@ export class SwitchPhase extends BattlePhase {
 
   start() {
     super.start();
+    const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());
 
     // Skip modal switch if impossible
-    if (this.isModal && !this.scene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
+    if (this.isModal && (!availablePartyMembers.filter(p => !p.isActive(true)).length || (!this.scene.currentBattle.started && availablePartyMembers.length === 1))) {
       return super.end();
     }
 
@@ -4469,7 +4489,7 @@ export class SwitchPhase extends BattlePhase {
     }
 
     // Override field index to 0 in case of double battle where 2/3 remaining legal party members fainted at once
-    const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? this.fieldIndex : 0;
+    const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || availablePartyMembers.length > 1 ? this.fieldIndex : 0;
 
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {

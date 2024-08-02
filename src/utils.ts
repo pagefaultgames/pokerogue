@@ -165,40 +165,20 @@ export function getPlayTimeString(totalSeconds: integer): string {
   return `${days.padStart(2, "0")}:${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:${seconds.padStart(2, "0")}`;
 }
 
-export function binToDec(input: string): integer {
-  const place: integer[] = [];
-  const binary: string[] = [];
-
-  let decimalNum = 0;
-
-  for (let i = 0; i < input.length; i++) {
-    binary.push(input[i]);
-    place.push(Math.pow(2, i));
-    decimalNum += place[i] * parseInt(binary[i]);
-  }
-
-  return decimalNum;
-}
-
-export function decToBin(input: integer): string {
-  let bin = "";
-  let intNum = input;
-  while (intNum > 0) {
-    bin = intNum % 2 ? `1${bin}` : `0${bin}`;
-    intNum = Math.floor(intNum * 0.5);
-  }
-
-  return bin;
-}
-
-export function getIvsFromId(id: integer): integer[] {
+/**
+ * Generates IVs from a given {@linkcode id} by extracting 5 bits at a time
+ * starting from the least significant bit up to the 30th most significant bit.
+ * @param id 32-bit number
+ * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
+ */
+export function getIvsFromId(id: number): number[] {
   return [
-    binToDec(decToBin(id).substring(0, 5)),
-    binToDec(decToBin(id).substring(5, 10)),
-    binToDec(decToBin(id).substring(10, 15)),
-    binToDec(decToBin(id).substring(15, 20)),
-    binToDec(decToBin(id).substring(20, 25)),
-    binToDec(decToBin(id).substring(25, 30))
+    (id & 0x3E000000) >>> 25,
+    (id & 0x01F00000) >>> 20,
+    (id & 0x000F8000) >>> 15,
+    (id & 0x00007C00) >>> 10,
+    (id & 0x000003E0) >>> 5,
+    (id & 0x0000001F)
   ];
 }
 

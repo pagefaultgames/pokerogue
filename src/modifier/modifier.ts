@@ -1579,11 +1579,11 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
     const pokemon = args[0] as Pokemon;
     pokemon.natureOverride = this.nature;
     let speciesId = pokemon.species.speciesId;
-    pokemon.scene.gameData.dexData[speciesId].natureAttr |= Math.pow(2, this.nature + 1);
+    pokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
 
     while (pokemonPrevolutions.hasOwnProperty(speciesId)) {
       speciesId = pokemonPrevolutions[speciesId];
-      pokemon.scene.gameData.dexData[speciesId].natureAttr |= Math.pow(2, this.nature + 1);
+      pokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
     }
 
     return true;
