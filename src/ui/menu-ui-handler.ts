@@ -75,9 +75,6 @@ export default class MenuUiHandler extends MessageUiHandler {
       { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
     ];
 
-    console.log("currentMode", ui.getModeChain());
-    console.log("menuUiHandler:render", this.excludedMenus());
-
     this.menuOptions = Utils.getEnumKeys(MenuOptions)
       .map(m => parseInt(MenuOptions[m]) as MenuOptions)
       .filter(m => {
@@ -335,8 +332,6 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     if (button === Button.ACTION) {
       let adjustedCursor = this.cursor;
-      console.log("menus", this.excludedMenus().find(e => e.condition).options.sort());
-      console.log("cursor", adjustedCursor);
       for (const imo of this.excludedMenus().find(e => e.condition).options.sort()) {
         if (adjustedCursor >= imo) {
           adjustedCursor++;
@@ -344,7 +339,6 @@ export default class MenuUiHandler extends MessageUiHandler {
           break;
         }
       }
-      console.log("adjustedCursor2", adjustedCursor);
       switch (adjustedCursor) {
       case MenuOptions.GAME_SETTINGS:
         ui.setOverlayMode(Mode.SETTINGS);
