@@ -13,7 +13,6 @@ async function enableApiMocking(): Promise<ServiceWorkerRegistration | void> {
     const { worker } = await import("./mocks/msw/msw-browser");
     return worker.start({ onUnhandledRequest: "bypass" });
   }
-  console.log("API Mocking disabled.");
   return Promise.resolve();
 }
 
