@@ -6740,7 +6740,7 @@ export function initMoves() {
         && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1)
       .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
-      .attr(MessageHeaderAttr, (user, move) => getPokemonMessage(user, " is tightening its focus!"))
+      .attr(MessageHeaderAttr, (user, move) => i18next.t("moveTriggers:isTighteningFocus"))
       .punchingMove()
       .ignoresVirtual()
       .condition((user, target, move) => !user.turnData.attacksReceived.find(r => r.damage)),
