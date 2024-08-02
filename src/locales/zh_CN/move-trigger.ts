@@ -52,7 +52,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "addType": "{{pokemonName}}\n增加了{{typeName}}属性！",
   "cannotUseMove": "{{pokemonName}}\n无法使用{{moveName}}！",
   "healHp": "{{pokemonName}}的\n体力回复了！",
-  "sacrificialFullRestore": "治愈之愿\n在{{target}}身上实现了！",
+  "sacrificialFullRestore": "{{pokemonName}}的\n治愈之愿实现了！",
   "invertStats": "{{pokemonName}}的\n能力变化颠倒过来了！",
   "resetStats": "{{pokemonName}}的\n能力变化复原了！",
   "faintCountdown": "{{pokemonName}}\n将在{{turnCount}}回合后灭亡！",
