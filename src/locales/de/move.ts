@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/interfaces/locales";
 
 export const move: MoveTranslationEntries = {
   "pound": {
@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   "bouncyBubble": {
     name: "Blubbsauger",
-    effect: "Evoli greift mit Wasserblasen an. Evolis KP werden um die Hälfte des vom Wasser angerichteten Schadens geheilt."
+    effect: "Der Anwender greift mit Wasserblasen an. Seine KP werden in Höhe des vom Wasser angerichteten Schadens geheilt."
   },
   "buzzyBuzz": {
     name: "Knisterladung",
@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   "dynamaxCannon": {
     name: "Dynamax-Kanone",
-    effect: "Der Anwender schießt einen Strahl aus seinem Kern ab. Dynamaximierte Ziele erleiden doppelten Schaden."
+    effect: "Der Anwender schießt einen Strahl aus seinem Kern ab. Verursacht bis zu doppelt so viel Schaden, wenn das Level des Gegners höher als die Levelgrenze ist."
   },
   "snipeShot": {
     name: "Präzisionsschuss",

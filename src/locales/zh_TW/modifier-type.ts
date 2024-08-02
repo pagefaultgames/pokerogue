@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -59,10 +59,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "一隻寶可夢的{{moveType}}系招式威力提升20%。",
     },
     PokemonLevelIncrementModifierType: {
-      description: "一隻寶可夢等級提升1級。",
+      description: "Increases a Pokémon's level by {{levels}}.",
     },
     AllPokemonLevelIncrementModifierType: {
-      description: "所有成員寶可夢等級提升1級。",
+      description: "Increases all party members' level by {{levels}}.",
     },
     PokemonBaseStatBoosterModifierType: {
       description:
@@ -153,7 +153,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
     SACRED_ASH: { name: "聖灰" },
     REVIVER_SEED: {
       name: "復活種子",
-      description: "恢復1只瀕死寶可夢的HP至1/2。",
+      description: "受到技能攻擊傷害瀕死時，\n恢復該瀕死寶可夢的HP至1/2。",
+    },
+    WHITE_HERB: {
+      name: "White Herb",
+      description: "An item to be held by a Pokémon. It will restore any lowered stat in battle.",
     },
     ETHER: { name: "PP單項小補劑" },
     MAX_ETHER: { name: "PP單項全補劑" },
@@ -187,6 +191,18 @@ export const modifierType: ModifierTypeTranslationEntries = {
     LUCKY_EGG: { name: "幸運蛋" },
     GOLDEN_EGG: { name: "金蛋" },
     SOOTHE_BELL: { name: "安撫之鈴" },
+    SCOPE_LENS: {
+      name: "焦點鏡",
+      description: "能看見弱點的鏡片。攜帶它的寶可夢的招式 會變得容易擊中要害。"
+    },
+    LEEK: {
+      name: "大蔥",
+      description: "非常長且堅硬的莖。讓大蔥鴨攜帶後，招式會 變得容易擊中要害。"
+    },
+    EVIOLITE: {
+      name: "進化奇石",
+      description: "進化的神奇石塊。攜帶後，還能進化的寶可夢的 防禦和特防就會提高。"
+    },
     SOUL_DEW: {
       name: "心之水滴",
       description: "增加寶可夢性格影響10% (加算)。",
@@ -243,14 +259,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
                 "攜帶該道具的寶可夢在攻擊對方成功造成傷\n害時，攜帶者的HP會恢復其所造成傷害\n的1/8。",
     },
     TOXIC_ORB: {
-      name: "Toxic Orb",
+      name: "劇毒寶珠",
       description:
-                "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle"
+                "觸碰後會放出毒的神奇寶珠。\n攜帶後，在戰鬥時會變成劇毒狀態。"
     },
     FLAME_ORB: {
-      name: "Flame Orb",
+      name: "火焰寶珠",
       description:
-                "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle"
+                "觸碰後會放出熱量的神奇寶珠。\n攜帶後，在戰鬥時會變成灼傷狀態。"
     },
     BATON: {
       name: "接力棒",
@@ -297,6 +313,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "增加1%野生融合寶可夢出現概率。",
     },
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "電氣球", description: "讓皮卡丘攜帶後，攻擊和特攻就會 提高的神奇之球。" },
+    "THICK_CLUB": { name: "粗骨頭", description: "某種堅硬的骨頭。讓卡拉卡拉或嘎啦嘎啦攜帶後，攻擊就會提高。" },
+    "METAL_POWDER": { name: "金屬粉", description: "讓百變怪攜帶後，防禦就會提高的神奇粉末。非常細緻堅硬。" },
+    "QUICK_POWDER": { name: "速度粉", description: "讓百變怪攜帶後，速度就會提高的神奇粉末。非常細緻堅硬。" }
+  },
   TempBattleStatBoosterItem: {
     x_attack: "力量強化",
     x_defense: "防禦強化",
@@ -306,6 +328,19 @@ export const modifierType: ModifierTypeTranslationEntries = {
     x_accuracy: "命中強化",
     dire_hit: "要害攻擊",
   },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "攻擊",
+    "DEF": "防禦",
+    "SPATK": "特攻",
+    "SPDEF": "特防",
+    "SPD": "速度",
+    "ACC": "命中",
+    "CRIT": "會心",
+    "EVA": "閃避",
+    "DEFAULT": "???",
+  },
+
   AttackTypeBoosterItem: {
     silk_scarf: "絲綢圍巾",
     black_belt: "黑帶",
@@ -442,5 +477,43 @@ export const modifierType: ModifierTypeTranslationEntries = {
     BURN_DRIVE: "火焰卡帶",
     CHILL_DRIVE: "冰凍卡帶",
     DOUSE_DRIVE: "水流卡帶",
+
+    "FIST_PLATE": "拳頭石板",
+    "SKY_PLATE": "藍天石板",
+    "TOXIC_PLATE": "劇毒石板",
+    "EARTH_PLATE": "大地石板",
+    "STONE_PLATE": "岩石石板",
+    "INSECT_PLATE": "玉蟲石板",
+    "SPOOKY_PLATE": "妖怪石板",
+    "IRON_PLATE": "鋼鐵石板",
+    "FLAME_PLATE": "火球石板",
+    "SPLASH_PLATE": "水滴石板",
+    "MEADOW_PLATE": "碧綠石板",
+    "ZAP_PLATE": "雷電石板",
+    "MIND_PLATE": "神奇石板",
+    "ICICLE_PLATE": "冰柱石板",
+    "DRACO_PLATE": "龍之石板",
+    "DREAD_PLATE": "惡顏石板",
+    "PIXIE_PLATE": "妖精石板",
+    "BLANK_PLATE": "淨空石板",
+    "LEGEND_PLATE": "傳說石板",
+    "FIGHTING_MEMORY": "戰鬥記憶碟",
+    "FLYING_MEMORY": "飛翔記憶碟",
+    "POISON_MEMORY": "毒記憶碟",
+    "GROUND_MEMORY": "大地記憶碟",
+    "ROCK_MEMORY": "岩石記憶碟",
+    "BUG_MEMORY": "蟲子記憶碟",
+    "GHOST_MEMORY": "幽靈記憶碟",
+    "STEEL_MEMORY": "鋼鐵記憶碟",
+    "FIRE_MEMORY": "火焰記憶碟",
+    "WATER_MEMORY": "清水記憶碟",
+    "GRASS_MEMORY": "青草記憶碟",
+    "ELECTRIC_MEMORY": "電子記憶碟",
+    "PSYCHIC_MEMORY": "精神記憶碟",
+    "ICE_MEMORY": "冰雪記憶碟",
+    "DRAGON_MEMORY": "龍記憶碟",
+    "DARK_MEMORY": "黑暗記憶碟",
+    "FAIRY_MEMORY": "妖精記憶碟",
+    "BLANK_MEMORY": "空白記憶碟",
   },
 } as const;

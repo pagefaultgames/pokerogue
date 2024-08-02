@@ -5,7 +5,7 @@ import MessageUiHandler from "./ui/message-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 import {Setting, SettingKeys, settingIndex} from "./system/settings/settings";
 import SettingsUiHandler from "./ui/settings/settings-ui-handler";
-import {Button} from "./enums/buttons";
+import {Button} from "#enums/buttons";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import BattleScene from "./battle-scene";
@@ -162,20 +162,13 @@ export class UiInputs {
       }
     case Mode.TITLE:
     case Mode.COMMAND:
-    case Mode.FIGHT:
-    case Mode.BALL:
-    case Mode.TARGET_SELECT:
-    case Mode.SAVE_SLOT:
-    case Mode.PARTY:
-    case Mode.SUMMARY:
-    case Mode.STARTER_SELECT:
-    case Mode.OPTION_SELECT:
+    case Mode.MODIFIER_SELECT:
       this.scene.ui.setOverlayMode(Mode.MENU);
       break;
-    case Mode.CONFIRM:
+    case Mode.STARTER_SELECT:
+      this.buttonTouch();
+      break;
     case Mode.MENU:
-    case Mode.SETTINGS:
-    case Mode.ACHIEVEMENTS:
       this.scene.ui.revertMode();
       this.scene.playSound("select");
       break;
@@ -197,12 +190,12 @@ export class UiInputs {
   buttonSpeedChange(up = true): void {
     const settingGameSpeed = settingIndex(SettingKeys.Game_Speed);
     if (up && this.scene.gameSpeed < 5) {
-      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Setting[settingGameSpeed].options.indexOf(`${this.scene.gameSpeed}x`) + 1);
+      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Setting[settingGameSpeed].options.findIndex((item) => item.label === `${this.scene.gameSpeed}x`) + 1);
       if (this.scene.ui?.getMode() === Mode.SETTINGS) {
         (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
       }
     } else if (!up && this.scene.gameSpeed > 1) {
-      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Math.max(Setting[settingGameSpeed].options.indexOf(`${this.scene.gameSpeed}x`) - 1, 0));
+      this.scene.gameData.saveSetting(SettingKeys.Game_Speed, Math.max(Setting[settingGameSpeed].options.findIndex((item) => item.label === `${this.scene.gameSpeed}x`) - 1, 0));
       if (this.scene.ui?.getMode() === Mode.SETTINGS) {
         (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
       }

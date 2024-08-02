@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -6,7 +6,8 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
  * account interactions, descriptive text, etc.
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
-  "confirmStartTeam":"¿Comenzar con estos Pokémon?",
+  "confirmStartTeam": "¿Comenzar con estos Pokémon?",
+  "invalidParty": "¡Este equipo no es válido!",
   "gen1": "I",
   "gen2": "II",
   "gen3": "III",
@@ -21,21 +22,24 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "passive": "Pasiva:",
   "nature": "Natur:",
   "eggMoves": "Mov. Huevo",
-  "start": "Iniciar",
-  "addToParty": "Añadir a Equipo",
+  "addToParty": "Añadir al Equipo",
+  "removeFromParty": "Excluir del Equipo",
   "toggleIVs": "Mostrar IVs",
-  "manageMoves": "Gestionar Movs.",
+  "manageMoves": "Cambiar movs.",
+  "manageNature": "Cambiar natur.",
   "useCandies": "Usar Caramelos",
+  "selectNature": "Elige Natur.",
   "selectMoveSwapOut": "Elige el movimiento que sustituir.",
   "selectMoveSwapWith": "Elige el movimiento que sustituirá a",
   "unlockPassive": "Añadir Pasiva",
   "reduceCost": "Reducir Coste",
-  "cycleShiny": ": Cambiar Shiny",
-  "cycleForm": ": Cambiar Forma",
-  "cycleGender": ": Cambiar Género",
-  "cycleAbility": ": Cambiar Habilidad",
-  "cycleNature": ": Cambiar Naturaleza",
-  "cycleVariant": ": Cambiar Variante",
+  "sameSpeciesEgg": "Buy an Egg",
+  "cycleShiny": ": Shiny",
+  "cycleForm": ": Forma",
+  "cycleGender": ": Género",
+  "cycleAbility": ": Habilidad",
+  "cycleNature": ": Naturaleza",
+  "cycleVariant": ": Variante",
   "enablePassive": "Activar Pasiva",
   "disablePassive": "Desactivar Pasiva",
   "locked": "Bloqueado",

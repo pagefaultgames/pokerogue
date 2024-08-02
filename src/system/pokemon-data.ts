@@ -1,22 +1,23 @@
 import { BattleType } from "../battle";
 import BattleScene from "../battle-scene";
-import { Biome } from "../data/enums/biome";
 import { Gender } from "../data/gender";
 import { Nature } from "../data/nature";
 import { PokeballType } from "../data/pokeball";
 import { getPokemonSpecies } from "../data/pokemon-species";
-import { Species } from "../data/enums/species";
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "../data/trainer-config";
-import { Moves } from "../data/enums/moves";
 import { Variant } from "#app/data/variant";
 import { loadBattlerTag } from "../data/battler-tags";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 
 export default class PokemonData {
   public id: integer;
   public player: boolean;
   public species: Species;
+  public nickname: string;
   public formIndex: integer;
   public abilityIndex: integer;
   public passive: boolean;
@@ -50,14 +51,16 @@ export default class PokemonData {
   public fusionLuck: integer;
 
   public boss: boolean;
+  public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
-    const sourcePokemon = source instanceof Pokemon ? source as Pokemon : null;
+    const sourcePokemon = source instanceof Pokemon ? source : null;
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
     this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;
+    this.nickname = sourcePokemon ? sourcePokemon.nickname : source.nickname;
     this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
     this.passive = source.passive;
@@ -96,6 +99,7 @@ export default class PokemonData {
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
+      this.bossSegments = source.bossSegments;
     }
 
     if (sourcePokemon) {
@@ -121,6 +125,7 @@ export default class PokemonData {
         this.summonData.disabledMove = source.summonData.disabledMove;
         this.summonData.disabledTurns = source.summonData.disabledTurns;
         this.summonData.abilitySuppressed = source.summonData.abilitySuppressed;
+        this.summonData.abilitiesApplied = source.summonData.abilitiesApplied;
 
         this.summonData.ability = source.summonData.ability;
         this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));
@@ -138,7 +143,11 @@ export default class PokemonData {
   toPokemon(scene: BattleScene, battleType?: BattleType, partyMemberIndex: integer = 0, double: boolean = false): Pokemon {
     const species = getPokemonSpecies(this.species);
     const ret: Pokemon = this.player
-      ? scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this)
+      ? scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this, (playerPokemon) => {
+        if (this.nickname) {
+          playerPokemon.nickname = this.nickname;
+        }
+      })
       : scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
     if (this.summonData) {
       ret.primeSummonData(this.summonData);

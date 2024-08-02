@@ -31,6 +31,7 @@ export default class MockSprite {
     };
     this.anims = {
       pause: () => null,
+      stop: () => null,
     };
   }
 
@@ -90,6 +91,10 @@ export default class MockSprite {
     return this.phaserSprite.setPosition(x, y);
   }
 
+  setRotation(radians) {
+    return this.phaserSprite.setRotation(radians);
+  }
+
   stop() {
     return this.phaserSprite.stop();
   }
@@ -122,6 +127,10 @@ export default class MockSprite {
     return this.phaserSprite.setPositionRelative(source, x, y);
   }
 
+  setY(y) {
+    return this.phaserSprite.setY(y);
+  }
+
   setCrop(x, y, width, height) {
     // Sets the crop size of this Game Object.
     return this.phaserSprite.setCrop(x, y, width, height);
@@ -143,6 +152,7 @@ export default class MockSprite {
 
   play() {
     // return this.phaserSprite.play();
+    return this;
   }
 
   setPipelineData(key, value) {

@@ -1,4 +1,4 @@
-import { AbilityTranslationEntries } from "#app/plugins/i18n.js";
+import { AbilityTranslationEntries } from "#app/interfaces/locales.js";
 
 export const ability: AbilityTranslationEntries = {
   "stench": {

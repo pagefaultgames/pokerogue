@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const menuUiHandler: SimpleTranslationEntries = {
   "GAME_SETTINGS": "Paramètres",
@@ -18,6 +18,11 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "Sélectionnez l’emplacement depuis lequel exporter les données.",
   "importData": "Importer données",
   "exportData": "Exporter données",
+  "linkDiscord": "Lier à Discord",
+  "unlinkDiscord": "Délier Discord",
+  "linkGoogle": "Lier à Google",
+  "unlinkGoogle": "Délier Google",
   "cancel": "Retour",
-  "losingProgressionWarning": "Vous allez perdre votre progression depuis le début du combat. Continuer ?"
+  "losingProgressionWarning": "Vous allez perdre votre progression depuis le début du combat. Continuer ?",
+  "noEggs": "Vous ne faites actuellement\néclore aucun Œuf !"
 } as const;

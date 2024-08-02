@@ -1,4 +1,4 @@
-import { ModifierTypeTranslationEntries } from "#app/plugins/i18n";
+import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
 
 export const modifierType: ModifierTypeTranslationEntries = {
   ModifierType: {
@@ -58,10 +58,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Aumenta la potencia de los movimientos de tipo {{moveType}} de un Pokémon en un 20%.",
     },
     "PokemonLevelIncrementModifierType": {
-      description: "Aumenta el nivel de un Pokémon en 1.",
+      description: "Aumenta el nivel de un Pokémon en {{levels}}.",
     },
     "AllPokemonLevelIncrementModifierType": {
-      description: "Aumenta el nivel de todos los miembros del equipo en 1.",
+      description: "Aumenta el nivel de todos los miembros del equipo en {{levels}}.",
     },
     "PokemonBaseStatBoosterModifierType": {
       description: "Aumenta la est. {{statName}} base del portador en un 10%.\nCuanto mayores sean tus IVs, mayor será el límite de acumulación.",
@@ -151,7 +151,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Cen. Sagrada" },
 
-    "REVIVER_SEED": { name: "Semilla Revivir", description: "Revive al portador con la mitad de sus PS al debilitarse." },
+    "REVIVER_SEED": { name: "Semilla Revivir", description: "Revive al portador con la mitad de sus PS al debilitarse por un golpe directo." },
+
+    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
 
     "ETHER": { name: "Éter" },
     "MAX_ETHER": { name: "Éter Máx." },
@@ -181,6 +183,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Huevo Dorado" },
 
     "SOOTHE_BELL": { name: "Camp. Alivio" },
+
+    "SCOPE_LENS": { name: "Periscopio", description: "Aumenta la probabilidad de asestar un golpe crítico." },
+    "LEEK": { name: "Puerro", description: "Puerro muy largo y duro que aumenta la probabilidad de asestar un golpe crítico. Debe llevarlo Farfetch'd." },
+
+    "EVIOLITE": { name: "Mineral Evolutivo", description: "Roca misteriosa. El Pokémon portador aumentará su Defensa y su Defensa Especial si aún puede evolucionar." },
 
     "SOUL_DEW": { name: "Rocío bondad", description: "Aumenta la influencia de la naturaleza de un Pokémon en sus estadísticas en un 10% (aditivo)." },
 
@@ -239,6 +246,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ENDURE_CHANCE": { name: "Ficha Aguante" },
     "ENEMY_FUSED_CHANCE": { name: "Ficha Fusión", description: "Agrega un 1% de probabilidad de que un Pokémon salvaje sea una fusión." },
   },
+  SpeciesBoosterItem: {
+    "LIGHT_BALL": { name: "Bola Luminosa", description: "Asombrosa esfera que aumenta el Ataque y el Ataque Especial. Debe llevarla Pikachu." },
+    "THICK_CLUB": { name: "Hueso Grueso", description: "Extraño tipo de hueso que potencia los ataques físicos. Debe llevarlo Cubone o Marowak." },
+    "METAL_POWDER": { name: "Polvo Metálico", description: "Polvo muy fino, pero a la vez poderoso, que aumenta la Defensa. Debe llevarlo Ditto." },
+    "QUICK_POWDER": { name: "Polvo Veloz", description: "Polvo muy fino, pero a la vez poderoso, que aumenta la Velocidad. Debe llevarlo Ditto." }
+  },
   TempBattleStatBoosterItem: {
     "x_attack": "Ataque X",
     "x_defense": "Defensa X",
@@ -247,6 +260,18 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "x_speed": "Velocidad X",
     "x_accuracy": "Precisión X",
     "dire_hit": "Crítico X",
+  },
+
+  TempBattleStatBoosterStatName: {
+    "ATK": "Attack",
+    "DEF": "Defense",
+    "SPATK": "Sp. Atk",
+    "SPDEF": "Sp. Def",
+    "SPD": "Speed",
+    "ACC": "Accuracy",
+    "CRIT": "Critical Hit Ratio",
+    "EVA": "Evasiveness",
+    "DEFAULT": "???",
   },
   AttackTypeBoosterItem: {
     "silk_scarf": "Pañuelo Seda",
@@ -388,5 +413,43 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "PiroROM",
     "CHILL_DRIVE": "CrioROM",
     "DOUSE_DRIVE": "HidroROM",
+
+    "FIST_PLATE": "Tabla Fuerte",
+    "SKY_PLATE": "Tabla Cielo",
+    "TOXIC_PLATE": "Tabla Tóxica",
+    "EARTH_PLATE": "Tabla Terrax",
+    "STONE_PLATE": "Tabla Pétrea",
+    "INSECT_PLATE": "Tabla Bicho",
+    "SPOOKY_PLATE": "Tabla Terror",
+    "IRON_PLATE": "Tabla Acero",
+    "FLAME_PLATE": "Tabla Llama",
+    "SPLASH_PLATE": "Tabla Linfa",
+    "MEADOW_PLATE": "Tabla Pradal",
+    "ZAP_PLATE": "Tabla Trueno",
+    "MIND_PLATE": "Tabla Mental",
+    "ICICLE_PLATE": "Tabla Helada",
+    "DRACO_PLATE": "Tabla Draco",
+    "DREAD_PLATE": "Tabla Oscura",
+    "PIXIE_PLATE": "Tabla Duende",
+    "BLANK_PLATE": "Tabla Neutra",
+    "LEGEND_PLATE": "Tabla Legendaria",
+    "FIGHTING_MEMORY": "Disco Lucha",
+    "FLYING_MEMORY": "Disco Volador",
+    "POISON_MEMORY": "Disco Veneno",
+    "GROUND_MEMORY": "Disco Tierra",
+    "ROCK_MEMORY": "Disco Roca",
+    "BUG_MEMORY": "Disco Bicho",
+    "GHOST_MEMORY": "Disco Fantasma",
+    "STEEL_MEMORY": "Disco Acero",
+    "FIRE_MEMORY": "Disco Fuego",
+    "WATER_MEMORY": "Disco Agua",
+    "GRASS_MEMORY": "Disco Planta",
+    "ELECTRIC_MEMORY": "Disco Eléctrico",
+    "PSYCHIC_MEMORY": "Disco Psíquico",
+    "ICE_MEMORY": "Disco Hielo",
+    "DRAGON_MEMORY": "Disco Dragón",
+    "DARK_MEMORY": "Disco Siniestro",
+    "FAIRY_MEMORY": "Disco Hada",
+    "BLANK_MEMORY": "Disco Blanco",
   },
 } as const;

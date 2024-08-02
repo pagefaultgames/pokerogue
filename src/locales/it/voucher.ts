@@ -1,11 +1,11 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const voucher: SimpleTranslationEntries = {
   "vouchers": "Vouchers",
-  "eggVoucher": "Egg Voucher",
-  "eggVoucherPlus": "Egg Voucher Plus",
-  "eggVoucherPremium": "Egg Voucher Premium",
-  "eggVoucherGold": "Egg Voucher Gold",
-  "locked": "Locked",
-  "defeatTrainer": "Defeat {{trainerName}}"
+  "eggVoucher": "Voucher uovo",
+  "eggVoucherPlus": "Voucher uovo plus",
+  "eggVoucherPremium": "Voucher uovo premium",
+  "eggVoucherGold": "Voucher uovo dorato",
+  "locked": "Bloccato",
+  "defeatTrainer": "Sconfiggi {{trainerName}}"
 } as const;

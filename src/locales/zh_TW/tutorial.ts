@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const tutorial: SimpleTranslationEntries = {
   "intro": `歡迎來到PokéRogue！這是一款以戰鬥爲核心的融合了roguelite元素的寶可夢同人遊戲。    
