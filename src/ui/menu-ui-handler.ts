@@ -64,9 +64,6 @@ export default class MenuUiHandler extends MessageUiHandler {
       });
   }
 
-  setup() {
-    this.render();
-  }
 
   render() {
     const ui = this.getUi();
