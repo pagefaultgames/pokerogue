@@ -140,9 +140,9 @@ function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean)
       offset++
     }
   })
-  scene.currentBattle.multiInt(scene, rolls, 12, 65536)
-  console.log(rolls)
-  console.log(rolls.slice(offset, offset + 3))
+  scene.currentBattle.multiInt(scene, rolls, offset + 3, 65536)
+  //console.log(rolls)
+  //console.log(rolls.slice(offset, offset + 3))
   if (scene.pokeballCounts[0] == 0 && !override) rates[0] = 0
   if (scene.pokeballCounts[1] == 0 && !override) rates[1] = 0
   if (scene.pokeballCounts[2] == 0 && !override) rates[2] = 0
@@ -171,20 +171,21 @@ function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean)
         if (v > rolls[offset + 2]) {
           //console.log("Caught!")
           if (func_output == "") {
-            func_output = ballNames[i] + " (CATCH)"
+            func_output = ballNames[i] + " catches"
           }
         }
       }
     }
     if (v > rolls[offset] && v > rolls[1 + offset] && v > rolls[2 + offset]) {
       if (func_output == "") {
-        func_output = ballNames[i] + " (CATCH)"
+        func_output = ballNames[i] + " catches"
       }
     }
   })
   if (func_output != "") {
     return func_output
   }
+  return "Can't catch"
   var n = ""
   switch (rates2[0]) {
     case rates[0]:
