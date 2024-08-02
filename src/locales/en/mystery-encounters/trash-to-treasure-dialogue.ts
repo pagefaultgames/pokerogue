@@ -6,7 +6,7 @@ export const trashToTreasureDialogue = {
   option: {
     1: {
       label: "Dig for Valuables",
-      tooltip: "(-) Become Covered in Filth\n(+) Gain Amazing Items",
+      tooltip: "(-) Lose Healing Items in Shops\n(+) Gain Amazing Items",
       selected: `You wade through the garbage pile, becoming mired in filth.
         $There's no way any respectable shopkeepers\nwill sell you anything in your grimy state!
         $You'll just have to make do without shop healing items.
@@ -16,7 +16,7 @@ export const trashToTreasureDialogue = {
       label: "Investigate Further",
       tooltip: "(?) Find the Source of the Garbage",
       selected: "You wander around the heap, searching for any indication as to how this might have appeared here...",
-      selected_2: "Suddenly, the garbage shifts! It wasn't just garbage, it's a Pokémon!"
+      selected_2: "Suddenly, the garbage shifts! It wasn't just garbage, it was a Pokémon!"
     },
   },
 };

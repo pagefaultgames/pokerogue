@@ -46,7 +46,6 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
         [Biome.CAVE, [MysteryEncounterType.TRASH_TO_TREASURE]],
-        [Biome.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ])
     );
   });

@@ -9,7 +9,7 @@ export enum MysteryEncounterType {
   SHADY_VITAMIN_DEALER,
   FIELD_TRIP,
   SAFARI_ZONE,
-  LOST_AT_SEA, //might be generalized later on
+  LOST_AT_SEA, // Might be generalized later on
   FIERY_FALLOUT,
   THE_STRONG_STUFF,
   THE_POKEMON_SALESMAN,
@@ -17,5 +17,6 @@ export enum MysteryEncounterType {
   DELIBIRDY,
   ABSOLUTE_AVARICE,
   A_TRAINERS_TEST,
-  TRASH_TO_TREASURE
+  TRASH_TO_TREASURE,
+  BERRIES_ABOUND
 }
