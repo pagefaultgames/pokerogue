@@ -1196,16 +1196,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true)), this.starterSpecies.length !== 0, false, false);
           }
 
+          const allowDuplicateSpecies = new Utils.BooleanHolder(false);
+          Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.DUPLICATE_SPECIES, allowDuplicateSpecies);
           const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
           const newCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
-          if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
+          if ((!isDupe && isValidForChallenge.value || allowDuplicateSpecies.value) && currentPartyValue + newCost <= this.getValueLimit()) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
             options = [
               {
                 label: i18next.t("starterSelectUiHandler:addToParty"),
                 handler: () => {
                   ui.setMode(Mode.STARTER_SELECT);
                   const isOverValueLimit = this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId), true);
-                  if (!isDupe && isValidForChallenge.value && isOverValueLimit) {
+                  if ((!isDupe || allowDuplicateSpecies.value) && isValidForChallenge.value && isOverValueLimit) {
                     const cursorObj = this.starterCursorObjs[this.starterSpecies.length];
                     cursorObj.setVisible(true);
                     cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);

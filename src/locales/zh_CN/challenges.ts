@@ -1,6 +1,8 @@
 import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
+  "on": "启用",
+  "off": "禁用",
   "title": "适用挑战条件",
   "illegalEvolution": "{{pokemon}}变成了\n不符合此挑战条件的宝可梦！",
   "singleGeneration": {
@@ -28,4 +30,8 @@ export const challenges: TranslationEntries = {
     "value.0": "关闭",
     "value.1": "开启",
   },
+  "eeveeOnly": {
+    "name": "伊布限定",
+    "desc": "在这个挑战中你只能使用伊布",
+  }
 } as const;

@@ -264,6 +264,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Ein ewiges Abenteuer!",
   },
+  "EEVEE_TRAINER": {
+    name: "E wie Evoli",
+    description: "Beende die 'Nur-Evoli' Herausforderung.",
+  },
 } as const;
 
 // Achievement translations for the when the player character is female

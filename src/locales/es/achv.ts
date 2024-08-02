@@ -264,6 +264,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Mono FAIRY",
   },
+  "EEVEE_TRAINER": {
+    name: "Entrenador de Eevee",
+    description: "Completa el desafío de solo Eevee.",
+  },
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)

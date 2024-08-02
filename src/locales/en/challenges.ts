@@ -1,6 +1,8 @@
 import { TranslationEntries } from "#app/interfaces/locales.js";
 
 export const challenges: TranslationEntries = {
+  "on": "On",
+  "off": "Off",
   "title": "Challenge Modifiers",
   "illegalEvolution": "{{pokemon}} changed into an ineligble pokémon\nfor this challenge!",
   "singleGeneration": {
@@ -22,6 +24,10 @@ export const challenges: TranslationEntries = {
     "desc": "You can only use Pokémon with the {{type}} type.",
     "desc_default": "You can only use Pokémon of the chosen type."
     //types in pokemon-info
+  },
+  "eeveeOnly": {
+    "name": "Eevee only",
+    "desc": "You can use only Eevee and its evolutions in this challenge",
   },
   "freshStart": {
     "name": "Fresh Start",

@@ -264,6 +264,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Hey ! Listen !",
   },
+  "EEVEE_TRAINER": {
+    name: "RP Pania",
+    description: "Terminer un challenge Évoli.",
+  },
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
@@ -529,5 +533,9 @@ export const PGFachv: AchievementTranslationEntries = {
   },
   "MONO_FAIRY": {
     name: "Hey ! Listen !",
+  },
+  "EEVEE_TRAINER": {
+    name: "RP Pania",
+    description: "Terminer un challenge Évoli.",
   },
 } as const;
