@@ -683,6 +683,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Writes the value of the corresponding {@linkcode Stat} of the {@linkcode Pokemon}.
+   *
+   * Note that this does nothing if {@linkcode value} is less than zero.
    * @param stat the desired {@linkcode Stat}
    * @param value the desired numeric value to be written to the desired {@linkcode Stat}
    * @param ignoreOverride {@linkcode boolean} to write to actual stats (`true`) or to in-battle overridden stats (`false`)
