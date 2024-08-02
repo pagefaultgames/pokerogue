@@ -65,22 +65,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   }
 
   setup(): void {
-  }
-
-
-  render() {
     const ui = this.getUi();
-    this.excludedMenus = () => [
-      { condition: ![Mode.COMMAND, Mode.TITLE].includes(ui.getModeChain()[0]), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
-      { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
-    ];
-
-    this.menuOptions = Utils.getEnumKeys(MenuOptions)
-      .map(m => parseInt(MenuOptions[m]) as MenuOptions)
-      .filter(m => {
-        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
-      });
-
     // wiki url directs based on languges available on wiki
     const lang = i18next.resolvedLanguage.substring(0,2);
     if (["de", "fr", "ko", "zh"].includes(lang)) {
@@ -101,10 +86,25 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuOverlay.setOrigin(0,0);
     this.menuContainer.add(this.menuOverlay);
 
-    const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
-    menuMessageText.setName("menu-message");
-    menuMessageText.setWordWrapWidth(1224);
-    menuMessageText.setOrigin(0, 0);
+    this.menuContainer.add(this.bgmBar);
+
+    this.menuContainer.setVisible(false);
+
+  }
+
+
+  render() {
+    const ui = this.getUi();
+    this.excludedMenus = () => [
+      { condition: ![Mode.COMMAND, Mode.TITLE].includes(ui.getModeChain()[0]), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
+      { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
+    ];
+
+    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+      .map(m => parseInt(MenuOptions[m]) as MenuOptions)
+      .filter(m => {
+        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+      });
 
     this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
     this.optionSelectText.setLineSpacing(12);
@@ -129,9 +129,11 @@ export default class MenuUiHandler extends MessageUiHandler {
     menuMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageBox);
 
+    const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
+    menuMessageText.setName("menu-message");
+    menuMessageText.setWordWrapWidth(1224);
+    menuMessageText.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageText);
-
-    this.menuContainer.add(this.bgmBar);
 
     this.message = menuMessageText;
 
@@ -291,10 +293,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       xOffset: 98,
       options: communityOptions
     };
-
     this.setCursor(0);
-
-    this.menuContainer.setVisible(false);
   }
 
   show(args: any[]): boolean {
