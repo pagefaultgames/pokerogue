@@ -40,8 +40,8 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   private cursorObj: Phaser.GameObjects.Image;
 
-  protected ignoredMenuOptions: MenuOptions[];
-  protected menuOptions: MenuOptions[];
+  private excludedMenus: () => { condition: boolean, options: MenuOptions[] }[];
+  private menuOptions: MenuOptions[];
 
   protected manageDataConfig: OptionSelectConfig;
   protected communityConfig: OptionSelectConfig;
@@ -52,14 +52,38 @@ export default class MenuUiHandler extends MessageUiHandler {
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
-    this.ignoredMenuOptions = !bypassLogin
-      ? [ ]
-      : [ MenuOptions.LOG_OUT ];
-    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => !this.ignoredMenuOptions.includes(m));
+    this.excludedMenus = () => [
+      { condition: [Mode.COMMAND, Mode.TITLE].includes(mode ?? Mode.TITLE), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
+      { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
+    ];
+
+    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+      .map(m => parseInt(MenuOptions[m]) as MenuOptions)
+      .filter(m => {
+        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+      });
   }
 
   setup() {
+    this.render();
+  }
+
+  render() {
     const ui = this.getUi();
+    this.excludedMenus = () => [
+      { condition: ![Mode.COMMAND, Mode.TITLE].includes(ui.getModeChain()[0]), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
+      { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
+    ];
+
+    console.log("currentMode", ui.getModeChain());
+    console.log("menuUiHandler:render", this.excludedMenus());
+
+    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+      .map(m => parseInt(MenuOptions[m]) as MenuOptions)
+      .filter(m => {
+        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+      });
+
     // wiki url directs based on languges available on wiki
     const lang = i18next.resolvedLanguage.substring(0,2);
     if (["de", "fr", "ko", "zh"].includes(lang)) {
@@ -277,8 +301,14 @@ export default class MenuUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
-
+    this.render();
     super.show(args);
+
+    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+      .map(m => parseInt(MenuOptions[m]) as MenuOptions)
+      .filter(m => {
+        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+      });
 
     this.menuContainer.setVisible(true);
     this.setCursor(0);
@@ -305,13 +335,16 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     if (button === Button.ACTION) {
       let adjustedCursor = this.cursor;
-      for (const imo of this.ignoredMenuOptions) {
+      console.log("menus", this.excludedMenus().find(e => e.condition).options.sort());
+      console.log("cursor", adjustedCursor);
+      for (const imo of this.excludedMenus().find(e => e.condition).options.sort()) {
         if (adjustedCursor >= imo) {
           adjustedCursor++;
         } else {
           break;
         }
       }
+      console.log("adjustedCursor2", adjustedCursor);
       switch (adjustedCursor) {
       case MenuOptions.GAME_SETTINGS:
         ui.setOverlayMode(Mode.SETTINGS);
