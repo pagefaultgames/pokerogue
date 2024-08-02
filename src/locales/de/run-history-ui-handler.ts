@@ -3,7 +3,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 export const runHistory: SimpleTranslationEntries = {
   "victory": "Sieg!",
   "defeatedWild": "Besiegt durch ",
-  "defeatedTrainer": "Besiegt durch",
+  "defeatedTrainer": "Besiegt durch ",
   "defeatedTrainerDouble": "Besiegt durch Doppelkampf",
   "defeatedRival": "Besiegt durch Rivale",
   "defeated":"Besiegt",
