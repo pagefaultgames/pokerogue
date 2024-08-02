@@ -1,6 +1,3 @@
-import { pokemonForm } from "./pokemon-form";
-// import { common } from "#app/locales/ko/common.js";
-// import { settings } from "#app/locales/ko/settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { arenaFlyout } from "./arena-flyout";
@@ -37,9 +34,9 @@ import { modifier } from "./modifier";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
 import { nature } from "./nature";
-import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
+import { pokemonForm, battlePokemonForm } from "./pokemon-form";
 import { fusionAffixes } from "./pokemon-fusion-affixes";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
@@ -52,6 +49,7 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
+import { partyUiHandler } from "./party-ui-handler";
 import { settings } from "./settings.js";
 import { common } from "./common.js";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
@@ -65,6 +63,7 @@ export const koConfig = {
   battle: battle,
   battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
+  battlePokemonForm: battlePokemonForm,
   battlerTags: battlerTags,
   berry: berry,
   bgmName: bgmName,
@@ -94,7 +93,6 @@ export const koConfig = {
   modifierType: modifierType,
   move: move,
   nature: nature,
-  partyUiHandler: partyUiHandler,
   pokeball: pokeball,
   pokemon: pokemon,
   pokemonForm: pokemonForm,
@@ -114,6 +112,7 @@ export const koConfig = {
   tutorial: tutorial,
   voucher: voucher,
   weather: weather,
+  partyUiHandler: partyUiHandler,
   modifierSelectUiHandler: modifierSelectUiHandler,
   moveTriggers: moveTriggers
 };
