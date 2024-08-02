@@ -23,7 +23,7 @@ export const runHistory: SimpleTranslationEntries = {
   "playerItems":"Spielergegenstände",
   "personalBest":"Persönlicher Bestwert!",
   "SPDshortened":"Geschw.",
-  "runInfo":"Durchlauf Info.",
+  "runInfo":"Durchlauf Informationen",
   "money":"Geld",
   "runLength":"Länge des Durchlaufs",
   "viewHeldItems":"Getragene Items",
