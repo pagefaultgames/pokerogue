@@ -55,7 +55,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "icot",
   },
   kakuna: {
-    fusionPrefix: "Cocon",
+    fusionPrefix: "Coconf",
+
     fusionSuffix: "ort",
   },
   beedrill: {
@@ -887,7 +888,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ochignon",
   },
   corsola: {
-    fusionPrefix: "Corayon",
+    fusionPrefix: "Coray",
+
     fusionSuffix: "orayon",
   },
   remoraid: {
@@ -4227,7 +4229,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ada",
   },
   galar_corsola: {
-    fusionPrefix: "Corayon",
+    fusionPrefix: "Coray",
+
     fusionSuffix: "orayon",
   },
   galar_zigzagoon: {
@@ -4251,7 +4254,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "eh",
   },
   galar_stunfisk: {
-    fusionPrefix: "Limon",
+    fusionPrefix: "Limond",
+
     fusionSuffix: "imonde",
   },
   hisui_growlithe: {
