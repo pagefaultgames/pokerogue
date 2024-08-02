@@ -1,15 +1,15 @@
 import {
   BattleEndPhase,
-  SelectTargetPhase,
   TurnInitPhase,
 } from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition, } from "#app/test/utils/gameManagerUtils";
-import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "../utils/testUtils";
+import { Status, StatusEffect } from "#app/data/status-effect.js";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -31,42 +31,39 @@ describe("Test Battle Phase", () => {
 
   // double-battle player's pokemon both fainted in same round, then revive one, and next double battle summons two player's pokemon successfully.
   // (There were bugs that either only summon one when can summon two, player stuck in switchPhase etc)
-  it("3v2 edge case", async() => {
+  it("3v2 edge case: player summons 2 pokemon on the next battle after being fainted and revived", async() => {
     game.override.battleType("double");
-    game.override.enemySpecies(Species.SHEDINJA);
-    game.override.enemyMoveset([Moves.DESTINY_BOND,Moves.DESTINY_BOND,Moves.DESTINY_BOND,Moves.DESTINY_BOND]);
-    game.override.enemyPassiveAbility(Abilities.PRANKSTER);
-    game.override.moveset([Moves.AERIAL_ACE]);
+    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.moveset(SPLASH_ONLY);
     await game.startBattle([
       Species.BULBASAUR,
       Species.CHARIZARD,
       Species.SQUIRTLE,
     ]);
-    const enemyToCheck = game.scene.getEnemyField();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.AERIAL_ACE));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(enemyToCheck[0].getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    game.doAttack(getMovePosition(game.scene, 1, Moves.AERIAL_ACE));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(enemyToCheck[1].getBattlerIndex());
+    const pokemon1 = game.scene.getParty()[0];
+    expect(pokemon1).not.toBe(undefined);
 
-    await game.phaseInterceptor.to(BattleEndPhase, false);
+    pokemon1.hp = 0;
+    pokemon1.status = new Status(StatusEffect.FAINT);
+    expect(pokemon1.isFainted()).toBe(true);
 
-    // // commented this area since the phases code rn ended the summonphase automatically. Do modification if needed.
-    // game.onNextPrompt("SwitchPhase", Mode.PARTY, () => {
-    //   game.scene.unshiftPhase(new SwitchSummonPhase(game.scene, 1, 2, false, false));
-    //   game.scene.ui.setMode(Mode.MESSAGE);
-    // });
-    // game.onNextPrompt("SwitchPhase", Mode.MESSAGE, () => {
-    //   game.endPhase();
-    // });
+    const pokemon2 = game.scene.getParty()[1];
+    expect(pokemon2).not.toBe(undefined);
 
+    pokemon2.hp = 0;
+    pokemon2.status = new Status(StatusEffect.FAINT);
+    expect(pokemon2.isFainted()).toBe(true);
+
+    await game.doKillOpponents();
+
+    await game.phaseInterceptor.to(BattleEndPhase);
     game.doSelectModifier();
     game.doRevivePokemon(1);
-
-    await game.phaseInterceptor.to(TurnInitPhase, false);
+    await game.phaseInterceptor.to(TurnInitPhase);
     expect(game.scene.getPlayerField().filter(p => !p.isFainted()).length).toBe(2);
-  }, 200000);
+  }, 20000);
 });
