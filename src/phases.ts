@@ -88,6 +88,132 @@ const { t } = i18next;
 
 
 //#region 01 Uncategorized
+function catchCalc(pokemon: EnemyPokemon) {
+  const _3m = 3 * pokemon.getMaxHp();
+  const _2h = 2 * pokemon.hp;
+  const catchRate = pokemon.species.catchRate;
+  const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
+  const rate1 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 1) / _3m) * statusMultiplier)))));
+  const rate2 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 1.5) / _3m) * statusMultiplier)))));
+  const rate3 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 2) / _3m) * statusMultiplier)))));
+  const rate4 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 3) / _3m) * statusMultiplier)))));
+
+  var rates = [rate1, rate2, rate3, rate4]
+  var rates2 = rates.map(r => ((r/65536) ** 3))
+  //console.log(rates2)
+
+  return rates2
+}
+function catchCalcRaw(pokemon: EnemyPokemon) {
+  const _3m = 3 * pokemon.getMaxHp();
+  const _2h = 2 * pokemon.hp;
+  const catchRate = pokemon.species.catchRate;
+  const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
+  const rate1 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 1) / _3m) * statusMultiplier)))));
+  const rate2 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 1.5) / _3m) * statusMultiplier)))));
+  const rate3 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 2) / _3m) * statusMultiplier)))));
+  const rate4 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 3) / _3m) * statusMultiplier)))));
+
+  var rates = [rate1, rate2, rate3, rate4]
+  var rates2 = rates.map(r => ((r/65536) ** 3))
+  //console.log(rates2)
+  //console.log("output: ", rates)
+
+  return rates
+}
+
+/**
+ * Finds the best Poké Ball to catch a Pokemon with, and the % chance of capturing it.
+ * @param pokemon The Pokémon to get the catch rate for.
+ * @param override Show the best Poké Ball to use, even if you don't have any.
+ * @returns The name and % rate of the best Poké Ball.
+ */
+function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean) {
+  var rates = catchCalc(pokemon)
+  var rates_raw = catchCalcRaw(pokemon)
+  var rolls = []
+  var offset = 0
+  scene.getModifiers(BypassSpeedChanceModifier, true).forEach(m => {
+    //console.log(m, m.getPokemon(this.scene), pokemon)
+    if (m.getPokemon(scene).isActive()) {
+      console.log(m.getPokemon(scene).name + " has a Quick Claw")
+      offset++
+    }
+  })
+  scene.currentBattle.multiInt(scene, rolls, 12, 65536)
+  console.log(rolls)
+  console.log(rolls.slice(offset, offset + 3))
+  if (scene.pokeballCounts[0] == 0 && !override) rates[0] = 0
+  if (scene.pokeballCounts[1] == 0 && !override) rates[1] = 0
+  if (scene.pokeballCounts[2] == 0 && !override) rates[2] = 0
+  if (scene.pokeballCounts[3] == 0 && !override) rates[3] = 0
+  var rates2 = rates.slice()
+  rates2.sort(function(a, b) {return b - a})
+  const ballNames = [
+    "Poké Ball",
+    "Great Ball",
+    "Ultra Ball",
+    "Rogue Ball",
+    "Master Ball"
+  ]
+  var func_output = ""
+  rates_raw.forEach((v, i) => {
+    if (scene.pokeballCounts[i] == 0 && !override)
+      return; // Don't list success for Poke Balls we don't have
+    //console.log(ballNames[i])
+    //console.log(v, rolls[offset + 0], v > rolls[offset + 0])
+    //console.log(v, rolls[offset + 1], v > rolls[offset + 1])
+    //console.log(v, rolls[offset + 2], v > rolls[offset + 2])
+    if (v > rolls[offset + 0]) {
+      //console.log("1 roll")
+      if (v > rolls[offset + 1]) {
+        //console.log("2 roll")
+        if (v > rolls[offset + 2]) {
+          //console.log("Caught!")
+          if (func_output == "") {
+            func_output = ballNames[i] + " (CATCH)"
+          }
+        }
+      }
+    }
+    if (v > rolls[offset] && v > rolls[1 + offset] && v > rolls[2 + offset]) {
+      if (func_output == "") {
+        func_output = ballNames[i] + " (CATCH)"
+      }
+    }
+  })
+  if (func_output != "") {
+    return func_output
+  }
+  var n = ""
+  switch (rates2[0]) {
+    case rates[0]:
+      // Poke Balls are best
+      n = "Poké Ball "
+      break;
+    case rates[1]:
+      // Great Balls are best
+      n = "Great Ball "
+      break;
+    case rates[2]:
+      // Ultra Balls are best
+      n = "Ultra Ball "
+      break;
+    case rates[3]:
+      // Rogue Balls are best
+      n = "Rogue Ball "
+      break;
+    default:
+      // Master Balls are the only thing that will work
+      if (scene.pokeballCounts[4] != 0 || override) {
+        return "Master Ball";
+      } else {
+        return "No balls"
+      }
+  }
+  return n + " (FAIL)"
+  return n + Math.round(rates2[0] * 100) + "%";
+}
 export function parseSlotData(slotId: integer): SessionSaveData {
   var S = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`)
   if (S == null) {
@@ -2690,60 +2816,6 @@ export class TurnInitPhase extends FieldPhase {
     super(scene);
   }
 
-  catchCalc(pokemon: EnemyPokemon) {
-    const _3m = 3 * pokemon.getMaxHp();
-    const _2h = 2 * pokemon.hp;
-    const catchRate = pokemon.species.catchRate;
-    const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
-    const rate1 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 1) / _3m) * statusMultiplier)))));
-    const rate2 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 1.5) / _3m) * statusMultiplier)))));
-    const rate3 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 2) / _3m) * statusMultiplier)))));
-    const rate4 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 3) / _3m) * statusMultiplier)))));
-
-    var rates = [rate1, rate2, rate3, rate4]
-    var rates2 = rates.map(r => ((r/65536) ** 3))
-    console.log(rates2)
-
-    return rates2
-  }
-
-  /**
-   * Finds the best Poké Ball to catch a Pokemon with, and the % chance of capturing it.
-   * @param pokemon The Pokémon to get the catch rate for.
-   * @param override Show the best Poké Ball to use, even if you don't have any.
-   * @returns The name and % rate of the best Poké Ball.
-   */
-  findBest(pokemon: EnemyPokemon, override?: boolean) {
-    var rates = this.catchCalc(pokemon)
-    if (this.scene.pokeballCounts[0] == 0 && !override) rates[0] = 0
-    if (this.scene.pokeballCounts[1] == 0 && !override) rates[1] = 0
-    if (this.scene.pokeballCounts[2] == 0 && !override) rates[2] = 0
-    if (this.scene.pokeballCounts[3] == 0 && !override) rates[3] = 0
-    var rates2 = rates.slice()
-    rates2.sort(function(a, b) {return b - a})
-    switch (rates2[0]) {
-      case rates[0]:
-        // Poke Balls are best
-        return "Poké Ball " + Math.round(rates2[0] * 100) + "%";
-      case rates[1]:
-        // Great Balls are best
-        return "Great Ball " + Math.round(rates2[0] * 100) + "%";
-      case rates[2]:
-        // Ultra Balls are best
-        return "Ultra Ball " + Math.round(rates2[0] * 100) + "%";
-      case rates[3]:
-        // Rogue Balls are best
-        return "Rogue Ball " + Math.round(rates2[0] * 100) + "%";
-      default:
-        // Master Balls are the only thing that will work
-        if (this.scene.pokeballCounts[4] != 0 || override) {
-          return "Master Ball";
-        } else {
-          return "No balls"
-        }
-    }
-  }
-
   start() {
     super.start();
 
@@ -2856,8 +2928,12 @@ export class TurnInitPhase extends FieldPhase {
     var txt = ["Turn: " + this.scene.currentBattle.turn]
     if (!this.scene.getEnemyField()[0].hasTrainer()) {
       this.scene.getEnemyField().forEach((pk, i) => {
-        txt = txt.concat(this.findBest(pk))
+        if (pk.isActive() && pk.hp > 0)
+        txt = txt.concat(findBest(this.scene, pk))
       })
+    }
+    if (txt.length > 2) {
+      txt = ["Turn: " + this.scene.currentBattle.turn]
     }
 
     this.scene.arenaFlyout.updateFieldText()
@@ -3149,6 +3225,7 @@ export class EnemyCommandPhase extends FieldPhase {
     super.start();
 
     const enemyPokemon = this.scene.getEnemyField()[this.fieldIndex];
+    console.log(enemyPokemon.getMoveset().map(m => m.getName()))
 
     const battle = this.scene.currentBattle;
 
@@ -3184,7 +3261,20 @@ export class EnemyCommandPhase extends FieldPhase {
 
             enemyPokemon.flyout.setText()
 
+            var txt = ["Turn: " + this.scene.currentBattle.turn]
+            if (!this.scene.getEnemyField()[0].hasTrainer()) {
+              this.scene.getEnemyField().forEach((pk, i) => {
+                if (pk.isActive() && pk.hp > 0)
+                txt = txt.concat(findBest(this.scene, pk))
+              })
+            }
+            if (txt.length > 2) {
+              txt = ["Turn: " + this.scene.currentBattle.turn]
+            }
+        
             this.scene.arenaFlyout.updateFieldText()
+        
+            this.scene.setScoreText(txt.join(" / "))
 
             return this.end();
           }
@@ -3224,6 +3314,18 @@ export class EnemyCommandPhase extends FieldPhase {
     LoggerTools.enemyPlan[this.fieldIndex*2] = mv.getName()
     LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + nextMove.targets.map((m) => targetLabels[m + 1])
     this.scene.arenaFlyout.updateFieldText()
+
+    var txt = ["Turn: " + this.scene.currentBattle.turn]
+    if (!this.scene.getEnemyField()[0].hasTrainer()) {
+      this.scene.getEnemyField().forEach((pk, i) => {
+        if (pk.isActive() && pk.hp > 0)
+        txt = txt.concat(findBest(this.scene, pk))
+      })
+    }
+
+    this.scene.arenaFlyout.updateFieldText()
+
+    this.scene.setScoreText(txt.join(" / "))
 
     this.end();
   }

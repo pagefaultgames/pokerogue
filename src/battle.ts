@@ -356,6 +356,28 @@ export default class Battle {
     return null;
   }
 
+  multiInt(scene: BattleScene, out: integer[], count: integer, range: integer, min: integer = 0): integer {
+    if (range <= 1) {
+      return min;
+    }
+    const tempRngCounter = scene.rngCounter;
+    const tempSeedOverride = scene.rngSeedOverride;
+    const state = Phaser.Math.RND.state();
+    if (this.battleSeedState) {
+      Phaser.Math.RND.state(this.battleSeedState);
+    } else {
+      Phaser.Math.RND.sow([ Utils.shiftCharCodes(this.battleSeed, this.turn << 6) ]);
+      console.log("Battle Seed:", this.battleSeed);
+    }
+    for (var i = 0; i < count; i++) {
+      out.push(Utils.randSeedInt(range, min))
+    }
+    Phaser.Math.RND.state(state);
+    //scene.setScoreText("RNG: " + tempRngCounter + " (Last sim: " + this.rngCounter + ")")
+    scene.rngCounter = tempRngCounter;
+    scene.rngSeedOverride = tempSeedOverride;
+  }
+
   randSeedInt(scene: BattleScene, range: integer, min: integer = 0): integer {
     if (range <= 1) {
       return min;

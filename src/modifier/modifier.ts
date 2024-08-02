@@ -1663,7 +1663,7 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
       : null;
 
     if (!matchingEvolution && pokemon.isFusion()) {
-      var bypassC = EvolutionItem.SUPER_EVO_ITEM_F === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
+      var bypassC = EvolutionItem.SUPER_EVO_ITEM_FUSION === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
       matchingEvolution = pokemonEvolutions[pokemon.fusionSpecies.speciesId].find(e => (e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem || bypassC)
         && (e.evoFormKey === null || (e.preFormKey || "") === pokemon.getFusionFormKey())
         && (!e.condition || e.condition.predicate(pokemon) || bypassC));

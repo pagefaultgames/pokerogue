@@ -222,7 +222,11 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextHeader.text = "IVs"
     for (var i = 0; i < poke.length; i++) {
       if (i == 1 || true) {
-        this.flyoutTextPlayer.text += poke[i].name + " " + (poke[i].gender == Gender.MALE ? "♂" : (poke[i].gender == Gender.FEMALE ? "♀" : "-")) + " " + poke[i].level + "\n"
+        var formtext = ""
+        if (poke[i].species.forms.length > 0) {
+          formtext = " (" + poke[i].species.forms[poke[i].formIndex].formName + ")"
+        }
+        this.flyoutTextPlayer.text += poke[i].name + formtext + " " + (poke[i].gender == Gender.MALE ? "♂" : (poke[i].gender == Gender.FEMALE ? "♀" : "-")) + " " + poke[i].level + "\n"
         this.flyoutTextEnemy.text += poke[i].getAbility().name + " / " + (poke[i].isBoss() ? poke[i].getPassiveAbility().name + " / " : "") + getNatureName(poke[i].nature) + (getNatureIncrease(poke[i].nature) != "" ? " (+" + getNatureIncrease(poke[i].nature) + " -" + getNatureDecrease(poke[i].nature) + ")" : "") + "\n\n\n"
       }
       this.flyoutTextPlayer.text += "HP: " + poke[i].ivs[0]
