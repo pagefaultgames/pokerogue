@@ -23,6 +23,7 @@
 		"@eslint/js": "^9.3.0",
 		"@hpcc-js/wasm": "^2.18.0",
 		"@stylistic/eslint-plugin-ts": "^2.6.0-beta.0",
+		"@types/crypto-js": "^4.2.2",
 		"@types/jsdom": "^21.1.7",
 		"@types/node": "^20.12.13",
 		"@typescript-eslint/eslint-plugin": "^8.0.0-alpha.54",
@@ -32,7 +33,7 @@
 		"eslint": "^9.7.0",
 		"jsdom": "^24.0.0",
 		"lefthook": "^1.6.12",
-    "msw": "^2.3.1",
+		"msw": "^2.3.1",
 		"phaser3spectorjs": "^0.0.8",
 		"typedoc": "^0.26.4",
 		"typescript": "^5.5.3",
@@ -61,9 +62,9 @@
 		"#app/*": "./src/*",
 		"#test/*": "./src/test/*"
 	},
-  "msw": {
-    "workerDirectory": [
-      "public"
-    ]
-  }
+	"msw": {
+		"workerDirectory": [
+			"public"
+		]
+	}
 }
