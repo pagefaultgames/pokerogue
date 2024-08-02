@@ -40,7 +40,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   private cursorObj: Phaser.GameObjects.Image;
 
-  private excludedMenus: () => { condition: boolean, options: MenuOptions[] }[];
+  private excludedMenus: () => ConditionalMenu[];
   private menuOptions: MenuOptions[];
 
   protected manageDataConfig: OptionSelectConfig;
@@ -532,4 +532,9 @@ export default class MenuUiHandler extends MessageUiHandler {
     }
     this.cursorObj = null;
   }
+}
+
+interface ConditionalMenu {
+  condition: boolean;
+  options: MenuOptions[];
 }
