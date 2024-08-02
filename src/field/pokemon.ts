@@ -656,8 +656,45 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  getStat(stat: Stat): integer {
+  /**
+   * Retrieves the entire set of stats of the {@linkcode Pokemon}.
+   * @param ignoreOverride {@linkcode boolean} to prefer actual stats (`true`) or in-battle overridden stats (`false`)
+   * @returns the numeric values of the {@linkcode Pokemon}'s stats
+   */
+  getStats(ignoreOverride: boolean = true): number[] {
+    if (!ignoreOverride && this.summonData?.stats) {
+      return this.summonData.stats;
+    }
+    return this.stats;
+  }
+
+  /**
+   * Retrieves the corresponding {@linkcode Stat} of the {@linkcode Pokemon}.
+   * @param stat the desired {@linkcode Stat}
+   * @param ignoreOverride {@linkcode boolean} to prefer actual stats (`true`) or in-battle overridden stats (`false`)
+   * @returns the numeric value of the desired {@linkcode Stat}
+   */
+  getStat(stat: Stat, ignoreOverride: boolean = true): number {
+    if (!ignoreOverride && this.summonData?.stats[stat] !== 0) {
+      return this.summonData.stats[stat];
+    }
     return this.stats[stat];
+  }
+
+  /**
+   * Writes the value of the corresponding {@linkcode Stat} of the {@linkcode Pokemon}.
+   * @param stat the desired {@linkcode Stat}
+   * @param value the desired numeric value to be written to the desired {@linkcode Stat}
+   * @param ignoreOverride {@linkcode boolean} to write to actual stats (`true`) or to in-battle overridden stats (`false`)
+   */
+  setStat(stat: Stat, value: number, ignoreOverride: boolean = true) {
+    if (value >= 0) {
+      if (!ignoreOverride && this.summonData) {
+        this.summonData.stats[stat] = value;
+      } else {
+        this.stats[stat] = value;
+      }
+    }
   }
 
   getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
@@ -687,7 +724,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isPlayer()) {
       this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
     }
-    const statValue = new Utils.NumberHolder(this.getStat(stat));
+    const statValue = new Utils.NumberHolder(this.getStat(stat, false));
     this.scene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
 
     const fieldApplied = new Utils.BooleanHolder(false);
@@ -747,7 +784,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     const baseStats = this.getSpeciesForm().baseStats.slice(0);
     if (this.fusionSpecies) {
-      const fusionBaseStats = this.getFusionSpeciesForm().baseStats;
+      const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
       for (let s = 0; s < this.stats.length; s++) {
         baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
       }
@@ -757,12 +794,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     this.scene.applyModifiers(PokemonBaseStatModifier, this.isPlayer(), this, baseStats);
-    const stats = Utils.getEnumValues(Stat);
-    for (const s of stats) {
-      const isHp = s === Stat.HP;
+    for (let s = Stat.HP; s <= Stat.SPD; s++) {
       const baseStat = baseStats[s];
       let value = Math.floor(((2 * baseStat + this.ivs[s]) * this.level) * 0.01);
-      if (isHp) {
+      if (s === Stat.HP) {
         value = value + this.level + 10;
         if (this.hasAbility(Abilities.WONDER_GUARD, false, true)) {
           value = 1;
@@ -783,7 +818,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           value = Math.max(Math[natureStatMultiplier.value > 1 ? "ceil" : "floor"](value * natureStatMultiplier.value), 1);
         }
       }
-      this.stats[s] = value;
+      this.setStat(s, value);
     }
   }
 
@@ -1609,8 +1644,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power/maxPower, 1), 0.5))]);
 
     // Weight damaging moves against the lower stat
-    const worseCategory: MoveCategory = this.stats[Stat.ATK] > this.stats[Stat.SPATK] ? MoveCategory.SPECIAL : MoveCategory.PHYSICAL;
-    const statRatio = worseCategory === MoveCategory.PHYSICAL ? this.stats[Stat.ATK]/this.stats[Stat.SPATK] : this.stats[Stat.SPATK]/this.stats[Stat.ATK];
+    const worseCategory: MoveCategory = this.getStat(Stat.ATK) > this.getStat(Stat.SPATK) ? MoveCategory.SPECIAL : MoveCategory.PHYSICAL;
+    const statRatio = worseCategory === MoveCategory.PHYSICAL ? this.getStat(Stat.ATK) / this.getStat(Stat.SPATK) : this.getStat(Stat.SPATK) / this.getStat(Stat.ATK);
     movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === worseCategory ? statRatio : 1)]);
 
     let weightMultiplier = 0.9; // The higher this is the more the game weights towards higher level moves. At 0 all moves are equal weight.
@@ -3491,13 +3526,13 @@ export class PlayerPokemon extends Pokemon {
       this.scene.gameData.gameStats.pokemonFused++;
 
       // Store the average HP% that each Pokemon has
-      const newHpPercent = ((pokemon.hp / pokemon.stats[Stat.HP]) + (this.hp / this.stats[Stat.HP])) / 2;
+      const newHpPercent = ((pokemon.hp / pokemon.getMaxHp()) + (this.hp / this.getMaxHp())) / 2;
 
       this.generateName();
       this.calculateStats();
 
       // Set this Pokemon's HP to the average % of both fusion components
-      this.hp = Math.round(this.stats[Stat.HP] * newHpPercent);
+      this.hp = Math.round(this.getMaxHp() * newHpPercent);
       if (!this.isFainted()) {
         // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
         this.hp = Math.min(this.hp, this.stats[Stat.HP]);
@@ -3932,7 +3967,7 @@ export class EnemyPokemon extends Pokemon {
     while (segmentIndex - 1 < this.bossSegmentIndex) {
       let boostedStat = BattleStat.RAND;
 
-      const battleStats = Utils.getEnumValues(BattleStat).slice(0, -3);
+      const battleStats = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK ];
       const statWeights = new Array().fill(battleStats.length).filter((bs: BattleStat) => this.summonData.battleStats[bs] < 6).map((bs: BattleStat) => this.getStat(bs + 1));
       const statThresholds: integer[] = [];
       let totalWeight = 0;
@@ -4054,7 +4089,7 @@ export class PokemonSummonData {
   public ability: Abilities = Abilities.NONE;
   public gender: Gender;
   public fusionGender: Gender;
-  public stats: integer[];
+  public stats: integer[] = [ 0, 0, 0, 0, 0, 0];
   public moveset: PokemonMove[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = null;
