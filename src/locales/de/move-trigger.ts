@@ -52,7 +52,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "addType": "{{pokemonName}} nimmt zusätzlich den Typ {{typeName}} an!",
   "cannotUseMove": "{{pokemonName}} kann {{moveName}} nicht einsetzen!",
   "healHp": "KP von {{pokemonName}} wurden aufgefrischt!",
-  "sacrificialFullRestore": "Das Heilopfer erreicht {{target}}",
+  "sacrificialFullRestore": "Das Heilopfer von {{pokemonName}} erreicht sein Ziel!",
   "invertStats": "Alle Statusveränderungen von {{pokemonName}} wurden invertiert!",
   "resetStats": "Die Statusveränderungen von {{pokemonName}} wurden aufgehoben!!",
   "faintCountdown": "{{pokemonName}} geht nach {{turnCount}} Runden K.O.!",
