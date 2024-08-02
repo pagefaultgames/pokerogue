@@ -435,7 +435,7 @@ export abstract class PokemonSpeciesForm {
     for (const moveId of moveset) {
       if (speciesEggMoves.hasOwnProperty(rootSpeciesId)) {
         const eggMoveIndex = speciesEggMoves[rootSpeciesId].findIndex(m => m === moveId);
-        if (eggMoveIndex > -1 && eggMoves & Math.pow(2, eggMoveIndex)) {
+        if (eggMoveIndex > -1 && (eggMoves & (1 << eggMoveIndex))) {
           continue;
         }
       }
@@ -630,7 +630,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       }
 
       if (key) {
-        return i18next.t(`pokemonForm:${key}`, {pokemonName: this.name});
+        return i18next.t(`battlePokemonForm:${key}`, {pokemonName: this.name});
       }
     }
     return this.name;
