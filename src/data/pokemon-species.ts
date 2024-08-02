@@ -312,7 +312,13 @@ export abstract class PokemonSpeciesForm {
   getIconAtlasKey(formIndex?: integer, shiny?: boolean, variant?: integer): string {
     const variantDataIndex = this.getVariantDataIndex(formIndex);
     const isVariant = shiny && variantData[variantDataIndex] && variantData[variantDataIndex][variant];
-    return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
+    const species = getPokemonSpecies(this.speciesId);
+    /**
+     * Currently, Victini's icon sprite is located in Gen 4, so we will temporarily bypass this issue with the following code.
+     * In the future, when Victini's icon sprite is properly moved to Gen 5, the temporary code below should be removed.
+     */
+    const generation = species.speciesId === Species.VICTINI ? 4 : this.generation;
+    return `pokemon_icons_${generation}${isVariant ? "v" : ""}`;
   }
 
   getIconId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
@@ -1671,7 +1677,7 @@ export function initSpecies() {
       new PokemonForm("Fairy", "fairy", Type.FAIRY, null, 3.2, 320, Abilities.MULTITYPE, Abilities.NONE, Abilities.NONE, 720, 120, 120, 120, 120, 120, 120, 3, 0, 324),
       new PokemonForm("???", "unknown", Type.UNKNOWN, null, 3.2, 320, Abilities.MULTITYPE, Abilities.NONE, Abilities.NONE, 720, 120, 120, 120, 120, 120, 120, 3, 0, 324),
     ),
-    new PokemonSpecies(Species.VICTINI, 4, false, false, true, "Victory Pokémon", Type.PSYCHIC, Type.FIRE, 0.4, 4, Abilities.VICTORY_STAR, Abilities.NONE, Abilities.NONE, 600, 100, 100, 100, 100, 100, 100, 3, 100, 300, GrowthRate.SLOW, null, false),
+    new PokemonSpecies(Species.VICTINI, 5, false, false, true, "Victory Pokémon", Type.PSYCHIC, Type.FIRE, 0.4, 4, Abilities.VICTORY_STAR, Abilities.NONE, Abilities.NONE, 600, 100, 100, 100, 100, 100, 100, 3, 100, 300, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.SNIVY, 5, false, false, false, "Grass Snake Pokémon", Type.GRASS, null, 0.6, 8.1, Abilities.OVERGROW, Abilities.NONE, Abilities.CONTRARY, 308, 45, 45, 55, 45, 55, 63, 45, 70, 62, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.SERVINE, 5, false, false, false, "Grass Snake Pokémon", Type.GRASS, null, 0.8, 16, Abilities.OVERGROW, Abilities.NONE, Abilities.CONTRARY, 413, 60, 60, 75, 60, 75, 83, 45, 70, 145, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.SERPERIOR, 5, false, false, false, "Regal Pokémon", Type.GRASS, null, 3.3, 63, Abilities.OVERGROW, Abilities.NONE, Abilities.CONTRARY, 528, 75, 75, 95, 75, 95, 113, 45, 70, 238, GrowthRate.MEDIUM_SLOW, 87.5, false),
