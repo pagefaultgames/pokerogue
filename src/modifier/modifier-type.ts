@@ -127,15 +127,18 @@ export class ModifierType {
    */
   withTierFromPool(poolType: ModifierPoolType = ModifierPoolType.PLAYER): ModifierType {
     const modifierPool = getModifierPoolForType(poolType);
-    Object.values(modifierPool).every(weightedModifiers => {
-      weightedModifiers.every(m => {
-        if (m.modifierType.id === this.id) {
-          this.tier = m.modifierType.tier;
-          return false; // Early lookup return if tier found
+
+    for (const weightedModifiers of Object.values(modifierPool)) {
+      for (const mod of weightedModifiers) {
+        if (mod.modifierType.id === this.id) {
+          this.tier = mod.modifierType.tier;
+          return this;
         }
-      });
-      return !this.tier; // Early lookup return if tier found
-    });
+      }
+    }
+
+    // Fallback to COMMON tier if no tier found
+    this.tier = ModifierTier.COMMON;
     return this;
   }
 

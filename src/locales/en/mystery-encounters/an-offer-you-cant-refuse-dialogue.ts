@@ -6,7 +6,7 @@ export const anOfferYouCantRefuseDialogue = {
     $I've always wanted to have a pet like that!
     $I'd pay you handsomely,\nand also give you this old bauble!`,
   title: "An Offer You Can't Refuse",
-  description: "You're being offered a @[TOOLTIP_TITLE]{Shiny Charm} and {{price, money}} for your {{strongestPokemon}}!\n\nIt's is an extremely good deal, but can you really bear to part with such a strong team member?",
+  description: "You're being offered a @[TOOLTIP_TITLE]{Shiny Charm} and {{price, money}} for your {{strongestPokemon}}!\n\nIt's an extremely good deal, but can you really bear to part with such a strong team member?",
   query: "What will you do?",
   option: {
     1: {

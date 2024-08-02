@@ -40,7 +40,8 @@ export const TrashToTreasureEncounter: IMysteryEncounter =
         hasShadow: false,
         disableAnimation: true,
         scale: 1.5,
-        y: 8
+        y: 8,
+        tint: 0.4
       }
     ])
     .withAutoHideIntroVisuals(false)

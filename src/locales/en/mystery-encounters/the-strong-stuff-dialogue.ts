@@ -10,7 +10,7 @@ export const theStrongStuffDialogue = {
       selected: "You black out.",
       selected_2: `@f{150}When you awaken, the Shuckle is gone\nand juice stash completely drained.
         $Your {{highBstPokemon}} feels a\nterrible lethargy come over it!
-        $It's base stats were reduced by 20 in each stat!
+        $Its base stats were reduced by 20 in each stat!
         $Your remaining Pokémon feel an incredible vigor, though!
         $Their base stats are increased by 10 in each stat!`
     },
