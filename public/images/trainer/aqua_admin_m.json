@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "aqua_admin.png",
+			"image": "aqua_admin_m.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 80,
