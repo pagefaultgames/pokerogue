@@ -306,15 +306,11 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     if (button === Button.ACTION) {
       let adjustedCursor = this.cursor;
-      const excludedMenu = this.excludedMenus().find(e => e.condition);
-      if (excludedMenu !== undefined && excludedMenu.options !== undefined && excludedMenu.options.length > 0) {
-        const sortedOptions = excludedMenu.options.sort();
-        for (const imo of sortedOptions) {
-          if (adjustedCursor >= imo) {
-            adjustedCursor++;
-          } else {
-            break;
-          }
+      for (const imo of this.ignoredMenuOptions) {
+        if (adjustedCursor >= imo) {
+          adjustedCursor++;
+        } else {
+          break;
         }
       }
       switch (adjustedCursor) {
