@@ -21,6 +21,7 @@ import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import Overrides from "#app/overrides";
 
 export enum TrainerVariant {
     DEFAULT,
@@ -429,6 +430,10 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE, forSwitch: boolean = false): [integer, integer][] {
+    if (Overrides.TRAINER_ALWAYS_SWITCHES) {
+      return [[1, 100], [1, 100]];
+    }
+
     if (trainerSlot && !this.isDouble()) {
       trainerSlot = TrainerSlot.NONE;
     }
