@@ -839,14 +839,6 @@ export class TitlePhase extends Phase {
               }
             }
           ];
-          options.push({
-            label: i18next.t("menuUiHandler:importSession"),
-            handler: () => {
-              this.confirmSlot(i18next.t("menuUiHandler:importSlotSelect"), () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
-              return true;
-            },
-            keepOpen: true
-          })
           if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
             options.push({
               label: GameMode.getModeName(GameModes.SPLICED_ENDLESS),
@@ -856,6 +848,14 @@ export class TitlePhase extends Phase {
               }
             });
           }
+          options.push({
+            label: i18next.t("menuUiHandler:importSession"),
+            handler: () => {
+              this.confirmSlot(i18next.t("menuUiHandler:importSlotSelect"), () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
+              return true;
+            },
+            keepOpen: true
+          })
           options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
@@ -867,10 +867,33 @@ export class TitlePhase extends Phase {
           });
           this.scene.ui.showText(i18next.t("menu:selectGameMode"), null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
         } else {
-          this.gameMode = GameModes.CLASSIC;
-          this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.ui.clearText();
-          this.end();
+          const options: OptionSelectItem[] = [
+            {
+              label: GameMode.getModeName(GameModes.CLASSIC),
+              handler: () => {
+                setModeAndEnd(GameModes.CLASSIC);
+                return true;
+              }
+            }
+          ];
+          options.push({
+            label: i18next.t("menuUiHandler:importSession"),
+            handler: () => {
+              this.confirmSlot(i18next.t("menuUiHandler:importSlotSelect"), () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
+              return true;
+            },
+            keepOpen: true
+          })
+          options.push({
+            label: i18next.t("menu:cancel"),
+            handler: () => {
+              this.scene.clearPhaseQueue();
+              this.scene.pushPhase(new TitlePhase(this.scene));
+              super.end();
+              return true;
+            }
+          });
+          this.scene.ui.showText(i18next.t("menu:selectGameMode"), null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
         }
         return true;
       }
@@ -2910,7 +2933,7 @@ export class TurnInitPhase extends FieldPhase {
       }
     }
     Pt.forEach((pokemon, i) => {
-      if (pokemon != undefined)
+      if (pokemon != undefined && pokemon.hp > 0 && pokemon.isActive())
         if (pokemon.hasTrainer() || true) {
           console.log(i)
           if (pokemon.getFieldIndex() == 1 && pokemon.isOnField()) {
