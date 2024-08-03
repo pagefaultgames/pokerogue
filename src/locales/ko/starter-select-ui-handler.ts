@@ -7,6 +7,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "이 포켓몬들로 시작하시겠습니까?",
+  "confirmExit": "Do you want to exit?",
   "invalidParty": "스타팅 포켓몬 파티에 적합하지 않습니다!",
   "gen1": "1세대",
   "gen2": "2세대",

@@ -1063,14 +1063,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
         this.updateInstructions();
       } else {
-        this.blockInput = true;
-        this.scene.clearPhaseQueue();
-        if (this.scene.gameMode.isChallenge) {
-          this.scene.pushPhase(new SelectChallengePhase(this.scene));
-        } else {
-          this.scene.pushPhase(new TitlePhase(this.scene));
-        }
-        this.scene.getCurrentPhase().end();
+        this.tryExit();
         success = true;
       }
     } else if (this.startCursorObj.visible) { // this checks to see if the start button is selected
@@ -2877,6 +2870,32 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     this.value = newValue;
+    return true;
+  }
+
+  tryExit(): boolean {
+    this.blockInput = true;
+    const ui = this.getUi();
+
+    const cancel = () => {
+      ui.setMode(Mode.STARTER_SELECT);
+      this.clearText();
+      this.blockInput = false;
+    };
+    ui.showText(i18next.t("starterSelectUiHandler:confirmExit"), null, () => {
+      ui.setModeWithoutClear(Mode.CONFIRM, () => {
+        ui.setMode(Mode.STARTER_SELECT);
+        this.scene.clearPhaseQueue();
+        if (this.scene.gameMode.isChallenge) {
+          this.scene.pushPhase(new SelectChallengePhase(this.scene));
+        } else {
+          this.scene.pushPhase(new TitlePhase(this.scene));
+        }
+        this.clearText();
+        this.scene.getCurrentPhase().end();
+      }, cancel, null, null, 19);
+    });
+
     return true;
   }
 
