@@ -116,6 +116,11 @@ class DefaultOverrides {
   readonly OPP_VARIANT_OVERRIDE: Variant = 0;
   readonly OPP_IVS_OVERRIDE: integer | integer[] = [];
 
+  // --------------------------
+  // TRAINER/AI OVERRIDES
+  // --------------------------
+  readonly TRAINER_ALWAYS_SWITCHES: boolean = false;
+
   // -------------
   // EGG OVERRIDES
   // -------------
