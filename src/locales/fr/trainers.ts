@@ -271,7 +271,11 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Tarak",
   "rival": "Gwenaël", //Male breton name, a celtic language spoken in  Brittany (France) and related to the word for "white" (gwenn). Finn meaning is also "white" in irish/goidelic which are also celtic languages.
   "rival_female": "Papina", //Litteral translation of ivy, also used as Female name in a North-American indigenous language
-
+  "maxie": "Max",
+  "archie": "Arthur",
+  "cyrus": "Hélios",
+  "ghetsis": "Ghetis",
+  "lysandre": "Lysandre",
 
   // Double Names
   "blue_red_double": "Blue & Red",
