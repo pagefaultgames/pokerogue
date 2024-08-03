@@ -2,7 +2,7 @@ import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
   "title": "Paramètres du Challenge",
-  "illegalEvolution": "{{pokemon}} s’est transformé en Pokémon\ninéligible pour ce challenge !",
+  "illegalEvolution": "{{pokemon}} est devenu\ninéligible pour ce challenge !",
   "singleGeneration": {
     "name": "Mono-génération",
     "desc": "Vous ne pouvez choisir que des Pokémon de {{gen}} génération.",
