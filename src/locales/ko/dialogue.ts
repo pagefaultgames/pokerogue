@@ -385,7 +385,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rocket_grunt": {
     "encounter": {
-      1: "트러블에 대비하도록!"
+      1: "트러블에 대비하도록!",
       2: "We're pulling a big job here! Get lost, kid!",
       3: "Hand over your Pokémon, or face the wrath of Team Rocket!",
       4: "You're about to experience the true terror of Team Rocket!",
