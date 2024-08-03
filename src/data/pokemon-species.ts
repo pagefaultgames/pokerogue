@@ -2946,8 +2946,8 @@ export const speciesStarters = {
   [Species.DARKRAI]: 6,
   [Species.SHAYMIN]: 6,
   [Species.ARCEUS]: 9,
-  [Species.VICTINI]: 7,
 
+  [Species.VICTINI]: 7,
   [Species.SNIVY]: 3,
   [Species.TEPIG]: 3,
   [Species.OSHAWOTT]: 3,
