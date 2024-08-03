@@ -1,4 +1,4 @@
-import {SimpleTranslationEntries} from "#app/plugins/i18n";
+import {SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
@@ -93,12 +93,12 @@ export const trainerClasses: SimpleTranslationEntries = {
   "pokémon_rangers": "Pokémon-Ranger",
   "ranger": "Ranger",
   "restaurant_staff": "Restaurant Angestellte",
-  "rich": "Rich",
-  "rich_female": "Rich",
+  "rich": "Gentleman",
+  "rich_female": "Reiche Dame",
   "rich_boy": "Schnösel",
   "rich_couple": "Reiches Paar",
-  "rich_kid": "Rich Kid",
-  "rich_kid_female": "Rich Kid",
+  "rich_kid": "Schnösel",
+  "rich_kid_female": "Schnöselin",
   "rich_kids": "Schnösel",
   "roughneck": "Raufbold",
   "sailor": "Matrose",
@@ -128,21 +128,32 @@ export const trainerClasses: SimpleTranslationEntries = {
   "rocket_grunt": "Rüpel von Team Rocket",
   "rocket_grunt_female": "Rüpel von Team Rocket",
   "rocket_grunts": "Rüpel von Team Rocket",
+  "rocket_admin": "Rocket Admin",
+  "rocket_admin_female": "Rocket Admin",
   "magma_grunt": "Rüpel von Team Magma",
   "magma_grunt_female": "Rüpel von Team Magma",
   "magma_grunts": "Rüpel von Team Magma",
+  "magma_admin": "Magma Admin",
+  "magma_admin_female": "Magma Admin",
   "aqua_grunt": "Rüpel von Team Aqua",
   "aqua_grunt_female": "Rüpel von Team Aqua",
   "aqua_grunts": "Rüpel von Team Aqua",
+  "aqua_admin": "Aqua Admin",
+  "aqua_admin_female": "Aqua Admin",
   "galactic_grunt": "Rüpel von Team Galaktik",
   "galactic_grunt_female": "Rüpel von Team Galaktik",
   "galactic_grunts": "Rüpel von Team Galaktik",
+  "galactic_admin": "Galactic Admin",
+  "galactic_admin_female": "Galactic Admin",
   "plasma_grunt": "Rüpel von Team Plasma",
   "plasma_grunt_female": "Rüpel von Team Plasma",
   "plasma_grunts": "Rüpel von Team Plasma",
+  "plasma_sage": "Plasma Sage",
   "flare_grunt": "Rüpel von Team Flare",
   "flare_grunt_female": "Rüpel von Team Flare",
   "flare_grunts": "Rüpel von Team Flare",
+  "flare_admin": "Flare Admin",
+  "flare_admin_female": "Flare Admin",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion

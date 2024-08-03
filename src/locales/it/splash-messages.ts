@@ -1,14 +1,14 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const splashMessages: SimpleTranslationEntries = {
   "battlesWon": "Battaglie Vinte!",
   "joinTheDiscord": "Entra nel Discord!",
   "infiniteLevels": "Livelli Infiniti!",
   "everythingStacks": "Tutto si impila!",
-  "optionalSaveScumming": "Salvataggio Facoltativo!",
+  "optionalSaveScumming": "Salvataggi Facoltativi!",
   "biomes": "35 Biomi!",
   "openSource": "Open Source!",
-  "playWithSpeed": "Gioca con il 5x di Velocità!",
+  "playWithSpeed": "Gioca con la velocità aumentata di 5 volte!",
   "liveBugTesting": "Test dei Bug in Tempo Reale!",
   "heavyInfluence": "Influenzato da RoR2!",
   "pokemonRiskAndPokemonRain": "Pokémon Risk e Pokémon Rain!",
@@ -34,4 +34,5 @@ export const splashMessages: SimpleTranslationEntries = {
   "alsoTryRadicalRed": "Prova anche Radical Red!",
   "eeveeExpo": "Eevee Expo!",
   "ynoproject": "YNOproject!",
+  "breedersInSpace": "Allevapokémon nello spazio!",
 } as const;

@@ -212,17 +212,18 @@ export default class PhaseInterceptor {
     return new Promise(async (resolve, reject) => {
       ErrorInterceptor.getInstance().add(this);
       const interval = setInterval(async () => {
-        const currentPhase = this.onHold.shift();
-        if (currentPhase) {
-          if (currentPhase.name !== targetName) {
-            this.onHold.unshift(currentPhase);
-          } else {
-            clearInterval(interval);
-            resolve();
-          }
+        const currentPhase = this.onHold[0];
+        if (currentPhase?.name === targetName) {
+          clearInterval(interval);
+          resolve();
         }
       });
     });
+  }
+
+  pop() {
+    this.onHold.pop();
+    this.scene.shiftPhase();
   }
 
   /**

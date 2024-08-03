@@ -24,6 +24,8 @@ import BattleScene from "#app/battle-scene.js";
 import {MoveAnim} from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
 import * as battleScene from "#app/battle-scene";
+import MockImage from "#app/test/utils/mocks/mocksContainer/mockImage.js";
+import { MockGameObjectCreator } from "./mocks/mockGameObjectCreator";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -35,6 +37,7 @@ Object.defineProperty(window, "console", {
 
 InputText.prototype.setElement = () => null;
 InputText.prototype.resize = () => null;
+Phaser.GameObjects.Image = MockImage;
 window.URL.createObjectURL = (blob: Blob) => {
   blobToString(blob).then((data: string) => {
     localStorage.setItem("toExport", data);
@@ -221,13 +224,9 @@ export default class GameWrapper {
         return resolve(response);
       });
     };
-    this.scene.make = {
-      graphics: (config) => new MockGraphics(mockTextureManager, config),
-      rexTransitionImagePack: () => ({
-        transit: () => null,
-      }),
-    };
+    this.scene.make = new MockGameObjectCreator(mockTextureManager);
     this.scene.time = new MockClock(this.scene);
+    this.scene.remove = vi.fn();
   }
 }
 

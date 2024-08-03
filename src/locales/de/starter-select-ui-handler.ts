@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/plugins/i18n";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 /**
  * The menu namespace holds most miscellaneous text that isn't directly part of the game's
@@ -7,6 +7,8 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "Mit diesen Pokémon losziehen?",
+  "confirmExit": "Do you want to exit?",
+  "invalidParty": "Das ist kein gültiges Team!",
   "gen1": "I",
   "gen2": "II",
   "gen3": "III",
@@ -21,15 +23,18 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "passive": "Passiv:",
   "nature": "Wesen:",
   "eggMoves": "Ei-Attacken",
-  "start": "Start",
   "addToParty": "Zum Team hinzufügen",
+  "removeFromParty": "Aus Team entfernen",
   "toggleIVs": "DVs anzeigen/verbergen",
   "manageMoves": "Attacken ändern",
+  "manageNature": "Wesen ändern",
   "useCandies": "Bonbons verwenden",
+  "selectNature": "Wähle das neue Wesen.",
   "selectMoveSwapOut": "Wähle die zu ersetzende Attacke.",
   "selectMoveSwapWith": "Wähle die gewünschte Attacke.",
   "unlockPassive": "Passiv-Skill freischalten",
   "reduceCost": "Preis reduzieren",
+  "sameSpeciesEgg": "Ein Ei kaufen",
   "cycleShiny": ": Schillernd",
   "cycleForm": ": Form",
   "cycleGender": ": Geschlecht",

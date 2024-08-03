@@ -1,25 +1,26 @@
 import BattleScene from "../battle-scene";
 import { BiomePoolTier, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "../data/biomes";
-import { Biome } from "../data/enums/biome";
+import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
-import { Species } from "../data/enums/species";
 import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
 import { CommonAnimPhase } from "../phases";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
 import Move from "../data/move";
-import { ArenaTag, ArenaTagSide, getArenaTag } from "../data/arena-tag";
-import { ArenaTagType } from "../data/enums/arena-tag-type";
-import { TrainerType } from "../data/enums/trainer-type";
+import { ArenaTag, ArenaTagSide, ArenaTrapTag, getArenaTag } from "../data/arena-tag";
 import { BattlerIndex } from "../battle";
-import { Moves } from "../data/enums/moves";
-import { TimeOfDay } from "../data/enums/time-of-day";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
-import * as Overrides from "../overrides";
-import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "./events/arena";
+import Overrides from "#app/overrides";
+import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "../events/arena";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { TimeOfDay } from "#enums/time-of-day";
+import { TrainerType } from "#enums/trainer-type";
 
 export class Arena {
   public scene: BattleScene;
@@ -55,6 +56,10 @@ export class Arena {
     this.scene.arenaNextEnemy.setBiome(this.biomeType);
     this.scene.arenaBg.setTexture(`${biomeKey}_bg`);
     this.scene.arenaBgTransition.setTexture(`${biomeKey}_bg`);
+
+    // Redo this on initialise because during save/load the current wave isn't always
+    // set correctly during construction
+    this.updatePoolsForTimeOfDay();
   }
 
   updatePoolsForTimeOfDay(): void {
@@ -379,6 +384,10 @@ export class Arena {
     return weatherMultiplier * terrainMultiplier;
   }
 
+  /**
+   * Gets the denominator for the chance for a trainer spawn
+   * @returns n where 1/n is the chance of a trainer battle
+   */
   getTrainerChance(): integer {
     switch (this.biomeType) {
     case Biome.METROPOLIS:
@@ -531,7 +540,7 @@ export class Arena {
     this.ignoreAbilities = ignoreAbilities;
   }
 
-  applyTagsForSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide, ...args: any[]): void {
+  applyTagsForSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide, ...args: unknown[]): void {
     let tags = typeof tagType === "string"
       ? this.tags.filter(t => t.tagType === tagType)
       : this.tags.filter(t => t instanceof tagType);
@@ -541,7 +550,7 @@ export class Arena {
     tags.forEach(t => t.apply(this, args));
   }
 
-  applyTags(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, ...args: any[]): void {
+  applyTags(tagType: ArenaTagType | Constructor<ArenaTag>, ...args: unknown[]): void {
     this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
   }
 
@@ -549,6 +558,12 @@ export class Arena {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
       existingTag.onOverlap(this);
+
+      if (existingTag instanceof ArenaTrapTag) {
+        const { tagType, side, turnCount, layers, maxLayers } = existingTag as ArenaTrapTag;
+        this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
+      }
+
       return false;
     }
 
@@ -556,16 +571,18 @@ export class Arena {
     this.tags.push(newTag);
     newTag.onAdd(this, quiet);
 
-    this.eventTarget.dispatchEvent(new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount));
+    const { layers = 0, maxLayers = 0 } = newTag instanceof ArenaTrapTag ? newTag : {};
+
+    this.eventTarget.dispatchEvent(new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, layers, maxLayers));
 
     return true;
   }
 
-  getTag(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }): ArenaTag {
+  getTag(tagType: ArenaTagType | Constructor<ArenaTag>): ArenaTag {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }
 
-  getTagOnSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide): ArenaTag {
+  getTagOnSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide): ArenaTag {
     return typeof(tagType) === "string"
       ? this.tags.find(t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side))
       : this.tags.find(t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
@@ -621,6 +638,18 @@ export class Arena {
     }
   }
 
+  /**
+   * Clears weather, terrain and arena tags when entering new biome or trainer battle.
+   */
+  resetArenaEffects(): void {
+    // Don't reset weather if a Biome's permanent weather is active
+    if (this.weather?.turnsLeft !== 0) {
+      this.trySetWeather(WeatherType.NONE, false);
+    }
+    this.trySetTerrain(TerrainType.NONE, false, true);
+    this.removeAllTags();
+  }
+
   preloadBgm(): void {
     this.scene.loadBgm(this.bgm);
   }
@@ -640,7 +669,7 @@ export class Arena {
     case Biome.FOREST:
       return 4.294;
     case Biome.SEA:
-      return 1.672;
+      return 0.024;
     case Biome.SWAMP:
       return 4.461;
     case Biome.BEACH:
@@ -648,7 +677,7 @@ export class Arena {
     case Biome.LAKE:
       return 5.350;
     case Biome.SEABED:
-      return 2.629;
+      return 2.600;
     case Biome.MOUNTAIN:
       return 4.018;
     case Biome.BADLANDS:
@@ -678,7 +707,7 @@ export class Arena {
     case Biome.ABYSS:
       return 5.130;
     case Biome.SPACE:
-      return 21.347;
+      return 20.036;
     case Biome.CONSTRUCTION_SITE:
       return 1.222;
     case Biome.JUNGLE:
@@ -692,7 +721,7 @@ export class Arena {
     case Biome.LABORATORY:
       return 114.862;
     case Biome.SLUM:
-      return 1.221;
+      return 0.000;
     case Biome.SNOWY_FOREST:
       return 3.047;
     }

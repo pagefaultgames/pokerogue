@@ -1,6 +1,6 @@
+import { BattleSpec } from "#enums/battle-spec";
+import { TrainerType } from "#enums/trainer-type";
 import {trainerConfigs} from "./trainer-config";
-import {TrainerType} from "./enums/trainer-type";
-import {BattleSpec} from "../enums/battle-spec";
 
 export interface TrainerTypeMessages {
     encounter?: string | string[],
@@ -459,6 +459,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.ROCKET_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:rocket_admin.encounter.1",
+        "dialogue:rocket_admin.encounter.2",
+        "dialogue:rocket_admin.encounter.3",
+      ],
+      victory: [
+        "dialogue:rocket_admin.victory.1",
+        "dialogue:rocket_admin.victory.2",
+        "dialogue:rocket_admin.victory.3",
+      ]
+    }
+  ],
   [TrainerType.MAGMA_GRUNT]: [
     {
       encounter: [
@@ -466,6 +480,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ],
       victory: [
         "dialogue:magma_grunt.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.MAGMA_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:magma_admin.encounter.1",
+        "dialogue:magma_admin.encounter.2",
+        "dialogue:magma_admin.encounter.3",
+      ],
+      victory: [
+        "dialogue:magma_admin.victory.1",
+        "dialogue:magma_admin.victory.2",
+        "dialogue:magma_admin.victory.3",
       ]
     }
   ],
@@ -479,6 +507,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.AQUA_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:aqua_admin.encounter.1",
+        "dialogue:aqua_admin.encounter.2",
+        "dialogue:aqua_admin.encounter.3",
+      ],
+      victory: [
+        "dialogue:aqua_admin.victory.1",
+        "dialogue:aqua_admin.victory.2",
+        "dialogue:aqua_admin.victory.3",
+      ]
+    }
+  ],
   [TrainerType.GALACTIC_GRUNT]: [
     {
       encounter: [
@@ -486,6 +528,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ],
       victory: [
         "dialogue:galactic_grunt.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.GALACTIC_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:galactic_admin.encounter.1",
+        "dialogue:galactic_admin.encounter.2",
+        "dialogue:galactic_admin.encounter.3",
+      ],
+      victory: [
+        "dialogue:galactic_admin.victory.1",
+        "dialogue:galactic_admin.victory.2",
+        "dialogue:galactic_admin.victory.3",
       ]
     }
   ],
@@ -499,6 +555,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.PLASMA_SAGE]: [
+    {
+      encounter: [
+        "dialogue:plasma_sage.encounter.1",
+        "dialogue:plasma_sage.encounter.2",
+        "dialogue:plasma_sage.encounter.3",
+      ],
+      victory: [
+        "dialogue:plasma_sage.victory.1",
+        "dialogue:plasma_sage.victory.2",
+        "dialogue:plasma_sage.victory.3",
+      ]
+    }
+  ],
   [TrainerType.FLARE_GRUNT]: [
     {
       encounter: [
@@ -506,6 +576,20 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ],
       victory: [
         "dialogue:flare_grunt.victory.1"
+      ]
+    }
+  ],
+  [TrainerType.FLARE_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:flare_admin.encounter.1",
+        "dialogue:flare_admin.encounter.2",
+        "dialogue:flare_admin.encounter.3",
+      ],
+      victory: [
+        "dialogue:flare_admin.victory.1",
+        "dialogue:flare_admin.victory.2",
+        "dialogue:flare_admin.victory.3",
       ]
     }
   ],
@@ -2288,6 +2372,28 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
     defeat: [
       "dialogue:raihan_elite.defeat.1",
       "dialogue:raihan_elite.defeat.2"
+    ]
+  },
+  [TrainerType.ALDER]: {
+    encounter: [
+      "dialogue:alder.encounter.1"
+    ],
+    victory: [
+      "dialogue:alder.victory.1"
+    ],
+    defeat: [
+      "dialogue:alder.defeat.1"
+    ]
+  },
+  [TrainerType.KIERAN]: {
+    encounter: [
+      "dialogue:kieran.encounter.1"
+    ],
+    victory: [
+      "dialogue:kieran.victory.1"
+    ],
+    defeat: [
+      "dialogue:kieran.defeat.1"
     ]
   },
   [TrainerType.RIVAL]: [

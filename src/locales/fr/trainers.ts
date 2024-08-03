@@ -1,4 +1,4 @@
-import {SimpleTranslationEntries} from "#app/plugins/i18n";
+import {SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
@@ -13,6 +13,12 @@ export const titles: SimpleTranslationEntries = {
   "rival": "Rival·e", //Written in gender-inclusive language in wait of a potential split of the entry
   "professor": "Professeur·e", //Written in gender-inclusive language in wait of a potential split of the entry
   "frontier_brain": "Meneur·euse de Zone", //Written in gender-inclusive language in wait of a potential split of the entry
+  "rocket_boss": "Leader de la Team Rocket",
+  "magma_boss": "Leader de la Team Magma",
+  "aqua_boss": "Leader de la Team Aqua",
+  "galactic_boss": "Leader de la Team Galaxie",
+  "plasma_boss": "Leader de la Team Plasma",
+  "flare_boss": "Leader de la Team Flare",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -118,7 +124,36 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker": "Ouvrier",
   "worker_female": "Ouvrière",
   "workers": "Ouvriers",
-  "youngster": "Gamin"
+  "youngster": "Gamin",
+  "rocket_grunt": "Sbire de la Team Rocket",
+  "rocket_grunt_female": "Sbire de la Team Rocket",
+  "rocket_grunts": "Sbires de la Team Rocket",
+  "rocket_admin": "Rocket Admin",
+  "rocket_admin_female": "Rocket Admin",
+  "magma_grunt": "Sbire de la Team Magma",
+  "magma_grunt_female": "Sbire de la Team Magma",
+  "magma_grunts": "Sbires de la Team Magma",
+  "magma_admin": "Magma Admin",
+  "magma_admin_female": "Magma Admin",
+  "aqua_grunt": "Sbire de la Team Aqua",
+  "aqua_grunt_female": "Sbire de la Team Aqua",
+  "aqua_grunts": "Sbires de la Team Aqua",
+  "aqua_admin": "Aqua Admin",
+  "aqua_admin_female": "Aqua Admin",
+  "galactic_grunt": "Sbire de la Team Galaxie",
+  "galactic_grunt_female": "Sbire de la Team Galaxie",
+  "galactic_grunts": "Sbires de la Team Galaxie",
+  "galactic_admin": "Galactic Admin",
+  "galactic_admin_female": "Galactic Admin",
+  "plasma_grunt": "Sbire de la Team Plasma",
+  "plasma_grunt_female": "Sbire de la Team Plasma",
+  "plasma_grunts": "Sbires de la Team Plasma",
+  "plasma_sage": "Plasma Sage",
+  "flare_grunt": "Sbire de la Team Flare",
+  "flare_grunt_female": "Sbire de la Team Flare",
+  "flare_grunts": "Sbires de la Team Flare",
+  "flare_admin": "Flare Admin",
+  "flare_admin_female": "Flare Admin",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -247,7 +282,11 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Tarak",
   "rival": "Gwenaël", //Male breton name, a celtic language spoken in  Brittany (France) and related to the word for "white" (gwenn). Finn meaning is also "white" in irish/goidelic which are also celtic languages.
   "rival_female": "Papina", //Litteral translation of ivy, also used as Female name in a North-American indigenous language
-
+  "maxie": "Max",
+  "archie": "Arthur",
+  "cyrus": "Hélios",
+  "ghetsis": "Ghetis",
+  "lysandre": "Lysandre",
 
   // Double Names
   "blue_red_double": "Blue & Red",

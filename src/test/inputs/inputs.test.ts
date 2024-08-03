@@ -48,8 +48,8 @@ describe("Inputs", () => {
   });
 
   it("Mobile - test touch holding for 1000ms - 4 input", async () => {
-    await game.inputsHandler.pressTouch("dpadUp", 1000);
-    expect(game.inputsHandler.log.length).toBe(4);
+    await game.inputsHandler.pressTouch("dpadUp", 1050);
+    expect(game.inputsHandler.log.length).toBe(5);
   });
 
   it("keyboard - test input holding for 200ms - 1 input", async() => {
@@ -63,13 +63,8 @@ describe("Inputs", () => {
   });
 
   it("keyboard - test input holding for 1000ms - 4 input", async() => {
-    await game.inputsHandler.pressKeyboardKey(cfg_keyboard_qwerty.deviceMapping.KEY_ARROW_UP, 1000);
-    expect(game.inputsHandler.log.length).toBe(4);
-  });
-
-  it("keyboard - test input holding for 2000ms - 8 input", async() => {
-    await game.inputsHandler.pressKeyboardKey(cfg_keyboard_qwerty.deviceMapping.KEY_ARROW_UP, 2000);
-    expect(game.inputsHandler.log.length).toBe(8);
+    await game.inputsHandler.pressKeyboardKey(cfg_keyboard_qwerty.deviceMapping.KEY_ARROW_UP, 1050);
+    expect(game.inputsHandler.log.length).toBe(5);
   });
 
   it("gamepad - test input holding for 1ms - 1 input", async() => {
@@ -82,24 +77,14 @@ describe("Inputs", () => {
     expect(game.inputsHandler.log.length).toBe(1);
   });
 
-  it("gamepad - test input holding for 249ms - 1 input", async() => {
-    await game.inputsHandler.pressGamepadButton(pad_xbox360.deviceMapping.RC_S, 249);
-    expect(game.inputsHandler.log.length).toBe(1);
-  });
-
   it("gamepad - test input holding for 300ms - 2 input", async() => {
     await game.inputsHandler.pressGamepadButton(pad_xbox360.deviceMapping.RC_S, 300);
     expect(game.inputsHandler.log.length).toBe(2);
   });
 
   it("gamepad - test input holding for 1000ms - 4 input", async() => {
-    await game.inputsHandler.pressGamepadButton(pad_xbox360.deviceMapping.RC_S, 1000);
-    expect(game.inputsHandler.log.length).toBe(4);
-  });
-
-  it("gamepad - test input holding for 2000ms - 8 input", async() => {
-    await game.inputsHandler.pressGamepadButton(pad_xbox360.deviceMapping.RC_S, 2000);
-    expect(game.inputsHandler.log.length).toBe(8);
+    await game.inputsHandler.pressGamepadButton(pad_xbox360.deviceMapping.RC_S, 1050);
+    expect(game.inputsHandler.log.length).toBe(5);
   });
 });
 

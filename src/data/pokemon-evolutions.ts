@@ -1,16 +1,16 @@
 import { Gender } from "./gender";
-import { Moves } from "./enums/moves";
 import { PokeballType } from "./pokeball";
 import Pokemon from "../field/pokemon";
 import { Stat } from "./pokemon-stat";
-import { Species } from "./enums/species";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { SpeciesFormKey } from "./pokemon-species";
 import { WeatherType } from "./weather";
-import { Biome } from "./enums/biome";
-import { TimeOfDay } from "./enums/time-of-day";
 import { Nature } from "./nature";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { TimeOfDay } from "#enums/time-of-day";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -1145,6 +1145,11 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.PAWMOT, 32, null, null)
   ],
   [Species.TANDEMAUS]: [
+    new SpeciesFormEvolution(Species.MAUSHOLD, "", "three", 25, null, new SpeciesEvolutionCondition(p => {
+      let ret = false;
+      p.scene.executeWithSeedOffset(() => ret = !Utils.randSeedInt(4), p.id);
+      return ret;
+    })),
     new SpeciesEvolution(Species.MAUSHOLD, 25, null, null)
   ],
   [Species.FIDOUGH]: [
@@ -1618,7 +1623,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.FROSMOTH, 1, null, new SpeciesFriendshipEvolutionCondition(90, p => p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.GIMMIGHOUL]: [
-    new SpeciesEvolution(Species.GHOLDENGO, 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesFormEvolution(Species.GHOLDENGO, "chest", "", 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesFormEvolution(Species.GHOLDENGO, "roaming", "", 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.VERY_LONG)
   ]
 };
 

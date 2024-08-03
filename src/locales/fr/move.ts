@@ -1,4 +1,4 @@
-import { MoveTranslationEntries } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/interfaces/locales";
 
 export const move: MoveTranslationEntries = {
   "pound": {
@@ -2931,7 +2931,7 @@ export const move: MoveTranslationEntries = {
   },
   "bouncyBubble": {
     name: "Évo-Thalasso",
-    effect: "Évoli frappe l’adversaire avec des bulles d’eau qu’il absorbe ensuite pour récupérer un nombre de PV égal à la moitié des dégâts infligés à l’ennemi."
+    effect: "L’adversaire est frappé par des bulles d’eau qui sont ensuite absorbées pour récupérer un nombre de PV égal aux dégâts infligés à l’ennemi."
   },
   "buzzyBuzz": {
     name: "Évo-Dynamo",
@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   "dynamaxCannon": {
     name: "Canon Dynamax",
-    effect: "Le lanceur attaque en émettant un laser depuis son noyau. Cette capacité inflige deux fois plus de dégâts si l’adversaire est level 200."
+    effect: "Le lanceur attaque en libérant l’énergie concentrée dans son noyau. Inflige jusqu’à deux fois plus de dégâts si l’adversaire a un niveau très élevé."
   },
   "snipeShot": {
     name: "Tir de Précision",

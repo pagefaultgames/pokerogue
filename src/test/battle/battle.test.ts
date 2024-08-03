@@ -1,10 +1,6 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import {generateStarter, getMovePosition,} from "#app/test/utils/gameManagerUtils";
-import {Mode} from "#app/ui/ui";
-import {GameModes} from "#app/game-mode";
-import {Species} from "#app/data/enums/species";
-import * as overrides from "../../overrides";
-import {Command} from "#app/ui/command-ui-handler";
+import { allSpecies } from "#app/data/pokemon-species";
+import { GameModes } from "#app/game-mode";
+import { getGameMode } from "#app/game-mode.js";
 import {
   CommandPhase, DamagePhase,
   EncounterPhase,
@@ -17,13 +13,16 @@ import {
   TitlePhase,
   TurnInitPhase, VictoryPhase,
 } from "#app/phases";
-import {Moves} from "#app/data/enums/moves";
 import GameManager from "#app/test/utils/gameManager";
+import { generateStarter, getMovePosition, } from "#app/test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
 import Phaser from "phaser";
-import {allSpecies} from "#app/data/pokemon-species";
-import {PlayerGender} from "#app/data/enums/player-gender";
-import { getGameMode } from "#app/game-mode.js";
-import {Abilities} from "#app/data/enums/abilities";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -90,14 +89,15 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("do attack wave 3 - single battle - regular - OHKO", async() => {
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    game.override.starterSpecies(Species.MEWTWO);
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.startingLevel(2000);
+    game.override
+      .startingWave(3)
+      .battleType("single");
+    game.override.moveset([Moves.TACKLE]);
+    game.override.enemyAbility(Abilities.HYDRATION);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
     await game.startBattle();
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
@@ -110,14 +110,14 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack", async() => {
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP]);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    game.override.starterSpecies(Species.MEWTWO);
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.startingLevel(5);
+    game.override.startingWave(3);
+    game.override.moveset([Moves.TACKLE]);
+    game.override.enemyAbility(Abilities.HYDRATION);
+    game.override.enemyMoveset([Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP]);
+    game.override.battleType("single");
     await game.startBattle();
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
@@ -151,8 +151,8 @@ describe("Test Battle Phase", () => {
 
   it("test remove random battle seed int", async() => {
     for (let i=0; i<10; i++) {
-      const rand = game.scene.randBattleSeedInt(15);
-      expect(rand).toBe(14);
+      const rand = game.scene.randBattleSeedInt(16);
+      expect(rand).toBe(15);
     }
   });
 
@@ -204,10 +204,10 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("2vs1", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.MIGHTYENA);
+    game.override.enemyAbility(Abilities.HYDRATION);
+    game.override.ability(Abilities.HYDRATION);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
@@ -217,10 +217,10 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("1vs1", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.MIGHTYENA);
+    game.override.enemyAbility(Abilities.HYDRATION);
+    game.override.ability(Abilities.HYDRATION);
     await game.startBattle([
       Species.BLASTOISE,
     ]);
@@ -229,11 +229,11 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("2vs2", async() => {
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    game.override.battleType("double");
+    game.override.enemySpecies(Species.MIGHTYENA);
+    game.override.enemyAbility(Abilities.HYDRATION);
+    game.override.ability(Abilities.HYDRATION);
+    game.override.startingWave(3);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
@@ -243,11 +243,11 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("4vs2", async() => {
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MIGHTYENA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
+    game.override.battleType("double");
+    game.override.enemySpecies(Species.MIGHTYENA);
+    game.override.enemyAbility(Abilities.HYDRATION);
+    game.override.ability(Abilities.HYDRATION);
+    game.override.startingWave(3);
     await game.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
@@ -260,15 +260,15 @@ describe("Test Battle Phase", () => {
 
   it("kill opponent pokemon", async() => {
     const moveToUse = Moves.SPLASH;
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.battleType("single");
+    game.override.starterSpecies(Species.MEWTWO);
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemyAbility(Abilities.HYDRATION);
+    game.override.ability(Abilities.ZEN_MODE);
+    game.override.startingLevel(2000);
+    game.override.startingWave(3);
+    game.override.moveset([moveToUse]);
+    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle([
       Species.DARMANITAN,
       Species.CHARIZARD,
@@ -289,15 +289,15 @@ describe("Test Battle Phase", () => {
 
   it("to next turn", async() => {
     const moveToUse = Moves.SPLASH;
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.battleType("single");
+    game.override.starterSpecies(Species.MEWTWO);
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemyAbility(Abilities.HYDRATION);
+    game.override.ability(Abilities.ZEN_MODE);
+    game.override.startingLevel(2000);
+    game.override.startingWave(3);
+    game.override.moveset([moveToUse]);
+    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle();
     const turn = game.scene.currentBattle.turn;
     game.doAttack(0);
@@ -307,15 +307,15 @@ describe("Test Battle Phase", () => {
 
   it("to next wave with pokemon killed, single", async() => {
     const moveToUse = Moves.SPLASH;
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.battleType("single");
+    game.override.starterSpecies(Species.MEWTWO);
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemyAbility(Abilities.HYDRATION);
+    game.override.ability(Abilities.ZEN_MODE);
+    game.override.startingLevel(2000);
+    game.override.startingWave(3);
+    game.override.moveset([moveToUse]);
+    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle();
     const waveIndex = game.scene.currentBattle.waveIndex;
     game.doAttack(0);
