@@ -1421,6 +1421,17 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "koga": {
     "encounter": {
+      1: "Fwahahaha! Very well, I shall show you true terror as a ninja master!"
+    },
+    "victory": {
+      1: "Humph! You've proven your worth!"
+    },
+    "defeat": {
+      1: "Despair to the creeping horror of Poison-type Pokémon!"
+    }
+  },
+  "koga_elite": {
+    "encounter": {
       1: "Fwahahahaha! Pokémon are not merely about brute force--you shall see soon enough!"
     },
     "victory": {

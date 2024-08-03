@@ -329,6 +329,9 @@ export class TrainerConfig {
     case TrainerType.RAIHAN_ELITE:
       trainerType = TrainerType.RAIHAN;
       break;
+    case TrainerType.KOGA_ELITE:
+      trainerType = TrainerType.KOGA;
+      break;
     }
 
     return trainerType;
@@ -891,6 +894,7 @@ export const signatureSpecies: SignatureSpecies = {
   LT_SURGE: [Species.VOLTORB, Species.PIKACHU, Species.ELECTABUZZ],
   ERIKA: [Species.ODDISH, Species.BELLSPROUT, Species.TANGELA, Species.HOPPIP],
   JANINE: [Species.VENONAT, Species.SPINARAK, Species.ZUBAT],
+  KOGA: [Species.KOFFING, Species.GRIMER, Species.VENONAT],
   SABRINA: [Species.ABRA, Species.MR_MIME, Species.ESPEON],
   BLAINE: [Species.GROWLITHE, Species.PONYTA, Species.MAGMAR],
   GIOVANNI: [Species.DIGLETT, Species.NIDORAN_M, Species.NIDOQUEEN, Species.RHYHORN],
@@ -965,7 +969,7 @@ export const signatureSpecies: SignatureSpecies = {
   AGATHA: [Species.GENGAR, [Species.ARBOK, Species.WEEZING], Species.CROBAT, Species.ALOLA_MAROWAK],
   LANCE: [Species.DRAGONITE, Species.GYARADOS, Species.AERODACTYL, Species.ALOLA_EXEGGUTOR],
   WILL: [Species.XATU, Species.JYNX, [Species.SLOWBRO, Species.SLOWKING], Species.EXEGGUTOR],
-  KOGA: [[Species.WEEZING, Species.MUK], [Species.VENOMOTH, Species.ARIADOS], Species.CROBAT, Species.TENTACRUEL],
+  KOGA_ELITE: [Species.MUK, Species.VENOMOTH, [Species.ARIADOS, Species.FORRETRESS], Species.CROBAT],
   KAREN: [Species.UMBREON, Species.HONCHKROW, Species.HOUNDOOM, Species.WEAVILE],
   SIDNEY: [[Species.SHIFTRY, Species.CACTURNE], [Species.SHARPEDO, Species.CRAWDAUNT], Species.ABSOL, Species.MIGHTYENA],
   PHOEBE: [Species.SABLEYE, Species.DUSKNOIR, Species.BANETTE, [Species.MISMAGIUS, Species.DRIFBLIM]],
@@ -1227,6 +1231,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.LT_SURGE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["LT_SURGE"],true, Type.ELECTRIC).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.ERIKA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["ERIKA"],false, Type.GRASS).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.JANINE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["JANINE"],false, Type.POISON).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
+  [TrainerType.KOGA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KOGA"],false, Type.POISON).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.SABRINA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["SABRINA"],false, Type.PSYCHIC).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.BLAINE]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["BLAINE"],true, Type.FIRE).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.GIOVANNI]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["GIOVANNI"],true, Type.GROUND).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
@@ -1302,7 +1307,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.AGATHA]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["AGATHA"], false,Type.GHOST).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.LANCE]: new TrainerConfig(++t).setName("Lance").initForEliteFour(signatureSpecies["LANCE"],true, Type.DRAGON).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.WILL]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["WILL"],true, Type.PSYCHIC).setBattleBgm("battle_johto_gym").setMixedBattleBgm("battle_johto_gym"),
-  [TrainerType.KOGA]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["KOGA"], true, Type.POISON).setBattleBgm("battle_johto_gym").setMixedBattleBgm("battle_johto_gym"),
+  [TrainerType.KOGA_ELITE]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["KOGA_ELITE"], true, Type.POISON).setBattleBgm("battle_johto_gym").setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.KAREN]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["KAREN"],false, Type.DARK).setBattleBgm("battle_johto_gym").setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.SIDNEY]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["SIDNEY"],true, Type.DARK).setMixedBattleBgm("battle_hoenn_elite"),
   [TrainerType.PHOEBE]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["PHOEBE"],false, Type.GHOST).setMixedBattleBgm("battle_hoenn_elite"),

@@ -1474,6 +1474,17 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Hast du gelernt, die Techniken der Ninja zu fürchten?"
     }
   },
+  "koga_elite": {
+    "encounter": {
+      1: "Fwahahahaha! Pokémon sind nicht nur rohe Gewalt - das wirst du bald genug sehen!"
+    },
+    "victory": {
+      1: "Ah! Du hast deinen Wert bewiesen!"
+    },
+    "defeat": {
+      1: "Hast du gelernt, die Techniken der Ninja zu fürchten?"
+    }
+  },
   "bertha": {
     "encounter": {
       1: "Nun, würdest du dieser alten Dame zeigen, wie viel du gelernt hast?"
