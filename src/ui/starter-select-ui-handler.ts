@@ -119,7 +119,7 @@ const starterCandyCosts: { passive: integer, costReduction: [integer, integer], 
   { passive: 10, costReduction: [3, 10], egg: 10 },  // 10
 ];
 
-export const VALUE_REDUCTION_MAX = 2;
+const VALUE_REDUCTION_MAX = 2;
 
 function getPassiveCandyCount(baseValue: integer): integer {
   return starterCandyCosts[baseValue - 1].passive;
