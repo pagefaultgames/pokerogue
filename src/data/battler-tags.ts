@@ -196,15 +196,15 @@ export class DisabledTag extends DisablingBattlerTag {
 
     this.moveId = move.move;
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, `'s ${allMoves[this.moveId].name}\nwas disabled!`));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsDisabledOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: this.getMoveName() }));
   }
 
   protected override interruptedText(pokemon: Pokemon, move: Moves): string {
-    return getPokemonMessage(pokemon, `'s ${allMoves[this.moveId].name}\nis disabled!`);
+    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: this.getMoveName() });
   }
 
   protected override finishedText(pokemon: Pokemon): string {
-    return i18next.t("battle:notDisabled", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name });
+    return i18next.t("battle:battlerTagsDisabledLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: this.getMoveName() });
   }
 }
 
@@ -1901,7 +1901,3 @@ export function loadBattlerTag(source: BattlerTag | any): BattlerTag {
   tag.loadTag(source);
   return tag;
 }
-function getPokemonMessage(pokemon: Pokemon, arg1: string): string {
-  throw new Error("Function not implemented.");
-}
-
