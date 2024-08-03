@@ -2856,7 +2856,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   tryExit(): boolean {
-
     this.blockInput = true;
     const ui = this.getUi();
 
