@@ -934,7 +934,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * Apply all challenges that modify what weight a pokemon gives to move generation
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.DUPLICATE_SPECIES
- * @param allowDuplicates {@link Utils.BooleanHolder} is allowing duplicates.
+ * @param allowDuplicates {@link Utils.BooleanHolder} True to allow duplicate species
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.DUPLICATE_SPECIES, allowDuplicates: Utils.BooleanHolder): boolean;
