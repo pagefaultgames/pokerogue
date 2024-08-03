@@ -151,8 +151,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private filterBarContainer: Phaser.GameObjects.Container;
   private filterBar: FilterBar;
   private shinyOverlay: Phaser.GameObjects.Image;
-  private starterContainer: StarterContainer[] = [];
+  private starterContainers: StarterContainer[] = [];
   private filteredStarterContainers: StarterContainer[] = [];
+  private validStarterContainers: StarterContainer[] = [];
   private pokemonNumberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private pokemonNameText: Phaser.GameObjects.Text;
@@ -536,7 +537,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       const starterContainer = new StarterContainer(this.scene, species).setVisible(false);
       this.iconAnimHandler.addOrUpdate(starterContainer.icon, PokemonIconAnimMode.NONE);
-      this.starterContainer.push(starterContainer);
+      this.starterContainers.push(starterContainer);
       starterBoxContainer.add(starterContainer);
     }
 
@@ -820,7 +821,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterSelectContainer.setVisible(true);
 
       this.allSpecies.forEach((species, s) => {
-        const icon = this.starterContainer[s].icon;
+        const icon = this.starterContainers[s].icon;
         const dexEntry = this.scene.gameData.dexData[species.speciesId];
 
         if (dexEntry.caughtAttr) {
@@ -1956,14 +1957,31 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   updateStarters = () => {
     this.scrollCursor = 0;
     this.filteredStarterContainers = [];
+    this.validStarterContainers = [];
 
     this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
     this.starterCursorObjs.forEach(cursor => cursor.setVisible(false));
 
     this.filterBar.updateFilterLabels();
 
+    // pre filter for challenges
+    if (this.scene.gameMode.modeId === GameModes.CHALLENGE) {
+      console.log("this.scene.gameMode.modeId", this.scene.gameMode.modeId);
+      this.starterContainers.forEach(container => {
+        const isValidForChallenge = new Utils.BooleanHolder(true);
+        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, container.species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(container.species, this.scene.gameData.getSpeciesDefaultDexAttr(container.species, false, true)), true);
+        if (isValidForChallenge.value) {
+          this.validStarterContainers.push(container);
+        } else {
+          container.setVisible(false);
+        }
+      });
+    } else {
+      this.validStarterContainers = this.starterContainers;
+    }
+
     // filter
-    this.starterContainer.forEach(container => {
+    this.validStarterContainers.forEach(container => {
       container.setVisible(false);
 
       container.cost = this.scene.gameData.getSpeciesStarterValue(container.species.speciesId);
@@ -2275,12 +2293,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const dexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(this.lastSpecies, false, true);
       const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr);
       const speciesIndex = this.allSpecies.indexOf(this.lastSpecies);
-      const lastSpeciesIcon = this.starterContainer[speciesIndex].icon;
+      const lastSpeciesIcon = this.starterContainers[speciesIndex].icon;
       this.checkIconId(lastSpeciesIcon, this.lastSpecies, props.female, props.formIndex, props.shiny, props.variant);
       this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
 
       // Resume the animation for the previously selected species
-      const icon = this.starterContainer[speciesIndex].icon;
+      const icon = this.starterContainers[speciesIndex].icon;
       this.scene.tweens.getTweensOf(icon).forEach(tween => tween.resume());
     }
 
@@ -2376,7 +2394,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         // Pause the animation when the species is selected
         const speciesIndex = this.allSpecies.indexOf(species);
-        const icon = this.starterContainer[speciesIndex].icon;
+        const icon = this.starterContainers[speciesIndex].icon;
 
         if (this.isUpgradeAnimationEnabled()) {
           this.scene.tweens.getTweensOf(icon).forEach(tween => tween.pause());
@@ -2813,7 +2831,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       /** Used to detect if this pokemon is registered in starter */
       const speciesStarterDexEntry = this.scene.gameData.dexData[this.allSpecies[s].speciesId];
       /** {@linkcode Phaser.GameObjects.Sprite} object of Pokémon for setting the alpha value */
-      const speciesSprite = this.starterContainer[s].icon;
+      const speciesSprite = this.starterContainers[s].icon;
 
       /**
        * If remainValue greater than or equal pokemon species and the pokemon is legal for this challenge, the user can select.
