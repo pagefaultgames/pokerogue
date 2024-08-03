@@ -556,7 +556,7 @@ export class TrainerConfig {
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
     this.name = i18next.t(`trainerNames:${nameForCall}`);
     this.setTitle(title);
-    this.setMoneyMultiplier(2.25);
+    this.setMoneyMultiplier(2.5);
     this.setBoss();
     this.setStaticParty();
     this.setBattleBgm("battle_plasma_boss");
