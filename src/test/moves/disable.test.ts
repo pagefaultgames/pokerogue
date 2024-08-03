@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "../utils/gameManager";
 import * as overrides from "#app/overrides";
-import { Abilities } from "#app/data/enums/abilities.js";
-import { Moves } from "#app/data/enums/moves.js";
-import { Species } from "#app/data/enums/species.js";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import { CommandPhase, EnemyCommandPhase, TurnInitPhase } from "#app/phases.js";
 import { Mode } from "#app/ui/ui.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
@@ -11,7 +11,7 @@ import {Command} from "#app/ui/command-ui-handler";
 import { MoveResult } from "#app/field/pokemon.js";
 import { Stat } from "#app/data/pokemon-stat.js";
 import { DisabledTag } from "#app/data/battler-tags.js";
-import { BattlerTagType } from "#app/data/enums/battler-tag-type.js";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 describe("Moves - Disable", () => {
   let phaserGame: Phaser.Game;
