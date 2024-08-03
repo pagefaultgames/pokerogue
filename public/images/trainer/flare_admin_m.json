@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "magma_admin.png",
+			"image": "flare_admin_m.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 80,
@@ -12,7 +12,7 @@
 				{
 					"filename": "0001.png",
 					"rotated": false,
-					"trimmed": true,
+					"trimmed": false,
 					"sourceSize": {
 						"w": 80,
 						"h": 80
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:f63ad48affc076f60fae78992c96a2bf:80928b32710abcb28c07c6fc5a425d99:3b961d8852b62aaf24ceb2030c036515$"
+		"smartupdate": "$TexturePacker:SmartUpdate:c30bf82452209a923f4becf13d275a9a:a6355b09f92c9c0388d0b919010f587f:0638dbf213f8a974eb5af76eb1e5ddeb$"
 	}
 }

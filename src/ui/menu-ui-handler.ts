@@ -40,8 +40,8 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   private cursorObj: Phaser.GameObjects.Image;
 
-  protected ignoredMenuOptions: MenuOptions[];
-  protected menuOptions: MenuOptions[];
+  private excludedMenus: () => ConditionalMenu[];
+  private menuOptions: MenuOptions[];
 
   protected manageDataConfig: OptionSelectConfig;
   protected communityConfig: OptionSelectConfig;
@@ -52,13 +52,19 @@ export default class MenuUiHandler extends MessageUiHandler {
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
-    this.ignoredMenuOptions = !bypassLogin
-      ? [ ]
-      : [ MenuOptions.LOG_OUT ];
-    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => !this.ignoredMenuOptions.includes(m));
+    this.excludedMenus = () => [
+      { condition: [Mode.COMMAND, Mode.TITLE].includes(mode ?? Mode.TITLE), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
+      { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
+    ];
+
+    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+      .map(m => parseInt(MenuOptions[m]) as MenuOptions)
+      .filter(m => {
+        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+      });
   }
 
-  setup() {
+  setup(): void {
     const ui = this.getUi();
     // wiki url directs based on languges available on wiki
     const lang = i18next.resolvedLanguage.substring(0,2);
@@ -80,10 +86,25 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuOverlay.setOrigin(0,0);
     this.menuContainer.add(this.menuOverlay);
 
-    const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
-    menuMessageText.setName("menu-message");
-    menuMessageText.setWordWrapWidth(1224);
-    menuMessageText.setOrigin(0, 0);
+    this.menuContainer.add(this.bgmBar);
+
+    this.menuContainer.setVisible(false);
+
+  }
+
+
+  render() {
+    const ui = this.getUi();
+    this.excludedMenus = () => [
+      { condition: ![Mode.COMMAND, Mode.TITLE].includes(ui.getModeChain()[0]), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
+      { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
+    ];
+
+    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+      .map(m => parseInt(MenuOptions[m]) as MenuOptions)
+      .filter(m => {
+        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+      });
 
     this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
     this.optionSelectText.setLineSpacing(12);
@@ -108,9 +129,11 @@ export default class MenuUiHandler extends MessageUiHandler {
     menuMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageBox);
 
+    const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
+    menuMessageText.setName("menu-message");
+    menuMessageText.setWordWrapWidth(1224);
+    menuMessageText.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageText);
-
-    this.menuContainer.add(this.bgmBar);
 
     this.message = menuMessageText;
 
@@ -270,15 +293,18 @@ export default class MenuUiHandler extends MessageUiHandler {
       xOffset: 98,
       options: communityOptions
     };
-
     this.setCursor(0);
-
-    this.menuContainer.setVisible(false);
   }
 
   show(args: any[]): boolean {
-
+    this.render();
     super.show(args);
+
+    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+      .map(m => parseInt(MenuOptions[m]) as MenuOptions)
+      .filter(m => {
+        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+      });
 
     this.menuContainer.setVisible(true);
     this.setCursor(0);
@@ -305,11 +331,15 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     if (button === Button.ACTION) {
       let adjustedCursor = this.cursor;
-      for (const imo of this.ignoredMenuOptions) {
-        if (adjustedCursor >= imo) {
-          adjustedCursor++;
-        } else {
-          break;
+      const excludedMenu = this.excludedMenus().find(e => e.condition);
+      if (excludedMenu !== undefined && excludedMenu.options !== undefined && excludedMenu.options.length > 0) {
+        const sortedOptions = excludedMenu.options.sort();
+        for (const imo of sortedOptions) {
+          if (adjustedCursor >= imo) {
+            adjustedCursor++;
+          } else {
+            break;
+          }
         }
       }
       switch (adjustedCursor) {
@@ -505,4 +535,9 @@ export default class MenuUiHandler extends MessageUiHandler {
     }
     this.cursorObj = null;
   }
+}
+
+interface ConditionalMenu {
+  condition: boolean;
+  options: MenuOptions[];
 }

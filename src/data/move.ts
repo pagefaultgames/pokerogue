@@ -1435,6 +1435,39 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Applies damage to the target's ally equal to 1/16 of that ally's max HP.
+ * @extends MoveEffectAttr
+ */
+export class FlameBurstAttr extends MoveEffectAttr {
+  /**
+   * @param user - n/a
+   * @param target - The target Pokémon.
+   * @param move - n/a
+   * @param args - n/a
+   * @returns A boolean indicating whether the effect was successfully applied.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    const targetAlly = target.getAlly();
+    const cancelled = new Utils.BooleanHolder(false);
+
+    if (targetAlly) {
+      applyAbAttrs(BlockNonDirectDamageAbAttr, targetAlly, cancelled);
+    }
+
+    if (cancelled.value || !targetAlly) {
+      return false;
+    }
+
+    targetAlly.damageAndUpdate(Math.max(1, Math.floor(1/16 * targetAlly.getMaxHp())), HitResult.OTHER);
+    return true;
+  }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    return target.getAlly() ? -5 : 0;
+  }
+}
+
 export class SacrificialFullRestoreAttr extends SacrificialAttr {
   constructor() {
     super();
@@ -1884,7 +1917,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const statusToApply: StatusEffect = user.status?.effect;
+    const statusToApply: StatusEffect = user.status?.effect ?? (user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined);
 
     if (target.status) {
       return false;
@@ -1892,7 +1925,9 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
     if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) {
       const statusAfflictResult = target.trySetStatus(statusToApply, true, user);
       if (statusAfflictResult) {
-        user.scene.queueMessage(getStatusEffectHealText(user.status.effect, getPokemonNameWithAffix(user)));
+        if (user.status) {
+          user.scene.queueMessage(getStatusEffectHealText(user.status.effect, getPokemonNameWithAffix(user)));
+        }
         user.resetStatus();
         user.updateInfo();
       }
@@ -3802,26 +3837,18 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
 
       switch (form) {
       case 1: // Wellspring Mask
-        move.type = Type.WATER;
-        break;
-      case 2: // Hearthflame Mask
-        move.type = Type.FIRE;
-        break;
-      case 3: // Cornerstone Mask
-        move.type = Type.ROCK;
-        break;
-      case 4: // Teal Mask Tera
-        move.type = Type.GRASS;
-        break;
       case 5: // Wellspring Mask Tera
         move.type = Type.WATER;
         break;
+      case 2: // Hearthflame Mask
       case 6: // Hearthflame Mask Tera
         move.type = Type.FIRE;
         break;
+      case 3: // Cornerstone Mask
       case 7: // Cornerstone Mask Tera
         move.type = Type.ROCK;
         break;
+      case 4: // Teal Mask Tera
       default:
         move.type = Type.GRASS;
         break;
@@ -4389,12 +4416,6 @@ export class ProtectAttr extends AddBattlerTagAttr {
       }
       return true;
     });
-  }
-}
-
-export class EndureAttr extends ProtectAttr {
-  constructor() {
-    super(BattlerTagType.ENDURING);
   }
 }
 
@@ -6514,7 +6535,7 @@ export function initMoves() {
       .attr(HitHealAttr)
       .triageMove(),
     new SelfStatusMove(Moves.ENDURE, Type.NORMAL, -1, 10, -1, 4, 2)
-      .attr(EndureAttr),
+      .attr(ProtectAttr, BattlerTagType.ENDURING),
     new StatusMove(Moves.CHARM, Type.FAIRY, 100, 20, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.ATK, -2),
     new AttackMove(Moves.ROLLOUT, Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, 0, 2)
@@ -7000,12 +7021,13 @@ export function initMoves() {
       .unimplemented(),
     new StatusMove(Moves.PSYCHO_SHIFT, Type.PSYCHIC, 100, 10, -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
-      .condition((user, target, move) => (user.status?.effect === StatusEffect.BURN
-        || user.status?.effect === StatusEffect.POISON
-        || user.status?.effect === StatusEffect.TOXIC
-        || user.status?.effect === StatusEffect.PARALYSIS
-        || user.status?.effect === StatusEffect.SLEEP)
-        && target.canSetStatus(user.status?.effect, false, false, user)
+      .condition((user, target, move) => {
+        let statusToApply = user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined;
+        if (user.status?.effect && isNonVolatileStatusEffect(user.status.effect)) {
+          statusToApply = user.status.effect;
+        }
+        return statusToApply && target.canSetStatus(statusToApply, false, false, user);
+      }
       ),
     new AttackMove(Moves.TRUMP_CARD, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
       .makesContact()
@@ -7292,7 +7314,7 @@ export function initMoves() {
     new AttackMove(Moves.STORM_THROW, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
       .attr(CritOnlyAttr),
     new AttackMove(Moves.FLAME_BURST, Type.FIRE, MoveCategory.SPECIAL, 70, 100, 15, -1, 0, 5)
-      .partial(),
+      .attr(FlameBurstAttr),
     new AttackMove(Moves.SLUDGE_WAVE, Type.POISON, MoveCategory.SPECIAL, 95, 100, 10, 10, 0, 5)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_OTHERS),

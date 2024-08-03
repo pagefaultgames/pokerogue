@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "rocket_admin.png",
+			"image": "flare_admin_f.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 80,

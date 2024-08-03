@@ -69,6 +69,7 @@ import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
 import {TrainerType} from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
+import { LoadingScene } from "./loading-scene";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -320,6 +321,7 @@ export default class BattleScene extends SceneBase {
   }
 
   create() {
+    this.scene.remove(LoadingScene.KEY);
     initGameSpeed.apply(this);
     this.inputController = new InputsController(this);
     this.uiInputs = new UiInputs(this, this.inputController);
@@ -370,7 +372,7 @@ export default class BattleScene extends SceneBase {
 
     this.fieldUI = fieldUI;
 
-    const transition = (this.make as any).rexTransitionImagePack({
+    const transition = this.make.rexTransitionImagePack({
       x: 0,
       y: 0,
       scale: 6,
@@ -378,11 +380,14 @@ export default class BattleScene extends SceneBase {
       origin: { x: 0, y: 0 }
     }, true);
 
+    //@ts-ignore (the defined types in the package are incromplete...)
     transition.transit({
       mode: "blinds",
       ease: "Cubic.easeInOut",
       duration: 1250,
-      oncomplete: () => transition.destroy()
+    });
+    transition.once("complete", () => {
+      transition.destroy();
     });
 
     this.add.existing(transition);
@@ -1134,7 +1139,7 @@ export default class BattleScene extends SceneBase {
       }
       if (resetArenaState) {
         this.arena.resetArenaEffects();
-        playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
+        playerField.forEach((_, p) => this.pushPhase(new ReturnPhase(this, p)));
 
         for (const pokemon of this.getParty()) {
           // Only trigger form change when Eiscue is in Noice form
@@ -1147,7 +1152,7 @@ export default class BattleScene extends SceneBase {
           applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
         }
 
-        this.unshiftPhase(new ShowTrainerPhase(this));
+        this.pushPhase(new ShowTrainerPhase(this));
       }
 
       for (const pokemon of this.getParty()) {
