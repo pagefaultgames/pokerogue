@@ -23,4 +23,10 @@ export const challenges: TranslationEntries = {
     "desc_default": "Vous ne pouvez choisir que des Pokémon du type sélectionné."
     //type in pokemon-info
   },
+  "freshStart": {
+    "name": "Nouveau départ",
+    "desc": "Vous ne pouvez choisir que les starters de base du jeu, comme si vous le recommenciez.",
+    "value.0": "Non",
+    "value.1": "Oui",
+  }
 } as const;
