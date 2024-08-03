@@ -266,7 +266,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "FRESH_START": {
     name: "Du premier coup !",
-    description: "Complete the fresh start challenge."
+    description: "Terminer un challenge « Nouveau départ »."
   }
 } as const;
 
@@ -536,6 +536,6 @@ export const PGFachv: AchievementTranslationEntries = {
   },
   "FRESH_START": {
     name: "Du premier coup !",
-    description: "Complete the fresh start challenge."
+    description: "Terminer un challenge « Nouveau départ »."
   }
 } as const;
