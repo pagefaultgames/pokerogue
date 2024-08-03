@@ -22,7 +22,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postDefendAbilityGive": "{{pokemonNameWithAffix}} deu a seu alvo\na habilidade {{abilityName}}!",
   "postDefendMoveDisable": "{{moveName}} de {{pokemonNameWithAffix}}\nfoi desabilitado!",
   "pokemonTypeChange": "{{pokemonNameWithAffix}} se transformou no tipo {{moveType}}!",
-  "postAttackStealHeldItem": "{{pokemonNameWithAffix}} roubou\n{{stolenItemType}} de {defenderName}}!",
+  "postAttackStealHeldItem": "{{pokemonNameWithAffix}} roubou\n{{stolenItemType}} de {{defenderName}}!",
   "postDefendStealHeldItem": "{{pokemonNameWithAffix}} roubou\n{{stolenItemType}} de {{attackerName}}!",
   "copyFaintedAllyAbility": "A habilidade {{abilityName}} de {{pokemonNameWithAffix}} foi tomada!",
   "intimidateImmunity": "{{abilityName}} de {{pokemonNameWithAffix}} previniu-o(a) de ser intimidado(a)!",
@@ -59,4 +59,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postSummonSwordOfRuin": "Sword of Ruin de {{pokemonNameWithAffix}} reduziu a {{statName}}\nde todos os Pokémon em volta!",
   "postSummonTabletsOfRuin": "Tablets of Ruin de {{pokemonNameWithAffix}} reduziu o {{statName}}\nde todos os Pokémon em volta!",
   "postSummonBeadsOfRuin": "Beads of Ruin de {{pokemonNameWithAffix}} reduziu a {{statName}}\nde todos os Pokémon em volta!",
+  "preventBerryUse": "{{pokemonNameWithAffix}} está nervoso\ndemais para comer frutas!",
 } as const;

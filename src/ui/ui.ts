@@ -235,8 +235,8 @@ export default class UI extends Phaser.GameObjects.Container {
     (this.scene as BattleScene).uiContainer.add(this.tooltipContainer);
   }
 
-  getHandler(): UiHandler {
-    return this.handlers[this.mode];
+  getHandler<H extends UiHandler = UiHandler>(): H {
+    return this.handlers[this.mode] as H;
   }
 
   getMessageHandler(): BattleMessageUiHandler {
@@ -535,5 +535,9 @@ export default class UI extends Phaser.GameObjects.Container {
       }
       this.revertMode().then(success => Utils.executeIf(success, this.revertModes).then(() => resolve()));
     });
+  }
+
+  public getModeChain(): Mode[] {
+    return this.modeChain;
   }
 }

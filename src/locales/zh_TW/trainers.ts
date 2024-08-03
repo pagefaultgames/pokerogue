@@ -118,7 +118,23 @@ export const trainerClasses: SimpleTranslationEntries = {
   "worker": "工人",
   "worker_female": "工人",
   "workers": "工人組合",
-  "youngster": "短褲小子"
+  "youngster": "短褲小子",
+  "rocket_grunts": "火箭队手下們",
+  "magma_grunt": "熔岩队手下",
+  "magma_grunt_female": "熔岩队手下",
+  "magma_grunts": "熔岩队手下們",
+  "aqua_grunt": "海洋队手下",
+  "aqua_grunt_female": "海洋队手下",
+  "aqua_grunts": "海洋队手下們",
+  "galactic_grunt": "银河队手下",
+  "galactic_grunt_female": "银河队手下",
+  "galactic_grunts": "银河队手下們",
+  "plasma_grunt": "等离子队手下",
+  "plasma_grunt_female": "等离子队手下",
+  "plasma_grunts": "等离子队手下們",
+  "flare_grunt": "闪焰队手下",
+  "flare_grunt_female": "闪焰队手下",
+  "flare_grunts": "闪焰队手下們",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion

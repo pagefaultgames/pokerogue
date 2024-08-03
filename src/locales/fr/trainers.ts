@@ -127,16 +127,22 @@ export const trainerClasses: SimpleTranslationEntries = {
   "youngster": "Gamin",
   "rocket_grunt": "Sbire de la Team Rocket",
   "rocket_grunt_female": "Sbire de la Team Rocket",
+  "rocket_grunts": "Sbires de la Team Rocket",
   "magma_grunt": "Sbire de la Team Magma",
   "magma_grunt_female": "Sbire de la Team Magma",
+  "magma_grunts": "Sbires de la Team Magma",
   "aqua_grunt": "Sbire de la Team Aqua",
   "aqua_grunt_female": "Sbire de la Team Aqua",
+  "aqua_grunts": "Sbires de la Team Aqua",
   "galactic_grunt": "Sbire de la Team Galaxie",
-  "galactic_grunt_female": "Sbire Team Galaxie",
+  "galactic_grunt_female": "Sbire de la Team Galaxie",
+  "galactic_grunts": "Sbires de la Team Galaxie",
   "plasma_grunt": "Sbire de la Team Plasma",
   "plasma_grunt_female": "Sbire de la Team Plasma",
+  "plasma_grunts": "Sbires de la Team Plasma",
   "flare_grunt": "Sbire de la Team Flare",
   "flare_grunt_female": "Sbire de la Team Flare",
+  "flare_grunts": "Sbires de la Team Flare",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -265,7 +271,11 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Tarak",
   "rival": "Gwenaël", //Male breton name, a celtic language spoken in  Brittany (France) and related to the word for "white" (gwenn). Finn meaning is also "white" in irish/goidelic which are also celtic languages.
   "rival_female": "Papina", //Litteral translation of ivy, also used as Female name in a North-American indigenous language
-
+  "maxie": "Max",
+  "archie": "Arthur",
+  "cyrus": "Hélios",
+  "ghetsis": "Ghetis",
+  "lysandre": "Lysandre",
 
   // Double Names
   "blue_red_double": "Blue & Red",
