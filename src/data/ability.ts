@@ -5260,11 +5260,13 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), BattleStatMultiplierAbAttr, BattleStat.ATK, 4 / 3)
+      .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr),
     new Ability(Abilities.HADRON_ENGINE, 9)
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPATK, 4 / 3)
+      .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr),
     new Ability(Abilities.OPPORTUNIST, 9)
       .attr(StatChangeCopyAbAttr),
