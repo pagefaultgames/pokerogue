@@ -193,17 +193,31 @@ export default class MenuUiHandler extends MessageUiHandler {
       handler: () => {
         this.scene.gameData.tryExportData(GameDataType.SYSTEM);
         return true;
+      }
+    },
+    {
+      label: "Consent Preferences",
+      handler: () => {
+        const consentLink = document.querySelector(".termly-display-preferences") as HTMLInputElement;
+        const clickEvent = new MouseEvent("click", {
+          view: window,
+          bubbles: true,
+          cancelable: true
+        });
+        consentLink.dispatchEvent(clickEvent);
+        consentLink.focus();
+        return true;
       },
       keepOpen: true
-    });
-    manageDataOptions.push({
+    },
+    {
       label: i18next.t("menuUiHandler:cancel"),
       handler: () => {
         this.scene.ui.revertMode();
         return true;
-      }
-    }
-    );
+      },
+      keepOpen: true
+    });
 
     this.manageDataConfig = {
       xOffset: 98,
