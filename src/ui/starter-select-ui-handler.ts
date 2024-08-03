@@ -1032,13 +1032,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const numOfRows = Math.ceil(numberOfStarters / maxColumns);
     const currentRow = Math.floor(this.cursor / maxColumns);
     const onScreenFirstIndex = this.scrollCursor * maxColumns; // this is first starter index on the screen
-    const onScreenLastIndex = Math.min(numberOfStarters - 1, onScreenFirstIndex + maxColumns * maxRows); // this is the last starter index on the screen
-
+    const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns - 1); // this is the last starter index on the screen
     const onScreenNumberOfStarters = onScreenLastIndex - onScreenFirstIndex + 1;
     const onScreenNumberOfRows = Math.ceil(onScreenNumberOfStarters / maxColumns);
     // const onScreenFirstRow = Math.floor(onScreenFirstIndex / maxColumns);
     const onScreenCurrentRow = Math.floor((this.cursor - onScreenFirstIndex) / maxColumns);
-
 
     // console.log("this.cursor: ", this.cursor, "this.scrollCursor" , this.scrollCursor, "numberOfStarters: ", numberOfStarters, "numOfRows: ", numOfRows, "currentRow: ", currentRow, "onScreenFirstIndex: ", onScreenFirstIndex, "onScreenLastIndex: ", onScreenLastIndex, "onScreenNumberOfStarters: ", onScreenNumberOfStarters, "onScreenNumberOfRow: ", onScreenNumberOfRows, "onScreenCurrentRow: ", onScreenCurrentRow);
 
@@ -1986,6 +1984,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.validStarterContainers.forEach(container => {
       container.setVisible(false);
 
+      container.cost = this.scene.gameData.getSpeciesStarterValue(container.species.speciesId);
+
       // First, ensure you have the caught attributes for the species else default to bigint 0
       const caughtVariants = this.scene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
 
@@ -2079,44 +2079,40 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const maxColumns = 9;
     const maxRows = 9;
     const onScreenFirstIndex = this.scrollCursor * maxColumns;
-    const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + maxColumns * maxRows);
+    const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns -1);
 
     this.starterSelectScrollBar.setPage(this.scrollCursor);
 
     let pokerusCursorIndex = 0;
     this.filteredStarterContainers.forEach((container, i) => {
+      const pos = calcStarterPosition(i, this.scrollCursor);
+      container.setPosition(pos.x, pos.y);
       if (i < onScreenFirstIndex || i > onScreenLastIndex) {
         container.setVisible(false);
-        return;
-      } else {
-        const pos = calcStarterPosition(i, this.scrollCursor);
-        container.setPosition(pos.x, pos.y);
-
-        if (i < (maxRows + this.scrollCursor) * maxColumns && i >= this.scrollCursor * maxColumns) {
-          container.setVisible(true);
-        } else {
-          container.setVisible(false);
-        }
 
         if (this.pokerusSpecies.includes(container.species)) {
           this.pokerusCursorObjs[pokerusCursorIndex].setPosition(pos.x - 1, pos.y + 1);
-
-          if (i < (maxRows + this.scrollCursor) * maxColumns && i >= this.scrollCursor * maxColumns) {
-            this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
-          } else {
-            this.pokerusCursorObjs[pokerusCursorIndex].setVisible(false);
-          }
+          this.pokerusCursorObjs[pokerusCursorIndex].setVisible(false);
           pokerusCursorIndex++;
         }
 
         if (this.starterSpecies.includes(container.species)) {
           this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setPosition(pos.x - 1, pos.y + 1);
+          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(false);
+        }
+        return;
+      } else {
+        container.setVisible(true);
 
-          if (i < (maxRows + this.scrollCursor) * maxColumns && i >= this.scrollCursor * maxColumns) {
-            this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(true);
-          } else {
-            this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(false);
-          }
+        if (this.pokerusSpecies.includes(container.species)) {
+          this.pokerusCursorObjs[pokerusCursorIndex].setPosition(pos.x - 1, pos.y + 1);
+          this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
+          pokerusCursorIndex++;
+        }
+
+        if (this.starterSpecies.includes(container.species)) {
+          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setPosition(pos.x - 1, pos.y + 1);
+          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(true);
         }
 
         const speciesId = container.species.speciesId;
@@ -2635,7 +2631,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.speciesStarterMoves.push(...levelMoves.filter(lm => lm[0] > 0 && lm[0] <= 5).map(lm => lm[1]));
         if (speciesEggMoves.hasOwnProperty(species.speciesId)) {
           for (let em = 0; em < 4; em++) {
-            if (this.scene.gameData.starterData[species.speciesId].eggMoves & Math.pow(2, em)) {
+            if (this.scene.gameData.starterData[species.speciesId].eggMoves & (1 << em)) {
               this.speciesStarterMoves.push(speciesEggMoves[species.speciesId][em]);
             }
           }
@@ -2647,7 +2643,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             ? speciesMoveData as StarterMoveset
             : (speciesMoveData as StarterFormMoveData)[formIndex]
           : null;
-        const availableStarterMoves = this.speciesStarterMoves.concat(speciesEggMoves.hasOwnProperty(species.speciesId) ? speciesEggMoves[species.speciesId].filter((_, em: integer) => this.scene.gameData.starterData[species.speciesId].eggMoves & Math.pow(2, em)) : []);
+        const availableStarterMoves = this.speciesStarterMoves.concat(speciesEggMoves.hasOwnProperty(species.speciesId) ? speciesEggMoves[species.speciesId].filter((_, em: integer) => this.scene.gameData.starterData[species.speciesId].eggMoves & (1 << em)) : []);
         this.starterMoveset = (moveData || (this.speciesStarterMoves.slice(0, 4) as StarterMoveset)).filter(m => availableStarterMoves.find(sm => sm === m)) as StarterMoveset;
         // Consolidate move data if it contains an incompatible move
         if (this.starterMoveset.length < 4 && this.starterMoveset.length < availableStarterMoves.length) {
@@ -2704,7 +2700,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     for (let em = 0; em < 4; em++) {
       const eggMove = hasEggMoves ? allMoves[speciesEggMoves[species.speciesId][em]] : null;
-      const eggMoveUnlocked = eggMove && this.scene.gameData.starterData[species.speciesId].eggMoves & Math.pow(2, em);
+      const eggMoveUnlocked = eggMove && this.scene.gameData.starterData[species.speciesId].eggMoves & (1 << em);
       this.pokemonEggMoveBgs[em].setFrame(Type[eggMove ? eggMove.type : Type.UNKNOWN].toString().toLowerCase());
       this.pokemonEggMoveLabels[em].setText(eggMove && eggMoveUnlocked ? eggMove.name : "???");
     }
@@ -2745,6 +2741,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const props = this.scene.gameData.getSpeciesDexAttrProps(species, currentDexAttr);
       this.starterIcons[s].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
       this.starterIcons[s].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+      this.checkIconId(this.starterIcons[s], species, props.female, props.formIndex, props.shiny, props.variant);
       if (s >= index) {
         this.starterCursorObjs[s].setPosition(this.starterCursorObjs[s + 1].x, this.starterCursorObjs[s + 1].y);
         this.starterCursorObjs[s].setVisible(this.starterCursorObjs[s + 1].visible);
