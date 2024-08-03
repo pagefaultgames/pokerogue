@@ -1430,7 +1430,7 @@ export default class BattleScene extends SceneBase {
     const wave = waveIndex || this.currentBattle?.waveIndex || 0;
     this.waveSeed = Utils.shiftCharCodes(this.seed, wave);
     Phaser.Math.RND.sow([ this.waveSeed ]);
-    // console.log("Wave Seed:", this.waveSeed, wave);
+    console.log("Wave Seed:", this.waveSeed, wave);
     this.rngCounter = 0;
   }
 

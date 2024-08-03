@@ -12,6 +12,7 @@ import PokemonData from "#app/system/pokemon-data";
 import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
+import * as Utils from "#app/utils";
 import { isNullOrUndefined } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
@@ -19,7 +20,6 @@ import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
 import BattleScene from "#app/battle-scene";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
-import * as Utils from "#app/utils";
 import { Gender } from "#app/data/gender";
 import { Nature } from "#app/data/nature";
 import { Moves } from "#enums/moves";
@@ -152,7 +152,17 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     let isBoss = false;
     if (!loaded) {
       if (trainerType || trainerConfig) {
-        battle.enemyParty[e] = battle.trainer.genPartyMember(e);
+        // Allows overriding a trainer's pokemon to use specific species/data
+        if (e < partyConfig?.pokemonConfigs?.length) {
+          const config = partyConfig?.pokemonConfigs?.[e];
+          level = config.level ? config.level : level;
+          dataSource = config.dataSource;
+          enemySpecies = config.species;
+          isBoss = config.isBoss;
+          battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.TRAINER, isBoss, dataSource);
+        } else {
+          battle.enemyParty[e] = battle.trainer.genPartyMember(e);
+        }
       } else {
         if (e < partyConfig?.pokemonConfigs?.length) {
           const config = partyConfig?.pokemonConfigs?.[e];

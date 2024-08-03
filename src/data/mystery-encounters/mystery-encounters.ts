@@ -21,6 +21,7 @@ import { AbsoluteAvariceEncounter } from "#app/data/mystery-encounters/encounter
 import { ATrainersTestEncounter } from "#app/data/mystery-encounters/encounters/a-trainers-test-encounter";
 import { TrashToTreasureEncounter } from "#app/data/mystery-encounters/encounters/trash-to-treasure-encounter";
 import { BerriesAboundEncounter } from "#app/data/mystery-encounters/encounters/berries-abound-encounter";
+import { ClowningAroundEncounter } from "#app/data/mystery-encounters/encounters/clowing-around-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -141,7 +142,7 @@ const humanTransitableBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.MYSTERIOUS_CHALLENGERS,
   MysteryEncounterType.SHADY_VITAMIN_DEALER,
   MysteryEncounterType.THE_POKEMON_SALESMAN,
-  MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE
+  MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE,
 ];
 
 const civilizationBiomeEncounters: MysteryEncounterType[] = [
@@ -159,7 +160,8 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.DELIBIRDY,
   MysteryEncounterType.A_TRAINERS_TEST,
   MysteryEncounterType.TRASH_TO_TREASURE,
-  MysteryEncounterType.BERRIES_ABOUND
+  MysteryEncounterType.BERRIES_ABOUND,
+  MysteryEncounterType.CLOWNING_AROUND
 ];
 
 /**
@@ -249,6 +251,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.A_TRAINERS_TEST] = ATrainersTestEncounter;
   allMysteryEncounters[MysteryEncounterType.TRASH_TO_TREASURE] = TrashToTreasureEncounter;
   allMysteryEncounters[MysteryEncounterType.BERRIES_ABOUND] = BerriesAboundEncounter;
+  allMysteryEncounters[MysteryEncounterType.CLOWNING_AROUND] = ClowningAroundEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {
