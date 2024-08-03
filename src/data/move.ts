@@ -4889,6 +4889,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   private user: boolean;
   private batonPass: boolean;
 
+  /**
+   * @param user Indicates if this move effect will switch out the user of the
+   * move (true) or the target of the move (false).
+   * @param batonPass Indicates if this move is a usage of Baton Pass.
+   */
   constructor(user?: boolean, batonPass?: boolean) {
     super(false, MoveEffectTrigger.POST_APPLY, false, true);
     this.user = !!user;
