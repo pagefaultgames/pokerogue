@@ -312,13 +312,7 @@ export abstract class PokemonSpeciesForm {
   getIconAtlasKey(formIndex?: integer, shiny?: boolean, variant?: integer): string {
     const variantDataIndex = this.getVariantDataIndex(formIndex);
     const isVariant = shiny && variantData[variantDataIndex] && variantData[variantDataIndex][variant];
-    const species = getPokemonSpecies(this.speciesId);
-    /**
-     * Currently, Victini's icon sprite is located in Gen 4, so we will temporarily bypass this issue with the following code.
-     * In the future, when Victini's icon sprite is properly moved to Gen 5, the temporary code below should be removed.
-     */
-    const generation = species.speciesId === Species.VICTINI ? 4 : this.generation;
-    return `pokemon_icons_${generation}${isVariant ? "v" : ""}`;
+    return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
   }
 
   getIconId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
@@ -2952,8 +2946,8 @@ export const speciesStarters = {
   [Species.DARKRAI]: 6,
   [Species.SHAYMIN]: 6,
   [Species.ARCEUS]: 9,
-  [Species.VICTINI]: 7,
 
+  [Species.VICTINI]: 7,
   [Species.SNIVY]: 3,
   [Species.TEPIG]: 3,
   [Species.OSHAWOTT]: 3,
