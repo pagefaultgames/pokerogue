@@ -401,7 +401,7 @@ export abstract class Challenge {
 
   /**
    * An apply function for DUPLICATE_SPECIES. Derived classes should alter this.
-   * @param allowDuplicates {@link Utils.BooleanHolder} Is allowing duplicates.
+   * @param allowDuplicates {@link Utils.BooleanHolder} True to allow duplicate species
    * @returns {@link boolean} Whether this function did anything.
    */
   applyDuplicateSpecies(allowDuplicates: Utils.BooleanHolder): boolean {
