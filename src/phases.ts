@@ -228,7 +228,7 @@ export class TitlePhase extends Phase {
           this.scene.ui.clearText();
           this.end();
         };
-        if (!this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
+        if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
           const options: OptionSelectItem[] = [
             {
               label: GameMode.getModeName(GameModes.CLASSIC),
