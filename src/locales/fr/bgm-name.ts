@@ -75,7 +75,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_wild_strong": "NB - Vs. Pokémon puissant sauvage",
   "end_summit": "PDM ÉSDX - Tour Céleste",
   "battle_rocket_grunt": "HGSS Vs. Team Rocket",
-  "battle_aqua_magma_grunt": "ORAS Vs. Team Aqua/Magma",
+  "battle_aqua_magma_grunt": "ROSA Vs. Team Aqua/Magma",
   "battle_galactic_grunt": "DÉPS Vs. Team Galaxie",
   "battle_plasma_grunt": "NB - Vs. Team Plasma",
   "battle_flare_grunt": "XY - Vs. Team Flare",
