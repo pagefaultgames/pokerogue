@@ -1392,10 +1392,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
       // First check if they're somehow still in play, if so remove them.
       if (partyMember.isOnField()) {
-        partyMember.hideInfo();
-        partyMember.setVisible(false);
-        this.scene.field.remove(partyMember);
-        this.scene.triggerPokemonFormChange(partyMember, SpeciesFormChangeActiveTrigger, true);
+        partyMember.leaveField();
       }
 
       const party = this.getParty();
@@ -1611,7 +1608,7 @@ export class SwitchSummonPhase extends SummonPhase {
       })
     );
     this.scene.playSound("pb_rel");
-    pokemon.hideInfo();
+    pokemon.hideInfo(); // this is also done by pokemon.leaveField(), but needs to go earlier for animation purposes
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     this.scene.tweens.add({
       targets: pokemon,
@@ -1619,9 +1616,9 @@ export class SwitchSummonPhase extends SummonPhase {
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        pokemon.setVisible(false);
-        this.scene.field.remove(pokemon);
-        this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+        // 250ms delay on leaveField is necessary to avoid calling hideInfo() twice
+        // and double-animating the stats panel slideout
+        this.scene.time.delayedCall(250, () => pokemon.leaveField(!this.batonPass));
         this.scene.time.delayedCall(750, () => this.switchAndSummon());
       }
     });
@@ -1629,25 +1626,25 @@ export class SwitchSummonPhase extends SummonPhase {
 
   switchAndSummon() {
     const party = this.player ? this.getParty() : this.scene.getEnemyParty();
-    const switchedPokemon = party[this.slotIndex];
+    const switchedInPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
-    if (this.batonPass && switchedPokemon) {
-      (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedPokemon.id));
-      if (!this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedPokemon.id)) {
+    if (this.batonPass && switchedInPokemon) {
+      (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id));
+      if (!this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
         const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
           && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
-        if (batonPassModifier && !this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedPokemon.id)) {
-          this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedPokemon, false);
+        if (batonPassModifier && !this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
+          this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedInPokemon, false);
         }
       }
     }
-    if (switchedPokemon) {
+    if (switchedInPokemon) {
       party[this.slotIndex] = this.lastPokemon;
-      party[this.fieldIndex] = switchedPokemon;
+      party[this.fieldIndex] = switchedInPokemon;
       const showTextAndSummon = () => {
         this.scene.ui.showText(this.player ?
-          i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(switchedPokemon) }) :
+          i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(switchedInPokemon) }) :
           i18next.t("battle:trainerGo", {
             trainerName: this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
             pokemonName: this.getPokemon().getNameToRender()
@@ -1655,8 +1652,8 @@ export class SwitchSummonPhase extends SummonPhase {
         );
         // Ensure improperly persisted summon data (such as tags) is cleared upon switching
         if (!this.batonPass) {
-          party[this.fieldIndex].resetBattleData();
-          party[this.fieldIndex].resetSummonData();
+          switchedInPokemon.resetBattleData();
+          switchedInPokemon.resetSummonData();
         }
         this.summon();
       };
@@ -1876,14 +1873,11 @@ export class TurnInitPhase extends FieldPhase {
           this.scene.unshiftPhase(new GameOverPhase(this.scene));
         } else if (allowedPokemon.length >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !allowedPokemon[0].isActive(true))) {
           // If there is at least one pokemon in the back that is legal to switch in, force a switch.
-          p.switchOut(false, true);
+          p.switchOut(false);
         } else {
           // If there are no pokemon in the back but we're not game overing, just hide the pokemon.
           // This should only happen in double battles.
-          p.hideInfo();
-          p.setVisible(false);
-          this.scene.field.remove(p);
-          this.scene.triggerPokemonFormChange(p, SpeciesFormChangeActiveTrigger, true);
+          p.leaveField();
         }
         if (allowedPokemon.length === 1 && this.scene.currentBattle.double) {
           this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));

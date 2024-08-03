@@ -13,10 +13,9 @@ import { ArenaTagSide, ArenaTrapTag, WeakenMoveTypeTag } from "./arena-tag";
 import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, IgnoreProtectOnContactAbAttr, IgnoreMoveEffectsAbAttr, applyPreDefendAbAttrs, MoveEffectChanceMultiplierAbAttr, WonderSkinAbAttr, applyPreAttackAbAttrs, MoveTypeChangeAttr, UserFieldMoveTypePowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AllyMoveCategoryPowerBoostAbAttr, VariableMovePowerAbAttr } from "./ability";
 import { allAbilities } from "./ability";
 import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier, PokemonMoveAccuracyBoosterModifier, AttackTypeBoosterModifier, PokemonMultiHitModifier } from "../modifier/modifier";
-import { BattlerIndex } from "../battle";
+import { BattlerIndex, BattleType } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
-import { SpeciesFormChangeActiveTrigger } from "./pokemon-forms";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../ui/command-ui-handler";
 import i18next from "i18next";
@@ -1817,13 +1816,10 @@ export class MultiHitAttr extends MoveAttr {
     }
     case MultiHitType._2:
       return 2;
-      break;
     case MultiHitType._3:
       return 3;
-      break;
     case MultiHitType._10:
       return 10;
-      break;
     case MultiHitType.BEAT_UP:
       const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
       // No status means the ally pokemon can contribute to Beat Up
@@ -4780,19 +4776,14 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         if (switchOutTarget.hp > 0) {
           applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
           // switchOut below sets the UI to select party(this is not a separate Phase), then adds a SwitchSummonPhase with selected 'mon
-          (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
+          (switchOutTarget as PlayerPokemon).switchOut(this.batonPass).then(() => resolve(true));
         } else {
           resolve(false);
         }
 	  	return;
-	  } else if (user.scene.currentBattle.battleType) {
-	  	// Switch out logic for the battle type
-	  	switchOutTarget.resetTurnData();
-	  	switchOutTarget.resetSummonData();
-	  	switchOutTarget.hideInfo();
-	  	switchOutTarget.setVisible(false);
-	  	switchOutTarget.scene.field.remove(switchOutTarget);
-	  	user.scene.triggerPokemonFormChange(switchOutTarget, SpeciesFormChangeActiveTrigger, true);
+	  } else if (user.scene.currentBattle.battleType !== BattleType.WILD) {
+	  	// Switch out logic for trainer battles
+        switchOutTarget.leaveField(!this.batonPass);
 
 	  	if (switchOutTarget.hp > 0) {
         // for opponent switching out
