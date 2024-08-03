@@ -4447,11 +4447,24 @@ export class PostGameOverPhase extends Phase {
   }
 }
 
+/**
+ * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}
+ * for the player.
+ */
 export class SwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
   private isModal: boolean;
   private doReturn: boolean;
 
+  /**
+   * Creates a new SwitchPhase
+   * @param scene Current battle scene
+   * @param fieldIndex Field index to switch out
+   * @param isModal Indicates if the switch should be forced (true) or is
+   * optional (false).
+   * @param doReturn Passed directly to {@linkcode SwitchSummonPhase} and has no
+   * unique function here.
+   */
   constructor(scene: BattleScene, fieldIndex: integer, isModal: boolean, doReturn: boolean) {
     super(scene);
 

@@ -1,5 +1,5 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, HelpingHandTag, SemiInvulnerableTag, StockpilingTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
@@ -4759,6 +4759,10 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     this.batonPass = !!batonPass;
   }
 
+  isBatonPass() {
+    return this.batonPass;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
 
@@ -4771,9 +4775,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   	// This ensures that the switch out only happens when the conditions are met
 	  const switchOutTarget = this.user ? user : target;
 	  if (switchOutTarget instanceof PlayerPokemon) {
+        switchOutTarget.leaveField(!this.batonPass);
+
         if (switchOutTarget.hp > 0) {
-          // switchOut below sets the UI to select party(this is not a separate Phase), then adds a SwitchSummonPhase with selected 'mon
-          (switchOutTarget as PlayerPokemon).switchOut(this.batonPass).then(() => resolve(true));
+          user.scene.prependToPhase(new SwitchPhase(user.scene, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
+          resolve(true);
         } else {
           resolve(false);
         }
