@@ -194,7 +194,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
       this.scene.executeWithSeedOffset(() => {
         let levelUpStatsValuesText = "";
         const stats = Utils.getEnumValues(Stat);
-        const shownStats = this.topIvs(ivs, shownIvsCount);
+        const shownStats = this.getTopIvs(ivs, shownIvsCount);
         for (const s of stats) {
           levelUpStatsValuesText += `${shownStats.indexOf(s) > -1 ? this.getIvDescriptor(ivs[s], s, pokemonId) : "???"}\n`;
         }
@@ -210,7 +210,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     });
   }
 
-  topIvs(ivs: integer[], shownIvsCount: integer): Stat[] {
+  getTopIvs(ivs: integer[], shownIvsCount: integer): Stat[] {
     const stats = Utils.getEnumValues(Stat);
     let shownStats: Stat[] = [];
     if (shownIvsCount < 6) {

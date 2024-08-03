@@ -12,9 +12,8 @@ import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
 import i18next from "i18next";
 
-let battleStatOrder = [];
-const battleStatOrderPlayer = [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD];
-const battleStatOrderEnemy = [BattleStat.HP, BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD];
+const battleStatOrderPlayer = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
+const battleStatOrderEnemy = [ BattleStat.HP, BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private baseY: number;
@@ -71,6 +70,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private statNumbers: Phaser.GameObjects.Sprite[];
 
   public flyoutMenu?: BattleFlyout;
+
+  public battleStatOrder: BattleStat[];
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
@@ -229,9 +230,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const startingX = this.player ? -this.statsBox.width + 8 : -this.statsBox.width + 5;
     const paddingX = this.player ? 4 : 2;
     const statOverflow = this.player ? 1 : 0;
-    battleStatOrder = this.player ? battleStatOrderPlayer : battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
+    this.battleStatOrder = this.player ? battleStatOrderPlayer : battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
 
-    battleStatOrder.map((s, i) => {
+    this.battleStatOrder.map((s, i) => {
       // we do a check for i > statOverflow to see when the stat labels go onto the next column
       // For enemies, we have HP (i=0) by itself then a new column, so we check for i > 0
       // For players, we don't have HP, so we start with i = 0 and i = 1 for our first column, and so need to check for i > 1
@@ -239,10 +240,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
       const baseY = -this.statsBox.height / 2 + 4; // this is the baseline for the y-axis
       let statY: number; // this will be the y-axis placement for the labels
-      if (battleStatOrder[i] === BattleStat.SPD || battleStatOrder[i] === BattleStat.HP) {
+      if (this.battleStatOrder[i] === BattleStat.SPD || this.battleStatOrder[i] === BattleStat.HP) {
         statY = baseY + 5;
       } else {
-        statY = baseY + (!!(i % 2) === this.player ? 10 : 0); // we compare i % 2 against this.player to tell us where to place the label; because battleStatOrder for enemies has HP, battleStatOrder[1]=ATK, but for players battleStatOrder[0]=ATK, so this comparing i % 2 to this.player fixes this issue for us
+        statY = baseY + (!!(i % 2) === this.player ? 10 : 0); // we compare i % 2 against this.player to tell us where to place the label; because this.battleStatOrder for enemies has HP, this.battleStatOrder[1]=ATK, but for players this.battleStatOrder[0]=ATK, so this comparing i % 2 to this.player fixes this issue for us
       }
 
       const statLabel = this.scene.add.sprite(statX, statY, "pbinfo_stat", BattleStat[s]);
@@ -251,13 +252,13 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       statLabels.push(statLabel);
       this.statValuesContainer.add(statLabel);
 
-      const statNumber = this.scene.add.sprite(statX + statLabel.width, statY, "pbinfo_stat_numbers", battleStatOrder[i] !== BattleStat.HP ? "3" : "empty");
+      const statNumber = this.scene.add.sprite(statX + statLabel.width, statY, "pbinfo_stat_numbers", this.battleStatOrder[i] !== BattleStat.HP ? "3" : "empty");
       statNumber.setName("icon_stat_number_" + i.toString());
       statNumber.setOrigin(0, 0);
       this.statNumbers.push(statNumber);
       this.statValuesContainer.add(statNumber);
 
-      if (battleStatOrder[i] === BattleStat.HP) {
+      if (this.battleStatOrder[i] === BattleStat.HP) {
         statLabel.setVisible(false);
         statNumber.setVisible(false);
       }
@@ -433,8 +434,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.statValuesContainer.setPosition(8, 7);
     }
 
-    battleStatOrder = this.player ? battleStatOrderPlayer : battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
-    const battleStats = battleStatOrder.map(() => 0);
+    this.battleStatOrder = this.player ? battleStatOrderPlayer : battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
+    const battleStats = this.battleStatOrder.map(() => 0);
 
     this.lastBattleStats = battleStats.join("");
     this.updateBattleStats(battleStats);
@@ -651,10 +652,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastLevel = pokemon.level;
       }
 
-      battleStatOrder = this.player ? battleStatOrderPlayer : battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
+      this.battleStatOrder = this.player ? battleStatOrderPlayer : battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
       const battleStats = pokemon.summonData
         ? pokemon.summonData.battleStats
-        : battleStatOrder.map(() => 0);
+        : this.battleStatOrder.map(() => 0);
       const battleStatsStr = battleStats.join("");
 
       if (this.lastBattleStats !== battleStatsStr) {
@@ -772,7 +773,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   updateBattleStats(battleStats: integer[]): void {
-    battleStatOrder.map((s, i) => {
+    this.battleStatOrder.map((s, i) => {
       if (s !== BattleStat.HP) {
         this.statNumbers[i].setFrame(battleStats[s].toString());
       }
