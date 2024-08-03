@@ -1392,10 +1392,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
       // First check if they're somehow still in play, if so remove them.
       if (partyMember.isOnField()) {
-        partyMember.hideInfo();
-        partyMember.setVisible(false);
-        this.scene.field.remove(partyMember);
-        this.scene.triggerPokemonFormChange(partyMember, SpeciesFormChangeActiveTrigger, true);
+        partyMember.leaveField();
       }
 
       const party = this.getParty();
@@ -1611,7 +1608,7 @@ export class SwitchSummonPhase extends SummonPhase {
       })
     );
     this.scene.playSound("pb_rel");
-    pokemon.hideInfo();
+    pokemon.hideInfo(); // this is also done by pokemon.leaveField(), but needs to go earlier for animation purposes
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     this.scene.tweens.add({
       targets: pokemon,
@@ -1619,9 +1616,9 @@ export class SwitchSummonPhase extends SummonPhase {
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        pokemon.setVisible(false);
-        this.scene.field.remove(pokemon);
-        this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+        // 250ms delay on leaveField is necessary to avoid calling hideInfo() twice
+        // and double-animating the stats panel slideout
+        this.scene.time.delayedCall(250, () => pokemon.leaveField(!this.batonPass));
         this.scene.time.delayedCall(750, () => this.switchAndSummon());
       }
     });
@@ -1653,11 +1650,6 @@ export class SwitchSummonPhase extends SummonPhase {
             pokemonName: this.getPokemon().getNameToRender()
           })
         );
-        // Ensure improperly persisted summon data (such as tags) is cleared upon switching
-        if (!this.batonPass) {
-          party[this.fieldIndex].resetBattleData();
-          party[this.fieldIndex].resetSummonData();
-        }
         this.summon();
       };
       if (this.player) {
@@ -1876,14 +1868,11 @@ export class TurnInitPhase extends FieldPhase {
           this.scene.unshiftPhase(new GameOverPhase(this.scene));
         } else if (allowedPokemon.length >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !allowedPokemon[0].isActive(true))) {
           // If there is at least one pokemon in the back that is legal to switch in, force a switch.
-          p.switchOut(false, true);
+          p.switchOut(false);
         } else {
           // If there are no pokemon in the back but we're not game overing, just hide the pokemon.
           // This should only happen in double battles.
-          p.hideInfo();
-          p.setVisible(false);
-          this.scene.field.remove(p);
-          this.scene.triggerPokemonFormChange(p, SpeciesFormChangeActiveTrigger, true);
+          p.leaveField();
         }
         if (allowedPokemon.length === 1 && this.scene.currentBattle.double) {
           this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
