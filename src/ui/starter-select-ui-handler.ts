@@ -914,15 +914,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
    */
   resetFilters() : void {
     const genDropDown: DropDown = this.filterBar.getFilter(DropDownColumn.GEN);
-    if (this.scene.gameMode.isChallenge) {
-      // In challenge mode all gens are selected by default
-      genDropDown.defaultCursor = 0;
-    } else {
-      // in other modes, gen 1 is selected by default, and all options disabled
-      genDropDown.defaultCursor = 1;
-    }
 
     this.filterBar.setValsToDefault();
+
+    if (!this.scene.gameMode.isChallenge) {
+      // if not in a challenge, in Gen hybrid filter hovering mode, set the cursor to the Gen1
+      genDropDown.setCursor(1);
+    }
   }
 
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
