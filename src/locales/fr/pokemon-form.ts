@@ -13,6 +13,7 @@ export const battlePokemonForm: SimpleTranslationEntries = {
   "eternamaxChange": "{{preName}} devient\n{{pokemonName}} !",
   "revertChange": "{{pokemonName}} retourne\nà sa forme initiale !",
   "formChange": "{{preName}} change de forme !",
+  "disguiseChange": "Its disguise served it as a decoy!",
 } as const;
 
 export const pokemonForm: SimpleTranslationEntries = {
