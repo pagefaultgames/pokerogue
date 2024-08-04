@@ -17,7 +17,8 @@ export enum SpeciesWildEvolutionDelay {
   SHORT,
   MEDIUM,
   LONG = 4,
-  VERY_LONG = 8
+  VERY_LONG = 8,
+  NEVER = 16
 }
 
 export enum EvolutionItem {
@@ -228,7 +229,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.SLOWPOKE]: [
     new SpeciesEvolution(Species.SLOWBRO, 37, null, null),
-    new SpeciesEvolution(Species.SLOWKING, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => true /* King's Rock */), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.SLOWKING, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MAGNEMITE]: [
     new SpeciesEvolution(Species.MAGNETON, 30, null, null)
@@ -1261,7 +1262,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.POLIWHIRL]: [
     new SpeciesEvolution(Species.POLIWRATH, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG),
-    new SpeciesEvolution(Species.POLITOED, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => true /* King's Rock */), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.POLITOED, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.WEEPINBELL]: [
     new SpeciesEvolution(Species.VICTREEBEL, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1636,7 +1637,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.FROSMOTH, 1, null, new SpeciesFriendshipEvolutionCondition(90, p => p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.GIMMIGHOUL]: [
-    new SpeciesEvolution(Species.GHOLDENGO, 1, null, new SpeciesEvolutionCondition( p => p.evoCounter > 9 ), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesFormEvolution(Species.GHOLDENGO, "chest", "", 1, null, new SpeciesEvolutionCondition( p => p.evoCounter > 9 ), SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesFormEvolution(Species.GHOLDENGO, "roaming", "", 1, null, new SpeciesEvolutionCondition( p => p.evoCounter > 9 ), SpeciesWildEvolutionDelay.NEVER)
   ]
 };
 

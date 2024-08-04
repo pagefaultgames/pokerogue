@@ -1609,9 +1609,9 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 12, Moves.DRAGON_BREATH ],
     [ 16, Moves.CURSE ],
     [ 20, Moves.ROCK_SLIDE ],
+    [ 22, Moves.GYRO_BALL ], //Custom, from USUM
     [ 24, Moves.SCREECH ],
     [ 28, Moves.SAND_TOMB ],
-    [ 30, Moves.IRON_DEFENSE ],
     [ 32, Moves.STEALTH_ROCK ],
     [ 36, Moves.SLAM ],
     [ 40, Moves.SANDSTORM ],

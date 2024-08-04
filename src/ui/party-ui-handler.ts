@@ -410,7 +410,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.clearOptions();
           ui.playSelect();
           pokemon.pauseEvolutions = !pokemon.pauseEvolutions;
-          this.showText(i18next.t("partyUiHandler:unpausedEvolutions", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => this.showText(null, 0), null, true);
+          this.showText(i18next.t(pokemon.pauseEvolutions? "partyUiHandler:unpausedEvolutions" : "partyUiHandler:pausedEvolutions", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => this.showText(null, 0), null, true);
         } else if (option === PartyOption.UNSPLICE) {
           this.clearOptions();
           ui.playSelect();
@@ -903,7 +903,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
             optionName = `${modifier.active ? i18next.t("partyUiHandler:DEACTIVATE") : i18next.t("partyUiHandler:ACTIVATE")} ${modifier.type.name}`;
           } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
-            optionName = `${pokemon.pauseEvolutions ? "Unpause" : "Pause"} Evolution`;
+            optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:UNPAUSE_EVOLUTION") : i18next.t("partyUiHandler:PAUSE_EVOLUTION")}`;
           } else {
             if (this.localizedOptions.includes(option)) {
               optionName = i18next.t(`partyUiHandler:${PartyOption[option]}`);
