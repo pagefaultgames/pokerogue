@@ -147,6 +147,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}}\n受到了{{moveName}}的伤害！",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}削减了自己的体力，\n并诅咒了{{pokemonName}}！",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}\n正受到诅咒！",
+  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
   "battlerTagsHealBlock": "{{pokemonNameWithAffix}} can't restore its HP!",
   "battlerTagsHealBlockOnRemove": "{{pokemonNameWithAffix}} can restore its HP again!",
 } as const;
