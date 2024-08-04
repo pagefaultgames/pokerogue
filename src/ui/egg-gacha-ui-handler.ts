@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { Mode } from "./ui";
-import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
+import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import * as Utils from "../utils";
 import { Egg, getLegendaryGachaSpeciesForTimestamp, IEggOptions } from "../data/egg";
