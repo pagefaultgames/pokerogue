@@ -53,7 +53,7 @@ export const settings: SimpleTranslationEntries = {
   "showTimeOfDayWidget": "Show Time of Day Widget",
   "timeOfDayAnimation": "Time of Day Animation",
   "bounce": "Bounce",
-  "back": "戻る",
+  "timeOfDay_back": "Back",
   "spriteSet": "Sprite Set",
   "consistent": "Consistent",
   "mixedAnimated": "Mixed Animated",
@@ -71,6 +71,7 @@ export const settings: SimpleTranslationEntries = {
   "reset": "リセット",
   "requireReload": "再読み込みが必要",
   "action": "決定",
+  "back": "戻る",
   "pressToBind": "Press to Bind",
   "pressButton": "Press a Button...",
   "buttonUp": "上",
@@ -93,5 +94,7 @@ export const settings: SimpleTranslationEntries = {
   "alt": " (代替)",
   "mute": "ミュート",
   "controller": "コントローラー",
-  "gamepadSupport": "コントローラーサポート"
+  "gamepadSupport": "コントローラーサポート",
+  "showBgmBar": "Show Music Names",
+  "shopOverlayOpacity": "Shop Overlay Opacity",
 } as const;
