@@ -264,6 +264,7 @@ export class DropDown extends Phaser.GameObjects.Container {
   private cursorObj: Phaser.GameObjects.Image;
   public dropDownType: DropDownType = DropDownType.MULTI;
   public cursor: number = 0;
+  public lastCursor: number = -1;
   public defaultCursor: number = 0;
   private onChange: () => void;
   private lastDir: SortDirection = SortDirection.ASC;
@@ -339,8 +340,8 @@ export class DropDown extends Phaser.GameObjects.Container {
 
   resetCursor(): boolean {
     // If we are an hybrid dropdown in "hover" mode, don't move the cursor back to 0
-    if (this.dropDownType === DropDownType.HYBRID && this.checkForAllOff() && this.cursor > 0) {
-      return false;
+    if (this.dropDownType === DropDownType.HYBRID && this.checkForAllOff()) {
+      return this.setCursor(this.lastCursor);
     }
     return this.setCursor(this.defaultCursor);
   }
@@ -361,6 +362,7 @@ export class DropDown extends Phaser.GameObjects.Container {
       this.cursorObj.setVisible(true);
       // If hydrid type, we need to update the filters when going up/down in the list
       if (this.dropDownType === DropDownType.HYBRID) {
+        this.lastCursor = cursor;
         this.onChange();
       }
     }
