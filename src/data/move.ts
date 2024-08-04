@@ -4927,26 +4927,65 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         return resolve(false);
       }
 
-  	// Move the switch out logic inside the conditional block
-  	// This ensures that the switch out only happens when the conditions are met
 	  const switchOutTarget = this.user ? user : target;
+
+      let willBePursued = false;
+      if (switchOutTarget.hp > 0 && !this.batonPass && this.user && move.id !== Moves.TELEPORT) {
+        switchOutTarget.addTag(BattlerTagType.ESCAPING);
+
+        const opposingField = user.isPlayer() ? user.scene.getEnemyField() : user.scene.getPlayerField();
+        const opposingPursuitUsers = opposingField
+          .filter((op: Pokemon) => op.getTag(BattlerTagType.ANTICIPATING_ACTION)?.sourceMove === Moves.PURSUIT)
+          .sort((a, b) => b.turnData.order - a.turnData.order);
+        if (opposingPursuitUsers.length) {
+          willBePursued = true;
+          opposingPursuitUsers.forEach(pursuiter => {
+            if (user.scene.tryRemovePhase(p => p instanceof MovePhase && p.pokemon.id === pursuiter.id)) {
+              user.scene.prependToPhase(new MovePhase(user.scene, pursuiter, [switchOutTarget.getBattlerIndex()], pursuiter.getMoveset().find(m => m.moveId === Moves.PURSUIT) || new PokemonMove(Moves.PURSUIT), false, false), MoveEndPhase);
+            }
+          });
+        }
+      }
+
 	  if (switchOutTarget instanceof PlayerPokemon) {
-        switchOutTarget.leaveField(!this.batonPass);
+        if (!willBePursued) {
+          switchOutTarget.leaveField(!this.batonPass);
+        }
 
         if (switchOutTarget.hp > 0) {
-          user.scene.prependToPhase(new SwitchPhase(user.scene, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
+          user.scene.prependToPhase(
+            new SwitchPhase(user.scene, switchOutTarget.getFieldIndex(), true, willBePursued),
+            MoveEndPhase
+          );
           resolve(true);
         } else {
           resolve(false);
         }
+
 	  	return;
 	  } else if (user.scene.currentBattle.battleType !== BattleType.WILD) {
+        if (!user.scene.currentBattle.trainer) {
+          return resolve(false); // what are we even doing here
+        }
+
 	  	// Switch out logic for trainer battles
-        switchOutTarget.leaveField(!this.batonPass);
+        if (!willBePursued) {
+          switchOutTarget.leaveField(!this.batonPass);
+        }
 
 	  	if (switchOutTarget.hp > 0) {
         // for opponent switching out
-          user.scene.prependToPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0), false, this.batonPass, false), MoveEndPhase);
+          user.scene.prependToPhase(
+            new SwitchSummonPhase(
+              user.scene,
+              switchOutTarget.getFieldIndex(),
+              user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot),
+              willBePursued,
+              this.batonPass,
+              false
+            ),
+            MoveEndPhase
+          );
         }
 	  } else {
 	    // Switch out logic for everything else (eg: WILD battles)

@@ -2332,14 +2332,22 @@ export class TurnStartPhase extends FieldPhase {
     const moveOrder = order.slice(0);
 
     moveOrder.sort((a, b) => {
-      const aCommand = this.scene.currentBattle.turnCommands[a];
-      const bCommand = this.scene.currentBattle.turnCommands[b];
+      const aCommand = this.scene.currentBattle.turnCommands[a]!;
+      const bCommand = this.scene.currentBattle.turnCommands[b]!;
 
-      if (aCommand?.command !== bCommand?.command) {
-        if (aCommand?.command === Command.FIGHT) {
-          return 1;
-        } else if (bCommand?.command === Command.FIGHT) {
-          return -1;
+      if (aCommand.command !== bCommand.command) {
+        if (aCommand.command === Command.FIGHT) {
+          if (aCommand.move?.move === Moves.PURSUIT && bCommand.command === Command.POKEMON) {
+            return -1;
+          } else {
+            return 1;
+          }
+        } else if (bCommand.command === Command.FIGHT) {
+          if (bCommand.move?.move === Moves.PURSUIT && aCommand.command === Command.POKEMON) {
+            return 1;
+          } else {
+            return -1;
+          }
         }
       } else if (aCommand?.command === Command.FIGHT) {
         const aMove = allMoves[aCommand.move!.move];//TODO: is the bang correct here?
@@ -2396,22 +2404,50 @@ export class TurnStartPhase extends FieldPhase {
         if (move.getMove().hasAttr(MoveHeaderAttr)) {
           this.scene.unshiftPhase(new MoveHeaderPhase(this.scene, pokemon, move));
         }
+        // even though pursuit is ordered before Pokemon commands in the move
+        // order, the SwitchSummonPhase is unshifted onto the phase list, which
+        // would cause it to run before pursuit if pursuit was pushed normally.
+        // the SwitchSummonPhase can't be changed to a push either, because then
+        // the MoveHeaderPhase for all moves would run prior to the switch-out,
+        // which is not correct (eg, when focus punching a switching opponent,
+        // the correct order is switch -> tightening focus message -> attack
+        // fires, not focus -> switch -> attack). so, we have to specifically
+        // unshift pursuit when there are other pokemon commands after it, as
+        // well as order it before any Pokemon commands, otherwise it won't go first.
+        const remainingMoves = moveOrder.slice(moveOrder.findIndex(mo => mo === o) + 1);
+        const pendingOpposingPokemonCommands = remainingMoves.filter(o =>
+          this.scene.currentBattle.turnCommands[o]!.command === Command.POKEMON
+            && (pokemon.isPlayer() ? o >= BattlerIndex.ENEMY : o < BattlerIndex.ENEMY)
+        );
+        const arePokemonCommandsLeftInQueue = Boolean(pendingOpposingPokemonCommands.length);
+        const addPhase = (
+          queuedMove.move === Moves.PURSUIT && arePokemonCommandsLeftInQueue
+            ? this.scene.unshiftPhase
+            : this.scene.pushPhase
+        ).bind(this.scene);
+
+        // pursuit also hits the first pokemon to switch out in doubles,
+        // regardless of original target
+        const targets = queuedMove.move === Moves.PURSUIT && arePokemonCommandsLeftInQueue
+          ? [pendingOpposingPokemonCommands[0]]
+          : turnCommand.targets || turnCommand.move!.targets;
         if (pokemon.isPlayer()) {
           if (turnCommand.cursor === -1) {
-            this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
+            addPhase(new MovePhase(this.scene, pokemon, targets, move));
           } else {
-            const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP);//TODO: is the bang correct here?
-            this.scene.pushPhase(playerPhase);
+            const playerPhase = new MovePhase(this.scene, pokemon, targets, move, false, queuedMove.ignorePP);
+            addPhase(playerPhase);
           }
         } else {
-          this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP));//TODO: is the bang correct here?
+          addPhase(new MovePhase(this.scene, pokemon, targets, move, false, queuedMove.ignorePP));
         }
         break;
       case Command.BALL:
         this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets![0] % 2, turnCommand.cursor!));//TODO: is the bang correct here?
         break;
       case Command.POKEMON:
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor!, true, turnCommand.args![0] as boolean, pokemon.isPlayer()));//TODO: is the bang correct here?
+        pokemon.addTag(BattlerTagType.ESCAPING);
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor!, true, turnCommand.args![0] as boolean, pokemon.isPlayer()));
         break;
       case Command.RUN:
         let runningPokemon = pokemon;
@@ -4694,8 +4730,9 @@ export class SwitchPhase extends BattlePhase {
    * @param fieldIndex Field index to switch out
    * @param isModal Indicates if the switch should be forced (true) or is
    * optional (false).
-   * @param doReturn Indicates if the party member on the field should be
-   * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase}.
+   * @param doReturn Indicates if this switch should call back the pokemon at
+   * the {@linkcode fieldIndex} (true), or if the mon has already been recalled
+   * (false).
    */
   constructor(scene: BattleScene, fieldIndex: integer, isModal: boolean, doReturn: boolean) {
     super(scene);
@@ -4723,7 +4760,9 @@ export class SwitchPhase extends BattlePhase {
     }
 
     // Check if there is any space still in field
-    if (this.isModal && this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
+    const numActiveBattlers = this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length;
+    const willReturnModifer = (this.doReturn ? 1 : 0); // need to subtract this if doReturn is true, because the pokemon in the given index hasn't left the field yet. (used for volt switch + pursuit, etc)
+    if (this.isModal && numActiveBattlers - willReturnModifer >= this.scene.currentBattle.getBattlerCount()) {
       return super.end();
     }
 
