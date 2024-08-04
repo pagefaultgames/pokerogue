@@ -1647,6 +1647,47 @@ export class StockpilingTag extends BattlerTag {
   }
 }
 
+/**
+ * Battler tag for Gulp Missile. This is mainly use in triggering Cramorant's form changes.
+ * @extends BattlerTag
+ */
+export class GulpMissileTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, sourceMove: Moves) {
+    super(tagType, BattlerTagLapseType.CUSTOM, 0, sourceMove);
+  }
+
+  /**
+   * Gulp Missile's initial form changes are triggered by using Surf and Fly.
+   * @param {Pokemon} pokemon The Pokemon with Gulp Missile ability.
+   * @returns Whether the BattlerTag can be added.
+   */
+  canAdd(pokemon: Pokemon): boolean {
+    const isSurfOrFly = [ Moves.SURF, Moves.FLY ].includes(this.sourceMove);
+    return isSurfOrFly && !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA) && !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+    this.triggerFormChange(pokemon);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+    this.triggerFormChange(pokemon);
+  }
+
+  /**
+   * Triggers the form change when the Pokemon is Cramorant
+   * @param {Pokemon} pokemon The Pokemon with Gulp Missile ability
+   */
+  triggerFormChange(pokemon: Pokemon): void {
+    const gulpTags = [ BattlerTagType.GULP_MISSILE_ARROKUDA, BattlerTagType.GULP_MISSILE_PIKACHU ];
+    if (pokemon.species.speciesId === Species.CRAMORANT && gulpTags.includes(this.tagType)) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    }
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1770,6 +1811,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new StockpilingTag(sourceMove);
   case BattlerTagType.OCTOLOCK:
     return new OctolockTag(sourceId);
+  case BattlerTagType.GULP_MISSILE_ARROKUDA:
+  case BattlerTagType.GULP_MISSILE_PIKACHU:
+    return new GulpMissileTag(tagType, sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

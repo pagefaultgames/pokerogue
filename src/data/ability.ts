@@ -6,7 +6,7 @@ import { BattleStat, getBattleStatName } from "./battle-stat";
 import { MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import { Weather, WeatherType } from "./weather";
-import { BattlerTag, GroundedTag } from "./battler-tags";
+import { BattlerTag, GroundedTag, GulpMissileTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, ChargeAttr, SacrificialAttr, SacrificialAttrOnHit } from "./move";
@@ -493,6 +493,49 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
 export class PostDefendAbAttr extends AbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
     return false;
+  }
+}
+
+/**
+ * Applies the effects of Gulp Missile when the user is hit by an attack.
+ * @extends PostDefendAbAttr
+ */
+export class PostDefendGulpMissileAbAttr extends PostDefendAbAttr {
+  constructor() {
+    super(false);
+  }
+
+  /**
+   * Damages the attacker and triggers the secondary effect based on the form or the BattlerTagType.
+   * @param {Pokemon} pokemon - The defending Pokemon.
+   * @param passive - n/a
+   * @param {Pokemon} attacker - The attacking Pokemon.
+   * @param {Move} move - The move being used.
+   * @param {HitResult} hitResult - n/a
+   * @param {any[]} args - n/a
+   * @returns Whether the effects of the ability are applied.
+   */
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
+    const battlerTag = pokemon.getTag(GulpMissileTag);
+    if (!battlerTag || move.category === MoveCategory.STATUS) {
+      return false;
+    }
+
+    const cancelled = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockNonDirectDamageAbAttr, attacker, cancelled);
+
+    if (!cancelled.value) {
+      attacker.damageAndUpdate(Math.floor(attacker.getMaxHp() * 1/4), HitResult.OTHER);
+    }
+
+    if (battlerTag.tagType === BattlerTagType.GULP_MISSILE_ARROKUDA) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, attacker.getBattlerIndex(), false, [ BattleStat.DEF ], -1));
+    } else {
+      attacker.trySetStatus(StatusEffect.PARALYSIS, true, pokemon);
+    }
+
+    pokemon.removeTag(battlerTag.tagType);
+    return true;
   }
 }
 
@@ -5082,7 +5125,9 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .unimplemented(),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(PostDefendGulpMissileAbAttr),
     new Ability(Abilities.STALWART, 8)
       .attr(BlockRedirectAbAttr),
     new Ability(Abilities.STEAM_ENGINE, 8)

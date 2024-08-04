@@ -4298,6 +4298,41 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Adds the appropriate battler tag for Gulp Missile when Surf or Fly is used.
+ * @extends MoveEffectAttr
+ */
+export class GulpMissileTagAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, MoveEffectTrigger.POST_APPLY);
+  }
+
+  /**
+   * Adds BattlerTagType from GulpMissileTag based on the Pokemon's HP ratio.
+   * @param {Pokemon} user The Pokemon using the move.
+   * @param {Pokemon} target The Pokemon being targeted by the move.
+   * @param {Move} move The move being used.
+   * @param {any[]} args Additional arguments, if any.
+   * @returns Whether the BattlerTag is applied.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    if (user.hasAbility(Abilities.GULP_MISSILE)) {
+      if (user.getHpRatio() >= .5) {
+        user.addTag(BattlerTagType.GULP_MISSILE_ARROKUDA, 0, move.id);
+      } else {
+        user.addTag(BattlerTagType.GULP_MISSILE_PIKACHU, 0, move.id);
+      }
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class CurseAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move:Move, args: any[]): boolean {
@@ -6030,6 +6065,7 @@ export function initMoves() {
       .windMove(),
     new AttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
       .attr(ChargeAttr, ChargeAnim.FLY_CHARGING, i18next.t("moveTriggers:flewUpHigh", {pokemonName: "{USER}"}), BattlerTagType.FLYING)
+      .attr(GulpMissileTagAttr)
       .condition(failOnGravityCondition)
       .ignoresVirtual(),
     new AttackMove(Moves.BIND, Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, 0, 1)
@@ -6130,7 +6166,8 @@ export function initMoves() {
     new AttackMove(Moves.HYDRO_PUMP, Type.WATER, MoveCategory.SPECIAL, 110, 80, 5, -1, 0, 1),
     new AttackMove(Moves.SURF, Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 1)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true),
+      .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true)
+      .attr(GulpMissileTagAttr),
     new AttackMove(Moves.ICE_BEAM, Type.ICE, MoveCategory.SPECIAL, 90, 100, 10, 10, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.FREEZE),
     new AttackMove(Moves.BLIZZARD, Type.ICE, MoveCategory.SPECIAL, 110, 70, 5, 10, 0, 1)
