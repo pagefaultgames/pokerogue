@@ -2999,7 +2999,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     };
     ui.showText(i18next.t("starterSelectUiHandler:confirmExit"), null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
-        this.resetFilters();
         ui.setMode(Mode.STARTER_SELECT);
         this.scene.clearPhaseQueue();
         if (this.scene.gameMode.isChallenge) {
