@@ -19,6 +19,8 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "Team Galactic Boss",
   "plasma_boss": "Team Plasma Boss",
   "flare_boss": "Team Flare Boss",
+  // "snagem_boss": "Team Snagem Head",
+  // "cipher_boss": "Cipher Grand Master",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -137,6 +139,8 @@ export const trainerClasses: SimpleTranslationEntries = {
   "plasma_grunt_female": "Plasma Grunt",
   "flare_grunt": "Flare Grunt",
   "flare_grunt_female": "Flare Grunt",
+  // "snagem_grunt" : "Snagem Grunt",
+  // "cipher_peon" : "Cipher Peon",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -251,6 +255,10 @@ export const trainerNames: SimpleTranslationEntries = {
   "amarys": "Amarys",
   "lacey": "Lacey",
   "drayton": "Drayton",
+  "miror_b": "Miror B.",
+  "dakim" : "Dakim",
+  "venus" : "Venus",
+  "ein" : "Ein",
   "blue": "Blue",
   "red": "Red",
   "steven": "Steven",
@@ -263,6 +271,8 @@ export const trainerNames: SimpleTranslationEntries = {
   "geeta": "Geeta",
   "nemona": "Nemona",
   "kieran": "Kieran",
+  "nascour" : "Nascour",
+  // "evice" : "Evice",
   "leon": "Leon",
   "rival": "Finn",
   "rival_female": "Ivy",
@@ -271,6 +281,8 @@ export const trainerNames: SimpleTranslationEntries = {
   "cyrus": "Cyrus",
   "ghetsis": "Ghetsis",
   "lysandre": "Lysandre",
+  // "gonzap": "Gonzap",
+  // "greevil": "Greevil",
 
   // Double Names
   "blue_red_double": "Blue & Red",
