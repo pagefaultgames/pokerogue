@@ -469,7 +469,6 @@ export class DropDown extends Phaser.GameObjects.Container {
     for (let i = 0; i < this.options.length; i++) {
       settings.push({ val: this.options[i].val, state: this.options[i].state , cursor: (this.cursor === i), dir: this.options[i].dir });
     }
-    console.log(settings);
     return settings;
   }
 
