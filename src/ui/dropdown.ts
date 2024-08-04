@@ -27,10 +27,10 @@ export class DropDownLabel {
   public text: string;
   public sprite?: Phaser.GameObjects.Sprite;
 
-  constructor(label: string, sprite?: Phaser.GameObjects.Sprite, state: DropDownState = DropDownState.ON) {
+  constructor(label: string, sprite?: Phaser.GameObjects.Sprite, state: DropDownState = DropDownState.OFF) {
     this.text = label || "";
     this.sprite = sprite;
-    this.state = state || DropDownState.ON;
+    this.state = state;
   }
 }
 
@@ -267,7 +267,7 @@ export class DropDown extends Phaser.GameObjects.Container {
   public defaultCursor: number = 0;
   private onChange: () => void;
   private lastDir: SortDirection = SortDirection.ASC;
-  private defaultValues: any[];
+  private defaultSettings: any[];
 
   constructor(scene: BattleScene, x: number, y: number, options: DropDownOption[], onChange: () => void, type: DropDownType = DropDownType.MULTI, optionSpacing: number = 2) {
     const windowPadding = 5;
@@ -292,7 +292,7 @@ export class DropDown extends Phaser.GameObjects.Container {
       this.options.unshift(new DropDownOption(scene, "ALL", new DropDownLabel(i18next.t("filterBar:all"), undefined, this.checkForAllOn() ? DropDownState.ON : DropDownState.OFF)));
     }
 
-    this.defaultValues = this.getVals();
+    this.defaultSettings = this.getSettings();
 
     // Place ui elements in the correct spot
     options.forEach((option, index) => {
@@ -458,23 +458,34 @@ export class DropDown extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Get the current selected settings dictionary for each option
+   * @returns an array of dictionaries with the current state of each option
+   */
+  getSettings(): any[] {
+    const settings = [];
+    for (const option of this.options) {
+      settings.push({ val: option.val, state: option.state , cursor: (this.cursor === this.options.indexOf(option)), dir: option.dir });
+    }
+    return settings;
+  }
+
+  /**
    * Check whether the values of all options are the same as the default ones
    * @returns true if they are the same, false otherwise
    */
   public hasDefaultValues(): boolean {
-    const currentValues = this.getVals();
+    const currentValues = this.getSettings();
 
     switch (this.dropDownType) {
     case DropDownType.MULTI:
-    case DropDownType.HYBRID:
-      return currentValues.length === this.defaultValues.length && currentValues.every((value, index) => value === this.defaultValues[index]);
-
     case DropDownType.RADIAL:
-      return currentValues.every((value, index) => value["val"] === this.defaultValues[index]["val"] && value["state"] === this.defaultValues[index]["state"]);
+      return currentValues.length === this.defaultSettings.length && currentValues.every((value, index) => value["val"] === this.defaultSettings[index]["val"] && value["state"] === this.defaultSettings[index]["state"]);
+
+    case DropDownType.HYBRID:
+      return currentValues.length === this.defaultSettings.length && currentValues.every((value, index) => value["val"] === this.defaultSettings[index]["val"] && value["state"] === this.defaultSettings[index]["state"] && value["cursor"] === this.defaultSettings[index]["cursor"]);
 
     case DropDownType.SINGLE:
-      return currentValues[0]["dir"] === this.defaultValues[0]["dir"] && currentValues[0]["val"] === this.defaultValues[0]["val"];
-
+      return currentValues.length === this.defaultSettings.length && currentValues.every((value, index) => value["val"] === this.defaultSettings[index]["val"] && value["dir"] === this.defaultSettings[index]["dir"]);
     default:
       return false;
     }
@@ -484,46 +495,24 @@ export class DropDown extends Phaser.GameObjects.Container {
    * Set all values to their default state
    */
   public resetToDefault(): void {
-    this.setCursor(this.defaultCursor);
+    if (this.defaultSettings.length > 0) {
+      this.setCursor(this.defaultCursor);
 
-    for (let i = 0; i < this.options.length; i++) {
-      const option = this.options[i];
-      // reset values
-      switch (this.dropDownType) {
-      case DropDownType.HYBRID:
-      case DropDownType.MULTI:
-        if (this.defaultValues.includes(option.val)) {
-          option.setOptionState(DropDownState.ON);
+      for (let i = 0; i < this.options.length; i++) {
+        // reset values with the defaultValues
+        if (this.dropDownType === DropDownType.SINGLE) {
+          if (this.options[i].val === this.defaultSettings[i].val) {
+            if (this.options[i].state !== DropDownState.ON && this.defaultSettings[i].state === DropDownState.ON) {
+              this.toggleOptionState(i);
+            }
+          }
         } else {
-          option.setOptionState(DropDownState.OFF);
-        }
-        break;
-      case DropDownType.RADIAL:
-        const targetValue = this.defaultValues.find(value => value.val === option.val);
-        option.setOptionState(targetValue.state);
-        break;
-      case DropDownType.SINGLE:
-        if (option.val === this.defaultValues[0].val) {
-          if (option.state !== DropDownState.ON) {
-            this.toggleOptionState(i);
-          }
-          if (option.dir !== this.defaultValues[0].dir) {
-            this.toggleOptionState(i);
+          if (this.defaultSettings[i]) {
+            this.options[i].setOptionState(this.defaultSettings[i]["state"]);
           }
         }
-        break;
       }
     }
-
-    // Select or unselect "ALL" button if applicable
-    if (this.dropDownType === DropDownType.MULTI || this.dropDownType === DropDownType.HYBRID) {
-      if (this.checkForAllOn()) {
-        this.options[0].setOptionState(DropDownState.ON);
-      } else {
-        this.options[0].setOptionState(DropDownState.OFF);
-      }
-    }
-
   }
 
   /**

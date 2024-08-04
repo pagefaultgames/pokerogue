@@ -450,11 +450,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     // sort filter
     const sortOptions = [
-      new DropDownOption(this.scene, 0, new DropDownLabel(i18next.t("filterBar:sortByNumber"))),
-      new DropDownOption(this.scene, 1, new DropDownLabel(i18next.t("filterBar:sortByCost"), undefined, DropDownState.OFF)),
-      new DropDownOption(this.scene, 2, new DropDownLabel(i18next.t("filterBar:sortByCandies"), undefined, DropDownState.OFF)),
-      new DropDownOption(this.scene, 3, new DropDownLabel(i18next.t("filterBar:sortByIVs"), undefined, DropDownState.OFF)),
-      new DropDownOption(this.scene, 4, new DropDownLabel(i18next.t("filterBar:sortByName"), undefined, DropDownState.OFF))
+      new DropDownOption(this.scene, 0, new DropDownLabel(i18next.t("filterBar:sortByNumber"), undefined, DropDownState.ON)),
+      new DropDownOption(this.scene, 1, new DropDownLabel(i18next.t("filterBar:sortByCost"))),
+      new DropDownOption(this.scene, 2, new DropDownLabel(i18next.t("filterBar:sortByCandies"))),
+      new DropDownOption(this.scene, 3, new DropDownLabel(i18next.t("filterBar:sortByIVs"))),
+      new DropDownOption(this.scene, 4, new DropDownLabel(i18next.t("filterBar:sortByName")))
     ];
     this.filterBar.addFilter(DropDownColumn.SORT, i18next.t("filterBar:sortFilter"), new DropDown(this.scene, 0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
     this.filterBarContainer.add(this.filterBar);
@@ -923,11 +923,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     this.filterBar.setValsToDefault();
-
-    // for all modes except challenge, disable all gen options to enable hovering behavior
-    if (!this.scene.gameMode.isChallenge) {
-      genDropDown.unselectAllOptions();
-    }
   }
 
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
@@ -3004,6 +2999,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     };
     ui.showText(i18next.t("starterSelectUiHandler:confirmExit"), null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
+        this.resetFilters();
         ui.setMode(Mode.STARTER_SELECT);
         this.scene.clearPhaseQueue();
         if (this.scene.gameMode.isChallenge) {
