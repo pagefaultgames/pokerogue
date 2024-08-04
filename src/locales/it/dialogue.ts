@@ -405,29 +405,29 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "You'd better not interfere with our plans! We're making the world a better place!",
       3: "You're in the way! Team Magma has no time for kids like you!",
       4: "I hope you brought marshmallows because things are about to heat up!",
-      5: "We're going to use the power of a volcano! It's gonna be.. explosive! Get it? Heh heh!"
+      5: "We're going to use the power of a volcano! It's gonna be... explosive! Get it? Heh heh!"
     },
     "victory": {
       1: "Huh? I lost?!",
       2: "I can't believe I lost! I even skipped lunch for this",
       3: "No way! You're just a kid!",
-      4: "Urrrgh...I should've ducked into our hideout right away...",
+      4: "Urrrgh... I should've ducked into our hideout right away...",
       5: "You beat me... Do you think the boss will dock my pay for this?"
     },
   },
   "aqua_grunt": {
     "encounter": {
       1: "No one who crosses Team Aqua gets any mercy, not even kids!",
-      2: "Grrr…You've got some nerve meddling with Team Aqua!",
+      2: "Grrr... You've got some nerve meddling with Team Aqua!",
       3: "You're about to get soaked! And not just from my water Pokémon!",
       4: "We, Team Aqua, exist for the good of all!",
-      5: "Prepare to be washed away by the tides of my… uh, Pokémon! Yeah, my Pokémon!"
+      5: "Prepare to be washed away by the tides of my... uh, Pokémon! Yeah, my Pokémon!"
     },
     "victory": {
       1: "You're kidding me!",
       2: "Arrgh, I didn't count on being meddled with by some meddling kid!",
       3: "I lost?! Guess I'll have to swim back to the hideout now...",
-      4: "Oh, man, what a disaster… The boss is going to be furious…",
+      4: "Oh, man, what a disaster... The boss is going to be furious...",
       5: "You beat me... Do you think the boss will make me walk the plank for this?"
     },
   },
@@ -451,14 +451,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: "We won't tolerate people who have different ideas!",
       2: "If I win against you, release your Pokémon!",
-      3: "Your Pokémon will serve a greater purpose under Lord N's vision.",
+      3: "If you get in the way of Team Plasma, I'll take care of you!",
       4: "Team Plasma will liberate Pokémon from selfish humans like you!",
       5: "Our hairstyles are out of this world... but our battling skills? You'll find out soon enough."
     },
     "victory": {
       1: "Plasmaaaaaaaaa!",
       2: "How could I lose...",
-      3: "Long live Team Plasma!",
+      3: "...What a weak Pokémon, I'll just have to go steal some better ones!",
       4: "Great plans are always interrupted.",
       5: "This is bad... Badbadbadbadbadbadbad! Bad for Team Plasma! Or Plasbad, for short!"
     },
