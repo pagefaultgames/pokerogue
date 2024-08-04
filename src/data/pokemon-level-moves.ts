@@ -4870,7 +4870,6 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 39, Moves.FUTURE_SIGHT ],
   ],
   [Species.KIRLIA]: [
-    [ 1, Moves.QUICK_GUARD ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.DISARMING_VOICE ],
     [ 1, Moves.DOUBLE_TEAM ],
@@ -4880,6 +4879,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 15, Moves.TELEPORT ],
     [ 18, Moves.PSYBEAM ],
     [ 23, Moves.LIFE_DEW ],
+    [ 25, Moves.QUICK_GUARD ],
     [ 28, Moves.CHARM ],
     [ 33, Moves.CALM_MIND ],
     [ 38, Moves.PSYCHIC ],
