@@ -69,5 +69,14 @@ export enum BattlerTagType {
   GULP_MISSILE_ARROKUDA = "GULP_MISSILE_ARROKUDA",
   GULP_MISSILE_PIKACHU = "GULP_MISSILE_PIKACHU",
   BEAK_BLAST_CHARGING = "BEAK_BLAST_CHARGING",
-  SHELL_TRAP = "SHELL_TRAP"
+  SHELL_TRAP = "SHELL_TRAP",
+  /**
+   * Tag which indicates the battler is waiting for their opponent to make some
+   * sort of action (switch out, use a type of move, make contact, etc)
+   */
+  ANTICIPATING_ACTION = "ANTICIPATING_ACTION",
+  /**
+   * Tag which indicates the battler is about to switch out.
+   */
+  ESCAPING = "ESCAPING",
 }

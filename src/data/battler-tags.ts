@@ -1957,6 +1957,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.GULP_MISSILE_ARROKUDA:
   case BattlerTagType.GULP_MISSILE_PIKACHU:
     return new GulpMissileTag(tagType, sourceMove);
+  case BattlerTagType.ANTICIPATING_ACTION:
+    return new BattlerTag(BattlerTagType.ANTICIPATING_ACTION, BattlerTagLapseType.TURN_END, 1, sourceMove);
+  case BattlerTagType.ESCAPING:
+    return new BattlerTag(BattlerTagType.ESCAPING, BattlerTagLapseType.TURN_END, 1, sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
