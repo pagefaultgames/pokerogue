@@ -4469,8 +4469,9 @@ export class SwitchPhase extends BattlePhase {
     }
 
     // Skip if the fainted party member has been revived already
-    if (this.isModal && !this.scene.getParty()[this.fieldIndex].isFainted())
+    if (this.isModal && !this.scene.getParty()[this.fieldIndex].isFainted()) {
       return super.end();
+    }
 
     // Check if there is any space still in field
     if (this.isModal && this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
