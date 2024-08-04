@@ -6936,7 +6936,7 @@ export function initMoves() {
     new AttackMove(Moves.CLOSE_COMBAT, Type.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 4)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),
     new AttackMove(Moves.PAYBACK, Type.DARK, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 4)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.BALL ? 2 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => (user.scene.currentBattle.turnCommands[target.getBattlerIndex()] != undefined && target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn)) || (user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.BALL) ? 2 : 1),
     new AttackMove(Moves.ASSURANCE, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.turnData.damageTaken > 0 ? 2 : 1),
     new StatusMove(Moves.EMBARGO, Type.DARK, 100, 15, -1, 0, 4)
@@ -8662,7 +8662,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.BURNING_BULWARK, Type.FIRE, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.BURNING_BULWARK),
     new AttackMove(Moves.THUNDERCLAP, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 5, -1, 1, 9)
-      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].category !== MoveCategory.STATUS),
+      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()] != undefined && user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].category !== MoveCategory.STATUS),
     new AttackMove(Moves.MIGHTY_CLEAVE, Type.ROCK, MoveCategory.PHYSICAL, 95, 100, 5, -1, 0, 9)
       .slicingMove()
       .ignoresProtect(),
@@ -8689,7 +8689,7 @@ export function initMoves() {
       .partial(),
     new AttackMove(Moves.UPPER_HAND, Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, 100, 3, 9)
       .attr(FlinchAttr)
-      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].category !== MoveCategory.STATUS && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].priority > 0 )
+      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()] != undefined && user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].category !== MoveCategory.STATUS && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].priority > 0 )
       //TODO: Should also apply when target move priority increased by ability ex. gale wings
       .partial(),
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
