@@ -1630,7 +1630,7 @@ export class GameData {
   }
 
   getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies): integer {
-    const abilityAttr = this.starterData[species.speciesId].abilityAttr;
+    const abilityAttr = this.starterData[species.getRootSpeciesId()].abilityAttr;
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 

@@ -152,6 +152,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("scroll_bar_handle", "ui");
     this.loadImage("starter_container_bg", "ui");
     this.loadImage("starter_select_bg", "ui");
+    this.loadImage("pokedex_bg", "ui");
     this.loadImage("select_cursor", "ui");
     this.loadImage("select_cursor_highlight", "ui");
     this.loadImage("select_cursor_highlight_thick", "ui");

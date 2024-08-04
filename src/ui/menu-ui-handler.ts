@@ -17,6 +17,7 @@ enum MenuOptions {
   ACHIEVEMENTS,
   STATS,
   VOUCHERS,
+  POKEDEX,
   EGG_LIST,
   EGG_GACHA,
   MANAGE_DATA,
@@ -327,6 +328,10 @@ export default class MenuUiHandler extends MessageUiHandler {
         break;
       case MenuOptions.VOUCHERS:
         ui.setOverlayMode(Mode.VOUCHERS);
+        success = true;
+        break;
+      case MenuOptions.POKEDEX:
+        ui.setOverlayMode(Mode.POKEDEX);
         success = true;
         break;
       case MenuOptions.EGG_LIST:
