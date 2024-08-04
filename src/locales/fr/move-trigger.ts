@@ -50,5 +50,13 @@ export const moveTriggers: SimpleTranslationEntries = {
   "transformedIntoTarget": "{{pokemonName}} prend\nl’apparence de {{targetName}} !",
   "tryingToTakeFoeDown": "{{pokemonName}} veut entrainer\nson assaillant dans sa chute !",
   "addType": "{{pokemonName}} gagne\nle type {{typeName}}.",
-  "cannotUseMove": "{{pokemonName}} ne peut pas\nutiliser la capacité {{moveName}} !"
+  "cannotUseMove": "{{pokemonName}} ne peut pas\nutiliser la capacité {{moveName}} !",
+  "healHp": "{{pokemonName}}\nrécupère des PV !",
+  "sacrificialFullRestore": "Le Vœu Soin est exaucé et profite\nà {{pokemonName}} !",
+  "invertStats": "Les changements de stats\nde {{pokemonName}} sont inversés !",
+  "resetStats": "Les changements de stats\nde {{pokemonName}} ont tous été annulés !",
+  "faintCountdown": "{{pokemonName}}\nsera K.O. dans {{turnCount}} tours !",
+  "copyType": "{{pokemonName}} prend le type\nde {{targetPokemonName}} !",
+  "suppressAbilities": "Le talent de {{pokemonName}}\na été rendu inactif !",
+  "swapArenaTags": "Les effets affectant chaque côté du terrain\nont été échangés par {{pokemonName}} !",
 } as const;

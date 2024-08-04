@@ -50,5 +50,13 @@ export const moveTriggers: SimpleTranslationEntries = {
   "transformedIntoTarget": "{{pokemonName}} assume le sembianze\ndi {{targetName}}!",
   "tryingToTakeFoeDown": "{{pokemonName}} tenta di far subire a chi lo manda KO la sua stessa sorte!",
   "addType": "Adesso {{pokemonName}} è anche\ndi tipo {{typeName}}!",
-  "cannotUseMove": "{{pokemonName}} non può usare {{moveName}}!"
+  "cannotUseMove": "{{pokemonName}} non può usare {{moveName}}!",
+  "healHp": "{{pokemonName}} ha recuperato dei PS.",
+  "sacrificialFullRestore": "{{pokemonName}} riceve i benefici\neffetti di Curardore!",
+  "invertStats": "Le modifiche alle statistiche di {{pokemonName}}\nvengono invertite!",
+  "resetStats": "Tutte le modifiche alle statistiche sono state annullate!",
+  "faintCountdown": "{{pokemonName}}\nandrà KO dopo {{turnCount}} turni.",
+  "copyType": "{{pokemonName}} assume il tipo\ndi {{targetPokemonName}}!",
+  "suppressAbilities": "L’abilità di {{pokemonName}}\nperde ogni efficacia!",
+  "swapArenaTags": "{{pokemonName}} ha invertito gli effetti attivi\nnelle due metà del campo!",
 } as const;
