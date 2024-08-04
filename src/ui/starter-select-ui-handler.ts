@@ -1265,7 +1265,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
-        } else if (this.starterSpecies.length < 6) { // checks to see you have less than 6 pokemon in your party
+        } else if (this.starterSpecies.length <= 6) { // checks to see if the party has 6 or fewer pokemon
 
           let species;
 
@@ -1291,7 +1291,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
           const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
           const newCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
-          if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit()) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
+          if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit() && this.starterSpecies.length < 6) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
             options = [
               {
                 label: i18next.t("starterSelectUiHandler:addToParty"),
