@@ -262,7 +262,7 @@ export class DropDown extends Phaser.GameObjects.Container {
   public options: DropDownOption[];
   private window: Phaser.GameObjects.NineSlice;
   private cursorObj: Phaser.GameObjects.Image;
-  private dropDownType: DropDownType = DropDownType.MULTI;
+  public dropDownType: DropDownType = DropDownType.MULTI;
   public cursor: number = 0;
   public defaultCursor: number = 0;
   private onChange: () => void;
