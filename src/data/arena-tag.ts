@@ -321,13 +321,18 @@ export class NoCritTag extends ArenaTag {
 
   /** Queues a message upon adding this effect to the field */
   onAdd(arena: Arena): void {
-    arena.scene.queueMessage(`The ${this.getMoveName()} shielded your\nteam from critical hits!`);
+    arena.scene.queueMessage(i18next.t(`arenaTag:noCritOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : "Enemy"}`, {
+      moveName: this.getMoveName()
+    }));
   }
 
   /** Queues a message upon removing this effect from the field */
   onRemove(arena: Arena): void {
     const source = arena.scene.getPokemonById(this.sourceId);
-    arena.scene.queueMessage(`${getPokemonNameWithAffix(source)}'s ${this.getMoveName()}\nwore off!`);
+    arena.scene.queueMessage(i18next.t("arenaTag:noCritOnRemove", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(source),
+      moveName: this.getMoveName()
+    }));
   }
 }
 
