@@ -1265,7 +1265,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
-        } else if (this.starterSpecies.length <= 6) { // checks to see you have less than 6 pokemon in your party
+        } else if (this.starterSpecies.length <= 6) { // checks to see if the party 6 or less pokemon
 
           let species;
 
