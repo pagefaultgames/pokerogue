@@ -20,7 +20,7 @@ export const runHistory: SimpleTranslationEntries = {
   "challengeMonoGen7":"7G",
   "challengeMonoGen8":"8G",
   "challengeMonoGen9":"9G",
-  "playerItems":"Objets joueur",
+  "playerItems":"Objets Dresseur",
   "personalBest":"Record personnel !",
   "SPDshortened":"Vit.",
   "runInfo":"Infos session",
