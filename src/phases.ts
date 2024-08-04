@@ -1913,7 +1913,9 @@ export class EncounterPhase extends BattlePhase {
       }
     }
     handleTutorial(this.scene, Tutorial.Access_Menu).then(() => {
-      this.scene.arenaFlyout.toggleFlyout(true)
+      if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+        this.scene.arenaFlyout.toggleFlyout(true)
+      }
       super.end()
     });
   }
