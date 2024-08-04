@@ -301,7 +301,7 @@ export abstract class PokemonSpeciesForm {
     let variantDataIndex: integer|string = this.speciesId;
     const species = getPokemonSpecies(this.speciesId);
     if (species.forms.length > 0) {
-      formkey = species.forms[formIndex]?.formKey;
+      formkey = species.forms[formIndex]?.formSpriteKey;
       if (formkey) {
         variantDataIndex = `${this.speciesId}-${formkey}`;
       }
