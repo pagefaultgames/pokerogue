@@ -488,7 +488,7 @@ export class DropDown extends Phaser.GameObjects.Container {
       return currentValues.length === this.defaultSettings.length && currentValues.every((value, index) => value["val"] === this.defaultSettings[index]["val"] && value["state"] === this.defaultSettings[index]["state"] && value["cursor"] === this.defaultSettings[index]["cursor"]);
 
     case DropDownType.SINGLE:
-      return currentValues.length === this.defaultSettings.length && currentValues.every((value, index) => value["val"] === this.defaultSettings[index]["val"] && value["dir"] === this.defaultSettings[index]["dir"]);
+      return currentValues.length === this.defaultSettings.length && currentValues.every((value, index) => value["val"] === this.defaultSettings[index]["val"] && value["state"] === this.defaultSettings[index]["state"] && value["dir"] === this.defaultSettings[index]["dir"]);
     default:
       return false;
     }
