@@ -55,7 +55,6 @@ import {UiInputs} from "./ui-inputs";
 import { NewArenaEvent } from "./events/battle-scene";
 import { ArenaFlyout } from "./ui/arena-flyout";
 import { EaseType } from "#enums/ease-type";
-import { Abilities } from "#enums/abilities";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
 import { Biome } from "#enums/biome";
@@ -1142,13 +1141,6 @@ export default class BattleScene extends SceneBase {
         playerField.forEach((_, p) => this.pushPhase(new ReturnPhase(this, p)));
 
         for (const pokemon of this.getParty()) {
-          // Only trigger form change when Eiscue is in Noice form (or Mimikyu is in Busted form)
-          // Hardcoded Eiscue (and Mimikyu) for now in case it is fused with another pokemon
-          if (((pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE)) ||
-              (pokemon.species.speciesId === Species.MIMIKYU && pokemon.hasAbility(Abilities.DISGUISE))) && pokemon.formIndex === 1) {
-            this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
-          }
-
           pokemon.resetBattleData();
           applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
         }
