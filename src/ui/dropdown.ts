@@ -503,10 +503,14 @@ export class DropDown extends Phaser.GameObjects.Container {
       for (let i = 0; i < this.options.length; i++) {
         // reset values with the defaultValues
         if (this.dropDownType === DropDownType.SINGLE) {
-          if (this.options[i].val === this.defaultSettings[i].val) {
-            if (this.options[i].state !== DropDownState.ON && this.defaultSettings[i].state === DropDownState.ON) {
-              this.toggleOptionState(i);
-            }
+          if (this.defaultSettings[i].state === DropDownState.OFF) {
+            this.options[i].setOptionState(DropDownState.OFF);
+            this.options[i].setDirection(SortDirection.ASC);
+            this.options[i].toggle.setVisible(false);
+          } else {
+            this.options[i].setOptionState(DropDownState.ON);
+            this.options[i].setDirection(SortDirection.ASC);
+            this.options[i].toggle.setVisible(true);
           }
         } else {
           if (this.defaultSettings[i]) {
