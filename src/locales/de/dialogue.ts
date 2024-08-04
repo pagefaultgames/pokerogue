@@ -378,6 +378,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Das war mal wieder ein Schuss in den Ofen!"
     },
   },
+  "rocket_admin": {
+    "encounter": {
+      1: "Oh? You managed to get this far? You must be quite the trainer.",
+      2: "That's quite enough of you playing hero, kid.",
+      3: "I'll show you how scary an angry adult can be!"
+    },
+    "victory": {
+      1: "No! Forgive me Giovanni!",
+      2: "How could this be?",
+      3: "Urgh... You were too strong..."
+    },
+  },
   "firebreather": {
     "encounter": {
       1: "Meine Flammen werden dich verschlingen!",
@@ -410,12 +422,36 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Wie kann das sein? Ich bin Teil vom mächtigen Team Magma! Wir wollen doch nur die Welt verbessern…"
     },
   },
+  "magma_admin": {
+    "encounter": {
+      1: "Hehehe! So you've come all the way here! But you're too late!",
+      2: "You're going to meddle in Team Magma's affairs? You're so cute you're disgusting! I'll put you down kiddy!",
+      3: "I'm going to give you a little taste of pain! Resign yourself to it!"
+    },
+    "victory": {
+      1: "Hehehe... So I lost...",
+      2: "You're disgustingly strong!",
+      3: "Ahahaha! Ouch!"
+    },
+  },
   "aqua_grunt": {
     "encounter": {
       1: "Du willst dich also mit Team Aqua anlegen? Du traust dich ja was… Dich werfe ich über Bord!",
     },
     "victory": {
       1: "Vielleicht sollte ich wohl lieber selber über die Planke gehen…",
+    },
+  },
+  "aqua_admin": {
+    "encounter": {
+      1: "I'm a cut above the grunts you've seen so far. I'm going to puvlerize you!",
+      2: "Hahn? What's this? Who's this spoiled brat?",
+      3: "What are you doing here? Did you follow us?"
+    },
+    "victory": {
+      1: "So I lost too...",
+      2: "Ahhh?! Did I go too easy on you?!",
+      3: "Wh-what was that?"
     },
   },
   "galactic_grunt": {
@@ -426,12 +462,36 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Zyrus wird uns für diese Niederlage bestrafen…"
     },
   },
+  "galactic_admin": {
+    "encounter": {
+      1: "I'm one of Team Galactic's Commanders.",
+      2: "Anything that opposes Team Galactic must be crushed! Even the very thought of opposition will not be tolerated!",
+      3: "What's the matter? Don't tell me you're shaking?"
+    },
+    "victory": {
+      1: "This can't be?! I lost?! You... you uppity brat!",
+      2: "You, my friend, are tough!",
+      3: "Losing to some child... Being careless cost me too much."
+    },
+  },
   "plasma_grunt": {
     "encounter": {
       1: "Pokémon sollten frei sein! Team Plasma wird sie befreien!"
     },
     "victory": {
       1: "Wie konnte ich verlieren? Ich dachte, ich würde die Welt retten…"
+    },
+  },
+  "plasma_sage": {
+    "encounter": {
+      1: "You could become a threat to Team Plasma, so we will eliminate you here!",
+      2: "Oh, for crying out loud... I didn't expect to have to fight!",
+      3: "You're an impressive Trainer to have made it this far."
+    },
+    "victory": {
+      1: "Ghetsis...",
+      2: "It's bitter cold. I'm shivering. I'm suffering.",
+      3: "Hmph. You're a smarter Trainer than I expected."
     },
   },
   "flare_grunt": {
@@ -441,6 +501,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "Stil ist wohl doch nicht alles…"
+    },
+  },
+  "flare_admin": {
+    "encounter": {
+      1: "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
+      2: "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
+      3: "I've been waiting for you! I need to do a little research on you! Come, let us begin!"
+    },
+    "victory": {
+      1: "You're quite strong. Oh yes-very strong, indeed.",
+      2: "Ding-ding-ding! Yup, you did it! To the victor goes the spoils!",
+      3: "Wonderful! Amazing! You have tremendous skill and bravery!"
     },
   },
   "rocket_boss_giovanni_1": {

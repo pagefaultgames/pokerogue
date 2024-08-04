@@ -1,0 +1,90 @@
+import { BattleStat } from "#app/data/battle-stat";
+import { Species } from "#app/enums/species.js";
+import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import { DamagePhase, TurnEndPhase } from "#app/phases";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { SPLASH_ONLY } from "../utils/testUtils";
+
+describe("Moves - Fissure", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+  let partyPokemon: PlayerPokemon;
+  let enemyPokemon: EnemyPokemon;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
+
+  beforeEach(async () => {
+    game = new GameManager(phaserGame);
+
+    game.override.battleType("single");
+    game.override.disableCrits();
+
+    game.override.starterSpecies(Species.SNORLAX);
+    game.override.moveset([Moves.FISSURE]);
+    game.override.passiveAbility(Abilities.BALL_FETCH);
+    game.override.startingLevel(100);
+
+    game.override.enemySpecies(Species.SNORLAX);
+    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyPassiveAbility(Abilities.BALL_FETCH);
+    game.override.enemyLevel(100);
+
+    await game.startBattle();
+
+    partyPokemon = game.scene.getParty()[0];
+    enemyPokemon = game.scene.getEnemyPokemon();
+
+    // remove berries
+    game.scene.removePartyMemberModifiers(0);
+    game.scene.clearEnemyHeldItemModifiers();
+  });
+
+  it("ignores damage modification from abilities such as fur coat", async () => {
+    game.override.ability(Abilities.NO_GUARD);
+    game.override.enemyAbility(Abilities.FUR_COAT);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+    await game.phaseInterceptor.to(DamagePhase, true);
+
+    expect(enemyPokemon.isFainted()).toBe(true);
+  });
+
+  it("ignores accuracy stat", async () => {
+    vi.spyOn(partyPokemon, "getAccuracyMultiplier");
+
+    enemyPokemon.summonData.battleStats[BattleStat.ACC] = -6;
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+
+    // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(partyPokemon.getAccuracyMultiplier).toHaveReturnedWith(1);
+  });
+
+  it("ignores evasion stat", async () => {
+    vi.spyOn(partyPokemon, "getAccuracyMultiplier");
+
+    enemyPokemon.summonData.battleStats[BattleStat.EVA] = 6;
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+
+    // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(partyPokemon.getAccuracyMultiplier).toHaveReturnedWith(1);
+  });
+});

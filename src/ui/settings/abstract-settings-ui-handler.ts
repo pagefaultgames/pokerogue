@@ -375,6 +375,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     super.clear();
     this.settingsContainer.setVisible(false);
     this.eraseCursor();
+    this.getUi().bgmBar.toggleBgmBar(this.scene.showBgmBar);
     if (this.reloadRequired) {
       this.reloadRequired = false;
       this.scene.reset(true, false, true);

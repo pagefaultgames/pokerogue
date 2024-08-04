@@ -24,10 +24,12 @@ import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
 
 export class LoadingScene extends SceneBase {
+  public static readonly KEY = "loading";
+
   readonly LOAD_EVENTS = Phaser.Loader.Events;
 
   constructor() {
-    super("loading");
+    super(LoadingScene.KEY);
 
     Phaser.Plugins.PluginCache.register("Loader", CacheBustedLoaderPlugin, "load");
     initI18n();
@@ -39,7 +41,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
-    this.loadImage("pride-update", "events");
+    // this.loadImage("pride-update", "events");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
@@ -78,6 +80,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("overlay_exp", "ui");
     this.loadImage("icon_owned", "ui");
     this.loadImage("ability_bar_left", "ui");
+    this.loadImage("bgm_bar", "ui");
     this.loadImage("party_exp_bar", "ui");
     this.loadImage("achv_bar", "ui");
     this.loadImage("achv_bar_2", "ui");
@@ -90,6 +93,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("shiny_star_small", "ui", "shiny_small.png");
     this.loadImage("shiny_star_small_1", "ui", "shiny_small_1.png");
     this.loadImage("shiny_star_small_2", "ui", "shiny_small_2.png");
+    this.loadImage("passive_bg", "ui", "passive_bg.png");
     this.loadAtlas("shiny_icons", "ui");
     this.loadImage("ha_capsule", "ui", "ha_capsule.png");
     this.loadImage("champion_ribbon", "ui", "champion_ribbon.png");
@@ -144,6 +148,9 @@ export class LoadingScene extends SceneBase {
       this.loadImage(`summary_tabs_${t}`, "ui");
     }
 
+    this.loadImage("scroll_bar", "ui");
+    this.loadImage("scroll_bar_handle", "ui");
+    this.loadImage("starter_container_bg", "ui");
     this.loadImage("starter_select_bg", "ui");
     this.loadImage("select_cursor", "ui");
     this.loadImage("select_cursor_highlight", "ui");
@@ -153,6 +160,8 @@ export class LoadingScene extends SceneBase {
     this.loadImage("select_gen_cursor_highlight", "ui");
 
     this.loadImage("saving_icon", "ui");
+    this.loadImage("discord", "ui");
+    this.loadImage("google", "ui");
 
     this.loadImage("default_bg", "arenas");
     // Load arena images
@@ -427,7 +436,7 @@ export class LoadingScene extends SceneBase {
     }
 
     const intro = this.add.video(0, 0);
-    intro.on(Phaser.GameObjects.Events.VIDEO_COMPLETE, (video: Phaser.GameObjects.Video) => {
+    intro.once(Phaser.GameObjects.Events.VIDEO_COMPLETE, (video: Phaser.GameObjects.Video) => {
       this.tweens.add({
         targets: intro,
         duration: 500,
@@ -475,7 +484,10 @@ export class LoadingScene extends SceneBase {
       }
     });
 
-    this.load.on(this.LOAD_EVENTS.COMPLETE, () => loadingGraphics.forEach(go => go.destroy()));
+    this.load.on(this.LOAD_EVENTS.COMPLETE, () => {
+      loadingGraphics.forEach(go => go.destroy());
+      intro.destroy();
+    });
   }
 
   get gameHeight() {
@@ -487,6 +499,17 @@ export class LoadingScene extends SceneBase {
   }
 
   async create() {
+    this.events.once(Phaser.Scenes.Events.DESTROY, () => this.handleDestroy());
     this.scene.start("battle");
+  }
+
+  handleDestroy() {
+    console.debug(`Destroying ${LoadingScene.KEY} scene`);
+    this.load.off(this.LOAD_EVENTS.PROGRESS);
+    this.load.off(this.LOAD_EVENTS.FILE_COMPLETE);
+    this.load.off(this.LOAD_EVENTS.COMPLETE);
+    // this.textures.remove("loading_bg"); is removed in BattleScene.launchBattle()
+    this.children.removeAll(true);
+    console.debug(`Destroyed ${LoadingScene.KEY} scene`);
   }
 }
