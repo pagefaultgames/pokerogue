@@ -1,6 +1,5 @@
 import { BattleStat } from "#app/data/battle-stat.js";
-import { PostSummonPhase } from "#app/phases.js";
-import i18next, { initI18n } from "#app/plugins/i18n.js";
+import { PostSummonPhase, TurnEndPhase } from "#app/phases.js";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -13,13 +12,7 @@ describe("Moves - Baton Pass", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  function getActivePokemon() {
-    return game.scene.getParty()[0];
-  }
-
   beforeAll(() => {
-    initI18n();
-    i18next.changeLanguage("en");
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
@@ -32,13 +25,14 @@ describe("Moves - Baton Pass", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.BATON_PASS;
-    game.override.battleType("single");
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.startingLevel(1);
-    game.override.startingWave(97);
-    game.override.moveset([moveToUse, Moves.NASTY_PLOT, Moves.SPLASH]);
-    game.override.enemyMoveset(new Array(4).fill(Moves.SPLASH));
-    game.override.disableCrits();
+    game.override
+      .battleType("single")
+      .enemySpecies(Species.DUGTRIO)
+      .startingLevel(1)
+      .startingWave(97)
+      .moveset([moveToUse, Moves.NASTY_PLOT, Moves.SPLASH])
+      .enemyMoveset(new Array(4).fill(Moves.SPLASH))
+      .disableCrits();
   });
 
   it("passes stat stage buffs when player uses it", async() => {
@@ -51,21 +45,23 @@ describe("Moves - Baton Pass", () => {
     // round 1 - buff
     game.doAttack(getMovePosition(game.scene, 0, Moves.NASTY_PLOT));
     await game.toNextTurn();
-    expect(getActivePokemon().summonData.battleStats[BattleStat.SPATK]).toEqual(2);
+    expect(game.scene.getPlayerPokemon().summonData.battleStats[BattleStat.SPATK]).toEqual(2);
 
     // round 2 - baton pass
     game.doAttack(getMovePosition(game.scene, 0, Moves.BATON_PASS));
     game.doSelectPokemon(1);
-    await game.toNextTurn();
+    await game.phaseInterceptor.to(TurnEndPhase);
 
     // assert
-    expect(getActivePokemon().summonData.battleStats[BattleStat.SPATK]).toEqual(2);
+    expect(game.scene.getPlayerPokemon().species.species).toEqual(Species.SHUCKLE);
+    expect(game.scene.getPlayerPokemon().summonData.battleStats[BattleStat.SPATK]).toEqual(2);
   }, 20000);
 
   it("passes stat stage buffs when AI uses it", async() => {
     // arrange
-    game.override.startingWave(5);
-    game.override.enemyMoveset(new Array(4).fill([Moves.NASTY_PLOT]));
+    game.override
+      .startingWave(5)
+      .enemyMoveset(new Array(4).fill([Moves.NASTY_PLOT]));
     await game.startBattle([
       Species.RAICHU,
       Species.SHUCKLE
@@ -76,17 +72,17 @@ describe("Moves - Baton Pass", () => {
     await game.toNextTurn();
 
     // round 2 - baton pass
-    game.phaseInterceptor.clearLogs();
+    game.scene.getEnemyPokemon().hp = 100;
     game.override.enemyMoveset(new Array(4).fill([Moves.BATON_PASS]));
-    game.override.enemySpecies(Species.GENGAR);
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(PostSummonPhase, false);
 
     // assert
     // check buffs are still there
-    expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.SPATK]).toEqual(2);
-    // confirm that a switch actually happened
-    expect(game.textInterceptor.getLatestMessage()).toContain("sent out Magikarp");
+    expect(game.scene.getEnemyPokemon().summonData.battleStats[BattleStat.SPATK]).toEqual(2);
+    // confirm that a switch actually happened. can't use species because I
+    // can't find a way to override trainer parties with more than 1 pokemon species
+    expect(game.scene.getEnemyPokemon().hp).not.toEqual(100);
     expect(game.phaseInterceptor.log.slice(-4)).toEqual([
       "MoveEffectPhase",
       "SwitchSummonPhase",
