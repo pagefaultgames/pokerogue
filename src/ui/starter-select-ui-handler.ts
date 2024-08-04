@@ -462,7 +462,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.filterBarContainer);
 
     // Offset the generation filter dropdown to avoid covering the filtered pokemon
-    this.filterBar.offsetFirstFilter();
+    this.filterBar.offsetHybridFilter();
 
     if (!this.scene.uiTheme) {
       starterContainerWindow.setVisible(false);
