@@ -3161,23 +3161,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.randSeedInt((max - min) + 1, min);
   }
 
-  /**
-   * Causes a Pokemon to leave the field (such as in preparation for a switch out/escape).
-   * @param clearEffects Indicates if effects should be cleared (true) or passed
-   * to the next pokemon, such as during a baton pass (false)
-   */
-  leaveField(clearEffects: boolean = true) {
-    this.resetTurnData();
-    if (clearEffects) {
-      this.resetSummonData();
-      this.resetBattleData();
-    }
-    this.hideInfo();
-    this.setVisible(false);
-    this.scene.field.remove(this);
-    this.scene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
-  }
-
   destroy(): void {
     this.battleInfo?.destroy();
     super.destroy();
@@ -3289,21 +3272,25 @@ export class PlayerPokemon extends Pokemon {
     return true;
   }
 
-  /**
-   * Causes this mon to leave the field (via {@linkcode leaveField}) and then
-   * opens the party switcher UI to switch a new mon in
-   * @param batonPass Indicates if this switch was caused by a baton pass (and
-   * thus should maintain active mon effects)
-   */
-  switchOut(batonPass: boolean): Promise<void> {
+  switchOut(batonPass: boolean, removeFromField: boolean = false): Promise<void> {
     return new Promise(resolve => {
-      this.leaveField(!batonPass);
+      this.resetTurnData();
+      if (!batonPass) {
+        this.resetSummonData();
+      }
+      this.hideInfo();
+      this.setVisible(false);
 
       this.scene.ui.setMode(Mode.PARTY, PartyUiMode.FAINT_SWITCH, this.getFieldIndex(), (slotIndex: integer, option: PartyOption) => {
         if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
           this.scene.prependToPhase(new SwitchSummonPhase(this.scene, this.getFieldIndex(), slotIndex, false, batonPass), MoveEndPhase);
         }
-        this.scene.ui.setMode(Mode.MESSAGE).then(resolve);
+        if (removeFromField) {
+          this.setVisible(false);
+          this.scene.field.remove(this);
+          this.scene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
+        }
+        this.scene.ui.setMode(Mode.MESSAGE).then(() => resolve());
       }, PartyUiHandler.FilterNonFainted);
     });
   }

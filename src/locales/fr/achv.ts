@@ -264,10 +264,6 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Hey ! Listen !",
   },
-  "FRESH_START": {
-    name: "Du premier coup !",
-    description: "Terminer un challenge « Nouveau départ »."
-  }
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
@@ -534,8 +530,4 @@ export const PGFachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Hey ! Listen !",
   },
-  "FRESH_START": {
-    name: "Du premier coup !",
-    description: "Terminer un challenge « Nouveau départ »."
-  }
 } as const;

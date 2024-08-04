@@ -464,8 +464,7 @@ export interface FixedBattleConfigs {
 /**
  * Youngster/Lass on 5
  * Rival on 8, 55, 95, 145, 195
- * Evil team grunts on 35, 62, 64, and 112
- * Evil team admin on 66 and 114
+ * Evil team grunts on 35, 62, 64, 66, 112, 114
  * Evil leader on 115, 165
  * E4 on 182, 184, 186, 188
  * Champion on 190
@@ -486,13 +485,13 @@ export const classicFixedBattles: FixedBattleConfigs = {
   [64]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
     .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT ], true)),
   [66]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_ADMIN, TrainerType.MAGMA_ADMIN, TrainerType.AQUA_ADMIN, TrainerType.GALACTIC_ADMIN, TrainerType.PLASMA_SAGE, TrainerType.FLARE_ADMIN ], true)),
+    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT ], true)),
   [95]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
     .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_4, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
   [112]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
     .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT ], true)),
   [114]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_ADMIN, TrainerType.MAGMA_ADMIN, TrainerType.AQUA_ADMIN, TrainerType.GALACTIC_ADMIN, TrainerType.PLASMA_SAGE, TrainerType.FLARE_ADMIN ], true)),
+    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT ], true)),
   [115]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
     .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerType.MAXIE, TrainerType.ARCHIE, TrainerType.CYRUS, TrainerType.GHETSIS, TrainerType.LYSANDRE ])),
   [145]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)

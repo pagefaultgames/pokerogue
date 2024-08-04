@@ -406,7 +406,14 @@ export class SingleGenerationChallenge extends Challenge {
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false, checkEvolutions?: boolean): boolean {
-    const generations = [pokemon.generation];
+    /**
+     * We have special code below for victini because it is classed as a generation 4 pokemon in the code
+     * despite being a generation 5 pokemon. This is due to UI constraints, the starter select screen has
+     * no more room for pokemon so victini is put in the gen 4 section instead. This code just overrides the
+     * normal generation check to correctly treat victini as gen 5.
+     */
+    const starterGeneration = pokemon.speciesId === Species.VICTINI ? 5 : pokemon.generation;
+    const generations = [starterGeneration];
     const checkPokemonEvolutions = checkEvolutions ?? true as boolean;
     if (soft) {
       const speciesToCheck = [pokemon.speciesId];
