@@ -1896,11 +1896,14 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     pokemon.scene.queueMessage(this.messageFunc(pokemon));
+    return true;
+  }
+}
 
+export class PostSummonRemoveIllusionAbAttr extends PostSummonAbAttr {
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     pokemon.scene.getField(true).map(pokemon => {
-      if (pokemon.breakIllusion()) {
-        pokemon.scene.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix(pokemon) }));
-      }
+      pokemon.breakIllusion();
     });
     return true;
   }
@@ -4049,6 +4052,11 @@ export class IceFaceBlockPhysicalAbAttr extends ReceivedMoveDamageMultiplierAbAt
   }
 }
 
+/**
+ * Base class for defining {@linkcode Ability} attributes before summon
+ * (should use {@linkcode PostSummonAbAttr} for most ability)
+ * @see {@linkcode applyPreSummon()}
+ */
 export class PreSummonAbAttr extends AbAttr {
   applyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     return false;
@@ -4097,17 +4105,16 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
    */
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
 
-    const breakIllusion: HitResult[] = [HitResult.EFFECTIVE, HitResult.SUPER_EFFECTIVE, HitResult.NOT_VERY_EFFECTIVE, HitResult.ONE_HIT_KO];
+    const breakIllusion: HitResult[] = [ HitResult.EFFECTIVE, HitResult.SUPER_EFFECTIVE, HitResult.NOT_VERY_EFFECTIVE, HitResult.ONE_HIT_KO ];
     if (!breakIllusion.includes(hitResult)) {
       return false;
     }
     pokemon.breakIllusion();
-    pokemon.scene.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix(pokemon) }));
     return true;
   }
 }
 
-export class IllusionAfterBattle extends PostBattleAbAttr {
+export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
   /**
    * Illusion will be available again after a battle and apply the illusion of the pokemon is already on field
    *
@@ -4868,7 +4875,7 @@ export function initAbilities() {
       //The pokemon loses his illusion when he is damaged by a move
       .conditionalAttr((pokemon) => pokemon.illusion.active, IllusionBreakAbAttr, true)
       //Illusion is available again after a battle
-      .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionAfterBattle, false)
+      .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionPostBattleAbAttr, false)
       //Illusion is not available after summon
       .attr(IllusionDisableAbAttr, false)
       .bypassFaint(),
@@ -5246,6 +5253,7 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonNeutralizingGas", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
+      .attr(PostSummonRemoveIllusionAbAttr)
       .partial(),
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)

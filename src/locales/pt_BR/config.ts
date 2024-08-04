@@ -1,6 +1,5 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
-import { arenaFlyout } from "./arena-flyout";
 import { PGFachv, PGMachv } from "./achv";
 import { arenaFlyout } from "./arena-flyout";
 import { arenaTag } from "./arena-tag";
