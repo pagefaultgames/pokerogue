@@ -1741,8 +1741,6 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.ALWAYS_CRIT:
   case BattlerTagType.IGNORE_ACCURACY:
     return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
-  case BattlerTagType.NO_CRIT:
-    return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
   case BattlerTagType.ALWAYS_GET_HIT:
   case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
     return new BattlerTag(tagType, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);

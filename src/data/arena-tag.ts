@@ -304,6 +304,34 @@ class CraftyShieldTag extends ConditionalProtectTag {
 }
 
 /**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Lucky_Chant_(move) Lucky Chant}.
+ * Prevents critical hits against the tag's side.
+ */
+export class NoCritTag extends ArenaTag {
+  /**
+   * Constructor method for the NoCritTag class
+   * @param turnCount `integer` the number of turns this effect lasts
+   * @param sourceMove {@linkcode Moves} the move that created this effect
+   * @param sourceId `integer` the ID of the {@linkcode Pokemon} that created this effect
+   * @param side {@linkcode ArenaTagSide} the side to which this effect belongs
+   */
+  constructor(turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.NO_CRIT, turnCount, sourceMove, sourceId, side);
+  }
+
+  /** Queues a message upon adding this effect to the field */
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(`The ${this.getMoveName()} shielded your\nteam from critical hits!`);
+  }
+
+  /** Queues a message upon removing this effect from the field */
+  onRemove(arena: Arena): void {
+    const source = arena.scene.getPokemonById(this.sourceId);
+    arena.scene.queueMessage(`${getPokemonNameWithAffix(source)}'s ${this.getMoveName()}\nwore off!`);
+  }
+}
+
+/**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Wish_(move) Wish}.
  * Heals the Pokémon in the user's position the turn after Wish is used.
  */
@@ -803,6 +831,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new MatBlockTag(sourceId, side);
   case ArenaTagType.CRAFTY_SHIELD:
     return new CraftyShieldTag(sourceId, side);
+  case ArenaTagType.NO_CRIT:
+    return new NoCritTag(turnCount, sourceMove, sourceId, side);
   case ArenaTagType.MUD_SPORT:
     return new MudSportTag(turnCount, sourceId);
   case ArenaTagType.WATER_SPORT:
