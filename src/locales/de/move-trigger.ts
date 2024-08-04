@@ -35,7 +35,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isOverflowingWithSpacePower": "Kosmische Kräfte strömen aus {{pokemonName}}!",
   "usedUpAllElectricity": "{{pokemonName}} braucht seinen Strom komplett auf!",
   "stoleItem": "{{pokemonName}}  hat {{targetName}} das Item {{itemName}} geklaut!",
-  "incineratedItem": "{{pokemonName}} hat {{itemName}} von {{targetName}} verbrannt es ist somit nutzlos geworden!",
+  "incineratedItem": "{{pokemonName}} hat {{itemName}} von {{targetName}} verbrannt. Es ist somit nutzlos geworden!",
   "knockedOffItem": "{{pokemonName}} schlägt das Item {{itemName}} von {{targetName}} weg!",
   "tookMoveAttack": "{{pokemonName}} wurde von {{moveName}} getroffen!",
   "cutOwnHpAndMaximizedStat": "{{pokemonName}} nutzt seine KP und maximiert dadurch seinen {{statName}}-Wert!",
