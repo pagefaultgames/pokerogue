@@ -1297,7 +1297,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.RYME]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["RYME"],false, Type.GHOST).setMixedBattleBgm("battle_paldea_gym"),
   [TrainerType.TULIP]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["TULIP"],false, Type.PSYCHIC).setMixedBattleBgm("battle_paldea_gym"),
   [TrainerType.GRUSHA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["GRUSHA"],true, Type.ICE).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.JUSTY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["JUSTY"],true, Type.GROUND).setMixedBattleBgm("battle_friendly_colosseum"),
+  [TrainerType.JUSTY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["JUSTY"],true, Type.GROUND).setBattleBgm("battle_hoenn_gym").setMixedBattleBgm("battle_friendly_colosseum"),
 
   [TrainerType.LORELEI]: new TrainerConfig((t = TrainerType.LORELEI)).initForEliteFour(signatureSpecies["LORELEI"],false, Type.ICE).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.BRUNO]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["BRUNO"], true, Type.FIGHTING).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
