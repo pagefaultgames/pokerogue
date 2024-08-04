@@ -55,9 +55,11 @@ const fonts: Array<LoadingFontFaceProperty> = [
   {
     face: new FontFace("emerald", "url(./fonts/Galmuri11.subset.woff2)", { unicodeRange: rangesByLanguage.japanese }),
     extraOptions: { sizeAdjust: "66%" },
+    only: [ "ja" ],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/Galmuri9.subset.woff2)", { unicodeRange: rangesByLanguage.japanese }),
+    only: [ "ja" ],
   },
 ];
 
