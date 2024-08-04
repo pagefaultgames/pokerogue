@@ -134,6 +134,10 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
       if (!moveInfo) {
         const mv = this.pokemon.getMoveset()[i]
+        if (mv == undefined) {
+          flyoutText.text = ""
+          continue;
+        }
         flyoutText.text = `${highlight == i ? ">> " : ""}${mv.getName()}${highlight == i ? " <<" : ""}`;
         flyoutText.text = `${highlight == i ? ">> " : ""}???${highlight == i ? " <<" : ""}`;
         continue;
