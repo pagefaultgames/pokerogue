@@ -12,9 +12,6 @@ import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
 import i18next from "i18next";
 
-const battleStatOrderPlayer = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
-const battleStatOrderEnemy = [ BattleStat.HP, BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD ];
-
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private baseY: number;
 
@@ -71,7 +68,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   public flyoutMenu?: BattleFlyout;
 
-  public battleStatOrder: BattleStat[];
+  private battleStatOrder: BattleStat[];
+  private battleStatOrderPlayer = [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD];
+  private battleStatOrderEnemy = [BattleStat.HP, BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD];
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
@@ -230,7 +229,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const startingX = this.player ? -this.statsBox.width + 8 : -this.statsBox.width + 5;
     const paddingX = this.player ? 4 : 2;
     const statOverflow = this.player ? 1 : 0;
-    this.battleStatOrder = this.player ? battleStatOrderPlayer : battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
+    this.battleStatOrder = this.player ? this.battleStatOrderPlayer : this.battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
 
     this.battleStatOrder.map((s, i) => {
       // we do a check for i > statOverflow to see when the stat labels go onto the next column
@@ -434,7 +433,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.statValuesContainer.setPosition(8, 7);
     }
 
-    this.battleStatOrder = this.player ? battleStatOrderPlayer : battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
     const battleStats = this.battleStatOrder.map(() => 0);
 
     this.lastBattleStats = battleStats.join("");
@@ -652,7 +650,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastLevel = pokemon.level;
       }
 
-      this.battleStatOrder = this.player ? battleStatOrderPlayer : battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
       const battleStats = pokemon.summonData
         ? pokemon.summonData.battleStats
         : this.battleStatOrder.map(() => 0);
