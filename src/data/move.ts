@@ -2627,36 +2627,15 @@ export class GrowthStatChangeAttr extends StatChangeAttr {
   }
 }
 
-export class HalfHpStatMaxAttr extends StatChangeAttr {
-  constructor(stat: BattleStat) {
-    super(stat, 12, true, null, false);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      user.damageAndUpdate(Math.floor(user.getMaxHp() / 2), HitResult.OTHER, false, true);
-      user.updateInfo().then(() => {
-        const ret = super.apply(user, target, move, args);
-        user.scene.queueMessage(i18next.t("moveTriggers:cutOwnHpAndMaximizedStat", {pokemonName: getPokemonNameWithAffix(user), statName: getBattleStatName(this.stats[BattleStat.ATK])}));
-        resolve(ret);
-      });
-    });
-  }
-
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => user.getHpRatio() > 0.5 && user.summonData.battleStats[this.stats[BattleStat.ATK]] < 6;
-  }
-
-  // TODO: Add benefit score that considers HP cut
-}
-
 export class CutHpStatBoostAttr extends StatChangeAttr {
   private cutRatio: integer;
+  private messageCallback: ((user: Pokemon) => void) | undefined;
 
-  constructor(stat: BattleStat | BattleStat[], levels: integer, cutRatio: integer) {
+  constructor(stat: BattleStat | BattleStat[], levels: integer, cutRatio: integer, messageCallback?: ((user: Pokemon) => void) | undefined) {
     super(stat, levels, true, null, true);
 
     this.cutRatio = cutRatio;
+    this.messageCallback = messageCallback;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
@@ -2664,13 +2643,16 @@ export class CutHpStatBoostAttr extends StatChangeAttr {
       user.damageAndUpdate(Math.floor(user.getMaxHp() / this.cutRatio), HitResult.OTHER, false, true);
       user.updateInfo().then(() => {
         const ret = super.apply(user, target, move, args);
+        if (this.messageCallback) {
+          this.messageCallback(user);
+        }
         resolve(ret);
       });
     });
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => user.getHpRatio() > 1 / this.cutRatio;
+    return (user, target, move) => user.getHpRatio() > 1 / this.cutRatio && this.stats.some(s => user.summonData.battleStats[s] < 6);
   }
 }
 
@@ -6480,7 +6462,9 @@ export function initMoves() {
     new StatusMove(Moves.SWEET_KISS, Type.FAIRY, 75, 10, -1, 0, 2)
       .attr(ConfuseAttr),
     new SelfStatusMove(Moves.BELLY_DRUM, Type.NORMAL, -1, 10, -1, 0, 2)
-      .attr(HalfHpStatMaxAttr, BattleStat.ATK),
+      .attr(CutHpStatBoostAttr, [BattleStat.ATK], 12, 2, (user) => {
+        user.scene.queueMessage(i18next.t("moveTriggers:cutOwnHpAndMaximizedStat", {pokemonName: getPokemonNameWithAffix(user), statName: getBattleStatName(BattleStat.ATK)}));
+      }),
     new AttackMove(Moves.SLUDGE_BOMB, Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 30, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .ballBombMove(),
