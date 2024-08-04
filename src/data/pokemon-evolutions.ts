@@ -1158,6 +1158,11 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.PAWMOT, 32, null, null)
   ],
   [Species.TANDEMAUS]: [
+    new SpeciesFormEvolution(Species.MAUSHOLD, "", "three", 25, null, new SpeciesEvolutionCondition(p => {
+      let ret = false;
+      p.scene.executeWithSeedOffset(() => ret = !Utils.randSeedInt(4), p.id);
+      return ret;
+    })),
     new SpeciesEvolution(Species.MAUSHOLD, 25, null, null)
   ],
   [Species.FIDOUGH]: [

@@ -31,6 +31,7 @@ export default class MockSprite {
     };
     this.anims = {
       pause: () => null,
+      stop: () => null,
     };
   }
 
@@ -88,6 +89,10 @@ export default class MockSprite {
 
   setPosition(x, y) {
     return this.phaserSprite.setPosition(x, y);
+  }
+
+  setRotation(radians) {
+    return this.phaserSprite.setRotation(radians);
   }
 
   stop() {

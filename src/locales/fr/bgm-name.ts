@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "Musique ",
+  "music": "Musique : ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "N2B2 - Vs. Maitre de Kanto",
   "battle_johto_champion": "N2B2 - Vs. Maitre de Johto",
@@ -74,16 +74,16 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_wild": "NB - Vs. Pokémon sauvage",
   "battle_wild_strong": "NB - Vs. Pokémon puissant sauvage",
   "end_summit": "PDM ÉSDX - Tour Céleste",
-  "battle_rocket_grunt": "HGSS Team Rocket Battle",
-  "battle_aqua_magma_grunt": "ORAS Team Aqua & Magma Battle",
-  "battle_galactic_grunt": "BDSP Team Galactic Battle",
+  "battle_rocket_grunt": "HGSS Vs. Team Rocket",
+  "battle_aqua_magma_grunt": "ROSA Vs. Team Aqua/Magma",
+  "battle_galactic_grunt": "DÉPS Vs. Team Galaxie",
   "battle_plasma_grunt": "NB - Vs. Team Plasma",
-  "battle_flare_grunt": "XY Team Flare Battle",
-  "battle_rocket_boss": "USUM Giovanni Battle",
-  "battle_aqua_magma_boss": "ORAS Archie & Maxie Battle",
-  "battle_galactic_boss": "BDSP Cyrus Battle",
-  "battle_plasma_boss": "B2W2 Ghetsis Battle",
-  "battle_flare_boss": "XY Lysandre Battle",
+  "battle_flare_grunt": "XY - Vs. Team Flare",
+  "battle_rocket_boss": "USUL - Vs. Giovanni",
+  "battle_aqua_magma_boss": "ROSA - Vs. Max/Arthur",
+  "battle_galactic_boss": "DÉPS - Vs. Hélio",
+  "battle_plasma_boss": "N2B2 - Vs. Ghetis",
+  "battle_flare_boss": "XY - Vs. Lysandre",
 
   // Biome Music
   "abyss": "PDM EdS - Cratère Obscur",
@@ -110,9 +110,9 @@ export const bgmName: SimpleTranslationEntries = {
   "plains": "PDM EdS - Pic Céleste (prairie)",
   "power_plant": "PDM EdS - Plaines Élek",
   "ruins": "PDM EdS - Ruine Scellée",
-  "sea": "PDM EdS - Caverne Saline",
+  "sea": "Andr06 - Marine Mystique", // Name defined by the composer
   "seabed": "Firel - Seabed", // The composer thinks about a more creative name
-  "slum": "PDM EdS - Pic Céleste (côte)",
+  "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
   "snowy_forest": "PDM EdS - Pic Céleste (plaine enneigée)",
   "space": "Firel - Aether",
   "swamp": "PDM EdS - Mer Fermée",

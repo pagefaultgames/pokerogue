@@ -1,20 +1,20 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
+import { StatusEffect } from "#app/data/status-effect";
 import {
   CommandPhase,
   EnemyCommandPhase,
   MessagePhase,
   TurnEndPhase,
 } from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
-import {StatusEffect} from "#app/data/status-effect";
+import i18next, { initI18n } from "#app/plugins/i18n";
+import GameManager from "#app/test/utils/gameManager";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Items - Toxic orb", () => {
@@ -35,19 +35,21 @@ describe("Items - Toxic orb", () => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.GROWTH;
     const oppMoveToUse = Moves.TACKLE;
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse]);
-    vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.ability(Abilities.INSOMNIA);
+    game.override.enemyAbility(Abilities.INSOMNIA);
+    game.override.startingLevel(2000);
+    game.override.moveset([moveToUse]);
+    game.override.enemyMoveset([oppMoveToUse, oppMoveToUse, oppMoveToUse, oppMoveToUse]);
+    game.override.startingHeldItems([{
       name: "TOXIC_ORB",
     }]);
   });
 
   it("TOXIC ORB", async() => {
+    initI18n();
+    i18next.changeLanguage("en");
     const moveToUse = Moves.GROWTH;
     await game.startBattle([
       Species.MIGHTYENA,
@@ -70,7 +72,7 @@ describe("Items - Toxic orb", () => {
     // Toxic orb should trigger here
     await game.phaseInterceptor.run(MessagePhase);
     const message = game.textInterceptor.getLatestMessage();
-    expect(message).toContain("was badly poisoned by Toxic Orb");
+    expect(message).toContain("was badly poisoned by the Toxic Orb");
     await game.phaseInterceptor.run(MessagePhase);
     const message2 = game.textInterceptor.getLatestMessage();
     expect(message2).toContain("is hurt");

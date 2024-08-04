@@ -22,4 +22,7 @@ export const egg: SimpleTranslationEntries = {
   "hatchFromTheEgg": "알이 부화해서\n{{pokemonName}}[[가]] 태어났다!",
   "eggMoveUnlock": "알 기술 {{moveName}}[[를]]\n사용할 수 있게 되었다!",
   "rareEggMoveUnlock": "레어 알 기술 {{moveName}}[[를]]\n사용할 수 있게 되었다!",
+  "moveUPGacha": "알 기술 UP!",
+  "shinyUPGacha": "색이 다른 포켓몬\nUP!",
+  "legendaryUPGacha": "UP!",
 } as const;

@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const biome: SimpleTranslationEntries = {
-  "unknownLocation": "Em algum lugar do qual você não se lembra",
+  "unknownLocation": "em algum lugar do qual você não se lembra",
   "TOWN": "Cidade",
   "PLAINS": "Planície",
   "GRASS": "Grama",
