@@ -1021,6 +1021,27 @@ export class MessageHeaderAttr extends MoveHeaderAttr {
   }
 }
 
+/**
+ * Applies a tag to a battler when a move is selected, before any other actions
+ * are taken. The tag is applied only for a single turn.
+ */
+export class AddBattlerTagOnMoveReadyAttr extends MoveHeaderAttr {
+  public tagType: BattlerTagType;
+
+  constructor(tagType: BattlerTagType) {
+    super();
+    this.tagType = tagType;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    return (this.selfTarget ? user : target).addTag(this.tagType, 1, move.id, user.id);
+  }
+}
+
 export class PreMoveMessageAttr extends MoveAttr {
   private message: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
 
@@ -3708,6 +3729,21 @@ export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
   }
 }
 
+const isPursuingFunc = (user: Pokemon, target: Pokemon) =>
+  user.getTag(BattlerTagType.ANTICIPATING_ACTION) && target.getTag(BattlerTagType.ESCAPING);
+
+export class PursuitAccuracyAttr extends VariableAccuracyAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (isPursuingFunc(user, target)) {
+      const accuracy = args[0] as Utils.NumberHolder;
+      accuracy.value = -1;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class VariableMoveCategoryAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return false;
@@ -4436,8 +4472,8 @@ export class LapseBattlerTagAttr extends MoveEffectAttr {
 export class RemoveBattlerTagAttr extends MoveEffectAttr {
   public tagTypes: BattlerTagType[];
 
-  constructor(tagTypes: BattlerTagType[], selfTarget: boolean = false) {
-    super(selfTarget);
+  constructor(tagTypes: BattlerTagType[], selfTarget: boolean = false, trigger?: MoveEffectTrigger) {
+    super(selfTarget, trigger);
 
     this.tagTypes = tagTypes;
   }
@@ -6761,7 +6797,10 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target)),
     new AttackMove(Moves.PURSUIT, Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, 0, 2)
-      .partial(),
+      .attr(PursuitAccuracyAttr)
+      .attr(AddBattlerTagOnMoveReadyAttr, BattlerTagType.ANTICIPATING_ACTION)
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.ANTICIPATING_ACTION], true, MoveEffectTrigger.POST_APPLY)
+      .attr(MovePowerMultiplierAttr, (user, target) => isPursuingFunc(user, target) ? 2 : 1),
     new AttackMove(Moves.RAPID_SPIN, Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
       .attr(RemoveBattlerTagAttr, [
