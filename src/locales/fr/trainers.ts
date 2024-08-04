@@ -19,11 +19,11 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "Leader de la Team Galaxie",
   "plasma_boss": "Leader de la Team Plasma",
   "flare_boss": "Leader de la Team Flare",
-  "aether_boss": "Aether President",
-  "aether_admin": "Aether Foundation Admin",
-  "skull_boss": "Team Skull Boss",
-  "skull_admin": "Team Skull Admin",
-  "macro_boss": "Macro Cosmos President",
+  "aether_boss": "Présidente d’Æther",
+  "aether_admin": "Directeur d’Æther",
+  "skull_boss": "Boss de la Team Skull",
+  "skull_admin": "Admin Team Skull",
+  "macro_boss": "Président de Macro Cosmos",
   "macro_admin": "Macro Cosmos",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
