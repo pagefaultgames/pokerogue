@@ -428,7 +428,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "Arrgh, I didn't count on being meddled with by some meddling kid!",
       3: "I lost?! Guess I'll have to swim back to the hideout now...",
       4: "Oh, man, what a disaster… The boss is going to be furious…",
-      5: "You beat me... Do you think the boss will make me walk the plank for this?" 
+      5: "You beat me... Do you think the boss will make me walk the plank for this?"
     },
   },
   "galactic_grunt": {
@@ -453,7 +453,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "If I win against you, release your Pokémon!",
       3: "Your Pokémon will serve a greater purpose under Lord N's vision.",
       4: "Team Plasma will liberate Pokémon from selfish humans like you!",
-      5: "Our hairstyles are out of this world... but our battling skills? You'll find out soon enough."  
+      5: "Our hairstyles are out of this world... but our battling skills? You'll find out soon enough."
     },
     "victory": {
       1: "Plasmaaaaaaaaa!",
