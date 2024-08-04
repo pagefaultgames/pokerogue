@@ -1912,7 +1912,10 @@ export class EncounterPhase extends BattlePhase {
         }
       }
     }
-    handleTutorial(this.scene, Tutorial.Access_Menu).then(() => super.end());
+    handleTutorial(this.scene, Tutorial.Access_Menu).then(() => {
+      this.scene.arenaFlyout.toggleFlyout(true)
+      super.end()
+    });
   }
 
   tryOverrideForBattleSpec(): boolean {
