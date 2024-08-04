@@ -18,6 +18,7 @@ import { DropDown, DropDownOption, DropDownState, DropDownType } from "./dropdow
 import { StarterContainer } from "./starter-container";
 import { DropDownColumn, FilterBar } from "./filter-bar";
 import { ScrollBar } from "./scroll-bar";
+import { Variant } from "#app/data/variant";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -970,7 +971,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     let shiny = false;
     let formIndex = 0;
     let female = false;
-    let variant = 0;
+    let variant: Variant = 0;
     let abilityIndex = 0;
     let natureIndex = 0;
 
