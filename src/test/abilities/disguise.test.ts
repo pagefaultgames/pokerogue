@@ -1,7 +1,6 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import Overrides from "#app/overrides";
 import { Moves } from "#enums/moves";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
@@ -33,12 +32,11 @@ describe("Abilities - Disguise", () => {
     game.override.battleType("single");
 
     game.override.enemySpecies(Species.MIMIKYU);
-    game.override.enemyAbility(Abilities.DISGUISE);
     game.override.enemyMoveset(SPLASH_ONLY);
 
     game.override.starterSpecies(Species.REGIELEKI);
     game.override.moveset([Moves.SHADOW_SNEAK, Moves.VACUUM_WAVE, Moves.TOXIC_THREAD, Moves.SPLASH]);
-    game.override.ability(Abilities.UNNERVE);
+    game.override.passiveAbility(Abilities.UNNERVE);
   }, TIMEOUT);
 
   it("takes no damage from attacking move and transforms to Busted form, taking 1/8 max HP damage from the disguise breaking", async () => {
@@ -73,8 +71,8 @@ describe("Abilities - Disguise", () => {
   }, TIMEOUT);
 
   it("takes no damage from the first hit of a multihit move and transforms to Busted form, then takes damage from the second hit", async () => {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SURGING_STRIKES]);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
+    game.override.moveset([Moves.SURGING_STRIKES]);
+    game.override.enemyLevel(5);
     await game.startBattle();
 
     const mimikyu = game.scene.getEnemyPokemon();
@@ -113,9 +111,8 @@ describe("Abilities - Disguise", () => {
   }, TIMEOUT);
 
   it("persists form change when switched out", async () => {
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SHADOW_SNEAK, Moves.SHADOW_SNEAK, Moves.SHADOW_SNEAK, Moves.SHADOW_SNEAK]);
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DISGUISE);
+    game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
+    game.override.starterSpecies(0);
 
     await game.startBattle([Species.MIMIKYU, Species.FURRET]);
 
@@ -140,23 +137,23 @@ describe("Abilities - Disguise", () => {
   }, TIMEOUT);
 
   it("reverts to Disguised on arena reset", async () => {
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(4);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(4);
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DISGUISE);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
-      [Species.MIMIKYU]: bustedForm,
+    game.override.startingWave(4);
+
+    game.override.starterSpecies(Species.MIMIKYU);
+    game.override.starterForms({
+      [Species.MIMIKYU]: bustedForm
     });
 
-    await game.startBattle([Species.MIMIKYU]);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
+
+    await game.startBattle();
 
     const mimikyu = game.scene.getPlayerPokemon();
 
     expect(mimikyu.formIndex).toBe(bustedForm);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.ICE_BEAM));
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.doKillOpponents();
     await game.phaseInterceptor.to(TurnEndPhase);
     game.doSelectModifier();
