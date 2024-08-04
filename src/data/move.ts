@@ -4299,7 +4299,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 }
 
 /**
- * Adds the appropriate battler tag for Gulp Missile when Surf or Fly is used.
+ * Adds the appropriate battler tag for Gulp Missile when Surf or Dive is used.
  * @extends MoveEffectAttr
  */
 export class GulpMissileTagAttr extends MoveEffectAttr {
@@ -6065,7 +6065,6 @@ export function initMoves() {
       .windMove(),
     new AttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
       .attr(ChargeAttr, ChargeAnim.FLY_CHARGING, i18next.t("moveTriggers:flewUpHigh", {pokemonName: "{USER}"}), BattlerTagType.FLYING)
-      .attr(GulpMissileTagAttr)
       .condition(failOnGravityCondition)
       .ignoresVirtual(),
     new AttackMove(Moves.BIND, Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, 0, 1)
@@ -6829,6 +6828,7 @@ export function initMoves() {
       .partial(),
     new AttackMove(Moves.DIVE, Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 3)
       .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, i18next.t("moveTriggers:hidUnderwater", {pokemonName: "{USER}"}), BattlerTagType.UNDERWATER)
+      .attr(GulpMissileTagAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.ARM_THRUST, Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, -1, 0, 3)
       .attr(MultiHitAttr),

@@ -1657,13 +1657,13 @@ export class GulpMissileTag extends BattlerTag {
   }
 
   /**
-   * Gulp Missile's initial form changes are triggered by using Surf and Fly.
+   * Gulp Missile's initial form changes are triggered by using Surf and Dive.
    * @param {Pokemon} pokemon The Pokemon with Gulp Missile ability.
    * @returns Whether the BattlerTag can be added.
    */
   canAdd(pokemon: Pokemon): boolean {
-    const isSurfOrFly = [ Moves.SURF, Moves.FLY ].includes(this.sourceMove);
-    return isSurfOrFly && !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA) && !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
+    const isSurfOrDive= [ Moves.SURF, Moves.DIVE ].includes(this.sourceMove);
+    return isSurfOrDive && !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA) && !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
   }
 
   onAdd(pokemon: Pokemon): void {

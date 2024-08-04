@@ -1,6 +1,5 @@
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import {
-  MoveEffectPhase,
   MoveEndPhase,
   TurnEndPhase,
   TurnStartPhase,
@@ -37,22 +36,20 @@ describe("Abilities - Gulp Missile", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
-      .moveset([Moves.SURF, Moves.FLY, Moves.SPLASH])
+      .moveset([Moves.SURF, Moves.DIVE, Moves.SPLASH])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(SPLASH_ONLY)
       .enemyLevel(5);
   });
 
-  it("changes to Gulping Form if HP is over half when Surf or Fly is used", async () => {
+  it("changes to Gulping Form if HP is over half when Surf or Dive is used", async () => {
     await game.startBattle([Species.CRAMORANT]);
     const cramorant = game.scene.getPlayerPokemon();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLY));
+    game.doAttack(getMovePosition(game.scene, 0, Moves.DIVE));
     await game.toNextTurn();
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLY));
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
-    vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.DIVE));
     await game.phaseInterceptor.to(MoveEndPhase);
 
     expect(cramorant.getHpRatio()).toBeGreaterThanOrEqual(.5);
@@ -60,7 +57,7 @@ describe("Abilities - Gulp Missile", () => {
     expect(cramorant.formIndex).toBe(GULPING_FORM);
   });
 
-  it("changes to Gorging Form if HP is under half when Surf or Fly is used", async () => {
+  it("changes to Gorging Form if HP is under half when Surf or Dive is used", async () => {
     await game.startBattle([Species.CRAMORANT]);
     const cramorant = game.scene.getPlayerPokemon();
 
