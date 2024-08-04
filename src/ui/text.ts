@@ -5,6 +5,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodete
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BattleScene from "../battle-scene";
 import { ModifierTier } from "../modifier/modifier-tier";
+import i18next from "#app/plugins/i18n.js";
 
 export enum TextStyle {
   MESSAGE,
@@ -24,6 +25,7 @@ export enum TextStyle {
   MONEY,
   STATS_LABEL,
   STATS_VALUE,
+  SETTINGS_VALUE,
   SETTINGS_LABEL,
   SETTINGS_SELECTED,
   SETTINGS_LOCKED,
@@ -38,6 +40,14 @@ export enum TextStyle {
   BGM_BAR
 }
 
+export interface TextStyleOptions {
+  scale: number,
+  styleOptions: Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig,
+  shadowColor: string,
+  shadowXpos: number,
+  shadowYpos: number
+}
+
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
   const [ scale, styleOptions, shadowColor, shadowXpos, shadowYpos ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
@@ -45,7 +55,11 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
   ret.setScale(scale);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
-    ret.setLineSpacing(5);
+    ret.setLineSpacing(scale * 30);
+  }
+
+  if (ret.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
+    ret.setLineSpacing(ret.lineSpacing + 35);
   }
 
   return ret;
@@ -56,7 +70,11 @@ export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, 
   obj.setScale(scale);
   obj.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
-    obj.setLineSpacing(5);
+    obj.setLineSpacing(scale * 30);
+  }
+
+  if (obj.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
+    obj.setLineSpacing(obj.lineSpacing + 35);
   }
 }
 
@@ -68,7 +86,11 @@ export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, c
   ret.setScale(scale);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as BBCodeText.TextStyle).lineSpacing) {
-    ret.setLineSpacing(10);
+    ret.setLineSpacing(scale * 60);
+  }
+
+  if (ret.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
+    ret.setLineSpacing(ret.lineSpacing + 35);
   }
 
   return ret;
@@ -87,7 +109,7 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
 export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ number, Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number ] {
   let shadowXpos = 4;
   let shadowYpos = 5;
-  const scale = 0.1666666667;
+  let scale = 0.1666666667;
   const defaultFontSize = 96;
 
   let styleOptions: Phaser.Types.GameObjects.Text.TextStyle = {
@@ -98,6 +120,11 @@ export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraSty
       bottom: 6
     }
   };
+
+  if (i18next.resolvedLanguage === "ja") {
+    scale = 0.1388888889;
+    styleOptions.padding = { top:2, bottom:4 };
+  }
 
   switch (style) {
   case TextStyle.SUMMARY:
@@ -119,6 +146,11 @@ export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraSty
   case TextStyle.SETTINGS_LABEL:
   case TextStyle.SETTINGS_LOCKED:
   case TextStyle.SETTINGS_SELECTED:
+    shadowXpos = 3;
+    shadowYpos = 3;
+    if (i18next.resolvedLanguage === "ja") {
+      styleOptions.fontSize = 116;
+    }
     break;
   case TextStyle.BATTLE_INFO:
   case TextStyle.MONEY:
@@ -179,6 +211,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.MOVE_INFO_CONTENT:
   case TextStyle.MOVE_PP_FULL:
   case TextStyle.TOOLTIP_CONTENT:
+  case TextStyle.SETTINGS_VALUE:
     if (uiTheme) {
       return !shadow ? "#484848" : "#d0d0c8";
     }
