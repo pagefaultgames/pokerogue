@@ -284,7 +284,7 @@ export const trainerNames: SimpleTranslationEntries = {
   "rival_female": "Papina", //Litteral translation of ivy, also used as Female name in a North-American indigenous language
   "maxie": "Max",
   "archie": "Arthur",
-  "cyrus": "Hélios",
+  "cyrus": "Hélio",
   "ghetsis": "Ghetis",
   "lysandre": "Lysandre",
 
