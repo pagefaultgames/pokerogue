@@ -960,6 +960,7 @@ export const signatureSpecies: SignatureSpecies = {
   RYME: [Species.GREAVARD, Species.SHUPPET, Species.MIMIKYU],
   TULIP: [Species.GIRAFARIG, Species.FLITTLE, Species.RALTS],
   GRUSHA: [Species.CETODDLE, Species.ALOLA_VULPIX, Species.CUBCHOO],
+  JUSTY: [Species.SILICOBRA, Species.GLIGAR, Species.SANDSHREW, [Species.STUNFISK, Species.GALAR_STUNFISK]],
   LORELEI: [Species.JYNX, [Species.SLOWBRO, Species.GALAR_SLOWBRO], Species.LAPRAS, [Species.ALOLA_SANDSLASH, Species.CLOYSTER]],
   BRUNO: [Species.MACHAMP, Species.HITMONCHAN, Species.HITMONLEE, [Species.ALOLA_GOLEM, Species.GOLEM]],
   AGATHA: [Species.GENGAR, [Species.ARBOK, Species.WEEZING], Species.CROBAT, Species.ALOLA_MAROWAK],
@@ -1296,6 +1297,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.RYME]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["RYME"],false, Type.GHOST).setMixedBattleBgm("battle_paldea_gym"),
   [TrainerType.TULIP]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["TULIP"],false, Type.PSYCHIC).setMixedBattleBgm("battle_paldea_gym"),
   [TrainerType.GRUSHA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["GRUSHA"],true, Type.ICE).setMixedBattleBgm("battle_paldea_gym"),
+  [TrainerType.JUSTY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["JUSTY"],true, Type.GROUND).setMixedBattleBgm("battle_friendly_colosseum"),
 
   [TrainerType.LORELEI]: new TrainerConfig((t = TrainerType.LORELEI)).initForEliteFour(signatureSpecies["LORELEI"],false, Type.ICE).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.BRUNO]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["BRUNO"], true, Type.FIGHTING).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),

@@ -2220,6 +2220,17 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       "dialogue:grusha.defeat.1"
     ]
   },
+  [TrainerType.JUSTY]: {
+    encounter: [
+      "dialogue:justy.encounter.1"
+    ],
+    victory: [
+      "dialogue:justy.victory.1"
+    ],
+    defeat: [
+      "dialogue:justy.defeat.1"
+    ]
+  },
   [TrainerType.MARNIE_ELITE]: {
     encounter: [
       "dialogue:marnie_elite.encounter.1",

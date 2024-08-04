@@ -215,6 +215,7 @@ export const trainerNames: SimpleTranslationEntries = {
   "ryme": "Ryme",
   "tulip": "Tulip",
   "grusha": "Grusha",
+  "justy": "Justy",
   "lorelei": "Lorelei",
   "bruno": "Bruno",
   "agatha": "Agatha",

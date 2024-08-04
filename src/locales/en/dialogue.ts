@@ -2220,6 +2220,19 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Things didn't heat up for you."
     }
   },
+  "justy": {
+    "encounter": {
+      1: "I don't see any blind spots in your battle style. Shall we have our battle right away?"
+    },
+    "victory": {
+      1: `There’s no shame in this loss!
+                $I’m one lucky guy for being a part of this spectacular battle.`
+    },
+    "defeat": {
+      1: `Honestly, our battle was fantastic.
+                $I will never forget the battle we had!`
+    }
+  },
   "marnie_elite": {
     "encounter": {
       1: "You've made it this far, huh? Let's see if you can handle my Pokémon!",

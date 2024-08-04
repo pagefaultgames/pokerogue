@@ -145,6 +145,7 @@ export enum TrainerType {
   RYME,
   TULIP,
   GRUSHA,
+  JUSTY,
   LORELEI = 300,
   BRUNO,
   AGATHA,
