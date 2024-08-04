@@ -35,6 +35,7 @@ import { Button } from "#enums/buttons";
 import { BattlerIndex } from "#app/battle.js";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
 import { OverridesHelper } from "./overridesHelper";
+import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -327,5 +328,16 @@ export default class GameManager {
     this.onNextPrompt("CommandPhase", Mode.PARTY, () => {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, pokemonIndex, false);
     });
+  }
+
+  /**
+   * Revive pokemon, currently player's only.
+   * @param pokemonIndex the index of the pokemon in your party to revive
+   */
+  doRevivePokemon(pokemonIndex: number) {
+    const party = this.scene.getParty();
+    const candidate = new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0);
+    const modifier = candidate.type.newModifier(party[pokemonIndex]);
+    this.scene.addModifier(modifier, false);
   }
 }

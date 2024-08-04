@@ -438,7 +438,7 @@ export const speciesEggMoves = {
   [Species.CHEWTLE]: [ Moves.FIRE_FANG, Moves.ACCELEROCK, Moves.SHELL_SMASH, Moves.FISHIOUS_REND ],
   [Species.YAMPER]: [ Moves.ICE_FANG, Moves.SWORDS_DANCE, Moves.THUNDER_FANG, Moves.ZIPPY_ZAP ],
   [Species.ROLYCOLY]: [ Moves.BITTER_BLADE, Moves.BODY_PRESS, Moves.BULK_UP, Moves.DIAMOND_STORM ],
-  [Species.APPLIN]: [ Moves.DRAGON_CHEER, Moves.DRAGON_HAMMER, Moves.FLOWER_TRICK, Moves.STRENGTH_SAP ],
+  [Species.APPLIN]: [ Moves.MATCHA_GOTCHA, Moves.DRAGON_HAMMER, Moves.FLOWER_TRICK, Moves.STRENGTH_SAP ],
   [Species.SILICOBRA]: [ Moves.SHORE_UP, Moves.SHED_TAIL, Moves.STONE_EDGE, Moves.PRECIPICE_BLADES ],
   [Species.CRAMORANT]: [ Moves.APPLE_ACID, Moves.SURF, Moves.SCORCHING_SANDS, Moves.OBLIVION_WING ],
   [Species.ARROKUDA]: [ Moves.SUPERCELL_SLAM, Moves.KNOCK_OFF, Moves.ICE_SPINNER, Moves.FILLET_AWAY ],

@@ -85,6 +85,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public friendship: integer;
   public metLevel: integer;
   public metBiome: Biome | -1;
+  public metSpecies: Species;
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
@@ -176,6 +177,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metLevel = dataSource.metLevel || 5;
       this.luck = dataSource.luck;
       this.metBiome = dataSource.metBiome;
+      this.metSpecies = dataSource.metSpecies ?? (this.metBiome !== -1 ? this.species.speciesId : this.species.getRootSpeciesId(true));
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
       this.fusionSpecies = dataSource.fusionSpecies instanceof PokemonSpecies ? dataSource.fusionSpecies : getPokemonSpecies(dataSource.fusionSpecies);
@@ -216,6 +218,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.friendship = species.baseFriendship;
       this.metLevel = level;
       this.metBiome = scene.currentBattle ? scene.arena.biomeType : -1;
+      this.metSpecies = species.speciesId;
       this.pokerus = false;
 
       if (level > 1) {
@@ -1077,11 +1080,40 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * All moves that could be relearned by this pokemon at this point. Used for memory mushrooms.
-   * @returns {Moves[]} The valid moves
+   * Checks which egg moves have been unlocked for the {@linkcode Pokemon} based
+   * on the species it was met at or by the first {@linkcode Pokemon} in its evolution
+   * line that can act as a starter and provides those egg moves.
+   * @returns an array of {@linkcode Moves}, the length of which is determined by how many
+   * egg moves are unlocked for that species.
+   */
+  getUnlockedEggMoves(): Moves[] {
+    const moves: Moves[] = [];
+    const species = this.metSpecies in speciesEggMoves ? this.metSpecies : this.getSpeciesForm(true).getRootSpeciesId(true);
+    if (species in speciesEggMoves) {
+      for (let i = 0; i < 4; i++) {
+        if (this.scene.gameData.starterData[species].eggMoves & (1 << i)) {
+          moves.push(speciesEggMoves[species][i]);
+        }
+      }
+    }
+    return moves;
+  }
+
+  /**
+   * Gets all possible learnable level moves for the {@linkcode Pokemon},
+   * excluding any moves already known.
+   *
+   * Available egg moves are only included if the {@linkcode Pokemon} was
+   * in the starting party of the run.
+   * @returns an array of {@linkcode Moves}, the length of which is determined
+   * by how many learnable moves there are for the {@linkcode Pokemon}.
    */
   getLearnableLevelMoves(): Moves[] {
-    return this.getLevelMoves(1, true, false, true).map(lm => lm[1]).filter(lm => !this.moveset.filter(m => m.moveId === lm).length).filter((move: Moves, i: integer, array: Moves[]) => array.indexOf(move) === i);
+    let levelMoves = this.getLevelMoves(1, true).map(lm => lm[1]);
+    if (this.metBiome === -1) {
+      levelMoves = this.getUnlockedEggMoves().concat(levelMoves);
+    }
+    return levelMoves.filter(lm => !this.moveset.some(m => m.moveId === lm));
   }
 
   /**
@@ -3321,6 +3353,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.randSeedInt((max - min) + 1, min);
   }
 
+  /**
+   * Causes a Pokemon to leave the field (such as in preparation for a switch out/escape).
+   * @param clearEffects Indicates if effects should be cleared (true) or passed
+   * to the next pokemon, such as during a baton pass (false)
+   */
+  leaveField(clearEffects: boolean = true) {
+    this.resetTurnData();
+    if (clearEffects) {
+      this.resetSummonData();
+      this.resetBattleData();
+    }
+    this.hideInfo();
+    this.setVisible(false);
+    this.scene.field.remove(this);
+    this.scene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
+  }
+
   destroy(): void {
     this.battleInfo?.destroy();
     super.destroy();
@@ -3432,25 +3481,21 @@ export class PlayerPokemon extends Pokemon {
     return true;
   }
 
-  switchOut(batonPass: boolean, removeFromField: boolean = false): Promise<void> {
+  /**
+   * Causes this mon to leave the field (via {@linkcode leaveField}) and then
+   * opens the party switcher UI to switch a new mon in
+   * @param batonPass Indicates if this switch was caused by a baton pass (and
+   * thus should maintain active mon effects)
+   */
+  switchOut(batonPass: boolean): Promise<void> {
     return new Promise(resolve => {
-      this.resetTurnData();
-      if (!batonPass) {
-        this.resetSummonData();
-      }
-      this.hideInfo();
-      this.setVisible(false);
+      this.leaveField(!batonPass);
 
       this.scene.ui.setMode(Mode.PARTY, PartyUiMode.FAINT_SWITCH, this.getFieldIndex(), (slotIndex: integer, option: PartyOption) => {
         if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
           this.scene.prependToPhase(new SwitchSummonPhase(this.scene, this.getFieldIndex(), slotIndex, false, batonPass), MoveEndPhase);
         }
-        if (removeFromField) {
-          this.setVisible(false);
-          this.scene.field.remove(this);
-          this.scene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
-        }
-        this.scene.ui.setMode(Mode.MESSAGE).then(() => resolve());
+        this.scene.ui.setMode(Mode.MESSAGE).then(resolve);
       }, PartyUiHandler.FilterNonFainted);
     });
   }
@@ -4267,6 +4312,7 @@ export class EnemyPokemon extends Pokemon {
       this.pokeball = pokeballType;
       this.metLevel = this.level;
       this.metBiome = this.scene.arena.biomeType;
+      this.metSpecies = this.species.speciesId;
       const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this);
       party.push(newPokemon);
       ret = newPokemon;
