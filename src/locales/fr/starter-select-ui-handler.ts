@@ -35,7 +35,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "unlockPassive": "Débloquer Passif",
   "reduceCost": "Diminuer le cout",
   "sameSpeciesEgg": "Acheter un Œuf",
-  "cycleShiny": ": » Chromatiques",
+  "cycleShiny": ": Chromatique",
   "cycleForm": ": Forme",
   "cycleGender": ": Sexe",
   "cycleAbility": ": Talent",
