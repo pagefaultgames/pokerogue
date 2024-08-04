@@ -17287,7 +17287,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.DIPPLIN]: [
     [ EVOLVE_MOVE, Moves.DOUBLE_HIT ],
-    [ RELEARN_MOVE, Moves.INFESTATION ],
+    [ RELEARN_MOVE, Moves.DRAGON_CHEER ], // Custom
     [ 1, Moves.WITHDRAW ],
     [ 1, Moves.SWEET_SCENT ],
     [ 1, Moves.RECYCLE ],
