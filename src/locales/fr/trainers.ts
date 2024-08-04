@@ -152,8 +152,8 @@ export const trainerClasses: SimpleTranslationEntries = {
   "flare_grunt": "Sbire de la Team Flare",
   "flare_grunt_female": "Sbire de la Team Flare",
   "flare_grunts": "Sbires de la Team Flare",
-  "flare_admin": "Flare Admin",
-  "flare_admin_female": "Flare Admin",
+  "flare_admin": "Manager de la Team Flare",
+  "flare_admin_female": "Manageuse de la Team Flare",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
