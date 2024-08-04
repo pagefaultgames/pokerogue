@@ -5,19 +5,7 @@ import { Scene } from "phaser";
 export const TOUCH_CONTROL_POSITIONS_LANDSCAPE = "touchControlPositionsLandscape";
 export const TOUCH_CONTROL_POSITIONS_PORTRAIT = "touchControlPositionsPortrait";
 
-const CONFIG_TOOLBAR: string = `<div id="configToolbar">
-			<div class="button-row">
-				<div id="resetButton" class="button">Reset</div>
-				<div id="saveButton" class="button">Save & close</div>
-				<div id="cancelButton" class="button">Cancel</div>
-			</div>
-			<div class="row">
-				<div class="orientation-label">Orientation:
-					<span id="orientation">Landscape</span>
-				</div>
-			</div>
-		</div>
-  `;
+
 
 type ControlPosition = { id: string, x: number, y: number };
 
@@ -81,10 +69,11 @@ export default class MoveTouchControlsHandler {
    */
   private async changeOrientation(isLandscapeMode: boolean) {
     this.isLandscapeMode = isLandscapeMode;
-    document
-      .querySelector("#touchControls #orientation")
-      .textContent = this.isLandscapeMode? "Landscape" : "Portrait";
-
+    if (this.inConfigurationMode) {
+      document
+        .querySelector("#touchControls #orientation")
+        .textContent = this.isLandscapeMode? "Landscape" : "Portrait";
+    }
     const positions = this.getSavedPositionsOfCurrentOrientation() ?? [];
     this.setPositions(positions);
   }
@@ -94,14 +83,35 @@ export default class MoveTouchControlsHandler {
   }
 
   /**
+   * Creates the toolbar element for the configuration mode.
+   * @returns A new div element that contains the toolbar for the configuration mode.
+   */
+  private createToolbarElement(): HTMLDivElement {
+    const toolbar = document.createElement("div");
+    toolbar.id = "configToolbar";
+    toolbar.innerHTML = `
+      <div class="column">
+        <div class="button-row">
+          <div id="resetButton" class="button">Reset</div>
+          <div id="saveButton" class="button">Save & close</div>
+          <div id="cancelButton" class="button">Cancel</div>
+        </div>
+        <div class="info-row">
+          <div class="orientation-label"> 
+            Orientation: <span id="orientation">${this.isLandscapeMode ? "Landscape" : "Portrait"}</span>
+          </div>
+        </div>
+      </div>
+    `;
+    return toolbar;
+  }
+
+  /**
    * Initializes the toolbar of the configuration mode.
    * Places its elements at the top of the touch controls and adds event listeners to them.
    */
   private createToolbar() {
-    const toolbar = document.createElement("div");
-    toolbar.id = "configToolbar";
-    toolbar.innerHTML = CONFIG_TOOLBAR;
-    document.querySelector("#touchControls").prepend(toolbar);
+    document.querySelector("#touchControls").prepend(this.createToolbarElement());
     const refs = this.getConfigToolbarRefs();
     if (!refs) {
       return;

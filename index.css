@@ -146,16 +146,20 @@ input:-internal-autofill-selected {
 /* Configuration toolbar */
 
 #configToolbar {
-  display: flex;
-  flex-direction: column;
   width: 100%;
   position: fixed;
   top: 1rem;
   left: 0;
+  z-index: 9;
+  user-select: none;
+}
+
+#configToolbar .column {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 10%;
-  padding: 0 1rem;
-  z-index: 9
+  padding: 0 var(--controls-padding);
 }
 
 #configToolbar .button-row {
@@ -164,9 +168,9 @@ input:-internal-autofill-selected {
   width: 100%;
 }
 
-#configToolbar .row {
+#configToolbar .info-row {
   display: flex;
-  justify-self: flex-start;
+  justify-content: flex-start;
   width: 100%;
 }
 
@@ -183,7 +187,6 @@ input:-internal-autofill-selected {
   border-radius: 8px;
   padding: 2px 8px;
   text-shadow: var(--color-dark) calc(var(--text-shadow-size) / 3) calc(var(--text-shadow-size) / 3);
-  user-select: none;
 }
 
 #configToolbar .button:active {
@@ -193,7 +196,6 @@ input:-internal-autofill-selected {
 #configToolbar .orientation-label {
   font-size: var(--small-control-size);
   text-shadow: var(--color-dark) calc(var(--text-shadow-size) / 3) calc(var(--text-shadow-size) / 3);
-  user-select: none;
 }
 
 /* dpad */
