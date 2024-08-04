@@ -2063,7 +2063,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     scene.addMoney(moneyAmount.value);
 
-    scene.getParty().filter(p => p.species.speciesId === Species.GIMMIGHOUL).map(p => p.evoCounter++);
+    scene.getParty().filter(p => p.species.speciesId === Species.GIMMIGHOUL || p.fusionSpecies.speciesId === Species.GIMMIGHOUL).map(p => p.evoCounter++);
 
     return true;
   }

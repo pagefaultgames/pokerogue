@@ -2154,9 +2154,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (!this.isPlayer()) {
               this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
             }
-            if (isCritical && source.species.speciesId === Species.GALAR_FARFETCHD) {
-              source.evoCounter++;
-            }
           }
         }
 
