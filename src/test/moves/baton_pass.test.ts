@@ -53,7 +53,7 @@ describe("Moves - Baton Pass", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     // assert
-    expect(game.scene.getPlayerPokemon().species.species).toEqual(Species.SHUCKLE);
+    expect(game.scene.getPlayerPokemon().species.speciesId).toEqual(Species.SHUCKLE);
     expect(game.scene.getPlayerPokemon().summonData.battleStats[BattleStat.SPATK]).toEqual(2);
   }, 20000);
 
