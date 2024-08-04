@@ -502,7 +502,7 @@ export class PostDefendAbAttr extends AbAttr {
  */
 export class PostDefendGulpMissileAbAttr extends PostDefendAbAttr {
   constructor() {
-    super(false);
+    super(true);
   }
 
   /**
