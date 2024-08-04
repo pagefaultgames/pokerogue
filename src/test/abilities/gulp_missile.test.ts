@@ -151,6 +151,30 @@ describe("Abilities - Gulp Missile", () => {
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
   });
 
+  it("prevents effect damage but inflicts secondary effect on attacker with Magic Guard", async () => {
+    game.override.enemyMoveset(Array(4).fill(Moves.TACKLE)).enemyAbility(Abilities.MAGIC_GUARD);
+    await game.startBattle([Species.CRAMORANT]);
+
+    const cramorant = game.scene.getPlayerPokemon();
+    const enemy = game.scene.getEnemyPokemon();
+
+    vi.spyOn(cramorant, "getHpRatio").mockReturnValue(.55);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
+    await game.phaseInterceptor.to(MoveEndPhase);
+    const enemyHpPreEffect = enemy.hp;
+
+    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant.formIndex).toBe(GULPING_FORM);
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(enemy.hp).toBe(enemyHpPreEffect);
+    expect(enemy.summonData.battleStats[BattleStat.DEF]).toBe(-1);
+    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeUndefined();
+    expect(cramorant.formIndex).toBe(NORMAL_FORM);
+  });
+
   it("cannot be suppressed", async () => {
     game.override.enemyMoveset(Array(4).fill(Moves.GASTRO_ACID));
     await game.startBattle([Species.CRAMORANT]);
