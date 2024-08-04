@@ -153,6 +153,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "ふっかつのタネ", description: "ひんしになったときもっているポケモンをHPはんぶんでふっかつさせる" },
 
+    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+
     "ETHER": { name: "ピーピーエイド" },
     "MAX_ETHER": { name: "ピーピーリカバー" },
 
@@ -181,6 +183,11 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "おうごんタマゴ" },
 
     "SOOTHE_BELL": { name: "やすらぎのすず" },
+
+    "SCOPE_LENS": { name: "Scope Lens", description: "It's a lens for scoping out weak points. It boosts the holder's critical-hit ratio."},
+    "LEEK": { name: "Leek", description: "This very long and stiff stalk of leek boosts the critical-hit ratio of Farfetch'd's moves."},
+
+    "EVIOLITE": { name: "Eviolite", description: "This mysterious evolutionary lump boosts the Defense and Sp. Def stats when held by a Pokémon that can still evolve." },
 
     "SOUL_DEW": { name: "こころのしずく", description: "ポケモンのせいかくがステータスにあたえるえいきょうを10%ふやす（合算）" },
 
@@ -407,5 +414,43 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "ブレイズカセット",
     "CHILL_DRIVE": "フリーズカセット",
     "DOUSE_DRIVE": "アクアカセット",
+
+    "FIST_PLATE": "Fist Plate",
+    "SKY_PLATE": "Sky Plate",
+    "TOXIC_PLATE": "Toxic Plate",
+    "EARTH_PLATE": "Earth Plate",
+    "STONE_PLATE": "Stone Plate",
+    "INSECT_PLATE": "Insect Plate",
+    "SPOOKY_PLATE": "Spooky Plate",
+    "IRON_PLATE": "Iron Plate",
+    "FLAME_PLATE": "Flame Plate",
+    "SPLASH_PLATE": "Splash Plate",
+    "MEADOW_PLATE": "Meadow Plate",
+    "ZAP_PLATE": "Zap Plate",
+    "MIND_PLATE": "Mind Plate",
+    "ICICLE_PLATE": "Icicle Plate",
+    "DRACO_PLATE": "Draco Plate",
+    "DREAD_PLATE": "Dread Plate",
+    "PIXIE_PLATE": "Pixie Plate",
+    "BLANK_PLATE": "Blank Plate",
+    "LEGEND_PLATE": "Legend Plate",
+    "FIGHTING_MEMORY": "Fighting Memory",
+    "FLYING_MEMORY": "Flying Memory",
+    "POISON_MEMORY": "Poison Memory",
+    "GROUND_MEMORY": "Ground Memory",
+    "ROCK_MEMORY": "Rock Memory",
+    "BUG_MEMORY": "Bug Memory",
+    "GHOST_MEMORY": "Ghost Memory",
+    "STEEL_MEMORY": "Steel Memory",
+    "FIRE_MEMORY": "Fire Memory",
+    "WATER_MEMORY": "Water Memory",
+    "GRASS_MEMORY": "Grass Memory",
+    "ELECTRIC_MEMORY": "Electric Memory",
+    "PSYCHIC_MEMORY": "Psychic Memory",
+    "ICE_MEMORY": "Ice Memory",
+    "DRAGON_MEMORY": "Dragon Memory",
+    "DARK_MEMORY": "Dark Memory",
+    "FAIRY_MEMORY": "Fairy Memory",
+    "BLANK_MEMORY": "Blank Memory",
   },
 } as const;
