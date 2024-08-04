@@ -250,18 +250,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonShinyIcon: Phaser.GameObjects.Sprite;
 
   private instructionsContainer: Phaser.GameObjects.Container;
+  private filterInstructionsContainer: Phaser.GameObjects.Container;
   private shinyIconElement: Phaser.GameObjects.Sprite;
   private formIconElement: Phaser.GameObjects.Sprite;
   private abilityIconElement: Phaser.GameObjects.Sprite;
   private genderIconElement: Phaser.GameObjects.Sprite;
   private natureIconElement: Phaser.GameObjects.Sprite;
   private variantIconElement: Phaser.GameObjects.Sprite;
+  private goFilterIconElement: Phaser.GameObjects.Sprite;
   private shinyLabel: Phaser.GameObjects.Text;
   private formLabel: Phaser.GameObjects.Text;
   private genderLabel: Phaser.GameObjects.Text;
   private abilityLabel: Phaser.GameObjects.Text;
   private natureLabel: Phaser.GameObjects.Text;
   private variantLabel: Phaser.GameObjects.Text;
+  private goFilterLabel: Phaser.GameObjects.Text;
 
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
@@ -798,7 +801,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.variantLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleVariant"), TextStyle.PARTY, { fontSize: instructionTextSize });
     this.variantLabel.setName("text-variant-label");
 
+    this.goFilterIconElement = new Phaser.GameObjects.Sprite(this.scene, this.instructionRowX, this.instructionRowY, "keyboard", "C.png");
+    this.goFilterIconElement.setName("sprite-goFilter-icon-element");
+    this.goFilterIconElement.setScale(0.675);
+    this.goFilterIconElement.setOrigin(0.0, 0.0);
+    this.goFilterLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:goFilter"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.goFilterLabel.setName("text-goFilter-label");
+
     this.hideInstructions();
+
+    this.filterInstructionsContainer = this.scene.add.container(3, -12);
+    this.filterInstructionsContainer.setVisible(true);
+    this.starterSelectContainer.add(this.filterInstructionsContainer);
+
+
 
     this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
     this.starterSelectMessageBoxContainer.setVisible(false);
@@ -1147,6 +1163,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       } else {
         this.tryExit();
         success = true;
+      }
+    } else if (button === Button.STATS) {
+      // down from start button with no Pokemon in the team > go to filter
+      if (!this.filterMode) {
+        console.log("Stats button pressed");
+        this.startCursorObj.setVisible(false);
+        this.starterIconsCursorObj.setVisible(false);
+        this.setSpecies(null);
+        this.filterBarCursor = 0;
+        this.setFilterMode(true);
       }
     } else if (this.startCursorObj.visible) { // this checks to see if the start button is selected
       switch (button) {
@@ -1965,7 +1991,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  updateButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
+  updateButtonIcon(container, iconSetting, gamepadType, iconElement, controlLabel): void {
     let iconPath;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
@@ -1990,6 +2016,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       case SettingKeyboard.Button_Cycle_Variant:
         iconPath = "V.png";
         break;
+      case SettingKeyboard.Button_Stats:
+        iconPath = "C.png";
+        break;
       default:
         break;
       }
@@ -2001,7 +2030,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     controlLabel.setPosition(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY);
     iconElement.setVisible(true);
     controlLabel.setVisible(true);
-    this.instructionsContainer.add([iconElement, controlLabel]);
+    container.add([iconElement, controlLabel]);
     this.instructionRowY += 8;
     if (this.instructionRowY >= 24) {
       this.instructionRowY = 0;
@@ -2014,6 +2043,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.instructionRowY = 0;
     this.hideInstructions();
     this.instructionsContainer.removeAll();
+    this.filterInstructionsContainer.removeAll();
     let gamepadType;
     if (this.scene.inputMethod === "gamepad") {
       gamepadType = this.scene.inputController.getConfig(this.scene.inputController.selectedDevice[Device.GAMEPAD]).padType;
@@ -2021,26 +2051,36 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       gamepadType = this.scene.inputMethod;
     }
 
+    if (!gamepadType) {
+      return;
+    }
+
     if (this.speciesStarterDexEntry?.caughtAttr) {
       if (this.canCycleShiny) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Shiny, gamepadType, this.shinyIconElement, this.shinyLabel);
+        this.updateButtonIcon(this.instructionsContainer, SettingKeyboard.Button_Cycle_Shiny, gamepadType, this.shinyIconElement, this.shinyLabel);
       }
       if (this.canCycleForm) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
+        this.updateButtonIcon(this.instructionsContainer, SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
       }
       if (this.canCycleGender) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Gender, gamepadType, this.genderIconElement, this.genderLabel);
+        this.updateButtonIcon(this.instructionsContainer, SettingKeyboard.Button_Cycle_Gender, gamepadType, this.genderIconElement, this.genderLabel);
       }
       if (this.canCycleAbility) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Ability, gamepadType, this.abilityIconElement, this.abilityLabel);
+        this.updateButtonIcon(this.instructionsContainer, SettingKeyboard.Button_Cycle_Ability, gamepadType, this.abilityIconElement, this.abilityLabel);
       }
       if (this.canCycleNature) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Nature, gamepadType, this.natureIconElement, this.natureLabel);
+        this.updateButtonIcon(this.instructionsContainer, SettingKeyboard.Button_Cycle_Nature, gamepadType, this.natureIconElement, this.natureLabel);
       }
       if (this.canCycleVariant) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Variant, gamepadType, this.variantIconElement, this.variantLabel);
+        this.updateButtonIcon(this.instructionsContainer, SettingKeyboard.Button_Cycle_Variant, gamepadType, this.variantIconElement, this.variantLabel);
       }
     }
+
+    // if filter mode is inactivated and gamepadType is not undefined, update the button icons
+    if (!this.filterMode) {
+      this.updateButtonIcon(this.filterInstructionsContainer, SettingKeyboard.Button_Stats, gamepadType, this.goFilterIconElement, this.goFilterLabel);
+    }
+
   }
 
   getValueLimit(): integer {
@@ -2303,6 +2343,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.setCursor(filterMode ? this.filterBarCursor : this.cursor);
       if (filterMode) {
         this.setSpecies(null);
+        this.updateInstructions();
       }
 
       return true;
@@ -3120,6 +3161,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.natureLabel.setVisible(false);
     this.variantIconElement.setVisible(false);
     this.variantLabel.setVisible(false);
+    this.goFilterIconElement.setVisible(false);
+    this.goFilterLabel.setVisible(false);
   }
 
   clear(): void {
