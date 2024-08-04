@@ -264,7 +264,7 @@ export class DropDown extends Phaser.GameObjects.Container {
   private cursorObj: Phaser.GameObjects.Image;
   public dropDownType: DropDownType = DropDownType.MULTI;
   public cursor: number = 0;
-  public lastCursor: number = -1;
+  private lastCursor: number = -1;
   public defaultCursor: number = 0;
   private onChange: () => void;
   private lastDir: SortDirection = SortDirection.ASC;
@@ -462,12 +462,14 @@ export class DropDown extends Phaser.GameObjects.Container {
   /**
    * Get the current selected settings dictionary for each option
    * @returns an array of dictionaries with the current state of each option
+   * - the settings dictionary is like this { val: any, state: DropDownState, cursor: boolean, dir: SortDirection }
    */
-  getSettings(): any[] {
+  private getSettings(): any[] {
     const settings = [];
-    for (const option of this.options) {
-      settings.push({ val: option.val, state: option.state , cursor: (this.cursor === this.options.indexOf(option)), dir: option.dir });
+    for (let i = 0; i < this.options.length; i++) {
+      settings.push({ val: this.options[i].val, state: this.options[i].state , cursor: (this.cursor === i), dir: this.options[i].dir });
     }
+    console.log(settings);
     return settings;
   }
 

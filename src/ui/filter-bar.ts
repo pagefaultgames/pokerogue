@@ -120,7 +120,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
   /**
    * Move the leftmost dropdown to the left of the FilterBar instead of below it
    */
-  offsetHybridFilter(): void {
+  offsetHybridFilters(): void {
     for (let i=0; i<this.dropDowns.length; i++) {
       if (this.dropDowns[i].dropDownType === DropDownType.HYBRID) {
         this.dropDowns[i].autoSize();
