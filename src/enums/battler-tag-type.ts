@@ -66,5 +66,14 @@ export enum BattlerTagType {
   IGNORE_GHOST = "IGNORE_GHOST",
   IGNORE_DARK = "IGNORE_DARK",
   GULP_MISSILE_ARROKUDA = "GULP_MISSILE_ARROKUDA",
-  GULP_MISSILE_PIKACHU = "GULP_MISSILE_PIKACHU"
+  GULP_MISSILE_PIKACHU = "GULP_MISSILE_PIKACHU",
+  /**
+   * Tag which indicates the battler is waiting for their opponent to make some
+   * sort of action (switch out, use a type of move, make contact, etc)
+   */
+  ANTICIPATING_ACTION = "ANTICIPATING_ACTION",
+  /**
+   * Tag which indicates the battler is about to switch out.
+   */
+  ESCAPING = "ESCAPING",
 }
