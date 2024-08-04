@@ -2556,6 +2556,15 @@ export class BattleEndPhase extends BattlePhase {
 
     this.scene.updateModifiers().then(() => this.end());
   }
+
+  end() {
+    // removing pokemon at the end of a battle
+    for (const p of this.scene.getEnemyParty()) {
+      p.destroy();
+    }
+
+    super.end();
+  }
 }
 
 export class NewBattlePhase extends BattlePhase {
@@ -3767,6 +3776,7 @@ export class FaintPhase extends PokemonPhase {
   doFaint(): void {
     const pokemon = this.getPokemon();
 
+
     // Track total times pokemon have been KO'd for supreme overlord/last respects
     if (pokemon.isPlayer()) {
       this.scene.currentBattle.playerFaints += 1;
@@ -3817,17 +3827,10 @@ export class FaintPhase extends PokemonPhase {
       }
     }
 
+    // in double battles redirect potential moves off fainted pokemon
     if (this.scene.currentBattle.double) {
       const allyPokemon = pokemon.getAlly();
-      if (allyPokemon?.isActive(true)) {
-        let targetingMovePhase: MovePhase;
-        do {
-          targetingMovePhase = this.scene.findPhase(mp => mp instanceof MovePhase && mp.targets.length === 1 && mp.targets[0] === pokemon.getBattlerIndex() && mp.pokemon.isPlayer() !== allyPokemon.isPlayer()) as MovePhase;
-          if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex()) {
-            targetingMovePhase.targets[0] = allyPokemon.getBattlerIndex();
-          }
-        } while (targetingMovePhase);
-      }
+      this.scene.redirectPokemonMoves(pokemon, allyPokemon);
     }
 
     pokemon.lapseTags(BattlerTagLapseType.FAINT);
