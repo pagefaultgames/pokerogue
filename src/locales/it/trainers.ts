@@ -20,8 +20,11 @@ export const titles: SimpleTranslationEntries = {
   "plasma_boss": "Team Plasma Boss",
   "flare_boss": "Team Flare Boss",
   "aether_boss": "Aether President",
+  "aether_admin": "Aether Foundation Admin",
   "skull_boss": "Team Skull Boss",
+  "skull_admin": "Team Skull Admin",
   "macro_boss": "Macro Cosmos President",
+  "macro_admin": "Macro Cosmos",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -279,8 +282,11 @@ export const trainerNames: SimpleTranslationEntries = {
   "cyrus": "Cyrus",
   "ghetsis": "Ghetsis",
   "lysandre": "Lysandre",
+  "faba": "Faba",
   "lusamine": "Lusamine",
+  "plumeria": "Plumeria",
   "guzma": "Guzma",
+  "oleana": "Oleana",
   "rose": "Rose",
 
   // Double Names

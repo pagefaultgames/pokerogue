@@ -445,26 +445,82 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "aether_grunt": {
     "encounter": {
-      1: "I'll fight you with all I have to wipe you out!"
+      1: "I'll fight you with all I have to wipe you out!",
+      2: "I don't care if you're a kid or what. I'll send you flying if you threaten us!",
+      3: "I was told to turn away Trainers, whomever they might be!",
+      4: "I'll show you the power of Aether Paradise!",
+      5: "Now that you've learned of the darkness at the heart of Aether Paradise, we'll need you to conveniently disappear!"
     },
     "victory": {
-      1: "Hmph! You seem to have a lot of skill."
+      1: "Hmph! You seem to have a lot of skill.",
+      2: "What does this mean? What does this mean!",
+      3: "Hey! You're so strong that there's no way I can turn you away!",
+      4: "Hmm... It seems as though I may have lost.",
+      5: "Here's an impression for you: Aiyee!"
+    },
+  },
+  "aether_admin": {
+    "encounter": {
+      1: "I, Branch Chief Faba, shall show you the harshness of the real world!",
+      2: "The man who is called Aether Paradise's last line of defense is to battle a mere child?",
+      3: "I, Faba, am the Aether Branch Chief. The only one in the world, I'm irreplaceable."
+    },
+    "victory": {
+      1: "Aiyee!",
+      2: "H-h-how can this be?! How could this child...",
+      3: "This is why... This is why I can't bring myself to like children."
     },
   },
   "skull_grunt": {
     "encounter": {
-      1: "We're not bad-we're just hard!"
+      1: "We're not bad-we're just hard!",
+      2: "You want some? That's how we say hello! Nice knowing you, punks!",
+      3: "We're just a bunch of guys and gals with a great interest in other people's Pokémon!",
+      4: "Why you trying to act hard when we're already hard as bones out here, homie?",
+      5: "Team Skull represent! We can't pay the rent! Had a lot of fun, but our youth was misspent!"
     },
     "victory": {
-      1: "Huh? Is it over already?"
+      1: "Huh? Is it over already?",
+      2: "Time for us to break out, yo! Gotta tell y'all peace out, yo!",
+      3: "We don't need your wack Pokémon anyway!",
+      4: "Wha-?! This kid's way too strong-no bones about it!",
+      5: "So, what? I'm lower than a Pokémon?! I already got self-esteem issues, man."
+    },
+  },
+  "skull_admin": {
+    "encounter": {
+      1: " ...Hmph. You don't look like anything special to me.",
+      2: "It takes these dumb Grunts way too long to deal with you kids..",
+      3: "Mess with anyone in Team Skull, and I'll show you how serious I can get."
+    },
+    "victory": {
+      1: "Hmmph! You're pretty strong. I'll give you that.",
+      2: "Hmmph. Guess you are pretty tough. Now I understand why my Grunts waste so much time battling kids.",
+      3: "Hmmph! I guess I just have to hold that loss."
     },
   },
   "macro_grunt": {
     "encounter": {
-      1: "It looks like this is the end of the line for you!"
+      1: "It looks like this is the end of the line for you!",
+      2: "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
+      3: "I'm from Macro Cosmos Insurance! Do you have a life insurance policy?"
     },
     "victory": {
-      1: "I have little choice but to respectfully retreat."
+      1: "I have little choice but to respectfully retreat.",
+      2: "Having to give up my pocket money... Losing means I'm back in the red...",
+      3: "Nobody can beat Macro Cosmos when it comes to our dedication to our work!"
+    },
+  },
+  "macro_admin": {
+    "encounter": {
+      1: "I won't let anyone interfere with Mr. Rose's plan!",
+      2: "So, you got through all of the special staff that I had ordered to stop you. I would expect nothing less.",
+      3: "For the chairman! I won't lose!"
+    },
+    "victory": {
+      1: "*sigh* I wasn't able to win... Oleana...you really are a hopeless woman.",
+      2: "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover..",
+      3: "*sigh* I am one tired Oleana..."
     },
   },
   "rocket_boss_giovanni_1": {

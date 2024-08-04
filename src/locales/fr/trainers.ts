@@ -20,8 +20,11 @@ export const titles: SimpleTranslationEntries = {
   "plasma_boss": "Leader de la Team Plasma",
   "flare_boss": "Leader de la Team Flare",
   "aether_boss": "Aether President",
+  "aether_admin": "Aether Foundation Admin",
   "skull_boss": "Team Skull Boss",
+  "skull_admin": "Team Skull Admin",
   "macro_boss": "Macro Cosmos President",
+  "macro_admin": "Macro Cosmos",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -274,7 +277,17 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Tarak",
   "rival": "Gwenaël", //Male breton name, a celtic language spoken in  Brittany (France) and related to the word for "white" (gwenn). Finn meaning is also "white" in irish/goidelic which are also celtic languages.
   "rival_female": "Papina", //Litteral translation of ivy, also used as Female name in a North-American indigenous language
-
+  "maxie": "Max",
+  "archie": "Arthur",
+  "cyrus": "Hélio",
+  "ghetsis": "Ghetis",
+  "lysandre": "Lysandre",
+  "faba": "Faba",
+  "lusamine": "Lusamine",
+  "plumeria": "Plumeria",
+  "guzma": "Guzma",
+  "oleana": "Oleana",
+  "rose": "Rose",
 
   // Double Names
   "blue_red_double": "Blue & Red",
