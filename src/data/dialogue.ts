@@ -512,30 +512,92 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
   [TrainerType.AETHER_GRUNT]: [
     {
       encounter: [
-        "dialogue:aether_grunt.encounter.1"
+        "dialogue:aether_grunt.encounter.1",
+        "dialogue:aether_grunt.encounter.2",
+        "dialogue:aether_grunt.encounter.3",
+        "dialogue:aether_grunt.encounter.4",
+        "dialogue:aether_grunt.encounter.5",	
       ],
       victory: [
-        "dialogue:aether_grunt.victory.1"
+        "dialogue:aether_grunt.victory.1",
+        "dialogue:aether_grunt.victory.2",
+        "dialogue:aether_grunt.victory.3",
+        "dialogue:aether_grunt.victory.4",
+        "dialogue:aether_grunt.victory.5",	
+      ]
+    }
+  ],
+  [TrainerType.AETHER_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:aether_admin.encounter.1",
+        "dialogue:aether_admin.encounter.2",
+        "dialogue:aether_admin.encounter.3",	
+      ],
+      victory: [
+        "dialogue:aether_admin.victory.1",
+        "dialogue:aether_admin.victory.2",
+        "dialogue:aether_admin.victory.3",
       ]
     }
   ],
   [TrainerType.SKULL_GRUNT]: [
     {
       encounter: [
-        "dialogue:skull_grunt.encounter.1"
+        "dialogue:skull_grunt.encounter.1",
+        "dialogue:skull_grunt.encounter.2",
+        "dialogue:skull_grunt.encounter.3",
+        "dialogue:skull_grunt.encounter.4",
+        "dialogue:skull_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:skull_grunt.victory.1"
+        "dialogue:skull_grunt.victory.1",
+        "dialogue:skull_grunt.victory.2",
+        "dialogue:skull_grunt.victory.3",
+        "dialogue:skull_grunt.victory.4",
+        "dialogue:skull_grunt.victory.5",
+      ]
+    }
+  ],
+  [TrainerType.SKULL_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:skull_admin.encounter.1",
+        "dialogue:skull_admin.encounter.2",
+        "dialogue:skull_admin.encounter.3",
+      ],
+      victory: [
+        "dialogue:skull_admin.victory.1",
+        "dialogue:skull_admin.victory.2",
+        "dialogue:skull_admin.victory.3",
       ]
     }
   ],
   [TrainerType.MACRO_GRUNT]: [
     {
       encounter: [
-        "dialogue:macro_grunt.encounter.1"
+        "dialogue:macro_grunt.encounter.1",
+        "dialogue:macro_grunt.encounter.2",
+        "dialogue:macro_grunt.encounter.3",
       ],
       victory: [
-        "dialogue:macro_grunt.victory.1"
+        "dialogue:macro_grunt.victory.1",
+        "dialogue:macro_grunt.victory.2",
+        "dialogue:macro_grunt.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.MACRO_ADMIN]: [
+    {
+      encounter: [
+        "dialogue:macro_admin.encounter.1",
+        "dialogue:macro_admin.encounter.2",
+        "dialogue:macro_admin.encounter.3",
+      ],
+      victory: [
+        "dialogue:macro_admin.victory.1",
+        "dialogue:macro_admin.victory.2",
+        "dialogue:macro_admin.victory.3",
       ]
     }
   ],
