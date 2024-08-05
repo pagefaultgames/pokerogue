@@ -2970,6 +2970,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
       // Move animation only needs one target
       new MoveAnim(move.id as Moves, user, this.getTarget()?.getBattlerIndex()).play(this.scene, () => {
+        /** Has the move successfully hit a target (for damage) yet? */
+        let hasHit: boolean = false;
         for (const target of targets) {
           if (!targetHitChecks[target.getBattlerIndex()]) {
             this.stopMultiHit(target);
@@ -2985,7 +2987,6 @@ export class MoveEffectPhase extends PokemonPhase {
           const isProtected = !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
 
           const firstHit = (user.turnData.hitsLeft === user.turnData.hitCount);
-          const firstTarget = (moveHistoryEntry.result === MoveResult.PENDING);
 
           if (firstHit) {
             user.pushMoveHistory(moveHistoryEntry);
@@ -2995,6 +2996,18 @@ export class MoveEffectPhase extends PokemonPhase {
 
           const hitResult = !isProtected ? target.apply(user, move) : HitResult.NO_EFFECT;
 
+          const dealsDamage = [
+            HitResult.EFFECTIVE,
+            HitResult.SUPER_EFFECTIVE,
+            HitResult.NOT_VERY_EFFECTIVE,
+            HitResult.ONE_HIT_KO
+          ].includes(hitResult);
+
+          const firstTarget = dealsDamage && !hasHit;
+          if (firstTarget) {
+            hasHit = true;
+          }
+
           const lastHit = (user.turnData.hitsLeft === 1 || !this.getTarget()?.isActive());
 
           if (lastHit) {
@@ -3002,7 +3015,7 @@ export class MoveEffectPhase extends PokemonPhase {
           }
 
           applyAttrs.push(new Promise(resolve => {
-            applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.PRE_APPLY && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit),
+            applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.PRE_APPLY && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit) && hitResult !== HitResult.NO_EFFECT,
               user, target, move).then(() => {
               if (hitResult !== HitResult.FAIL) {
                 const chargeEffect = !!move.getAttrs(ChargeAttr).find(ca => ca.usedChargeEffect(user, this.getTarget(), move));
@@ -3012,7 +3025,7 @@ export class MoveEffectPhase extends PokemonPhase {
                   if (hitResult !== HitResult.NO_EFFECT) {
                     applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_APPLY
                       && !(attr as MoveEffectAttr).selfTarget && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit), user, target, this.move.getMove()).then(() => {
-                      if (hitResult < HitResult.NO_EFFECT && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr)) {
+                      if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr)) {
                         const flinched = new Utils.BooleanHolder(false);
                         user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
                         if (flinched.value) {

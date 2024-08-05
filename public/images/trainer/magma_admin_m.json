@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "magma_admin_f.png",
+			"image": "magma_admin_m.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 80,
