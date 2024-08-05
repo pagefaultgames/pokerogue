@@ -41,6 +41,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "cycleAbility": ": Fähigkeit",
   "cycleNature": ": Wesen",
   "cycleVariant": ": Seltenheit",
+  "goFilter": ": Go to filters",
   "enablePassive": "Passiv-Skill aktivieren",
   "disablePassive": "Passiv-Skill deaktivieren",
   "locked": "Gesperrt",

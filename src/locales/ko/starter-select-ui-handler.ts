@@ -41,6 +41,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "cycleAbility": ": 특성",
   "cycleNature": ": 성격",
   "cycleVariant": ": 색상",
+  "goFilter": ": Go to filters",
   "enablePassive": "패시브 활성화",
   "disablePassive": "패시브 비활성화",
   "locked": "잠김",

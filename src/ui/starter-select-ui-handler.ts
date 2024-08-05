@@ -1172,9 +1172,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
       }
     } else if (button === Button.STATS) {
-      // down from start button with no Pokemon in the team > go to filter
+      // if stats button is pressed, go to filter directly
       if (!this.filterMode) {
-        console.log("Stats button pressed");
         this.startCursorObj.setVisible(false);
         this.starterIconsCursorObj.setVisible(false);
         this.setSpecies(null);
@@ -2115,7 +2114,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.updateButtonIcon(SettingKeyboard.Button_Cycle_Shiny, gamepadType, this.shinyIconElement, this.shinyLabel);
       }
       if (this.canCycleForm) {
-        this.updateButtonIcon( SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
+        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
       }
       if (this.canCycleGender) {
         this.updateButtonIcon(SettingKeyboard.Button_Cycle_Gender, gamepadType, this.genderIconElement, this.genderLabel);
