@@ -638,7 +638,7 @@ export default class GameInfoUiHandler extends UiHandler {
       const speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
       speciesLoaded.set(id, false);
 
-      const female = species.gender === 1;
+      const female = pkmn.gender === 1;
       species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
         speciesLoaded.set(id, true);
         pokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
