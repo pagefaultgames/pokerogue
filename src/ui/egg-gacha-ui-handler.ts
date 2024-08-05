@@ -332,7 +332,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     return Utils.fixedInt(delay);
   }
 
-  pull(pullCount: integer = 0, count: integer = 0, eggs: Egg[] = []): void {
+  pull(pullCount: integer = 0, count: integer = 0, eggs?: Egg[]): void {
     if (Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE && !count) {
       pullCount = Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE;
     }
@@ -342,10 +342,10 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     const doPull = () => {
       if (this.transitionCancelled) {
-        return this.showSummary(eggs);
+        return this.showSummary(eggs!);
       }
 
-      const egg = this.scene.add.sprite(127, 75, "egg", `egg_${eggs[count].getKey()}`);
+      const egg = this.scene.add.sprite(127, 75, "egg", `egg_${eggs![count].getKey()}`);
       egg.setScale(0.5);
 
       this.gachaContainers[this.gachaCursor].add(egg);
@@ -388,7 +388,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                           if (++count < pullCount) {
                             this.pull(pullCount, count, eggs);
                           } else {
-                            this.showSummary(eggs);
+                            this.showSummary(eggs!);
                           }
                         }
                       });
