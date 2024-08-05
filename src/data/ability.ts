@@ -525,7 +525,7 @@ export class PostDefendGulpMissileAbAttr extends PostDefendAbAttr {
     applyAbAttrs(BlockNonDirectDamageAbAttr, attacker, cancelled);
 
     if (!cancelled.value) {
-      attacker.damageAndUpdate(Math.floor(attacker.getMaxHp() * 1/4), HitResult.OTHER);
+      attacker.damageAndUpdate(Math.max(1, Math.floor(attacker.getMaxHp() / 4)), HitResult.OTHER);
     }
 
     if (battlerTag.tagType === BattlerTagType.GULP_MISSILE_ARROKUDA) {

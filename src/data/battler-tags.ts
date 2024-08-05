@@ -1648,7 +1648,7 @@ export class StockpilingTag extends BattlerTag {
 }
 
 /**
- * Battler tag for Gulp Missile. This is mainly use in triggering Cramorant's form changes.
+ * Battler tag for Gulp Missile used by Cramorant.
  * @extends BattlerTag
  */
 export class GulpMissileTag extends BattlerTag {
@@ -1662,29 +1662,21 @@ export class GulpMissileTag extends BattlerTag {
    * @returns Whether the BattlerTag can be added.
    */
   canAdd(pokemon: Pokemon): boolean {
-    const isSurfOrDive= [ Moves.SURF, Moves.DIVE ].includes(this.sourceMove);
-    return isSurfOrDive && !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA) && !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
+    const isSurfOrDive = [ Moves.SURF, Moves.DIVE ].includes(this.sourceMove);
+    const isNormalForm = pokemon.formIndex === 0 && !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA) && !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
+    const isCramorant = pokemon.species.speciesId === Species.CRAMORANT;
+
+    return isSurfOrDive && isNormalForm && isCramorant;
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
-    this.triggerFormChange(pokemon);
+    pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
-    this.triggerFormChange(pokemon);
-  }
-
-  /**
-   * Triggers the form change when the Pokemon is Cramorant
-   * @param {Pokemon} pokemon The Pokemon with Gulp Missile ability
-   */
-  triggerFormChange(pokemon: Pokemon): void {
-    const gulpTags = [ BattlerTagType.GULP_MISSILE_ARROKUDA, BattlerTagType.GULP_MISSILE_PIKACHU ];
-    if (pokemon.species.speciesId === Species.CRAMORANT && gulpTags.includes(this.tagType)) {
-      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
-    }
+    pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
   }
 }
 
