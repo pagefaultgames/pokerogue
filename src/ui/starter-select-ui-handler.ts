@@ -70,7 +70,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "38px",
   },
   "de":{
-    starterInfoTextSize: "56px",
+    starterInfoTextSize: "48px",
     instructionTextSize: "35px",
   },
   "es":{
