@@ -146,11 +146,6 @@ export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraSty
   case TextStyle.SETTINGS_LABEL:
   case TextStyle.SETTINGS_LOCKED:
   case TextStyle.SETTINGS_SELECTED:
-    shadowXpos = 3;
-    shadowYpos = 3;
-    if (i18next.resolvedLanguage === "ja") {
-      styleOptions.fontSize = 116;
-    }
     break;
   case TextStyle.BATTLE_INFO:
   case TextStyle.MONEY:
