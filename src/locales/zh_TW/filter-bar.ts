@@ -4,7 +4,7 @@ export const filterBar: SimpleTranslationEntries = {
   "genFilter": "世代",
   "typeFilter": "屬性",
   "dexFilter": "Dex",
-  "unlocksFilter": "解鎖",
+  "caughtFilter": "解鎖",
   "miscFilter": "混合",
   "sortFilter": "排序",
   "all": "全部",
