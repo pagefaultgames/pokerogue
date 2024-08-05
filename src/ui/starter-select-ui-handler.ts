@@ -2154,7 +2154,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const fitsPassive = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(unlocks => {
         if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.ON) {
           return isPassiveUnlocked;
-        } else if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.ON) {
         } else if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.EXCLUDE) {
           return !isPassiveUnlocked;
         } else if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.OFF) {
