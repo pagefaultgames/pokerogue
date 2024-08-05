@@ -508,6 +508,7 @@ export class DropDown extends Phaser.GameObjects.Container {
   public resetToDefault(): void {
     if (this.defaultSettings.length > 0) {
       this.setCursor(this.defaultCursor);
+      this.lastDir = SortDirection.ASC;
 
       for (let i = 0; i < this.options.length; i++) {
         // reset values with the defaultValues
