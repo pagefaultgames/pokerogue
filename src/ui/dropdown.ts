@@ -465,7 +465,7 @@ export class DropDown extends Phaser.GameObjects.Container {
    * - the settings dictionary is like this { val: any, state: DropDownState, cursor: boolean, dir: SortDirection }
    */
   private getSettings(): any[] {
-    const settings = [];
+    const settings : any[] = [];
     for (let i = 0; i < this.options.length; i++) {
       settings.push({ val: this.options[i].val, state: this.options[i].state , cursor: (this.cursor === i), dir: this.options[i].dir });
     }
