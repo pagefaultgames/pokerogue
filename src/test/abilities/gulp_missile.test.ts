@@ -15,13 +15,25 @@ import { SPLASH_ONLY } from "../utils/testUtils";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
 import { GulpMissileTag } from "#app/data/battler-tags.js";
+import Pokemon from "#app/field/pokemon.js";
 
 describe("Abilities - Gulp Missile", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+
   const NORMAL_FORM = 0;
   const GULPING_FORM = 1;
   const GORGING_FORM = 2;
+
+  /**
+   * Gets the effect damage of Gulp Missile
+   * See Gulp Missile {@link https://bulbapedia.bulbagarden.net/wiki/Gulp_Missile_(Ability)}
+   * @param {Pokemon} pokemon The pokemon taking the effect damage.
+   * @returns The effect damage of Gulp Missile
+   */
+  const getEffectDamage = (pokemon: Pokemon): number => {
+    return Math.max(Math.floor(pokemon.getMaxHp() * 1/4));
+  };
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -82,7 +94,7 @@ describe("Abilities - Gulp Missile", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(enemy.damageAndUpdate).toHaveReturnedWith(Math.floor(enemy.getMaxHp() * 1/4));
+    expect(enemy.damageAndUpdate).toHaveReturnedWith(getEffectDamage(enemy));
   });
 
   it("does not have any effect when hit by non-damaging attack", async () => {
@@ -122,7 +134,7 @@ describe("Abilities - Gulp Missile", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(enemy.damageAndUpdate).toHaveReturnedWith(Math.floor(enemy.getMaxHp() * 1/4));
+    expect(enemy.damageAndUpdate).toHaveReturnedWith(getEffectDamage(enemy));
     expect(enemy.summonData.battleStats[BattleStat.DEF]).toBe(-1);
     expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeUndefined();
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
@@ -146,7 +158,7 @@ describe("Abilities - Gulp Missile", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(enemy.damageAndUpdate).toHaveReturnedWith(Math.floor(enemy.getMaxHp() * 1/4));
+    expect(enemy.damageAndUpdate).toHaveReturnedWith(getEffectDamage(enemy));
     expect(enemy.status.effect).toBe(StatusEffect.PARALYSIS);
     expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_PIKACHU)).toBeUndefined();
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
