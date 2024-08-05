@@ -288,11 +288,11 @@ export const trainerNames: SimpleTranslationEntries = {
   "cyrus": "Zyrus",
   "ghetsis": "G-Cis",
   "lysandre": "Flordelis",
-  "faba": "Faba",
+  "faba": "Fabian",
   "lusamine": "Samantha",
-  "plumeria": "Plumeria",
+  "plumeria": "Fran",
   "guzma": "Bromley",
-  "oleana": "Oleana",
+  "oleana": "Olivia",
   "rose": "Rose",
 
   // Double Names
