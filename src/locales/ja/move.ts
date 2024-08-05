@@ -671,7 +671,7 @@ export const move: MoveTranslationEntries = {
   },
   thief: {
     name: "どろぼう",
-    effect: "The user attacks and has a 30% chance to steal the target's held item simultaneously."
+    effect: "攻撃と 同時に 道具を 盗む。自分が 道具を 持っている 場合は 盗めない。"
   },
   spiderWeb: {
     name: "クモのす",
@@ -1371,7 +1371,7 @@ export const move: MoveTranslationEntries = {
   },
   covet: {
     name: "ほしがる",
-    effect: "The user endearingly approaches the target, then has a 30% chance to steal the target's held item."
+    effect: "かわいく あまえながら 相手に ちかづき 持っている 道具を うばう。"
   },
   voltTackle: {
     name: "ボルテッカー",
@@ -2775,7 +2775,7 @@ export const move: MoveTranslationEntries = {
   },
   auroraVeil: {
     name: "オーロラベール",
-    effect: "This move reduces damage from physical and special moves for five turns. This can be used only when it is snowing."
+    effect: "5ターンの 間 物理と 特殊の ダメージを 弱める。 ゆきの 時しか 出すことが できない。"
   },
   sinisterArrowRaid: {
     name: "シャドーアローズストライク",
@@ -2891,7 +2891,7 @@ export const move: MoveTranslationEntries = {
   },
   lightThatBurnsTheSky: {
     name: "てんこがすめつぼうのひかり",
-    effect: "This attack inflicts Attack or Sp. Atk damage—whichever stat is higher for the user, Necrozma. This move ignores the target's Ability."
+    effect: "ネクロズマが 相手の 特性の 効果を 無視して 攻撃と 特攻の 高い方で ダメージを 与える。"
   },
   searingSunrazeSmash: {
     name: "サンシャインスマッシャー",
@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "ダイマックスほう",
-    effect: "The user unleashes a strong beam from its core. This move deals twice the damage if the target is over level 200."
+    effect: "体内で 凝縮した エネルギーを コアから 放って 攻撃する。"
   },
   snipeShot: {
     name: "ねらいうち",
@@ -3123,11 +3123,11 @@ export const move: MoveTranslationEntries = {
   },
   behemothBlade: {
     name: "きょじゅうざん",
-    effect: "The user wields a large, powerful sword using its whole body and cuts the target in a vigorous attack."
+    effect: "全身で 強大な剣を 振りかざし 勢いよく 切りかかって 攻撃する。"
   },
   behemothBash: {
     name: "きょじゅうだん",
-    effect: "The user's body becomes a firm shield and slams into the target fiercely."
+    effect: "全身を 強固な盾へと 変化させ 勢いよく ぶつかって 攻撃する。"
   },
   auraWheel: {
     name: "オーラぐるま",
@@ -3307,403 +3307,403 @@ export const move: MoveTranslationEntries = {
   },
   direClaw: {
     name: "フェイタルクロー",
-    effect: "The user lashes out at the target with ruinous claws. This may also leave the target poisoned, paralyzed, or asleep."
+    effect: "破滅的なツメで 攻撃する。 相手を どく まひ ねむりの いずれかの状態に することも ある。"
   },
   psyshieldBash: {
     name: "バリアーラッシュ",
-    effect: "Cloaking itself in psychic energy, the user slams into the target. This also boosts the user's Defense stat."
+    effect: "思念のエネルギーを まといながら 相手に ぶつかっていく。 自分の 防御を あげる。"
   },
   powerShift: {
     name: "パワーシフト",
-    effect: "The user swaps its Attack and Defense stats."
+    effect: "自分の 攻撃と防御を 入れ替える。"
   },
   stoneAxe: {
     name: "がんせきアックス",
-    effect: "The user swings its stone axes at the target. Stone splinters left behind by this attack float around the target."
+    effect: "岩の斧で 攻撃する。 ばらまかれた 岩の破片が 相手の 周りに 浮かぶ。"
   },
   springtideStorm: {
     name: "はるのあらし",
-    effect: "The user attacks by wrapping opposing Pokémon in fierce winds brimming with love and hate. This may also lower their Attack stats."
+    effect: "愛憎 入りまじった 強烈な風で 相手を 包みこんで 攻撃する。 相手の 攻撃を さげることが ある。"
   },
   mysticalPower: {
     name: "しんぴのちから",
-    effect: "The user attacks by emitting a mysterious power. This also boosts the user's Sp. Atk stat."
+    effect: "不思議な力を 放出して 攻撃する。 自分の 特攻が あがる。"
   },
   ragingFury: {
     name: "だいふんげき",
-    effect: "The user rampages around spewing flames for two to three turns. The user then becomes confused."
+    effect: "2-3ターンの 間 炎を 放ちながら 暴れまわる。 暴れたあとは 混乱する。"
   },
   waveCrash: {
     name: "ウェーブタックル",
-    effect: "The user shrouds itself in water and slams into the target with its whole body to inflict damage. This also damages the user quite a lot."
+    effect: "水を まといつつ 全身で 相手に ぶつかるが 自分も かなりの ダメージ を受ける。"
   },
   chloroblast: {
     name: "クロロブラスト",
-    effect: "The user launches its amassed chlorophyll to inflict damage on the target. This also damages the user."
+    effect: "自身の 葉緑素を 集約し 放出して 攻撃する。 自分も ダメージを 受けてしまう。"
   },
   mountainGale: {
     name: "ひょうざんおろし",
-    effect: "The user hurls giant chunks of ice at the target to inflict damage. This may also make the target flinch."
+    effect: "氷山のような 大きな 氷塊を ぶつけて 攻撃する。 相手を ひるませることが ある。"
   },
   victoryDance: {
     name: "しょうりのまい",
-    effect: "The user performs an intense dance to usher in victory, boosting its Attack, Defense, and Speed stats."
+    effect: "勝利を 呼びこむ 舞を 激しく 踊って 自分の 攻撃と 防御と 素早さを あげる。"
   },
   headlongRush: {
     name: "ぶちかまし",
-    effect: "The user smashes into the target in a full-body tackle. This also lowers the user's Defense and Sp. Def stats."
+    effect: "全身全霊の たいあたりを くらわせる。 自分の 防御と 特防が さがる。"
   },
   barbBarrage: {
     name: "どくばりセンボン",
-    effect: "The user launches countless toxic barbs to inflict damage. This may also poison the target. This move's power is doubled if the target is already poisoned."
+    effect: "無数の毒針で 相手を 毒状態に することもある。 相手が 毒状態だと 威力は 2倍になる。"
   },
   esperWing: {
     name: "オーラウイング",
-    effect: "The user slashes the target with aura-enriched wings. This also boosts the user's Speed stat. This move has a heightened chance of landing a critical hit."
+    effect: "オーラで 強化した翼で 切り裂く。 急所に 当たりやすい。 自分の 素早さを あげる。"
   },
   bitterMalice: {
     name: "うらみつらみ",
-    effect: "The user attacks the target with spine-chilling resentment. This also lowers the target's Attack stat."
+    effect: "背筋が 凍るような 怨念で 攻撃して 相手の 攻撃を さげる。"
   },
   shelter: {
     name: "たてこもる",
-    effect: "The user makes its skin as hard as an iron shield, sharply boosting its Defense stat."
+    effect: "皮膚を 鉄の盾のように 硬くすることで 自分の 防御を ぐーんと あげる。"
   },
   tripleArrows: {
     name: "３ぼんのや",
-    effect: "The user kicks, then fires three arrows. This move has a heightened chance of landing a critical hit and may also lower the target's Defense stat or make it flinch."
+    effect: "足技のあと 3本の矢を 同時に放つ。 相手の 防御を さげたり ひるませることが ある。 急所に 当たりやすい。"
   },
   infernalParade: {
     name: "ひゃっきやこう",
-    effect: "The user attacks with myriad fireballs. This may also leave the target with a burn. This move's power is doubled if the target has a status condition."
+    effect: "無数の火の玉で 攻撃して やけど状態に することが ある。 相手が 状態異常だと 威力は 2倍。"
   },
   ceaselessEdge: {
     name: "ひけん・ちえなみ",
-    effect: "The user slashes its shell blade at the target. Shell splinters left behind by this attack remain scattered under the target as spikes."
+    effect: "貝殻の剣で 攻撃する。 ばらまかれた 貝殻の破片は 相手の 足下に まきびし となって 散らばる。"
   },
   bleakwindStorm: {
     name: "こがらしあらし",
-    effect: "The user attacks with savagely cold winds that cause both body and spirit to tremble. This may also lower the Speed stats of opposing Pokémon."
+    effect: "身も心も 震える 冷たく 激しい風で 攻撃する。 相手の 素早さを さげることが ある。"
   },
   wildboltStorm: {
     name: "かみなりあらし",
-    effect: "The user summons a thunderous tempest and savagely attacks with lightning and wind. This may also leave opposing Pokémon with paralysis."
+    effect: "嵐を 起こし 雷雲を 呼びよせ 雷と風で 激しく 攻撃をする。 相手を まひ状態に することもある。"
   },
   sandsearStorm: {
     name: "ねっさのあらし",
-    effect: "The user attacks by wrapping opposing Pokémon in fierce winds and searingly hot sand. This may also leave them with a burn."
+    effect: "熱く焼けた砂と 強烈な風で 包みこんで 攻撃する。 相手を やけど状態に することがある。"
   },
   lunarBlessing: {
     name: "みかづきのいのり",
-    effect: "The user receives a blessing from the crescent moon, restoring HP and curing status conditions for itself and its ally Pokémon currently in the battle."
+    effect: "みかづきに いのりを ささげて 自分と 場にいる 味方の HPと 状態を 回復する。"
   },
   takeHeart: {
     name: "ブレイブチャージ",
-    effect: "The user lifts its spirits, curing its own status conditions and boosting its Sp. Atk and Sp. Def stats."
+    effect: "心を 奮わせて 自分の 状態異常を 治し さらには 特攻と 特防を あげる。"
   },
   gMaxWildfire: {
     name: "キョダイゴクエン",
-    effect: "A Fire-type attack that Gigantamax Charizard use. This move continues to deal damage to opponents for four turns."
+    effect: "キョダイマックスした リザードンが 繰りだす ほのおタイプの 攻撃。 4ターンの 間 ダメージを 与える。"
   },
   gMaxBefuddle: {
     name: "キョダイコワク",
-    effect: "A Bug-type attack that Gigantamax Butterfree use. This move inflicts the poisoned, paralyzed, or asleep status condition on opponents."
+    effect: "キョダイマックスした バタフリーが 繰り出す むしタイプの 攻撃。 毒・まひ・眠りの どれかに する。"
   },
   gMaxVoltCrash: {
     name: "キョダイバンライ",
-    effect: "An Electric-type attack that Gigantamax Pikachu use. This move paralyzes opponents."
+    effect: "キョダイマックスした ピカチュウが 繰りだす でんきタイプの 攻撃。 相手を まひ状態に する。"
   },
   gMaxGoldRush: {
     name: "キョダイコバン",
-    effect: "A Normal-type attack that Gigantamax Meowth use. This move confuses opponents and also earns extra money."
+    effect: "キョダイマックスした ニャースが 繰り出す ノーマルタイプの 攻撃。 相手を 混乱させ お金も もらえる。"
   },
   gMaxChiStrike: {
     name: "キョダイシンゲキ",
-    effect: "A Fighting-type attack that Gigantamax Machamp use. This move raises the chance of critical hits."
+    effect: "キョダイマックスした カイリキーが 繰りだす かくとうタイプの 攻撃。 急所に 当たりやすく なる。"
   },
   gMaxTerror: {
     name: "キョダイゲンエイ",
-    effect: "A Ghost-type attack that Gigantamax Gengar use. This Pokémon steps on the opposing Pokémon's shadow to prevent them from escaping."
+    effect: "キョダイマックスした ゲンガーが 繰りだす ゴーストタイプの 攻撃。 影を 踏み 交代 できなくする。"
   },
   gMaxResonance: {
     name: "キョダイセンリツ",
-    effect: "An Ice-type attack that Gigantamax Lapras use. This move reduces the damage received for five turns."
+    effect: "キョダイマックスした ラプラスが 繰りだす こおりタイプの 攻撃。 5ターンの 間 ダメージを 弱める。"
   },
   gMaxCuddle: {
     name: "キョダイホーヨー",
-    effect: "A Normal-type attack that Gigantamax Eevee use. This move infatuates opponents."
+    effect: "キョダイマックスした イーブイが 繰りだす ノーマルタイプの 攻撃。 相手を メロメロに する。"
   },
   gMaxReplenish: {
     name: "キョダイサイセイ",
-    effect: "A Normal-type attack that Gigantamax Snorlax use. This move restores Berries that have been eaten."
+    effect: "キョダイマックスした カビゴンが 繰りだす ノーマルタイプの 攻撃。 食べた きのみを 再生する。"
   },
   gMaxMalodor: {
     name: "キョダイシュウキ",
-    effect: "A Poison-type attack that Gigantamax Garbodor use. This move poisons opponents."
+    effect: "キョダイマックスした ダストダスが 繰りだす どくタイプの 攻撃。 相手を 毒 状態に する。"
   },
   gMaxStonesurge: {
     name: "キョダイガンジン",
-    effect: "A Water-type attack that Gigantamax Drednaw use. This move scatters sharp rocks around the field."
+    effect: "キョダイマックスした カジリガメが 繰りだす みずタイプの 攻撃。 鋭い 無数の 岩を ばらまく。"
   },
   gMaxWindRage: {
     name: "キョダイフウゲキ",
-    effect: "A Flying-type attack that Gigantamax Corviknight use. This move removes the effects of moves like Reflect and Light Screen."
+    effect: "キョダイマックスした アーマーガアが 繰りだす ひこうタイプの 攻撃。 リフレクターや ひかりのかべを 消し去る。"
   },
   gMaxStunShock: {
     name: "キョダイカンデン",
-    effect: "An Electric-type attack that Gigantamax Toxtricity use. This move poisons or paralyzes opponents."
+    effect: "キョダイマックスした ストリンダーが 繰り出す でんきタイプの 攻撃。 相手を 毒 か まひ どちらかにする。"
   },
   gMaxFinale: {
     name: "キョダイダンエン",
-    effect: "A Fairy-type attack that Gigantamax Alcremie use. This move heals the HP of allies."
+    effect: "キョダイマックスした マホイップが 繰りだす フェアリータイプの 攻撃。 味方の HPを 回復する。"
   },
   gMaxDepletion: {
     name: "キョダイゲンスイ",
-    effect: "A Dragon-type attack that Gigantamax Duraludon use. Reduces the PP of the last move used."
+    effect: "キョダイマックスした ジュラルドンが 繰りだす ドラゴンタイプの 攻撃。 最後に 使われた わざPPを 減らす。"
   },
   gMaxGravitas: {
     name: "キョダイテンドウ",
-    effect: "A Psychic-type attack that Gigantamax Orbeetle use. This move changes gravity for five turns."
+    effect: "キョダイマックスした イオルブが 繰りだす エスパータイプの 攻撃。 5ターンの 間 重力が 変わる。"
   },
   gMaxVolcalith: {
     name: "キョダイフンセキ",
-    effect: "A Rock-type attack that Gigantamax Coalossal use. This move continues to deal damage to opponents for four turns."
+    effect: "キョダイマックスした セキタンザンが 繰りだす いわタイプの 攻撃。 4ターンの 間 ダメージを 与える。"
   },
   gMaxSandblast: {
     name: "キョダイサジン",
-    effect: "A Ground-type attack that Gigantamax Sandaconda use. Opponents are trapped in a raging sandstorm for four to five turns."
+    effect: "キョダイマックスした サダイジャが 繰りだす じめんタイプの 攻撃。 4－5ターンの間 砂が 吹き荒れる。"
   },
   gMaxSnooze: {
     name: "キョダイスイマ",
-    effect: "A Dark-type attack that Gigantamax Grimmsnarl use. The user lets loose a huge yawn that lulls the targets into falling asleep on the next turn."
+    effect: "キョダイマックスした オーロンゲが 繰りだす あくタイプの 攻撃。 大きな あくびで 眠気を 誘う。"
   },
   gMaxTartness: {
     name: "キョダイサンゲキ",
-    effect: "A Grass-type attack that Gigantamax Flapple use. This move reduces the opponents' evasiveness."
+    effect: "キョダイマックスした アップリューが 繰りだす くさタイプの 攻撃。 相手の 回避率を 下げる。"
   },
   gMaxSweetness: {
     name: "キョダイカンロ",
-    effect: "A Grass-type attack that Gigantamax Appletun use. This move heals the status conditions of allies."
+    effect: "キョダイマックスした タルップルが 繰りだす くさタイプの 攻撃。 味方の 状態異常を 回復する。"
   },
   gMaxSmite: {
     name: "キョダイテンバツ",
-    effect: "A Fairy-type attack that Gigantamax Hatterene use. This move confuses opponents."
+    effect: "キョダイマックスした ブリムオンが 繰りだす フェアリータイプの 攻撃。 相手を 混乱させる。"
   },
   gMaxSteelsurge: {
     name: "キョダイコウジン",
-    effect: "A Steel-type attack that Gigantamax Copperajah use. This move scatters sharp spikes around the field."
+    effect: "キョダイマックスした ダイオウドウが 繰りだす タイプの 攻撃。 鋭い 無数の とげを ばらまく。"
   },
   gMaxMeltdown: {
     name: "キョダイユウゲキ",
-    effect: "A Steel-type attack that Gigantamax Melmetal use. This move makes opponents incapable of using the same move twice in a row."
+    effect: "キョダイマックスした メルメタルが 繰りだす はがねタイプの 攻撃。 同じ 技を 連続で 出せなくする。"
   },
   gMaxFoamBurst: {
     name: "キョダイホウマツ",
-    effect: "A Water-type attack that Gigantamax Kingler use. This move harshly lowers the Speed of opponents."
+    effect: "キョダイマックスした キングラーが 繰りだす みずタイプの 攻撃。 相手の 素早さを がくっと さげる。"
   },
   gMaxCentiferno: {
     name: "キョダイヒャッカ",
-    effect: "A Fire-type attack that Gigantamax Centiskorch use. This move traps opponents in flames for four to five turns."
+    effect: "キョダイマックスした マルヤクデが 繰りだす ほのおタイプの 攻撃。 4－5ターンの間 炎に 閉じこめる。"
   },
   gMaxVineLash: {
     name: "キョダイベンタツ",
-    effect: "A Grass-type attack that Gigantamax Venusaur use. This move continues to deal damage to opponents for four turns."
+    effect: "キョダイマックスした フシギバナが 繰りだす くさタイプの 攻撃。 4ターンの 間 ダメージを 与える。"
   },
   gMaxCannonade: {
     name: "キョダイホウゲキ",
-    effect: "A Water-type attack that Gigantamax Blastoise use. This move continues to deal damage to opponents for four turns."
+    effect: "キョダイマックスした カメックスが 繰りだす みずタイプの 攻撃。 4ターンの 間 ダメージを 与える。"
   },
   gMaxDrumSolo: {
     name: "キョダイコランダ",
-    effect: "A Grass-type attack that Gigantamax Rillaboom use. This move can be used on the target regardless of its Abilities."
+    effect: "キョダイマックスした ゴリランダーが 繰りだす くさタイプの 攻撃。 相手の 特性に ジャマされない。"
   },
   gMaxFireball: {
     name: "キョダイカキュウ",
-    effect: "A Fire-type attack that Gigantamax Cinderace use. This move can be used on the target regardless of its Abilities."
+    effect: "キョダイマックスした エースバーンが 繰りだす ほのおタイプの 攻撃。 相手の 特性に ジャマされない。"
   },
   gMaxHydrosnipe: {
     name: "キョダイソゲキ",
-    effect: "A Water-type attack that Gigantamax Inteleon use. This move can be used on the target regardless of its Abilities."
+    effect: "キョダイマックスした インテレオンが 繰りだす みずタイプの 攻撃。 相手の 特性に ジャマされない。"
   },
   gMaxOneBlow: {
     name: "キョダイイチゲキ",
-    effect: "A Dark-type attack that Gigantamax Urshifu use. This single-strike move can ignore Max Guard."
+    effect: "キョダイマックスした ウーラオスが 繰りだす あくタイプの 攻撃。 ダイウォールを 無視できる 一撃。"
   },
   gMaxRapidFlow: {
     name: "キョダイレンゲキ",
-    effect: "A Water-type attack that Gigantamax Urshifu use. This rapid-strike move can ignore Max Guard."
+    effect: "キョダイマックスした ウーラオスが 繰りだす みずタイプの 攻撃。 ダイウォールを 無視できる 連撃。"
   },
   teraBlast: {
     name: "テラバースト",
-    effect: "If the user has Terastallized, it unleashes energy of its Tera Type. This move inflicts damage using the Attack or Sp. Atk stat-whichever is higher for the user."
+    effect: "テラスタルだと テラスタイプの エネルギーを 放出して 攻撃する。 攻撃と 特攻を 比べて 高いほうで ダメージを 与える。"
   },
   silkTrap: {
     name: "スレッドトラップ",
-    effect: "The user spins a silken trap, protecting itself from damage while lowering the Speed stat of any attacker that makes direct contact."
+    effect: "糸の罠を はりめぐらせる。 相手の 攻撃を 防ぐと 同時に 触れた 相手の 素早さを さげる。"
   },
   axeKick: {
     name: "かかとおとし",
-    effect: "The user attacks by kicking up into the air and slamming its heel down upon the target. This may also confuse the target. If it misses, the user takes damage instead."
+    effect: "蹴りあげた かかとを 落として 攻撃する。 相手を 混乱させることが ある。 はずすと 自分が ダメージを 受ける。"
   },
   lastRespects: {
     name: "おはかまいり",
-    effect: "The user attacks to avenge its allies. The more defeated allies there are in the user's party, the greater the move's power."
+    effect: "仲間の 無念を 晴らすため 攻撃する。 倒された 味方のポケモンが 多いほど 技の 威力が 増える。"
   },
   luminaCrash: {
     name: "ルミナコリジョン",
-    effect: "The user attacks by unleashing a peculiar light that even affects the mind. This also harshly lowers the target's Sp. Def stat."
+    effect: "精神にも 作用する 奇妙な光を 放って 攻撃する。 相手の 特防を がくっと さげる。"
   },
   orderUp: {
     name: "いっちょうあがり",
-    effect: "The user attacks with elegant poise. If the user has a Tatsugiri in its mouth, this move boosts one of the user's stats based on the Tatsugiri's form."
+    effect: "いなせな 身のこなしで 攻撃。 口の中に シャリタツが いると そのすがたによって 能力が あがる。"
   },
   jetPunch: {
     name: "ジェットパンチ",
-    effect: "The user summons a torrent around its fist and punches at blinding speed. This move always goes first."
+    effect: "激流を こぶしに まとって 目にも 留まらぬ パンチを くりだす。 必ず 先制攻撃 できる。"
   },
   spicyExtract: {
     name: "ハバネロエキス",
-    effect: "The user emits an incredibly spicy extract, sharply boosting the target's Attack stat and harshly lowering the target's Defense stat."
+    effect: "とんでもなく 辛いエキスを 出す。 相手の 攻撃が ぐーんと あがり 防御が がくっと さがる。"
   },
   spinOut: {
     name: "ホイールスピン",
-    effect: "The user spins furiously by straining its legs, inflicting damage on the target. This also harshly lowers the user's Speed stat."
+    effect: "足に 負荷を かけることにより 激しく 回転して ダメージを 与える。 自分の 素早さが がくっと さがる。"
   },
   populationBomb: {
     name: "ネズミざん",
-    effect: "The user's fellows gather in droves to perform a combo attack that hits the target one to ten times in a row."
+    effect: "仲間たちが わらわらと 集まって コンビネーションで 攻撃を 与えていく。 1-10回の 間 連続で あたる。"
   },
   iceSpinner: {
     name: "アイススピナー",
-    effect: "The user covers its feet in thin ice and twirls around, slamming into the target. This move's spinning motion also destroys the terrain."
+    effect: "足に 薄い氷を まとい クルクルと 回りながら ぶつかる。 回転の 動きによって フィールドを 壊す。"
   },
   glaiveRush: {
     name: "きょけんとつげき",
-    effect: "The user throws its entire body into a reckless charge. After this move is used, attacks on the user cannot miss and will inflict double damage until the user's next turn."
+    effect: "体を 投げだす 無謀な突撃。 技のあと 相手からの 攻撃は 必ず 命中し ダメージが 2倍に なってしまう。"
   },
   revivalBlessing: {
     name: "さいきのいのり",
-    effect: "The user bestows a loving blessing, reviving a party Pokémon that has fainted and restoring half that Pokémon's max HP."
+    effect: "慈愛の心で いのることにより 控えにいる ひんしの ポケモンを HPを 半分の状態で 復活させる。"
   },
   saltCure: {
     name: "しおづけ",
-    effect: "The user salt cures the target, inflicting damage every turn. Steel and Water types are more strongly affected by this move."
+    effect: "相手を しおづけ状態に して 毎ターン ダメージを 与える。 はがね みずタイプは より 苦しむ。"
   },
   tripleDive: {
     name: "トリプルダイブ",
-    effect: "The user performs a perfectly timed triple dive, hitting the target with splashes of water three times in a row."
+    effect: "息のあった 飛びこみを することで 相手に 水しぶきを あてる。 3回連続で ダメージを 与える。"
   },
   mortalSpin: {
     name: "キラースピン",
-    effect: "The user performs a spin attack that can also eliminate the effects of such moves as Bind, Wrap, and Leech Seed. This also poisons opposing Pokémon."
+    effect: "回転して 相手を 攻撃する。 しめつける まきつく やどりぎのタネ など 吹きとばす。 相手を 毒状態に する。"
   },
   doodle: {
     name: "うつしえ",
-    effect: "The user captures the very essence of the target in a sketch. This changes the Abilities of the user and its ally Pokémon to that of the target."
+    effect: "相手の本質を とらえて うつしだし 自分と 味方を 相手と 同じ 特性に 変化させる。"
   },
   filletAway: {
     name: "みをけずる",
-    effect: "The user sharply boosts its Attack, Sp. Atk, and Speed stats by using its own HP."
+    effect: "自分の HPを けずって 自分の 攻撃と 特攻と 素早さを ぐーんと あげる。"
   },
   kowtowCleave: {
     name: "ドゲザン",
-    effect: "The user slashes at the target after kowtowing to make the target let down its guard. This attack never misses."
+    effect: "土下座して 相手を 油断させておいて 切りかかる。 攻撃は 必ず 命中する。"
   },
   flowerTrick: {
     name: "トリックフラワー",
-    effect: "The user throws a rigged bouquet of flowers at the target. This attack never misses and always lands a critical hit."
+    effect: "細工がある 花たばを 相手に 投げて 攻撃する。 必ず 命中して 急所にも 当たる。"
   },
   torchSong: {
     name: "フレアソング",
-    effect: "The user blows out raging flames as if singing a song, scorching the target. This also boosts the user's Sp. Atk stat."
+    effect: "燃えたぎる 火炎を 歌うように 吹きつけて 相手を 焦がす。 自分の 特攻を あげる。"
   },
   aquaStep: {
     name: "アクアステップ",
-    effect: "The user toys with the target and attacks it using light and fluid dance steps. This also boosts the user's Speed stat."
+    effect: "水もしたたる かろやかな 足どりで 相手を 翻弄し ダメージを 与える。 自分の 素早さを あげる。"
   },
   ragingBull: {
     name: "レイジングブル",
-    effect: "The user performs a tackle like a raging bull. This move's type depends on the user's form. It can also break barriers, such as Light Screen and Reflect."
+    effect: "怒り狂う あばれうしの 猛烈な タックル。 フォルムで 技のタイプが 変わり ひかりのかべや リフレクターなども 破壊できる。"
   },
   makeItRain: {
     name: "ゴールドラッシュ",
-    effect: "The user attacks by throwing out a mass of coins. This also lowers the user's Sp. Atk stat. Money is earned after the battle."
+    effect: "大量のコインを ぶちまけて 攻撃。 自分の 特攻が さがる。 戦闘の あとで お金も もらえる。"
   },
   psyblade: {
     name: "サイコブレイド",
-    effect: "The user rends the target with an ethereal blade. This move's power is boosted by 50 percent if the user is on Electric Terrain."
+    effect: "実体のない刃で 相手を 切り裂く。 エレキフィールドに いるとき 技の威力が 1.5倍に なる。"
   },
   hydroSteam: {
     name: "ハイドロスチーム",
-    effect: "The user blasts the target with boiling-hot water. This move's power is not lowered in harsh sunlight but rather boosted by 50 percent."
+    effect: "煮えたぎる水を 勢いよく 浴びせる。 日差しが 強いとき 技の威力が さがるどころか 1.5倍になる。"
   },
   ruination: {
     name: "カタストロフィ",
-    effect: "The user summons a ruinous disaster. This cuts the target's HP in half."
+    effect: "破滅的な 災厄を 巻き起こし 相手の HPを 半分に する。"
   },
   collisionCourse: {
     name: "アクセルブレイク",
-    effect: "The user transforms and crashes to the ground, causing a massive prehistoric explosion. This move's power is boosted more than usual if it's a supereffective hit."
+    effect: "変形しながら 荒々しく 落下し いにしえの 大爆発を 引き起こす。 弱点をつくと さらに 威力が 増す。"
   },
   electroDrift: {
     name: "イナズマドライブ",
-    effect: "The user races forward at ultrafast speeds, piercing its target with futuristic electricity. This move's power is boosted more than usual if it's a supereffective hit."
+    effect: "変形しながら 超高速で 走行し 未知なる 電撃が 相手を つらぬく。 弱点をつくと さらに 威力が 増す。"
   },
   shedTail: {
     name: "しっぽきり",
-    effect: "The user creates a substitute for itself using its own HP before switching places with a party Pokémon in waiting."
+    effect: "自分の HPを 削って 分身を だしたあと もどってきて 控えの ポケモンと 入れ替わる。"
   },
   chillyReception: {
     name: "さむいギャグ",
-    effect: "The user tells a chillingly bad joke before switching places with a party Pokémon in waiting. This summons a snowstorm lasting five turns."
+    effect: "場を 凍らせる ギャグを 言い残し 控えの ポケモンと 入れ替わる。 5ターンの 間 ゆきを 降らす。"
   },
   tidyUp: {
     name: "おかたづけ",
-    effect: "The user tidies up and removes the effects of Spikes, Stealth Rock, Sticky Web, Toxic Spikes, and Substitute. This also boosts the user's Attack and Speed stats."
+    effect: "まきびし ステルスロック ねばねばネット どくびし みがわりを すべて かたづける。 自分の 攻撃と 素早さが あがる。"
   },
   snowscape: {
     name: "ゆきげしき",
-    effect: "The user summons a snowstorm lasting five turns. This boosts the Defense stats of Ice types."
+    effect: "5ターンの 間 ゆきを 降らせる。 こおりタイプの 防御が あがる。"
   },
   pounce: {
     name: "とびつく",
-    effect: "The user attacks by pouncing on the target. This also lowers the target's Speed stat."
+    effect: "相手に 飛びついて 攻撃する。 相手の 素早さを さげる。"
   },
   trailblaze: {
     name: "くさわけ",
-    effect: "The user attacks suddenly as if leaping out from tall grass. The user's nimble footwork boosts its Speed stat."
+    effect: "草むらから 飛びだすように 攻撃する。 軽快な 足どりに よって 自分の 素早さを あげる。"
   },
   chillingWater: {
     name: "ひやみず",
-    effect: "The user attacks the target by showering it with water that's so cold it saps the target's power. This also lowers the target's Attack stat."
+    effect: "相手の 元気を 失わせるくらい 冷たい水を 浴びせて 攻撃する。 相手の 攻撃を さげる。"
   },
   hyperDrill: {
     name: "ハイパードリル",
-    effect: "The user spins the pointed part of its body at high speed to pierce the target. This attack can hit a target using a move such as Protect or Detect."
+    effect: "とがった 体の部位を 急速に 回転させ つらぬく。 まもるや みきり なども 無視 できる。"
   },
   twinBeam: {
     name: "ツインビーム",
-    effect: "The user shoots mystical beams from its eyes to inflict damage. The target is hit twice in a row."
+    effect: "両目から 不可思議な 光線を 発射して 攻撃する。 2回連続で ダメージを 与える。"
   },
   rageFist: {
     name: "ふんどのこぶし",
-    effect: "The user converts its rage into energy to attack. The more times the user has been hit by attacks, the greater the move's power."
+    effect: "怒りを エネルギーに 変えて 攻撃。 受けた 攻撃の 回数が 多いほど 技の 威力が あがる。"
   },
   armorCannon: {
     name: "アーマーキャノン",
-    effect: "The user shoots its own armor out as blazing projectiles. This also lowers the user's Defense and Sp. Def stats."
+    effect: "みずからの ヨロイを 燃えたぎる 弾として 撃ち出して 攻撃する。 自分の 防御と 特防が さがる。"
   },
   bitterBlade: {
     name: "むねんのつるぎ",
-    effect: "The user focuses its bitter feelings toward the world of the living into a slashing attack. The user's HP is restored by up to half the damage taken by the target."
+    effect: "この世への 未練を 剣先に こめて 切りつける。 与えた ダメージの 半分の HPを 回復できる。"
   },
   doubleShock: {
     name: "でんこうそうげき",
-    effect: "The user discharges all the electricity from its body to perform a high-damage attack. After using this move, the user will no longer be Electric type."
+    effect: "全身の でんきを すべて 放って 大ダメージを 与える。 自分の でんきタイプが なくなる。"
   },
   gigatonHammer: {
     name: "デカハンマー",
-    effect: "The user swings its whole body around to attack with its huge hammer. This move can't be used twice in a row."
+    effect: "大きな ハンマーを 体ごと ぶんまわして 攻撃する。 この技は 2回連続で だせない。"
   },
   comeuppance: {
     name: "ほうふく",
@@ -3711,102 +3711,102 @@ export const move: MoveTranslationEntries = {
   },
   aquaCutter: {
     name: "アクアカッター",
-    effect: "The user expels pressurized water to cut at the target like a blade. This move has a heightened chance of landing a critical hit."
+    effect: "加圧された 水を 刃のように 噴射して 相手を 切り裂く。 急所に 当たりやすい。"
   },
   blazingTorque: {
     name: "バーンアクセル",
-    effect: "The user revs their blazing engine into the target. This may also leave the target with a burn."
+    effect: "The user revs their blazing engine into the target. This may also leave the target with a burn." // 説明文がゲームにない（NPC専用）
   },
   wickedTorque: {
     name: "ダークアクセル",
-    effect: "The user revs their engine into the target with malicious intent. This may put the target to sleep."
+    effect: "The user revs their engine into the target with malicious intent. This may put the target to sleep." // 説明文がゲームにない（NPC専用）
   },
   noxiousTorque: {
     name: "ポイズンアクセル",
-    effect: "The user revs their poisonous engine into the target. This may also poison the target."
+    effect: "The user revs their poisonous engine into the target. This may also poison the target." // 説明文がゲームにない（NPC専用）
   },
   combatTorque: {
     name: "ファイトアクセル",
-    effect: "The user revs their engine forcefully into the target. This may also leave the target with paralysis."
+    effect: "The user revs their engine forcefully into the target. This may also leave the target with paralysis." // 説明文がゲームにない（NPC専用）
   },
   magicalTorque: {
     name: "マジカルアクセル",
-    effect: "The user revs their fae-like engine into the target. This may also confuse the target."
+    effect: "The user revs their fae-like engine into the target. This may also confuse the target." // 説明文がゲームにない（NPC専用）
   },
   bloodMoon: {
     name: "ブラッドムーン",
-    effect: "The user unleashes the full brunt of its spirit from a full moon that shines as red as blood. This move can't be used twice in a row."
+    effect: "血のように 赤い満月から ありったけの 気迫を 撃ちだす。 この技は 2回連続で だせない。"
   },
   matchaGotcha: {
     name: "シャカシャカほう",
-    effect: "The user fires a blast of tea that it mixed. The user's HP is restored by up to half the damage taken by the target. This may also leave the target with a burn."
+    effect: "かきまぜた お茶の 大砲は 与えた ダメージの 半分を 回復して やけど状態に することも ある。"
   },
   syrupBomb: {
     name: "みずあめボム",
-    effect: "The user sets off an explosion of sticky candy syrup, which coats the target and causes the target's Speed stat to drop each turn for three turns."
+    effect: "ねっとりした みずあめを 爆発させ 相手を あめまみれ 状態にして 3ターンの間 素早さを さげ続ける。"
   },
   ivyCudgel: {
     name: "ツタこんぼう",
-    effect: "The user strikes with an ivy-wrapped cudgel. This move's type changes depending on the mask worn by the user, and it has a heightened chance of landing a critical hit."
+    effect: "ツタを まきつけた こん棒で なぐる。 かぶっている お面で タイプが 変わる。 急所に 当たりやすい。"
   },
   electroShot: {
     name: "エレクトロビーム",
-    effect: "The user gathers electricity on the first turn, boosting its Sp. Atk stat, then fires a high-voltage shot on the next turn. The shot will be fired immediately in rain."
+    effect: "1ターン目に 電気を 集めて 特攻が あがり 2ターン目に 高圧の 電気を 発射する。 天気が 雨のときは すぐに 発射できる。"
   },
   teraStarstorm: {
     name: "テラクラスター",
-    effect: "With the power of its crystals, the user bombards and eliminates the target. When used by Terapagos in its Stellar Form, this move damages all opposing Pokémon."
+    effect: "結晶の力を 照射し 敵を 排除する。 テラパゴスが ステラフォルムで 放つと すべての 相手に ダメージを 与える。"
   },
   fickleBeam: {
     name: "きまぐレーザー",
-    effect: "The user shoots a beam of light to inflict damage. Sometimes all the user's heads shoot beams in unison, doubling the move's power."
+    effect: "光線を 発射して 攻撃する。 ときどき ほかの首も 協力して レーザーを 放ち 威力が 2倍に なる。"
   },
   burningBulwark: {
     name: "かえんのまもり",
-    effect: "The user's intensely hot fur protects it from attacks and also burns any attacker that makes direct contact with it."
+    effect: "相手の 攻撃を 超高熱の 体毛で 防ぎ 同時に 触れた 相手に やけどを 与えてしまう。"
   },
   thunderclap: {
     name: "じんらい",
-    effect: "This move enables the user to attack first with a jolt of electricity. This move fails if the target is not readying an attack."
+    effect: "相手より 先に 電撃を 浴びせる。 相手が だす技が 攻撃技でないと 失敗する。"
   },
   mightyCleave: {
     name: "パワフルエッジ",
-    effect: "The user wields the light that has accumulated atop its head to cleave the target. This move hits even if the target protects itself."
+    effect: "頭部に 蓄積した 光で 切断する。 守りを 無視して 攻撃できる。"
   },
   tachyonCutter: {
     name: "タキオンカッター",
-    effect: "The user attacks by launching particle blades at the target twice in a row. This attack never misses."
+    effect: "粒子の刃を たて続けに 発射して 2回連続で ダメージを 与える。 攻撃は 必ず 命中する。"
   },
   hardPress: {
     name: "ハードプレス",
-    effect: "The target is crushed with an arm, a claw, or the like to inflict damage. The more HP the target has left, the greater the move's power."
+    effect: "腕やハサミで 相手を 圧迫する。 相手の HPが 残っているほど 威力が あがる。"
   },
   dragonCheer: {
     name: "ドラゴンエール",
-    effect: "The user raises its allies' morale with a draconic cry so that their future attacks have a heightened chance of landing critical hits. This rouses Dragon types more."
+    effect: "竜の鼓舞で 士気を 上げて 味方の技が 急所に 当たりやすくなる。 ドラゴンタイプだと より 鼓舞される。"
   },
   alluringVoice: {
     name: "みわくのボイス",
-    effect: "The user attacks the target using its angelic voice. This also confuses the target if its stats have been boosted during the turn."
+    effect: "天使のような 歌声で 相手を 攻撃。 そのターン 能力が あがった ポケモンを 混乱の 状態に する。"
   },
   temperFlare: {
     name: "やけっぱち",
-    effect: "Spurred by desperation, the user attacks the target. This move's power is doubled if the user's previous move failed."
+    effect: "自棄になった 勢いで 攻撃する。 前の ターンに 技を 外していると 威力が 倍に なる。"
   },
   supercellSlam: {
     name: "サンダーダイブ",
-    effect: "The user electrifies its body and drops onto the target to inflict damage. If this move misses, the user takes damage instead."
+    effect: "体を 帯電させ て相手に のしかかる。 はずすと 自分が ダメージを 受ける。"
   },
   psychicNoise: {
     name: "サイコノイズ",
-    effect: "The user attacks the target with unpleasant sound waves. For two turns, the target is prevented from recovering HP through moves, Abilities, or held items."
+    effect: "不快な音波を 相手に 浴びせて 攻撃。 2ターンの間 技や 特性や 持っている 道具によって HPを 回復できなくなる。"
   },
   upperHand: {
     name: "はやてがえし",
-    effect: "The user reacts to the target's movement and strikes with the heel of its palm, making the target flinch. This move fails if the target is not readying a priority move."
+    effect: "動きに 反応して 掌底を 打ちこみ 相手を ひるませる。 相手が だす技が 先制攻撃でないと 失敗する。"
   },
   malignantChain: {
     name: "じゃどくのくさり",
-    effect: "The user pours toxins into the target by wrapping them in a toxic, corrosive chain. This may also leave the target badly poisoned."
+    effect: "毒でできた鎖を 相手に 巻きつけ 毒素を 流しこんで 蝕む。 猛毒の 状態に することが ある。"
   },
 } as const;
