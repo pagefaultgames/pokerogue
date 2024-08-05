@@ -1192,6 +1192,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.setSpecies(null);
         this.filterBarCursor = 0;
         this.setFilterMode(true);
+        this.filterBar.toggleDropDown(this.filterBarCursor);
       }
     } else if (this.startCursorObj.visible) { // this checks to see if the start button is selected
       switch (button) {
