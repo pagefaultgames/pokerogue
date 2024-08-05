@@ -332,7 +332,7 @@ export default class GameManager {
   doRevivePokemon(pokemonIndex: number) {
     const party = this.scene.getParty();
     const candidate = new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0);
-    const modifier = candidate.type.newModifier(party[pokemonIndex]);
+    const modifier = candidate.type!.newModifier(party[pokemonIndex]);
     this.scene.addModifier(modifier, false);
   }
 }

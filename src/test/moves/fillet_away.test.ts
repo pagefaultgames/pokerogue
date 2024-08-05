@@ -46,7 +46,7 @@ describe("Moves - FILLET AWAY", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
@@ -64,7 +64,7 @@ describe("Moves - FILLET AWAY", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
@@ -86,7 +86,7 @@ describe("Moves - FILLET AWAY", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
 
       leadPokemon.summonData.battleStats[BattleStat.ATK] = 6;
@@ -107,7 +107,7 @@ describe("Moves - FILLET AWAY", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
       leadPokemon.hp = hpLost - PREDAMAGE;

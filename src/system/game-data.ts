@@ -80,7 +80,7 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
 export function encrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
     ? (data: string) => btoa(data)
-    : (data: string) => AES.encrypt(data, saveKey))(data);
+    : (data: string) => AES.encrypt(data, saveKey))(data) as unknown as string; // TODO: is this correct?
 }
 
 export function decrypt(data: string, bypassLogin: boolean): string {
@@ -407,7 +407,7 @@ export class GameData {
             }
 
             const cachedSystem = localStorage.getItem(`data_${loggedInUser?.username}`);
-            this.initSystem(response, cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : null).then(resolve);
+            this.initSystem(response, cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : undefined).then(resolve);
           });
       } else {
         this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)).then(resolve); // TODO: is this bang correct?
@@ -1277,7 +1277,7 @@ export class GameData {
         reader.onload = (_ => {
           return e => {
             let dataName: string;
-            let dataStr = AES.decrypt(e.target?.result?.toString(), saveKey).toString(enc.Utf8);
+            let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
             let valid = false;
             try {
               dataName = GameDataType[dataType].toLowerCase();
