@@ -126,6 +126,7 @@ export default class BattleScene extends SceneBase {
   public bgmVolume: number = 1;
   public fieldVolume: number = 1;
   public seVolume: number = 1;
+  public uiSoundEffects: boolean = true;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
