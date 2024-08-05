@@ -273,11 +273,9 @@ export abstract class Challenge {
    * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
    * @param dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
    * @param soft {@link boolean} If true, allow it if it could become a valid pokemon.
-   * @param checkEvolutions {@link boolean} If true, check the pokemon's future evolutions
-   * @param checkForms {@link boolean} If true, check the pokemon's alternative forms
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false, checkEvolutions?: boolean, checkForms?: boolean): boolean {
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
     return false;
   }
 
@@ -405,14 +403,13 @@ export class SingleGenerationChallenge extends Challenge {
     super(Challenges.SINGLE_GENERATION, 9);
   }
 
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false, checkEvolutions?: boolean): boolean {
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
     const generations = [pokemon.generation];
-    const checkPokemonEvolutions = checkEvolutions ?? true as boolean;
     if (soft) {
       const speciesToCheck = [pokemon.speciesId];
       while (speciesToCheck.length) {
         const checking = speciesToCheck.pop();
-        if (pokemonEvolutions.hasOwnProperty(checking) && checkPokemonEvolutions) {
+        if (pokemonEvolutions.hasOwnProperty(checking)) {
           pokemonEvolutions[checking].forEach(e => {
             speciesToCheck.push(e.speciesId);
             generations.push(getPokemonSpecies(e.speciesId).generation);
@@ -533,22 +530,20 @@ export class SingleTypeChallenge extends Challenge {
     super(Challenges.SINGLE_TYPE, 18);
   }
 
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false, checkEvolutions?: boolean, checkForms?: boolean): boolean {
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
     const speciesForm = getPokemonSpeciesForm(pokemon.speciesId, dexAttr.formIndex);
     const types = [speciesForm.type1, speciesForm.type2];
-    const checkPokemonEvolutions = checkEvolutions ?? true as boolean;
-    const checkPokemonForms = checkForms ?? true as boolean;
     if (soft) {
       const speciesToCheck = [pokemon.speciesId];
       while (speciesToCheck.length) {
         const checking = speciesToCheck.pop();
-        if (pokemonEvolutions.hasOwnProperty(checking) && checkPokemonEvolutions) {
+        if (pokemonEvolutions.hasOwnProperty(checking)) {
           pokemonEvolutions[checking].forEach(e => {
             speciesToCheck.push(e.speciesId);
             types.push(getPokemonSpecies(e.speciesId).type1, getPokemonSpecies(e.speciesId).type2);
           });
         }
-        if (pokemonFormChanges.hasOwnProperty(checking) && checkPokemonForms) {
+        if (pokemonFormChanges.hasOwnProperty(checking)) {
           pokemonFormChanges[checking].forEach(f1 => {
             getPokemonSpecies(checking).forms.forEach(f2 => {
               if (f1.formKey === f2.formKey) {
@@ -745,7 +740,7 @@ export class LowerStarterPointsChallenge extends Challenge {
  * @param soft {@link boolean} If true, allow it if it could become a valid pokemon.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_CHOICE, pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean, checkEvolutions?: boolean, checkForms?: boolean): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_CHOICE, pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean): boolean;
 /**
  * Apply all challenges that modify available total starter points.
  * @param gameMode {@link GameMode} The current gameMode
