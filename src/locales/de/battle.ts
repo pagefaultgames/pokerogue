@@ -155,7 +155,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} wurde durch {{moveName}} verletzt!",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} nimmt einen Teil seiner KP und legt einen Fluch auf {{pokemonName}}!",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} wurde durch den Fluch verletzt!",
-  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
+  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}} hortet {{stockpiledCount}}!",
   "battlerTagsHealBlock": "{{pokemonNameWithAffix}} kann nicht geheilt werden, da die Heilung blockiert wird!",
   "battlerTagsHealBlockOnRemove": "{{pokemonNameWithAffix}} kann wieder geheilt werden!",
 } as const;
