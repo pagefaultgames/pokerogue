@@ -184,10 +184,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "やすらぎのすず" },
 
-    "SCOPE_LENS": { name: "Scope Lens", description: "It's a lens for scoping out weak points. It boosts the holder's critical-hit ratio."},
-    "LEEK": { name: "Leek", description: "This very long and stiff stalk of leek boosts the critical-hit ratio of Farfetch'd's moves."},
+    "SCOPE_LENS": { name: "ピントレンズ", description: "弱点が 見える レンズ。持たせた ポケモンの技が 急所に 当たりやすくなる。"},
+    "LEEK": { name: "ながねぎ", description: "とても長くて 硬いクキ。カモネギに 持たせると 技が 急所に 当たりやすくなる。"},
 
-    "EVIOLITE": { name: "Eviolite", description: "This mysterious evolutionary lump boosts the Defense and Sp. Def stats when held by a Pokémon that can still evolve." },
+    "EVIOLITE": { name: "しんかのきせき", description: "進化の不思議な かたまり。持たせると 進化前ポケモンの 防御と 特防が あがる。" },
 
     "SOUL_DEW": { name: "こころのしずく", description: "ポケモンのせいかくがステータスにあたえるえいきょうを10%ふやす（合算）" },
 
@@ -247,10 +247,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_FUSED_CHANCE": { name: "フュージョントークン", description: "やせいのポケモンがフュージョンするかくりつを1%ふやす" },
   },
   SpeciesBoosterItem: {
-    "LIGHT_BALL": { name: "Light Ball", description: "It's a mysterious orb that boosts Pikachu's Attack and Sp. Atk stats." },
-    "THICK_CLUB": { name: "Thick Club", description: "This hard bone of unknown origin boosts Cubone or Marowak's Attack stat." },
-    "METAL_POWDER": { name: "Metal Powder", description: "Extremely fine yet hard, this odd powder boosts Ditto's Defense stat." },
-    "QUICK_POWDER": { name: "Quick Powder", description: "Extremely fine yet hard, this odd powder boosts Ditto's Speed stat." }
+    "LIGHT_BALL": { name: "でんきだま", description: "ピカチュウに 持たせると 攻撃と 特攻が あがる 不思議な玉。" },
+    "THICK_CLUB": { name: "ふといホネ", description: "なにかの 硬いホネ。カラカラ または ガラガラに 持たせると 攻撃が あがる。" },
+    "METAL_POWDER": { name: "メタルパウダー", description: "メタモンに 持たせると 防御が あがる 不思議な粉。とても こまかくて 硬い。" },
+    "QUICK_POWDER": { name: "スピードパウダー", description: "メタモンに 持たせると 素早さが あがる 不思議 粉。とても こまかくて 硬い。" }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "プラスパワー",
