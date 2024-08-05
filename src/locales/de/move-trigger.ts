@@ -55,6 +55,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "sacrificialFullRestore": "Das Heilopfer von {{pokemonName}} erreicht sein Ziel!",
   "invertStats": "Alle Statusveränderungen von {{pokemonName}} wurden invertiert!",
   "resetStats": "Die Statusveränderungen von {{pokemonName}} wurden aufgehoben!",
+  "statEliminated": "All stat changes were eliminated!",
   "faintCountdown": "{{pokemonName}} geht nach {{turnCount}} Runden K.O.!",
   "copyType": "{{pokemonName}} hat den Typ von {{targetPokemonName}} angenommen!",
   "suppressAbilities": "Die Fähigkeit von {{pokemonName}} wirkt nicht mehr!",

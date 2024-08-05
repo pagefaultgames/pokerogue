@@ -2705,7 +2705,7 @@ export class ResetStatsAttr extends MoveEffectAttr {
     const activePokemon = user.scene.getField(true);
     activePokemon.forEach(p => this.resetStats(p));
 
-    target.scene.queueMessage(i18next.t("moveTriggers:resetStats", {pokemonName: getPokemonNameWithAffix(target)}));
+    target.scene.queueMessage(i18next.t("moveTriggers:statEliminated"));
 
     return true;
   }
