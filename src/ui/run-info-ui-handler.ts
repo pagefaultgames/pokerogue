@@ -608,11 +608,15 @@ export default class GameInfoUiHandler extends UiHandler {
     //Thank you Hayuna for the code
     const endCard = this.scene.add.image(0, 0, `end_${this.scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}`);
     endCard.setOrigin(0);
+    endCard.setPosition(-1, -1);
     endCard.setScale(0.5);
-    const hofLayer = this.scene.add.rectangle(0, 0, endCard.width, endCard.height);
-    hofLayer.setFillStyle(0, 0.95);
+    const overlayColor = this.scene.gameData.gender === PlayerGender.FEMALE ? "red" : "blue";
+    const hallofFameBg = this.scene.add.image(0, 0, "hall_of_fame_"+overlayColor);
+    hallofFameBg.setPosition(159, 89);
+    hallofFameBg.setSize(this.scene.game.canvas.width, this.scene.game.canvas.height+10);
+    hallofFameBg.setAlpha(0.8);
     this.hallofFameContainer.add(endCard);
-    this.hallofFameContainer.add(hofLayer);
+    this.hallofFameContainer.add(hallofFameBg);
 
     const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText"), TextStyle.WINDOW);
     hallofFameText.setPosition(84, 144);
