@@ -5882,6 +5882,51 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for transferring items between a user Pokemon and target Pokemon
+ */
+export class SwapHeldItemsAttr extends MoveEffectAttr {
+  /**
+   * A random item is taken from user and given to target, and a random item is taken from target and given to user
+   * @param {Pokemon} user Pokemon that used the move
+   * @param {Pokemon} target Enemy Pokemon
+   * @param {Move} move Unused
+   * @param {any[]} args Unused
+   * @returns {boolean} Returns true if an item swap occured, false if not
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+
+    const targetHeldItems = target.getHeldItems().filter(i => i.isTransferrable);
+    const userHeldItems = user.getHeldItems().filter(i => i.isTransferrable);
+
+    if (!user.isPlayer() || target.hasAbility(Abilities.STICKY_HOLD) || (!userHeldItems.length && !targetHeldItems.length)) {
+      user.scene.queueMessage(i18next.t("battle:attackFailed"));
+      return false;
+    }
+
+    user.scene.queueMessage(i18next.t("battle:battlerTagsTrickOnSwap", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(user),
+    }));
+
+    if (targetHeldItems.length) {
+      const targetItemToSwap = targetHeldItems[target.randSeedInt(targetHeldItems.length)];
+      user.scene.tryTransferHeldItemModifier(targetItemToSwap, user, false);
+    }
+
+    if (userHeldItems.length) {
+      const userItemToSwap = userHeldItems[user.randSeedInt(userHeldItems.length)];
+      target.scene.tryTransferHeldItemModifier(userItemToSwap, target, false);
+
+      user.scene.queueMessage(i18next.t("battle:battlerTagsTrickFoeNewItem", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(target),
+        itemName: userItemToSwap.type.name,
+      }));
+    }
+
+    return true;
+  }
+}
+
 const unknownTypeCondition: MoveConditionFunc = (user, target, move) => !user.getTypes().includes(Type.UNKNOWN);
 
 export type MoveTargetSet = {
@@ -6719,7 +6764,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.TRICK, Type.PSYCHIC, 100, 10, -1, 0, 3)
-      .unimplemented(),
+      .attr(SwapHeldItemsAttr),
     new StatusMove(Moves.ROLE_PLAY, Type.PSYCHIC, -1, 10, -1, 0, 3)
       .attr(AbilityCopyAttr),
     new SelfStatusMove(Moves.WISH, Type.NORMAL, -1, 10, -1, 0, 3)
