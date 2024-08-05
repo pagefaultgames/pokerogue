@@ -208,7 +208,7 @@ export default class GameInfoUiHandler extends UiHandler {
       } else if (runData.battleType === BattleType.TRAINER) {
         const tObj = runData.trainer.toTrainer(this.scene);
         const tObjSpriteKey = tObj.config.getSpriteKey(runData.trainer.variant === TrainerVariant.FEMALE, false);
-        const tObjSprite = this.scene.add.sprite(0, 0, tObjSpriteKey);
+        const tObjSprite = this.scene.add.sprite(0, 5, tObjSpriteKey);
         if (runData.trainer.variant === TrainerVariant.DOUBLE) {
           const doubleContainer = this.scene.add.container(5, 8);
           tObjSprite.setPosition(-3, -3);
@@ -416,7 +416,7 @@ export default class GameInfoUiHandler extends UiHandler {
       const pName = pokemon.fusionSpecies ? pokemon.name : pSpecies.name;
       const passiveLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:passive") : (i18next.t("starterSelectUiHandler:passive") as string).charAt(0);
       const abilityLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:ability") : (i18next.t("starterSelectUiHandler:ability") as string).charAt(0);
-      const pPassiveInfo = pokemon.passive ? `${passiveLabel+": "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]]}` : "";
+      const pPassiveInfo = pokemon.passive ? `${passiveLabel+": "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]].name}` : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
       const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
       pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`);
@@ -604,6 +604,7 @@ export default class GameInfoUiHandler extends UiHandler {
   }
 
   createHallofFame(): void {
+    //Issue Note (08-05-2024): It seems as if fused pokemon do not appear with the averaged color b/c pokemonData's loadAsset requires there to be some active battle?
     this.hallofFameContainer = this.scene.add.container(0, 0);
     //Thank you Hayuna for the code
     const endCard = this.scene.add.image(0, 0, `end_${this.scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}`);
@@ -622,12 +623,15 @@ export default class GameInfoUiHandler extends UiHandler {
     hallofFameText.setPosition(84, 144);
     this.hallofFameContainer.add(hallofFameText);
     this.runInfo.party.forEach((p, i) => {
-      const species = p.toPokemon(this.scene);
+      const pkmn= p.toPokemon(this.scene);
       const row = i % 2;
-      const id = species.id;
-      const shiny = species.shiny;
-      const formIndex = species.formIndex;
-      const variant = species.variant;
+      const id = pkmn.id;
+      const shiny = pkmn.shiny;
+      const formIndex = pkmn.formIndex;
+      const variant = pkmn.variant;
+      const species = pkmn.getSpeciesForm();
+      //const species = pkmn.isFusion() ? pkmn.getFusionSpeciesForm() : pkmn.getSpeciesForm();
+      pkmn.loadAssets();
       const pokemonSprite: Phaser.GameObjects.Sprite = this.scene.add.sprite(60 + 40 * i, 40 + row  * 60, "pkmn__sub");
       pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
       this.hallofFameContainer.add(pokemonSprite);
@@ -635,15 +639,15 @@ export default class GameInfoUiHandler extends UiHandler {
       speciesLoaded.set(id, false);
 
       const female = species.gender === 1;
-      species.species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
+      species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
         speciesLoaded.set(id, true);
-        pokemonSprite.play(species.species.getSpriteKey(female, formIndex, shiny, variant));
+        pokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
         pokemonSprite.setPipelineData("shiny", shiny);
         pokemonSprite.setPipelineData("variant", variant);
-        pokemonSprite.setPipelineData("spriteKey", species.species.getSpriteKey(female, formIndex, shiny, variant));
+        pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
         pokemonSprite.setVisible(true);
       });
-      species.destroy();
+      pkmn.destroy();
     });
     this.hallofFameContainer.setVisible(false);
     this.gameStatsContainer.add(this.hallofFameContainer);
