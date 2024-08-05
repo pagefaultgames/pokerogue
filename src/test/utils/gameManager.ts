@@ -1,32 +1,21 @@
 import GameWrapper from "#app/test/utils/gameWrapper";
-import {Mode} from "#app/ui/ui";
-import {generateStarter, waitUntil} from "#app/test/utils/gameManagerUtils";
-import {
-  CommandPhase,
-  EncounterPhase,
-  FaintPhase,
-  LoginPhase,
-  MovePhase,
-  NewBattlePhase,
-  SelectStarterPhase,
-  SelectTargetPhase,
-  TitlePhase, TurnEndPhase, TurnInitPhase,
-  TurnStartPhase,
-} from "#app/phases";
+import { Mode } from "#app/ui/ui";
+import { generateStarter, waitUntil } from "#app/test/utils/gameManagerUtils";
+import { CommandPhase, EncounterPhase, FaintPhase, LoginPhase, MovePhase, NewBattlePhase, SelectStarterPhase, SelectTargetPhase, TitlePhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#app/test/utils/phaseInterceptor";
 import TextInterceptor from "#app/test/utils/TextInterceptor";
-import {GameModes, getGameMode} from "#app/game-mode";
+import { GameModes, getGameMode } from "#app/game-mode";
 import fs from "fs";
-import {AES, enc} from "crypto-js";
-import {updateUserInfo} from "#app/account";
+import { AES, enc } from "crypto-js";
+import { updateUserInfo } from "#app/account";
 import InputsHandler from "#app/test/utils/inputsHandler";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import {EnemyPokemon, PlayerPokemon} from "#app/field/pokemon";
 import {MockClock} from "#app/test/utils/mocks/mockClock";
-import CommandUiHandler, {Command} from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler from "#app/ui/party-ui-handler";
+import CommandUiHandler, {Command} from "#app/ui/command-ui-handler";
 import Trainer from "#app/field/trainer";
 import { ExpNotification } from "#enums/exp-notification";
 import { GameDataType } from "#enums/game-data-type";
@@ -37,6 +26,8 @@ import { BattlerIndex } from "#app/battle.js";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
 import { OverridesHelper } from "./overridesHelper";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
+import overrides from "#app/overrides.js";
+import { removeEnemyHeldItems } from "./testUtils";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -141,6 +132,9 @@ export default class GameManager {
     });
 
     await this.phaseInterceptor.run(EncounterPhase);
+    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
+      removeEnemyHeldItems(this.scene);
+    }
   }
 
   /**
