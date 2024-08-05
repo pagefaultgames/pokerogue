@@ -44,12 +44,12 @@ const fonts: Array<LoadingFontFaceProperty> = [
   {
     face: new FontFace("emerald", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
     extraOptions: { sizeAdjust: "70%", format: "woff2" },
-    only: [ "zh" ],
+    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko" ],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
     extraOptions: { format: "woff2" },
-    only: [ "zh" ],
+    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko" ],
   },
   // japanese
   {
