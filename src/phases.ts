@@ -2992,7 +2992,14 @@ export class MoveEffectPhase extends PokemonPhase {
 
           const hitResult = !isProtected ? target.apply(user, move) : HitResult.NO_EFFECT;
 
-          const firstTarget = (hitResult < HitResult.NO_EFFECT) && !hasHit;
+          const dealsDamage = [
+            HitResult.EFFECTIVE,
+            HitResult.SUPER_EFFECTIVE,
+            HitResult.NOT_VERY_EFFECTIVE,
+            HitResult.ONE_HIT_KO
+          ].includes(hitResult);
+
+          const firstTarget = dealsDamage && !hasHit;
           if (firstTarget) {
             hasHit = true;
           }
@@ -3014,7 +3021,7 @@ export class MoveEffectPhase extends PokemonPhase {
                   if (hitResult !== HitResult.NO_EFFECT) {
                     applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_APPLY
                       && !(attr as MoveEffectAttr).selfTarget && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit), user, target, this.move.getMove()).then(() => {
-                      if (hitResult < HitResult.NO_EFFECT && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr)) {
+                      if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr)) {
                         const flinched = new Utils.BooleanHolder(false);
                         user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
                         if (flinched.value) {
