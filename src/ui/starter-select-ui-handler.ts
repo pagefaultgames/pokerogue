@@ -436,8 +436,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownLabel(i18next.t("filterBar:passiveUnlocked"), undefined, DropDownState.ON),
       new DropDownLabel(i18next.t("filterBar:passiveLocked"), undefined, DropDownState.EXCLUDE),
     ];
+
+    const costReductionLabels = [
+      new DropDownLabel(i18next.t("filterBar:costReduction"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:costReductionUnlocked"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:costReductionLocked"), undefined, DropDownState.EXCLUDE),
+    ];
+
     const unlocksOptions = [
       new DropDownOption(this.scene, "PASSIVE", passiveLabels),
+      new DropDownOption(this.scene, "COST_REDUCTION", costReductionLabels),
     ];
 
     this.filterBar.addFilter(DropDownColumn.UNLOCKS, i18next.t("filterBar:unlocksFilter"), new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.RADIAL));
@@ -448,18 +456,30 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownLabel(i18next.t("filterBar:hasWon"), undefined, DropDownState.ON),
       new DropDownLabel(i18next.t("filterBar:hasNotWon"), undefined, DropDownState.EXCLUDE),
     ];
+    const hiddenAbilityLabels = [
+      new DropDownLabel(i18next.t("filterBar:hiddenAbility"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:hasHiddenAbility"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:noHiddenAbility"), undefined, DropDownState.EXCLUDE),
+    ];
+    const pokerusLabels = [
+      new DropDownLabel(i18next.t("filterBar:pokerus"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:hasPokerus"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:noPokerus"), undefined, DropDownState.EXCLUDE),
+    ];
     const miscOptions = [
       new DropDownOption(this.scene, "WIN", winLabels),
+      new DropDownOption(this.scene, "HIDDEN_ABILITY", hiddenAbilityLabels),
+      new DropDownOption(this.scene, "POKERUS", pokerusLabels),
     ];
     this.filterBar.addFilter(DropDownColumn.MISC, i18next.t("filterBar:miscFilter"), new DropDown(this.scene, 0, 0, miscOptions, this.updateStarters, DropDownType.RADIAL));
 
     // sort filter
     const sortOptions = [
-      new DropDownOption(this.scene, 0, new DropDownLabel(i18next.t("filterBar:sortByNumber"))),
-      new DropDownOption(this.scene, 1, new DropDownLabel(i18next.t("filterBar:sortByCost"), undefined, DropDownState.OFF)),
-      new DropDownOption(this.scene, 2, new DropDownLabel(i18next.t("filterBar:sortByCandies"), undefined, DropDownState.OFF)),
-      new DropDownOption(this.scene, 3, new DropDownLabel(i18next.t("filterBar:sortByIVs"), undefined, DropDownState.OFF)),
-      new DropDownOption(this.scene, 4, new DropDownLabel(i18next.t("filterBar:sortByName"), undefined, DropDownState.OFF))
+      new DropDownOption(this.scene, 0, new DropDownLabel(i18next.t("filterBar:sortByNumber"), undefined, DropDownState.ON)),
+      new DropDownOption(this.scene, 1, new DropDownLabel(i18next.t("filterBar:sortByCost"))),
+      new DropDownOption(this.scene, 2, new DropDownLabel(i18next.t("filterBar:sortByCandies"))),
+      new DropDownOption(this.scene, 3, new DropDownLabel(i18next.t("filterBar:sortByIVs"))),
+      new DropDownOption(this.scene, 4, new DropDownLabel(i18next.t("filterBar:sortByName")))
     ];
     this.filterBar.addFilter(DropDownColumn.SORT, i18next.t("filterBar:sortFilter"), new DropDown(this.scene, 0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
     this.filterBarContainer.add(this.filterBar);
@@ -467,7 +487,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.filterBarContainer);
 
     // Offset the generation filter dropdown to avoid covering the filtered pokemon
-    this.filterBar.offsetFirstFilter();
+    this.filterBar.offsetHybridFilters();
 
     if (!this.scene.uiTheme) {
       starterContainerWindow.setVisible(false);
@@ -930,19 +950,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
    */
   resetFilters() : void {
     const genDropDown: DropDown = this.filterBar.getFilter(DropDownColumn.GEN);
-    if (this.scene.gameMode.isChallenge) {
-      // In challenge mode all gens are selected by default
-      genDropDown.defaultCursor = 0;
-    } else {
-      // in other modes, gen 1 is selected by default, and all options disabled
-      genDropDown.defaultCursor = 1;
-    }
 
     this.filterBar.setValsToDefault();
 
-    // for all modes except challenge, disable all gen options to enable hovering behavior
     if (!this.scene.gameMode.isChallenge) {
-      genDropDown.unselectAllOptions();
+      // if not in a challenge, in Gen hybrid filter hovering mode, set the cursor to the Gen1
+      genDropDown.setCursor(1);
     }
   }
 
@@ -2194,9 +2207,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const isCaught = !!(caughtVariants & DexAttr.NON_SHINY);
       const isUncaught = !isCaught && !isVariantCaught && !isVariant2Caught && !isVariant3Caught;
       const isPassiveUnlocked = this.scene.gameData.starterData[container.species.speciesId].passiveAttr > 0;
+      const isCostReduced = this.scene.gameData.starterData[container.species.speciesId].valueReduction > 0;
       const isWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0;
       const isNotWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0;
       const isUndefined = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === undefined;
+      const isHA = this.scene.gameData.starterData[container.species.speciesId].abilityAttr & AbilityAttr.ABILITY_HIDDEN;
 
       const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
 
@@ -2226,6 +2241,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       });
 
+      const fitsCostReduction = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(unlocks => {
+        if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.ON) {
+          return isCostReduced;
+        } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.EXCLUDE) {
+          return !isCostReduced;
+        } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.OFF) {
+          return true;
+        }
+      });
+
       const fitsWin = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (container.species.speciesId < 10) {
         }
@@ -2238,7 +2263,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       });
 
-      if (fitsGen && fitsType && fitsShiny && fitsPassive && fitsWin) {
+      const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
+        if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {
+          return isHA;
+        } else if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.EXCLUDE) {
+          return !isHA;
+        } else if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.OFF) {
+          return true;
+        }
+      });
+
+      const fitsPokerus = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
+        if (misc.val === "POKERUS" && misc.state === DropDownState.ON) {
+          return this.pokerusSpecies.includes(container.species);
+        } else if (misc.val === "POKERUS" && misc.state === DropDownState.EXCLUDE) {
+          return !this.pokerusSpecies.includes(container.species);
+        } else if (misc.val === "POKERUS" && misc.state === DropDownState.OFF) {
+          return true;
+        }
+      });
+
+      if (fitsGen && fitsType && fitsShiny && fitsPassive && fitsCostReduction && fitsWin && fitsHA && fitsPokerus) {
         this.filteredStarterContainers.push(container);
       }
     });
