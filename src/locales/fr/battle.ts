@@ -155,7 +155,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} est blessé\npar la capacité {{moveName}} !",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} sacrifie des PV\net lance une malédiction sur {{pokemonName}} !",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} est touché par la malédiction !",
-  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
-  "battlerTagsHealBlock": "{{pokemonNameWithAffix}} can't restore its HP!",
-  "battlerTagsHealBlockOnRemove": "{{pokemonNameWithAffix}} can restore its HP again!",
+  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}} utilise\nla capacité Stockage {{stockpiledCount}} fois !",
+  "battlerTagsHealBlock": "{{pokemonNameWithAffix}} ne peut pas guérir !",
+  "battlerTagsHealBlockOnRemove": "Le blocage de soins qui affectait\n{{pokemonNameWithAffix}} s’est dissipé !",
 } as const;
