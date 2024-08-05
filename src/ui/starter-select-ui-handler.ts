@@ -450,11 +450,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     // sort filter
     const sortOptions = [
-      new DropDownOption(this.scene, 0, new DropDownLabel(i18next.t("filterBar:sortByNumber"))),
-      new DropDownOption(this.scene, 1, new DropDownLabel(i18next.t("filterBar:sortByCost"), undefined, DropDownState.OFF)),
-      new DropDownOption(this.scene, 2, new DropDownLabel(i18next.t("filterBar:sortByCandies"), undefined, DropDownState.OFF)),
-      new DropDownOption(this.scene, 3, new DropDownLabel(i18next.t("filterBar:sortByIVs"), undefined, DropDownState.OFF)),
-      new DropDownOption(this.scene, 4, new DropDownLabel(i18next.t("filterBar:sortByName"), undefined, DropDownState.OFF))
+      new DropDownOption(this.scene, 0, new DropDownLabel(i18next.t("filterBar:sortByNumber"), undefined, DropDownState.ON)),
+      new DropDownOption(this.scene, 1, new DropDownLabel(i18next.t("filterBar:sortByCost"))),
+      new DropDownOption(this.scene, 2, new DropDownLabel(i18next.t("filterBar:sortByCandies"))),
+      new DropDownOption(this.scene, 3, new DropDownLabel(i18next.t("filterBar:sortByIVs"))),
+      new DropDownOption(this.scene, 4, new DropDownLabel(i18next.t("filterBar:sortByName")))
     ];
     this.filterBar.addFilter(DropDownColumn.SORT, i18next.t("filterBar:sortFilter"), new DropDown(this.scene, 0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
     this.filterBarContainer.add(this.filterBar);
@@ -462,7 +462,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.filterBarContainer);
 
     // Offset the generation filter dropdown to avoid covering the filtered pokemon
-    this.filterBar.offsetFirstFilter();
+    this.filterBar.offsetHybridFilters();
 
     if (!this.scene.uiTheme) {
       starterContainerWindow.setVisible(false);
@@ -914,19 +914,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
    */
   resetFilters() : void {
     const genDropDown: DropDown = this.filterBar.getFilter(DropDownColumn.GEN);
-    if (this.scene.gameMode.isChallenge) {
-      // In challenge mode all gens are selected by default
-      genDropDown.defaultCursor = 0;
-    } else {
-      // in other modes, gen 1 is selected by default, and all options disabled
-      genDropDown.defaultCursor = 1;
-    }
 
     this.filterBar.setValsToDefault();
 
-    // for all modes except challenge, disable all gen options to enable hovering behavior
     if (!this.scene.gameMode.isChallenge) {
-      genDropDown.unselectAllOptions();
+      // if not in a challenge, in Gen hybrid filter hovering mode, set the cursor to the Gen1
+      genDropDown.setCursor(1);
     }
   }
 
