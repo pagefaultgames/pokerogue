@@ -14,6 +14,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
+import { GulpMissileTag } from "#app/data/battler-tags.js";
 
 describe("Abilities - Gulp Missile", () => {
   let phaserGame: Phaser.Game;
@@ -149,6 +150,32 @@ describe("Abilities - Gulp Missile", () => {
     expect(enemy.status.effect).toBe(StatusEffect.PARALYSIS);
     expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_PIKACHU)).toBeUndefined();
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
+  });
+
+  it("does not activate the ability when underwater", async () => {
+    game.override
+      .enemyMoveset(Array(4).fill(Moves.SURF))
+      .enemySpecies(Species.REGIELEKI)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyLevel(5);
+    await game.startBattle([Species.CRAMORANT]);
+
+    const cramorant = game.scene.getPlayerPokemon();
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.DIVE));
+    await game.toNextTurn();
+
+    // Turn 2 underwater, enemy moves first
+    game.doAttack(getMovePosition(game.scene, 0, Moves.DIVE));
+    await game.phaseInterceptor.to(MoveEndPhase);
+
+    expect(cramorant.formIndex).toBe(NORMAL_FORM);
+    expect(cramorant.getTag(GulpMissileTag)).toBeUndefined();
+
+    // Turn 2 Cramorant comes out and changes form
+    await game.phaseInterceptor.to(TurnEndPhase);
+    expect(cramorant.formIndex).not.toBe(NORMAL_FORM);
+    expect(cramorant.getTag(GulpMissileTag)).toBeDefined();
   });
 
   it("prevents effect damage but inflicts secondary effect on attacker with Magic Guard", async () => {
