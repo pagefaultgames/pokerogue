@@ -152,8 +152,8 @@ export const trainerClasses: SimpleTranslationEntries = {
   "flare_grunt": "Sbire de la Team Flare",
   "flare_grunt_female": "Sbire de la Team Flare",
   "flare_grunts": "Sbires de la Team Flare",
-  "flare_admin": "Flare Admin",
-  "flare_admin_female": "Flare Admin",
+  "flare_admin": "Manager de la Team Flare",
+  "flare_admin_female": "Manageuse de la Team Flare",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -284,7 +284,7 @@ export const trainerNames: SimpleTranslationEntries = {
   "rival_female": "Papina", //Litteral translation of ivy, also used as Female name in a North-American indigenous language
   "maxie": "Max",
   "archie": "Arthur",
-  "cyrus": "Hélios",
+  "cyrus": "Hélio",
   "ghetsis": "Ghetis",
   "lysandre": "Lysandre",
 
