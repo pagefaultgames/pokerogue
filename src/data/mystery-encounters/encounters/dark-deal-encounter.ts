@@ -127,7 +127,7 @@ export const DarkDealEncounter: IMysteryEncounter =
           const removedPokemon = getRandomPlayerPokemon(scene, false, true);
           scene.removePokemonFromPlayerParty(removedPokemon);
 
-          scene.currentBattle.mysteryEncounter.setDialogueToken("pokeName", removedPokemon.name);
+          scene.currentBattle.mysteryEncounter.setDialogueToken("pokeName", removedPokemon.getNameToRender());
 
           // Store removed pokemon types
           scene.currentBattle.mysteryEncounter.misc = [

@@ -16,6 +16,7 @@ import { BattleStat } from "#app/data/battle-stat";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:theStrongStuff";
@@ -70,7 +71,7 @@ export const TheStrongStuffEncounter: IMysteryEncounter =
             species: getPokemonSpecies(Species.SHUCKLE),
             isBoss: true,
             bossSegments: 5,
-            spriteScale: 1.5,
+            mysteryEncounterData: new MysteryEncounterPokemonData(1.5),
             nature: Nature.BOLD,
             moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
             modifierTypes: [
@@ -147,7 +148,7 @@ export const TheStrongStuffEncounter: IMysteryEncounter =
           modifyPlayerPokemonBST(pokemon, 10);
         }
 
-        encounter.setDialogueToken("highBstPokemon", highestBst.name);
+        encounter.setDialogueToken("highBstPokemon", highestBst.getNameToRender());
         await showEncounterText(scene, `${namespace}.option.1.selected_2`, null, true);
 
         setEncounterRewards(scene, { fillRemaining: true });

@@ -30,6 +30,8 @@ import { TrainerConfig, trainerConfigs, TrainerSlot } from "#app/data/trainer-co
 import PokemonSpecies from "#app/data/pokemon-species";
 import Overrides from "#app/overrides";
 import { Egg, IEggOptions } from "#app/data/egg";
+import { Abilities } from "#enums/abilities";
+import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -63,7 +65,7 @@ export interface EnemyPokemonConfig {
   isBoss: boolean;
   bossSegments?: number;
   bossSegmentModifier?: number; // Additive to the determined segment number
-  spriteScale?: number;
+  mysteryEncounterData?: MysteryEncounterPokemonData;
   formIndex?: number;
   level?: number;
   gender?: Gender;
@@ -71,6 +73,8 @@ export interface EnemyPokemonConfig {
   moveSet?: Moves[];
   nature?: Nature;
   ivs?: [integer, integer, integer, integer, integer, integer];
+  ability?: Abilities;
+  shiny?: boolean;
   /** Can set just the status, or pass a timer on the status turns */
   status?: StatusEffect | [StatusEffect, number];
   mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
@@ -210,11 +214,14 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
         enemyPokemon.formIndex = config.formIndex;
       }
 
-      // Set scale
-      if (!isNullOrUndefined(config.spriteScale)) {
-        enemyPokemon.mysteryEncounterData = {
-          spriteScale: config.spriteScale
-        };
+      // Set shiny
+      if (!isNullOrUndefined(config.shiny)) {
+        enemyPokemon.shiny = config.shiny;
+      }
+
+      // Set custom mystery encounter data fields (such as sprite scale, custom abilities, types, etc.)
+      if (!isNullOrUndefined(config.mysteryEncounterData)) {
+        enemyPokemon.mysteryEncounterData = config.mysteryEncounterData;
       }
 
       // Set Boss
@@ -251,6 +258,11 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       }
 
       // Set summon data fields
+
+      // Set ability
+      if (!isNullOrUndefined(config.ability)) {
+        enemyPokemon.summonData.ability = config.ability;
+      }
 
       // Set gender
       if (!isNullOrUndefined(config.gender)) {
@@ -381,7 +393,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
           const pokemon = scene.getParty()[slotIndex];
           const secondaryOptions = onPokemonSelected(pokemon);
           if (!secondaryOptions) {
-            scene.currentBattle.mysteryEncounter.setDialogueToken("selectedPokemon", pokemon.name);
+            scene.currentBattle.mysteryEncounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
             resolve(true);
             return;
           }
@@ -395,7 +407,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
                 const onSelect = option.handler;
                 option.handler = () => {
                   onSelect();
-                  scene.currentBattle.mysteryEncounter.setDialogueToken("selectedPokemon", pokemon.name);
+                  scene.currentBattle.mysteryEncounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
                   resolve(true);
                   return true;
                 };

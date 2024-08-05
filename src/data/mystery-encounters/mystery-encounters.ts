@@ -21,7 +21,7 @@ import { AbsoluteAvariceEncounter } from "#app/data/mystery-encounters/encounter
 import { ATrainersTestEncounter } from "#app/data/mystery-encounters/encounters/a-trainers-test-encounter";
 import { TrashToTreasureEncounter } from "#app/data/mystery-encounters/encounters/trash-to-treasure-encounter";
 import { BerriesAboundEncounter } from "#app/data/mystery-encounters/encounters/berries-abound-encounter";
-import { ClowningAroundEncounter } from "#app/data/mystery-encounters/encounters/clowing-around-encounter";
+import { ClowningAroundEncounter } from "#app/data/mystery-encounters/encounters/clowning-around-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;

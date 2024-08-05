@@ -1369,7 +1369,7 @@ export class PostSummonPhase extends PokemonPhase {
     }
     this.scene.arena.applyTags(ArenaTrapTag, pokemon);
 
-    // If this is fight or flight mystery encounter and is enemy pokemon summon phase, add enraged tag
+    // If this is mystery encounter and has post summon phase tag, apply post summon effects
     if (pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag)) {
       pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
     }
