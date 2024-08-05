@@ -64,6 +64,8 @@ describe("Abilities - Illusion", () => {
     await game.startBattle([Species.AXEW]);
     game.doAttack(getMovePosition(game.scene, 0, Moves.WORRY_SEED));
 
+    await game.phaseInterceptor.to(TurnEndPhase);
+
     const zorua = game.scene.getEnemyPokemon();
 
     expect(zorua.illusion.active).equals(false);
