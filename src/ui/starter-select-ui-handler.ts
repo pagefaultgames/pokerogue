@@ -2063,31 +2063,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
     if (gamepadType === "touch") {
       gamepadType = "keyboard";
-      switch (iconSetting) {
-      case SettingKeyboard.Button_Cycle_Shiny:
-        iconPath = "R.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Form:
-        iconPath = "F.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Gender:
-        iconPath = "G.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Ability:
-        iconPath = "E.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Nature:
-        iconPath = "N.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Variant:
-        iconPath = "V.png";
-        break;
-      case SettingKeyboard.Button_Stats:
-        iconPath = "C.png";
-        break;
-      default:
-        break;
-      }
+      iconPath = "C.png";
     } else {
       iconPath = this.scene.inputController?.getIconForLatestInputRecorded(iconSetting);
     }
