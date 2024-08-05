@@ -22,6 +22,7 @@ import { getVariantTint } from "#app/data/variant";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import {modifierSortFunc} from "../modifier/modifier";
 import { Species } from "#enums/species";
+import { PlayerGender } from "#enums/player-gender";
 
 /*
 enum Page {
@@ -53,6 +54,7 @@ export default class GameInfoUiHandler extends UiHandler {
   private partyContainerWidth: integer;
 
   private hallofFameContainer: Phaser.GameObjects.Container;
+  private endCardContainer: Phaser.GameObjects.Container;
 
   private partyInfo: Phaser.GameObjects.Container[];
   private partyVisibility: Boolean;
@@ -146,6 +148,11 @@ export default class GameInfoUiHandler extends UiHandler {
       const upButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHallOfFame"), TextStyle.WINDOW, {fontSize:"65px"});
       const upButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, "keyboard", "KEY_ARROW_UP.png");
       hallofFameInstructionContainer.add([upButtonText, upButtonElement]);
+
+      const formButtonText = addTextObject(this.scene, 8, 12, i18next.t("runHistory:viewEndingSplash"), TextStyle.WINDOW, {fontSize:"65px"});
+      const formButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 16, "keyboard", "F.png");
+      hallofFameInstructionContainer.add([formButtonText, formButtonElement]);
+
       hallofFameInstructionContainer.setPosition(12, 25);
       this.runResultContainer.add(hallofFameInstructionContainer);
     }
@@ -409,7 +416,7 @@ export default class GameInfoUiHandler extends UiHandler {
       const pName = pokemon.fusionSpecies ? pokemon.name : pSpecies.name;
       const passiveLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:passive") : (i18next.t("starterSelectUiHandler:passive") as string).charAt(0);
       const abilityLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:ability") : (i18next.t("starterSelectUiHandler:ability") as string).charAt(0);
-      const pPassiveInfo = pokemon.passive ? `${passiveLabel+": "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]].name}` : "";
+      const pPassiveInfo = pokemon.passive ? `${passiveLabel+": "+allAbilities[starterPassiveAbilities[pSpecies.speciesId]]}` : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
       const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
       pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`);
@@ -573,6 +580,29 @@ export default class GameInfoUiHandler extends UiHandler {
     });
   }
 
+  createVictorySplash(): void {
+    this.endCardContainer = this.scene.add.container(0,0);
+    const endCard = this.scene.add.image(0, 0, `end_${this.scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}`);
+    endCard.setOrigin(0);
+    endCard.setScale(0.5);
+    const text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, i18next.t("battle:congratulations"), TextStyle.SUMMARY, { fontSize: "128px" });
+    text.setOrigin(0.5);
+    this.endCardContainer.add(endCard);
+    this.endCardContainer.add(text);
+  }
+
+  buttonCycleOption(button: Button) {
+    console.log(button);
+    if (!this.endCardContainer || !this.endCardContainer.visible) {
+      this.createVictorySplash();
+      this.endCardContainer.setVisible(true);
+      this.gameStatsContainer.add(this.endCardContainer);
+    } else {
+      this.endCardContainer.setVisible(false);
+      this.gameStatsContainer.remove(this.endCardContainer);
+    }
+  }
+
   createHallofFame(): void {
     this.hallofFameContainer = this.scene.add.container(0, 0);
     //Thank you Hayuna for the code
@@ -580,8 +610,9 @@ export default class GameInfoUiHandler extends UiHandler {
     hallofFameBg.setPosition(159, 89);
     hallofFameBg.setSize(this.scene.game.canvas.width, this.scene.game.canvas.height+10);
     this.hallofFameContainer.add(hallofFameBg);
+
     const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText"), TextStyle.WINDOW);
-    hallofFameText.setPosition(85, 145);
+    hallofFameText.setPosition(84, 144);
     this.hallofFameContainer.add(hallofFameText);
     this.runInfo.party.forEach((p, i) => {
       const species = p.toPokemon(this.scene);
@@ -650,6 +681,10 @@ export default class GameInfoUiHandler extends UiHandler {
           break;
         }
         break;
+      case Button.CYCLE_FORM:
+        if (this.victory) {
+          this.buttonCycleOption(Button.CYCLE_SHINY);
+        }
       }
     }
     if (success) {

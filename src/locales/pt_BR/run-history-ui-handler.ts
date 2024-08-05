@@ -28,7 +28,8 @@ export const runHistory: SimpleTranslationEntries = {
   "runLength": "Duração do Jogo",
   "viewHeldItems": "Itens Segurados",
   "hallofFameText": "Bem-vindo(a) ao Hall da Fama!",
-  "viewHallOfFame": "Veja o Hall da Fama!"
+  "viewHallOfFame": "Veja o Hall da Fama!",
+  "viewEndingSplash":"View ending art!"
 } as const;
 
 //Mode Information found in game-mode.ts

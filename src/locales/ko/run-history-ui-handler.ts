@@ -28,7 +28,8 @@ export const runHistory: SimpleTranslationEntries = {
   "runLength":"플레이 타임",
   "viewHeldItems":"도구",
   "hallofFameText":"전당 등록을 축하합니다!",
-  "viewHallOfFame":"전당 보기"
+  "viewHallOfFame":"전당 보기",
+  "viewEndingSplash":"View ending art!"
 } as const;
 
 //Mode Information found in game-mode.ts
