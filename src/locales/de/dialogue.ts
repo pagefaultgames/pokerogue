@@ -380,16 +380,17 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rocket_admin": {
     "encounter": {
-      1: "Oh? You managed to get this far? You must be quite the trainer.",
-      2: "That's quite enough of you playing hero, kid.",
-      3: "I'll show you how scary an angry adult can be!"
+      1: "Oh? Du wagst es, dich Team Rocket zu widersetzen? Du wirst es bereuen.",
+      2: "Du glaubst, du kannst uns aufhalten? Naiver Narr!",
+      3: "Ich werde dir die wahre Macht von Team Rocket zeigen!"
     },
     "victory": {
-      1: "No! Forgive me Giovanni!",
-      2: "How could this be?",
-      3: "Urgh... You were too strong..."
+      1: "Nein! Verzeih mir, Giovanni!",
+      2: "Wie konnte das geschehen?",
+      3: "Urgh... Du warst zu stark..."
     },
   },
+
   "firebreather": {
     "encounter": {
       1: "Meine Flammen werden dich verschlingen!",
@@ -424,14 +425,16 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "magma_admin": {
     "encounter": {
-      1: "Hehehe! So you've come all the way here! But you're too late!",
-      2: "You're going to meddle in Team Magma's affairs? You're so cute you're disgusting! I'll put you down kiddy!",
-      3: "I'm going to give you a little taste of pain! Resign yourself to it!"
+      1: `Hahaha! Du hast den ganzen weiten Weg auf dich genommen! Aber du bist zu spät!
+          $Unsere Mission ist schon fast abgeschlossen!`,
+      2: `Du willst dich in Team Magmas Angelegenheiten einmischen? Du bist so süß, dass es ekelhaft ist!
+          $Ich werde dich ein für alle Mal erledigen!`,
+      3: "Ich werde dir zeigen, was wahrer Schmerz ist! Mach dich bereit!",
     },
     "victory": {
-      1: "Hehehe... So I lost...",
-      2: "You're disgustingly strong!",
-      3: "Ahahaha! Ouch!"
+      1: "Hahaha! Ouch! Ich habe wohl verloren...",
+      2: "Du bist ekelhaft stark!",
+      3: "Da habe ich meine eigene Medizin zu schmecken bekommen!"
     },
   },
   "aqua_grunt": {
@@ -444,14 +447,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "aqua_admin": {
     "encounter": {
-      1: "I'm a cut above the grunts you've seen so far. I'm going to puvlerize you!",
-      2: "Hahn? What's this? Who's this spoiled brat?",
-      3: "What are you doing here? Did you follow us?"
+      1: "Ich bin eine Stufe über den Rüpeln, die du bisher gesehen hast. Ich werde dich pulverisieren!",
+      2: "Hmmm? Wer ist das? Wer ist dieses verwöhnte Gör?",
+      3: "Was machst du hier? Bist du uns gefolgt? Dann müssen wir dich wohl loswerden!"
     },
     "victory": {
-      1: "So I lost too...",
-      2: "Ahhh?! Did I go too easy on you?!",
-      3: "Wh-what was that?"
+      1: "Also habe ich auch verloren...",
+      2: "Ahhh?! War ich zu nachsichtig mit dir?!",
+      3: "W-was war das?"
     },
   },
   "galactic_grunt": {
@@ -464,14 +467,15 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "galactic_admin": {
     "encounter": {
-      1: "I'm one of Team Galactic's Commanders.",
-      2: "Anything that opposes Team Galactic must be crushed! Even the very thought of opposition will not be tolerated!",
-      3: "What's the matter? Don't tell me you're shaking?"
+      1: "Ich bin einer der Commander von Team Galaktik. Wir werden Zyrus' Traum verwirklichen!",
+      2: `Alles, was sich Team Galaktik widersetzt, muss zerschlagen werden!
+          $Selbst der Gedanke an Widerstand wird nicht toleriert!`,
+      3: "Was ist los? Sag mir nicht, dass du zitterst? Mach ich dir Angst? Gut so! Knie nieder!"
     },
     "victory": {
-      1: "This can't be?! I lost?! You... you uppity brat!",
-      2: "You, my friend, are tough!",
-      3: "Losing to some child... Being careless cost me too much."
+      1: "Das kann nicht sein?! Ich habe verloren?! Du... du freches Gör!",
+      2: "Du, mein Freund, bist stark! Aber widestand ist zwecklos! Team Galaktik wird siegen!",
+      3: "Gegen ein Kind zu verlieren... Meine Unachtsamkeit wird mir nicht verziehen werden..."
     },
   },
   "plasma_grunt": {
@@ -484,14 +488,15 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "plasma_sage": {
     "encounter": {
-      1: "You could become a threat to Team Plasma, so we will eliminate you here!",
-      2: "Oh, for crying out loud... I didn't expect to have to fight!",
-      3: "You're an impressive Trainer to have made it this far."
+      1: "Du könntest eine Bedrohung für Team Plasma werden, also werden wir dich hier eliminieren!",
+      2: "Oh, ernsthaft... Ich hatte nicht erwartet, kämpfen zu müssen!",
+      3: `Du bist ein beeindruckender Trainer, dass du es so weit geschafft hast. 
+          $Als Weiser von Team Plasma werde ich dich besiegen!`
     },
     "victory": {
-      1: "Ghetsis...",
-      2: "It's bitter cold. I'm shivering. I'm suffering.",
-      3: "Hmph. You're a smarter Trainer than I expected."
+      1: "G-Cis...",
+      2: "Es ist bitterkalt. Ich zittere. Ich leide.",
+      3: "Hm. Du bist ein klügerer Trainer, als ich erwartet hatte. Ich bin beeindruckt."
     },
   },
   "flare_grunt": {
@@ -505,14 +510,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "flare_admin": {
     "encounter": {
-      1: "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
-      2: "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
-      3: "I've been waiting for you! I need to do a little research on you! Come, let us begin!"
+      1: "Ah ha ha! Es wäre mir ein Vergnügen. Komm schon, kleiner Trainer! Zeig mir, was du drauf hast!",
+      2: "Wir von Team Flare sind die einzigen, die die Schönheit der Welt wirklich schätzen!",
+      3: "Ich habe auf dich gewartet! Lass mich ein wenig an dir forschen! Komm, lass uns beginnen!"
     },
     "victory": {
-      1: "You're quite strong. Oh yes-very strong, indeed.",
-      2: "Ding-ding-ding! Yup, you did it! To the victor goes the spoils!",
-      3: "Wonderful! Amazing! You have tremendous skill and bravery!"
+      1: "Du bist ziemlich stark. Oh ja, sehr stark, in der Tat.",
+      2: "Es scheint als hätte ich mich geirrt… Der Sieger steht fest.",
+      3: "Wunderbar! Erstaunlich! Du hast enormes Geschick und dieser Mut!"
     },
   },
   "rocket_boss_giovanni_1": {
@@ -548,7 +553,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
           $Wir brauchen mehr Landmassen um zu leben! Team Magma wird dieses Ziel mit aller Macht erreichen!`
     },
     "victory": {
-      1:"Ugh! Das entspricht nicht meinen Berechnungen! Wie konnte ich verlieren? Wir sehen uns wieder!"
+      1: "Ugh! Das entspricht nicht meinen Berechnungen! Wie konnte ich verlieren? Wir sehen uns wieder!"
     },
     "defeat": {
       1: "Team Magma wird weiterhin die Welt verbessern!"
@@ -614,7 +619,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "plasma_boss_ghetsis_1": {
     "encounter": {
-      1:"Ich werde nicht zulassen, dass mich jemand aufhält! Egal wer es auch sein mag!"
+      1: "Ich werde nicht zulassen, dass mich jemand aufhält! Egal wer es auch sein mag!"
     },
     "victory": {
       1: "Wie kann das sein? Ich bin der Schöpfer von Team Plasma! Ich bin perfekt!"
@@ -2676,7 +2681,7 @@ export const PGFbattleSpecDialogue: SimpleTranslationEntries = PGMbattleSpecDial
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is male
 export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending":
-      `@c{smile}Oh? Du hast gewonnen?@d{96} @c{smile_eclosed}Ich schätze, das hätte ich wissen sollen.
+        `@c{smile}Oh? Du hast gewonnen?@d{96} @c{smile_eclosed}Ich schätze, das hätte ich wissen sollen.
         $Aber, du bist jetzt zurück.
         $@c{smile}Es ist vorbei.@d{64} Du hast die Schleife beendet.
         $@c{serious_smile_fists}Du hast auch deinen Traum erfüllt, nicht wahr?\nDu hast nicht einmal verloren.
@@ -2687,7 +2692,7 @@ export const PGMmiscDialogue: SimpleTranslationEntries = {
         $@c{serious_smile_fists}Vielleicht können wir, wenn wir zurück sind, noch einen Kampf haben?
         $Wenn du dazu bereit bist.`,
   "ending_female":
-      `@c{shock}Du bist zurück?@d{32} Bedeutet das…@d{96} du hast gewonnen?!
+        `@c{shock}Du bist zurück?@d{32} Bedeutet das…@d{96} du hast gewonnen?!
        $@c{smile_ehalf}Ich hätte wissen sollen, dass du es in dir hast.
         $@c{smile_eclosed}Natürlich… ich hatte immer dieses Gefühl.
         $@c{smile}Es ist jetzt vorbei, richtig? Du hast die Schleife beendet.
