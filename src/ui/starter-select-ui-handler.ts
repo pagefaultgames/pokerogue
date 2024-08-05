@@ -79,7 +79,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
   "fr":{
     starterInfoTextSize: "54px",
-    instructionTextSize: "42px",
+    instructionTextSize: "35px",
   },
   "it":{
     starterInfoTextSize: "56px",
@@ -324,7 +324,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   //variables to keep track of the dynamically rendered list of instruction prompts for starter select
   private instructionRowX = 0;
   private instructionRowY = 0;
-  private instructionRowTextOffset = 12;
+  private instructionRowTextOffset = 9;
   private filterInstructionRowX = 0;
   private filterInstructionRowY = 0;
 
@@ -832,7 +832,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.hideInstructions();
 
-    this.filterInstructionsContainer = this.scene.add.container(55, 5);
+    this.filterInstructionsContainer = this.scene.add.container(50, 5);
     this.filterInstructionsContainer.setVisible(true);
     this.starterSelectContainer.add(this.filterInstructionsContainer);
 
