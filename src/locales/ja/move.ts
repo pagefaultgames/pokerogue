@@ -671,7 +671,7 @@ export const move: MoveTranslationEntries = {
   },
   thief: {
     name: "どろぼう",
-    effect: "The user attacks and has a 30% chance to steal the target's held item simultaneously."
+    effect: "攻撃と 同時に 道具を 盗む。自分が 道具を 持っている 場合は 盗めない。"
   },
   spiderWeb: {
     name: "クモのす",
@@ -1371,7 +1371,7 @@ export const move: MoveTranslationEntries = {
   },
   covet: {
     name: "ほしがる",
-    effect: "The user endearingly approaches the target, then has a 30% chance to steal the target's held item."
+    effect: "かわいく あまえながら 相手に ちかづき 持っている 道具を うばう。"
   },
   voltTackle: {
     name: "ボルテッカー",
@@ -2775,7 +2775,7 @@ export const move: MoveTranslationEntries = {
   },
   auroraVeil: {
     name: "オーロラベール",
-    effect: "This move reduces damage from physical and special moves for five turns. This can be used only when it is snowing."
+    effect: "5ターンの 間 物理と 特殊の ダメージを 弱める。 ゆきの 時しか 出すことが できない。"
   },
   sinisterArrowRaid: {
     name: "シャドーアローズストライク",
@@ -2891,7 +2891,7 @@ export const move: MoveTranslationEntries = {
   },
   lightThatBurnsTheSky: {
     name: "てんこがすめつぼうのひかり",
-    effect: "This attack inflicts Attack or Sp. Atk damage—whichever stat is higher for the user, Necrozma. This move ignores the target's Ability."
+    effect: "ネクロズマが 相手の 特性の 効果を 無視して 攻撃と 特攻の 高い方で ダメージを 与える。"
   },
   searingSunrazeSmash: {
     name: "サンシャインスマッシャー",
@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "ダイマックスほう",
-    effect: "The user unleashes a strong beam from its core. This move deals twice the damage if the target is over level 200."
+    effect: "体内で 凝縮した エネルギーを コアから 放って 攻撃する。"
   },
   snipeShot: {
     name: "ねらいうち",
@@ -3123,11 +3123,11 @@ export const move: MoveTranslationEntries = {
   },
   behemothBlade: {
     name: "きょじゅうざん",
-    effect: "The user wields a large, powerful sword using its whole body and cuts the target in a vigorous attack."
+    effect: "全身で 強大な剣を 振りかざし 勢いよく 切りかかって 攻撃する。"
   },
   behemothBash: {
     name: "きょじゅうだん",
-    effect: "The user's body becomes a firm shield and slams into the target fiercely."
+    effect: "全身を 強固な盾へと 変化させ 勢いよく ぶつかって 攻撃する。"
   },
   auraWheel: {
     name: "オーラぐるま",

@@ -139,7 +139,7 @@ export const ability: AbilityTranslationEntries = {
   },
   illuminate: {
     name: "はっこう",
-    description: "By illuminating its surroundings, the Pokémon raises the likelihood of meeting wild Pokémon and prevents its accuracy from being lowered.",
+    description: "あたりを 明るくすることで 命中率を 下げられない。",
   },
   trace: {
     name: "トレース",
@@ -211,7 +211,7 @@ export const ability: AbilityTranslationEntries = {
   },
   pickup: {
     name: "ものひろい",
-    description: "The Pokémon may pick up the item an opposing Pokémon held during a battle.",
+    description: "相手の 使った 道具を 拾ってくることが ある。 冒険中も 拾ってくる。",
   },
   truant: {
     name: "なまけ",
@@ -323,7 +323,7 @@ export const ability: AbilityTranslationEntries = {
   },
   snowCloak: {
     name: "ゆきがくれ",
-    description: "Boosts the Pokémon's evasiveness in snow.",
+    description: "天気が ゆきのとき 回避率が 上がる。",
   },
   gluttony: {
     name: "くいしんぼう",
@@ -459,7 +459,7 @@ export const ability: AbilityTranslationEntries = {
   },
   iceBody: {
     name: "アイスボディ",
-    description: "The Pokémon gradually regains HP in snow.",
+    description: "天気が ゆきのとき HPを 少しずつ 回復 する。",
   },
   solidRock: {
     name: "ハードロック",
@@ -467,7 +467,7 @@ export const ability: AbilityTranslationEntries = {
   },
   snowWarning: {
     name: "ゆきふらし",
-    description: "The Pokémon makes it snow when it enters a battle.",
+    description: "登場 したときに 天気を ゆきに する。",
   },
   honeyGather: {
     name: "みつあつめ",
@@ -619,7 +619,7 @@ export const ability: AbilityTranslationEntries = {
   },
   rattled: {
     name: "びびり",
-    description: "Intimidate or being hit by a Dark-, Ghost-, or Bug-type move will scare the Pokémon and boost its Speed stat.",
+    description: "あく ゴースト むしタイプの 攻撃を 受けたり いかくを されると びびって 素早さが 上がる。",
   },
   magicBounce: {
     name: "マジックミラー",
@@ -807,7 +807,7 @@ export const ability: AbilityTranslationEntries = {
   },
   slushRush: {
     name: "ゆきかき",
-    description: "Boosts the Pokémon's Speed stat in snow.",
+    description: "天気が ゆき のとき 素早さが 上がる。",
   },
   longReach: {
     name: "えんかく",
@@ -947,7 +947,7 @@ export const ability: AbilityTranslationEntries = {
   },
   ballFetch: {
     name: "たまひろい",
-    description: "The Pokémon will fetch the Poké Ball from the first failed throw of the battle.",
+    description: "道具を 持っていない 場合 1回目に 投げて 失敗 した モンスターボールを 拾ってくる。",
   },
   cottonDown: {
     name: "わたげ",
