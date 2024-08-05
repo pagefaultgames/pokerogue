@@ -536,4 +536,8 @@ export default class UI extends Phaser.GameObjects.Container {
       this.revertMode().then(success => Utils.executeIf(success, this.revertModes).then(() => resolve()));
     });
   }
+
+  public getModeChain(): Mode[] {
+    return this.modeChain;
+  }
 }

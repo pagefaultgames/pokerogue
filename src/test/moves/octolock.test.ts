@@ -8,7 +8,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { removeEnemyHeldItems, SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Octolock", () => {
   describe("integration tests", () => {
@@ -32,15 +32,16 @@ describe("Moves - Octolock", () => {
 
       game.override.enemySpecies(Species.RATTATA);
       game.override.enemyMoveset(SPLASH_ONLY);
-      game.override.enemyAbility(Abilities.NONE);
+      game.override.enemyAbility(Abilities.BALL_FETCH);
 
       game.override.startingLevel(2000);
       game.override.moveset([Moves.OCTOLOCK, Moves.SPLASH]);
-      game.override.ability(Abilities.NONE);
+      game.override.ability(Abilities.BALL_FETCH);
     });
 
     it("Reduces DEf and SPDEF by 1 each turn", { timeout: 10000 }, async () => {
       await game.startBattle([Species.GRAPPLOCT]);
+      removeEnemyHeldItems(game.scene);
 
       const enemyPokemon = game.scene.getEnemyField();
 
@@ -62,6 +63,7 @@ describe("Moves - Octolock", () => {
 
     it("Traps the target pokemon", { timeout: 10000 }, async () => {
       await game.startBattle([Species.GRAPPLOCT]);
+      removeEnemyHeldItems(game.scene);
 
       const enemyPokemon = game.scene.getEnemyField();
 
