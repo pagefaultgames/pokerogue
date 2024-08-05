@@ -1563,14 +1563,14 @@ const modifierPool: ModifierPool = {
       // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
       return party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => checkedMoves.includes(m.moveId)))) ? 10 : 0;
     }, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
-      const checkedAbilities = [Abilities.WEAK_ARMOR, Abilities.CONTRARY, Abilities.MOODY, Abilities.ANGER_SHELL, Abilities.COMPETITIVE, Abilities.DEFIANT];
-      const weightMultiplier = party.filter(
-        p => !p.getHeldItems().some(i => i instanceof Modifiers.PokemonResetNegativeStatStageModifier && i.stackCount >= i.getMaxHeldItemCount(p)) &&
-          (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => selfStatLowerMoves.includes(m.moveId)))).length;
-      // If a party member has one of the above moves or abilities and doesn't have max herbs, the herb will appear more frequently
-      return 2 * (weightMultiplier ? 2 : 1) + (weightMultiplier ? weightMultiplier : 0);
-    }, 10),
+    // new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
+    //   const checkedAbilities = [Abilities.WEAK_ARMOR, Abilities.CONTRARY, Abilities.MOODY, Abilities.ANGER_SHELL, Abilities.COMPETITIVE, Abilities.DEFIANT];
+    //   const weightMultiplier = party.filter(
+    //     p => !p.getHeldItems().some(i => i instanceof Modifiers.PokemonResetNegativeStatStageModifier && i.stackCount >= i.getMaxHeldItemCount(p)) &&
+    //       (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => selfStatLowerMoves.includes(m.moveId)))).length;
+    //   // If a party member has one of the above moves or abilities and doesn't have max herbs, the herb will appear more frequently
+    //   return 2 * (weightMultiplier ? 2 : 1) + (weightMultiplier ? weightMultiplier : 0);
+    // }, 10),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 9),
@@ -1637,7 +1637,7 @@ const wildModifierPool: ModifierPool = {
   }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 1)
+    //new WeightedModifierType(modifierTypes.WHITE_HERB, 1)
   ].map(m => {
     m.setTier(ModifierTier.ULTRA); return m;
   }),
@@ -1667,7 +1667,7 @@ const trainerModifierPool: ModifierPool = {
   }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 1),
+    //new WeightedModifierType(modifierTypes.WHITE_HERB, 1),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA); return m;
   }),
