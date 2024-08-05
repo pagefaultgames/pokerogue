@@ -50,5 +50,13 @@ export const moveTriggers: SimpleTranslationEntries = {
   "transformedIntoTarget": "{{pokemonName}}[[는]]\n{{targetName}}[[로]] 변신했다!",
   "tryingToTakeFoeDown": "{{pokemonName}}[[는]] 상대를\n길동무로 삼으려 하고 있다!",
   "addType": "{{pokemonName}}에게\n{{typeName}}타입이 추가되었다!",
-  "cannotUseMove": "{{pokemonName}}[[는]]\n{{moveName}}[[를]] 쓸 수 없다!"
+  "cannotUseMove": "{{pokemonName}}[[는]]\n{{moveName}}[[를]] 쓸 수 없다!",
+  "healHp": "{{pokemonName}}의\n체력이 회복되었다!",
+  "sacrificialFullRestore": "{{pokemonName}}의\n치유소원이 이루어졌다!",
+  "invertStats": "{{pokemonName}}[[는]]\n능력 변화가 뒤집혔다!",
+  "resetStats": "{{pokemonName}}의 모든 상태가\n원래대로 되돌아왔다!",
+  "faintCountdown": "{{pokemonName}}[[는]]\n{{turnCount}}턴 후에 쓰러져 버린다!",
+  "copyType": "{{pokemonName}}[[는]]\n{{targetPokemonName}}[[와]] 같은 타입이 되었다!",
+  "suppressAbilities": "{{pokemonName}}의\n특성이 효과를 발휘하지 못하게 되었다!",
+  "swapArenaTags": "{{pokemonName}}[[는]]\n서로의 필드 효과를 교체했다!",
 } as const;
