@@ -606,10 +606,13 @@ export default class GameInfoUiHandler extends UiHandler {
   createHallofFame(): void {
     this.hallofFameContainer = this.scene.add.container(0, 0);
     //Thank you Hayuna for the code
-    const hallofFameBg = this.scene.add.image(0, 0, "hall_of_fame");
-    hallofFameBg.setPosition(159, 89);
-    hallofFameBg.setSize(this.scene.game.canvas.width, this.scene.game.canvas.height+10);
-    this.hallofFameContainer.add(hallofFameBg);
+    const endCard = this.scene.add.image(0, 0, `end_${this.scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}`);
+    endCard.setOrigin(0);
+    endCard.setScale(0.5);
+    const hofLayer = this.scene.add.rectangle(0, 0, endCard.width, endCard.height);
+    hofLayer.setFillStyle(0, 0.95);
+    this.hallofFameContainer.add(endCard);
+    this.hallofFameContainer.add(hofLayer);
 
     const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText"), TextStyle.WINDOW);
     hallofFameText.setPosition(84, 144);
@@ -656,6 +659,9 @@ export default class GameInfoUiHandler extends UiHandler {
       this.gameStatsContainer.removeAll(true);
       if (this.victory) {
         this.hallofFameContainer.removeAll(true);
+        if (this.endCardContainer) {
+          this.endCardContainer.removeAll(true);
+        }
       }
       super.clear();
       this.gameStatsContainer.setVisible(false);
