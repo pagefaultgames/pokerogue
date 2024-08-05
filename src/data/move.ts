@@ -2697,15 +2697,24 @@ export class InvertStatsAttr extends MoveEffectAttr {
 }
 
 export class ResetStatsAttr extends MoveEffectAttr {
+  private targetAllPokemon: boolean;
+  constructor(targetAllPokemon: boolean) {
+    super();
+    this.targetAllPokemon = targetAllPokemon;
+  }
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
 
-    const activePokemon = user.scene.getField(true);
-    activePokemon.forEach(p => this.resetStats(p));
-
-    target.scene.queueMessage(i18next.t("moveTriggers:statEliminated"));
+    if (this.targetAllPokemon) { // Target all pokemon on the field when Freezy Frost or Haze are used
+      const activePokemon = user.scene.getField(true);
+      activePokemon.forEach(p => this.resetStats(p));
+      target.scene.queueMessage(i18next.t("moveTriggers:statEliminated"));
+    } else { // Affects only the single target when Clear Smog is used
+      this.resetStats(target);
+      target.scene.queueMessage(i18next.t("moveTriggers:resetStats", {pokemonName: getPokemonNameWithAffix(target)}));
+    }
 
     return true;
   }
@@ -6256,7 +6265,7 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.LIGHT_SCREEN, 5, true)
       .target(MoveTarget.USER_SIDE),
     new SelfStatusMove(Moves.HAZE, Type.ICE, -1, 30, -1, 0, 1)
-      .attr(ResetStatsAttr),
+      .attr(ResetStatsAttr, true),
     new StatusMove(Moves.REFLECT, Type.PSYCHIC, -1, 20, -1, 0, 1)
       .attr(AddArenaTagAttr, ArenaTagType.REFLECT, 5, true)
       .target(MoveTarget.USER_SIDE),
@@ -7342,7 +7351,7 @@ export function initMoves() {
     new AttackMove(Moves.CHIP_AWAY, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 5)
       .attr(IgnoreOpponentStatChangesAttr),
     new AttackMove(Moves.CLEAR_SMOG, Type.POISON, MoveCategory.SPECIAL, 50, -1, 15, -1, 0, 5)
-      .attr(ResetStatsAttr),
+      .attr(ResetStatsAttr, false),
     new AttackMove(Moves.STORED_POWER, Type.PSYCHIC, MoveCategory.SPECIAL, 20, 100, 10, -1, 0, 5)
       .attr(StatChangeCountPowerAttr),
     new StatusMove(Moves.QUICK_GUARD, Type.FIGHTING, -1, 15, -1, 3, 5)
@@ -8048,7 +8057,7 @@ export function initMoves() {
       .makesContact(false)
       .attr(AddBattlerTagAttr, BattlerTagType.SEEDED),
     new AttackMove(Moves.FREEZY_FROST, Type.ICE, MoveCategory.SPECIAL, 100, 90, 10, -1, 0, 7)
-      .attr(ResetStatsAttr),
+      .attr(ResetStatsAttr, true),
     new AttackMove(Moves.SPARKLY_SWIRL, Type.FAIRY, MoveCategory.SPECIAL, 120, 85, 5, -1, 0, 7)
       .attr(PartyStatusCureAttr, null, Abilities.NONE),
     new AttackMove(Moves.VEEVEE_VOLLEY, Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 20, -1, 0, 7)
