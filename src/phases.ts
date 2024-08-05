@@ -642,6 +642,10 @@ export class SelectStarterPhase extends Phase {
       this.scene.arena.init();
       this.scene.sessionPlayTime = 0;
       this.scene.lastSavePlayTime = 0;
+      // Ensures Keldeo (or any future Pokemon that have this type of form change) starts in the correct form
+      this.scene.getParty().forEach((p: PlayerPokemon) => {
+        this.scene.triggerPokemonFormChange(p, SpeciesFormChangeMoveLearnedTrigger);
+      });
       this.end();
     });
   }
