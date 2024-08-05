@@ -128,7 +128,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const randAbilityIndex = Utils.randSeedInt(2);
 
     this.species = species;
-    this.illusion = {active: false, available: true};
+    this.illusion = { active: false, available: true };
 
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
