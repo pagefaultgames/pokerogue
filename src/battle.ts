@@ -423,7 +423,10 @@ export class FixedBattleConfig {
     this.seedOffsetWaveIndex = seedOffsetWaveIndex;
     return this;
   }
+
+
 }
+
 
 /**
  * Helper function to generate a random trainer for evil team trainers and the elite 4/champion
