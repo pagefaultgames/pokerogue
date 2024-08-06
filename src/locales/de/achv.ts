@@ -378,6 +378,5 @@ export const PGFachv: AchievementTranslationEntries = {
   "MONO_DARK": PGMachv.MONO_DARK,
   "MONO_FAIRY": PGMachv.MONO_FAIRY,
   "FRESH_START": PGMachv.FRESH_START
-  }
 } as const;
 
