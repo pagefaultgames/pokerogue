@@ -4531,11 +4531,25 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
   }
 }
 
+/**
+ * Attribute to remove all Substitutes from the field.
+ * @extends MoveEffectAttr
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Tidy_Up_(move) | Tidy Up}
+ * @see {@linkcode SubstituteTag}
+ */
 export class RemoveAllSubstitutesAttr extends MoveEffectAttr {
   constructor() {
     super(true);
   }
 
+  /**
+   * Remove's the Substitute Doll effect from all active Pokemon on the field
+   * @param user {@linkcode Pokemon} the Pokemon using this move
+   * @param target n/a
+   * @param move {@linkcode Move} the move applying this effect
+   * @param args n/a
+   * @returns `true` if the effect successfully applies
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
