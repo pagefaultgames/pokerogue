@@ -4466,7 +4466,7 @@ export class PostGameOverPhase extends Phase {
 
 /**
  * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}
- * for the player.
+ * for the player (if a switch would be valid for the current battle state).
  */
 export class SwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
@@ -4475,7 +4475,7 @@ export class SwitchPhase extends BattlePhase {
 
   /**
    * Creates a new SwitchPhase
-   * @param scene Current battle scene
+   * @param scene {@linkcode BattleScene} Current battle scene
    * @param fieldIndex Field index to switch out
    * @param isModal Indicates if the switch should be forced (true) or is
    * optional (false).
