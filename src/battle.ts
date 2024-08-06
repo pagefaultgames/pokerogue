@@ -378,7 +378,7 @@ export default class Battle {
     scene.rngSeedOverride = tempSeedOverride;
   }
 
-  randSeedInt(scene: BattleScene, range: integer, min: integer = 0): integer {
+  randSeedInt(scene: BattleScene, range: integer, min: integer = 0, reason: string = "Unlabeled randSeedInt"): integer {
     if (range <= 1) {
       return min;
     }
@@ -394,6 +394,7 @@ export default class Battle {
     scene.rngCounter = this.rngCounter++;
     scene.rngSeedOverride = this.battleSeed;
     const ret = Utils.randSeedInt(range, min);
+    console.log(reason, ret)
     this.battleSeedState = Phaser.Math.RND.state();
     Phaser.Math.RND.state(state);
     //scene.setScoreText("RNG: " + tempRngCounter + " (Last sim: " + this.rngCounter + ")")

@@ -951,8 +951,8 @@ export default class BattleScene extends SceneBase {
     this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
   }
 
-  randBattleSeedInt(range: integer, min: integer = 0): integer {
-    return this.currentBattle.randSeedInt(this, range, min);
+  randBattleSeedInt(range: integer, min: integer = 0, reason?: string): integer {
+    return this.currentBattle.randSeedInt(this, range, min, reason);
   }
 
   reset(clearScene: boolean = false, clearData: boolean = false, reloadI18n: boolean = false): void {

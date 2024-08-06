@@ -1050,7 +1050,7 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as Pokemon;
     const surviveDamage = args[1] as Utils.BooleanHolder;
 
-    if (!surviveDamage.value && pokemon.randSeedInt(10) < this.getStackCount()) {
+    if (!surviveDamage.value && pokemon.randSeedInt(10, undefined, "Chance to endure an attack") < this.getStackCount()) {
       surviveDamage.value = true;
 
       pokemon.scene.queueMessage(i18next.t("modifier:surviveDamageApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }));
@@ -1086,7 +1086,7 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as Pokemon;
     const bypassSpeed = args[1] as Utils.BooleanHolder;
 
-    if (!bypassSpeed.value && pokemon.randSeedInt(10) < this.getStackCount()) {
+    if (!bypassSpeed.value && pokemon.randSeedInt(10, undefined, "Chance to activate Quick Claw") < this.getStackCount()) {
       bypassSpeed.value = true;
       const isCommandFight = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command === Command.FIGHT;
       const hasQuickClaw = this.type instanceof ModifierTypes.PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW";
@@ -1126,7 +1126,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as Pokemon;
     const flinched = args[1] as Utils.BooleanHolder;
 
-    if (!flinched.value && pokemon.randSeedInt(10) < (this.getStackCount() * this.getSecondaryChanceMultiplier(pokemon))) {
+    if (!flinched.value && pokemon.randSeedInt(10, undefined, "Chance to flinch") < (this.getStackCount() * this.getSecondaryChanceMultiplier(pokemon))) {
       flinched.value = true;
       return true;
     }
@@ -1356,7 +1356,7 @@ export class PreserveBerryModifier extends PersistentModifier {
 
   apply(args: any[]): boolean {
     if (!(args[1] as Utils.BooleanHolder).value) {
-      (args[1] as Utils.BooleanHolder).value = (args[0] as Pokemon).randSeedInt(10) < this.getStackCount() * 3;
+      (args[1] as Utils.BooleanHolder).value = (args[0] as Pokemon).randSeedInt(10, undefined, "Chance to save a berry") < this.getStackCount() * 3;
     }
 
     return true;
@@ -2284,7 +2284,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       return false;
     }
 
-    const targetPokemon = opponents[pokemon.randSeedInt(opponents.length)];
+    const targetPokemon = opponents[pokemon.randSeedInt(opponents.length, undefined, "Chance to steal/transfer an item")];
 
     const transferredItemCount = this.getTransferredItemCount();
     if (!transferredItemCount) {
@@ -2310,7 +2310,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
           break;
         }
       }
-      const randItemIndex = pokemon.randSeedInt(itemModifiers.length);
+      const randItemIndex = pokemon.randSeedInt(itemModifiers.length, undefined, "Choosing an item to steal");
       const randItem = itemModifiers[randItemIndex];
       heldItemTransferPromises.push(pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false).then(success => {
         if (success) {

@@ -1933,7 +1933,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
           console.log(`crit stage: +${critLevel.value}`);
           const critChance = [24, 8, 2, 1][Math.max(0, Math.min(critLevel.value, 3))];
-          isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !this.scene.randBattleSeedInt(critChance));
+          isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !this.scene.randBattleSeedInt(critChance, undefined, "Crit Chance"));
           if (Overrides.NEVER_CRIT_OVERRIDE) {
             isCritical = false;
           }
@@ -1985,7 +1985,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (!isTypeImmune) {
           const levelMultiplier = (2 * source.level / 5 + 2);
-          const randomMultiplier = ((this.scene.randBattleSeedInt(16) + 85) / 100);
+          const randomMultiplier = ((this.scene.randBattleSeedInt(16, undefined, "Random damage roll") + 85) / 100);
           damage.value = Math.ceil((((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2)
                                    * stabMultiplier.value
                                    * typeMultiplier.value
@@ -2688,7 +2688,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let statusCureTurn: Utils.IntegerHolder;
 
     if (effect === StatusEffect.SLEEP) {
-      statusCureTurn = new Utils.IntegerHolder(this.randSeedIntRange(2, 4));
+      statusCureTurn = new Utils.IntegerHolder(this.randSeedIntRange(2, 4, "Random sleep turns"));
       applyAbAttrs(ReduceStatusEffectDurationAbAttr, this, null, effect, statusCureTurn);
 
       this.setFrameRate(4);
@@ -3100,14 +3100,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     fusionCanvas.remove();
   }
 
-  randSeedInt(range: integer, min: integer = 0): integer {
+  randSeedInt(range: integer, min: integer = 0, reason: string = "Pokémon randSeedInt"): integer {
     return this.scene.currentBattle
-      ? this.scene.randBattleSeedInt(range, min)
-      : Utils.randSeedInt(range, min);
+      ? this.scene.randBattleSeedInt(range, min, reason)
+      : Utils.randSeedInt(range, min, reason);
   }
 
-  randSeedIntRange(min: integer, max: integer): integer {
-    return this.randSeedInt((max - min) + 1, min);
+  randSeedIntRange(min: integer, max: integer, reason: string = "Pokémon randSeedInt"): integer {
+    return this.randSeedInt((max - min) + 1, min, reason);
   }
 
   destroy(): void {
@@ -3701,7 +3701,7 @@ export class EnemyPokemon extends Pokemon {
       }
       switch (this.aiType) {
       case AiType.RANDOM:
-        var i = this.scene.randBattleSeedInt(movePool.length)
+        var i = this.scene.randBattleSeedInt(movePool.length, undefined, "Move selection roll (RANDOM)")
         const moveId = movePool[i].moveId;
         this.flyout.setText(i)
         return { move: moveId, targets: this.getNextTargets(moveId) };
@@ -3766,12 +3766,12 @@ export class EnemyPokemon extends Pokemon {
         });
         let r = 0;
         if (this.aiType === AiType.SMART_RANDOM) {
-          while (r < sortedMovePool.length - 1 && this.scene.randBattleSeedInt(8) >= 5) {
+          while (r < sortedMovePool.length - 1 && this.scene.randBattleSeedInt(8, undefined, "Move selection roll (SMART_RANDOM)") >= 5) {
             r++;
           }
         } else if (this.aiType === AiType.SMART) {
           while (r < sortedMovePool.length - 1 && (moveScores[movePool.indexOf(sortedMovePool[r + 1])] / moveScores[movePool.indexOf(sortedMovePool[r])]) >= 0
-              && this.scene.randBattleSeedInt(100) < Math.round((moveScores[movePool.indexOf(sortedMovePool[r + 1])] / moveScores[movePool.indexOf(sortedMovePool[r])]) * 50)) {
+              && this.scene.randBattleSeedInt(100, undefined, "Move selection roll (SMART)") < Math.round((moveScores[movePool.indexOf(sortedMovePool[r + 1])] / moveScores[movePool.indexOf(sortedMovePool[r])]) * 50)) {
             r++;
           }
         }
@@ -3836,7 +3836,7 @@ export class EnemyPokemon extends Pokemon {
       return total;
     }, 0);
 
-    const randValue = this.scene.randBattleSeedInt(totalWeight);
+    const randValue = this.scene.randBattleSeedInt(totalWeight, undefined, "Random target selection");
     let targetIndex: integer;
 
     thresholds.every((t, i) => {

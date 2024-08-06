@@ -813,8 +813,8 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.status && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance)) {
-      const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
+    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.status && (this.chance === -1 || pokemon.randSeedInt(100, undefined, "Random chance to apply effect after something makes contact") < this.chance)) {
+      const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length, undefined, "Selecting an effect to apply")];
       return attacker.trySetStatus(effect, true, pokemon);
     }
 
@@ -849,7 +849,7 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && pokemon.randSeedInt(100) < this.chance) {
+    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && pokemon.randSeedInt(100, undefined, "Random chance to apply Battle Tag after something makes contact") < this.chance) {
       return attacker.addTag(this.tagType, this.turnCount, move.id, attacker.id);
     }
 
@@ -1017,7 +1017,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (!attacker.summonData.disabledMove) {
-      if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance) && !attacker.isMax()) {
+      if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100, undefined, "Chance to disable a move") < this.chance) && !attacker.isMax()) {
         this.attacker = attacker;
         this.move = move;
 
@@ -1551,7 +1551,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
       if (hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, defender, move))) {
         const heldItems = this.getTargetHeldItems(defender).filter(i => i.isTransferrable);
         if (heldItems.length) {
-          const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
+          const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length, undefined, "Selecting item to steal")];
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
             if (success) {
               pokemon.scene.queueMessage(i18next.t("abilityTriggers:postAttackStealHeldItem", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), defenderName: defender.name, stolenItemType: stolenItem.type.name }));
@@ -1586,8 +1586,8 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     /**Status inflicted by abilities post attacking are also considered additional effects.*/
-    if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
-      const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
+    if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100, undefined, "Chance to apply status after attacking") < this.chance && !pokemon.status) {
+      const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length, undefined, "Selecting a status to apply")];
       return attacker.trySetStatus(effect, true, pokemon);
     }
 
@@ -1617,8 +1617,8 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     /**Battler tags inflicted by abilities post attacking are also considered additional effects.*/
-    if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance(attacker, pokemon, move) && !pokemon.status) {
-      const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
+    if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100, undefined, "Random chance to apply a Battle Tag after attacking") < this.chance(attacker, pokemon, move) && !pokemon.status) {
+      const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length, undefined, "Selecting which tag to apply")];
       return attacker.addTag(effect);
     }
 
@@ -1640,7 +1640,7 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
       if (hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, attacker, move))) {
         const heldItems = this.getTargetHeldItems(attacker).filter(i => i.isTransferrable);
         if (heldItems.length) {
-          const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
+          const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length, undefined, "Choosing an item to steal")];
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
             if (success) {
               pokemon.scene.queueMessage(i18next.t("abilityTriggers:postDefendStealHeldItem", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), attackerName: attacker.name, stolenItemType: stolenItem.type.name }));
@@ -2387,7 +2387,7 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
    */
   applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (this.effects.indexOf(args[0]) > -1 && !defender.isFainted()) {
-      return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedInt(3,2), move.id, defender.id);
+      return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedInt(3,2, "Duration of Confusion effect"), move.id, defender.id);
     }
     return false;
   }
@@ -3951,7 +3951,7 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const bypassSpeed = args[0] as Utils.BooleanHolder;
 
-    if (!bypassSpeed.value && pokemon.randSeedInt(100) < this.chance) {
+    if (!bypassSpeed.value && pokemon.randSeedInt(100, undefined, "Chance of going first") < this.chance) {
       const turnCommand =
         pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
       const isCommandFight = turnCommand?.command === Command.FIGHT;
@@ -4035,7 +4035,7 @@ function applyAbAttrsInternalNoApply<TAttr extends AbAttr>(attrType: Constructor
       if (!passive) {
         args[0].value = 0
         return resolve();
-        return applyAbAttrsInternal(attrType, pokemon, applyFunc, args, isAsync, showAbilityInstant, quiet, true).then(() => resolve());
+        //return applyAbAttrsInternal(attrType, pokemon, applyFunc, args, isAsync, showAbilityInstant, quiet, true).then(() => resolve());
       } else {
         return resolve();
       }
@@ -4049,12 +4049,13 @@ function applyAbAttrsInternalNoApply<TAttr extends AbAttr>(attrType: Constructor
       if (!passive) {
         args[0].value = 0
         return resolve()
-        return applyAbAttrsInternal(attrType, pokemon, applyFunc, args, isAsync, showAbilityInstant, quiet, true).then(() => resolve());
+        //return applyAbAttrsInternal(attrType, pokemon, applyFunc, args, isAsync, showAbilityInstant, quiet, true).then(() => resolve());
       } else {
         return resolve();
       }
     };
     return resolve();
+    /*
     const applyNextAbAttr = () => {
       if (attrs.length) {
         applyAbAttr(attrs.shift());
@@ -4108,6 +4109,7 @@ function applyAbAttrsInternalNoApply<TAttr extends AbAttr>(attrType: Constructor
       }
     };
     applyNextAbAttr();
+    */
   });
 }
 

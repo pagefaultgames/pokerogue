@@ -4160,7 +4160,7 @@ export class MovePhase extends BattlePhase {
 
       switch (this.pokemon.status.effect) {
       case StatusEffect.PARALYSIS:
-        if (!this.pokemon.randSeedInt(4)) {
+        if (!this.pokemon.randSeedInt(4, undefined, "Paralysis chance")) {
           activated = true;
           this.cancelled = true;
         }
@@ -4172,7 +4172,7 @@ export class MovePhase extends BattlePhase {
         this.cancelled = activated;
         break;
       case StatusEffect.FREEZE:
-        healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
+        healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5, undefined, "Chance to thaw out from freeze");
         activated = !healed;
         this.cancelled = activated;
         break;
@@ -4471,7 +4471,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     const accuracyMultiplier = user.getAccuracyMultiplier(target, this.move.getMove());
-    const rand = user.randSeedInt(100, 1);
+    const rand = user.randSeedInt(100, 1, "Accuracy roll");
 
     return rand <= moveAccuracy * accuracyMultiplier;
   }
@@ -4779,7 +4779,7 @@ export class StatChangePhase extends PokemonPhase {
 
   getRandomStat(): BattleStat {
     const allStats = Utils.getEnumValues(BattleStat);
-    return allStats[this.getPokemon().randSeedInt(BattleStat.SPD + 1)];
+    return allStats[this.getPokemon().randSeedInt(BattleStat.SPD + 1, undefined, "Randomly selecting a stat")];
   }
 
   aggregateStatChanges(random: boolean = false): void {
@@ -6382,7 +6382,7 @@ export class AttemptCapturePhase extends PokemonPhase {
   }
 
   roll(y?: integer) {
-    var roll = (this.getPokemon() as EnemyPokemon).randSeedInt(65536)
+    var roll = (this.getPokemon() as EnemyPokemon).randSeedInt(65536, undefined, "Capture roll")
     if (y != undefined) {
       console.log(roll, y, roll < y)
     } else {
@@ -6679,7 +6679,7 @@ export class AttemptRunPhase extends PokemonPhase {
     const escapeChance = new Utils.IntegerHolder((((playerPokemon.getStat(Stat.SPD) * 128) / enemySpeed) + (30 * this.scene.currentBattle.escapeAttempts++)) % 256);
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, escapeChance);
 
-    if (playerPokemon.randSeedInt(256) < escapeChance.value) {
+    if (playerPokemon.randSeedInt(256, undefined, "Run attempt") < escapeChance.value) {
       this.scene.playSound("flee");
       LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, "Fled")
       this.scene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);

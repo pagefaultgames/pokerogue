@@ -76,18 +76,22 @@ export function padInt(value: integer, length: integer, padWith?: string): strin
 * @param range The amount of possible numbers
 * @param min The starting number
 */
-export function randInt(range: integer, min: integer = 0): integer {
+export function randInt(range: integer, min: integer = 0, reason?: string): integer {
   if (range === 1) {
     return min;
   }
-  return Math.floor(Math.random() * range) + min;
+  let V = Math.floor(Math.random() * range) + min;
+  //console.log(reason ? reason : "randInt", V)
+  return V;
 }
 
-export function randSeedInt(range: integer, min: integer = 0): integer {
+export function randSeedInt(range: integer, min: integer = 0, reason?: string): integer {
   if (range <= 1) {
     return min;
   }
-  return Phaser.Math.RND.integerInRange(min, (range - 1) + min);
+  let V = Phaser.Math.RND.integerInRange(min, (range - 1) + min);
+  //console.log(reason ? reason : "randSeedInt", V)
+  return V;
 }
 
 /**
@@ -95,26 +99,36 @@ export function randSeedInt(range: integer, min: integer = 0): integer {
 * @param min The lowest number
 * @param max The highest number
 */
-export function randIntRange(min: integer, max: integer): integer {
-  return randInt(max - min, min);
+export function randIntRange(min: integer, max: integer, reason?: string): integer {
+  return randInt(max - min, min, reason ? reason : "randIntRange");
 }
 
-export function randItem<T>(items: T[]): T {
+export function randItem<T>(items: T[], reason?: string): T {
   return items.length === 1
     ? items[0]
-    : items[randInt(items.length)];
+    : items[randInt(items.length, undefined, reason ? reason : "randItem")];
 }
 
-export function randSeedItem<T>(items: T[]): T {
+export function randSeedItem<T>(items: T[], reason?: string): T {
+  function rpick() {
+    let V = Phaser.Math.RND.pick(items)
+    //console.log(reason ? reason : "randSeedItem")
+    return V;
+  }
   return items.length === 1
     ? items[0]
-    : Phaser.Math.RND.pick(items);
+    : rpick();
 }
 
-export function randSeedWeightedItem<T>(items: T[]): T {
+export function randSeedWeightedItem<T>(items: T[], reason?: string): T {
+  function rpick() {
+    let V = Phaser.Math.RND.weightedPick(items);
+    //console.log(reason ? reason : "randSeedWeightedItem")
+    return V;
+  }
   return items.length === 1
     ? items[0]
-    : Phaser.Math.RND.weightedPick(items);
+    : rpick();
 }
 
 export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T {
