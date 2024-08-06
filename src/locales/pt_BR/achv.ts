@@ -169,6 +169,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Invencível",
     description: "Vença o jogo no modo clássico",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Bring Your Child To Work Day",
+    description: "Beat the game in Classic Mode with at least one unevolved party member."
+  },
 
   "MONO_GEN_ONE": {
 

@@ -169,6 +169,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "战无不胜",
     description: "在经典模式中通关游戏",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Bring Your Child To Work Day",
+    description: "Beat the game in Classic Mode with at least one unevolved party member."
+  },
 
   "MONO_GEN_ONE": {
     name: "最初的劲敌",
