@@ -148,7 +148,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsHighestStatBoostOnAdd": "{{pokemonNameWithAffix}}の {{statName}}が\nあがっている　じょうたいに　なった！",
   "battlerTagsHighestStatBoostOnRemove": "{{pokemonNameWithAffix}}の　{{abilityName}}の　こうかが なくなった！",
   "battlerTagsMagnetRisenOnAdd": "{{pokemonNameWithAffix}}は でんじりょくで　うかびあがった!",
-  "battlerTagsMagnetRisenOnRemove": "{{pokemonNameWithAffix}}は でんじりょくが　なくなった!",	
+  "battlerTagsMagnetRisenOnRemove": "{{pokemonNameWithAffix}}は でんじりょくが　なくなった!",
   "battlerTagsCritBoostOnAdd": "{{pokemonNameWithAffix}}は はりきっている！",
   "battlerTagsCritBoostOnRemove": "{{pokemonNameWithAffix}}は おちついた。",
   "battlerTagsSaltCuredOnAdd": "{{pokemonNameWithAffix}}は　しおづけに　なった!",
