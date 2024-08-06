@@ -2093,9 +2093,24 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // pre filter for challenges
     if (this.scene.gameMode.modeId === GameModes.CHALLENGE) {
       this.starterContainers.forEach(container => {
-        const isValidForChallenge = new Utils.BooleanHolder(true);
-        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, container.species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(container.species, this.scene.gameData.getSpeciesDefaultDexAttr(container.species, false, true)), true);
-        if (isValidForChallenge.value) {
+        const species = container.species;
+        let allFormsValid = false;
+        if (species.forms?.length > 0) {
+          for (let i = 0; i < species.forms.length; i++) {
+            /* Here we are making a fake form index dex props for challenges
+             * Since some pokemon rely on forms to be valid (i.e. blaze tauros for fire challenges), we make a fake form and dex props to use in the challenge
+             */
+            const tempFormProps = BigInt(Math.pow(2, i)) * DexAttr.DEFAULT_FORM;
+            const isValidForChallenge = new Utils.BooleanHolder(true);
+            Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, container.species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, tempFormProps), true);
+            allFormsValid = allFormsValid || isValidForChallenge.value;
+          }
+        } else {
+          const isValidForChallenge = new Utils.BooleanHolder(true);
+          Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, container.species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(container.species, false, true)), true);
+          allFormsValid = isValidForChallenge.value;
+        }
+        if (allFormsValid) {
           this.validStarterContainers.push(container);
         } else {
           container.setVisible(false);
