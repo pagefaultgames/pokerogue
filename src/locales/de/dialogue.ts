@@ -369,203 +369,212 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "archer": {
     "encounter": {
-      1: "Before you go any further, let's see how you far against us, Team Rocket!",
-      2: "I have received reports that your skills are not insignificant. Let's see if they are true.",
-      3: "I am Archer, an Admin of Team Rocket. And I do not go easy on enemies of our organization."
+      1: "Bevor du weitergehst, lass uns sehen, wie du dich gegen uns, Team Rocket, schlägst!",
+      2: `Ich habe Berichte erhalten, dass deine Fähigkeiten nicht unbedeutend sind.
+          $Mal sehen, ob sie wahr sind.`,
+      3: `Ich bin Atlas, ein Vorstand von Team Rocket. 
+         $Und ich mache es den Feinden unserer Organisation nicht leicht.`
     },
     "victory": {
-      1: "What a blunder!",
-      2: "With my current skills, I was not up to the task after all.",
-      3: "F-forgive me, Giovanni... For me to be defeated by a mere trainer..."
-    },
+      1: "Was für ein Fehler!",
+      2: "Mit meinen aktuellen Fähigkeiten war ich der Aufgabe doch nicht gewachsen.",
+      3: "V-verzeih mir, Giovanni... Dass ich von einem einfachen Trainer besiegt wurde..."
+    }
   },
   "ariana": {
     "encounter": {
-      1: `Hold it right there! We can't someone on the loose." 
-          $It's harmful to Team Rocket's pride, you see.`,
-      2: `I don't know or care if what I'm doing is right or wrong...
-          $I just put my faith in Giovanni and do as I am told`,
-      3: "Your trip ends here. I'm going to take you down!"
+      1: `Halt! Wir können niemanden herumlaufen lassen. 
+          $Es ist schädlich für den Stolz von Team Rocket, verstehst du.`,
+      2: `Ich weiß nicht und es ist mir egal, ob das, was ich tue, richtig oder falsch ist...
+          $Ich vertraue einfach auf Giovanni und tue, was mir gesagt wird.`,
+      3: "Dein Trip endet hier. Ich werde dich erledigen!"
     },
     "victory": {
-      1: `Tch, you really are strong. It's too bad. 
-          $If you were to join Team Rocket, you could become an Executive.`,
-      2: "I... I'm shattered...",
-      3: "Aaaieeeee! This can't be happening! I fought hard, but I still lost…"
-    },
+      1: `Tch, du bist wirklich stark. Es ist schade. 
+          $Wenn du Team Rocket beitreten würdest, könntest du ein Vorstand werden.`,
+      2: "Ich... ich bin zerstört...",
+      3: "Aaaieeeee! Das kann nicht passieren! Ich habe hart gekämpft, aber trotzdem verloren..."
+    }
   },
   "proton": {
     "encounter": {
-      1: "What do you want? If you interrupt our work, don't expect any mercy!",
-      2: `What do we have here? I am often labeled as the scariest and cruelest guy in Team Rocket…
-         $I strongly urge you not to interfere with our business!`,
-      3: "I am Proton, an Admin of Team Rocket. I am here to put an end to your meddling!"
+      1: "Was willst du? Wenn du unsere Arbeit unterbrichst, erwarte keine Gnade!",
+      2: `Was haben wir hier? Ich werde oft als der gruseligste und grausamste Typ bei Team Rocket bezeichnet…
+         $Ich rate dir dringend, dich nicht in unsere Geschäfte einzumischen!`,
+      3: "Ich bin Proton, ein Admin von Team Rocket. Ich bin hier, um deinem Einmischen ein Ende zu setzen!"
     },
     "victory": {
-      1: "The fortress came down!",
-      2: "You may have won this time… But all you did was make Team Rocket's wrath grow…",
-      3: "I am defeated… But I will not forget this!"
-    },
+      1: "Die Festung ist gefallen! Alle Mann zurückziehen!",
+      2: "Du hast diesmal gewonnen… Aber alles, was du getan hast, war, den Zorn von Team Rocket zu vergrößern…",
+      3: "Ich bin besiegt… Aber ich werde das nicht vergessen!"
+    }
   },
-
   "petrel": {
     "encounter": {
-      1: `Muhahaha, we've been waiting for you. Me? You don't know who I am? It is me, Giovanni.
-          $The majestic Giovanni himself! Wahahaha! …Huh? I don't sound anything like Giovanni?
-          $I don't even look like Giovanni? How come? I've worked so hard to mimic him!`,
-      2: "I am Petrel, an Admin of Team Rocket. I will not allow you to interfere with our plans!",
-      3: "Rocket Executive Petrel will deal with this intruder!"
+      1: `Muhahaha, wir haben auf dich gewartet. Ich? Du weißt nicht, wer ich bin? Ich bin Giovanni.
+          $Der majestätische Giovanni höchstpersönlich! Wahahaha!
+          $…Huh? Ich klinge überhaupt nicht wie Giovanni?
+          $Ich sehe nicht einmal aus wie Giovanni?
+          $Wie kommt das? Ich habe so hart daran gearbeitet, ihn nachzuahmen!`,
+      2: "Ich bin Lambda, ein Admin von Team Rocket. Ich werde nicht zulassen, dass du unsere Pläne störst!",
+      3: "Rocket Vorstand Lambda wird sich um diesen Eindringling kümmern!"
     },
     "victory": {
-      1: "OK, OK. I'll tell you where he is.",
-      2: "I… I couldn't do a thing… Giovanni, please forgive me…",
-      3: "No, I can't let this affect me. I have to inform the others…"
-    },
+      1: "OK, OK. Ich sage dir, wo er ist.",
+      2: "Ich… Ich konnte nichts tun… Giovanni, bitte vergib mir…",
+      3: "Nein, ich kann das nicht auf mich sitzen lassen. Ich muss die anderen informieren…"
+    }
   },
   "tabitha": {
     "encounter": {
-      1: "Hehehe! So you've come all the way here! But you're too late!",
-      2: `Hehehe... Got here already, did you? We underestimated you! But this is it! 
-          $I'm a cut above the Grunts you've seen so far. I'm not stalling for time.
-          $I'm going to pulverize you!`,
-      3: "I'm going to give you a little taste of pain! Resign yourself to it!"
+      1: "Hehehe! Du bist also bis hierher gekommen! Aber du bist zu spät!",
+      2: `Hehehe... Schon hier, oder? Wir haben dich unterschätzt! Aber das war's! 
+          $Ich bin eine Klasse über den Rüpeln, die du bisher gesehen hast. Ich halte dich nicht hin.
+          $Ich werde dich zermalmen!`,
+      3: "Ich werde dir eine kleine Kostprobe des Schmerzes geben! Ergebe dich!"
     },
     "victory": {
-      1: `Hehehe! You might have beaten me, but you don't stand a chance against the Boss!
-          $If you get lost now, you won't have to face a sound whipping!`,
-      2: "Hehehe... So, I lost, too...",
-      3: "Ahya! How could this be? For an Admin like me to lose to some random trainer..."
-    },
+      1: `Hehehe! Du hast mich vielleicht besiegt, aber du hast keine Chance gegen den Boss!
+          $Wenn du jetzt aufgibst, musst du dich keiner ordentlichen Tracht Prügel stellen!`,
+      2: "Hehehe... Also habe ich auch verloren...",
+      3: "Ahya! Wie konnte das passieren? Ein Vorstand wie ich von einem zufälligen Trainer besiegt..."
+    }
   },
   "courtney": {
     "encounter": {
-      1: "The thing...The thing that you hold...That is what... That's what we of Team Magma seek...",
-      2: "... Well then...Deleting...",
-      3: "...Ha. ...Analyzing... ...Hah♪"
+      1: `Das Ding... Das Ding, das du hältst... Das ist es, was...
+          $Das ist es, wonach wir von Team Magma suchen...`,
+      2: "... Nun dann... Auslöschen...",
+      3: `...?! Du... Hm... ♪ Das trifft sich ausgezeichnet... ♪
+         $Dann hole ich mir eben zuerst deine Pokémon... Her damit...`
     },
     "victory": {
-      1: "... ...Change...the world.",
-      2: `As anticipated. Unanticipated. You. Target lock...completed.
-         $Commencing...experiment. You. Forever. Aha... ♪`,
-      3: "...Again? That's unanticipated. ...I knew it. You...are interesting! ...Haha. ♪"
-    },
+      1: "... ...Ändere... die Welt.",
+      2: `Wie erwartet. Unerwartet. Du. Ziel erfasst... abgeschlossen.
+         $Beginne... Experiment. Du. Für immer. Aha... ♪`,
+      3: "...Schon wieder? Das war unerwartet. ...Ich wusste es. Du... bist interessant! ...Haha. ♪"
+    }
   },
   "shelly": {
     "encounter": {
-      1: `Ahahahaha! You're going to meddle in Team Aqua's affairs?
-         $You're either absolutely fearless, simply ignorant, or both!
-         $You're so cute, you're disgusting! I'll put you down`,
-      2: "What's this? Who's this spoiled brat?",
-      3: "Cool your jets. Be patient. I'll crush you shortly."
+      1: `Ahahahaha! Du wirst dich in die Angelegenheiten von Team Aqua einmischen?
+         $Du bist entweder absolut furchtlos, einfach unwissend oder beides!
+         $Du bist so süß, dass es ekelhaft ist! Ich werde dich erledigen.`,
+      2: "Was ist das? Wer ist dieser verwöhnte Gör?",
+      3: "Beruhige dich. Sei geduldig. Ich werde dich gleich zermalmen."
     },
     "victory": {
-      1: `Ahahahaha! We got meddled with unexpectedly! We're out of options.
-         $We'll have to pull out. But this isn't the last you'll see of Team Aqua!
-         $We have other plans! Don't you forget it!`,
-      2: "Ahhh?! Did I go too easy on you?!",
-      3: `Uh. Are you telling me you've upped your game even more during the fight?
-         $You're a brat with a bright future… My Pokémon and I don't have any strength left to fight…
-         $Go on… Go and be destroyed by Archie.`
-    },
+      1: `Ahahahaha! Wir wurden unerwartet gestört! Uns bleiben keine Optionen.
+         $Wir müssen uns zurückziehen. Aber das ist nicht das letzte Mal, dass du Team Aqua siehst!
+         $Wir haben andere Pläne! Vergiss das nicht!`,
+      2: "Ahhh?! War ich zu nachsichtig mit dir?!",
+      3: `Uh. Willst du mir sagen, dass du während des Kampfes noch besser geworden bist?
+         $Du bist ein Gör mit einer glänzenden Zukunft… 
+         $Meine Pokémon und ich haben keine Kraft mehr zu kämpfen…
+         $Geh weiter… Geh und werde von Adrian zerstört.`
+    }
   },
   "matt": {
     "encounter": {
-      1: "Hoohahaha! What, you got a screw loose or something? Look at you, little Makuhita person!",
-      2: "Oho! You! You're that funny kid!",
-      3: "What are you doing here? Did you follow us?"
+      1: `Hoohahaha! Was, hast du eine Schraube locker oder so?
+          $Sieh dich an, kleiner Makuhita-ähnlicher Trainer!`,
+      2: "Oho! Du! Du bist das lustige Kind!",
+      3: "Was machst du hier? Bist du uns gefolgt?"
     },
     "victory": {
-      1: "All right then, until the Boss has time for you, I'll be your opponent!",
-      2: `I can feel it! I can feel it, all right! The strength coming offa you!
-          $More! I still want more! But looks like we're outta time...`,
-      3: "That was fun! I knew you'd show me a good time! I look forward to facing you again someday!"
-    },
+      1: "Na gut, bis der Boss Zeit für dich hat, werde ich dein Gegner sein!",
+      2: `Ich kann es fühlen! Ich kann es spüren, das ist klar! Die Stärke, die von dir ausgeht!
+          $Mehr! Ich will noch mehr! Aber es sieht so aus, als hätten wir keine Zeit mehr...`,
+      3: `Das war Spaß! Ich wusste, dass du mir eine gute Zeit bieten würdest!
+         $Ich freue mich darauf, dich eines Tages wieder zu treffen!`
+    }
   },
   "mars": {
     "encounter": {
-      1: "I'm Mars, one of Team Galactic's top Commanders.",
-      2: "Team Galactic's vision for the future is unwavering. Opposition will be crushed without mercy!",
-      3: "Feeling nervous? You should be!"
+      1: "Ich bin Mars, eine der obersten Commander von Team Galaktik.",
+      2: "Die Vision von Team Galaktik für die Zukunft ist unbeirrt. Opposition wird gnadenlos zerschlagen!",
+      3: "Fühlst du dich nervös? Das solltest du!"
     },
     "victory": {
-      1: "This can't be happening! How did I lose?!",
-      2: "You have some skill, I'll give you that.",
-      3: "Defeated... This was a costly mistake."
+      1: "Das kann nicht passieren! Wie habe ich verloren?!",
+      2: "Du hast etwas Können, das muss ich zugeben.",
+      3: "Besiegt... Das war ein teurer Fehler."
     }
   },
   "jupiter": {
     "encounter": {
-      1: "Jupiter, Commander of Team Galactic, at your service.",
-      2: "Resistance is futile. Team Galactic will prevail!",
-      3: "You're trembling... scared already?"
+      1: "Jupiter, Commander von Team Galaktik, zu Diensten.",
+      2: "Widerstand ist zwecklos. Team Galaktik wird siegen!",
+      3: "Du zitterst... Schon Angst?"
     },
     "victory": {
-      1: "No way... I lost?!",
-      2: "Impressive, you've got guts!",
-      3: "Losing like this... How embarrassing."
+      1: "Unmöglich... Ich habe verloren?!",
+      2: "Beeindruckend, du hast Mut!",
+      3: "So zu verlieren... Wie peinlich."
     }
   },
   "saturn": {
     "encounter": {
-      1: "I am Saturn, Commander of Team Galactic.",
-      2: "Our mission is absolute. Any hindrance will be obliterated!",
-      3: "Is that fear I see in your eyes?"
+      1: "Ich bin Saturn, Commander von Team Galaktik.",
+      2: "Unsere Mission ist absolut. Jeder Widerstand wird vernichtet!",
+      3: "Ist das Angst, die ich in deinen Augen sehe?"
     },
     "victory": {
-      1: "Impossible... Defeated by you?!",
-      2: "You have proven yourself a worthy adversary.",
-      3: "Bestowed in defeat... This is unacceptable."
-    }},
+      1: "Unmöglich... Von dir besiegt?!",
+      2: "Du hast dich als würdiger Gegner erwiesen.",
+      3: "Besiegt in der Niederlage... Das ist inakzeptabel."
+    }
+  },
   "zinzolin": {
     "encounter": {
-      1: "You could become a threat to Team Plasma, so we will eliminate you here and now!",
-      2: "Oh, for crying out loud... I didn't expect to have to battle in this freezing cold!",
-      3: "You're an impressive Trainer to have made it this far. But it ends here."
+      1: "Du könntest eine Bedrohung für Team Plasma werden, also werden wir dich hier und jetzt eliminieren!",
+      2: "Oh, zum Heulen... Ich hatte nicht erwartet, in dieser eisigen Kälte kämpfen zu müssen!",
+      3: "Du bist ein beeindruckender Trainer, dass du es so weit geschafft hast. Aber hier endet es."
     },
     "victory": {
-      1: "Ghetsis... I have failed you...",
-      2: "It's bitter cold. I'm shivering. I'm suffering. Yet, I still stand victorious.",
-      3: "Hmph. You're a smarter Trainer than I expected, but not smart enough."
+      1: "G-Cis... Ich habe versagt...",
+      2: "Es ist bitterkalt. Ich zittere. Ich leide. Doch ich stehe immer noch siegreich da.",
+      3: "Hm. Du bist ein klügerer Trainer, als ich erwartet habe, aber nicht klug genug."
     }
   },
   "colress": {
     "encounter": {
-      1: "You could become a threat to Team Plasma, so we must eliminate you here for the sake of my research!",
-      2: "Oh, for crying out loud... I didn't expect to have to fight so soon. Fascinating!",
-      3: "You're an impressive Trainer to have made it this far. Let's see how you fare against my strategies."
+      1: `Du könntest eine Bedrohung für Team Plasma werden.
+          $Wir müssen dich hier im Interesse meiner Forschung eliminieren!`,
+      2: "Oh, zum Heulen... Ich hatte nicht erwartet, so schnell kämpfen zu müssen. Faszinierend!",
+      3: `Du bist ein beeindruckender Trainer, dass du es so weit geschafft hast.
+         $Mal sehen, wie du gegen meine Strategien abschneidest.`,
     },
     "victory": {
-      1: "Ghetsis... I must report this...",
-      2: "It's bitter cold. I'm shivering. Yet my mind is focused on the data!",
-      3: "Hmph. You're a smarter Trainer than I expected. Quite intriguing."
+      1: "G-Cis... Ich muss das berichten...",
+      2: "Es ist bitterkalt. Ich zittere. Doch mein Geist ist auf die Daten fokussiert!",
+      3: "Hm. Du bist ein klügerer Trainer, als ich erwartet habe. Sehr interessant."
     }
   },
   "xerosic": {
     "encounter": {
-      1: "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
-      2: "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
-      3: "I've been waiting for you! I need to do a little research on you! Come, let us begin!"
+      1: "Ah ha ha! Es wäre mir ein Vergnügen. Komm schon, kleiner Trainer! Zeig mir, was du drauf hast!",
+      2: "Hm... Du bist mächtiger, als du aussiehst. Ich frage mich, wie viel Energie in dir steckt.",
+      3: "Ich habe auf dich gewartet! Ich muss ein wenig Forschung an dir betreiben! Komm, lass uns beginnen!"
     },
     "victory": {
-      1: "Ah, you're quite strong. Oh yes—very strong, indeed.",
-      2: "Ding-ding-ding! You did it! To the victor go the spoils!",
-      3: "Wonderful! Amazing! You have tremendous skill and bravery!"
+      1: "Ah, du bist ziemlich stark. Oh ja—sehr stark, in der Tat.",
+      2: "Ding-ding-ding! Du hast es geschafft! Dem Sieger gebührt die Beute!",
+      3: "Wunderbar! Erstaunlich! Du hast enorme Fähigkeiten und Mut!"
     }
   },
   "bryony": {
     "encounter": {
-      1: "I am Bryony, and it would be my pleasure to battle you. Show me what you've got.",
-      2: "Impressive... You're more powerful than you appear. Let's see the true extent of your energy.",
-      3: "I've anticipated your arrival. It's time for a little test. Shall we begin?"
+      1: "Ich bin Begonia, und es wäre mir ein Vergnügen, gegen dich zu kämpfen. Zeig mir, was du drauf hast.",
+      2: "Beeindruckend... Du bist mächtiger, als du aussiehst. Zeig mir das wahre Ausmaß deiner Energie.",
+      3: "Ich habe deine Ankunft erwartet. Es ist Zeit für einen kleinen Test. Sollen wir beginnen?"
     },
     "victory": {
-      1: "You're quite strong. Oh yes—very strong, indeed.",
-      2: "Ding-ding-ding! You've done well. Victory is yours.",
-      3: "Wonderful! Remarkable! Your skill and bravery are commendable."
+      1: "Du bist ziemlich stark. Oh ja—sehr stark, in der Tat.",
+      2: "Ding-ding-ding! Du hast dich gut geschlagen. Der Sieg gehört dir.",
+      3: "Wunderbar! Bemerkenswert! Deine Fähigkeiten und dein Mut sind lobenswert."
     }
   },
-
-
   "firebreather": {
     "encounter": {
       1: "Meine Flammen werden dich verschlingen!",
