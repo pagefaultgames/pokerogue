@@ -2360,7 +2360,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (species) {
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
         const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-        const variant = this.starterPreferences[species.speciesId]?.variant ? this.starterPreferences[species.speciesId].variant : defaultProps.variant;
+        const variant = this.starterPreferences[species.speciesId]?.variant ? this.starterPreferences[species.speciesId].variant as Variant : defaultProps.variant;
         const tint = getVariantTint(variant);
         this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
         this.pokemonShinyIcon.setTint(tint);

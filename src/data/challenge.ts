@@ -848,7 +848,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
     if (c.value !== 0) {
       switch (challengeType) {
       case ChallengeType.STARTER_CHOICE:
-        ret ||= c.applyStarterChoice(args[0], args[1], args[2], args[3], args[4], args[5]);
+        ret ||= c.applyStarterChoice(args[0], args[1], args[2], args[3]);
         break;
       case ChallengeType.STARTER_POINTS:
         ret ||= c.applyStarterPoints(args[0]);
