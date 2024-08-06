@@ -25,7 +25,7 @@ export const challenges: TranslationEntries = {
   },
   "freshStart": {
     "name": "Fresh Start",
-    "desc": "You can only use the original starters, and only as if you had just started pokerogue.",
+    "desc": "You can only use the original starters, and only as if you had just started PokéRogue.",
     "value.0": "Off",
     "value.1": "On",
   }
