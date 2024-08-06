@@ -831,7 +831,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           // exclusive partyUiMode. But better safe than sorry.
           this.options.push(isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT);
           if (allowBatonModifierSwitch && !isBatonPassMove) {
-            // the BATON modifier gives uses an extra switch option for
+            // the BATON modifier gives an extra switch option for
             // pokemon-command switches, allowing buffs to be optionally passed
             this.options.push(PartyOption.PASS_BATON);
           }
