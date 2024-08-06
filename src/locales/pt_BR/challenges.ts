@@ -23,9 +23,9 @@ export const challenges: TranslationEntries = {
     "desc_default": "Você só pode user Pokémon de um único tipo."
   },
   "freshStart": {
-    "name": "Fresh Start",
-    "desc": "You can only use the original starters, and only as if you had just started pokerogue.",
-    "value.0": "Off",
-    "value.1": "On",
+    "name": "Novo Começo",
+    "desc": "Você só pode usar os iniciais originais, como se tivesse acabado de começar o PokéRogue.",
+    "value.0": "Desligado",
+    "value.1": "Ligado",
   }
 } as const;
