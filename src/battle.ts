@@ -423,8 +423,6 @@ export class FixedBattleConfig {
     this.seedOffsetWaveIndex = seedOffsetWaveIndex;
     return this;
   }
-
-
 }
 
 
