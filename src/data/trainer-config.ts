@@ -259,11 +259,10 @@ export class TrainerConfig {
   }
 
   /**
-     * Sets if a boss trainer will have a voucher or not.
-     * @param hasVoucher - If the boss trainer will have a voucher.
-     * @returns {TrainerConfig} - The updated TrainerConfig instance.
-     */
-  setHasVoucher(hasVoucher: boolean): TrainerConfig {
+   * Sets if a boss trainer will have a voucher or not.
+   * @param hasVoucher - If the boss trainer will have a voucher.
+   */
+  setHasVoucher(hasVoucher: boolean): void {
     if (!hasVoucher) {
       this.hasVoucher = false;
     }
