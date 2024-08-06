@@ -8,6 +8,13 @@ import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
 import { LoadingScene } from "./loading-scene";
 
+async function enableApiMocking(): Promise<ServiceWorkerRegistration | void> {
+  if (Number(import.meta.env.VITE_MOCK_API) === 1) {
+    const { worker } = await import("./mocks/msw/msw-browser");
+    return worker.start({ onUnhandledRequest: "bypass" });
+  }
+  return Promise.resolve();
+}
 
 // Catch global errors and display them in an alert so users can report the issue.
 window.onerror = function (message, source, lineno, colno, error) {
@@ -158,9 +165,10 @@ const startGame = () => {
   game.sound.pauseOnBlur = false;
 };
 
-fetch("/manifest.json")
-  .then(res => res.json())
-  .then(jsonResponse => {
+enableApiMocking()
+  .then(() => fetch("/manifest.json"))
+  .then((res) => res.json())
+  .then((jsonResponse) => {
     startGame();
     game["manifest"] = jsonResponse.manifest;
   }).catch(() => {
