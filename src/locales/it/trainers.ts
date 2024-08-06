@@ -21,12 +21,17 @@ export const titles: SimpleTranslationEntries = {
   "flare_boss": "Team Flare Boss",
 
   "rocket_admin": "Team Rocket Admin",
+  "rocket_admin_female": "Team Rocket Admin",
   "magma_admin": "Team Magma Admin",
+  "magma_admin_female": "Team Magma Admin",
   "aqua_admin": "Team Aqua Admin",
+  "aqua_admin_female": "Team Aqua Admin",
   "galactic_commander": "Team Galactic Commander",
+  "galactic_commander_female": "Team Galactic Commander",
   "plasma_sage": "Team Plasma Sage",
   "plasma_admin": "Team Plasma Admin",
   "flare_admin": "Team Flare Admin",
+  "flare_admin_female": "Team Flare Admin",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -136,31 +141,22 @@ export const trainerClasses: SimpleTranslationEntries = {
   "rocket_grunt": "Recluta Team Rocket",
   "rocket_grunt_female": "Recluta Team Rocket",
   "rocket_grunts": "Reclute Team Rocket",
-  "rocket_admin": "Rocket Admin",
-  "rocket_admin_female": "Rocket Admin",
   "magma_grunt": "Recluta Team Magma",
   "magma_grunt_female": "Recluta Team Magma",
   "magma_grunts": "Reclute Team Magma",
-  "magma_admin": "Magma Admin",
-  "magma_admin_female": "Magma Admin",
   "aqua_grunt": "Recluta Team Idro",
   "aqua_grunt_female": "Recluta Team Idro",
   "aqua_grunts": "Recluta Team Idro",
-  "aqua_admin": "Aqua Admin",
-  "aqua_admin_female": "Aqua Admin",
   "galactic_grunt": "Recluta Team Galassia",
   "galactic_grunt_female": "Recluta Team Galassia",
   "galactic_grunts": "Reclute Team Galassia",
-  "galactic_admin": "Galactic Admin",
-  "galactic_admin_female": "Galactic Admin",
   "plasma_grunt": "Seguace Plasma",
   "plasma_grunt_female": "Seguace Plasma",
   "plasma_grunts": "Seguaci Plasma",
   "flare_grunt": "Recluta Team Flare",
   "flare_grunt_female": "Recluta Team Flare",
   "flare_grunts": "Reclute Team Flare",
-  "flare_admin": "Flare Admin",
-  "flare_admin_female": "Flare Admin",
+
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion

@@ -105,7 +105,7 @@ export function initVouchers() {
     }
 
     const bossTrainerTypes = Object.keys(trainerConfigs)
-      .filter(tt => trainerConfigs[tt].isBoss && trainerConfigs[tt].getDerivedType() !== TrainerType.RIVAL);
+      .filter(tt => trainerConfigs[tt].isBoss && trainerConfigs[tt].getDerivedType() !== TrainerType.RIVAL && trainerConfigs[tt].hasVoucher);
 
     for (const trainerType of bossTrainerTypes) {
       const voucherType = trainerConfigs[trainerType].moneyMultiplier < 10
