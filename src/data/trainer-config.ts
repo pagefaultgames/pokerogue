@@ -540,7 +540,13 @@ export class TrainerConfig {
     return this;
   }
 
-  speciesPoolPerTeam(team): TrainerTierPools {
+  /**
+  * Returns the pool of species for an evil team admin
+  * @param team - The evil team the admin belongs to.
+  * @returns {TrainerTierPools}
+  */
+  speciesPoolPerEvilTeamAdmin(team): TrainerTierPools {
+    team = team.toLowerCase();
     switch (team) {
     case "rocket": {
       return {
@@ -601,7 +607,7 @@ export class TrainerConfig {
     this.setPartyTemplates(trainerPartyTemplates.RIVAL_5);
 
     // Set the species pools for the evil team admin.
-    this.speciesPools = this.speciesPoolPerTeam(team);
+    this.speciesPools = this.speciesPoolPerEvilTeamAdmin(team);
 
     signatureSpecies.forEach((speciesPool, s) => {
       if (!Array.isArray(speciesPool)) {
