@@ -91,6 +91,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
         if (this.runs[cursor]) {
+          console.log(this.runs[cursor].entryData);
           this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, true);
         } else {
           return false;
