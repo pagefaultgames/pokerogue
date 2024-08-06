@@ -201,7 +201,7 @@ export class TrainerConfig {
   public speciesPools: TrainerTierPools;
   public speciesFilter: PokemonSpeciesFilter;
   public specialtyTypes: Type[] = [];
-  public hasVoucher: boolean = true;
+  public hasVoucher: boolean = false;
 
   public encounterMessages: string[] = [];
   public victoryMessages: string[] = [];
@@ -263,9 +263,7 @@ export class TrainerConfig {
    * @param hasVoucher - If the boss trainer will have a voucher.
    */
   setHasVoucher(hasVoucher: boolean): void {
-    if (!hasVoucher) {
-      this.hasVoucher = false;
-    }
+    this.hasVoucher = hasVoucher;
   }
 
   setTitle(title: string): TrainerConfig {
@@ -665,6 +663,7 @@ export class TrainerConfig {
     this.setMoneyMultiplier(2.5);
     this.setBoss();
     this.setStaticParty();
+    this.setHasVoucher(true);
     this.setBattleBgm("battle_plasma_boss");
     this.setVictoryBgm("victory_team_plasma");
 
@@ -717,6 +716,7 @@ export class TrainerConfig {
     this.setMoneyMultiplier(2.5);
     this.setBoss();
     this.setStaticParty();
+    this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_gym");
     this.setVictoryBgm("victory_gym");
     this.setGenModifiersFunc(party => {
@@ -775,6 +775,7 @@ export class TrainerConfig {
     this.setMoneyMultiplier(3.25);
     this.setBoss();
     this.setStaticParty();
+    this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("victory_gym");
     this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyTypes.length ? specialtyTypes : null));
@@ -825,6 +826,7 @@ export class TrainerConfig {
     this.setMoneyMultiplier(10);
     this.setBoss();
     this.setStaticParty();
+    this.setHasVoucher(true);
     this.setBattleBgm("battle_champion_alder");
     this.setVictoryBgm("victory_champion");
     this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 3));
