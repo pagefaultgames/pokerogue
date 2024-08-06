@@ -27,6 +27,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { MoveUsedEvent } from "#app/events/battle-scene.js";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -5337,7 +5338,7 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
     movesetMove.ppUsed = Math.min(movesetMove.ppUsed + this.reduction, movesetMove.getMovePp());
 
     const message = i18next.t("battle:ppReduced", {targetName: getPokemonNameWithAffix(target), moveName: movesetMove.getName(), reduction: movesetMove.ppUsed - lastPpUsed});
-
+    user.scene.eventTarget.dispatchEvent(new MoveUsedEvent(target?.id, movesetMove.getMove(), movesetMove.ppUsed));
     user.scene.queueMessage(message);
 
     return true;
