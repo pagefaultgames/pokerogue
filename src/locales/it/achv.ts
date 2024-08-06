@@ -99,7 +99,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "MEGA_EVOLVE": {
     name: "Megamorfosi",
-    description: "Megaevolvi un pokémon",
+    description: "Megaevolvi un Pokémon",
   },
   "GIGANTAMAX": {
     name: "Grosso e Cattivo",
@@ -266,7 +266,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "FRESH_START": {
     name: "First Try!",
-    description: "Complete the fresh start challenge."
+    description: "Complete the Fresh Start challenge."
   }
 } as const;
 
