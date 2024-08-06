@@ -116,7 +116,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   nidoran_f: {
     fusionPrefix: "니드런♀",
-    fusionSuffix: "♀",
+    fusionSuffix: "드런♀",
   },
   nidorina: {
     fusionPrefix: "니드리나",
@@ -128,7 +128,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   nidoran_m: {
     fusionPrefix: "니드런♂",
-    fusionSuffix: "♂",
+    fusionSuffix: "드♂",
   },
   nidorino: {
     fusionPrefix: "니드리노",
@@ -147,7 +147,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "픽시",
   },
   vulpix: {
-    fusionPrefix: "식",
+    fusionPrefix: "식스",
     fusionSuffix: "스테일",
   },
   ninetales: {
@@ -175,7 +175,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "쵸",
   },
   gloom: {
-    fusionPrefix: "냄",
+    fusionPrefix: "냄새",
     fusionSuffix: "새꼬",
   },
   vileplume: {
@@ -188,7 +188,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   parasect: {
     fusionPrefix: "파라섹",
-    fusionSuffix: "섹트",
+    fusionSuffix: "라섹트",
   },
   venonat: {
     fusionPrefix: "콘팡",
@@ -203,8 +203,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "디그다",
   },
   dugtrio: {
-    fusionPrefix: "닥",
-    fusionSuffix: "닥트리오",
+    fusionPrefix: "닥트",
+    fusionSuffix: "트리오",
   },
   meowth: {
     fusionPrefix: "나옹",
@@ -255,23 +255,23 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "이시",
   },
   kadabra: {
-    fusionPrefix: "윤",
+    fusionPrefix: "윤겔",
     fusionSuffix: "겔라",
   },
   alakazam: {
     fusionPrefix: "후딘",
-    fusionSuffix: "딘",
+    fusionSuffix: "후딘",
   },
   machop: {
-    fusionPrefix: "알",
+    fusionPrefix: "알통",
     fusionSuffix: "통몬",
   },
   machoke: {
-    fusionPrefix: "근",
+    fusionPrefix: "근육",
     fusionSuffix: "육몬",
   },
   machamp: {
-    fusionPrefix: "괴",
+    fusionPrefix: "괴력",
     fusionSuffix: "력몬",
   },
   bellsprout: {
@@ -359,12 +359,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "뻐기",
   },
   shellder: {
-    fusionPrefix: "셀",
+    fusionPrefix: "셀러",
     fusionSuffix: "셀러",
   },
   cloyster: {
     fusionPrefix: "파르셀",
-    fusionSuffix: "셀",
+    fusionSuffix: "르셀",
   },
   gastly: {
     fusionPrefix: "고오",
@@ -415,7 +415,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "나시",
   },
   cubone: {
-    fusionPrefix: "탕",
+    fusionPrefix: "탕구",
     fusionSuffix: "탕구리",
   },
   marowak: {
@@ -427,7 +427,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "소몬",
   },
   hitmonchan: {
-    fusionPrefix: "홍",
+    fusionPrefix: "홍수",
     fusionSuffix: "수몬",
   },
   lickitung: {
@@ -479,7 +479,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "왕콘치",
   },
   staryu: {
-    fusionPrefix: "별",
+    fusionPrefix: "별가",
     fusionSuffix: "가사리",
   },
   starmie: {
@@ -507,7 +507,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "그마",
   },
   pinsir: {
-    fusionPrefix: "쁘",
+    fusionPrefix: "쁘사",
     fusionSuffix: "사이저",
   },
   tauros: {
@@ -515,11 +515,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "타로스",
   },
   magikarp: {
-    fusionPrefix: "잉",
+    fusionPrefix: "잉어",
     fusionSuffix: "어킹",
   },
   gyarados: {
-    fusionPrefix: "갸",
+    fusionPrefix: "갸라",
     fusionSuffix: "라도스",
   },
   lapras: {
@@ -576,7 +576,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   articuno: {
     fusionPrefix: "프리져",
-    fusionSuffix: "져",
+    fusionSuffix: "리져",
   },
   zapdos: {
     fusionPrefix: "썬더",
@@ -628,7 +628,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   typhlosion: {
     fusionPrefix: "블레",
-    fusionSuffix: "범",
+    fusionSuffix: "이범",
   },
   totodile: {
     fusionPrefix: "리아",
@@ -639,7 +639,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "게이",
   },
   feraligatr: {
-    fusionPrefix: "장크",
+    fusionPrefix: "장크로",
     fusionSuffix: "다일",
   },
   sentret: {
@@ -652,19 +652,19 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   hoothoot: {
     fusionPrefix: "부우",
-    fusionSuffix: "부",
+    fusionSuffix: "우부",
   },
   noctowl: {
     fusionPrefix: "야부",
-    fusionSuffix: "엉",
+    fusionSuffix: "부엉",
   },
   ledyba: {
     fusionPrefix: "레디바",
     fusionSuffix: "디바",
   },
   ledian: {
-    fusionPrefix: "레디안",
-    fusionSuffix: "레디안",
+    fusionPrefix: "레디",
+    fusionSuffix: "디안",
   },
   spinarak: {
     fusionPrefix: "페이",
@@ -684,7 +684,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   lanturn: {
     fusionPrefix: "랜턴",
-    fusionSuffix: "턴",
+    fusionSuffix: "랜턴",
   },
   pichu: {
     fusionPrefix: "피츄",
@@ -720,7 +720,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   flaaffy: {
     fusionPrefix: "보송",
-    fusionSuffix: "송",
+    fusionSuffix: "송송",
   },
   ampharos: {
     fusionPrefix: "전룡",
@@ -747,7 +747,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "왕구리",
   },
   hoppip: {
-    fusionPrefix: "통",
+    fusionPrefix: "통통",
     fusionSuffix: "통코",
   },
   skiploom: {
@@ -803,7 +803,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "우마",
   },
   unown: {
-    fusionPrefix: "안",
+    fusionPrefix: "안농",
     fusionSuffix: "안농",
   },
   wobbuffet: {
@@ -855,7 +855,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "단지",
   },
   heracross: {
-    fusionPrefix: "헤",
+    fusionPrefix: "헤라",
     fusionSuffix: "크로스",
   },
   sneasel: {
@@ -888,7 +888,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   corsola: {
     fusionPrefix: "코산",
-    fusionSuffix: "호",
+    fusionSuffix: "산호",
   },
   remoraid: {
     fusionPrefix: "총어",
@@ -899,7 +899,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "포무노",
   },
   delibird: {
-    fusionPrefix: "딜",
+    fusionPrefix: "딜리",
     fusionSuffix: "리버드",
   },
   mantine: {
@@ -928,11 +928,11 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   donphan: {
     fusionPrefix: "코리",
-    fusionSuffix: "갑",
+    fusionSuffix: "리갑",
   },
   porygon2: {
     fusionPrefix: "폴리곤2",
-    fusionSuffix: "2",
+    fusionSuffix: "리곤2",
   },
   stantler: {
     fusionPrefix: "노라",
@@ -964,7 +964,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   miltank: {
     fusionPrefix: "밀탱",
-    fusionSuffix: "밀탱크",
+    fusionSuffix: "탱크",
   },
   blissey: {
     fusionPrefix: "해피",
@@ -1060,14 +1060,14 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   wurmple: {
     fusionPrefix: "개무",
-    fusionSuffix: "소",
+    fusionSuffix: "무소",
   },
   silcoon: {
     fusionPrefix: "실쿤",
     fusionSuffix: "실쿤",
   },
   beautifly: {
-    fusionPrefix: "뷰",
+    fusionPrefix: "뷰티",
     fusionSuffix: "플라이",
   },
   cascoon: {
@@ -1079,7 +1079,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "케일",
   },
   lotad: {
-    fusionPrefix: "연",
+    fusionPrefix: "연꽃",
     fusionSuffix: "꽃몬",
   },
   lombre: {
@@ -1095,7 +1095,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "토링",
   },
   nuzleaf: {
-    fusionPrefix: "잎",
+    fusionPrefix: "잎새",
     fusionSuffix: "새코",
   },
   shiftry: {
@@ -1112,10 +1112,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   wingull: {
     fusionPrefix: "갈모",
-    fusionSuffix: "매",
+    fusionSuffix: "모매",
   },
   pelipper: {
-    fusionPrefix: "패",
+    fusionPrefix: "패리",
     fusionSuffix: "패리퍼",
   },
   ralts: {
@@ -1132,7 +1132,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   surskit: {
     fusionPrefix: "비구",
-    fusionSuffix: "술",
+    fusionSuffix: "구술",
   },
   masquerain: {
     fusionPrefix: "비나",
@@ -1167,7 +1167,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "스크",
   },
   shedinja: {
-    fusionPrefix: "껍",
+    fusionPrefix: "껍질",
     fusionSuffix: "질몬",
   },
   whismur: {
@@ -1263,11 +1263,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "젤리아",
   },
   gulpin: {
-    fusionPrefix: "꼴",
+    fusionPrefix: "꼴깍",
     fusionSuffix: "깍몬",
   },
   swalot: {
-    fusionPrefix: "꿀",
+    fusionPrefix: "꿀꺽",
     fusionSuffix: "꺽몬",
   },
   carvanha: {
@@ -1323,7 +1323,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "이곤",
   },
   cacnea: {
-    fusionPrefix: "선",
+    fusionPrefix: "선인",
     fusionSuffix: "인왕",
   },
   cacturne: {
@@ -1375,7 +1375,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "뚝군",
   },
   claydol: {
-    fusionPrefix: "점",
+    fusionPrefix: "점토",
     fusionSuffix: "토도리",
   },
   lileep: {
@@ -1407,7 +1407,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "퐁",
   },
   kecleon: {
-    fusionPrefix: "켈",
+    fusionPrefix: "켈리",
     fusionSuffix: "리몬",
   },
   shuppet: {
@@ -1463,7 +1463,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "카이저",
   },
   clamperl: {
-    fusionPrefix: "진",
+    fusionPrefix: "진주",
     fusionSuffix: "주몽",
   },
   huntail: {
@@ -1516,7 +1516,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   registeel: {
     fusionPrefix: "레지스",
-    fusionSuffix: "틸",
+    fusionSuffix: "스틸",
   },
   latias: {
     fusionPrefix: "라티아",
@@ -1695,15 +1695,15 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "토돈",
   },
   ambipom: {
-    fusionPrefix: "겟",
+    fusionPrefix: "겟핸",
     fusionSuffix: "보숭",
   },
   drifloon: {
-    fusionPrefix: "흔",
+    fusionPrefix: "흔들",
     fusionSuffix: "풍손",
   },
   drifblim: {
-    fusionPrefix: "둥",
+    fusionPrefix: "둥실",
     fusionSuffix: "라이드",
   },
   buneary: {
@@ -1716,10 +1716,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   mismagius: {
     fusionPrefix: "무우마직",
-    fusionSuffix: "직",
+    fusionSuffix: "마직",
   },
   honchkrow: {
-    fusionPrefix: "돈",
+    fusionPrefix: "돈크",
     fusionSuffix: "돈크로우",
   },
   glameow: {
@@ -1771,7 +1771,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "강돌",
   },
   gible: {
-    fusionPrefix: "딥",
+    fusionPrefix: "딥상어",
     fusionSuffix: "어동",
   },
   gabite: {
@@ -1783,8 +1783,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "리아스",
   },
   munchlax: {
-    fusionPrefix: "먹",
-    fusionSuffix: "고자",
+    fusionPrefix: "먹고",
+    fusionSuffix: "먹고자",
   },
   riolu: {
     fusionPrefix: "리오",
@@ -1864,7 +1864,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   electivire: {
     fusionPrefix: "에레키블",
-    fusionSuffix: "블",
+    fusionSuffix: "키블",
   },
   magmortar: {
     fusionPrefix: "마그마번",
@@ -1896,7 +1896,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   porygon_z: {
     fusionPrefix: "폴리곤Z",
-    fusionSuffix: "Z",
+    fusionSuffix: "리곤Z",
   },
   gallade: {
     fusionPrefix: "엘레",
@@ -1980,7 +1980,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   snivy: {
     fusionPrefix: "주리",
-    fusionSuffix: "얀",
+    fusionSuffix: "비얀",
   },
   servine: {
     fusionPrefix: "샤비",
@@ -1995,8 +1995,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "뚜꾸리",
   },
   pignite: {
-    fusionPrefix: "챠",
-    fusionSuffix: "꿀",
+    fusionPrefix: "차오",
+    fusionSuffix: "오꿀",
   },
   emboar: {
     fusionPrefix: "염무",
@@ -2035,12 +2035,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "랜드",
   },
   purrloin: {
-    fusionPrefix: "쌔",
-    fusionSuffix: "냥",
+    fusionPrefix: "쌔비",
+    fusionSuffix: "비냥",
   },
   liepard: {
     fusionPrefix: "레파",
-    fusionSuffix: "다스",
+    fusionSuffix: "르다스",
   },
   pansage: {
     fusionPrefix: "야나프",
@@ -2091,7 +2091,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "뮤마",
   },
   zebstrika: {
-    fusionPrefix: "제브",
+    fusionPrefix: "제브라",
     fusionSuffix: "이카",
   },
   roggenrola: {
@@ -2127,7 +2127,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "부니",
   },
   timburr: {
-    fusionPrefix: "으",
+    fusionPrefix: "으랏",
     fusionSuffix: "랏차",
   },
   gurdurr: {
@@ -2296,7 +2296,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   gothita: {
     fusionPrefix: "고디탱",
-    fusionSuffix: "탱",
+    fusionSuffix: "디탱",
   },
   gothorita: {
     fusionPrefix: "고디보",
@@ -2311,11 +2311,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "니란",
   },
   duosion: {
-    fusionPrefix: "듀",
+    fusionPrefix: "듀란",
     fusionSuffix: "듀란",
   },
   reuniclus: {
-    fusionPrefix: "란",
+    fusionPrefix: "란쿨",
     fusionSuffix: "쿨루스",
   },
   ducklett: {
@@ -2360,7 +2360,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   foongus: {
     fusionPrefix: "깜놀",
-    fusionSuffix: "슬",
+    fusionSuffix: "버슬",
   },
   amoonguss: {
     fusionPrefix: "뽀록",
@@ -2371,8 +2371,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "그릴",
   },
   jellicent: {
-    fusionPrefix: "탱탱",
-    fusionSuffix: "겔",
+    fusionPrefix: "탱탱겔",
+    fusionSuffix: "탱겔",
   },
   alomomola: {
     fusionPrefix: "맘복",
@@ -2435,7 +2435,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "프라",
   },
   chandelure: {
-    fusionPrefix: "샹",
+    fusionPrefix: "샹델",
     fusionSuffix: "델라",
   },
   axew: {
@@ -2476,7 +2476,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   mienfoo: {
     fusionPrefix: "비조푸",
-    fusionSuffix: "푸",
+    fusionSuffix: "조푸",
   },
   mienshao: {
     fusionPrefix: "비조도",
@@ -2484,11 +2484,11 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   druddigon: {
     fusionPrefix: "크리",
-    fusionSuffix: "만",
+    fusionSuffix: "리만",
   },
   golett: {
     fusionPrefix: "골비",
-    fusionSuffix: "람",
+    fusionSuffix: "비람",
   },
   golurk: {
     fusionPrefix: "골루",
@@ -2496,7 +2496,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   pawniard: {
     fusionPrefix: "자망",
-    fusionSuffix: "칼",
+    fusionSuffix: "망칼",
   },
   bisharp: {
     fusionPrefix: "절각",
@@ -2511,8 +2511,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "둥보",
   },
   braviary: {
-    fusionPrefix: "워",
-    fusionSuffix: "글",
+    fusionPrefix: "워글",
+    fusionSuffix: "워글",
   },
   vullaby: {
     fusionPrefix: "벌",
@@ -2628,7 +2628,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   frogadier: {
     fusionPrefix: "개굴반",
-    fusionSuffix: "장",
+    fusionSuffix: "반장",
   },
   greninja: {
     fusionPrefix: "개굴닌",
@@ -2636,11 +2636,11 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   bunnelby: {
     fusionPrefix: "파르빗",
-    fusionSuffix: "빗",
+    fusionSuffix: "르빗",
   },
   diggersby: {
     fusionPrefix: "파르토",
-    fusionSuffix: "토",
+    fusionSuffix: "르토",
   },
   fletchling: {
     fusionPrefix: "화살",
@@ -2676,7 +2676,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   flabebe: {
     fusionPrefix: "플라베",
-    fusionSuffix: "베",
+    fusionSuffix: "베베",
   },
   floette: {
     fusionPrefix: "플라엣",
@@ -2704,7 +2704,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   furfrou: {
     fusionPrefix: "트리미",
-    fusionSuffix: "앙",
+    fusionSuffix: "미앙",
   },
   espurr: {
     fusionPrefix: "냐스",
@@ -2716,11 +2716,11 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   honedge: {
     fusionPrefix: "단칼",
-    fusionSuffix: "빙",
+    fusionSuffix: "칼빙",
   },
   doublade: {
     fusionPrefix: "쌍검킬",
-    fusionSuffix: "킬",
+    fusionSuffix: "검킬",
   },
   aegislash: {
     fusionPrefix: "킬가",
@@ -2744,10 +2744,10 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   inkay: {
     fusionPrefix: "오케",
-    fusionSuffix: "징",
+    fusionSuffix: "이징",
   },
   malamar: {
-    fusionPrefix: "칼",
+    fusionPrefix: "칼라마",
     fusionSuffix: "네로",
   },
   binacle: {
@@ -2764,30 +2764,30 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   dragalge: {
     fusionPrefix: "드래캄",
-    fusionSuffix: "캄",
+    fusionSuffix: "래캄",
   },
   clauncher: {
-    fusionPrefix: "완",
-    fusionSuffix: "포",
+    fusionPrefix: "완철",
+    fusionSuffix: "철포",
   },
   clawitzer: {
     fusionPrefix: "블로",
     fusionSuffix: "로스터",
   },
   helioptile: {
-    fusionPrefix: "목",
-    fusionSuffix: "텔",
+    fusionPrefix: "목도리",
+    fusionSuffix: "키텔",
   },
   heliolisk: {
     fusionPrefix: "일레도",
     fusionSuffix: "도리자드",
   },
   tyrunt: {
-    fusionPrefix: "티",
+    fusionPrefix: "티고",
     fusionSuffix: "티고라스",
   },
   tyrantrum: {
-    fusionPrefix: "견",
+    fusionPrefix: "견고",
     fusionSuffix: "견고라스",
   },
   amaura: {
@@ -2799,7 +2799,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "르가",
   },
   sylveon: {
-    fusionPrefix: "님",
+    fusionPrefix: "님피",
     fusionSuffix: "님피아",
   },
   hawlucha: {
@@ -2820,7 +2820,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   sliggoo: {
     fusionPrefix: "미끄네",
-    fusionSuffix: "네일",
+    fusionSuffix: "끄네일",
   },
   goodra: {
     fusionPrefix: "미끄래",
@@ -2839,16 +2839,16 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "로트",
   },
   pumpkaboo: {
-    fusionPrefix: "호",
+    fusionPrefix: "호바",
     fusionSuffix: "바귀",
   },
   gourgeist: {
-    fusionPrefix: "펌",
+    fusionPrefix: "펌킨",
     fusionSuffix: "킨인",
   },
   bergmite: {
     fusionPrefix: "꽁",
-    fusionSuffix: "름",
+    fusionSuffix: "어름",
   },
   avalugg: {
     fusionPrefix: "크레베",
@@ -2891,12 +2891,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "빼미",
   },
   dartrix: {
-    fusionPrefix: "빼",
+    fusionPrefix: "빼미스",
     fusionSuffix: "스로우",
   },
   decidueye: {
     fusionPrefix: "모크",
-    fusionSuffix: "이퍼",
+    fusionSuffix: "나이퍼",
   },
   litten: {
     fusionPrefix: "냐오불",
@@ -2943,7 +2943,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "사구스",
   },
   grubbin: {
-    fusionPrefix: "턱",
+    fusionPrefix: "턱지",
     fusionSuffix: "턱지충이",
   },
   charjabug: {
@@ -2980,7 +2980,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   lycanroc: {
     fusionPrefix: "루가",
-    fusionSuffix: "암",
+    fusionSuffix: "루암",
   },
   wishiwashi: {
     fusionPrefix: "약",
@@ -3020,7 +3020,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   morelull: {
     fusionPrefix: "자마슈",
-    fusionSuffix: "슈",
+    fusionSuffix: "마슈",
   },
   shiinotic: {
     fusionPrefix: "마셰",
@@ -3071,7 +3071,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "시레",
   },
   golisopod: {
-    fusionPrefix: "갑",
+    fusionPrefix: "갑주",
     fusionSuffix: "무사",
   },
   sandygast: {
@@ -3080,7 +3080,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   palossand: {
     fusionPrefix: "모래성",
-    fusionSuffix: "당",
+    fusionSuffix: "성이당",
   },
   pyukumuku: {
     fusionPrefix: "해무",
@@ -3111,7 +3111,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "마루",
   },
   mimikyu: {
-    fusionPrefix: "따",
+    fusionPrefix: "따라",
     fusionSuffix: "큐",
   },
   bruxish: {
@@ -3119,12 +3119,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "갈기",
   },
   drampa: {
-    fusionPrefix: "할",
+    fusionPrefix: "할비",
     fusionSuffix: "비롱",
   },
   dhelmise: {
     fusionPrefix: "타타",
-    fusionSuffix: "륜",
+    fusionSuffix: "타륜",
   },
   jangmo_o: {
     fusionPrefix: "짜랑꼬",
@@ -3132,27 +3132,27 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   hakamo_o: {
     fusionPrefix: "짜랑고우",
-    fusionSuffix: "고우",
+    fusionSuffix: "랑고우",
   },
   kommo_o: {
     fusionPrefix: "짜랑고우거",
-    fusionSuffix: "우거",
+    fusionSuffix: "고우거",
   },
   tapu_koko: {
     fusionPrefix: "카푸꼬",
-    fusionSuffix: "꼭",
+    fusionSuffix: "꼬꼬꼭",
   },
   tapu_lele: {
     fusionPrefix: "카푸나",
-    fusionSuffix: "비나",
+    fusionSuffix: "나비나",
   },
   tapu_bulu: {
     fusionPrefix: "카푸브",
-    fusionSuffix: "루루",
+    fusionSuffix: "브루루",
   },
   tapu_fini: {
     fusionPrefix: "카푸느",
-    fusionSuffix: "지느",
+    fusionSuffix: "느지느",
   },
   cosmog: {
     fusionPrefix: "코스모그",
@@ -3175,23 +3175,23 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "비드",
   },
   buzzwole: {
-    fusionPrefix: "매",
+    fusionPrefix: "매시",
     fusionSuffix: "시붕",
   },
   pheromosa: {
     fusionPrefix: "페로",
-    fusionSuffix: "체",
+    fusionSuffix: "코체",
   },
   xurkitree: {
     fusionPrefix: "전수",
-    fusionSuffix: "목",
+    fusionSuffix: "수목",
   },
   celesteela: {
     fusionPrefix: "철화",
-    fusionSuffix: "야",
+    fusionSuffix: "구야",
   },
   kartana: {
-    fusionPrefix: "종",
+    fusionPrefix: "종이",
     fusionSuffix: "신도",
   },
   guzzlord: {
@@ -3199,7 +3199,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "식킹",
   },
   necrozma: {
-    fusionPrefix: "네크",
+    fusionPrefix: "네크로",
     fusionSuffix: "즈마",
   },
   magearna: {
@@ -3220,7 +3220,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   stakataka: {
     fusionPrefix: "차곡",
-    fusionSuffix: "곡",
+    fusionSuffix: "차곡",
   },
   blacephalon: {
     fusionPrefix: "두파",
@@ -3236,7 +3236,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   melmetal: {
     fusionPrefix: "멜메",
-    fusionSuffix: "탈",
+    fusionSuffix: "메탈",
   },
   grookey: {
     fusionPrefix: "흥",
@@ -3255,7 +3255,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "염버니",
   },
   raboot: {
-    fusionPrefix: "래",
+    fusionPrefix: "래비",
     fusionSuffix: "풋",
   },
   cinderace: {
@@ -3263,7 +3263,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "스번",
   },
   sobble: {
-    fusionPrefix: "울",
+    fusionPrefix: "울머",
     fusionSuffix: "울머기",
   },
   drizzile: {
@@ -3271,7 +3271,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "겔레온",
   },
   inteleon: {
-    fusionPrefix: "인",
+    fusionPrefix: "인텔리",
     fusionSuffix: "리레온",
   },
   skwovet: {
@@ -3319,7 +3319,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "꼬모카",
   },
   eldegoss: {
-    fusionPrefix: "백",
+    fusionPrefix: "백솜",
     fusionSuffix: "솜모카",
   },
   wooloo: {
@@ -3355,11 +3355,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "차곤",
   },
   coalossal: {
-    fusionPrefix: "석",
-    fusionSuffix: "산",
+    fusionPrefix: "석탄",
+    fusionSuffix: "탄산",
   },
   applin: {
-    fusionPrefix: "과사",
+    fusionPrefix: "과사삭",
     fusionSuffix: "삭벌레",
   },
   flapple: {
@@ -3372,7 +3372,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   silicobra: {
     fusionPrefix: "모래뱀",
-    fusionSuffix: "뱀",
+    fusionSuffix: "래뱀",
   },
   sandaconda: {
     fusionPrefix: "사다",
@@ -3392,7 +3392,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   toxel: {
     fusionPrefix: "일레즌",
-    fusionSuffix: "즌",
+    fusionSuffix: "레즌",
   },
   toxtricity: {
     fusionPrefix: "스트",
@@ -3407,7 +3407,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "다태우지네",
   },
   clobbopus: {
-    fusionPrefix: "때",
+    fusionPrefix: "때때",
     fusionSuffix: "때무노",
   },
   grapploct: {
@@ -3444,7 +3444,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   grimmsnarl: {
     fusionPrefix: "오롱",
-    fusionSuffix: "털",
+    fusionSuffix: "롱털",
   },
   obstagoon: {
     fusionPrefix: "가로",
@@ -3455,11 +3455,11 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "이킹",
   },
   cursola: {
-    fusionPrefix: "산",
+    fusionPrefix: "산호",
     fusionSuffix: "르곤",
   },
   sirfetchd: {
-    fusionPrefix: "창",
+    fusionPrefix: "창파",
     fusionSuffix: "파나이트",
   },
   mr_rime: {
@@ -3476,7 +3476,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   alcremie: {
     fusionPrefix: "마휘",
-    fusionSuffix: "핑",
+    fusionSuffix: "휘핑",
   },
   falinks: {
     fusionPrefix: "대여",
@@ -3496,7 +3496,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   stonjourner: {
     fusionPrefix: "돌헨",
-    fusionSuffix: "진",
+    fusionSuffix: "헨진",
   },
   eiscue: {
     fusionPrefix: "빙",
@@ -3576,11 +3576,11 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   regieleki: {
     fusionPrefix: "레지에",
-    fusionSuffix: "레키",
+    fusionSuffix: "에레키",
   },
   regidrago: {
     fusionPrefix: "레지드",
-    fusionSuffix: "래고",
+    fusionSuffix: "드래고",
   },
   glastrier: {
     fusionPrefix: "블리",
@@ -3608,7 +3608,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   basculegion: {
     fusionPrefix: "대쓰",
-    fusionSuffix: "너",
+    fusionSuffix: "여너",
   },
   sneasler: {
     fusionPrefix: "포푸니크",
@@ -3619,7 +3619,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "장침바루",
   },
   enamorus: {
-    fusionPrefix: "러",
+    fusionPrefix: "러브",
     fusionSuffix: "브로스",
   },
   sprigatito: {
@@ -3655,8 +3655,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "왁",
   },
   quaquaval: {
-    fusionPrefix: "웨",
-    fusionSuffix: "발",
+    fusionPrefix: "웨이",
+    fusionSuffix: "니발",
   },
   lechonk: {
     fusionPrefix: "맛",
@@ -3716,7 +3716,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   dolliv: {
     fusionPrefix: "올리뇨",
-    fusionSuffix: "뇨",
+    fusionSuffix: "리뇨",
   },
   arboliva: {
     fusionPrefix: "올리르",
@@ -3851,8 +3851,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "구새",
   },
   finizen: {
-    fusionPrefix: "맨",
-    fusionSuffix: "핀",
+    fusionPrefix: "맨돌",
+    fusionSuffix: "돌핀",
   },
   palafin: {
     fusionPrefix: "돌핀",
@@ -3908,7 +3908,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   dondozo: {
     fusionPrefix: "어써",
-    fusionSuffix: "셔",
+    fusionSuffix: "러셔",
   },
   tatsugiri: {
     fusionPrefix: "싸",
@@ -3935,36 +3935,36 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "도각참",
   },
   great_tusk: {
-    fusionPrefix: "위대",
+    fusionPrefix: "위대한",
     fusionSuffix: "엄니",
   },
   scream_tail: {
-    fusionPrefix: "우렁",
-    fusionSuffix: "찬꼬리",
+    fusionPrefix: "우렁찬",
+    fusionSuffix: "꼬리",
   },
   brute_bonnet: {
-    fusionPrefix: "사나",
-    fusionSuffix: "섯",
+    fusionPrefix: "사나운",
+    fusionSuffix: "버섯",
   },
   flutter_mane: {
-    fusionPrefix: "날개",
-    fusionSuffix: "는머리",
+    fusionPrefix: "날개치는",
+    fusionSuffix: "머리",
   },
   slither_wing: {
-    fusionPrefix: "땅",
+    fusionPrefix: "땅을기는",
     fusionSuffix: "날개",
   },
   sandy_shocks: {
     fusionPrefix: "모래털",
-    fusionSuffix: "죽",
+    fusionSuffix: "가죽",
   },
   iron_treads: {
     fusionPrefix: "무쇠바",
-    fusionSuffix: "퀴",
+    fusionSuffix: "바퀴",
   },
   iron_bundle: {
     fusionPrefix: "무쇠보",
-    fusionSuffix: "따리",
+    fusionSuffix: "보따리",
   },
   iron_hands: {
     fusionPrefix: "무쇠손",
@@ -4019,7 +4019,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "유이",
   },
   roaring_moon: {
-    fusionPrefix: "고동",
+    fusionPrefix: "고동치는",
     fusionSuffix: "달",
   },
   iron_valiant: {
@@ -4035,8 +4035,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "미라이돈",
   },
   walking_wake: {
-    fusionPrefix: "굽",
-    fusionSuffix: "결",
+    fusionPrefix: "굽이치는",
+    fusionSuffix: "물결",
   },
   iron_leaves: {
     fusionPrefix: "무쇠잎",
@@ -4060,7 +4060,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   munkidori: {
     fusionPrefix: "이야",
-    fusionSuffix: "후",
+    fusionSuffix: "야후",
   },
   fezandipiti: {
     fusionPrefix: "기로",
@@ -4079,16 +4079,16 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "미드라",
   },
   gouging_fire: {
-    fusionPrefix: "꿰",
+    fusionPrefix: "꿰뚫는",
     fusionSuffix: "화염",
   },
   raging_bolt: {
-    fusionPrefix: "날뛰",
+    fusionPrefix: "날뛰는",
     fusionSuffix: "우레",
   },
   iron_boulder: {
     fusionPrefix: "무쇠암",
-    fusionSuffix: "석",
+    fusionSuffix: "암석",
   },
   iron_crown: {
     fusionPrefix: "무쇠감",
@@ -4099,7 +4099,7 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "고스",
   },
   pecharunt: {
-    fusionPrefix: "복",
+    fusionPrefix: "복슝",
     fusionSuffix: "악동",
   },
   alola_rattata: {
@@ -4272,7 +4272,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   hisui_typhlosion: {
     fusionPrefix: "블레",
-    fusionSuffix: "범",
+    fusionSuffix: "이범",
   },
   hisui_qwilfish: {
     fusionPrefix: "침",
@@ -4299,8 +4299,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "아크",
   },
   hisui_braviary: {
-    fusionPrefix: "워",
-    fusionSuffix: "글",
+    fusionPrefix: "워글",
+    fusionSuffix: "워글",
   },
   hisui_sliggoo: {
     fusionPrefix: "미끄네",
@@ -4316,7 +4316,7 @@ export const fusionAffixes: FusionTranslationEntries = {
   },
   hisui_decidueye: {
     fusionPrefix: "모크",
-    fusionSuffix: "이퍼",
+    fusionSuffix: "나이퍼",
   },
   paldea_tauros: {
     fusionPrefix: "켄타",
@@ -4331,3 +4331,4 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "투곰",
   },
 } as const;
+
