@@ -4252,6 +4252,7 @@ export class GameOverPhase extends BattlePhase {
         if (this.victory && newClear) {
           if (this.scene.gameMode.isClassic) {
             firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
+            this.scene.validateAchv(achvs.UNEVOLVED_CLASSIC_VICTORY);
             this.scene.gameData.gameStats.sessionsWon++;
             for (const pokemon of this.scene.getParty()) {
               this.awardRibbon(pokemon);
