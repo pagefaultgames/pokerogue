@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
 import { SelectTargetPhase, TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#app/enums/abilities.js";
 import { allAbilities } from "#app/data/ability.js";
 import Pokemon from "#app/field/pokemon.js";

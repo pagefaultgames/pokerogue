@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { TurnStartPhase } from "#app/phases";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { StatusEffect } from "#app/data/status-effect";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";

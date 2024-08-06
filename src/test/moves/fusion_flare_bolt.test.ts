@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { MoveEffectPhase, MovePhase, MoveEndPhase, TurnStartPhase, DamagePhase } from "#app/phases";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Stat } from "#app/data/pokemon-stat";
 import { allMoves } from "#app/data/move";
 import { BattlerIndex } from "#app/battle";

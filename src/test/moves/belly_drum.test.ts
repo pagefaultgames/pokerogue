@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { TurnEndPhase } from "#app/phases";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { BattleStat } from "#app/data/battle-stat";
@@ -44,7 +44,6 @@ describe("Moves - BELLY DRUM", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
@@ -60,7 +59,6 @@ describe("Moves - BELLY DRUM", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       // Here - BattleStat.ATK -> -3 and BattleStat.SPATK -> 6
@@ -81,7 +79,6 @@ describe("Moves - BELLY DRUM", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
 
       leadPokemon.summonData.battleStats[BattleStat.ATK] = 6;
 
@@ -98,7 +95,6 @@ describe("Moves - BELLY DRUM", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
       leadPokemon.hp = hpLost - PREDAMAGE;
 

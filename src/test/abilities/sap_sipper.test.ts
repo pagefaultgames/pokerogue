@@ -1,10 +1,8 @@
 import { BattleStat } from "#app/data/battle-stat.js";
 import { TerrainType } from "#app/data/terrain.js";
-import {
-  MoveEndPhase, TurnEndPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { MoveEndPhase, TurnEndPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";

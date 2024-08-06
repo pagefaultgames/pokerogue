@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
 import { CommandPhase, MoveEffectPhase, MovePhase, TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { BattlerIndex } from "#app/battle.js";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Sweet Veil", () => {
   let phaserGame: Phaser.Game;

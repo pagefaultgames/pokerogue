@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { Species } from "#app/enums/species.js";
 import { Moves } from "#app/enums/moves.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { getMovePosition } from "../utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { MoveEffectPhase } from "#app/phases.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
 

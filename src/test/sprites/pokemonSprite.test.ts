@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import _masterlist from "../../../public/images/pokemon/variant/_masterlist.json";
 import fs from "fs";
 import path from "path";
-import { getAppRootDir } from "#app/test/sprites/spritesUtils";
+import { getAppRootDir } from "#test/sprites/spritesUtils";
 
 type PokemonVariantMasterlist = typeof _masterlist;
 
@@ -29,10 +29,10 @@ describe("check if every variant's sprite are correctly set", () => {
   });
 
   it("data should not be undefined", () => {
-    expect(masterlist).not.toBeUndefined();
-    expect(expVariant).not.toBeUndefined();
-    expect(femaleVariant).not.toBeUndefined();
-    expect(backVariant).not.toBeUndefined();
+    expect(masterlist).toBeDefined();
+    expect(expVariant).toBeDefined();
+    expect(femaleVariant).toBeDefined();
+    expect(backVariant).toBeDefined();
   });
 
   function getMissingMasterlist(mlist: any, dirpath: string, excludes: string[] = []): string[] {

@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { Mode } from "#app/ui/ui";
 import { BattleStat } from "#app/data/battle-stat";
-import { generateStarter, getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { generateStarter, getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { GameModes, getGameMode } from "#app/game-mode";
@@ -11,7 +11,7 @@ import { CommandPhase, DamagePhase, EncounterPhase, EnemyCommandPhase, SelectSta
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;
