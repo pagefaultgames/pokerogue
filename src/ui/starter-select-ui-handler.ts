@@ -1653,10 +1653,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         case Button.CYCLE_SHINY:
           if (this.canCycleShiny) {
             const newVariant = props.variant;
+            starterAttributes.shiny = starterAttributes.shiny ? !starterAttributes.shiny : true;
             this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
-            const isShiny = this.dexAttrCursor & DexAttr.SHINY;
-            starterAttributes.shiny = isShiny > 0;
-            if (isShiny) {
+            if (starterAttributes.shiny) {
               this.scene.playSound("sparkle");
               // Set the variant label to the shiny tint
               const tint = getVariantTint(newVariant);
@@ -1934,6 +1933,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
     }
     this.updateInstructions();
+  }
+
+  updatePartyIcon(species: PokemonSpecies, index: number) {
+    const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
+    this.starterIcons[index].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
+    this.starterIcons[index].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
+    this.checkIconId(this.starterIcons[index], species, props.female, props.formIndex, props.shiny, props.variant);
   }
 
   switchMoveHandler(i: number, newMove: Moves, move: Moves) {
@@ -2292,9 +2298,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const species = this.filteredStarterContainers[cursor]?.species;
 
       if (species) {
-        const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+        const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
         const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-        const variant = defaultProps.variant;
+        const variant = this.starterPreferences[species.speciesId]?.variant ? this.starterPreferences[species.speciesId].variant : defaultProps.variant;
         const tint = getVariantTint(variant);
         this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
         this.pokemonShinyIcon.setTint(tint);
@@ -2436,7 +2442,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonLuckText.setText(luck.toString());
         this.pokemonLuckText.setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
         this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
-        this.pokemonShinyIcon.setVisible(this.pokemonLuckText.visible);
+        this.pokemonShinyIcon.setVisible(this.starterPreferences[species.speciesId]?.shiny);
 
         //Growth translate
         let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
@@ -2460,7 +2466,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
         }
         this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry.hatchedCount}`);
-        const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+        const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
         const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
         const variant = defaultProps.variant;
         const tint = getVariantTint(variant);
@@ -2635,6 +2641,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.dexAttrCursor |= this.scene.gameData.getFormAttr(formIndex !== undefined ? formIndex : (formIndex = oldProps.formIndex));
       this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
       this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
+      const [isInParty, partyIndex]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
+      if (isInParty) {
+        this.updatePartyIcon(species, partyIndex);
+      }
     }
 
     this.pokemonSprite.setVisible(false);
@@ -3090,7 +3100,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     for (let s = 0; s < this.starterSpecies.length; s++) {
       const isValidForChallenge = new Utils.BooleanHolder(true);
       const species = this.starterSpecies[s];
-      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), false);
+      Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)), false);
       canStart = canStart || isValidForChallenge.value;
     }
     return canStart;
