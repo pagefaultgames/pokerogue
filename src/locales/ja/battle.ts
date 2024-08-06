@@ -69,7 +69,7 @@ export const battle: SimpleTranslationEntries = {
   "regainHealth": "{{pokemonName}}は\nたいりょくを かいふくした！",
   "stealEatBerry": "{{pokemonName}}は {{targetName}}の\n{{berryName}}を　うばって　たべた!",
   "ppHealBerry": "{{pokemonNameWithAffix}}は　{{berryName}}で {{moveName}}のＰＰを　かいふくした！",
-  "hpHealBerry": "{{pokemonNameWithAffix}}は　{{berryName}}で たいりょくを　かいふくした！",											   
+  "hpHealBerry": "{{pokemonNameWithAffix}}は　{{berryName}}で たいりょくを　かいふくした！",
   "fainted": "{{pokemonNameWithAffix}}は たおれた！",
   "statsAnd": "と　",
   "stats": "のうりょく",
