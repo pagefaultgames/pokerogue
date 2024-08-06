@@ -36,7 +36,6 @@ describe("Abilities - Disguise", () => {
 
     game.override.starterSpecies(Species.REGIELEKI);
     game.override.moveset([Moves.SHADOW_SNEAK, Moves.VACUUM_WAVE, Moves.TOXIC_THREAD, Moves.SPLASH]);
-    game.override.passiveAbility(Abilities.UNNERVE);
   }, TIMEOUT);
 
   it("takes no damage from attacking move and transforms to Busted form, taking 1/8 max HP damage from the disguise breaking", async () => {
@@ -116,7 +115,7 @@ describe("Abilities - Disguise", () => {
 
     await game.startBattle([Species.MIMIKYU, Species.FURRET]);
 
-    let mimikyu = game.scene.getPlayerPokemon();
+    const mimikyu = game.scene.getPlayerPokemon();
     const maxHp = mimikyu.getMaxHp();
     const disguiseDamage = Math.floor(maxHp / 8);
 
@@ -131,7 +130,6 @@ describe("Abilities - Disguise", () => {
     game.doSwitchPokemon(1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    mimikyu = game.scene.getParty()[1];
 
     expect(mimikyu.formIndex).toBe(bustedForm);
   }, TIMEOUT);
