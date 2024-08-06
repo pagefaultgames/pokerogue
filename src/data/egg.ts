@@ -205,7 +205,11 @@ export class Egg {
       this._species = this.rollSpecies(scene);
     }
 
-    const pokemonSpecies = getPokemonSpecies(this._species);
+    let pokemonSpecies = getPokemonSpecies(this._species);
+    // Special condition to have Phione eggs also have a chance of generating Manaphy
+    if (this._species === Species.PHIONE) {
+      pokemonSpecies = getPokemonSpecies(Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE) ? Species.PHIONE : Species.MANAPHY);
+    }
 
     // Sets the hidden ability if a hidden ability exists and the override is set
     // or if the same species egg hits the chance

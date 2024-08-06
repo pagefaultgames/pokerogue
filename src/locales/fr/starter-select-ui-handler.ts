@@ -7,7 +7,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "Commencer avec ces Pokémon ?",
-  "confirmExit": "Do you want to exit?",
+  "confirmExit": "Êtes-vous sûr·e de vouloir quitter ?",
   "invalidParty": "Cette équipe de départ est invalide !",
   "gen1": "1G",
   "gen2": "2G",
