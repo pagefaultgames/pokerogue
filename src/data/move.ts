@@ -993,10 +993,6 @@ export class MoveHeaderAttr extends MoveAttr {
   constructor() {
     super(true);
   }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
-    return true;
-  }
 }
 
 /**
@@ -1013,7 +1009,7 @@ export class MessageHeaderAttr extends MoveHeaderAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const message = typeof this.message === "string"
-      ? this.message as string
+      ? this.message
       : this.message(user, move);
 
     if (message) {

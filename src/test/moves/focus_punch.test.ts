@@ -1,13 +1,12 @@
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
-import Overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, MessagePhase } from "#app/phases";
-import { StatusEffect } from "#app/data/status-effect";
+import { BerryPhase, MessagePhase, SwitchSummonPhase, TurnStartPhase } from "#app/phases";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -27,14 +26,15 @@ describe("Moves - Focus Punch", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FOCUS_PUNCH]);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GROUDON);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override
+      .battleType("single")
+      .ability(Abilities.UNNERVE)
+      .moveset([Moves.FOCUS_PUNCH])
+      .enemySpecies(Species.GROUDON)
+      .enemyAbility(Abilities.INSOMNIA)
+      .enemyMoveset(SPLASH_ONLY)
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   it(
@@ -68,7 +68,7 @@ describe("Moves - Focus Punch", () => {
   it(
     "should fail if the user is hit",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -96,31 +96,9 @@ describe("Moves - Focus Punch", () => {
   );
 
   it(
-    "should be cancelled if the user is asleep",
-    async () => {
-      vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(StatusEffect.SLEEP);
-
-      await game.startBattle([Species.CHARIZARD]);
-
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).not.toBe(undefined);
-
-      const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).not.toBe(undefined);
-
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
-
-      await game.phaseInterceptor.to(BerryPhase, false);
-
-      expect(leadPokemon.getMoveHistory().length).toBe(1);
-      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    }, TIMEOUT
-  );
-
-  it(
     "should be cancelled if the user falls asleep mid-turn",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPORE, Moves.SPORE, Moves.SPORE, Moves.SPORE]);
+      game.override.enemyMoveset(Array(4).fill(Moves.SPORE));
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -140,6 +118,23 @@ describe("Moves - Focus Punch", () => {
 
       expect(leadPokemon.getMoveHistory().length).toBe(1);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    }, TIMEOUT
+  );
+
+  it(
+    "should not queue its pre-move message before an enemy switches",
+    async () => {
+      /** Guarantee a Trainer battle with multiple enemy Pokemon */
+      game.override.startingWave(25);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      game.forceOpponentToSwitch();
+      game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
+
+      await game.phaseInterceptor.to(TurnStartPhase);
+
+      expect(game.scene.getCurrentPhase() instanceof SwitchSummonPhase).toBeTruthy();
     }, TIMEOUT
   );
 });

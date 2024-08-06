@@ -2609,7 +2609,7 @@ export class MoveHeaderPhase extends BattlePhase {
   }
 
   canMove(): boolean {
-    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon, true);
+    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon);
   }
 
   start() {
