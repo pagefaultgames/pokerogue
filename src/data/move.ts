@@ -8653,8 +8653,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.SHED_TAIL, Type.NORMAL, -1, 10, -1, 0, 9)
       .unimplemented(),
     new SelfStatusMove(Moves.CHILLY_RECEPTION, Type.ICE, -1, 10, -1, 0, 9)
-      //.attr(MessageHeaderAttr, )
-      .attr(PreMoveMessageAttr, (user, move) => getPokemonMessage(user, " is preparing to tell a chillingly bad joke!"))
+      .attr(PreMoveMessageAttr, (user, move) => i18next.t("moveTriggers:chillyReception", {pokemonName: getPokemonNameWithAffix(user)}))
       .attr(StatusForceSwitchOutAttr, true, false,
         (user: Pokemon, target: Pokemon, move: Move, args: any[]) => user.scene.arena.trySetWeather(WeatherType.SNOW, true),
         (user, target, move) => (user.scene.arena.weather?.weatherType === WeatherType.SNOW) ? false : true
