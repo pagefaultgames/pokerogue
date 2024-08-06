@@ -4,7 +4,7 @@
 			"image": "courtney.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 80,
+				"w": 52,
 				"h": 80
 			},
 			"scale": 1,
@@ -14,19 +14,19 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 80,
+						"w": 52,
 						"h": 80
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 80,
+						"w": 52,
 						"h": 80
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 80,
+						"w": 52,
 						"h": 80
 					}
 				}
