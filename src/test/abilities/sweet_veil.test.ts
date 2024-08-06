@@ -1,19 +1,14 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
 import { Species } from "#enums/species";
-import {
-  CommandPhase,
-  MoveEffectPhase,
-  MovePhase,
-  TurnEndPhase,
-} from "#app/phases";
+import { CommandPhase, MoveEffectPhase, MovePhase, TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { BattlerIndex } from "#app/battle.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Sweet Veil", () => {
   let phaserGame: Phaser.Game;
@@ -31,11 +26,11 @@ describe("Abilities - Sweet Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.REST]);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.POWDER, Moves.POWDER, Moves.POWDER, Moves.POWDER]);
+    game.override.battleType("double");
+    game.override.moveset([Moves.SPLASH, Moves.REST]);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyMoveset([Moves.POWDER, Moves.POWDER, Moves.POWDER, Moves.POWDER]);
   });
 
   it("prevents the user and its allies from falling asleep", async () => {
@@ -50,7 +45,7 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("causes Rest to fail when used by the user or its allies", async () => {
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     await game.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
@@ -62,7 +57,7 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("causes Yawn to fail if used on the user or its allies", async () => {
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.YAWN, Moves.YAWN, Moves.YAWN, Moves.YAWN]);
+    game.override.enemyMoveset([Moves.YAWN, Moves.YAWN, Moves.YAWN, Moves.YAWN]);
     await game.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
@@ -74,10 +69,10 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("prevents the user and its allies already drowsy due to Yawn from falling asleep.", async () => {
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.PIKACHU);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.YAWN, Moves.YAWN, Moves.YAWN, Moves.YAWN]);
+    game.override.enemySpecies(Species.PIKACHU);
+    game.override.enemyLevel(5);
+    game.override.startingLevel(5);
+    game.override.enemyMoveset([Moves.YAWN, Moves.YAWN, Moves.YAWN, Moves.YAWN]);
 
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE, Species.SWIRLIX]);
 

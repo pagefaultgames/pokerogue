@@ -1,19 +1,17 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
-import {
-  TurnEndPhase,
-} from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import { TurnEndPhase } from "#app/phases";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { BattleStat } from "#app/data/battle-stat";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
-// RATIO : HP Cost of Move
+/** HP Cost of Move */
 const RATIO = 2;
-// PREDAMAGE : Amount of extra HP lost
+/** Amount of extra HP lost */
 const PREDAMAGE = 15;
 
 describe("Moves - FILLET AWAY", () => {
@@ -32,12 +30,12 @@ describe("Moves - FILLET AWAY", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.starterSpecies(Species.MAGIKARP);
+    game.override.enemySpecies(Species.SNORLAX);
+    game.override.startingLevel(100);
+    game.override.enemyLevel(100);
     game.override.moveset([Moves.FILLET_AWAY]);
-    game.override.enemyMoveset([Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/fillet_away_(move)
@@ -47,7 +45,6 @@ describe("Moves - FILLET AWAY", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.FILLET_AWAY));
@@ -65,7 +62,6 @@ describe("Moves - FILLET AWAY", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       //Here - BattleStat.SPD -> 0 and BattleStat.SPATK -> 3
@@ -87,7 +83,6 @@ describe("Moves - FILLET AWAY", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
 
       leadPokemon.summonData.battleStats[BattleStat.ATK] = 6;
       leadPokemon.summonData.battleStats[BattleStat.SPATK] = 6;
@@ -108,7 +103,6 @@ describe("Moves - FILLET AWAY", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
       leadPokemon.hp = hpLost - PREDAMAGE;
 
