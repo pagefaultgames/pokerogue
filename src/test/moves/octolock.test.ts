@@ -32,11 +32,11 @@ describe("Moves - Octolock", () => {
 
       game.override.enemySpecies(Species.RATTATA);
       game.override.enemyMoveset(SPLASH_ONLY);
-      game.override.enemyAbility(Abilities.NONE);
+      game.override.enemyAbility(Abilities.BALL_FETCH);
 
       game.override.startingLevel(2000);
       game.override.moveset([Moves.OCTOLOCK, Moves.SPLASH]);
-      game.override.ability(Abilities.NONE);
+      game.override.ability(Abilities.BALL_FETCH);
     });
 
     it("Reduces DEf and SPDEF by 1 each turn", { timeout: 10000 }, async () => {

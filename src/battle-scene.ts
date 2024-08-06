@@ -1796,8 +1796,10 @@ export default class BattleScene extends SceneBase {
       return 13.950;
     case "battle_johto_champion": //B2W2 Johto Champion Battle
       return 23.498;
-    case "battle_hoenn_champion": //B2W2 Hoenn Champion Battle
+    case "battle_hoenn_champion_g5": //B2W2 Hoenn Champion Battle
       return 11.328;
+    case "battle_hoenn_champion_g6": //ORAS Hoenn Champion Battle
+      return 11.762;
     case "battle_sinnoh_champion": //B2W2 Sinnoh Champion Battle
       return 12.235;
     case "battle_champion_alder": //BW Unova Champion Battle
