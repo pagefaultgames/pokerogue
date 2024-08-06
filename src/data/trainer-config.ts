@@ -607,7 +607,7 @@ export class TrainerConfig {
       if (!Array.isArray(speciesPool)) {
         speciesPool = [speciesPool];
       }
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool, TrainerSlot.TRAINER, false, null, true));
+      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
 
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
@@ -952,22 +952,11 @@ function getGymLeaderPartyTemplate(scene: BattleScene) {
   return getWavePartyTemplate(scene, trainerPartyTemplates.GYM_LEADER_1, trainerPartyTemplates.GYM_LEADER_2, trainerPartyTemplates.GYM_LEADER_3, trainerPartyTemplates.GYM_LEADER_4, trainerPartyTemplates.GYM_LEADER_5);
 }
 
-function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSlot = TrainerSlot.TRAINER, ignoreEvolution: boolean = false, postProcess?: (enemyPokemon: EnemyPokemon) => void, noDuplicates = false): PartyMemberFunc {
+function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSlot = TrainerSlot.TRAINER, ignoreEvolution: boolean = false, postProcess?: (enemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
   return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
     let species = Utils.randSeedItem(speciesPool);
     if (!ignoreEvolution) {
       species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength);
-    }
-    if (noDuplicates) {
-      // Check if that species already exists in the scene and if it does remove it from the species pool and get a new one - if the species pool is empty return a random species of equal strength
-      while (scene.getEnemyParty().find(p => p.species.speciesId === species)) {
-        speciesPool.splice(speciesPool.indexOf(species), 1);
-        if (speciesPool.length === 0) {
-          species = scene.randomSpecies(scene.currentBattle.waveIndex, level, false, p => (p.baseTotal <= getPokemonSpecies(species).baseTotal + 20) && (p.baseTotal >= getPokemonSpecies(species).baseTotal - 20)).speciesId;
-          break;
-        }
-        species = Utils.randSeedItem(speciesPool);
-      }
     }
     return scene.addEnemyPokemon(getPokemonSpecies(species), level, trainerSlot, undefined, undefined, postProcess);
   };
