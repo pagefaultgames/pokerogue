@@ -12,6 +12,7 @@ import { allMoves, StealHeldItemChanceAttr } from "#app/data/move";
 import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
 import { StatusEffect } from "#app/data/status-effect";
 import { BerryType } from "#app/enums/berry-type";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
 

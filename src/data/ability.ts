@@ -1975,7 +1975,7 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
         applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled);
         applyAbAttrs(PostIntimidateStatChangeAbAttr, opponent, cancelled);
 
-        if (!!opponent.getTag(BattlerTagType.SUBSTITUTE)) {
+        if (opponent.getTag(BattlerTagType.SUBSTITUTE)) {
           cancelled.value = true;
         }
       }
