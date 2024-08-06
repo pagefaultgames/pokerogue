@@ -581,6 +581,12 @@ export class TrainerConfig {
         [TrainerPoolTier.RARE]: [Species.DRUDDIGON, Species.BOUFFALANT, Species.AXEW, Species.DEINO, Species.DURANT]
       };
     }
+    case "colress": {
+      return {
+        [TrainerPoolTier.COMMON]: [Species.ROTOM, Species.BELDUM, Species.MAGNEMITE, Species.ELGYEM, Species.VOLTORB, Species.GRIMER, Species.NOSEPASS, Species.JOLTIK, Species.BLIPBUG],
+        [TrainerPoolTier.UNCOMMON]: [Species.HISUI_VOLTORB, Species.ALOLA_GRIMER, Species.DURANT, Species.TINKATINK, Species.ELEKID, Species.DRILBUR],
+        [TrainerPoolTier.RARE]: [Species.DURALUDON, Species.TYPE_NULL]};
+    }
     case "flare": {
       return {
         [TrainerPoolTier.COMMON]: [Species.FLETCHLING, Species.LITLEO, Species.INKAY, Species.HELIOPTILE, Species.ELECTRIKE, Species.SKRELP, Species.GULPIN, Species.PURRLOIN, Species.POOCHYENA, Species.SCATTERBUG],
@@ -594,18 +600,18 @@ export class TrainerConfig {
   /**
      * Initializes the trainer configuration for an evil team admin.
      * @param title - The title of the evil team admin.
-     * @param team - The evil team the admin belongs to.
+     * @param poolName - The evil team the admin belongs to.
      * @param {Species | Species[]} signatureSpecies - The signature species for the evil team leader.
      * @returns {TrainerConfig} - The updated TrainerConfig instance.
      * **/
-  initForEvilTeamAdmin(title: string, team: string, signatureSpecies: (Species | Species[])[],): TrainerConfig {
+  initForEvilTeamAdmin(title: string, poolName: string, signatureSpecies: (Species | Species[])[],): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
     this.setPartyTemplates(trainerPartyTemplates.RIVAL_5);
 
     // Set the species pools for the evil team admin.
-    this.speciesPools = this.speciesPoolPerEvilTeamAdmin(team);
+    this.speciesPools = this.speciesPoolPerEvilTeamAdmin(poolName);
 
     signatureSpecies.forEach((speciesPool, s) => {
       if (!Array.isArray(speciesPool)) {
@@ -1338,7 +1344,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [Species.DRUDDIGON, Species.BOUFFALANT, Species.AXEW, Species.DEINO, Species.DURANT]
     }),
   [TrainerType.ZINZOLIN]: new TrainerConfig(++t).setMoneyMultiplier(1.5).initForEvilTeamAdmin("plasma_sage", "plasma", [Species.CRYOGONAL]).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_plasma_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene)),
-  [TrainerType.COLRESS]: new TrainerConfig(++t).setMoneyMultiplier(1.5).initForEvilTeamAdmin("plasma_admin", "plasma", [Species.KLINKLANG]).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_plasma_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene)),
+  [TrainerType.COLRESS]: new TrainerConfig(++t).setMoneyMultiplier(1.5).initForEvilTeamAdmin("plasma_admin", "colress", [Species.KLINKLANG]).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_plasma_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene)),
   [TrainerType.FLARE_GRUNT]: new TrainerConfig(++t).setHasGenders("Flare Grunt Female").setHasDouble("Flare Grunts").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_flare_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(scene => getEvilGruntPartyTemplate(scene))
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [Species.FLETCHLING, Species.LITLEO, Species.PONYTA, Species.INKAY, Species.HOUNDOUR, Species.SKORUPI, Species.SCRAFTY, Species.CROAGUNK],
