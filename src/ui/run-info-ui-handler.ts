@@ -641,10 +641,10 @@ export default class GameInfoUiHandler extends UiHandler {
       const female = pkmn.gender === 1;
       species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
         speciesLoaded.set(id, true);
-        pokemonSprite.play(pkmn.getSpriteKey(female, formIndex, shiny, variant));
+        pokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
         pokemonSprite.setPipelineData("shiny", shiny);
         pokemonSprite.setPipelineData("variant", variant);
-        pokemonSprite.setPipelineData("spriteKey", pkmn.getSpriteKey(female, formIndex, shiny, variant));
+        pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
         /**
         pkmn.resetSummonData();
         [ "spriteColors", "fusionSpriteColors" ].map(k => {
