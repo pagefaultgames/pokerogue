@@ -1,10 +1,8 @@
 import { Status, StatusEffect } from "#app/data/status-effect.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon.js";
-import {
-  MoveEndPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { MoveEndPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";

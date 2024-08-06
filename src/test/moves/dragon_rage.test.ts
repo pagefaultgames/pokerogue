@@ -4,14 +4,14 @@ import { Species } from "#app/enums/species.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { TurnEndPhase } from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Dragon Rage", () => {
   let phaserGame: Phaser.Game;

@@ -3,11 +3,9 @@ import Move, { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import Pokemon from "#app/field/pokemon.js";
-import {
-  TurnEndPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { TurnEndPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { NumberHolder } from "#app/utils.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

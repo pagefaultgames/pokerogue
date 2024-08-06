@@ -4,10 +4,10 @@ import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
 import { BerryPhase, TurnEndPhase } from "#app/phases.js";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { getMovePosition } from "../utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout for all tests
 

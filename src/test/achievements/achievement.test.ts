@@ -1,6 +1,6 @@
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier.js";
 import { Achv, AchvTier, DamageAchv, HealAchv, LevelAchv, ModifierAchv, MoneyAchv, RibbonAchv, achvs } from "#app/system/achv";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { IntegerHolder, NumberHolder } from "#app/utils.js";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

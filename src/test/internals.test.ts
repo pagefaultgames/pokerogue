@@ -1,6 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { Species } from "#app/enums/species.js";
 import { Abilities } from "#app/enums/abilities.js";
 

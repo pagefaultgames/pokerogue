@@ -1,20 +1,9 @@
 import { allSpecies } from "#app/data/pokemon-species";
 import { GameModes } from "#app/game-mode";
 import { getGameMode } from "#app/game-mode.js";
-import {
-  CommandPhase, DamagePhase,
-  EncounterPhase,
-  EnemyCommandPhase,
-  LoginPhase,
-  SelectGenderPhase,
-  SelectModifierPhase,
-  SelectStarterPhase,
-  SummonPhase,
-  TitlePhase,
-  TurnInitPhase, VictoryPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { generateStarter, getMovePosition, } from "#app/test/utils/gameManagerUtils";
+import { CommandPhase, DamagePhase, EncounterPhase, EnemyCommandPhase, LoginPhase, SelectGenderPhase, SelectModifierPhase, SelectStarterPhase, SummonPhase, TitlePhase, TurnInitPhase, VictoryPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { generateStarter, getMovePosition, } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
