@@ -201,7 +201,7 @@ export class TrainerConfig {
   public partyMemberFuncs: PartyMemberFuncs = {};
   public speciesPools: TrainerTierPools;
   public speciesFilter: PokemonSpeciesFilter;
-  public specialtyTypes: Type[] = [];
+  public specialtyType: Type;
 
   public encounterMessages: string[] = [];
   public victoryMessages: string[] = [];
@@ -516,8 +516,8 @@ export class TrainerConfig {
     return this;
   }
 
-  setSpecialtyTypes(...specialtyTypes: Type[]): TrainerConfig {
-    this.specialtyTypes = specialtyTypes;
+  setSpecialtyType(specialtyType: Type): TrainerConfig {
+    this.specialtyType = specialtyType;
     return this;
   }
 
@@ -539,11 +539,11 @@ export class TrainerConfig {
   /**
      * Initializes the trainer configuration for an evil team leader. Temporarily hardcoding evil leader teams though.
      * @param {Species | Species[]} signatureSpecies - The signature species for the evil team leader.
-     * @param {Type[]} specialtyTypes - The specialty types for the evil team Leader.
+     * @param {Type} specialtyType - The specialty type for the evil team Leader.
      * @param boolean whether or not this is the rematch fight
      * @returns {TrainerConfig} - The updated TrainerConfig instance.
      * **/
-  initForEvilTeamLeader(title: string, signatureSpecies: (Species | Species[])[], rematch: boolean = false, ...specialtyTypes: Type[]): TrainerConfig {
+  initForEvilTeamLeader(title: string, signatureSpecies: (Species | Species[])[], rematch: boolean = false, specialtyType?: Type): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
@@ -558,9 +558,9 @@ export class TrainerConfig {
       }
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
-    if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) !== undefined);
-      this.setSpecialtyTypes(...specialtyTypes);
+    if (specialtyType) {
+      this.setSpeciesFilter(p => p.isOfType(specialtyType));
+      this.setSpecialtyType(specialtyType);
     }
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
     this.name = i18next.t(`trainerNames:${nameForCall}`);
@@ -577,11 +577,11 @@ export class TrainerConfig {
   /**
    * Initializes the trainer configuration for a Gym Leader.
    * @param {Species | Species[]} signatureSpecies - The signature species for the Gym Leader.
-   * @param {Type[]} specialtyTypes - The specialty types for the Gym Leader.
+   * @param {Type} specialtyType - The specialty type for the Gym Leader.
    * @param isMale - Whether the Gym Leader is Male or Not (for localization of the title).
    * @returns {TrainerConfig} - The updated TrainerConfig instance.
    * **/
-  initForGymLeader(signatureSpecies: (Species | Species[])[],isMale:boolean, ...specialtyTypes: Type[]): TrainerConfig {
+  initForGymLeader(signatureSpecies: (Species | Species[])[],isMale:boolean, specialtyType: Type): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
       initI18n();
@@ -600,10 +600,10 @@ export class TrainerConfig {
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
 
-    // If specialty types are provided, set species filter and specialty types.
-    if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) !== undefined);
-      this.setSpecialtyTypes(...specialtyTypes);
+    // If specialty type is provided, set species filter and specialty type.
+    if (specialtyType) {
+      this.setSpeciesFilter(p => p.isOfType(specialtyType));
+      this.setSpecialtyType(specialtyType);
     }
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
@@ -624,7 +624,7 @@ export class TrainerConfig {
     this.setVictoryBgm("victory_gym");
     this.setGenModifiersFunc(party => {
       const waveIndex = party[0].scene.currentBattle.waveIndex;
-      return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyTypes.length ? specialtyTypes : null, this.forceTeraOffType);
+      return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyType, this.forceTeraOffType);
     });
 
     return this;
@@ -633,11 +633,11 @@ export class TrainerConfig {
   /**
    * Initializes the trainer configuration for an Elite Four member.
    * @param {Species | Species[]} signatureSpecies - The signature species for the Elite Four member.
-   * @param {Type[]} specialtyTypes - The specialty types for the Elite Four member.
+   * @param {Type} specialtyType - The specialty type for the Elite Four member.
    * @param isMale - Whether the Elite Four Member is Male or Female (for localization of the title).
    * @returns {TrainerConfig} - The updated TrainerConfig instance.
    **/
-  initForEliteFour(signatureSpecies: (Species | Species[])[],isMale: boolean, ...specialtyTypes: Type[]): TrainerConfig {
+  initForEliteFour(signatureSpecies: (Species | Species[])[],isMale: boolean, specialtyType: Type): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
       initI18n();
@@ -656,10 +656,10 @@ export class TrainerConfig {
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
 
-    // Set species filter and specialty types if provided, otherwise filter by base total.
-    if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) && p.baseTotal >= 450);
-      this.setSpecialtyTypes(...specialtyTypes);
+    // Set species filter and specialty type if provided, otherwise filter by base total.
+    if (specialtyType) {
+      this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= 450);
+      this.setSpecialtyType(specialtyType);
     } else {
       this.setSpeciesFilter(p => p.baseTotal >= 450);
     }
@@ -680,7 +680,7 @@ export class TrainerConfig {
     this.setStaticParty();
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("victory_gym");
-    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyTypes.length ? specialtyTypes : null, this.forceTeraOffType));
+    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyType, this.forceTeraOffType));
 
     return this;
   }
@@ -882,20 +882,20 @@ function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilt
  * @param forceTeraOffType {@linkcode boolean} Whether Trainer should attempt to Terastalize off-type mons
  * @returns {@linkcode PersistentModifier} an array of Tera modifiers for the enemy party
  */
-function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, types?: Type[], forceTeraOffType?: boolean): PersistentModifier[] {
+function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, type?: Type, forceTeraOffType?: boolean): PersistentModifier[] {
   const ret: PersistentModifier[] = [];
   const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i);
   //If "forceTeraOffType" is true, count how many off-type mons to look for
-  let offTypes = (forceTeraOffType && types.length) ? party.filter((p) => {
-    return types?.filter(t => p.isOfType(t)).length === 0;
+  let offTypes = (forceTeraOffType && type) ? party.filter((p) => {
+    return p.isOfType(type);
   }).length : 0;
   const teras = Math.max(offTypes, count);
   //Apply teras until you run out of party members or expected teras
   for (let t = 0; t < Math.min(teras, party.length); t++) {
     const randomIndex = offTypes > 0 ?
-      //If there's still an off-type to look for, find the first party index where the mon is not of the specialty type(s)
+      //If there's still an off-type to look for, find the first party index where the mon is not of the specialty type
       party.findIndex((p, i) => {
-        if (partyMemberIndexes.includes(i) && types?.filter(t => p.isOfType(t)).length === 0) {
+        if (partyMemberIndexes.includes(i) && p.isOfType(type)) {
           --offTypes;
           return true;
         }
@@ -904,7 +904,7 @@ function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, types?: T
       //Otherwise, get a random party member index
       : Utils.randSeedItem(partyMemberIndexes);
     partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
-    ret.push(modifierTypes.TERA_SHARD().generateType(null, [Utils.randSeedItem(types ? types : party[randomIndex].getTypes())]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier);
+    ret.push(modifierTypes.TERA_SHARD().generateType(null, [Utils.randSeedItem(type ? [type] : party[randomIndex].getTypes())]).withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier);
   }
   return ret;
 }
@@ -953,11 +953,11 @@ export const signatureSpecies: SignatureSpecies = {
   BYRON: [Species.SHIELDON, Species.BRONZOR, Species.ARON],
   CANDICE: [Species.SNEASEL, Species.SNOVER, Species.SNORUNT],
   VOLKNER: [Species.SHINX, Species.JOLTEON, Species.REMORAID, Species.ELECTABUZZ],
-  CILAN: [Species.PANSAGE, Species.FERROSEED, Species.MARACTUS],
+  CILAN: [Species.PANSAGE, Species.FOONGUS, Species.MARACTUS],
   CHILI: [Species.PANSEAR, Species.DARUMAKA, Species.HEATMOR],
-  CRESS: [Species.PANPOUR, Species.FRILLISH, Species.BASCULIN],
+  CRESS: [Species.PANPOUR, Species.SLOWPOKE, Species.BASCULIN],
   CHEREN: [Species.LILLIPUP, Species.MINCCINO, Species.PIDOVE],
-  LENORA: [Species.PATRAT, Species.DEERLING, Species.CHANSEY],
+  LENORA: [Species.PATRAT, Species.DEERLING, Species.AUDINO],
   ROXIE: [Species.VENIPEDE, Species.TRUBBISH, Species.KOFFING],
   BURGH: [Species.SEWADDLE, Species.DWEBBLE, Species.SHELMET, Species.KARRABLAST],
   ELESA: [Species.EMOLGA, Species.BLITZLE, Species.JOLTIK],
@@ -971,7 +971,7 @@ export const signatureSpecies: SignatureSpecies = {
   KORRINA: [Species.HAWLUCHA, Species.LUCARIO, Species.MIENFOO],
   RAMOS: [Species.SKIDDO, Species.HOPPIP, Species.BELLSPROUT],
   CLEMONT: [Species.HELIOPTILE, Species.MAGNEMITE, Species.ROTOM],
-  VALERIE: [Species.SYLVEON, Species.MARILL, Species.MR_MIME],
+  VALERIE: [Species.SYLVEON, Species.MAWILE, Species.MR_MIME],
   OLYMPIA: [Species.ESPURR, Species.SIGILYPH, Species.SLOWKING],
   WULFRIC: [Species.BERGMITE, Species.SNOVER, Species.CRYOGONAL],
   MILO: [Species.GOSSIFLEUR, Species.APPLIN, Species.BOUNSWEET],
@@ -979,20 +979,20 @@ export const signatureSpecies: SignatureSpecies = {
   KABU: [Species.SIZZLIPEDE, Species.GROWLITHE, Species.TORKOAL],
   BEA: [Species.GALAR_FARFETCHD, Species.FALINKS, Species.CLOBBOPUS],
   ALLISTER: [Species.GALAR_YAMASK, Species.GALAR_CORSOLA, Species.SINISTEA],
-  OPAL: [Species.MILCERY, Species.TOGETIC, Species.SPRITZEE, Species.GALAR_WEEZING],
+  OPAL: [Species.MILCERY, Species.TOGETIC, Species.GALAR_WEEZING],
   BEDE: [Species.HATENNA, Species.GALAR_PONYTA, Species.GARDEVOIR],
   GORDIE: [Species.ROLYCOLY, Species.STONJOURNER, Species.BINACLE],
   MELONY: [Species.SNOM, Species.GALAR_DARUMAKA, Species.GALAR_MR_MIME],
   PIERS: [Species.GALAR_ZIGZAGOON, Species.SCRAGGY, Species.INKAY],
   MARNIE: [Species.IMPIDIMP, Species.PURRLOIN, Species.MORPEKO],
   RAIHAN: [Species.DURALUDON, Species.TRAPINCH, Species.TURTONATOR],
-  KATY: [Species.NYMBLE, Species.TAROUNTULA, Species.FIDOUGH],
+  KATY: [Species.NYMBLE, Species.TAROUNTULA, Species.TEDDIURSA],
   BRASSIUS: [Species.SMOLIV, Species.BRAMBLIN, Species.SUDOWOODO],
   IONO: [Species.TADBULB, Species.WATTREL, Species.MISDREAVUS],
   KOFU: [Species.VELUZA, Species.WIGLETT, Species.CRABRAWLER],
   LARRY: [Species.STARLY, Species.DUNSPARCE, Species.KOMALA],
   RYME: [Species.GREAVARD, Species.SHUPPET, Species.MIMIKYU, Species.TOXTRICITY],
-  TULIP: [Species.GIRAFARIG, Species.FLITTLE, Species.FLABEBE],
+  TULIP: [Species.GIRAFARIG, Species.FLITTLE, Species.RALTS, Species.FLABEBE],
   GRUSHA: [Species.CETODDLE, Species.ALOLA_VULPIX, Species.CUBCHOO, Species.SWABLU],
   LORELEI: [Species.JYNX, [Species.SLOWBRO, Species.GALAR_SLOWBRO], Species.LAPRAS, [Species.ALOLA_SANDSLASH, Species.CLOYSTER]],
   BRUNO: [Species.MACHAMP, Species.HITMONCHAN, Species.HITMONLEE, [Species.ALOLA_GOLEM, Species.GOLEM]],
@@ -1069,7 +1069,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.BAKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK).setMoneyMultiplier(1.35).setSpeciesFilter(s => s.isOfType(Type.GRASS) || s.isOfType(Type.FIRE)),
   [TrainerType.BEAUTY]: new TrainerConfig(++t).setMoneyMultiplier(1.55).setEncounterBgm(TrainerType.PARASOL_LADY),
   [TrainerType.BIKER]: new TrainerConfig(++t).setMoneyMultiplier(1.4).setEncounterBgm(TrainerType.ROUGHNECK).setSpeciesFilter(s => s.isOfType(Type.POISON)),
-  [TrainerType.BLACK_BELT]: new TrainerConfig(++t).setHasGenders("Battle Girl", TrainerType.PSYCHIC).setHasDouble("Crush Kin").setEncounterBgm(TrainerType.ROUGHNECK).setSpecialtyTypes(Type.FIGHTING)
+  [TrainerType.BLACK_BELT]: new TrainerConfig(++t).setHasGenders("Battle Girl", TrainerType.PSYCHIC).setHasDouble("Crush Kin").setEncounterBgm(TrainerType.ROUGHNECK).setSpecialtyType(Type.FIGHTING)
     .setPartyTemplates(trainerPartyTemplates.TWO_WEAK_ONE_AVG, trainerPartyTemplates.TWO_WEAK_ONE_AVG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_WEAK_ONE_STRONG, trainerPartyTemplates.THREE_AVG, trainerPartyTemplates.TWO_AVG_ONE_STRONG)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [Species.NIDORAN_F, Species.NIDORAN_M, Species.MACHOP, Species.MAKUHITA, Species.MEDITITE, Species.CROAGUNK, Species.TIMBURR],
@@ -1109,7 +1109,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.HEAL_PULSE)),
   [TrainerType.FIREBREATHER]: new TrainerConfig(++t).setMoneyMultiplier(1.4).setEncounterBgm(TrainerType.ROUGHNECK)
     .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.SMOG) || s.isOfType(Type.FIRE)),
-  [TrainerType.FISHERMAN]: new TrainerConfig(++t).setMoneyMultiplier(1.25).setEncounterBgm(TrainerType.BACKPACKER).setSpecialtyTypes(Type.WATER)
+  [TrainerType.FISHERMAN]: new TrainerConfig(++t).setMoneyMultiplier(1.25).setEncounterBgm(TrainerType.BACKPACKER).setSpecialtyType(Type.WATER)
     .setPartyTemplates(trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG, trainerPartyTemplates.ONE_AVG, trainerPartyTemplates.THREE_WEAK_SAME, trainerPartyTemplates.ONE_STRONG, trainerPartyTemplates.SIX_WEAKER)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [Species.TENTACOOL, Species.MAGIKARP, Species.GOLDEEN, Species.STARYU, Species.REMORAID, Species.SKRELP, Species.CLAUNCHER, Species.ARROKUDA],
@@ -1117,7 +1117,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.RARE]: [Species.CHINCHOU, Species.CORSOLA, Species.WAILMER, Species.BARBOACH, Species.CLAMPERL, Species.LUVDISC, Species.MANTYKE, Species.ALOMOMOLA, Species.TATSUGIRI, Species.VELUZA],
       [TrainerPoolTier.SUPER_RARE]: [Species.LAPRAS, Species.FEEBAS, Species.RELICANTH, Species.DONDOZO]
     }),
-  [TrainerType.GUITARIST]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.ROUGHNECK).setSpecialtyTypes(Type.ELECTRIC).setSpeciesFilter(s => s.isOfType(Type.ELECTRIC)),
+  [TrainerType.GUITARIST]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.ROUGHNECK).setSpecialtyType(Type.ELECTRIC).setSpeciesFilter(s => s.isOfType(Type.ELECTRIC)),
   [TrainerType.HARLEQUIN]: new TrainerConfig(++t).setEncounterBgm(TrainerType.PSYCHIC).setSpeciesFilter(s => tmSpecies[Moves.TRICK_ROOM].indexOf(s.speciesId) > -1),
   [TrainerType.HIKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.BACKPACKER)
     .setPartyTemplates(trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG, trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.FOUR_WEAK, trainerPartyTemplates.ONE_STRONG)
@@ -1196,7 +1196,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.RARE]: [Species.TANGELA, Species.EEVEE, Species.YANMA],
       [TrainerPoolTier.SUPER_RARE]: [Species.TADBULB]
     }),
-  [TrainerType.SWIMMER]: new TrainerConfig(++t).setMoneyMultiplier(1.3).setEncounterBgm(TrainerType.PARASOL_LADY).setHasGenders("Swimmer Female").setHasDouble("Swimmers").setSpecialtyTypes(Type.WATER).setSpeciesFilter(s => s.isOfType(Type.WATER)),
+  [TrainerType.SWIMMER]: new TrainerConfig(++t).setMoneyMultiplier(1.3).setEncounterBgm(TrainerType.PARASOL_LADY).setHasGenders("Swimmer Female").setHasDouble("Swimmers").setSpecialtyType(Type.WATER).setSpeciesFilter(s => s.isOfType(Type.WATER)),
   [TrainerType.TWINS]: new TrainerConfig(++t).setDoubleOnly().setMoneyMultiplier(0.65).setUseSameSeedForAllMembers()
     .setPartyTemplateFunc(scene => getWavePartyTemplate(scene, trainerPartyTemplates.TWO_WEAK, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_STRONG))
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.PLUSLE, Species.VOLBEAT, Species.PACHIRISU, Species.SILCOON, Species.METAPOD, Species.IGGLYBUFF, Species.PETILIL, Species.EEVEE]))
