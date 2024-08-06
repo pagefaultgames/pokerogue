@@ -1870,6 +1870,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, target, sourceMove, targetEvasionLevel);
     this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), TempBattleStat.ACC, userAccuracyLevel);
 
+    if (target.findTag(t => t instanceof ExposedTag)) {
+      targetEvasionLevel.value = Math.min(0, targetEvasionLevel.value);
+    }
+
     const accuracyMultiplier = new Utils.NumberHolder(1);
     if (userAccuracyLevel.value !== targetEvasionLevel.value) {
       accuracyMultiplier.value = userAccuracyLevel.value > targetEvasionLevel.value
@@ -1881,10 +1885,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const evasionMultiplier = new Utils.NumberHolder(1);
     applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier);
-
-    if (target.findTag(t => t instanceof ExposedTag)) {
-      targetEvasionLevel.value = 0;
-    }
 
     accuracyMultiplier.value /= evasionMultiplier.value;
 
