@@ -140,8 +140,7 @@ export default class GameInfoUiHandler extends UiHandler {
  	}
 
   async parseRunResult(runData: any, runResult: boolean) {
-    const runResultText = addBBCodeTextObject(this.scene, 6, 4, `${(runResult ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated")+" - Wave "+runData.waveIndex)}`, TextStyle.WINDOW, {fontSize : "65px", lineSpacing: 0.1});
-    this.runResultContainer.add(runResultText);
+    const runResultText = addBBCodeTextObject(this.scene, 6, 5, `${(runResult ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated")+" - Wave "+runData.waveIndex)}`, this.victory ? TextStyle.SUMMARY : TextStyle.SUMMARY_RED, {fontSize : "65px", lineSpacing: 0.1});
 
     if (runResult) {
       const hallofFameInstructionContainer = this.scene.add.container(0, 0);
@@ -156,6 +155,8 @@ export default class GameInfoUiHandler extends UiHandler {
       hallofFameInstructionContainer.setPosition(12, 25);
       this.runResultContainer.add(hallofFameInstructionContainer);
     }
+
+    this.runResultContainer.add(runResultText);
 
     if (!runResult) {
       const enemyContainer = this.scene.add.container(0, 0);
@@ -180,7 +181,7 @@ export default class GameInfoUiHandler extends UiHandler {
           enemyIconContainer.add(enemyIcon);
           enemyIconContainer.add(enemyLevel);
           enemyContainer.add(enemyIconContainer);
-          enemyContainer.setPosition(27, 10);
+          enemyContainer.setPosition(27, 12);
           enemy.destroy();
           break;
         case 2:
@@ -623,7 +624,7 @@ export default class GameInfoUiHandler extends UiHandler {
     hallofFameText.setPosition(84, 144);
     this.hallofFameContainer.add(hallofFameText);
     this.runInfo.party.forEach((p, i) => {
-      const pkmn= p.toPokemon(this.scene);
+      const pkmn = p.toPokemon(this.scene);
       const row = i % 2;
       const id = pkmn.id;
       const shiny = pkmn.shiny;
@@ -631,7 +632,6 @@ export default class GameInfoUiHandler extends UiHandler {
       const variant = pkmn.variant;
       const species = pkmn.getSpeciesForm();
       //const species = pkmn.isFusion() ? pkmn.getFusionSpeciesForm() : pkmn.getSpeciesForm();
-      pkmn.loadAssets();
       const pokemonSprite: Phaser.GameObjects.Sprite = this.scene.add.sprite(60 + 40 * i, 40 + row  * 60, "pkmn__sub");
       pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
       this.hallofFameContainer.add(pokemonSprite);
@@ -641,10 +641,21 @@ export default class GameInfoUiHandler extends UiHandler {
       const female = pkmn.gender === 1;
       species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
         speciesLoaded.set(id, true);
-        pokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
+        pokemonSprite.play(pkmn.getSpriteKey(female, formIndex, shiny, variant));
         pokemonSprite.setPipelineData("shiny", shiny);
         pokemonSprite.setPipelineData("variant", variant);
-        pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
+        pokemonSprite.setPipelineData("spriteKey", pkmn.getSpriteKey(female, formIndex, shiny, variant));
+        /**
+        pkmn.resetSummonData();
+        [ "spriteColors", "fusionSpriteColors" ].map(k => {
+          delete pokemonSprite.pipelineData[`${k}Base`];
+          if (pkmn.summonData?.speciesForm) {
+            k += "Base";
+          }
+          const temp = pkmn.getSprite();
+          console.log(temp);
+          pokemonSprite.pipelineData[k] = pkmn.getSprite().pipelineData[k];
+        });*/
         pokemonSprite.setVisible(true);
       });
       pkmn.destroy();
