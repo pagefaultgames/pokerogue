@@ -385,97 +385,97 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "rocket_grunt": {
     "encounter": {
       1: "你要有麻烦了！",
-      2: "We're pulling a big job here! Get lost, kid!",
-      3: "Hand over your Pokémon, or face the wrath of Team Rocket!",
-      4: "You're about to experience the true terror of Team Rocket!",
-      5: "Hey, kid! Me am a Team Rocket member kind of guy!" //Use of wrong grammar is deliberate
+      2: "我们要干大事了！\n闪一边去，小子！",
+      3: "把你的宝可梦交过来，\n不然就尝尝火箭队的厉害！",
+      4: "你准备好感受火箭队真正的恐怖了吗！",
+      5: "喂，小子！俺可是火箭队滴！" //Use of wrong grammar is deliberate
     },
     "victory": {
       1: "好讨厌的感觉啊！",
-      2: "Oh no! I dropped the Lift Key!",
-      3: "I blew it!",
-      4: "My associates won't stand for this!",
-      5: "You say what? Team Rocket bye-bye a go-go? Broken it is says you?" //Use of wrong grammar is deliberate.
+      2: "哎呀！不小心丢掉电梯钥匙啦！",
+      3: "我搞砸了。",
+      4: "我的伙计们不会放过你……！",
+      5: "你说啥？俺们火箭队要玩完了？" //Use of wrong grammar is deliberate.
     },
   },
   "magma_grunt": {
     "encounter": {
       1: "如果你挡在熔岩队路上，那就别指望我们手下留情！",
-      2: "You'd better not interfere with our plans! We're making the world a better place!",
-      3: "You're in the way! Team Magma has no time for kids like you!",
-      4: "I hope you brought marshmallows because things are about to heat up!",
-      5: "We're going to use the power of a volcano! It's gonna be... explosive! Get it? Heh heh!"
+      2: "你最好别妨碍我们的计划！\n我们会让世界变得更美好！",
+      3: "少碍事！熔岩队没时间理你这样的小孩！",
+      4: "你有棉花糖没？我来给你好好烤烤！",
+      5: "我们会利用火山的力量！\n它马上要…爆发了！懂吗？嘿嘿嘿……"
     },
     "victory": {
       1: "哈？我输了？！",
-      2: "I can't believe I lost! I even skipped lunch for this",
-      3: "No way! You're just a kid!",
-      4: "Urrrgh... I should've ducked into our hideout right away...",
-      5: "You beat me... Do you think the boss will dock my pay for this?"
+      2: "我怎么会输！我为了训练饭都不吃了！",
+      3: "不会吧，不就是一个小孩！",
+      4: "呃啊…我得赶快逃回基地…",
+      5: "你打败我了…你觉得老大会扣我工资吗？"
     },
   },
   "aqua_grunt": {
     "encounter": {
       1: "即使是小孩，如果要和海洋队作对，也别指望我们手下留情！",
-      2: "Grrr... You've got some nerve meddling with Team Aqua!",
-      3: "You're about to get soaked! And not just from my water Pokémon!",
-      4: "We, Team Aqua, exist for the good of all!",
-      5: "Prepare to be washed away by the tides of my... uh, Pokémon! Yeah, my Pokémon!"
+      2: "嚯…你好大的胆子，敢惹我们海洋队！",
+      3: "不仅是我的水系宝可梦，整片大海即将淹没你！",
+      4: "我们海洋队，是为了大义！",
+      5: "准备好被我的…呃…我宝可梦的海流冲走吧！"
     },
     "victory": {
       1: "你在开玩笑吧？",
-      2: "Arrgh, I didn't count on being meddled with by some meddling kid!",
-      3: "I lost?! Guess I'll have to swim back to the hideout now...",
-      4: "Oh, man, what a disaster... The boss is going to be furious...",
-      5: "You beat me... Do you think the boss will make me walk the plank for this?"
+      2: "害，没想到这种小屁孩也要管我的闲事！",
+      3: "我输了？看来我得自己游回基地了。",
+      4: "不是吧，怎么会，老大要生气了……",
+      5: "你打败了我…老大不会要让我上跳板吧……"
     },
   },
   "galactic_grunt": {
     "encounter": {
       1: "别惹银河队！",
-      2: "Witness the power of our technology and the future we envision!",
-      3: "In the name of Team Galactic, I'll eliminate anyone who stands in our way!",
-      4: "Get ready to lose!",
-      5: "Hope you're ready for a cosmic beatdown!"
+      2: "见识下我们的科技，和我们所设想的未来！",
+      3: "以银河队之名，我会扫清一切挡路的人！",
+      4: "准备输的一败涂地吧！",
+      5: "希望你做好被宇宙力量碾压的准备。"
     },
     "victory": {
       1: "停机了…",
-      2: "This setback means nothing in the grand scheme.",
-      3: "Our plans are bigger than this defeat.",
-      4: "How?!",
-      5: "Note to self: practice Pokémon battling, ASAP."
+      2: "从长远来看，这次的挫折不用在意。",
+      3: "小失败不会影响我们的宏图伟业！",
+      4: "咋回事！？",
+      5: "个人记录：提升对战水平，优先级，高……"
     },
   },
   "plasma_grunt": {
     "encounter": {
       1: "异端不共戴天！",
-      2: "If I win against you, release your Pokémon!",
-      3: "If you get in the way of Team Plasma, I'll take care of you!",
-      4: "Team Plasma will liberate Pokémon from selfish humans like you!",
-      5: "Our hairstyles are out of this world... but our battling skills? You'll find out soon enough."
+      2: "要是我赢了你！就把你的宝可梦放生！",
+      3: "要是敢和等离子队作对，我来好好关照你！",
+      4: "等离子队会从你们这种自私的人手里解放宝可梦！",
+      5: "我们的发型帅的一批，而我们的战斗水平呢，\n马上让你见识一下。"
     },
     "victory": {
       1: "等离子子子子子子！",
-      2: "How could I lose...",
-      3: "...What a weak Pokémon, I'll just have to go steal some better ones!",
-      4: "Great plans are always interrupted.",
-      5: "This is bad... Badbadbadbadbadbadbad! Bad for Team Plasma! Or Plasbad, for short!"
+      2: "我怎么会输……",
+      3: "…没用的家伙！我得去偷个厉害点的宝可梦！",
+      4: "伟大的事业总会被人阻挠…",
+      5: "烂完了…烂烂烂烂烂！等离子队烂了！\n说短点就是，等烂子队！"
     },
   },
   "flare_grunt": {
     "encounter": {
-      1: "Your Pokémon are no match for the elegance of Team Flare.",
-      2: "Hope you brought your sunglasses, because things are about to get bright!",
-      3: "Team Flare will cleanse the world of imperfection!",
-      4: "Prepare to face the brilliance of Team Flare!",
-      5: "Fashion is most important to us!"
+      1: "你的宝可梦无法与闪焰队的优雅相提并论",
+      2: "带个墨镜吧，别被我闪瞎狗眼了！",
+      3: "闪焰队将净化这个不完美的世界！",
+      4: "准备面对闪焰队的美！",
+      5: "时尚对我们来说最重要！"
     },
     "victory": {
-      1: "The future doesn't look bright for me.",
-      2: "Perhaps there's more to battling than I thought. Back to the drawing board.",
-      3: "Gahh?! I lost?!",
-      4: "Even in defeat, Team Flare's elegance shines through.",
-      5: "You may have beaten me, but when I lose, I go out in style!"
+      1: "我的未来看起来并不明亮…",
+      2: "这战斗比我想的更难搞，我得重头训练了。",
+      3: "啊啊？我输了？！",
+      4: "就算是在失败当中，闪焰队依旧优雅动人！",
+      5: "你虽然打败了我，但是我输的也这么潇洒！"
     },
   },
   "rocket_boss_giovanni_1": {

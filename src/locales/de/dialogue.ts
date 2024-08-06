@@ -373,17 +373,17 @@ export const PGMdialogue: DialogueTranslationEntries = {
           $und es kommt noch härter!
           $Wir wollen über die Erde regieren…
           $und naja du kennst den Rest…!`,
-      2: "We're pulling a big job here! Get lost, kid!",
-      3: "Hand over your Pokémon, or face the wrath of Team Rocket!",
-      4: "You're about to experience the true terror of Team Rocket!",
-      5: "Hey, kid! Me am a Team Rocket member kind of guy!" //Use of wrong grammar is deliberate
+      2: "Wir führen gerade eine große Operation durch. Hast du vor uns zu stören?",
+      3: "Gib uns deine Pokémon, oder stelle dich dem Zorn von Team Rocket!"
+      4: "Team Rocket wird seinen Plan zur Vollendung bringen, Aus dem Weg!",
+      5: "Los, gib uns deine Pokémon. Wir brauchen sie für unseren Plan!"
     },
     "victory": {
       1: "Das war mal wieder ein Schuss in den Ofen!",
-      2: "Oh no! I dropped the Lift Key!",
-      3: "I blew it!",
-      4: "My associates won't stand for this!",
-      5: "You say what? Team Rocket bye-bye a go-go? Broken it is says you?" //Use of wrong grammar is deliberate.
+      2: "Dem Boss wird das aber nicht gefallen!",
+      3: "Ich habe es vermasselt!",
+      4: "Meine Kollegen werden das nicht tolerieren!",
+      5: "Team Rocket wird wiederkehren! Das sage ich Jessie und James!"
     },
   },
   "firebreather": {
@@ -413,81 +413,81 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "magma_grunt": {
     "encounter": {
       1: "Keiner, der sich Team Magma in den Weg stellt, bekommt Gnade, nicht einmal Kinder!",
-      2: "You'd better not interfere with our plans! We're making the world a better place!",
-      3: "You're in the way! Team Magma has no time for kids like you!",
-      4: "I hope you brought marshmallows because things are about to heat up!",
-      5: "We're going to use the power of a volcano! It's gonna be... explosive! Get it? Heh heh!"
+      2: "Störe besser nicht unsere Pläne! Wir formen die Welt nach unseren Vorstellungen!",
+      3: "Du stehst uns im Weg! Team Magma hat keine Zeit für Störenfriede wie dich!",
+      4: "Bereite dich auf die Hölle vor, denn es wird bald sehr heiß!",
+      5: "Wir werden die Macht des Vulkans entfesseln! Es wird gewaltig sein! Mach dich bereit!"
     },
     "victory": {
-      1: "Wie kann das sein? Ich bin Teil vom mächtigen Team Magma! Wir wollen doch nur die Welt verbessern…",
-      2: "I can't believe I lost! I even skipped lunch for this",
-      3: "No way! You're just a kid!",
-      4: "Urrrgh... I should've ducked into our hideout right away...",
-      5: "You beat me... Do you think the boss will dock my pay for this?"
+ 1: "Wie kann das sein? Ich bin Teil des mächtigen Team Magma! Wir streben nach der Verbesserung der Welt...",
+      2: "Unglaublich, dass ich verloren habe! Mit meinen mächtigen Pokémon.",
+      3: "Das kann nicht sein! Ich hab doch viel mehr Erfahrung als du!",
+      4: "Verdammt... Ich hätte sofort in unser Versteck fliehen sollen...",
+      5: "Du hast mich besiegt... Der Boss wird mich dafür zur Rechenschaft ziehen."
     },
   },
   "aqua_grunt": {
     "encounter": {
       1: "Du willst dich also mit Team Aqua anlegen? Du traust dich ja was… Dich werfe ich über Bord!",
-      2: "Grrr... You've got some nerve meddling with Team Aqua!",
-      3: "You're about to get soaked! And not just from my water Pokémon!",
-      4: "We, Team Aqua, exist for the good of all!",
-      5: "Prepare to be washed away by the tides of my... uh, Pokémon! Yeah, my Pokémon!"
+      2: "Du hast ganz schön Mut, dich mit Team Aqua anzulegen!",
+      3: "Ich hoffe du hast einen Regenschirm dabei. Hier wird es jetzt nass!",
+      4: "Wir, Team Aqua, existieren zum Wohle aller!",
+      5: "Bereite dich darauf vor, von den Fluten meiner Pokémon weggespült zu werden!"
     },
     "victory": {
       1: "Vielleicht sollte ich wohl lieber selber über die Planke gehen…",
-      2: "Arrgh, I didn't count on being meddled with by some meddling kid!",
-      3: "I lost?! Guess I'll have to swim back to the hideout now...",
-      4: "Oh, man, what a disaster... The boss is going to be furious...",
-      5: "You beat me... Do you think the boss will make me walk the plank for this?"
+      2: "Arrgh, ich habe nicht damit gerechnet, von einer Landratte gestört zu werden!",
+      3: "Ich habe verloren?! Ich schätze, ich muss jetzt zurück zum Versteck schwimmen...",
+      4: "Oh Mann, was für eine Katastrophe... Der Boss wird wütend sein...",
+      5: "Du hast mich besiegt... Meinst du, der Boss wird mich dafür kielholen lassen?"
     },
   },
   "galactic_grunt": {
     "encounter": {
-      1: "Team Galaktik wird die Welt in eine bessere Welt verwandeln! Und du wirst uns nicht aufhalten!",
-      2: "Witness the power of our technology and the future we envision!",
-      3: "In the name of Team Galactic, I'll eliminate anyone who stands in our way!",
-      4: "Get ready to lose!",
-      5: "Hope you're ready for a cosmic beatdown!"
+      1: "Team Galaktik wird die Welt in eine bessere verwandeln! Und du wirst uns nicht aufhalten!",
+      2: "Erlebe die Macht unserer Technologie und die Zukunft, die wir uns vorstellen!",
+      3: "Im Namen von Team Galaktik werde ich jeden beseitigen, der uns im Weg steht!",
+      4: "Mach dich bereit zu verlieren!",
+      5: "Hoffentlich bist du bereit für eine kosmische Niederlage!"
     },
     "victory": {
       1: "Zyrus wird uns für diese Niederlage bestrafen…",
-      2: "This setback means nothing in the grand scheme.",
-      3: "Our plans are bigger than this defeat.",
-      4: "How?!",
-      5: "Note to self: practice Pokémon battling, ASAP."
+      2: "Dieser Rückschlag bedeutet nichts in Hinsicht unseres großen Plans.",
+      3: "Unsere Pläne sind größer als diese Niederlage.",
+      4: "Wie ist das möglich?!",
+      5: "Notiz an mich selbst: Pokémon-Kämpfe üben, so bald wie möglich."
     },
   },
   "plasma_grunt": {
     "encounter": {
       1: "Pokémon sollten frei sein! Team Plasma wird sie befreien!",
-      2: "If I win against you, release your Pokémon!",
-      3: "If you get in the way of Team Plasma, I'll take care of you!",
-      4: "Team Plasma will liberate Pokémon from selfish humans like you!",
-      5: "Our hairstyles are out of this world... but our battling skills? You'll find out soon enough."
+      2: "Wenn ich gegen dich gewinne, lass deine Pokémon frei!",
+      3: "Wenn du Team Plasma im Weg stehst, werde ich mich um dich kümmern!",
+      4: "Team Plasma wird Pokémon von egoistischen Menschen wie dir befreien!",
+      5: "Lass dich von unserem Aussehen nicht täuschen. Unsere Kampffähigkeiten sind überragend!"
     },
     "victory": {
-      1: "Wie konnte ich verlieren? Ich dachte, ich würde die Welt retten…",
-      2: "How could I lose...",
-      3: "...What a weak Pokémon, I'll just have to go steal some better ones!",
-      4: "Great plans are always interrupted.",
-      5: "This is bad... Badbadbadbadbadbadbad! Bad for Team Plasma! Or Plasbad, for short!"
+      1: "Wie konnte ich verlieren? Ich dachte, ich würde die Welt retten...",
+      2: "Wie konnte ich nur verlieren...",
+      3: "...Dieses Pokémon ist zu schwach, ich werde stärkere beschaffen müssen!",
+      4: "Große Pläne stoßen immer auf Hindernisse.",
+      5: "Das ist ein schwerer Rückschlag für Team Plasma..."
     },
   },
   "flare_grunt": {
     "encounter": {
-      1: "Your Pokémon are no match for the elegance of Team Flare.",
-      2: "Hope you brought your sunglasses, because things are about to get bright!",
-      3: "Team Flare will cleanse the world of imperfection!",
-      4: "Prepare to face the brilliance of Team Flare!",
-      5: "Fashion is most important to us!"
+      1: "Deine Pokémon haben keine Chance gegen die Überlegenheit von Team Flare.",
+      2: "Mach dich bereit, denn gleich wird es hier lichterloh brennen!",
+      3: "Team Flare wird die Welt von allen Makeln befreien!",
+      4: "Bereite dich auf die unvergleichliche Macht von Team Flare vor!",
+      5: "Unsere Mission steht über allem, sogar über der Mode!"
     },
     "victory": {
-      1: "The future doesn't look bright for me.",
-      2: "Perhaps there's more to battling than I thought. Back to the drawing board.",
-      3: "Gahh?! I lost?!",
-      4: "Even in defeat, Team Flare's elegance shines through.",
-      5: "You may have beaten me, but when I lose, I go out in style!"
+   1: "Diese Niederlage wirft einen Schatten auf meine Zukunft.",
+      2: "Es scheint, dass ich meine Strategien überdenken muss. Zurück ans Reißbrett.",
+      3: "Unglaublich?! Ich habe verloren?!",
+      4: "Selbst in der Niederlage bleibt Team Flare unübertroffen in seiner Eleganz.",
+      5: "Du hast mich besiegt, aber Team Flare wird immer in Glanz und Stil erstrahlen."
     },
   },
   "rocket_boss_giovanni_1": {
