@@ -1,14 +1,6 @@
-import {expect} from "vitest";
-import {
-  deleteBind,
-  getIconWithKeycode,
-  getIconWithSettingName,
-  getKeyWithKeycode,
-  getKeyWithSettingName,
-  assign,
-  getSettingNameWithKeycode, canIAssignThisKey, canIDeleteThisKey, canIOverrideThisSetting
-} from "#app/configs/inputs/configHandler";
-import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import { expect } from "vitest";
+import { deleteBind, getIconWithKeycode, getIconWithSettingName, getKeyWithKeycode, getKeyWithSettingName, assign, getSettingNameWithKeycode, canIAssignThisKey, canIDeleteThisKey, canIOverrideThisSetting } from "#app/configs/inputs/configHandler";
+import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 
 export class MenuManip {
   private config;
