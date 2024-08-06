@@ -499,7 +499,7 @@ export const classicFixedBattles: FixedBattleConfigs = {
   [112]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
     .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT ], true)),
   [114]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
-    .setGetTrainerFunc(getRandomTrainerFunc([[TrainerType.PETREL,TrainerType.ARCHER,TrainerType.ARIANA,TrainerType.PROTON], [TrainerType.COURTNEY,TrainerType.TABITHA], [TrainerType.SHELLY,TrainerType.MATT], [TrainerType.SATURN,TrainerType.JUPITER,TrainerType.MARS], [TrainerType.ZINZOLIN,TrainerType.COLRESS], [TrainerType.BRYONY,TrainerType.XEROSIC] ], true)),
+    .setGetTrainerFunc(getRandomTrainerFunc([[TrainerType.ARCHER,TrainerType.ARIANA,TrainerType.PROTON,TrainerType.PETREL], [TrainerType.TABITHA,TrainerType.COURTNEY], [TrainerType.MATT,TrainerType.SHELLY], [TrainerType.JUPITER,TrainerType.MARS,TrainerType.SATURN], [TrainerType.COLRESS,TrainerType.ZINZOLIN], [TrainerType.XEROSIC,TrainerType.BRYONY] ], true,1)),
   [115]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
     .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerType.MAXIE, TrainerType.ARCHIE, TrainerType.CYRUS, TrainerType.GHETSIS, TrainerType.LYSANDRE ])),
   [145]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
