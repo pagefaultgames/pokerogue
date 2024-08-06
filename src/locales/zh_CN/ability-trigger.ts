@@ -36,7 +36,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "forewarn": "{{pokemonNameWithAffix}}读取了\n{{moveName}}！",
   "frisk": "{{pokemonNameWithAffix}}察觉到了\n{{opponentName}}的{{opponentAbilityName}}！",
   "postWeatherLapseHeal": "{{pokemonNameWithAffix}}因{{abilityName}}\n回复了少许HP！",
-  "postWeatherLapseDamage": "{{pokemonNameWithAffix}}\n因{abilityName}}而受到了伤害！",
+  "postWeatherLapseDamage": "{{pokemonNameWithAffix}}\n因{{abilityName}}而受到了伤害！",
   "postTurnLootCreateEatenBerry": "{{pokemonNameWithAffix}}\n收获了{{berryName}}！",
   "postTurnHeal": "{{pokemonNameWithAffix}}因{{abilityName}}\n回复了少许HP！",
   "fetchBall": "{{pokemonNameWithAffix}}\n捡回了{{pokeballName}}！",
@@ -59,4 +59,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postSummonSwordOfRuin": "{{pokemonNameWithAffix}}的灾祸之剑\n令周围的宝可梦的{{statName}}减弱了！",
   "postSummonTabletsOfRuin": "{{pokemonNameWithAffix}}的灾祸之简\n令周围的宝可梦的{{statName}}减弱了！",
   "postSummonBeadsOfRuin": "{{pokemonNameWithAffix}}的灾祸之玉\n令周围的宝可梦的{{statName}}减弱了！",
+  "preventBerryUse": "{{pokemonNameWithAffix}}因太紧张\n而无法食用树果！",
 } as const;

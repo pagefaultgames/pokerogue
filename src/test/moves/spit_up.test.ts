@@ -4,13 +4,13 @@ import { allMoves } from "#app/data/move.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { MoveResult, TurnMove } from "#app/field/pokemon.js";
 import { MovePhase, TurnInitPhase } from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Spit Up", () => {
   let phaserGame: Phaser.Game;

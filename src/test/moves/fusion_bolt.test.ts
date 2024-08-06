@@ -1,8 +1,7 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
 import { Abilities } from "#enums/abilities";
@@ -25,16 +24,16 @@ describe("Moves - Fusion Bolt", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ fusionBolt ]);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1);
+    game.override.moveset([ fusionBolt ]);
+    game.override.startingLevel(1);
 
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RESHIRAM);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ROUGH_SKIN);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
+    game.override.enemySpecies(Species.RESHIRAM);
+    game.override.enemyAbility(Abilities.ROUGH_SKIN);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
 
-    vi.spyOn(overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(97);
-    vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("single");
+    game.override.startingWave(97);
+    game.override.disableCrits();
   });
 
   it("should not make contact", async() => {

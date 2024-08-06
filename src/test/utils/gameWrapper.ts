@@ -8,23 +8,24 @@ import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
 import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 import EventEmitter = Phaser.Events.EventEmitter;
 import UpdateList = Phaser.GameObjects.UpdateList;
-import MockGraphics from "#app/test/utils/mocks/mocksContainer/mockGraphics";
-import MockTextureManager from "#app/test/utils/mocks/mockTextureManager";
+import MockGraphics from "#test/utils/mocks/mocksContainer/mockGraphics";
+import MockTextureManager from "#test/utils/mocks/mockTextureManager";
 import Phaser from "phaser";
-import {blobToString} from "#app/test/utils/gameManagerUtils";
-import {vi} from "vitest";
-import mockLocalStorage from "#app/test/utils/mocks/mockLocalStorage";
-import mockConsoleLog from "#app/test/utils/mocks/mockConsoleLog";
-import MockLoader from "#app/test/utils/mocks/mockLoader";
-import {MockFetch} from "#app/test/utils/mocks/mockFetch";
+import { blobToString } from "#test/utils/gameManagerUtils";
+import { vi } from "vitest";
+import mockLocalStorage from "#test/utils/mocks/mockLocalStorage";
+import mockConsoleLog from "#test/utils/mocks/mockConsoleLog";
+import MockLoader from "#test/utils/mocks/mockLoader";
+import { MockFetch } from "#test/utils/mocks/mockFetch";
 import * as Utils from "#app/utils";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import {MockClock} from "#app/test/utils/mocks/mockClock";
+import { MockClock } from "#test/utils/mocks/mockClock";
 import BattleScene from "#app/battle-scene.js";
-import {MoveAnim} from "#app/data/battle-anims";
+import { MoveAnim } from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
 import * as battleScene from "#app/battle-scene";
-import MockImage from "#app/test/utils/mocks/mocksContainer/mockImage.js";
+import MockImage from "#test/utils/mocks/mocksContainer/mockImage.js";
+import { MockGameObjectCreator } from "./mocks/mockGameObjectCreator";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -40,7 +41,7 @@ Phaser.GameObjects.Image = MockImage;
 window.URL.createObjectURL = (blob: Blob) => {
   blobToString(blob).then((data: string) => {
     localStorage.setItem("toExport", data);
-  })
+  });
   return null;
 };
 navigator.getGamepads = vi.fn().mockReturnValue([]);
@@ -100,7 +101,7 @@ export default class GameWrapper {
   injectMandatory() {
     this.game.config = {
       seed: ["test"],
-    }
+    };
     this.scene.game = this.game;
     this.game.renderer = {
       maxTextures: -1,
@@ -138,7 +139,7 @@ export default class GameWrapper {
         setPostPipeline: () => null,
         removePostPipeline: () => null,
       },
-    }
+    };
 
     this.scene.tweens = {
       add: (data) => {
@@ -223,13 +224,9 @@ export default class GameWrapper {
         return resolve(response);
       });
     };
-    this.scene.make = {
-      graphics: (config) => new MockGraphics(mockTextureManager, config),
-      rexTransitionImagePack: () => ({
-        transit: () => null,
-      }),
-    };
+    this.scene.make = new MockGameObjectCreator(mockTextureManager);
     this.scene.time = new MockClock(this.scene);
+    this.scene.remove = vi.fn();
   }
 }
 

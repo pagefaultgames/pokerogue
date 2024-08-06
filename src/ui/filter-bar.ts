@@ -1,30 +1,29 @@
 import BattleScene from "#app/battle-scene.js";
-import { DropDown } from "./dropdown";
+import { DropDown, DropDownType } from "./dropdown";
 import { StarterContainer } from "./starter-container";
-import { addTextObject, TextStyle } from "./text";
+import { addTextObject, getTextColor, TextStyle } from "./text";
+import { UiTheme } from "#enums/ui-theme";
 import { addWindow, WindowVariant } from "./ui-theme";
 
 export enum DropDownColumn {
   GEN,
   TYPES,
+  CAUGHT,
   UNLOCKS,
-  WIN,
+  MISC,
   SORT
 }
 
 export class FilterBar extends Phaser.GameObjects.Container {
   private window: Phaser.GameObjects.NineSlice;
-  public labels:  Phaser.GameObjects.Text[] = [];
-  public dropDowns: DropDown[] = [];
+  private labels:  Phaser.GameObjects.Text[] = [];
+  private dropDowns: DropDown[] = [];
+  private columns: DropDownColumn[] = [];
   public cursorObj: Phaser.GameObjects.Image;
   public numFilters: number = 0;
   public openDropDown: boolean = false;
   private lastCursor: number = -1;
-  public defaultGenVals: any[] = [];
-  public defaultTypeVals: any[] = [];
-  public defaultUnlockVals: any[] = [];
-  public defaultWinVals: any[] = [];
-  public defaultSortVals: any[] = [];
+  private uiTheme: UiTheme;
 
   constructor(scene: BattleScene, x: number, y: number, width: number, height: number) {
     super(scene, x, y);
@@ -40,10 +39,26 @@ export class FilterBar extends Phaser.GameObjects.Container {
     this.cursorObj.setVisible(false);
     this.cursorObj.setOrigin(0, 0);
     this.add(this.cursorObj);
+
+    this.uiTheme = scene.uiTheme;
   }
 
-  addFilter(text: string, dropDown: DropDown): void {
-    const filterTypesLabel = addTextObject(this.scene, 0, 3, text, TextStyle.TOOLTIP_CONTENT);
+  /**
+   * Add a new filter to the FilterBar, as long that a unique DropDownColumn is provided
+   * @param column  the DropDownColumn that will be used to access the filter values
+   * @param title   the string that will get displayed in the filter bar
+   * @param dropDown the DropDown with all options for this filter
+   * @returns true if successful, false if the provided column was already in use for another filter
+   */
+  addFilter(column: DropDownColumn, title: string, dropDown: DropDown): boolean {
+    // The column should be unique to each filter,
+    if (this.columns.includes(column)) {
+      return false;
+    }
+
+    this.columns.push(column);
+
+    const filterTypesLabel = addTextObject(this.scene, 0, 3, title, TextStyle.TOOLTIP_CONTENT);
     this.labels.push(filterTypesLabel);
     this.add(filterTypesLabel);
     this.dropDowns.push(dropDown);
@@ -51,61 +66,39 @@ export class FilterBar extends Phaser.GameObjects.Container {
 
     this.calcFilterPositions();
     this.numFilters++;
+
+    return true;
   }
 
+  /**
+   * Get the DropDown associated to a given filter
+   * @param col the DropDownColumn used to register the filter to retrieve
+   * @returns the associated DropDown if it exists, undefined otherwise
+   */
+  getFilter(col: DropDownColumn) : DropDown {
+    return this.dropDowns[this.columns.indexOf(col)];
+  }
 
+  /**
+   * Highlight the labels of the FilterBar if the filters are different from their default values
+   */
   updateFilterLabels(): void {
-    const genVals = this.getVals(DropDownColumn.GEN);
-    const typeVals = this.getVals(DropDownColumn.TYPES);
-    const unlockVals = this.getVals(DropDownColumn.UNLOCKS);
-    const winVals = this.getVals(DropDownColumn.WIN);
-    const sortVals = this.getVals(DropDownColumn.SORT);
-
-    // onColor is Yellow, offColor is White
-    const onColor = 0xffef5c;
-    const offColor = 0xffffff;
-
-    // if genVals and defaultGenVals has same elements, set the label to White else set it to Green
-    if (genVals.length === this.defaultGenVals.length && genVals.every((value, index) => value === this.defaultGenVals[index])) {
-      this.labels[DropDownColumn.GEN].setTint(offColor);
-    } else {
-      this.labels[DropDownColumn.GEN].setTint(onColor);
-    }
-
-    // if typeVals and defaultTypeVals has same elements, set the label to White else set it to Green
-    if (typeVals.length === this.defaultTypeVals.length && typeVals.every((value, index) => value === this.defaultTypeVals[index])) {
-      this.labels[DropDownColumn.TYPES].setTint(offColor);
-    } else {
-      this.labels[DropDownColumn.TYPES].setTint(onColor);
-    }
-
-    // if unlockVals and defaultUnlockVals has same elements, set the label to White else set it to Green
-    if (unlockVals.length === this.defaultUnlockVals.length && unlockVals.every((value, index) => value === this.defaultUnlockVals[index])) {
-      this.labels[DropDownColumn.UNLOCKS].setTint(offColor);
-    } else {
-      this.labels[DropDownColumn.UNLOCKS].setTint(onColor);
-    }
-
-    // if winVals and defaultWinVals has same elements, set the label to White else set it to Green
-    if (winVals.length === this.defaultWinVals.length && winVals.every((value, index) => value === this.defaultWinVals[index])) {
-      this.labels[DropDownColumn.WIN].setTint(offColor);
-    } else {
-      this.labels[DropDownColumn.WIN].setTint(onColor);
-    }
-
-    // if sortVals and defaultSortVals has same value and dir, set the label to White else set it to Green
-    if (sortVals[0]["dir"] === this.defaultSortVals[0]["dir"] && sortVals[0]["val"] === this.defaultSortVals[0]["val"]) {
-      this.labels[DropDownColumn.SORT].setTint(offColor);
-    } else {
-      this.labels[DropDownColumn.SORT].setTint(onColor);
+    for (let i = 0; i < this.numFilters; i++) {
+      if (this.dropDowns[i].hasDefaultValues()) {
+        this.labels[i].setColor(getTextColor(TextStyle.TOOLTIP_CONTENT, false, this.uiTheme));
+      } else {
+        this.labels[i].setColor(getTextColor(TextStyle.STATS_LABEL, false, this.uiTheme));
+      }
     }
   }
 
-  calcFilterPositions(): void {
+  /**
+   * Position the filter dropdowns evenly across the width of the container
+   */
+  private calcFilterPositions(): void {
     const paddingX = 6;
     const cursorOffset = 8;
 
-    // position labels with even space across the width of the container
     let totalWidth = paddingX * 2 + cursorOffset;
     this.labels.forEach(label => {
       totalWidth += label.displayWidth + cursorOffset;
@@ -124,12 +117,25 @@ export class FilterBar extends Phaser.GameObjects.Container {
     }
   }
 
+  /**
+   * Move the leftmost dropdown to the left of the FilterBar instead of below it
+   */
+  offsetHybridFilters(): void {
+    for (let i=0; i<this.dropDowns.length; i++) {
+      if (this.dropDowns[i].dropDownType === DropDownType.HYBRID) {
+        this.dropDowns[i].autoSize();
+        this.dropDowns[i].x = - this.dropDowns[i].getWidth();
+        this.dropDowns[i].y = 0;
+      }
+    }
+  }
+
   setCursor(cursor: number): void {
     if (this.lastCursor > -1) {
       if (this.dropDowns[this.lastCursor].visible) {
         this.dropDowns[this.lastCursor].setVisible(false);
         this.dropDowns[cursor].setVisible(true);
-        this.dropDowns[cursor].setCursor(0);
+        this.dropDowns[cursor].resetCursor();
       }
     }
 
@@ -139,9 +145,9 @@ export class FilterBar extends Phaser.GameObjects.Container {
   }
 
   toggleDropDown(index: number): void {
-    this.dropDowns[index].toggle();
+    this.dropDowns[index].toggleVisibility();
     this.openDropDown = this.dropDowns[index].visible;
-    this.dropDowns[index].setCursor(0);
+    this.dropDowns[index].resetCursor();
   }
 
   hideDropDowns(): void {
@@ -172,11 +178,22 @@ export class FilterBar extends Phaser.GameObjects.Container {
   }
 
   getVals(col: DropDownColumn): any[] {
-    return this.dropDowns[col].getVals();
+    return this.getFilter(col).getVals();
   }
 
+  setValsToDefault(): void {
+    for (const dropDown of this.dropDowns) {
+      dropDown.resetToDefault();
+    }
+  }
+
+  /**
+   * Find the nearest filter to the provided container
+   * @param container the StarterContainer to compare position against
+   * @returns the index of the closest filter
+   */
   getNearestFilter(container: StarterContainer): number {
-    // find the nearest filter to the x position
+
     const midx = container.x + container.icon.displayWidth / 2;
     let nearest = 0;
     let nearestDist = 1000;
@@ -191,11 +208,4 @@ export class FilterBar extends Phaser.GameObjects.Container {
     return nearest;
   }
 
-  getLastFilterX(): number {
-    return this.labels[this.lastCursor].x + this.labels[this.lastCursor].displayWidth / 2;
-  }
-
-  isFilterActive(index: number) {
-    return this.dropDowns[index].isActive();
-  }
 }

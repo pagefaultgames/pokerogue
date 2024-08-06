@@ -1,4 +1,3 @@
-import { pokemonForm } from "./pokemon-form";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { arenaFlyout } from "./arena-flyout";
@@ -37,6 +36,7 @@ import { move } from "./move";
 import { nature } from "./nature";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
+import { pokemonForm, battlePokemonForm } from "./pokemon-form";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
 import { pokemonSummary } from "./pokemon-summary";
@@ -62,6 +62,7 @@ export const koConfig = {
   battle: battle,
   battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
+  battlePokemonForm: battlePokemonForm,
   battlerTags: battlerTags,
   berry: berry,
   bgmName: bgmName,

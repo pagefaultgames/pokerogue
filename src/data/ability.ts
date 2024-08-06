@@ -1,4 +1,4 @@
-import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
+import Pokemon, { HitResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
@@ -941,14 +941,19 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
 
 export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
   private weatherType: WeatherType;
+  protected condition: PokemonDefendCondition | null;
 
-  constructor(weatherType: WeatherType) {
+  constructor(weatherType: WeatherType, condition?: PokemonDefendCondition) {
     super();
 
     this.weatherType = weatherType;
+    this.condition = condition ?? null;
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+    if (this.condition !== null && !this.condition(pokemon, attacker, move)) {
+      return false;
+    }
     if (!pokemon.scene.arena.weather?.isImmutable()) {
       return pokemon.scene.arena.trySetWeather(this.weatherType, true);
     }
@@ -1531,23 +1536,50 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
 }
 
 export class PostAttackAbAttr extends AbAttr {
+  private attackCondition: PokemonAttackCondition;
+
+  /** The default attackCondition requires that the selected move is a damaging move */
+  constructor(attackCondition: PokemonAttackCondition = (user, target, move) => (move.category !== MoveCategory.STATUS)) {
+    super();
+
+    this.attackCondition = attackCondition;
+  }
+
+  /**
+   * Please override {@link applyPostAttackAfterMoveTypeCheck} instead of this method. By default, this method checks that the move used is a damaging attack before
+   * applying the effect of any inherited class. This can be changed by providing a different {@link attackCondition} to the constructor. See {@link ConfusionOnStatusEffectAbAttr}
+   * for an example of an effect that does not require a damaging move.
+   */
   applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
+    // When attackRequired is true, we require the move to be an attack move and to deal damage before checking secondary requirements.
+    // If attackRequired is false, we always defer to the secondary requirements.
+    if (this.attackCondition(pokemon, defender, move)) {
+      return this.applyPostAttackAfterMoveTypeCheck(pokemon, passive, defender, move, hitResult, args);
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * This method is only called after {@link applyPostAttack} has already been applied. Use this for handling checks specific to the ability in question.
+   */
+  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
-  private condition: PokemonAttackCondition;
+  private stealCondition: PokemonAttackCondition;
 
-  constructor(condition?: PokemonAttackCondition) {
+  constructor(stealCondition?: PokemonAttackCondition) {
     super();
 
-    this.condition = condition;
+    this.stealCondition = stealCondition;
   }
 
-  applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
+  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, defender, move))) {
+      if (hitResult < HitResult.NO_EFFECT && (!this.stealCondition || this.stealCondition(pokemon, defender, move))) {
         const heldItems = this.getTargetHeldItems(defender).filter(i => i.isTransferrable);
         if (heldItems.length) {
           const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
@@ -1583,7 +1615,7 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
     this.effects = effects;
   }
 
-  applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     /**Status inflicted by abilities post attacking are also considered additional effects.*/
     if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
@@ -1614,7 +1646,7 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
     this.effects = effects;
   }
 
-  applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     /**Battler tags inflicted by abilities post attacking are also considered additional effects.*/
     if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance(attacker, pokemon, move) && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
@@ -2147,6 +2179,49 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Removes supplied status effects from the user's field.
+ */
+export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAttr {
+  private statusEffect: StatusEffect[];
+
+  /**
+   * @param statusEffect - The status effects to be removed from the user's field.
+   */
+  constructor(...statusEffect: StatusEffect[]) {
+    super(false);
+
+    this.statusEffect = statusEffect;
+  }
+
+  /**
+   * Removes supplied status effect from the user's field when user of the ability is summoned.
+   *
+   * @param pokemon - The Pokémon that triggered the ability.
+   * @param passive - n/a
+   * @param args - n/a
+   * @returns A boolean or a promise that resolves to a boolean indicating the result of the ability application.
+   */
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    const party = pokemon instanceof PlayerPokemon ? pokemon.scene.getPlayerField() : pokemon.scene.getEnemyField();
+    const allowedParty = party.filter(p => p.isAllowedInBattle());
+
+    if (allowedParty.length < 1) {
+      return false;
+    }
+
+    for (const pokemon of allowedParty) {
+      if (this.statusEffect.includes(pokemon.status?.effect)) {
+        pokemon.scene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
+        pokemon.resetStatus(false);
+        pokemon.updateInfo();
+      }
+    }
+
+    return true;
+  }
+}
+
 
 /** Attempt to copy the stat changes on an ally pokemon */
 export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
@@ -2371,7 +2446,8 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
   private effects: StatusEffect[];
 
   constructor(...effects: StatusEffect[]) {
-    super();
+    /** This effect does not require a damaging move */
+    super((user, target, move) => true);
     this.effects = effects;
   }
   /**
@@ -2384,7 +2460,7 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
    * @param args [0] {@linkcode StatusEffect} applied by move
    * @returns true if defender is confused
    */
-  applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (this.effects.indexOf(args[0]) > -1 && !defender.isFainted()) {
       return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedInt(3,2), move.id, defender.id);
     }
@@ -2398,17 +2474,33 @@ export class PreSetStatusAbAttr extends AbAttr {
   }
 }
 
-export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
+/**
+ * Provides immunity to status effects to specified targets.
+ */
+export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   private immuneEffects: StatusEffect[];
 
+  /**
+   * @param immuneEffects - The status effects to which the Pokémon is immune.
+   */
   constructor(...immuneEffects: StatusEffect[]) {
     super();
 
     this.immuneEffects = immuneEffects;
   }
 
+  /**
+   * Applies immunity to supplied status effects.
+   *
+   * @param pokemon - The Pokémon to which the status is being applied.
+   * @param passive - n/a
+   * @param effect - The status effect being applied.
+   * @param cancelled - A holder for a boolean value indicating if the status application was cancelled.
+   * @param args - n/a
+   * @returns A boolean indicating the result of the status application.
+   */
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (!this.immuneEffects.length || this.immuneEffects.indexOf(effect) > -1) {
+    if (this.immuneEffects.length < 1 || this.immuneEffects.includes(effect)) {
       cancelled.value = true;
       return true;
     }
@@ -2430,14 +2522,30 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 }
 
+/**
+ * Provides immunity to status effects to the user.
+ * @extends PreSetStatusEffectImmunityAbAttr
+ */
+export class StatusEffectImmunityAbAttr extends PreSetStatusEffectImmunityAbAttr { }
+
+/**
+ * Provides immunity to status effects to the user's field.
+ * @extends PreSetStatusEffectImmunityAbAttr
+ */
+export class UserFieldStatusEffectImmunityAbAttr extends PreSetStatusEffectImmunityAbAttr { }
+
 export class PreApplyBattlerTagAbAttr extends AbAttr {
   applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
 
-export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
+/**
+ * Provides immunity to BattlerTags {@linkcode BattlerTag} to specified targets.
+ */
+export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   private immuneTagType: BattlerTagType;
+  private battlerTag: BattlerTag;
 
   constructor(immuneTagType: BattlerTagType) {
     super();
@@ -2448,6 +2556,7 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (tag.tagType === this.immuneTagType) {
       cancelled.value = true;
+      this.battlerTag = tag;
       return true;
     }
 
@@ -2458,10 +2567,22 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
     return i18next.t("abilityTriggers:battlerTagImmunity", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
-      battlerTagName: (args[0] as BattlerTag).getDescriptor()
+      battlerTagName: this.battlerTag.getDescriptor()
     });
   }
 }
+
+/**
+ * Provides immunity to BattlerTags {@linkcode BattlerTag} to the user.
+ * @extends PreApplyBattlerTagImmunityAbAttr
+ */
+export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr { }
+
+/**
+ * Provides immunity to BattlerTags {@linkcode BattlerTag} to the user's field.
+ * @extends PreApplyBattlerTagImmunityAbAttr
+ */
+export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr { }
 
 export class BlockCritAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -4187,7 +4308,7 @@ export const allAbilities = [ new Ability(Abilities.NONE, 3) ];
 export function initAbilities() {
   allAbilities.push(
     new Ability(Abilities.STENCH, 3)
-      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => (move.category !== MoveCategory.STATUS && !move.hasAttr(FlinchAttr)) ? 10 : 0, BattlerTagType.FLINCHED),
+      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.hasAttr(FlinchAttr) ? 10 : 0, BattlerTagType.FLINCHED),
     new Ability(Abilities.DRIZZLE, 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN),
@@ -4722,10 +4843,10 @@ export function initAbilities() {
     new Ability(Abilities.REFRIGERATE, 6)
       .attr(MoveTypeChangeAttr, Type.ICE, 1.2, (user, target, move) => move.type === Type.NORMAL),
     new Ability(Abilities.SWEET_VEIL, 6)
-      .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
+      .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(UserFieldBattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable()
-      .partial(),
+      .partial(), // Mold Breaker ally should not be affected by Sweet Veil
     new Ability(Abilities.STANCE_CHANGE, 6)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -4976,7 +5097,7 @@ export function initAbilities() {
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.hasFlag(MoveFlags.SOUND_BASED), 0.5)
       .ignorable(),
     new Ability(Abilities.SAND_SPIT, 8)
-      .attr(PostDefendWeatherChangeAbAttr, WeatherType.SANDSTORM),
+      .attr(PostDefendWeatherChangeAbAttr, WeatherType.SANDSTORM, (target, user, move) => move.category !== MoveCategory.STATUS),
     new Ability(Abilities.ICE_SCALES, 8)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.SPECIAL, 0.5)
       .ignorable(),
@@ -5020,7 +5141,8 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonNeutralizingGas", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .partial(),
     new Ability(Abilities.PASTEL_VEIL, 8)
-      .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.HUNGER_SWITCH, 8)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1)

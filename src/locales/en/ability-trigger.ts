@@ -59,4 +59,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postSummonSwordOfRuin": "{{pokemonNameWithAffix}}'s Sword of Ruin lowered the {{statName}}\nof all surrounding Pokémon!",
   "postSummonTabletsOfRuin": "{{pokemonNameWithAffix}}'s Tablets of Ruin lowered the {{statName}}\nof all surrounding Pokémon!",
   "postSummonBeadsOfRuin": "{{pokemonNameWithAffix}}'s Beads of Ruin lowered the {{statName}}\nof all surrounding Pokémon!",
+  "preventBerryUse": "{{pokemonNameWithAffix}} is too\nnervous to eat berries!",
 } as const;
