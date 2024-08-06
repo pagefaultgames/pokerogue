@@ -37,7 +37,7 @@ describe("Moves - Substitute", () => {
       .moveset([Moves.SUBSTITUTE, Moves.SWORDS_DANCE, Moves.TACKLE, Moves.SPLASH])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(Array(4).fill(Moves.SPLASH))
+      .enemyMoveset(SPLASH_ONLY)
       .startingLevel(100)
       .enemyLevel(100);
   });
