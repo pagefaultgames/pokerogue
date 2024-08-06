@@ -1128,7 +1128,12 @@ export class EncounterPhase extends BattlePhase {
     case BattleSpec.FINAL_BOSS:
       const enemy = this.scene.getEnemyPokemon();
       this.scene.ui.showText(this.getEncounterMessage(), null, () => {
-        this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].encounter, enemy.species.name, null, () => {
+        const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
+        const ordinalUse = ["en", "es", "it"];
+        const ordinalIndex = (ordinalUse.includes(i18next.resolvedLanguage)) ? ["st","nd","rd"][((count+90)%100-10)%10-1]||"th" : "";
+        const cycleCount = count.toLocaleString()+ordinalIndex;
+        const encounterDialogue = i18next.t("PGMbattleSpecDialogue:encounter", {cycleCount: cycleCount});
+        this.scene.ui.showDialogue(encounterDialogue, enemy.species.name, null, () => {
           this.doEncounterCommon(false);
         });
       }, 1500, true);
