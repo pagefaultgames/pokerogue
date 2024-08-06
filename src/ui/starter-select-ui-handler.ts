@@ -72,6 +72,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   "de":{
     starterInfoTextSize: "48px",
     instructionTextSize: "35px",
+    starterInfoXPos: 33,
   },
   "es":{
     starterInfoTextSize: "56px",
@@ -91,9 +92,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 33,
   },
   "zh":{
-    starterInfoTextSize: "40px",
-    instructionTextSize: "42px",
-    starterInfoYOffset: 2
+    starterInfoTextSize: "47px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 1,
+    starterInfoXPos: 24,
   },
   "pt":{
     starterInfoTextSize: "48px",
