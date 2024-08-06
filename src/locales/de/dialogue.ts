@@ -374,7 +374,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
           $Wir wollen über die Erde regieren…
           $und naja du kennst den Rest…!`,
       2: "Wir führen gerade eine große Operation durch. Hast du vor uns zu stören?",
-      3: "Gib uns deine Pokémon, oder stelle dich dem Zorn von Team Rocket!"
+      3: "Gib uns deine Pokémon, oder stelle dich dem Zorn von Team Rocket!",
       4: "Team Rocket wird seinen Plan zur Vollendung bringen, Aus dem Weg!",
       5: "Los, gib uns deine Pokémon. Wir brauchen sie für unseren Plan!"
     },
