@@ -3,7 +3,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 export const filterBar: SimpleTranslationEntries = {
   "genFilter": "세대",
   "typeFilter": "타입",
-  "dexFilter": "도감",
+  "caughtFilter": "포획",
   "unlocksFilter": "해금",
   "miscFilter": "기타",
   "sortFilter": "정렬",
