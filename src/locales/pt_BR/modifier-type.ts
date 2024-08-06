@@ -414,6 +414,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "IgneDisco",
     "CHILL_DRIVE": "CrioDisco",
     "DOUSE_DRIVE": "HidroDisco",
+    "ULTRANECROZIUM_Z": "Ultranecrozium Z",
 
     "FIST_PLATE": "Placa do Punho",
     "SKY_PLATE": "Placa do Céu",
