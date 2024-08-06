@@ -265,8 +265,8 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Ein ewiges Abenteuer!",
   },
   "FRESH_START": {
-    name: "First Try!",
-    description: "Complete the fresh start challenge."
+    name: "Hussa, noch einmal von vorn!",
+    description: "Schließe die 'Neuanfang' Herausforderung ab"
   }
 } as const;
 
