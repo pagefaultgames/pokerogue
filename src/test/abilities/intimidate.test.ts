@@ -1,10 +1,9 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import GameManager from "#test/utils/gameManager";
 import { Mode } from "#app/ui/ui";
 import { BattleStat } from "#app/data/battle-stat";
-import { generateStarter, getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { generateStarter, getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { GameModes, getGameMode } from "#app/game-mode";
@@ -12,6 +11,7 @@ import { CommandPhase, DamagePhase, EncounterPhase, EnemyCommandPhase, SelectSta
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;
@@ -35,7 +35,7 @@ describe("Abilities - Intimidate", () => {
     game.override.enemyPassiveAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.INTIMIDATE);
     game.override.startingWave(3);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
   it("single - wild with switch", async () => {
@@ -294,7 +294,7 @@ describe("Abilities - Intimidate", () => {
 
   it("single - trainer should only trigger once whatever turn we are", async () => {
     game.override.moveset([Moves.SPLASH]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     game.override.startingWave(5);
     await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
     let battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
@@ -334,7 +334,6 @@ describe("Abilities - Intimidate", () => {
   it("double - wild vs only 1 on player side", async () => {
     game.override.battleType("double");
     game.override.startingWave(3);
-    vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{ name: "COIN_CASE" }]);
     await game.runToSummon([Species.MIGHTYENA]);
     await game.phaseInterceptor.to(CommandPhase, false);
     const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
