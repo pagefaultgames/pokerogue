@@ -20,7 +20,7 @@ export const filterBar: SimpleTranslationEntries = {
   "hasWon": "클리어 완료",
   "hasNotWon": "클리어 안함",
   "hiddenAbility": "숨겨진 특성",
-  "hasHiddenAbility": "숨겨진 특성 있음",
+  "hasHiddenAbility": "숨겨진 특성 보유",
   "noHiddenAbility": "숨겨진 특성 없음",
   "pokerus": "포켓러스",
   "hasPokerus": "포켓러스 감염",
