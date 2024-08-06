@@ -3,6 +3,7 @@ import { settings } from "./settings.js";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { arenaFlyout } from "./arena-flyout";
+import { arenaTag } from "./arena-tag";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
 import { battleInfo } from "./battle-info";
@@ -25,6 +26,7 @@ import {
 } from "./dialogue";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
+import { filterBar } from "./filter-bar";
 import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
@@ -37,7 +39,7 @@ import { nature } from "./nature";
 import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
-import { pokemonForm } from "./pokemon-form";
+import { pokemonForm, battlePokemonForm } from "./pokemon-form";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
 import { pokemonSummary } from "./pokemon-summary";
@@ -50,14 +52,17 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
+import { moveTriggers } from "./move-trigger";
 
 export const enConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   arenaFlyout: arenaFlyout,
+  arenaTag: arenaTag,
   battle: battle,
   battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
+  battlePokemonForm: battlePokemonForm,
   battlerTags: battlerTags,
   berry: berry,
   bgmName: bgmName,
@@ -77,6 +82,7 @@ export const enConfig = {
   PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
   egg: egg,
   fightUiHandler: fightUiHandler,
+  filterBar: filterBar,
   gameMode: gameMode,
   gameStatsUiHandler: gameStatsUiHandler,
   growth: growth,
@@ -105,5 +111,6 @@ export const enConfig = {
   voucher: voucher,
   weather: weather,
   partyUiHandler: partyUiHandler,
-  modifierSelectUiHandler: modifierSelectUiHandler
+  modifierSelectUiHandler: modifierSelectUiHandler,
+  moveTriggers: moveTriggers
 };

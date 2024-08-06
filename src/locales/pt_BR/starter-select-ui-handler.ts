@@ -7,6 +7,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "Começar com esses Pokémon?",
+  "confirmExit": "Deseja sair?",
   "invalidParty": "Essa equipe de iniciais não é válida!",
   "gen1": "G1",
   "gen2": "G2",
@@ -23,6 +24,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "nature": "Natureza:",
   "eggMoves": "Mov. de Ovo",
   "addToParty": "Adicionar à equipe",
+  "removeFromParty": "Remover da Equipe",
   "toggleIVs": "Mostrar IVs",
   "manageMoves": "Mudar Movimentos",
   "manageNature": "Mudar Natureza",
@@ -30,9 +32,9 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "selectNature": "Escolha uma natureza.",
   "selectMoveSwapOut": "Escolha um movimento para substituir.",
   "selectMoveSwapWith": "Escolha o movimento que substituirá",
+  "sameSpeciesEgg": "Comprar Ovo",
   "unlockPassive": "Aprender Passiva",
   "reduceCost": "Reduzir Custo",
-  "sameSpeciesEgg": "Comprar Ovo",
   "cycleShiny": ": » Shiny",
   "cycleForm": ": » Forma",
   "cycleGender": ": » Gênero",

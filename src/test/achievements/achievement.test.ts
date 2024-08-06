@@ -1,11 +1,10 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import {MoneyAchv, Achv, AchvTier, RibbonAchv, DamageAchv, HealAchv, LevelAchv, ModifierAchv, achvs} from "#app/system/achv";
-import BattleScene from "../../battle-scene";
-import { IntegerHolder, NumberHolder } from "#app/utils.js";
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier.js";
+import { Achv, AchvTier, DamageAchv, HealAchv, LevelAchv, ModifierAchv, MoneyAchv, RibbonAchv, achvs } from "#app/system/achv";
+import GameManager from "#test/utils/gameManager";
+import { IntegerHolder, NumberHolder } from "#app/utils.js";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import BattleScene from "../../battle-scene";
 
 describe("check some Achievement related stuff", () => {
   it ("should check Achievement creation", () => {
@@ -103,13 +102,13 @@ describe("RibbonAchv", () => {
   });
 
   beforeEach(() => {
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(0);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
     game = new GameManager(phaserGame);
+    game.override.moveset([]);
+    game.override.startingLevel(0);
+    game.override.starterSpecies(0);
+    game.override.enemyMoveset([]);
+    game.override.enemySpecies(0);
+    game.override.startingWave(0);
     scene = game.scene;
   });
 

@@ -1,18 +1,18 @@
+import { allMoves } from "#app/data/move.js";
+import { Type } from "#app/data/type.js";
+import { Weather, WeatherType } from "#app/data/weather.js";
+import { PlayerPokemon } from "#app/field/pokemon.js";
+import { MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "../utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
-import { allMoves } from "#app/data/move.js";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { Weather, WeatherType } from "#app/data/weather.js";
-import { Type } from "#app/data/type.js";
-import { Biome } from "#enums/biome";
-import { PlayerPokemon } from "#app/field/pokemon.js";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -32,17 +32,17 @@ describe("Abilities - Protean", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.PROTEAN);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ENDURE, Moves.ENDURE, Moves.ENDURE, Moves.ENDURE]);
+    game.override.battleType("single");
+    game.override.ability(Abilities.PROTEAN);
+    game.override.startingLevel(100);
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemyMoveset([Moves.ENDURE, Moves.ENDURE, Moves.ENDURE, Moves.ENDURE]);
   });
 
   test(
     "ability applies and changes a pokemon's type",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+      game.override.moveset([Moves.SPLASH]);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -60,7 +60,7 @@ describe("Abilities - Protean", () => {
   test.skip(
     "ability applies only once per switch in",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.AGILITY]);
+      game.override.moveset([Moves.SPLASH, Moves.AGILITY]);
 
       await game.startBattle([Species.MAGIKARP, Species.BULBASAUR]);
 
@@ -100,7 +100,7 @@ describe("Abilities - Protean", () => {
   test(
     "ability applies correctly even if the pokemon's move has a variable type",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.WEATHER_BALL]);
+      game.override.moveset([Moves.WEATHER_BALL]);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -123,8 +123,8 @@ describe("Abilities - Protean", () => {
   test(
     "ability applies correctly even if the type has changed by another ability",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
-      vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.REFRIGERATE);
+      game.override.moveset([Moves.TACKLE]);
+      game.override.passiveAbility(Abilities.REFRIGERATE);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -146,7 +146,7 @@ describe("Abilities - Protean", () => {
   test(
     "ability applies correctly even if the pokemon's move calls another move",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.NATURE_POWER]);
+      game.override.moveset([Moves.NATURE_POWER]);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -165,7 +165,7 @@ describe("Abilities - Protean", () => {
   test(
     "ability applies correctly even if the pokemon's move is delayed / charging",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DIG]);
+      game.override.moveset([Moves.DIG]);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -183,8 +183,8 @@ describe("Abilities - Protean", () => {
   test(
     "ability applies correctly even if the pokemon's move misses",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+      game.override.moveset([Moves.TACKLE]);
+      game.override.enemyMoveset(SPLASH_ONLY);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -206,8 +206,8 @@ describe("Abilities - Protean", () => {
   test(
     "ability applies correctly even if the pokemon's move is protected against",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
+      game.override.moveset([Moves.TACKLE]);
+      game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -225,8 +225,8 @@ describe("Abilities - Protean", () => {
   test(
     "ability applies correctly even if the pokemon's move fails because of type immunity",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
-      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GASTLY);
+      game.override.moveset([Moves.TACKLE]);
+      game.override.enemySpecies(Species.GASTLY);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -244,7 +244,7 @@ describe("Abilities - Protean", () => {
   test(
     "ability is not applied if pokemon's type is the same as the move's type",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+      game.override.moveset([Moves.SPLASH]);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -263,7 +263,7 @@ describe("Abilities - Protean", () => {
   test(
     "ability is not applied if pokemon is terastallized",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+      game.override.moveset([Moves.SPLASH]);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -283,7 +283,7 @@ describe("Abilities - Protean", () => {
   test(
     "ability is not applied if pokemon uses struggle",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STRUGGLE]);
+      game.override.moveset([Moves.STRUGGLE]);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -301,7 +301,7 @@ describe("Abilities - Protean", () => {
   test(
     "ability is not applied if the pokemon's move fails",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BURN_UP]);
+      game.override.moveset([Moves.BURN_UP]);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -319,8 +319,8 @@ describe("Abilities - Protean", () => {
   test(
     "ability applies correctly even if the pokemon's Trick-or-Treat fails",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TRICK_OR_TREAT]);
-      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GASTLY);
+      game.override.moveset([Moves.TRICK_OR_TREAT]);
+      game.override.enemySpecies(Species.GASTLY);
 
       await game.startBattle([Species.MAGIKARP]);
 
@@ -338,7 +338,7 @@ describe("Abilities - Protean", () => {
   test(
     "ability applies correctly and the pokemon curses itself",
     async () => {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.CURSE]);
+      game.override.moveset([Moves.CURSE]);
 
       await game.startBattle([Species.MAGIKARP]);
 

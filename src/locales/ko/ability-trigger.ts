@@ -59,4 +59,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postSummonSwordOfRuin": "{{pokemonNameWithAffix}}의 재앙의검에 의해\n주위의 {{statName}}[[가]] 약해졌다!",
   "postSummonTabletsOfRuin": "{{pokemonNameWithAffix}}의 재앙의목간에 의해\n주위의 {{statName}}[[가]] 약해졌다!",
   "postSummonBeadsOfRuin": "{{pokemonNameWithAffix}}의 재앙의구슬에 의해\n주위의 {{statName}}[[가]] 약해졌다!",
+  "preventBerryUse": "{{pokemonNameWithAffix}}[[는]] 긴장해서\n나무열매를 먹을 수 없게 되었다!",
 } as const;

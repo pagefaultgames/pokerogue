@@ -66,7 +66,7 @@ export interface IEggOptions {
 export class Egg {
 
   ////
-  // #region Privat properties
+  // #region Private properties
   ////
 
   private _id: number;
@@ -182,7 +182,7 @@ export class Egg {
   }
 
   ////
-  // #region Public methodes
+  // #region Public methods
   ////
 
   public isManaphyEgg(): boolean {
@@ -212,7 +212,7 @@ export class Egg {
     let abilityIndex = undefined;
     if (pokemonSpecies.abilityHidden && (this._overrideHiddenAbility
       || (this._sourceType === EggSourceType.SAME_SPECIES_EGG && !Utils.randSeedInt(SAME_SPECIES_EGG_HA_RATE)))) {
-      abilityIndex = pokemonSpecies.ability2 ? 2 : 1;
+      abilityIndex = 2;
     }
 
     // This function has way to many optional parameters
@@ -281,7 +281,7 @@ export class Egg {
   ////
 
   ////
-  // #region Private methodes
+  // #region Private methods
   ////
 
   private rollEggMoveIndex() {

@@ -1,12 +1,11 @@
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "../utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { TurnEndPhase } from "#app/phases.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { TurnEndPhase } from "#app/phases.js";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -26,12 +25,12 @@ describe("Abilities - Unseen Fist", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.URSHIFU);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.battleType("single");
+    game.override.starterSpecies(Species.URSHIFU);
+    game.override.enemySpecies(Species.SNORLAX);
+    game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
+    game.override.startingLevel(100);
+    game.override.enemyLevel(100);
   });
 
   test(
@@ -49,7 +48,7 @@ describe("Abilities - Unseen Fist", () => {
   test(
     "ability does not apply if the source has Long Reach",
     () => {
-      vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.LONG_REACH);
+      game.override.passiveAbility(Abilities.LONG_REACH);
       testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, false);
     }, TIMEOUT
   );
@@ -68,8 +67,8 @@ describe("Abilities - Unseen Fist", () => {
 });
 
 async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, protectMove: Moves, shouldSucceed: boolean = true): Promise<void> {
-  vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([attackMove]);
-  vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([protectMove, protectMove, protectMove, protectMove]);
+  game.override.moveset([attackMove]);
+  game.override.enemyMoveset([protectMove, protectMove, protectMove, protectMove]);
 
   await game.startBattle();
 

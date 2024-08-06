@@ -1,14 +1,13 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phase from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import { Moves } from "#enums/moves";
+import { BattlerIndex } from "#app/battle";
 import { CritBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import * as Utils from "#app/utils";
 import { MoveEffectPhase, TurnStartPhase } from "#app/phases";
-import { BattlerIndex } from "#app/battle";
+import GameManager from "#test/utils/gameManager";
+import * as Utils from "#app/utils";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phase from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Scope Lens", () => {
   let phaserGame: Phaser.Game;
@@ -27,16 +26,16 @@ describe("Items - Scope Lens", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
+    game.override.disableCrits();
 
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
   }, 20000);
 
   it("SCOPE_LENS activates in battle correctly", async() => {
-    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{ name: "SCOPE_LENS" }]);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.POUND ]);
+    game.override.startingHeldItems([{ name: "SCOPE_LENS" }]);
+    game.override.moveset([ Moves.POUND ]);
     const consoleSpy = vi.spyOn(console, "log");
     await game.startBattle([
       Species.GASTLY

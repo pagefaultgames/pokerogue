@@ -1,28 +1,16 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import {
-  CommandPhase,
-  DamagePhase,
-  EnemyCommandPhase,
-  MessagePhase,
-  PostSummonPhase,
-  SwitchPhase,
-  SwitchSummonPhase,
-  TurnEndPhase,
-  TurnInitPhase,
-  TurnStartPhase,
-} from "#app/phases";
-import { Mode } from "#app/ui/ui";
 import { Stat } from "#app/data/pokemon-stat";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import { Command } from "#app/ui/command-ui-handler";
-import { QuietFormChangePhase } from "#app/form-change-phase";
 import { Status, StatusEffect } from "#app/data/status-effect.js";
+import { QuietFormChangePhase } from "#app/form-change-phase";
+import { CommandPhase, DamagePhase, EnemyCommandPhase, MessagePhase, PostSummonPhase, SwitchPhase, SwitchSummonPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -43,13 +31,13 @@ describe("Abilities - ZEN MODE", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemyAbility(Abilities.HYDRATION);
+    game.override.ability(Abilities.ZEN_MODE);
+    game.override.startingLevel(100);
+    game.override.moveset([moveToUse]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
   test(
@@ -153,8 +141,8 @@ describe("Abilities - ZEN MODE", () => {
     async () => {
       const baseForm = 0,
         zenForm = 1;
-      vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(4);
-      vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
+      game.override.startingWave(4);
+      game.override.starterForms({
         [Species.DARMANITAN]: zenForm,
       });
 

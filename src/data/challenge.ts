@@ -17,6 +17,9 @@ import { Gender } from "./gender";
 import { pokemonEvolutions } from "./pokemon-evolutions";
 import { pokemonFormChanges } from "./pokemon-forms";
 
+/** A constant for the default max cost of the starting party before a run */
+const DEFAULT_PARTY_MAX_COST = 10;
+
 /**
  * An enum for all the challenge types. The parameter entries on these describe the
  * parameters to use when calling the applyChallenges function.
@@ -403,14 +406,7 @@ export class SingleGenerationChallenge extends Challenge {
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false, checkEvolutions?: boolean): boolean {
-    /**
-     * We have special code below for victini because it is classed as a generation 4 pokemon in the code
-     * despite being a generation 5 pokemon. This is due to UI constraints, the starter select screen has
-     * no more room for pokemon so victini is put in the gen 4 section instead. This code just overrides the
-     * normal generation check to correctly treat victini as gen 5.
-     */
-    const starterGeneration = pokemon.speciesId === Species.VICTINI ? 5 : pokemon.generation;
-    const generations = [starterGeneration];
+    const generations = [pokemon.generation];
     const checkPokemonEvolutions = checkEvolutions ?? true as boolean;
     if (soft) {
       const speciesToCheck = [pokemon.speciesId];
@@ -689,11 +685,11 @@ export class LowerStarterMaxCostChallenge extends Challenge {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    return (10 - overrideValue).toString();
+    return (DEFAULT_PARTY_MAX_COST - overrideValue).toString();
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
-    if (speciesStarters[pokemon.speciesId] > 10 - this.value) {
+    if (speciesStarters[pokemon.speciesId] > DEFAULT_PARTY_MAX_COST - this.value) {
       valid.value = false;
       return true;
     }
@@ -723,7 +719,7 @@ export class LowerStarterPointsChallenge extends Challenge {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    return (10 - overrideValue).toString();
+    return (DEFAULT_PARTY_MAX_COST - overrideValue).toString();
   }
 
   applyStarterPoints(points: Utils.NumberHolder): boolean {

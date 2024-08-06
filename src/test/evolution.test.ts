@@ -1,10 +1,9 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import { Species } from "#app/enums/species.js";
-import { Abilities } from "#app/enums/abilities.js";
-import Overrides from "#app/overrides";
 import { pokemonEvolutions } from "#app/data/pokemon-evolutions.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { Species } from "#app/enums/species.js";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Evolution", () => {
   let phaserGame: Phaser.Game;
@@ -24,12 +23,12 @@ describe("Evolution", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
 
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
 
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(60);
+    game.override.startingLevel(60);
   });
 
   it("should keep hidden ability after evolving", async () => {

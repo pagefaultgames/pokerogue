@@ -1,14 +1,13 @@
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "../utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
+import { allMoves } from "#app/data/move.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { BerryPhase, CommandPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, CommandPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { allMoves } from "#app/data/move.js";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -28,13 +27,13 @@ describe("Moves - Astonish", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ASTONISH, Moves.SPLASH]);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.BLASTOISE);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.battleType("single");
+    game.override.moveset([Moves.ASTONISH, Moves.SPLASH]);
+    game.override.enemySpecies(Species.BLASTOISE);
+    game.override.enemyAbility(Abilities.INSOMNIA);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.startingLevel(100);
+    game.override.enemyLevel(100);
 
     vi.spyOn(allMoves[Moves.ASTONISH], "chance", "get").mockReturnValue(100);
   });
@@ -45,10 +44,8 @@ describe("Moves - Astonish", () => {
       await game.startBattle([Species.MEOWSCARADA]);
 
       const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
 
       const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.ASTONISH));
 

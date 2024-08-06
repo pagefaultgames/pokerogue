@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { allMoves } from "#app/data/move.js";
+import { Abilities } from "#app/enums/abilities.js";
 import { DamagePhase, TurnEndPhase } from "#app/phases";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Abilities } from "#app/enums/abilities.js";
-import { allMoves } from "#app/data/move.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 
 describe("Moves - Glaive Rush", () => {
@@ -26,15 +25,15 @@ describe("Moves - Glaive Rush", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.GLAIVE_RUSH));
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.KLINK);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
-    vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.FUR_COAT);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SHADOW_SNEAK, Moves.AVALANCHE, Moves.SPLASH, Moves.GLAIVE_RUSH]);
+    game.override.battleType("single");
+    game.override.disableCrits();
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyMoveset(Array(4).fill(Moves.GLAIVE_RUSH));
+    game.override.starterSpecies(Species.KLINK);
+    game.override.ability(Abilities.UNNERVE);
+    game.override.passiveAbility(Abilities.FUR_COAT);
+    game.override.moveset([Moves.SHADOW_SNEAK, Moves.AVALANCHE, Moves.SPLASH, Moves.GLAIVE_RUSH]);
   });
 
   it("takes double damage from attacks", async() => {
@@ -66,8 +65,8 @@ describe("Moves - Glaive Rush", () => {
   }, 20000);
 
   it("interacts properly with multi-lens", async() => {
-    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 2}]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.AVALANCHE));
+    game.override.startingHeldItems([{name: "MULTI_LENS", count: 2}]);
+    game.override.enemyMoveset(Array(4).fill(Moves.AVALANCHE));
     await game.startBattle();
     const player = game.scene.getPlayerPokemon();
     const enemy = game.scene.getEnemyPokemon();
@@ -86,7 +85,7 @@ describe("Moves - Glaive Rush", () => {
   }, 20000);
 
   it("secondary effects only last until next move", async() => {
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.SHADOW_SNEAK));
+    game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
     await game.startBattle();
     const player = game.scene.getPlayerPokemon();
     const enemy = game.scene.getEnemyPokemon();
@@ -110,8 +109,8 @@ describe("Moves - Glaive Rush", () => {
   }, 20000);
 
   it("secondary effects are removed upon switching", async() => {
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.SHADOW_SNEAK));
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(0);
+    game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
+    game.override.starterSpecies(0);
     await game.startBattle([Species.KLINK, Species.FEEBAS]);
     const player = game.scene.getPlayerPokemon();
     const enemy = game.scene.getEnemyPokemon();

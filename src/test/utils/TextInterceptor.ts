@@ -11,6 +11,11 @@ export default class TextInterceptor {
     this.logs.push(text);
   }
 
+  showDialogue(text: string, name: string, delay?: integer, callback?: Function, callbackDelay?: integer, promptDelay?: integer): void {
+    console.log(name, text);
+    this.logs.push(name, text);
+  }
+
   getLatestMessage(): string {
     return this.logs.pop();
   }

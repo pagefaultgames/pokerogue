@@ -1,15 +1,15 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
-import { CommandPhase, TurnInitPhase } from "#app/phases";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { BattleStat } from "#app/data/battle-stat";
+import { StockpilingTag } from "#app/data/battler-tags.js";
+import { MoveResult, TurnMove } from "#app/field/pokemon.js";
+import { CommandPhase, TurnInitPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { StockpilingTag } from "#app/data/battler-tags.js";
-import { MoveResult, TurnMove } from "#app/field/pokemon.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Stockpile", () => {
   describe("integration tests", () => {
@@ -27,15 +27,15 @@ describe("Moves - Stockpile", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
 
-      vi.spyOn(overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+      game.override.battleType("single");
 
-      vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-      vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-      vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+      game.override.enemySpecies(Species.RATTATA);
+      game.override.enemyMoveset(SPLASH_ONLY);
+      game.override.enemyAbility(Abilities.NONE);
 
-      vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-      vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.STOCKPILE, Moves.SPLASH]);
-      vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+      game.override.startingLevel(2000);
+      game.override.moveset([Moves.STOCKPILE, Moves.SPLASH]);
+      game.override.ability(Abilities.NONE);
     });
 
     it("Gains a stockpile stack and increases DEF and SPDEF by 1 on each use, fails at max stacks (3)", { timeout: 10000 }, async () => {

@@ -1,18 +1,16 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import {
-  TurnEndPhase,
-} from "#app/phases";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import { Abilities } from "#enums/abilities";
 import { BattleStat } from "#app/data/battle-stat.js";
-import { Biome } from "#app/enums/biome.js";
-import { Type } from "#app/data/type.js";
 import { SemiInvulnerableTag } from "#app/data/battler-tags.js";
+import { Type } from "#app/data/type.js";
+import { Biome } from "#app/enums/biome.js";
+import { TurnEndPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Flower Shield", () => {
   let phaserGame: Phaser.Game;
@@ -30,15 +28,15 @@ describe("Moves - Flower Shield", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLOWER_SHIELD, Moves.SPLASH]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.ability(Abilities.NONE);
+    game.override.enemyAbility(Abilities.NONE);
+    game.override.battleType("single");
+    game.override.moveset([Moves.FLOWER_SHIELD, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
   it("increases defense of all Grass-type Pokemon on the field by one stage - single battle", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.CHERRIM);
+    game.override.enemySpecies(Species.CHERRIM);
 
     await game.startBattle([Species.MAGIKARP]);
     const cherrim = game.scene.getEnemyPokemon();
@@ -55,9 +53,7 @@ describe("Moves - Flower Shield", () => {
   });
 
   it("increases defense of all Grass-type Pokemon on the field by one stage - double battle", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(Overrides, "STARTING_BIOME_OVERRIDE", "get").mockReturnValue(Biome.GRASS);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
+    game.override.enemySpecies(Species.MAGIKARP).startingBiome(Biome.GRASS).battleType("double");
 
     await game.startBattle([Species.CHERRIM, Species.MAGIKARP]);
     const field = game.scene.getField(true);
@@ -80,9 +76,9 @@ describe("Moves - Flower Shield", () => {
    * See semi-vulnerable state tags. {@linkcode SemiInvulnerableTag}
   */
   it("does not increase defense of a pokemon in semi-vulnerable state", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.PARAS);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DIG, Moves.DIG, Moves.DIG, Moves.DIG]);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(50);
+    game.override.enemySpecies(Species.PARAS);
+    game.override.enemyMoveset([Moves.DIG, Moves.DIG, Moves.DIG, Moves.DIG]);
+    game.override.enemyLevel(50);
 
     await game.startBattle([Species.CHERRIM]);
     const paras = game.scene.getEnemyPokemon();
@@ -101,7 +97,7 @@ describe("Moves - Flower Shield", () => {
   });
 
   it("does nothing if there are no Grass-type pokemon on the field", async () => {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
+    game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.MAGIKARP]);
     const enemy = game.scene.getEnemyPokemon();

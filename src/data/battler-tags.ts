@@ -31,14 +31,14 @@ export enum BattlerTagLapseType {
 
 export class BattlerTag {
   public tagType: BattlerTagType;
-  public lapseType: BattlerTagLapseType[];
+  public lapseTypes: BattlerTagLapseType[];
   public turnCount: number;
   public sourceMove: Moves;
   public sourceId?: number;
 
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: number, sourceMove: Moves, sourceId?: number) {
     this.tagType = tagType;
-    this.lapseType = typeof lapseType === "number" ? [ lapseType ] : lapseType;
+    this.lapseTypes = Array.isArray(lapseType) ? lapseType : [ lapseType ];
     this.turnCount = turnCount;
     this.sourceMove = sourceMove;
     this.sourceId = sourceId;
@@ -497,12 +497,6 @@ export class FrenzyTag extends BattlerTag {
   }
 }
 
-export class ChargingTag extends BattlerTag {
-  constructor(sourceMove: Moves, sourceId: number) {
-    super(BattlerTagType.CHARGING, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
-  }
-}
-
 export class EncoreTag extends BattlerTag {
   public moveId: Moves;
 
@@ -650,8 +644,7 @@ export class OctolockTag extends TrappedTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    const isOctolocked = pokemon.getTag(BattlerTagType.OCTOLOCK);
-    return !isOctolocked;
+    return !pokemon.getTag(BattlerTagType.OCTOLOCK);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1414,30 +1407,6 @@ export class CritBoostTag extends BattlerTag {
   }
 }
 
-export class AlwaysCritTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
-    super(BattlerTagType.ALWAYS_CRIT, BattlerTagLapseType.TURN_END, 2, sourceMove);
-  }
-}
-
-export class IgnoreAccuracyTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
-    super(BattlerTagType.IGNORE_ACCURACY, BattlerTagLapseType.TURN_END, 2, sourceMove);
-  }
-}
-
-export class AlwaysGetHitTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
-    super(BattlerTagType.ALWAYS_GET_HIT, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
-  }
-}
-
-export class ReceiveDoubleDamageTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
-    super(BattlerTagType.RECEIVE_DOUBLE_DAMAGE, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
-  }
-}
-
 export class SaltCuredTag extends BattlerTag {
   private sourceIndex: number;
 
@@ -1628,8 +1597,8 @@ export class StockpilingTag extends BattlerTag {
     super.loadTag(source);
     this.stockpiledCount = source.stockpiledCount || 0;
     this.statChangeCounts = {
-      [BattleStat.DEF]: source.statChangeCounts?.[BattleStat.DEF] || 0,
-      [BattleStat.SPDEF]: source.statChangeCounts?.[BattleStat.SPDEF] || 0,
+      [ BattleStat.DEF ]: source.statChangeCounts?.[ BattleStat.DEF ] ?? 0,
+      [ BattleStat.SPDEF ]: source.statChangeCounts?.[ BattleStat.SPDEF ] ?? 0,
     };
   }
 
@@ -1697,7 +1666,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.FRENZY:
     return new FrenzyTag(turnCount, sourceMove, sourceId);
   case BattlerTagType.CHARGING:
-    return new ChargingTag(sourceMove, sourceId);
+    return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
   case BattlerTagType.ENCORE:
     return new EncoreTag(sourceId);
   case BattlerTagType.HELPING_HAND:
@@ -1770,17 +1739,15 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.CRIT_BOOST:
     return new CritBoostTag(tagType, sourceMove);
   case BattlerTagType.ALWAYS_CRIT:
-    return new AlwaysCritTag(sourceMove);
+  case BattlerTagType.IGNORE_ACCURACY:
+    return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
   case BattlerTagType.NO_CRIT:
     return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
-  case BattlerTagType.IGNORE_ACCURACY:
-    return new IgnoreAccuracyTag(sourceMove);
   case BattlerTagType.ALWAYS_GET_HIT:
-    return new AlwaysGetHitTag(sourceMove);
   case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
-    return new ReceiveDoubleDamageTag(sourceMove);
+    return new BattlerTag(tagType, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
   case BattlerTagType.BYPASS_SLEEP:
-    return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+    return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
   case BattlerTagType.IGNORE_FLYING:
     return new GroundedTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.ROOSTED:

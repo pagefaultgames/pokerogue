@@ -572,7 +572,7 @@ export class PokemonLevelIncrementModifierType extends PokemonModifierType {
     if (hasCandyJar) {
       levels += hasCandyJar.stackCount;
     }
-    return i18next.t("modifierType:ModifierType.PokemonLevelIncrementModifierType.description", {levels });
+    return i18next.t("modifierType:ModifierType.PokemonLevelIncrementModifierType.description", { levels });
   }
 }
 
@@ -1569,7 +1569,7 @@ const modifierPool: ModifierPool = {
         p => !p.getHeldItems().some(i => i instanceof Modifiers.PokemonResetNegativeStatStageModifier && i.stackCount >= i.getMaxHeldItemCount(p)) &&
           (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => selfStatLowerMoves.includes(m.moveId)))).length;
       // If a party member has one of the above moves or abilities and doesn't have max herbs, the herb will appear more frequently
-      return 3*(weightMultiplier? 2: 1)+(weightMultiplier? weightMultiplier-1: 0);
+      return 0 * (weightMultiplier ? 2 : 1) + (weightMultiplier ? weightMultiplier * 0 : 0);
     }, 10),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
@@ -1637,7 +1637,7 @@ const wildModifierPool: ModifierPool = {
   }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 2)
+    new WeightedModifierType(modifierTypes.WHITE_HERB, 0)
   ].map(m => {
     m.setTier(ModifierTier.ULTRA); return m;
   }),
@@ -1666,13 +1666,12 @@ const trainerModifierPool: ModifierPool = {
     m.setTier(ModifierTier.GREAT); return m;
   }),
   [ModifierTier.ULTRA]: [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 1),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
+    new WeightedModifierType(modifierTypes.WHITE_HERB, 0),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA); return m;
   }),
   [ModifierTier.ROGUE]: [
-    new WeightedModifierType(modifierTypes.REVIVER_SEED, 2),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 2),
     new WeightedModifierType(modifierTypes.LUCKY_EGG, 4),
     new WeightedModifierType(modifierTypes.QUICK_CLAW, 1),
@@ -1685,6 +1684,7 @@ const trainerModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 1),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 1),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 1),
+    new WeightedModifierType(modifierTypes.SCOPE_LENS, 1),
   ].map(m => {
     m.setTier(ModifierTier.MASTER); return m;
   })

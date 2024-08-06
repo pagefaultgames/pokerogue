@@ -638,8 +638,14 @@ export class Arena {
     }
   }
 
-  /** Clears terrain and arena tags when entering new biome or trainer battle. */
+  /**
+   * Clears weather, terrain and arena tags when entering new biome or trainer battle.
+   */
   resetArenaEffects(): void {
+    // Don't reset weather if a Biome's permanent weather is active
+    if (this.weather?.turnsLeft !== 0) {
+      this.trySetWeather(WeatherType.NONE, false);
+    }
     this.trySetTerrain(TerrainType.NONE, false, true);
     this.removeAllTags();
   }

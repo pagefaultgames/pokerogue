@@ -1,13 +1,10 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import {
-  CommandPhase
-} from "#app/phases";
+import { CommandPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Moves - Spikes", () => {
@@ -27,15 +24,15 @@ describe("Moves - Spikes", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.scene.battleStyle = 1;
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPIKES,Moves.SPLASH, Moves.ROAR]);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemyAbility(Abilities.HYDRATION);
+    game.override.enemyPassiveAbility(Abilities.HYDRATION);
+    game.override.ability(Abilities.HYDRATION);
+    game.override.passiveAbility(Abilities.HYDRATION);
+    game.override.startingWave(3);
+    game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
+    game.override.moveset([Moves.SPIKES,Moves.SPLASH, Moves.ROAR]);
   });
 
   it("single - wild - stay on field - no damage", async() => {
@@ -86,7 +83,7 @@ describe("Moves - Spikes", () => {
   }, 20000);
 
   it("trainer - wild - force switch opponent - should take damage", async() => {
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
+    game.override.startingWave(5);
     // player set spikes on the field and do splash for 3 turns
     // opponent do splash for 4 turns
     // nobody should take damage
@@ -104,9 +101,9 @@ describe("Moves - Spikes", () => {
   }, 20000);
 
   it("trainer - wild - force switch by himself opponent - should take damage", async() => {
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(5);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(5000);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(0);
+    game.override.startingWave(5);
+    game.override.startingLevel(5000);
+    game.override.enemySpecies(0);
     // turn 1: player set spikes, opponent do splash
     // turn 2: player do splash, opponent switch pokemon
     // opponent pokemon should trigger spikes and lose HP

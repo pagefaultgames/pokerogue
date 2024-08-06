@@ -1,13 +1,12 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#app/enums/species.js";
-import { Moves } from "#app/enums/moves.js";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { Abilities } from "#app/enums/abilities.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { Moves } from "#app/enums/moves.js";
+import { Species } from "#app/enums/species.js";
+import { MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -27,13 +26,13 @@ describe("Moves - Roost", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.STARAPTOR);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.STOMPING_TANTRUM ]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ROOST,Moves.ROOST,Moves.ROOST,Moves.ROOST]);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.STARAPTOR);
+    game.override.enemyAbility(Abilities.INSOMNIA);
+    game.override.startingLevel(100);
+    game.override.enemyLevel(100);
+    game.override.moveset([ Moves.STOMPING_TANTRUM ]);
+    game.override.enemyMoveset([Moves.ROOST,Moves.ROOST,Moves.ROOST,Moves.ROOST]);
   });
 
   test(
@@ -41,11 +40,7 @@ describe("Moves - Roost", () => {
     async () => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
-
       const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
 
       const enemyStartingHp = enemyPokemon.hp;
 

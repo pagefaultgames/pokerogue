@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { MoveEffectPhase, DamagePhase, TurnStartPhase } from "#app/phases";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
+import { DamagePhase, MoveEffectPhase, TurnStartPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { BattlerIndex } from "#app/battle";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Dynamax Cannon", () => {
   let phaserGame: Phaser.Game;
@@ -28,22 +27,22 @@ describe("Moves - Dynamax Cannon", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ dynamaxCannon.id ]);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(200);
+    game.override.moveset([ dynamaxCannon.id ]);
+    game.override.startingLevel(200);
 
     // Note that, for Waves 1-10, the level cap is 10
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(1);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.startingWave(1);
+    game.override.battleType("single");
+    game.override.disableCrits();
 
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
 
     vi.spyOn(dynamaxCannon, "calculateBattlePower");
   });
 
   it("should return 100 power against an enemy below level cap", async() => {
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(1);
+    game.override.enemyLevel(1);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
@@ -57,7 +56,7 @@ describe("Moves - Dynamax Cannon", () => {
   }, 20000);
 
   it("should return 100 power against an enemy at level cap", async() => {
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(10);
+    game.override.enemyLevel(10);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
@@ -71,7 +70,7 @@ describe("Moves - Dynamax Cannon", () => {
   }, 20000);
 
   it("should return 120 power against an enemy 1% above level cap", async() => {
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(101);
+    game.override.enemyLevel(101);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
@@ -88,7 +87,7 @@ describe("Moves - Dynamax Cannon", () => {
   }, 20000);
 
   it("should return 140 power against an enemy 2% above level capp", async() => {
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(102);
+    game.override.enemyLevel(102);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
@@ -105,7 +104,7 @@ describe("Moves - Dynamax Cannon", () => {
   }, 20000);
 
   it("should return 160 power against an enemy 3% above level cap", async() => {
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(103);
+    game.override.enemyLevel(103);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
@@ -122,7 +121,7 @@ describe("Moves - Dynamax Cannon", () => {
   }, 20000);
 
   it("should return 180 power against an enemy 4% above level cap", async() => {
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(104);
+    game.override.enemyLevel(104);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
@@ -139,7 +138,7 @@ describe("Moves - Dynamax Cannon", () => {
   }, 20000);
 
   it("should return 200 power against an enemy 5% above level cap", async() => {
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(105);
+    game.override.enemyLevel(105);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
@@ -156,7 +155,7 @@ describe("Moves - Dynamax Cannon", () => {
   }, 20000);
 
   it("should return 200 power against an enemy way above level cap", async() => {
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(999);
+    game.override.enemyLevel(999);
     await game.startBattle([
       Species.ETERNATUS,
     ]);

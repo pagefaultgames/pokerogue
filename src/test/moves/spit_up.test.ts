@@ -1,16 +1,16 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
-import { MovePhase, TurnInitPhase } from "#app/phases";
 import { BattleStat } from "#app/data/battle-stat";
+import { StockpilingTag } from "#app/data/battler-tags.js";
+import { allMoves } from "#app/data/move.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { MoveResult, TurnMove } from "#app/field/pokemon.js";
+import { MovePhase, TurnInitPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { StockpilingTag } from "#app/data/battler-tags.js";
-import { MoveResult, TurnMove } from "#app/field/pokemon.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { allMoves } from "#app/data/move.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Spit Up", () => {
   let phaserGame: Phaser.Game;
@@ -27,15 +27,15 @@ describe("Moves - Spit Up", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    vi.spyOn(overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
 
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyAbility(Abilities.NONE);
+    game.override.enemyLevel(2000);
 
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPIT_UP, Moves.SPIT_UP, Moves.SPIT_UP, Moves.SPIT_UP]);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    game.override.moveset([Moves.SPIT_UP, Moves.SPIT_UP, Moves.SPIT_UP, Moves.SPIT_UP]);
+    game.override.ability(Abilities.NONE);
   });
 
   describe("consumes all stockpile stacks to deal damage (scaling with stacks)", () => {

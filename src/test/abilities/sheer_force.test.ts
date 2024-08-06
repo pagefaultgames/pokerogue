@@ -1,20 +1,16 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import {Abilities} from "#enums/abilities";
-import {applyAbAttrs ,applyPreAttackAbAttrs,applyPostDefendAbAttrs, MoveEffectChanceMultiplierAbAttr, MovePowerBoostAbAttr, PostDefendTypeChangeAbAttr} from "#app/data/ability";
-import {Species} from "#enums/species";
-import {
-  CommandPhase,
-  MoveEffectPhase,
-} from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {Stat} from "#app/data/pokemon-stat";
-import {Moves} from "#enums/moves";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
+import { applyAbAttrs, applyPostDefendAbAttrs, applyPreAttackAbAttrs, MoveEffectChanceMultiplierAbAttr, MovePowerBoostAbAttr, PostDefendTypeChangeAbAttr } from "#app/data/ability";
+import { Stat } from "#app/data/pokemon-stat";
+import { CommandPhase, MoveEffectPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Abilities - Sheer Force", () => {
@@ -34,16 +30,16 @@ describe("Abilities - Sheer Force", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const movesToUse = [Moves.AIR_SLASH, Moves.BIND, Moves.CRUSH_CLAW, Moves.TACKLE];
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.ONIX);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(movesToUse);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.ONIX);
+    game.override.startingLevel(100);
+    game.override.moveset(movesToUse);
+    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
 
   it("Sheer Force", async() => {
     const moveToUse = Moves.AIR_SLASH;
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHEER_FORCE);
+    game.override.ability(Abilities.SHEER_FORCE);
     await game.startBattle([
       Species.PIDGEOT
     ]);
@@ -82,7 +78,7 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force with exceptions including binding moves", async() => {
     const moveToUse = Moves.BIND;
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHEER_FORCE);
+    game.override.ability(Abilities.SHEER_FORCE);
     await game.startBattle([
       Species.PIDGEOT
     ]);
@@ -121,7 +117,7 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force with moves with no secondary effect", async() => {
     const moveToUse = Moves.TACKLE;
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHEER_FORCE);
+    game.override.ability(Abilities.SHEER_FORCE);
     await game.startBattle([
       Species.PIDGEOT
     ]);
@@ -160,9 +156,9 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force Disabling Specific Abilities", async() => {
     const moveToUse = Moves.CRUSH_CLAW;
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.COLOR_CHANGE);
-    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "KINGS_ROCK", count: 1}]);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.SHEER_FORCE);
+    game.override.enemyAbility(Abilities.COLOR_CHANGE);
+    game.override.startingHeldItems([{name: "KINGS_ROCK", count: 1}]);
+    game.override.ability(Abilities.SHEER_FORCE);
     await game.startBattle([
       Species.PIDGEOT
     ]);

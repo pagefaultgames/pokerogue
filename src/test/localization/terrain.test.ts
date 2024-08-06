@@ -1,12 +1,11 @@
-import { beforeAll, describe, beforeEach, afterEach, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
 import { TerrainType, getTerrainName } from "#app/data/terrain";
-import { getTerrainStartMessage, getTerrainClearMessage, getTerrainBlockMessage } from "#app/data/weather";
+import { getTerrainBlockMessage, getTerrainClearMessage, getTerrainStartMessage } from "#app/data/weather";
+import GameManager from "#test/utils/gameManager";
+import { Species } from "#enums/species";
 import i18next from "i18next";
-import { mockI18next } from "../utils/testUtils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { mockI18next } from "#test/utils/testUtils";
 
 describe("terrain", () => {
   let phaserGame: Phaser.Game;
@@ -21,7 +20,7 @@ describe("terrain", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
   });
 
   describe("NONE", () => {

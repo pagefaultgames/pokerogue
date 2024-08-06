@@ -1,7 +1,6 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
-export const pokemonForm: SimpleTranslationEntries = {
-  // Battle forms
+export const battlePokemonForm: SimpleTranslationEntries = {
   "mega": "Mega {{pokemonName}}",
   "mega-x": "Mega {{pokemonName}} X",
   "mega-y": "Mega {{pokemonName}} Y",
@@ -9,6 +8,14 @@ export const pokemonForm: SimpleTranslationEntries = {
   "gigantamax": "G-Max {{pokemonName}}",
   "eternamax": "E-Max {{pokemonName}}",
 
+  "megaChange": "{{preName}} Mega Evolved\ninto {{pokemonName}}!",
+  "gigantamaxChange": "{{preName}} Gigantamaxed\ninto {{pokemonName}}!",
+  "eternamaxChange": "{{preName}} Eternamaxed\ninto {{pokemonName}}!",
+  "revertChange": "{{pokemonName}} reverted\nto its original form!",
+  "formChange": "{{preName}} changed form!",
+} as const;
+
+export const pokemonForm: SimpleTranslationEntries = {
   // Starters forms
   // 1G
   "pikachuCosplay": "Coqueta",
