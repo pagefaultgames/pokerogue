@@ -266,7 +266,6 @@ export class TrainerConfig {
     if (!hasVoucher) {
       this.hasVoucher = false;
     }
-    return this;
   }
 
   setTitle(title: string): TrainerConfig {
