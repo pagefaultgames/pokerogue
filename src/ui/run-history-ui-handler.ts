@@ -137,6 +137,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     if (timestamps.length > 1) {
       timestampsNo.sort((a, b) => a - b);
     }
+    timestampsNo.reverse();
     const entryCount = timestamps.length;
     for (let s = 0; s < entryCount; s++) {
       const entry = new RunEntry(this.scene, response, timestampsNo[s].toString(), s);
