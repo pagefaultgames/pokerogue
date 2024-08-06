@@ -3051,6 +3051,18 @@ export const PGFdialogue: DialogueTranslationEntries = {
       3: "Hmph. You're a smarter Trainer than I expected, but not smart enough."
     }
   },
+  "rood": {
+    "encounter": {
+      1: "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
+      2: "Oh, this icy wind... I never thought I'd have to fight here!",
+      3: "You are a remarkable Trainer to have made it this far. But this is where it ends."
+    },
+    "victory": {
+      1: "Ghetsis... I have failed my mission...",
+      2: "The cold is piercing. I'm shivering. I'm suffering. Yet, I have triumphed.",
+      3: "Hm. You are a talented Trainer, but unfortunately not talented enough."
+    }
+  },
   "colress": {
     "encounter": {
       1: "You could become a threat to Team Plasma, so we must eliminate you here for the sake of my research!",

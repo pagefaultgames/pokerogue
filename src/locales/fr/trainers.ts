@@ -303,6 +303,7 @@ export const trainerNames: SimpleTranslationEntries = {
   "jupiter": "Jupiter",
   "saturn": "Saturn",
   "zinzolin": "Zinzolin",
+  "rood": "Rood",
   "colress": "Colress",
   "xerosic": "Xerosic",
   "bryony": "Bryony",

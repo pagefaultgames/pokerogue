@@ -537,6 +537,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Hm. Du bist ein klügerer Trainer, als ich erwartet habe, aber nicht klug genug."
     }
   },
+  "rood": {
+    "encounter": {
+      1: "Du bist eine Bedrohung für Team Plasma. Wir können dich hier und jetzt nicht laufen lassen!",
+      2: "Oh, dieser eisige Wind... Ich hätte nie gedacht, dass ich hier kämpfen müsste!",
+      3: "Du bist ein bemerkenswerter Trainer, dass du es bis hierher geschafft hast. Aber hier wird es enden."
+    },
+    "victory": {
+      1: "G-Cis... Ich habe meine Mission nicht erfüllt...",
+      2: "Die Kälte ist durchdringend. Ich zittere. Ich leide. Doch ich habe gesiegt.",
+      3: "Hm. Du bist ein talentierter Trainer, aber leider nicht talentiert genug."
+    }
+  },
   "colress": {
     "encounter": {
       1: `Du könntest eine Bedrohung für Team Plasma werden.

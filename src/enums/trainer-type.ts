@@ -68,6 +68,7 @@ export enum TrainerType {
     SATURN,
     PLASMA_GRUNT,
     ZINZOLIN,
+    ROOD,
     COLRESS,
     FLARE_GRUNT,
     BRYONY,
