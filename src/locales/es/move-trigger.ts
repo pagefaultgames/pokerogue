@@ -59,4 +59,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}}'s type\nchanged to match {{targetPokemonName}}'s!",
   "suppressAbilities": "{{pokemonName}}'s ability\nwas suppressed!",
   "swapArenaTags": "{{pokemonName}} swapped the battle effects affecting each side of the field!",
+  "chillyReception": "{{pokemonName}} is preparing to tell a chillingly bad joke!",
 } as const;

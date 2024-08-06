@@ -59,4 +59,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}}變成了{{targetPokemonName}}的屬性！",
   "suppressAbilities": "{{pokemonName}}的特性\n變得無效了！",
   "swapArenaTags": "{{pokemonName}}\n交換了雙方的場地效果！",
+  "chillyReception": "{{pokemonName}} is preparing to tell a chillingly bad joke!",
 } as const;

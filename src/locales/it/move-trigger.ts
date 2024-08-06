@@ -59,4 +59,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}} assume il tipo\ndi {{targetPokemonName}}!",
   "suppressAbilities": "L’abilità di {{pokemonName}}\nperde ogni efficacia!",
   "swapArenaTags": "{{pokemonName}} ha invertito gli effetti attivi\nnelle due metà del campo!",
+  "chillyReception": "{{pokemonName}} is preparing to tell a chillingly bad joke!",
 } as const;
