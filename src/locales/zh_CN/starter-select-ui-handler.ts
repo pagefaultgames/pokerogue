@@ -41,7 +41,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "cycleAbility": ": 特性",
   "cycleNature": ": 性格",
   "cycleVariant": ": 变种",
-  "goFilter": ": Go to filters",
+  "goFilter": ": 转到筛选",
   "enablePassive": "启用被动",
   "disablePassive": "禁用被动",
   "locked": "未解锁",
