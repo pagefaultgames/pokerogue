@@ -1809,7 +1809,7 @@ export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool
   return pool;
 }
 
-const tierWeights = [ 769 / 1024, 192 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
+const tierWeights = [ 768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
 
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount: integer = 0) {
   const pool = getModifierPoolForType(poolType);
@@ -2025,10 +2025,6 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
       } while (upgraded);
     }
     tier = tierValue > 255 ? ModifierTier.COMMON : tierValue > 60 ? ModifierTier.GREAT : tierValue > 12 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
-    // Does this actually do anything?
-    if (!upgradeCount) {
-      upgradeCount = Math.min(upgradeCount, ModifierTier.MASTER - tier);
-    }
     tier += upgradeCount;
     while (tier && (!modifierPool.hasOwnProperty(tier) || !modifierPool[tier].length)) {
       tier--;
