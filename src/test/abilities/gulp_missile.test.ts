@@ -32,7 +32,7 @@ describe("Abilities - Gulp Missile", () => {
    * @returns The effect damage of Gulp Missile
    */
   const getEffectDamage = (pokemon: Pokemon): number => {
-    return Math.max(Math.floor(pokemon.getMaxHp() * 1/4));
+    return Math.max(1, Math.floor(pokemon.getMaxHp() * 1/4));
   };
 
   beforeAll(() => {
