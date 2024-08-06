@@ -5345,7 +5345,7 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
     movesetMove!.ppUsed = Math.min((movesetMove?.ppUsed!) + this.reduction, movesetMove?.getMovePp()!); // TODO: is the bang correct?
 
     const message = i18next.t("battle:ppReduced", {targetName: getPokemonNameWithAffix(target), moveName: movesetMove?.getName(), reduction: (movesetMove?.ppUsed!) - lastPpUsed}); // TODO: is the bang correct?
-    user.scene.eventTarget.dispatchEvent(new MoveUsedEvent(target?.id, movesetMove.getMove(), movesetMove.ppUsed));
+    user.scene.eventTarget.dispatchEvent(new MoveUsedEvent(target?.id, movesetMove?.getMove()!, movesetMove?.ppUsed!)); // TODO: are these bangs correct?
     user.scene.queueMessage(message);
 
     return true;
