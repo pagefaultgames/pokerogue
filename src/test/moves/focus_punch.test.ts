@@ -1,12 +1,12 @@
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "../utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, MessagePhase, SwitchSummonPhase, TurnStartPhase } from "#app/phases";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { BerryPhase, MessagePhase, MoveHeaderPhase, SwitchSummonPhase, TurnStartPhase } from "#app/phases";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -135,6 +135,7 @@ describe("Moves - Focus Punch", () => {
       await game.phaseInterceptor.to(TurnStartPhase);
 
       expect(game.scene.getCurrentPhase() instanceof SwitchSummonPhase).toBeTruthy();
+      expect(game.scene.phaseQueue.find(phase => phase instanceof MoveHeaderPhase)).toBeDefined();
     }, TIMEOUT
   );
 });
