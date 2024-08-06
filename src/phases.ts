@@ -65,6 +65,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { applyChallenges, ChallengeType } from "./data/challenge";
+import { pokemonEvolutions } from "./data/pokemon-evolutions";
 
 const { t } = i18next;
 
@@ -4352,6 +4353,9 @@ export class GameOverPhase extends BattlePhase {
       }
       if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE]) {
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
+      }
+      if (!this.scene.gameData.unlocks[Unlockables.EVIOLITE] && this.scene.getParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)) {
+        this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.EVIOLITE));
       }
     }
   }
