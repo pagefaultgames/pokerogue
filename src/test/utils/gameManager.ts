@@ -133,7 +133,7 @@ export default class GameManager {
 
     await this.phaseInterceptor.run(EncounterPhase);
     if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
-      removeEnemyHeldItems(this.scene);
+      removeEnemyHeldItems(this);
     }
   }
 
