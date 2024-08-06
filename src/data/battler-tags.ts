@@ -1651,8 +1651,8 @@ export class StockpilingTag extends BattlerTag {
  * Tag that makes the target drop all of it type immunities
  * and all accuracy checks ignore its evasiveness stat.
  *
- * Applied by moves: {@linkcode Moves.ODOR_SLEUTH},
- * {@linkcode Moves.MIRACLE_EYE} and {@linkcode Moves.FORESIGHT}.
+ * Applied by moves: {@linkcode Moves.ODOR_SLEUTH | Odor Sleuth},
+ * {@linkcode Moves.MIRACLE_EYE | Miracle Eye} and {@linkcode Moves.FORESIGHT | Foresight}.
  *
  * @extends BattlerTag
  * @see {@linkcode ignoreImmunity}
@@ -1680,7 +1680,7 @@ export class ExposedTag extends BattlerTag {
   /**
    * @param types {@linkcode Type} of the defending Pokemon
    * @param moveType {@linkcode Type} of the move targetting it
-   * @returns true if the move should be allowed to target the defender.
+   * @returns `true` if the move should be allowed to target the defender.
    */
   ignoreImmunity(type: Type, moveType: Type): boolean {
     return type === this.defenderType && this.allowedTypes.includes(moveType);
