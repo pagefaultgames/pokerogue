@@ -5908,7 +5908,7 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
       return false;
     }
 
-    //target.scene.queueMessage(`${getPokemonMessage(user, " identified\n")}${getPokemonMessage(target, "!")}`);
+    user.scene.queueMessage(i18next.t("moveTriggers:exposedMove", { pokemonName: getPokemonNameWithAffix(user), targetPokemonName: getPokemonNameWithAffix(target)}));
 
     return true;
   }
