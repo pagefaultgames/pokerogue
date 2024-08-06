@@ -61,7 +61,7 @@ export const battle: SimpleTranslationEntries = {
   "hpIsFull": "Les PV de {{pokemonName}}\nsont au maximum !",
   "skipItemQuestion": "Êtes-vous sûr·e de ne pas vouloir prendre d’objet ?",
   "eggHatching": "Hein ?",
-  "ivScannerUseQuestion": "Utiliser le Scanner d’IV sur {{pokemonName}} ?",
+  "ivScannerUseQuestion": "Utiliser le Scanner d’IV\nsur {{pokemonName}} ?",
   "wildPokemonWithAffix": "{{pokemonName}} sauvage",
   "foePokemonWithAffix": "{{pokemonName}} ennemi",
   "useMove": "{{pokemonNameWithAffix}} utilise\n{{moveName}} !",
