@@ -1,20 +1,9 @@
 import { Stat } from "#app/data/pokemon-stat";
 import { Status, StatusEffect } from "#app/data/status-effect.js";
 import { QuietFormChangePhase } from "#app/form-change-phase";
-import {
-  CommandPhase,
-  DamagePhase,
-  EnemyCommandPhase,
-  MessagePhase,
-  PostSummonPhase,
-  SwitchPhase,
-  SwitchSummonPhase,
-  TurnEndPhase,
-  TurnInitPhase,
-  TurnStartPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { CommandPhase, DamagePhase, EnemyCommandPhase, MessagePhase, PostSummonPhase, SwitchPhase, SwitchSummonPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";

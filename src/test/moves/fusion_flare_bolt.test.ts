@@ -1,9 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
+import GameManager from "#test/utils/gameManager";
 import { MoveEffectPhase, MovePhase, MoveEndPhase, TurnStartPhase, DamagePhase } from "#app/phases";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Stat } from "#app/data/pokemon-stat";
 import { allMoves } from "#app/data/move";
 import { BattlerIndex } from "#app/battle";
@@ -29,15 +28,15 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ fusionFlare.id, fusionBolt.id ]);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1);
+    game.override.moveset([ fusionFlare.id, fusionBolt.id ]);
+    game.override.startingLevel(1);
 
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RESHIRAM);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.REST, Moves.REST, Moves.REST, Moves.REST ]);
+    game.override.enemySpecies(Species.RESHIRAM);
+    game.override.enemyMoveset([ Moves.REST, Moves.REST, Moves.REST, Moves.REST ]);
 
-    vi.spyOn(overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(97);
-    vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("double");
+    game.override.startingWave(97);
+    game.override.disableCrits();
 
     vi.spyOn(fusionFlare, "calculateBattlePower");
     vi.spyOn(fusionBolt, "calculateBattlePower");
@@ -133,7 +132,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE should not double power of subsequent FUSION_BOLT if a move succeeded in between", async() => {
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
     await game.startBattle([
       Species.ZEKROM,
       Species.ZEKROM
@@ -194,7 +193,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE and FUSION_BOLT alternating throughout turn should double power of subsequent moves", async() => {
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id ]);
+    game.override.enemyMoveset([ fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id ]);
     await game.startBattle([
       Species.ZEKROM,
       Species.ZEKROM
@@ -258,7 +257,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE and FUSION_BOLT alternating throughout turn should double power of subsequent moves if moves are aimed at allies", async() => {
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id ]);
+    game.override.enemyMoveset([ fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id ]);
     await game.startBattle([
       Species.ZEKROM,
       Species.ZEKROM

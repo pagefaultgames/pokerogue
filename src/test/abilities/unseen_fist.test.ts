@@ -4,8 +4,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import GameManager from "../utils/gameManager";
-import { getMovePosition } from "../utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000;
 

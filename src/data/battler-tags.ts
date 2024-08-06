@@ -1752,7 +1752,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
     return new BattlerTag(tagType, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
   case BattlerTagType.BYPASS_SLEEP:
-    return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+    return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
   case BattlerTagType.IGNORE_FLYING:
     return new GroundedTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.ROOSTED:
