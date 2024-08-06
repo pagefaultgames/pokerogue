@@ -463,6 +463,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       //   starterAttributes = this.starterPreferences[this.lastSpecies.speciesId] = {};
       // }
       switch (button) {
+      case Button.ACTION:
+        const pkmn = this.filteredStarterContainers[this.cursor]?.species;
+        if (this.scene.gameData.dexData[pkmn.speciesId]?.caughtAttr) {
+          console.log(pkmn);
+          success = true;
+        } else {
+          console.log("not caught yet");
+          success = false;
+        }
+        break;
       case Button.UP:
         if (!this.starterIconsCursorObj.visible) {
           if (currentRow > 0) {
