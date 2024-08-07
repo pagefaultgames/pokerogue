@@ -1,13 +1,13 @@
 import { CommandPhase, SelectModifierPhase } from "../phases";
 import BattleScene from "../battle-scene";
-import { PlayerPokemon, PokemonMove } from "../field/pokemon";
+import { MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
 import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { PokemonBaseStatModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
-import { allMoves } from "../data/move";
+import { allMoves, ForceSwitchOutAttr } from "../data/move";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
@@ -25,18 +25,69 @@ import { getPokemonNameWithAffix } from "#app/messages.js";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
+/**
+ * Indicates the reason why the party UI is being opened.
+ */
 export enum PartyUiMode {
+  /**
+   * Indicates that the party UI is open because of a user-opted switch.  This
+   * type of switch can be cancelled.
+   */
   SWITCH,
+  /**
+   * Indicates that the party UI is open because of a faint or other forced
+   * switch (eg, move effect). This type of switch cannot be cancelled.
+   */
   FAINT_SWITCH,
+  /**
+   * Indicates that the party UI is open because of a start-of-encounter optional
+   * switch. This type of switch can be cancelled.
+   */
   POST_BATTLE_SWITCH,
+  /**
+   * Indicates that the party UI is open because of the move Revival Blessing.
+   * This selection cannot be cancelled.
+   */
   REVIVAL_BLESSING,
+  /**
+   * Indicates that the party UI is open to select a mon to apply a modifier to.
+   * This type of selection can be cancelled.
+   */
   MODIFIER,
+  /**
+   * Indicates that the party UI is open to select a mon to apply a move
+   * modifier to (such as an Ether or PP Up).  This type of selection can be cancelled.
+   */
   MOVE_MODIFIER,
+  /**
+   * Indicates that the party UI is open to select a mon to teach a TM.  This
+   * type of selection can be cancelled.
+   */
   TM_MODIFIER,
+  /**
+   * Indicates that the party UI is open to select a mon to remember a move.
+   * This type of selection can be cancelled.
+   */
   REMEMBER_MOVE_MODIFIER,
+  /**
+   * Indicates that the party UI is open to transfer items between mons.  This
+   * type of selection can be cancelled.
+   */
   MODIFIER_TRANSFER,
+  /**
+   * Indicates that the party UI is open because of a DNA Splicer.  This
+   * type of selection can be cancelled.
+   */
   SPLICE,
+  /**
+   * Indicates that the party UI is open to release a party member.  This
+   * type of selection can be cancelled.
+   */
   RELEASE,
+  /**
+   * Indicates that the party UI is open to check the team.  This
+   * type of selection can be cancelled.
+   */
   CHECK
 }
 
@@ -767,10 +818,21 @@ export default class PartyUiHandler extends MessageUiHandler {
       case PartyUiMode.FAINT_SWITCH:
       case PartyUiMode.POST_BATTLE_SWITCH:
         if (this.cursor >= this.scene.currentBattle.getBattlerCount()) {
-          this.options.push(PartyOption.SEND_OUT);
-          if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH
-                && this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
-                  && (m as SwitchEffectTransferModifier).pokemonId === this.scene.getPlayerField()[this.fieldIndex].id)) {
+          const allowBatonModifierSwitch =
+            this.partyUiMode !== PartyUiMode.FAINT_SWITCH
+              && this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
+              && (m as SwitchEffectTransferModifier).pokemonId === this.scene.getPlayerField()[this.fieldIndex].id);
+
+          const moveHistory = this.scene.getPlayerField()[this.fieldIndex].getMoveHistory();
+          const isBatonPassMove = this.partyUiMode === PartyUiMode.FAINT_SWITCH && moveHistory.length && allMoves[moveHistory[moveHistory.length - 1].move].getAttrs(ForceSwitchOutAttr)[0]?.isBatonPass() && moveHistory[moveHistory.length - 1].result === MoveResult.SUCCESS;
+
+          // isBatonPassMove and allowBatonModifierSwitch shouldn't ever be true
+          // at the same time, because they both explicitly check for a mutually
+          // exclusive partyUiMode. But better safe than sorry.
+          this.options.push(isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT);
+          if (allowBatonModifierSwitch && !isBatonPassMove) {
+            // the BATON modifier gives an extra switch option for
+            // pokemon-command switches, allowing buffs to be optionally passed
             this.options.push(PartyOption.PASS_BATON);
           }
         }

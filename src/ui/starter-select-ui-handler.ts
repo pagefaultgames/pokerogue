@@ -107,7 +107,11 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   "ja":{
     starterInfoTextSize: "51px",
     instructionTextSize: "38px",
-  }
+  },
+  "ca-ES":{
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
 };
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer], egg: integer }[] = [
@@ -463,7 +467,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const pokerusLabels = [
       new DropDownLabel(i18next.t("filterBar:pokerus"), undefined, DropDownState.OFF),
       new DropDownLabel(i18next.t("filterBar:hasPokerus"), undefined, DropDownState.ON),
-      new DropDownLabel(i18next.t("filterBar:noPokerus"), undefined, DropDownState.EXCLUDE),
     ];
     const miscOptions = [
       new DropDownOption(this.scene, "WIN", winLabels),

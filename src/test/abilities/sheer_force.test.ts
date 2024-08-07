@@ -11,6 +11,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { changeTurnOrder } from "../utils/testUtils";
+import { BattlerIndex } from "#app/battle.js";
 
 
 describe("Abilities - Sheer Force", () => {
@@ -46,7 +48,6 @@ describe("Abilities - Sheer Force", () => {
 
 
     game.scene.getEnemyParty()[0].stats[Stat.SPDEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -57,6 +58,7 @@ describe("Abilities - Sheer Force", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
+    await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -85,7 +87,6 @@ describe("Abilities - Sheer Force", () => {
 
 
     game.scene.getEnemyParty()[0].stats[Stat.DEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -96,6 +97,7 @@ describe("Abilities - Sheer Force", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
+    await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -124,7 +126,6 @@ describe("Abilities - Sheer Force", () => {
 
 
     game.scene.getEnemyParty()[0].stats[Stat.DEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -135,6 +136,7 @@ describe("Abilities - Sheer Force", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
+    await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -165,7 +167,6 @@ describe("Abilities - Sheer Force", () => {
 
 
     game.scene.getEnemyParty()[0].stats[Stat.DEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -176,6 +177,7 @@ describe("Abilities - Sheer Force", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
+    await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;

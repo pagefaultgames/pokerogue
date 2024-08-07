@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "galactic_admin_f.png",
+			"image": "proton.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 80,
