@@ -19,6 +19,8 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "Sélectionnez l’emplacement depuis lequel exporter les données.",
   "importData": "Importer données",
   "exportData": "Exporter données",
+  "importRunHistory":"Import Run History",
+  "exportRunHistory":"Export Run History",
   "linkDiscord": "Link Discord",
   "unlinkDiscord": "Unlink Discord",
   "linkGoogle": "Link Google",

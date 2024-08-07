@@ -201,6 +201,20 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true
     });
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:importRunHistory"),
+      handler: () => {
+        this.scene.gameData.importData(GameDataType.RUN_HISTORY);
+        return true;
+      }
+    });
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:exportRunHistory"),
+      handler: () => {
+        this.scene.gameData.tryExportData(GameDataType.RUN_HISTORY);
+        return true;
+      }
+    });
     if (Utils.isLocal || Utils.isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),

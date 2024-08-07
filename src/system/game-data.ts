@@ -73,7 +73,7 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
   case GameDataType.SEEN_DIALOGUES:
     return "seenDialogues";
   case GameDataType.RUN_HISTORY:
-    return "runHistory";
+    return "runHistoryData";
   }
 }
 
@@ -1378,6 +1378,10 @@ export class GameData {
               case GameDataType.SESSION:
                 const sessionData = this.parseSessionData(dataStr);
                 valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
+                break;
+              case GameDataType.RUN_HISTORY:
+                localStorage.setItem(`runHistoryData_${loggedInUser.username}`, dataStr);
+                valid = true;
                 break;
               case GameDataType.SETTINGS:
               case GameDataType.TUTORIALS:

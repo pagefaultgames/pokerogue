@@ -17,6 +17,8 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "importSlotSelect": "选择要导入到的存档位。",
   "exportSession": "导出存档",
   "exportSlotSelect": "选择要导出的存档位。",
+  "importRunHistory":"Import Run History",
+  "exportRunHistory":"Export Run History",
   "importData": "导入数据",
   "exportData": "导出数据",
   "linkDiscord": "关联Discord",

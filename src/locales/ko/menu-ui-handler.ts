@@ -17,6 +17,8 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "importSlotSelect": "불러올 슬롯을 골라주세요.",
   "exportSession": "세션 내보내기",
   "exportSlotSelect": "내보낼 슬롯을 골라주세요.",
+  "importRunHistory":"Import Run History",
+  "exportRunHistory":"Export Run History",
   "importData": "데이터 불러오기",
   "exportData": "데이터 내보내기",
   "linkDiscord": "디스코드 연동",

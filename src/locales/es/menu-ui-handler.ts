@@ -17,6 +17,8 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "importSlotSelect": "Selecciona una ranura para importar.",
   "exportSession": "Exportar Sesión",
   "exportSlotSelect": "Selecciona una ranura para exportar.",
+  "importRunHistory":"Import Run History",
+  "exportRunHistory":"Export Run History",
   "importData": "Importar Datos",
   "exportData": "Exportar Datos",
   "linkDiscord": "Conectar Discord",
