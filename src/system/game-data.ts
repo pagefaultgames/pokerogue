@@ -1380,8 +1380,16 @@ export class GameData {
                 valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
                 break;
               case GameDataType.RUN_HISTORY:
-                localStorage.setItem(`runHistoryData_${loggedInUser.username}`, dataStr);
-                valid = true;
+                const data = JSON.parse(dataStr);
+                const keys = Object.keys(data);
+                keys.forEach((key) => {
+                  const entryKeys = Object.keys(data[key]);
+                  console.log(entryKeys);
+                  valid = ["favorite", "victory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
+                });
+                if (valid) {
+                  localStorage.setItem(`runHistoryData_${loggedInUser.username}`, dataStr);
+                }
                 break;
               case GameDataType.SETTINGS:
               case GameDataType.TUTORIALS:
