@@ -171,7 +171,6 @@ export default class AchvsUiHandler extends MessageUiHandler {
     } else {
       const rowIndex = Math.floor(this.cursor / achvCols);
       const itemOffset = (this.scrollCursor * achvCols);
-      console.log(this.cursor);
       switch (button) {
       case Button.UP:
         if (this.cursor < achvCols) {
