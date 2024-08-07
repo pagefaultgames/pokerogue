@@ -35,7 +35,7 @@ describe("Internals", () => {
   it("should allow Psychic moves to hit Dark types", async () => {
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.CONFUSION));
     await game.toNextTurn();
