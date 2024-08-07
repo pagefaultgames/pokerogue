@@ -16,9 +16,9 @@ export enum SpeciesWildEvolutionDelay {
   NONE,
   SHORT,
   MEDIUM,
-  LONG = 4,
-  VERY_LONG = 8,
-  NEVER = 16
+  LONG,
+  VERY_LONG,
+  NEVER
 }
 
 export enum EvolutionItem {
@@ -56,12 +56,12 @@ export enum EvolutionItem {
   CHIPPED_POT,
   GALARICA_CUFF,
   GALARICA_WREATH,
+  AUSPICIOUS_ARMOR,
+  MALICIOUS_ARMOR,
   MASTERPIECE_TEACUP,
 
   BLACK_AUGURITE = 51,
   PEAT_BLOCK,
-  AUSPICIOUS_ARMOR,
-  MALICIOUS_ARMOR,
   METAL_ALLOY,
   SCROLL_OF_DARKNESS,
   SCROLL_OF_WATERS,
