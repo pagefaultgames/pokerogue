@@ -1136,7 +1136,7 @@ export class EncounterPhase extends BattlePhase {
         //As of 08-07-24: Spanish and Italian default to the English translations
         const ordinalUse = ["en", "es", "it"];
         const currentLanguage = i18next.resolvedLanguage ?? "en";
-        const ordinalIndex = (ordinalUse.includes(currentLanguage)) ? ["st", "nd", "rd"][((count + 90) % 100 - 10) % 10 - 1] || "th" : "";
+        const ordinalIndex = (ordinalUse.includes(currentLanguage)) ? ["st", "nd", "rd"][((count + 90) % 100 - 10) % 10 - 1] ?? "th" : "";
         const cycleCount = count.toLocaleString() + ordinalIndex;
         const encounterDialogue = i18next.t(`${(this.scene.gameData.gender === PlayerGender.FEMALE) ? "PGF" : "PGM"}battleSpecDialogue:encounter`, {cycleCount: cycleCount});
         this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
