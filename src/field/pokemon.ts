@@ -3223,7 +3223,7 @@ export class PlayerPokemon extends Pokemon {
     }
 
     if (!dataSource) {
-      this.generateAndPopulateMoveset();
+      this.moveset = [];
     }
     this.generateCompatibleTms();
   }

@@ -1569,7 +1569,7 @@ const modifierPool: ModifierPool = {
         p => !p.getHeldItems().some(i => i instanceof Modifiers.PokemonResetNegativeStatStageModifier && i.stackCount >= i.getMaxHeldItemCount(p)) &&
           (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => selfStatLowerMoves.includes(m.moveId)))).length;
       // If a party member has one of the above moves or abilities and doesn't have max herbs, the herb will appear more frequently
-      return 2 * (weightMultiplier ? 2 : 1) + (weightMultiplier ? weightMultiplier : 0);
+      return 0 * (weightMultiplier ? 2 : 1) + (weightMultiplier ? weightMultiplier * 0 : 0);
     }, 10),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
@@ -1637,7 +1637,7 @@ const wildModifierPool: ModifierPool = {
   }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 1)
+    new WeightedModifierType(modifierTypes.WHITE_HERB, 0)
   ].map(m => {
     m.setTier(ModifierTier.ULTRA); return m;
   }),
@@ -1667,7 +1667,7 @@ const trainerModifierPool: ModifierPool = {
   }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 1),
+    new WeightedModifierType(modifierTypes.WHITE_HERB, 0),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA); return m;
   }),
@@ -1809,7 +1809,7 @@ export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool
   return pool;
 }
 
-const tierWeights = [ 769 / 1024, 192 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
+const tierWeights = [ 768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
 
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount: integer = 0) {
   const pool = getModifierPoolForType(poolType);
@@ -2023,10 +2023,6 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
       } while (upgraded);
     }
     tier = tierValue > 255 ? ModifierTier.COMMON : tierValue > 60 ? ModifierTier.GREAT : tierValue > 12 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
-    // Does this actually do anything?
-    if (!upgradeCount) {
-      upgradeCount = Math.min(upgradeCount, ModifierTier.MASTER - tier);
-    }
     tier += upgradeCount;
     while (tier && (!modifierPool.hasOwnProperty(tier) || !modifierPool[tier].length)) {
       tier--;

@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { CritBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MoveEffectPhase, TurnStartPhase } from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import * as Utils from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

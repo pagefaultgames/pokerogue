@@ -1,7 +1,7 @@
 import { pokemonEvolutions } from "#app/data/pokemon-evolutions.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Species } from "#app/enums/species.js";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
