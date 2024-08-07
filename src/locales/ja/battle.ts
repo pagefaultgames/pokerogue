@@ -90,7 +90,7 @@ export const battle: SimpleTranslationEntries = {
   "statWontGoAnyLower_one": "{{pokemonNameWithAffix}}の {{stats}}が　もう さがらない！",
   "statWontGoAnyLower_other": "{{pokemonNameWithAffix}}の {{stats}}が　もう さがらない！",
   "transformedIntoType": "{{pokemonName}}は\n{{type}}タイプに　へんしんした!",
-  "retryBattle": "このせんとうの　はじまりから　やりなおす？,
+  "retryBattle": "このせんとうの　はじまりから　やりなおす？",
   "unlockedSomething": "{{unlockedThing}}\nを　アンロックした！",
   "congratulations": "おめでとうございます！！",
   "beatModeFirstTime": "はじめて　{{speciesName}}が {{gameMode}}モードを　クリアした!\n{{newModifier}}を　てにいれた!",
