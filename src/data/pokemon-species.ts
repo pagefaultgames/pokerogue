@@ -2809,7 +2809,7 @@ export const speciesStarters = {
   [Species.SMOOCHUM]: 3,
   [Species.ELEKID]: 3,
   [Species.MAGBY]: 3,
-  [Species.MILTANK]: 4,
+  [Species.MILTANK]: 3,
   [Species.RAIKOU]: 6,
   [Species.ENTEI]: 6,
   [Species.SUICUNE]: 6,
