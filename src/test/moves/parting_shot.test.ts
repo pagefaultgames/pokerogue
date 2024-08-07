@@ -38,10 +38,11 @@ describe("Moves - Parting Shot", () => {
   test(
     "Parting Shot when buffed by prankster should fail against dark types",
     async () => {
-      await game.startBattle([Species.MURKROW, Species.MEOWTH]);
       game.override
         .enemySpecies(Species.POOCHYENA)
         .ability(Abilities.PRANKSTER);
+      await game.startBattle([Species.MURKROW, Species.MEOWTH]);
+
       game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
 
       await game.phaseInterceptor.to(BerryPhase, false);
@@ -53,12 +54,13 @@ describe("Moves - Parting Shot", () => {
   );
 
   test(
-    "Parting shot when buffed by prankster should fail against good as gold ability",
+    "Parting shot should fail against good as gold ability",
     async () => {
-      await game.startBattle([Species.MURKROW, Species.MEOWTH]);
       game.override
         .enemySpecies(Species.GHOLDENGO)
         .enemyAbility(Abilities.GOOD_AS_GOLD);
+      await game.startBattle([Species.MURKROW, Species.MEOWTH]);
+
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
