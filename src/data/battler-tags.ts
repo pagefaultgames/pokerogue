@@ -1693,6 +1693,47 @@ export class GulpMissileTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag that makes the target drop all of it type immunities
+ * and all accuracy checks ignore its evasiveness stat.
+ *
+ * Applied by moves: {@linkcode Moves.ODOR_SLEUTH | Odor Sleuth},
+ * {@linkcode Moves.MIRACLE_EYE | Miracle Eye} and {@linkcode Moves.FORESIGHT | Foresight}.
+ *
+ * @extends BattlerTag
+ * @see {@linkcode ignoreImmunity}
+ */
+export class ExposedTag extends BattlerTag {
+  private defenderType: Type;
+  private allowedTypes: Type[];
+
+  constructor(tagType: BattlerTagType, sourceMove: Moves, defenderType: Type, allowedTypes: Type[]) {
+    super(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+    this.defenderType = defenderType;
+    this.allowedTypes = allowedTypes;
+  }
+
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.defenderType = source.defenderType as Type;
+    this.allowedTypes = source.allowedTypes as Type[];
+  }
+
+  /**
+   * @param types {@linkcode Type} of the defending Pokemon
+   * @param moveType {@linkcode Type} of the move targetting it
+   * @returns `true` if the move should be allowed to target the defender.
+   */
+  ignoreImmunity(type: Type, moveType: Type): boolean {
+    return type === this.defenderType && this.allowedTypes.includes(moveType);
+  }
+}
+
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1814,6 +1855,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new StockpilingTag(sourceMove);
   case BattlerTagType.OCTOLOCK:
     return new OctolockTag(sourceId);
+  case BattlerTagType.IGNORE_GHOST:
+    return new ExposedTag(tagType, sourceMove, Type.GHOST, [Type.NORMAL, Type.FIGHTING]);
+  case BattlerTagType.IGNORE_DARK:
+    return new ExposedTag(tagType, sourceMove, Type.DARK, [Type.PSYCHIC]);
   case BattlerTagType.GULP_MISSILE_ARROKUDA:
   case BattlerTagType.GULP_MISSILE_PIKACHU:
     return new GulpMissileTag(tagType, sourceMove);

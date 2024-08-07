@@ -671,7 +671,7 @@ export const move: MoveTranslationEntries = {
   },
   thief: {
     name: "どろぼう",
-    effect: "攻撃と 同時に 道具を 盗む。自分が 道具を 持っている 場合は 盗めない。"
+    effect: "攻撃と 同時に 道具を 盗もうとする。 盗む 可能性は 30％。"
   },
   spiderWeb: {
     name: "クモのす",
@@ -1371,7 +1371,7 @@ export const move: MoveTranslationEntries = {
   },
   covet: {
     name: "ほしがる",
-    effect: "かわいく あまえながら 相手に ちかづき 持っている 道具を うばう。"
+    effect: "かわいく あまえながら 相手に ちかづき 持っている 道具を うばおうとする。 うばう 可能性は ３０％。"
   },
   voltTackle: {
     name: "ボルテッカー",
@@ -2927,7 +2927,7 @@ export const move: MoveTranslationEntries = {
   },
   pikaPapow: {
     name: "ピカピカサンダー",
-    effect: "ピカチュウの トレーナーへの 大好きな 気持ちが 強いほど 威力が あがる 電撃。 必ず 命中する。"
+    effect: "トレーナーへの 大好きな 気持ちが 強いほど 威力が あがる 電撃。 必ず 命中する。"
   },
   bouncyBubble: {
     name: "いきいきバブル",
@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "ダイマックスほう",
-    effect: "体内で 凝縮した エネルギーを コアから 放って 攻撃する。"
+    effect: "コアから ビームを 放つ。相手の レベルが 過度に 上がっている 場合は 与える ダメージが 最大 2倍に 増える。"
   },
   snipeShot: {
     name: "ねらいうち",
@@ -3715,23 +3715,23 @@ export const move: MoveTranslationEntries = {
   },
   blazingTorque: {
     name: "バーンアクセル",
-    effect: "The user revs their blazing engine into the target. This may also leave the target with a burn." // 説明文がゲームにない（NPC専用）
+    effect: "メラメラの エンジンを 吹かして 相手に ぶつかる。やけど状態に することが ある。"
   },
   wickedTorque: {
     name: "ダークアクセル",
-    effect: "The user revs their engine into the target with malicious intent. This may put the target to sleep." // 説明文がゲームにない（NPC専用）
+    effect: "悪意で エンジンを 吹かして 相手に ぶつかる。眠り状態に することが ある。"
   },
   noxiousTorque: {
     name: "ポイズンアクセル",
-    effect: "The user revs their poisonous engine into the target. This may also poison the target." // 説明文がゲームにない（NPC専用）
+    effect: "有毒な エンジンを 吹かして 相手に ぶつかる。毒状態に することが ある。"
   },
   combatTorque: {
     name: "ファイトアクセル",
-    effect: "The user revs their engine forcefully into the target. This may also leave the target with paralysis." // 説明文がゲームにない（NPC専用）
+    effect: "力いっぱい エンジンを 吹かして 相手に ぶつかる。まひ状態に することが ある。"
   },
   magicalTorque: {
     name: "マジカルアクセル",
-    effect: "The user revs their fae-like engine into the target. This may also confuse the target." // 説明文がゲームにない（NPC専用）
+    effect: "幻想的な エンジンを 吹かして 相手に ぶつかる。混乱させることが ある。"
   },
   bloodMoon: {
     name: "ブラッドムーン",
