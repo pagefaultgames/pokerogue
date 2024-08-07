@@ -24,20 +24,6 @@ import {modifierSortFunc} from "../modifier/modifier";
 import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 
-/*
-enum Page {
-  GENERAL,
-  STATS,
-  HALL_OF_FAME
-}
-*/
-
-
-export enum RunVictory {
-  DEFEATED,
-  VICTORY
-}
-
 export default class GameInfoUiHandler extends UiHandler {
   private runInfo: SessionSaveData;
   private victory: boolean;
@@ -83,16 +69,16 @@ export default class GameInfoUiHandler extends UiHandler {
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
-    const downButtonContainer = this.scene.add.container(0, 0);
-    const downButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {fontSize:"34px"});
-    const downButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "KEY_ARROW_DOWN.png");
-    downButtonContainer.add([downButtonText, downButtonElement]);
-    downButtonContainer.setPositionRelative(headerBg, 275, 10);
+    const abilityButtonContainer = this.scene.add.container(0, 0);
+    const abilityButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {fontSize:"34px"});
+    const abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "E.png");
+    abilityButtonContainer.add([abilityButtonText, abilityButtonElement]);
+    abilityButtonContainer.setPositionRelative(headerBg, 275, 10);
     const headerText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:runInfo"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
     this.gameStatsContainer.add(headerBg);
-    this.gameStatsContainer.add(downButtonContainer);
+    this.gameStatsContainer.add(abilityButtonContainer);
     this.gameStatsContainer.add(headerText);
 
     const run = args[0];
@@ -144,9 +130,9 @@ export default class GameInfoUiHandler extends UiHandler {
 
     if (runResult) {
       const hallofFameInstructionContainer = this.scene.add.container(0, 0);
-      const upButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHallOfFame"), TextStyle.WINDOW, {fontSize:"65px"});
-      const upButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, "keyboard", "KEY_ARROW_UP.png");
-      hallofFameInstructionContainer.add([upButtonText, upButtonElement]);
+      const shinyButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHallOfFame"), TextStyle.WINDOW, {fontSize:"65px"});
+      const shinyButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, "keyboard", "R.png");
+      hallofFameInstructionContainer.add([shinyButtonText, shinyButtonElement]);
 
       const formButtonText = addTextObject(this.scene, 8, 12, i18next.t("runHistory:viewEndingSplash"), TextStyle.WINDOW, {fontSize:"65px"});
       const formButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 16, "keyboard", "F.png");
@@ -592,17 +578,7 @@ export default class GameInfoUiHandler extends UiHandler {
     this.endCardContainer.add(text);
   }
 
-  buttonCycleOption(button: Button) {
-    console.log(button);
-    if (!this.endCardContainer || !this.endCardContainer.visible) {
-      this.createVictorySplash();
-      this.endCardContainer.setVisible(true);
-      this.gameStatsContainer.add(this.endCardContainer);
-    } else {
-      this.endCardContainer.setVisible(false);
-      this.gameStatsContainer.remove(this.endCardContainer);
-    }
-  }
+
 
   createHallofFame(): void {
     //Issue Note (08-05-2024): It seems as if fused pokemon do not appear with the averaged color b/c pokemonData's loadAsset requires there to be some active battle?
@@ -688,28 +664,13 @@ export default class GameInfoUiHandler extends UiHandler {
     } else {
       switch (button) {
       case Button.DOWN:
-        if (this.partyVisibility) {
-          this.showParty(false);
-        } else {
-          this.showParty(true);
-        }
-        break;
       case Button.UP:
-        if (this.victory) {
-          if (!this.hallofFameContainer.visible) {
-            this.hallofFameContainer.setVisible(true);
-            break;
-          } else {
-            this.hallofFameContainer.setVisible(false);
-            break;
-          }
-          break;
-        }
         break;
       case Button.CYCLE_FORM:
-        if (this.victory) {
-          this.buttonCycleOption(Button.CYCLE_SHINY);
-        }
+      case Button.CYCLE_SHINY:
+      case Button.CYCLE_ABILITY:
+        this.buttonCycleOption(button);
+        break;
       }
     }
     if (success) {
@@ -718,6 +679,44 @@ export default class GameInfoUiHandler extends UiHandler {
       ui.playError();
     }
     return success || error;
+  }
+
+
+  // The use of non-directional / A / B buttons is named in relation to functions used during starter-select.
+  // Button.CYCLE_FORM (F key) --> displays ending art (victory only)
+  // Button.CYCLE_SHINY (R key) --> displays hall of fame (victory only)
+  // Button.CYCLE_ABILITY (E key) --> shows pokemon held items
+  buttonCycleOption(button: Button) {
+    switch (button) {
+    case Button.CYCLE_FORM:
+      if (this.victory) {
+        if (!this.endCardContainer || !this.endCardContainer.visible) {
+          this.createVictorySplash();
+          this.endCardContainer.setVisible(true);
+          this.gameStatsContainer.add(this.endCardContainer);
+        } else {
+          this.endCardContainer.setVisible(false);
+          this.gameStatsContainer.remove(this.endCardContainer);
+        }
+      }
+      break;
+    case Button.CYCLE_SHINY:
+      if (this.victory) {
+        if (!this.hallofFameContainer.visible) {
+          this.hallofFameContainer.setVisible(true);
+        } else {
+          this.hallofFameContainer.setVisible(false);
+        }
+      }
+      break;
+    case Button.CYCLE_ABILITY:
+      if (this.partyVisibility) {
+        this.showParty(false);
+      } else {
+        this.showParty(true);
+      }
+      break;
+    }
   }
 }
 
