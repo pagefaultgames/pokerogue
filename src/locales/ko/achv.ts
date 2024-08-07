@@ -170,8 +170,8 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "클래식 모드 클리어",
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
-    name: "Bring Your Child To Work Day",
-    description: "Beat the game in Classic Mode with at least one unevolved party member."
+    name: "우리집 꿈나무",
+    description: "최종 진화형이 아닌 포켓몬을 데리고 클래식 모드 클리어."
   },
 
   "MONO_GEN_ONE": {
