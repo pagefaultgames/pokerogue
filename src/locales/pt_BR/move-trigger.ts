@@ -50,5 +50,13 @@ export const moveTriggers: SimpleTranslationEntries = {
   "transformedIntoTarget": "{{pokemonName}} se transformou\nem um(a) {{targetName}}!",
   "tryingToTakeFoeDown": "{{pokemonName}} está tentando derrubar o atacante com ele!",
   "addType": "{{pokemonName}} recebeu\no tipo {{typeName}}!",
-  "cannotUseMove": "{{pokemonName}} não pode usar {{moveName}}!"
+  "cannotUseMove": "{{pokemonName}} não pode usar {{moveName}}!",
+  "healHp": "{{pokemonName}} teve seus PS recuperados.",
+  "sacrificialFullRestore": "O Healing Wish de {{pokemonName}}\nfoi concedido!",
+  "invertStats": "As mudanças de atributo de {{pokemonName}}\nforam revertidas!",
+  "resetStats": "As mudanças de atributo de {{pokemonName}}\nforam eliminadas!",
+  "faintCountdown": "{{pokemonName}}\nirá desmaiar em {{turnCount}} turnos.",
+  "copyType": "O tipo de {{pokemonName}}\nmudou para combinar com {{targetPokemonName}}!",
+  "suppressAbilities": "A habilidade de {{pokemonName}}\nfoi suprimida!",
+  "swapArenaTags": "{{pokemonName}} trocou os efeitos de batalha que afetam cada lado do campo!",
 } as const;

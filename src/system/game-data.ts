@@ -349,7 +349,7 @@ export class GameData {
       this.scene.ui.savingIcon.show();
       const data = this.getSystemSaveData();
 
-      const maxIntAttrValue = Math.pow(2, 31);
+      const maxIntAttrValue = 0x80000000;
       const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
 
       localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemData, bypassLogin));
@@ -1163,7 +1163,7 @@ export class GameData {
         }
         const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`), bypassLogin)) : this.getSessionSaveData(scene);
 
-        const maxIntAttrValue = Math.pow(2, 31);
+        const maxIntAttrValue = 0x80000000;
         const systemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), bypassLogin)) : this.getSystemSaveData();
 
         const request = {
@@ -1368,7 +1368,7 @@ export class GameData {
       const entry = data[defaultStarterSpecies[ds]] as DexEntry;
       entry.seenAttr = defaultStarterAttr;
       entry.caughtAttr = defaultStarterAttr;
-      entry.natureAttr = Math.pow(2, defaultStarterNatures[ds] + 1);
+      entry.natureAttr = 1 << (defaultStarterNatures[ds] + 1);
       for (const i in entry.ivs) {
         entry.ivs[i] = 10;
       }
@@ -1435,10 +1435,10 @@ export class GameData {
       dexEntry.caughtAttr |= dexAttr;
       if (speciesStarters.hasOwnProperty(species.speciesId)) {
         this.starterData[species.speciesId].abilityAttr |= pokemon.abilityIndex !== 1 || pokemon.species.ability2
-          ? Math.pow(2, pokemon.abilityIndex)
+          ? 1 << pokemon.abilityIndex
           : AbilityAttr.ABILITY_HIDDEN;
       }
-      dexEntry.natureAttr |= Math.pow(2, pokemon.nature + 1);
+      dexEntry.natureAttr |= 1 << (pokemon.nature + 1);
 
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
       const newCatch = !caughtAttr;
@@ -1474,7 +1474,7 @@ export class GameData {
         }
 
         if (!hasPrevolution && (!pokemon.scene.gameMode.isDaily || hasNewAttr || fromEgg)) {
-          this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant || 0) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
+          this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * (1 << (pokemon.variant ?? 0)) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
         }
       }
 
@@ -1545,7 +1545,7 @@ export class GameData {
         this.starterData[speciesId].eggMoves = 0;
       }
 
-      const value = Math.pow(2, eggMoveIndex);
+      const value = 1 << eggMoveIndex;
 
       if (this.starterData[speciesId].eggMoves & value) {
         resolve(false);
@@ -1637,7 +1637,7 @@ export class GameData {
   getSpeciesDefaultNature(species: PokemonSpecies): Nature {
     const dexEntry = this.dexData[species.speciesId];
     for (let n = 0; n < 25; n++) {
-      if (dexEntry.natureAttr & Math.pow(2, n + 1)) {
+      if (dexEntry.natureAttr & (1 << (n + 1))) {
         return n as Nature;
       }
     }
@@ -1645,7 +1645,7 @@ export class GameData {
   }
 
   getSpeciesDefaultNatureAttr(species: PokemonSpecies): integer {
-    return Math.pow(2, this.getSpeciesDefaultNature(species));
+    return 1 << (this.getSpeciesDefaultNature(species));
   }
 
   getDexAttrLuck(dexAttr: bigint): integer {
@@ -1655,7 +1655,7 @@ export class GameData {
   getNaturesForAttr(natureAttr: integer): Nature[] {
     const ret: Nature[] = [];
     for (let n = 0; n < 25; n++) {
-      if (natureAttr & Math.pow(2, n + 1)) {
+      if (natureAttr & (1 << (n + 1))) {
         ret.push(n);
       }
     }
@@ -1697,7 +1697,7 @@ export class GameData {
   }
 
   getFormAttr(formIndex: integer): bigint {
-    return BigInt(Math.pow(2, 7 + formIndex));
+    return BigInt(1 << (7 + formIndex));
   }
 
   consolidateDexData(dexData: DexData): void {
@@ -1707,7 +1707,7 @@ export class GameData {
         entry.hatchedCount = 0;
       }
       if (!entry.hasOwnProperty("natureAttr") || (entry.caughtAttr && !entry.natureAttr)) {
-        entry.natureAttr = this.defaultDexData[k].natureAttr || Math.pow(2, Utils.randInt(25, 1));
+        entry.natureAttr = this.defaultDexData[k].natureAttr || (1 << Utils.randInt(25, 1));
       }
     }
   }

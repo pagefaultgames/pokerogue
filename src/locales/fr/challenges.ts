@@ -2,7 +2,7 @@ import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
   "title": "Paramètres du Challenge",
-  "illegalEvolution": "{{pokemon}} s’est transformé en Pokémon\ninéligible pour ce challenge !",
+  "illegalEvolution": "{{pokemon}} est devenu\ninéligible pour ce challenge !",
   "singleGeneration": {
     "name": "Mono-génération",
     "desc": "Vous ne pouvez choisir que des Pokémon de {{gen}} génération.",
@@ -23,4 +23,10 @@ export const challenges: TranslationEntries = {
     "desc_default": "Vous ne pouvez choisir que des Pokémon du type sélectionné."
     //type in pokemon-info
   },
+  "freshStart": {
+    "name": "Nouveau départ",
+    "desc": "Vous ne pouvez choisir que les starters de base du jeu, comme si vous le recommenciez.",
+    "value.0": "Non",
+    "value.1": "Oui",
+  }
 } as const;

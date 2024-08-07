@@ -1,12 +1,7 @@
 import { QuietFormChangePhase } from "#app/form-change-phase";
-import {
-  MoveEffectPhase,
-  MoveEndPhase,
-  TurnEndPhase,
-  TurnInitPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { MoveEffectPhase, MoveEndPhase, TurnEndPhase, TurnInitPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";

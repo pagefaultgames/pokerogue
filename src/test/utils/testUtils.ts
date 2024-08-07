@@ -34,4 +34,5 @@ export function arrayOfRange(start: integer, end: integer) {
 export function removeEnemyHeldItems(scene: BattleScene) {
   scene.clearEnemyHeldItemModifiers();
   scene.clearEnemyModifiers();
+  console.log("Enemy held items removed");
 }

@@ -1,15 +1,19 @@
 import { allSpecies } from "#app/data/pokemon-species";
+import { TempBattleStat } from "#app/data/temp-battle-stat.js";
 import { GameModes } from "#app/game-mode";
 import { getGameMode } from "#app/game-mode.js";
 import {
+  BattleEndPhase,
   CommandPhase, DamagePhase,
   EncounterPhase,
   EnemyCommandPhase,
   LoginPhase,
+  NextEncounterPhase,
   SelectGenderPhase,
   SelectModifierPhase,
   SelectStarterPhase,
   SummonPhase,
+  SwitchPhase,
   TitlePhase,
   TurnInitPhase, VictoryPhase,
 } from "#app/phases";
@@ -23,6 +27,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -322,6 +327,32 @@ describe("Test Battle Phase", () => {
     await game.doKillOpponents();
     await game.toNextWave();
     expect(game.scene.currentBattle.waveIndex).toBeGreaterThan(waveIndex);
+  }, 20000);
+
+  it("does not force switch if active pokemon faints at same time as enemy mon and is revived in post-battle", async () => {
+    const moveToUse = Moves.TAKE_DOWN;
+    game.override
+      .battleType("single")
+      .starterSpecies(Species.SAWK)
+      .enemySpecies(Species.RATTATA)
+      .startingWave(1)
+      .startingLevel(100)
+      .moveset([moveToUse])
+      .enemyMoveset(SPLASH_ONLY)
+      .startingHeldItems([{ name: "TEMP_STAT_BOOSTER", type: TempBattleStat.ACC }]);
+
+    await game.startBattle();
+    game.scene.getPlayerPokemon().hp = 1;
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+
+    await game.phaseInterceptor.to(BattleEndPhase);
+    game.doRevivePokemon(0); // pretend max revive was picked
+    game.doSelectModifier();
+
+    game.onNextPrompt("SwitchPhase", Mode.PARTY, () => {
+      expect.fail("Switch was forced");
+    }, () => game.isCurrentPhase(NextEncounterPhase));
+    await game.phaseInterceptor.to(SwitchPhase);
   }, 20000);
 });
 
