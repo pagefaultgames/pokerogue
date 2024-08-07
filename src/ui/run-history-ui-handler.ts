@@ -248,7 +248,7 @@ class RunEntry extends Phaser.GameObjects.Container {
         const gameOutcomeLabel = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:defeatedWild")}`, TextStyle.WINDOW);
         enemyContainer.add(gameOutcomeLabel);
         data.enemyParty.forEach((enemyData, e) => {
-          //This allows the enemyParty to be shown - doubles or sings -> 58+(e*8)
+          // This allows the enemyParty to be shown - doubles or singles -> 58+(e*8)
           const enemyIconContainer = this.scene.add.container(65+(e*25),-8);
           enemyIconContainer.setScale(0.75);
           enemyData.boss = false;
@@ -269,7 +269,7 @@ class RunEntry extends Phaser.GameObjects.Container {
         const tObj = data.trainer.toTrainer(this.scene);
         if (data.trainer.trainerType >= 375) {
           const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival")}`, TextStyle.WINDOW);
-          //otherwise it becomes Rival_5 in Ivy's case
+          // otherwise it becomes Rival_5 in Ivy's case
           this.add(gameOutcomeLabel);
         } else if (data.trainer.variant === TrainerVariant.DOUBLE) {
           const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer")+tObj.config.nameDouble+" "+tObj.getName(0, false)}`, TextStyle.WINDOW);

@@ -32,5 +32,5 @@ export const runHistory: SimpleTranslationEntries = {
   "viewEndingSplash":"View ending art!"
 } as const;
 
-//Mode Information found in game-mode.ts
-//Wave / Lv found in save-slot-select-ui-handler.ts
+// Mode Information found in game-mode.ts
+// Wave / Lv found in save-slot-select-ui-handler.ts

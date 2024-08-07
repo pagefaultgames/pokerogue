@@ -582,7 +582,7 @@ export class GameData {
           cachedResponse = JSON.parse(decrypt(cachedResponse, true));
         }
         const cachedRHData = cachedResponse ?? {};
-        //check to see whether cachedData or serverData is more up-to-date
+        // check to see whether cachedData or serverData is more up-to-date
         /**
        * Networking Code
        *
@@ -615,7 +615,7 @@ export class GameData {
     const timestamps = Object.keys(runHistoryData);
     const timestampsNo = timestamps.map(Number);
 
-    //Arbitrary limit of 25 entries per User --> Can increase or decrease
+    // Arbitrary limit of 25 entries per User --> Can increase or decrease
     if (timestamps.length >= 25) {
       const oldestTimestamp = Math.min.apply(Math, timestampsNo);
       delete runHistoryData[oldestTimestamp.toString()];
@@ -625,7 +625,7 @@ export class GameData {
     runHistoryData[timestamp] = {};
     runHistoryData[timestamp]["entry"] = runEntry;
     runHistoryData[timestamp]["victory"] = victory;
-    //Not implemented at the moment, but leaving room for future work
+    // Not implemented at the moment, but leaving room for future work
     runHistoryData[timestamp]["favorite"] = false;
 
     localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), true));
