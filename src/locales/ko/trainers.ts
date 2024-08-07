@@ -29,7 +29,7 @@ export const titles: SimpleTranslationEntries = {
   "galactic_commander": "갤럭시단 간부",
   "galactic_commander_female": "갤럭시단 간부",
   "plasma_sage": "플라스마단 현인",
-  "plasma_admin": "Team Plasma Admin",
+  "plasma_admin": "플라스마단 간부",
   "flare_admin": "플레어단 간부",
   "flare_admin_female": "플레어단 간부",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
