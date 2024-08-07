@@ -1130,7 +1130,7 @@ export class EncounterPhase extends BattlePhase {
       this.scene.ui.showText(this.getEncounterMessage(), null, () => {
         const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
         const ordinalUse = ["en", "es", "it"];
-        const ordinalIndex = (ordinalUse.includes(i18next.resolvedLanguage)) ? ["st","nd","rd"][((count+90)%100-10)%10-1]||"th" : "";
+        const ordinalIndex = (ordinalUse.includes(i18next.resolvedLanguage)) ? ["st","nd","rd"][((count+90)%100-10)%10-1] || "th" : "";
         const cycleCount = count.toLocaleString()+ordinalIndex;
         const encounterDialogue = i18next.t(`${(this.scene.gameData.gender === PlayerGender.FEMALE)?"PGF":"PGM"}battleSpecDialogue:encounter`, {cycleCount: cycleCount});
         this.scene.ui.showDialogue(encounterDialogue, enemy.species.name, null, () => {
