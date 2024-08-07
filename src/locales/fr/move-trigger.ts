@@ -21,6 +21,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isGlowing": "{{pokemonName}} est entouré\nd’une lumière intense !",
   "bellChimed": "Un grelot sonne !",
   "foresawAnAttack": "{{pokemonName}}\nprévoit une attaque !",
+  "isTighteningFocus": "{{pokemonName}} se concentre\nau maximum !",
   "hidUnderwater": "{{pokemonName}}\nse cache sous l’eau !",
   "soothingAromaWaftedThroughArea": "Une odeur apaisante flotte dans l’air !",
   "sprangUp": "{{pokemonName}}\nse propulse dans les airs !",
@@ -59,4 +60,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}} prend le type\nde {{targetPokemonName}} !",
   "suppressAbilities": "Le talent de {{pokemonName}}\na été rendu inactif !",
   "swapArenaTags": "Les effets affectant chaque côté du terrain\nont été échangés par {{pokemonName}} !",
+  "exposedMove": "{{targetPokemonName}} est identifié\npar {{pokemonName}} !",
 } as const;

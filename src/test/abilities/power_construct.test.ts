@@ -47,11 +47,11 @@ describe("Abilities - POWER CONSTRUCT", () => {
 
       const zygarde = game.scene.getParty().find((p) => p.species.speciesId === Species.ZYGARDE);
       expect(zygarde).not.toBe(undefined);
-      expect(zygarde.formIndex).toBe(completeForm);
+      expect(zygarde!.formIndex).toBe(completeForm);
 
-      zygarde.hp = 0;
-      zygarde.status = new Status(StatusEffect.FAINT);
-      expect(zygarde.isFainted()).toBe(true);
+      zygarde!.hp = 0;
+      zygarde!.status = new Status(StatusEffect.FAINT);
+      expect(zygarde!.isFainted()).toBe(true);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.doKillOpponents();
@@ -59,7 +59,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
       game.doSelectModifier();
       await game.phaseInterceptor.to(QuietFormChangePhase);
 
-      expect(zygarde.formIndex).toBe(baseForm);
+      expect(zygarde!.formIndex).toBe(baseForm);
     },
     TIMEOUT
   );

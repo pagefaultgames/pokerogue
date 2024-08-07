@@ -2,7 +2,7 @@ import { Stat } from "#app/data/pokemon-stat";
 import { SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import * as Utils from "#app/utils";
 import { Species } from "#enums/species";
 import Phase from "phaser";
@@ -79,7 +79,7 @@ describe("Items - Thick Club", () => {
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType(null, ["THICK_CLUB"]).newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
@@ -101,7 +101,7 @@ describe("Items - Thick Club", () => {
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType(null, ["THICK_CLUB"]).newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
@@ -123,7 +123,7 @@ describe("Items - Thick Club", () => {
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType(null, ["THICK_CLUB"]).newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
@@ -160,7 +160,7 @@ describe("Items - Thick Club", () => {
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType(null, ["THICK_CLUB"]).newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
@@ -197,7 +197,7 @@ describe("Items - Thick Club", () => {
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType(null, ["THICK_CLUB"]).newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
@@ -219,7 +219,7 @@ describe("Items - Thick Club", () => {
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType(null, ["THICK_CLUB"]).newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(1);

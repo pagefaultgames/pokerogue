@@ -11,7 +11,7 @@ export default class SettingsAudioUiHandler extends AbstractSettingsUiHandler {
    * @param scene - The BattleScene instance.
    * @param mode - The UI mode, optional.
    */
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
     this.title = "Audio";
     this.settings = Setting.filter(s => s.type === SettingType.AUDIO);

@@ -84,7 +84,7 @@ export class EggHatchPhase extends Phase {
 
       this.scene.gameData.eggs.splice(eggIndex, 1);
 
-      this.scene.fadeOutBgm(null, false);
+      this.scene.fadeOutBgm(undefined, false);
 
       this.eggHatchHandler = this.scene.ui.getHandler() as EggHatchSceneHandler;
 
@@ -234,8 +234,8 @@ export class EggHatchPhase extends Phase {
             ease: "Sine.easeInOut",
             duration: 250,
             onComplete: () => {
-              count++;
-              if (count < repeatCount) {
+              count!++;
+              if (count! < repeatCount!) { // we know they are defined
                 return this.doEggShake(intensity, repeatCount, count).then(() => resolve());
               }
               this.scene.tweens.add({
@@ -347,7 +347,7 @@ export class EggHatchPhase extends Phase {
           this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
           this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
             this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(() => {
-              this.scene.ui.showText(null, 0);
+              this.scene.ui.showText("", 0);
               this.end();
             });
           });
@@ -447,6 +447,6 @@ export class EggHatchPhase extends Phase {
 
     }, this.egg.id, EGG_SEED.toString());
 
-    return ret;
+    return ret!;
   }
 }
