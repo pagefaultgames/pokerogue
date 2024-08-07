@@ -587,6 +587,9 @@ export class TrainerConfig {
       };
     }
     }
+
+    console.warn(`Evil team admin for ${team} not found. Returning empty species pools.`);
+    return [];
   }
 
   /**

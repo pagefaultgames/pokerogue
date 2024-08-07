@@ -25,8 +25,8 @@ export enum ArenaTagSide {
 export abstract class ArenaTag {
   public tagType: ArenaTagType;
   public turnCount: integer;
-  public sourceMove: Moves | undefined;
-  public sourceId: integer | undefined;
+  public sourceMove?: Moves;
+  public sourceId?: integer;
   public side: ArenaTagSide;
 
 
@@ -339,9 +339,9 @@ export class NoCritTag extends ArenaTag {
 
   /** Queues a message upon removing this effect from the field */
   onRemove(arena: Arena): void {
-    const source = arena.scene.getPokemonById(this.sourceId);
+    const source = arena.scene.getPokemonById(this.sourceId!); // TODO: is this bang correct?
     arena.scene.queueMessage(i18next.t("arenaTag:noCritOnRemove", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(source),
+      pokemonNameWithAffix: getPokemonNameWithAffix(source ?? undefined),
       moveName: this.getMoveName()
     }));
   }
@@ -857,7 +857,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
   case ArenaTagType.CRAFTY_SHIELD:
     return new CraftyShieldTag(sourceId, side);
   case ArenaTagType.NO_CRIT:
-    return new NoCritTag(turnCount, sourceMove, sourceId, side);
+    return new NoCritTag(turnCount, sourceMove!, sourceId, side); // TODO: is this bang correct?
   case ArenaTagType.MUD_SPORT:
     return new MudSportTag(turnCount, sourceId);
   case ArenaTagType.WATER_SPORT:

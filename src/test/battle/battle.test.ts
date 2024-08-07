@@ -342,7 +342,7 @@ describe("Test Battle Phase", () => {
       .startingHeldItems([{ name: "TEMP_STAT_BOOSTER", type: TempBattleStat.ACC }]);
 
     await game.startBattle();
-    game.scene.getPlayerPokemon().hp = 1;
+    game.scene.getPlayerPokemon()!.hp = 1;
     game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(BattleEndPhase);
