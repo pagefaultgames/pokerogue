@@ -667,20 +667,6 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.COLRESS]: [
-    {
-      encounter: [
-        "dialogue:colress.encounter.1",
-        "dialogue:colress.encounter.2",
-        "dialogue:colress.encounter.3",
-      ],
-      victory: [
-        "dialogue:colress.victory.1",
-        "dialogue:colress.victory.2",
-        "dialogue:colress.victory.3",
-      ]
-    }
-  ],
   [TrainerType.FLARE_GRUNT]: [
     {
       encounter: [
