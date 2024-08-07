@@ -4941,7 +4941,18 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           willBePursued = true;
           opposingPursuitUsers.forEach(pursuiter => {
             if (user.scene.tryRemovePhase(p => p instanceof MovePhase && p.pokemon.id === pursuiter.id)) {
-              user.scene.prependToPhase(new MovePhase(user.scene, pursuiter, [switchOutTarget.getBattlerIndex()], pursuiter.getMoveset().find(m => m.moveId === Moves.PURSUIT) || new PokemonMove(Moves.PURSUIT), false, false), MoveEndPhase);
+              user.scene.prependToPhase(
+                new MovePhase(
+                  user.scene,
+                  pursuiter,
+                  [switchOutTarget.getBattlerIndex()],
+                  pursuiter.getMoveset().find(m =>
+                    m?.moveId === Moves.PURSUIT) || new PokemonMove(Moves.PURSUIT),
+                  false,
+                  false
+                ),
+                MoveEndPhase
+              );
             }
           });
         }
