@@ -2,7 +2,7 @@ import { BattleStat } from "#app/data/battle-stat.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
-import { CommandPhase, MessagePhase } from "#app/phases.js";
+import { CommandPhase, MessagePhase } from "#app/phases/phases";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "#test/utils/gameManager";

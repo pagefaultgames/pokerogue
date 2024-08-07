@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
-import { EncounterPhase, SelectStarterPhase, TitlePhase } from "#app/phases";
+import { EncounterPhase, SelectStarterPhase, TitlePhase } from "#app/phases/phases";
 import { Mode } from "#app/ui/ui";
 import { GameModes } from "#app/game-mode";
 import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";

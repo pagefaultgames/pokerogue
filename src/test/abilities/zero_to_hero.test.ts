@@ -1,6 +1,6 @@
 import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { QuietFormChangePhase } from "#app/form-change-phase.js";
-import { TurnEndPhase } from "#app/phases.js";
+import { TurnEndPhase } from "#app/phases/phases";
+import { QuietFormChangePhase } from "#app/phases/form-change-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

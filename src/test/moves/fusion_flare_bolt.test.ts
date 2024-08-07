@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
-import { MoveEffectPhase, MovePhase, MoveEndPhase, DamagePhase } from "#app/phases";
+import { MoveEffectPhase, MovePhase, MoveEndPhase, DamagePhase } from "#app/phases/phases";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Stat } from "#app/data/pokemon-stat";
 import { allMoves } from "#app/data/move";

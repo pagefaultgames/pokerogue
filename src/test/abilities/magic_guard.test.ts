@@ -2,7 +2,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
-import { TurnEndPhase, MoveEffectPhase } from "#app/phases";
+import { TurnEndPhase, MoveEffectPhase } from "#app/phases/phases";
 import { Moves } from "#enums/moves";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { ArenaTagSide, getArenaTag } from "#app/data/arena-tag";

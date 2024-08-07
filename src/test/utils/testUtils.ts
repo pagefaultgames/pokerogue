@@ -3,7 +3,7 @@ import i18next, { type ParseKeys } from "i18next";
 import { vi } from "vitest";
 import GameManager from "./gameManager";
 import { BattlerIndex } from "#app/battle.js";
-import { TurnStartPhase } from "#app/phases.js";
+import { TurnStartPhase } from "#app/phases/phases";
 
 /** Ready to use array of Moves.SPLASH x4 */
 export const SPLASH_ONLY = [Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH];

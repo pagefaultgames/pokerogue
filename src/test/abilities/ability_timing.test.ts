@@ -1,4 +1,4 @@
-import { CommandPhase, MessagePhase, TurnInitPhase } from "#app/phases";
+import { CommandPhase, MessagePhase, TurnInitPhase } from "#app/phases/phases";
 import i18next, { initI18n } from "#app/plugins/i18n";
 import GameManager from "#test/utils/gameManager";
 import { Mode } from "#app/ui/ui";

@@ -4,7 +4,7 @@ import * as Utils from "../utils";
 import { MoveCategory, allMoves, MoveTarget } from "./move";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases/phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";

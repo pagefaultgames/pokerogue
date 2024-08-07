@@ -3,7 +3,7 @@ import { Abilities } from "#app/enums/abilities.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
-import { BerryPhase, TurnEndPhase } from "#app/phases.js";
+import { BerryPhase, TurnEndPhase } from "#app/phases/phases";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

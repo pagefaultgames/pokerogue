@@ -27,7 +27,7 @@ import { Tutorial } from "../tutorial";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
-import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
+import { OutdatedPhase, ReloadSessionPhase } from "#app/phases/phases";
 import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";

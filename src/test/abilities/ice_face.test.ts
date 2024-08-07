@@ -1,5 +1,5 @@
-import { QuietFormChangePhase } from "#app/form-change-phase";
-import { MoveEffectPhase, MoveEndPhase, TurnEndPhase, TurnInitPhase } from "#app/phases";
+import { QuietFormChangePhase } from "#app/phases/form-change-phase";
+import { MoveEffectPhase, MoveEndPhase, TurnEndPhase, TurnInitPhase } from "#app/phases/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";

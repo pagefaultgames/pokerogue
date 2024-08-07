@@ -1,4 +1,4 @@
-import { BattleEndPhase, TurnInitPhase } from "#app/phases";
+import { BattleEndPhase, TurnInitPhase } from "#app/phases/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition, } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";

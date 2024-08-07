@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { BerryPhase, MessagePhase, MoveHeaderPhase, SwitchSummonPhase, TurnStartPhase } from "#app/phases";
+import { BerryPhase, MessagePhase, MoveHeaderPhase, SwitchSummonPhase, TurnStartPhase } from "#app/phases/phases";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;

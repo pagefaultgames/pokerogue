@@ -5,12 +5,12 @@ import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import {Button} from "#enums/buttons";
 import i18next from "i18next";
-import { SelectStarterPhase, TitlePhase } from "#app/phases.js";
 import { Challenge } from "#app/data/challenge.js";
 import * as Utils from "../utils";
 import { Challenges } from "#app/enums/challenges.js";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Color, ShadowColor } from "#app/enums/color.js";
+import { SelectStarterPhase, TitlePhase } from "#app/phases/phases";
 
 /**
  * Handles all the UI for choosing optional challenges.

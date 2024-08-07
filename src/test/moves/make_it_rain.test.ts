@@ -1,5 +1,5 @@
 import { BattleStat } from "#app/data/battle-stat.js";
-import { MoveEffectPhase, MoveEndPhase, StatChangePhase } from "#app/phases";
+import { MoveEffectPhase, MoveEndPhase, StatChangePhase } from "#app/phases/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";

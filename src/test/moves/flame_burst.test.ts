@@ -2,7 +2,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
-import { SelectTargetPhase, TurnEndPhase } from "#app/phases";
+import { SelectTargetPhase, TurnEndPhase } from "#app/phases/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#app/enums/abilities.js";

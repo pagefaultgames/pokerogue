@@ -1,6 +1,6 @@
 import { applyAbAttrs, applyPreDefendAbAttrs, IgnoreMoveEffectsAbAttr, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
 import { Stat } from "#app/data/pokemon-stat";
-import { CommandPhase, MoveEffectPhase } from "#app/phases";
+import { CommandPhase, MoveEffectPhase } from "#app/phases/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";

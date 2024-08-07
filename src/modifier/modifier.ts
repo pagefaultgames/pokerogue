@@ -1,5 +1,5 @@
 import * as ModifierTypes from "./modifier-type";
-import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../phases";
+import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../phases/phases";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { MAX_PER_TYPE_POKEBALLS, PokeballType } from "../data/pokeball";
@@ -7,7 +7,7 @@ import Pokemon, { PlayerPokemon } from "../field/pokemon";
 import { Stat } from "../data/pokemon-stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from "../data/type";
-import { EvolutionPhase } from "../evolution-phase";
+import { EvolutionPhase } from "../phases/evolution-phase";
 import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import { getPokemonNameWithAffix } from "../messages";
 import * as Utils from "../utils";
