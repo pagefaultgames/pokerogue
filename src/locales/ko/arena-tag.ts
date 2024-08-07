@@ -37,6 +37,8 @@ export const arenaTag: SimpleTranslationEntries = {
   "stickyWebActivateTrap": "{{pokemonName}}[[는]]\n끈적끈적네트에 걸렸다!",
   "trickRoomOnAdd": "{{pokemonNameWithAffix}}[[는]]\n시공을 뒤틀었다!",
   "trickRoomOnRemove": "뒤틀린 시공이 원래대로 되돌아왔다!",
+  "wonderRoomOnAdd": "It created a bizarre area in which the\nDefense and Special Defense stats are swapped!",
+  "wonderRoomOnRemove": "The Defense and Special Defense stats\nhave returned to normal!",
   "gravityOnAdd": "중력이 강해졌다!",
   "gravityOnRemove": "중력이 원래대로 되돌아왔다!",
   "tailwindOnAdd": "순풍이 불기 시작했다!",

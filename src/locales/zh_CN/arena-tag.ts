@@ -37,6 +37,8 @@ export const arenaTag: SimpleTranslationEntries = {
   "stickyWebActivateTrap": "{{pokemonName}}\n被黏黏网粘住了！",
   "trickRoomOnAdd": "{{pokemonNameWithAffix}}\n扭曲了时空！",
   "trickRoomOnRemove": "扭曲的时空复原了！",
+  "wonderRoomOnAdd": "It created a bizarre area in which the\nDefense and Special Defense stats are swapped!",
+  "wonderRoomOnRemove": "The Defense and Special Defense stats\nhave returned to normal!",
   "gravityOnAdd": "重力变强了！",
   "gravityOnRemove": "重力复原了！",
   "tailwindOnAdd": "从身后\n吹起了顺风！",

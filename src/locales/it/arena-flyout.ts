@@ -36,6 +36,7 @@ export const arenaFlyout: SimpleTranslationEntries = {
   "stealthRock": "Levitoroccia",
   "stickyWeb": "Rete Vischiosa",
   "trickRoom": "Distortozona",
+  "wonderRoom": "Wonder Room",
   "gravity": "Gravità",
   "reflect": "Riflesso",
   "lightScreen": "Schermoluce",

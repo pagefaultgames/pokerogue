@@ -37,6 +37,8 @@ export const arenaTag: SimpleTranslationEntries = {
   "stickyWebActivateTrap": "{{pokemonName}} ennemi\nest pris dans la toile gluante !",
   "trickRoomOnAdd": "{{pokemonNameWithAffix}}\nfausse les dimensions !",
   "trickRoomOnRemove": "Les dimensions faussées\nreviennent à la normale !",
+  "wonderRoomOnAdd": "It created a bizarre area in which the\nDefense and Special Defense stats are swapped!",
+  "wonderRoomOnRemove": "The Defense and Special Defense stats\nhave returned to normal!",
   "gravityOnAdd": "La gravité s’intensifie !",
   "gravityOnRemove": "La gravité est revenue à la normale !",
   "tailwindOnAdd": "Un vent arrière souffle !",

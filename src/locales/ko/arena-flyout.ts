@@ -36,6 +36,7 @@ export const arenaFlyout: SimpleTranslationEntries = {
   "stealthRock": "스텔스록",
   "stickyWeb": "끈적끈적네트",
   "trickRoom": "트릭룸",
+  "wonderRoom": "Wonder Room",
   "gravity": "중력",
   "reflect": "리플렉터",
   "lightScreen": "빛의장막",

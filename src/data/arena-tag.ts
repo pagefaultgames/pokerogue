@@ -711,6 +711,31 @@ export class TrickRoomTag extends ArenaTag {
 }
 
 /**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Wonder_Room_(move) Wonder Room}.
+ * Swaps the Defense and Special Defense stats for all Pokémon on the field as long as this arena tag is up,
+ * also reversing the turn order for all Pokémon on the field as well.
+ */
+export class WonderRoomTag extends ArenaTag {
+  constructor(turnCount: integer) {
+    super(ArenaTagType.WONDER_ROOM, turnCount, Moves.WONDER_ROOM);
+  }
+
+  apply(arena: Arena, args: any[]): boolean {
+    const isWonderRoom = args[0] as Utils.BooleanHolder;
+    isWonderRoom.value = !isWonderRoom.value;
+    return true;
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t("arenaTag:wonderRoomOnAdd"));
+  }
+
+  onRemove(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t("arenaTag:wonderRoomOnRemove"));
+  }
+}
+
+/**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) Gravity}.
  * Grounds all Pokémon on the field, including Flying-types and those with
  * {@linkcode Abilities.LEVITATE} for the duration of the arena tag, usually 5 turns.
@@ -834,5 +859,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new TailwindTag(turnCount, sourceId, side);
   case ArenaTagType.HAPPY_HOUR:
     return new HappyHourTag(turnCount, sourceId, side);
+  case ArenaTagType.WONDER_ROOM:
+    return new WonderRoomTag(turnCount);
   }
 }

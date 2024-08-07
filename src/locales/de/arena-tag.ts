@@ -37,6 +37,8 @@ export const arenaTag: SimpleTranslationEntries = {
   "stickyWebActivateTrap": "{{pokemonName}} ist im Klebenetz gefangen!",
   "trickRoomOnAdd": "{{pokemonNameWithAffix}} hat die Dimensionen verdreht!",
   "trickRoomOnRemove": "Die verdrehte Dimension ist wieder normal!",
+  "wonderRoomOnAdd": "It created a bizarre area in which the\nDefense and Special Defense stats are swapped!",
+  "wonderRoomOnRemove": "The Defense and Special Defense stats\nhave returned to normal!",
   "gravityOnAdd": "Die Erdanziehung wurde verstärkt!",
   "gravityOnRemove": "Die Erdanziehung ist wieder normal!",
   "tailwindOnAdd": "Die Pokémon erhalten Rückenwind!",

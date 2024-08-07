@@ -37,6 +37,8 @@ export const arenaTag: SimpleTranslationEntries = {
   "stickyWebActivateTrap": "The opposing {{pokemonName}} was caught in a sticky web!",
   "trickRoomOnAdd": "{{pokemonNameWithAffix}} twisted\nthe dimensions!",
   "trickRoomOnRemove": "The twisted dimensions\nreturned to normal!",
+  "wonderRoomOnAdd": "It created a bizarre area in which the\nDefense and Special Defense stats are swapped!",
+  "wonderRoomOnRemove": "The Defense and Special Defense stats\nhave returned to normal!",
   "gravityOnAdd": "Gravity intensified!",
   "gravityOnRemove": "Gravity returned to normal!",
   "tailwindOnAdd": "The Tailwind blew from behind team!",

@@ -7358,9 +7358,10 @@ export function initMoves() {
     new StatusMove(Moves.POWER_SPLIT, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .unimplemented(),
     new StatusMove(Moves.WONDER_ROOM, Type.PSYCHIC, -1, 10, -1, 0, 5)
+      .attr(AddArenaTagAttr, ArenaTagType.WONDER_ROOM, 5)
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES)
-      .unimplemented(),
+      .partial(),
     new AttackMove(Moves.PSYSHOCK, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 5)
       .attr(DefDefAttr),
     new AttackMove(Moves.VENOSHOCK, Type.POISON, MoveCategory.SPECIAL, 65, 100, 10, -1, 0, 5)

@@ -690,7 +690,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isPlayer()) {
       this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
     }
-    const statValue = new Utils.NumberHolder(this.getStat(stat));
+    const statValue = new Utils.NumberHolder(1);
+    const wonderRoom = new Utils.BooleanHolder(false);
+    this.scene.arena.applyTags(ArenaTagType.WONDER_ROOM, wonderRoom);
+    if (wonderRoom.value) {
+      if (stat === Stat.DEF) {
+        statValue.value = this.getStat(Stat.SPDEF);
+      } else if (stat === Stat.SPDEF) {
+        statValue.value = this.getStat(Stat.DEF);
+      }
+    } else {
+      statValue.value = this.getStat(stat);
+    }
     this.scene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
 
     const fieldApplied = new Utils.BooleanHolder(false);

@@ -36,6 +36,7 @@ export const arenaFlyout: SimpleTranslationEntries = {
   "stealthRock": "Piège de Roc",
   "stickyWeb": "Toile Gluante",
   "trickRoom": "Distorsion",
+  "wonderRoom": "Wonder Room",
   "gravity": "Gravité",
   "reflect": "Protection",
   "lightScreen": "Mur Lumière",
