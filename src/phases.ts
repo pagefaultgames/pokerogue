@@ -1129,6 +1129,9 @@ export class EncounterPhase extends BattlePhase {
       const enemy = this.scene.getEnemyPokemon();
       this.scene.ui.showText(this.getEncounterMessage(), null, () => {
         const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
+        //The two lines below check if English ordinals (1st, 2nd, 3rd, Xth) are used and determine which one to use.
+        //Otherwise, it defaults to an empty string.
+        //As of 08-07-24: Spanish and Italian default to the English translations
         const ordinalUse = ["en", "es", "it"];
         const ordinalIndex = (ordinalUse.includes(i18next.resolvedLanguage)) ? ["st","nd","rd"][((count+90)%100-10)%10-1] || "th" : "";
         const cycleCount = count.toLocaleString()+ordinalIndex;
