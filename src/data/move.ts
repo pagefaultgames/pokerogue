@@ -118,7 +118,7 @@ export default class Move implements Localizable {
   private conditions: MoveCondition[];
   private flags: integer;
   private nameAppend: string;
-  /** Used for possible type change due ot outside effects */
+  /** Used for possible type change due to outside effects */
   private _finalType: Type | null = null;
 
   constructor(id: Moves, type: Type, category: MoveCategory, defaultMoveTarget: MoveTarget, power: integer, accuracy: integer, pp: integer, chance: integer, priority: integer, generation: integer) {
