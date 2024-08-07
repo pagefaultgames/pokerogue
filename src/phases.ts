@@ -4464,11 +4464,24 @@ export class PostGameOverPhase extends Phase {
   }
 }
 
+/**
+ * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}
+ * for the player (if a switch would be valid for the current battle state).
+ */
 export class SwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
   private isModal: boolean;
   private doReturn: boolean;
 
+  /**
+   * Creates a new SwitchPhase
+   * @param scene {@linkcode BattleScene} Current battle scene
+   * @param fieldIndex Field index to switch out
+   * @param isModal Indicates if the switch should be forced (true) or is
+   * optional (false).
+   * @param doReturn Indicates if the party member on the field should be
+   * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase}.
+   */
   constructor(scene: BattleScene, fieldIndex: integer, isModal: boolean, doReturn: boolean) {
     super(scene);
 
@@ -4480,13 +4493,17 @@ export class SwitchPhase extends BattlePhase {
   start() {
     super.start();
 
-    // Skip modal switch if impossible
+    // Skip modal switch if impossible (no remaining party members that aren't in battle)
     if (this.isModal && !this.scene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
       return super.end();
     }
 
-    // Skip if the fainted party member has been revived already
-    if (this.isModal && !this.scene.getParty()[this.fieldIndex].isFainted()) {
+    // Skip if the fainted party member has been revived already. doReturn is
+    // only passed as `false` from FaintPhase (as opposed to other usages such
+    // as ForceSwitchOutAttr or CheckSwitchPhase), so we only want to check this
+    // if the mon should have already been returned but is still alive and well
+    // on the field. see also; battle.test.ts
+    if (this.isModal && !this.doReturn && !this.scene.getParty()[this.fieldIndex].isFainted()) {
       return super.end();
     }
 
