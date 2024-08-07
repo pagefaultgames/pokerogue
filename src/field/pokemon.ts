@@ -19,7 +19,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase, MoveEndPhase } from "../phases";
 import { BattleStat } from "../data/battle-stat";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
@@ -1259,6 +1259,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (ignoreImmunity.value) {
           return 1;
         }
+
+        const exposedTags = this.findTags(tag => tag instanceof ExposedTag) as ExposedTag[];
+        if (exposedTags.some(t => t.ignoreImmunity(defType, moveType))) {
+          return 1;
+        }
       }
 
       return getTypeDamageMultiplier(moveType, defType);
@@ -1864,6 +1869,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyAbAttrs(IgnoreOpponentEvasionAbAttr, this, null, targetEvasionLevel);
     applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, target, sourceMove, targetEvasionLevel);
     this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), TempBattleStat.ACC, userAccuracyLevel);
+
+    if (target.findTag(t => t instanceof ExposedTag)) {
+      targetEvasionLevel.value = Math.min(0, targetEvasionLevel.value);
+    }
 
     const accuracyMultiplier = new Utils.NumberHolder(1);
     if (userAccuracyLevel.value !== targetEvasionLevel.value) {
