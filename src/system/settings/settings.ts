@@ -764,6 +764,14 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
               handler: () => changeLocaleHandler("ko")
             },
             {
+              label: "日本語",
+              handler: () => changeLocaleHandler("ja")
+            },
+            {
+              label: "Català",
+              handler: () => changeLocaleHandler("ca-ES")
+            },
+            {
               label: i18next.t("settings:back"),
               handler: () => cancelHandler()
             }

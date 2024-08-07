@@ -36,7 +36,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "baker": "제빵사",
   "battle_girl": "배틀걸",
   "beauty": "아가씨",
-  "beginners": "반바지 꼬마 & 짧은 치마", // 확인 필요
+  "beginners": "반바지 꼬마 & 짧은 치마",
   "biker": "폭주족",
   "black_belt": "태권왕",
   "breeder": "포켓몬 브리더",
@@ -62,7 +62,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "guitarist_female": "기타리스트",
   "harlequin": "어릿광대",
   "hiker": "등산가",
-  "hooligans": "폭주족 & 빡빡이", // 확인 필요
+  "hooligans": "폭주족 & 빡빡이",
   "hoopster": "농구선수",
   "infielder": "야구선수",
   "janitor": "청소부",
@@ -92,7 +92,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "pokémon_ranger_female": "포켓몬 레인저",
   "pokémon_rangers": "포켓몬 레인저",
   "ranger": "포켓몬 레인저",
-  "restaurant_staff": "요리사", // 혹은 오너로 추정
+  "restaurant_staff": "레스토랑 직원",
   "rich": "신사",
   "rich_female": "마담",
   "rich_boy": "도련님",
@@ -114,7 +114,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "school_kids": "학원끝난 아이",
   "swimmer": "수영팬티 소년",
   "swimmer_female": "비키니 아가씨",
-  "swimmers": "수영팬티 소년 & 비키니 아가씨", // 확인 필요
+  "swimmers": "수영팬티 소년 & 비키니 아가씨",
   "twins": "쌍둥이",
   "veteran": "베테랑 트레이너",
   "veteran_female": "베테랑 트레이너",
