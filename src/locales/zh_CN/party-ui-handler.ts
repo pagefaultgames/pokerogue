@@ -17,6 +17,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "UNPAUSE_EVOLUTION": "解除进化暂停",
   "REVIVE": "复活",
   "RENAME": "起名",
+  "PAUSE_EVOLUTION": "Pause Evolution",
 
   "choosePokemon": "选择一只宝可梦。",
   "doWhatWithThisPokemon": "要对宝可梦做什么？",
@@ -26,6 +27,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "tooManyItems": "{{pokemonName}}拥有\n太多这个道具了！",
   "anyEffect": "即便使用也无效果哦。",
   "unpausedEvolutions": "{{pokemonName}}的进化停止了。",
+  "pausedEvolutions": "Evolutions have been paused for {{pokemonName}}.",
   "unspliceConfirmation": "真的要把{{fusionName}}\n从{{pokemonName}}身上分离吗? {{fusionName}}会就此消失。",
   "wasReverted": "{{fusionName}}恢复成了{{pokemonName}}。",
   "releaseConfirmation": "你真要放生{{pokemonName}}吗？",

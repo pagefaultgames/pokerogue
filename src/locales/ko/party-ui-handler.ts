@@ -17,6 +17,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "UNPAUSE_EVOLUTION": "진화 재개",
   "REVIVE": "되살린다",
   "RENAME": "닉네임 바꾸기",
+  "PAUSE_EVOLUTION": "Pause Evolution",
 
   "choosePokemon": "포켓몬을 선택하세요.",
   "doWhatWithThisPokemon": "포켓몬을 어떻게 하겠습니까?",
@@ -26,6 +27,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "tooManyItems": "{{pokemonName}}[[는]] 지닌 도구의 수가\n너무 많습니다",
   "anyEffect": "써도 효과가 없다.",
   "unpausedEvolutions": "{{pokemonName}}의 진화가 재개되었다.",
+  "pausedEvolutions": "Evolutions have been paused for {{pokemonName}}.",
   "unspliceConfirmation": "{{pokemonName}}로부터 {{fusionName}}의 융합을 해제하시겠습니까?\n{{fusionName}}는 사라지게 됩니다.",
   "wasReverted": "{{fusionName}}은 {{pokemonName}}의 모습으로 돌아갔습니다!",
   "releaseConfirmation": "{{pokemonName}}[[를]]\n정말 놓아주겠습니까?",

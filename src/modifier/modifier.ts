@@ -969,7 +969,7 @@ export class SpeciesCritBoosterModifier extends CritBoosterModifier {
  * Applies Specific Type item boosts (e.g., Magnet)
  */
 export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
-  private moveType: Type;
+  public moveType: Type;
   private boostMultiplier: number;
 
   constructor(type: ModifierType, pokemonId: integer, moveType: Type, boostPercent: number, stackCount?: integer) {
@@ -2062,6 +2062,12 @@ export class MoneyRewardModifier extends ConsumableModifier {
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
     scene.addMoney(moneyAmount.value);
+
+    scene.getParty().map(p => {
+      if (p.species.speciesId === Species.GIMMIGHOUL || p.fusionSpecies.speciesId === Species.GIMMIGHOUL) {
+        p.evoCounter++;
+      }
+    });
 
     return true;
   }

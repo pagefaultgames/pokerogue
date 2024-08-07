@@ -1609,6 +1609,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 12, Moves.DRAGON_BREATH ],
     [ 16, Moves.CURSE ],
     [ 20, Moves.ROCK_SLIDE ],
+    [ 22, Moves.GYRO_BALL ], //Custom, from USUM
     [ 24, Moves.SCREECH ],
     [ 28, Moves.SAND_TOMB ],
     [ 32, Moves.STEALTH_ROCK ],
@@ -2121,11 +2122,11 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 20, Moves.DOUBLE_HIT ],
     [ 24, Moves.SLASH ],
     [ 28, Moves.FOCUS_ENERGY ],
-    [ 30, Moves.STEEL_WING ],
     [ 32, Moves.AGILITY ],
     [ 36, Moves.AIR_SLASH ],
     [ 40, Moves.X_SCISSOR ],
     [ 44, Moves.SWORDS_DANCE ],
+    [ 48, Moves.STEEL_WING ],
   ],
   [Species.JYNX]: [
     [ 1, Moves.POUND ],

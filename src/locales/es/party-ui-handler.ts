@@ -17,6 +17,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "UNPAUSE_EVOLUTION": "Reanudar Evolución",
   "REVIVE": "Revivir",
   "RENAME": "Rename",
+  "PAUSE_EVOLUTION": "Pause Evolution",
 
   "choosePokemon": "Elige a un Pokémon.",
   "doWhatWithThisPokemon": "¿Que quieres hacer con este Pokémon?",
@@ -26,6 +27,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "tooManyItems": "¡{{pokemonName}} tiene demasiados\nde este objeto!",
   "anyEffect": "No tendría ningún efecto.",
   "unpausedEvolutions": "Se reanudó las evoluciones de {{pokemonName}}.",
+  "pausedEvolutions": "Evolutions have been paused for {{pokemonName}}.",
   "unspliceConfirmation": "¿Seguro que quiere separar a {{fusionName}}\nde {{pokemonName}}? {{fusionName}} se perderá.",
   "wasReverted": "{{fusionName}} se revirtió a {{pokemonName}}.",
   "releaseConfirmation": "¿Quieres liberar a {{pokemonName}}?",
