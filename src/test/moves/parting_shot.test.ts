@@ -29,7 +29,6 @@ describe("Moves - Parting Shot", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
     game.override.moveset([Moves.PARTING_SHOT, Moves.SPLASH]);
-    game.override.enemySpecies(Species.POOCHYENA);
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.startingLevel(5);
     game.override.enemyLevel(5);
@@ -41,13 +40,14 @@ describe("Moves - Parting Shot", () => {
     async () => {
       await game.startBattle([Species.MURKROW]);
       game.override.ability(Abilities.PRANKSTER);
+      game.override.enemySpecies(Species.POOCHYENA);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
 
-      await game.phaseInterceptor.to(BerryPhase);
+      await game.phaseInterceptor.to(BerryPhase, false);
       const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
       expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
       expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
@@ -61,6 +61,7 @@ describe("Moves - Parting Shot", () => {
     async () => {
       await game.startBattle([Species.MURKROW]);
       game.override.ability(Abilities.PRANKSTER);
+      game.override.enemySpecies(Species.GHOLDENGO);
       game.override.enemyAbility(Abilities.GOOD_AS_GOLD);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -68,7 +69,7 @@ describe("Moves - Parting Shot", () => {
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
 
-      await game.phaseInterceptor.to(BerryPhase);
+      await game.phaseInterceptor.to(BerryPhase, false);
       const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
       expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
       expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
