@@ -264,6 +264,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Ein ewiges Abenteuer!",
   },
+  "FRESH_START": {
+    name: "Hussa, noch einmal von vorn!",
+    description: "Schließe die 'Neuanfang' Herausforderung ab"
+  }
 } as const;
 
 // Achievement translations for the when the player character is female
@@ -373,5 +377,6 @@ export const PGFachv: AchievementTranslationEntries = {
   "MONO_DRAGON": PGMachv.MONO_DRAGON,
   "MONO_DARK": PGMachv.MONO_DARK,
   "MONO_FAIRY": PGMachv.MONO_FAIRY,
+  "FRESH_START": PGMachv.FRESH_START
 } as const;
 

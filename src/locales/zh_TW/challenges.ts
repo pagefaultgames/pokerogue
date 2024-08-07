@@ -22,4 +22,10 @@ export const challenges: TranslationEntries = {
     "desc": "你只能使用{{type}}\n屬性的寶可夢",
     "desc_default": "你只能使用所選\n屬性的寶可夢"
   },
+  "freshStart": {
+    "name": "Fresh Start",
+    "desc": "You can only use the original starters, and only as if you had just started PokéRogue.",
+    "value.0": "Off",
+    "value.1": "On",
+  }
 } as const;
