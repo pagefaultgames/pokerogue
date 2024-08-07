@@ -44,7 +44,7 @@ describe("Moves - CLANGOROUS_SOUL", () => {
   	async() => {
   	 	await game.startBattle([Species.MAGIKARP]);
 
-     	const leadPokemon = game.scene.getPlayerPokemon();
+     	const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.CLANGOROUS_SOUL));
@@ -63,7 +63,7 @@ describe("Moves - CLANGOROUS_SOUL", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       //Here - BattleStat.SPD -> 0 and BattleStat.SPDEF -> 4
@@ -88,7 +88,7 @@ describe("Moves - CLANGOROUS_SOUL", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       leadPokemon.summonData.battleStats[BattleStat.ATK] = 6;
       leadPokemon.summonData.battleStats[BattleStat.DEF] = 6;
@@ -112,7 +112,7 @@ describe("Moves - CLANGOROUS_SOUL", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
       leadPokemon.hp = hpLost - PREDAMAGE;
 

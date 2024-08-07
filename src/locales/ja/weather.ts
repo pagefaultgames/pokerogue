@@ -4,63 +4,63 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  * The weather namespace holds text displayed when weather is active during a battle
  */
 export const weather: SimpleTranslationEntries = {
-  "sunnyStartMessage": "The sunlight got bright!",
-  "sunnyLapseMessage": "The sunlight is strong.",
-  "sunnyClearMessage": "The sunlight faded.",
+  "sunnyStartMessage": "日差しが　強くなった！",
+  "sunnyLapseMessage": "日差しが　強い！",
+  "sunnyClearMessage": "日差しが　元に戻った！",
 
-  "rainStartMessage": "A downpour started!",
-  "rainLapseMessage": "The downpour continues.",
-  "rainClearMessage": "The rain stopped.",
+  "rainStartMessage": "雨が　降り始めた！",
+  "rainLapseMessage": "雨が　降っている！",
+  "rainClearMessage": "雨が　あがった！",
 
-  "sandstormStartMessage": "A sandstorm brewed!",
-  "sandstormLapseMessage": "The sandstorm rages.",
-  "sandstormClearMessage": "The sandstorm subsided.",
-  "sandstormDamageMessage": "{{pokemonNameWithAffix}} is buffeted\nby the sandstorm!",
+  "sandstormStartMessage": "砂あらしが　吹き始めた！",
+  "sandstormLapseMessage": "砂あらしが　吹きあれる！",
+  "sandstormClearMessage": "砂あらしが　おさまった！",
+  "sandstormDamageMessage": "砂あらしが\n{{pokemonNameWithAffix}}を　襲う！",
 
-  "hailStartMessage": "It started to hail!",
-  "hailLapseMessage": "Hail continues to fall.",
-  "hailClearMessage": "The hail stopped.",
-  "hailDamageMessage": "{{pokemonNameWithAffix}} is pelted\nby the hail!",
+  "hailStartMessage": "あられが　降り始めた！",
+  "hailLapseMessage": "あられが　降っている！",
+  "hailClearMessage": "あられが　止んだ！",
+  "hailDamageMessage": "あられが\n{{pokemonNameWithAffix}}を　襲う！",
 
-  "snowStartMessage": "It started to snow!",
-  "snowLapseMessage": "The snow is falling down.",
-  "snowClearMessage": "The snow stopped.",
+  "snowStartMessage": "雪が　降り始めた！",
+  "snowLapseMessage": "雪が　降っている！",
+  "snowClearMessage": "雪が　止んだ！",
 
-  "fogStartMessage": "A thick fog emerged!",
-  "fogLapseMessage": "The fog continues.",
-  "fogClearMessage": "The fog disappeared.",
+  "fogStartMessage": "足下に　霧(きり)が立ち込めた！",
+  "fogLapseMessage": "足下に　霧(きり)が　立ち込めている！",
+  "fogClearMessage": "足下の　霧(きり)が消え去った！",
 
-  "heavyRainStartMessage": "A heavy downpour started!",
-  "heavyRainLapseMessage": "The heavy downpour continues.",
-  "heavyRainClearMessage": "The heavy rain stopped.",
+  "heavyRainStartMessage": "強い雨が　降り始めた！",
+  "heavyRainLapseMessage": "強い雨が　降っている！",
+  "heavyRainClearMessage": "強い雨が　あがった！",
 
-  "harshSunStartMessage": "The sunlight got hot!",
-  "harshSunLapseMessage": "The sun is scorching hot.",
-  "harshSunClearMessage": "The harsh sunlight faded.",
+  "harshSunStartMessage": "日差しが　とても強くなった！",
+  "harshSunLapseMessage": "日差しが　とても強い！",
+  "harshSunClearMessage": "日差しが　元に戻った！",
 
-  "strongWindsStartMessage": "A heavy wind began!",
-  "strongWindsLapseMessage": "The wind blows intensely.",
-  "strongWindsEffectMessage": "The mysterious air current weakened the attack!",
-  "strongWindsClearMessage": "The heavy wind stopped."
+  "strongWindsStartMessage": "謎(なぞ)の　乱気流(らんきりゅう)が\nひこうポケモンを　護(まも)る！",
+  "strongWindsLapseMessage": "謎(なぞ)の　乱気流(らんきりゅう)の　勢(いきお)いは　止まらない！",
+  "strongWindsEffectMessage": "謎(なぞ)の　乱気流(らんきりゅう)が　攻撃(こうげき)を　弱(よわ)めた！",
+  "strongWindsClearMessage": "謎(なぞ)の　乱気流(らんきりゅう)が　おさまった！"
 };
 
 export const terrain: SimpleTranslationEntries = {
-  "misty": "Misty",
-  "mistyStartMessage": "Mist swirled around the battlefield!",
-  "mistyClearMessage": "The mist disappeared from the battlefield.",
-  "mistyBlockMessage": "{{pokemonNameWithAffix}} surrounds itself with a protective mist!",
+  "misty": "ミストフィールド",
+  "mistyStartMessage": "足下に　霧(きり)が立ち込めた！",
+  "mistyClearMessage": "足下の　霧(きり)が消え去った！",
+  "mistyBlockMessage": "{{pokemonNameWithAffix}}は\nミストフィールドに　守られている！",
 
-  "electric": "Electric",
-  "electricStartMessage": "An electric current ran across the battlefield!",
-  "electricClearMessage": "The electricity disappeared from the battlefield.",
+  "electric": "エレキフィールド",
+  "electricStartMessage": "足下に　電気が　かけめぐる！",
+  "electricClearMessage": "足下の　電気が　消え去った！",
 
-  "grassy": "Grassy",
-  "grassyStartMessage": "Grass grew to cover the battlefield!",
-  "grassyClearMessage": "The grass disappeared from the battlefield.",
+  "grassy": "グラスフィールド",
+  "grassyStartMessage": "足下に　草がおいしげった！",
+  "grassyClearMessage": "足下の　草が消え去った！",
 
-  "psychic": "Psychic",
-  "psychicStartMessage": "The battlefield got weird!",
-  "psychicClearMessage": "The weirdness disappeared from the battlefield!",
+  "psychic": "サイコフィールド",
+  "psychicStartMessage": "足元が　不思議な感じに　なった！",
+  "psychicClearMessage": "足元の　不思議感が　消え去った！",
 
-  "defaultBlockMessage": "{{pokemonNameWithAffix}} is protected by the {{terrainName}} Terrain!"
+  "defaultBlockMessage": "{{pokemonNameWithAffix}}は\n{{terrainName}}に　守られている！"
 };

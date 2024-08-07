@@ -42,10 +42,10 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
     this.settingBlacklisted = settingKeyboardBlackList;
     this.device = Device.KEYBOARD;
 
-    const deleteEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
-    const restoreDefaultEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.HOME);
-    deleteEvent.on("up", this.onDeleteDown, this);
-    restoreDefaultEvent.on("up", this.onHomeDown, this);
+    const deleteEvent = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
+    const restoreDefaultEvent = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.HOME);
+    deleteEvent && deleteEvent.on("up", this.onDeleteDown, this);
+    restoreDefaultEvent && restoreDefaultEvent.on("up", this.onHomeDown, this);
   }
 
   setSetting = setSettingKeyboard;

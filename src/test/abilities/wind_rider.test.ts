@@ -34,7 +34,7 @@ describe("Abilities - Wind Rider", () => {
 
   it("takes no damage from wind moves and its Attack is increased by one stage when hit by one", async () => {
     await game.startBattle([Species.MAGIKARP]);
-    const shiftry = game.scene.getEnemyPokemon();
+    const shiftry = game.scene.getEnemyPokemon()!;
 
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
@@ -51,7 +51,7 @@ describe("Abilities - Wind Rider", () => {
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
-    const shiftry = game.scene.getPlayerPokemon();
+    const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
@@ -67,8 +67,8 @@ describe("Abilities - Wind Rider", () => {
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
-    const magikarp = game.scene.getEnemyPokemon();
-    const shiftry = game.scene.getPlayerPokemon();
+    const magikarp = game.scene.getEnemyPokemon()!;
+    const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
     expect(magikarp.summonData.battleStats[BattleStat.ATK]).toBe(0);
@@ -85,8 +85,8 @@ describe("Abilities - Wind Rider", () => {
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
-    const magikarp = game.scene.getEnemyPokemon();
-    const shiftry = game.scene.getPlayerPokemon();
+    const magikarp = game.scene.getEnemyPokemon()!;
+    const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
     expect(magikarp.summonData.battleStats[BattleStat.ATK]).toBe(0);
@@ -103,7 +103,7 @@ describe("Abilities - Wind Rider", () => {
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
-    const shiftry = game.scene.getPlayerPokemon();
+    const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
     expect(shiftry.isFullHp()).toBe(true);

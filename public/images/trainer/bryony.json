@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "magma_admin_m.png",
+			"image": "bryony.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 80,
@@ -12,7 +12,7 @@
 				{
 					"filename": "0001.png",
 					"rotated": false,
-					"trimmed": true,
+					"trimmed": false,
 					"sourceSize": {
 						"w": 80,
 						"h": 80
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:f63ad48affc076f60fae78992c96a2bf:80928b32710abcb28c07c6fc5a425d99:3b961d8852b62aaf24ceb2030c036515$"
+		"smartupdate": "$TexturePacker:SmartUpdate:831f5748dad92911b10a1cb358ee2dae:a3bf81bbaa3b49cad5e0e549cf94563b:bb6befc9383c9c08837183ae2a7a80c1$"
 	}
 }

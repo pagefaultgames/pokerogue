@@ -7,7 +7,7 @@ import * as Utils from "#app/utils";
 import i18next from "i18next";
 
 export default class UnavailableModalUiHandler extends ModalUiHandler {
-  private reconnectTimer: NodeJS.Timeout;
+  private reconnectTimer: NodeJS.Timeout | null;
   private reconnectDuration: number;
   private reconnectCallback: () => void;
 
