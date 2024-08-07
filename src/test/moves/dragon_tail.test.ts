@@ -44,6 +44,7 @@ describe("Moves - Dragon Tail", () => {
       await game.startBattle([Species.DRATINI]);
 
       const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
 
@@ -66,8 +67,10 @@ describe("Moves - Dragon Tail", () => {
       game.override.enemyAbility(Abilities.ROUGH_SKIN);
 
       const leadPokemon = game.scene.getPlayerPokemon();
+      expect(leadPokemon).toBeDefined();
 
       const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
 
@@ -97,6 +100,8 @@ describe("Moves - Dragon Tail", () => {
 
       const enemyLeadPokemon = game.scene.currentBattle.enemyParty[0];
       const enemySecPokemon = game.scene.currentBattle.enemyParty[1];
+      expect(enemyLeadPokemon).toBeDefined();
+      expect(enemySecPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
       game.doSelectTarget(BattlerIndex.ENEMY);
@@ -140,6 +145,8 @@ describe("Moves - Dragon Tail", () => {
 
       const enemyLeadPokemon = game.scene.currentBattle.enemyParty[0];
       const enemySecPokemon = game.scene.currentBattle.enemyParty[1];
+      expect(enemyLeadPokemon).toBeDefined();
+      expect(enemySecPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
       game.doSelectTarget(BattlerIndex.ENEMY);
