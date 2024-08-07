@@ -9,6 +9,9 @@ import { addWindow } from "./ui-theme";
 import { ParseKeys } from "i18next";
 import { PlayerGender } from "#enums/player-gender";
 
+const achvRows = 4;
+const achvCols = 17;
+
 export default class AchvsUiHandler extends MessageUiHandler {
   private achvsContainer: Phaser.GameObjects.Container;
   private achvIconsContainer: Phaser.GameObjects.Container;
@@ -19,10 +22,16 @@ export default class AchvsUiHandler extends MessageUiHandler {
   private scoreText: Phaser.GameObjects.Text;
   private unlockText: Phaser.GameObjects.Text;
 
+  private achvsTotal: integer;
+  private scrollCursor: integer;
+
   private cursorObj: Phaser.GameObjects.NineSlice;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
+
+    this.achvsTotal = Object.keys(achvs).length;
+    this.scrollCursor = 0;
   }
 
   setup() {
@@ -53,9 +62,9 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     this.achvIcons = [];
 
-    for (let a = 0; a < Object.keys(achvs).length; a++) {
-      const x = (a % 17) * 18;
-      const y = Math.floor(a / 17) * 18;
+    for (let a = 0; a < achvRows * achvCols; a++) {
+      const x = (a % achvCols) * 18;
+      const y = Math.floor(a / achvCols) * 18;
 
       const icon = this.scene.add.sprite(x, y, "items", "unknown");
       icon.setOrigin(0, 0);
@@ -119,24 +128,11 @@ export default class AchvsUiHandler extends MessageUiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
-    const achvUnlocks = this.scene.gameData.achvUnlocks;
-
-    Object.values(achvs).forEach((achv: Achv, i: integer) => {
-      const icon = this.achvIcons[i];
-      const unlocked = achvUnlocks.hasOwnProperty(achv.id);
-      const hidden = !unlocked && achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
-      const tinted = !hidden && !unlocked;
-
-      icon.setFrame(!hidden ? achv.iconImage : "unknown");
-      if (tinted) {
-        icon.setTintFill(0);
-      } else {
-        icon.clearTint();
-      }
-    });
+    this.updateAchvIcons();
 
     this.achvsContainer.setVisible(true);
     this.setCursor(0);
+    this.setScrollCursor(0);
 
     this.getUi().moveTo(this.achvsContainer, this.getUi().length - 1);
 
@@ -173,24 +169,40 @@ export default class AchvsUiHandler extends MessageUiHandler {
       success = true;
       this.scene.ui.revertMode();
     } else {
+      const rowIndex = Math.floor(this.cursor / achvCols);
+      const itemOffset = (this.scrollCursor * achvCols);
+      console.log(this.cursor);
       switch (button) {
       case Button.UP:
-        if (this.cursor >= 17) {
-          success = this.setCursor(this.cursor - 17);
+        if (this.cursor < achvCols) {
+          if (this.scrollCursor) {
+            success = this.setScrollCursor(this.scrollCursor - 1);
+          }
+        } else {
+          success = this.setCursor(this.cursor - achvCols);
         }
         break;
       case Button.DOWN:
-        if (this.cursor + 17 < Object.keys(achvs).length) {
-          success = this.setCursor(this.cursor + 17);
+        const canMoveDown = (this.cursor + itemOffset) + achvCols < this.achvsTotal;
+        if (rowIndex >= achvRows - 1) {
+          if (this.scrollCursor < Math.ceil(this.achvsTotal / achvCols) - achvRows && canMoveDown) {
+            success = this.setScrollCursor(this.scrollCursor + 1);
+          }
+        } else if (canMoveDown) {
+          success = this.setCursor(this.cursor + achvCols);
         }
         break;
       case Button.LEFT:
-        if (this.cursor) {
+        if (!this.cursor && this.scrollCursor) {
+          success = this.setScrollCursor(this.scrollCursor - 1) && this.setCursor(this.cursor + (achvCols - 1));
+        } else if (this.cursor) {
           success = this.setCursor(this.cursor - 1);
         }
         break;
       case Button.RIGHT:
-        if (this.cursor < Object.keys(achvs).length - 1) {
+        if (this.cursor + 1 === achvRows * achvCols && this.scrollCursor < Math.ceil(this.achvsTotal / achvCols) - achvRows) {
+          success = this.setScrollCursor(this.scrollCursor + 1) && this.setCursor(this.cursor - (achvCols - 1));
+        } else if (this.cursor + itemOffset < Object.keys(achvs).length - 1) {
           success = this.setCursor(this.cursor + 1);
         }
         break;
@@ -219,10 +231,52 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.cursorObj.setPositionRelative(this.achvIcons[this.cursor], 0, 0);
 
     if (updateAchv) {
-      this.showAchv(achvs[Object.keys(achvs)[cursor]]);
+      this.showAchv(achvs[Object.keys(achvs)[cursor + this.scrollCursor * achvCols]]);
     }
 
     return ret;
+  }
+
+  setScrollCursor(scrollCursor: integer): boolean {
+    if (scrollCursor === this.scrollCursor) {
+      return false;
+    }
+
+    this.scrollCursor = scrollCursor;
+
+    this.updateAchvIcons();
+
+    this.showAchv(achvs[Object.keys(achvs)[Math.min(this.cursor + this.scrollCursor * achvCols, Object.values(achvs).length - 1)]]);
+
+    return true;
+  }
+
+  updateAchvIcons(): void {
+    const achvUnlocks = this.scene.gameData.achvUnlocks;
+
+    const itemOffset = this.scrollCursor * achvCols;
+    const itemLimit = achvRows * achvCols;
+
+    const achvRange = Object.values(achvs).slice(itemOffset, itemLimit + itemOffset);
+
+    achvRange.forEach((achv: Achv, i: integer) => {
+      const icon = this.achvIcons[i];
+      const unlocked = achvUnlocks.hasOwnProperty(achv.id);
+      const hidden = !unlocked && achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
+      const tinted = !hidden && !unlocked;
+
+      icon.setFrame(!hidden ? achv.iconImage : "unknown");
+      icon.setVisible(true);
+      if (tinted) {
+        icon.setTintFill(0);
+      } else {
+        icon.clearTint();
+      }
+    });
+
+    if (achvRange.length < this.achvIcons.length) {
+      this.achvIcons.slice(achvRange.length).map(i => i.setVisible(false));
+    }
   }
 
   clear() {
