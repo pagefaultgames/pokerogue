@@ -201,7 +201,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
       case Button.RIGHT:
         if (this.cursor + 1 === achvRows * achvCols && this.scrollCursor < Math.ceil(this.achvsTotal / achvCols) - achvRows) {
           success = this.setScrollCursor(this.scrollCursor + 1) && this.setCursor(this.cursor - (achvCols - 1));
-        } else if (this.cursor + itemOffset < Object.keys(achvs).length - 1) {
+        } else if (this.cursor + itemOffset < this.achvsTotal - 1) {
           success = this.setCursor(this.cursor + 1);
         }
         break;
