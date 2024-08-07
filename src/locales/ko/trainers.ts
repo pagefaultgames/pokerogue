@@ -92,7 +92,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "pokémon_ranger_female": "포켓몬 레인저",
   "pokémon_rangers": "포켓몬 레인저",
   "ranger": "포켓몬 레인저",
-  "restaurant_staff": "요리사", // 혹은 오너로 추정
+  "restaurant_staff": "레스토랑 직원",
   "rich": "신사",
   "rich_female": "마담",
   "rich_boy": "도련님",
