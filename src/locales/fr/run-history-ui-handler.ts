@@ -28,8 +28,8 @@ export const runHistory: SimpleTranslationEntries = {
   "runLength":"Durée session ",
   "viewHeldItems":"Objets tenus",
   "hallofFameText":"Bienvenue au Panthéon !",
-  "viewHallOfFame":"Voir le Panthéon !",
-  "viewEndingSplash":"View ending art!"
+  "viewHallOfFame":"Voir le Panthéon",
+  "viewEndingSplash":"Voir l’illustration de fin !"
 } as const;
 
 //Mode Information found in game-mode.ts
