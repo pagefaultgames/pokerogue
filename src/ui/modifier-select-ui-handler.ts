@@ -52,7 +52,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-    const [ , styleOptions, , , ] = getTextStyleOptions(TextStyle.PARTY, (this.scene as BattleScene).uiTheme);
+    const styleOptions = getTextStyleOptions(TextStyle.PARTY, (this.scene as BattleScene).uiTheme).styleOptions;
 
     if (context) {
       context.font = styleOptions.fontSize + "px " + styleOptions.fontFamily;

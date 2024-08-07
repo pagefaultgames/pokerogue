@@ -2,7 +2,7 @@ import BattleScene from "../battle-scene";
 import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { TextStyle, addTextObject } from "./text";
+import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager.js";
@@ -40,7 +40,14 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       this.titleContainer.add(this.eventDisplay);
     }
 
-    this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 109, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: "54px" });
+    this.playerCountLabel = addTextObject(
+      this.scene,
+      (this.scene.game.canvas.width / 6) - 2,
+      (this.scene.game.canvas.height / 6) - 13 - 576 * getTextStyleOptions(TextStyle.WINDOW, this.scene.uiTheme).scale,
+      `? ${i18next.t("menu:playersOnline")}`,
+      TextStyle.MESSAGE,
+      { fontSize: "54px" }
+    );
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 

@@ -103,6 +103,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   "ko":{
     starterInfoTextSize: "52px",
     instructionTextSize: "38px",
+  },
+  "ja":{
+    starterInfoTextSize: "51px",
+    instructionTextSize: "38px",
   }
 };
 
