@@ -41,7 +41,7 @@ describe("Abilities - Disguise", () => {
   it("takes no damage from attacking move and transforms to Busted form, taking 1/8 max HP damage from the disguise breaking", async () => {
     await game.startBattle();
 
-    const mimikyu = game.scene.getEnemyPokemon();
+    const mimikyu = game.scene.getEnemyPokemon()!;
     const maxHp = mimikyu.getMaxHp();
     const disguiseDamage = Math.floor(maxHp / 8);
 
@@ -58,7 +58,7 @@ describe("Abilities - Disguise", () => {
   it("doesn't break disguise when attacked with ineffective move", async () => {
     await game.startBattle();
 
-    const mimikyu = game.scene.getEnemyPokemon();
+    const mimikyu = game.scene.getEnemyPokemon()!;
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
@@ -74,7 +74,7 @@ describe("Abilities - Disguise", () => {
     game.override.enemyLevel(5);
     await game.startBattle();
 
-    const mimikyu = game.scene.getEnemyPokemon();
+    const mimikyu = game.scene.getEnemyPokemon()!;
     const maxHp = mimikyu.getMaxHp();
     const disguiseDamage = Math.floor(maxHp / 8);
 
@@ -96,7 +96,7 @@ describe("Abilities - Disguise", () => {
   it("takes effects from status moves and damage from status effects", async () => {
     await game.startBattle();
 
-    const mimikyu = game.scene.getEnemyPokemon();
+    const mimikyu = game.scene.getEnemyPokemon()!;
     expect(mimikyu.hp).toBe(mimikyu.getMaxHp());
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TOXIC_THREAD));
@@ -104,7 +104,7 @@ describe("Abilities - Disguise", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
-    expect(mimikyu.status.effect).toBe(StatusEffect.POISON);
+    expect(mimikyu.status?.effect).toBe(StatusEffect.POISON);
     expect(mimikyu.summonData.battleStats[BattleStat.SPD]).toBe(-1);
     expect(mimikyu.hp).toBeLessThan(mimikyu.getMaxHp());
   }, TIMEOUT);
@@ -115,7 +115,7 @@ describe("Abilities - Disguise", () => {
 
     await game.startBattle([Species.MIMIKYU, Species.FURRET]);
 
-    const mimikyu = game.scene.getPlayerPokemon();
+    const mimikyu = game.scene.getPlayerPokemon()!;
     const maxHp = mimikyu.getMaxHp();
     const disguiseDamage = Math.floor(maxHp / 8);
 
@@ -147,7 +147,7 @@ describe("Abilities - Disguise", () => {
 
     await game.startBattle();
 
-    const mimikyu = game.scene.getPlayerPokemon();
+    const mimikyu = game.scene.getPlayerPokemon()!;
 
     expect(mimikyu.formIndex).toBe(bustedForm);
 
