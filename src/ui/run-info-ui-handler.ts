@@ -147,11 +147,11 @@ export default class GameInfoUiHandler extends UiHandler {
     if (!runResult) {
       const enemyContainer = this.scene.add.container(0, 0);
 
-      //Wild - Single and Doubles
+      // Wild - Single and Doubles
       if (runData.battleType === BattleType.WILD) {
         switch (runData.enemyParty.length) {
         case 1:
-          //Wild - Singles
+          // Wild - Singles
           const enemyIconContainer = this.scene.add.container(0, 0);
           const enemyData = runData.enemyParty[0];
           const bossStatus = enemyData.boss;
@@ -191,7 +191,7 @@ export default class GameInfoUiHandler extends UiHandler {
           enemyContainer.setPosition(8, 14);
           break;
         }
-      //Trainer - Single and Double
+      // Trainer - Single and Double
       } else if (runData.battleType === BattleType.TRAINER) {
         const tObj = runData.trainer.toTrainer(this.scene);
         const tObjSpriteKey = tObj.config.getSpriteKey(runData.trainer.variant === TrainerVariant.FEMALE, false);
@@ -429,12 +429,12 @@ export default class GameInfoUiHandler extends UiHandler {
       const speedLabel = (currentLanguage==="es"||currentLanguage==="pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
       const speed = speedLabel+": "+pStats[5];
 
-      //Column 1: HP Atk Def
+      // Column 1: HP Atk Def
       const pokeStatText1 = addBBCodeTextObject(this.scene, -5, 0, hp, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
       pokeStatText1.appendText(atk);
       pokeStatText1.appendText(def);
       pokeStatTextContainer.add(pokeStatText1);
-      //Column 2: SpAtk SpDef Speed
+      // Column 2: SpAtk SpDef Speed
       const pokeStatText2 = addBBCodeTextObject(this.scene, 25, 0, spatk, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
       pokeStatText2.appendText(spdef);
       pokeStatText2.appendText(speed);
@@ -581,9 +581,9 @@ export default class GameInfoUiHandler extends UiHandler {
 
 
   createHallofFame(): void {
-    //Issue Note (08-05-2024): It seems as if fused pokemon do not appear with the averaged color b/c pokemonData's loadAsset requires there to be some active battle?
+    // Issue Note (08-05-2024): It seems as if fused pokemon do not appear with the averaged color b/c pokemonData's loadAsset requires there to be some active battle?
     this.hallofFameContainer = this.scene.add.container(0, 0);
-    //Thank you Hayuna for the code
+    // Thank you Hayuna for the code
     const endCard = this.scene.add.image(0, 0, `end_${this.scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}`);
     endCard.setOrigin(0);
     endCard.setPosition(-1, -1);
