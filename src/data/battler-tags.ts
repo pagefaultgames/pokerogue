@@ -1647,6 +1647,80 @@ export class StockpilingTag extends BattlerTag {
   }
 }
 
+/**
+ * Battler tag for Gulp Missile used by Cramorant.
+ * @extends BattlerTag
+ */
+export class GulpMissileTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, sourceMove: Moves) {
+    super(tagType, BattlerTagLapseType.CUSTOM, 0, sourceMove);
+  }
+
+  /**
+   * Gulp Missile's initial form changes are triggered by using Surf and Dive.
+   * @param {Pokemon} pokemon The Pokemon with Gulp Missile ability.
+   * @returns Whether the BattlerTag can be added.
+   */
+  canAdd(pokemon: Pokemon): boolean {
+    const isSurfOrDive = [ Moves.SURF, Moves.DIVE ].includes(this.sourceMove);
+    const isNormalForm = pokemon.formIndex === 0 && !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA) && !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
+    const isCramorant = pokemon.species.speciesId === Species.CRAMORANT;
+
+    return isSurfOrDive && isNormalForm && isCramorant;
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+    pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+    pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+  }
+}
+
+/**
+ * Tag that makes the target drop all of it type immunities
+ * and all accuracy checks ignore its evasiveness stat.
+ *
+ * Applied by moves: {@linkcode Moves.ODOR_SLEUTH | Odor Sleuth},
+ * {@linkcode Moves.MIRACLE_EYE | Miracle Eye} and {@linkcode Moves.FORESIGHT | Foresight}.
+ *
+ * @extends BattlerTag
+ * @see {@linkcode ignoreImmunity}
+ */
+export class ExposedTag extends BattlerTag {
+  private defenderType: Type;
+  private allowedTypes: Type[];
+
+  constructor(tagType: BattlerTagType, sourceMove: Moves, defenderType: Type, allowedTypes: Type[]) {
+    super(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+    this.defenderType = defenderType;
+    this.allowedTypes = allowedTypes;
+  }
+
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.defenderType = source.defenderType as Type;
+    this.allowedTypes = source.allowedTypes as Type[];
+  }
+
+  /**
+   * @param types {@linkcode Type} of the defending Pokemon
+   * @param moveType {@linkcode Type} of the move targetting it
+   * @returns `true` if the move should be allowed to target the defender.
+   */
+  ignoreImmunity(type: Type, moveType: Type): boolean {
+    return type === this.defenderType && this.allowedTypes.includes(moveType);
+  }
+}
+
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1741,13 +1815,11 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.ALWAYS_CRIT:
   case BattlerTagType.IGNORE_ACCURACY:
     return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
-  case BattlerTagType.NO_CRIT:
-    return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
   case BattlerTagType.ALWAYS_GET_HIT:
   case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
     return new BattlerTag(tagType, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
   case BattlerTagType.BYPASS_SLEEP:
-    return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+    return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
   case BattlerTagType.IGNORE_FLYING:
     return new GroundedTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.ROOSTED:
@@ -1770,6 +1842,13 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new StockpilingTag(sourceMove);
   case BattlerTagType.OCTOLOCK:
     return new OctolockTag(sourceId);
+  case BattlerTagType.IGNORE_GHOST:
+    return new ExposedTag(tagType, sourceMove, Type.GHOST, [Type.NORMAL, Type.FIGHTING]);
+  case BattlerTagType.IGNORE_DARK:
+    return new ExposedTag(tagType, sourceMove, Type.DARK, [Type.PSYCHIC]);
+  case BattlerTagType.GULP_MISSILE_ARROKUDA:
+  case BattlerTagType.GULP_MISSILE_PIKACHU:
+    return new GulpMissileTag(tagType, sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

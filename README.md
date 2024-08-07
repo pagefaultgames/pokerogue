@@ -81,6 +81,7 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
   - kyledove
   - Brumirage
   - pkmn_realidea (Paid Commissions)
+  - IceJkai 
 
 ### 🎨 Trainer Portraits
   - pkmn_realidea (Paid Commissions)

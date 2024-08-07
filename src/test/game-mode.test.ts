@@ -1,13 +1,5 @@
 import { GameMode, GameModes, getGameMode } from "#app/game-mode.js";
-import {
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "./utils/gameManager";
 import * as Utils from "../utils";
 describe("game-mode", () => {

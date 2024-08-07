@@ -19,6 +19,19 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "Team Galactic Boss",
   "plasma_boss": "Team Plasma Boss",
   "flare_boss": "Team Flare Boss",
+
+  "rocket_admin": "Team Rocket Admin",
+  "rocket_admin_female": "Team Rocket Admin",
+  "magma_admin": "Team Magma Admin",
+  "magma_admin_female": "Team Magma Admin",
+  "aqua_admin": "Team Aqua Admin",
+  "aqua_admin_female": "Team Aqua Admin",
+  "galactic_commander": "Team Galactic Commander",
+  "galactic_commander_female": "Team Galactic Commander",
+  "plasma_sage": "Team Plasma Sage",
+  "plasma_admin": "Team Plasma Admin",
+  "flare_admin": "Team Flare Admin",
+  "flare_admin_female": "Team Flare Admin",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -126,17 +139,23 @@ export const trainerClasses: SimpleTranslationEntries = {
   "workers": "Workers",
   "youngster": "Youngster",
   "rocket_grunt": "Rocket Grunt",
+  "rocket_grunts": "Rocket Grunts",
   "rocket_grunt_female": "Rocket Grunt",
   "magma_grunt": "Magma Grunt",
   "magma_grunt_female": "Magma Grunt",
+  "magma_grunts": "Magma Grunts",
   "aqua_grunt": "Aqua Grunt",
   "aqua_grunt_female": "Aqua Grunt",
+  "aqua_grunts": "Aqua Grunts",
   "galactic_grunt": "Galactic Grunt",
   "galactic_grunt_female": "Galactic Grunt",
+  "galactic_grunts": "Galactic Grunts",
   "plasma_grunt": "Plasma Grunt",
   "plasma_grunt_female": "Plasma Grunt",
+  "plasma_grunts": "Plasma Grunts",
   "flare_grunt": "Flare Grunt",
   "flare_grunt_female": "Flare Grunt",
+  "flare_grunts": "Flare Grunts",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -265,6 +284,24 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Leon",
   "rival": "Finn",
   "rival_female": "Ivy",
+
+  // Evil Team Admins
+  "archer": "Archer",
+  "ariana": "Ariana",
+  "proton": "Proton",
+  "petrel": "Petrel",
+  "tabitha": "Tabitha",
+  "courtney": "Courtney",
+  "shelly": "Shelly",
+  "matt": "Matt",
+  "mars": "Mars",
+  "jupiter": "Jupiter",
+  "saturn": "Saturn",
+  "zinzolin": "Zinzolin",
+  "rood": "Rood",
+  "xerosic": "Xerosic",
+  "bryony": "Bryony",
+
   "maxie": "Maxie",
   "archie": "Archie",
   "cyrus": "Cyrus",

@@ -1,11 +1,8 @@
 import { applyAbAttrs, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
 import { Stat } from "#app/data/pokemon-stat";
-import {
-  CommandPhase,
-  MoveEffectPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { CommandPhase, MoveEffectPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
@@ -14,6 +11,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { changeTurnOrder } from "../utils/testUtils";
+import { BattlerIndex } from "#app/battle.js";
 
 
 describe("Abilities - Serene Grace", () => {
@@ -48,7 +47,6 @@ describe("Abilities - Serene Grace", () => {
 
 
     game.scene.getEnemyParty()[0].stats[Stat.SPDEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -59,6 +57,7 @@ describe("Abilities - Serene Grace", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
+    await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     // Check chance of Air Slash without Serene Grace
@@ -81,7 +80,6 @@ describe("Abilities - Serene Grace", () => {
     ]);
 
     game.scene.getEnemyParty()[0].stats[Stat.SPDEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -92,6 +90,7 @@ describe("Abilities - Serene Grace", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
+    await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     // Check chance of Air Slash with Serene Grace

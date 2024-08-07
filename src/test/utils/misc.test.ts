@@ -1,8 +1,8 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import {apiFetch} from "#app/utils";
-import {waitUntil} from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { apiFetch } from "#app/utils";
+import { waitUntil } from "#test/utils/gameManagerUtils";
 
 describe("Test misc", () => {
   let phaserGame: Phaser.Game;
@@ -59,7 +59,7 @@ describe("Test misc", () => {
 
   it("test apifetch mock sync", async () => {
     const data = await game.scene.cachedFetch("./battle-anims/splishy-splash.json");
-    expect(data).not.toBeUndefined();
+    expect(data).toBeDefined();
   });
 
   it("testing wait phase queue", async () => {

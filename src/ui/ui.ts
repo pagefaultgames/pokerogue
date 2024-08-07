@@ -454,7 +454,7 @@ export default class UI extends Phaser.GameObjects.Container {
             this.modeChain.push(this.mode);
           }
           this.mode = mode;
-          const touchControls = document.getElementById("touchControls");
+          const touchControls = document?.getElementById("touchControls");
           if (touchControls) {
             touchControls.dataset.uiMode = Mode[mode];
           }
@@ -535,5 +535,9 @@ export default class UI extends Phaser.GameObjects.Container {
       }
       this.revertMode().then(success => Utils.executeIf(success, this.revertModes).then(() => resolve()));
     });
+  }
+
+  public getModeChain(): Mode[] {
+    return this.modeChain;
   }
 }

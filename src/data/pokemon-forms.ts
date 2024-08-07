@@ -9,6 +9,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { getPokemonNameWithAffix } from "#app/messages.js";
+import i18next from "i18next";
 
 export enum FormChangeItem {
   NONE,
@@ -357,22 +358,21 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
 export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: SpeciesFormChange, preName: string): string {
   const isMega = formChange.formKey.indexOf(SpeciesFormKey.MEGA) > -1;
   const isGmax = formChange.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1;
-  const isEmax = formChange.formKey.indexOf("eternamax") > -1;
+  const isEmax = formChange.formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1;
   const isRevert = !isMega && formChange.formKey === pokemon.species.forms[0].formKey;
-  const prefix = !pokemon.isPlayer() ? pokemon.hasTrainer() ? "Foe " : "Wild " : "Your ";
   if (isMega) {
-    return `${prefix}${preName} Mega Evolved\ninto ${pokemon.name}!`;
+    return i18next.t("battlePokemonForm:megaChange", { preName, pokemonName: pokemon.name });
   }
   if (isGmax) {
-    return `${prefix}${preName} Gigantamaxed\ninto ${pokemon.name}!`;
+    return i18next.t("battlePokemonForm:gigantamaxChange", { preName, pokemonName: pokemon.name });
   }
   if (isEmax) {
-    return `${prefix}${preName} Eternamaxed\ninto ${pokemon.name}!`;
+    return i18next.t("battlePokemonForm:eternamaxChange", { preName, pokemonName: pokemon.name });
   }
   if (isRevert) {
-    return `${prefix}${getPokemonNameWithAffix(pokemon)} reverted\nto its original form!`;
+    return i18next.t("battlePokemonForm:revertChange", { pokemonName: getPokemonNameWithAffix(pokemon) });
   }
-  return `${prefix}${preName} changed form!`;
+  return i18next.t("battlePokemonForm:formChange", { preName });
 }
 
 /**
@@ -828,6 +828,12 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.EISCUE]: [
     new SpeciesFormChange(Species.EISCUE, "", "no-ice", new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.EISCUE, "no-ice", "", new SpeciesFormChangeManualTrigger(), true),
+  ],
+  [Species.CRAMORANT]: [
+    new SpeciesFormChange(Species.CRAMORANT, "", "gulping", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() >= .5)),
+    new SpeciesFormChange(Species.CRAMORANT, "", "gorging", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() < .5)),
+    new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeManualTrigger, true),
+    new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeManualTrigger, true),
   ]
 };
 
