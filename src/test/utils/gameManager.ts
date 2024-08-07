@@ -345,7 +345,7 @@ export default class GameManager {
    * @param inPhase Which phase to expect the selection to occur in. Typically
    * non-command switch actions happen in SwitchPhase.
    */
-  doSelectPartyPokemon(slot: integer, inPhase = "SwitchPhase") {
+  doSelectPartyPokemon(slot: number, inPhase = "SwitchPhase") {
     this.onNextPrompt(inPhase, Mode.PARTY, () => {
       const partyHandler = this.scene.ui.getHandler() as PartyUiHandler;
 
