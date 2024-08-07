@@ -43,15 +43,15 @@ describe("Moves - Dragon Tail", () => {
     async () => {
       await game.startBattle([Species.DRATINI]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
 
       await game.phaseInterceptor.to(BerryPhase);
 
-      const isVisible = enemyPokemon?.visible;
-      const hasFled = enemyPokemon?.wildFlee;
+      const isVisible = enemyPokemon.visible;
+      const hasFled = enemyPokemon.wildFlee;
       expect(!isVisible && hasFled ).toBe(true);
 
       // simply want to test that the game makes it this far without crashing
@@ -66,22 +66,20 @@ describe("Moves - Dragon Tail", () => {
       await game.startBattle([Species.DRATINI]);
       game.override.enemyAbility(Abilities.ROUGH_SKIN);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
 
       await game.phaseInterceptor.to(BerryPhase);
 
-      const isVisible = enemyPokemon?.visible;
-      const hasFled = enemyPokemon?.wildFlee;
+      const isVisible = enemyPokemon.visible;
+      const hasFled = enemyPokemon.wildFlee;
       expect(!isVisible && hasFled ).toBe(true);
       expect(leadPokemon?.hp < leadPokemon?.getMaxHp());
-
-      await game.phaseInterceptor.to(BattleEndPhase);
     }, TIMEOUT
   );
 
@@ -93,13 +91,13 @@ describe("Moves - Dragon Tail", () => {
       game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER]);
       game.override.enemyAbility(Abilities.ROUGH_SKIN);
 
-      const leadPokemon = game.scene.getParty()[0];
-      const secPokemon = game.scene.getParty()[1];
+      const leadPokemon = game.scene.getParty()[0]!;
+      const secPokemon = game.scene.getParty()[1]!;
       expect(leadPokemon).toBeDefined();
       expect(secPokemon).toBeDefined();
 
-      const enemyLeadPokemon = game.scene.currentBattle.enemyParty[0];
-      const enemySecPokemon = game.scene.currentBattle.enemyParty[1];
+      const enemyLeadPokemon = game.scene.currentBattle.enemyParty[0]!;
+      const enemySecPokemon = game.scene.currentBattle.enemyParty[1]!;
       expect(enemyLeadPokemon).toBeDefined();
       expect(enemySecPokemon).toBeDefined();
 
@@ -138,13 +136,13 @@ describe("Moves - Dragon Tail", () => {
       game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER]);
       game.override.enemyAbility(Abilities.ROUGH_SKIN);
 
-      const leadPokemon = game.scene.getParty()[0];
-      const secPokemon = game.scene.getParty()[1];
+      const leadPokemon = game.scene.getParty()[0]!;
+      const secPokemon = game.scene.getParty()[1]!;
       expect(leadPokemon).toBeDefined();
       expect(secPokemon).toBeDefined();
 
-      const enemyLeadPokemon = game.scene.currentBattle.enemyParty[0];
-      const enemySecPokemon = game.scene.currentBattle.enemyParty[1];
+      const enemyLeadPokemon = game.scene.currentBattle.enemyParty[0]!;
+      const enemySecPokemon = game.scene.currentBattle.enemyParty[1]!;
       expect(enemyLeadPokemon).toBeDefined();
       expect(enemySecPokemon).toBeDefined();
 
