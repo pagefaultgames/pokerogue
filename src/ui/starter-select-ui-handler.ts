@@ -2504,7 +2504,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonLuckText.setText(luck.toString());
         this.pokemonLuckText.setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
         this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
-        this.pokemonShinyIcon.setVisible(this.starterPreferences[species.speciesId]?.shiny);
+        this.pokemonShinyIcon.setVisible(this.starterPreferences[species.speciesId]?.shiny ?? false);
 
         //Growth translate
         let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
@@ -2778,7 +2778,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         const isValidForChallenge = new Utils.BooleanHolder(true);
         Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), !!this.starterSpecies.length);
-        const currentFilteredContainer = this.filteredStarterContainers.find(p => p.species.speciesId === species.speciesId);
+        const currentFilteredContainer = this.filteredStarterContainers.find(p => p.species.speciesId === species.speciesId)!;
         const starterSprite = currentFilteredContainer.icon as Phaser.GameObjects.Sprite;
         starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female!, formIndex, shiny, variant));
         currentFilteredContainer.checkIconId(female, formIndex, shiny, variant);
