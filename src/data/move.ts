@@ -5718,7 +5718,12 @@ export class TransformAttr extends MoveEffectAttr {
       user.summonData.ability = target.getAbility().id;
       user.summonData.gender = target.getGender();
       user.summonData.fusionGender = target.getFusionGender();
-      user.summonData.stats = [ user.stats[Stat.HP] ].concat(target.stats.slice(1));
+
+      const targetStats = target.getStats();
+      for (let s = Stat.ATK; s <= Stat.SPD; s++) {
+        user.setStat(s, targetStats[s], false);
+      }
+
       user.summonData.battleStats = target.summonData.battleStats.slice(0);
       user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
       user.summonData.types = target.getTypes();
@@ -5730,6 +5735,43 @@ export class TransformAttr extends MoveEffectAttr {
         resolve(true);
       });
     });
+  }
+}
+
+/**
+ * Attribute used for status moves, namely Power Split and Guard Split,
+ * that take the average of a user's and target's corresponding
+ * {@linkcode Stat}s and assign that average back to that {@linkcode Stat}.
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ */
+export class AverageStatAttr extends MoveEffectAttr {
+  /** The stat to be averaged between the user and target */
+  private stat: Stat;
+
+  constructor(stat: Stat) {
+    super();
+
+    this.stat = stat;
+  }
+
+  /**
+   * Takes the average of the {@linkcode user}'s and {@linkcode target}'s corresponding
+   * current {@linkcode stat} values and sets that stat to the average for
+   * both temporarily.
+   * @param user the {@linkcode Pokemon} that used the move
+   * @param target the {@linkcode Pokemon} that the move was used on
+   * @param _move N/A
+   * @param _args N/A
+   * @returns true if attribute application succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    const avg = Math.floor((user.getStat(this.stat, false) + target.getStat(this.stat, false)) / 2);
+
+    user.setStat(this.stat, avg, false);
+    target.setStat(this.stat, avg, false);
+
+    return true;
   }
 }
 
@@ -7355,9 +7397,11 @@ export function initMoves() {
       .target(MoveTarget.USER_SIDE)
       .attr(AddArenaTagAttr, ArenaTagType.WIDE_GUARD, 1, true, true),
     new StatusMove(Moves.GUARD_SPLIT, Type.PSYCHIC, -1, 10, -1, 0, 5)
-      .unimplemented(),
+      .attr(AverageStatAttr, Stat.DEF)
+      .attr(AverageStatAttr, Stat.SPDEF),
     new StatusMove(Moves.POWER_SPLIT, Type.PSYCHIC, -1, 10, -1, 0, 5)
-      .unimplemented(),
+      .attr(AverageStatAttr, Stat.ATK)
+      .attr(AverageStatAttr, Stat.SPATK),
     new StatusMove(Moves.WONDER_ROOM, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES)
