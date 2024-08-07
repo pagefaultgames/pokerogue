@@ -81,7 +81,7 @@ describe("Moves - Baton Pass", () => {
     // assert
     const playerPkm = game.scene.getPlayerPokemon()!;
     // check buffs are still there
-    expect(playerPkm.summonData.battleStats[BattleStat.SPATK]).toEqual(2);
+    expect(game.scene.getEnemyPokemon()!.summonData.battleStats[BattleStat.SPATK]).toEqual(2);
     // confirm that a switch actually happened. can't use species because I
     // can't find a way to override trainer parties with more than 1 pokemon species
     expect(playerPkm.hp).not.toEqual(100);
