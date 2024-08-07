@@ -99,7 +99,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "MEGA_EVOLVE": {
     name: "Megamorfosi",
-    description: "Megaevolvi un pokémon",
+    description: "Megaevolvi un Pokémon",
   },
   "GIGANTAMAX": {
     name: "Grosso e Cattivo",
@@ -264,6 +264,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Follettini e follettine",
   },
+  "FRESH_START": {
+    name: "First Try!",
+    description: "Complete the Fresh Start challenge."
+  }
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
