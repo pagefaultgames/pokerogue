@@ -5078,7 +5078,7 @@ export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
 // Dialogue of the endboss of the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMbattleSpecDialogue.
 export const PGFbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `Une fois de plus, te revoilà.\nSais-tu que ce n’est point là ta première venue ?
-               $Tu a été appelée ici parce que t’y est déjà venue.\nUn nombre inimaginable de fois.
+               $Tu as été appelée ici parce que t’y es déjà venue.\nUn nombre inimaginable de fois.
                $Mais allons-y, faisons le décompte.\nTu en es très précisément à ton {{cycleCount}}e cycle.
 			   $Chaque cycle réinitialise ton souvenir du précédent.\nMais étrangement, des bribes subsistent en toi.
 			   $Jusqu’à maintenant, tu as toujours échoué. Mais je ressens quelque chose de différent cette fois-ci.\n
