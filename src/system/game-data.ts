@@ -520,67 +520,11 @@ export class GameData {
           });
         }
 
-
-        const eggsTestData = [
-          { id: 1, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 2, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 3, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 4, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625126789 },
-          { id: 5, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 6, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 7, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625129012 },
-          { id: 8, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 9, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
-          { id: 10, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625132345 },
-          { id: 11, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 12, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 13, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 14, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625126789 },
-          { id: 15, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 16, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 17, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625129012 },
-          { id: 18, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 19, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
-          { id: 20, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1625132345 },
-          { id: 21, gachaType: GachaType.MOVE, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 22, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 23, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 24, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1625126789 },
-          { id: 25, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 26, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 27, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1625129012 },
-          { id: 28, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 29, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
-          { id: 310, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625132345 },
-          { id: 311, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 312, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 313, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 314, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625126789 },
-          { id: 315, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 316, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 317, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625129012 },
-          { id: 318, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 319, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
-          { id: 320, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625132345 },
-          { id: 29, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
-          { id: 410, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625132345 },
-          { id: 411, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 412, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 413, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 414, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625126789 },
-          { id: 415, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 416, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 417, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625129012 },
-          { id: 418, gachaType: GachaType.LEGENDARY, hatchWaves: 1, timestamp: 1825124567 },
-          { id: 419, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625131234 },
-          { id: 420, gachaType: GachaType.SHINY, hatchWaves: 1, timestamp: 1625132345 }
-        ];
-
-        const eggDataArray: EggData[] = eggsTestData.map(data => new EggData(data));
+        const eggDataArray: EggData[] = systemData.eggs.map(data => new EggData(data));
 
         // this.eggs = systemData.eggs
-        //   ? systemData.eggs.map(e => e.toEgg())
-        //   : [];
+        // ? systemData.eggs.map(e => e.toEgg())
+        // : [];
         this.eggs = eggDataArray.map(e => e.toEgg());
         console.log(this.eggs);
         this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];

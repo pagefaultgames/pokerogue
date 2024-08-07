@@ -47,6 +47,7 @@ import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
 import RenameFormUiHandler from "./rename-form-ui-handler";
+import EggSummaryUiHandler from "./egg-summary-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -62,6 +63,7 @@ export enum Mode {
   STARTER_SELECT,
   EVOLUTION_SCENE,
   EGG_HATCH_SCENE,
+  EGG_HATCH_SUMMARY,
   CONFIRM,
   OPTION_SELECT,
   MENU,
@@ -160,6 +162,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene),
       new EggHatchSceneHandler(scene),
+      new EggSummaryUiHandler(scene),
       new ConfirmUiHandler(scene),
       new OptionSelectUiHandler(scene),
       new MenuUiHandler(scene),
