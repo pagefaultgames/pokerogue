@@ -164,10 +164,13 @@ export const trainerClasses: SimpleTranslationEntries = {
   "flare_grunts": "Sbires de la Team Flare",
   "aether_grunt": "Employé de la Fondation Æther",
   "aether_grunt_female": "Employée de la Fondation Æther",
+  "aether_grunts": "Aether Foundation Employees",
   "skull_grunt": "Sbire de la Team Skull",
   "skull_grunt_female": "Sbire de la Team Skull",
+  "skull_grunts": "Team Skull Grunts",
   "macro_grunt": "Employé de Macro Cosmos",
   "macro_grunt_female": "Employée de Macro Cosmos",
+  "macro_grunts": "Macro Cosmos Trainers",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
