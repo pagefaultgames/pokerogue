@@ -8,7 +8,7 @@ import { addWindow, WindowVariant } from "./ui-theme";
 export enum DropDownColumn {
   GEN,
   TYPES,
-  DEX,
+  CAUGHT,
   UNLOCKS,
   MISC,
   SORT

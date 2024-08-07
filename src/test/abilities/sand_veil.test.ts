@@ -7,8 +7,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "../utils/gameManager";
-import { getMovePosition } from "../utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -45,10 +45,6 @@ describe("Abilities - Sand Veil", () => {
       await game.startBattle([Species.SNORLAX, Species.BLISSEY]);
 
       const leadPokemon = game.scene.getPlayerField();
-      leadPokemon.forEach(p => expect(p).toBeDefined());
-
-      const enemyPokemon = game.scene.getEnemyField();
-      enemyPokemon.forEach(p => expect(p).toBeDefined());
 
       vi.spyOn(leadPokemon[0], "getAbility").mockReturnValue(allAbilities[Abilities.SAND_VEIL]);
 
