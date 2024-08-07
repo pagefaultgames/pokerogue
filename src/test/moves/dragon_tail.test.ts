@@ -50,8 +50,8 @@ describe("Moves - Dragon Tail", () => {
 
       await game.phaseInterceptor.to(BerryPhase);
 
-      const isVisible = enemyPokemon.visible;
-      const hasFled = enemyPokemon.wildFlee;
+      const isVisible = enemyPokemon?.visible;
+      const hasFled = enemyPokemon?.wildFlee;
       expect(!isVisible && hasFled ).toBe(true);
 
       // simply want to test that the game makes it this far without crashing
@@ -76,12 +76,12 @@ describe("Moves - Dragon Tail", () => {
 
       await game.phaseInterceptor.to(BerryPhase);
 
-      const isVisible = enemyPokemon.visible;
-      const hasFled = enemyPokemon.wildFlee;
+      const isVisible = enemyPokemon?.visible;
+      const hasFled = enemyPokemon?.wildFlee;
       expect(!isVisible && hasFled ).toBe(true);
 
       await game.phaseInterceptor.to(BattleEndPhase);
-      expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
+      expect(leadPokemon?.hp).toBeLessThan(leadPokemon?.getMaxHp());
     }, TIMEOUT
   );
 
