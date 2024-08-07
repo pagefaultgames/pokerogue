@@ -22,8 +22,8 @@ export default class AchvsUiHandler extends MessageUiHandler {
   private scoreText: Phaser.GameObjects.Text;
   private unlockText: Phaser.GameObjects.Text;
 
-  private achvsTotal: integer;
-  private scrollCursor: integer;
+  private achvsTotal: number;
+  private scrollCursor: number;
 
   private cursorObj: Phaser.GameObjects.NineSlice;
 
