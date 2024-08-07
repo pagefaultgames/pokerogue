@@ -30,7 +30,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
   private move: Move;
 
   private desc: Phaser.GameObjects.Text;
-  private descScroll : Phaser.Tweens.Tween = null;
+  private descScroll : Phaser.Tweens.Tween | null = null;
 
   private val: Phaser.GameObjects.Container;
   private pp:  Phaser.GameObjects.Text;
@@ -131,7 +131,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
   // show this component with infos for the specific move
   show(move : Move):boolean {
     if (!(this.scene as BattleScene).enableMoveInfo) {
-      return; // move infos have been disabled
+      return false; // move infos have been disabled // TODO:: is `false` correct? i used to be `undeefined`
     }
     this.move = move;
     this.pow.setText(move.power >= 0 ? move.power.toString() : "---");

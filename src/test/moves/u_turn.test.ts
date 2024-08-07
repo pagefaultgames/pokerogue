@@ -43,7 +43,7 @@ describe("Moves - U-turn", () => {
       Species.RAICHU,
       Species.SHUCKLE
     ]);
-    game.scene.getPlayerPokemon().hp = playerHp;
+    game.scene.getPlayerPokemon()!.hp = playerHp;
 
     // act
     game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
@@ -53,7 +53,7 @@ describe("Moves - U-turn", () => {
     // assert
     expect(game.scene.getParty()[1].hp).toEqual(Math.floor(game.scene.getParty()[1].getMaxHp() * 0.33 + playerHp));
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-    expect(game.scene.getPlayerPokemon().species.speciesId).toBe(Species.SHUCKLE);
+    expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.SHUCKLE);
   }, 20000);
 
   it("triggers rough skin on the u-turn user before a new pokemon is switched in", async() => {
@@ -70,9 +70,10 @@ describe("Moves - U-turn", () => {
     await game.phaseInterceptor.to(SwitchPhase, false);
 
     // assert
-    expect(game.scene.getPlayerPokemon().hp).not.toEqual(game.scene.getPlayerPokemon().getMaxHp());
-    expect(game.scene.getEnemyPokemon().battleData.abilityRevealed).toBe(true); // proxy for asserting ability activated
-    expect(game.scene.getPlayerPokemon().species.speciesId).toEqual(Species.RAICHU);
+    const playerPkm = game.scene.getPlayerPokemon()!;
+    expect(playerPkm.hp).not.toEqual(playerPkm.getMaxHp());
+    expect(game.scene.getEnemyPokemon()!.battleData.abilityRevealed).toBe(true); // proxy for asserting ability activated
+    expect(playerPkm.species.speciesId).toEqual(Species.RAICHU);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
   }, 20000);
 
@@ -83,16 +84,17 @@ describe("Moves - U-turn", () => {
       Species.RAICHU,
       Species.SHUCKLE
     ]);
-    vi.spyOn(game.scene.getEnemyPokemon(), "randSeedInt").mockReturnValue(0);
+    vi.spyOn(game.scene.getEnemyPokemon()!, "randSeedInt").mockReturnValue(0);
 
     // act
     game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
     await game.phaseInterceptor.to(SwitchPhase, false);
 
     // assert
-    expect(game.scene.getPlayerPokemon().status?.effect).toEqual(StatusEffect.POISON);
-    expect(game.scene.getPlayerPokemon().species.speciesId).toEqual(Species.RAICHU);
-    expect(game.scene.getEnemyPokemon().battleData.abilityRevealed).toBe(true); // proxy for asserting ability activated
+    const playerPkm = game.scene.getPlayerPokemon()!;
+    expect(playerPkm.status?.effect).toEqual(StatusEffect.POISON);
+    expect(playerPkm.species.speciesId).toEqual(Species.RAICHU);
+    expect(game.scene.getEnemyPokemon()!.battleData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
   }, 20000);
 });

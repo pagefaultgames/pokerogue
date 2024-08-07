@@ -41,7 +41,7 @@ describe("Moves - Lucky Chant", () => {
     async () => {
       await game.startBattle([Species.CHARIZARD]);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
@@ -91,8 +91,8 @@ describe("Moves - Lucky Chant", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       enemyPokemon.addTag(BattlerTagType.ALWAYS_CRIT, 2, Moves.NONE, 0);
 

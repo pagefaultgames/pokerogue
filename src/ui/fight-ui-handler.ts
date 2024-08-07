@@ -21,7 +21,7 @@ export default class FightUiHandler extends UiHandler {
   private powerText: Phaser.GameObjects.Text;
   private accuracyLabel: Phaser.GameObjects.Text;
   private accuracyText: Phaser.GameObjects.Text;
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
   private moveCategoryIcon: Phaser.GameObjects.Sprite;
 
   protected fieldIndex: integer = 0;
@@ -176,7 +176,7 @@ export default class FightUiHandler extends UiHandler {
     const hasMove = cursor < moveset.length;
 
     if (hasMove) {
-      const pokemonMove = moveset[cursor];
+      const pokemonMove = moveset[cursor]!; // TODO: is the bang correct?
       this.typeIcon.setTexture(`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
       this.moveCategoryIcon.setTexture("categories", MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
 
@@ -246,7 +246,7 @@ export default class FightUiHandler extends UiHandler {
       moveText.setName("text-empty-move");
 
       if (moveIndex < moveset.length) {
-        const pokemonMove = moveset[moveIndex];
+        const pokemonMove = moveset[moveIndex]!; // TODO is the bang correct?
         moveText.setText(pokemonMove.getName());
         moveText.setName(pokemonMove.getName());
         moveText.setColor(this.getMoveColor(pokemon, pokemonMove) ?? moveText.style.color);
@@ -273,7 +273,7 @@ export default class FightUiHandler extends UiHandler {
 
     const moveColors = opponents.map((opponent) => {
       return opponent.getMoveEffectiveness(pokemon, pokemonMove);
-    }).sort((a, b) => b - a).map((effectiveness) => {
+    }).filter((eff) => !!eff).sort((a, b) => b - a).map((effectiveness) => {
       return getTypeDamageMultiplierColor(effectiveness, "offense");
     });
 

@@ -14,7 +14,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private splashMessageText: Phaser.GameObjects.Text;
   private eventDisplay: TimedEventDisplay;
 
-  private titleStatsTimer: NodeJS.Timeout;
+  private titleStatsTimer: NodeJS.Timeout | null;
 
   constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
     super(scene, mode);
@@ -118,7 +118,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     this.eventDisplay?.clear();
 
-    clearInterval(this.titleStatsTimer);
+    this.titleStatsTimer && clearInterval(this.titleStatsTimer);
     this.titleStatsTimer = null;
 
     this.scene.tweens.add({

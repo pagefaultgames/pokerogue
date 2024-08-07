@@ -208,7 +208,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getPartyLevels(waveIndex: integer): integer[] {
-    const ret = [];
+    const ret: number[] = [];
     const partyTemplate = this.getPartyTemplate();
 
     const difficultyWaveIndex = this.scene.gameMode.getWaveForDifficulty(waveIndex);
@@ -257,7 +257,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   genPartyMember(index: integer): EnemyPokemon {
     const battle = this.scene.currentBattle;
-    const level = battle.enemyLevels[index];
+    const level = battle.enemyLevels?.[index]!; // TODO: is this bang correct?
 
     let ret: EnemyPokemon;
 
@@ -290,7 +290,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
 
       // Create an empty species pool (which will be set to one of the species pools based on the index)
-      let newSpeciesPool = [];
+      let newSpeciesPool: Species[] = [];
       let useNewSpeciesPool = false;
 
       // If we are in a double battle of named trainers, we need to use alternate species pools (generate half the party from each trainer)
@@ -315,7 +315,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
             return !species.some(s => AlreadyUsedSpecies.includes(s));
           }
           return !AlreadyUsedSpecies.includes(species);
-        });
+        }).flat();
 
         // Filter out the species that are already in the enemy party from the partner trainer species pool
         const speciesPoolPartnerFiltered = speciesPoolPartner.filter(species => {
@@ -324,7 +324,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
             return !species.some(s => AlreadyUsedSpecies.includes(s));
           }
           return !AlreadyUsedSpecies.includes(species);
-        });
+        }).flat();
 
 
         // If the index is even, use the species pool for the main trainer (that way he only uses his own pokemon in battle)
@@ -370,7 +370,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       ret = this.scene.addEnemyPokemon(species, level, !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
     }, this.config.hasStaticParty ? this.config.getDerivedType() + ((index + 1) << 8) : this.scene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + (((!this.config.useSameSeedForAllMembers ? index : 0) + 1) << 8));
 
-    return ret;
+    return ret!; // TODO: is this bang correct?
   }
 
 
@@ -481,7 +481,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     if (maxScorePartyMemberIndexes.length > 1) {
       let rand: integer;
       this.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(maxScorePartyMemberIndexes.length), this.scene.currentBattle.turn << 2);
-      return maxScorePartyMemberIndexes[rand];
+      return maxScorePartyMemberIndexes[rand!];
     }
 
     return maxScorePartyMemberIndexes[0];
@@ -499,6 +499,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
       return 0.45;
     case PartyMemberStrength.STRONGER:
       return 0.375;
+    default:
+      console.warn("getPartyMemberModifierChanceMultiplier not defined. Using default 0");
+      return 0;
     }
   }
 

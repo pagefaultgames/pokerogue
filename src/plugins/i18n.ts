@@ -157,7 +157,7 @@ export async function initI18n(): Promise<void> {
     postProcess: ["korean-postposition"],
   });
 
-  await initFonts(localStorage.getItem("prLang"));
+  await initFonts(localStorage.getItem("prLang") ?? undefined);
 }
 
 export default i18next;

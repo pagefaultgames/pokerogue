@@ -35,7 +35,7 @@ describe("Internals", () => {
   it("should allow Normal and Fighting moves to hit Ghost types", async () => {
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
     await game.toNextTurn();
@@ -59,7 +59,7 @@ describe("Internals", () => {
     game.override.enemyMoveset(Array(4).fill(Moves.MINIMIZE));
     await game.startBattle();
 
-    const pokemon = game.scene.getPlayerPokemon();
+    const pokemon = game.scene.getPlayerPokemon()!;
     vi.spyOn(pokemon, "getAccuracyMultiplier");
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.FORESIGHT));

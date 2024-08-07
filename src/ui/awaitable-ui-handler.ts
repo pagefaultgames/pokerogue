@@ -5,7 +5,7 @@ import {Button} from "#enums/buttons";
 
 export default abstract class AwaitableUiHandler extends UiHandler {
   protected awaitingActionInput: boolean;
-  protected onActionInput: Function;
+  protected onActionInput: Function | null;
   public tutorialActive: boolean = false;
 
   constructor(scene: BattleScene, mode: Mode) {

@@ -55,7 +55,7 @@ describe("Items - Scope Lens", () => {
       Species.GASTLY
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);

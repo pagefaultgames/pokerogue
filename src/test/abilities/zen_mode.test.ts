@@ -150,7 +150,7 @@ describe("Abilities - ZEN MODE", () => {
 
       await game.startBattle([Species.MAGIKARP, Species.DARMANITAN]);
 
-      const darmanitan = game.scene.getParty().find((p) => p.species.speciesId === Species.DARMANITAN);
+      const darmanitan = game.scene.getParty().find((p) => p.species.speciesId === Species.DARMANITAN)!;
       expect(darmanitan).not.toBe(undefined);
       expect(darmanitan.formIndex).toBe(zenForm);
 
