@@ -171,8 +171,8 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Beende den klassischen Modus erfolgreich.",
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
-    name: "Bring Your Child To Work Day",
-    description: "Beat the game in Classic Mode with at least one unevolved party member."
+    name: "'Bringe dein Kind mit zur Arbeit'-Tag" ,
+    description: "Beende den klassischen Modus erfolgreich mit mindestens einem nicht entwickeltem Pokémon in deinem Team"
   },
 
   "MONO_GEN_ONE": {
