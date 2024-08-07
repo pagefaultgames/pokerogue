@@ -46,8 +46,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   private cursorObj: Phaser.GameObjects.Image | null;
 
-  constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode!); // TODO: is this bang correct?
+  constructor(scene: BattleScene, mode: Mode | null) {
+    super(scene, mode);
   }
 
   abstract getWindowWidth(): integer;
@@ -60,7 +60,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     const ui = this.getUi();
 
     this.optionSelectContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -48);
-    this.optionSelectContainer.setName(`option-select-${Mode[this.mode]}`);
+    this.optionSelectContainer.setName(`option-select-${this.mode ? Mode[this.mode] : "UNKNOWN"}`);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
 

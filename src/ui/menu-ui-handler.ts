@@ -51,8 +51,8 @@ export default class MenuUiHandler extends MessageUiHandler {
   public bgmBar: BgmBar;
 
 
-  constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode!); // TODO: is this bang correct?
+  constructor(scene: BattleScene, mode: Mode | null = null) {
+    super(scene, mode);
 
     this.excludedMenus = () => [
       { condition: [Mode.COMMAND, Mode.TITLE].includes(mode ?? Mode.TITLE), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },

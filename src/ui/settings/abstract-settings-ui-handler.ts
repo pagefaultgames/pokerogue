@@ -40,8 +40,8 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   protected settings: Array<Setting>;
   protected localStorageKey: string;
 
-  constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode!); // TODO: is this bang correct?
+  constructor(scene: BattleScene, mode: Mode | null = null) {
+    super(scene, mode);
 
     this.reloadRequired = false;
     this.rowsToDisplay = 8;

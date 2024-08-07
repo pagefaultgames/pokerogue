@@ -27,7 +27,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
     this.achvsTotal = Object.keys(achvs).length;

@@ -16,7 +16,7 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
 
   private readonly randVarianceTime = 1000 * 10;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
     this.reconnectDuration = this.minTime;
   }
