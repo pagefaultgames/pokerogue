@@ -1,16 +1,14 @@
 import { ArenaTagSide } from "#app/data/arena-tag.js";
 import { Stat } from "#app/data/pokemon-stat.js";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import {
-  TurnEndPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { TurnEndPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Wind Rider", () => {
   let phaserGame: Phaser.Game;
@@ -82,8 +80,8 @@ describe("Abilities - Wind Rider", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const ally = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const ally = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     const allySpd = ally.getStat(Stat.SPD);
     const enemySpd = enemy.getStat(Stat.SPD);

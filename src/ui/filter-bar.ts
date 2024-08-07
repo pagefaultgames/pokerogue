@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene.js";
-import { DropDown } from "./dropdown";
+import { DropDown, DropDownType } from "./dropdown";
 import { StarterContainer } from "./starter-container";
 import { addTextObject, getTextColor, TextStyle } from "./text";
 import { UiTheme } from "#enums/ui-theme";
@@ -8,7 +8,7 @@ import { addWindow, WindowVariant } from "./ui-theme";
 export enum DropDownColumn {
   GEN,
   TYPES,
-  DEX,
+  CAUGHT,
   UNLOCKS,
   MISC,
   SORT
@@ -31,7 +31,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
     this.width = width;
     this.height = height;
 
-    this.window = addWindow(scene, 0, 0, width, height, false, false, null, null, WindowVariant.THIN);
+    this.window = addWindow(scene, 0, 0, width, height, false, false, undefined, undefined, WindowVariant.THIN);
     this.add(this.window);
 
     this.cursorObj = this.scene.add.image(1, 1, "cursor");
@@ -120,11 +120,13 @@ export class FilterBar extends Phaser.GameObjects.Container {
   /**
    * Move the leftmost dropdown to the left of the FilterBar instead of below it
    */
-  offsetFirstFilter(): void {
-    if (this.dropDowns[0]) {
-      this.dropDowns[0].autoSize();
-      this.dropDowns[0].x -= this.dropDowns[0].getWidth();
-      this.dropDowns[0].y = 0;
+  offsetHybridFilters(): void {
+    for (let i=0; i<this.dropDowns.length; i++) {
+      if (this.dropDowns[i].dropDownType === DropDownType.HYBRID) {
+        this.dropDowns[i].autoSize();
+        this.dropDowns[i].x = - this.dropDowns[i].getWidth();
+        this.dropDowns[i].y = 0;
+      }
     }
   }
 

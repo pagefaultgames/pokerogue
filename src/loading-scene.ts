@@ -457,8 +457,8 @@ export class LoadingScene extends SceneBase {
       // videos do not need to be preloaded
       intro.loadURL("images/intro_dark.mp4", true);
       if (mobile) {
-        intro.video.setAttribute("webkit-playsinline", "webkit-playsinline");
-        intro.video.setAttribute("playsinline", "playsinline");
+        intro.video?.setAttribute("webkit-playsinline", "webkit-playsinline");
+        intro.video?.setAttribute("playsinline", "playsinline");
       }
       intro.play();
     });

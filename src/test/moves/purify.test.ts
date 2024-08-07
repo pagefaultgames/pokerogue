@@ -1,10 +1,8 @@
 import { Status, StatusEffect } from "#app/data/status-effect.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon.js";
-import {
-  MoveEndPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { MoveEndPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
@@ -44,8 +42,8 @@ describe("Moves - Purify", () => {
     async () => {
       await game.startBattle();
 
-      const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon();
-      const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon();
+      const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+      const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon()!;
 
       playerPokemon.hp = playerPokemon.getMaxHp() - 1;
       enemyPokemon.status = new Status(StatusEffect.BURN);
@@ -53,7 +51,7 @@ describe("Moves - Purify", () => {
       game.doAttack(getMovePosition(game.scene, 0, Moves.PURIFY));
       await game.phaseInterceptor.to(MoveEndPhase);
 
-      expect(enemyPokemon.status).toBe(undefined);
+      expect(enemyPokemon.status).toBeNull();
       expect(playerPokemon.isFullHp()).toBe(true);
     },
     TIMEOUT
@@ -64,7 +62,7 @@ describe("Moves - Purify", () => {
     async () => {
       await game.startBattle();
 
-      const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon();
+      const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon()!;
 
       playerPokemon.hp = playerPokemon.getMaxHp() - 1;
       const playerInitialHp = playerPokemon.hp;

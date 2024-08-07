@@ -3,7 +3,7 @@ import * as Utils from "../utils";
 
 class TrainerNameConfig {
   public urls: string[];
-  public femaleUrls: string[];
+  public femaleUrls: string[] | null;
 
   constructor(type: TrainerType, ...urls: string[]) {
     this.urls = urls.length ? urls : [ Utils.toReadableString(TrainerType[type]).replace(/ /g, "_") ];
@@ -136,8 +136,11 @@ function fetchAndPopulateTrainerNames(url: string, parser: DOMParser, trainerNam
       .then(html => {
         console.log(url);
         const htmlDoc = parser.parseFromString(html, "text/html");
-        const trainerListHeader = htmlDoc.querySelector("#Trainer_list").parentElement;
-        const elements = [...trainerListHeader.parentElement.childNodes];
+        const trainerListHeader = htmlDoc.querySelector("#Trainer_list")?.parentElement;
+        if (!trainerListHeader) {
+          return [];
+        }
+        const elements = [...(trainerListHeader?.parentElement?.childNodes ?? [])];
         const startChildIndex = elements.indexOf(trainerListHeader);
         const endChildIndex = elements.findIndex(h => h.nodeName === "H2" && elements.indexOf(h) > startChildIndex);
         const tables = elements.filter(t => {
@@ -152,6 +155,9 @@ function fetchAndPopulateTrainerNames(url: string, parser: DOMParser, trainerNam
           const trainerRows = [...table.querySelectorAll("tr:not(:first-child)")].filter(r => r.children.length === 9);
           for (const row of trainerRows) {
             const nameCell = row.firstElementChild;
+            if (!nameCell) {
+              continue;
+            }
             const content = nameCell.innerHTML;
             if (content.indexOf(" <a ") > -1) {
               const female = /♀/.test(content);

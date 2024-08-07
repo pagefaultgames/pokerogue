@@ -1,12 +1,12 @@
 import { Species } from "#app/enums/species.js";
 import { TurnEndPhase } from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Dry Skin", () => {
   let phaserGame: Phaser.Game;
@@ -38,7 +38,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     // first turn
@@ -59,7 +59,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
@@ -82,8 +82,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
-    expect(enemy).toBeDefined();
+    const enemy = game.scene.getEnemyPokemon()!;
     const initialHP = 1000;
     enemy.hp = initialHP;
 
@@ -109,7 +108,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
@@ -124,7 +123,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
@@ -140,7 +139,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
