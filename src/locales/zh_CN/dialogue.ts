@@ -432,82 +432,82 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "aether_grunt": {
     "encounter": {
-      1: "I'll fight you with all I have to wipe you out!",
-      2: "I don't care if you're a kid or what. I'll send you flying if you threaten us!",
-      3: "I was told to turn away Trainers, whomever they might be!",
-      4: "I'll show you the power of Aether Paradise!",
-      5: "Now that you've learned of the darkness at the heart of Aether Paradise, we'll need you to conveniently disappear!"
+      1: "我会用尽全力消灭你！",
+      2: "我才不管你是不是小孩！\n只要和我们作对，我就把你打飞！",
+      3: "上头要我拦下所有训练师，无论是谁！",
+      4: "给你展现一下以太乐园的力量！",
+      5: "既然你已经触达到了以太基金会的黑暗，\n那我要请你就此消失了。"
     },
     "victory": {
-      1: "Hmph! You seem to have a lot of skill.",
-      2: "What does this mean? What does this mean!",
-      3: "Hey! You're so strong that there's no way I can turn you away!",
-      4: "Hmm... It seems as though I may have lost.",
-      5: "Here's an impression for you: Aiyee!"
+      1: "哼！看来你有点实力。",
+      2: "这什么情况！什么情况！",
+      3: "啊！你怎么这么强！我这下可没法阻止你！",
+      4: "嗯……看来我输了……",
+      5: "我惊掉大牙了……"
     },
   },
   "aether_admin": {
     "encounter": {
-      1: "I, Branch Chief Faba, shall show you the harshness of the real world!",
-      2: "The man who is called Aether Paradise's last line of defense is to battle a mere child?",
-      3: "I, Faba, am the Aether Branch Chief. The only one in the world, I'm irreplaceable."
+      1: "我，分部长扎奥博， \n给你见识下现实世界的残酷吧！",
+      2: "堂堂以太乐园的最后防线，\n我扎奥博竟然要跟个毛头小子对战。",
+      3: "我，扎奥博，以太基金会分部长。\n世上唯一，无可替代！"
     },
     "victory": {
-      1: "Aiyee!",
-      2: "H-h-how can this be?! How could this child...",
-      3: "This is why... This is why I can't bring myself to like children."
+      1: "哎咿呀！",
+      2: "怎……怎么可能！这孩子！",
+      3: "这就是……这就是为啥我讨厌小孩子！"
     },
   },
   "skull_grunt": {
     "encounter": {
-      1: "We're not bad-we're just hard!",
-      2: "You want some? That's how we say hello! Nice knowing you, punks!",
-      3: "We're just a bunch of guys and gals with a great interest in other people's Pokémon!",
-      4: "Why you trying to act hard when we're already hard as bones out here, homie?",
-      5: "Team Skull represent! We can't pay the rent! Had a lot of fun, but our youth was misspent!"
+      1: "我们并不坏，YO，我们是硬汉！",
+      2: "YO！咋样！我们就这样打招呼！\n混个脸熟呗，崽子！",
+      3: "咱们就是一帮对别人的宝可梦\n比较感兴趣的哥们和姐们！",
+      4: "别装B了，你有我们拽吗，老弟？",
+      5: "骷髅队在此！没钱住房子！\n天天找乐子！青春混到死！"
     },
     "victory": {
-      1: "Huh? Is it over already?",
-      2: "Time for us to break out, yo! Gotta tell y'all peace out, yo!",
-      3: "We don't need your wack Pokémon anyway!",
-      4: "Wha-?! This kid's way too strong-no bones about it!",
-      5: "So, what? I'm lower than a Pokémon?! I already got self-esteem issues, man."
+      1: "哈？这就完了？",
+      2: "该逃跑了YO！闪一边去YO！",
+      3: "你这种弱鸡宝可梦反正我们也不要！",
+      4: "啥！？ 这小屁孩也太牛B了！",
+      5: "MAN！我能说什么，\n我的人生比宝可梦还烂。"
     },
   },
   "skull_admin": {
     "encounter": {
-      1: " ...Hmph. You don't look like anything special to me.",
-      2: "It takes these dumb Grunts way too long to deal with you kids..",
-      3: "Mess with anyone in Team Skull, and I'll show you how serious I can get."
+      1: " …哼嗯，你看起来也没啥特别的。",
+      2: "这帮呆子对付你也花了太长时间了吧……",
+      3: "要是惹了骷髅队的人！我就不和你开玩笑了！"
     },
     "victory": {
-      1: "Hmmph! You're pretty strong. I'll give you that.",
-      2: "Hmmph. Guess you are pretty tough. Now I understand why my Grunts waste so much time battling kids.",
-      3: "Hmmph! I guess I just have to hold that loss."
+      1: "哼嗯！你很强，我承认。",
+      2: "哼，你是挺强的。现在我知道\n为啥那帮手下要花那么久对付一个小孩了。",
+      3: "哼嗯！看来我得承认我输了。"
     },
   },
   "macro_grunt": {
     "encounter": {
-      1: "It looks like this is the end of the line for you!",
-      2: "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
-      3: "I'm from Macro Cosmos Insurance! Do you have a life insurance policy?"
+      1: "你的对战生涯到此为止了。",
+      2: "你是一名训练师吧\n你没有干涉我们工作的权力！",
+      3: "我是马洛科蒙集团的，要买马洛科蒙人寿保险吗。"
     },
     "victory": {
-      1: "I have little choice but to respectfully retreat.",
-      2: "Having to give up my pocket money... Losing means I'm back in the red...",
-      3: "Nobody can beat Macro Cosmos when it comes to our dedication to our work!"
+      1: "除了礼貌地撤退我似乎别无选择…",
+      2: "没法留住我的零花钱了，我又要财政赤字了…",
+      3: "没人能比马洛科蒙集团的我们工作更卷！"
     },
   },
   "macro_admin": {
     "encounter": {
-      1: "I won't let anyone interfere with Mr. Rose's plan!",
-      2: "So, you got through all of the special staff that I had ordered to stop you. I would expect nothing less.",
-      3: "For the chairman! I won't lose!"
+      1: "我不会让你方案洛兹先生的计划！",
+      2: "看来你打倒了所有我安排的训练师，本身也没对他们有啥期待…",
+      3: "为了总裁！我不会输的！"
     },
     "victory": {
-      1: "*sigh* I wasn't able to win... Oleana...you really are a hopeless woman.",
-      2: "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover..",
-      3: "*sigh* I am one tired Oleana..."
+      1: "*叹气*我赢不了。\n奥利薇，你真是个没用的女人",
+      2: "呃啊！不可饶恕...我在想什么。\n走到这里的训练师果然不会轻易屈服！",
+      3: "*叹气*奥利薇累累了……"
     },
   },
   "rocket_boss_giovanni_1": {
@@ -644,78 +644,78 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "aether_boss_lusamine_1": {
     "encounter": {
-      1: "You're going to startle my sweet beast! It looks like I'll need to silence you first."
+      1: "你吓到我可爱的异兽了！我要让你先闭嘴！"
     },
     "victory": {
-      1: "How.. how can you be so awful!"
+      1: "你…你怎么这么不听话！"
     },
     "defeat": {
-      1: "Hmph..."
+      1: "哼嗯…"
     }
   },
   "aether_boss_lusamine_2": {
     "encounter": {
-      1: `Why must you continue to pester me?! I am sick of you. Sick through and through!
-          $Enough with this useless talk.. with Nihilego's power I will show you how wrong you were to come here!`
+      1: `为什么你要一直妨碍我！\n我受够你了，完完全全受够了！ 
+          $不用说废话了…有了虚吾伊德的力量。\n我会让你明白，你来这里是有多么错误！`
     },
     "victory": {
-      1: "Aaauuuggghhhhhhhhh!!!"
+      1: "呃呃啊啊啊啊呜呜呜啊啊！"
     },
     "defeat": {
-      1: "All that I want is my precious beast! I don't care about any of the rest of you!"
+      1: "我只要和我可爱的异兽在一起就好了！你们怎么样都无所谓了！"
     }
   },
   "skull_boss_guzma_1": {
     "encounter": {
-      1: `The hated boss who beats you down and beats you down and never lets up...
-          $Yeah. Big bad Guzma is here!`
+         1: `摧毁，摧毁，\n不管摧毁几次也从不手软
+          $惹人厌的古兹马大爷在此。`
     },
     "victory": {
-      1: "Tch. I'm gonna beat you down one of these days!"
+      1: "切，我一定要找时间干掉你！"
     },
     "defeat": {
-      1: "And you came all the way out here just for that, huh?"
+      1: "大老远跑来就这，昂？"
     }
   },
   "skull_boss_guzma_2": {
     "encounter": {
-      1: `Doesn't matter who I'm up against, I'm gonna beat them down!
-          $That's what big bad Guzma is all about!`
+      1: `不管谁与我作对，我都会干掉他们！
+          $这就是大坏蛋古兹马的全部！`
     },
     "victory": {
-      1: "Guzma!!! What is wrong with you?!"
+      1: "古兹马！！你在干什么啊！！！"
     },
     "defeat": {
-      1: "Y'all are stupid!"
+      1: "你们真够蠢的!"
     }
   },
   "macro_boss_rose_1": {
     "encounter": {
-      1: `I must provide limitless energy to ensure everlasting prosperity for everyone...
-          $It is my purpose, my duty, my destiny!`
+      1: `我必须为所有人提供无限的能源，实现繁荣。
+          $这是我的目的，我的责任，我的使命！`
     },
     "victory": {
-      1: `You still don't understand, trainer...
-          $We... No, I am going to change the course of history!`
+      1: `你还是没有明白，训练师
+          $我们…不，我要推动历史的进程啊！`
     },
     "defeat": {
-      1: "You still don't understand a thing!"
+      1: "你完全不理解！"
     }
   },
   "macro_boss_rose_2": {
     "encounter": {
-      1: `I'm committed to solving the energy problem in the Galar region—and, of course, around the world.
-          $My experience and accomplishments that made Macro Cosmos a success are proof my methods work.
-          $I don't intend to change my mind, even if I lose.`
+      1: `我致力于解决伽勒尔的能源问题\n——当然也是全世界的能源问题。
+          $我的经验与成果，造就了马洛科蒙集团，证明了我的正确与成功！
+          $就算输了，我也不会改变主意的……`
 
     },
     "victory": {
-      1: `I'd forgotten how great Pokémon battles are! It's been so long since I battled...
-          $That sure was satisfying, I accept defeat for this battle.`
+      1: `我都忘记宝可梦对战的魅力了！我太久没有着手对战了…
+          $这的确让人很满足，我接受我的失败！`
     },
     "defeat": {
-      1: `I suppose it must seem that I am doing something terrible. I don't expect you to understand.
-          $But I must provide the Galar region with limitless energy to ensure everlasting prosperity.`
+      1: `我承认我做的事情非常渗人，我也不指望你能理解。
+          $但我必须为伽勒尔地区提供无限的能源，确保永久的繁荣。`
     }
   },
   "brock": {

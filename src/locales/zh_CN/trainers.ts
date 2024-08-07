@@ -19,12 +19,12 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "银河队老大",
   "plasma_boss": "等离子队老大",
   "flare_boss": "闪焰队老大",
-  "aether_boss": "Aether President",
-  "aether_admin": "Aether Foundation Admin",
-  "skull_boss": "Team Skull Boss",
-  "skull_admin": "Team Skull Admin",
-  "macro_boss": "Macro Cosmos President",
-  "macro_admin": "Macro Cosmos",
+  "aether_boss": "以太基金会理事长",
+  "aether_admin": "以太基金会干部",
+  "skull_boss": "骷髅队老大",
+  "skull_admin": "骷髅队干部",
+  "macro_boss": "马洛科蒙总裁",
+  "macro_admin": "马洛科蒙",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -143,12 +143,12 @@ export const trainerClasses: SimpleTranslationEntries = {
   "plasma_grunt_female": "等离子队手下",
   "flare_grunt": "闪焰队手下",
   "flare_grunt_female": "闪焰队手下",
-  "aether_grunt": "Aether Foundation Employee",
-  "aether_grunt_female": "Aether Foundation Employee",
-  "skull_grunt": "Team Skull Grunt",
-  "skull_grunt_female": "Team Skull Grunt",
-  "macro_grunt": "Macro Cosmos Trainer",
-  "macro_grunt_female": "Macro Cosmos Trainer",
+  "aether_grunt": "以太基金会职员",
+  "aether_grunt_female": "以太基金会职员",
+  "skull_grunt": "骷髅队手下",
+  "skull_grunt_female": "骷髅队手下",
+  "macro_grunt": "马洛科蒙训练师",
+  "macro_grunt_female": "马洛科蒙训练师",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -340,12 +340,12 @@ export const trainerNames: SimpleTranslationEntries = {
   "cyrus": "赤日",
   "ghetsis": "魁奇思",
   "lysandre": "弗拉达利",
-  "faba": "Faba",
-  "lusamine": "Lusamine",
-  "plumeria": "Plumeria",
-  "guzma": "Guzma",
-  "oleana": "Oleana",
-  "rose": "Rose",
+  "faba": "扎奥博",
+  "lusamine": "露莎米奈",
+  "plumeria": "布尔美丽",
+  "guzma": "古兹马",
+  "oleana": "奥莉薇",
+  "rose": "洛兹",
 
 
 
