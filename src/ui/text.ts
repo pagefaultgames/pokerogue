@@ -145,6 +145,8 @@ export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraSty
     let fontSizeLabel = "96px";
     switch (lang) {
     case "de":
+      shadowXpos = 3;
+      shadowYpos = 3;
       fontSizeLabel = "80px";
       break;
     default:
