@@ -1,14 +1,11 @@
-import {beforeEach, describe, expect, it} from "vitest";
-import {deepCopy} from "#app/utils";
-import {
-  getKeyWithKeycode,
-  getKeyWithSettingName,
-} from "#app/configs/inputs/configHandler";
-import {MenuManip} from "#app/test/settingMenu/helpers/menuManip";
-import {InGameManip} from "#app/test/settingMenu/helpers/inGameManip";
-import {InterfaceConfig} from "#app/inputs-controller";
+import { beforeEach, describe, expect, it } from "vitest";
+import { deepCopy } from "#app/utils";
+import { getKeyWithKeycode, getKeyWithSettingName } from "#app/configs/inputs/configHandler";
+import { MenuManip } from "#test/settingMenu/helpers/menuManip";
+import { InGameManip } from "#test/settingMenu/helpers/inGameManip";
+import { InterfaceConfig } from "#app/inputs-controller";
 import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
-import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { Device } from "#enums/devices";
 import { Button } from "#enums/buttons";
 

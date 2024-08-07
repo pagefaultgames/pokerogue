@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag, HelpingHandTag, SemiInvulnerableTag, StockpilingTag, TypeBoostTag } from "./battler-tags";
+import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, StockpilingTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
@@ -27,6 +27,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { MoveUsedEvent } from "#app/events/battle-scene.js";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -3553,6 +3554,9 @@ export class VariableAccuracyAttr extends MoveAttr {
   }
 }
 
+/**
+ * Attribute used for Thunder and Hurricane that sets accuracy to 50 in sun and never miss in rain
+ */
 export class ThunderAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
@@ -3560,10 +3564,31 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
       const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
       case WeatherType.SUNNY:
-      case WeatherType.SANDSTORM:
       case WeatherType.HARSH_SUN:
         accuracy.value = 50;
         return true;
+      case WeatherType.RAIN:
+      case WeatherType.HEAVY_RAIN:
+        accuracy.value = -1;
+        return true;
+      }
+    }
+
+    return false;
+  }
+}
+
+/**
+ * Attribute used for Bleakwind Storm, Wildbolt Storm, and Sandsear Storm that sets accuracy to never
+ * miss in rain
+ * Springtide Storm does NOT have this property
+ */
+export class StormAccuracyAttr extends VariableAccuracyAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
+      const accuracy = args[0] as Utils.NumberHolder;
+      const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
+      switch (weatherType) {
       case WeatherType.RAIN:
       case WeatherType.HEAVY_RAIN:
         accuracy.value = -1;
@@ -4261,6 +4286,46 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       moveChance = 100;
     }
     return Math.floor(this.getTagTargetBenefitScore(user, target, move) * (moveChance / 100));
+  }
+}
+
+/**
+ * Adds the appropriate battler tag for Gulp Missile when Surf or Dive is used.
+ * @extends MoveEffectAttr
+ */
+export class GulpMissileTagAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, MoveEffectTrigger.POST_APPLY);
+  }
+
+  /**
+   * Adds BattlerTagType from GulpMissileTag based on the Pokemon's HP ratio.
+   * @param {Pokemon} user The Pokemon using the move.
+   * @param {Pokemon} target The Pokemon being targeted by the move.
+   * @param {Move} move The move being used.
+   * @param {any[]} args Additional arguments, if any.
+   * @returns Whether the BattlerTag is applied.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    if (user.hasAbility(Abilities.GULP_MISSILE) && user.species.speciesId === Species.CRAMORANT) {
+      if (user.getHpRatio() >= .5) {
+        user.addTag(BattlerTagType.GULP_MISSILE_ARROKUDA, 0, move.id);
+      } else {
+        user.addTag(BattlerTagType.GULP_MISSILE_PIKACHU, 0, move.id);
+      }
+      return true;
+    }
+
+    return false;
+  }
+
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    const isCramorant = user.hasAbility(Abilities.GULP_MISSILE) && user.species.speciesId === Species.CRAMORANT;
+    return isCramorant && !user.getTag(GulpMissileTag) ? 10 : 0;
   }
 }
 
@@ -5576,7 +5641,7 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
     movesetMove.ppUsed = Math.min(movesetMove.ppUsed + this.reduction, movesetMove.getMovePp());
 
     const message = i18next.t("battle:ppReduced", {targetName: getPokemonNameWithAffix(target), moveName: movesetMove.getName(), reduction: movesetMove.ppUsed - lastPpUsed});
-
+    user.scene.eventTarget.dispatchEvent(new MoveUsedEvent(target?.id, movesetMove.getMove(), movesetMove.ppUsed));
     user.scene.queueMessage(message);
 
     return true;
@@ -5698,10 +5763,26 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
   }
 }
 
+/**
+ * Attribute for {@linkcode Moves.SKETCH} that causes the user to copy the opponent's last used move
+ * This move copies the last used non-virtual move
+ *  e.g. if Metronome is used, it copies Metronome itself, not the virtual move called by Metronome
+ * Fails if the opponent has not yet used a move.
+ * Fails if used on an uncopiable move, listed in unsketchableMoves in getCondition
+ * Fails if the move is already in the user's moveset
+ */
 export class SketchAttr extends MoveEffectAttr {
   constructor() {
     super(true);
   }
+  /**
+   * User copies the opponent's last used move, if possible
+   * @param {Pokemon} user Pokemon that used the move and will replace Sketch with the copied move
+   * @param {Pokemon} target Pokemon that the user wants to copy a move from
+   * @param {Move} move Move being used
+   * @param {any[]} args Unused
+   * @returns {boolean} true if the function succeeds, otherwise false
+   */
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
@@ -5732,14 +5813,28 @@ export class SketchAttr extends MoveEffectAttr {
         return false;
       }
 
-      const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
-      if (!targetMoves.length) {
+      const targetMove = target.getMoveHistory().filter(m => !m.virtual).at(-1);
+      if (!targetMove) {
         return false;
       }
 
-      const sketchableMove = targetMoves[0];
+      const unsketchableMoves = [
+        Moves.CHATTER,
+        Moves.MIRROR_MOVE,
+        Moves.SLEEP_TALK,
+        Moves.STRUGGLE,
+        Moves.SKETCH,
+        Moves.REVIVAL_BLESSING,
+        Moves.TERA_STARSTORM,
+        Moves.BREAKNECK_BLITZ__PHYSICAL,
+        Moves.BREAKNECK_BLITZ__SPECIAL
+      ];
 
-      if (user.getMoveset().find(m => m.moveId === sketchableMove.move)) {
+      if (unsketchableMoves.includes(targetMove.move)) {
+        return false;
+      }
+
+      if (user.getMoveset().find(m => m.moveId === targetMove.move)) {
         return false;
       }
 
@@ -6404,7 +6499,8 @@ export function initMoves() {
     new AttackMove(Moves.HYDRO_PUMP, Type.WATER, MoveCategory.SPECIAL, 110, 80, 5, -1, 0, 1),
     new AttackMove(Moves.SURF, Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 1)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true),
+      .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true)
+      .attr(GulpMissileTagAttr),
     new AttackMove(Moves.ICE_BEAM, Type.ICE, MoveCategory.SPECIAL, 90, 100, 10, 10, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.FREEZE),
     new AttackMove(Moves.BLIZZARD, Type.ICE, MoveCategory.SPECIAL, 110, 70, 5, 10, 0, 1)
@@ -7053,7 +7149,9 @@ export function initMoves() {
       .makesContact(false)
       .partial(),
     new AttackMove(Moves.DIVE, Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 3)
-      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, i18next.t("moveTriggers:hidUnderwater", {pokemonName: "{USER}"}), BattlerTagType.UNDERWATER),
+      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, i18next.t("moveTriggers:hidUnderwater", {pokemonName: "{USER}"}), BattlerTagType.UNDERWATER)
+      .attr(GulpMissileTagAttr)
+      .ignoresVirtual(),
     new AttackMove(Moves.ARM_THRUST, Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, -1, 0, 3)
       .attr(MultiHitAttr),
     new SelfStatusMove(Moves.CAMOUFLAGE, Type.NORMAL, -1, 20, -1, 0, 3)
@@ -8599,17 +8697,17 @@ export function initMoves() {
       .attr(AddArenaTrapTagHitAttr, ArenaTagType.SPIKES)
       .slicingMove(),
     new AttackMove(Moves.BLEAKWIND_STORM, Type.FLYING, MoveCategory.SPECIAL, 100, 80, 10, 30, 0, 8)
-      .attr(ThunderAccuracyAttr)
+      .attr(StormAccuracyAttr)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .windMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.WILDBOLT_STORM, Type.ELECTRIC, MoveCategory.SPECIAL, 100, 80, 10, 20, 0, 8)
-      .attr(ThunderAccuracyAttr)
+      .attr(StormAccuracyAttr)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .windMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.SANDSEAR_STORM, Type.GROUND, MoveCategory.SPECIAL, 100, 80, 10, 20, 0, 8)
-      .attr(ThunderAccuracyAttr)
+      .attr(StormAccuracyAttr)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .windMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),

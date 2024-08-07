@@ -3,7 +3,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 export const filterBar: SimpleTranslationEntries = {
   "genFilter": "Gen.",
   "typeFilter": "Typ",
-  "dexFilter": "Dex.",
+  "caughtFilter": "Gefangen",
   "unlocksFilter": "Freisch.",
   "miscFilter": "Sonst.",
   "sortFilter": "Sort.",
