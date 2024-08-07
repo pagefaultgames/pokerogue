@@ -34,8 +34,8 @@ export default class GameChallengesUiHandler extends UiHandler {
 
   private startCursor: Phaser.GameObjects.NineSlice;
 
-  constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode!); // TODO: is this bang correct?
+  constructor(scene: BattleScene, mode: Mode | null = null) {
+    super(scene, mode);
   }
 
   setup() {

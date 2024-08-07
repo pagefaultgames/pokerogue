@@ -218,8 +218,8 @@ export default class GameStatsUiHandler extends UiHandler {
   private statLabels: Phaser.GameObjects.Text[];
   private statValues: Phaser.GameObjects.Text[];
 
-  constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode!); // TODO: is this bang correct?
+  constructor(scene: BattleScene, mode: Mode | null = null) {
+    super(scene, mode);
 
     this.statLabels = [];
     this.statValues = [];
