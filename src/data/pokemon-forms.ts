@@ -828,6 +828,12 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.EISCUE]: [
     new SpeciesFormChange(Species.EISCUE, "", "no-ice", new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.EISCUE, "no-ice", "", new SpeciesFormChangeManualTrigger(), true),
+  ],
+  [Species.CRAMORANT]: [
+    new SpeciesFormChange(Species.CRAMORANT, "", "gulping", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() >= .5)),
+    new SpeciesFormChange(Species.CRAMORANT, "", "gorging", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() < .5)),
+    new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeManualTrigger, true),
+    new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeManualTrigger, true),
   ]
 };
 
