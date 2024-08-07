@@ -9,10 +9,10 @@ import { addWindow } from "./ui-theme";
 import { ParseKeys } from "i18next";
 import { PlayerGender } from "#enums/player-gender";
 
-const achvRows = 4;
-const achvCols = 17;
-
 export default class AchvsUiHandler extends MessageUiHandler {
+  private readonly ACHV_ROWS = 4;
+  private readonly ACHV_COLS = 17;
+
   private achvsContainer: Phaser.GameObjects.Container;
   private achvIconsContainer: Phaser.GameObjects.Container;
 
@@ -62,9 +62,9 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     this.achvIcons = [];
 
-    for (let a = 0; a < achvRows * achvCols; a++) {
-      const x = (a % achvCols) * 18;
-      const y = Math.floor(a / achvCols) * 18;
+    for (let a = 0; a < this.ACHV_ROWS * this.ACHV_COLS; a++) {
+      const x = (a % this.ACHV_COLS) * 18;
+      const y = Math.floor(a / this.ACHV_COLS) * 18;
 
       const icon = this.scene.add.sprite(x, y, "items", "unknown");
       icon.setOrigin(0, 0);
@@ -169,38 +169,38 @@ export default class AchvsUiHandler extends MessageUiHandler {
       success = true;
       this.scene.ui.revertMode();
     } else {
-      const rowIndex = Math.floor(this.cursor / achvCols);
-      const itemOffset = (this.scrollCursor * achvCols);
+      const rowIndex = Math.floor(this.cursor / this.ACHV_COLS);
+      const itemOffset = (this.scrollCursor * this.ACHV_COLS);
       switch (button) {
       case Button.UP:
-        if (this.cursor < achvCols) {
+        if (this.cursor < this.ACHV_COLS) {
           if (this.scrollCursor) {
             success = this.setScrollCursor(this.scrollCursor - 1);
           }
         } else {
-          success = this.setCursor(this.cursor - achvCols);
+          success = this.setCursor(this.cursor - this.ACHV_COLS);
         }
         break;
       case Button.DOWN:
-        const canMoveDown = (this.cursor + itemOffset) + achvCols < this.achvsTotal;
-        if (rowIndex >= achvRows - 1) {
-          if (this.scrollCursor < Math.ceil(this.achvsTotal / achvCols) - achvRows && canMoveDown) {
+        const canMoveDown = (this.cursor + itemOffset) + this.ACHV_COLS < this.achvsTotal;
+        if (rowIndex >= this.ACHV_ROWS - 1) {
+          if (this.scrollCursor < Math.ceil(this.achvsTotal / this.ACHV_COLS) - this.ACHV_ROWS && canMoveDown) {
             success = this.setScrollCursor(this.scrollCursor + 1);
           }
         } else if (canMoveDown) {
-          success = this.setCursor(this.cursor + achvCols);
+          success = this.setCursor(this.cursor + this.ACHV_COLS);
         }
         break;
       case Button.LEFT:
         if (!this.cursor && this.scrollCursor) {
-          success = this.setScrollCursor(this.scrollCursor - 1) && this.setCursor(this.cursor + (achvCols - 1));
+          success = this.setScrollCursor(this.scrollCursor - 1) && this.setCursor(this.cursor + (this.ACHV_COLS - 1));
         } else if (this.cursor) {
           success = this.setCursor(this.cursor - 1);
         }
         break;
       case Button.RIGHT:
-        if (this.cursor + 1 === achvRows * achvCols && this.scrollCursor < Math.ceil(this.achvsTotal / achvCols) - achvRows) {
-          success = this.setScrollCursor(this.scrollCursor + 1) && this.setCursor(this.cursor - (achvCols - 1));
+        if (this.cursor + 1 === this.ACHV_ROWS * this.ACHV_COLS && this.scrollCursor < Math.ceil(this.achvsTotal / this.ACHV_COLS) - this.ACHV_ROWS) {
+          success = this.setScrollCursor(this.scrollCursor + 1) && this.setCursor(this.cursor - (this.ACHV_COLS - 1));
         } else if (this.cursor + itemOffset < this.achvsTotal - 1) {
           success = this.setCursor(this.cursor + 1);
         }
@@ -230,7 +230,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.cursorObj.setPositionRelative(this.achvIcons[this.cursor], 0, 0);
 
     if (updateAchv) {
-      this.showAchv(achvs[Object.keys(achvs)[cursor + this.scrollCursor * achvCols]]);
+      this.showAchv(achvs[Object.keys(achvs)[cursor + this.scrollCursor * this.ACHV_COLS]]);
     }
 
     return ret;
@@ -245,7 +245,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     this.updateAchvIcons();
 
-    this.showAchv(achvs[Object.keys(achvs)[Math.min(this.cursor + this.scrollCursor * achvCols, Object.values(achvs).length - 1)]]);
+    this.showAchv(achvs[Object.keys(achvs)[Math.min(this.cursor + this.scrollCursor * this.ACHV_COLS, Object.values(achvs).length - 1)]]);
 
     return true;
   }
@@ -253,8 +253,8 @@ export default class AchvsUiHandler extends MessageUiHandler {
   updateAchvIcons(): void {
     const achvUnlocks = this.scene.gameData.achvUnlocks;
 
-    const itemOffset = this.scrollCursor * achvCols;
-    const itemLimit = achvRows * achvCols;
+    const itemOffset = this.scrollCursor * this.ACHV_COLS;
+    const itemLimit = this.ACHV_ROWS * this.ACHV_COLS;
 
     const achvRange = Object.values(achvs).slice(itemOffset, itemLimit + itemOffset);
 
