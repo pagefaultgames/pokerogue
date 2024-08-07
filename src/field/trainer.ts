@@ -405,14 +405,14 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
     }
 
-    if (!retry && this.config.specialtyTypes.length && !this.config.specialtyTypes.find(t => ret.isOfType(t))) {
+    if (!retry && this.config.specialtyType && !ret.isOfType(this.config.specialtyType)) {
       retry = true;
       console.log("Attempting reroll of species evolution to fit specialty type...");
       let evoAttempt = 0;
       while (retry && evoAttempt++ < 10) {
         ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength));
         console.log(ret.name);
-        if (this.config.specialtyTypes.find(t => ret.isOfType(t))) {
+        if (ret.isOfType(this.config.specialtyType)) {
           retry = false;
         }
       }
