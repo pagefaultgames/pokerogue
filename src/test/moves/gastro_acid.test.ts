@@ -1,5 +1,4 @@
 import { BattlerIndex } from "#app/battle.js";
-import { Stat } from "#app/data/pokemon-stat.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
@@ -7,7 +6,7 @@ import { MoveResult } from "#app/field/pokemon.js";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { changeTurnOrder, SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -74,11 +73,9 @@ describe("Moves - Gastro Acid", () => {
 
     await game.startBattle();
 
-    // Force player to be slower to enable Core Enforcer to proc its suppression effect
-    game.scene.getPlayerPokemon().stats[Stat.SPD] = 1;
-    game.scene.getEnemyPokemon().stats[Stat.SPD] = 2;
-
     game.doAttack(getMovePosition(game.scene, 0, Moves.CORE_ENFORCER));
+    // Force player to be slower to enable Core Enforcer to proc its suppression effect
+    await changeTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
@@ -86,6 +83,6 @@ describe("Moves - Gastro Acid", () => {
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
-    expect(game.scene.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   }, TIMEOUT);
 });

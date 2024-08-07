@@ -59,4 +59,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}} prend le type\nde {{targetPokemonName}} !",
   "suppressAbilities": "Le talent de {{pokemonName}}\na été rendu inactif !",
   "swapArenaTags": "Les effets affectant chaque côté du terrain\nont été échangés par {{pokemonName}} !",
+  "exposedMove": "{{targetPokemonName}} est identifié\npar {{pokemonName}} !",
 } as const;

@@ -31,7 +31,7 @@ describe("EXP Modifier Items", () => {
     game.override.startingHeldItems([{name: "LUCKY_EGG"}, {name: "GOLDEN_EGG"}]);
     await game.startBattle();
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
     const modifierBonusExp = new Utils.NumberHolder(1);
     partyMember.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, modifierBonusExp);
     expect(modifierBonusExp.value).toBe(2.4);

@@ -130,7 +130,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
           .then(response => {
             if (response.hasOwnProperty("token")) {
               Utils.setCookie(Utils.sessionIdKey, response.token);
-              originalLoginAction();
+              originalLoginAction && originalLoginAction();
             } else {
               onFail(response);
             }

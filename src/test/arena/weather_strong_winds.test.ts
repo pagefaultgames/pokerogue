@@ -35,8 +35,8 @@ describe("Weather - Strong Winds", () => {
     game.override.enemySpecies(Species.RAYQUAZA);
 
     await game.startBattle([Species.PIKACHU]);
-    const pikachu = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const pikachu = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDERBOLT));
 
@@ -46,8 +46,8 @@ describe("Weather - Strong Winds", () => {
 
   it("electric type move is neutral for flying type pokemon", async () => {
     await game.startBattle([Species.PIKACHU]);
-    const pikachu = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const pikachu = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDERBOLT));
 
@@ -57,8 +57,8 @@ describe("Weather - Strong Winds", () => {
 
   it("ice type move is neutral for flying type pokemon", async () => {
     await game.startBattle([Species.PIKACHU]);
-    const pikachu = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const pikachu = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.ICE_BEAM));
 
@@ -68,8 +68,8 @@ describe("Weather - Strong Winds", () => {
 
   it("rock type move is neutral for flying type pokemon", async () => {
     await game.startBattle([Species.PIKACHU]);
-    const pikachu = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const pikachu = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.ROCK_SLIDE));
 

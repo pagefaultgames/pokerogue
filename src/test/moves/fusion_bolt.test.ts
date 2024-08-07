@@ -41,7 +41,7 @@ describe("Moves - Fusion Bolt", () => {
       Species.ZEKROM,
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
     const initialHp = partyMember.hp;
 
     game.doAttack(getMovePosition(game.scene, 0, fusionBolt));

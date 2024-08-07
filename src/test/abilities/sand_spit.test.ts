@@ -42,7 +42,7 @@ describe("Ability Timing", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
 
-    expect(game.scene.arena.weather.weatherType).toBe(WeatherType.SANDSTORM);
+    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
   }, 20000);
 
   it("should not trigger when targetted with status moves", async() => {

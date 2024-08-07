@@ -55,8 +55,8 @@ describe("Moves - Make It Rain", () => {
 
     await game.startBattle([Species.CHARIZARD]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
 
