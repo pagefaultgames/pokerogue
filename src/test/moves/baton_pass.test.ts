@@ -79,12 +79,11 @@ describe("Moves - Baton Pass", () => {
     await game.phaseInterceptor.to(PostSummonPhase, false);
 
     // assert
-    const playerPkm = game.scene.getPlayerPokemon()!;
     // check buffs are still there
     expect(game.scene.getEnemyPokemon()!.summonData.battleStats[BattleStat.SPATK]).toEqual(2);
     // confirm that a switch actually happened. can't use species because I
     // can't find a way to override trainer parties with more than 1 pokemon species
-    expect(playerPkm.hp).not.toEqual(100);
+    expect(game.scene.getEnemyPokemon()!.hp).not.toEqual(100);
     expect(game.phaseInterceptor.log.slice(-4)).toEqual([
       "MoveEffectPhase",
       "SwitchSummonPhase",
