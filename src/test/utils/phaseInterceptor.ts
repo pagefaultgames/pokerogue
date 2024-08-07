@@ -42,7 +42,7 @@ import { QuietFormChangePhase } from "#app/form-change-phase";
 export default class PhaseInterceptor {
   public scene;
   public phases = {};
-  public log;
+  public log: string[];
   private onHold;
   private interval;
   private promptInterval;
@@ -104,11 +104,18 @@ export default class PhaseInterceptor {
    */
   constructor(scene) {
     this.scene = scene;
-    this.log = [];
     this.onHold = [];
     this.prompts = [];
+    this.clearLogs();
     this.startPromptHandler();
     this.initPhases();
+  }
+
+  /**
+   * Clears phase logs
+   */
+  clearLogs() {
+    this.log = [];
   }
 
   rejectAll(error) {
