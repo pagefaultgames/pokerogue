@@ -62,8 +62,8 @@ describe("Moves - Dragon Tail", () => {
   test(
     "Single battle should cause opponent to flee, display ability, and not crash",
     async () => {
-      await game.startBattle([Species.DRATINI]);
       game.override.enemyAbility(Abilities.ROUGH_SKIN);
+      await game.startBattle([Species.DRATINI]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
@@ -86,9 +86,9 @@ describe("Moves - Dragon Tail", () => {
     "Double battles should proceed without crashing" ,
     async () => {
       game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
-      await game.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
       game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER])
         .enemyAbility(Abilities.ROUGH_SKIN);
+      await game.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
 
       const leadPokemon = game.scene.getParty()[0]!;
       const secPokemon = game.scene.getParty()[1]!;
@@ -129,9 +129,9 @@ describe("Moves - Dragon Tail", () => {
     "Flee move redirection works" ,
     async () => {
       game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
-      await game.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
       game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER]);
       game.override.enemyAbility(Abilities.ROUGH_SKIN);
+      await game.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
 
       const leadPokemon = game.scene.getParty()[0]!;
       const secPokemon = game.scene.getParty()[1]!;
