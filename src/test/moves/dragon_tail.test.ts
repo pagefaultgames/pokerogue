@@ -28,12 +28,12 @@ describe("Moves - Dragon Tail", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH]);
-    game.override.enemySpecies(Species.WAILORD);
-    game.override.enemyMoveset(SPLASH_ONLY);
-    game.override.startingLevel(5);
-    game.override.enemyLevel(5);
+    game.override.battleType("single")
+      .moveset([Moves.DRAGON_TAIL, Moves.SPLASH])
+      .enemySpecies(Species.WAILORD)
+      .enemyMoveset(SPLASH_ONLY)
+      .startingLevel(5)
+      .enemyLevel(5);
 
     vi.spyOn(allMoves[Moves.DRAGON_TAIL], "accuracy", "get").mockReturnValue(100);
   });
@@ -52,11 +52,10 @@ describe("Moves - Dragon Tail", () => {
 
       const isVisible = enemyPokemon.visible;
       const hasFled = enemyPokemon.wildFlee;
-      expect(!isVisible && hasFled ).toBe(true);
+      expect(!isVisible && hasFled).toBe(true);
 
       // simply want to test that the game makes it this far without crashing
       await game.phaseInterceptor.to(BattleEndPhase);
-      expect(true).toBe(true);
     }, TIMEOUT
   );
 
@@ -78,8 +77,8 @@ describe("Moves - Dragon Tail", () => {
 
       const isVisible = enemyPokemon.visible;
       const hasFled = enemyPokemon.wildFlee;
-      expect(!isVisible && hasFled ).toBe(true);
-      expect(leadPokemon?.hp < leadPokemon?.getMaxHp());
+      expect(!isVisible && hasFled).toBe(true);
+      expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
     }, TIMEOUT
   );
 
@@ -88,8 +87,8 @@ describe("Moves - Dragon Tail", () => {
     async () => {
       game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
       await game.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
-      game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER]);
-      game.override.enemyAbility(Abilities.ROUGH_SKIN);
+      game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER])
+        .enemyAbility(Abilities.ROUGH_SKIN);
 
       const leadPokemon = game.scene.getParty()[0]!;
       const secPokemon = game.scene.getParty()[1]!;
@@ -112,9 +111,8 @@ describe("Moves - Dragon Tail", () => {
       const hasFledLead = enemyLeadPokemon.wildFlee;
       const isVisibleSec = enemySecPokemon.visible;
       const hasFledSec = enemySecPokemon.wildFlee;
-      expect(!isVisibleLead && hasFledLead && isVisibleSec && !hasFledSec ).toBe(true);
-
-      expect(leadPokemon.hp < leadPokemon.getMaxHp());
+      expect(!isVisibleLead && hasFledLead && isVisibleSec && !hasFledSec).toBe(true);
+      expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
 
       // second turn
 
@@ -123,8 +121,7 @@ describe("Moves - Dragon Tail", () => {
       game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase);
-      expect(enemySecPokemon.hp < enemySecPokemon.getMaxHp() ).toBe(true);
-
+      expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
     }, TIMEOUT
   );
 
@@ -159,13 +156,11 @@ describe("Moves - Dragon Tail", () => {
       const hasFledLead = enemyLeadPokemon.wildFlee;
       const isVisibleSec = enemySecPokemon.visible;
       const hasFledSec = enemySecPokemon.wildFlee;
-      expect(!isVisibleLead && hasFledLead && !isVisibleSec && hasFledSec ).toBe(true);
-
-      expect(leadPokemon.hp < leadPokemon.getMaxHp());
-      expect(secPokemon.hp < secPokemon.getMaxHp());
-      expect(enemyLeadPokemon.hp < enemyLeadPokemon.getMaxHp());
-      expect(enemySecPokemon.hp < enemySecPokemon.getMaxHp());
-
+      expect(!isVisibleLead && hasFledLead && !isVisibleSec && hasFledSec).toBe(true);
+      expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
+      expect(secPokemon.hp).toBeLessThan(secPokemon.getMaxHp());
+      expect(enemyLeadPokemon.hp).toBeLessThan(enemyLeadPokemon.getMaxHp());
+      expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
     }, TIMEOUT
   );
 });
