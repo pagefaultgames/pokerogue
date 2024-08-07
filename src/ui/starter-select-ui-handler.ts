@@ -103,7 +103,15 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   "ko":{
     starterInfoTextSize: "52px",
     instructionTextSize: "38px",
-  }
+  },
+  "ja":{
+    starterInfoTextSize: "51px",
+    instructionTextSize: "38px",
+  },
+  "ca-ES":{
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
 };
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer], egg: integer }[] = [
@@ -398,7 +406,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
     this.filterBar.addFilter(DropDownColumn.TYPES, i18next.t("filterBar:typeFilter"), new DropDown(this.scene, 0, 0, typeOptions, this.updateStarters, DropDownType.HYBRID, 0.5));
 
-    // shiny filter
+    // caught filter
     const shiny1Sprite = this.scene.add.sprite(0, 0, "shiny_icons");
     shiny1Sprite.setOrigin(0.15, 0.2);
     shiny1Sprite.setScale(0.6);
@@ -415,7 +423,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     shiny3Sprite.setFrame(getVariantIcon(2));
     shiny3Sprite.setTint(getVariantTint(2));
 
-    const shinyOptions = [
+    const caughtOptions = [
       new DropDownOption(this.scene, "SHINY3", new DropDownLabel("", shiny3Sprite)),
       new DropDownOption(this.scene, "SHINY2", new DropDownLabel("", shiny2Sprite)),
       new DropDownOption(this.scene, "SHINY", new DropDownLabel("", shiny1Sprite)),
@@ -423,7 +431,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(this.scene, "UNCAUGHT", new DropDownLabel(i18next.t("filterBar:uncaught")))
     ];
 
-    this.filterBar.addFilter(DropDownColumn.DEX, i18next.t("filterBar:dexFilter"), new DropDown(this.scene, 0, 0, shinyOptions, this.updateStarters, DropDownType.HYBRID));
+    this.filterBar.addFilter(DropDownColumn.CAUGHT, i18next.t("filterBar:caughtFilter"), new DropDown(this.scene, 0, 0, caughtOptions, this.updateStarters, DropDownType.HYBRID));
 
     // unlocks filter
     const passiveLabels = [
@@ -2130,16 +2138,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
 
-      const fitsShiny = this.filterBar.getVals(DropDownColumn.DEX).some(variant => {
-        if (variant === "SHINY3") {
+      const fitsCaught = this.filterBar.getVals(DropDownColumn.CAUGHT).some(caught => {
+        if (caught === "SHINY3") {
           return isVariant3Caught;
-        } else if (variant === "SHINY2") {
+        } else if (caught === "SHINY2") {
           return isVariant2Caught && !isVariant3Caught;
-        } else if (variant === "SHINY") {
+        } else if (caught === "SHINY") {
           return isVariantCaught && !isVariant2Caught && !isVariant3Caught;
-        } else if (variant === "NORMAL") {
+        } else if (caught === "NORMAL") {
           return isCaught && !isVariantCaught && !isVariant2Caught && !isVariant3Caught;
-        } else if (variant === "UNCAUGHT") {
+        } else if (caught === "UNCAUGHT") {
           return isUncaught;
         }
       });
@@ -2196,7 +2204,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       });
 
-      if (fitsGen && fitsType && fitsShiny && fitsPassive && fitsCostReduction && fitsWin && fitsHA && fitsPokerus) {
+      if (fitsGen && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsWin && fitsHA && fitsPokerus) {
         this.filteredStarterContainers.push(container);
       }
     });
