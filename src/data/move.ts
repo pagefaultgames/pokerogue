@@ -1259,7 +1259,7 @@ export class SacrificialAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
 	  user.turnData.damageTaken += user.hp;
-    const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: user.hp, critical: false, sourceId: user.id };
+    const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: user.hp, critical: false, sourceId: user.id, sourceBattlerIndex: user.getBattlerIndex() };
     user.turnData.attacksReceived.unshift(attackResult);
 
     return true;
@@ -1299,7 +1299,7 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
 
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
     user.turnData.damageTaken += user.hp;
-    const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: user.hp, critical: false, sourceId: user.id };
+    const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: user.hp, critical: false, sourceId: user.id, sourceBattlerIndex: user.getBattlerIndex() };
     user.turnData.attacksReceived.unshift(attackResult);
 
     return true;
@@ -1343,7 +1343,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
     if (!cancelled.value) {
       const damage = Math.ceil(user.getMaxHp()/2);
       user.damageAndUpdate(damage, HitResult.OTHER, false, true, true);
-      const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: damage, critical: false, sourceId: user.id };
+      const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: damage, critical: false, sourceId: user.id, sourceBattlerIndex: user.getBattlerIndex() };
       user.turnData.attacksReceived.unshift(attackResult);
       user.scene.queueMessage(i18next.t("moveTriggers:cutHpPowerUpMove", {pokemonName: getPokemonNameWithAffix(user)})); // Queue recoil message
     }
