@@ -1,6 +1,6 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { Stat } from "#app/data/pokemon-stat";
-import { CommandPhase, EnemyCommandPhase, VictoryPhase } from "#app/phases/phases";
+import { CommandPhase, EnemyCommandPhase, VictoryPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";

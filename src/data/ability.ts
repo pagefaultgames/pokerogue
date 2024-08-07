@@ -3,7 +3,7 @@ import { Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases/phases";
+import { MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag, GroundedTag, GulpMissileTag } from "./battler-tags";

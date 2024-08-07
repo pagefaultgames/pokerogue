@@ -2,7 +2,7 @@ import { BattleStat } from "#app/data/battle-stat.js";
 import { SemiInvulnerableTag } from "#app/data/battler-tags.js";
 import { Type } from "#app/data/type.js";
 import { Biome } from "#app/enums/biome.js";
-import { TurnEndPhase } from "#app/phases/phases";
+import { TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";

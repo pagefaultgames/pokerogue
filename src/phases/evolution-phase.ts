@@ -5,7 +5,7 @@ import { SpeciesFormEvolution } from "../data/pokemon-evolutions";
 import EvolutionSceneHandler from "../ui/evolution-scene-handler";
 import * as Utils from "../utils";
 import { Mode } from "../ui/ui";
-import { LearnMovePhase } from "./phases";
+import { LearnMovePhase } from "../phases";
 import { cos, sin } from "../field/anims";
 import { PlayerPokemon } from "../field/pokemon";
 import { getTypeRgb } from "../data/type";

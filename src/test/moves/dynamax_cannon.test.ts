@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
-import { DamagePhase, MoveEffectPhase, TurnStartPhase } from "#app/phases/phases";
+import { DamagePhase, MoveEffectPhase, TurnStartPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";

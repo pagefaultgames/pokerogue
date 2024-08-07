@@ -10,7 +10,7 @@ import * as Utils from "../utils";
 import { Challenges } from "#app/enums/challenges.js";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Color, ShadowColor } from "#app/enums/color.js";
-import { SelectStarterPhase, TitlePhase } from "#app/phases/phases";
+import { SelectStarterPhase, TitlePhase } from "#app/phases";
 
 /**
  * Handles all the UI for choosing optional challenges.

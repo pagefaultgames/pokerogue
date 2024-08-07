@@ -7,7 +7,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { TurnEndPhase } from "#app/phases/phases";
+import { TurnEndPhase } from "#app/phases";
 
 const TIMEOUT = 20 * 1000;
 

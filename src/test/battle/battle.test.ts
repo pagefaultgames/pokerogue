@@ -16,7 +16,7 @@ import {
   SwitchPhase,
   TitlePhase,
   TurnInitPhase, VictoryPhase,
-} from "#app/phases/phases";
+} from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { generateStarter, getMovePosition, } from "#app/test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";

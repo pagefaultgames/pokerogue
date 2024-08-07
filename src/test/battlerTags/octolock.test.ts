@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import Pokemon from "#app/field/pokemon.js";
 import BattleScene from "#app/battle-scene.js";
 import { BattlerTag, BattlerTagLapseType, OctolockTag, TrappedTag } from "#app/data/battler-tags.js";
-import { StatChangePhase } from "#app/phases/phases";
+import { StatChangePhase } from "#app/phases";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 

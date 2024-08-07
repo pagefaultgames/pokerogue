@@ -1,5 +1,5 @@
 import { StatusEffect } from "#app/data/status-effect";
-import { CommandPhase, EnemyCommandPhase, MessagePhase, TurnEndPhase } from "#app/phases/phases";
+import { CommandPhase, EnemyCommandPhase, MessagePhase, TurnEndPhase } from "#app/phases";
 import i18next, { initI18n } from "#app/plugins/i18n";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

@@ -3,7 +3,7 @@ import {
   MoveEndPhase,
   TurnEndPhase,
   TurnStartPhase,
-} from "#app/phases/phases";
+} from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";

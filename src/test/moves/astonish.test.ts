@@ -1,6 +1,6 @@
 import { allMoves } from "#app/data/move.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BerryPhase, CommandPhase, MoveEndPhase, TurnEndPhase } from "#app/phases/phases";
+import { BerryPhase, CommandPhase, MoveEndPhase, TurnEndPhase } from "#app/phases";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

@@ -1,4 +1,4 @@
-import { CommandPhase } from "../phases/phases";
+import { CommandPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { getPokeballName } from "../data/pokeball";
 import { addTextObject, getTextStyleOptions, TextStyle } from "./text";

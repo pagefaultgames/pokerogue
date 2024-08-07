@@ -4,7 +4,7 @@ import { getMovePosition } from "../utils/gameManagerUtils";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { BerryPhase, TurnEndPhase } from "#app/phases/phases";
+import { BerryPhase, TurnEndPhase } from "#app/phases";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 
 const TIMEOUT = 20 * 1000;

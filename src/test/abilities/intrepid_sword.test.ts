@@ -1,5 +1,5 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { CommandPhase } from "#app/phases/phases";
+import { CommandPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";

@@ -1,4 +1,4 @@
-import { PokemonHealPhase, StatChangePhase } from "../phases/phases";
+import { PokemonHealPhase, StatChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { HitResult } from "../field/pokemon";
 import { BattleStat } from "./battle-stat";

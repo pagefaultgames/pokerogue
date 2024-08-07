@@ -1,7 +1,7 @@
 import { BattleStatMultiplierAbAttr, allAbilities } from "#app/data/ability.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { WeatherType } from "#app/data/weather.js";
-import { CommandPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases/phases";
+import { CommandPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

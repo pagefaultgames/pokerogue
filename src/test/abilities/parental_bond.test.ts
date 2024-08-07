@@ -2,7 +2,7 @@ import { BattleStat } from "#app/data/battle-stat.js";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { Type } from "#app/data/type.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BerryPhase, CommandPhase, DamagePhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase } from "#app/phases/phases";
+import { BerryPhase, CommandPhase, DamagePhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase } from "#app/phases";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

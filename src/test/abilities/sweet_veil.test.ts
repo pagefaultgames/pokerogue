@@ -2,7 +2,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
-import { CommandPhase, MoveEffectPhase, MovePhase, TurnEndPhase } from "#app/phases/phases";
+import { CommandPhase, MoveEffectPhase, MovePhase, TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";

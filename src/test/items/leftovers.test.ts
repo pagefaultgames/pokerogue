@@ -1,4 +1,4 @@
-import { DamagePhase, TurnEndPhase } from "#app/phases/phases";
+import { DamagePhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";

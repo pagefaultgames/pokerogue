@@ -5,7 +5,7 @@ import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
-import { CommandPhase } from "../phases/phases";
+import { CommandPhase } from "../phases";
 import { MoveCategory } from "#app/data/move.js";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";

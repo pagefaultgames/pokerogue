@@ -16,7 +16,7 @@ import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../
 import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { GameModes } from "../game-mode";
-import { SelectChallengePhase, TitlePhase } from "../phases/phases";
+import { SelectChallengePhase, TitlePhase } from "../phases";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "../system/game-data";
 import { Tutorial, handleTutorial } from "../tutorial";
 import * as Utils from "../utils";

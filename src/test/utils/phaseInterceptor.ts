@@ -33,7 +33,7 @@ import {
   TurnStartPhase,
   UnavailablePhase,
   VictoryPhase
-} from "#app/phases/phases";
+} from "#app/phases";
 import UI, { Mode } from "#app/ui/ui";
 import { Phase } from "#app/phases/phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";

@@ -8,7 +8,7 @@ import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { Mode } from "../ui/ui";
 import PartyUiHandler from "../ui/party-ui-handler";
 import { BattleSpec } from "#enums/battle-spec";
-import { MovePhase, PokemonHealPhase } from "./phases";
+import { MovePhase, PokemonHealPhase } from "../phases";
 import { BattlePhase } from "../phases/battle-phase";
 import { getTypeRgb } from "../data/type";
 import { getPokemonNameWithAffix } from "../messages";

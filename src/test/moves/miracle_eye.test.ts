@@ -5,7 +5,7 @@ import { Species } from "#app/enums/species.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { Moves } from "#app/enums/moves.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { MoveEffectPhase } from "#app/phases/phases";
+import { MoveEffectPhase } from "#app/phases";
 
 describe("Internals", () => {
   let phaserGame: Phaser.Game;

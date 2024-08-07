@@ -7,7 +7,7 @@ import { generateStarter, getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { CommandPhase, DamagePhase, EncounterPhase, EnemyCommandPhase, SelectStarterPhase, TurnInitPhase } from "#app/phases/phases";
+import { CommandPhase, DamagePhase, EncounterPhase, EnemyCommandPhase, SelectStarterPhase, TurnInitPhase } from "#app/phases";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
