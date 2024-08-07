@@ -177,15 +177,22 @@ export default class FightUiHandler extends UiHandler {
 
     if (hasMove) {
       const pokemonMove = moveset[cursor]!; // TODO: is the bang correct?
-      this.typeIcon.setTexture(`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
-      this.moveCategoryIcon.setTexture("categories", MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
+      const lang = i18next.resolvedLanguage;
+      const moveType = pokemonMove.getMove().getFinalType(pokemon);
+      const textureKey = `types${Utils.verifyLang(lang) ? `_${lang}` : ""}`;
+      this.typeIcon.setTexture(textureKey, Type[moveType].toLowerCase()).setScale(0.8);
+
+      const moveCategory = pokemonMove.getMove().category;
+      this.moveCategoryIcon.setTexture("categories", MoveCategory[moveCategory].toLowerCase()).setScale(1.0);
 
       const power = pokemonMove.getMove().power;
       const accuracy = pokemonMove.getMove().accuracy;
       const maxPP = pokemonMove.getMovePp();
       const pp = maxPP - pokemonMove.ppUsed;
 
-      this.ppText.setText(`${Utils.padInt(pp, 2, "  ")}/${Utils.padInt(maxPP, 2, "  ")}`);
+      const ppLeftStr = Utils.padInt(pp, 2, "  ");
+      const ppMaxStr = Utils.padInt(maxPP, 2, "  ");
+      this.ppText.setText(`${ppLeftStr}/${ppMaxStr}`);
       this.powerText.setText(`${power >= 0 ? power : "---"}`);
       this.accuracyText.setText(`${accuracy >= 0 ? accuracy : "---"}`);
 

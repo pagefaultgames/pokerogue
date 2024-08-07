@@ -378,7 +378,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
       return false;
     }
 
-    if (attacker !== pokemon && move.type === this.immuneType) {
+    if (attacker !== pokemon && move.type === this.immuneType && move.getFinalType(pokemon) === this.immuneType) {
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
@@ -473,7 +473,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   }
 
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (move instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.type, attacker) < 2) {
+    if (move instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getFinalType(pokemon), attacker) < 2) {
       cancelled.value = true;
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
@@ -806,7 +806,7 @@ export class PostDefendApplyBattlerTagAbAttr extends PostDefendAbAttr {
 export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (hitResult < HitResult.NO_EFFECT) {
-      const type = move.type;
+      const type = move.getFinalType(pokemon, true);
       const pokemonTypes = pokemon.getTypes(true);
       if (pokemonTypes.length !== 1 || pokemonTypes[0] !== type) {
         pokemon.summonData.types = [ type ];
@@ -2853,16 +2853,20 @@ function getAnticipationCondition(): AbAttrCondition {
   return (pokemon: Pokemon) => {
     for (const opponent of pokemon.getOpponents()) {
       for (const move of opponent.moveset) {
+        // ignore null/undefined moves
+        if (!move) {
+          continue;
+        }
         // move is super effective
-        if (move!.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move!.getMove().type, opponent, true) >= 2) { // TODO: is this bang correct?
+        if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().getFinalType(pokemon, true), opponent, true) >= 2) {
           return true;
         }
         // move is a OHKO
-        if (move!.getMove().hasAttr(OneHitKOAttr)) { // TODO: is this bang correct?
+        if (move.getMove().hasAttr(OneHitKOAttr)) { // TODO: is this bang correct?
           return true;
         }
         // edge case for hidden power, type is computed
-        if (move!.getMove().id === Moves.HIDDEN_POWER) { // TODO: is this bang correct?
+        if (move.getMove().id === Moves.HIDDEN_POWER) { // TODO: is this bang correct?
           const iv_val = Math.floor(((opponent.ivs[Stat.HP] & 1)
               +(opponent.ivs[Stat.ATK] & 1) * 2
               +(opponent.ivs[Stat.DEF] & 1) * 4
