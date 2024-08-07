@@ -59,5 +59,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}}[[는]]\n{{targetPokemonName}}[[와]] 같은 타입이 되었다!",
   "suppressAbilities": "{{pokemonName}}의\n특성이 효과를 발휘하지 못하게 되었다!",
   "swapArenaTags": "{{pokemonName}}[[는]]\n서로의 필드 효과를 교체했다!",
-  "chillyReception": "{{pokemonName}} is preparing to tell a chillingly bad joke!",
+  "chillyReception": "{{pokemonName}}[[는]] 썰렁한 개그를 선보였다!",
 } as const;
