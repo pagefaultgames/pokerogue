@@ -407,8 +407,8 @@ export class Egg {
       let weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
       const species = getPokemonSpecies(speciesId);
       if (species.isRegional()) {
-        weight = Math.floor(weight / (species.isRareRegional() ? 2 : 1));
-      }
+      weight = Math.floor(weight / 2);
+    }
       speciesWeights.push(totalWeight + weight);
       totalWeight += weight;
     }
