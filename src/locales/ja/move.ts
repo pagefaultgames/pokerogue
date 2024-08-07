@@ -671,7 +671,7 @@ export const move: MoveTranslationEntries = {
   },
   thief: {
     name: "どろぼう",
-    effect: "攻撃と 同時に 道具を 盗んでみる。 盗む 可能性は 30％。"
+    effect: "攻撃と 同時に 道具を 盗もうとする。 盗む 可能性は 30％。"
   },
   spiderWeb: {
     name: "クモのす",
@@ -1371,7 +1371,7 @@ export const move: MoveTranslationEntries = {
   },
   covet: {
     name: "ほしがる",
-    effect: "かわいく あまえながら 相手に ちかづき 持っている 道具を うばってみる。 うばう 可能性は ３０％。"
+    effect: "かわいく あまえながら 相手に ちかづき 持っている 道具を うばおうとする。 うばう 可能性は ３０％。"
   },
   voltTackle: {
     name: "ボルテッカー",
@@ -2975,7 +2975,7 @@ export const move: MoveTranslationEntries = {
   },
   dynamaxCannon: {
     name: "ダイマックスほう",
-    effect: "コアから ビームを 放って 攻撃。相手が LV200を 超えている場合 ダメージは 2倍になる。"
+    effect: "コアから ビームを 放つ。相手の レベルが 過度に 上がっている 場合は 与える ダメージが 最大 2倍に 増える。"
   },
   snipeShot: {
     name: "ねらいうち",
