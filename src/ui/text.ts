@@ -35,7 +35,8 @@ export enum TextStyle {
   MOVE_PP_NEAR_EMPTY,
   MOVE_PP_EMPTY,
   SMALLER_WINDOW_ALT,
-  BGM_BAR
+  BGM_BAR,
+  PERFECT_IV
 }
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
@@ -243,6 +244,8 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     return !shadow ? "#484848" : "#d0d0c8";
   case TextStyle.BGM_BAR:
     return !shadow ? "#f8f8f8" : "#6b5a73";
+  case TextStyle.PERFECT_IV:
+    return !shadow ? "#f8c020" : "#ff0000"; // this intentionally has no shadow
   }
 }
 

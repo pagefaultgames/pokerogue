@@ -5506,7 +5506,7 @@ export class ScanIvsPhase extends PokemonPhase {
       for (let s = 0; s < statsContainerLabels.length; s++) {
         const ivStat = Stat[statsContainerLabels[s].frame.name];
         if (enemyIvs[ivStat] > currentIvs[ivStat] && ivsToShow.indexOf(Number(ivStat)) >= 0) {
-          const hexColour = enemyIvs[ivStat] === 31 ? "#f8c020" : getTextColor(TextStyle.SUMMARY_GREEN, false, uiTheme);
+          const hexColour = enemyIvs[ivStat] === 31 ? getTextColor(TextStyle.PERFECT_IV, false, uiTheme) : getTextColor(TextStyle.SUMMARY_GREEN, false, uiTheme);
           const hexTextColour = Phaser.Display.Color.HexStringToColor(hexColour).color;
           statsContainerLabels[s].setTint(hexTextColour);
         }
