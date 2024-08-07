@@ -299,7 +299,6 @@ export const trainerNames: SimpleTranslationEntries = {
   "saturn": "Saturn",
   "zinzolin": "Violaceus",
   "rood": "Rubius",
-  "colress": "Achromas",
   "xerosic": "Xeros",
   "bryony": "Begonia",
 

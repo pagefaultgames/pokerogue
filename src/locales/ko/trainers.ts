@@ -300,7 +300,6 @@ export const trainerNames: SimpleTranslationEntries = {
   "saturn": "새턴",
   "zinzolin": "비오",
   "rood": "로트",
-  "colress": "아크로마",
   "xerosic": "크세로시키",
   "bryony": "바라",
 

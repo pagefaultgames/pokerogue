@@ -549,20 +549,6 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Hm. Du bist ein talentierter Trainer, aber leider nicht talentiert genug."
     }
   },
-  "colress": {
-    "encounter": {
-      1: `Du könntest eine Bedrohung für Team Plasma werden.
-          $Wir müssen dich hier im Interesse meiner Forschung eliminieren!`,
-      2: "Oh, zum Heulen... Ich hatte nicht erwartet, so schnell kämpfen zu müssen. Faszinierend!",
-      3: `Du bist ein beeindruckender Trainer, dass du es so weit geschafft hast.
-         $Mal sehen, wie du gegen meine Strategien abschneidest.`,
-    },
-    "victory": {
-      1: "G-Cis... Ich muss das berichten...",
-      2: "Es ist bitterkalt. Ich zittere. Doch mein Geist ist auf die Daten fokussiert!",
-      3: "Hm. Du bist ein klügerer Trainer, als ich erwartet habe. Sehr interessant."
-    }
-  },
   "xerosic": {
     "encounter": {
       1: "Ah ha ha! Es wäre mir ein Vergnügen. Komm schon, kleiner Trainer! Zeig mir, was du drauf hast!",
