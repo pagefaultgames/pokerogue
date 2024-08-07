@@ -60,4 +60,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "suppressAbilities": "A habilidade de {{pokemonName}}\nfoi suprimida!",
   "swapArenaTags": "{{pokemonName}} trocou os efeitos de batalha que afetam cada lado do campo!",
   "chillyReception": "{{pokemonName}} está prestes a contar uma piada gelada!",
+  "exposedMove": "{{pokemonName}} identificou\n{{targetPokemonName}}!",
 } as const;

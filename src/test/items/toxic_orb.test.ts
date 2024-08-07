@@ -72,6 +72,6 @@ describe("Items - Toxic orb", () => {
     const message2 = game.textInterceptor.getLatestMessage();
     expect(message2).toContain("is hurt");
     expect(message2).toContain("by poison");
-    expect(game.scene.getParty()[0].status.effect).toBe(StatusEffect.TOXIC);
+    expect(game.scene.getParty()[0].status!.effect).toBe(StatusEffect.TOXIC);
   }, 20000);
 });

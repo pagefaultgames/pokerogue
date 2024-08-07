@@ -60,4 +60,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "suppressAbilities": "Die Fähigkeit von {{pokemonName}} wirkt nicht mehr!",
   "swapArenaTags": "{{pokemonName}} hat die Effekte, die auf den beiden Seiten des Kampffeldes wirken, miteinander getauscht!",
   "chillyReception": "{{pokemonName}} erzählt einen schlechten Witz, der nicht besonders gut ankommt...",
+  "exposedMove": "{{pokemonName}} erkennt {{targetPokemonName}}!",
 } as const;

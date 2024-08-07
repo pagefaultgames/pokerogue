@@ -5,6 +5,7 @@ import MockNineslice from "#test/utils/mocks/mocksContainer/mockNineslice";
 import MockImage from "#test/utils/mocks/mocksContainer/mockImage";
 import MockText from "#test/utils/mocks/mocksContainer/mockText";
 import MockPolygon from "#test/utils/mocks/mocksContainer/mockPolygon";
+import { MockGameObject } from "./mockGameObject";
 
 
 export default class MockTextureManager {
@@ -12,7 +13,7 @@ export default class MockTextureManager {
   private scene;
   public add;
   public displayList;
-  public list = [];
+  public list: MockGameObject[] = [];
 
   constructor(scene) {
     this.scene = scene;

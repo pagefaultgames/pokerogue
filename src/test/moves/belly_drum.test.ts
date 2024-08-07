@@ -43,7 +43,7 @@ describe("Moves - BELLY DRUM", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
@@ -58,7 +58,7 @@ describe("Moves - BELLY DRUM", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       // Here - BattleStat.ATK -> -3 and BattleStat.SPATK -> 6
@@ -78,7 +78,7 @@ describe("Moves - BELLY DRUM", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       leadPokemon.summonData.battleStats[BattleStat.ATK] = 6;
 
@@ -94,7 +94,7 @@ describe("Moves - BELLY DRUM", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
       leadPokemon.hp = hpLost - PREDAMAGE;
 
