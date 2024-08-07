@@ -467,7 +467,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const pokerusLabels = [
       new DropDownLabel(i18next.t("filterBar:pokerus"), undefined, DropDownState.OFF),
       new DropDownLabel(i18next.t("filterBar:hasPokerus"), undefined, DropDownState.ON),
-      new DropDownLabel(i18next.t("filterBar:noPokerus"), undefined, DropDownState.EXCLUDE),
     ];
     const miscOptions = [
       new DropDownOption(this.scene, "WIN", winLabels),
