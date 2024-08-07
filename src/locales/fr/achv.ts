@@ -444,8 +444,8 @@ export const PGFachv: AchievementTranslationEntries = {
     description: "Terminer le jeu en mode classique",
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
-    name: "Bring Your Child To Work Day",
-    description: "Beat the game in Classic Mode with at least one unevolved party member."
+    name: "Le stagiaire de 3e",
+    description: "Terminer le mode Classique avec au moins un Pokémon non-évolué dans l’équipe."
   },
 
   "MONO_GEN_ONE": {
