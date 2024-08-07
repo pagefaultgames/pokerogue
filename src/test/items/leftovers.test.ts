@@ -40,7 +40,7 @@ describe("Items - Leftovers", () => {
     // Make sure leftovers are there
     expect(game.scene.modifiers[0].type.id).toBe("LEFTOVERS");
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
     // We should have full hp
     expect(leadPokemon.isFullHp()).toBe(true);

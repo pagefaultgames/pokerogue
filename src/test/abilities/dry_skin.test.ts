@@ -38,7 +38,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     // first turn
@@ -59,7 +59,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
@@ -82,7 +82,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     const initialHP = 1000;
     enemy.hp = initialHP;
 
@@ -108,7 +108,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
@@ -123,7 +123,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
@@ -139,7 +139,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;

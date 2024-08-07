@@ -25,10 +25,10 @@ export default class AchvsUiHandler extends MessageUiHandler {
   private achvsTotal: number;
   private scrollCursor: number;
 
-  private cursorObj: Phaser.GameObjects.NineSlice;
+  private cursorObj: Phaser.GameObjects.NineSlice | null;
 
   constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode);
+    super(scene, mode!); // TODO: is this bang correct?
 
     this.achvsTotal = Object.keys(achvs).length;
     this.scrollCursor = 0;
@@ -221,7 +221,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     let updateAchv = ret;
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight", null, 16, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight", undefined, 16, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.achvIconsContainer.add(this.cursorObj);
       updateAchv = true;
