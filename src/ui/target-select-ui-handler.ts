@@ -18,7 +18,7 @@ export default class TargetSelectUiHandler extends UiHandler {
   private isMultipleTargets: boolean = false;
   private targets: BattlerIndex[];
   private targetsHighlighted: Pokemon[];
-  private targetFlashTween: Phaser.Tweens.Tween;
+  private targetFlashTween: Phaser.Tweens.Tween | null;
   private targetBattleInfoMoveTween: Phaser.Tweens.Tween[] = [];
 
   constructor(scene: BattleScene) {
@@ -68,12 +68,12 @@ export default class TargetSelectUiHandler extends UiHandler {
       switch (button) {
       case Button.UP:
         if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex(t => t >= BattlerIndex.ENEMY) > -1) {
-          success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY));
+          success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
         }
         break;
       case Button.DOWN:
         if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex(t => t < BattlerIndex.ENEMY) > -1) {
-          success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY));
+          success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
         }
         break;
       case Button.LEFT:

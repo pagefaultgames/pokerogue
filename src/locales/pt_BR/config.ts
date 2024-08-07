@@ -39,7 +39,7 @@ import { nature } from "./nature";
 import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
-import { pokemonForm } from "./pokemon-form";
+import { pokemonForm, battlePokemonForm } from "./pokemon-form";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
 import { pokemonSummary } from "./pokemon-summary";
@@ -62,6 +62,7 @@ export const ptBrConfig = {
   battle: battle,
   battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
+  battlePokemonForm: battlePokemonForm,
   battlerTags: battlerTags,
   berry: berry,
   bgmName: bgmName,

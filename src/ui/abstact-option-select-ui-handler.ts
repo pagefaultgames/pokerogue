@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
+import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
@@ -36,22 +36,24 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected optionSelectText: Phaser.GameObjects.Text;
   protected optionSelectIcons: Phaser.GameObjects.Sprite[];
 
-  protected config: OptionSelectConfig;
+  protected config: OptionSelectConfig | null;
 
   protected blockInput: boolean;
 
   protected scrollCursor: integer = 0;
 
-  private cursorObj: Phaser.GameObjects.Image;
+  protected scale: number = 0.1666666667;
+
+  private cursorObj: Phaser.GameObjects.Image | null;
 
   constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode);
+    super(scene, mode!); // TODO: is this bang correct?
   }
 
   abstract getWindowWidth(): integer;
 
   getWindowHeight(): integer {
-    return (Math.min((this.config?.options || []).length, this.config?.maxOptions || 99) + 1) * 16;
+    return (Math.min((this.config?.options || []).length, this.config?.maxOptions || 99) + 1) * 96 * this.scale;
   }
 
   setup() {
@@ -69,6 +71,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectIcons = [];
 
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, (this.scene as BattleScene).uiTheme).scale;
+
     this.setCursor(0);
   }
 
@@ -84,6 +88,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     }
 
     this.optionSelectText = addTextObject(this.scene, 0, 0, options.map(o => o.item ? `    ${o.label}` : o.label).join("\n"), TextStyle.WINDOW, { maxLines: options.length });
+    this.optionSelectText.setLineSpacing(this.scale * 72);
     this.optionSelectText.setName("text-option-select");
     this.optionSelectText.setLineSpacing(12);
     this.optionSelectContainer.add(this.optionSelectText);
@@ -91,35 +96,37 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
 
-    if (this.config?.options.length > this.config?.maxOptions) {
+    if (this.config?.options && this.config?.options.length > (this.config?.maxOptions!)) { // TODO: is this bang correct?
       this.optionSelectText.setText(this.getOptionsWithScroll().map(o => o.label).join("\n"));
     }
 
     this.optionSelectBg.height = this.getWindowHeight();
 
-    this.optionSelectText.setPositionRelative(this.optionSelectBg, 16, 9);
+    this.optionSelectText.setPositionRelative(this.optionSelectBg, 12+24*this.scale, 2+42*this.scale);
 
     options.forEach((option: OptionSelectItem, i: integer) => {
       if (option.item) {
         const itemIcon = this.scene.add.sprite(0, 0, "items", option.item);
-        itemIcon.setScale(0.5);
+        itemIcon.setScale(3 * this.scale);
         this.optionSelectIcons.push(itemIcon);
 
         this.optionSelectContainer.add(itemIcon);
 
-        itemIcon.setPositionRelative(this.optionSelectText, 6, 7 + 16 * i);
+        itemIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
         if (option.item === "candy") {
           const itemOverlayIcon = this.scene.add.sprite(0, 0, "items", "candy_overlay");
-          itemOverlayIcon.setScale(0.5);
+          itemOverlayIcon.setScale(3 * this.scale);
           this.optionSelectIcons.push(itemOverlayIcon);
 
           this.optionSelectContainer.add(itemOverlayIcon);
 
-          itemOverlayIcon.setPositionRelative(this.optionSelectText, 6, 7 + 16 * i);
+          itemOverlayIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
-          itemIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[0])));
-          itemOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[1])));
+          if (option.itemArgs) {
+            itemIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[0])));
+            itemOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[1])));
+          }
         }
       }
     });
@@ -294,7 +301,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.optionSelectContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setPositionRelative(this.optionSelectBg, 12, 17 + this.cursor * 16);
+    this.cursorObj.setScale(this.scale * 6);
+    this.cursorObj.setPositionRelative(this.optionSelectBg, 12, 102*this.scale + this.cursor * (114 * this.scale - 3));
 
     return changed;
   }

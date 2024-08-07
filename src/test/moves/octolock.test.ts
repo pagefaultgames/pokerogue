@@ -1,14 +1,14 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { TrappedTag } from "#app/data/battler-tags.js";
 import { CommandPhase, MoveEndPhase, TurnInitPhase } from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Octolock", () => {
   describe("integration tests", () => {
@@ -32,11 +32,11 @@ describe("Moves - Octolock", () => {
 
       game.override.enemySpecies(Species.RATTATA);
       game.override.enemyMoveset(SPLASH_ONLY);
-      game.override.enemyAbility(Abilities.NONE);
+      game.override.enemyAbility(Abilities.BALL_FETCH);
 
       game.override.startingLevel(2000);
       game.override.moveset([Moves.OCTOLOCK, Moves.SPLASH]);
-      game.override.ability(Abilities.NONE);
+      game.override.ability(Abilities.BALL_FETCH);
     });
 
     it("Reduces DEf and SPDEF by 1 each turn", { timeout: 10000 }, async () => {

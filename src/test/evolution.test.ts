@@ -1,7 +1,7 @@
 import { pokemonEvolutions } from "#app/data/pokemon-evolutions.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Species } from "#app/enums/species.js";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -64,7 +64,7 @@ describe("Evolution", () => {
   it("should handle illegal abilityIndex values", async () => {
     await game.runToSummon([Species.SQUIRTLE]);
 
-    const squirtle = game.scene.getPlayerPokemon();
+    const squirtle = game.scene.getPlayerPokemon()!;
     squirtle.abilityIndex = 5;
 
     squirtle.evolve(pokemonEvolutions[Species.SQUIRTLE][0], squirtle.getSpeciesForm());
@@ -74,7 +74,7 @@ describe("Evolution", () => {
   it("should handle nincada's unique evolution", async () => {
     await game.runToSummon([Species.NINCADA]);
 
-    const nincada = game.scene.getPlayerPokemon();
+    const nincada = game.scene.getPlayerPokemon()!;
     nincada.abilityIndex = 2;
 
     nincada.evolve(pokemonEvolutions[Species.NINCADA][0], nincada.getSpeciesForm());

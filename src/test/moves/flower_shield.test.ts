@@ -2,17 +2,15 @@ import { BattleStat } from "#app/data/battle-stat.js";
 import { SemiInvulnerableTag } from "#app/data/battler-tags.js";
 import { Type } from "#app/data/type.js";
 import { Biome } from "#app/enums/biome.js";
-import {
-  TurnEndPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { TurnEndPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Flower Shield", () => {
   let phaserGame: Phaser.Game;
@@ -41,8 +39,8 @@ describe("Moves - Flower Shield", () => {
     game.override.enemySpecies(Species.CHERRIM);
 
     await game.startBattle([Species.MAGIKARP]);
-    const cherrim = game.scene.getEnemyPokemon();
-    const magikarp = game.scene.getPlayerPokemon();
+    const cherrim = game.scene.getEnemyPokemon()!;
+    const magikarp = game.scene.getPlayerPokemon()!;
 
     expect(magikarp.summonData.battleStats[BattleStat.DEF]).toBe(0);
     expect(cherrim.summonData.battleStats[BattleStat.DEF]).toBe(0);
@@ -83,8 +81,8 @@ describe("Moves - Flower Shield", () => {
     game.override.enemyLevel(50);
 
     await game.startBattle([Species.CHERRIM]);
-    const paras = game.scene.getEnemyPokemon();
-    const cherrim = game.scene.getPlayerPokemon();
+    const paras = game.scene.getEnemyPokemon()!;
+    const cherrim = game.scene.getPlayerPokemon()!;
 
     expect(paras.summonData.battleStats[BattleStat.DEF]).toBe(0);
     expect(cherrim.summonData.battleStats[BattleStat.DEF]).toBe(0);
@@ -102,8 +100,8 @@ describe("Moves - Flower Shield", () => {
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.MAGIKARP]);
-    const enemy = game.scene.getEnemyPokemon();
-    const ally = game.scene.getPlayerPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
+    const ally = game.scene.getPlayerPokemon()!;
 
     expect(enemy.summonData.battleStats[BattleStat.DEF]).toBe(0);
     expect(ally.summonData.battleStats[BattleStat.DEF]).toBe(0);

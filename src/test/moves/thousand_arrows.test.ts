@@ -1,11 +1,8 @@
 import { Abilities } from "#app/enums/abilities.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import {
-  BerryPhase,
-  MoveEffectPhase
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { BerryPhase, MoveEffectPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
@@ -42,7 +39,7 @@ describe("Moves - Thousand Arrows", () => {
     async () => {
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THOUSAND_ARROWS));
 
@@ -65,7 +62,7 @@ describe("Moves - Thousand Arrows", () => {
 
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THOUSAND_ARROWS));
 
@@ -87,9 +84,9 @@ describe("Moves - Thousand Arrows", () => {
 
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      enemyPokemon.addTag(BattlerTagType.MAGNET_RISEN, null, Moves.MAGNET_RISE);
+      enemyPokemon.addTag(BattlerTagType.MAGNET_RISEN, undefined, Moves.MAGNET_RISE);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THOUSAND_ARROWS));
 

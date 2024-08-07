@@ -1,31 +1,20 @@
-import GameWrapper from "#app/test/utils/gameWrapper";
-import {Mode} from "#app/ui/ui";
-import {generateStarter, waitUntil} from "#app/test/utils/gameManagerUtils";
-import {
-  CommandPhase,
-  EncounterPhase,
-  FaintPhase,
-  LoginPhase,
-  NewBattlePhase,
-  SelectStarterPhase,
-  SelectTargetPhase,
-  TitlePhase, TurnEndPhase, TurnInitPhase,
-  TurnStartPhase,
-} from "#app/phases";
+import GameWrapper from "#test/utils/gameWrapper";
+import { Mode } from "#app/ui/ui";
+import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
+import { CommandPhase, EncounterPhase, FaintPhase, LoginPhase, MovePhase, NewBattlePhase, SelectStarterPhase, SelectTargetPhase, TitlePhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
-import PhaseInterceptor from "#app/test/utils/phaseInterceptor";
-import TextInterceptor from "#app/test/utils/TextInterceptor";
-import {GameModes, getGameMode} from "#app/game-mode";
+import PhaseInterceptor from "#test/utils/phaseInterceptor";
+import TextInterceptor from "#test/utils/TextInterceptor";
+import { GameModes, getGameMode } from "#app/game-mode";
 import fs from "fs";
-import {AES, enc} from "crypto-js";
-import {updateUserInfo} from "#app/account";
+import { AES, enc } from "crypto-js";
+import { updateUserInfo } from "#app/account";
 import InputsHandler from "#app/test/utils/inputsHandler";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
-import {EnemyPokemon, PlayerPokemon} from "#app/field/pokemon";
-import {MockClock} from "#app/test/utils/mocks/mockClock";
-import {Command} from "#app/ui/command-ui-handler";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import PartyUiHandler, {PartyUiMode} from "#app/ui/party-ui-handler";
+import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import { MockClock } from "#app/test/utils/mocks/mockClock";
+import PartyUiHandler from "#app/ui/party-ui-handler";
+import CommandUiHandler, { Command } from "#app/ui/command-ui-handler";
 import Trainer from "#app/field/trainer";
 import { ExpNotification } from "#enums/exp-notification";
 import { GameDataType } from "#enums/game-data-type";
@@ -35,6 +24,10 @@ import { Button } from "#enums/buttons";
 import { BattlerIndex } from "#app/battle.js";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
 import { OverridesHelper } from "./overridesHelper";
+import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
+import overrides from "#app/overrides.js";
+import { removeEnemyHeldItems } from "./testUtils";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -88,7 +81,7 @@ export default class GameManager {
    * Ends the current phase.
    */
   endPhase() {
-    this.scene.getCurrentPhase().end();
+    this.scene.getCurrentPhase()?.end();
   }
 
   /**
@@ -139,6 +132,9 @@ export default class GameManager {
     });
 
     await this.phaseInterceptor.run(EncounterPhase);
+    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
+      removeEnemyHeldItems(this);
+    }
   }
 
   /**
@@ -178,11 +174,11 @@ export default class GameManager {
     // Confirm target selection if move is multi-target
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition].getMove();
+      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
       if (move.isMultiTarget()) {
         handler.processInput(Button.ACTION);
       }
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnEndPhase));
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MovePhase) || this.isCurrentPhase(TurnEndPhase));
   }
 
   /**
@@ -259,7 +255,7 @@ export default class GameManager {
    */
   isCurrentPhase(phaseTarget) {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
-    return this.scene.getCurrentPhase().constructor.name === targetName;
+    return this.scene.getCurrentPhase()?.constructor.name === targetName;
   }
 
   /**
@@ -282,7 +278,7 @@ export default class GameManager {
       await waitUntil(() => this.scene.ui?.getMode() === Mode.TITLE);
       await this.scene.gameData.tryExportData(GameDataType.SESSION, 0);
       await waitUntil(() => localStorage.hasOwnProperty("toExport"));
-      return resolve(localStorage.getItem("toExport"));
+      return resolve(localStorage.getItem("toExport")!); // TODO: is this bang correct?;
     });
   }
 
@@ -317,15 +313,45 @@ export default class GameManager {
   }
 
   /**
-   * Switch pokemon and transition to the enemy command phase
+   * Command an in-battle switch to another Pokemon via the main battle menu.
    * @param pokemonIndex the index of the pokemon in your party to switch to
    */
   doSwitchPokemon(pokemonIndex: number) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      this.scene.ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
+      (this.scene.ui.getHandler() as CommandUiHandler).setCursor(2);
+      (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
     });
-    this.onNextPrompt("CommandPhase", Mode.PARTY, () => {
-      (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, pokemonIndex, false);
+
+    this.doSelectPartyPokemon(pokemonIndex, "CommandPhase");
+  }
+
+  /**
+   * Revive pokemon, currently players only.
+   * @param pokemonIndex the index of the pokemon in your party to revive
+   */
+  doRevivePokemon(pokemonIndex: number) {
+    const party = this.scene.getParty();
+    const candidate = new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0);
+    const modifier = candidate.type!.newModifier(party[pokemonIndex]);
+    this.scene.addModifier(modifier, false);
+  }
+
+  /**
+   * Select a pokemon from the party menu. Only really handles the basic cases
+   * of the party UI, where you just need to navigate to a party slot and press
+   * Action twice - navigating any menus that come up after you select a party member
+   * is not supported.
+   * @param slot the index of the pokemon in your party to switch to
+   * @param inPhase Which phase to expect the selection to occur in. Typically
+   * non-command switch actions happen in SwitchPhase.
+   */
+  doSelectPartyPokemon(slot: number, inPhase = "SwitchPhase") {
+    this.onNextPrompt(inPhase, Mode.PARTY, () => {
+      const partyHandler = this.scene.ui.getHandler() as PartyUiHandler;
+
+      partyHandler.setCursor(slot);
+      partyHandler.processInput(Button.ACTION); // select party slot
+      partyHandler.processInput(Button.ACTION); // send out (or whatever option is at the top)
     });
   }
 }

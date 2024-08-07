@@ -20,10 +20,23 @@ export const titles: SimpleTranslationEntries = {
   "plasma_boss": "Weiser von Team Plasma", // This is on purpose, since "Ghetsis" is never mentioned as the boss of team plasma in the game but as "Weiser"
   "flare_boss": "Flare-Boss",
   "aether_boss": "Æther-Präsidentin",
-  "aether_admin": "Æther-Regionalleiter",
   "skull_boss": "Skull-Boss",
-  "skull_admin": "Team Skull Vorstand",
   "macro_boss": "Geschäftsführer von Macro Cosmos",
+  
+  "rocket_admin": "Team Rocket Vorstand",
+  "rocket_admin_female": "Team Rocket Vorstand",
+  "magma_admin": "Team Magma Vorstand",
+  "magma_admin_female": "Team Magma Vorstand",
+  "aqua_admin": "Team Aqua Vorstand",
+  "aqua_admin_female": "Team Aqua Vorstand",
+  "galactic_commander": "Team Galaktik Commander",
+  "galactic_commander_female": "Team Galaktik Commander",
+  "plasma_sage": "Weiser von Team Plasma",
+  "plasma_admin": "Team Plasma Vorstand",
+  "flare_admin": "Team Flare Vorstand",
+  "flare_admin_female": "Team Flare Vorstand",
+  "aether_admin": "Æther-Regionalleiter",
+  "skull_admin": "Team Skull Vorstand",
   "macro_admin": "Vizepräsidentin von Macro Cosmos"
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
@@ -283,16 +296,34 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Delion",
   "rival": "Finn",
   "rival_female": "Ivy",
+
+  // Evil Team Admins
+  "archer": "Atlas",
+  "ariana": "Athena",
+  "proton": "Lance",
+  "petrel": "Lambda",
+  "tabitha": "Kalle",
+  "courtney": "Jördis",
+  "shelly": "Kordula",
+  "matt": "Wolfgang",
+  "mars": "Mars",
+  "jupiter": "Jupiter",
+  "saturn": "Saturn",
+  "zinzolin": "Violaceus",
+  "rood": "Rubius",
+  "xerosic": "Xeros",
+  "bryony": "Begonia",
+  "faba": "Fabian"
+  "plumeria": "Fran",
+  "oleana": "Olivia",
+
   "maxie": "Marc",
   "archie": "Adrian",
   "cyrus": "Zyrus",
   "ghetsis": "G-Cis",
   "lysandre": "Flordelis",
-  "faba": "Fabian",
   "lusamine": "Samantha",
-  "plumeria": "Fran",
   "guzma": "Bromley",
-  "oleana": "Olivia",
   "rose": "Rose",
 
   // Double Names
