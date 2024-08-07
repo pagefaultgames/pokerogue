@@ -3136,7 +3136,7 @@ export const speciesStarters = {
   [Species.SCORBUNNY]: 4,
   [Species.SOBBLE]: 3,
   [Species.SKWOVET]: 2,
-  [Species.ROOKIDEE]: 4,
+  [Species.ROOKIDEE]: 3,
   [Species.BLIPBUG]: 2,
   [Species.NICKIT]: 1,
   [Species.GOSSIFLEUR]: 2,
