@@ -17,7 +17,7 @@ export const egg: SimpleTranslationEntries = {
   "notEnoughVouchers": "タマゴクーポンが足りません！",
   "tooManyEggs": "タマゴが一杯です!",
   "pull": "回引く",
-  "pulls": "回引く"
+  "pulls": "回引く",
   "sameSpeciesEgg": "{{species}}は　このタマゴから　うまれる！",
   "hatchFromTheEgg": "{{pokemonName}}は　タマゴから　うまれた！",
   "eggMoveUnlock": "タマゴわざ　{{moveName}}を　おぼえた！",
