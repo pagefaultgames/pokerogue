@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { Mode } from "./ui";
-import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
+import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import * as Utils from "../utils";
 import { Egg, getLegendaryGachaSpeciesForTimestamp, IEggOptions } from "../data/egg";
@@ -36,6 +36,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   private transitionCancelled: boolean;
   private defaultText: string;
 
+  private scale: number = 0.1666666667;
+
   constructor(scene: BattleScene) {
     super(scene, Mode.EGG_GACHA);
 
@@ -50,6 +52,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
   setup() {
     this.gachaCursor = 0;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, this.scene.uiTheme).scale;
 
     const ui = this.getUi();
 
@@ -57,7 +60,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.setVisible(false);
     ui.add(this.eggGachaContainer);
 
-    const bg = this.scene.add.nineslice(0, 0, "default_bg", null, 320, 180, 0, 0, 16, 0);
+    const bg = this.scene.add.nineslice(0, 0, "default_bg", undefined, 320, 180, 0, 0, 16, 0);
     bg.setOrigin(0, 0);
 
     this.eggGachaContainer.add(bg);
@@ -96,7 +99,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       const gachaInfoContainer = this.scene.add.container(160, 46);
 
-      const currentLanguage = i18next.resolvedLanguage;
+      const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
       let gachaTextStyle = TextStyle.WINDOW_ALT;
       let gachaX = 4;
       let gachaY = 0;
@@ -200,7 +203,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
 
-    this.eggGachaOptionSelectBg = addWindow(this.scene, 0, 0, 96, 112);
+    this.eggGachaOptionSelectBg = addWindow(this.scene, 0, 0, 96, 16 + 576 * this.scale);
     this.eggGachaOptionSelectBg.setOrigin(1, 1);
     this.eggGachaOptionsContainer.add(this.eggGachaOptionSelectBg);
 
@@ -214,7 +217,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       { multiplier: multiplierOne, description: `25 ${i18next.t("egg:pulls")}`, icon: getVoucherTypeIcon(VoucherType.GOLDEN) }
     ];
 
-    const { resolvedLanguage } = i18next;
+    const resolvedLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
     const pullOptionsText = pullOptions.map(option =>{
       const desc = option.description.split(" ");
       if (desc[0].length < 2) {
@@ -243,8 +246,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     pullOptions.forEach((option, i) => {
       const icon = this.scene.add.sprite(0, 0, "items", option.icon);
-      icon.setScale(0.5);
-      icon.setPositionRelative(this.eggGachaOptionSelectBg, 20, 17 + i * 16);
+      icon.setScale(3 * this.scale);
+      icon.setPositionRelative(this.eggGachaOptionSelectBg, 20, 9 + (48 + i * 96) * this.scale);
       this.eggGachaOptionsContainer.add(icon);
     });
 
@@ -332,7 +335,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     return Utils.fixedInt(delay);
   }
 
-  pull(pullCount?: integer, count?: integer, eggs?: Egg[]): void {
+  pull(pullCount: integer = 0, count: integer = 0, eggs?: Egg[]): void {
     if (Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE && !count) {
       pullCount = Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE;
     }
@@ -342,10 +345,10 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     const doPull = () => {
       if (this.transitionCancelled) {
-        return this.showSummary(eggs);
+        return this.showSummary(eggs!);
       }
 
-      const egg = this.scene.add.sprite(127, 75, "egg", `egg_${eggs[count].getKey()}`);
+      const egg = this.scene.add.sprite(127, 75, "egg", `egg_${eggs![count].getKey()}`);
       egg.setScale(0.5);
 
       this.gachaContainers[this.gachaCursor].add(egg);
@@ -388,7 +391,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                           if (++count < pullCount) {
                             this.pull(pullCount, count, eggs);
                           } else {
-                            this.showSummary(eggs);
+                            this.showSummary(eggs!);
                           }
                         }
                       });
@@ -581,7 +584,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   showError(text: string): void {
-    this.showText(text, null, () => this.showText(this.defaultText), Utils.fixedInt(1500));
+    this.showText(text, undefined, () => this.showText(this.defaultText), Utils.fixedInt(1500));
   }
 
   setTransitioning(transitioning: boolean): void {
@@ -735,7 +738,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       this.eggGachaOptionsContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setPositionRelative(this.eggGachaOptionSelectBg, 10, 17 + this.cursor * 16);
+    this.cursorObj.setScale(this.scale * 6);
+    this.cursorObj.setPositionRelative(this.eggGachaOptionSelectBg, 10, 9 + (48 + this.cursor * 96) * this.scale);
 
     return ret;
   }

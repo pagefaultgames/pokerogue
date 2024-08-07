@@ -2,12 +2,12 @@ import { getMoveTargets } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Species } from "#app/enums/species.js";
 import { TurnEndPhase } from "#app/phases.js";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { Moves } from "#enums/moves";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -73,7 +73,6 @@ async function checkTargetMultiplier(game: GameManager, attackMove: Moves, killA
   await game.startBattle();
 
   const playerPokemonRepr = game.scene.getPlayerField();
-  expect(playerPokemonRepr).not.toBeUndefined();
 
   killAllyAndEnemy(game, killAlly, killSecondEnemy);
 

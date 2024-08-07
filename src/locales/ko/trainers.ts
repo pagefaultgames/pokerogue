@@ -19,6 +19,19 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "갤럭시단 보스",
   "plasma_boss": "플라스마단 보스",
   "flare_boss": "플레어단 보스",
+
+  "rocket_admin": "로켓단 간부",
+  "rocket_admin_female": "로켓단 간부",
+  "magma_admin": "마그마단 간부",
+  "magma_admin_female": "마그마단 간부",
+  "aqua_admin": "아쿠아단 간부",
+  "aqua_admin_female": "아쿠아단 간부",
+  "galactic_commander": "갤럭시단 간부",
+  "galactic_commander_female": "갤럭시단 간부",
+  "plasma_sage": "플라스마단 현인",
+  "plasma_admin": "플라스마단 간부",
+  "flare_admin": "플레어단 간부",
+  "flare_admin_female": "플레어단 간부",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -36,7 +49,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "baker": "제빵사",
   "battle_girl": "배틀걸",
   "beauty": "아가씨",
-  "beginners": "반바지 꼬마 & 짧은 치마", // 확인 필요
+  "beginners": "반바지 꼬마 & 짧은 치마",
   "biker": "폭주족",
   "black_belt": "태권왕",
   "breeder": "포켓몬 브리더",
@@ -62,7 +75,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "guitarist_female": "기타리스트",
   "harlequin": "어릿광대",
   "hiker": "등산가",
-  "hooligans": "폭주족 & 빡빡이", // 확인 필요
+  "hooligans": "폭주족 & 빡빡이",
   "hoopster": "농구선수",
   "infielder": "야구선수",
   "janitor": "청소부",
@@ -92,7 +105,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "pokémon_ranger_female": "포켓몬 레인저",
   "pokémon_rangers": "포켓몬 레인저",
   "ranger": "포켓몬 레인저",
-  "restaurant_staff": "요리사", // 혹은 오너로 추정
+  "restaurant_staff": "레스토랑 직원",
   "rich": "신사",
   "rich_female": "마담",
   "rich_boy": "도련님",
@@ -114,7 +127,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "school_kids": "학원끝난 아이",
   "swimmer": "수영팬티 소년",
   "swimmer_female": "비키니 아가씨",
-  "swimmers": "수영팬티 소년 & 비키니 아가씨", // 확인 필요
+  "swimmers": "수영팬티 소년 & 비키니 아가씨",
   "twins": "쌍둥이",
   "veteran": "베테랑 트레이너",
   "veteran_female": "베테랑 트레이너",
@@ -127,16 +140,23 @@ export const trainerClasses: SimpleTranslationEntries = {
   "youngster": "반바지 꼬마",
   "rocket_grunt": "로켓단 조무래기",
   "rocket_grunt_female": "로켓단 조무래기",
+  "rocket_grunts": "로켓단 조무래기들",
   "magma_grunt": "마그마단 조무래기",
   "magma_grunt_female": "마그마단 조무래기",
+  "magma_grunts": "마그마단 조무래기들",
   "aqua_grunt": "아쿠아단 조무래기",
   "aqua_grunt_female": "아쿠아단 조무래기",
+  "aqua_grunts": "아쿠아단 조무래기들",
   "galactic_grunt": "갤럭시단 조무래기",
   "galactic_grunt_female": "갤럭시단 조무래기",
+  "galactic_grunts": "갤럭시단 조무래기들",
   "plasma_grunt": "플라스마단 조무래기",
   "plasma_grunt_female": "플라스마단 조무래기",
+  "plasma_grunts": "플라스마단 조무래기들",
   "flare_grunt": "플레어단 조무래기",
   "flare_grunt_female": "플레어단 조무래기",
+  "flare_grunts": "플레어단 조무래기들",
+
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -265,6 +285,25 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "단델",
   "rival": "핀",
   "rival_female": "아이비",
+
+  // Evil Team Admins
+  "archer": "아폴로",
+  "ariana": "아테나",
+  "proton": "랜스",
+  "petrel": "람다",
+  "tabitha": "호걸",
+  "courtney": "구열",
+  "shelly": "이연",
+  "matt": "해조",
+  "mars": "마스",
+  "jupiter": "주피터",
+  "saturn": "새턴",
+  "zinzolin": "비오",
+  "rood": "로트",
+  "xerosic": "크세로시키",
+  "bryony": "바라",
+
+
   "maxie": "마적",
   "archie": "아강",
   "cyrus": "태홍",

@@ -19,6 +19,19 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "Chefe da Equipe Galáctica",
   "plasma_boss": "Chefe da Equipe Plasma",
   "flare_boss": "Chefe da Equipe Flare",
+
+  "rocket_admin": "Team Rocket Admin",
+  "rocket_admin_female": "Team Rocket Admin",
+  "magma_admin": "Team Magma Admin",
+  "magma_admin_female": "Team Magma Admin",
+  "aqua_admin": "Team Aqua Admin",
+  "aqua_admin_female": "Team Aqua Admin",
+  "galactic_commander": "Team Galactic Commander",
+  "galactic_commander_female": "Team Galactic Commander",
+  "plasma_sage": "Team Plasma Sage",
+  "plasma_admin": "Team Plasma Admin",
+  "flare_admin": "Team Flare Admin",
+  "flare_admin_female": "Team Flare Admin",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -127,16 +140,22 @@ export const trainerClasses: SimpleTranslationEntries = {
   "youngster": "Jovem",
   "rocket_grunt": "Recruta da Equipe Rocket",
   "rocket_grunt_female": "Recruta da Equipe Rocket",
+  "rocket_grunts": "Recrutas da Equipe Rocket",
   "magma_grunt": "Recruta da Equipe Magma",
   "magma_grunt_female": "Recruta da Equipe Magma",
+  "magma_grunts": "Recrutas da Equipe Magma",
   "aqua_grunt": "Recruta da Equipe Aqua",
   "aqua_grunt_female": "Recruta da Equipe Aqua",
+  "aqua_grunts": "Recrutas da Equipe Aqua",
   "galactic_grunt": "Recruta da Equipe Galáctica",
   "galactic_grunt_female": "Recruta da Equipe Galáctica",
+  "galactic_grunts": "Recrutas da Equipe Galáctica",
   "plasma_grunt": "Recruta da Equipe Plasma",
   "plasma_grunt_female": "Recruta da Equipe Plasma",
+  "plasma_grunts": "Recrutas da Equipe Plasma",
   "flare_grunt": "Recruta da Equipe Flare",
   "flare_grunt_female": "Recruta da Equipe Flare",
+  "flare_grunts": "Recrutas da Equipe Flare",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -265,6 +284,24 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Leon",
   "rival": "Finn",
   "rival_female": "Ivy",
+
+  // Evil Team Admins
+  "archer": "Archer",
+  "ariana": "Ariana",
+  "proton": "Proton",
+  "petrel": "Petrel",
+  "tabitha": "Tabitha",
+  "courtney": "Courtney",
+  "shelly": "Shelly",
+  "matt": "Matt",
+  "mars": "Mars",
+  "jupiter": "Jupiter",
+  "saturn": "Saturn",
+  "zinzolin": "Zinzolin",
+  "rood": "Rood",
+  "xerosic": "Xerosic",
+  "bryony": "Bryony",
+
   "maxie": "Maxie",
   "archie": "Archie",
   "cyrus": "Cyrus",

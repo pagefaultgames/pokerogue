@@ -1,6 +1,6 @@
 import { Abilities } from "#app/enums/abilities.js";
 import { PokemonExpBoosterModifier } from "#app/modifier/modifier.js";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import * as Utils from "#app/utils";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -31,7 +31,7 @@ describe("EXP Modifier Items", () => {
     game.override.startingHeldItems([{name: "LUCKY_EGG"}, {name: "GOLDEN_EGG"}]);
     await game.startBattle();
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
     const modifierBonusExp = new Utils.NumberHolder(1);
     partyMember.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, modifierBonusExp);
     expect(modifierBonusExp.value).toBe(2.4);

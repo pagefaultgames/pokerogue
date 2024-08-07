@@ -11,7 +11,7 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
    * @param scene - The BattleScene instance.
    * @param mode - The UI mode, optional.
    */
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null) {
     super(scene, SettingType.DISPLAY, mode);
     this.title = "Display";
 
@@ -76,6 +76,18 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
         this.settings[languageIndex].options[0] = {
           value: "한국어",
           label: "한국어",
+        };
+        break;
+      case "ja":
+        this.settings[languageIndex].options[0] = {
+          value: "日本語",
+          label: "日本語",
+        };
+        break;
+      case "ca-ES":
+        this.settings[languageIndex].options[0] = {
+          value: "Català",
+          label: "Català",
         };
         break;
       default:
