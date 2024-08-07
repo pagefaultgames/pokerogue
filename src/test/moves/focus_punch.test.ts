@@ -42,11 +42,8 @@ describe("Moves - Focus Punch", () => {
     async () => {
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).not.toBe(undefined);
-
-      const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).not.toBe(undefined);
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       const enemyStartingHp = enemyPokemon.hp;
 
@@ -72,11 +69,8 @@ describe("Moves - Focus Punch", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).not.toBe(undefined);
-
-      const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).not.toBe(undefined);
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       const enemyStartingHp = enemyPokemon.hp;
 
@@ -102,11 +96,8 @@ describe("Moves - Focus Punch", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
-
-      const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
 
