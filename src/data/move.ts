@@ -5999,7 +5999,7 @@ export class SwapHeldItemsAttr extends MoveEffectAttr {
       return false;
     }
 
-    user.scene.queueMessage(i18next.t("battle:battlerTagsTrickOnSwap", {
+    user.scene.queueMessage(i18next.t("moveTriggers:trickOnSwap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(user),
     }));
 
@@ -6012,7 +6012,7 @@ export class SwapHeldItemsAttr extends MoveEffectAttr {
       const userItemToSwap = userHeldItems[user.randSeedInt(userHeldItems.length)];
       target.scene.tryTransferHeldItemModifier(userItemToSwap, target, false);
 
-      user.scene.queueMessage(i18next.t("battle:battlerTagsTrickFoeNewItem", {
+      user.scene.queueMessage(i18next.t("moveTriggers:trickFoeNewItem", {
         pokemonNameWithAffix: getPokemonNameWithAffix(target),
         itemName: userItemToSwap.type.name,
       }));

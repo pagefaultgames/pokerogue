@@ -155,7 +155,5 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} wurde durch {{moveName}} verletzt!",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} nimmt einen Teil seiner KP und legt einen Fluch auf {{pokemonName}}!",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} wurde durch den Fluch verletzt!",
-  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}} hortet {{stockpiledCount}}!",
-  "battlerTagsTrickOnSwap": "{{pokemonNameWithAffix}} tauscht Items mit dem Ziel!",
-  "battlerTagsTrickFoeNewItem": "{{pokemonNameWithAffix}} erhält {{itemName}}."
+  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}} hortet {{stockpiledCount}}!"
 } as const;

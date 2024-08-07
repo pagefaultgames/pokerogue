@@ -147,7 +147,5 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}}\n受到了{{moveName}}的伤害！",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}削减了自己的体力，\n并诅咒了{{pokemonName}}！",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}\n正受到诅咒！",
-  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}}蓄力了{{stockpiledCount}}次！",
-  "battlerTagsTrickOnSwap": "{{pokemonNameWithAffix}}\n互换了各自的道具！",
-  "battlerTagsTrickFoeNewItem": "{{pokemonNameWithAffix}}\n获得了{{itemName}}！"
+  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}}蓄力了{{stockpiledCount}}次！"
 } as const;
