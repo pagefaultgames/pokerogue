@@ -1,7 +1,7 @@
 import BattleScene, { bypassLogin } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from "./utils";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr, MoveHeaderAttr } from "./data/move";
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -2353,6 +2353,9 @@ export class TurnStartPhase extends FieldPhase {
           continue;
         }
         const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
+        if (move.getMove().hasAttr(MoveHeaderAttr)) {
+          this.scene.unshiftPhase(new MoveHeaderPhase(this.scene, pokemon, move));
+        }
         if (pokemon.isPlayer()) {
           if (turnCommand.cursor === -1) {
             this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
@@ -2594,6 +2597,32 @@ export class CommonAnimPhase extends PokemonPhase {
     new CommonBattleAnim(this.anim, this.getPokemon(), this.targetIndex !== undefined ? (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField())[this.targetIndex] : this.getPokemon()).play(this.scene, () => {
       this.end();
     });
+  }
+}
+
+export class MoveHeaderPhase extends BattlePhase {
+  public pokemon: Pokemon;
+  public move: PokemonMove;
+
+  constructor(scene: BattleScene, pokemon: Pokemon, move: PokemonMove) {
+    super(scene);
+
+    this.pokemon = pokemon;
+    this.move = move;
+  }
+
+  canMove(): boolean {
+    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon);
+  }
+
+  start() {
+    super.start();
+
+    if (this.canMove()) {
+      applyMoveAttrs(MoveHeaderAttr, this.pokemon, null, this.move.getMove()).then(() => this.end());
+    } else {
+      this.end();
+    }
   }
 }
 

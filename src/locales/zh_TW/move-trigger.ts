@@ -21,6 +21,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isGlowing": "強光包圍了\n{{pokemonName}}！",
   "bellChimed": "鈴聲響徹四周！",
   "foresawAnAttack": "{{pokemonName}}\n預知了未來的攻擊！",
+  "isTighteningFocus": "{{pokemonName}}正在集中注意力！",
   "hidUnderwater": "{{pokemonName}}\n潛入了水中！",
   "soothingAromaWaftedThroughArea": "怡人的香氣擴散了開來！",
   "sprangUp": "{{pokemonName}}\n高高地跳了起來！",
