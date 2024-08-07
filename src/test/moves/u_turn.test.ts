@@ -47,7 +47,7 @@ describe("Moves - U-turn", () => {
 
     // act
     game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
-    game.doSelectPokemon(1);
+    game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     // assert
@@ -66,7 +66,7 @@ describe("Moves - U-turn", () => {
 
     // act
     game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
-    game.doSelectPokemon(1);
+    game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to(SwitchPhase, false);
 
     // assert

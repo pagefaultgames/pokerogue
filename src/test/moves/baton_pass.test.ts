@@ -49,7 +49,7 @@ describe("Moves - Baton Pass", () => {
 
     // round 2 - baton pass
     game.doAttack(getMovePosition(game.scene, 0, Moves.BATON_PASS));
-    game.doSelectPokemon(1);
+    game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     // assert

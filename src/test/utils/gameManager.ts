@@ -313,7 +313,7 @@ export default class GameManager {
   }
 
   /**
-   * Switch pokemon via the Pokemon menu command and transition to the enemy command phase
+   * Command an in-battle switch to another Pokemon via the main battle menu.
    * @param pokemonIndex the index of the pokemon in your party to switch to
    */
   doSwitchPokemon(pokemonIndex: number) {
@@ -321,9 +321,8 @@ export default class GameManager {
       (this.scene.ui.getHandler() as CommandUiHandler).setCursor(2);
       (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
     });
-    this.onNextPrompt("CommandPhase", Mode.PARTY, () => {
-      (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, pokemonIndex, false);
-    });
+
+    this.doSelectPartyPokemon(pokemonIndex, "CommandPhase");
   }
 
   /**
@@ -338,19 +337,21 @@ export default class GameManager {
   }
 
   /**
-   * Select a pokemon from your party in response to an action, such as Baton
-   * Pass or Volt Switch.
+   * Select a pokemon from the party menu. Only really handles the basic cases
+   * of the party UI, where you just need to navigate to a party slot and press
+   * Action twice - navigating any menus that come up after you select a party member
+   * is not supported.
    * @param slot the index of the pokemon in your party to switch to
    * @param inPhase Which phase to expect the selection to occur in. Typically
    * non-command switch actions happen in SwitchPhase.
    */
-  doSelectPokemon(slot: integer, inPhase = "SwitchPhase") {
+  doSelectPartyPokemon(slot: integer, inPhase = "SwitchPhase") {
     this.onNextPrompt(inPhase, Mode.PARTY, () => {
       const partyHandler = this.scene.ui.getHandler() as PartyUiHandler;
 
       partyHandler.setCursor(slot);
-      partyHandler.processInput(Button.ACTION); // select pokemon
-      partyHandler.processInput(Button.ACTION); // send out
+      partyHandler.processInput(Button.ACTION); // select party slot
+      partyHandler.processInput(Button.ACTION); // send out (or whatever option is at the top)
     });
   }
 }
