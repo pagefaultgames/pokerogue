@@ -1699,7 +1699,7 @@ export class HitHealAttr extends MoveEffectAttr {
   constructor(healRatio?: number | null, healStat?: Stat) {
     super(true, MoveEffectTrigger.HIT);
 
-    this.healRatio = healRatio!; // TODO: is this bang correct?
+    this.healRatio = healRatio ?? 0.5;
     this.healStat = healStat ?? null;
   }
   /**

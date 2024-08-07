@@ -107,6 +107,7 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
 }
 
 export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): TextStyleOptions {
+  const lang = i18next.resolvedLanguage;
   let shadowXpos = 4;
   let shadowYpos = 5;
   let scale = 0.1666666667;
@@ -137,11 +138,37 @@ export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraSty
   case TextStyle.SUMMARY_GREEN:
   case TextStyle.WINDOW:
   case TextStyle.WINDOW_ALT:
-  case TextStyle.STATS_VALUE:
     shadowXpos = 3;
     shadowYpos = 3;
     break;
   case TextStyle.STATS_LABEL:
+    let fontSizeLabel = "96px";
+    switch (lang) {
+    case "de":
+      shadowXpos = 3;
+      shadowYpos = 3;
+      fontSizeLabel = "80px";
+      break;
+    default:
+      fontSizeLabel = "96px";
+      break;
+    }
+    styleOptions.fontSize =  fontSizeLabel;
+    break;
+  case TextStyle.STATS_VALUE:
+    shadowXpos = 3;
+    shadowYpos = 3;
+    let fontSizeValue = "96px";
+    switch (lang) {
+    case "de":
+      fontSizeValue = "80px";
+      break;
+    default:
+      fontSizeValue = "96px";
+      break;
+    }
+    styleOptions.fontSize =  fontSizeValue;
+    break;
   case TextStyle.MESSAGE:
   case TextStyle.SETTINGS_LABEL:
   case TextStyle.SETTINGS_LOCKED:

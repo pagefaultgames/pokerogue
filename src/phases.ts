@@ -3989,9 +3989,7 @@ export class VictoryPhase extends PokemonPhase {
           expMultiplier = Overrides.XP_MULTIPLIER_OVERRIDE;
         }
         const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
-        const modifierBonusExp = new Utils.NumberHolder(1);
-        this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, modifierBonusExp);
-        pokemonExp.value *= modifierBonusExp.value;
+        this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
         partyMemberExp.push(Math.floor(pokemonExp.value));
       }
 
