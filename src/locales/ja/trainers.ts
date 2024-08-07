@@ -156,6 +156,12 @@ export const trainerClasses: SimpleTranslationEntries = {
   "flare_grunt": "Flare Grunt",
   "flare_grunt_female": "Flare Grunt",
   "flare_grunts": "Flare Grunts",
+  "aether_grunt": "Aether Foundation Employee",
+  "aether_grunt_female": "Aether Foundation Employee",
+  "skull_grunt": "Team Skull Grunt",
+  "skull_grunt_female": "Team Skull Grunt",
+  "macro_grunt": "Macro Cosmos Trainer",
+  "macro_grunt_female": "Macro Cosmos Trainer",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -301,12 +307,17 @@ export const trainerNames: SimpleTranslationEntries = {
   "rood": "Rood",
   "xerosic": "Xerosic",
   "bryony": "Bryony",
-
+  "faba": "Faba",
+  "plumeria": "Plumeria",
+  "oleana": "Oleana",
   "maxie": "Maxie",
   "archie": "Archie",
   "cyrus": "Cyrus",
   "ghetsis": "Ghetsis",
   "lysandre": "Lysandre",
+  "lusamine": "Lusamine",
+  "guzma": "Guzma",
+  "rose": "Rose",
 
   // Double Names
   "blue_red_double": "Blue & Red",
