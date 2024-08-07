@@ -454,8 +454,8 @@ export class GameData {
         if (versions[0] !== versions[1]) {
           const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
         }*/
-        if (!localStorage.hasOwnProperty(`runHistoryData_${loggedInUser.username}`)) {
-          localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt("", true));
+        if (!localStorage.hasOwnProperty(`runHistoryData_${loggedInUser?.username}`)) {
+          localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt("", true));
         }
 
         this.trainerId = systemData.trainerId;
@@ -576,8 +576,8 @@ export class GameData {
       const response = await Utils.apiFetch("savedata/runHistory", true);
       const data = await response.json();
       */
-      if (localStorage.hasOwnProperty(`runHistoryData_${loggedInUser.username}`)) {
-        let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`);
+      if (localStorage.hasOwnProperty(`runHistoryData_${loggedInUser?.username}`)) {
+        let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser?.username}`);
         if (cachedResponse) {
           cachedResponse = JSON.parse(decrypt(cachedResponse, true));
         }
@@ -592,12 +592,12 @@ export class GameData {
         */
         return cachedRHData;
       } else {
-        localStorage.setItem(`runHistoryData_${loggedInUser.username}`, JSON.parse(encrypt("", true)));
+        localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, JSON.parse(encrypt("", true)));
         return {};
       }
       //return data;
     } else {
-      let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser.username}`);
+      let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser?.username}`);
       if (cachedResponse) {
         cachedResponse = JSON.parse(decrypt(cachedResponse, true));
       }
@@ -628,7 +628,7 @@ export class GameData {
     //Not implemented at the moment, but leaving room for future work
     runHistoryData[timestamp]["favorite"] = false;
 
-    localStorage.setItem(`runHistoryData_${loggedInUser.username}`, encrypt(JSON.stringify(runHistoryData), true));
+    localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), true));
 
     /**
      * Networking Code
@@ -1391,11 +1391,10 @@ export class GameData {
                 const keys = Object.keys(data);
                 keys.forEach((key) => {
                   const entryKeys = Object.keys(data[key]);
-                  console.log(entryKeys);
                   valid = ["favorite", "victory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
                 });
                 if (valid) {
-                  localStorage.setItem(`runHistoryData_${loggedInUser.username}`, dataStr);
+                  localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, dataStr);
                 }
                 break;
               case GameDataType.SETTINGS:

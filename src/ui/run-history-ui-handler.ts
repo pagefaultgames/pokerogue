@@ -25,11 +25,11 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   private runSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private runs: RunEntry[];
 
-  private runSelectCallback: RunSelectCallback;
+  private runSelectCallback: RunSelectCallback | null;
 
   private scrollCursor: integer = 0;
 
-  private cursorObj: Phaser.GameObjects.NineSlice;
+  private cursorObj: Phaser.GameObjects.NineSlice | null;
 
   private runContainerInitialY: number;
 
@@ -166,7 +166,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", null, 296, 44, 6, 6, 6, 6);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
       this.cursorObj.setOrigin(0, 0);
       this.runsContainer.add(this.cursorObj);
     }
@@ -256,7 +256,7 @@ class RunEntry extends Phaser.GameObjects.Container {
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
           const enemyLevel = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
-          enemyLevel.setShadow(0, 0, null);
+          enemyLevel.setShadow(0, 0, undefined);
           enemyLevel.setStroke("#424242", 14);
           enemyLevel.setOrigin(1, 0);
           enemyIconContainer.add(enemyIcon);
@@ -315,7 +315,7 @@ class RunEntry extends Phaser.GameObjects.Container {
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
       const text = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
-      text.setShadow(0, 0, null);
+      text.setShadow(0, 0, undefined);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);
 

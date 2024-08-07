@@ -161,7 +161,7 @@ export default class GameInfoUiHandler extends UiHandler {
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
           const enemyLevel = addTextObject(this.scene, 36, 26, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "44px", color: "#f8f8f8" });
-          enemyLevel.setShadow(0, 0, null);
+          enemyLevel.setShadow(0, 0, undefined);
           enemyLevel.setStroke("#424242", 14);
           enemyLevel.setOrigin(1, 0);
           enemyIconContainer.add(enemyIcon);
@@ -179,7 +179,7 @@ export default class GameInfoUiHandler extends UiHandler {
             const enemy = enemyData.toPokemon(this.scene);
             const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
             const enemyLevel = addTextObject(this.scene, 36, 26, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "44px", color: "#f8f8f8" });
-            enemyLevel.setShadow(0, 0, null);
+            enemyLevel.setShadow(0, 0, undefined);
             enemyLevel.setStroke("#424242", 14);
             enemyLevel.setOrigin(1, 0);
             enemyIconContainer.add(enemyIcon);
@@ -230,7 +230,7 @@ export default class GameInfoUiHandler extends UiHandler {
           const enemy = enemyData.toPokemon(this.scene);
           const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
           const enemySprite1 = enemyIcon.list[0] as Phaser.GameObjects.Sprite;
-          const enemySprite2 = (enemyIcon.list.length > 1) ? enemyIcon.list[1] as Phaser.GameObjects.Sprite : null;
+          const enemySprite2 = (enemyIcon.list.length > 1) ? enemyIcon.list[1] as Phaser.GameObjects.Sprite : undefined;
           if (teraPokemon[enemyData.id]) {
             const teraTint = getTypeRgb(teraPokemon[enemyData.id]);
             const teraColor = new Phaser.Display.Color(teraTint[0], teraTint[1], teraTint[2]);
@@ -241,7 +241,7 @@ export default class GameInfoUiHandler extends UiHandler {
           }
           enemyIcon.setPosition(39*(e%3), (35*pokemonRowHeight));
           const enemyLevel = addTextObject(this.scene, 43*(e%3), (27*(pokemonRowHeight+1)), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
-          enemyLevel.setShadow(0, 0, null);
+          enemyLevel.setShadow(0, 0, undefined);
           enemyLevel.setStroke("#424242", 14);
           enemyLevel.setOrigin(0, 0);
 
@@ -380,8 +380,8 @@ export default class GameInfoUiHandler extends UiHandler {
  			const pokemonInfoContainer = this.scene.add.container(this.statsBgWidth+5, (windowHeight-0.5)*i);
 
  			const types = pokemon.getTypes();
- 			let typeColor = getTypeRgb(types[0]);
- 			const type1Color = new Phaser.Display.Color(typeColor[0], typeColor[1], typeColor[2]);
+ 			const type1 = getTypeRgb(types[0]);
+ 			const type1Color = new Phaser.Display.Color(type1[0], type1[1], type1[2]);
 
  			const bgColor = type1Color.clone().darken(45);
       pokemonInfoWindow.setFillStyle(bgColor.color);
@@ -390,8 +390,8 @@ export default class GameInfoUiHandler extends UiHandler {
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
       icon.setScale(0.75);
       icon.setPosition(-99, 1);
-      typeColor = types[1] ? getTypeRgb(types[1]) : null;
-      const type2Color = typeColor ? new Phaser.Display.Color(typeColor[0], typeColor[1], typeColor[2]) : null;
+      const type2 = types[1] ? getTypeRgb(types[1]) : undefined;
+      const type2Color = type2 ? new Phaser.Display.Color(type2[0], type2[1], type2[2]) : undefined;
       type2Color ? pokemonInfoWindow.setStrokeStyle(1, type2Color.color, 0.95) : pokemonInfoWindow.setStrokeStyle(1, type1Color.color, 0.95);
 
       this.getUi().bringToTop(icon);
@@ -412,7 +412,7 @@ export default class GameInfoUiHandler extends UiHandler {
       pokeInfoTextContainer.add(pokeInfoText);
 
       const pokeStatTextContainer = this.scene.add.container(-35, 6);
-      const pStats = [];
+      const pStats : string[]= [];
       pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element,1)));
 
       for (let i = 0; i < pStats.length; i++) {
@@ -475,10 +475,10 @@ export default class GameInfoUiHandler extends UiHandler {
 
       const pokemonMoveset = pokemon.getMoveset();
       const movesetContainer = this.scene.add.container(70, -29);
-      const pokemonMoveBgs = [];
-      const pokemonMoveLabels = [];
+      const pokemonMoveBgs : Phaser.GameObjects.NineSlice[] = [];
+      const pokemonMoveLabels : Phaser.GameObjects.Text[] = [];
       const movePos = [[-6.5,35.5],[37,35.5],[-6.5,43.5],[37,43.5]];
-      for (let m = 0; m < pokemonMoveset.length; m++) {
+      for (let m = 0; m < pokemonMoveset?.length; m++) {
       	const moveContainer = this.scene.add.container(movePos[m][0], movePos[m][1]);
         moveContainer.setScale(0.5);
 
@@ -497,14 +497,14 @@ export default class GameInfoUiHandler extends UiHandler {
 
       	movesetContainer.add(moveContainer);
 
-      	const move = m < pokemonMoveset.length ? pokemonMoveset[m].getMove() : null;
+      	const move = pokemonMoveset[m]?.getMove();
         pokemonMoveBgs[m].setFrame(Type[move ? move.type : Type.UNKNOWN].toString().toLowerCase());
         pokemonMoveLabels[m].setText(move ? move.name : "-");
     	}
 
       const heldItemsScale = (this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS) ? 0.25 : 0.5;
       const heldItemsContainer = this.scene.add.container(-82, 6);
-      const heldItemsList = [];
+      const heldItemsList : PokemonHeldItemModifier[] = [];
       if (this.runInfo.modifiers.length) {
         for (const m of this.runInfo.modifiers) {
           const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
@@ -522,7 +522,7 @@ export default class GameInfoUiHandler extends UiHandler {
               heldItemsContainer.add(overflowIcon);
               break;
             }
-            const itemIcon = item.getIcon(this.scene, true);
+            const itemIcon = item?.getIcon(this.scene, true);
             //itemIcon.setFrame(item.type.iconImage);
             itemIcon.setScale(heldItemsScale);
             itemIcon.setPosition((index%19)*10, row*10);
