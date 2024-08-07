@@ -1650,7 +1650,7 @@ export class HitHealAttr extends MoveEffectAttr {
     super(true, MoveEffectTrigger.HIT);
 
     this.healRatio = healRatio!; // TODO: is this bang correct?
-    this.healStat = healStat!; // TODO: is this bang correct?
+    this.healStat = healStat ?? null;
   }
   /**
    * Heals the user the determined amount and possibly displays a message about regaining health.
