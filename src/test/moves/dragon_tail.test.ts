@@ -79,9 +79,9 @@ describe("Moves - Dragon Tail", () => {
       const isVisible = enemyPokemon?.visible;
       const hasFled = enemyPokemon?.wildFlee;
       expect(!isVisible && hasFled ).toBe(true);
+      expect(leadPokemon?.hp < leadPokemon?.getMaxHp());
 
       await game.phaseInterceptor.to(BattleEndPhase);
-      expect(leadPokemon?.hp < leadPokemon?.getMaxHp());
     }, TIMEOUT
   );
 
