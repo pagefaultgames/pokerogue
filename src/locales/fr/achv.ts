@@ -443,6 +443,10 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Invaincue",
     description: "Terminer le jeu en mode classique",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Bring Your Child To Work Day",
+    description: "Beat the game in Classic Mode with at least one unevolved party member."
+  },
 
   "MONO_GEN_ONE": {
     name: "Le rival originel",
