@@ -237,6 +237,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.SUMMARY_GREEN:
     return !shadow ? "#78c850" : "#306850";
   case TextStyle.SETTINGS_LABEL:
+  case TextStyle.PERFECT_IV:
     return !shadow ? "#f8b050" : "#c07800";
   case TextStyle.SETTINGS_SELECTED:
     return !shadow ? "#f88880" : "#f83018";
@@ -244,8 +245,6 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     return !shadow ? "#484848" : "#d0d0c8";
   case TextStyle.BGM_BAR:
     return !shadow ? "#f8f8f8" : "#6b5a73";
-  case TextStyle.PERFECT_IV:
-    return !shadow ? "#f8c020" : "#ff0000"; // this intentionally has no shadow
   }
 }
 
