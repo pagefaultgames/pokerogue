@@ -519,10 +519,13 @@ export class GameData {
           });
         }
 
-        this.eggs = systemData.eggs
-          ? systemData.eggs.map(e => e.toEgg())
-          : [];
+        const eggDataArray: EggData[] = systemData.eggs.map(data => new EggData(data));
 
+        // this.eggs = systemData.eggs
+        // ? systemData.eggs.map(e => e.toEgg())
+        // : [];
+        this.eggs = eggDataArray.map(e => e.toEgg());
+        console.log(this.eggs);
         this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
         this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
 
@@ -1418,11 +1421,11 @@ export class GameData {
     }
   }
 
-  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
-    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg);
+  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<void> {
+    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
   }
 
-  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
+  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<void> {
     return new Promise<void>(resolve => {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
@@ -1479,17 +1482,25 @@ export class GameData {
       }
 
       const checkPrevolution = () => {
+        console.log("checking prevolution");
         if (hasPrevolution) {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
-          return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg).then(() => resolve());
+          this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg, showMessage).then(() => resolve());
         } else {
+          console.log("resolving");
           resolve();
         }
       };
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
         this.scene.playSound("level_up_fanfare");
-        this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
+        if (showMessage) {
+          console.log(`${species.name} has been\nadded as a starter!`);
+          this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
+          console.log("show text passed");
+        } else {
+          resolve();
+        }
       } else {
         checkPrevolution();
       }
@@ -1533,7 +1544,7 @@ export class GameData {
     this.starterData[species.speciesId].candyCount += count;
   }
 
-  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer): Promise<boolean> {
+  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, showMessage: boolean = true): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const speciesId = species.speciesId;
       if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
@@ -1555,9 +1566,15 @@ export class GameData {
       this.starterData[speciesId].eggMoves |= value;
 
       this.scene.playSound("level_up_fanfare");
+      if (showMessage) {
 
-      const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
-      this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, () => resolve(true), null, true);
+        const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
+        this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, (() => {
+          resolve(true);
+        }), null, true);
+      } else {
+        resolve(true);
+      }
     });
   }
 

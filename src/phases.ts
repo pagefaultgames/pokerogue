@@ -31,7 +31,7 @@ import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { ChallengeAchv, HealAchv, LevelAchv, achvs } from "./system/achv";
 import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
-import { EggHatchPhase } from "./egg-hatch-phase";
+import { EggSkipPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { clientSessionId, loggedInUser, updateUserInfo } from "./account";
@@ -5383,6 +5383,9 @@ export class SelectModifierPhase extends BattlePhase {
 }
 
 export class EggLapsePhase extends Phase {
+  private pokemonSprite: Phaser.GameObjects.Sprite;
+  private starterSelectGenIconContainers: Phaser.GameObjects.Container[];
+  private starterSelectContainer: Phaser.GameObjects.Container;
   constructor(scene: BattleScene) {
     super(scene);
   }
@@ -5394,18 +5397,14 @@ export class EggLapsePhase extends Phase {
       return Overrides.EGG_IMMEDIATE_HATCH_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
 
-    let eggCount: integer = eggsToHatch.length;
-
-    if (eggCount) {
+    const eggsToHatchCount: integer = eggsToHatch.length;
+    const pokemonHatched: PlayerPokemon[] = [];
+    if (eggsToHatchCount) {
       this.scene.queueMessage(i18next.t("battle:eggHatching"));
+      console.log("2");
+      this.scene.unshiftPhase(new EggSkipPhase(this.scene, eggsToHatch, pokemonHatched, eggsToHatchCount));
 
-      for (const egg of eggsToHatch) {
-        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, eggCount));
-        if (eggCount > 0) {
-          eggCount--;
-        }
-      }
-
+      console.log(pokemonHatched);
     }
     this.end();
   }
