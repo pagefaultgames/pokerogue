@@ -385,211 +385,211 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "archer": {
     "encounter": {
-      1: "Before you go any further, let's see how you far against us, Team Rocket!",
-      2: "I have received reports that your skills are not insignificant. Let's see if they are true.",
-      3: "I am Archer, an Admin of Team Rocket. And I do not go easy on enemies of our organization."
+      1: "더 나아가기 전에 우리 로켓단과 맞설 만한지 한 번 봅시다!",
+      2: "당신의 실력이 예사롭지 않다는 소식을 들었습니다. 정말인지 한 번 보지요.",
+      3: "…저는 로켓단의 간부 아폴로. 우리 조직의 적에게는 봐 주지 않습니다!"
     },
     "victory": {
-      1: "What a blunder!",
-      2: "With my current skills, I was not up to the task after all.",
-      3: "F-forgive me, Giovanni... For me to be defeated by a mere trainer..."
+      1: "…이런 실수를 하다니!",
+      2: "역시 지금의 저는 무리였군요…",
+      3: "비, 비주기님, 용서해주십시오…제가 일개 트레이너한테 당하다니…"
     },
   },
   "ariana": {
     "encounter": {
-      1: `Hold it right there! We can't someone on the loose." 
-          $It's harmful to Team Rocket's pride, you see.`,
-      2: `I don't know or care if what I'm doing is right or wrong...
-          $I just put my faith in Giovanni and do as I am told`,
-      3: "Your trip ends here. I'm going to take you down!"
+      1: `거기까지다~!! 너 같은 놈을 언제까지고 설치게 두었다가는 
+          $로켓단의 프라이드는 상처 입고 상처 입어서 상처투성이가 돼 버린다고-!`,
+      2: `내가 하는 일이 옳은지 그른지는 상관 없어…
+          $그저 비주기님을 믿고 따르는 것 뿐이니까-!`,
+      3: "네 여정은 여기서 끝이야. 내가 널 이길 테니까-!"
     },
     "victory": {
-      1: `Tch, you really are strong. It's too bad. 
-          $If you were to join Team Rocket, you could become an Executive.`,
-      2: "I... I'm shattered...",
-      3: "Aaaieeeee! This can't be happening! I fought hard, but I still lost…"
+      1: `어머, 강하군. 안타깝네.
+          $네가 로켓단에 있었다면 간부가 될 수 있었을 텐데.`,
+      2: "사…산산조각났네…",
+      3: "으이이이익! 온 힘을 다해서 싸웠는데…이래도 이길 수 없다니!"
     },
   },
   "proton": {
     "encounter": {
-      1: "What do you want? If you interrupt our work, don't expect any mercy!",
-      2: `What do we have here? I am often labeled as the scariest and cruelest guy in Team Rocket…
-         $I strongly urge you not to interfere with our business!`,
-      3: "I am Proton, an Admin of Team Rocket. I am here to put an end to your meddling!"
+      1: "뭐죠? 우리 일에 끼어든다면 자비를 바라지 마십시오!",
+      2: `뭐죠? 나는 로켓단에서 제일 냉혹하다고 불리는 남자…
+         $우리 일을 방해하도록 그냥 놔두지 않겠습니다!`,
+      3: "나는 로켓단의 간부 랜스. 당신의 참견도 여기까지입니다!"
     },
     "victory": {
-      1: "The fortress came down!",
-      2: "You may have won this time… But all you did was make Team Rocket's wrath grow…",
-      3: "I am defeated… But I will not forget this!"
+      1: "요새가 무너져내렸네요…",
+      2: "나한테 이긴 건 결국 로켓단의 분노를 강하게 했을 뿐이예요…",
+      3: "나는 졌지만, 결코 이 일을 잊지 않을 겁니다!"
     },
   },
 
   "petrel": {
     "encounter": {
-      1: `Muhahaha, we've been waiting for you. Me? You don't know who I am? It is me, Giovanni.
-          $The majestic Giovanni himself! Wahahaha! …Huh? I don't sound anything like Giovanni?
-          $I don't even look like Giovanni? How come? I've worked so hard to mimic him!`,
-      2: "I am Petrel, an Admin of Team Rocket. I will not allow you to interfere with our plans!",
-      3: "Rocket Executive Petrel will deal with this intruder!"
+      1: `후후훗, 잘 왔구나. 오잉? 내가 누군지 알아? 비주기야.
+          $비주기님이라고, 우-하하! …엥? 전혀 안 닮았다고?
+          $비주기님으로는 안 보인다고? 제길- 열심히 연습했는데!`,
+      2: "나는 로켓단의 간부 람다. 우리 계획을 방해하는 건 용납할 수 없다!",
+      3: "이 로켓단 간부 람다가 네놈 불청객을 처리해 주지!"
     },
     "victory": {
-      1: "OK, OK. I'll tell you where he is.",
-      2: "I… I couldn't do a thing… Giovanni, please forgive me…",
-      3: "No, I can't let this affect me. I have to inform the others…"
+      1: "조…좋아. 비주기님이 어디 계신지 알려주지.",
+      2: "크으으… 이 내가 당해낼 수 없다니… 비주기님, 용서해주십시오…",
+      3: "안돼, 이런다고 나한테 어쩔 수는 없어. 다른 사람들에게 알려야겠어…"
     },
   },
   "tabitha": {
     "encounter": {
-      1: "Hehehe! So you've come all the way here! But you're too late!",
-      2: `Hehehe... Got here already, did you? We underestimated you! But this is it! 
-          $I'm a cut above the Grunts you've seen so far. I'm not stalling for time.
-          $I'm going to pulverize you!`,
-      3: "I'm going to give you a little taste of pain! Resign yourself to it!"
+      1: "우효효효! 그래 당신 여기까지 왔구나! 그치만 늦었어요!",
+      2: `우효효… 벌써 여기까지 왔네요? 우리가 당신을 과소평가했어요. 하지만 이제 시작입니다! 
+          $이 호걸님은 이제까지 본 조무래기들과는 차원이 다르답니다! 우물쭈물 시간을 끌지 않아요.
+          $확실하게 보내주마! 우효효효효효효!!`,
+      3: "여기서 어른의 무서움을 제대로 알려주지! 받아랏-!"
     },
     "victory": {
-      1: `Hehehe! You might have beaten me, but you don't stand a chance against the Boss!
-          $If you get lost now, you won't have to face a sound whipping!`,
-      2: "Hehehe... So, I lost, too...",
-      3: "Ahya! How could this be? For an Admin like me to lose to some random trainer..."
+      1: `우효효! 이 호걸은 이겼을지 몰라도 마적님한테는 안 될 겁니다!
+          $차라리 여기서 졌다면 무자비한 채찍질은 피했을텐데 말이죠!`,
+      2: "우효~! 이야 이건 예상 밖의 전개인데!?",
+      3: "우효! 어떻게?! 이 호걸님이 이런 일개 트레이너에게…"
     },
   },
   "courtney": {
     "encounter": {
-      1: "The thing...The thing that you hold...That is what... That's what we of Team Magma seek...",
-      2: "... Well then...Deleting...",
-      3: "...Ha. ...Analyzing... ...Hah♪"
+      1: "…그 …네가 가진 …우리…마그마단이 원하는 것",
+      2: "…………그럼 …………삭제하겠습니다",
+      3: "……애널라이즈 ……하고 싶어 ……아하하하♪"
     },
     "victory": {
-      1: "... ...Change...the world.",
-      2: `As anticipated. Unanticipated. You. Target lock...completed.
-         $Commencing...experiment. You. Forever. Aha... ♪`,
-      3: "...Again? That's unanticipated. ...I knew it. You...are interesting! ...Haha. ♪"
+      1: "……바꿔줘 ……세계를",
+      2: `………예상대로 ………예상외 ………너 …………타깃 록 ………했으니까
+         $……엑스페리먼트 ……할 테니까 ………너를………계속………아핫…♪`,
+      3: "……또 ……예상외 ………… ……역시 ……너…재미있어…! ………아하하…♪"
     },
   },
   "shelly": {
     "encounter": {
-      1: `Ahahahaha! You're going to meddle in Team Aqua's affairs?
-         $You're either absolutely fearless, simply ignorant, or both!
-         $You're so cute, you're disgusting! I'll put you down`,
-      2: "What's this? Who's this spoiled brat?",
-      3: "Cool your jets. Be patient. I'll crush you shortly."
+      1: `엥? 우리 아쿠아단의 일에 끼어들겠다고?
+         $…좋아! 기본적인 예의도 모르는 애송이한테는 제대로 그 버릇을 고쳐줘야지…
+         $겁먹고 도망쳐도 용서 따위 없을 줄 알아! 우하하하!`,
+      2: "아앙? 뭐야? 이 건방진 꼬맹이는…",
+      3: "침착해. 조급해 하지 말라고… 금방 박살내 줄 테니까."
     },
     "victory": {
-      1: `Ahahahaha! We got meddled with unexpectedly! We're out of options.
-         $We'll have to pull out. But this isn't the last you'll see of Team Aqua!
-         $We have other plans! Don't you forget it!`,
-      2: "Ahhh?! Did I go too easy on you?!",
-      3: `Uh. Are you telling me you've upped your game even more during the fight?
-         $You're a brat with a bright future… My Pokémon and I don't have any strength left to fight…
-         $Go on… Go and be destroyed by Archie.`
+      1: `아아아아앙!? 예상치 못하게 방해받았잖아! 어쩔 수 없네.
+         $여기선 물러나야겠네. 그렇지만 네가 아쿠아단을 만나는 게 이게 마지막은 아닐 거야.
+         $우리는 다른 계획도 있거든! 잊지 마!`,
+      2: "크윽…!? 너무 봐줬나…!",
+      3: `…으윽 …싸우면서 더욱 실력이 좋아졌다고…!?
+         $장래가 무서워지는 애송이네… …나와 내 포켓몬들은 더 이상 싸울 힘이 남아 있지 않아.
+         $…가 …가서 아강님한테 아주 혼쭐이나 나 버려.`
     },
   },
   "matt": {
     "encounter": {
-      1: "Hoohahaha! What, you got a screw loose or something? Look at you, little Makuhita person!",
-      2: "Oho! You! You're that funny kid!",
-      3: "What are you doing here? Did you follow us?"
+      1: "후하하하하하! 뭐라 떠들고 있는 거야! 너 생긴 게 마크탕이랑 똑같네!",
+      2: "음음! 네 녀석은! 재미있는 녀석!",
+      3: "뭐야?! 우릴 따라온 거냐!"
     },
     "victory": {
-      1: "All right then, until the Boss has time for you, I'll be your opponent!",
-      2: `I can feel it! I can feel it, all right! The strength coming offa you!
-          $More! I still want more! But looks like we're outta time...`,
-      3: "That was fun! I knew you'd show me a good time! I look forward to facing you again someday!"
+      1: "…그래서 말이지, 리더님이 시간이 나실 때까진 내가 상대해 주마!",
+      2: `확 확 느껴지는데! 네놈들의 강함이 말이야!
+          $제대로 붙었다고 하기엔 조금 모자라지만 이제 타임오버 같네…`,
+      3: "재밌는데!! 역시 재미있어! 넌! 또 붙게 될 때를 기대하고 있겠어!"
     },
   },
   "mars": {
     "encounter": {
-      1: "I'm Mars, one of Team Galactic's top Commanders.",
-      2: "Team Galactic's vision for the future is unwavering. Opposition will be crushed without mercy!",
-      3: "Feeling nervous? You should be!"
+      1: "난 갤럭시단 간부인 마스! 강하고 아름답지!",
+      2: "갤럭시단의 미래에 대한 비전은 흔들림 없지. 방해한다면 무자비하게 짓밟아 주마!",
+      3: "두렵지 않아? 넌 그래야만 할 걸!"
     },
     "victory": {
-      1: "This can't be happening! How did I lose?!",
-      2: "You have some skill, I'll give you that.",
-      3: "Defeated... This was a costly mistake."
+      1: "갤럭시단의 간부로서… 이런 일은 있을 수 없어!!",
+      2: "넌 능력 있구나. 그건 인정하지.",
+      3: "아-이런 이런! 졌잖아!"
     }
   },
   "jupiter": {
     "encounter": {
-      1: "Jupiter, Commander of Team Galactic, at your service.",
-      2: "Resistance is futile. Team Galactic will prevail!",
-      3: "You're trembling... scared already?"
+      1: "무슨 볼일이라도? 좋아! 갤럭시단 간부인 나 주피터가 상대해주지.",
+      2: "발버둥쳐 봐야 소용 없어. 갤럭시단이 승리할 거니까!",
+      3: "너 떨고 있네… 무서운 거지?"
     },
     "victory": {
-      1: "No way... I lost?!",
-      2: "Impressive, you've got guts!",
-      3: "Losing like this... How embarrassing."
+      1: "일개 트레이너에게 지다니 방심이란 무섭구나.",
+      2: "다음에는 내가 울려 주고 말겠어!",
+      3: "흥! 강하네. 하지만 보스는 당할 수 없어"
     }
   },
   "saturn": {
     "encounter": {
-      1: "I am Saturn, Commander of Team Galactic.",
-      2: "Our mission is absolute. Any hindrance will be obliterated!",
-      3: "Is that fear I see in your eyes?"
+      1: "나는 갤럭시단의 간부 새턴. 모든 것은 모두를 위해 그리고 갤럭시단을 위해!",
+      2: "갤럭시단을 방해한다면 일말의 가능성도 모두 제거한다!",
+      3: "여기까지 왔으니 갤럭시단 나름의 접대를 해 주지."
     },
     "victory": {
-      1: "Impossible... Defeated by you?!",
-      2: "You have proven yourself a worthy adversary.",
-      3: "Bestowed in defeat... This is unacceptable."
+      1: "이럴 수가… 너한테 졌다고?!",
+      2: "…역시 강해! 갤럭시단에 맞설 만하군.",
+      3: "강하다! 하지만 불쌍하군."
     }},
   "zinzolin": {
     "encounter": {
-      1: "You could become a threat to Team Plasma, so we will eliminate you here and now!",
-      2: "Oh, for crying out loud... I didn't expect to have to battle in this freezing cold!",
-      3: "You're an impressive Trainer to have made it this far. But it ends here."
+      1: "너는 플라스마단에게 있어 불안요소가 될 것이다. 여기서 제거하겠다!",
+      2: "이런 이런… 내가 이런 곳에서 싸워야만 하다니!",
+      3: "여기까지 오다니 대단한 트레이너군. 그러나 여기가 끝이다."
     },
     "victory": {
-      1: "Ghetsis... I have failed you...",
-      2: "It's bitter cold. I'm shivering. I'm suffering. Yet, I still stand victorious.",
-      3: "Hmph. You're a smarter Trainer than I expected, but not smart enough."
+      1: "게치스님… 제가 실패했습니다…",
+      2: "그건 그렇고 힘들구먼. 나는 떨고 있다. 괴롭지만 살아 있다. 그것이야말로 살아 있다는 실감!",
+      3: "흐음. 의외로 똑똑한 트레이너군. 하지만 생각만큼은 아니야."
     }
   },
   "rood": {
     "encounter": {
-      1: "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
-      2: "Oh, this icy wind... I never thought I'd have to fight here!",
-      3: "You are a remarkable Trainer to have made it this far. But this is where it ends."
+      1: "너는 플라스마단에 위협이 되는구나. 너라는 트레이너가 어떤 인물인지 승부로 알아봐야겠다.",
+      2: "오호! 싸늘하구먼… 이런 곳에서 싸울 줄이야!",
+      3: "너는 여기까지 온 것으로 보니 뛰어난 트레이너구나. 그렇다만 이젠 끝이다."
     },
     "victory": {
-      1: "Ghetsis... I have failed my mission...",
-      2: "The cold is piercing. I'm shivering. I'm suffering. Yet, I have triumphed.",
-      3: "Hm. You are a talented Trainer, but unfortunately not talented enough."
+      1: "게치스님… 임무를 실패했습니다…",
+      2: "나는 떨고 있다. 나는 괴롭지만 이겨냈다.",
+      3: "음… 너는 재능이 있는 트레이너구나. 하지만 충분하지는 않다."
     }
   },
   "colress": {
     "encounter": {
-      1: "You could become a threat to Team Plasma, so we must eliminate you here for the sake of my research!",
-      2: "Oh, for crying out loud... I didn't expect to have to fight so soon. Fascinating!",
-      3: "You're an impressive Trainer to have made it this far. Let's see how you fare against my strategies."
+      1: "기다리고 있었습니다! 그럼 당신이 포켓몬의 힘을 끌어낼 수 있는 트레이너인지 확인하겠습니다!",
+      2: "당신과 포켓몬의 신뢰관계가 옳았던 것인가 제게 가르쳐줄 수 있는지 기대됩니다!",
+      3: "저의 소원은 포켓몬의 힘을 완전히 끌어내는 것! 그것만 할 수 있다면 수단은 아무래도 좋습니다!"
     },
     "victory": {
-      1: "Ghetsis... I must report this...",
-      2: "It's bitter cold. I'm shivering. Yet my mind is focused on the data!",
-      3: "Hmph. You're a smarter Trainer than I expected. Quite intriguing."
+      1: "좋습니다! 제법이군요!!",
+      2: "훌륭합니다! 지금의 승부로 배운 게 있어요.",
+      3: "포켓몬이 숨기고 있는 능력을 끌어내는 건 이런 거군요!"
     }
   },
   "xerosic": {
     "encounter": {
-      1: "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
-      2: "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
-      3: "I've been waiting for you! I need to do a little research on you! Come, let us begin!"
+      1: "오오- 네 소문은 많이 들었다. 자, 이리 와 보거라!",
+      2: "너 강하구나. 에너지를 얼마나 갖고 있지?",
+      3: "기다리고 있었어! 너를 조사하겠다. 자 시작한다!"
     },
     "victory": {
-      1: "Ah, you're quite strong. Oh yes—very strong, indeed.",
-      2: "Ding-ding-ding! You did it! To the victor go the spoils!",
-      3: "Wonderful! Amazing! You have tremendous skill and bravery!"
+      1: "강하구나, 너는. 응, 정말 강해, 너는.",
+      2: "뭣이라! 넌 굉장하군! 너의 포켓몬도 대단하군!",
+      3: "굉장하구나 너! 아주 굉장해! 나는 너를 인정하겠다!"
     }
   },
   "bryony": {
     "encounter": {
-      1: "I am Bryony, and it would be my pleasure to battle you. Show me what you've got.",
-      2: "Impressive... You're more powerful than you appear. Let's see the true extent of your energy.",
-      3: "I've anticipated your arrival. It's time for a little test. Shall we begin?"
+      1: "나는 바라. 당신과 싸울 수 있어 기쁘군요. 한 번 보여주시죠.",
+      2: "인상적이군요… 보기보다 강해요. 에너지가 어디까지 뻗어나가는지 봅시다.",
+      3: "도착할 줄 알았습니다. 시작할까요?"
     },
     "victory": {
-      1: "You're quite strong. Oh yes—very strong, indeed.",
-      2: "Ding-ding-ding! You've done well. Victory is yours.",
-      3: "Wonderful! Remarkable! Your skill and bravery are commendable."
+      1: "어라? 이길 확률은 어디까지나 확률. 절대적이진 않네.",
+      2: "확률을 무시하는 트레이너, 네 파워의 원천은 뭐지?",
+      3: "놀랍군! 칭찬할 만 해."
     }
   },
   "rocket_grunt": {
