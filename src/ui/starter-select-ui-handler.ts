@@ -107,7 +107,11 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   "ja":{
     starterInfoTextSize: "51px",
     instructionTextSize: "38px",
-  }
+  },
+  "ca-ES":{
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
 };
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer], egg: integer }[] = [
