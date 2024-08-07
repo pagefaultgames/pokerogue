@@ -6,6 +6,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 
 describe("Moves - Baton Pass", () => {
@@ -24,14 +25,13 @@ describe("Moves - Baton Pass", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.BATON_PASS;
     game.override
       .battleType("single")
       .enemySpecies(Species.DUGTRIO)
       .startingLevel(1)
       .startingWave(97)
-      .moveset([moveToUse, Moves.NASTY_PLOT, Moves.SPLASH])
-      .enemyMoveset(new Array(4).fill(Moves.SPLASH))
+      .moveset([Moves.BATON_PASS, Moves.NASTY_PLOT, Moves.SPLASH])
+      .enemyMoveset(SPLASH_ONLY)
       .disableCrits();
   });
 
@@ -73,7 +73,7 @@ describe("Moves - Baton Pass", () => {
 
     // round 2 - baton pass
     game.scene.getEnemyPokemon().hp = 100;
-    game.override.enemyMoveset(new Array(4).fill([Moves.BATON_PASS]));
+    game.override.enemyMoveset(new Array(4).fill(Moves.BATON_PASS));
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(PostSummonPhase, false);
 

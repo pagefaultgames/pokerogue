@@ -27,6 +27,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -337,7 +338,7 @@ describe("Test Battle Phase", () => {
       .startingWave(1)
       .startingLevel(100)
       .moveset([moveToUse])
-      .enemyMoveset(new Array(4).fill(Moves.SPLASH))
+      .enemyMoveset(SPLASH_ONLY)
       .startingHeldItems([{ name: "TEMP_STAT_BOOSTER", type: TempBattleStat.ACC }]);
 
     await game.startBattle();

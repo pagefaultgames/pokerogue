@@ -7,6 +7,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { StatusEffect } from "#app/enums/status-effect.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - U-turn", () => {
   let phaserGame: Phaser.Game;
@@ -24,14 +25,13 @@ describe("Moves - U-turn", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.U_TURN;
     game.override
       .battleType("single")
       .enemySpecies(Species.GENGAR)
       .startingLevel(90)
       .startingWave(97)
-      .moveset([moveToUse])
-      .enemyMoveset(new Array(4).fill(Moves.SPLASH))
+      .moveset([Moves.U_TURN])
+      .enemyMoveset(SPLASH_ONLY)
       .disableCrits();
   });
 
