@@ -36,34 +36,29 @@ describe("Moves - Parting Shot", () => {
   });
 
   test(
-    "Parting shot when buffed by prankster should fail against dark types",
+    "Parting Shot when buffed by prankster should fail against dark types",
     async () => {
-      await game.startBattle([Species.MURKROW]);
-      game.override.ability(Abilities.PRANKSTER);
-      game.override.enemySpecies(Species.POOCHYENA);
-
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
-      expect(enemyPokemon).toBeDefined();
-
+      await game.startBattle([Species.MURKROW, Species.MEOWTH]);
+      game.override
+        .enemySpecies(Species.POOCHYENA)
+        .ability(Abilities.PRANKSTER);
       game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
 
       await game.phaseInterceptor.to(BerryPhase, false);
       const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
       expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
       expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
-
-
+      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
     }, TIMEOUT
   );
 
   test(
-    "Parting shot when buffed by prankster should fail against good for gold ability",
+    "Parting shot when buffed by prankster should fail against good as gold ability",
     async () => {
-      await game.startBattle([Species.MURKROW]);
-      game.override.ability(Abilities.PRANKSTER);
-      game.override.enemySpecies(Species.GHOLDENGO);
-      game.override.enemyAbility(Abilities.GOOD_AS_GOLD);
-
+      await game.startBattle([Species.MURKROW, Species.MEOWTH]);
+      game.override
+        .enemySpecies(Species.GHOLDENGO)
+        .enemyAbility(Abilities.GOOD_AS_GOLD);
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
@@ -73,6 +68,7 @@ describe("Moves - Parting Shot", () => {
       const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
       expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
       expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
+      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
     }, TIMEOUT
   );
 });
