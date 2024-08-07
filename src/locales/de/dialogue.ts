@@ -625,7 +625,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       5: "Wir werden die Macht des Vulkans entfesseln! Es wird gewaltig sein! Mach dich bereit!"
     },
     "victory": {
- 1: "Wie kann das sein? Ich bin Teil des mächtigen Team Magma! Wir streben nach der Verbesserung der Welt...",
+      1: "Wie kann das sein? Ich bin Teil des mächtigen Team Magma! Wir streben nach der Verbesserung der Welt...",
       2: "Unglaublich, dass ich verloren habe! Mit meinen mächtigen Pokémon.",
       3: "Das kann nicht sein! Ich hab doch viel mehr Erfahrung als du!",
       4: "Verdammt... Ich hätte sofort in unser Versteck fliehen sollen...",
@@ -689,7 +689,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       5: "Unsere Mission steht über allem, sogar über der Mode!"
     },
     "victory": {
-   1: "Diese Niederlage wirft einen Schatten auf meine Zukunft.",
+      1: "Diese Niederlage wirft einen Schatten auf meine Zukunft.",
       2: "Es scheint, dass ich meine Strategien überdenken muss. Zurück ans Reißbrett.",
       3: "Unglaublich?! Ich habe verloren?!",
       4: "Selbst in der Niederlage bleibt Team Flare unübertroffen in seiner Eleganz.",
