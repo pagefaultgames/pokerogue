@@ -400,7 +400,7 @@ export class Egg {
      * and being the same each time
      */
     let totalWeight = 0;
-    const speciesWeights = [];
+    const speciesWeights: number[] = [];
     for (const speciesId of speciesPool) {
       let weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
       const species = getPokemonSpecies(speciesId);
