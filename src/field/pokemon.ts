@@ -1077,6 +1077,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && !this.isPlayer())) {
       return true;
     }
+
+    // Final boss does not have passive
+    if (this.scene.currentBattle?.battleSpec === BattleSpec.FINAL_BOSS && this instanceof EnemyPokemon) {
+      return false;
+    }
+
     return this.passive || this.isBoss();
   }
 
