@@ -2924,7 +2924,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     for (let s = 0; s < this.starterSpecies.length; s++) {
       const species = this.starterSpecies[s];
-      const currentDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+      const currentDexAttr = this.getCurrentDexProps(species.speciesId);
       const props = this.scene.gameData.getSpeciesDexAttrProps(species, currentDexAttr);
       this.starterIcons[s].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
       this.starterIcons[s].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
