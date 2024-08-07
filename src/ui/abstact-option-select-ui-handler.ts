@@ -36,7 +36,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected optionSelectText: Phaser.GameObjects.Text;
   protected optionSelectIcons: Phaser.GameObjects.Sprite[];
 
-  protected config: OptionSelectConfig;
+  protected config: OptionSelectConfig | null;
 
   protected blockInput: boolean;
 
@@ -44,10 +44,10 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   protected scale: number = 0.1666666667;
 
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
 
   constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode);
+    super(scene, mode!); // TODO: is this bang correct?
   }
 
   abstract getWindowWidth(): integer;
@@ -96,7 +96,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
 
-    if (this.config?.options.length > this.config?.maxOptions) {
+    if (this.config?.options && this.config?.options.length > (this.config?.maxOptions!)) { // TODO: is this bang correct?
       this.optionSelectText.setText(this.getOptionsWithScroll().map(o => o.label).join("\n"));
     }
 
@@ -123,8 +123,10 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
           itemOverlayIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
-          itemIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[0])));
-          itemOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[1])));
+          if (option.itemArgs) {
+            itemIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[0])));
+            itemOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[1])));
+          }
         }
       }
     });

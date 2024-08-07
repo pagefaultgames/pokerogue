@@ -23,9 +23,12 @@ describe("check if every variant's sprite are correctly set", () => {
     expVariant = masterlist.exp;
     femaleVariant = masterlist.female;
     backVariant = masterlist.back;
-    delete masterlist.exp;
-    delete masterlist.female;
-    delete masterlist.back;
+    //@ts-ignore
+    delete masterlist.exp; //TODO: resolve ts-ignore
+    //@ts-ignore
+    delete masterlist.female; //TODO: resolve ts-ignore
+    //@ts-ignore
+    delete masterlist.back; //TODO: resolve ts-ignore
   });
 
   it("data should not be undefined", () => {
@@ -103,7 +106,7 @@ describe("check if every variant's sprite are correctly set", () => {
   }
 
   function getMissingFiles(keys: Record<string, any>, dirPath: string): string[] {
-    const errors = [];
+    const errors: string[] = [];
     for (const key of Object.keys(keys)) {
       const row = keys[key];
       for (const [index, elm] of row.entries()) {

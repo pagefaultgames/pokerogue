@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "galactic_admin_m.png",
+			"image": "archer.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 80,
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:3012867f03f02c4ee67a8ab3ad5a000e:77a5f60f1adc158664b3b2ee17bf30fe:7e8259b5177c0a76e5d02d6bdc66affe$"
+		"smartupdate": "$TexturePacker:SmartUpdate:831f5748dad92911b10a1cb358ee2dae:a3bf81bbaa3b49cad5e0e549cf94563b:bb6befc9383c9c08837183ae2a7a80c1$"
 	}
 }

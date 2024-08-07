@@ -147,19 +147,21 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
         }
       }
     }
+
+    return false;
   }
 
   clear() {
     super.clear();
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
     this.hideNameText();
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  showDialogue(text: string, name: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
-    this.showNameText(name);
+  showDialogue(text: string, name?: string, delay?: integer | null, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+    name && this.showNameText(name);
     super.showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
@@ -180,7 +182,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
       this.awaitingActionInput = true;
       this.onActionInput = () => {
         if (!showTotals) {
-          return this.promptLevelUpStats(partyMemberIndex, null, true).then(() => resolve());
+          return this.promptLevelUpStats(partyMemberIndex, [], true).then(() => resolve());
         } else {
           this.levelUpStatsContainer.setVisible(false);
           resolve();
@@ -206,8 +208,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
                 highestIv = ivs[s];
               }
             });
-            shownStats.push(shownStat);
-            statsPool.splice(statsPool.indexOf(shownStat), 1);
+            shownStats.push(shownStat!); // TODO: is the bang correct?
+            statsPool.splice(statsPool.indexOf(shownStat!), 1); // TODO: is the bang correct?
           }
         } else {
           shownStats = stats;
@@ -228,7 +230,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   }
 
   getIvDescriptor(value: integer, typeIv: integer, pokemonId: integer): string {
-    const starterSpecies = this.scene.getPokemonById(pokemonId).species.getRootSpeciesId(true);
+    const starterSpecies = this.scene.getPokemonById(pokemonId)!.species.getRootSpeciesId(true); // TODO: is this bang correct?
     const starterIvs: number[] = this.scene.gameData.dexData[starterSpecies].ivs;
     const uiTheme = (this.scene as BattleScene).uiTheme; // Assuming uiTheme is accessible
 
