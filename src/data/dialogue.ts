@@ -723,17 +723,17 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.AETHER_ADMIN]: [
+  [TrainerType.FABA]: [
     {
       encounter: [
-        "dialogue:aether_admin.encounter.1",
-        "dialogue:aether_admin.encounter.2",
-        "dialogue:aether_admin.encounter.3",
+        "dialogue:faba.encounter.1",
+        "dialogue:faba.encounter.2",
+        "dialogue:faba.encounter.3",
       ],
       victory: [
-        "dialogue:aether_admin.victory.1",
-        "dialogue:aether_admin.victory.2",
-        "dialogue:aether_admin.victory.3",
+        "dialogue:faba.victory.1",
+        "dialogue:faba.victory.2",
+        "dialogue:faba.victory.3",
       ]
     }
   ],
@@ -755,17 +755,17 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.SKULL_ADMIN]: [
+  [TrainerType.PLUMERIA]: [
     {
       encounter: [
-        "dialogue:skull_admin.encounter.1",
-        "dialogue:skull_admin.encounter.2",
-        "dialogue:skull_admin.encounter.3",
+        "dialogue:plumeria.encounter.1",
+        "dialogue:plumeria.encounter.2",
+        "dialogue:plumeria.encounter.3",
       ],
       victory: [
-        "dialogue:skull_admin.victory.1",
-        "dialogue:skull_admin.victory.2",
-        "dialogue:skull_admin.victory.3",
+        "dialogue:plumeria.victory.1",
+        "dialogue:plumeria.victory.2",
+        "dialogue:plumeria.victory.3",
       ]
     }
   ],
@@ -783,17 +783,17 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.MACRO_ADMIN]: [
+  [TrainerType.OLEANA]: [
     {
       encounter: [
-        "dialogue:macro_admin.encounter.1",
-        "dialogue:macro_admin.encounter.2",
-        "dialogue:macro_admin.encounter.3",
+        "dialogue:oleana.encounter.1",
+        "dialogue:oleana.encounter.2",
+        "dialogue:oleana.encounter.3",
       ],
       victory: [
-        "dialogue:macro_admin.victory.1",
-        "dialogue:macro_admin.victory.2",
-        "dialogue:macro_admin.victory.3",
+        "dialogue:oleana.victory.1",
+        "dialogue:oleana.victory.2",
+        "dialogue:oleana.victory.3",
       ]
     }
   ],

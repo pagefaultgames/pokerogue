@@ -665,7 +665,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       5: "Here's an impression for you: Aiyee!"
     },
   },
-  "aether_admin": {
+  "faba": {
     "encounter": {
       1: "I, Branch Chief Faba, shall show you the harshness of the real world!",
       2: "The man who is called Aether Paradise's last line of defense is to battle a mere child?",
@@ -693,7 +693,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       5: "So, what? I'm lower than a Pokémon?! I already got self-esteem issues, man."
     },
   },
-  "skull_admin": {
+  "plumeria": {
     "encounter": {
       1: " ...Hmph. You don't look like anything special to me.",
       2: "It takes these dumb Grunts way too long to deal with you kids..",
@@ -717,7 +717,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Nobody can beat Macro Cosmos when it comes to our dedication to our work!"
     },
   },
-  "macro_admin": {
+  "oleana": {
     "encounter": {
       1: "I won't let anyone interfere with Mr. Rose's plan!",
       2: "So, you got through all of the special staff that I had ordered to stop you. I would expect nothing less.",

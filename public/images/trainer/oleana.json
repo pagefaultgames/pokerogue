@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "macro_admin.png",
+			"image": "oleana.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 80,
-				"h": 80
+				"w": 79,
+				"h": 79
 			},
 			"scale": 1,
 			"frames": [
@@ -18,15 +18,15 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 80,
+						"x": 10,
+						"y": 1,
+						"w": 53,
 						"h": 79
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 80,
+						"w": 53,
 						"h": 79
 					}
 				}
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:f297d2655f56a9673e2c3f0d74c8d452:d5d3e53c048b239038cfd696850b113f:4ba820d6c57d3220ebd996a1c93658ff$"
+		"smartupdate": "$TexturePacker:SmartUpdate:30987a671771127a38491a588c465964:38b28effcfd5c6cbc0f358912a775af3:82e2a1f8afed29be57f6c2473f4c5be2$"
 	}
 }

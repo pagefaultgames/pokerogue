@@ -643,7 +643,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       5: "我惊掉大牙了……"
     },
   },
-  "aether_admin": {
+  "faba": {
     "encounter": {
       1: "我，分部长扎奥博， \n给你见识下现实世界的残酷吧！",
       2: "堂堂以太乐园的最后防线，\n我扎奥博竟然要跟个毛头小子对战。",
@@ -671,7 +671,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       5: "MAN！我能说什么，\n我的人生比宝可梦还烂。"
     },
   },
-  "skull_admin": {
+  "plumeria": {
     "encounter": {
       1: " …哼嗯，你看起来也没啥特别的。",
       2: "这帮呆子对付你也花了太长时间了吧……",
@@ -695,7 +695,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "没人能比马洛科蒙集团的我们工作更卷！"
     },
   },
-  "macro_admin": {
+  "oleana": {
     "encounter": {
       1: "我不会让你方案洛兹先生的计划！",
       2: "看来你打倒了所有我安排的训练师，本身也没对他们有啥期待…",

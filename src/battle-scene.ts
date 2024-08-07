@@ -1953,6 +1953,12 @@ export default class BattleScene extends SceneBase {
       return 20.87;
     case "battle_macro_grunt": // Battle!(Trainer) Sword / Shield
       return 11.56;
+    case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
+      return 11.997;
+    case "battle_skull_admin": //SM Team Skull Admin Battle
+      return 15.463;
+    case "battle_oleana": //SWSH Oleana Battle
+      return 14.110;
     case "battle_rocket_boss": //USUM Giovanni Battle
       return 9.115;
     case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle

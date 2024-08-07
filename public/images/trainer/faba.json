@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "skull_admin.png",
+			"image": "faba.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 74,
@@ -18,15 +18,15 @@
 						"h": 80
 					},
 					"spriteSourceSize": {
-						"x": 22,
+						"x": 25,
 						"y": 5,
-						"w": 36,
+						"w": 31,
 						"h": 74
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 36,
+						"w": 31,
 						"h": 74
 					}
 				}
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:41da3a1299e3831be70016dc91e49313:2413ba06767fb10fdc6fde8cc736c51c:4012333084c529872232c8d052561dc1$"
+		"smartupdate": "$TexturePacker:SmartUpdate:47622708d99a504998950bd9c389a504:fe1c51be191dd9fafb5b6f309c08ae1a:8d64db18930325b8b513740c1d83ce4c$"
 	}
 }
