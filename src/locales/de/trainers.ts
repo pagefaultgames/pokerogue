@@ -22,7 +22,7 @@ export const titles: SimpleTranslationEntries = {
   "aether_boss": "Æther-Präsidentin",
   "skull_boss": "Skull-Boss",
   "macro_boss": "Geschäftsführer von Macro Cosmos",
-  
+
   "rocket_admin": "Team Rocket Vorstand",
   "rocket_admin_female": "Team Rocket Vorstand",
   "magma_admin": "Team Magma Vorstand",
@@ -313,7 +313,7 @@ export const trainerNames: SimpleTranslationEntries = {
   "rood": "Rubius",
   "xerosic": "Xeros",
   "bryony": "Begonia",
-  "faba": "Fabian"
+  "faba": "Fabian",
   "plumeria": "Fran",
   "oleana": "Olivia",
 

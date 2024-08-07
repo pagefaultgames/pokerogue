@@ -295,9 +295,6 @@ export const trainerNames: SimpleTranslationEntries = {
   "leon": "Lionel",
   "rival": "Finn",
   "rival_female": "Ivy",
-  "lusamine": "Lusamine",
-  "guzma": "Guzma",
-  "rose": "Rose",
 
   // Evil Team Admins
   "archer": "Archer",

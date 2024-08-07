@@ -378,7 +378,6 @@ export const trainerNames: SimpleTranslationEntries = {
   "lysandre": "Lysandre",
   "lusamine": "Lusamine",
   "guzma": "Guzma",
-  "oleana": "Oleana",
   "rose": "Rose",
 
   // Double Names

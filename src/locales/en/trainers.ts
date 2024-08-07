@@ -22,7 +22,7 @@ export const titles: SimpleTranslationEntries = {
   "aether_boss": "Aether President",
   "skull_boss": "Team Skull Boss",
   "macro_boss": "Macro Cosmos President",
-  
+
   "rocket_admin": "Team Rocket Admin",
   "rocket_admin_female": "Team Rocket Admin",
   "magma_admin": "Team Magma Admin",

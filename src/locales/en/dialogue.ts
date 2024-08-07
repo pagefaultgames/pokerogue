@@ -709,7 +709,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover..",
       3: "*sigh* I am one tired Oleana..."
     },
-  },  
+  },
   "rocket_boss_giovanni_1": {
     "encounter": {
       1: "So! I must say, I am impressed you got here!"

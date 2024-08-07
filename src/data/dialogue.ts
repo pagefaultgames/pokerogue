@@ -712,14 +712,14 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:aether_grunt.encounter.2",
         "dialogue:aether_grunt.encounter.3",
         "dialogue:aether_grunt.encounter.4",
-        "dialogue:aether_grunt.encounter.5",	
+        "dialogue:aether_grunt.encounter.5",
       ],
       victory: [
         "dialogue:aether_grunt.victory.1",
         "dialogue:aether_grunt.victory.2",
         "dialogue:aether_grunt.victory.3",
         "dialogue:aether_grunt.victory.4",
-        "dialogue:aether_grunt.victory.5",	
+        "dialogue:aether_grunt.victory.5",
       ]
     }
   ],
@@ -728,7 +728,7 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       encounter: [
         "dialogue:aether_admin.encounter.1",
         "dialogue:aether_admin.encounter.2",
-        "dialogue:aether_admin.encounter.3",	
+        "dialogue:aether_admin.encounter.3",
       ],
       victory: [
         "dialogue:aether_admin.victory.1",

@@ -864,7 +864,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "skull_boss_guzma_1": {
     "encounter": {
-         1: `摧毁，摧毁，\n不管摧毁几次也从不手软
+      1: `摧毁，摧毁，\n不管摧毁几次也从不手软
           $惹人厌的古兹马大爷在此。`
     },
     "victory": {
