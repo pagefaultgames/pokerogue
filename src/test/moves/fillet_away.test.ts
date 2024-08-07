@@ -44,7 +44,7 @@ describe("Moves - FILLET AWAY", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.FILLET_AWAY));
@@ -61,7 +61,7 @@ describe("Moves - FILLET AWAY", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       //Here - BattleStat.SPD -> 0 and BattleStat.SPATK -> 3
@@ -82,7 +82,7 @@ describe("Moves - FILLET AWAY", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       leadPokemon.summonData.battleStats[BattleStat.ATK] = 6;
       leadPokemon.summonData.battleStats[BattleStat.SPATK] = 6;
@@ -102,7 +102,7 @@ describe("Moves - FILLET AWAY", () => {
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
       leadPokemon.hp = hpLost - PREDAMAGE;
 

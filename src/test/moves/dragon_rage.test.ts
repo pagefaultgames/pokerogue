@@ -51,7 +51,7 @@ describe("Moves - Dragon Rage", () => {
     await game.startBattle();
 
     partyPokemon = game.scene.getParty()[0];
-    enemyPokemon = game.scene.getEnemyPokemon();
+    enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // remove berries
     game.scene.removePartyMemberModifiers(0);

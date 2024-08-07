@@ -13,7 +13,7 @@ export default class BallUiHandler extends UiHandler {
   private pokeballSelectBg: Phaser.GameObjects.NineSlice;
   private countsText: Phaser.GameObjects.Text;
 
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
 
   private scale: number = 0.1666666667;
 

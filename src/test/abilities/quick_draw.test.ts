@@ -41,8 +41,8 @@ describe("Abilities - Quick Draw", () => {
   test("makes pokemon going first in its priority bracket", async () => {
     await game.startBattle();
 
-    const pokemon = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const pokemon = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     pokemon.hp = 1;
     enemy.hp = 1;
@@ -61,8 +61,8 @@ describe("Abilities - Quick Draw", () => {
   }, async () => {
     await game.startBattle();
 
-    const pokemon = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const pokemon = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     pokemon.hp = 1;
     enemy.hp = 1;
@@ -81,8 +81,8 @@ describe("Abilities - Quick Draw", () => {
 
     await game.startBattle();
 
-    const pokemon = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const pokemon = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     pokemon.hp = 1;
     enemy.hp = 1;

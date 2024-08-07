@@ -47,11 +47,11 @@ describe("Abilities - DISGUISE", () => {
 
       const mimikyu = game.scene.getParty().find((p) => p.species.speciesId === Species.MIMIKYU);
       expect(mimikyu).not.toBe(undefined);
-      expect(mimikyu.formIndex).toBe(bustedForm);
+      expect(mimikyu!.formIndex).toBe(bustedForm);
 
-      mimikyu.hp = 0;
-      mimikyu.status = new Status(StatusEffect.FAINT);
-      expect(mimikyu.isFainted()).toBe(true);
+      mimikyu!.hp = 0;
+      mimikyu!.status = new Status(StatusEffect.FAINT);
+      expect(mimikyu!.isFainted()).toBe(true);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.doKillOpponents();
@@ -59,7 +59,7 @@ describe("Abilities - DISGUISE", () => {
       game.doSelectModifier();
       await game.phaseInterceptor.to(QuietFormChangePhase);
 
-      expect(mimikyu.formIndex).toBe(baseForm);
+      expect(mimikyu!.formIndex).toBe(baseForm);
     },
     TIMEOUT
   );
@@ -80,17 +80,17 @@ describe("Abilities - DISGUISE", () => {
 
       await game.startBattle([Species.MIMIKYU]);
 
-      const mimikyu = game.scene.getPlayerPokemon();
-      const damage = (Math.floor(mimikyu.getMaxHp()/8));
+      const mimikyu = game.scene.getPlayerPokemon()!;
+      const damage = (Math.floor(mimikyu!.getMaxHp()/8));
 
       expect(mimikyu).not.toBe(undefined);
-      expect(mimikyu.formIndex).toBe(baseForm);
+      expect(mimikyu!.formIndex).toBe(baseForm);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      expect(mimikyu.formIndex).toBe(bustedForm);
-      expect(game.scene.getEnemyPokemon().turnData.currDamageDealt).toBe(damage);
+      expect(mimikyu!.formIndex).toBe(bustedForm);
+      expect(game.scene.getEnemyPokemon()!.turnData.currDamageDealt).toBe(damage);
     },
     TIMEOUT
   );

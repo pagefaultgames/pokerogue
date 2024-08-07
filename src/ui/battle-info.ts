@@ -20,12 +20,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private boss: boolean;
   private bossSegments: integer;
   private offset: boolean;
-  private lastName: string;
+  private lastName: string | null;
   private lastTeraType: Type;
   private lastStatus: StatusEffect;
   private lastHp: integer;
   private lastMaxHp: integer;
-  private lastHpFrame: string;
+  private lastHpFrame: string | null;
   private lastExp: integer;
   private lastLevelExp: integer;
   private lastLevel: integer;
@@ -293,7 +293,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.add(this.effectivenessContainer);
 
       this.effectivenessText = addTextObject(this.scene, 5, 4.5, "", TextStyle.BATTLE_INFO);
-      this.effectivenessWindow = addWindow((this.scene as BattleScene), 0, 0, 0, 20, false, false, null, null, WindowVariant.XTHIN);
+      this.effectivenessWindow = addWindow((this.scene as BattleScene), 0, 0, 0, 20, undefined, false, undefined, undefined, WindowVariant.XTHIN);
 
       this.effectivenessContainer.add(this.effectivenessWindow);
       this.effectivenessContainer.add(this.effectivenessText);
@@ -323,7 +323,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.teraIcon.setVisible(this.lastTeraType !== Type.UNKNOWN);
     this.teraIcon.on("pointerover", () => {
       if (this.lastTeraType !== Type.UNKNOWN) {
-        (this.scene as BattleScene).ui.showTooltip(null, `${Utils.toReadableString(Type[this.lastTeraType])} Terastallized`);
+        (this.scene as BattleScene).ui.showTooltip("", `${Utils.toReadableString(Type[this.lastTeraType])} Terastallized`);
       }
     });
     this.teraIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
@@ -333,7 +333,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 2.5);
     this.splicedIcon.setVisible(isFusion);
     if (this.splicedIcon.visible) {
-      this.splicedIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `${pokemon.species.getName(pokemon.formIndex)}/${pokemon.fusionSpecies.getName(pokemon.fusionFormIndex)}`));
+      this.splicedIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", `${pokemon.species.getName(pokemon.formIndex)}/${pokemon.fusionSpecies?.getName(pokemon.fusionFormIndex)}`));
       this.splicedIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
@@ -348,7 +348,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const shinyDescriptor = doubleShiny || baseVariant ?
         `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
         : "";
-      this.shinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`));
+      this.shinyIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`));
       this.shinyIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
@@ -360,7 +360,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     if (!this.player) {
       if (this.nameText.visible) {
-        this.nameText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, i18next.t("battleInfo:generation", { generation: i18next.t(`starterSelectUiHandler:gen${pokemon.species.generation}`) })));
+        this.nameText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", i18next.t("battleInfo:generation", { generation: i18next.t(`starterSelectUiHandler:gen${pokemon.species.generation}`) })));
         this.nameText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
       }
 
@@ -502,7 +502,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   updateBossSegmentDividers(pokemon: EnemyPokemon): void {
     while (this.hpBarSegmentDividers.length) {
-      this.hpBarSegmentDividers.pop().destroy();
+      this.hpBarSegmentDividers.pop()?.destroy();
     }
 
     if (this.boss && this.bossSegments > 1) {
@@ -800,7 +800,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
     this.currentEffectiveness = effectiveness;
 
-    if (!(this.scene as BattleScene).typeHints || effectiveness === undefined || this.flyoutMenu.flyoutVisible) {
+    if (!(this.scene as BattleScene).typeHints || effectiveness === undefined || this.flyoutMenu?.flyoutVisible) {
       this.effectivenessContainer.setVisible(false);
       return;
     }
