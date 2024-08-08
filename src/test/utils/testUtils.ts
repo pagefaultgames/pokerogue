@@ -40,15 +40,16 @@ export function removeEnemyHeldItems(game: GameManager): void {
 }
 
 /**
- * Used to modify the turn order. Will advance the turn to {@link TurnStartPhase}
- * @param game The {@link GameManager} instance
- * @param order The turn order to set
+ * Intercepts `TurnStartPhase` and mocks the getOrder's return value {@linkcode TurnStartPhase.getOrder}
+ * Used to modify the turn order.
+ * @param {GameManager} game The GameManager instance
+ * @param {BattlerIndex[]} order The turn order to set
  * @example
  * ```ts
- * await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+ * await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
  * ```
  */
-export async function changeTurnOrder(game: GameManager, order: BattlerIndex[]): Promise<void> {
+export async function mockTurnOrder(game: GameManager, order: BattlerIndex[]): Promise<void> {
   await game.phaseInterceptor.to(TurnStartPhase, false);
 
   vi.spyOn(game.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue(order);
