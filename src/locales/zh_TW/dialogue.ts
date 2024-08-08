@@ -2529,7 +2529,7 @@ export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `看來終於又到了那個時候。\n你知道自己為何會來到這裡，不是嗎？
     $你被吸引到這裡，因為你以前就來過這裡。\n無數次。
-    $儘管，或許可以數一數。\n準確地說，這實際上是你的第5,643,853次循環。
+    $儘管，或許可以數一數。\n準確地說，這實際上是你的第{{cycleCount}}次循環。
     $每一次循環，你的思想都會恢復到之前的狀態。\n即便如此，不知何故，你之前自我的殘留仍然存在。
     $直到現在，你仍未成功，但我感覺這次你身上有一種異樣的氣息。
     $你是這裡唯一的人，儘管感覺上還有……另一個人。

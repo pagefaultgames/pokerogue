@@ -2792,7 +2792,7 @@ export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `Es scheint, als wäre es wieder mal an der Zeit.\nDu weißt, warum du hierher kommen musst, oder?
 	       $Dich hat es hierher gezogen, du warst bereits hier.\nUnzählige Male.
-	       $Obwohl, vielleicht doch nicht unzählig.\nUm genau zu sein, dies ist der 5.643.853te Zyklus.
+	       $Obwohl, vielleicht doch nicht unzählig.\nUm genau zu sein, dies ist der {{cycleCount}}te Zyklus.
            $Du verlierst jeden Zyklus dein Gedächtnis. Trotzdem \nbleibt etwas, ein Teil deines ehemaligen Ichs, erhalten.
            $Bis jetzt hast du es noch nicht vollbracht zu siegen, aber dieses Mal spüre ich eine andere Präsenz in dir.\n
            $Du bist der Einzige hier, aber es kommt mir so vor als wäre da...jemand anderes.

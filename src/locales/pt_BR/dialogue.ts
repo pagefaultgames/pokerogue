@@ -5002,7 +5002,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `Parece que a hora finalmente chegou novamente.\nVocê sabe por que veio aqui, não sabe?
                $Você foi atraído para cá, porque já esteve aqui antes.\nInúmeras vezes.
-               $Embora talvez isso possa ser contado.\nPara ser preciso, este é de fato o seu 5.643.853º ciclo.
+               $Embora talvez isso possa ser contado.\nPara ser preciso, este é de fato o seu {{cycleCount}}º ciclo.
                $A cada ciclo, sua mente retorna ao seu estado anterior.\nMesmo assim, de alguma forma, vestígios de seus antigos "eus" permanecem.
                $Até agora, você ainda não conseguiu, mas sinto uma presença diferente em você desta vez.\n
                $Você é o único aqui, embora pareça haver... outro.
@@ -5017,7 +5017,7 @@ export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
 export const PGFbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `Parece que a hora finalmente chegou novamente.\nVocê sabe por que veio aqui, não sabe?
                $Você foi atraída para cá, porque já esteve aqui antes.\nInúmeras vezes.
-               $Embora talvez isso possa ser contado.\nPara ser preciso, este é de fato o seu 5.643.853º ciclo.
+               $Embora talvez isso possa ser contado.\nPara ser preciso, este é de fato o seu {{cycleCount}}º ciclo.
                $A cada ciclo, sua mente retorna ao seu estado anterior.\nMesmo assim, de alguma forma, vestígios de seus antigos "eus" permanecem.
                $Até agora, você ainda não conseguiu, mas sinto uma presença diferente em você desta vez.\n
                $Você é a única aqui, embora pareça haver... outro.

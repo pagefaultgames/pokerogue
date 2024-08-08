@@ -2707,7 +2707,7 @@ export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `드디어 때가 다시 도래했다.\n당도한 연유를 아는가?
                $이미 도달한 적이 있기에 이 자리에 있다.\n셀 수도 없이 많이.
-               $아니, 사실 셀 수는 있지.\n정확히 너의 5,643,853번째다.
+               $아니, 사실 셀 수는 있지.\n정확히 너의 {{cycleCount}}번째다.
                $매 번 태초의 정신으로 되돌아갔을 뿐.\n하지만 어떻게든, 흔적은 남는다.
                $실패만을 반복했을 뿐이지만,\n지금은 네 안에 무언가가 있구나.\n
                $홀로 선 것처럼 보이나, 무언가 이질적인…
