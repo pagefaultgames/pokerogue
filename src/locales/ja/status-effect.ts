@@ -15,7 +15,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
     description: "どく",
     obtain: "{{pokemonNameWithAffix}}は\n毒を　あびた！",
     obtainSource: "{{pokemonNameWithAffix}}は\n{{sourceText}}で　毒を　あびた！",
-    activation: "{{pokemonNameWithAffix}}は\n毒の　ダメージを受けた！",
+    activation: "{{pokemonNameWithAffix}}は\n毒の　ダメージを　受けた！",
     overlap: "{{pokemonNameWithAffix}}は　すでに\n毒を　あびている",
     heal: "{{pokemonNameWithAffix}}の　毒は\nきれいさっぱり　なくなった！"
   },
@@ -40,8 +40,8 @@ export const statusEffect: StatusEffectTranslationEntries = {
   sleep: {
     name: "ねむり",
     description: "ねむり",
-    obtain: "{{pokemonNameWithAffix}}は\nねむってしまった！",
-    obtainSource: "{{pokemonNameWithAffix}}は\n{{sourceText}}で　ねむってしまった！",
+    obtain: "{{pokemonNameWithAffix}}は\n眠ってしまった！",
+    obtainSource: "{{pokemonNameWithAffix}}は\n{{sourceText}}で　眠ってしまった！",
     activation: "{{pokemonNameWithAffix}}は\nぐうぐう　眠っている",
     overlap: "{{pokemonNameWithAffix}}は\nすでに　眠っている",
     heal: "{{pokemonNameWithAffix}}は\n目を　覚ました！"
