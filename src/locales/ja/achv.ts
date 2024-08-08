@@ -223,7 +223,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "カントーの名物",
   },
   "MONO_GROUND": {
-    name: "地震速報",
+    name: "自信でユラユラ",
   },
   "MONO_ROCK": {
     name: "タケシの挑戦状",
