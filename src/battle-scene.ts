@@ -769,6 +769,27 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Used in doubles battles to redirect moves from one pokemon to another when one faints or is removed from the field
+   * @param removedPokemon {@linkcode Pokemon} the pokemon that is being removed from the field (flee, faint), moves to be redirected FROM
+   * @param allyPokemon {@linkcode Pokemon} the pokemon that will have the moves be redirected TO
+   */
+  redirectPokemonMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
+    // failsafe: if not a double battle just return
+    if (this.currentBattle.double === false) {
+      return;
+    }
+    if (allyPokemon?.isActive(true)) {
+      let targetingMovePhase: MovePhase;
+      do {
+        targetingMovePhase = this.findPhase(mp => mp instanceof MovePhase && mp.targets.length === 1 && mp.targets[0] === removedPokemon.getBattlerIndex() && mp.pokemon.isPlayer() !== allyPokemon.isPlayer()) as MovePhase;
+        if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex()) {
+          targetingMovePhase.targets[0] = allyPokemon.getBattlerIndex();
+        }
+      } while (targetingMovePhase);
+    }
+  }
+
+  /**
    * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
    * @returns {ModifierBar}
    */
@@ -1115,27 +1136,11 @@ export default class BattleScene extends SceneBase {
     //this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
 
     if (!waveIndex && lastBattle) {
-      let isNewBiome = !(lastBattle.waveIndex % 10) || ((this.gameMode.hasShortBiomes || this.gameMode.isDaily) && (lastBattle.waveIndex % 50) === 49);
-      if (!isNewBiome && this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 10) < 9) {
-        let w = lastBattle.waveIndex - ((lastBattle.waveIndex % 10) - 1);
-        let biomeWaves = 1;
-        while (w < lastBattle.waveIndex) {
-          let wasNewBiome = false;
-          this.executeWithSeedOffset(() => {
-            wasNewBiome = !Utils.randSeedInt(6 - biomeWaves);
-          }, w << 4);
-          if (wasNewBiome) {
-            biomeWaves = 1;
-          } else {
-            biomeWaves++;
-          }
-          w++;
-        }
-
-        this.executeWithSeedOffset(() => {
-          isNewBiome = !Utils.randSeedInt(6 - biomeWaves);
-        }, lastBattle.waveIndex << 4);
-      }
+      const isWaveIndexMultipleOfTen = !(lastBattle.waveIndex % 10);
+      const isEndlessOrDaily = this.gameMode.hasShortBiomes || this.gameMode.isDaily;
+      const isEndlessFifthWave = this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 5) === 0;
+      const isWaveIndexMultipleOfFiftyMinusOne = (lastBattle.waveIndex % 50) === 49;
+      const isNewBiome = isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
       const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
       this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
       this.trySpreadPokerus();
