@@ -13850,11 +13850,11 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 99, Moves.CLOSE_COMBAT ],
   ],
   [Species.POIPOLE]: [
+    [ RELEARN_MOVE, Moves.DRAGON_PULSE ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.ACID ],
     [ 1, Moves.PECK ],
     [ 1, Moves.HELPING_HAND ],
-    [ 1, Moves.DRAGON_PULSE ],
     [ 7, Moves.FURY_ATTACK ],
     [ 14, Moves.FELL_STINGER ],
     [ 21, Moves.CHARM ],
