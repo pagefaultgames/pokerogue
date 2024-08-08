@@ -276,3 +276,13 @@ export const PGMachv: AchievementTranslationEntries = {
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
 export const PGFachv: AchievementTranslationEntries = PGMachv;
+
+export const voucher: SimpleTranslationEntries = {
+  "vouchers": "Vouchers",
+  "eggVoucher": "Egg Voucher",
+  "eggVoucherPlus": "Egg Voucher Plus",
+  "eggVoucherPremium": "Egg Voucher Premium",
+  "eggVoucherGold": "Egg Voucher Gold",
+  "locked": "Locked",
+  "defeatTrainer": "Defeat {{trainerName}}"
+} as const;
