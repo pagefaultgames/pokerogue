@@ -24,8 +24,8 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
 
-  constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode!); // TODO: is this bang correct?
+  constructor(scene: BattleScene, mode: Mode | null = null) {
+    super(scene, mode);
 
     this.itemsTotal = Object.keys(vouchers).length;
     this.scrollCursor = 0;

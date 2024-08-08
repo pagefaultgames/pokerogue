@@ -21,6 +21,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isGlowing": "{{pokemonName}}を\nはげしいひかりが　つつむ！",
   "bellChimed": "すずのおとが　ひびきわたった！",
   "foresawAnAttack": "{{pokemonName}}は\nみらいに　こうげきを　よちした！",
+  "isTighteningFocus": "{{pokemonName}} is\ntightening its focus!",
   "hidUnderwater": "{{pokemonName}}は\nすいちゅうに　みをひそめた！",
   "soothingAromaWaftedThroughArea": "ここちよい　かおりが　ひろがった！",
   "sprangUp": "{{pokemonName}}は\nたかく　とびはねた！",

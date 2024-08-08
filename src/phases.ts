@@ -1,7 +1,7 @@
 import BattleScene, { bypassLogin } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from "./utils";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr, MoveHeaderAttr } from "./data/move";
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -65,6 +65,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { applyChallenges, ChallengeType } from "./data/challenge";
+import { pokemonEvolutions } from "./data/pokemon-evolutions";
 
 const { t } = i18next;
 
@@ -1130,7 +1131,16 @@ export class EncounterPhase extends BattlePhase {
     case BattleSpec.FINAL_BOSS:
       const enemy = this.scene.getEnemyPokemon();
       this.scene.ui.showText(this.getEncounterMessage(), null, () => {
-        this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].encounter, enemy?.species.name, null, () => {
+        const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
+        //The two lines below check if English ordinals (1st, 2nd, 3rd, Xth) are used and determine which one to use.
+        //Otherwise, it defaults to an empty string.
+        //As of 08-07-24: Spanish and Italian default to the English translations
+        const ordinalUse = ["en", "es", "it"];
+        const currentLanguage = i18next.resolvedLanguage ?? "en";
+        const ordinalIndex = (ordinalUse.includes(currentLanguage)) ? ["st", "nd", "rd"][((count + 90) % 100 - 10) % 10 - 1] ?? "th" : "";
+        const cycleCount = count.toLocaleString() + ordinalIndex;
+        const encounterDialogue = i18next.t(`${(this.scene.gameData.gender === PlayerGender.FEMALE) ? "PGF" : "PGM"}battleSpecDialogue:encounter`, {cycleCount: cycleCount});
+        this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
           this.doEncounterCommon(false);
         });
       }, 1500, true);
@@ -2353,6 +2363,9 @@ export class TurnStartPhase extends FieldPhase {
           continue;
         }
         const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
+        if (move.getMove().hasAttr(MoveHeaderAttr)) {
+          this.scene.unshiftPhase(new MoveHeaderPhase(this.scene, pokemon, move));
+        }
         if (pokemon.isPlayer()) {
           if (turnCommand.cursor === -1) {
             this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
@@ -2563,6 +2576,15 @@ export class BattleEndPhase extends BattlePhase {
 
     this.scene.updateModifiers().then(() => this.end());
   }
+
+  end() {
+    // removing pokemon at the end of a battle
+    for (const p of this.scene.getEnemyParty()) {
+      p.destroy();
+    }
+
+    super.end();
+  }
 }
 
 export class NewBattlePhase extends BattlePhase {
@@ -2594,6 +2616,32 @@ export class CommonAnimPhase extends PokemonPhase {
     new CommonBattleAnim(this.anim, this.getPokemon(), this.targetIndex !== undefined ? (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField())[this.targetIndex] : this.getPokemon()).play(this.scene, () => {
       this.end();
     });
+  }
+}
+
+export class MoveHeaderPhase extends BattlePhase {
+  public pokemon: Pokemon;
+  public move: PokemonMove;
+
+  constructor(scene: BattleScene, pokemon: Pokemon, move: PokemonMove) {
+    super(scene);
+
+    this.pokemon = pokemon;
+    this.move = move;
+  }
+
+  canMove(): boolean {
+    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon);
+  }
+
+  start() {
+    super.start();
+
+    if (this.canMove()) {
+      applyMoveAttrs(MoveHeaderAttr, this.pokemon, null, this.move.getMove()).then(() => this.end());
+    } else {
+      this.end();
+    }
   }
 }
 
@@ -3791,6 +3839,7 @@ export class FaintPhase extends PokemonPhase {
   doFaint(): void {
     const pokemon = this.getPokemon();
 
+
     // Track total times pokemon have been KO'd for supreme overlord/last respects
     if (pokemon.isPlayer()) {
       this.scene.currentBattle.playerFaints += 1;
@@ -3841,17 +3890,10 @@ export class FaintPhase extends PokemonPhase {
       }
     }
 
+    // in double battles redirect potential moves off fainted pokemon
     if (this.scene.currentBattle.double) {
       const allyPokemon = pokemon.getAlly();
-      if (allyPokemon?.isActive(true)) {
-        let targetingMovePhase: MovePhase;
-        do {
-          targetingMovePhase = this.scene.findPhase(mp => mp instanceof MovePhase && mp.targets.length === 1 && mp.targets[0] === pokemon.getBattlerIndex() && mp.pokemon.isPlayer() !== allyPokemon.isPlayer()) as MovePhase;
-          if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex()) {
-            targetingMovePhase.targets[0] = allyPokemon.getBattlerIndex();
-          }
-        } while (targetingMovePhase);
-      }
+      this.scene.redirectPokemonMoves(pokemon, allyPokemon);
     }
 
     pokemon.lapseTags(BattlerTagLapseType.FAINT);
@@ -3959,9 +4001,7 @@ export class VictoryPhase extends PokemonPhase {
           expMultiplier = Overrides.XP_MULTIPLIER_OVERRIDE;
         }
         const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
-        const modifierBonusExp = new Utils.NumberHolder(1);
-        this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, modifierBonusExp);
-        pokemonExp.value *= modifierBonusExp.value;
+        this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
         partyMemberExp.push(Math.floor(pokemonExp.value));
       }
 
@@ -4260,6 +4300,7 @@ export class GameOverPhase extends BattlePhase {
         if (this.victory && newClear) {
           if (this.scene.gameMode.isClassic) {
             firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
+            this.scene.validateAchv(achvs.UNEVOLVED_CLASSIC_VICTORY);
             this.scene.gameData.gameStats.sessionsWon++;
             for (const pokemon of this.scene.getParty()) {
               this.awardRibbon(pokemon);
@@ -4359,6 +4400,9 @@ export class GameOverPhase extends BattlePhase {
       }
       if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE]) {
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
+      }
+      if (!this.scene.gameData.unlocks[Unlockables.EVIOLITE] && this.scene.getParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)) {
+        this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.EVIOLITE));
       }
     }
   }
