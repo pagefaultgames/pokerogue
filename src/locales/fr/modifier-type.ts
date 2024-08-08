@@ -24,7 +24,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonReviveModifierType": {
-      description: "Réanime un Pokémon et restaure {{restorePercent}}% de ses PV.",
+      description: "Ranime un Pokémon et restaure {{restorePercent}}% de ses PV.",
     },
     "PokemonStatusHealModifierType": {
       description: "Soigne tous les problèmes de statut d’un Pokémon.",
@@ -70,7 +70,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Restaure tous les PV de toute l’équipe.",
     },
     "AllPokemonFullReviveModifierType": {
-      description: "Réanime et restaure tous les PV de tous les Pokémon K.O. .",
+      description: "Ranime et restaure tous les PV de tous les Pokémon K.O. .",
     },
     "MoneyRewardModifierType": {
       description: "Octroie une {{moneyMultiplier}} somme d’argent.\n({{moneyAmount}} ₽)",
@@ -151,7 +151,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Cendre Sacrée" },
 
-    "REVIVER_SEED": { name: "Résugraine", description: "Réanime et restaure la moitié des PV de son porteur s’il est mis K.O. par une capacité directe." },
+    "REVIVER_SEED": { name: "Résugraine", description: "Ranime et restaure la moitié des PV de son porteur s’il est mis K.O. par une capacité directe." },
 
     "WHITE_HERB": { name: "Herbe Blanche", description: "Restaure toute stat ayant subi une baisse en combat." },
 
