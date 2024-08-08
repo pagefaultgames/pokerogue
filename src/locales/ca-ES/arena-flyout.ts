@@ -2,21 +2,21 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const arenaFlyout: SimpleTranslationEntries = {
   // Title
-  "activeBattleEffects": "Active Battle Effects",
-  "player": "Player",
-  "neutral": "Neutral",
-  "enemy": "Enemy",
+  "activeBattleEffects": "Efectes d'Arena Activa",
+  "player": "Jugador",
+  "neutral": "Neutre",
+  "enemy": "Enemic",
 
   // WeatherType
-  "sunny": "Sunny",
-  "rain": "Rain",
-  "sandstorm": "Sandstorm",
-  "hail": "Hail",
-  "snow": "Snow",
-  "fog": "Fog",
-  "heavyRain": "Heavy Rain",
-  "harshSun": "Harsh Sun",
-  "strongWinds": "Strong Winds",
+  "sunny": "Assolellat",
+  "rain": "Plujós",
+  "sandstorm": "Tempesta Sorra",
+  "hail": "Calamarsa",
+  "snow": "Neu",
+  "fog": "Boira",
+  "heavyRain": "Diluvi",
+  "harshSun": "Sol Abrasador",
+  "strongWinds": "Vents Forts",
 
   // TerrainType
   "misty": "Misty Terrain",
