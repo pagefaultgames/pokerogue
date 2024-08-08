@@ -3999,6 +3999,72 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+/**
+ * Represents the Natural Gift attribute which extends VariablePowerAttr.
+ * This class handles the power for the Natural Gift move in the game.
+ */
+export class NaturalGiftPowerAttr extends VariablePowerAttr {
+  /**
+   * Applies the Natural Gift power to the move.
+   * @param user - The Pokémon using the move.
+   * @param target - The target Pokémon.
+   * @param move - The move being used.
+   * @param args - n/a
+   * @returns A boolean indicating whether the power was successfully applied.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0];
+    power.value = user.turnData.naturalGiftBerryModifier.getNaturalGiftPower();
+    return true;
+  }
+}
+
+/**
+ * Represents the Natural Gift attribute which extends VariableMoveTypeAttr.
+ * This class handles the typing for the Natural Gift move in the game.
+ */
+class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
+  protected randomItem: string;
+
+  /**
+   * Determines if the move can be used based on the user's held berries.
+   * @returns A function that checks the condition for using the move.
+   */
+  getCondition(): MoveConditionFunc {
+    return (user: Pokemon, target: Pokemon, move: Move) => {
+      const userBerries = user.scene.findModifiers(
+        m => m instanceof BerryModifier && m.pokemonId === user.id,
+        user.isPlayer()
+      ) as BerryModifier[];
+      return userBerries.length > 0;
+    };
+  }
+
+  /**
+   * Applies the Natural Gift move logic to the given user and target Pokémon.
+   * Determines the berry to be used, sets the move type, and removes the berry.
+   * @param user - The Pokémon using the move.
+   * @param target - The target Pokémon.
+   * @param move - The move being used.
+   * @param args - n/a
+   * @returns A boolean indicating whether the move was successfully applied.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const userBerries = user.scene.findModifiers(
+      m => m instanceof BerryModifier && m.pokemonId === user.id,
+      user.isPlayer()
+    ) as BerryModifier[];
+    const randomBerry = userBerries[user.randSeedInt(userBerries.length)];
+    user.turnData.naturalGiftBerryModifier = randomBerry;
+
+    move.type = randomBerry.getMoveTypeForBerry();
+    user.scene.removeModifier(randomBerry, !user.isPlayer());
+    user.scene.updateModifiers(user.isPlayer());
+
+    return true;
+  }
+}
+
 export class MatchUserTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const userTypes = user.getTypes(true);
@@ -7150,8 +7216,9 @@ export function initMoves() {
     new AttackMove(Moves.BRINE, Type.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHpRatio() < 0.5 ? 2 : 1),
     new AttackMove(Moves.NATURAL_GIFT, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 4)
-      .makesContact(false)
-      .unimplemented(),
+      .attr(NaturalGiftTypeAttr)
+      .attr(NaturalGiftPowerAttr)
+      .makesContact(false),
     new AttackMove(Moves.FEINT, Type.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, 2, 4)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.PROTECTED ])
       .attr(RemoveArenaTagsAttr, [ ArenaTagType.QUICK_GUARD, ArenaTagType.WIDE_GUARD, ArenaTagType.MAT_BLOCK, ArenaTagType.CRAFTY_SHIELD ], false)
