@@ -12,7 +12,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { BattlerIndex } from "#app/battle.js";
-import { changeTurnOrder } from "../utils/testUtils";
+import { mockTurnOrder } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -58,7 +58,7 @@ describe("Abilities - ZEN MODE", () => {
         const movePosition = getMovePosition(game.scene, 0, moveToUse);
         (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
       });
-      await changeTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await mockTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.phaseInterceptor.to(DamagePhase, false);
       // await game.phaseInterceptor.runFrom(DamagePhase).to(DamagePhase, false);
       const damagePhase = game.scene.getCurrentPhase() as DamagePhase;
@@ -86,7 +86,7 @@ describe("Abilities - ZEN MODE", () => {
         const movePosition = getMovePosition(game.scene, 0, moveToUse);
         (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
       });
-      await changeTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await mockTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.phaseInterceptor.to(QuietFormChangePhase);
       await game.phaseInterceptor.to(TurnInitPhase, false);
       expect(game.scene.getParty()[0].hp).not.toBe(100);
@@ -111,7 +111,7 @@ describe("Abilities - ZEN MODE", () => {
         const movePosition = getMovePosition(game.scene, 0, moveToUse);
         (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
       });
-      await changeTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await mockTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.phaseInterceptor.to(DamagePhase, false);
       // await game.phaseInterceptor.runFrom(DamagePhase).to(DamagePhase, false);
       const damagePhase = game.scene.getCurrentPhase() as DamagePhase;
@@ -150,7 +150,7 @@ describe("Abilities - ZEN MODE", () => {
 
       await game.startBattle([Species.MAGIKARP, Species.DARMANITAN]);
 
-      const darmanitan = game.scene.getParty().find((p) => p.species.speciesId === Species.DARMANITAN);
+      const darmanitan = game.scene.getParty().find((p) => p.species.speciesId === Species.DARMANITAN)!;
       expect(darmanitan).not.toBe(undefined);
       expect(darmanitan.formIndex).toBe(zenForm);
 

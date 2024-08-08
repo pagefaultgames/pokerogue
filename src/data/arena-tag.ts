@@ -25,12 +25,12 @@ export enum ArenaTagSide {
 export abstract class ArenaTag {
   public tagType: ArenaTagType;
   public turnCount: integer;
-  public sourceMove: Moves;
-  public sourceId: integer;
+  public sourceMove?: Moves;
+  public sourceId?: integer;
   public side: ArenaTagSide;
 
 
-  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId?: integer, side: ArenaTagSide = ArenaTagSide.BOTH) {
+  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId?: integer, side: ArenaTagSide = ArenaTagSide.BOTH) {
     this.tagType = tagType;
     this.turnCount = turnCount;
     this.sourceMove = sourceMove;
@@ -56,7 +56,7 @@ export abstract class ArenaTag {
     return this.turnCount < 1 || !!(--this.turnCount);
   }
 
-  getMoveName(): string {
+  getMoveName(): string | null {
     return this.sourceMove
       ? allMoves[this.sourceMove].name
       : null;
@@ -75,9 +75,14 @@ export class MistTag extends ArenaTag {
   onAdd(arena: Arena, quiet: boolean = false): void {
     super.onAdd(arena);
 
-    const source = arena.scene.getPokemonById(this.sourceId);
-    if (!quiet) {
-      arena.scene.queueMessage(i18next.t("arenaTag:mistOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(source) }));
+    if (this.sourceId) {
+      const source = arena.scene.getPokemonById(this.sourceId);
+
+      if (!quiet && source) {
+        arena.scene.queueMessage(i18next.t("arenaTag:mistOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(source) }));
+      } else if (!quiet) {
+        console.warn("Failed to get source for MistTag onAdd");
+      }
     }
   }
 
@@ -280,8 +285,14 @@ class MatBlockTag extends ConditionalProtectTag {
   }
 
   onAdd(arena: Arena) {
-    const source = arena.scene.getPokemonById(this.sourceId);
-    arena.scene.queueMessage(i18next.t("arenaTag:matBlockOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(source) }));
+    if (this.sourceId) {
+      const source = arena.scene.getPokemonById(this.sourceId);
+      if (source) {
+        arena.scene.queueMessage(i18next.t("arenaTag:matBlockOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(source) }));
+      } else {
+        console.warn("Failed to get source for MatBlockTag onAdd");
+      }
+    }
   }
 }
 
@@ -328,9 +339,9 @@ export class NoCritTag extends ArenaTag {
 
   /** Queues a message upon removing this effect from the field */
   onRemove(arena: Arena): void {
-    const source = arena.scene.getPokemonById(this.sourceId);
+    const source = arena.scene.getPokemonById(this.sourceId!); // TODO: is this bang correct?
     arena.scene.queueMessage(i18next.t("arenaTag:noCritOnRemove", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(source),
+      pokemonNameWithAffix: getPokemonNameWithAffix(source ?? undefined),
       moveName: this.getMoveName()
     }));
   }
@@ -350,10 +361,16 @@ class WishTag extends ArenaTag {
   }
 
   onAdd(arena: Arena): void {
-    const user = arena.scene.getPokemonById(this.sourceId);
-    this.battlerIndex = user.getBattlerIndex();
-    this.triggerMessage = i18next.t("arenaTag:wishTagOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(user) });
-    this.healHp = Math.max(Math.floor(user.getMaxHp() / 2), 1);
+    if (this.sourceId) {
+      const user = arena.scene.getPokemonById(this.sourceId);
+      if (user) {
+        this.battlerIndex = user.getBattlerIndex();
+        this.triggerMessage = i18next.t("arenaTag:wishTagOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(user) });
+        this.healHp = Math.max(Math.floor(user.getMaxHp() / 2), 1);
+      } else {
+        console.warn("Failed to get source for WishTag onAdd");
+      }
+    }
   }
 
   onRemove(arena: Arena): void {
@@ -494,8 +511,8 @@ class SpikesTag extends ArenaTrapTag {
   onAdd(arena: Arena, quiet: boolean = false): void {
     super.onAdd(arena);
 
-    const source = arena.scene.getPokemonById(this.sourceId);
-    if (!quiet) {
+    const source = this.sourceId ? arena.scene.getPokemonById(this.sourceId) : null;
+    if (!quiet && source) {
       arena.scene.queueMessage(i18next.t("arenaTag:spikesOnAdd", { moveName: this.getMoveName(), opponentDesc: source.getOpponentDescriptor() }));
     }
   }
@@ -539,8 +556,8 @@ class ToxicSpikesTag extends ArenaTrapTag {
   onAdd(arena: Arena, quiet: boolean = false): void {
     super.onAdd(arena);
 
-    const source = arena.scene.getPokemonById(this.sourceId);
-    if (!quiet) {
+    const source = this.sourceId ? arena.scene.getPokemonById(this.sourceId) : null;
+    if (!quiet && source) {
       arena.scene.queueMessage(i18next.t("arenaTag:toxicSpikesOnAdd", { moveName: this.getMoveName(), opponentDesc: source.getOpponentDescriptor() }));
     }
   }
@@ -589,7 +606,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
 class DelayedAttackTag extends ArenaTag {
   public targetIndex: BattlerIndex;
 
-  constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, targetIndex: BattlerIndex) {
+  constructor(tagType: ArenaTagType, sourceMove: Moves | undefined, sourceId: integer, targetIndex: BattlerIndex) {
     super(tagType, 3, sourceMove, sourceId);
 
     this.targetIndex = targetIndex;
@@ -599,7 +616,7 @@ class DelayedAttackTag extends ArenaTag {
     const ret = super.lapse(arena);
 
     if (!ret) {
-      arena.scene.unshiftPhase(new MoveEffectPhase(arena.scene, this.sourceId, [ this.targetIndex ], new PokemonMove(this.sourceMove, 0, 0, true)));
+      arena.scene.unshiftPhase(new MoveEffectPhase(arena.scene, this.sourceId!, [ this.targetIndex ], new PokemonMove(this.sourceMove!, 0, 0, true))); // TODO: are those bangs correct?
     }
 
     return ret;
@@ -621,8 +638,8 @@ class StealthRockTag extends ArenaTrapTag {
   onAdd(arena: Arena, quiet: boolean = false): void {
     super.onAdd(arena);
 
-    const source = arena.scene.getPokemonById(this.sourceId);
-    if (!quiet) {
+    const source = this.sourceId ? arena.scene.getPokemonById(this.sourceId) : null;
+    if (!quiet && source) {
       arena.scene.queueMessage(i18next.t("arenaTag:stealthRockOnAdd", { opponentDesc: source.getOpponentDescriptor() }));
     }
   }
@@ -630,7 +647,7 @@ class StealthRockTag extends ArenaTrapTag {
   getDamageHpRatio(pokemon: Pokemon): number {
     const effectiveness = pokemon.getAttackTypeEffectiveness(Type.ROCK, undefined, true);
 
-    let damageHpRatio: number;
+    let damageHpRatio: number = 0;
 
     switch (effectiveness) {
     case 0:
@@ -696,8 +713,8 @@ class StickyWebTag extends ArenaTrapTag {
 
   onAdd(arena: Arena, quiet: boolean = false): void {
     super.onAdd(arena);
-    const source = arena.scene.getPokemonById(this.sourceId);
-    if (!quiet) {
+    const source = this.sourceId ? arena.scene.getPokemonById(this.sourceId) : null;
+    if (!quiet && source) {
       arena.scene.queueMessage(i18next.t("arenaTag:stickyWebOnAdd", { moveName: this.getMoveName(), opponentDesc: source.getOpponentDescriptor() }));
     }
   }
@@ -735,7 +752,10 @@ export class TrickRoomTag extends ArenaTag {
   }
 
   onAdd(arena: Arena): void {
-    arena.scene.queueMessage(i18next.t("arenaTag:trickRoomOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(arena.scene.getPokemonById(this.sourceId)) }));
+    const source = this.sourceId ? arena.scene.getPokemonById(this.sourceId) : null;
+    if (source) {
+      arena.scene.queueMessage(i18next.t("arenaTag:trickRoomOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(source) }));
+    }
   }
 
   onRemove(arena: Arena): void {
@@ -782,8 +802,8 @@ class TailwindTag extends ArenaTag {
       arena.scene.queueMessage(i18next.t(`arenaTag:tailwindOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
     }
 
-    const source = arena.scene.getPokemonById(this.sourceId);
-    const party = source.isPlayer() ? source.scene.getPlayerField() : source.scene.getEnemyField();
+    const source = arena.scene.getPokemonById(this.sourceId!); //TODO: this bang is questionable!
+    const party = (source?.isPlayer() ? source.scene.getPlayerField() : source?.scene.getEnemyField()) ?? [];
 
     for (const pokemon of party) {
       // Apply the CHARGED tag to party members with the WIND_POWER ability
@@ -824,7 +844,7 @@ class HappyHourTag extends ArenaTag {
   }
 }
 
-export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
+export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
   case ArenaTagType.MIST:
     return new MistTag(turnCount, sourceId, side);
@@ -837,7 +857,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
   case ArenaTagType.CRAFTY_SHIELD:
     return new CraftyShieldTag(sourceId, side);
   case ArenaTagType.NO_CRIT:
-    return new NoCritTag(turnCount, sourceMove, sourceId, side);
+    return new NoCritTag(turnCount, sourceMove!, sourceId, side); // TODO: is this bang correct?
   case ArenaTagType.MUD_SPORT:
     return new MudSportTag(turnCount, sourceId);
   case ArenaTagType.WATER_SPORT:
@@ -848,7 +868,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new ToxicSpikesTag(sourceId, side);
   case ArenaTagType.FUTURE_SIGHT:
   case ArenaTagType.DOOM_DESIRE:
-    return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex);
+    return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex!); // TODO:questionable bang
   case ArenaTagType.WISH:
     return new WishTag(turnCount, sourceId, side);
   case ArenaTagType.STEALTH_ROCK:
@@ -869,5 +889,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new TailwindTag(turnCount, sourceId, side);
   case ArenaTagType.HAPPY_HOUR:
     return new HappyHourTag(turnCount, sourceId, side);
+  default:
+    return null;
   }
 }

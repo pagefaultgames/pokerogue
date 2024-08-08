@@ -40,7 +40,7 @@ describe("Moves - Roost", () => {
     async () => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       const enemyStartingHp = enemyPokemon.hp;
 

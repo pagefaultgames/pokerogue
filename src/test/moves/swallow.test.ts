@@ -44,13 +44,13 @@ describe("Moves - Swallow", () => {
 
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
       pokemon["hp"] = 1;
 
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
 
@@ -71,14 +71,14 @@ describe("Moves - Swallow", () => {
 
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
       pokemon["hp"] = 1;
 
       pokemon.addTag(BattlerTagType.STOCKPILING);
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
 
@@ -99,7 +99,7 @@ describe("Moves - Swallow", () => {
 
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
       pokemon["hp"] = 0.0001;
 
@@ -107,7 +107,7 @@ describe("Moves - Swallow", () => {
       pokemon.addTag(BattlerTagType.STOCKPILING);
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
 
@@ -126,9 +126,9 @@ describe("Moves - Swallow", () => {
   it("fails without stacks", { timeout: 10000 }, async () => {
     await game.startBattle([Species.ABOMASNOW]);
 
-    const pokemon = game.scene.getPlayerPokemon();
+    const pokemon = game.scene.getPlayerPokemon()!;
 
-    const stockpilingTag = pokemon.getTag(StockpilingTag);
+    const stockpilingTag = pokemon.getTag(StockpilingTag)!;
     expect(stockpilingTag).toBeUndefined();
 
     game.doAttack(0);
@@ -141,10 +141,10 @@ describe("Moves - Swallow", () => {
     it("decreases stats based on stored values (both boosts equal)", { timeout: 10000 }, async () => {
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
 
       game.doAttack(0);
@@ -166,10 +166,10 @@ describe("Moves - Swallow", () => {
     it("decreases stats based on stored values (different boosts)", { timeout: 10000 }, async () => {
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
 
       // for the sake of simplicity (and because other tests cover the setup), set boost amounts directly

@@ -2,7 +2,7 @@ import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
-import { caESConfig} from "#app/locales/ca-ES/config.js";
+import { caESConfig} from "#app/locales/ca_ES/config.js";
 import { deConfig } from "#app/locales/de/config.js";
 import { enConfig } from "#app/locales/en/config.js";
 import { esConfig } from "#app/locales/es/config.js";
@@ -157,7 +157,7 @@ export async function initI18n(): Promise<void> {
     postProcess: ["korean-postposition"],
   });
 
-  await initFonts(localStorage.getItem("prLang"));
+  await initFonts(localStorage.getItem("prLang") ?? undefined);
 }
 
 export default i18next;

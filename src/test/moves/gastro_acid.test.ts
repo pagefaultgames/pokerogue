@@ -6,7 +6,7 @@ import { MoveResult } from "#app/field/pokemon.js";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { changeTurnOrder, SPLASH_ONLY } from "#test/utils/testUtils";
+import { mockTurnOrder, SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -75,7 +75,7 @@ describe("Moves - Gastro Acid", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.CORE_ENFORCER));
     // Force player to be slower to enable Core Enforcer to proc its suppression effect
-    await changeTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await mockTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
@@ -83,6 +83,6 @@ describe("Moves - Gastro Acid", () => {
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
-    expect(game.scene.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   }, TIMEOUT);
 });

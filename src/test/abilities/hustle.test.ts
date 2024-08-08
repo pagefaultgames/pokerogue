@@ -8,7 +8,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { mockHitCheck, SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Hustle", () => {
   let phaserGame: Phaser.Game;
@@ -38,14 +38,13 @@ describe("Abilities - Hustle", () => {
 
   it("increases the user's Attack stat by 50%", async () => {
     await game.startBattle([Species.PIKACHU]);
-    const pikachu = game.scene.getPlayerPokemon();
+    const pikachu = game.scene.getPlayerPokemon()!;
     const atk = pikachu.stats[Stat.ATK];
 
     vi.spyOn(pikachu, "getBattleStat");
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
-    vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+    await mockHitCheck(game, true);
     await game.phaseInterceptor.to(DamagePhase);
 
     expect(pikachu.getBattleStat).toHaveReturnedWith(atk * 1.5);
@@ -53,7 +52,7 @@ describe("Abilities - Hustle", () => {
 
   it("lowers the accuracy of the user's physical moves by 20%", async () => {
     await game.startBattle([Species.PIKACHU]);
-    const pikachu = game.scene.getPlayerPokemon();
+    const pikachu = game.scene.getPlayerPokemon()!;
 
     vi.spyOn(pikachu, "getAccuracyMultiplier");
 
@@ -65,7 +64,7 @@ describe("Abilities - Hustle", () => {
 
   it("does not affect non-physical moves", async () => {
     await game.startBattle([Species.PIKACHU]);
-    const pikachu = game.scene.getPlayerPokemon();
+    const pikachu = game.scene.getPlayerPokemon()!;
     const spatk = pikachu.stats[Stat.SPATK];
 
     vi.spyOn(pikachu, "getBattleStat");
@@ -83,8 +82,8 @@ describe("Abilities - Hustle", () => {
     game.override.enemyLevel(30);
 
     await game.startBattle([Species.PIKACHU]);
-    const pikachu = game.scene.getPlayerPokemon();
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const pikachu = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(pikachu, "getAccuracyMultiplier");
     vi.spyOn(allMoves[Moves.FISSURE], "calculateBattleAccuracy");

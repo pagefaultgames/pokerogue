@@ -45,7 +45,7 @@ describe("Moves - Ceaseless Edge", () => {
     async () => {
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       const enemyStartingHp = enemyPokemon.hp;
 
@@ -70,7 +70,7 @@ describe("Moves - Ceaseless Edge", () => {
       game.override.startingHeldItems([{name: "MULTI_LENS"}]);
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       const enemyStartingHp = enemyPokemon.hp;
 

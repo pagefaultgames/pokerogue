@@ -21,6 +21,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isGlowing": "{{pokemonName}}を\nはげしいひかりが　つつむ！",
   "bellChimed": "すずのおとが　ひびきわたった！",
   "foresawAnAttack": "{{pokemonName}}は\nみらいに　こうげきを　よちした！",
+  "isTighteningFocus": "{{pokemonName}} is\ntightening its focus!",
   "hidUnderwater": "{{pokemonName}}は\nすいちゅうに　みをひそめた！",
   "soothingAromaWaftedThroughArea": "ここちよい　かおりが　ひろがった！",
   "sprangUp": "{{pokemonName}}は\nたかく　とびはねた！",
@@ -60,4 +61,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}}は　{{targetPokemonName}}と\n同じタイプに　なった！",
   "suppressAbilities": "{{pokemonName}}の　とくせいが　きかなくなった！",
   "swapArenaTags": "{{pokemonName}}は\nおたがいの　ばのこうかを　いれかえた！",
+  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
 } as const;

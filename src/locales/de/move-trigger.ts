@@ -21,6 +21,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isGlowing": "{{pokemonName}} leuchtet grell!",
   "bellChimed": "Eine Glocke läutet!",
   "foresawAnAttack": "{{pokemonName}} sieht einen Angriff voraus!",
+  "isTighteningFocus": "{{pokemonName}} konzentriert sich!",
   "hidUnderwater": "{{pokemonName}} taucht unter!",
   "soothingAromaWaftedThroughArea": "Ein wohltuendes Aroma breitet sich aus!",
   "sprangUp": "{{pokemonName}} springt hoch in die Luft!",
@@ -60,4 +61,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}} hat den Typ von {{targetPokemonName}} angenommen!",
   "suppressAbilities": "Die Fähigkeit von {{pokemonName}} wirkt nicht mehr!",
   "swapArenaTags": "{{pokemonName}} hat die Effekte, die auf den beiden Seiten des Kampffeldes wirken, miteinander getauscht!",
+  "exposedMove": "{{pokemonName}} erkennt {{targetPokemonName}}!",
 } as const;

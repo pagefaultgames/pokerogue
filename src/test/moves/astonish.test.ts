@@ -43,9 +43,9 @@ describe("Moves - Astonish", () => {
     async () => {
       await game.startBattle([Species.MEOWSCARADA]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.ASTONISH));
 

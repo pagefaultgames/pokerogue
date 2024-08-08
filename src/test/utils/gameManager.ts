@@ -81,7 +81,7 @@ export default class GameManager {
    * Ends the current phase.
    */
   endPhase() {
-    this.scene.getCurrentPhase().end();
+    this.scene.getCurrentPhase()?.end();
   }
 
   /**
@@ -174,7 +174,7 @@ export default class GameManager {
     // Confirm target selection if move is multi-target
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition].getMove();
+      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
       if (move.isMultiTarget()) {
         handler.processInput(Button.ACTION);
       }
@@ -255,7 +255,7 @@ export default class GameManager {
    */
   isCurrentPhase(phaseTarget) {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
-    return this.scene.getCurrentPhase().constructor.name === targetName;
+    return this.scene.getCurrentPhase()?.constructor.name === targetName;
   }
 
   /**
@@ -278,7 +278,7 @@ export default class GameManager {
       await waitUntil(() => this.scene.ui?.getMode() === Mode.TITLE);
       await this.scene.gameData.tryExportData(GameDataType.SESSION, 0);
       await waitUntil(() => localStorage.hasOwnProperty("toExport"));
-      return resolve(localStorage.getItem("toExport"));
+      return resolve(localStorage.getItem("toExport")!); // TODO: is this bang correct?;
     });
   }
 
@@ -332,7 +332,7 @@ export default class GameManager {
   doRevivePokemon(pokemonIndex: number) {
     const party = this.scene.getParty();
     const candidate = new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0);
-    const modifier = candidate.type.newModifier(party[pokemonIndex]);
+    const modifier = candidate.type!.newModifier(party[pokemonIndex]);
     this.scene.addModifier(modifier, false);
   }
 

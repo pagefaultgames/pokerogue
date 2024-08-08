@@ -12,7 +12,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { BattlerIndex } from "#app/battle.js";
-import { changeTurnOrder } from "../utils/testUtils";
+import { mockTurnOrder } from "../utils/testUtils";
 
 
 describe("Abilities - Shield Dust", () => {
@@ -58,7 +58,7 @@ describe("Abilities - Shield Dust", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
-    await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     // Shield Dust negates secondary effect
@@ -67,8 +67,8 @@ describe("Abilities - Shield Dust", () => {
     expect(move.id).toBe(Moves.AIR_SLASH);
 
     const chance = new Utils.IntegerHolder(move.chance);
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon(), null, chance, move, phase.getTarget(), false);
-    applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr, phase.getTarget(),phase.getUserPokemon(),null,null, chance);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, chance, move, phase.getTarget(), false);
+    applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr, phase.getTarget()!, phase.getUserPokemon()!, null!, null!, chance);
     expect(chance.value).toBe(0);
 
   }, 20000);
