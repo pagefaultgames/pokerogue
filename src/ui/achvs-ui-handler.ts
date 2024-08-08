@@ -146,8 +146,8 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     ui.add(this.mainContainer);
 
-    this.setCursor(0);
     this.currentPage = Page.ACHIEVEMENTS;
+    this.setCursor(0);
 
     this.mainContainer.setVisible(false);
   }
@@ -203,15 +203,18 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     if (button === Button.ACTION) {
       success = true;
-      this.setCursor(0);
-      this.setScrollCursor(0);
       if (this.currentPage === Page.ACHIEVEMENTS) {
         this.currentPage = Page.VOUCHERS;
         this.updateVoucherIcons();
+        this.setCursor(0);
       } else if (this.currentPage === Page.VOUCHERS) {
         this.currentPage = Page.ACHIEVEMENTS;
         this.updateAchvIcons();
+
       }
+      this.mainContainer.update();
+      this.setCursor(0, true);
+      this.setScrollCursor(0);
     }
     if (button === Button.CANCEL) {
       success = true;
@@ -263,7 +266,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     return success;
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: integer, pageChange?: boolean): boolean {
     const ret = super.setCursor(cursor);
 
     let update = ret;
@@ -277,7 +280,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     this.cursorObj.setPositionRelative(this.icons[this.cursor], 0, 0);
 
-    if (update) {
+    if (update || pageChange) {
       switch (this.currentPage) {
       case Page.ACHIEVEMENTS:
         this.showAchv(achvs[Object.keys(achvs)[cursor + this.scrollCursor * this.COLS]]);
@@ -324,7 +327,6 @@ export default class AchvsUiHandler extends MessageUiHandler {
   updateAchvIcons(): void {
     this.headerText.text = this.achvsName;
     this.headerActionText.text = this.vouchersName;
-    this.mainContainer.update();
 
     const achvUnlocks = this.scene.gameData.achvUnlocks;
 
@@ -362,7 +364,6 @@ export default class AchvsUiHandler extends MessageUiHandler {
   updateVoucherIcons(): void {
     this.headerText.text = this.vouchersName;
     this.headerActionText.text = this.achvsName;
-    this.mainContainer.update();
 
     const voucherUnlocks = this.scene.gameData.voucherUnlocks;
 
