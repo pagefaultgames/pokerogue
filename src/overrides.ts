@@ -29,9 +29,7 @@ import { type ModifierOverride, type ModifierTypeKeys } from "./modifier/modifie
  * }
  * ```
  */
-const overrides = {
-  MOVESET_OVERRIDE: [Moves.HIDDEN_POWER, Moves.SUNNY_DAY]
-} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
