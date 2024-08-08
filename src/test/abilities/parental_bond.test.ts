@@ -7,10 +7,10 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { mockHitCheck, SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -129,10 +129,7 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.DOUBLE_HIT));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await mockHitCheck(game, true);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -175,9 +172,7 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.ROLLOUT));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await mockHitCheck(game, true);
 
       await game.phaseInterceptor.to(DamagePhase, false);
 
@@ -373,9 +368,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SUPER_FANG));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await mockHitCheck(game, true);
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -404,9 +397,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SEISMIC_TOSS));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await mockHitCheck(game, true);
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -432,9 +423,7 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.HYPER_BEAM));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await mockHitCheck(game, true);
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -462,9 +451,7 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.ANCHOR_SHOT));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await mockHitCheck(game, true);
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -494,9 +481,7 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SMACK_DOWN));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await mockHitCheck(game, true);
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -523,9 +508,7 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await mockHitCheck(game, true);
 
       await game.phaseInterceptor.to(MoveEffectPhase);
       expect(leadPokemon.turnData.hitCount).toBe(2);
@@ -549,9 +532,7 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.WAKE_UP_SLAP));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await mockHitCheck(game, true);
 
       await game.phaseInterceptor.to(DamagePhase);
 

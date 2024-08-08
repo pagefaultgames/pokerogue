@@ -3,6 +3,7 @@ import { PokemonInfoTranslationEntries } from "#app/interfaces/locales";
 export const pokemonInfo: PokemonInfoTranslationEntries = {
   Stat: {
     "HP": "KP",
+    "HPStat": "KP",
     "HPshortened": "KP",
     "ATK": "Angriff",
     "ATKshortened": "Ang",

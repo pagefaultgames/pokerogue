@@ -583,51 +583,98 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rocket_grunt": {
     "encounter": {
-      1: "Prepare for trouble!"
+      1: "Se prepara pra encrenca!",
+      2: "We're pulling a big job here! Get lost, kid!",
+      3: "Hand over your Pokémon, or face the wrath of Team Rocket!",
+      4: "You're about to experience the true terror of Team Rocket!",
+      5: "Hey, kid! Me am a Team Rocket member kind of guy!" //Use of wrong grammar is deliberate
     },
     "victory": {
-      1: "Team Rocket blasting off again!"
+      1: "Equipe Rocket decolando de novo!",
+      2: "Oh no! I dropped the Lift Key!",
+      3: "I blew it!",
+      4: "My associates won't stand for this!",
+      5: "You say what? Team Rocket bye-bye a go-go? Broken it is says you?" //Use of wrong grammar is deliberate.
     },
   },
   "magma_grunt": {
     "encounter": {
-      1: " If you get in the way of Team Magma, don’t expect any mercy!"
+      1: "Se você se meter com a Equipe Magma, não teremos piedade!",
+      2: "You'd better not interfere with our plans! We're making the world a better place!",
+      3: "You're in the way! Team Magma has no time for kids like you!",
+      4: "I hope you brought marshmallows because things are about to heat up!",
+      5: "We're going to use the power of a volcano! It's gonna be... explosive! Get it? Heh heh!"
     },
     "victory": {
-      1: "Huh? I lost?!"
+      1: "Ahn? Eu perdi?!",
+      2: "I can't believe I lost! I even skipped lunch for this",
+      3: "No way! You're just a kid!",
+      4: "Urrrgh... I should've ducked into our hideout right away...",
+      5: "You beat me... Do you think the boss will dock my pay for this?"
     },
   },
-
   "aqua_grunt": {
     "encounter": {
-      1: "No one who crosses Team Aqua gets any mercy, not even kids!"
+      1: "Não pegamos leve com quem se mete com a Equipe Aqua, nem mesmo crianças!",
+      2: "Grrr... You've got some nerve meddling with Team Aqua!",
+      3: "You're about to get soaked! And not just from my water Pokémon!",
+      4: "We, Team Aqua, exist for the good of all!",
+      5: "Prepare to be washed away by the tides of my... uh, Pokémon! Yeah, my Pokémon!"
     },
     "victory": {
-      1: "You're kidding me!"
+      1: "Tá de brincadeira!",
+      2: "Arrgh, I didn't count on being meddled with by some meddling kid!",
+      3: "I lost?! Guess I'll have to swim back to the hideout now...",
+      4: "Oh, man, what a disaster... The boss is going to be furious...",
+      5: "You beat me... Do you think the boss will make me walk the plank for this?"
     },
   },
   "galactic_grunt": {
     "encounter": {
-      1: "Don't mess with Team Galactic!"
+      1: "Não mexe com a Equipe Galáctica!",
+      2: "Witness the power of our technology and the future we envision!",
+      3: "In the name of Team Galactic, I'll eliminate anyone who stands in our way!",
+      4: "Get ready to lose!",
+      5: "Hope you're ready for a cosmic beatdown!"
     },
     "victory": {
-      1: "Shut down..."
+      1: "Fui amassado...",
+      2: "This setback means nothing in the grand scheme.",
+      3: "Our plans are bigger than this defeat.",
+      4: "How?!",
+      5: "Note to self: practice Pokémon battling, ASAP."
     },
   },
   "plasma_grunt": {
     "encounter": {
-      1: "We won't tolerate people who have different ideas!"
+      1: "Não toleramos pessoas que pensam diferente de nós!",
+      2: "If I win against you, release your Pokémon!",
+      3: "If you get in the way of Team Plasma, I'll take care of you!",
+      4: "Team Plasma will liberate Pokémon from selfish humans like you!",
+      5: "Our hairstyles are out of this world... but our battling skills? You'll find out soon enough."
     },
     "victory": {
-      1: "Plasmaaaaaaaaa!"
+      1: "Plasmaaaaaaaaa!",
+      2: "How could I lose...",
+      3: "...What a weak Pokémon, I'll just have to go steal some better ones!",
+      4: "Great plans are always interrupted.",
+      5: "This is bad... Badbadbadbadbadbadbad! Bad for Team Plasma! Or Plasbad, for short!"
     },
   },
   "flare_grunt": {
     "encounter": {
-      1: "Fashion is most important to us!"
+      1: "Your Pokémon are no match for the elegance of Team Flare.",
+      2: "Hope you brought your sunglasses, because things are about to get bright!",
+      3: "Team Flare will cleanse the world of imperfection!",
+      4: "Prepare to face the brilliance of Team Flare!",
+      5: "Fashion is most important to us!"
     },
     "victory": {
-      1: "The future doesn't look bright for me."
+      1: "The future doesn't look bright for me.",
+      2: "Perhaps there's more to battling than I thought. Back to the drawing board.",
+      3: "Gahh?! I lost?!",
+      4: "Even in defeat, Team Flare's elegance shines through.",
+      5: "You may have beaten me, but when I lose, I go out in style!"
     },
   },
   "rocket_boss_giovanni_1": {

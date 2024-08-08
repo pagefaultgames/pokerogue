@@ -169,6 +169,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "战无不胜",
     description: "在经典模式中通关游戏",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "带孩子来上班",
+    description: "通关经典模式时队伍中至少有一名未进化的宝可梦"
+  },
 
   "MONO_GEN_ONE": {
     name: "最初的劲敌",

@@ -11,7 +11,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { changeTurnOrder } from "../utils/testUtils";
+import { mockTurnOrder } from "../utils/testUtils";
 import { BattlerIndex } from "#app/battle.js";
 
 
@@ -57,7 +57,7 @@ describe("Abilities - Serene Grace", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
-    await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     // Check chance of Air Slash without Serene Grace
@@ -90,7 +90,7 @@ describe("Abilities - Serene Grace", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
-    await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     // Check chance of Air Slash with Serene Grace

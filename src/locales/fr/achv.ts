@@ -169,6 +169,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Invaincu",
     description: "Terminer le jeu en mode classique",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Le stagiaire de 3e",
+    description: "Terminer le mode Classique avec au moins un Pokémon non-évolué dans l’équipe."
+  },
 
   "MONO_GEN_ONE": {
     name: "Le rival originel",
@@ -438,6 +442,10 @@ export const PGFachv: AchievementTranslationEntries = {
   "CLASSIC_VICTORY": {
     name: "Invaincue",
     description: "Terminer le jeu en mode classique",
+  },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Le stagiaire de 3e",
+    description: "Terminer le mode Classique avec au moins un Pokémon non-évolué dans l’équipe."
   },
 
   "MONO_GEN_ONE": {

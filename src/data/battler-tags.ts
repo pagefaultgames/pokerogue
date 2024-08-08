@@ -1,4 +1,4 @@
-import { CommonAnim, CommonBattleAnim } from "./battle-anims";
+import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "./battle-anims";
 import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangeCallback, StatChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
@@ -113,6 +113,44 @@ export class RechargingTag extends BattlerTag {
       pokemon.scene.queueMessage(i18next.t("battle:battlerTagsRechargingLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
       pokemon.getMoveQueue().shift();
+    }
+    return super.lapse(pokemon, lapseType);
+  }
+}
+
+/**
+ * BattlerTag representing the "charge phase" of Beak Blast
+ * Pokemon with this tag will inflict BURN status on any attacker that makes contact.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Beak_Blast_(move) | Beak Blast}
+ */
+export class BeakBlastChargingTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.BEAK_BLAST_CHARGING, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 1, Moves.BEAK_BLAST);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    // Play Beak Blast's charging animation
+    new MoveChargeAnim(ChargeAnim.BEAK_BLAST_CHARGING, this.sourceMove, pokemon).play(pokemon.scene);
+
+    // Queue Beak Blast's header message
+    pokemon.scene.queueMessage(i18next.t("moveTriggers:startedHeatingUpBeak", { pokemonName: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  /**
+   * Inflicts `BURN` status on attackers that make contact, and causes this tag
+   * to be removed after the source makes a move (or the turn ends, whichever comes first)
+   * @param pokemon {@linkcode Pokemon} the owner of this tag
+   * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
+   * @returns `true` if invoked with the CUSTOM lapse type; `false` otherwise
+   */
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      const effectPhase = pokemon.scene.getCurrentPhase();
+      if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
+        const attacker = effectPhase.getPokemon();
+        attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
+      }
+      return true;
     }
     return super.lapse(pokemon, lapseType);
   }
@@ -1738,6 +1776,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   switch (tagType) {
   case BattlerTagType.RECHARGING:
     return new RechargingTag(sourceMove);
+  case BattlerTagType.BEAK_BLAST_CHARGING:
+    return new BeakBlastChargingTag();
   case BattlerTagType.FLINCHED:
     return new FlinchedTag(sourceMove);
   case BattlerTagType.INTERRUPTED:
