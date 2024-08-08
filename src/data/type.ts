@@ -499,6 +499,8 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
   case Type.STELLAR:
     return 1;
   }
+
+  return 0;
 }
 
 /**

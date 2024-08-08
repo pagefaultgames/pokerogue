@@ -1,6 +1,7 @@
-import MockTextureManager from "#app/test/utils/mocks/mockTextureManager";
+import MockTextureManager from "#test/utils/mocks/mockTextureManager";
+import { MockGameObject } from "../mockGameObject";
 
-export default class MockContainer {
+export default class MockContainer implements MockGameObject {
   protected x;
   protected y;
   protected scene;
@@ -11,7 +12,7 @@ export default class MockContainer {
   private style;
   public frame;
   protected textureManager;
-  public list = [];
+  public list: MockGameObject[] = [];
 
   constructor(textureManager: MockTextureManager, x, y) {
     this.x = x;
