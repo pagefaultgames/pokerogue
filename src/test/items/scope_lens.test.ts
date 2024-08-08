@@ -43,7 +43,7 @@ describe("Items - Scope Lens", () => {
 
     game.doAttack(0);
 
-    await game.mockTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase);
 

@@ -55,7 +55,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.doSelectTarget(BattlerIndex.ENEMY);
 
     // Force user party to act before enemy party
-    await game.mockTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
@@ -81,7 +81,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.doSelectTarget(BattlerIndex.ENEMY);
 
     // Force user party to act before enemy party
-    await game.mockTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
@@ -107,7 +107,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.doSelectTarget(0);
 
     // Force first enemy to act (and fail) in between party
-    await game.mockTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
@@ -139,7 +139,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.doSelectTarget(BattlerIndex.ENEMY);
 
     // Force first enemy to act in between party
-    await game.mockTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
@@ -169,7 +169,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.doSelectTarget(BattlerIndex.PLAYER);
 
     // Force user party to act before enemy party
-    await game.mockTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
@@ -221,7 +221,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.doSelectTarget(BattlerIndex.ENEMY);
 
     // Force first enemy to act in between party
-    await game.mockTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
@@ -283,7 +283,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.doSelectTarget(BattlerIndex.PLAYER);
 
     // Force first enemy to act in between party
-    await game.mockTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);

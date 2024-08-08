@@ -75,7 +75,7 @@ describe("Moves - Gastro Acid", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.CORE_ENFORCER));
     // Force player to be slower to enable Core Enforcer to proc its suppression effect
-    await game.mockTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 

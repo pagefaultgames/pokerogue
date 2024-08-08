@@ -58,7 +58,7 @@ describe("Abilities - ZEN MODE", () => {
         (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
       });
 
-      await game.mockTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.phaseInterceptor.to(DamagePhase, false);
       // await game.phaseInterceptor.runFrom(DamagePhase).to(DamagePhase, false);
       const damagePhase = game.scene.getCurrentPhase() as DamagePhase;
@@ -87,7 +87,7 @@ describe("Abilities - ZEN MODE", () => {
         (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
       });
 
-      await game.mockTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.phaseInterceptor.to(QuietFormChangePhase);
       await game.phaseInterceptor.to(TurnInitPhase, false);
       expect(game.scene.getParty()[0].hp).not.toBe(100);
@@ -113,7 +113,7 @@ describe("Abilities - ZEN MODE", () => {
         (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
       });
 
-      await game.mockTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.phaseInterceptor.to(DamagePhase, false);
       // await game.phaseInterceptor.runFrom(DamagePhase).to(DamagePhase, false);
       const damagePhase = game.scene.getCurrentPhase() as DamagePhase;
