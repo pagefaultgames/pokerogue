@@ -218,7 +218,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     if (shownIvsCount < 6) {
       const statsPool = stats.slice(0);
       for (let i = 0; i < shownIvsCount; i++) {
-        let shownStat: Stat;
+        let shownStat: Stat | null = null;
         let highestIv = -1;
         statsPool.map(s => {
           if (ivs[s] > highestIv) {
@@ -226,8 +226,10 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
             highestIv = ivs[s];
           }
         });
-        shownStats.push(shownStat);
-        statsPool.splice(statsPool.indexOf(shownStat), 1);
+        if (shownStat) {
+          shownStats.push(shownStat);
+          statsPool.splice(statsPool.indexOf(shownStat), 1);
+        }
       }
     } else {
       shownStats = stats;
