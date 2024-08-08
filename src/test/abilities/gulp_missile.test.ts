@@ -86,7 +86,7 @@ describe("Abilities - Gulp Missile", () => {
 
   it("changes form during Dive's charge turn", async () => {
     await game.startBattle([Species.CRAMORANT]);
-    const cramorant = game.scene.getPlayerPokemon();
+    const cramorant = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DIVE));
     await game.phaseInterceptor.to(MoveEndPhase);
