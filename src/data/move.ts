@@ -4356,7 +4356,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
  */
 export class GulpMissileTagAttr extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.POST_APPLY);
+    super(true);
   }
 
   /**
@@ -6954,7 +6954,7 @@ export function initMoves() {
       .makesContact(false)
       .partial(),
     new AttackMove(Moves.DIVE, Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 3)
-      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, i18next.t("moveTriggers:hidUnderwater", {pokemonName: "{USER}"}), BattlerTagType.UNDERWATER)
+      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, i18next.t("moveTriggers:hidUnderwater", {pokemonName: "{USER}"}), BattlerTagType.UNDERWATER, true)
       .attr(GulpMissileTagAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.ARM_THRUST, Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, -1, 0, 3)
