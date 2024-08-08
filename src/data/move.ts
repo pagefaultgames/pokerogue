@@ -1028,6 +1028,9 @@ export class MessageHeaderAttr extends MoveHeaderAttr {
  * @see {@linkcode BeakBlastChargingTag}
  */
 export class BeakBlastHeaderAttr extends MoveHeaderAttr {
+  /** Required to initialize Beak Blast's charge animation correctly */
+  public chargeAnim = ChargeAnim.BEAK_BLAST_CHARGING;
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.addTag(BattlerTagType.BEAK_BLAST_CHARGING);
     return true;
