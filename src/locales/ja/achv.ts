@@ -10,7 +10,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "MoneyAchv": {
-    description: "一回の ランで ₽{{moneyAmount}}を 稼ぐ",
+    description: "一回の　ランで　₽{{moneyAmount}}を　稼ぐ",
   },
   "10K_MONEY": {
     name: "お金を持つ人",
@@ -26,7 +26,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "DamageAchv": {
-    description: "一撃で {{damageAmount}}ダメージを 与える",
+    description: "一撃で　{{damageAmount}}ダメージを　与える",
   },
   "250_DMG": {
     name: "力持ち",
@@ -42,7 +42,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "HealAchv": {
-    description: "一つの 技や 特性や 持っているアイテムで {{healAmount}}{{HP}}を 一気に 回復する",
+    description: "一つの　技や　特性や　持っているアイテムで　{{healAmount}}{{HP}}を　一気に　回復する",
   },
   "250_HEAL": {
     name: "回復発見者",
@@ -58,7 +58,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "LevelAchv": {
-    description: "一つの ポケモンを Lv{{level}}まで レベルアップする",
+    description: "一つの　ポケモンを　Lv{{level}}まで　レベルアップする",
   },
   "LV_100": {
     name: "まだまだだよ",
@@ -71,7 +71,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "RibbonAchv": {
-    description: "{{ribbonAmount}}巻の リボンを 積もる",
+    description: "{{ribbonAmount}}巻の　リボンを　積もる",
   },
   "10_RIBBONS": {
     name: "ポケモンリーグチャンピオン",
@@ -91,71 +91,71 @@ export const PGMachv: AchievementTranslationEntries = {
 
   "TRANSFER_MAX_BATTLE_STAT": {
     name: "同力",
-    description: "少なくとも 一つの 能力を 最大まで あげて 他の 手持ちポケモンに バトンタッチする",
+    description: "少なくとも　一つの　能力を　最大まで　あげて　他の　手持ちポケモンに　バトンタッチする",
   },
   "MAX_FRIENDSHIP": {
     name: "マブ達",
-    description: "一つの 手持ちポケモンの 仲良し度を 最大に 上げる",
+    description: "一つの　手持ちポケモンの　仲良し度を　最大に　上げる",
   },
   "MEGA_EVOLVE": {
     name: "ザ・アブソリュート",
-    description: "一つの 手持ちポケモンを メガシンカさせる",
+    description: "一つの　手持ちポケモンを　メガシンカさせる",
   },
   "GIGANTAMAX": {
     name: "太―くて　堪らない",
-    description: "一つの 手持ちポケモンを キョダイマックスさせる",
+    description: "一つの　手持ちポケモンを　キョダイマックスさせる",
   },
   "TERASTALLIZE": {
     name: "一致好き",
-    description: "一つの　手持ちポケモンを テラスタルさせる",
+    description: "一つの　手持ちポケモンを　テラスタルさせる",
   },
   "STELLAR_TERASTALLIZE": {
     name: "隠れたタイプ",
-    description: "一つの 手持ちポケモンを ステラ・テラスタルさせる",
+    description: "一つの　手持ちポケモンを　ステラ・テラスタルさせる",
   },
   "SPLICE": {
     name: "インフィニット・フュジョン",
-    description: "いでんしのくさびで 二つの ポケモンを 吸収合体させる",
+    description: "いでんしのくさびで　二つの　ポケモンを　吸収合体させる",
   },
   "MINI_BLACK_HOLE": {
     name: "アイテムホーリック",
-    description: "ミニブラックホールを 手に入れる",
+    description: "ミニブラックホールを　手に入れる",
   },
   "CATCH_MYTHICAL": {
     name: "幻",
-    description: "幻の ポケモンを 捕まえる",
+    description: "幻の　ポケモンを　捕まえる",
   },
   "CATCH_SUB_LEGENDARY": {
     name: "準・伝説",
-    description: "準伝説の ポケモンを 捕まえる",
+    description: "準伝説の　ポケモンを　捕まえる",
   },
   "CATCH_LEGENDARY": {
     name: "ザ・伝説",
-    description: "伝説の ポケモンを 捕まえる",
+    description: "伝説の　ポケモンを　捕まえる",
   },
   "SEE_SHINY": {
     name: "色とりどりに光る",
-    description: "野生の 色違いポケモンを みつける",
+    description: "野生の　色違いポケモンを　みつける",
   },
   "SHINY_PARTY": {
     name: "きらきら努力家",
-    description: "手持ちポケモンは 全員 色違いが あるように する",
+    description: "手持ちポケモンは　全員　色違いポケモンに　する",
   },
   "HATCH_MYTHICAL": {
     name: "幻のタマゴ",
-    description: "幻の　ポケモンを タマゴから 生まれる",
+    description: "幻の　ポケモンを　タマゴから　生まれる",
   },
   "HATCH_SUB_LEGENDARY": {
     name: "準伝説のタマゴ",
-    description: "準伝説の ポケモンを タマゴから 生まれる",
+    description: "準伝説の　ポケモンを　タマゴから　生まれる",
   },
   "HATCH_LEGENDARY": {
     name: "伝説のタマゴ",
-    description: "伝説の ポケモンを タマゴから 生まれる",
+    description: "伝説の　ポケモンを　タマゴから　生まれる",
   },
   "HATCH_SHINY": {
     name: "色違いタマゴ",
-    description: "色違いポケモンを タマゴから 生まれる",
+    description: "色違いポケモンを　タマゴから　生まれる",
   },
   "HIDDEN_ABILITY": {
     name: "底力",
@@ -163,52 +163,52 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "PERFECT_IVS": {
     name: "個体値の賞状",
-    description: "一つの ポケモンの 個体値が すべて 最大に なるように する",
+    description: "一つの　ポケモンの　個体値を　すべて　最大に　する",
   },
   "CLASSIC_VICTORY": {
     name: "無双",
-    description: "クラシックモードを クリアする",
+    description: "クラシックモードを　クリアする",
   },
 
   "MONO_GEN_ONE": {
     name: "原始",
-    description: "１世代の 単一世代チャレンジを クリアする",
+    description: "１世代の　単一世代チャレンジを　クリアする",
   },
   "MONO_GEN_TWO": {
     name: "懐かしいカンジョウ",
-    description: "2世代の 単一世代チャレンジを クリアする",
+    description: "2世代の　単一世代チャレンジを　クリアする",
   },
   "MONO_GEN_THREE": {
     name: "水浸し",
-    description: "3世代の 単一世代チャレンジを クリアする",
+    description: "3世代の　単一世代チャレンジを　クリアする",
   },
   "MONO_GEN_FOUR": {
     name: "神々の地",
-    description: "4世代の 単一世代チャレンジを クリアする",
+    description: "4世代の　単一世代チャレンジを　クリアする",
   },
   "MONO_GEN_FIVE": {
     name: "ニューヨーカー",
-    description: "5世代の 単一世代チャレンジを クリアする",
+    description: "5世代の　単一世代チャレンジを　クリアする",
   },
   "MONO_GEN_SIX": {
     name: "サヴァ・サヴァ",
-    description: "6世代の 単一世代チャレンジを クリアする",
+    description: "6世代の　単一世代チャレンジを　クリアする",
   },
   "MONO_GEN_SEVEN": {
     name: "アローラ・オエ",
-    description: "7世代の 単一世代チャレンジを クリアする",
+    description: "7世代の　単一世代チャレンジを　クリアする",
   },
   "MONO_GEN_EIGHT": {
     name: "チャンピオン タイムを 楽しめ！",
-    description: "8世代の 単一世代チャレンジを クリアする",
+    description: "8世代の　単一世代チャレンジを　クリアする",
   },
   "MONO_GEN_NINE": {
     name: "ネモに甘えたでしょう",
-    description: "9世代の 単一世代チャレンジを クリアする",
+    description: "9世代の　単一世代チャレンジを　クリアする",
   },
 
   "MonoType": {
-    description: "{{type}}タイプの 単一タイプチャレンジを クリアする.",
+    description: "{{type}}タイプの　単一タイプチャレンジを　クリアする.",
   },
   "MONO_NORMAL": {
     name: "凡人",
@@ -223,7 +223,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "カントーの名物",
   },
   "MONO_GROUND": {
-    name: "Forecast: Earthquakes",
+    name: "自信でユラユラ",
   },
   "MONO_ROCK": {
     name: "タケシの挑戦状",
@@ -238,7 +238,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "ハガネーター",
   },
   "MONO_FIRE": {
-    name: "NIGHT OF FIRE",
+    name: "NIGHT　OF　FIRE",
   },
   "MONO_WATER": {
     name: "土砂降リスト",
@@ -266,7 +266,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "FRESH_START": {
     name: "一発で!",
-    description: "出直しチャレンジを クリアする"
+    description: "出直しチャレンジを　クリアする"
   }
 } as const;
 
