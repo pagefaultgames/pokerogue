@@ -1022,18 +1022,38 @@ export class MessageHeaderAttr extends MoveHeaderAttr {
 }
 
 /**
+ * Applies a tag to a battler when a move is selected, before any other actions
+ * are taken. The tag is applied only for a single turn.
+ */
+export class AddBattlerTagOnMoveReadyAttr extends MoveHeaderAttr {
+  public tagType: BattlerTagType;
+
+  constructor(tagType: BattlerTagType) {
+    super();
+    this.tagType = tagType;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    return (this.selfTarget ? user : target).addTag(this.tagType, 1, move.id, user.id);
+  }
+}
+
+/**
  * Header attribute to implement the "charge phase" of Beak Blast at the
  * beginning of a turn.
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Beak_Blast_(move) | Beak Blast}
  * @see {@linkcode BeakBlastChargingTag}
  */
-export class BeakBlastHeaderAttr extends MoveHeaderAttr {
+export class BeakBlastHeaderAttr extends AddBattlerTagOnMoveReadyAttr {
   /** Required to initialize Beak Blast's charge animation correctly */
   public chargeAnim = ChargeAnim.BEAK_BLAST_CHARGING;
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.addTag(BattlerTagType.BEAK_BLAST_CHARGING);
-    return true;
+  constructor() {
+    super(BattlerTagType.BEAK_BLAST_CHARGING);
   }
 }
 
@@ -3714,6 +3734,21 @@ export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
   }
 }
 
+const isPursuingFunc = (user: Pokemon, target: Pokemon) =>
+  user.getTag(BattlerTagType.ANTICIPATING_ACTION) && target.getTag(BattlerTagType.ESCAPING);
+
+export class PursuitAccuracyAttr extends VariableAccuracyAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (isPursuingFunc(user, target)) {
+      const accuracy = args[0] as Utils.NumberHolder;
+      accuracy.value = -1;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class VariableMoveCategoryAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return false;
@@ -4442,8 +4477,8 @@ export class LapseBattlerTagAttr extends MoveEffectAttr {
 export class RemoveBattlerTagAttr extends MoveEffectAttr {
   public tagTypes: BattlerTagType[];
 
-  constructor(tagTypes: BattlerTagType[], selfTarget: boolean = false) {
-    super(selfTarget);
+  constructor(tagTypes: BattlerTagType[], selfTarget: boolean = false, trigger?: MoveEffectTrigger) {
+    super(selfTarget, trigger);
 
     this.tagTypes = tagTypes;
   }
@@ -4849,6 +4884,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   private user: boolean;
   private batonPass: boolean;
 
+  /**
+   * @param user Indicates if this move effect will switch out the user of the
+   * move (true) or the target of the move (false).
+   * @param batonPass Indicates if this move is a usage of Baton Pass.
+   */
   constructor(user?: boolean, batonPass?: boolean) {
     super(false, MoveEffectTrigger.POST_APPLY, false, true);
     this.user = !!user;
@@ -4867,26 +4907,76 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         return resolve(false);
       }
 
-  	// Move the switch out logic inside the conditional block
-  	// This ensures that the switch out only happens when the conditions are met
 	  const switchOutTarget = this.user ? user : target;
+
+      let willBePursued = false;
+      if (switchOutTarget.hp > 0 && !this.batonPass && this.user && move.id !== Moves.TELEPORT) {
+        switchOutTarget.addTag(BattlerTagType.ESCAPING);
+
+        const opposingField = user.isPlayer() ? user.scene.getEnemyField() : user.scene.getPlayerField();
+        const opposingPursuitUsers = opposingField
+          .filter((op: Pokemon) => op.getTag(BattlerTagType.ANTICIPATING_ACTION)?.sourceMove === Moves.PURSUIT)
+          .sort((a, b) => b.turnData.order - a.turnData.order);
+        if (opposingPursuitUsers.length) {
+          willBePursued = true;
+          opposingPursuitUsers.forEach(pursuiter => {
+            if (user.scene.tryRemovePhase(p => p instanceof MovePhase && p.pokemon.id === pursuiter.id)) {
+              user.scene.prependToPhase(
+                new MovePhase(
+                  user.scene,
+                  pursuiter,
+                  [switchOutTarget.getBattlerIndex()],
+                  pursuiter.getMoveset().find(m =>
+                    m?.moveId === Moves.PURSUIT) || new PokemonMove(Moves.PURSUIT),
+                  false,
+                  false
+                ),
+                MoveEndPhase
+              );
+            }
+          });
+        }
+      }
+
 	  if (switchOutTarget instanceof PlayerPokemon) {
-        switchOutTarget.leaveField(!this.batonPass);
+        if (!willBePursued) {
+          switchOutTarget.leaveField(!this.batonPass);
+        }
 
         if (switchOutTarget.hp > 0) {
-          user.scene.prependToPhase(new SwitchPhase(user.scene, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
+          user.scene.prependToPhase(
+            new SwitchPhase(user.scene, switchOutTarget.getFieldIndex(), "moveEffect", willBePursued),
+            MoveEndPhase
+          );
           resolve(true);
         } else {
           resolve(false);
         }
+
 	  	return;
 	  } else if (user.scene.currentBattle.battleType !== BattleType.WILD) {
+        if (!user.scene.currentBattle.trainer) {
+          return resolve(false); // what are we even doing here
+        }
+
 	  	// Switch out logic for trainer battles
-        switchOutTarget.leaveField(!this.batonPass);
+        if (!willBePursued) {
+          switchOutTarget.leaveField(!this.batonPass);
+        }
 
 	  	if (switchOutTarget.hp > 0) {
         // for opponent switching out
-          user.scene.prependToPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0), false, this.batonPass, false), MoveEndPhase);
+          user.scene.prependToPhase(
+            new SwitchSummonPhase(
+              user.scene,
+              switchOutTarget.getFieldIndex(),
+              user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot),
+              willBePursued,
+              this.batonPass,
+              false
+            ),
+            MoveEndPhase
+          );
         }
 	  } else {
 	    // Switch out logic for everything else (eg: WILD battles)
@@ -6767,7 +6857,10 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target)),
     new AttackMove(Moves.PURSUIT, Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, 0, 2)
-      .partial(),
+      .attr(PursuitAccuracyAttr)
+      .attr(AddBattlerTagOnMoveReadyAttr, BattlerTagType.ANTICIPATING_ACTION)
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.ANTICIPATING_ACTION], true, MoveEffectTrigger.POST_APPLY)
+      .attr(MovePowerMultiplierAttr, (user, target) => isPursuingFunc(user, target) ? 2 : 1),
     new AttackMove(Moves.RAPID_SPIN, Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
       .attr(RemoveBattlerTagAttr, [

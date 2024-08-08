@@ -21,6 +21,7 @@ import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import Overrides from "#app/overrides";
 
 export enum TrainerVariant {
     DEFAULT,
@@ -435,6 +436,11 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     const party = this.scene.getEnemyParty();
     const nonFaintedLegalPartyMembers = party.slice(this.scene.currentBattle.getBattlerCount()).filter(p => p.isAllowedInBattle()).filter(p => !trainerSlot || p.trainerSlot === trainerSlot);
+
+    if (Overrides.TRAINER_ALWAYS_SWITCHES) {
+      return nonFaintedLegalPartyMembers.map(p => [party.indexOf(p), 100]);
+    }
+
     const partyMemberScores = nonFaintedLegalPartyMembers.map(p => {
       const playerField = this.scene.getPlayerField().filter(p => p.isAllowedInBattle());
       let score = 0;

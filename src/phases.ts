@@ -1832,7 +1832,7 @@ export class CheckSwitchPhase extends BattlePhase {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
-        this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, false, true));
+        this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, "switchMode", true));
         this.end();
       }, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
@@ -2307,14 +2307,22 @@ export class TurnStartPhase extends FieldPhase {
     const moveOrder = order.slice(0);
 
     moveOrder.sort((a, b) => {
-      const aCommand = this.scene.currentBattle.turnCommands[a];
-      const bCommand = this.scene.currentBattle.turnCommands[b];
+      const aCommand = this.scene.currentBattle.turnCommands[a]!;
+      const bCommand = this.scene.currentBattle.turnCommands[b]!;
 
-      if (aCommand?.command !== bCommand?.command) {
-        if (aCommand?.command === Command.FIGHT) {
-          return 1;
-        } else if (bCommand?.command === Command.FIGHT) {
-          return -1;
+      if (aCommand.command !== bCommand.command) {
+        if (aCommand.command === Command.FIGHT) {
+          if (aCommand.move?.move === Moves.PURSUIT && bCommand.command === Command.POKEMON) {
+            return -1;
+          } else {
+            return 1;
+          }
+        } else if (bCommand.command === Command.FIGHT) {
+          if (bCommand.move?.move === Moves.PURSUIT && aCommand.command === Command.POKEMON) {
+            return 1;
+          } else {
+            return -1;
+          }
         }
       } else if (aCommand?.command === Command.FIGHT) {
         const aMove = allMoves[aCommand.move!.move];//TODO: is the bang correct here?
@@ -2366,22 +2374,50 @@ export class TurnStartPhase extends FieldPhase {
         if (move.getMove().hasAttr(MoveHeaderAttr)) {
           this.scene.unshiftPhase(new MoveHeaderPhase(this.scene, pokemon, move));
         }
+        // even though pursuit is ordered before Pokemon commands in the move
+        // order, the SwitchSummonPhase is unshifted onto the phase list, which
+        // would cause it to run before pursuit if pursuit was pushed normally.
+        // the SwitchSummonPhase can't be changed to a push either, because then
+        // the MoveHeaderPhase for all moves would run prior to the switch-out,
+        // which is not correct (eg, when focus punching a switching opponent,
+        // the correct order is switch -> tightening focus message -> attack
+        // fires, not focus -> switch -> attack). so, we have to specifically
+        // unshift pursuit when there are other pokemon commands after it, as
+        // well as order it before any Pokemon commands, otherwise it won't go first.
+        const remainingMoves = moveOrder.slice(moveOrder.findIndex(mo => mo === o) + 1);
+        const pendingOpposingPokemonCommands = remainingMoves.filter(o =>
+          this.scene.currentBattle.turnCommands[o]!.command === Command.POKEMON
+            && (pokemon.isPlayer() ? o >= BattlerIndex.ENEMY : o < BattlerIndex.ENEMY)
+        );
+        const arePokemonCommandsLeftInQueue = Boolean(pendingOpposingPokemonCommands.length);
+        const addPhase = (
+          queuedMove.move === Moves.PURSUIT && arePokemonCommandsLeftInQueue
+            ? this.scene.unshiftPhase
+            : this.scene.pushPhase
+        ).bind(this.scene);
+
+        // pursuit also hits the first pokemon to switch out in doubles,
+        // regardless of original target
+        const targets = queuedMove.move === Moves.PURSUIT && arePokemonCommandsLeftInQueue
+          ? [pendingOpposingPokemonCommands[0]]
+          : turnCommand.targets || turnCommand.move!.targets;
         if (pokemon.isPlayer()) {
           if (turnCommand.cursor === -1) {
-            this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
+            addPhase(new MovePhase(this.scene, pokemon, targets, move));
           } else {
-            const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP);//TODO: is the bang correct here?
-            this.scene.pushPhase(playerPhase);
+            const playerPhase = new MovePhase(this.scene, pokemon, targets, move, false, queuedMove.ignorePP);
+            addPhase(playerPhase);
           }
         } else {
-          this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP));//TODO: is the bang correct here?
+          addPhase(new MovePhase(this.scene, pokemon, targets, move, false, queuedMove.ignorePP));
         }
         break;
       case Command.BALL:
         this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets![0] % 2, turnCommand.cursor!));//TODO: is the bang correct here?
         break;
       case Command.POKEMON:
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor!, true, turnCommand.args![0] as boolean, pokemon.isPlayer()));//TODO: is the bang correct here?
+        pokemon.addTag(BattlerTagType.ESCAPING);
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor!, true, turnCommand.args![0] as boolean, pokemon.isPlayer()));
         break;
       case Command.RUN:
         let runningPokemon = pokemon;
@@ -3997,7 +4033,7 @@ export class FaintPhase extends PokemonPhase {
       } else if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double) {
         this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
       } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount()) {
-        this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
+        this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, "faint", false));
       }
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
@@ -4641,52 +4677,56 @@ export class PostGameOverPhase extends Phase {
  */
 export class SwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
-  private isModal: boolean;
+  private switchReason: "faint" | "moveEffect" | "switchMode";
   private doReturn: boolean;
 
   /**
    * Creates a new SwitchPhase
    * @param scene {@linkcode BattleScene} Current battle scene
    * @param fieldIndex Field index to switch out
-   * @param isModal Indicates if the switch should be forced (true) or is
-   * optional (false).
-   * @param doReturn Indicates if the party member on the field should be
-   * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase}.
+   * @param switchReason Indicates why this switch is occurring. The valid options are
+   * `'faint'` (party member fainted), `'moveEffect'` (uturn, baton pass, dragon
+   * tail, etc), and `'switchMode'` (start-of-battle optional switch). This
+   * helps the phase determine both if the switch should be cancellable by the
+   * user, as well as determine if the party UI should be shown at all.
+   * @param doReturn Indicates if this switch should call back the pokemon at
+   * the {@linkcode fieldIndex} (true), or if the mon has already been recalled
+   * (false).
    */
-  constructor(scene: BattleScene, fieldIndex: integer, isModal: boolean, doReturn: boolean) {
+  constructor(scene: BattleScene, fieldIndex: integer, switchReason: "faint" | "moveEffect" | "switchMode", doReturn: boolean) {
     super(scene);
 
     this.fieldIndex = fieldIndex;
-    this.isModal = isModal;
+    this.switchReason = switchReason;
     this.doReturn = doReturn;
   }
 
   start() {
     super.start();
 
-    // Skip modal switch if impossible (no remaining party members that aren't in battle)
-    if (this.isModal && !this.scene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
+    const isForcedSwitch = this.switchReason !== "switchMode";
+
+    // Skip forced switch if impossible (no remaining party members that aren't in battle)
+    if (isForcedSwitch && !this.scene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
       return super.end();
     }
 
-    // Skip if the fainted party member has been revived already. doReturn is
-    // only passed as `false` from FaintPhase (as opposed to other usages such
-    // as ForceSwitchOutAttr or CheckSwitchPhase), so we only want to check this
-    // if the mon should have already been returned but is still alive and well
-    // on the field. see also; battle.test.ts
-    if (this.isModal && !this.doReturn && !this.scene.getParty()[this.fieldIndex].isFainted()) {
+    // Skip if the fainted party member has been revived already. see also; battle.test.ts
+    if (this.switchReason === "faint" && !this.scene.getParty()[this.fieldIndex].isFainted()) {
       return super.end();
     }
 
     // Check if there is any space still in field
-    if (this.isModal && this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
+    const numActiveBattlers = this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length;
+    const willReturnModifer = (this.doReturn ? 1 : 0); // need to subtract this if doReturn is true, because the pokemon in the given index hasn't left the field yet. (used for volt switch + pursuit, etc)
+    if (isForcedSwitch && numActiveBattlers - willReturnModifer >= this.scene.currentBattle.getBattlerCount()) {
       return super.end();
     }
 
     // Override field index to 0 in case of double battle where 2/3 remaining legal party members fainted at once
     const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? this.fieldIndex : 0;
 
-    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
+    this.scene.ui.setMode(Mode.PARTY, isForcedSwitch ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
       }
