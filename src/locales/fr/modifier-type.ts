@@ -24,7 +24,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonReviveModifierType": {
-      description: "Réanime un Pokémon et restaure {{restorePercent}}% de ses PV.",
+      description: "Ranime un Pokémon et restaure {{restorePercent}}% de ses PV.",
     },
     "PokemonStatusHealModifierType": {
       description: "Soigne tous les problèmes de statut d’un Pokémon.",
@@ -64,13 +64,13 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Fait monter toute l’équipe de {{levels}} niveau·x.",
     },
     "PokemonBaseStatBoosterModifierType": {
-	  description: "Augmente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
+      description: "Augmente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
     },
     "AllPokemonFullHpRestoreModifierType": {
-      description: "Restaure tous les PV de toute l'équipe.",
+      description: "Restaure tous les PV de toute l’équipe.",
     },
     "AllPokemonFullReviveModifierType": {
-      description: "Réanime et restaure tous les PV de tous les Pokémon K.O.",
+      description: "Ranime et restaure tous les PV de tous les Pokémon K.O. .",
     },
     "MoneyRewardModifierType": {
       description: "Octroie une {{moneyMultiplier}} somme d’argent.\n({{moneyAmount}} ₽)",
@@ -151,9 +151,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SACRED_ASH": { name: "Cendre Sacrée" },
 
-    "REVIVER_SEED": { name: "Résugraine", description: "Réanime et restaure la moitié des PV de son porteur s’il est mis K.O. par une capacité directe." },
+    "REVIVER_SEED": { name: "Résugraine", description: "Ranime et restaure la moitié des PV de son porteur s’il est mis K.O. par une capacité directe." },
 
-    "WHITE_HERB": { name: "White Herb", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+    "WHITE_HERB": { name: "Herbe Blanche", description: "Restaure toute stat ayant subi une baisse en combat." },
 
     "ETHER": { name: "Huile" },
     "MAX_ETHER": { name: "Huile Max" },
@@ -184,12 +184,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "SOOTHE_BELL": { name: "Grelot Zen" },
 
-    "SCOPE_LENS": { name: "Lentilscope", description: "Une lentille qui augmente le taux de critiques du porteur." },
-    "LEEK": { name: "Poireau", description: "Objet à faire tenir à Canarticho. Un poireau très long et solide qui augmente son taux de critiques." },
+    "SCOPE_LENS": { name: "Lentilscope", description: "Une lentille qui augmente d’un cran le taux de critiques du porteur." },
+    "LEEK": { name: "Poireau", description: "À faire tenir à Canarticho ou Palarticho. Un poireau très long et solide qui augmente de 2 crans le taux de critiques." },
 
-    "EVIOLITE": { name: "Évoluroc", description: "Un étrange concentré d’évolution qui augmente la Défense et la Défense Spéciale d’un Pokémon pouvant évoluer." },
+    "EVIOLITE": { name: "Évoluroc", description: "Augmente de 50% la Défense et Déf. Spé. si le porteur peut évoluer, 25% aux fusions dont une moitié le peut encore." },
 
-    "SOUL_DEW": { name: "Rosée Âme", description: "Augmente de 10% l’influence de la nature d’un Pokémon sur ses statistiques (cumulatif)." },
+    "SOUL_DEW": { name: "Rosée Âme", description: "Augmente de 10% l’influence de la nature d’un Pokémon sur ses statistiques. Effet cumulatif." },
 
     "NUGGET": { name: "Pépite" },
     "BIG_NUGGET": { name: "Maxi Pépite" },
@@ -199,7 +199,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_PUNCH": { name: "Poing Doré", description: "50% des dégâts infligés sont convertis en argent." },
     "COIN_CASE": { name: "Boite Jetons", description: "Tous les 10 combats, recevez 10% de votre argent en intérêts." },
 
-    "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de verrouiller des objets rares si vous relancez les objets proposés." },
+    "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de conserver la rareté des objets si vous relancez les objets proposés." },
 
     "GRIP_CLAW": { name: "Accro Griffe" },
     "WIDE_LENS": { name: "Loupe" },
@@ -220,8 +220,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LEFTOVERS": { name: "Restes", description: "Soigne à chaque tour 1/16 des PV max d’un Pokémon." },
     "SHELL_BELL": { name: "Grelot Coque", description: "Soigne son porteur avec 1/8 des dégâts qu’il inflige à un Pokémon." },
 
-    "TOXIC_ORB": { name: "Orbe Toxique", description: "Un orbe bizarre qui empoisonne gravement son porteur durant le combat." },
-    "FLAME_ORB": { name: "Orbe Flamme", description: "Un orbe bizarre qui brule son porteur durant le combat." },
+    "TOXIC_ORB": { name: "Orbe Toxique", description: "Empoisonne gravement son porteur à la fin du tour s’il n’a pas déjà de problème de statut." },
+    "FLAME_ORB": { name: "Orbe Flamme", description: "Brule son porteur à la fin du tour s’il n’a pas déjà de problème de statut." },
 
     "BATON": { name: "Bâton", description: "Permet de transmettre les effets en cas de changement de Pokémon. Ignore les pièges." },
 
@@ -242,21 +242,21 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ENEMY_ATTACK_POISON_CHANCE": { name: "Jeton Poison" },
     "ENEMY_ATTACK_PARALYZE_CHANCE": { name: "Jeton Paralysie" },
     "ENEMY_ATTACK_BURN_CHANCE": { name: "Jeton Brulure" },
-    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Jeton Total Soin", description: "Ajoute 2.5% de chances à chaque tour de se soigner d’un problème de statut." },
+    "ENEMY_STATUS_EFFECT_HEAL_CHANCE": { name: "Jeton Total Soin", description: "Ajoute 2,5% de chances à chaque tour de se soigner d’un problème de statut." },
     "ENEMY_ENDURE_CHANCE": { name: "Jeton Ténacité" },
     "ENEMY_FUSED_CHANCE": { name: "Jeton Fusion", description: "Ajoute 1% de chances qu’un Pokémon sauvage soit une fusion." },
   },
   SpeciesBoosterItem: {
-    "LIGHT_BALL": { name: "Balle Lumière", description: "Objet à faire tenir à Pikachu. Un orbe énigmatique qui augmente son Attaque et son Attaque Spéciale." },
-    "THICK_CLUB": { name: "Masse Os", description: "Objet à faire tenir à Osselait ou Ossatueur. Un os dur qui augmente leur Attaque." },
-    "METAL_POWDER": { name: "Poudre Métal", description: "Objet à faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, augmente sa Défense." },
-    "QUICK_POWDER": { name: "Poudre Vite", description: "Objet à faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, augmente sa Vitesse." }
+    "LIGHT_BALL": { name: "Balle Lumière", description: "À faire tenir à Pikachu. Un orbe énigmatique qui double son Attaque et son Atq. Spé. ." },
+    "THICK_CLUB": { name: "Masse Os", description: "À faire tenir à Osselait ou Ossatueur. Un os dur qui double leur Attaque." },
+    "METAL_POWDER": { name: "Poudre Métal", description: "À faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, double sa Défense." },
+    "QUICK_POWDER": { name: "Poudre Vite", description: "À faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, double sa Vitesse." }
   },
   TempBattleStatBoosterItem: {
     "x_attack": "Attaque +",
     "x_defense": "Défense +",
-    "x_sp_atk": "Atq. Spé. +",
-    "x_sp_def": "Déf. Spé. +",
+    "x_sp_atk": "Atq. Spé. +",
+    "x_sp_def": "Déf. Spé. +",
     "x_speed": "Vitesse +",
     "x_accuracy": "Précision +",
     "dire_hit": "Muscle +",
@@ -265,8 +265,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
   TempBattleStatBoosterStatName: {
     "ATK": "Attaque",
     "DEF": "Défense",
-    "SPATK": "Atq. Spé.",
-    "SPDEF": "Déf. Spé.",
+    "SPATK": "Atq. Spé.",
+    "SPDEF": "Déf. Spé.",
     "SPD": "Vitesse",
     "ACC": "Précision",
     "CRIT": "Taux de critique",
