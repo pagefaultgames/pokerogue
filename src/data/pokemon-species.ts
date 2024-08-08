@@ -2999,7 +2999,7 @@ export const speciesStarters = {
   [Species.FERROSEED]: 3,
   [Species.KLINK]: 3,
   [Species.TYNAMO]: 2,
-  [Species.ELGYEM]: 3,
+  [Species.ELGYEM]: 2,
   [Species.LITWICK]: 3,
   [Species.AXEW]: 4,
   [Species.CUBCHOO]: 2,
