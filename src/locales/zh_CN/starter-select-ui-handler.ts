@@ -28,6 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "toggleIVs": "显示个体",
   "manageMoves": "管理招式",
   "manageNature": "管理性格",
+  "addToFavorites": "Add to Favorites",
+  "removeFromFavorites": "Remove from Favorites",
   "useCandies": "使用糖果",
   "selectNature": "选择性格",
   "selectMoveSwapOut": "选择要替换的招式。",

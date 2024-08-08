@@ -28,6 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "toggleIVs": "Vedi/Nascondi IV",
   "manageMoves": "Gestisci mosse",
   "manageNature": "Gestisci natura",
+  "addToFavorites": "Add to Favorites",
+  "removeFromFavorites": "Remove from Favorites",
   "useCandies": "Usa caramelle",
   "selectNature": "Seleziona natura.",
   "selectMoveSwapOut": "Seleziona una mossa da scambiare.",

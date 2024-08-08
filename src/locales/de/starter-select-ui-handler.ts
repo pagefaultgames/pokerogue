@@ -28,6 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "toggleIVs": "DVs anzeigen/verbergen",
   "manageMoves": "Attacken ändern",
   "manageNature": "Wesen ändern",
+  "addToFavorites": "Add to Favorites",
+  "removeFromFavorites": "Remove from Favorites",
   "useCandies": "Bonbons verwenden",
   "selectNature": "Wähle das neue Wesen.",
   "selectMoveSwapOut": "Wähle die zu ersetzende Attacke.",
