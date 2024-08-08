@@ -13,6 +13,7 @@
 		"test:cov": "vitest run --project pre && vitest run --project main --coverage",
 		"test:watch": "vitest run --project pre && vitest watch --project main --coverage",
 		"test:silent": "vitest run --project pre && vitest run --project main --silent",
+		"typecheck": "tsc --noEmit",
 		"eslint": "eslint --fix .",
 		"eslint-ci": "eslint .",
 		"docs": "typedoc",
