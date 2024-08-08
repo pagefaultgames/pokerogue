@@ -36,8 +36,8 @@ describe("Moves - Double Team", () => {
   it("increases the user's evasion by one stage.", async () => {
     await game.startBattle([Species.MAGIKARP]);
 
-    const ally = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const ally = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(enemy, "getAccuracyMultiplier");
     expect(ally.summonData.battleStats[BattleStat.EVA]).toBe(0);

@@ -8,7 +8,7 @@ export const filterBar: SimpleTranslationEntries = {
   "miscFilter": "Misc",
   "sortFilter": "Sort",
   "all": "All",
-  "normal": "Normal",
+  "normal": "Not Shiny",
   "uncaught": "Uncaught",
   "passive": "Passive",
   "passiveUnlocked": "Passive Unlocked",

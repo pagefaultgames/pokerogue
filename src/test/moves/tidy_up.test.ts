@@ -106,7 +106,7 @@ describe("Moves - Tidy Up", () => {
 
   it("user's stats are raised with no traps set", async() => {
     await game.startBattle();
-    const player = game.scene.getPlayerPokemon().summonData.battleStats;
+    const player = game.scene.getPlayerPokemon()!.summonData.battleStats;
 
     expect(player[BattleStat.ATK]).toBe(0);
     expect(player[BattleStat.SPD]).toBe(0);

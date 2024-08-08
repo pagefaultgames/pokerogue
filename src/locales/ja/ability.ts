@@ -211,7 +211,7 @@ export const ability: AbilityTranslationEntries = {
   },
   pickup: {
     name: "ものひろい",
-    description: "相手の 使った 道具を 拾ってくることが ある。 冒険中も 拾ってくる。",
+    description: "戦闘が 終わったとき 相手の 持った 道具を 一つ 拾ってくることが ある。",
   },
   truant: {
     name: "なまけ",
@@ -471,7 +471,7 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "みつあつめ",
-    description: "戦闘が 終わったとき あまいミツを 拾うことが ある。",
+    description: "戦闘が 終わったとき あまいミツを 拾う。そのあまいミツが 売られて お金を もらう。",
   },
   frisk: {
     name: "おみとおし",
@@ -947,7 +947,7 @@ export const ability: AbilityTranslationEntries = {
   },
   ballFetch: {
     name: "たまひろい",
-    description: "道具を 持っていない 場合 1回目に 投げて 失敗 した モンスターボールを 拾ってくる。",
+    description: "1回目に 投げて 失敗 した モンスターボールを 拾ってくる。",
   },
   cottonDown: {
     name: "わたげ",

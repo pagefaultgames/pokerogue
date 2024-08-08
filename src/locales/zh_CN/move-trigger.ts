@@ -21,6 +21,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isGlowing": "强光包围了{{pokemonName}}\n！",
   "bellChimed": "铃声响彻四周！",
   "foresawAnAttack": "{{pokemonName}}\n预知了未来的攻击！",
+  "isTighteningFocus": "{{pokemonName}}正在集中注意力！",
   "hidUnderwater": "{{pokemonName}}\n潜入了水中！",
   "soothingAromaWaftedThroughArea": "怡人的香气扩散了开来！",
   "sprangUp": "{{pokemonName}}\n高高地跳了起来！",
@@ -59,4 +60,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}}\n变成了{{targetPokemonName}}的属性！",
   "suppressAbilities": "{{pokemonName}}的特性\n变得无效了！",
   "swapArenaTags": "{{pokemonName}}\n交换了双方的场地效果！",
+  "exposedMove": "{{pokemonName}}识破了\n{{targetPokemonName}}的原型！",
 } as const;
