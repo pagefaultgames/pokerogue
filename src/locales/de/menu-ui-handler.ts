@@ -4,7 +4,6 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "GAME_SETTINGS": "Spieleinstellungen",
   "ACHIEVEMENTS": "Erfolge",
   "STATS": "Statistiken",
-  "VOUCHERS": "Gutscheine",
   "EGG_LIST": "Eierliste",
   "EGG_GACHA": "Eier-Gacha",
   "MANAGE_DATA": "Daten verwalten",

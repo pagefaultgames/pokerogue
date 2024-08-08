@@ -1,4 +1,4 @@
-import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
+import { AchievementTranslationEntries, SimpleTranslationEntries } from "#app/interfaces/locales";
 
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {
@@ -546,4 +546,14 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Du premier coup !",
     description: "Terminer un challenge « Nouveau départ »."
   }
+} as const;
+
+export const voucher: SimpleTranslationEntries = {
+  "vouchers": "Coupons",
+  "eggVoucher": "Coupon Œuf",
+  "eggVoucherPlus": "Coupon Œuf +",
+  "eggVoucherPremium": "Coupon Œuf Premium",
+  "eggVoucherGold": "Coupon Œuf Or",
+  "locked": "Verrouillé",
+  "defeatTrainer": "Vaincre {{trainerName}}"
 } as const;
