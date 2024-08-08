@@ -40,8 +40,8 @@ export function removeEnemyHeldItems(game: GameManager): void {
 }
 
 /**
- * Mocks the getOrder's return value {@linkcode TurnStartPhase.getOrder}
- * Used to modify the turn order. Will advance the turn to {@linkcode TurnStartPhase}
+ * Intercepts `TurnStartPhase` and mocks the getOrder's return value {@linkcode TurnStartPhase.getOrder}
+ * Used to modify the turn order.
  * @param {GameManager} game The GameManager instance
  * @param {BattlerIndex[]} order The turn order to set
  * @example
