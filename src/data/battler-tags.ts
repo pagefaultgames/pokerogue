@@ -1,4 +1,4 @@
-import { CommonAnim, CommonBattleAnim } from "./battle-anims";
+import { CommonAnim, CommonBattleAnim, MoveChargeAnim, ChargeAnim } from "./battle-anims";
 import { CommonAnimPhase, MessagePhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangeCallback, StatChangePhase, TurnEndPhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
@@ -126,7 +126,8 @@ export abstract class DisablingBattlerTag extends BattlerTag {
 
   /** Called when the disable expires due to duration. */
   onRemove(pokemon: Pokemon): void {
-    if (this.finishedText(pokemon) === null) {
+    const text = this.finishedText(pokemon);
+    if (text === null) {
       return;
     }
 
@@ -134,7 +135,7 @@ export abstract class DisablingBattlerTag extends BattlerTag {
     //  lapses on PRE_MOVE, so we must manually insert a message phase after the next end of turn.
     const turnEndPhaseIndex = pokemon.scene.phaseQueue.findIndex(p => p instanceof TurnEndPhase);
     if (turnEndPhaseIndex >= 0) {
-      pokemon.scene.phaseQueue.splice(turnEndPhaseIndex, 0, new MessagePhase(pokemon.scene, this.finishedText(pokemon)));
+      pokemon.scene.phaseQueue.splice(turnEndPhaseIndex, 0, new MessagePhase(pokemon.scene, text));
     }
   }
 
