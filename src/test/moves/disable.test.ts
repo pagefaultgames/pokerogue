@@ -1,6 +1,5 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
-import * as overrides from "#app/overrides";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -42,11 +41,11 @@ describe("Moves - Disable", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DISABLE, Moves.SPLASH]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH,Moves.NONE,Moves.NONE,Moves.NONE]);
+    game.override.battleType("single");
+    game.override.ability(Abilities.NONE);
+    game.override.enemyAbility(Abilities.NONE);
+    game.override.moveset([Moves.DISABLE, Moves.SPLASH, Moves.NONE, Moves.NONE]);
+    game.override.enemyMoveset([Moves.SPLASH,Moves.NONE,Moves.NONE,Moves.NONE]);
   });
 
   it("DISABLE fails if enemy has no move history", async() => {
@@ -60,7 +59,7 @@ describe("Moves - Disable", () => {
     _useMove();
 
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
-    expect(game.scene.getParty()[0].getMoveHistory().at(0).result).toBe(MoveResult.FAIL);
+    expect(game.scene.getParty()[0].getMoveHistory().at(0)!.result).toBe(MoveResult.FAIL);
   }, 20000);
 
   it("DISABLE works when user moves after enemy", async() => {
@@ -73,9 +72,9 @@ describe("Moves - Disable", () => {
     _useMove();
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
 
-    expect(game.scene.getParty()[0].getMoveHistory().at(0).move).toBe(Moves.DISABLE);
-    expect(game.scene.getParty()[0].getMoveHistory().at(0).result).toBe(MoveResult.SUCCESS);
-    expect(game.scene.getEnemyParty()[0].getMoveHistory().at(0).move).toBe(Moves.SPLASH);
+    expect(game.scene.getParty()[0].getMoveHistory().at(0)!.move).toBe(Moves.DISABLE);
+    expect(game.scene.getParty()[0].getMoveHistory().at(0)!.result).toBe(MoveResult.SUCCESS);
+    expect(game.scene.getEnemyParty()[0].getMoveHistory().at(0)!.move).toBe(Moves.SPLASH);
     expect(game.scene.getEnemyParty()[0].summonData.tags).toHaveLength(1);
     expect(game.scene.getEnemyParty()[0].summonData.tags[0]).toBeInstanceOf(DisabledTag);
     expect((game.scene.getEnemyParty()[0].getTag(BattlerTagType.DISABLED) as DisabledTag).moveId).toBe(Moves.SPLASH);
@@ -83,7 +82,7 @@ describe("Moves - Disable", () => {
 
     _useMove();
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
-    expect(game.scene.getEnemyParty()[0].getLastXMoves().at(0).move).toBe(Moves.STRUGGLE);
+    expect(game.scene.getEnemyParty()[0].getLastXMoves().at(0)!.move).toBe(Moves.STRUGGLE);
   }, 20000);
 
   it("DISABLE interrupts target's move when user moves first", async() => {
@@ -103,11 +102,11 @@ describe("Moves - Disable", () => {
     _useMove(Moves.DISABLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
 
-    expect(game.scene.getPlayerPokemon().getMoveHistory().length === 2);
+    expect(game.scene.getPlayerPokemon()!.getMoveHistory().length === 2);
     expect(game.scene.getEnemyParty()[0].isMoveDisabled(Moves.SPLASH));
     expect(game.scene.getEnemyParty()[0].getMoveHistory().length === 2);
-    expect(game.scene.getEnemyParty()[0].getLastXMoves().at(0).result).toBe(MoveResult.FAIL);
-    expect(game.scene.getEnemyParty()[0].getLastXMoves().at(1).result).toBe(MoveResult.SUCCESS);
+    expect(game.scene.getEnemyParty()[0].getLastXMoves().at(0)!.result).toBe(MoveResult.FAIL);
+    expect(game.scene.getEnemyParty()[0].getLastXMoves().at(1)!.result).toBe(MoveResult.SUCCESS);
   }, 20000);
 
 });
