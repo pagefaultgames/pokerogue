@@ -3010,15 +3010,21 @@ export class MoveEffectPhase extends PokemonPhase {
         applyMoveAttrs(MultiHitAttr, user, this.getTarget() ?? null, move, hitCount);
         // If Parental Bond is applicable, double the hit count
         applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, null, move, targets.length, hitCount, new Utils.IntegerHolder(0));
-        // If Multi-Lens is applicable, multiply the hit count by the number of Multi-Lenses held by the user
+        // If Multi-Lens is applicable, multiply the hit count by 1 + the number of Multi-Lenses held by the user
         if (move instanceof AttackMove && !move.hasAttr(FixedDamageAttr)) {
           this.scene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, hitCount, new Utils.IntegerHolder(0));
         }
         // Set the user's relevant turnData fields to reflect the final hit count
-        [ user.turnData.hitCount, user.turnData.hitsLeft ] = Array(2).fill(hitCount.value);
+        user.turnData.hitCount = hitCount.value;
+        user.turnData.hitsLeft = hitCount.value;
       }
 
-      /** Log to be entered into the user's move history once the move result is resolved. */
+      /**
+       * Log to be entered into the user's move history once the move result is resolved.
+       * Note that `result` (a {@linkcode MoveResult}) logs whether the move was successfully
+       * used in the sense of it not failing or missing; it does not account for the move's
+       * effectiveness (which is logged as a {@linkcode HitResult}).
+       */
       const moveHistoryEntry = { move: this.move.moveId, targets: this.targets, result: MoveResult.PENDING, virtual: this.move.virtual };
 
       /**
@@ -3080,7 +3086,11 @@ export class MoveEffectPhase extends PokemonPhase {
             user.pushMoveHistory(moveHistoryEntry);
           }
 
-          // Since all fail/miss checks have applied, the move is considered successfully applied
+          /**
+           * Since all fail/miss checks have applied, the move is considered successfully applied.
+           * It's worth noting that if the move has no effect or is protected against, it's move
+           * result is still logged as a SUCCESS.
+           */
           moveHistoryEntry.result = MoveResult.SUCCESS;
 
           /**
