@@ -264,7 +264,7 @@ const QuickGuardConditionFunc: ProtectConditionFunc = (arena, moveId) => {
   const effectPhase = arena.scene.getCurrentPhase();
 
   if (effectPhase instanceof MoveEffectPhase) {
-    const attacker = effectPhase.getUserPokemon();
+    const attacker = effectPhase.getUserPokemon()!;
     applyMoveAttrs(IncrementMovePriorityAttr, attacker, null, move, priority);
     applyAbAttrs(IncrementMovePriorityAbAttr, attacker, null, move, priority);
   }
