@@ -384,199 +384,199 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "archer": {
     "encounter": {
-      1: "Before you go any further, let's see how you far against us, Team Rocket!",
-      2: "I have received reports that your skills are not insignificant. Let's see if they are true.",
-      3: "I am Archer, an Admin of Team Rocket. And I do not go easy on enemies of our organization."
+      1: "在你继续前进之前，\n让我看看你要如何和对付火箭队。",
+      2: "我收到报告说你的实力与众不同，\n就让我来看看这是否属实吧。",
+      3: "我是阿波罗，火箭对的干部。\n我不会对组织的敌人手软。"
     },
     "victory": {
-      1: "What a blunder!",
-      2: "With my current skills, I was not up to the task after all.",
-      3: "F-forgive me, Giovanni... For me to be defeated by a mere trainer..."
+      1: "大失误……",
+      2: "以我现在的实力，无法胜任我的任务……",
+      3: "原……谅我，坂木。\n我竟被一名训练师打败了。."
     },
   },
   "ariana": {
     "encounter": {
-      1: `Hold it right there! We can't someone on the loose." 
-          $It's harmful to Team Rocket's pride, you see.`,
-      2: `I don't know or care if what I'm doing is right or wrong...
-          $I just put my faith in Giovanni and do as I am told`,
-      3: "Your trip ends here. I'm going to take you down!"
+      1: `站住！我们可不能放过你！" 
+          $这会损伤火箭对的名誉，明白吗？`,
+      2: `我不知道也不想知道我的所作所为正确与否…
+          $我只要遵从坂木老大的指令就可以了！`,
+      3: "你的旅途到此为止了，我会把你狠狠扳倒！"
     },
     "victory": {
-      1: `Tch, you really are strong. It's too bad. 
-          $If you were to join Team Rocket, you could become an Executive.`,
-      2: "I... I'm shattered...",
-      3: "Aaaieeeee! This can't be happening! I fought hard, but I still lost…"
+      1: `切，你好强，可恶。
+          $如果你加入火箭队，肯定能成为干部。`,
+      2: "好……好崩溃……",
+      3: "嗯啊啊！这不可能！我使出全力还是输了！"
     },
   },
   "proton": {
     "encounter": {
-      1: "What do you want? If you interrupt our work, don't expect any mercy!",
-      2: `What do we have here? I am often labeled as the scariest and cruelest guy in Team Rocket…
-         $I strongly urge you not to interfere with our business!`,
-      3: "I am Proton, an Admin of Team Rocket. I am here to put an end to your meddling!"
+      1: "你想干什么？如果你要妨碍我们的事业，我可不会手下留情。",
+      2: `你在这干什么？别人总说我是火箭队里最残忍和恐怖的人…
+         $我强烈推荐你别来碍我们的事！`,
+      3: "我是兰斯，火箭队的干部。就让来扫除你对我们的阻挠。"
     },
     "victory": {
-      1: "The fortress came down!",
-      2: "You may have won this time… But all you did was make Team Rocket's wrath grow…",
-      3: "I am defeated… But I will not forget this!"
+      1: "我的防线崩溃了……",
+      2: "你虽然这次赢了，但是这只是让火箭队的怒火继续燃烧！",
+      3: "我输了…但是我不会忘记的。"
     },
   },
 
   "petrel": {
     "encounter": {
-      1: `Muhahaha, we've been waiting for you. Me? You don't know who I am? It is me, Giovanni.
-          $The majestic Giovanni himself! Wahahaha! …Huh? I don't sound anything like Giovanni?
-          $I don't even look like Giovanni? How come? I've worked so hard to mimic him!`,
-      2: "I am Petrel, an Admin of Team Rocket. I will not allow you to interfere with our plans!",
-      3: "Rocket Executive Petrel will deal with this intruder!"
+      1: `哇哈哈哈，我们一直在等你。我？你不知道我是谁？是我，坂木啊。
+          $伟大的坂木大人本人！哇哈哈哈！…啊？我听起来不像坂木吗？
+          $我连看起来都不像？怎么会呢，我可认真的变装了！`,
+      2: "我是拉姆达，火箭队的干部。我不会允许你干涉我们的计划！",
+      3: "火箭队干部拉姆达来会会这个入侵者！"
     },
     "victory": {
-      1: "OK, OK. I'll tell you where he is.",
-      2: "I… I couldn't do a thing… Giovanni, please forgive me…",
-      3: "No, I can't let this affect me. I have to inform the others…"
+      1: "好好好，我会说他在哪的",
+      2: "我……我什么也做不了……坂木，请原谅我……",
+      3: "不，我不能慌了神，必须通知其他人…"
     },
   },
   "tabitha": {
     "encounter": {
-      1: "Hehehe! So you've come all the way here! But you're too late!",
-      2: `Hehehe... Got here already, did you? We underestimated you! But this is it! 
-          $I'm a cut above the Grunts you've seen so far. I'm not stalling for time.
-          $I'm going to pulverize you!`,
-      3: "I'm going to give you a little taste of pain! Resign yourself to it!"
+      1: "呵呵呵！原来你都一路来到这里了！但你来晚了！",
+      2: `呵呵呵……你终于来了？我们小瞧你了，没不过事！ 
+          $我比你见过的所有队员都要厉害，我可不会拖延时间。
+          $我会把你碾碎！`,
+      3: "我要让你尝尝痛苦的滋味！认命吧！"
     },
     "victory": {
-      1: `Hehehe! You might have beaten me, but you don't stand a chance against the Boss!
-          $If you get lost now, you won't have to face a sound whipping!`,
-      2: "Hehehe... So, I lost, too...",
-      3: "Ahya! How could this be? For an Admin like me to lose to some random trainer..."
+      1: `呵呵呵！虽然你打败了我，但你根本没机会打败老大！
+          $如果你现在输了，你就不用面对那样严厉的鞭笞了！`,
+      2: "呵呵呵……所以，我也输了……",
+      3: "啊哈！怎么会这样？像我这样的干部\n竟然输给了一个随处可见的训练师……"
     },
   },
   "courtney": {
     "encounter": {
-      1: "The thing...The thing that you hold...That is what... That's what we of Team Magma seek...",
-      2: "... Well then...Deleting...",
-      3: "...Ha. ...Analyzing... ...Hah♪"
+      1: "那个东西……你所拥有的那个东西……\n那就是……那就是我们熔岩队所寻找的东西……",
+      2: "……那么……删除记忆……",
+      3: "……哈……分析中……啊哈♪"
     },
     "victory": {
-      1: "... ...Change...the world.",
-      2: `As anticipated. Unanticipated. You. Target lock...completed.
-         $Commencing...experiment. You. Forever. Aha... ♪`,
-      3: "...Again? That's unanticipated. ...I knew it. You...are interesting! ...Haha. ♪"
+      1: "……改变……世界。",
+      2: `如预期。出乎意料。目标锁定…锁定你……完成。
+         $开始……实验。材料是你…永远…啊哈……♪`,
+      3: "……又来了？出乎意料……我就知道。你……很有趣！……啊哈哈！♪"
     },
   },
   "shelly": {
     "encounter": {
-      1: `Ahahahaha! You're going to meddle in Team Aqua's affairs?
-         $You're either absolutely fearless, simply ignorant, or both!
-         $You're so cute, you're disgusting! I'll put you down`,
-      2: "What's this? Who's this spoiled brat?",
-      3: "Cool your jets. Be patient. I'll crush you shortly."
+      1: `啊哈哈哈哈！你要插手海洋队的事？
+         $你要么是绝对无畏，要么就是无知，或者两者兼有！
+         $你太可爱了，太恶心了！我要把你打倒！`,
+      2: "怎么回事？这个小鬼头是谁？",
+      3: "冷静点，耐心点。我很快就会把你击溃。"
     },
     "victory": {
-      1: `Ahahahaha! We got meddled with unexpectedly! We're out of options.
-         $We'll have to pull out. But this isn't the last you'll see of Team Aqua!
-         $We have other plans! Don't you forget it!`,
-      2: "Ahhh?! Did I go too easy on you?!",
-      3: `Uh. Are you telling me you've upped your game even more during the fight?
-         $You're a brat with a bright future… My Pokémon and I don't have any strength left to fight…
-         $Go on… Go and be destroyed by Archie.`
+      1: `啊哈哈哈哈！我们意外地被人干扰了！我们别无选择。
+         $不得不撤退了，但这会不是你最后一次面对海洋队！
+         $我们还有其他计划！别忘了！`,
+      2: "啊？！我是不是对你太温柔了？！",
+      3: `呃…难道在对战中你也一刻不停地在变强吗？
+         $你真是个前途光明的小鬼……\n我和我的宝可梦已经没有任何力量去战斗了……
+         $继续吧……准备去被水梧桐摧毁吧。`
     },
   },
   "matt": {
     "encounter": {
-      1: "Hoohahaha! What, you got a screw loose or something? Look at you, little Makuhita person!",
-      2: "Oho! You! You're that funny kid!",
-      3: "What are you doing here? Did you follow us?"
+      1: "嚯！哈哈哈！怎么，你是不是脑子不正常了？\n看看你，像个幕下力士！",
+      2: "“哦吼！你！你真是个有趣的孩子！",
+      3: "你在这里干什么？你跟踪我们了吗？"
     },
     "victory": {
-      1: "All right then, until the Boss has time for you, I'll be your opponent!",
-      2: `I can feel it! I can feel it, all right! The strength coming offa you!
-          $More! I still want more! But looks like we're outta time...`,
-      3: "That was fun! I knew you'd show me a good time! I look forward to facing you again someday!"
+      1: "好吧，在老大有时间对付你之前，我来成为你的对手！",
+      2: `我能感觉到！我感觉到了，没错！你身上散发出的力量！
+          $更多！还想要更多！但看起来我们没时间了……`,
+      3: "真有趣！我就知道你会让我尽兴的！\n我期待有一天再次面对你！"
     },
   },
   "mars": {
     "encounter": {
-      1: "I'm Mars, one of Team Galactic's top Commanders.",
-      2: "Team Galactic's vision for the future is unwavering. Opposition will be crushed without mercy!",
-      3: "Feeling nervous? You should be!"
+      1: "我是伙星，银河队的顶级干部之一。",
+      2: "银河队对未来的愿景坚定不移。\n反对者将被无情地粉碎！",
+      3: "“紧张吗？你是该感到紧张了！"
     },
     "victory": {
-      1: "This can't be happening! How did I lose?!",
-      2: "You have some skill, I'll give you that.",
-      3: "Defeated... This was a costly mistake."
+      1: "这不可能！我怎么会输？！",
+      2: "你很有本事，我承认。",
+      3: "输了……犯了一个代价高昂的大错。"
     }
   },
   "jupiter": {
     "encounter": {
-      1: "Jupiter, Commander of Team Galactic, at your service.",
-      2: "Resistance is futile. Team Galactic will prevail!",
-      3: "You're trembling... scared already?"
+      1: "岁星，银河队干部，为您效劳。",
+      2: "抵抗是徒劳的。银河队必将获胜！",
+      3: "你在发抖啊……已经害怕了吗？"
     },
     "victory": {
-      1: "No way... I lost?!",
-      2: "Impressive, you've got guts!",
-      3: "Losing like this... How embarrassing."
+      1: "不会吧……我输了？！",
+      2: "厉害，你胆子真大！",
+      3: "输成这样……真丢人。"
     }
   },
   "saturn": {
     "encounter": {
-      1: "I am Saturn, Commander of Team Galactic.",
-      2: "Our mission is absolute. Any hindrance will be obliterated!",
-      3: "Is that fear I see in your eyes?"
+      1: "我是镇星，银河队的干部。",
+      2: "我们的使命是绝对的，任何阻碍都将被消灭！",
+      3: "我从你的眼中看到的是恐惧吗？"
     },
     "victory": {
-      1: "Impossible... Defeated by you?!",
-      2: "You have proven yourself a worthy adversary.",
-      3: "Bestowed in defeat... This is unacceptable."
+      1: "不可能……被你打败了？！",
+      2: "你证明了自己是一个值得尊敬的对手。",
+      3: "失败的苦涩……难以接受……。"
     }},
   "zinzolin": {
     "encounter": {
-      1: "You could become a threat to Team Plasma, so we will eliminate you here and now!",
-      2: "Oh, for crying out loud... I didn't expect to have to battle in this freezing cold!",
-      3: "You're an impressive Trainer to have made it this far. But it ends here."
+      1: "你可能会对等离子队构成威胁，所以我们现在就消灭你！",
+      2: "哦，天哪……我没想到要在这么冷的天气里战斗！",
+      3: "能走到今天这一步，你真是个了不起的训练师。\n但一切到此结束。"
     },
     "victory": {
-      1: "Ghetsis... I have failed you...",
-      2: "It's bitter cold. I'm shivering. I'm suffering. Yet, I still stand victorious.",
-      3: "Hmph. You're a smarter Trainer than I expected, but not smart enough."
+      1: "魁奇思大人……我让你失望了……",
+      2: "好冷，我不仅发抖，还要遭罪。",
+      3: "哼。你比我想象的要聪明，但还不够。"
     }
   },
   "rood": {
     "encounter": {
-      1: "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
-      2: "Oh, this icy wind... I never thought I'd have to fight here!",
-      3: "You are a remarkable Trainer to have made it this far. But this is where it ends."
+      1: "你对等离子队是个威胁。我们现在不能让你离开这里！",
+      2: "哦，这寒风……我从没想过我必须在这里战斗！",
+      3: "能走到今天这一步，你是一位了不起的训练师，但这就是你的结局了。"
     },
     "victory": {
-      1: "Ghetsis... I have failed my mission...",
-      2: "The cold is piercing. I'm shivering. I'm suffering. Yet, I have triumphed.",
-      3: "Hm. You are a talented Trainer, but unfortunately not talented enough."
+      1: "魁奇思大人……我的任务失败了",
+      2: "寒风刺骨。我瑟瑟发抖。我痛苦不堪。",
+      3: "嗯，你是很有才。但是要打败等离子队还不够……！"
     }
   },
   "xerosic": {
     "encounter": {
-      1: "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
-      2: "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
-      3: "I've been waiting for you! I need to do a little research on you! Come, let us begin!"
+      1: "啊哈哈！我很乐意。\n来吧，小训练师！让我们看看你有什么本事！",
+      2: "嗯……你比看上去更强大。\n我想知道你体内有多少能量。",
+      3: "我一直在等你！我需要对你做一点研究！\n来吧，我们开始吧！"
     },
     "victory": {
-      1: "Ah, you're quite strong. Oh yes—very strong, indeed.",
-      2: "Ding-ding-ding! You did it! To the victor go the spoils!",
-      3: "Wonderful! Amazing! You have tremendous skill and bravery!"
+      1: "啊，你好强大啊……嗯……确实非常强大。",
+      2: "叮叮叮！你成功了！\n战利品归胜利者！",
+      3: "太棒了！太神奇了！\n你的技巧和勇气都无与伦比！"
     }
   },
   "bryony": {
     "encounter": {
-      1: "I am Bryony, and it would be my pleasure to battle you. Show me what you've got.",
-      2: "Impressive... You're more powerful than you appear. Let's see the true extent of your energy.",
-      3: "I've anticipated your arrival. It's time for a little test. Shall we begin?"
+      1: "我是芭菈，能与你一战是我的荣幸。\n让我看看你的实力。",
+      2: "令人印象深刻……你比你看上去的还要强大。\n让我们看看你真正的实力。",
+      3: "我预料到了你的到来。\n是时候进行一个小实验了，我们开始吧？"
     },
     "victory": {
-      1: "You're quite strong. Oh yes—very strong, indeed.",
-      2: "Ding-ding-ding! You've done well. Victory is yours.",
-      3: "Wonderful! Remarkable! Your skill and bravery are commendable."
+      1: "你很强大。哦，嗯嗯！确实非常强大",
+      2: "叮叮叮！你做得很好。胜利属于你。",
+      3: "太棒了！了不起！你的技巧和勇气值得称赞。"
     }
   },
   "rocket_grunt": {
