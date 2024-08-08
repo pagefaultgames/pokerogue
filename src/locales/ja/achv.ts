@@ -265,7 +265,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "あらハート満タンになった",
   },
   "FRESH_START": {
-    name: "一発で!",
+    name: "一発で！",
     description: "出直しチャレンジを　クリアする"
   }
 } as const;
