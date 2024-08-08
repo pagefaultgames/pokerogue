@@ -4886,13 +4886,18 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           user.scene.prependToPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0), false, this.batonPass, false), MoveEndPhase);
         }
 	  } else {
-	    // Switch out logic for everything else
-	  	switchOutTarget.setVisible(false);
+	    // Switch out logic for everything else (eg: WILD battles)
+	  	switchOutTarget.leaveField(false);
 
 	  	if (switchOutTarget.hp) {
-	  	  switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
-	  	  switchOutTarget.scene.field.remove(switchOutTarget);
+          switchOutTarget.setWildFlee(true);
 	  	  user.scene.queueMessage(i18next.t("moveTriggers:fled", {pokemonName: getPokemonNameWithAffix(switchOutTarget)}), null, true, 500);
+
+          // in double battles redirect potential moves off fled pokemon
+          if (switchOutTarget.scene.currentBattle.double) {
+            const allyPokemon = switchOutTarget.getAlly();
+            switchOutTarget.scene.redirectPokemonMoves(switchOutTarget, allyPokemon);
+          }
 	  	}
 
 	  	if (!switchOutTarget.getAlly()?.isActive(true)) {
@@ -7588,7 +7593,8 @@ export function initMoves() {
     new AttackMove(Moves.FROST_BREATH, Type.ICE, MoveCategory.SPECIAL, 60, 90, 10, 100, 0, 5)
       .attr(CritOnlyAttr),
     new AttackMove(Moves.DRAGON_TAIL, Type.DRAGON, MoveCategory.PHYSICAL, 60, 90, 10, -1, -6, 5)
-      .attr(ForceSwitchOutAttr),
+      .attr(ForceSwitchOutAttr)
+      .hidesTarget(),
     new SelfStatusMove(Moves.WORK_UP, Type.NORMAL, -1, 30, -1, 0, 5)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, true),
     new AttackMove(Moves.ELECTROWEB, Type.ELECTRIC, MoveCategory.SPECIAL, 55, 95, 15, 100, 0, 5)
