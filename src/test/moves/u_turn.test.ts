@@ -51,9 +51,9 @@ describe("Moves - U-turn", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     // assert
+    expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.SHUCKLE);
     expect(game.scene.getParty()[1].hp).toEqual(Math.floor(game.scene.getParty()[1].getMaxHp() * 0.33 + playerHp));
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-    expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.SHUCKLE);
   }, 20000);
 
   it("triggers rough skin on the u-turn user before a new pokemon is switched in", async() => {
@@ -71,9 +71,9 @@ describe("Moves - U-turn", () => {
 
     // assert
     const playerPkm = game.scene.getPlayerPokemon()!;
+    expect(playerPkm.species.speciesId).toEqual(Species.RAICHU);
     expect(playerPkm.hp).not.toEqual(playerPkm.getMaxHp());
     expect(game.scene.getEnemyPokemon()!.battleData.abilityRevealed).toBe(true); // proxy for asserting ability activated
-    expect(playerPkm.species.speciesId).toEqual(Species.RAICHU);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
   }, 20000);
 
@@ -92,8 +92,8 @@ describe("Moves - U-turn", () => {
 
     // assert
     const playerPkm = game.scene.getPlayerPokemon()!;
-    expect(playerPkm.status?.effect).toEqual(StatusEffect.POISON);
     expect(playerPkm.species.speciesId).toEqual(Species.RAICHU);
+    expect(playerPkm.status?.effect).toEqual(StatusEffect.POISON);
     expect(game.scene.getEnemyPokemon()!.battleData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
   }, 20000);
