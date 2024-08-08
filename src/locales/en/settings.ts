@@ -15,6 +15,7 @@ export const settings: SimpleTranslationEntries = {
   "skipSeenDialogues": "Skip Seen Dialogues",
   "battleStyle": "Battle Style",
   "enableRetries": "Enable Retries",
+  "hideIvs": "Hide IV scanner",
   "tutorials": "Tutorials",
   "touchControls": "Touch Controls",
   "vibrations": "Vibrations",

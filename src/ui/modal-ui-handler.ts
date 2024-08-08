@@ -16,8 +16,8 @@ export abstract class ModalUiHandler extends UiHandler {
   protected buttonContainers: Phaser.GameObjects.Container[];
   protected buttonBgs: Phaser.GameObjects.NineSlice[];
 
-  constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode!); // TODO: is this bang correct?
+  constructor(scene: BattleScene, mode: Mode | null = null) {
+    super(scene, mode);
 
     this.buttonContainers = [];
     this.buttonBgs = [];

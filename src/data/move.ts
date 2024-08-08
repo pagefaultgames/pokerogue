@@ -984,6 +984,43 @@ export class MoveEffectAttr extends MoveAttr {
   }
 }
 
+/**
+ * Base class defining all Move Header attributes.
+ * Move Header effects apply at the beginning of a turn before any moves are resolved.
+ * They can be used to apply effects to the field (e.g. queueing a message) or to the user
+ * (e.g. adding a battler tag).
+ */
+export class MoveHeaderAttr extends MoveAttr {
+  constructor() {
+    super(true);
+  }
+}
+
+/**
+ * Header attribute to queue a message at the beginning of a turn.
+ * @see {@link MoveHeaderAttr}
+ */
+export class MessageHeaderAttr extends MoveHeaderAttr {
+  private message: string | ((user: Pokemon, move: Move) => string);
+
+  constructor(message: string | ((user: Pokemon, move: Move) => string)) {
+    super();
+    this.message = message;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const message = typeof this.message === "string"
+      ? this.message
+      : this.message(user, move);
+
+    if (message) {
+      user.scene.queueMessage(message);
+      return true;
+    }
+    return false;
+  }
+}
+
 export class PreMoveMessageAttr extends MoveAttr {
   private message: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
 
@@ -1649,8 +1686,8 @@ export class HitHealAttr extends MoveEffectAttr {
   constructor(healRatio?: number | null, healStat?: Stat) {
     super(true, MoveEffectTrigger.HIT);
 
-    this.healRatio = healRatio!; // TODO: is this bang correct?
-    this.healStat = healStat!; // TODO: is this bang correct?
+    this.healRatio = healRatio ?? 0.5;
+    this.healStat = healStat ?? null;
   }
   /**
    * Heals the user the determined amount and possibly displays a message about regaining health.
@@ -4846,13 +4883,18 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           user.scene.prependToPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0), false, this.batonPass, false), MoveEndPhase);
         }
 	  } else {
-	    // Switch out logic for everything else
-	  	switchOutTarget.setVisible(false);
+	    // Switch out logic for everything else (eg: WILD battles)
+	  	switchOutTarget.leaveField(false);
 
 	  	if (switchOutTarget.hp) {
-	  	  switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
-	  	  switchOutTarget.scene.field.remove(switchOutTarget);
+          switchOutTarget.setWildFlee(true);
 	  	  user.scene.queueMessage(i18next.t("moveTriggers:fled", {pokemonName: getPokemonNameWithAffix(switchOutTarget)}), null, true, 500);
+
+          // in double battles redirect potential moves off fled pokemon
+          if (switchOutTarget.scene.currentBattle.double) {
+            const allyPokemon = switchOutTarget.getAlly();
+            switchOutTarget.scene.redirectPokemonMoves(switchOutTarget, allyPokemon);
+          }
 	  	}
 
 	  	if (!switchOutTarget.getAlly()?.isActive(true)) {
@@ -6837,6 +6879,7 @@ export function initMoves() {
         && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1)
       .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
+      .attr(MessageHeaderAttr, (user, move) => i18next.t("moveTriggers:isTighteningFocus", {pokemonName: getPokemonNameWithAffix(user)}))
       .punchingMove()
       .ignoresVirtual()
       .condition((user, target, move) => !user.turnData.attacksReceived.find(r => r.damage)),
@@ -7547,7 +7590,8 @@ export function initMoves() {
     new AttackMove(Moves.FROST_BREATH, Type.ICE, MoveCategory.SPECIAL, 60, 90, 10, 100, 0, 5)
       .attr(CritOnlyAttr),
     new AttackMove(Moves.DRAGON_TAIL, Type.DRAGON, MoveCategory.PHYSICAL, 60, 90, 10, -1, -6, 5)
-      .attr(ForceSwitchOutAttr),
+      .attr(ForceSwitchOutAttr)
+      .hidesTarget(),
     new SelfStatusMove(Moves.WORK_UP, Type.NORMAL, -1, 30, -1, 0, 5)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, true),
     new AttackMove(Moves.ELECTROWEB, Type.ELECTRIC, MoveCategory.SPECIAL, 55, 95, 15, 100, 0, 5)

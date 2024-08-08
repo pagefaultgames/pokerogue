@@ -8,7 +8,7 @@ export default abstract class AwaitableUiHandler extends UiHandler {
   protected onActionInput: Function | null;
   public tutorialActive: boolean = false;
 
-  constructor(scene: BattleScene, mode: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
   }
 

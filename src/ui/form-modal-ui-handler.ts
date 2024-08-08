@@ -20,7 +20,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   protected submitAction: Function | null;
   protected tween: Phaser.Tweens.Tween;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
     this.editing = false;
