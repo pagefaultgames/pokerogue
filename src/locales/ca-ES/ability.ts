@@ -38,12 +38,12 @@ export const ability: AbilityTranslationEntries = {
     description: "The Pokémon is charged with static electricity, so contact with it may cause paralysis.",
   },
   voltAbsorb: {
-    name: "Volt Absorb",
-    description: "Restores HP if hit by an Electric-type move instead of taking damage.",
+    name: "Absorb Electricitat",
+    description: "Recupera PS al rebre atacs de tipus elèctric.",
   },
   waterAbsorb: {
-    name: "Water Absorb",
-    description: "Restores HP if hit by a Water-type move instead of taking damage.",
+    name: "Absorb Aigua",
+    description: "Recupera PS al rebre atacs de tipus aigua.",
   },
   oblivious: {
     name: "Oblivious",
@@ -70,7 +70,7 @@ export const ability: AbilityTranslationEntries = {
     description: "The immune system of the Pokémon prevents it from getting poisoned.",
   },
   flashFire: {
-    name: "Flash Fire",
+    name: "Absorb Foc",
     description: "Powers up the Pokémon's Fire-type moves if it's hit by one.",
   },
   shieldDust: {
@@ -134,8 +134,8 @@ export const ability: AbilityTranslationEntries = {
     description: "Boosts the Pokémon's Speed stat in rain.",
   },
   chlorophyll: {
-    name: "Chlorophyll",
-    description: "Boosts the Pokémon's Speed stat in harsh sunlight.",
+    name: "Clorofil·la",
+    description: "Puja la velocitat quan fa sol.",
   },
   illuminate: {
     name: "Illuminate",
