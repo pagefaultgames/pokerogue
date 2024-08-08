@@ -12,7 +12,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { BattlerIndex } from "#app/battle.js";
-import { changeTurnOrder } from "../utils/testUtils";
+import { mockTurnOrder } from "../utils/testUtils";
 
 
 describe("Abilities - Shield Dust", () => {
@@ -58,7 +58,7 @@ describe("Abilities - Shield Dust", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
-    await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     // Shield Dust negates secondary effect
