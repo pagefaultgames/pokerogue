@@ -2,7 +2,7 @@ import { AbilityTranslationEntries } from "#app/interfaces/locales.js";
 
 export const ability: AbilityTranslationEntries = {
   stench: {
-    name: "Duftnote",
+    name: "Duftnote ",
     description: "Lässt das Ziel beim Angriff eventuell durch Gestank zurückschrecken.",
   },
   drizzle: {
