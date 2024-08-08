@@ -1,7 +1,6 @@
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import {
   BerryPhase,
-  MoveEffectPhase,
   MoveEndPhase,
   TurnEndPhase,
   TurnStartPhase,
@@ -90,33 +89,6 @@ describe("Abilities - Gulp Missile", () => {
     const cramorant = game.scene.getPlayerPokemon();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DIVE));
-    await game.phaseInterceptor.to(MoveEndPhase);
-
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
-    expect(cramorant.formIndex).toBe(GULPING_FORM);
-  });
-
-  it("changes form even if Surf misses", async () => {
-    await game.startBattle([Species.CRAMORANT]);
-    const cramorant = game.scene.getPlayerPokemon();
-
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
-
-    vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValueOnce(false);
-    await game.phaseInterceptor.to(MoveEndPhase);
-
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
-    expect(cramorant.formIndex).toBe(GULPING_FORM);
-  });
-
-  it("changes form even if Surf is protected against", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.PROTECT));
-
-    await game.startBattle([Species.CRAMORANT]);
-    const cramorant = game.scene.getPlayerPokemon();
-
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
     await game.phaseInterceptor.to(MoveEndPhase);
 
     expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();

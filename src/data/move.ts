@@ -4306,8 +4306,8 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
  * @extends MoveEffectAttr
  */
 export class GulpMissileTagAttr extends MoveEffectAttr {
-  constructor(trigger: MoveEffectTrigger) {
-    super(true, trigger);
+  constructor() {
+    super(true);
   }
 
   /**
@@ -6199,7 +6199,7 @@ export function initMoves() {
     new AttackMove(Moves.SURF, Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 1)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true)
-      .attr(GulpMissileTagAttr, MoveEffectTrigger.PRE_APPLY),
+      .attr(GulpMissileTagAttr),
     new AttackMove(Moves.ICE_BEAM, Type.ICE, MoveCategory.SPECIAL, 90, 100, 10, 10, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.FREEZE),
     new AttackMove(Moves.BLIZZARD, Type.ICE, MoveCategory.SPECIAL, 110, 70, 5, 10, 0, 1)
@@ -6864,7 +6864,7 @@ export function initMoves() {
       .partial(),
     new AttackMove(Moves.DIVE, Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 3)
       .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, i18next.t("moveTriggers:hidUnderwater", {pokemonName: "{USER}"}), BattlerTagType.UNDERWATER, true)
-      .attr(GulpMissileTagAttr, MoveEffectTrigger.POST_APPLY)
+      .attr(GulpMissileTagAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.ARM_THRUST, Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, -1, 0, 3)
       .attr(MultiHitAttr),

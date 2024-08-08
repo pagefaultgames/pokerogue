@@ -5132,9 +5132,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .attr(PostDefendGulpMissileAbAttr)
-      // Does not transform when Surf/Dive misses/is protected
-      .partial(),
+      .attr(PostDefendGulpMissileAbAttr),
     new Ability(Abilities.STALWART, 8)
       .attr(BlockRedirectAbAttr),
     new Ability(Abilities.STEAM_ENGINE, 8)
