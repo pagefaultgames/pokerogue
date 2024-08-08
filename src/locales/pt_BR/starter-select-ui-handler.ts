@@ -7,7 +7,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "Começar com esses Pokémon?",
-  "confirmExit": "Do you want to exit?",
+  "confirmExit": "Deseja sair?",
   "invalidParty": "Essa equipe de iniciais não é válida!",
   "gen1": "G1",
   "gen2": "G2",
@@ -41,6 +41,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "cycleAbility": ": » Habilidade",
   "cycleNature": ": » Natureza",
   "cycleVariant": ": » Variante",
+  "goFilter": ": Ir para filtros",
   "enablePassive": "Ativar Passiva",
   "disablePassive": "Desativar Passiva",
   "locked": "Bloqueada",

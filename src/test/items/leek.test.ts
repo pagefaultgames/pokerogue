@@ -1,13 +1,14 @@
 import { BattlerIndex } from "#app/battle";
 import { CritBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { MoveEffectPhase, TurnStartPhase } from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
+import { MoveEffectPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
 import * as Utils from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { mockTurnOrder } from "#test/utils/testUtils";
 
 describe("Items - Leek", () => {
   let phaserGame: Phaser.Game;
@@ -43,9 +44,7 @@ describe("Items - Leek", () => {
 
     game.doAttack(0);
 
-    await game.phaseInterceptor.to(TurnStartPhase, false);
-
-    vi.spyOn(game.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -57,7 +56,7 @@ describe("Items - Leek", () => {
       Species.FARFETCHD
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
@@ -77,7 +76,7 @@ describe("Items - Leek", () => {
       Species.GALAR_FARFETCHD
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
@@ -97,7 +96,7 @@ describe("Items - Leek", () => {
       Species.SIRFETCHD
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
@@ -187,7 +186,7 @@ describe("Items - Leek", () => {
       Species.PIKACHU
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon();
+    const partyMember = game.scene.getPlayerPokemon()!;
 
     // Making sure modifier is not applied without holding item
     const critLevel = new Utils.IntegerHolder(0);
