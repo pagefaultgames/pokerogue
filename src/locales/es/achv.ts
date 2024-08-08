@@ -1,4 +1,4 @@
-import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
+import { AchievementTranslationEntries, SimpleTranslationEntries } from "#app/interfaces/locales";
 
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {
@@ -276,3 +276,13 @@ export const PGMachv: AchievementTranslationEntries = {
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
 export const PGFachv: AchievementTranslationEntries = PGMachv;
+
+export const voucher: SimpleTranslationEntries = {
+  "vouchers": "Vales",
+  "eggVoucher": "Vale Huevo",
+  "eggVoucherPlus": "Vale Huevo Plus",
+  "eggVoucherPremium": "Vale Huevo Premium",
+  "eggVoucherGold": "Vale Huevo Dorado",
+  "locked": "Bloqueado",
+  "defeatTrainer": "Derrota a {{trainerName}}"
+} as const;

@@ -1,4 +1,4 @@
-import {AchievementTranslationEntries} from "#app/interfaces/locales.js";
+import { AchievementTranslationEntries, SimpleTranslationEntries } from "#app/interfaces/locales";
 
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {
@@ -384,5 +384,15 @@ export const PGFachv: AchievementTranslationEntries = {
   "MONO_DARK": PGMachv.MONO_DARK,
   "MONO_FAIRY": PGMachv.MONO_FAIRY,
   "FRESH_START": PGMachv.FRESH_START
+} as const;
+
+export const voucher: SimpleTranslationEntries = {
+  "vouchers": "Gutscheine",
+  "eggVoucher": "Ei-Gutschein",
+  "eggVoucherPlus": "Ei-Gutschein Plus",
+  "eggVoucherPremium": "Ei-Gutschein Premium",
+  "eggVoucherGold": "Ei-Gutschein Gold",
+  "locked": "Gesperrt",
+  "defeatTrainer": "Besiege {{trainerName}}"
 } as const;
 

@@ -1,6 +1,6 @@
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
-import { PGFachv, PGMachv } from "./achv";
+import { PGFachv, PGMachv, voucher } from "./achv";
 import { arenaFlyout } from "./arena-flyout";
 import { arenaTag } from "./arena-tag";
 import { battle } from "./battle";
@@ -50,7 +50,6 @@ import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { statusEffect } from "./status-effect";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
-import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
 import { moveTriggers } from "./move-trigger";
 

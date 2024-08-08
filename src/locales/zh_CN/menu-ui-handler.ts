@@ -4,7 +4,6 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "GAME_SETTINGS": "游戏设置",
   "ACHIEVEMENTS": "成就",
   "STATS": "数据统计",
-  "VOUCHERS": "兑换券",
   "EGG_LIST": "蛋列表",
   "EGG_GACHA": "扭蛋机",
   "MANAGE_DATA": "管理数据",
