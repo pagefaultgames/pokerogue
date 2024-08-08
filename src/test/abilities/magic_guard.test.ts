@@ -11,7 +11,7 @@ import { Abilities } from "#enums/abilities";
 import { WeatherType } from "#app/data/weather.js";
 import { StatusEffect, getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { mockHitCheck, SPLASH_ONLY } from "#test/utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
 
@@ -258,7 +258,7 @@ describe("Abilities - Magic Guard", () => {
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.HIGH_JUMP_KICK));
-    await mockHitCheck(game, false);
+    await game.mockHitCheck(false);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

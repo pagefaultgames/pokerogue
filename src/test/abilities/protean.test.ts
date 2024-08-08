@@ -12,7 +12,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { mockHitCheck, SPLASH_ONLY } from "#test/utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -192,7 +192,7 @@ describe("Abilities - Protean", () => {
       expect(leadPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
-      await mockHitCheck(game, false);
+      await game.mockHitCheck(false);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;

@@ -1,7 +1,7 @@
 import GameWrapper from "#test/utils/gameWrapper";
 import { Mode } from "#app/ui/ui";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
-import { CommandPhase, EncounterPhase, FaintPhase, LoginPhase, MovePhase, NewBattlePhase, SelectStarterPhase, SelectTargetPhase, TitlePhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
+import { CommandPhase, EncounterPhase, FaintPhase, LoginPhase, MoveEffectPhase, MovePhase, NewBattlePhase, SelectStarterPhase, SelectTargetPhase, TitlePhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#test/utils/phaseInterceptor";
 import TextInterceptor from "#test/utils/TextInterceptor";
@@ -28,6 +28,7 @@ import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.j
 import overrides from "#app/overrides.js";
 import { removeEnemyHeldItems } from "./testUtils";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
+import { vi } from "vitest";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -353,5 +354,20 @@ export default class GameManager {
       partyHandler.processInput(Button.ACTION); // select party slot
       partyHandler.processInput(Button.ACTION); // send out (or whatever option is at the top)
     });
+  }
+
+  /**
+   * Intercepts `MoveEffectPhase` and mocks the hitCheck's return value {@linkcode MoveEffectPhase.hitCheck}.
+   * Used to force a move to either hit or miss.
+   * Note that this uses `mockReturnValue()`, meaning it will also apply to a
+   * succeeding `MoveEffectPhase` immediately following the first one
+   * (in the case of a multi-target move)
+   *
+   * @param shouldHit Whether the move should hit
+   */
+  async mockHitCheck(shouldHit: boolean): Promise<void> {
+    await this.phaseInterceptor.to(MoveEffectPhase, false);
+
+    vi.spyOn(this.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(shouldHit);
   }
 }
