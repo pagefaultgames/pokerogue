@@ -534,13 +534,11 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
 export async function initEncounterAnims(scene: BattleScene, encounterAnim: EncounterAnim | EncounterAnim[]): Promise<void> {
   const anims = Array.isArray(encounterAnim) ? encounterAnim : [encounterAnim];
   const encounterAnimNames = Utils.getEnumKeys(EncounterAnim);
-  // const encounterAnimIds = Utils.getEnumValues(EncounterAnim);
   const encounterAnimFetches = [];
   for (const anim of anims) {
     if (encounterAnims.has(anim) && !isNullOrUndefined(encounterAnims.get(anim))) {
       continue;
     }
-    // const encounterAnimId = encounterAnimIds[anim];
     encounterAnimFetches.push(scene.cachedFetch(`./battle-anims/encounter-${encounterAnimNames[anim].toLowerCase().replace(/\_/g, "-")}.json`)
       .then(response => response.json())
       .then(cas => encounterAnims.set(anim, new AnimConfig(cas))));

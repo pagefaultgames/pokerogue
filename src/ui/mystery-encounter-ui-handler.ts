@@ -81,8 +81,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.rarityBall.setScale(0.75);
     this.descriptionContainer.add(this.rarityBall);
 
-    const dexProgressIndicator = this.scene.add.sprite(12, 9,  "encounter_radar");
-    dexProgressIndicator.setScale(0.85);
+    const dexProgressIndicator = this.scene.add.sprite(12, 10,  "encounter_radar");
+    dexProgressIndicator.setScale(0.80);
     this.dexProgressContainer.add(dexProgressIndicator);
     this.dexProgressContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, 24, 28), Phaser.Geom.Rectangle.Contains);
     this.dexProgressContainer.on("pointerover", () => {

@@ -38,7 +38,7 @@ import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/myster
  * @param scene
  */
 export function doTrainerExclamation(scene: BattleScene) {
-  const exclamationSprite = scene.addFieldSprite(0, 0, "exclaim");
+  const exclamationSprite = scene.add.sprite(0, 0, "exclaim");
   exclamationSprite.setName("exclamation");
   scene.field.add(exclamationSprite);
   scene.field.moveTo(exclamationSprite, scene.field.getAll().length - 1);
@@ -386,10 +386,12 @@ export function generateModifierTypeOption(scene: BattleScene, modifier: () => M
  */
 export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (pokemon: PlayerPokemon) => void | OptionSelectItem[], onPokemonNotSelected?: () => void, selectablePokemonFilter?: (pokemon: PlayerPokemon) => string): Promise<boolean> {
   return new Promise(resolve => {
+    const modeToSetOnExit = scene.ui.getMode();
+
     // Open party screen to choose pokemon to train
     scene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex < scene.getParty().length) {
-        scene.ui.setMode(Mode.MYSTERY_ENCOUNTER).then(() => {
+        scene.ui.setMode(modeToSetOnExit).then(() => {
           const pokemon = scene.getParty()[slotIndex];
           const secondaryOptions = onPokemonSelected(pokemon);
           if (!secondaryOptions) {
@@ -443,7 +445,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
           });
         });
       } else {
-        scene.ui.setMode(Mode.MYSTERY_ENCOUNTER).then(() => {
+        scene.ui.setMode(modeToSetOnExit).then(() => {
           if (onPokemonNotSelected) {
             onPokemonNotSelected();
           }

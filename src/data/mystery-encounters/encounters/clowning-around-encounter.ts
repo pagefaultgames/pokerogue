@@ -1,7 +1,7 @@
 import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs, TrainerPartyCompoundTemplate, TrainerPartyTemplate, } from "#app/data/trainer-config";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { BerryModifierType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "#app/battle-scene";
@@ -104,16 +104,14 @@ export const ClowningAroundEncounter: IMysteryEncounter =
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter;
 
-      // Clown trainer is pulled from pool of boss trainers (gym leaders) for the biome
-      // They are given an E4 template team, so will be stronger than usual boss encounter and always have 6 mons
       const clownTrainerType = TrainerType.HARLEQUIN;
+      const clownConfig = trainerConfigs[clownTrainerType].copy();
       const clownPartyTemplate = new TrainerPartyCompoundTemplate(
         new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
         new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER));
-      const clownConfig = trainerConfigs[clownTrainerType].copy();
       clownConfig.setPartyTemplates(clownPartyTemplate);
       clownConfig.setDoubleOnly();
-      clownConfig.partyTemplateFunc = null; // Overrides party template func
+      clownConfig.partyTemplateFunc = null; // Overrides party template func if it exists
 
       // Generate random ability for Blacephalon from pool
       const ability = RANDOM_ABILITY_POOL[randSeedInt(RANDOM_ABILITY_POOL.length)];
@@ -142,28 +140,6 @@ export const ClowningAroundEncounter: IMysteryEncounter =
       // Load animations/sfx for start of fight moves
       loadCustomMovesForEncounter(scene, [Moves.ROLE_PLAY, Moves.TAUNT]);
 
-      // These have to be defined at runtime so that modifierTypes exist
-      encounter.misc.RANDOM_ULTRA_POOL = [
-        modifierTypes.REVIVER_SEED,
-        modifierTypes.GOLDEN_PUNCH,
-        modifierTypes.ATTACK_TYPE_BOOSTER,
-        modifierTypes.QUICK_CLAW,
-        modifierTypes.WIDE_LENS,
-        modifierTypes.WHITE_HERB
-      ];
-
-      encounter.misc.RANDOM_ROGUE_POOL = [
-        modifierTypes.LEFTOVERS,
-        modifierTypes.SHELL_BELL,
-        modifierTypes.SOUL_DEW,
-        modifierTypes.SOOTHE_BELL,
-        modifierTypes.SCOPE_LENS,
-        modifierTypes.BATON,
-        modifierTypes.FOCUS_BAND,
-        modifierTypes.KINGS_ROCK,
-        modifierTypes.GRIP_CLAW
-      ];
-
       return true;
     })
     .withTitle(`${namespace}.title`)
@@ -187,7 +163,7 @@ export const ClowningAroundEncounter: IMysteryEncounter =
           // Spawn battle
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.TM_COMMON, modifierTypes.TM_GREAT, modifierTypes.MEMORY_MUSHROOM], fillRemaining: true });
+          setEncounterRewards(scene, { fillRemaining: true });
 
           // TODO: when Magic Room and Wonder Room are implemented, add those to start of battle
           encounter.startOfBattleEffects.push(
@@ -217,7 +193,6 @@ export const ClowningAroundEncounter: IMysteryEncounter =
           // After the battle, offer the player the opportunity to permanently swap ability
           const abilityWasSwapped = await handleSwapAbility(scene);
           if (abilityWasSwapped) {
-            await scene.ui.setMode(Mode.MESSAGE);
             await showEncounterText(scene, `${namespace}.option.1.ability_gained`);
           }
 
@@ -284,44 +259,33 @@ export const ClowningAroundEncounter: IMysteryEncounter =
           const items = mostHeldItemsPokemon.getHeldItems();
 
           // Shuffles Berries (if they have any)
-          const berries = items.filter(m => m instanceof BerryModifier);
+          let numBerries = 0;
+          items.filter(m => m instanceof BerryModifier)
+            .forEach(m => {
+              numBerries += m.stackCount;
+              scene.removeModifier(m);
+            });
 
-          berries.forEach(berry => {
-            const stackCount = berry.stackCount;
-            scene.removeModifier(berry);
-            const newBerry = generateModifierTypeOption(scene, modifierTypes.BERRY, [randSeedInt(Object.keys(BerryType).filter(s => !isNaN(Number(s))).length) as BerryType]).type as BerryModifierType;
-            for (let i = 0; i < stackCount; i++) {
-              applyModifierTypeToPlayerPokemon(scene, mostHeldItemsPokemon, newBerry);
-            }
-          });
+          generateItemsOfTier(scene, mostHeldItemsPokemon, numBerries, "Berries");
 
           // Shuffle Transferable held items in the same tier (only shuffles Ultra and Rogue atm)
-          const transferableItems = items.filter(m => m.isTransferrable && !(m instanceof BerryModifier));
-
-          transferableItems.forEach(transferableItem => {
-            const stackCount = transferableItem.stackCount;
-            transferableItem.type.withTierFromPool();
-
-            // Lucky Eggs and other items that do not appear in item pools are treated as Ultra rarity
-            const tier = transferableItem.type.tier ?? ModifierTier.ULTRA;
-
-            if (tier === ModifierTier.ULTRA) {
-              scene.removeModifier(transferableItem);
-              for (let i = 0; i < stackCount; i++) {
-                const newItemType = encounter.misc.RANDOM_ULTRA_POOL[randSeedInt(encounter.misc.RANDOM_ULTRA_POOL.length)];
-                const newMod = generateModifierTypeOption(scene, newItemType).type as PokemonHeldItemModifierType;
-                applyModifierTypeToPlayerPokemon(scene, mostHeldItemsPokemon, newMod);
+          let numUltra = 0;
+          let numRogue = 0;
+          items.filter(m => m.isTransferrable && !(m instanceof BerryModifier))
+            .forEach(m => {
+              const type = m.type.withTierFromPool();
+              const tier = type.tier ?? ModifierTier.ULTRA;
+              if (type.id === "LUCKY_EGG" || tier === ModifierTier.ULTRA) {
+                numUltra += m.stackCount;
+                scene.removeModifier(m);
+              } else if (type.id === "GOLDEN_EGG" || tier === ModifierTier.ROGUE) {
+                numRogue += m.stackCount;
+                scene.removeModifier(m);
               }
-            } else if (tier === ModifierTier.ROGUE) {
-              scene.removeModifier(transferableItem);
-              for (let i = 0; i < stackCount; i++) {
-                const newItemType = encounter.misc.RANDOM_ROGUE_POOL[randSeedInt(encounter.misc.RANDOM_ROGUE_POOL.length)];
-                const newMod = generateModifierTypeOption(scene, newItemType).type as PokemonHeldItemModifierType;
-                applyModifierTypeToPlayerPokemon(scene, mostHeldItemsPokemon, newMod);
-              }
-            }
-          });
+            });
 
+          generateItemsOfTier(scene, mostHeldItemsPokemon, numUltra, ModifierTier.ULTRA);
+          generateItemsOfTier(scene, mostHeldItemsPokemon, numRogue, ModifierTier.ROGUE);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           leaveEncounterWithoutBattle(scene, true);
@@ -456,7 +420,7 @@ function onYesAbilitySwap(scene: BattleScene, resolve) {
     }
     pokemon.mysteryEncounterData.ability = scene.currentBattle.mysteryEncounter.misc.ability;
     scene.currentBattle.mysteryEncounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
-    resolve(true);
+    scene.ui.setMode(Mode.MESSAGE).then(() => resolve(true));
   };
 
   const onPokemonNotSelected = () => {
@@ -466,4 +430,68 @@ function onYesAbilitySwap(scene: BattleScene, resolve) {
   };
 
   selectPokemonForOption(scene, onPokemonSelected, onPokemonNotSelected);
+}
+
+function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItems: integer, tier: ModifierTier | "Berries") {
+  // These pools have to be defined at runtime so that modifierTypes exist
+  // Pools have instances of the modifier type equal to the max stacks that modifier can be applied to any one pokemon
+  // This is to prevent "over-generating" a random item of a certain type during item swaps
+  const ultraPool = [
+    [modifierTypes.REVIVER_SEED, 1],
+    [modifierTypes.GOLDEN_PUNCH, 5],
+    [modifierTypes.ATTACK_TYPE_BOOSTER, 99],
+    [modifierTypes.QUICK_CLAW, 3],
+    [modifierTypes.WIDE_LENS, 3],
+    [modifierTypes.WHITE_HERB, 2]
+  ];
+
+  const roguePool = [
+    [modifierTypes.LEFTOVERS, 4],
+    [modifierTypes.SHELL_BELL, 4],
+    [modifierTypes.SOUL_DEW, 10],
+    [modifierTypes.SOOTHE_BELL, 3],
+    [modifierTypes.SCOPE_LENS, 5],
+    [modifierTypes.BATON, 1],
+    [modifierTypes.FOCUS_BAND, 5],
+    [modifierTypes.KINGS_ROCK, 3],
+    [modifierTypes.GRIP_CLAW, 5]
+  ];
+
+  const berryPool = [
+    [BerryType.APICOT, 3],
+    [BerryType.ENIGMA, 2],
+    [BerryType.GANLON, 3],
+    [BerryType.LANSAT, 3],
+    [BerryType.LEPPA, 2],
+    [BerryType.LIECHI, 3],
+    [BerryType.LUM, 2],
+    [BerryType.PETAYA, 3],
+    [BerryType.SALAC, 2],
+    [BerryType.SITRUS, 2],
+    [BerryType.STARF, 3]
+  ];
+
+  let pool: any[];
+  if (tier === "Berries") {
+    pool = berryPool;
+  } else {
+    pool = tier === ModifierTier.ULTRA ? ultraPool : roguePool;
+  }
+
+  for (let i = 0; i < numItems; i++) {
+    const randIndex = randSeedInt(pool.length);
+    const newItemType = pool[randIndex];
+    let newMod;
+    if (tier === "Berries") {
+      newMod = generateModifierTypeOption(scene, modifierTypes.BERRY, [newItemType[0]]).type as PokemonHeldItemModifierType;
+    } else {
+      newMod = generateModifierTypeOption(scene, newItemType[0]).type as PokemonHeldItemModifierType;
+    }
+    applyModifierTypeToPlayerPokemon(scene, pokemon, newMod);
+    // Decrement max stacks and remove from pool if at max
+    newItemType[1]--;
+    if (newItemType[1] <= 0) {
+      pool.splice(randIndex, 1);
+    }
+  }
 }
