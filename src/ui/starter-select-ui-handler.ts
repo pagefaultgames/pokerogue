@@ -1524,7 +1524,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             }
           }
           // if container.favorite is false, show the favorite option
-          if (!starterAttributes.favorite) {
+          const isFavorite = starterAttributes?.favorite ?? false;
+          if (!isFavorite) {
             options.push({
               label: i18next.t("starterSelectUiHandler:addToFavorites"),
               handler: () => {
@@ -2338,7 +2339,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         container.starterPassiveBgs.setVisible(!!this.scene.gameData.starterData[speciesId].passiveAttr);
         container.hiddenAbilityIcon.setVisible(!!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
         container.classicWinIcon.setVisible(this.scene.gameData.starterData[speciesId].classicWinCount > 0);
-        container.favoriteIcon.setVisible(this.starterPreferences[speciesId].favorite ? true : false);
+        container.favoriteIcon.setVisible(this.starterPreferences[speciesId]?.favorite ?? false);
 
         // 'Candy Icon' mode
         if (this.scene.candyUpgradeDisplay === 0) {
