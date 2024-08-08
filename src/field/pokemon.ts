@@ -1921,7 +1921,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     applyMoveAttrs(VariableMoveTypeAttr, source, this, move);
     const types = this.getTypes(true, true);
-
     const cancelled = new Utils.BooleanHolder(false);
     const power = move.calculateBattlePower(source, this);
     const typeless = move.hasAttr(TypelessAttr);
@@ -2871,6 +2870,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   resetTurnData(): void {
     this.turnData = new PokemonTurnData();
+    this.moveset.filter((m) => !!m).map((m) => m.getMove().finalType = null);
   }
 
   getExpValue(): integer {
