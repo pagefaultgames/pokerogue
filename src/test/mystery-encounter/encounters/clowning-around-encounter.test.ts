@@ -48,9 +48,9 @@ describe("Clowning Around - Mystery Encounter", () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
     game.override.mysteryEncounterChance(100);
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
+    game.override.disableTrainerWaves(true);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
