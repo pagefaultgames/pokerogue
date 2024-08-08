@@ -793,17 +793,16 @@ export default class Move implements Localizable {
    * @returns The type of the move after applying all modifiers
    */
   getFinalType(pokemon: Pokemon, update: boolean = false): Type {
-    if (this._finalType && !update) {
+    if (this._finalType !== null && !update) {
       return this._finalType;
     }
 
     const moveType = new Utils.IntegerHolder(this.type);
 
     applyMoveAttrs(VariableMoveTypeAttr, pokemon, null, this, moveType);
-    // applyAbAttrs(MoveTypeChangeAbAttr, this, null, moveType, new Utils.NumberHolder(1)); //TODO: this attribute doesn't exist anymore. what do I do?
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, pokemon, null, this, moveType, new Utils.NumberHolder(1));
 
-    this._finalType = moveType.value;
+    this.finalType = moveType.value;
 
     return moveType.value;
   }

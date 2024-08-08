@@ -42,7 +42,7 @@ export default class FightUiHandler extends UiHandler {
     this.moveInfoContainer.setName("move-info");
     ui.add(this.moveInfoContainer);
 
-    this.typeIcon = this.scene.add.sprite(this.scene.scaledCanvas.width - 57, -36, Utils.getLocalizedSpriteKey("type"), "unknown");
+    this.typeIcon = this.scene.add.sprite(this.scene.scaledCanvas.width - 57, -36, Utils.getLocalizedSpriteKey("types"), "unknown");
     this.typeIcon.setVisible(false);
     this.moveInfoContainer.add(this.typeIcon);
 
@@ -177,9 +177,10 @@ export default class FightUiHandler extends UiHandler {
 
     if (hasMove) {
       const pokemonMove = moveset[cursor]!; // TODO: is the bang correct?
-      const lang = i18next.resolvedLanguage;
-      const moveType = pokemonMove.getMove().getFinalType(pokemon);
-      const textureKey = `types${Utils.verifyLang(lang) ? `_${lang}` : ""}`;
+      pokemonMove.getMove().getFinalType(pokemon, true); // calling twice to fix the first render showign wrong type (bad solution, but it works for now)
+      const moveType = pokemonMove.getMove().getFinalType(pokemon, true);
+      console.log("move type", moveType);
+      const textureKey = Utils.getLocalizedSpriteKey("types");
       this.typeIcon.setTexture(textureKey, Type[moveType].toLowerCase()).setScale(0.8);
 
       const moveCategory = pokemonMove.getMove().category;
