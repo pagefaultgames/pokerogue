@@ -1,4 +1,4 @@
-import { pokemonEvolutions } from "#app/data/pokemon-evolutions.js";
+import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#app/data/pokemon-evolutions.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Species } from "#app/enums/species.js";
 import GameManager from "#test/utils/gameManager";
@@ -83,4 +83,10 @@ describe("Evolution", () => {
     expect(ninjask.abilityIndex).toBe(2);
     expect(shedinja.abilityIndex).toBe(1);
   }, TIMEOUT);
+
+  it("should set wild delay to NONE by default", () => {
+    const speciesFormEvo = new SpeciesFormEvolution(Species.ABRA, null, null, 1000, null, null);
+
+    expect(speciesFormEvo.wildDelay).toBe(SpeciesWildEvolutionDelay.NONE);
+  });
 });
