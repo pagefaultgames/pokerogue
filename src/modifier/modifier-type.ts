@@ -1949,10 +1949,10 @@ export function overridePlayerModifierTypeOptions(options: ModifierTypeOption[],
   for (let i = 0; i < minLength; i++) {
     const override: ModifierOverride = Overrides.ITEM_REWARD_OVERRIDE[i];
     const modifierFunc = modifierTypes[override.name];
-    let modifierType = modifierFunc();
+    let modifierType: ModifierType | null = modifierFunc();
 
     if (modifierType instanceof ModifierTypeGenerator) {
-      const pregenArgs = ("type" in override) && (override.type !== null) ? [override.type] : null;
+      const pregenArgs = ("type" in override) && (override.type !== null) ? [override.type] : undefined;
       modifierType = modifierType.generateType(party, pregenArgs);
     }
 
