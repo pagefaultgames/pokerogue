@@ -1929,7 +1929,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
         }
       }
 
-      if (user.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, targetSide)) {
+      if (user !== target && user.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, targetSide)) {
         if (move.category === MoveCategory.STATUS) {
           user.scene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target)}));
         }
@@ -6748,7 +6748,8 @@ export function initMoves() {
       .attr(FriendshipPowerAttr, true),
     new StatusMove(Moves.SAFEGUARD, Type.NORMAL, -1, 25, -1, 0, 2)
       .target(MoveTarget.USER_SIDE)
-      .attr(AddArenaTagAttr, ArenaTagType.SAFEGUARD, 5, true, true),
+      .attr(AddArenaTagAttr, ArenaTagType.SAFEGUARD, 5, true, true)
+      .partial(),
     new StatusMove(Moves.PAIN_SPLIT, Type.NORMAL, -1, 20, -1, 0, 2)
       .attr(HpSplitAttr)
       .condition(failOnBossCondition),
