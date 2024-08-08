@@ -1,13 +1,13 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Moves } from "#enums/moves";
 import { getMoveTargets } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Species } from "#app/enums/species.js";
-import { getMovePosition } from "../utils/gameManagerUtils";
 import { TurnEndPhase } from "#app/phases.js";
+import GameManager from "#test/utils/gameManager";
+import { Moves } from "#enums/moves";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -69,11 +69,10 @@ describe("Moves - Multi target", () => {
 
 async function checkTargetMultiplier(game: GameManager, attackMove: Moves, killAlly: boolean, killSecondEnemy: boolean, shouldMultiplied: boolean, oppAbility?: Abilities) {
   // play an attack and check target count
-  vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(oppAbility ? oppAbility : Abilities.BALL_FETCH);
+  game.override.enemyAbility(oppAbility ? oppAbility : Abilities.BALL_FETCH);
   await game.startBattle();
 
   const playerPokemonRepr = game.scene.getPlayerField();
-  expect(playerPokemonRepr).not.toBeUndefined();
 
   killAllyAndEnemy(game, killAlly, killSecondEnemy);
 
@@ -164,14 +163,16 @@ function leaveOneEnemyPokemon(game: GameManager) {
 
 function beforeTrial(phaserGame: Phaser.Game, single: boolean = false) {
   const game = new GameManager(phaserGame);
-  vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-  vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EARTHQUAKE, Moves.HYPER_VOICE, Moves.SURF, Moves.SPLASH]);
-  vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-  vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-  vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
-  vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(50);
-  vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(40);
-  vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.EEVEE);
+  game.override
+    .battleType("double")
+    .moveset([Moves.EARTHQUAKE, Moves.HYPER_VOICE, Moves.SURF, Moves.SPLASH])
+    .ability(Abilities.BALL_FETCH)
+    .passiveAbility(Abilities.UNNERVE)
+    .enemyMoveset(SPLASH_ONLY)
+    .disableCrits()
+    .startingLevel(50)
+    .enemyLevel(40)
+    .enemySpecies(Species.EEVEE);
   return game;
 }
 

@@ -21,7 +21,9 @@ export default class PokemonIconAnimHandler {
       const value = tween.getValue();
       this.toggled = !!value;
       for (const i of this.icons.keys()) {
-        i.y += this.getModeYDelta(this.icons.get(i)) * (this.toggled ? 1 : -1);
+        const icon = this.icons.get(i);
+        const delta = icon ? this.getModeYDelta(icon) : 0;
+        i.y += delta * (this.toggled ? 1 : -1);
       }
     };
     scene.tweens.addCounter({
@@ -56,7 +58,7 @@ export default class PokemonIconAnimHandler {
       }
       if (this.toggled) {
         const lastYDelta = this.icons.has(i)
-          ? this.icons.get(i)
+          ? this.icons.get(i)!
           : 0;
         const yDelta = this.getModeYDelta(mode);
         i.y += yDelta + lastYDelta;
@@ -71,7 +73,9 @@ export default class PokemonIconAnimHandler {
     }
     for (const i of icons) {
       if (this.toggled) {
-        i.y -= this.getModeYDelta(this.icons.get(i));
+        const icon = this.icons.get(i);
+        const delta = icon ? this.getModeYDelta(icon) : 0;
+        i.y -= delta;
       }
       this.icons.delete(i);
     }
@@ -80,7 +84,9 @@ export default class PokemonIconAnimHandler {
   removeAll(): void {
     for (const i of this.icons.keys()) {
       if (this.toggled) {
-        i.y -= this.getModeYDelta(this.icons.get(i));
+        const icon = this.icons.get(i);
+        const delta = icon ? this.getModeYDelta(icon) : 0;
+        i.y -= delta;
       }
       this.icons.delete(i);
     }

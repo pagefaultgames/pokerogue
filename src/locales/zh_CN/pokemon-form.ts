@@ -1,14 +1,21 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
-export const pokemonForm: SimpleTranslationEntries = {
-  // Battle forms
+export const battlePokemonForm: SimpleTranslationEntries = {
   "mega": "Mega {{pokemonName}}",
   "mega-x": "Mega {{pokemonName}} X",
   "mega-y": "Mega {{pokemonName}} Y",
-  "primal": "原始回归{{pokemonName}}",
+  "primal": "原始{{pokemonName}}",
   "gigantamax": "超极巨{{pokemonName}}",
   "eternamax": "无极巨{{pokemonName}}",
 
+  "megaChange": "{{preName}}超级进化成了\n{{pokemonName}}！",
+  "gigantamaxChange": "{{preName}}超极巨化成了\n{{pokemonName}}！",
+  "eternamaxChange": "{{preName}}无极巨化成了\n{{pokemonName}}！",
+  "revertChange": "{{pokemonName}}变回了\n原本的样子！",
+  "formChange": "{{preName}}变成其他样子了。",
+} as const;
+
+export const pokemonForm: SimpleTranslationEntries = {
   // Starters forms
   // 1G
   "pikachuCosplay": "服装",
@@ -53,7 +60,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "castformSunny": "晴天",
   "castformRainy": "雨天",
   "castformSnowy": "雪天",
-  "deoxysNormal": "Normal",
+  "deoxysNormal": "普通",
   // 4G
   "burmyPlant": "草木蓑衣",
   "burmySandy": "砂土蓑衣",
@@ -65,8 +72,8 @@ export const pokemonForm: SimpleTranslationEntries = {
   "rotomFrost": "结冰",
   "rotomFan": "旋转",
   "rotomMow": "切割",
-  "giratinaAltered": "Altered",
-  "shayminLand": "Land",
+  "giratinaAltered": "别种",
+  "shayminLand": "陆上",
   // 5G
   "basculinRedStriped": "红条纹",
   "basculinBlueStriped": "蓝条纹",
@@ -75,11 +82,11 @@ export const pokemonForm: SimpleTranslationEntries = {
   "deerlingSummer": "夏天",
   "deerlingAutumn": "秋天",
   "deerlingWinter": "冬天",
-  "tornadusIncarnate": "Incarnate",
-  "thundurusIncarnate": "Incarnate",
-  "landorusIncarnate": "Incarnate",
-  "keldeoOrdinary": "Ordinary",
-  "meloettaAria": "Aria",
+  "tornadusIncarnate": "化身",
+  "thundurusIncarnate": "化身",
+  "landorusIncarnate": "化身",
+  "keldeoOrdinary": "通常",
+  "meloettaAria": "歌声",
   // 6G
   "froakieBattleBond": "牵绊变身",
   "scatterbugMeadow": "花园花纹",
@@ -156,11 +163,11 @@ export const pokemonForm: SimpleTranslationEntries = {
   "eiscueNoIce": "解冻头",
   "indeedeeMale": "雄性",
   "indeedeeFemale": "雌性",
-  "morpekoFullBelly": "Full Belly",
-  "zacianHeroOfManyBattles": "Hero Of Many Battles",
-  "zamazentaHeroOfManyBattles": "Hero Of Many Battles",
+  "morpekoFullBelly": "满腹花纹",
+  "zacianHeroOfManyBattles": "百战勇者",
+  "zamazentaHeroOfManyBattles": "百战勇者",
   "zarudeDada": "老爹",
-  "enamorusIncarnate": "Incarnate",
+  "enamorusIncarnate": "化身",
   // 9G
   "squawkabillyGreenPlumage": "绿羽毛",
   "squawkabillyBluePlumage": "蓝羽毛",
@@ -171,16 +178,16 @@ export const pokemonForm: SimpleTranslationEntries = {
   "tatsugiriStretchy": "平挺姿势",
   "gimmighoulChest": "宝箱形态",
   "gimmighoulRoaming": "徒步形态",
-  "koraidonApexBuild": "Apex Build",
-  "koraidonLimitedBuild":"Limited Build",
-  "koraidonSprintingBuild":"Sprinting Build",
-  "koraidonSwimmingBuild":"Swimming Build",
-  "koraidonGlidingBuild":"Gliding Build",
-  "miraidonUltimateMode":"Ultimate Mode",
-  "miraidonLowPowerMode":"Low Power Mode",
-  "miraidonDriveMode":"Drive Mode",
-  "miraidonAquaticMode":"Aquatic Mode",
-  "miraidonGlideMode":"Glide Mode",
+  "koraidonApexBuild": "顶尖形态",
+  "koraidonLimitedBuild":"限制形态",
+  "koraidonSprintingBuild":"冲刺形态",
+  "koraidonSwimmingBuild":"游泳形态",
+  "koraidonGlidingBuild":"滑翔形态",
+  "miraidonUltimateMode":"极限模式",
+  "miraidonLowPowerMode":"节能模式",
+  "miraidonDriveMode":"驾驶模式",
+  "miraidonAquaticMode":"水上模式",
+  "miraidonGlideMode":"滑翔模式",
   "poltchageistCounterfeit": "冒牌货",
   "poltchageistArtisan": "高档货",
   "paldeaTaurosCombat": "斗战种",

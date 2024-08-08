@@ -106,85 +106,85 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "fisherman_female": {
     "encounter": {
-      1: "Woah! I've hooked a big one!",
-      2: "Line's in, ready to reel in success!",
-      3: "Ready to make waves!"
+      1: "¡Eh! ¡He pescado uno grande!",
+      2: "¡La caña está lista, para pescar la victoria!",
+      3: "¡Lista para hacer olas!"
     },
     "victory": {
-      1: "I'll be back with a stronger hook.",
-      2: "I'll reel in victory next time.",
-      3: "I'm just sharpening my hooks for the comeback!"
+      1: "Volveré con un pez más grande.",
+      2: "Pescaré la victoria a la siguiente...",
+      3: "¡Estoy afilando mis anzuelos para la próxima!"
     },
   },
   "swimmer": {
     "encounter": {
-      1: "Time to dive in!",
-      2: "Let's ride the waves of victory!",
-      3: "Ready to make a splash!",
+      1: "¡Listo para bucear!",
+      2: "¡Montemos las olas de la victoria!",
+      3: "¡Listo para darme un chapuzón!",
     },
     "victory": {
-      1: "Drenched in defeat!",
-      2: "A wave of defeat!",
-      3: "Back to shore, I guess.",
+      1: "¡Empapado en la derrota!",
+      2: "¡Las olas de la derrota!",
+      3: "Vuelta a la costa, supongo.",
     },
   },
   "backpacker": {
     "encounter": {
-      1: "Pack up, game on!",
-      2: "Let's see if you can keep pace!",
-      3: "Gear up, challenger!",
-      4: "I've spent 20 years trying to find myself… But where am I?"
+      1: "¡Recoge y vámonos!",
+      2: "¡Veamos si puedes mantener la velocidad!",
+      3: "¡Sube la marcha, entrenador!",
+      4: "Traté de encontrarme un sentido durante 20 años… ¿Pero dónde estoy?"
     },
     "victory": {
-      1: "Tripped up this time!",
-      2: "Oh, I think I'm lost.",
-      3: "Dead end!",
-      4: "Wait up a second! Hey! Don't you know who I am?"
+      1: "¡Tropecé esta vez!",
+      2: "Oh, creo que me perdí.",
+      3: "¡Punto muerto!",
+      4: "¡Un segundo! ¡Ey! ¿No sabes quién soy?"
     },
   },
   "ace_trainer": {
     "encounter": {
-      1: "You seem quite confident.",
-      2: "Your Pokémon… Show them to me…",
-      3: "Because I'm an Ace Trainer, people think I'm strong.",
-      4: "Are you aware of what it takes to be an Ace Trainer?"
+      1: "Pareces muy seguro en ti mismo.",
+      2: "Enséñame tus Pokémon…",
+      3: "Como soy un Entrenador Guay, la gente cree que soy fuerte.",
+      4: "¿Sabes lo que toma ser un Entrenador Guay?"
     },
     "victory": {
-      1: "Yes… You have good Pokémon…",
-      2: "What?! But I'm a battling genius!",
-      3: "Of course, you are the main character!",
-      4: "OK! OK! You could be an Ace Trainer!"
+      1: "Sí, tienes buenos Pokémon…",
+      2: "¡¿Cómo?! ¡Si soy un genio combatiendo!",
+      3: "Claro, ¡tienes el poder del guión!",
+      4: "¡OK! ¡OK! ¡Puedes ser un Entrenador Guay!"
     },
     "defeat": {
-      1: "I am devoting my body and soul to Pokémon battles!",
-      2: "All within my expectations… Nothing to be surprised about…",
-      3: "I thought I'd grow up to be a frail person who looked like they would break if you squeezed them too hard.",
-      4: "Of course I'm strong and don't lose. It's important that I win gracefully."
+      1: "¡Doy mi cuerpo y alma para los combates Pokémon.",
+      2: "Según mis expectativas… Nada de qué sorprenderse…",
+      3: "Pensé que crecería como persona frágil que parece que rompe a llorar si le hacen daño muy fuerte.",
+      4: "Por supuesto que soy fuerte y no pierdo. Es importante que gane con gracia."
     }
   },
   "parasol_lady": {
     "encounter": {
-      1: "Time to grace the battlefield with elegance and poise!",
+      1: "¡Tiempo de agradar al campo de batalla con elegancia y esmero!",
     },
     "victory": {
-      1: "My elegance remains unbroken!",
+      1: "¡Mi elegancia es indestructible!",
     }
   },
   "twins": {
     "encounter": {
-      1: "Get ready, because when we team up, it's double the trouble!",
-      2: "Two hearts, one strategy – let's see if you can keep up with our twin power!",
-      3: "Hope you're ready for double trouble, because we're about to bring the heat!"
+      1: "¡Prepárate, porque cuando somos juntas el problema es doble!",
+      2: "Dos almas, una estrategia – ¡veamos si eres capaz de seguir nuestro poder gemelo!",
+      3: "¡Espero que estés listo para el doble problema, porque traeremos mucha emoción!"
     },
     "victory": {
-      1: "We may have lost this round, but our bond remains unbreakable!",
-      2: "Our twin spirit won't be dimmed for long.",
-      3: "We'll come back stronger as a dynamic duo!"
+      1: "¡Aunque hayamos perdido esta ronda, nuestra unión es indestructible!",
+      2: "Nuestro espíritu gemelo no seguirá así por mucho tiempo.",
+      3: "¡Volveremos más fuertes como un dúo dinámico!"
     },
     "defeat": {
-      1: "Twin power reigns supreme!",
-      2: "Two hearts, one triumph!",
-      3: "Double the smiles, double the victory dance!"
+      1: "¡El poder gemelo triunfa como ninguno!",
+      2: "¡Dos almas, un triunfo!",
+      3: "¡Doble sonrisa, doble baile de victoria!"
     }
   },
   "cyclist": {
@@ -383,52 +383,297 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Creo que soy yo quien está mareado..."
     },
   },
-  "rocket_grunt": {
+  "archer": {
     "encounter": {
-      1: "¡Ríndete ahora, o prepárate para luchar!"
+      1: "Before you go any further, let's see how you far against us, Team Rocket!",
+      2: "I have received reports that your skills are not insignificant. Let's see if they are true.",
+      3: "I am Archer, an Admin of Team Rocket. And I do not go easy on enemies of our organization."
     },
     "victory": {
-      1: "¡El Team Rocket despega de nuevo!"
+      1: "What a blunder!",
+      2: "With my current skills, I was not up to the task after all.",
+      3: "F-forgive me, Giovanni... For me to be defeated by a mere trainer..."
+    },
+  },
+  "ariana": {
+    "encounter": {
+      1: `Hold it right there! We can't someone on the loose." 
+          $It's harmful to Team Rocket's pride, you see.`,
+      2: `I don't know or care if what I'm doing is right or wrong...
+          $I just put my faith in Giovanni and do as I am told`,
+      3: "Your trip ends here. I'm going to take you down!"
+    },
+    "victory": {
+      1: `Tch, you really are strong. It's too bad. 
+          $If you were to join Team Rocket, you could become an Executive.`,
+      2: "I... I'm shattered...",
+      3: "Aaaieeeee! This can't be happening! I fought hard, but I still lost…"
+    },
+  },
+  "proton": {
+    "encounter": {
+      1: "What do you want? If you interrupt our work, don't expect any mercy!",
+      2: `What do we have here? I am often labeled as the scariest and cruelest guy in Team Rocket…
+         $I strongly urge you not to interfere with our business!`,
+      3: "I am Proton, an Admin of Team Rocket. I am here to put an end to your meddling!"
+    },
+    "victory": {
+      1: "The fortress came down!",
+      2: "You may have won this time… But all you did was make Team Rocket's wrath grow…",
+      3: "I am defeated… But I will not forget this!"
+    },
+  },
+
+  "petrel": {
+    "encounter": {
+      1: `Muhahaha, we've been waiting for you. Me? You don't know who I am? It is me, Giovanni.
+          $The majestic Giovanni himself! Wahahaha! …Huh? I don't sound anything like Giovanni?
+          $I don't even look like Giovanni? How come? I've worked so hard to mimic him!`,
+      2: "I am Petrel, an Admin of Team Rocket. I will not allow you to interfere with our plans!",
+      3: "Rocket Executive Petrel will deal with this intruder!"
+    },
+    "victory": {
+      1: "OK, OK. I'll tell you where he is.",
+      2: "I… I couldn't do a thing… Giovanni, please forgive me…",
+      3: "No, I can't let this affect me. I have to inform the others…"
+    },
+  },
+  "tabitha": {
+    "encounter": {
+      1: "Hehehe! So you've come all the way here! But you're too late!",
+      2: `Hehehe... Got here already, did you? We underestimated you! But this is it! 
+          $I'm a cut above the Grunts you've seen so far. I'm not stalling for time.
+          $I'm going to pulverize you!`,
+      3: "I'm going to give you a little taste of pain! Resign yourself to it!"
+    },
+    "victory": {
+      1: `Hehehe! You might have beaten me, but you don't stand a chance against the Boss!
+          $If you get lost now, you won't have to face a sound whipping!`,
+      2: "Hehehe... So, I lost, too...",
+      3: "Ahya! How could this be? For an Admin like me to lose to some random trainer..."
+    },
+  },
+  "courtney": {
+    "encounter": {
+      1: "The thing...The thing that you hold...That is what... That's what we of Team Magma seek...",
+      2: "... Well then...Deleting...",
+      3: "...Ha. ...Analyzing... ...Hah♪"
+    },
+    "victory": {
+      1: "... ...Change...the world.",
+      2: `As anticipated. Unanticipated. You. Target lock...completed.
+         $Commencing...experiment. You. Forever. Aha... ♪`,
+      3: "...Again? That's unanticipated. ...I knew it. You...are interesting! ...Haha. ♪"
+    },
+  },
+  "shelly": {
+    "encounter": {
+      1: `Ahahahaha! You're going to meddle in Team Aqua's affairs?
+         $You're either absolutely fearless, simply ignorant, or both!
+         $You're so cute, you're disgusting! I'll put you down`,
+      2: "What's this? Who's this spoiled brat?",
+      3: "Cool your jets. Be patient. I'll crush you shortly."
+    },
+    "victory": {
+      1: `Ahahahaha! We got meddled with unexpectedly! We're out of options.
+         $We'll have to pull out. But this isn't the last you'll see of Team Aqua!
+         $We have other plans! Don't you forget it!`,
+      2: "Ahhh?! Did I go too easy on you?!",
+      3: `Uh. Are you telling me you've upped your game even more during the fight?
+         $You're a brat with a bright future… My Pokémon and I don't have any strength left to fight…
+         $Go on… Go and be destroyed by Archie.`
+    },
+  },
+  "matt": {
+    "encounter": {
+      1: "Hoohahaha! What, you got a screw loose or something? Look at you, little Makuhita person!",
+      2: "Oho! You! You're that funny kid!",
+      3: "What are you doing here? Did you follow us?"
+    },
+    "victory": {
+      1: "All right then, until the Boss has time for you, I'll be your opponent!",
+      2: `I can feel it! I can feel it, all right! The strength coming offa you!
+          $More! I still want more! But looks like we're outta time...`,
+      3: "That was fun! I knew you'd show me a good time! I look forward to facing you again someday!"
+    },
+  },
+  "mars": {
+    "encounter": {
+      1: "I'm Mars, one of Team Galactic's top Commanders.",
+      2: "Team Galactic's vision for the future is unwavering. Opposition will be crushed without mercy!",
+      3: "Feeling nervous? You should be!"
+    },
+    "victory": {
+      1: "This can't be happening! How did I lose?!",
+      2: "You have some skill, I'll give you that.",
+      3: "Defeated... This was a costly mistake."
+    }
+  },
+  "jupiter": {
+    "encounter": {
+      1: "Jupiter, Commander of Team Galactic, at your service.",
+      2: "Resistance is futile. Team Galactic will prevail!",
+      3: "You're trembling... scared already?"
+    },
+    "victory": {
+      1: "No way... I lost?!",
+      2: "Impressive, you've got guts!",
+      3: "Losing like this... How embarrassing."
+    }
+  },
+  "saturn": {
+    "encounter": {
+      1: "I am Saturn, Commander of Team Galactic.",
+      2: "Our mission is absolute. Any hindrance will be obliterated!",
+      3: "Is that fear I see in your eyes?"
+    },
+    "victory": {
+      1: "Impossible... Defeated by you?!",
+      2: "You have proven yourself a worthy adversary.",
+      3: "Bestowed in defeat... This is unacceptable."
+    }},
+  "zinzolin": {
+    "encounter": {
+      1: "You could become a threat to Team Plasma, so we will eliminate you here and now!",
+      2: "Oh, for crying out loud... I didn't expect to have to battle in this freezing cold!",
+      3: "You're an impressive Trainer to have made it this far. But it ends here."
+    },
+    "victory": {
+      1: "Ghetsis... I have failed you...",
+      2: "It's bitter cold. I'm shivering. I'm suffering. Yet, I still stand victorious.",
+      3: "Hmph. You're a smarter Trainer than I expected, but not smart enough."
+    }
+  },
+  "rood": {
+    "encounter": {
+      1: "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
+      2: "Oh, this icy wind... I never thought I'd have to fight here!",
+      3: "You are a remarkable Trainer to have made it this far. But this is where it ends."
+    },
+    "victory": {
+      1: "Ghetsis... I have failed my mission...",
+      2: "The cold is piercing. I'm shivering. I'm suffering. Yet, I have triumphed.",
+      3: "Hm. You are a talented Trainer, but unfortunately not talented enough."
+    }
+  },
+  "xerosic": {
+    "encounter": {
+      1: "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
+      2: "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
+      3: "I've been waiting for you! I need to do a little research on you! Come, let us begin!"
+    },
+    "victory": {
+      1: "Ah, you're quite strong. Oh yes—very strong, indeed.",
+      2: "Ding-ding-ding! You did it! To the victor go the spoils!",
+      3: "Wonderful! Amazing! You have tremendous skill and bravery!"
+    }
+  },
+  "bryony": {
+    "encounter": {
+      1: "I am Bryony, and it would be my pleasure to battle you. Show me what you've got.",
+      2: "Impressive... You're more powerful than you appear. Let's see the true extent of your energy.",
+      3: "I've anticipated your arrival. It's time for a little test. Shall we begin?"
+    },
+    "victory": {
+      1: "You're quite strong. Oh yes—very strong, indeed.",
+      2: "Ding-ding-ding! You've done well. Victory is yours.",
+      3: "Wonderful! Remarkable! Your skill and bravery are commendable."
+    }
+  },
+  "rocket_grunt": {
+    "encounter": {
+      1: "¡Ríndete ahora, o prepárate para luchar!",
+      2: "We're pulling a big job here! Get lost, kid!",
+      3: "Hand over your Pokémon, or face the wrath of Team Rocket!",
+      4: "You're about to experience the true terror of Team Rocket!",
+      5: "Hey, kid! Me am a Team Rocket member kind of guy!" //Use of wrong grammar is deliberate
+    },
+    "victory": {
+      1: "¡El Team Rocket despega de nuevo!",
+      2: "Oh no! I dropped the Lift Key!",
+      3: "I blew it!",
+      4: "My associates won't stand for this!",
+      5: "You say what? Team Rocket bye-bye a go-go? Broken it is says you?" //Use of wrong grammar is deliberate.
     },
   },
   "magma_grunt": {
     "encounter": {
-      1: "¡No esperes piedad si te interpones al Team Magma!"
+      1: "¡No esperes piedad si te interpones al Team Magma!",
+      2: "You'd better not interfere with our plans! We're making the world a better place!",
+      3: "You're in the way! Team Magma has no time for kids like you!",
+      4: "I hope you brought marshmallows because things are about to heat up!",
+      5: "We're going to use the power of a volcano! It's gonna be... explosive! Get it? Heh heh!"
     },
     "victory": {
-      1: "¿Eh? ¿He perdido?"
+      1: "¿Eh? ¿He perdido?",
+      2: "I can't believe I lost! I even skipped lunch for this",
+      3: "No way! You're just a kid!",
+      4: "Urrrgh... I should've ducked into our hideout right away...",
+      5: "You beat me... Do you think the boss will dock my pay for this?"
     },
   },
   "aqua_grunt": {
     "encounter": {
-      1: "El Team Aqua no muestra piedad, ¡ni siquiera a los niños!"
+      1: "El Team Aqua no muestra piedad, ¡ni siquiera a los niños!",
+      2: "Grrr... You've got some nerve meddling with Team Aqua!",
+      3: "You're about to get soaked! And not just from my water Pokémon!",
+      4: "We, Team Aqua, exist for the good of all!",
+      5: "Prepare to be washed away by the tides of my... uh, Pokémon! Yeah, my Pokémon!"
     },
     "victory": {
-      1: "¡Bromeas! ¡No me lo creo!"
+      1: "¡Bromeas! ¡No me lo creo!",
+      2: "Arrgh, I didn't count on being meddled with by some meddling kid!",
+      3: "I lost?! Guess I'll have to swim back to the hideout now...",
+      4: "Oh, man, what a disaster... The boss is going to be furious...",
+      5: "You beat me... Do you think the boss will make me walk the plank for this?"
     },
   },
   "galactic_grunt": {
     "encounter": {
-      1: "¡No desafíes al Equipo Galaxia, te arrepentirás!"
+      1: "¡No desafíes al Equipo Galaxia, te arrepentirás!",
+      2: "Witness the power of our technology and the future we envision!",
+      3: "In the name of Team Galactic, I'll eliminate anyone who stands in our way!",
+      4: "Get ready to lose!",
+      5: "Hope you're ready for a cosmic beatdown!"
     },
     "victory": {
-      1: "Me callaste la boca..."
+      1: "Me callaste la boca...",
+      2: "This setback means nothing in the grand scheme.",
+      3: "Our plans are bigger than this defeat.",
+      4: "How?!",
+      5: "Note to self: practice Pokémon battling, ASAP."
     },
   },
   "plasma_grunt": {
     "encounter": {
-      1: "¡El Equipo Plasma no tolerará otros ideales!"
+      1: "¡El Equipo Plasma no tolerará otros ideales!",
+      2: "If I win against you, release your Pokémon!",
+      3: "If you get in the way of Team Plasma, I'll take care of you!",
+      4: "Team Plasma will liberate Pokémon from selfish humans like you!",
+      5: "Our hairstyles are out of this world... but our battling skills? You'll find out soon enough."
     },
     "victory": {
-      1: "Plasmaaaaaaaaa!"
+      1: "Plasmaaaaaaaaa!",
+      2: "How could I lose...",
+      3: "...What a weak Pokémon, I'll just have to go steal some better ones!",
+      4: "Great plans are always interrupted.",
+      5: "This is bad... Badbadbadbadbadbadbad! Bad for Team Plasma! Or Plasbad, for short!"
     },
   },
   "flare_grunt": {
     "encounter": {
-      1: "¡La moda es lo más importante para nosotros!"
+      1: "Your Pokémon are no match for the elegance of Team Flare.",
+      2: "Hope you brought your sunglasses, because things are about to get bright!",
+      3: "Team Flare will cleanse the world of imperfection!",
+      4: "Prepare to face the brilliance of Team Flare!",
+      5: "Fashion is most important to us!"
     },
     "victory": {
-      1: "Me temo que se me avecina un futuro oscuro..."
+      1: "The future doesn't look bright for me.",
+      2: "Perhaps there's more to battling than I thought. Back to the drawing board.",
+      3: "Gahh?! I lost?!",
+      4: "Even in defeat, Team Flare's elegance shines through.",
+      5: "You may have beaten me, but when I lose, I go out in style!"
     },
   },
   "rocket_boss_giovanni_1": {
@@ -565,73 +810,73 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "brock": {
     "encounter": {
-      1: "My expertise on Rock-type Pokémon will take you down! Come on!",
-      2: "My rock-hard willpower will overwhelm you!",
-      3: "Allow me to show you the true strength of my Pokémon!"
+      1: "Mi conocimiento en Pokémon tipo Roca te aplastará. ¡Dalo todo!",
+      2: "¡Mi determinación tipo Roca te sorprenderá!",
+      3: "¡Permíteme enseñarte la verdadera fuerza de mis Pokémon!"
     },
     "victory": {
-      1: "Your Pokémon's strength have overcome my rock-hard defenses!",
-      2: "The world is huge! I'm glad to have had a chance to battle you.",
-      3: "Perhaps I should go back to pursuing my dream as a Pokémon Breeder…"
+      1: "¡La fuerza de mis Pokémon superó mi defensa dura como una roca!",
+      2: "¡El mundo es enorme! Me encantó tener una oportunidad para combatir contigo.",
+      3: "A lo mejor tendría que volver a mi sueño de ser un Criapokémon…"
     },
     "defeat": {
-      1: "The best offense is a good defense!\nThat's my way of doing things!",
-      2: "Come study rocks with me next time to better learn how to fight them!",
-      3: "Hah, all my traveling around the regions is paying off!"
+      1: "¡La mejor ofensa es una buena defensa!\n¡Esa es mi manera de hacer las cosas!",
+      2: "¡Ven preparado sobre las rocas para saber cómo luchar contra las mías!",
+      3: "Ja, ¡todos mis viajes por regiones se notan!"
     }
   },
   "misty": {
     "encounter": {
-      1: "My policy is an all out offensive with Water-type Pokémon!",
-      2: "Hiya, I'll show you the strength of my aquatic Pokémon!",
-      3: "My dream was to go on a journey and battle powerful trainers…\nWill you be a sufficient challenge?"
+      1: "¡Mi política es muy ofensiva con Pokémon tipo Agua!",
+      2: "Oye, ¡te enseñaré la auténtica fuerza de mis Pokémon tipo Agua!",
+      3: "Mi sueño era viajar conociendo Entrenadores fuertes…\n¿Serás suficiente desafío?"
     },
     "victory": {
-      1: "You really are strong… I'll admit that you are skilled…",
-      2: "Grrr… You know you just got lucky, right?!",
-      3: "Wow, you're too much! I can't believe you beat me!"
+      1: "Eres muy fuerte… Admito tu talento…",
+      2: "Grrr… ¡¿Solo tuviste suerte, sabes?!",
+      3: "¡Guau, eres demasiado! ¡No me creo que me hayas vencido!"
     },
     "defeat": {
-      1: "Was the mighty Misty too much for you?",
-      2: "I hope you saw my Pokémon's elegant swimming techniques!",
-      3: "Your Pokémon were no match for my pride and joys!"
+      1: "¿Fue la valiente Misty demasiado para ti?",
+      2: "¡Espero que hayas visto la elegancia en las técnicas de nado de mis Pokémon!",
+      3: "¡Tus Pokémon no fueron rival para mi orgullo y felicidad!"
     }
   },
   "lt_surge": {
     "encounter": {
-      1: "My Electric Pokémon saved me during the war! I'll show you how!",
-      2: "Ten-hut! I'll shock you into surrender!",
-      3: "I'll zap you just like I do to all my enemies in battle!"
+      1: "¡Mis Pokémon eléctricos me salvaron en la guerra! ¡Te enseñaré cómo!",
+      2: "¡10 voltios! ¡Te electrocutaré hasta la derrota!",
+      3: "¡Te electrocutaré como a todos mis enemigos en combate!"
     },
     "victory": {
-      1: "Whoa! Your team's the real deal, kid!",
-      2: "Aaargh, you're strong! Even my electric tricks lost against you.",
-      3: "That was an absolutely shocking loss!"
+      1: "¡Guau! ¡Tu equipo es lo mejor de lo mejor, chaval!",
+      2: "¡Aaargh, eres fuerte! Incluso mis trucos electrizantes fallaron.",
+      3: "¡Fue una derrota electrizante!"
     },
     "defeat": {
-      1: "Oh yeah! When it comes to Electric-type Pokémon, I'm number one in the world!",
-      2: "Hahaha! That was an electrifying battle, kid!",
-      3: "A Pokémon battle is war, and I have showed you first-hand combat!"
+      1: "¡Oh sí! Cuando se trata de Pokémon tipo Eléctrico, ¡soy el número uno!",
+      2: "¡Jajaja! ¡Menuda batalla electrizante, chaval!",
+      3: "Un combate Pokémon es la guerra, ¡y te he enseñado lo esencial, chaval!"
     }
   },
   "erika": {
     "encounter": {
-      1: "Ah, the weather is lovely here…\nOh, a battle? Very well then.",
-      2: "My Pokémon battling skills rival that of my flower arranging skills.",
-      3: "Oh, I hope the pleasant aroma of my Pokémon doesn't put me to sleep again…",
-      4: "Seeing flowers in a garden is so soothing."
+      1: "El tiempo es maravilloso aquí…\n¿Oh un combate? Perfecto, entonces.",
+      2: "Mis dotes como Entrenadora rivalizan mis dotes como florista.",
+      3: "Espero que el dulce aroma de mis Pokémon no me dé sueño…",
+      4: "Ver flores en un jardín es tan relajante."
     },
     "victory": {
-      1: "Oh! I concede defeat.",
-      2: "That match was most delightful.",
-      3: "Ah, it appears it is my loss…",
-      4: "Oh, my goodness."
+      1: "¡Oh! Reconozco mi derrota.",
+      2: "Este combate fue agradable.",
+      3: "Ah, es mi derrota…",
+      4: "Oh Dios mío."
     },
     "defeat": {
-      1: "I was afraid I would doze off…",
-      2: "Oh my, it seems my Grass Pokémon overwhelmed you.",
-      3: "That battle was such a soothing experience.",
-      4: "Oh… Is that all?"
+      1: "Tenía miedo de dormirme…",
+      2: "Oh, parece que mis Pokémon tipo planta te sobrecargaron.",
+      3: "Este combate fue una experiencia muy relajante.",
+      4: "Oh… ¿Eso es todo?"
     }
   },
   "janine": {
@@ -2513,11 +2758,11 @@ export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `It appears the time has finally come once again.\nYou know why you have come here, do you not?
                $You were drawn here, because you have been here before.\nCountless times.
-               $Though, perhaps it can be counted.\nTo be precise, this is in fact your 5,643,853rd cycle.
+               $Though, perhaps it can be counted.\nTo be precise, this is in fact your {{cycleCount}} cycle.
                $Each cycle your mind reverts to its former state.\nEven so, somehow, remnants of your former selves remain.
                $Until now you have yet to succeed, but I sense a different presence in you this time.\n
                $You are the only one here, though it is as if there is… another.
-               $Will you finally prove a formidable challenge to me?\nThe challenge I have longed for for millennia?
+               $Will you finally prove a formidable challenge to me?\nThe challenge I have longed after for millennia?
                $We begin.`,
   "firstStageWin": `I see. The presence I felt was indeed real.\nIt appears I no longer need to hold back.
                     $Do not disappoint me.`,

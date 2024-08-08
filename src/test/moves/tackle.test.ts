@@ -1,17 +1,13 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import {
-  CommandPhase,
-  EnemyCommandPhase, TurnEndPhase,
-} from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
-import {Stat} from "#app/data/pokemon-stat";
+import { Stat } from "#app/data/pokemon-stat";
+import { CommandPhase, EnemyCommandPhase, TurnEndPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Moves - Tackle", () => {
@@ -31,18 +27,18 @@ describe("Moves - Tackle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.TACKLE;
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(97);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GROWTH,Moves.GROWTH,Moves.GROWTH,Moves.GROWTH]);
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.startingLevel(1);
+    game.override.startingWave(97);
+    game.override.moveset([moveToUse]);
+    game.override.enemyMoveset([Moves.GROWTH,Moves.GROWTH,Moves.GROWTH,Moves.GROWTH]);
+    game.override.disableCrits();
   });
 
   it("TACKLE against ghost", async() => {
     const moveToUse = Moves.TACKLE;
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.GENGAR);
+    game.override.enemySpecies(Species.GENGAR);
     await game.startBattle([
       Species.MIGHTYENA,
     ]);

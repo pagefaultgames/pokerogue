@@ -33,7 +33,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
   protected scrollCursor: integer;
   protected optionCursors: integer[];
-  protected cursorObj: Phaser.GameObjects.NineSlice;
+  protected cursorObj: Phaser.GameObjects.NineSlice | null;
 
   protected optionsBg: Phaser.GameObjects.NineSlice;
   protected actionsBg: Phaser.GameObjects.NineSlice;
@@ -73,14 +73,14 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
    * @param scene - The BattleScene instance.
    * @param mode - The UI mode.
    */
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
     this.rowsToDisplay = 8;
   }
 
   getLocalStorageSetting(): object {
     // Retrieve the settings from local storage or use an empty object if none exist.
-    const settings: object = localStorage.hasOwnProperty(this.localStoragePropertyName) ? JSON.parse(localStorage.getItem(this.localStoragePropertyName)) : {};
+    const settings: object = localStorage.hasOwnProperty(this.localStoragePropertyName) ? JSON.parse(localStorage.getItem(this.localStoragePropertyName)!) : {}; // TODO: is this bang correct?
     return settings;
   }
 
@@ -442,7 +442,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
       switch (button) {
       case Button.ACTION:
         if (!this.optionCursors || !this.optionValueLabels) {
-          return;
+          return false; // TODO: is false correct as default? (previously was `undefined`)
         }
         if (this.settingBlacklisted.includes(setting) || !setting.includes("BUTTON_")) {
           success = false;
@@ -490,7 +490,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
         break;
       case Button.LEFT: // Move selection left within the current option set.
         if (!this.optionCursors || !this.optionValueLabels) {
-          return;
+          return false; // TODO: is false correct as default? (previously was `undefined`)
         }
         if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
           success = false;
@@ -500,7 +500,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
         break;
       case Button.RIGHT: // Move selection right within the current option set.
         if (!this.optionCursors || !this.optionValueLabels) {
-          return;
+          return false; // TODO: is false correct as default? (previously was `undefined`)
         }
         if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
           success = false;
@@ -526,7 +526,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
   resetScroll() {
     this.cursorObj?.destroy();
     this.cursorObj = null;
-    this.cursor = null;
+    this.cursor = 0;
     this.setCursor(0);
     this.setScrollCursor(0);
     this.updateSettingsScroll();
@@ -547,7 +547,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
     // Check if the cursor object exists, if not, create it.
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0); // Set the origin to the top-left corner.
       this.optionsContainer.add(this.cursorObj); // Add the cursor to the options container.
     }

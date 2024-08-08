@@ -1,13 +1,13 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
 import { CommandPhase, MessagePhase, TurnInitPhase } from "#app/phases";
+import i18next, { initI18n } from "#app/plugins/i18n";
+import GameManager from "#test/utils/gameManager";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import i18next, { initI18n } from "#app/plugins/i18n";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 
 describe("Ability Timing", () => {
@@ -26,14 +26,14 @@ describe("Ability Timing", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
 
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.PIDGEY);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INTIMIDATE);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.SPLASH));
+    game.override.enemySpecies(Species.PIDGEY);
+    game.override.enemyAbility(Abilities.INTIMIDATE);
+    game.override.enemyMoveset(SPLASH_ONLY);
 
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.ICE_BEAM]);
+    game.override.ability(Abilities.BALL_FETCH);
+    game.override.moveset([Moves.SPLASH, Moves.ICE_BEAM]);
   });
 
   it("should trigger after switch check", async() => {
