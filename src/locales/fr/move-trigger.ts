@@ -61,4 +61,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "suppressAbilities": "Le talent de {{pokemonName}}\na été rendu inactif !",
   "swapArenaTags": "Les effets affectant chaque côté du terrain\nont été échangés par {{pokemonName}} !",
   "exposedMove": "{{targetPokemonName}} est identifié\npar {{pokemonName}} !",
+  "safeguard": "{{targetName}} is protected by Safeguard!",
 } as const;

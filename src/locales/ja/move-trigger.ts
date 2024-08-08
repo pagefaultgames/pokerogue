@@ -61,4 +61,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "suppressAbilities": "{{pokemonName}}の　とくせいが　きかなくなった！",
   "swapArenaTags": "{{pokemonName}}は\nおたがいの　ばのこうかを　いれかえた！",
   "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
+  "safeguard": "{{targetName}} is protected by Safeguard!",
 } as const;

@@ -61,4 +61,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "suppressAbilities": "{{pokemonName}}'s ability\nwas suppressed!",
   "swapArenaTags": "{{pokemonName}} swapped the battle effects affecting each side of the field!",
   "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
+  "safeguard": "{{targetName}} is protected by Safeguard!",
 } as const;

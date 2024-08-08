@@ -61,4 +61,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "suppressAbilities": "{{pokemonName}}의\n특성이 효과를 발휘하지 못하게 되었다!",
   "swapArenaTags": "{{pokemonName}}[[는]]\n서로의 필드 효과를 교체했다!",
   "exposedMove": "{{pokemonName}}[[는]]\n{{targetPokemonName}}의 정체를 꿰뚫어 보았다!",
+  "safeguard": "{{targetName}} is protected by Safeguard!",
 } as const;

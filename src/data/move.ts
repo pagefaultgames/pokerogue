@@ -1,5 +1,5 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MessagePhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, StockpilingTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
@@ -1931,10 +1931,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
 
       if (user.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, targetSide)) {
         if (move.category === MoveCategory.STATUS) {
-          user.scene.pushPhase(
-            new MessagePhase(user.scene,
-              `${target.name} is protected by Safeguard!`,
-              0, false, 0), false);
+          user.scene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target)}));
         }
         return false;
       }
