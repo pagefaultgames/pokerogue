@@ -68,7 +68,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.hiddenAbilityIcon = abilityIcon;
 
     // favorite icon
-    const favoriteIcon = this.scene.add.image(1, 7, "shiny_star_small");
+    const favoriteIcon = this.scene.add.image(1, 7, "favorite");
     favoriteIcon.setOrigin(0, 0);
     favoriteIcon.setScale(0.5);
     favoriteIcon.setVisible(false);
