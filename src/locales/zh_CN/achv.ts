@@ -170,8 +170,8 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "在经典模式中通关游戏",
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
-    name: "Bring Your Child To Work Day",
-    description: "Beat the game in Classic Mode with at least one unevolved party member."
+    name: "带孩子来上班",
+    description: "通关经典模式时队伍中至少有一名未进化的宝可梦"
   },
 
   "MONO_GEN_ONE": {
