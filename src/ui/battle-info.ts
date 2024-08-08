@@ -10,6 +10,8 @@ import { getVariantTint } from "#app/data/variant";
 import { BattleStat } from "#app/data/battle-stat";
 import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
+
+import { Color } from "#app/enums/color.js";
 import i18next from "i18next";
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
@@ -677,6 +679,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       displayName = `${displayName.slice(0, displayName.endsWith(".") ? -2 : -1).trimEnd()}.`;
       nameSizeTest.setText(displayName);
       nameTextWidth = nameSizeTest.displayWidth;
+    }
+
+    //if it's a challenge, highlight in green the name of the opposing pokemon if it's usable
+    if (pokemon.scene.gameMode.isChallenge && !this.player && pokemon.isUsableInChallenge()) {
+      this.nameText.setColor(Color.GREEN);
     }
 
     nameSizeTest.destroy();
