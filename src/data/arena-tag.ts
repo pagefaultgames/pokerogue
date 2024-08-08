@@ -844,7 +844,30 @@ class HappyHourTag extends ArenaTag {
   }
 }
 
-export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
+class SafegaurdTag extends ArenaTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.SAFEGUARD, turnCount, Moves.SAFEGUARD, sourceId, side);
+  }
+
+  onAdd(arena: Arena): void {
+    if (this.side === ArenaTagSide.PLAYER) {
+      arena.scene.queueMessage("Your team cloaked itself in a mystical veil!");
+    } else {
+      arena.scene.queueMessage("Enemy team cloaked itself in a mystical veil!");
+    }
+  }
+
+  onRemove(arena: Arena): void {
+    if (this.side === ArenaTagSide.PLAYER) {
+      arena.scene.queueMessage("Your team is not longer protected by the mystical veil!");
+    } else {
+      arena.scene.queueMessage("Enemy team is not longer protected by the mystical veil!");
+    }
+  }
+}
+
+
+export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
   switch (tagType) {
   case ArenaTagType.MIST:
     return new MistTag(turnCount, sourceId, side);
@@ -889,6 +912,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new TailwindTag(turnCount, sourceId, side);
   case ArenaTagType.HAPPY_HOUR:
     return new HappyHourTag(turnCount, sourceId, side);
+  case ArenaTagType.SAFEGUARD:
+    return new SafegaurdTag(turnCount, sourceId, side);
   default:
     return null;
   }

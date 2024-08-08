@@ -4,7 +4,7 @@ import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, StockpilingTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
-import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
+import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects } from "./status-effect";
 import { getTypeResistances, Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
@@ -1918,6 +1918,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     const statusCheck = moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance;
+    const targetSide = target instanceof EnemyPokemon ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER;
     if (statusCheck) {
       const pokemon = this.selfTarget ? user : target;
       if (pokemon.status) {
@@ -1926,6 +1927,16 @@ export class StatusEffectAttr extends MoveEffectAttr {
         } else {
           return false;
         }
+      }
+
+      if (user.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, targetSide)) {
+        if (move.category === MoveCategory.STATUS) {
+          user.scene.pushPhase(
+            new MessagePhase(user.scene,
+              `${target.name} is protected by Safeguard!`,
+              0, false, 0), false);
+        }
+        return false;
       }
       if ((!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0))
         && pokemon.trySetStatus(this.effect, true, user, this.cureTurn)) {
@@ -6740,7 +6751,7 @@ export function initMoves() {
       .attr(FriendshipPowerAttr, true),
     new StatusMove(Moves.SAFEGUARD, Type.NORMAL, -1, 25, -1, 0, 2)
       .target(MoveTarget.USER_SIDE)
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.SAFEGUARD, 5, true, true),
     new StatusMove(Moves.PAIN_SPLIT, Type.NORMAL, -1, 20, -1, 0, 2)
       .attr(HpSplitAttr)
       .condition(failOnBossCondition),
