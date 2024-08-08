@@ -12,6 +12,7 @@ import { loadBattlerTag } from "../data/battler-tags";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 
 export default class PokemonData {
   public id: integer;
@@ -54,6 +55,7 @@ export default class PokemonData {
   public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
+  public mysteryEncounterData: MysteryEncounterPokemonData;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
@@ -108,6 +110,7 @@ export default class PokemonData {
         this.status = sourcePokemon.status;
         if (this.player) {
           this.summonData = sourcePokemon.summonData;
+          this.mysteryEncounterData = sourcePokemon.mysteryEncounterData;
         }
       }
     } else {
@@ -136,6 +139,14 @@ export default class PokemonData {
         } else {
           this.summonData.tags = [];
         }
+      }
+
+      this.mysteryEncounterData = new MysteryEncounterPokemonData();
+      if (!forHistory && source.mysteryEncounterData) {
+        this.mysteryEncounterData.spriteScale = source.mysteryEncounterData.spriteScale;
+        this.mysteryEncounterData.ability = source.mysteryEncounterData.ability;
+        this.mysteryEncounterData.passive = source.mysteryEncounterData.passive;
+        this.mysteryEncounterData.types = source.mysteryEncounterData.types;
       }
     }
   }

@@ -18,6 +18,7 @@ import { absoluteAvariceDialogue } from "#app/locales/en/mystery-encounters/abso
 import { aTrainersTestDialogue } from "#app/locales/en/mystery-encounters/a-trainers-test-dialogue";
 import { trashToTreasureDialogue } from "#app/locales/en/mystery-encounters/trash-to-treasure-dialogue";
 import { berriesAboundDialogue } from "#app/locales/en/mystery-encounters/berries-abound-dialogue";
+import { clowningAroundDialogue } from "#app/locales/en/mystery-encounters/clowning-around-dialogue";
 
 /**
  * Patterns that can be used:
@@ -60,5 +61,6 @@ export const mysteryEncounter = {
   absoluteAvarice: absoluteAvariceDialogue,
   aTrainersTest: aTrainersTestDialogue,
   trashToTreasure: trashToTreasureDialogue,
-  berriesAbound: berriesAboundDialogue
+  berriesAbound: berriesAboundDialogue,
+  clowningAround: clowningAroundDialogue
 } as const;

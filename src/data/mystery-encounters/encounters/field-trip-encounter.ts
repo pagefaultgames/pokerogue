@@ -95,7 +95,7 @@ export const FieldTripEncounter: IMysteryEncounter =
                     ];
                     setEncounterExp(scene, scene.getParty().map((p) => p.id), 50);
                   } else {
-                    encounter.setDialogueToken("pokeName", pokemon.name);
+                    encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
                     encounter.setDialogueToken("move", move.getName());
                     encounter.options[0].dialogue.selected = [
                       {
@@ -187,7 +187,7 @@ export const FieldTripEncounter: IMysteryEncounter =
                     ];
                     setEncounterExp(scene, scene.getParty().map((p) => p.id), 50);
                   } else {
-                    encounter.setDialogueToken("pokeName", pokemon.name);
+                    encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
                     encounter.setDialogueToken("move", move.getName());
                     encounter.options[1].dialogue.selected = [
                       {
@@ -273,7 +273,7 @@ export const FieldTripEncounter: IMysteryEncounter =
                     ];
                     setEncounterExp(scene, scene.getParty().map((p) => p.id), 50);
                   } else {
-                    encounter.setDialogueToken("pokeName", pokemon.name);
+                    encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
                     encounter.setDialogueToken("move", move.getName());
                     encounter.options[2].dialogue.selected = [
                       {

@@ -36,9 +36,9 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
     game.override.mysteryEncounterChance(100);
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
+    game.override.disableTrainerWaves(true);
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
@@ -72,6 +72,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
     game.override.startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 

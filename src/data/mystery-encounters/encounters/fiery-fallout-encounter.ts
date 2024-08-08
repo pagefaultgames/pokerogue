@@ -191,7 +191,7 @@ export const FieryFalloutEncounter: IMysteryEncounter =
           const chosenPokemon = burnable[roll];
           if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
             // Burn applied
-            encounter.setDialogueToken("burnedPokemon", chosenPokemon.name);
+            encounter.setDialogueToken("burnedPokemon", chosenPokemon.getNameToRender());
             queueEncounterMessage(scene, `${namespace}.option.2.target_burned`);
           }
         }
@@ -245,7 +245,7 @@ function giveLeadPokemonCharcoal(scene: BattleScene) {
   if (leadPokemon) {
     const charcoal = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FIRE]).type as AttackTypeBoosterModifierType;
     applyModifierTypeToPlayerPokemon(scene, leadPokemon, charcoal);
-    scene.currentBattle.mysteryEncounter.setDialogueToken("leadPokemon", leadPokemon.name);
+    scene.currentBattle.mysteryEncounter.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
     queueEncounterMessage(scene, `${namespace}.found_charcoal`);
   }
 }

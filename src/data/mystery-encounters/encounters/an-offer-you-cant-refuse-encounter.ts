@@ -62,7 +62,7 @@ export const AnOfferYouCantRefuseEncounter: IMysteryEncounter =
       const pokemon = getHighestStatTotalPlayerPokemon(scene, false);
       const price = scene.getWaveMoneyAmount(10);
 
-      encounter.setDialogueToken("strongestPokemon", pokemon.name);
+      encounter.setDialogueToken("strongestPokemon", pokemon.getNameToRender());
       encounter.setDialogueToken("price", price.toString());
 
       // Store pokemon and price

@@ -92,7 +92,7 @@ export const ThePokemonSalesmanEncounter: IMysteryEncounter =
         encounter.options[0].dialogue.buttonTooltip = `${namespace}.option.1.tooltip_shiny`;
       }
       const price = scene.getWaveMoneyAmount(priceMultiplier);
-      encounter.setDialogueToken("purchasePokemon", pokemon.name);
+      encounter.setDialogueToken("purchasePokemon", pokemon.getNameToRender());
       encounter.setDialogueToken("price", price.toString());
       encounter.misc = {
         price: price,

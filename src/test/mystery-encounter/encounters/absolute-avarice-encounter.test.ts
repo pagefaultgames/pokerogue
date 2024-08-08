@@ -33,9 +33,9 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
     game.override.mysteryEncounterChance(100);
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
+    game.override.disableTrainerWaves(true);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -81,6 +81,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of proper biomes", async () => {
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
     game.override.startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
@@ -96,6 +97,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
   });
 
   it("should spawn if player has enough berries", async () => {
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
     game.override.starterHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}]);
 
     await game.runToMysteryEncounter();
@@ -106,7 +108,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
   it("should remove all player's berries at the start of the encounter", async () => {
     game.override.starterHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}]);
 
-    await game.runToMysteryEncounter();
+    await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
     expect(scene.modifiers?.length).toBe(0);

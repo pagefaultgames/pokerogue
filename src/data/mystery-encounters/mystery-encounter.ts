@@ -305,7 +305,7 @@ export default class IMysteryEncounter implements IMysteryEncounter {
       }
     }
     if (this.primaryPokemon?.length > 0) {
-      this.setDialogueToken("primaryName", this.primaryPokemon.name);
+      this.setDialogueToken("primaryName", this.primaryPokemon.getNameToRender());
       for (const req of this.primaryPokemonRequirements) {
         if (!req.invertQuery) {
           const value = req.getDialogueToken(scene, this.primaryPokemon);
@@ -316,7 +316,7 @@ export default class IMysteryEncounter implements IMysteryEncounter {
       }
     }
     if (this.secondaryPokemonRequirements?.length > 0 && this.secondaryPokemon?.length > 0) {
-      this.setDialogueToken("secondaryName", this.secondaryPokemon[0].name);
+      this.setDialogueToken("secondaryName", this.secondaryPokemon[0].getNameToRender());
       for (const req of this.secondaryPokemonRequirements) {
         if (!req.invertQuery) {
           const value = req.getDialogueToken(scene, this.secondaryPokemon[0]);
@@ -342,7 +342,7 @@ export default class IMysteryEncounter implements IMysteryEncounter {
         }
       }
       if (opt.primaryPokemonRequirements?.length > 0 && opt.primaryPokemon?.length > 0) {
-        this.setDialogueToken("option" + j + "PrimaryName", opt.primaryPokemon.name);
+        this.setDialogueToken("option" + j + "PrimaryName", opt.primaryPokemon.getNameToRender());
         for (const req of opt.primaryPokemonRequirements) {
           if (!req.invertQuery) {
             const value = req.getDialogueToken(scene, opt.primaryPokemon);
@@ -353,7 +353,7 @@ export default class IMysteryEncounter implements IMysteryEncounter {
         }
       }
       if (opt.secondaryPokemonRequirements?.length > 0 && opt.secondaryPokemon?.length > 0) {
-        this.setDialogueToken("option" + j + "SecondaryName", opt.secondaryPokemon[0].name);
+        this.setDialogueToken("option" + j + "SecondaryName", opt.secondaryPokemon[0].getNameToRender());
         for (const req of opt.secondaryPokemonRequirements) {
           if (!req.invertQuery) {
             const value = req.getDialogueToken(scene, opt.secondaryPokemon[0]);

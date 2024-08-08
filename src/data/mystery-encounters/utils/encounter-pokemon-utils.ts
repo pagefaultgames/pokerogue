@@ -20,10 +20,6 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { Gender } from "#app/data/gender";
 
-export interface MysteryEncounterPokemonData {
-  spriteScale?: number
-}
-
 export function getSpriteKeysFromSpecies(species: Species, female?: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): { spriteKey: string, fileRoot: string } {
   const spriteKey = getPokemonSpecies(species).getSpriteKey(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
   const fileRoot = getPokemonSpecies(species).getSpriteAtlasPath(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
@@ -447,7 +443,7 @@ function failCatch(scene: BattleScene, pokemon: EnemyPokemon, originalY: number,
     scene.currentBattle.lastUsedPokeball = pokeballType;
     removePb(scene, pokeball);
 
-    scene.ui.showText(i18next.t("battle:pokemonBrokeFree", { pokemonName: pokemon.name }), null, () => resolve(), null, true);
+    scene.ui.showText(i18next.t("battle:pokemonBrokeFree", { pokemonName: pokemon.getNameToRender() }), null, () => resolve(), null, true);
   });
 }
 
@@ -516,7 +512,7 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
       Promise.all([pokemon.hideInfo(), scene.gameData.setPokemonCaught(pokemon)]).then(() => {
         if (scene.getParty().length === 6) {
           const promptRelease = () => {
-            scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.name }), null, () => {
+            scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
               scene.pokemonInfoContainer.makeRoomForConfirmUi();
               scene.ui.setMode(Mode.CONFIRM, () => {
                 scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, 0, (slotIndex: integer, _option: PartyOption) => {
@@ -544,7 +540,7 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
     };
 
     if (showCatchObtainMessage) {
-      scene.ui.showText(i18next.t(isObtain ? "battle:pokemonObtained" : "battle:pokemonCaught", { pokemonName: pokemon.name }), null, doPokemonCatchMenu, 0, true);
+      scene.ui.showText(i18next.t(isObtain ? "battle:pokemonObtained" : "battle:pokemonCaught", { pokemonName: pokemon.getNameToRender() }), null, doPokemonCatchMenu, 0, true);
     } else {
       doPokemonCatchMenu();
     }
@@ -581,7 +577,7 @@ export async function doPokemonFlee(scene: BattleScene, pokemon: EnemyPokemon): 
       onComplete: () => {
         pokemon.setVisible(false);
         scene.field.remove(pokemon, true);
-        showEncounterText(scene, i18next.t("battle:pokemonFled", { pokemonName: pokemon.name }), 600, false)
+        showEncounterText(scene, i18next.t("battle:pokemonFled", { pokemonName: pokemon.getNameToRender() }), 600, false)
           .then(() => {
             resolve();
           });
@@ -604,7 +600,7 @@ export function doPlayerFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise
       onComplete: () => {
         pokemon.setVisible(false);
         scene.field.remove(pokemon, true);
-        showEncounterText(scene, i18next.t("battle:playerFled", { pokemonName: pokemon.name }), 600, false)
+        showEncounterText(scene, i18next.t("battle:playerFled", { pokemonName: pokemon.getNameToRender() }), 600, false)
           .then(() => {
             resolve();
           });

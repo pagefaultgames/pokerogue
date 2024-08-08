@@ -33,7 +33,6 @@ describe("Department Store Sale - Mystery Encounter", () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
     game.override.mysteryEncounterChance(100);
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
     game.override.disableTrainerWaves(true);
@@ -73,6 +72,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of CIVILIZATION_ENCOUNTER_BIOMES", async () => {
+    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
     game.override.startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 

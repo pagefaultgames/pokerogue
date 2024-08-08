@@ -36,6 +36,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
+    game.override.disableTrainerWaves(true);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -65,6 +66,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of sea biome", async () => {
+    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
     game.override.startingBiome(Biome.MOUNTAIN);
     await game.runToMysteryEncounter();
 
