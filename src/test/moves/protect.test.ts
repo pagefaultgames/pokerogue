@@ -46,7 +46,7 @@ describe("Moves - Protect", () => {
     async () => {
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
 
@@ -64,7 +64,7 @@ describe("Moves - Protect", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
 
@@ -82,7 +82,7 @@ describe("Moves - Protect", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
 
@@ -99,9 +99,9 @@ describe("Moves - Protect", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
 

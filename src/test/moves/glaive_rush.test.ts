@@ -132,8 +132,8 @@ describe("Moves - Glaive Rush", () => {
   it("secondary effects don't activate if move fails", async() => {
     game.override.moveset([Moves.SHADOW_SNEAK, Moves.PROTECT, Moves.SPLASH, Moves.GLAIVE_RUSH]);
     await game.startBattle();
-    const player = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
     player.hp = 1000;
 
