@@ -1,14 +1,10 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import overrides from "#app/overrides";
+import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
-import {
-  CommandPhase,
-  TurnEndPhase,
-} from "#app/phases";
+import { CommandPhase, TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { allAbilities } from "#app/data/ability.js";
 import { Abilities } from "#app/enums/abilities.js";
@@ -30,11 +26,11 @@ describe("Abilities - Pastel Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TOXIC_THREAD, Moves.TOXIC_THREAD, Moves.TOXIC_THREAD, Moves.TOXIC_THREAD]);
+    game.override.battleType("double");
+    game.override.moveset([Moves.SPLASH]);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyMoveset([Moves.TOXIC_THREAD, Moves.TOXIC_THREAD, Moves.TOXIC_THREAD, Moves.TOXIC_THREAD]);
   });
 
   it("prevents the user and its allies from being afflicted by poison", async () => {
@@ -55,7 +51,7 @@ describe("Abilities - Pastel Veil", () => {
 
   it("it heals the poisoned status condition of allies if user is sent out into battle", async () => {
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.GALAR_PONYTA]);
-    const ponyta = game.scene.getParty().find(p => p.species.speciesId === Species.GALAR_PONYTA);
+    const ponyta = game.scene.getParty().find(p => p.species.speciesId === Species.GALAR_PONYTA)!;
 
     vi.spyOn(ponyta, "getAbility").mockReturnValue(allAbilities[Abilities.PASTEL_VEIL]);
 
@@ -70,7 +66,7 @@ describe("Abilities - Pastel Veil", () => {
     const poisonedMon = game.scene.getPlayerField().find(p => p.status?.effect === StatusEffect.POISON);
 
     await game.phaseInterceptor.to(CommandPhase);
-    game.doAttack(getMovePosition(game.scene, (poisonedMon.getBattlerIndex() as BattlerIndex.PLAYER | BattlerIndex.PLAYER_2), Moves.SPLASH));
+    game.doAttack(getMovePosition(game.scene, (poisonedMon!.getBattlerIndex() as BattlerIndex.PLAYER | BattlerIndex.PLAYER_2), Moves.SPLASH));
     game.doSwitchPokemon(2);
     await game.phaseInterceptor.to(TurnEndPhase);
 

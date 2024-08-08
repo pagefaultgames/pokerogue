@@ -28,21 +28,21 @@ export enum Region {
   PALDEA
 }
 
-export function getPokemonSpecies(species: Species): PokemonSpecies {
+export function getPokemonSpecies(species: Species | Species[]): PokemonSpecies {
   // If a special pool (named trainers) is used here it CAN happen that they have a array as species (which means choose one of those two). So we catch that with this code block
   if (Array.isArray(species)) {
     // Pick a random species from the list
     species = species[Math.floor(Math.random() * species.length)];
   }
   if (species >= 2000) {
-    return allSpecies.find(s => s.speciesId === species);
+    return allSpecies.find(s => s.speciesId === species)!; // TODO: is this bang correct?
   }
   return allSpecies[species - 1];
 }
 
 export function getPokemonSpeciesForm(species: Species, formIndex: integer): PokemonSpeciesForm {
   const retSpecies: PokemonSpecies = species >= 2000
-    ? allSpecies.find(s => s.speciesId === species)
+    ? allSpecies.find(s => s.speciesId === species)! // TODO: is the bang correct?
     : allSpecies[species - 1];
   if (formIndex < retSpecies.forms?.length) {
     return retSpecies.forms[formIndex];
@@ -97,7 +97,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
           fragB = fragB.slice(1);
         } else {
           const newCharMatch = new RegExp(`[^${lastCharA}]`).exec(fragB);
-          if (newCharMatch?.index > 0) {
+          if (newCharMatch?.index !== undefined && newCharMatch.index > 0) {
             fragB = fragB.slice(newCharMatch.index);
           }
         }
@@ -125,7 +125,7 @@ export abstract class PokemonSpeciesForm {
   public formIndex: integer;
   public generation: integer;
   public type1: Type;
-  public type2: Type;
+  public type2: Type | null;
   public height: number;
   public weight: number;
   public ability1: Abilities;
@@ -139,7 +139,7 @@ export abstract class PokemonSpeciesForm {
   public genderDiffs: boolean;
   public isStarterSelectable: boolean;
 
-  constructor(type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
+  constructor(type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
     catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs: boolean, isStarterSelectable: boolean) {
     this.type1 = type1;
@@ -267,7 +267,7 @@ export abstract class PokemonSpeciesForm {
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
-  getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer, back?: boolean): string {
+  getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean, variant: integer = 0, back?: boolean): string {
     if (formIndex === undefined || this instanceof PokemonForm) {
       formIndex = this.formIndex;
     }
@@ -281,7 +281,7 @@ export abstract class PokemonSpeciesForm {
     `${back ? "back__" : ""}${baseSpriteKey}`.split("__").map(p => config ? config = config[p] : null);
     const variantSet = config as VariantSet;
 
-    return `${back ? "back__" : ""}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? "shiny__" : ""}${baseSpriteKey}${shiny && variantSet && variantSet[variant || 0] === 2 ? `_${variant + 1}` : ""}`;
+    return `${back ? "back__" : ""}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? "shiny__" : ""}${baseSpriteKey}${shiny && variantSet && variantSet[variant] === 2 ? `_${variant + 1}` : ""}`;
   }
 
   getSpriteKey(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
@@ -297,10 +297,10 @@ export abstract class PokemonSpeciesForm {
    * @returns species id if no additional forms, index with formkey if a pokemon with a form
    */
   getVariantDataIndex(formIndex?: integer) {
-    let formkey = null;
-    let variantDataIndex: integer|string = this.speciesId;
+    let formkey: string | null = null;
+    let variantDataIndex: integer | string = this.speciesId;
     const species = getPokemonSpecies(this.speciesId);
-    if (species.forms.length > 0) {
+    if (species.forms.length > 0 && formIndex !== undefined) {
       formkey = species.forms[formIndex]?.formSpriteKey;
       if (formkey) {
         variantDataIndex = `${this.speciesId}-${formkey}`;
@@ -311,7 +311,7 @@ export abstract class PokemonSpeciesForm {
 
   getIconAtlasKey(formIndex?: integer, shiny?: boolean, variant?: integer): string {
     const variantDataIndex = this.getVariantDataIndex(formIndex);
-    const isVariant = shiny && variantData[variantDataIndex] && variantData[variantDataIndex][variant];
+    const isVariant = shiny && variantData[variantDataIndex] && (variant !== undefined && variantData[variantDataIndex][variant]);
     return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
   }
 
@@ -324,7 +324,7 @@ export abstract class PokemonSpeciesForm {
 
     let ret = this.speciesId.toString();
 
-    const isVariant = shiny && variantData[variantDataIndex] && variantData[variantDataIndex][variant];
+    const isVariant = shiny && variantData[variantDataIndex] && (variant !== undefined && variantData[variantDataIndex][variant]);
 
     if (shiny && !isVariant) {
       ret += "s";
@@ -382,7 +382,7 @@ export abstract class PokemonSpeciesForm {
     let ret = speciesId.toString();
     const forms = getPokemonSpecies(speciesId).forms;
     if (forms.length) {
-      if (formIndex >= forms.length) {
+      if (formIndex !== undefined && formIndex >= forms.length) {
         console.warn(`Attempted accessing form with index ${formIndex} of species ${getPokemonSpecies(speciesId).getName()} with only ${forms.length || 0} forms`);
         formIndex = Math.min(formIndex, forms.length - 1);
       }
@@ -478,7 +478,7 @@ export abstract class PokemonSpeciesForm {
         let config = variantData;
         spritePath.split("/").map(p => config ? config = config[p] : null);
         const variantSet = config as VariantSet;
-        if (variantSet && variantSet[variant] === 1) {
+        if (variantSet && (variant !== undefined && variantSet[variant] === 1)) {
           const populateVariantColors = (key: string): Promise<void> => {
             return new Promise(resolve => {
               if (variantColorCache.hasOwnProperty(key)) {
@@ -507,7 +507,7 @@ export abstract class PokemonSpeciesForm {
 
   cry(scene: BattleScene, soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound {
     const cryKey = this.getCryKey(this.formIndex);
-    let cry = scene.sound.get(cryKey) as AnySound;
+    let cry: AnySound | null = scene.sound.get(cryKey) as AnySound;
     if (cry?.pendingRemove) {
       cry = null;
     }
@@ -532,30 +532,32 @@ export abstract class PokemonSpeciesForm {
     const frame = sourceFrame;
     canvas.width = frame.width;
     canvas.height = frame.height;
-    context.drawImage(sourceImage, frame.cutX, frame.cutY, frame.width, frame.height, 0, 0, frame.width, frame.height);
-    const imageData = context.getImageData(frame.cutX, frame.cutY, frame.width, frame.height);
-    const pixelData = imageData.data;
+    context?.drawImage(sourceImage, frame.cutX, frame.cutY, frame.width, frame.height, 0, 0, frame.width, frame.height);
+    const imageData = context?.getImageData(frame.cutX, frame.cutY, frame.width, frame.height);
+    const pixelData = imageData?.data;
+    const pixelColors: number[] = [];
 
-    for (let i = 0; i < pixelData.length; i += 4) {
-      if (pixelData[i + 3]) {
-        const pixel = pixelData.slice(i, i + 4);
-        const [ r, g, b, a ] = pixel;
-        if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b)) {
-          spriteColors.push([ r, g, b, a ]);
+    if (pixelData?.length !== undefined) {
+      for (let i = 0; i < pixelData.length; i += 4) {
+        if (pixelData[i + 3]) {
+          const pixel = pixelData.slice(i, i + 4);
+          const [ r, g, b, a ] = pixel;
+          if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b)) {
+            spriteColors.push([ r, g, b, a ]);
+          }
         }
       }
-    }
 
-    const pixelColors = [];
-    for (let i = 0; i < pixelData.length; i += 4) {
-      const total = pixelData.slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
-      if (!total) {
-        continue;
+      for (let i = 0; i < pixelData.length; i += 4) {
+        const total = pixelData.slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
+        if (!total) {
+          continue;
+        }
+        pixelColors.push(argbFromRgba({ r: pixelData[i], g: pixelData[i + 1], b: pixelData[i + 2], a: pixelData[i + 3] }));
       }
-      pixelColors.push(argbFromRgba({ r: pixelData[i], g: pixelData[i + 1], b: pixelData[i + 2], a: pixelData[i + 3] }));
     }
 
-    let paletteColors: Map<number, number>;
+    let paletteColors: Map<number, number> = new Map();
 
     const originalRandom = Math.random;
     Math.random = () => Phaser.Math.RND.realInRange(0, 1);
@@ -577,15 +579,15 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   public mythical: boolean;
   public species: string;
   public growthRate: GrowthRate;
-  public malePercent: number;
+  public malePercent: number | null;
   public genderDiffs: boolean;
   public canChangeForm: boolean;
   public forms: PokemonForm[];
 
   constructor(id: Species, generation: integer, subLegendary: boolean, legendary: boolean, mythical: boolean, species: string,
-    type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
+    type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
-    catchRate: integer, baseFriendship: integer, baseExp: integer, growthRate: GrowthRate, malePercent: number,
+    catchRate: integer, baseFriendship: integer, baseExp: integer, growthRate: GrowthRate, malePercent: number | null,
     genderDiffs: boolean, canChangeForm?: boolean, ...forms: PokemonForm[]) {
     super(type1, type2, height, weight, ability1, ability2, abilityHidden, baseTotal, baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd,
       catchRate, baseFriendship, baseExp, genderDiffs, false);
@@ -614,7 +616,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   getName(formIndex?: integer): string {
     if (formIndex !== undefined && this.forms.length) {
       const form = this.forms[formIndex];
-      let key: string;
+      let key: string | null;
       switch (form.formKey) {
       case SpeciesFormKey.MEGA:
       case SpeciesFormKey.PRIMAL:
@@ -626,6 +628,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       default:
         if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
           key = "gigantamax";
+        } else {
+          key = null;
         }
       }
 
@@ -713,11 +717,11 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
             evolutionChance = Math.min(minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance), 1);
           }
         } else {
-          const preferredMinLevel = Math.max((ev.level - 1) + ev.wildDelay * this.getStrengthLevelDiff(strength), 1);
+          const preferredMinLevel = Math.max((ev.level - 1) + (ev.wildDelay!) * this.getStrengthLevelDiff(strength), 1); // TODO: is the bang correct?
           let evolutionLevel = Math.max(ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2), 1);
 
           if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
-            const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId).level;
+            const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId)!.level; // TODO: is the bang correct?
             if (prevolutionLevel > 1) {
               evolutionLevel = prevolutionLevel;
             }
@@ -750,15 +754,15 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
     for (const weight of evolutionPool.keys()) {
       if (randValue < weight) {
-        return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true, forTrainer, strength);
+        return getPokemonSpecies(evolutionPool.get(weight)!).getSpeciesForLevel(level, true, forTrainer, strength); // TODO: is the bang correct?
       }
     }
 
     return this.speciesId;
   }
 
-  getEvolutionLevels() {
-    const evolutionLevels = [];
+  getEvolutionLevels(): [Species, integer][] {
+    const evolutionLevels: [Species, integer][] = [];
 
     //console.log(Species[this.speciesId], pokemonEvolutions[this.speciesId])
 
@@ -778,8 +782,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return evolutionLevels;
   }
 
-  getPrevolutionLevels() {
-    const prevolutionLevels = [];
+  getPrevolutionLevels(): [Species, integer][] {
+    const prevolutionLevels: [Species, integer][] = [];
 
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
     for (const p of allEvolvingPokemon) {
@@ -801,18 +805,18 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
   // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
   getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): [Species, integer][] {
-    const ret = [];
+    const ret: [Species, integer][] = [];
     if (pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
       const prevolutionLevels = this.getPrevolutionLevels().reverse();
       const levelDiff = player ? 0 : forTrainer || isBoss ? forTrainer && isBoss ? 2.5 : 5 : 10;
       ret.push([ prevolutionLevels[0][0], 1 ]);
       for (let l = 1; l < prevolutionLevels.length; l++) {
         const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0]].find(e => e.speciesId === prevolutionLevels[l][0]);
-        ret.push([ prevolutionLevels[l][0], Math.min(Math.max(evolution.level + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution.wildDelay, 0.5) * 5) - 1, 2, evolution.level), currentLevel - 1) ]);
+        ret.push([ prevolutionLevels[l][0], Math.min(Math.max((evolution?.level!) + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay!), 0.5) * 5) - 1, 2, (evolution?.level!)), currentLevel - 1) ]); // TODO: are those bangs correct?
       }
       const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
       const evolution = pokemonEvolutions[prevolutionLevels[prevolutionLevels.length - 1][0]].find(e => e.speciesId === this.speciesId);
-      ret.push([ this.speciesId, Math.min(Math.max(lastPrevolutionLevel + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution.wildDelay, 0.5) * 5), lastPrevolutionLevel + 1, evolution.level), currentLevel) ]);
+      ret.push([ this.speciesId, Math.min(Math.max(lastPrevolutionLevel + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay!), 0.5) * 5), lastPrevolutionLevel + 1, (evolution?.level!)), currentLevel) ]); // TODO: are those bangs correct?
     } else {
       ret.push([ this.speciesId, 1 ]);
     }
@@ -853,7 +857,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   getFormSpriteKey(formIndex?: integer) {
-    if (this.forms.length && formIndex >= this.forms.length) {
+    if (this.forms.length && (formIndex !== undefined && formIndex >= this.forms.length)) {
       console.warn(`Attempted accessing form with index ${formIndex} of species ${this.getName()} with only ${this.forms.length || 0} forms`);
       formIndex = Math.min(formIndex, this.forms.length - 1);
     }
@@ -866,14 +870,14 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 export class PokemonForm extends PokemonSpeciesForm {
   public formName: string;
   public formKey: string;
-  public formSpriteKey: string;
+  public formSpriteKey: string | null;
 
   // This is a collection of form keys that have in-run form changes, but should still be separately selectable from the start screen
   private starterSelectableKeys: string[] = ["10", "50", "10-pc", "50-pc", "red", "orange", "yellow", "green", "blue", "indigo", "violet"];
 
-  constructor(formName: string, formKey: string, type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
+  constructor(formName: string, formKey: string, type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
-    catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs?: boolean, formSpriteKey?: string, isStarterSelectable?: boolean, ) {
+    catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs?: boolean, formSpriteKey?: string | null, isStarterSelectable?: boolean, ) {
     super(type1, type2, height, weight, ability1, ability2, abilityHidden, baseTotal, baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd,
       catchRate, baseFriendship, baseExp, !!genderDiffs, (!!isStarterSelectable || !formKey));
     this.formName = formName;
@@ -2725,8 +2729,8 @@ export const speciesStarters = {
   [Species.VOLTORB]: 2,
   [Species.EXEGGCUTE]: 3,
   [Species.CUBONE]: 3,
-  [Species.HITMONLEE]: 4,
-  [Species.HITMONCHAN]: 4,
+  [Species.HITMONLEE]: 5,
+  [Species.HITMONCHAN]: 5,
   [Species.LICKITUNG]: 3,
   [Species.KOFFING]: 2,
   [Species.RHYHORN]: 3,
@@ -2738,7 +2742,7 @@ export const speciesStarters = {
   [Species.STARYU]: 3,
   [Species.MR_MIME]: 3,
   [Species.SCYTHER]: 5,
-  [Species.JYNX]: 3,
+  [Species.JYNX]: 4,
   [Species.ELECTABUZZ]: 4,
   [Species.MAGMAR]: 4,
   [Species.PINSIR]: 4,
@@ -2765,7 +2769,7 @@ export const speciesStarters = {
   [Species.SENTRET]: 1,
   [Species.HOOTHOOT]: 2,
   [Species.LEDYBA]: 1,
-  [Species.SPINARAK]: 2,
+  [Species.SPINARAK]: 1,
   [Species.CHINCHOU]: 2,
   [Species.PICHU]: 2,
   [Species.CLEFFA]: 2,
@@ -2805,8 +2809,8 @@ export const speciesStarters = {
   [Species.PHANPY]: 3,
   [Species.STANTLER]: 3,
   [Species.SMEARGLE]: 1,
-  [Species.TYROGUE]: 2,
-  [Species.SMOOCHUM]: 2,
+  [Species.TYROGUE]: 3,
+  [Species.SMOOCHUM]: 3,
   [Species.ELEKID]: 3,
   [Species.MAGBY]: 3,
   [Species.MILTANK]: 4,
@@ -2819,7 +2823,7 @@ export const speciesStarters = {
   [Species.CELEBI]: 6,
 
   [Species.TREECKO]: 3,
-  [Species.TORCHIC]: 3,
+  [Species.TORCHIC]: 4,
   [Species.MUDKIP]: 3,
   [Species.POOCHYENA]: 2,
   [Species.ZIGZAGOON]: 2,
@@ -2898,7 +2902,7 @@ export const speciesStarters = {
   [Species.CHIMCHAR]: 3,
   [Species.PIPLUP]: 3,
   [Species.STARLY]: 3,
-  [Species.BIDOOF]: 3,
+  [Species.BIDOOF]: 2,
   [Species.KRICKETOT]: 1,
   [Species.SHINX]: 2,
   [Species.BUDEW]: 3,
@@ -2986,7 +2990,7 @@ export const speciesStarters = {
   [Species.ZORUA]: 3,
   [Species.MINCCINO]: 3,
   [Species.GOTHITA]: 3,
-  [Species.SOLOSIS]: 4,
+  [Species.SOLOSIS]: 3,
   [Species.DUCKLETT]: 2,
   [Species.VANILLITE]: 3,
   [Species.DEERLING]: 2,
@@ -3205,7 +3209,7 @@ export const speciesStarters = {
   [Species.LECHONK]: 2,
   [Species.TAROUNTULA]: 1,
   [Species.NYMBLE]: 3,
-  [Species.PAWMI]: 4,
+  [Species.PAWMI]: 3,
   [Species.TANDEMAUS]: 4,
   [Species.FIDOUGH]: 2,
   [Species.SMOLIV]: 3,
@@ -3319,14 +3323,14 @@ export const starterPassiveAbilities = {
   [Species.SQUIRTLE]: Abilities.STURDY,
   [Species.CATERPIE]: Abilities.MAGICIAN,
   [Species.WEEDLE]: Abilities.TINTED_LENS,
-  [Species.PIDGEY]: Abilities.GALE_WINGS,
+  [Species.PIDGEY]: Abilities.FLARE_BOOST,
   [Species.RATTATA]: Abilities.STRONG_JAW,
   [Species.SPEAROW]: Abilities.MOXIE,
   [Species.EKANS]: Abilities.REGENERATOR,
   [Species.SANDSHREW]: Abilities.TOUGH_CLAWS,
   [Species.NIDORAN_F]: Abilities.FLARE_BOOST,
   [Species.NIDORAN_M]: Abilities.GUTS,
-  [Species.VULPIX]: Abilities.SOLAR_POWER,
+  [Species.VULPIX]: Abilities.FUR_COAT,
   [Species.ZUBAT]: Abilities.INTIMIDATE,
   [Species.ODDISH]: Abilities.TRIAGE,
   [Species.PARAS]: Abilities.TRIAGE,
@@ -3345,16 +3349,16 @@ export const starterPassiveAbilities = {
   [Species.PONYTA]: Abilities.MAGIC_GUARD,
   [Species.SLOWPOKE]: Abilities.UNAWARE,
   [Species.MAGNEMITE]: Abilities.LEVITATE,
-  [Species.FARFETCHD]: Abilities.HUGE_POWER,
+  [Species.FARFETCHD]: Abilities.SNIPER,
   [Species.DODUO]: Abilities.PARENTAL_BOND,
   [Species.SEEL]: Abilities.WATER_BUBBLE,
   [Species.GRIMER]: Abilities.WATER_ABSORB,
   [Species.SHELLDER]: Abilities.ICE_SCALES,
   [Species.GASTLY]: Abilities.SHADOW_SHIELD,
   [Species.ONIX]: Abilities.ROCKY_PAYLOAD,
-  [Species.DROWZEE]: Abilities.BAD_DREAMS,
+  [Species.DROWZEE]: Abilities.MAGICIAN,
   [Species.KRABBY]: Abilities.UNBURDEN,
-  [Species.VOLTORB]: Abilities.ELECTRIC_SURGE,
+  [Species.VOLTORB]: Abilities.TRANSISTOR,
   [Species.EXEGGCUTE]: Abilities.RIPEN,
   [Species.CUBONE]: Abilities.PARENTAL_BOND,
   [Species.LICKITUNG]: Abilities.THICK_FAT,
@@ -3374,7 +3378,7 @@ export const starterPassiveAbilities = {
   [Species.EEVEE]: Abilities.SIMPLE,
   [Species.PORYGON]: Abilities.PROTEAN,
   [Species.OMANYTE]: Abilities.STURDY,
-  [Species.KABUTO]: Abilities.SHARPNESS,
+  [Species.KABUTO]: Abilities.TOUGH_CLAWS,
   [Species.AERODACTYL]: Abilities.ORICHALCUM_PULSE,
   [Species.ARTICUNO]: Abilities.SNOW_WARNING,
   [Species.ZAPDOS]: Abilities.DRIZZLE,
@@ -3476,7 +3480,7 @@ export const starterPassiveAbilities = {
   [Species.CACNEA]: Abilities.SAND_RUSH,
   [Species.SWABLU]: Abilities.ADAPTABILITY,
   [Species.ZANGOOSE]: Abilities.POISON_HEAL,
-  [Species.SEVIPER]: Abilities.INTIMIDATE,
+  [Species.SEVIPER]: Abilities.MULTISCALE,
   [Species.LUNATONE]: Abilities.SHADOW_SHIELD,
   [Species.SOLROCK]: Abilities.DROUGHT,
   [Species.BARBOACH]: Abilities.SIMPLE,
@@ -3495,16 +3499,16 @@ export const starterPassiveAbilities = {
   [Species.SNORUNT]: Abilities.SNOW_WARNING,
   [Species.SPHEAL]: Abilities.UNAWARE,
   [Species.CLAMPERL]: Abilities.DRIZZLE,
-  [Species.RELICANTH]: Abilities.SOLID_ROCK,
+  [Species.RELICANTH]: Abilities.PRIMORDIAL_SEA,
   [Species.LUVDISC]: Abilities.MULTISCALE,
-  [Species.BAGON]: Abilities.ADAPTABILITY,
+  [Species.BAGON]: Abilities.DRAGONS_MAW,
   [Species.BELDUM]: Abilities.LEVITATE,
   [Species.REGIROCK]: Abilities.SAND_STREAM,
   [Species.REGICE]: Abilities.SNOW_WARNING,
   [Species.REGISTEEL]: Abilities.FILTER,
-  [Species.LATIAS]: Abilities.SOUL_HEART,
+  [Species.LATIAS]: Abilities.PRISM_ARMOR,
   [Species.LATIOS]: Abilities.TINTED_LENS,
-  [Species.KYOGRE]: Abilities.RAIN_DISH,
+  [Species.KYOGRE]: Abilities.MOLD_BREAKER,
   [Species.GROUDON]: Abilities.TURBOBLAZE,
   [Species.RAYQUAZA]: Abilities.UNNERVE,
   [Species.JIRACHI]: Abilities.COMATOSE,
@@ -3523,7 +3527,7 @@ export const starterPassiveAbilities = {
   [Species.COMBEE]: Abilities.INTIMIDATE,
   [Species.PACHIRISU]: Abilities.HONEY_GATHER,
   [Species.BUIZEL]: Abilities.MOXIE,
-  [Species.CHERUBI]: Abilities.DROUGHT,
+  [Species.CHERUBI]: Abilities.ORICHALCUM_PULSE,
   [Species.SHELLOS]: Abilities.REGENERATOR,
   [Species.DRIFLOON]: Abilities.MAGIC_GUARD,
   [Species.BUNEARY]: Abilities.ADAPTABILITY,
@@ -3537,13 +3541,13 @@ export const starterPassiveAbilities = {
   [Species.CHATOT]: Abilities.PUNK_ROCK,
   [Species.SPIRITOMB]: Abilities.VESSEL_OF_RUIN,
   [Species.GIBLE]: Abilities.SAND_STREAM,
-  [Species.MUNCHLAX]: Abilities.RIPEN,
+  [Species.MUNCHLAX]: Abilities.HARVEST,
   [Species.RIOLU]: Abilities.MINDS_EYE,
   [Species.HIPPOPOTAS]: Abilities.UNAWARE,
   [Species.SKORUPI]: Abilities.SUPER_LUCK,
   [Species.CROAGUNK]: Abilities.MOXIE,
   [Species.CARNIVINE]: Abilities.ARENA_TRAP,
-  [Species.FINNEON]: Abilities.DRIZZLE,
+  [Species.FINNEON]: Abilities.WATER_BUBBLE,
   [Species.MANTYKE]: Abilities.UNAWARE,
   [Species.SNOVER]: Abilities.THICK_FAT,
   [Species.ROTOM]: Abilities.HADRON_ENGINE,
@@ -3557,7 +3561,7 @@ export const starterPassiveAbilities = {
   [Species.GIRATINA]: Abilities.SHADOW_SHIELD,
   [Species.CRESSELIA]: Abilities.MAGIC_BOUNCE,
   [Species.PHIONE]: Abilities.SIMPLE,
-  [Species.MANAPHY]: Abilities.SIMPLE,
+  [Species.MANAPHY]: Abilities.PRIMORDIAL_SEA,
   [Species.DARKRAI]: Abilities.UNNERVE,
   [Species.SHAYMIN]: Abilities.WIND_RIDER,
   [Species.ARCEUS]: Abilities.ADAPTABILITY,
@@ -3590,13 +3594,13 @@ export const starterPassiveAbilities = {
   [Species.SANDILE]: Abilities.TOUGH_CLAWS,
   [Species.DARUMAKA]: Abilities.GORILLA_TACTICS,
   [Species.MARACTUS]: Abilities.WELL_BAKED_BODY,
-  [Species.DWEBBLE]: Abilities.ANGER_SHELL,
+  [Species.DWEBBLE]: Abilities.ROCKY_PAYLOAD,
   [Species.SCRAGGY]: Abilities.PROTEAN,
-  [Species.SIGILYPH]: Abilities.MAGICIAN,
+  [Species.SIGILYPH]: Abilities.FLARE_BOOST,
   [Species.YAMASK]: Abilities.PURIFYING_SALT,
-  [Species.TIRTOUGA]: Abilities.ANGER_SHELL,
+  [Species.TIRTOUGA]: Abilities.WATER_ABSORB,
   [Species.ARCHEN]: Abilities.MULTISCALE,
-  [Species.TRUBBISH]: Abilities.TOXIC_DEBRIS,
+  [Species.TRUBBISH]: Abilities.NEUTRALIZING_GAS,
   [Species.ZORUA]: Abilities.DARK_AURA,
   [Species.MINCCINO]: Abilities.FUR_COAT,
   [Species.GOTHITA]: Abilities.UNNERVE,
@@ -3611,7 +3615,7 @@ export const starterPassiveAbilities = {
   [Species.ALOMOMOLA]: Abilities.MULTISCALE,
   [Species.JOLTIK]: Abilities.TRANSISTOR,
   [Species.FERROSEED]: Abilities.ROUGH_SKIN,
-  [Species.KLINK]: Abilities.STEELWORKER,
+  [Species.KLINK]: Abilities.STEELY_SPIRIT,
   [Species.TYNAMO]: Abilities.POISON_HEAL,
   [Species.ELGYEM]: Abilities.PRISM_ARMOR,
   [Species.LITWICK]: Abilities.SOUL_HEART,
@@ -3625,7 +3629,7 @@ export const starterPassiveAbilities = {
   [Species.GOLETT]: Abilities.SHADOW_SHIELD,
   [Species.PAWNIARD]: Abilities.SWORD_OF_RUIN,
   [Species.BOUFFALANT]: Abilities.ROCK_HEAD,
-  [Species.RUFFLET]: Abilities.GALE_WINGS,
+  [Species.RUFFLET]: Abilities.SPEED_BOOST,
   [Species.VULLABY]: Abilities.THICK_FAT,
   [Species.HEATMOR]: Abilities.CONTRARY,
   [Species.DURANT]: Abilities.COMPOUND_EYES,
@@ -3651,12 +3655,12 @@ export const starterPassiveAbilities = {
   [Species.SCATTERBUG]: Abilities.PRANKSTER,
   [Species.LITLEO]: Abilities.BEAST_BOOST,
   [Species.FLABEBE]: Abilities.GRASSY_SURGE,
-  [Species.SKIDDO]: Abilities.GRASSY_SURGE,
+  [Species.SKIDDO]: Abilities.SEED_SOWER,
   [Species.PANCHAM]: Abilities.FUR_COAT,
   [Species.FURFROU]: Abilities.FLUFFY,
   [Species.ESPURR]: Abilities.FUR_COAT,
   [Species.HONEDGE]: Abilities.SHARPNESS,
-  [Species.SPRITZEE]: Abilities.MISTY_SURGE,
+  [Species.SPRITZEE]: Abilities.FUR_COAT,
   [Species.SWIRLIX]: Abilities.WELL_BAKED_BODY,
   [Species.INKAY]: Abilities.UNNERVE,
   [Species.BINACLE]: Abilities.SAP_SIPPER,
@@ -3670,17 +3674,17 @@ export const starterPassiveAbilities = {
   [Species.CARBINK]: Abilities.SOLID_ROCK,
   [Species.GOOMY]: Abilities.REGENERATOR,
   [Species.KLEFKI]: Abilities.LEVITATE,
-  [Species.PHANTUMP]: Abilities.RIPEN,
+  [Species.PHANTUMP]: Abilities.SHADOW_TAG,
   [Species.PUMPKABOO]: Abilities.WELL_BAKED_BODY,
   [Species.BERGMITE]: Abilities.ICE_SCALES,
   [Species.NOIBAT]: Abilities.PUNK_ROCK,
-  [Species.XERNEAS]: Abilities.MISTY_SURGE,
+  [Species.XERNEAS]: Abilities.HARVEST,
   [Species.YVELTAL]: Abilities.SOUL_HEART,
   [Species.ZYGARDE]: Abilities.HUGE_POWER,
   [Species.DIANCIE]: Abilities.LEVITATE,
   [Species.HOOPA]: Abilities.OPPORTUNIST,
   [Species.VOLCANION]: Abilities.FILTER,
-  [Species.ROWLET]: Abilities.UNBURDEN,
+  [Species.ROWLET]: Abilities.SNIPER,
   [Species.LITTEN]: Abilities.FUR_COAT,
   [Species.POPPLIO]: Abilities.PUNK_ROCK,
   [Species.PIKIPEK]: Abilities.TECHNICIAN,
@@ -3714,7 +3718,7 @@ export const starterPassiveAbilities = {
   [Species.BRUXISH]: Abilities.MULTISCALE,
   [Species.DRAMPA]: Abilities.THICK_FAT,
   [Species.DHELMISE]: Abilities.WATER_BUBBLE,
-  [Species.JANGMO_O]: Abilities.PUNK_ROCK,
+  [Species.JANGMO_O]: Abilities.DAUNTLESS_SHIELD,
   [Species.TAPU_KOKO]: Abilities.TRANSISTOR,
   [Species.TAPU_LELE]: Abilities.SHEER_FORCE,
   [Species.TAPU_BULU]: Abilities.TRIAGE,
@@ -3726,7 +3730,7 @@ export const starterPassiveAbilities = {
   [Species.XURKITREE]: Abilities.TRANSISTOR,
   [Species.CELESTEELA]: Abilities.HEATPROOF,
   [Species.KARTANA]: Abilities.SHARPNESS,
-  [Species.GUZZLORD]: Abilities.INNARDS_OUT,
+  [Species.GUZZLORD]: Abilities.POISON_HEAL,
   [Species.NECROZMA]: Abilities.BEAST_BOOST,
   [Species.MAGEARNA]: Abilities.STEELY_SPIRIT,
   [Species.MARSHADOW]: Abilities.IRON_FIST,
@@ -3738,13 +3742,13 @@ export const starterPassiveAbilities = {
   [Species.GROOKEY]: Abilities.GRASS_PELT,
   [Species.SCORBUNNY]: Abilities.NO_GUARD,
   [Species.SOBBLE]: Abilities.SUPER_LUCK,
-  [Species.SKWOVET]: Abilities.RIPEN,
+  [Species.SKWOVET]: Abilities.HARVEST,
   [Species.ROOKIDEE]: Abilities.IRON_BARBS,
   [Species.BLIPBUG]: Abilities.PSYCHIC_SURGE,
   [Species.NICKIT]: Abilities.MAGICIAN,
   [Species.GOSSIFLEUR]: Abilities.GRASSY_SURGE,
   [Species.WOOLOO]: Abilities.SIMPLE,
-  [Species.CHEWTLE]: Abilities.ROCK_HEAD,
+  [Species.CHEWTLE]: Abilities.ROCKY_PAYLOAD,
   [Species.YAMPER]: Abilities.SHEER_FORCE,
   [Species.ROLYCOLY]: Abilities.SOLID_ROCK,
   [Species.APPLIN]: Abilities.DRAGONS_MAW,
@@ -3757,7 +3761,7 @@ export const starterPassiveAbilities = {
   [Species.SINISTEA]: Abilities.SHADOW_SHIELD,
   [Species.HATENNA]: Abilities.FAIRY_AURA,
   [Species.IMPIDIMP]: Abilities.FUR_COAT,
-  [Species.MILCERY]: Abilities.MISTY_SURGE,
+  [Species.MILCERY]: Abilities.REGENERATOR,
   [Species.FALINKS]: Abilities.PARENTAL_BOND,
   [Species.PINCURCHIN]: Abilities.ELECTROMORPHOSIS,
   [Species.SNOM]: Abilities.SNOW_WARNING,
@@ -3776,7 +3780,7 @@ export const starterPassiveAbilities = {
   [Species.ZAMAZENTA]: Abilities.STAMINA,
   [Species.ETERNATUS]: Abilities.SUPREME_OVERLORD,
   [Species.KUBFU]: Abilities.IRON_FIST,
-  [Species.ZARUDE]: Abilities.GRASSY_SURGE,
+  [Species.ZARUDE]: Abilities.TOUGH_CLAWS,
   [Species.REGIELEKI]: Abilities.ELECTRIC_SURGE,
   [Species.REGIDRAGO]: Abilities.MULTISCALE,
   [Species.GLASTRIER]: Abilities.FILTER,
@@ -3785,7 +3789,7 @@ export const starterPassiveAbilities = {
   [Species.ENAMORUS]: Abilities.FAIRY_AURA,
   [Species.SPRIGATITO]: Abilities.MAGICIAN,
   [Species.FUECOCO]: Abilities.PUNK_ROCK,
-  [Species.QUAXLY]: Abilities.DEFIANT,
+  [Species.QUAXLY]: Abilities.OPPORTUNIST,
   [Species.LECHONK]: Abilities.SIMPLE,
   [Species.TAROUNTULA]: Abilities.HONEY_GATHER,
   [Species.NYMBLE]: Abilities.GUTS,
@@ -3833,7 +3837,7 @@ export const starterPassiveAbilities = {
   [Species.IRON_MOTH]: Abilities.LEVITATE,
   [Species.IRON_THORNS]: Abilities.SAND_STREAM,
   [Species.FRIGIBAX]: Abilities.SNOW_WARNING,
-  [Species.GIMMIGHOUL]: Abilities.CONTRARY,
+  [Species.GIMMIGHOUL]: Abilities.HONEY_GATHER,
   [Species.WO_CHIEN]: Abilities.VESSEL_OF_RUIN,
   [Species.CHIEN_PAO]: Abilities.INTREPID_SWORD,
   [Species.TING_LU]: Abilities.STAMINA,
@@ -3864,7 +3868,7 @@ export const starterPassiveAbilities = {
   [Species.ALOLA_GRIMER]: Abilities.TOXIC_DEBRIS,
   [Species.ETERNAL_FLOETTE]: Abilities.MAGIC_GUARD,
   [Species.GALAR_MEOWTH]: Abilities.STEELWORKER,
-  [Species.GALAR_PONYTA]: Abilities.PIXILATE,
+  [Species.GALAR_PONYTA]: Abilities.MOXIE,
   [Species.GALAR_SLOWPOKE]: Abilities.UNAWARE,
   [Species.GALAR_FARFETCHD]: Abilities.INTREPID_SWORD,
   [Species.GALAR_ARTICUNO]: Abilities.SERENE_GRACE,
@@ -3876,7 +3880,7 @@ export const starterPassiveAbilities = {
   [Species.GALAR_YAMASK]: Abilities.TABLETS_OF_RUIN,
   [Species.GALAR_STUNFISK]: Abilities.ARENA_TRAP,
   [Species.HISUI_GROWLITHE]: Abilities.RECKLESS,
-  [Species.HISUI_VOLTORB]: Abilities.ELECTRIC_SURGE,
+  [Species.HISUI_VOLTORB]: Abilities.TRANSISTOR,
   [Species.HISUI_QWILFISH]: Abilities.MERCILESS,
   [Species.HISUI_SNEASEL]: Abilities.SCRAPPY,
   [Species.HISUI_ZORUA]: Abilities.ADAPTABILITY,

@@ -3,6 +3,7 @@ import i18next from "i18next";
 import { Achv, AchvTier, achvs, getAchievementDescription } from "./achv";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
+import { ConditionFn } from "#app/@types/common.js";
 
 export enum VoucherType {
   REGULAR,
@@ -16,15 +17,15 @@ export class Voucher {
   public voucherType: VoucherType;
   public description: string;
 
-  private conditionFunc: (scene: BattleScene, args: any[]) => boolean;
+  private conditionFunc: ConditionFn | undefined;
 
-  constructor(voucherType: VoucherType, description: string, conditionFunc?: (scene: BattleScene, args: any[]) => boolean) {
+  constructor(voucherType: VoucherType, description: string, conditionFunc?: ConditionFn) {
     this.description = description;
     this.voucherType = voucherType;
     this.conditionFunc = conditionFunc;
   }
 
-  validate(scene: BattleScene, args: any[]): boolean {
+  validate(scene: BattleScene, args?: any[]): boolean {
     return !this.conditionFunc || this.conditionFunc(scene, args);
   }
 
@@ -105,7 +106,7 @@ export function initVouchers() {
     }
 
     const bossTrainerTypes = Object.keys(trainerConfigs)
-      .filter(tt => trainerConfigs[tt].isBoss && trainerConfigs[tt].getDerivedType() !== TrainerType.RIVAL);
+      .filter(tt => trainerConfigs[tt].isBoss && trainerConfigs[tt].getDerivedType() !== TrainerType.RIVAL && trainerConfigs[tt].hasVoucher);
 
     for (const trainerType of bossTrainerTypes) {
       const voucherType = trainerConfigs[trainerType].moneyMultiplier < 10

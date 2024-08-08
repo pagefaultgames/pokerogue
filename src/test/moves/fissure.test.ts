@@ -2,13 +2,13 @@ import { BattleStat } from "#app/data/battle-stat";
 import { Species } from "#app/enums/species.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { DamagePhase, TurnEndPhase } from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Fissure", () => {
   let phaserGame: Phaser.Game;
@@ -45,7 +45,7 @@ describe("Moves - Fissure", () => {
     await game.startBattle();
 
     partyPokemon = game.scene.getParty()[0];
-    enemyPokemon = game.scene.getEnemyPokemon();
+    enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // remove berries
     game.scene.removePartyMemberModifiers(0);
