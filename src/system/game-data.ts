@@ -573,7 +573,7 @@ export class GameData {
   public async getRunHistoryData(scene: BattleScene): Promise<Object> {
     if (!Utils.isLocal) {
       /**
-       * Networking Code
+       * Networking Code DO NOT DELETE!
        *
       const response = await Utils.apiFetch("savedata/runHistory", true);
       const data = await response.json();
@@ -586,7 +586,7 @@ export class GameData {
         const cachedRHData = cachedResponse ?? {};
         // check to see whether cachedData or serverData is more up-to-date
         /**
-       * Networking Code
+       * Networking Code DO NOT DELETE!
        *
         if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
           return cachedRHData;
@@ -633,7 +633,7 @@ export class GameData {
     localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), true));
 
     /**
-     * Networking Code
+     * Networking Code DO NOT DELETE
      *
     if (!Utils.isLocal) {
       try {
