@@ -378,7 +378,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
       return false;
     }
 
-    if (attacker !== pokemon && move.type === this.immuneType && move.getFinalType(pokemon) === this.immuneType) {
+    if (attacker !== pokemon && move.type === this.immuneType && move.getFinalType(attacker) === this.immuneType) {
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
@@ -473,7 +473,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   }
 
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (move instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getFinalType(pokemon), attacker) < 2) {
+    if (move instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getFinalType(attacker), attacker) < 2) {
       cancelled.value = true;
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
@@ -806,7 +806,7 @@ export class PostDefendApplyBattlerTagAbAttr extends PostDefendAbAttr {
 export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (hitResult < HitResult.NO_EFFECT) {
-      const type = move.getFinalType(pokemon, true);
+      const type = move.getFinalType(attacker, true);
       const pokemonTypes = pokemon.getTypes(true);
       if (pokemonTypes.length !== 1 || pokemonTypes[0] !== type) {
         pokemon.summonData.types = [ type ];
