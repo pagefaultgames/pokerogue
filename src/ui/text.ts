@@ -5,7 +5,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodete
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BattleScene from "../battle-scene";
 import { ModifierTier } from "../modifier/modifier-tier";
-import i18next from "#app/plugins/i18n.js";
+import i18next from "#app/plugins/i18n";
 
 export enum TextStyle {
   MESSAGE,
@@ -37,7 +37,8 @@ export enum TextStyle {
   MOVE_PP_NEAR_EMPTY,
   MOVE_PP_EMPTY,
   SMALLER_WINDOW_ALT,
-  BGM_BAR
+  BGM_BAR,
+  PERFECT_IV
 }
 
 export interface TextStyleOptions {
@@ -291,6 +292,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.SUMMARY_GREEN:
     return !shadow ? "#78c850" : "#306850";
   case TextStyle.SETTINGS_LABEL:
+  case TextStyle.PERFECT_IV:
     return !shadow ? "#f8b050" : "#c07800";
   case TextStyle.SETTINGS_SELECTED:
     return !shadow ? "#f88880" : "#f83018";

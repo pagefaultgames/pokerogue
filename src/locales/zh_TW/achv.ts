@@ -1,4 +1,4 @@
-import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
+import { AchievementTranslationEntries } from "#app/interfaces/locales";
 
 // Achievement translations for the when the player character is male
 export const PGMachv: AchievementTranslationEntries = {
@@ -168,6 +168,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "CLASSIC_VICTORY": {
     name: "戰無不勝",
     description: "在經典模式中通關遊戲",
+  },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Bring Your Child To Work Day",
+    description: "Beat the game in Classic Mode with at least one unevolved party member."
   },
 
   "MONO_GEN_ONE": {

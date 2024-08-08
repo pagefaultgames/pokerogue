@@ -27,7 +27,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { getPokemonNameWithAffix } from "#app/messages.js";
+import { getPokemonNameWithAffix } from "#app/messages";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -1544,7 +1544,12 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.MINT, 4),
     new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
     new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
-    //new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier)) ? 10 : 0),
+    new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => {
+      if (party[0].scene.gameData.unlocks[Unlockables.EVIOLITE]) {
+        return party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier)) ? 10 : 0;
+      }
+      return 0;
+    }),
     new WeightedModifierType(modifierTypes.SPECIES_STAT_BOOSTER, 12),
     new WeightedModifierType(modifierTypes.LEEK, (party: Pokemon[]) => {
       const checkedSpecies = [ Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD ];

@@ -6,7 +6,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
-import { getPokemonNameWithAffix } from "#app/messages.js";
+import { getPokemonNameWithAffix } from "#app/messages";
 
 export enum Command {
   FIGHT = 0,

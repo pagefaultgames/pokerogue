@@ -22,12 +22,12 @@ import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-fo
 import { Nature } from "#app/data/nature";
 import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
-import { Command } from "#app/ui/command-ui-handler.js";
+import { Command } from "#app/ui/command-ui-handler";
 import { Species } from "#enums/species";
 import i18next from "i18next";
 
-import { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
+import { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 

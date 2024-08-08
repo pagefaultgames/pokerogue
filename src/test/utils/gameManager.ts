@@ -2,7 +2,7 @@ import GameWrapper from "#test/utils/gameWrapper";
 import { Mode } from "#app/ui/ui";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
 import { CommandPhase, EncounterPhase, FaintPhase, LoginPhase, MovePhase, NewBattlePhase, SelectStarterPhase, SelectTargetPhase, TitlePhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
-import BattleScene from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene";
 import PhaseInterceptor from "#test/utils/phaseInterceptor";
 import TextInterceptor from "#test/utils/TextInterceptor";
 import { GameModes, getGameMode } from "#app/game-mode";

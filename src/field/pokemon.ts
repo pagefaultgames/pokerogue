@@ -41,7 +41,7 @@ import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
@@ -50,7 +50,7 @@ import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { getPokemonNameWithAffix } from "#app/messages.js";
+import { getPokemonNameWithAffix } from "#app/messages";
 
 export enum FieldPosition {
   CENTER,
@@ -88,6 +88,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
+  public wildFlee: boolean;
 
   public fusionSpecies: PokemonSpecies | null;
   public fusionFormIndex: integer;
@@ -129,6 +130,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.species = species;
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
+    this.wildFlee = false;
+
     // Determine the ability index
     if (abilityIndex !== undefined) {
       this.abilityIndex = abilityIndex; // Use the provided ability index if it is defined
@@ -298,14 +301,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Check if this pokemon is both not fainted and allowed to be in battle.
+   * Check if this pokemon is both not fainted (or a fled wild pokemon) and allowed to be in battle.
    * This is frequently a better alternative to {@link isFainted}
    * @returns {boolean} True if pokemon is allowed in battle
    */
   isAllowedInBattle(): boolean {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
-    return !this.isFainted() && challengeAllowed.value;
+    return !this.isFainted() && !this.wildFlee && challengeAllowed.value;
   }
 
   isActive(onField?: boolean): boolean {
@@ -1777,6 +1780,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         resolve();
       }
     });
+  }
+
+  /**
+   * sets if the pokemon has fled (implies it's a wild pokemon)
+   * @param status - boolean
+   */
+  setWildFlee(status: boolean): void {
+    this.wildFlee = status;
   }
 
   updateInfo(instant?: boolean): Promise<void> {

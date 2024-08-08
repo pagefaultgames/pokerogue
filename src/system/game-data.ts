@@ -31,18 +31,18 @@ import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
+import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
-import { StatusEffect } from "#app/data/status-effect.js";
+import { StatusEffect } from "#app/data/status-effect";
 import ChallengeData from "./challenge-data";
 import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
-import { WeatherType } from "#app/enums/weather-type.js";
-import { TerrainType } from "#app/data/terrain.js";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { WeatherType } from "#app/enums/weather-type";
+import { TerrainType } from "#app/data/terrain";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -197,6 +197,7 @@ export interface StarterAttributes {
   variant?: integer;
   form?: integer;
   female?: boolean;
+  shiny?: boolean;
 }
 
 export interface StarterPreferences {
@@ -309,7 +310,8 @@ export class GameData {
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
       [Unlockables.MINI_BLACK_HOLE]: false,
-      [Unlockables.SPLICED_ENDLESS_MODE]: false
+      [Unlockables.SPLICED_ENDLESS_MODE]: false,
+      [Unlockables.EVIOLITE]: false
     };
     this.achvUnlocks = {};
     this.voucherUnlocks = {};

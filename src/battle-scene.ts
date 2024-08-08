@@ -65,7 +65,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
-import { TimedEventManager } from "#app/timed-event-manager.js";
+import { TimedEventManager } from "#app/timed-event-manager";
 import i18next from "i18next";
 import {TrainerType} from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
@@ -122,6 +122,7 @@ export default class BattleScene extends SceneBase {
   public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
   public enableMoveInfo: boolean = true;
   public enableRetries: boolean = false;
+  public hideIvs: boolean = false;
   /**
    * Determines the condition for a notification should be shown for Candy Upgrades
    * - 0 = 'Off'
@@ -766,6 +767,27 @@ export default class BattleScene extends SceneBase {
     return activeOnly
       ? ret.filter(p => p?.isActive())
       : ret;
+  }
+
+  /**
+   * Used in doubles battles to redirect moves from one pokemon to another when one faints or is removed from the field
+   * @param removedPokemon {@linkcode Pokemon} the pokemon that is being removed from the field (flee, faint), moves to be redirected FROM
+   * @param allyPokemon {@linkcode Pokemon} the pokemon that will have the moves be redirected TO
+   */
+  redirectPokemonMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
+    // failsafe: if not a double battle just return
+    if (this.currentBattle.double === false) {
+      return;
+    }
+    if (allyPokemon?.isActive(true)) {
+      let targetingMovePhase: MovePhase;
+      do {
+        targetingMovePhase = this.findPhase(mp => mp instanceof MovePhase && mp.targets.length === 1 && mp.targets[0] === removedPokemon.getBattlerIndex() && mp.pokemon.isPlayer() !== allyPokemon.isPlayer()) as MovePhase;
+        if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex()) {
+          targetingMovePhase.targets[0] = allyPokemon.getBattlerIndex();
+        }
+      } while (targetingMovePhase);
+    }
   }
 
   /**

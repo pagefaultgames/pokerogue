@@ -16,7 +16,7 @@ import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import i18next from "i18next";
-import { Localizable } from "#app/interfaces/locales.js";
+import { Localizable } from "#app/interfaces/locales";
 import { Command } from "../ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "./pokeball";

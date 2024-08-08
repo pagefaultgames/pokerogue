@@ -3,7 +3,7 @@ import i18next from "i18next";
 import { Achv, AchvTier, achvs, getAchievementDescription } from "./achv";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
-import { ConditionFn } from "#app/@types/common.js";
+import { ConditionFn } from "#app/@types/common";
 
 export enum VoucherType {
   REGULAR,

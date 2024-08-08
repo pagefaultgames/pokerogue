@@ -1,6 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import BattleScene from "../../battle-scene";
-import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg.js";
+import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { EggSourceType } from "#app/enums/egg-source-types.js";

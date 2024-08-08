@@ -1,5 +1,5 @@
-import { common } from "./common.js";
-import { settings } from "./settings.js";
+import { common } from "./common";
+import { settings } from "./settings";
 import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { arenaFlyout } from "./arena-flyout";

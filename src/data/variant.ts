@@ -1,4 +1,4 @@
-import { VariantTier } from "#app/enums/variant-tier.js";
+import { VariantTier } from "#app/enums/variant-tier";
 
 export type Variant = 0 | 1 | 2;
 

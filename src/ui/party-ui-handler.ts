@@ -16,12 +16,12 @@ import { addWindow } from "./ui-theme";
 import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { getVariantTint } from "#app/data/variant";
 import {Button} from "#enums/buttons";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Moves } from "#enums/moves";
-import { getPokemonNameWithAffix } from "#app/messages.js";
+import { getPokemonNameWithAffix } from "#app/messages";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 

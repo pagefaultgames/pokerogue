@@ -3,7 +3,7 @@ import i18next, { type ParseKeys } from "i18next";
 import { vi } from "vitest";
 import GameManager from "./gameManager";
 import { BattlerIndex } from "#app/battle.js";
-import { TurnStartPhase } from "#app/phases";
+import { MoveEffectPhase, TurnStartPhase } from "#app/phases";
 
 /** Ready to use array of Moves.SPLASH x4 */
 export const SPLASH_ONLY = [Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH];
@@ -40,16 +40,33 @@ export function removeEnemyHeldItems(game: GameManager): void {
 }
 
 /**
- * Used to modify the turn order. Will advance the turn to {@link TurnStartPhase}
- * @param game The {@link GameManager} instance
- * @param order The turn order to set
+ * Intercepts `TurnStartPhase` and mocks the getOrder's return value {@linkcode TurnStartPhase.getOrder}
+ * Used to modify the turn order.
+ * @param {GameManager} game The GameManager instance
+ * @param {BattlerIndex[]} order The turn order to set
  * @example
  * ```ts
- * await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+ * await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
  * ```
  */
-export async function changeTurnOrder(game: GameManager, order: BattlerIndex[]): Promise<void> {
+export async function mockTurnOrder(game: GameManager, order: BattlerIndex[]): Promise<void> {
   await game.phaseInterceptor.to(TurnStartPhase, false);
 
   vi.spyOn(game.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue(order);
+}
+
+/**
+ * Intercepts `MoveEffectPhase` and mocks the hitCheck's return value {@linkcode MoveEffectPhase.hitCheck}.
+ * Used to force a move to either hit or miss.
+ * Note that this uses `mockReturnValue()`, meaning it will also apply to a
+ * succeeding `MoveEffectPhase` immediately following the first one
+ * (in the case of a multi-target move)
+ *
+ * @param {GameManager} game The GameManager instance
+ * @param shouldHit Whether the move should hit
+ */
+export async function mockHitCheck(game: GameManager, shouldHit: boolean): Promise<void> {
+  await game.phaseInterceptor.to(MoveEffectPhase, false);
+
+  vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(shouldHit);
 }

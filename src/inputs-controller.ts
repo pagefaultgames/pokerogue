@@ -16,7 +16,7 @@ import {
   getIconForLatestInput, swap,
 } from "#app/configs/inputs/configHandler";
 import BattleScene from "./battle-scene";
-import {SettingGamepad} from "#app/system/settings/settings-gamepad.js";
+import {SettingGamepad} from "#app/system/settings/settings-gamepad";
 import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import TouchControl from "#app/touch-controls";
 import { Button } from "#enums/buttons";

@@ -8,7 +8,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { mockHitCheck, SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Hustle", () => {
   let phaserGame: Phaser.Game;
@@ -44,8 +44,7 @@ describe("Abilities - Hustle", () => {
     vi.spyOn(pikachu, "getBattleStat");
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
-    vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+    await mockHitCheck(game, true);
     await game.phaseInterceptor.to(DamagePhase);
 
     expect(pikachu.getBattleStat).toHaveReturnedWith(atk * 1.5);

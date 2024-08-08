@@ -1,7 +1,7 @@
 import { allSpecies } from "#app/data/pokemon-species";
-import { TempBattleStat } from "#app/data/temp-battle-stat.js";
+import { TempBattleStat } from "#app/data/temp-battle-stat";
 import { GameModes } from "#app/game-mode";
-import { getGameMode } from "#app/game-mode.js";
+import { getGameMode } from "#app/game-mode";
 import {
   BattleEndPhase,
   CommandPhase, DamagePhase,

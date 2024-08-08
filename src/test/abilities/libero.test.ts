@@ -2,7 +2,7 @@ import { allMoves } from "#app/data/move.js";
 import { Type } from "#app/data/type.js";
 import { Weather, WeatherType } from "#app/data/weather.js";
 import { PlayerPokemon } from "#app/field/pokemon.js";
-import { MoveEffectPhase, TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
@@ -12,7 +12,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { mockHitCheck, SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -192,8 +192,7 @@ describe("Abilities - Protean", () => {
       expect(leadPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValueOnce(false);
+      await mockHitCheck(game, false);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
