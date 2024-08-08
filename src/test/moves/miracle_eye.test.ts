@@ -2,10 +2,11 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { Species } from "#app/enums/species.js";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { mockTurnOrder, SPLASH_ONLY } from "../utils/testUtils";
 import { Moves } from "#app/enums/moves.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { MoveEffectPhase } from "#app/phases.js";
+import { BattlerIndex } from "#app/battle.js";
 
 describe("Internals", () => {
   let phaserGame: Phaser.Game;
@@ -38,6 +39,7 @@ describe("Internals", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.CONFUSION));
+    await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
     expect(enemy.hp).toBe(enemy.getMaxHp());
 

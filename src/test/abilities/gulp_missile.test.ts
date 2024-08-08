@@ -1,5 +1,6 @@
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import {
+  BerryPhase,
   MoveEndPhase,
   TurnEndPhase,
   TurnStartPhase,
@@ -14,7 +15,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
-import { GulpMissileTag } from "#app/data/battler-tags.js";
 import Pokemon from "#app/field/pokemon.js";
 
 describe("Abilities - Gulp Missile", () => {
@@ -82,6 +82,17 @@ describe("Abilities - Gulp Missile", () => {
 
     expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_PIKACHU)).toBeDefined();
     expect(cramorant.formIndex).toBe(GORGING_FORM);
+  });
+
+  it("changes form during Dive's charge turn", async () => {
+    await game.startBattle([Species.CRAMORANT]);
+    const cramorant = game.scene.getPlayerPokemon()!;
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.DIVE));
+    await game.phaseInterceptor.to(MoveEndPhase);
+
+    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant.formIndex).toBe(GULPING_FORM);
   });
 
   it("deals ¼ of the attacker's maximum HP when hit by a damaging attack", async () => {
@@ -165,29 +176,16 @@ describe("Abilities - Gulp Missile", () => {
   });
 
   it("does not activate the ability when underwater", async () => {
-    game.override
-      .enemyMoveset(Array(4).fill(Moves.SURF))
-      .enemySpecies(Species.REGIELEKI)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyLevel(5);
+    game.override.enemyMoveset(Array(4).fill(Moves.SURF));
     await game.startBattle([Species.CRAMORANT]);
 
     const cramorant = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DIVE));
-    await game.toNextTurn();
+    await game.phaseInterceptor.to(BerryPhase, false);
 
-    // Turn 2 underwater, enemy moves first
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DIVE));
-    await game.phaseInterceptor.to(MoveEndPhase);
-
-    expect(cramorant.formIndex).toBe(NORMAL_FORM);
-    expect(cramorant.getTag(GulpMissileTag)).toBeUndefined();
-
-    // Turn 2 Cramorant comes out and changes form
-    await game.phaseInterceptor.to(TurnEndPhase);
-    expect(cramorant.formIndex).not.toBe(NORMAL_FORM);
-    expect(cramorant.getTag(GulpMissileTag)).toBeDefined();
+    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant.formIndex).toBe(GULPING_FORM);
   });
 
   it("prevents effect damage but inflicts secondary effect on attacker with Magic Guard", async () => {
