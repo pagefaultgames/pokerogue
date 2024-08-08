@@ -208,7 +208,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "MonoType": {
-    description: "{{type}}タイプの　単一タイプチャレンジを　クリアする.",
+    description: "{{type}}タイプの　単一タイプチャレンジを　クリアする",
   },
   "MONO_NORMAL": {
     name: "凡人",
@@ -223,7 +223,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "カントーの名物",
   },
   "MONO_GROUND": {
-    name: "自信でユラユラ",
+    name: "地震速報",
   },
   "MONO_ROCK": {
     name: "タケシの挑戦状",
