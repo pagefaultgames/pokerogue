@@ -60,8 +60,8 @@ describe("Final Boss", () => {
     await runToFinalBossEncounter(game, [Species.BIDOOF]);
 
     const eternatus = game.scene.getEnemyPokemon();
-    expect(eternatus.species.speciesId).toBe(Species.ETERNATUS);
-    expect(eternatus.hasPassive()).toBe(false);
+    expect(eternatus?.species.speciesId).toBe(Species.ETERNATUS);
+    expect(eternatus?.hasPassive()).toBe(false);
   });
 
   it.todo("should change form on direct hit down to last boss fragment", () => {});
