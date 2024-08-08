@@ -4,15 +4,15 @@ import { DialogueTranslationEntries, SimpleTranslationEntries } from "#app/inter
 export const PGMdialogue: DialogueTranslationEntries = {
   "youngster": {
     "encounter": {
-      1: "Hey, wanna battle?",
-      2: "Are you a new trainer too?",
-      3: "Hey, I haven't seen you before. Let's battle!",
-      4: "I just lost, so I'm trying to find more Pokémon.\nWait! You look weak! Come on, let's battle!",
-      5: "Have we met or not? I don't really remember. Well, I guess it's nice to meet you anyway!",
-      6: "All right! Let's go!",
+      1: "よっ 勝負する?",
+      2: "あっ きみも 駆け出し トレーナーだね?",
+      3: "あっ 初めてみる 人！ 勝負だ！",
+      4: "さっき 負けて くやしいから ポケモン 探してるんだよ\nでも きみ 弱そうだな…… よしっ！ 勝負 しようぜ！",
+      5: "お久しぶりかな？　初めましてかな？\n覚えてないけど　ヨロシクね！!",
+      6: "よーし　いくぞー！",
       7: "All right! Here I come! I'll show you my power!",
-      8: "Haw haw haw... I'll show you how hawesome my Pokémon are!",
-      9: "No need to waste time saying hello. Bring it on whenever you're ready!",
+      8: "へへへ……　見せて あげるね！\nぼくの ポケモンの すごさを！！!",
+      9: "挨拶 なんて よかよか！ いつでも かかってきんしゃい!",
       10: "Don't let your guard down, or you may be crying when a kid beats you.",
       11: "I've raised my Pokémon with great care. You're not allowed to hurt them!",
       12: "Glad you made it! It won't be an easy job from here.",
