@@ -55,7 +55,7 @@ export async function changeTurnOrder(game: GameManager, order: BattlerIndex[]):
 }
 
 /**
- * Mocks the hitCheck's return value {@linkcode MoveEffectPhase.hitCheck}.
+ * Intercepts `MoveEffectPhase` and mocks the hitCheck's return value {@linkcode MoveEffectPhase.hitCheck}.
  * Used to force a move to either hit or miss.
  * Note that this uses `mockReturnValue()`, meaning it will also apply to a
  * succeeding `MoveEffectPhase` immediately following the first one
