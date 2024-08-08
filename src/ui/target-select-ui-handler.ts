@@ -108,19 +108,28 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetFlashTween.stop();
       for (const pokemon of multipleTargets) {
         pokemon.setAlpha(1);
+        const targetItems = this.scene.enemyModifierBar.getAll("name", pokemon.id);
+        for (const target of targetItems) {
+          target.setAlpha(1);
+        }
       }
     }
 
     this.targetFlashTween = this.scene.tweens.add({
-      targets: this.targetsHighlighted,
+      targets: [this.targetsHighlighted],
       alpha: 0,
       loop: -1,
+      loopDelay: 450,
       duration: Utils.fixedInt(250),
       ease: "Sine.easeIn",
       yoyo: true,
       onUpdate: t => {
         for (const target of this.targetsHighlighted) {
           target.setAlpha(t.getValue());
+          const targetItems = this.scene.enemyModifierBar.getAll("name", target.id);
+          for (const target of targetItems) {
+            target.setAlpha(t.getValue());
+          }
         }
       }
     });
@@ -152,8 +161,13 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetFlashTween.stop();
       this.targetFlashTween = null;
     }
+
     for (const pokemon of this.targetsHighlighted) {
       pokemon.setAlpha(1);
+      const targetItems = this.scene.enemyModifierBar.getAll("name", pokemon.id);
+      for (const item of targetItems) {
+        item.setAlpha(1);
+      }
     }
 
     if (this.targetBattleInfoMoveTween.length >= 1) {
