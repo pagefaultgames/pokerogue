@@ -1,5 +1,5 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import { ArenaTagType } from "#app/enums/arena-tag-type.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { MoveEndPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

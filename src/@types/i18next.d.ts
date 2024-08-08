@@ -1,4 +1,4 @@
-import { type enConfig } from "#app/locales/en/config.js";
+import { type enConfig } from "#app/locales/en/config";
 
 // Module declared to make referencing keys in the localization files type-safe.
 declare module "i18next" {

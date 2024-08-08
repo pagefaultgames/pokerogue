@@ -35,9 +35,9 @@ import {
   VictoryPhase
 } from "#app/phases";
 import UI, { Mode } from "#app/ui/ui";
-import { Phase } from "#app/phase";
+import { Phase } from "#app/phases/phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
-import { QuietFormChangePhase } from "#app/form-change-phase";
+import { QuietFormChangePhase } from "#app/phases/form-change-phase";
 
 export default class PhaseInterceptor {
   public scene;

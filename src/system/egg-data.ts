@@ -2,7 +2,7 @@ import { EggTier } from "#enums/egg-type";
 import { Species } from "#enums/species";
 import { VariantTier } from "#enums/variant-tiers";
 import { EGG_SEED, Egg } from "../data/egg";
-import { EggSourceType } from "#app/enums/egg-source-types.js";
+import { EggSourceType } from "#app/enums/egg-source-types";
 
 export default class EggData {
   public id: integer;

@@ -1,4 +1,4 @@
-import { Abilities } from "#app/enums/abilities.js";
+import { Abilities } from "#app/enums/abilities";
 import { SwitchPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
@@ -6,7 +6,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { StatusEffect } from "#app/enums/status-effect.js";
+import { StatusEffect } from "#app/enums/status-effect";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - U-turn", () => {

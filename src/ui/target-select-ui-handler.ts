@@ -6,7 +6,7 @@ import * as Utils from "../utils";
 import { getMoveTargets } from "../data/move";
 import {Button} from "#enums/buttons";
 import { Moves } from "#enums/moves";
-import Pokemon from "#app/field/pokemon.js";
+import Pokemon from "#app/field/pokemon";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 

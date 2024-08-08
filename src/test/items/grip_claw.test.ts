@@ -1,10 +1,10 @@
-import { BattlerIndex } from "#app/battle.js";
-import { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BerryType } from "#app/enums/berry-type.js";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { CommandPhase, MoveEndPhase, SelectTargetPhase } from "#app/phases.js";
+import { BattlerIndex } from "#app/battle";
+import { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { BerryType } from "#app/enums/berry-type";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { CommandPhase, MoveEndPhase, SelectTargetPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

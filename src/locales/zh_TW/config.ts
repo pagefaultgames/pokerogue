@@ -49,8 +49,8 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
 import { partyUiHandler } from "./party-ui-handler";
-import { settings } from "./settings.js";
-import { common } from "./common.js";
+import { settings } from "./settings";
+import { common } from "./common";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 import { moveTriggers } from "./move-trigger";
 

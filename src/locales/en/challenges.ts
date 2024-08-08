@@ -1,4 +1,4 @@
-import { TranslationEntries } from "#app/interfaces/locales.js";
+import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
   "title": "Challenge Modifiers",

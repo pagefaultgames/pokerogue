@@ -6,7 +6,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { Status, StatusEffect } from "#app/data/status-effect.js";
+import { Status, StatusEffect } from "#app/data/status-effect";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;

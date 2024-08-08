@@ -2,7 +2,7 @@ import GameWrapper from "#test/utils/gameWrapper";
 import { Mode } from "#app/ui/ui";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
 import { CommandPhase, EncounterPhase, FaintPhase, LoginPhase, MovePhase, NewBattlePhase, SelectStarterPhase, SelectTargetPhase, TitlePhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
-import BattleScene from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene";
 import PhaseInterceptor from "#test/utils/phaseInterceptor";
 import TextInterceptor from "#test/utils/TextInterceptor";
 import { GameModes, getGameMode } from "#app/game-mode";
@@ -21,13 +21,13 @@ import { GameDataType } from "#enums/game-data-type";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
-import { BattlerIndex } from "#app/battle.js";
-import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
+import { BattlerIndex } from "#app/battle";
+import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { OverridesHelper } from "./overridesHelper";
-import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
-import overrides from "#app/overrides.js";
+import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
+import overrides from "#app/overrides";
 import { removeEnemyHeldItems } from "./testUtils";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 
 /**
  * Class to manage the game state and transitions between phases.

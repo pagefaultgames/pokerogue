@@ -1,4 +1,4 @@
-import { Species } from "#app/enums/species.js";
+import { Species } from "#app/enums/species";
 import { TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

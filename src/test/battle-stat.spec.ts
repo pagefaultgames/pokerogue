@@ -1,4 +1,4 @@
-import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "#app/data/battle-stat.js";
+import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "#app/data/battle-stat";
 import { describe, expect, it } from "vitest";
 import { arrayOfRange, mockI18next } from "./utils/testUtils";
 

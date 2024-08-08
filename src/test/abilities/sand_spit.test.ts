@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { WeatherType } from "#app/enums/weather-type.js";
+import { WeatherType } from "#app/enums/weather-type";
 
 
 describe("Ability Timing", () => {

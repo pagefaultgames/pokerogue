@@ -5,9 +5,9 @@ import { Species } from "#enums/species";
 import { CommandPhase, MovePhase, TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerIndex } from "#app/battle.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { Abilities } from "#app/enums/abilities";
+import { BattlerIndex } from "#app/battle";
 import { mockHitCheck, SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Sweet Veil", () => {

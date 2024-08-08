@@ -1,12 +1,12 @@
-import { ArenaTagSide } from "#app/data/arena-tag.js";
-import Move, { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import Pokemon from "#app/field/pokemon.js";
+import { ArenaTagSide } from "#app/data/arena-tag";
+import Move, { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
+import Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { NumberHolder } from "#app/utils.js";
+import { NumberHolder } from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";

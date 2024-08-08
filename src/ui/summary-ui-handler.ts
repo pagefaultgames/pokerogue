@@ -19,7 +19,7 @@ import { Nature, getNatureName, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
 import { Variant, getVariantTint } from "#app/data/variant";
 import {Button} from "#enums/buttons";
-import { Ability } from "../data/ability.js";
+import { Ability } from "../data/ability";
 import i18next from "i18next";
 import {modifierSortFunc} from "../modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";

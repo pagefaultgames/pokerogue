@@ -12,8 +12,8 @@ import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAsset
 import { StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./data/status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
-import { EvolutionPhase } from "./evolution-phase";
-import { Phase } from "./phase";
+import { EvolutionPhase } from "./phases/evolution-phase";
+import { Phase } from "./phases/phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { biomeLinks, getBiomeName } from "./data/biomes";
 import { ModifierTier } from "./modifier/modifier-tier";
@@ -31,7 +31,7 @@ import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { ChallengeAchv, HealAchv, LevelAchv, achvs } from "./system/achv";
 import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
-import { EggHatchPhase } from "./egg-hatch-phase";
+import { EggHatchPhase } from "./phases/egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { clientSessionId, loggedInUser, updateUserInfo } from "./account";
@@ -66,6 +66,7 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { applyChallenges, ChallengeType } from "./data/challenge";
 import { pokemonEvolutions } from "./data/pokemon-evolutions";
+import { BattlePhase } from "#app/phases/battle-phase";
 
 const { t } = i18next;
 
@@ -649,50 +650,6 @@ export class SelectStarterPhase extends Phase {
         this.scene.triggerPokemonFormChange(p, SpeciesFormChangeMoveLearnedTrigger);
       });
       this.end();
-    });
-  }
-}
-
-export class BattlePhase extends Phase {
-  constructor(scene: BattleScene) {
-    super(scene);
-  }
-
-  showEnemyTrainer(trainerSlot: TrainerSlot = TrainerSlot.NONE): void {
-    const sprites = this.scene.currentBattle.trainer?.getSprites()!; // TODO: is this bang correct?
-    const tintSprites = this.scene.currentBattle.trainer?.getTintSprites()!; // TODO: is this bang correct?
-    for (let i = 0; i < sprites.length; i++) {
-      const visible = !trainerSlot || !i === (trainerSlot === TrainerSlot.TRAINER) || sprites.length < 2;
-      [sprites[i], tintSprites[i]].map(sprite => {
-        if (visible) {
-          sprite.x = trainerSlot || sprites.length < 2 ? 0 : i ? 16 : -16;
-        }
-        sprite.setVisible(visible);
-        sprite.clearTint();
-      });
-      sprites[i].setVisible(visible);
-      tintSprites[i].setVisible(visible);
-      sprites[i].clearTint();
-      tintSprites[i].clearTint();
-    }
-    this.scene.tweens.add({
-      targets: this.scene.currentBattle.trainer,
-      x: "-=16",
-      y: "+=16",
-      alpha: 1,
-      ease: "Sine.easeInOut",
-      duration: 750
-    });
-  }
-
-  hideEnemyTrainer(): void {
-    this.scene.tweens.add({
-      targets: this.scene.currentBattle.trainer,
-      x: "+=16",
-      y: "-=16",
-      alpha: 0,
-      ease: "Sine.easeInOut",
-      duration: 750
     });
   }
 }

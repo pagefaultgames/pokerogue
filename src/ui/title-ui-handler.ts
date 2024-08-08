@@ -5,7 +5,7 @@ import * as Utils from "../utils";
 import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
-import { TimedEventDisplay } from "#app/timed-event-manager.js";
+import { TimedEventDisplay } from "#app/timed-event-manager";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   private titleContainer: Phaser.GameObjects.Container;

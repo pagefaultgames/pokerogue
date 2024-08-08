@@ -17,7 +17,7 @@ import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import i18next from "#app/plugins/i18n.js";
+import i18next from "#app/plugins/i18n";
 
 export enum BattlerTagLapseType {
   FAINT,

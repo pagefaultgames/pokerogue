@@ -5,7 +5,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodete
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BattleScene from "../battle-scene";
 import { ModifierTier } from "../modifier/modifier-tier";
-import i18next from "#app/plugins/i18n.js";
+import i18next from "#app/plugins/i18n";
 
 export enum TextStyle {
   MESSAGE,

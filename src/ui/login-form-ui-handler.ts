@@ -3,7 +3,7 @@ import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
 import i18next from "i18next";
-import BattleScene from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow } from "./ui-theme";
 

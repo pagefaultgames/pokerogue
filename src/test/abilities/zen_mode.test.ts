@@ -1,6 +1,6 @@
 import { Stat } from "#app/data/pokemon-stat";
-import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { QuietFormChangePhase } from "#app/form-change-phase";
+import { Status, StatusEffect } from "#app/data/status-effect";
+import { QuietFormChangePhase } from "#app/phases/form-change-phase";
 import { CommandPhase, DamagePhase, EnemyCommandPhase, MessagePhase, PostSummonPhase, SwitchPhase, SwitchSummonPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
@@ -11,7 +11,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import { BattlerIndex } from "#app/battle.js";
+import { BattlerIndex } from "#app/battle";
 import { mockTurnOrder } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;

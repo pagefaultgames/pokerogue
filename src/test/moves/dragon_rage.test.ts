@@ -1,6 +1,6 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { Type } from "#app/data/type";
-import { Species } from "#app/enums/species.js";
+import { Species } from "#app/enums/species";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { TurnEndPhase } from "#app/phases";

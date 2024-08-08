@@ -27,7 +27,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { MoveUsedEvent } from "#app/events/battle-scene.js";
+import { MoveUsedEvent } from "#app/events/battle-scene";
 
 export enum MoveCategory {
   PHYSICAL,

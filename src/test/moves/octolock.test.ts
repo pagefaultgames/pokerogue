@@ -1,5 +1,5 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { TrappedTag } from "#app/data/battler-tags.js";
+import { TrappedTag } from "#app/data/battler-tags";
 import { CommandPhase, MoveEndPhase, TurnInitPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

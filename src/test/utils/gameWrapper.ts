@@ -20,11 +20,11 @@ import { MockFetch } from "#test/utils/mocks/mockFetch";
 import * as Utils from "#app/utils";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import { MockClock } from "#test/utils/mocks/mockClock";
-import BattleScene from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene";
 import { MoveAnim } from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
 import * as battleScene from "#app/battle-scene";
-import MockImage from "#test/utils/mocks/mocksContainer/mockImage.js";
+import MockImage from "#test/utils/mocks/mocksContainer/mockImage";
 import { MockGameObjectCreator } from "./mocks/mockGameObjectCreator";
 
 Object.defineProperty(window, "localStorage", {

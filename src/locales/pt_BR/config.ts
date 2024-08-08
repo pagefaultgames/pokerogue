@@ -12,7 +12,7 @@ import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
 import { challenges } from "./challenges";
 import { commandUiHandler } from "./command-ui-handler";
-import { common } from "./common.js";
+import { common } from "./common";
 import {
   PGFbattleSpecDialogue,
   PGFdialogue,
@@ -44,7 +44,7 @@ import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
 import { pokemonSummary } from "./pokemon-summary";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
-import { settings } from "./settings.js";
+import { settings } from "./settings";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { statusEffect } from "./status-effect";

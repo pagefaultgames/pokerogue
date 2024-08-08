@@ -12,7 +12,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { mockTurnOrder } from "../utils/testUtils";
-import { BattlerIndex } from "#app/battle.js";
+import { BattlerIndex } from "#app/battle";
 
 
 describe("Abilities - Serene Grace", () => {
