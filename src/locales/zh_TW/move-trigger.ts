@@ -21,6 +21,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isGlowing": "強光包圍了\n{{pokemonName}}！",
   "bellChimed": "鈴聲響徹四周！",
   "foresawAnAttack": "{{pokemonName}}\n預知了未來的攻擊！",
+  "isTighteningFocus": "{{pokemonName}}正在集中注意力！",
   "hidUnderwater": "{{pokemonName}}\n潛入了水中！",
   "soothingAromaWaftedThroughArea": "怡人的香氣擴散了開來！",
   "sprangUp": "{{pokemonName}}\n高高地跳了起來！",
@@ -60,5 +61,6 @@ export const moveTriggers: SimpleTranslationEntries = {
   "suppressAbilities": "{{pokemonName}}的特性\n變得無效了！",
   "swapArenaTags": "{{pokemonName}}\n交換了雙方的場地效果！",
   "trickOnSwap": "{{pokemonNameWithAffix}}\n互換了各自的道具！",
-  "trickFoeNewItem": "{{pokemonNameWithAffix}}\n獲得了{{itemName}}！"
+  "trickFoeNewItem": "{{pokemonNameWithAffix}}\n獲得了{{itemName}}！",
+  "exposedMove": "{{pokemonName}}識破了\n{{targetPokemonName}}的原形！"
 } as const;

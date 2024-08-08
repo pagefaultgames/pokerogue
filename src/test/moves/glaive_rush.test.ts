@@ -38,7 +38,7 @@ describe("Moves - Glaive Rush", () => {
 
   it("takes double damage from attacks", async() => {
     await game.startBattle();
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
 
     vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(0);
@@ -50,11 +50,11 @@ describe("Moves - Glaive Rush", () => {
     await game.phaseInterceptor.to(DamagePhase);
     expect(enemy.hp).toBeLessThanOrEqual(1001 - (damageDealt * 3));
 
-  }, 20000);
+  }, 5000); // TODO: revert back to 20s
 
   it("always gets hit by attacks", async() => {
     await game.startBattle();
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
 
     allMoves[Moves.AVALANCHE].accuracy = 0;
@@ -68,8 +68,8 @@ describe("Moves - Glaive Rush", () => {
     game.override.startingHeldItems([{name: "MULTI_LENS", count: 2}]);
     game.override.enemyMoveset(Array(4).fill(Moves.AVALANCHE));
     await game.startBattle();
-    const player = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
     player.hp = 1000;
 
@@ -87,8 +87,8 @@ describe("Moves - Glaive Rush", () => {
   it("secondary effects only last until next move", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
     await game.startBattle();
-    const player = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
     player.hp = 1000;
     allMoves[Moves.SHADOW_SNEAK].accuracy = 0;
@@ -112,8 +112,8 @@ describe("Moves - Glaive Rush", () => {
     game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
     game.override.starterSpecies(0);
     await game.startBattle([Species.KLINK, Species.FEEBAS]);
-    const player = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
     allMoves[Moves.SHADOW_SNEAK].accuracy = 0;
 

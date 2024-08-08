@@ -37,13 +37,13 @@ describe("Test Rebinding", () => {
     expect(button).toEqual(Button.LEFT);
   });
   it("Check key for Keyboard KeyCode", () => {
-    const key = getKeyWithKeycode(config, Phaser.Input.Keyboard.KeyCodes.LEFT);
+    const key = getKeyWithKeycode(config, Phaser.Input.Keyboard.KeyCodes.LEFT) ?? "";
     const settingName = config.custom[key];
     const button = config.settings[settingName];
     expect(button).toEqual(Button.LEFT);
   });
   it("Check key for currenly Assigned to action not alt", () => {
-    const key = getKeyWithKeycode(config, Phaser.Input.Keyboard.KeyCodes.A);
+    const key = getKeyWithKeycode(config, Phaser.Input.Keyboard.KeyCodes.A) ?? "";
     const settingName = config.custom[key];
     const button = config.settings[settingName];
     expect(button).toEqual(Button.LEFT);
@@ -66,25 +66,25 @@ describe("Test Rebinding", () => {
   });
   it("Check icon for currenly Assigned to key code", () => {
     const keycode = Phaser.Input.Keyboard.KeyCodes.LEFT;
-    const key = getKeyWithKeycode(config, keycode);
+    const key = getKeyWithKeycode(config, keycode) ?? "";
     const icon = config.icons[key];
     expect(icon).toEqual("KEY_ARROW_LEFT.png");
   });
   it("Check icon for currenly Assigned to key code", () => {
     const keycode = Phaser.Input.Keyboard.KeyCodes.A;
-    const key = getKeyWithKeycode(config, keycode);
+    const key = getKeyWithKeycode(config, keycode) ?? "";
     const icon = config.icons[key];
     expect(icon).toEqual("A.png");
   });
   it("Check icon for currenly Assigned to setting name", () => {
     const settingName = SettingKeyboard.Button_Left;
-    const key = getKeyWithSettingName(config, settingName);
+    const key = getKeyWithSettingName(config, settingName) ?? "";
     const icon = config.icons[key];
     expect(icon).toEqual("KEY_ARROW_LEFT.png");
   });
   it("Check icon for currenly Assigned to setting name alt", () => {
     const settingName = SettingKeyboard.Alt_Button_Left;
-    const key = getKeyWithSettingName(config, settingName);
+    const key = getKeyWithSettingName(config, settingName) ?? "";
     const icon = config.icons[key];
     expect(icon).toEqual("A.png");
   });
@@ -369,7 +369,7 @@ describe("Test Rebinding", () => {
 
   it("test keyboard listener", () => {
     const keyDown = Phaser.Input.Keyboard.KeyCodes.S;
-    const key = getKeyWithKeycode(config, keyDown);
+    const key = getKeyWithKeycode(config, keyDown) ?? "";
     const settingName = config.custom[key];
     const buttonDown = config.settings[settingName];
     expect(buttonDown).toEqual(Button.DOWN);

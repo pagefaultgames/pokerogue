@@ -21,6 +21,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isGlowing": "{{pokemonName}} ficou envolto em uma luz forte!",
   "bellChimed": "Um sino tocou!",
   "foresawAnAttack": "{{pokemonName}} previu/num ataque!",
+  "isTighteningFocus": "{{pokemonName}} está\naumentando seu foco!",
   "hidUnderwater": "{{pokemonName}} se escondeu/nembaixo d'água!",
   "soothingAromaWaftedThroughArea": "Um aroma suave se espalhou pelo ambiente!",
   "sprangUp": "{{pokemonName}} se levantou!",
@@ -60,5 +61,6 @@ export const moveTriggers: SimpleTranslationEntries = {
   "suppressAbilities": "A habilidade de {{pokemonName}}\nfoi suprimida!",
   "swapArenaTags": "{{pokemonName}} trocou os efeitos de batalha que afetam cada lado do campo!",
   "trickOnSwap": "{{pokemonNameWithAffix}} trocou de itens com seu alvo!",
-  "trickFoeNewItem": "{{pokemonNameWithAffix}} obteve um(a) {{itemName}}."
+  "trickFoeNewItem": "{{pokemonNameWithAffix}} obteve um(a) {{itemName}}.",
+  "exposedMove": "{{pokemonName}} identificou\n{{targetPokemonName}}!"
 } as const;

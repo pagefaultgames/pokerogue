@@ -27,7 +27,7 @@ describe("BattlerTag - StockpilingTag", () => {
         expect((phase as StatChangePhase)["levels"]).toEqual(1);
         expect((phase as StatChangePhase)["stats"]).toEqual(expect.arrayContaining([BattleStat.DEF, BattleStat.SPDEF]));
 
-        (phase as StatChangePhase)["onChange"](mockPokemon, [BattleStat.DEF, BattleStat.SPDEF], [1, 1]);
+        (phase as StatChangePhase)["onChange"]!(mockPokemon, [BattleStat.DEF, BattleStat.SPDEF], [1, 1]);
       });
 
       subject.onAdd(mockPokemon);
@@ -54,7 +54,7 @@ describe("BattlerTag - StockpilingTag", () => {
         expect((phase as StatChangePhase)["levels"]).toEqual(1);
         expect((phase as StatChangePhase)["stats"]).toEqual(expect.arrayContaining([BattleStat.DEF, BattleStat.SPDEF]));
 
-        (phase as StatChangePhase)["onChange"](mockPokemon, [BattleStat.DEF, BattleStat.SPDEF], [1, 1]);
+        (phase as StatChangePhase)["onChange"]!(mockPokemon, [BattleStat.DEF, BattleStat.SPDEF], [1, 1]);
       });
 
       subject.onAdd(mockPokemon);
@@ -79,7 +79,7 @@ describe("BattlerTag - StockpilingTag", () => {
         expect((phase as StatChangePhase)["levels"]).toEqual(1);
         expect((phase as StatChangePhase)["stats"]).toEqual(expect.arrayContaining([BattleStat.DEF, BattleStat.SPDEF]));
 
-        (phase as StatChangePhase)["onChange"](mockPokemon, [BattleStat.DEF, BattleStat.SPDEF], [1, 1]);
+        (phase as StatChangePhase)["onChange"]!(mockPokemon, [BattleStat.DEF, BattleStat.SPDEF], [1, 1]);
       });
 
       subject.onOverlap(mockPokemon);
@@ -109,7 +109,7 @@ describe("BattlerTag - StockpilingTag", () => {
         expect((phase as StatChangePhase)["stats"]).toEqual(expect.arrayContaining([BattleStat.DEF, BattleStat.SPDEF]));
 
         // def doesn't change
-        (phase as StatChangePhase)["onChange"](mockPokemon, [BattleStat.SPDEF], [1]);
+        (phase as StatChangePhase)["onChange"]!(mockPokemon, [BattleStat.SPDEF], [1]);
       });
 
       subject.onAdd(mockPokemon);
@@ -121,7 +121,7 @@ describe("BattlerTag - StockpilingTag", () => {
         expect((phase as StatChangePhase)["stats"]).toEqual(expect.arrayContaining([BattleStat.DEF, BattleStat.SPDEF]));
 
         // def doesn't change
-        (phase as StatChangePhase)["onChange"](mockPokemon, [BattleStat.SPDEF], [1]);
+        (phase as StatChangePhase)["onChange"]!(mockPokemon, [BattleStat.SPDEF], [1]);
       });
 
       subject.onOverlap(mockPokemon);

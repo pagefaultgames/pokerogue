@@ -1,11 +1,13 @@
 import { Modifier } from "typescript";
 import BattleScene from "../battle-scene";
 import { TurnHeldItemTransferModifier } from "../modifier/modifier";
+import { pokemonEvolutions } from "#app/data/pokemon-evolutions";
 import i18next from "i18next";
 import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
 import { ParseKeys } from "i18next";
 import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge } from "#app/data/challenge.js";
+import { ConditionFn } from "#app/@types/common.js";
 
 export enum AchvTier {
   COMMON,
@@ -27,9 +29,9 @@ export class Achv {
   public hasParent: boolean;
   public parentId: string;
 
-  private conditionFunc: (scene: BattleScene, args: any[]) => boolean;
+  private conditionFunc: ConditionFn | undefined;
 
-  constructor(localizationKey:string, name: string, description: string, iconImage: string, score: integer, conditionFunc?: (scene: BattleScene, args: any[]) => boolean) {
+  constructor(localizationKey:string, name: string, description: string, iconImage: string, score: integer, conditionFunc?: ConditionFn) {
     this.name = name;
     this.description = description;
     this.iconImage = iconImage;
@@ -63,7 +65,7 @@ export class Achv {
     return this;
   }
 
-  validate(scene: BattleScene, args: any[]): boolean {
+  validate(scene: BattleScene, args?: any[]): boolean {
     return !this.conditionFunc || this.conditionFunc(scene, args);
   }
 
@@ -239,6 +241,8 @@ export function getAchievementDescription(localizationKey: string): string {
     return i18next.t(`${genderPrefix}achv:PERFECT_IVS.description` as ParseKeys);
   case "CLASSIC_VICTORY":
     return i18next.t(`${genderPrefix}achv:CLASSIC_VICTORY.description` as ParseKeys);
+  case "UNEVOLVED_CLASSIC_VICTORY":
+    return i18next.t(`${genderPrefix}achv:UNEVOLVED_CLASSIC_VICTORY.description` as ParseKeys);
   case "MONO_GEN_ONE":
     return i18next.t(`${genderPrefix}achv:MONO_GEN_ONE.description` as ParseKeys);
   case "MONO_GEN_TWO":
@@ -325,6 +329,7 @@ export const achvs = {
   HIDDEN_ABILITY: new Achv("HIDDEN_ABILITY","",  "HIDDEN_ABILITY.description","ability_charm", 75),
   PERFECT_IVS: new Achv("PERFECT_IVS","",  "PERFECT_IVS.description","blunder_policy", 100),
   CLASSIC_VICTORY: new Achv("CLASSIC_VICTORY","",  "CLASSIC_VICTORY.description","relic_crown", 150),
+  UNEVOLVED_CLASSIC_VICTORY: new Achv("UNEVOLVED_CLASSIC_VICTORY", "", "UNEVOLVED_CLASSIC_VICTORY.description", "eviolite", 175, c => c.getParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)),
   MONO_GEN_ONE_VICTORY: new ChallengeAchv("MONO_GEN_ONE","",  "MONO_GEN_ONE.description", "ribbon_gen1", 100, c => c instanceof SingleGenerationChallenge && c.value === 1),
   MONO_GEN_TWO_VICTORY: new ChallengeAchv("MONO_GEN_TWO","",  "MONO_GEN_TWO.description", "ribbon_gen2", 100, c => c instanceof SingleGenerationChallenge && c.value === 2),
   MONO_GEN_THREE_VICTORY: new ChallengeAchv("MONO_GEN_THREE","",  "MONO_GEN_THREE.description", "ribbon_gen3", 100, c => c instanceof SingleGenerationChallenge && c.value === 3),

@@ -13,7 +13,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   private externalPartyContainer: Phaser.GameObjects.Container;
   private externalPartyBg: Phaser.GameObjects.NineSlice;
   private externalPartyTitle: Phaser.GameObjects.Text;
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
   }
 
@@ -130,7 +130,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
           .then(response => {
             if (response.hasOwnProperty("token")) {
               Utils.setCookie(Utils.sessionIdKey, response.token);
-              originalLoginAction();
+              originalLoginAction && originalLoginAction();
             } else {
               onFail(response);
             }
