@@ -283,7 +283,6 @@ export default class AchvsUiHandler extends MessageUiHandler {
         this.showAchv(achvs[Object.keys(achvs)[cursor + this.scrollCursor * this.COLS]]);
         break;
       case Page.VOUCHERS:
-        this.updateVoucherIcons();
         this.showVoucher(vouchers[Object.keys(vouchers)[cursor + this.scrollCursor * this.COLS]]);
         break;
       }
@@ -349,15 +348,17 @@ export default class AchvsUiHandler extends MessageUiHandler {
       }
     });
 
-    console.log(this.icons.length);
-    console.log(achvRange.length);
     if (achvRange.length < this.icons.length) {
-      icons.slice(achvRange.length).map(i => i.setVisible(false));
+      this.icons.slice(achvRange.length).map(i => i.setVisible(false));
     }
 
     this.currentTotal = this.achvsTotal;
   }
 
+  /**
+   * updateVoucherIcons(): void
+   * Determines what data is to be displayed on the UI and updates it accordingly based on the current value of this.scrollCursor
+   */
   updateVoucherIcons(): void {
     this.headerText.text = this.vouchersName;
     this.headerActionText.text = this.achvsName;
@@ -384,7 +385,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     });
 
     if (voucherRange.length < this.icons.length) {
-      this.voucherIcons.slice(voucherRange.length).map(i => i.setVisible(false));
+      this.icons.slice(voucherRange.length).map(i => i.setVisible(false));
     }
     this.currentTotal = this.vouchersTotal;
   }
