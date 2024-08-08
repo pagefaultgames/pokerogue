@@ -46,14 +46,13 @@ describe("Moves - Disable", () => {
     game.override.enemyAbility(Abilities.NONE);
     game.override.moveset([Moves.DISABLE, Moves.SPLASH, Moves.NONE, Moves.NONE]);
     game.override.enemyMoveset([Moves.SPLASH,Moves.NONE,Moves.NONE,Moves.NONE]);
+    game.override.starterSpecies(Species.PIKACHU);
+    game.override.enemySpecies(Species.SHUCKLE);
   });
 
   it("DISABLE fails if enemy has no move history", async() => {
     // Player goes first
-    await game.startBattle([
-      Species.PIKACHU,
-      Species.SHUCKLE,
-    ]);
+    await game.startBattle();
     expect(game.scene.getParty()[0].stats[Stat.SPD]).toBeGreaterThan(game.scene.getEnemyParty()[0].stats[Stat.SPD]);
 
     _useMove();
@@ -63,14 +62,14 @@ describe("Moves - Disable", () => {
   }, 20000);
 
   it("DISABLE works when user moves after enemy", async() => {
-    await game.startBattle([
-      Species.SHUCKLE,
-      Species.PIKACHU,
-    ]);
+    game.override.starterSpecies(Species.SHUCKLE);
+    game.override.enemySpecies(Species.PIKACHU);
+
+    await game.startBattle();
     expect(game.scene.getParty()[0].stats[Stat.SPD]).toBeLessThan(game.scene.getEnemyParty()[0].stats[Stat.SPD]);
 
     _useMove();
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
+    await game.phaseInterceptor.to(CommandPhase);
 
     expect(game.scene.getParty()[0].getMoveHistory().at(0)!.move).toBe(Moves.DISABLE);
     expect(game.scene.getParty()[0].getMoveHistory().at(0)!.result).toBe(MoveResult.SUCCESS);
@@ -87,10 +86,7 @@ describe("Moves - Disable", () => {
 
   it("DISABLE interrupts target's move when user moves first", async() => {
     // Player goes first
-    await game.startBattle([
-      Species.PIKACHU,
-      Species.SHUCKLE,
-    ]);
+    await game.startBattle();
 
     _useMove(Moves.SPLASH);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
@@ -102,11 +98,12 @@ describe("Moves - Disable", () => {
     _useMove(Moves.DISABLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
 
-    expect(game.scene.getPlayerPokemon()!.getMoveHistory().length === 2);
+    expect(game.scene.getPlayerPokemon()!.getMoveHistory().length).toBe(2);
+
     expect(game.scene.getEnemyParty()[0].isMoveDisabled(Moves.SPLASH));
-    expect(game.scene.getEnemyParty()[0].getMoveHistory().length === 2);
-    expect(game.scene.getEnemyParty()[0].getLastXMoves().at(0)!.result).toBe(MoveResult.FAIL);
-    expect(game.scene.getEnemyParty()[0].getLastXMoves().at(1)!.result).toBe(MoveResult.SUCCESS);
+    expect(game.scene.getEnemyParty()[0].getMoveHistory().length).toBe(2);
+    expect(game.scene.getEnemyParty()[0].getLastXMoves(2).at(0)!.result).toBe(MoveResult.FAIL);
+    expect(game.scene.getEnemyParty()[0].getLastXMoves(2).at(1)!.result).toBe(MoveResult.SUCCESS);
   }, 20000);
 
 });
