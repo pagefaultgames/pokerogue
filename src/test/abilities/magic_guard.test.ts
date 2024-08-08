@@ -1,8 +1,8 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
-import { TurnEndPhase, MoveEffectPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { ArenaTagSide, getArenaTag } from "#app/data/arena-tag";
@@ -11,7 +11,7 @@ import { Abilities } from "#enums/abilities";
 import { WeatherType } from "#app/data/weather.js";
 import { StatusEffect, getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { mockHitCheck, SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
 
@@ -53,9 +53,10 @@ describe("Abilities - Magic Guard", () => {
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      expect(enemyPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
@@ -79,7 +80,7 @@ describe("Abilities - Magic Guard", () => {
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
@@ -91,7 +92,7 @@ describe("Abilities - Magic Guard", () => {
        * - The Pokemon's CatchRateMultiplier should be 1.5
        */
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-      expect(getStatusEffectCatchRateMultiplier(leadPokemon.status.effect)).toBe(1.5);
+      expect(getStatusEffectCatchRateMultiplier(leadPokemon.status!.effect)).toBe(1.5);
     }, TIMEOUT
   );
 
@@ -103,7 +104,7 @@ describe("Abilities - Magic Guard", () => {
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
@@ -127,7 +128,7 @@ describe("Abilities - Magic Guard", () => {
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -138,7 +139,7 @@ describe("Abilities - Magic Guard", () => {
        * - The enemy Pokemon's hypothetical CatchRateMultiplier should be 1.5
        */
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-      expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status.effect)).toBe(1.5);
+      expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status!.effect)).toBe(1.5);
     }, TIMEOUT
   );
 
@@ -151,9 +152,9 @@ describe("Abilities - Magic Guard", () => {
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      const toxicStartCounter = enemyPokemon.status.turnCount;
+      const toxicStartCounter = enemyPokemon.status!.turnCount;
       //should be 0
 
       await game.phaseInterceptor.to(TurnEndPhase);
@@ -165,23 +166,23 @@ describe("Abilities - Magic Guard", () => {
        * - The enemy Pokemon's hypothetical CatchRateMultiplier should be 1.5
        */
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-      expect(enemyPokemon.status.turnCount).toBeGreaterThan(toxicStartCounter);
-      expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status.effect)).toBe(1.5);
+      expect(enemyPokemon.status!.turnCount).toBeGreaterThan(toxicStartCounter);
+      expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status!.effect)).toBe(1.5);
     }, TIMEOUT
   );
 
 
   it("Magic Guard prevents damage caused by entry hazards", async () => {
     //Adds and applies Spikes to both sides of the arena
-    const newTag = getArenaTag(ArenaTagType.SPIKES, 5, Moves.SPIKES, 0, 0, ArenaTagSide.BOTH);
+    const newTag = getArenaTag(ArenaTagType.SPIKES, 5, Moves.SPIKES, 0, 0, ArenaTagSide.BOTH)!;
     game.scene.arena.tags.push(newTag);
 
     await game.startBattle([Species.MAGIKARP]);
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -197,17 +198,17 @@ describe("Abilities - Magic Guard", () => {
 
   it("Magic Guard does not prevent poison from Toxic Spikes", async () => {
     //Adds and applies Spikes to both sides of the arena
-    const playerTag = getArenaTag(ArenaTagType.TOXIC_SPIKES, 5, Moves.TOXIC_SPIKES, 0, 0, ArenaTagSide.PLAYER);
-    const enemyTag = getArenaTag(ArenaTagType.TOXIC_SPIKES, 5, Moves.TOXIC_SPIKES, 0, 0, ArenaTagSide.ENEMY);
+    const playerTag = getArenaTag(ArenaTagType.TOXIC_SPIKES, 5, Moves.TOXIC_SPIKES, 0, 0, ArenaTagSide.PLAYER)!;
+    const enemyTag = getArenaTag(ArenaTagType.TOXIC_SPIKES, 5, Moves.TOXIC_SPIKES, 0, 0, ArenaTagSide.ENEMY)!;
     game.scene.arena.tags.push(playerTag);
     game.scene.arena.tags.push(enemyTag);
 
     await game.startBattle([Species.MAGIKARP]);
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -217,8 +218,8 @@ describe("Abilities - Magic Guard", () => {
     * - The player Pokemon (with Magic Guard) has not taken damage from poison
     * - The enemy Pokemon (without Magic Guard) has taken damage from poison
     */
-    expect(leadPokemon.status.effect).toBe(StatusEffect.POISON);
-    expect(enemyPokemon.status.effect).toBe(StatusEffect.POISON);
+    expect(leadPokemon.status!.effect).toBe(StatusEffect.POISON);
+    expect(enemyPokemon.status!.effect).toBe(StatusEffect.POISON);
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   }, TIMEOUT
@@ -230,11 +231,11 @@ describe("Abilities - Magic Guard", () => {
       game.override.moveset([Moves.CURSE]);
       game.override.enemyAbility(Abilities.MAGIC_GUARD);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.CURSE));
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -254,11 +255,10 @@ describe("Abilities - Magic Guard", () => {
     game.override.moveset([Moves.HIGH_JUMP_KICK]);
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.HIGH_JUMP_KICK));
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
-    vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValueOnce(false);
+    await mockHitCheck(game, false);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -274,7 +274,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.moveset([Moves.TAKE_DOWN]);
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TAKE_DOWN));
 
@@ -292,7 +292,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.moveset([Moves.STRUGGLE]);
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.STRUGGLE));
 
@@ -311,7 +311,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.moveset([Moves.STEEL_BEAM]);
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.STEEL_BEAM));
 
@@ -339,7 +339,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.moveset([Moves.BELLY_DRUM]);
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
 
@@ -362,7 +362,7 @@ describe("Abilities - Magic Guard", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
@@ -374,7 +374,7 @@ describe("Abilities - Magic Guard", () => {
     * - The player Pokemon is asleep
     */
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-    expect(leadPokemon.status.effect).toBe(StatusEffect.SLEEP);
+    expect(leadPokemon.status!.effect).toBe(StatusEffect.SLEEP);
   }, TIMEOUT
   );
 
@@ -385,9 +385,9 @@ describe("Abilities - Magic Guard", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
     enemyPokemon.hp = 1;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
@@ -410,9 +410,9 @@ describe("Abilities - Magic Guard", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -434,9 +434,9 @@ describe("Abilities - Magic Guard", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.ABSORB));
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -457,7 +457,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.weather(WeatherType.SUNNY);
 
     await game.startBattle([Species.MAGIKARP]);
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 

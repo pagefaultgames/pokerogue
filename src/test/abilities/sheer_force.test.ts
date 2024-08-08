@@ -11,6 +11,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { mockTurnOrder } from "../utils/testUtils";
+import { BattlerIndex } from "#app/battle.js";
 
 
 describe("Abilities - Sheer Force", () => {
@@ -46,7 +48,6 @@ describe("Abilities - Sheer Force", () => {
 
 
     game.scene.getEnemyParty()[0].stats[Stat.SPDEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -57,6 +58,7 @@ describe("Abilities - Sheer Force", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
+    await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -67,8 +69,8 @@ describe("Abilities - Sheer Force", () => {
     const power = new Utils.IntegerHolder(move.power);
     const chance = new Utils.IntegerHolder(move.chance);
 
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon(), null, chance, move, phase.getTarget(), false);
-    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon(), phase.getTarget(), move, power);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, chance, move, phase.getTarget(), false);
+    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getTarget()!, move, power);
 
     expect(chance.value).toBe(0);
     expect(power.value).toBe(move.power * 5461/4096);
@@ -85,7 +87,6 @@ describe("Abilities - Sheer Force", () => {
 
 
     game.scene.getEnemyParty()[0].stats[Stat.DEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -96,6 +97,7 @@ describe("Abilities - Sheer Force", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
+    await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -106,8 +108,8 @@ describe("Abilities - Sheer Force", () => {
     const power = new Utils.IntegerHolder(move.power);
     const chance = new Utils.IntegerHolder(move.chance);
 
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon(), null, chance, move, phase.getTarget(), false);
-    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon(), phase.getTarget(), move, power);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, chance, move, phase.getTarget(), false);
+    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getTarget()!, move, power);
 
     expect(chance.value).toBe(-1);
     expect(power.value).toBe(move.power);
@@ -124,7 +126,6 @@ describe("Abilities - Sheer Force", () => {
 
 
     game.scene.getEnemyParty()[0].stats[Stat.DEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -135,6 +136,7 @@ describe("Abilities - Sheer Force", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
+    await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -145,8 +147,8 @@ describe("Abilities - Sheer Force", () => {
     const power = new Utils.IntegerHolder(move.power);
     const chance = new Utils.IntegerHolder(move.chance);
 
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon(), null, chance, move, phase.getTarget(), false);
-    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon(), phase.getTarget(), move, power);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, chance, move, phase.getTarget(), false);
+    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getTarget()!, move, power);
 
     expect(chance.value).toBe(-1);
     expect(power.value).toBe(move.power);
@@ -165,7 +167,6 @@ describe("Abilities - Sheer Force", () => {
 
 
     game.scene.getEnemyParty()[0].stats[Stat.DEF] = 10000;
-    game.scene.getEnemyParty()[0].stats[Stat.SPD] = 1;
     expect(game.scene.getParty()[0].formIndex).toBe(0);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -176,6 +177,7 @@ describe("Abilities - Sheer Force", () => {
       (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
+    await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -185,8 +187,8 @@ describe("Abilities - Sheer Force", () => {
     //Disable color change due to being hit by Sheer Force
     const power = new Utils.IntegerHolder(move.power);
     const chance = new Utils.IntegerHolder(move.chance);
-    const user = phase.getUserPokemon();
-    const target = phase.getTarget();
+    const user = phase.getUserPokemon()!;
+    const target = phase.getTarget()!;
     const opponentType = target.getTypes()[0];
 
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, chance, move, target, false);
