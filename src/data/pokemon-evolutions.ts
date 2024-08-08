@@ -425,8 +425,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.KIRLIA, 20, null, null)
   ],
   [Species.KIRLIA]: [
-    new SpeciesEvolution(Species.GARDEVOIR, 30, null, new SpeciesEvolutionCondition(p => p.gender === Gender.FEMALE, p => p.gender = Gender.FEMALE)),
-    new SpeciesEvolution(Species.GALLADE, 30, null, new SpeciesEvolutionCondition(p => p.gender === Gender.MALE, p => p.gender = Gender.MALE))
+    new SpeciesEvolution(Species.GALLADE, 30, null, new SpeciesEvolutionCondition(p => p.gender === Gender.MALE && !!p.getMoveset().find(m => m.getMove().type === Type.FIGHTING), p => p.gender = Gender.MALE)),
+    new SpeciesEvolution(Species.GARDEVOIR, 30, null, null)
   ],
   [Species.SURSKIT]: [
     new SpeciesEvolution(Species.MASQUERAIN, 22, null, null)
@@ -514,8 +514,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.DUSCLOPS, 37, null, null)
   ],
   [Species.SNORUNT]: [
-    new SpeciesEvolution(Species.GLALIE, 42, null, new SpeciesEvolutionCondition(p => p.gender === Gender.MALE, p => p.gender = Gender.MALE)),
-    new SpeciesEvolution(Species.FROSLASS, 42, null, new SpeciesEvolutionCondition(p => p.gender === Gender.FEMALE, p => p.gender = Gender.FEMALE))
+    new SpeciesEvolution(Species.FROSLASS, 42, null, new SpeciesEvolutionCondition(p => p.gender === Gender.FEMALE && !!p.getMoveset().find(m => m.getMove().type === Type.GHOST), p => p.gender = Gender.FEMALE)),
+    new SpeciesEvolution(Species.GLALIE, 42, null, null)
   ],
   [Species.SPHEAL]: [
     new SpeciesEvolution(Species.SEALEO, 32, null, null)
