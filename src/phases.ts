@@ -3173,7 +3173,8 @@ export class MoveEffectPhase extends PokemonPhase {
                           && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit) && (!attr.firstTargetOnly || firstTarget), user, target, this.move.getMove()).then(() => {
                         // Apply the target's post-defend ability effects (as long as the target is active or can otherwise apply them)
                         return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move.getMove(), hitResult).then(() => {
-                          // If the invoked move is an enemy attack, apply the enemy's status effect-inflicting tokens
+                          // If the invoked move is an enemy attack, apply the enemy's status effect-inflicting tags and tokens
+                          target.lapseTag(BattlerTagType.BEAK_BLAST_CHARGING);
                           if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
                             user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
                           }
