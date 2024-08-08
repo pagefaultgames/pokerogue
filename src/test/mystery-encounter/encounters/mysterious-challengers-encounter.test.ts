@@ -71,6 +71,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
     game.override.startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
@@ -86,7 +87,6 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
   });
 
   it("should not run above wave 179", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
     game.override.startingWave(181);
 
     await game.runToMysteryEncounter();

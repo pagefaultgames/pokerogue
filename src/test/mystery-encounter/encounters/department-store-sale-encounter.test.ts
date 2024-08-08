@@ -72,6 +72,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of CIVILIZATION_ENCOUNTER_BIOMES", async () => {
+    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
     game.override.startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 

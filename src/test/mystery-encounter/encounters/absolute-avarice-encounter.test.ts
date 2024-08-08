@@ -81,6 +81,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of proper biomes", async () => {
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
     game.override.startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
@@ -96,6 +97,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
   });
 
   it("should spawn if player has enough berries", async () => {
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
     game.override.starterHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}]);
 
     await game.runToMysteryEncounter();

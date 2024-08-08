@@ -69,6 +69,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
+    game.override.mysteryEncounterTier(MysteryEncounterTier.ULTRA);
     game.override.startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 

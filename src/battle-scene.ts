@@ -2760,7 +2760,7 @@ export default class BattleScene extends SceneBase {
     const previousEncounter = this.mysteryEncounterData.encounteredEvents?.length > 0 ? this.mysteryEncounterData.encounteredEvents[this.mysteryEncounterData.encounteredEvents.length - 1][0] : null;
     const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType) ?? [];
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
-    while (availableEncounters.length === 0 && tier >= 0) {
+    while (availableEncounters.length === 0 && tier !== null) {
       availableEncounters = biomeMysteryEncounters
         .filter((encounterType) => {
           const encounterCandidate = allMysteryEncounters[encounterType];
@@ -2784,7 +2784,16 @@ export default class BattleScene extends SceneBase {
           return true;
         })
         .map((m) => (allMysteryEncounters[m]));
-      tier--;
+      // Decrement tier
+      if (tier === MysteryEncounterTier.ROGUE) {
+        tier = MysteryEncounterTier.ULTRA;
+      } else if (tier === MysteryEncounterTier.ULTRA) {
+        tier = MysteryEncounterTier.GREAT;
+      } else if (tier === MysteryEncounterTier.GREAT) {
+        tier = MysteryEncounterTier.COMMON;
+      } else {
+        tier = null; // Ends loop
+      }
     }
 
     // If absolutely no encounters are available, spawn 0th encounter
