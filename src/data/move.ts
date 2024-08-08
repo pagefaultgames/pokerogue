@@ -4402,9 +4402,12 @@ export class AddLinkedBattlerTagAttr extends AddBattlerTagAttr {
 
     const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
-      // Add the tag to both the user and target
+      /**
+       * Add the tag to both the user and the target.
+       * The target's tag source is considered to be the user and vice versa
+       */
       return target.addTag(this.tagType,  user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, user.id)
-        && user.addTag(this.tagType,  user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, user.id);
+        && user.addTag(this.tagType,  user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, target.id);
     }
 
     return false;

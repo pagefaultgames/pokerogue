@@ -66,10 +66,6 @@ export class BattlerTag {
     return false;
   }
 
-  isTargetLinked(): boolean {
-    return false;
-  }
-
   getMoveName(): string | null {
     return this.sourceMove
       ? allMoves[this.sourceMove].name
@@ -206,10 +202,6 @@ export class TrappedTag extends BattlerTag {
 export class JawLockTag extends TrappedTag {
   constructor(sourceId: integer) {
     super(BattlerTagType.JAW_LOCK, BattlerTagLapseType.CUSTOM, 1, Moves.JAW_LOCK, sourceId);
-  }
-
-  isTargetLinked(): boolean {
-    return true;
   }
 }
 

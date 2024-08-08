@@ -1,18 +1,17 @@
 import { Abilities } from "#app/enums/abilities.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import overrides from "#app/overrides";
 import {
-  DamagePhase,
+  FaintPhase,
   MoveEffectPhase,
-  TurnEndPhase,
-  VictoryPhase
+  TurnEndPhase
 } from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -32,81 +31,82 @@ describe("Moves - Jaw Lock", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.STURDY);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.JAW_LOCK]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+
+    game.override
+      .battleType("single")
+      .enemySpecies(Species.SNORLAX)
+      .enemyAbility(Abilities.INSOMNIA)
+      .enemyMoveset(SPLASH_ONLY)
+      .moveset([Moves.JAW_LOCK])
+      .startingLevel(100)
+      .enemyLevel(100)
+      .disableCrits();
   });
 
-  test("move should add BattlerTag to both Pokemon", async () => {
-    await game.startBattle([ Species.BULBASAUR ]);
+  it(
+    "should trap the move's user and target",
+    async () => {
+      await game.startBattle([ Species.BULBASAUR ]);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
-    expect(leadPokemon).toBeDefined();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    expect(enemyPokemon).toBeDefined();
+      game.doAttack(getMovePosition(game.scene, 0, Moves.JAW_LOCK));
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.JAW_LOCK));
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
 
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
 
-    expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
-    expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
+      await game.phaseInterceptor.to(TurnEndPhase);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
+      expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
+    }, TIMEOUT
+  );
 
-    expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
-    expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
-  }, TIMEOUT);
+  it(
+    "should not trap either pokemon if the target faints",
+    async () => {
+      game.override.enemyLevel(1);
+      await game.startBattle([ Species.BULBASAUR ]);
 
-  test("move should not add BattlerTag to either Pokemon if enemy faints in 1 hit", async () => {
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    await game.startBattle([ Species.BULBASAUR ]);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.JAW_LOCK));
 
-    const leadPokemon = game.scene.getPlayerPokemon();
-    const enemyPokemon = game.scene.getEnemyPokemon();
+      await game.phaseInterceptor.to(MoveEffectPhase, false);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.JAW_LOCK));
+      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
 
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+      await game.phaseInterceptor.to(FaintPhase);
 
-    expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
-    expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
+      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
+    }, TIMEOUT
+  );
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+  it(
+    "should only trap the user until the target faints",
+    async () => {
+      await game.startBattle([ Species.BULBASAUR ]);
 
-    expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
-    expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
-  }, TIMEOUT);
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-  test("BattlerTag should be removed after fainting", async () => {
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.JAW_LOCK));
 
-    await game.startBattle([ Species.BULBASAUR ]);
+      await game.phaseInterceptor.to(MoveEffectPhase);
 
-    const leadPokemon = game.scene.getPlayerPokemon();
-    const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
+      expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.JAW_LOCK));
+      await game.phaseInterceptor.to(TurnEndPhase);
 
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+      await game.doKillOpponents();
 
-    expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
-    expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
-
-    await game.phaseInterceptor.to(DamagePhase, false);
-
-    expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
-    expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
-
-    game.doAttack(getMovePosition(game.scene, 0, Moves.JAW_LOCK));
-
-    await game.phaseInterceptor.to(VictoryPhase, false);
-
-    expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
-  }, TIMEOUT);
+      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
+    }, TIMEOUT);
 });

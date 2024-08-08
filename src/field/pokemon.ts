@@ -2207,7 +2207,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (this.isFainted()) {
           // set splice index here, so future scene queues happen before FaintedPhase
           this.scene.setPhaseQueueSplice();
-          this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo, [...this.summonData.tags]));
+          this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo));
           this.resetSummonData();
         }
 
@@ -2274,7 +2274,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
        * Once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
        */
       this.scene.setPhaseQueueSplice();
-      this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure, [...this.summonData.tags]));
+      this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
       this.resetSummonData();
     }
 
@@ -2414,14 +2414,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   removeTagsBySourceId(sourceId: integer): void {
     this.findAndRemoveTags(t => t.isSourceLinked() && t.sourceId === sourceId);
-  }
-
-  /**
-   * Removes all tags that are from this Pokemon and are target linked
-   * @param {BattlerTag[]} sourceTags {@linkcode BattlerTag} array to filter from
-   */
-  removeTargetLinkedTags(sourceTags: BattlerTag[]): void {
-    sourceTags.filter(t => t.isTargetLinked() && t.sourceId === this.id).forEach(t => this.removeTag(t.tagType));
   }
 
   transferTagsBySourceId(sourceId: integer, newSourceId: integer): void {
