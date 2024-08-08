@@ -59,9 +59,9 @@ describe("Final Boss", () => {
   it("should not have passive enabled on Eternatus", async () => {
     await runToFinalBossEncounter(game, [Species.BIDOOF]);
 
-    const eternatus = game.scene.getEnemyPokemon()!;
-    expect(eternatus.species.speciesId).toBe(Species.ETERNATUS);
-    expect(eternatus.hasPassive()).toBe(false);
+    const eternatus = game.scene.getEnemyPokemon();
+    expect(eternatus?.species.speciesId).toBe(Species.ETERNATUS);
+    expect(eternatus?.hasPassive()).toBe(false);
   });
 
   it.todo("should change form on direct hit down to last boss fragment", () => {});
