@@ -68,7 +68,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.hiddenAbilityIcon = abilityIcon;
 
     // favorite icon
-    const favoriteIcon = this.scene.add.image(1, 7, "favorite");
+    const favoriteIcon = this.scene.add.image(0, 7, "favorite");
     favoriteIcon.setOrigin(0, 0);
     favoriteIcon.setScale(0.5);
     favoriteIcon.setVisible(false);
@@ -76,7 +76,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.favoriteIcon = favoriteIcon;
 
     // classic win icon
-    const classicWinIcon = this.scene.add.image(2, 12, "champion_ribbon");
+    const classicWinIcon = this.scene.add.image(0, 12, "champion_ribbon");
     classicWinIcon.setOrigin(0, 0);
     classicWinIcon.setScale(0.5);
     classicWinIcon.setVisible(false);
