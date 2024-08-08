@@ -209,6 +209,7 @@ export interface StarterAttributes {
   variant?: integer;
   form?: integer;
   female?: boolean;
+  shiny?: boolean;
 }
 
 export interface StarterPreferences {
@@ -323,7 +324,8 @@ export class GameData {
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
       [Unlockables.MINI_BLACK_HOLE]: false,
-      [Unlockables.SPLICED_ENDLESS_MODE]: false
+      [Unlockables.SPLICED_ENDLESS_MODE]: false,
+      [Unlockables.EVIOLITE]: false
     };
     this.achvUnlocks = {};
     this.voucherUnlocks = {};
