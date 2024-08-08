@@ -1,8 +1,8 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
-import { TurnEndPhase, MoveEffectPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { ArenaTagSide, getArenaTag } from "#app/data/arena-tag";
@@ -11,7 +11,7 @@ import { Abilities } from "#enums/abilities";
 import { WeatherType } from "#app/data/weather.js";
 import { StatusEffect, getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { mockHitCheck, SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
 
@@ -258,8 +258,7 @@ describe("Abilities - Magic Guard", () => {
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.HIGH_JUMP_KICK));
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
-    vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValueOnce(false);
+    await mockHitCheck(game, false);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
