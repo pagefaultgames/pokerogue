@@ -548,3 +548,12 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
   }
   return null;
 }
+
+/**
+ * Helper method to localize a sprite key (e.g. for types)
+ * @param baseKey the base key of the sprite (e.g. `type`)
+ * @returns the localized sprite key
+ */
+export function getLocalizedSpriteKey(baseKey: string) {
+  return `${baseKey}${verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
+}

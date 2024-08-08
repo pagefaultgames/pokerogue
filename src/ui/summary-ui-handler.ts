@@ -716,7 +716,7 @@ export default class SummaryUiHandler extends UiHandler {
       const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
         const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
         const typeIcon = !tera
-          ? this.scene.add.sprite(xCoord, 42, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[type].toLowerCase())          : this.scene.add.sprite(xCoord, 42, "type_tera");
+          ? this.scene.add.sprite(xCoord, 42, Utils.getLocalizedSpriteKey("type"), Type[type].toLowerCase())          : this.scene.add.sprite(xCoord, 42, "type_tera");
         if (tera) {
           typeIcon.setScale(0.5);
           const typeRgb = getTypeRgb(type);
@@ -936,7 +936,7 @@ export default class SummaryUiHandler extends UiHandler {
         this.extraMoveRowContainer.setVisible(true);
 
         if (this.newMove && this.pokemon) {
-          const spriteKey = `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
+          const spriteKey = Utils.getLocalizedSpriteKey("type");
           const moveType = this.newMove.getFinalType(this.pokemon);
           const newMoveTypeIcon = this.scene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
           newMoveTypeIcon.setOrigin(0, 1);
@@ -962,7 +962,7 @@ export default class SummaryUiHandler extends UiHandler {
         this.moveRowsContainer.add(moveRowContainer);
 
         if (move && this.pokemon) {
-          const spriteKey = `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
+          const spriteKey = Utils.getLocalizedSpriteKey("type");
           const moveType = move.getMove().getFinalType(this.pokemon);
           const typeIcon = this.scene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
           typeIcon.setOrigin(0, 1);
