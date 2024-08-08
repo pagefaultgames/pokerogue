@@ -48,7 +48,7 @@ export default class TouchControl {
 
     node.addEventListener("touchend", event => {
       event.preventDefault();
-      this.touchButtonUp(node, key, event.target["id"]);
+      this.touchButtonUp(node, key, event.target?.["id"]);
     });
   }
 
@@ -120,7 +120,7 @@ export default class TouchControl {
    * Prevent zoom on specified element
    * @param {HTMLElement} element
    */
-  preventElementZoom(element: HTMLElement): void {
+  preventElementZoom(element: HTMLElement | null): void {
     if (!element) {
       return;
     }
