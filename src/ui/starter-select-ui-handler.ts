@@ -454,6 +454,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.filterBar.addFilter(DropDownColumn.UNLOCKS, i18next.t("filterBar:unlocksFilter"), new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.RADIAL));
 
     // misc filter
+    const favoriteLabels = [
+      new DropDownLabel(i18next.t("filterBar:favorite"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:isFavorite"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:notFavorite"), undefined, DropDownState.EXCLUDE),
+    ];
     const winLabels = [
       new DropDownLabel(i18next.t("filterBar:ribbon"), undefined, DropDownState.OFF),
       new DropDownLabel(i18next.t("filterBar:hasWon"), undefined, DropDownState.ON),
@@ -469,6 +474,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownLabel(i18next.t("filterBar:hasPokerus"), undefined, DropDownState.ON),
     ];
     const miscOptions = [
+      new DropDownOption(this.scene, "FAVORITE", favoriteLabels),
       new DropDownOption(this.scene, "WIN", winLabels),
       new DropDownOption(this.scene, "HIDDEN_ABILITY", hiddenAbilityLabels),
       new DropDownOption(this.scene, "POKERUS", pokerusLabels),
@@ -1517,6 +1523,28 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             }
           }
+          // if container.favorite is false, show the favorite option
+          if (!starterAttributes.favorite) {
+            options.push({
+              label: i18next.t("starterSelectUiHandler:addToFavorites"),
+              handler: () => {
+                starterAttributes.favorite = true;
+                starterContainer.favoriteIcon.setVisible(starterAttributes.favorite);
+                ui.setMode(Mode.STARTER_SELECT);
+                return true;
+              }
+            });
+          } else {
+            options.push({
+              label: i18next.t("starterSelectUiHandler:removeFromFavorites"),
+              handler: () => {
+                starterAttributes.favorite = false;
+                starterContainer.favoriteIcon.setVisible(starterAttributes.favorite);
+                ui.setMode(Mode.STARTER_SELECT);
+                return true;
+              }
+            });
+          }
           const showUseCandies = () => { // this lets you use your candies
             const options: any[] = []; // TODO: add proper type
             if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
@@ -2128,6 +2156,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const isUncaught = !isCaught && !isVariantCaught && !isVariant2Caught && !isVariant3Caught;
       const isPassiveUnlocked = this.scene.gameData.starterData[container.species.speciesId].passiveAttr > 0;
       const isCostReduced = this.scene.gameData.starterData[container.species.speciesId].valueReduction > 0;
+      const isFavorite = this.starterPreferences[container.species.speciesId]?.favorite ?? false;
+
       const isWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0;
       const isNotWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0;
       const isUndefined = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === undefined;
@@ -2171,6 +2201,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       });
 
+      const fitsFavorite = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
+        if (misc.val === "FAVORITE" && misc.state === DropDownState.ON) {
+          return isFavorite;
+        }
+        if (misc.val === "FAVORITE" && misc.state === DropDownState.EXCLUDE) {
+          return !isFavorite;
+        }
+        if (misc.val === "FAVORITE" && misc.state === DropDownState.OFF) {
+          return true;
+        }
+      });
+
       const fitsWin = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (container.species.speciesId < 10) {
         }
@@ -2203,7 +2245,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       });
 
-      if (fitsGen && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsWin && fitsHA && fitsPokerus) {
+      if (fitsGen && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsFavorite && fitsWin && fitsHA && fitsPokerus) {
         this.filteredStarterContainers.push(container);
       }
     });
@@ -2296,6 +2338,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         container.starterPassiveBgs.setVisible(!!this.scene.gameData.starterData[speciesId].passiveAttr);
         container.hiddenAbilityIcon.setVisible(!!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
         container.classicWinIcon.setVisible(this.scene.gameData.starterData[speciesId].classicWinCount > 0);
+        container.favoriteIcon.setVisible(this.starterPreferences[speciesId].favorite ? true : false);
 
         // 'Candy Icon' mode
         if (this.scene.candyUpgradeDisplay === 0) {
