@@ -1,4 +1,4 @@
-import {SettingGamepad} from "#app/system/settings/settings-gamepad.js";
+import {SettingGamepad} from "#app/system/settings/settings-gamepad";
 import {Button} from "#enums/buttons";
 
 /**

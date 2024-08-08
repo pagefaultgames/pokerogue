@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
-import { Species } from "#app/enums/species.js";
+import { Species } from "#app/enums/species";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { Moves } from "#app/enums/moves.js";
+import { Moves } from "#app/enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { MoveEffectPhase } from "#app/phases";
 

@@ -1,4 +1,4 @@
-import { EnemyPokemon } from "#app/field/pokemon.js";
+import { EnemyPokemon } from "#app/field/pokemon";
 import { DamagePhase, MoveEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

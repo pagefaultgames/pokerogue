@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle.js";
+import { BattlerIndex } from "#app/battle";
 import { CommandPhase, SelectTargetPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

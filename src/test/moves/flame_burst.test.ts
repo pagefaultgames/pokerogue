@@ -5,9 +5,9 @@ import { Species } from "#enums/species";
 import { SelectTargetPhase, TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { Abilities } from "#app/enums/abilities.js";
-import { allAbilities } from "#app/data/ability.js";
-import Pokemon from "#app/field/pokemon.js";
+import { Abilities } from "#app/enums/abilities";
+import { allAbilities } from "#app/data/ability";
+import Pokemon from "#app/field/pokemon";
 
 describe("Moves - Flame Burst", () => {
   let phaserGame: Phaser.Game;

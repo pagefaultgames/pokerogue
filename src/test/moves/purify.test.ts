@@ -1,5 +1,5 @@
-import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon.js";
+import { Status, StatusEffect } from "#app/data/status-effect";
+import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { MoveEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

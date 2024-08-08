@@ -1,4 +1,4 @@
-import { Status, StatusEffect } from "#app/data/status-effect.js";
+import { Status, StatusEffect } from "#app/data/status-effect";
 import { QuietFormChangePhase } from "#app/phases/form-change-phase";
 import { TurnEndPhase } from "#app/phases";
 import { Abilities } from "#enums/abilities";

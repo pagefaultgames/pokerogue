@@ -1,4 +1,4 @@
-import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
+import { StatusEffectTranslationEntries } from "#app/interfaces/locales";
 
 export const statusEffect: StatusEffectTranslationEntries = {
   none: {

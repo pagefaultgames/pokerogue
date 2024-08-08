@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
-import { Species } from "#app/enums/species.js";
-import { Abilities } from "#app/enums/abilities.js";
+import { Species } from "#app/enums/species";
+import { Abilities } from "#app/enums/abilities";
 
 describe("Internals", () => {
   let phaserGame: Phaser.Game;

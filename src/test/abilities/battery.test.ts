@@ -1,5 +1,5 @@
-import { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
+import { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
 import { MoveEffectPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

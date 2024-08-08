@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene";
 import { DropDown, DropDownType } from "./dropdown";
 import { StarterContainer } from "./starter-container";
 import { addTextObject, getTextColor, TextStyle } from "./text";

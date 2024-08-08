@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat.js";
+import { BattleStat } from "#app/data/battle-stat";
 import { PostSummonPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";

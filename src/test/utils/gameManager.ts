@@ -21,13 +21,13 @@ import { GameDataType } from "#enums/game-data-type";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
-import { BattlerIndex } from "#app/battle.js";
-import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
+import { BattlerIndex } from "#app/battle";
+import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { OverridesHelper } from "./overridesHelper";
-import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
-import overrides from "#app/overrides.js";
+import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
+import overrides from "#app/overrides";
 import { removeEnemyHeldItems } from "./testUtils";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 
 /**
  * Class to manage the game state and transitions between phases.

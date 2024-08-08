@@ -1,7 +1,7 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { Abilities } from "#app/enums/abilities";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
 import { CommandPhase, MessagePhase } from "#app/phases";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";

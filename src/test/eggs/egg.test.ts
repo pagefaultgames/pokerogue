@@ -3,12 +3,12 @@ import BattleScene from "../../battle-scene";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
-import { EggSourceType } from "#app/enums/egg-source-types.js";
-import { EggTier } from "#app/enums/egg-type.js";
-import { VariantTier } from "#app/enums/variant-tiers.js";
+import { EggSourceType } from "#app/enums/egg-source-types";
+import { EggTier } from "#app/enums/egg-type";
+import { VariantTier } from "#app/enums/variant-tiers";
 import GameManager from "#test/utils/gameManager";
-import EggData from "#app/system/egg-data.js";
-import * as Utils from "#app/utils.js";
+import EggData from "#app/system/egg-data";
+import * as Utils from "#app/utils";
 
 describe("Egg Generation Tests", () => {
   let phaserGame: Phaser.Game;

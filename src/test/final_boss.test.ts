@@ -1,8 +1,8 @@
-import { Biome } from "#app/enums/biome.js";
-import { Species } from "#app/enums/species.js";
-import { GameModes, getGameMode } from "#app/game-mode.js";
+import { Biome } from "#app/enums/biome";
+import { Species } from "#app/enums/species";
+import { GameModes, getGameMode } from "#app/game-mode";
 import { EncounterPhase, SelectStarterPhase } from "#app/phases";
-import { Mode } from "#app/ui/ui.js";
+import { Mode } from "#app/ui/ui";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "./utils/gameManager";
 import { generateStarter } from "./utils/gameManagerUtils";

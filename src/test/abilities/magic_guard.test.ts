@@ -8,7 +8,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { ArenaTagSide, getArenaTag } from "#app/data/arena-tag";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
-import { WeatherType } from "#app/data/weather.js";
+import { WeatherType } from "#app/data/weather";
 import { StatusEffect, getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { mockHitCheck, SPLASH_ONLY } from "#test/utils/testUtils";

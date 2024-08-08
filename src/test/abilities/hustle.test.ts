@@ -1,6 +1,6 @@
-import { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { Stat } from "#app/enums/stat.js";
+import { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { Stat } from "#app/enums/stat";
 import { DamagePhase, MoveEffectPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/move.js";
+import { allMoves } from "#app/data/move";
 import { CommandPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

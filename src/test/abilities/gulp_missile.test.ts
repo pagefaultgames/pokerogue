@@ -1,4 +1,4 @@
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
 import {
   MoveEndPhase,
   TurnEndPhase,
@@ -12,10 +12,10 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { GulpMissileTag } from "#app/data/battler-tags.js";
-import Pokemon from "#app/field/pokemon.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { StatusEffect } from "#app/enums/status-effect";
+import { GulpMissileTag } from "#app/data/battler-tags";
+import Pokemon from "#app/field/pokemon";
 
 describe("Abilities - Gulp Missile", () => {
   let phaserGame: Phaser.Game;

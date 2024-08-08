@@ -1,5 +1,5 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import { TerrainType } from "#app/data/terrain.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { TerrainType } from "#app/data/terrain";
 import { MoveEndPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

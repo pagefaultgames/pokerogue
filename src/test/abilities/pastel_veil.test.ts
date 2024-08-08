@@ -5,10 +5,10 @@ import { Species } from "#enums/species";
 import { CommandPhase, TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { StatusEffect } from "#app/data/status-effect.js";
-import { allAbilities } from "#app/data/ability.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerIndex } from "#app/battle.js";
+import { StatusEffect } from "#app/data/status-effect";
+import { allAbilities } from "#app/data/ability";
+import { Abilities } from "#app/enums/abilities";
+import { BattlerIndex } from "#app/battle";
 
 describe("Abilities - Pastel Veil", () => {
   let phaserGame: Phaser.Game;

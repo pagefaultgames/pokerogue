@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { Mode } from "#app/ui/ui";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";

@@ -12,7 +12,7 @@ import { koConfig } from "#app/locales/ko/config";
 import { jaConfig } from "#app/locales/ja/config";
 import { ptBrConfig } from "#app/locales/pt_BR/config";
 import { zhCnConfig } from "#app/locales/zh_CN/config";
-import { zhTwConfig } from "#app/locales/zh_TW/config.js";
+import { zhTwConfig } from "#app/locales/zh_TW/config";
 
 interface LoadingFontFaceProperty {
   face: FontFace,

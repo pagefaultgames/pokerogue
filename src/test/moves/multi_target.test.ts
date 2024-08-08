@@ -1,6 +1,6 @@
-import { getMoveTargets } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { Species } from "#app/enums/species.js";
+import { getMoveTargets } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { Species } from "#app/enums/species";
 import GameManager from "#test/utils/gameManager";
 import { Moves } from "#enums/moves";
 import Phaser from "phaser";

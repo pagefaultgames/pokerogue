@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { Abilities } from "#app/enums/abilities.js";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { Abilities } from "#app/enums/abilities";
 import { BerryPhase, TurnEndPhase } from "#app/phases";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
 
 const TIMEOUT = 20 * 1000;
 

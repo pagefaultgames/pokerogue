@@ -1,4 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales.js";
+import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const settings: SimpleTranslationEntries = {
   "boy": "Menino",

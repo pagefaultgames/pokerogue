@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene.js";
-import { TextStyle, addTextObject } from "#app/ui/text.js";
+import BattleScene from "#app/battle-scene";
+import { TextStyle, addTextObject } from "#app/ui/text";
 
 export enum EventType {
     SHINY

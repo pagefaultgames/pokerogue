@@ -1,5 +1,5 @@
-import { Abilities } from "#app/enums/abilities.js";
-import { PokemonExpBoosterModifier } from "#app/modifier/modifier.js";
+import { Abilities } from "#app/enums/abilities";
+import { PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import GameManager from "#test/utils/gameManager";
 import * as Utils from "#app/utils";
 import Phase from "phaser";
