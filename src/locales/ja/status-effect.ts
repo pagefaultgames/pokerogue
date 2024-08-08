@@ -33,7 +33,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
     description: "まひ",
     obtain: "{{pokemonNameWithAffix}}は　まひして\n技が　でにくくなった！",
     obtainSource: "{{pokemonNameWithAffix}}は　{{sourceText}}で　まひして\n技が　でにくくなった！",
-    activation: "{{pokemonNameWithAffix}}は\n体がしびれて　動けない！",
+    activation: "{{pokemonNameWithAffix}}は\n体が　しびれて　動けない！",
     overlap: "{{pokemonNameWithAffix}}は\nすでに　まひしている",
     heal: "{{pokemonNameWithAffix}}の\nしびれが　とれた！"
   },
