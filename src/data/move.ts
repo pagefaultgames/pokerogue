@@ -4965,7 +4965,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
         if (switchOutTarget.hp > 0) {
           user.scene.prependToPhase(
-            new SwitchPhase(user.scene, switchOutTarget.getFieldIndex(), true, willBePursued),
+            new SwitchPhase(user.scene, switchOutTarget.getFieldIndex(), "moveEffect", willBePursued),
             MoveEndPhase
           );
           resolve(true);
