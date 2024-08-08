@@ -8,7 +8,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { mockTurnOrder } from "#test/utils/testUtils";
 
 describe("Items - Leek", () => {
   let phaserGame: Phaser.Game;
@@ -44,7 +43,7 @@ describe("Items - Leek", () => {
 
     game.doAttack(0);
 
-    await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.mockTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase);
 
