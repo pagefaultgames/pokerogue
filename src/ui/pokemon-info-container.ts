@@ -12,6 +12,7 @@ import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { addWindow } from "./ui-theme";
+import * as pokemonSpecies from "../data/pokemon-species";
 
 interface LanguageSetting {
   infoContainerTextSize: string;
@@ -226,7 +227,26 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setVisible(false);
       }
 
-      if (pokemon.species.forms?.[pokemon.formIndex]?.formName) {
+      let isFormVisible = true; // This sets the form label to be visible by default. We change it later if it has conditions that make it false
+      if (pokemon.species.forms?.length > 0) { // This code checks to see if the pokemon has forms at all
+        /* If the pokemon in question does have forms, it compares the form list of the pokemon against the noStarterFormKeys from the pokemon-species.ts file.
+           This noStarterFormKeys lists all of the form keys that make a form be mega/gmax/primal etc.
+           If any of the forms of that pokemon have a formKey on the noStarterFormKeys list, it filters them out
+        */
+        const nonFormKeyForms = pokemon.species.forms.filter(object => {
+          return !pokemonSpecies.noStarterFormKeys.includes(object.formKey);
+        });
+        // If the final list of forms for the pokemon has a length 1, that means there's only one form that's not a mega/gmax etc
+        // Usually if the remaining forms array has a length of 1, it means the form name remaining is usually "Normal", which should not be shown.
+        // If this is the case (whether the form name is "Normal" or not), hide the form label as we don't want to be shown the label if this is the only form available
+        if (nonFormKeyForms.length === 1) {
+          isFormVisible = false;
+        }
+      } else { // If the pokemon doesn't have any forms, hide the form label
+        isFormVisible = false;
+      }
+
+      if (isFormVisible) {
         this.pokemonFormLabelText.setVisible(true);
         this.pokemonFormText.setVisible(true);
         const newForm = BigInt(1 << pokemon.formIndex) * DexAttr.DEFAULT_FORM;
