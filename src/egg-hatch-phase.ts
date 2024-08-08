@@ -13,104 +13,30 @@ import EggCounterContainer from "./ui/egg-counter-container";
 import { EggCountChangedEvent } from "./events/egg";
 import { getPokemonNameWithAffix } from "./messages";
 
-export class EggSkipPhase extends Phase {
-  private eggs: Egg[];
-  private newEggMoves: integer[];
-  private eggsToHatchCount: number;
-  private pokemonHatched: PlayerPokemon[];
-
-  constructor(scene: BattleScene, eggs: Egg[], pokemonHatchedContainer: PlayerPokemon[], eggsToHatchCount: integer) {
-    super(scene);
-
-    this.eggs = eggs;
-    this.newEggMoves = [];
-    this.eggsToHatchCount = eggsToHatchCount;
-    this.pokemonHatched = pokemonHatchedContainer;
-  }
-
-  start() {
-    super.start();
-    console.log(this.eggs);
-    // show prompt for skip
-    this.scene.ui.showText("Skip egg hatch animations?", 0);
-    this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
-      for (const egg of this.eggs) {
-        this.hatchEggSilently(egg);
-      }
-      this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.pokemonHatched, this.newEggMoves));
-      this.end();
-    }, () => {
-      for (const egg of this.eggs) {
-        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, this.pokemonHatched, this.eggsToHatchCount));
-      }
-      this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.pokemonHatched, this.newEggMoves));
-      this.end();
-    }
-    );this.scene.ui.showText("Skip egg hatch animations?", 0);
-    this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
-      for (const egg of this.eggs) {
-        this.hatchEggSilently(egg);
-      }
-      this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.pokemonHatched, this.newEggMoves));
-      this.end();
-    }, () => {
-      for (const egg of this.eggs) {
-        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, this.pokemonHatched, this.eggsToHatchCount));
-      }
-      this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.pokemonHatched, this.newEggMoves));
-      this.end();
-    }
-    );
-  }
+// export class EggSkipPhase extends Phase {
+//   private eggs: Egg[];
 
 
-  hatchEggSilently(egg: Egg) {
-    const pokemon = this.generatePokemon(egg);
-    if (pokemon.fusionSpecies) {
-      pokemon.clearFusionSpecies();
-    }
-    console.log(pokemon);
+//   constructor(scene: BattleScene, eggs: Egg[], pokemonHatchedContainer: PlayerPokemon[]) {
+//     super(scene);
 
-    pokemon.loadAssets().then(() => {
+//     this.eggs = eggs;
+//     this.newEggMoves = [];
+//     this.eggsToHatchCount = eggs.length;
+//     this.pokemonHatched = pokemonHatchedContainer;
+//   }
 
-      if (pokemon.species.subLegendary) {
-        this.scene.validateAchv(achvs.HATCH_SUB_LEGENDARY);
-      }
-      if (pokemon.species.legendary) {
-        this.scene.validateAchv(achvs.HATCH_LEGENDARY);
-      }
-      if (pokemon.species.mythical) {
-        this.scene.validateAchv(achvs.HATCH_MYTHICAL);
-      }
-      if (pokemon.isShiny()) {
-        this.scene.validateAchv(achvs.HATCH_SHINY);
-      }
+//   start() {
 
-    });
+//   }
 
-  }
 
-  /**
-   * Generates a Pokemon to be hatched by the egg
-   * @returns the hatched PlayerPokemon
-   */
-  generatePokemon(egg: Egg): PlayerPokemon {
-    let ret: PlayerPokemon;
 
-    this.scene.executeWithSeedOffset(() => {
-      ret = egg.generatePlayerPokemon(this.scene);
-      this.newEggMoves.push(egg.eggMoveIndex);
 
-    }, egg.id, EGG_SEED.toString());
-
-    this.pokemonHatched.push(ret);
-    return ret;
-  }
-
-  end() {
-    super.end();
-  }
-}
+//   end() {
+//     super.end();
+//   }
+// }
 
 
 /**
@@ -120,6 +46,8 @@ export class EggHatchPhase extends Phase {
   /** The egg that is hatching */
   private egg: Egg;
   private pokemonHatched: PlayerPokemon[];
+  private newEggMoves: integer[];
+  private eggMoveUnlocks: boolean[];
 
   /** The number of eggs that are hatching */
   private eggsToHatchCount: integer;
@@ -161,12 +89,14 @@ export class EggHatchPhase extends Phase {
   /** The sound effect being played when the egg is hatched */
   private evolutionBgm: AnySound;
 
-  constructor(scene: BattleScene, egg: Egg, pokemonHatchedContainer: PlayerPokemon[], eggsToHatchCount: integer) {
+  constructor(scene: BattleScene, egg: Egg, pokemonHatchedContainer: PlayerPokemon[], eggMovesContainer: integer[], eggsToHatchCount: integer, eggMoveUnlocks: boolean[]) {
     super(scene);
 
     this.egg = egg;
     this.pokemonHatched = pokemonHatchedContainer;
+    this.newEggMoves = eggMovesContainer;
     this.eggsToHatchCount = eggsToHatchCount;
+    this.eggMoveUnlocks = eggMoveUnlocks;
   }
 
   start() {
@@ -448,7 +378,13 @@ export class EggHatchPhase extends Phase {
         this.scene.ui.showText(i18next.t("egg:hatchFromTheEgg", { pokemonName: getPokemonNameWithAffix(this.pokemon) }), null, () => {
           this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
           this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
-            this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(() => {
+            this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then((value) => {
+              if (value) {
+                this.eggMoveUnlocks.push(true);
+                console.log("new egg move?");
+              } else {
+                this.eggMoveUnlocks.push(false);
+              }
               this.scene.ui.showText(null, 0);
               this.end();
             });
@@ -546,6 +482,7 @@ export class EggHatchPhase extends Phase {
     this.scene.executeWithSeedOffset(() => {
       ret = this.egg.generatePlayerPokemon(this.scene);
       this.eggMoveIndex = this.egg.eggMoveIndex;
+      this.newEggMoves.push(this.eggMoveIndex);
 
     }, this.egg.id, EGG_SEED.toString());
 
@@ -574,6 +511,7 @@ export class EggSummaryPhase extends Phase {
   private egg: Egg;
   private pokemonHatched: PlayerPokemon[];
   private newEggMoves: integer[];
+  private eggMoveUnlocks: boolean[];
   private showMessages: boolean;
 
   private eggHatchHandler: EggHatchSceneHandler;
@@ -589,10 +527,11 @@ export class EggSummaryPhase extends Phase {
   private pokeballIcons: Phaser.GameObjects.Image[];
   private eggMoveIcons: Phaser.GameObjects.Image[];
   private infoContainers: PokemonInfoContainer[];
-  constructor(scene: BattleScene, pokemonHatchedContainer: PlayerPokemon[], newEggMoves: integer[]) {
+  constructor(scene: BattleScene, pokemonHatchedContainer: PlayerPokemon[], newEggMoves: integer[], eggMoveUnlocks: boolean[]) {
     super(scene);
     this.pokemonHatched = pokemonHatchedContainer;
     this.newEggMoves = newEggMoves;
+    this.eggMoveUnlocks = eggMoveUnlocks;
   }
 
   start() {
@@ -821,7 +760,13 @@ export class EggSummaryPhase extends Phase {
         // console.log("set IVs");
         this.scene.gameData.updateSpeciesDexIvs(pokemon.species.speciesId, pokemon.ivs);
         // console.log("set egg moves");
-        this.scene.gameData.setEggMoveUnlocked(pokemon.species, eggMoveIndex, showMessage). then (() => {
+        this.scene.gameData.setEggMoveUnlocked(pokemon.species, eggMoveIndex, showMessage).then((value) => {
+          if (value) {
+            this.eggMoveUnlocks.push(true);
+            console.log("new egg move?");
+          } else {
+            this.eggMoveUnlocks.push(false);
+          }
           resolve();
         });
       });

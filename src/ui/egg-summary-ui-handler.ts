@@ -137,6 +137,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     const size = 12;
     const scale_size =  size * (4/3);
 
+    console.log("generating icons...");
     this.shinyIcons = new Array(this.pokemonHatched.length).fill(null).map((_, i) => {
       const x = (i % 11) * 18;
       const y = Math.floor(i / 11) * 18;
@@ -181,6 +182,9 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       this.eggListPokemonContainer.add(ret);
       return ret;
     });
+    console.log("icons done");
+
+    console.log("generating info containers...");
 
     this.infoContainers = new Array(this.pokemonHatched.length).fill(null).map((_, i) => {
       const ret = new PokemonInfoContainer(this.scene, 45, 100);
@@ -191,6 +195,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       this.eggListPokemonContainer.add(ret);
       return ret;
     });
+    console.log("info containers done");
 
     let i = 0;
     for (const displayPokemon of this.pokemonHatched) {

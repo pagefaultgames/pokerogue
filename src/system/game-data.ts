@@ -520,12 +520,9 @@ export class GameData {
           });
         }
 
-        const eggDataArray: EggData[] = systemData.eggs.map(data => new EggData(data));
-
-        // this.eggs = systemData.eggs
-        // ? systemData.eggs.map(e => e.toEgg())
-        // : [];
-        this.eggs = eggDataArray.map(e => e.toEgg());
+        this.eggs = systemData.eggs
+          ? systemData.eggs.map(e => e.toEgg())
+          : [];
         console.log(this.eggs);
         this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
         this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
@@ -1502,8 +1499,8 @@ export class GameData {
       };
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
-        this.scene.playSound("level_up_fanfare");
         if (showMessage) {
+          this.scene.playSound("level_up_fanfare");
           console.log(`${species.name} has been\nadded as a starter!`);
           this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
           console.log("show text passed");
@@ -1574,9 +1571,8 @@ export class GameData {
 
       this.starterData[speciesId].eggMoves |= value;
 
-      this.scene.playSound("level_up_fanfare");
       if (showMessage) {
-
+        this.scene.playSound("level_up_fanfare");
         const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
         this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, (() => {
           resolve(true);
