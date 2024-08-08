@@ -16,7 +16,6 @@ enum MenuOptions {
   GAME_SETTINGS,
   ACHIEVEMENTS,
   STATS,
-  VOUCHERS,
   EGG_LIST,
   EGG_GACHA,
   MANAGE_DATA,
@@ -361,10 +360,6 @@ export default class MenuUiHandler extends MessageUiHandler {
         break;
       case MenuOptions.STATS:
         ui.setOverlayMode(Mode.GAME_STATS);
-        success = true;
-        break;
-      case MenuOptions.VOUCHERS:
-        ui.setOverlayMode(Mode.VOUCHERS);
         success = true;
         break;
       case MenuOptions.EGG_LIST:
