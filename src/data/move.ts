@@ -1021,6 +1021,22 @@ export class MessageHeaderAttr extends MoveHeaderAttr {
   }
 }
 
+/**
+ * Header attribute to implement the "charge phase" of Beak Blast at the
+ * beginning of a turn.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Beak_Blast_(move) | Beak Blast}
+ * @see {@linkcode BeakBlastChargingTag}
+ */
+export class BeakBlastHeaderAttr extends MoveHeaderAttr {
+  /** Required to initialize Beak Blast's charge animation correctly */
+  public chargeAnim = ChargeAnim.BEAK_BLAST_CHARGING;
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    user.addTag(BattlerTagType.BEAK_BLAST_CHARGING);
+    return true;
+  }
+}
+
 export class PreMoveMessageAttr extends MoveAttr {
   private message: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
 
@@ -2391,24 +2407,21 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
   private chargeText: string;
   private tagType: BattlerTagType | null;
   private chargeEffect: boolean;
-  public sameTurn: boolean;
   public followUpPriority: integer | null;
 
-  constructor(chargeAnim: ChargeAnim, chargeText: string, tagType?: BattlerTagType | null, chargeEffect: boolean = false, sameTurn: boolean = false, followUpPriority?: integer) {
+  constructor(chargeAnim: ChargeAnim, chargeText: string, tagType?: BattlerTagType | null, chargeEffect: boolean = false) {
     super();
 
     this.chargeAnim = chargeAnim;
     this.chargeText = chargeText;
     this.tagType = tagType!; // TODO: is this bang correct?
     this.chargeEffect = chargeEffect;
-    this.sameTurn = sameTurn;
-    this.followUpPriority = followUpPriority!; // TODO: is this bang correct?
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       const lastMove = user.getLastXMoves().find(() => true);
-      if (!lastMove || lastMove.move !== move.id || (lastMove.result !== MoveResult.OTHER && (this.sameTurn || lastMove.turn !== user.scene.currentBattle.turn))) {
+      if (!lastMove || lastMove.move !== move.id || (lastMove.result !== MoveResult.OTHER && lastMove.turn !== user.scene.currentBattle.turn)) {
         (args[0] as Utils.BooleanHolder).value = true;
         new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, () => {
           user.scene.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
@@ -2420,13 +2433,6 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
           }
           user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
           user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true });
-          if (this.sameTurn) {
-            let movesetMove = user.moveset.find(m => m?.moveId === move.id);
-            if (!movesetMove) { // account for any move that calls a ChargeAttr move when the ChargeAttr move does not exist in moveset
-              movesetMove = new PokemonMove(move.id, 0, 0, true);
-            }
-            user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], movesetMove, true), this.followUpPriority!); // TODO: is this bang correct?
-          }
           user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
           resolve(true);
         });
@@ -8081,11 +8087,10 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new StatusMove(Moves.INSTRUCT, Type.PSYCHIC, -1, 15, -1, 0, 7)
       .unimplemented(),
-    new AttackMove(Moves.BEAK_BLAST, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, 5, 7)
-      .attr(ChargeAttr, ChargeAnim.BEAK_BLAST_CHARGING, i18next.t("moveTriggers:startedHeatingUpBeak", {pokemonName: "{USER}"}), undefined, false, true, -3)
+    new AttackMove(Moves.BEAK_BLAST, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
+      .attr(BeakBlastHeaderAttr)
       .ballBombMove()
-      .makesContact(false)
-      .partial(),
+      .makesContact(false),
     new AttackMove(Moves.CLANGING_SCALES, Type.DRAGON, MoveCategory.SPECIAL, 110, 100, 5, -1, 0, 7)
       .attr(StatChangeAttr, BattleStat.DEF, -1, true, null, true, false, MoveEffectTrigger.HIT, true)
       .soundBased()
