@@ -2135,6 +2135,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.validStarterContainers = this.starterContainers;
     }
 
+    // this updates icons for previously saved pokemon
+    for (let i = 0; i < this.validStarterContainers.length; i++) {
+      const currentFilteredContainer = this.validStarterContainers[i];
+      const starterSprite = currentFilteredContainer.icon as Phaser.GameObjects.Sprite;
+
+      const currentDexAttr = this.getCurrentDexProps(currentFilteredContainer.species.speciesId);
+      const props = this.scene.gameData.getSpeciesDexAttrProps(currentFilteredContainer.species, currentDexAttr);
+
+      starterSprite.setTexture(currentFilteredContainer.species.getIconAtlasKey(props.formIndex, props.shiny, props.variant), currentFilteredContainer.species.getIconId(props.female!, props.formIndex, props.shiny, props.variant));
+      currentFilteredContainer.checkIconId(props.female, props.formIndex, props.shiny, props.variant);
+    }
+
     // filter
     this.validStarterContainers.forEach(container => {
       container.setVisible(false);
