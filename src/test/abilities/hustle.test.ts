@@ -44,7 +44,7 @@ describe("Abilities - Hustle", () => {
     vi.spyOn(pikachu, "getBattleStat");
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
-    await game.mockHitCheck(true);
+    await game.move.forceHit();
     await game.phaseInterceptor.to(DamagePhase);
 
     expect(pikachu.getBattleStat).toHaveReturnedWith(atk * 1.5);

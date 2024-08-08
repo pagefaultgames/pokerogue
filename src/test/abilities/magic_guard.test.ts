@@ -258,7 +258,7 @@ describe("Abilities - Magic Guard", () => {
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.HIGH_JUMP_KICK));
-    await game.mockHitCheck(false);
+    await game.move.forceMiss();
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

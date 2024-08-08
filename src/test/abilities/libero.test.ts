@@ -192,7 +192,7 @@ describe("Abilities - Protean", () => {
       expect(leadPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
-      await game.mockHitCheck(false);
+      await game.move.forceMiss();
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;

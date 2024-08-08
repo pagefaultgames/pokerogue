@@ -80,11 +80,11 @@ describe("Abilities - Sweet Veil", () => {
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     // First pokemon move
-    await game.mockHitCheck(true);
+    await game.move.forceHit();
 
     // Second pokemon move
     await game.phaseInterceptor.to(MovePhase, false);
-    await game.mockHitCheck(true);
+    await game.move.forceHit();
 
     expect(game.scene.getPlayerField().some(p => !!p.getTag(BattlerTagType.DROWSY))).toBe(true);
 
