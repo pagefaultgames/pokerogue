@@ -28,6 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "toggleIVs": "個体値を ひょうじ",
   "manageMoves": "わざを ならびかえ",
   "manageNature": "せいかくを ならびかえ",
+  "addToFavorites": "Add to Favorites",
+  "removeFromFavorites": "Remove from Favorites",
   "useCandies": "アメを つかう",
   "selectNature": "せいかくをえらんでください",
   "selectMoveSwapOut": "交換する技を選択してください",

@@ -28,6 +28,7 @@ import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.j
 import overrides from "#app/overrides.js";
 import { removeEnemyHeldItems } from "./testUtils";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
+import { MoveHelper } from "./moveHelper";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -39,6 +40,7 @@ export default class GameManager {
   public textInterceptor: TextInterceptor;
   public inputsHandler: InputsHandler;
   public readonly override: OverridesHelper;
+  public readonly move: MoveHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -55,6 +57,7 @@ export default class GameManager {
     this.textInterceptor = new TextInterceptor(this.scene);
     this.gameWrapper.setScene(this.scene);
     this.override = new OverridesHelper(this);
+    this.move = new MoveHelper(this);
   }
 
   /**
