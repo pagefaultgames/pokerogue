@@ -377,12 +377,13 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
     if ([ MoveTarget.BOTH_SIDES, MoveTarget.ENEMY_SIDE, MoveTarget.USER_SIDE ].includes(move.moveTarget)) {
       return false;
     }
-
-    if (attacker !== pokemon && move.type === this.immuneType && move.category !== MoveCategory.STATUS) {
+    if (attacker !== pokemon && move.type === this.immuneType) {
+      if (move.category === MoveCategory.STATUS && !this.isPrototypeOf(TypeImmunityAbAttr)) {
+        return false;
+      }
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
-
     return false;
   }
 
