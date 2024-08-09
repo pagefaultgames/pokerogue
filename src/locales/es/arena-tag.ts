@@ -55,6 +55,5 @@ export const arenaTag: SimpleTranslationEntries = {
   "safeguardOnAddEnemy": "¡El equipo enemigo se ha protegido con Velo Sagrado!",
   "safeguardOnRemove": "¡Velo Sagrado dejó de hacer efecto!",
   "safeguardOnRemovePlayer": "El efecto de Velo Sagrado en tu equipo se ha disipado.",
-  "safeguardOnRemoveEnemy": "El efecto de Velo Sagrado en el equipo enemigo
-se ha disipado.",
+  "safeguardOnRemoveEnemy": "El efecto de Velo Sagrado en el equipo enemigo se ha disipado.",
 } as const;
