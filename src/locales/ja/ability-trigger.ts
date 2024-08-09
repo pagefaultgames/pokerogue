@@ -10,6 +10,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "trace": "{{pokemonName}}は　相手の　{{targetName}}の\n{{abilityName}}を　トレースした！",
   "windPowerCharged": "{{pokemonName}}は\n{{moveName}}を　受けて　じゅうでんした！",
   "quickDraw": "{{pokemonName}}は　クイックドロウで\n行動が　はやくなった！",
+  "disguiseAvoidedDamage" : "{{pokemonNameWithAffix}}'s disguise was busted!",
   "blockItemTheft": "{{pokemonNameWithAffix}}の　{{abilityName}}で\n道具を　うばわれない！",
   "typeImmunityHeal": "{{pokemonNameWithAffix}}は　{{abilityName}}で\n体力を　回復した！",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}}は　{{abilityName}}で\nダメージを　受けない。",
