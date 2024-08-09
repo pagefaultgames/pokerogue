@@ -18,7 +18,6 @@ import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase, MoveEndPhase } from "../phases";
-import { BattleStat } from "../data/battle-stat";
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
@@ -51,6 +50,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
+import { PermanentStat, BattleStat } from "#app/enums/stat";
 
 export enum FieldPosition {
   CENTER,
@@ -663,8 +663,72 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  getStat(stat: Stat): integer {
+  /**
+   * Retrieves the entire set of stats of the {@linkcode Pokemon}.
+   * @param ignoreOverride {@linkcode boolean} to prefer actual stats (`true` by default) or in-battle overriden stats (`false`)
+   * @returns the numeric values of the {@linkcode Pokemon}'s stats
+   */
+  getStats(ignoreOverride: boolean = true): number[] {
+    if (!ignoreOverride && this.summonData?.stats) {
+      return this.summonData.stats;
+    }
+    return this.stats;
+  }
+
+  /**
+   * Retrieves the corresponding {@linkcode PermanentStat} of the {@linkcode Pokemon}.
+   * @param stat the desired {@linkcode PermanentStat}
+   * @param ignoreOverride {@linkcode boolean} to prefer actual stats (`true` by default) or in-battle overridden stats (`false`)
+   * @returns the numeric value of the desired {@linkcode Stat}
+   */
+  getStat(stat: PermanentStat, ignoreOverride: boolean = true): number {
+    if (!ignoreOverride && this.summonData?.stats[stat] !== 0) {
+      return this.summonData.stats[stat];
+    }
     return this.stats[stat];
+  }
+
+  /**
+   * Writes the value to the corrseponding {@linkcode PermanentStat} of the {@linkcode Pokemon}.
+   *
+   * Note that this does nothing if {@linkcode value} is less than 0.
+   * @param stat the desired {@linkcode PermanentStat} to be overwritten
+   * @param value the desired numeric value
+   * @param ignoreOverride {@linkcode boolean} to write to actual stats (`true` by default) or in-battle overridden stats (`false`)
+   */
+  setStat(stat: PermanentStat, value: number, ignoreOverride: boolean = true): void {
+    if (value >= 0) {
+      if (!ignoreOverride && this.summonData) {
+        this.summonData.stats[stat] = value;
+      } else {
+        this.stats[stat] = value;
+      }
+    }
+  }
+
+  /**
+   * Retrieves the in-battle stage of the {@linkcode BattleStat}.
+   * @param stat the {@linkcode BattleStat} whose stage is desired
+   * @returns the stage of the desired {@linkcode BattleStat} if available, 0 otherwise
+   */
+  getStatStage(stat: BattleStat): number {
+    if (this.summonData) {
+      return this.summonData.statStages[stat - 1];
+    }
+    return 0;
+  }
+
+  /**
+   * Writes the value to the in-battle stage of the corresponding {@linkcode BattleStat} of the {@linkcode Pokemon}.
+   *
+   * Note that this does nothing if {@linkcode value} is less than -6 and greater than 6.
+   * @param stat the {@linkcode BattleStat} whose stage is to be overwritten
+   * @param value the desired numeric value
+   */
+  setStatStage(stat: BattleStat, value: number): void {
+    if ((value >= -6) && (value >= 6) && this.summonData) {
+      this.summonData.statStages[stat - 1] = value;
+    }
   }
 
   getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
@@ -4203,7 +4267,7 @@ export interface AttackMoveResult {
 }
 
 export class PokemonSummonData {
-  public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
+  public statStages: number[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public moveQueue: QueuedMove[] = [];
   public disabledMove: Moves = Moves.NONE;
   public disabledTurns: integer = 0;
@@ -4216,7 +4280,7 @@ export class PokemonSummonData {
   public ability: Abilities = Abilities.NONE;
   public gender: Gender;
   public fusionGender: Gender;
-  public stats: integer[];
+  public stats: number[] = [ 0, 0, 0, 0, 0, 0 ];
   public moveset: (PokemonMove | null)[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = [];
