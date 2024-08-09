@@ -11,7 +11,7 @@ export interface SimpleTranslationEntries {
 
 export interface FusionTranslationEntries {
   shouldReverse?: string,
-  [key: string]: FusionTranslationEntry | string,
+  [key: string]: FusionTranslationEntry | string | undefined,
   }
 
 export interface FusionTranslationEntry {
