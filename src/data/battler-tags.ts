@@ -163,7 +163,7 @@ export class DisabledTag extends DisablingBattlerTag {
     }
 
     const move = history.find(m => m.move !== Moves.NONE);
-    if (move === undefined) {
+    if (move === undefined || move.move === Moves.STRUGGLE) {
       return;
     }
 

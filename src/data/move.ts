@@ -6006,6 +6006,7 @@ const unknownTypeCondition: MoveConditionFunc = (user, target, move) => !user.ge
 
 /** Ensures that the target has at least one non-virtual, non-NONE move in its history. */
 const targetHasMoveHistoryCondition: MoveConditionFunc = (user, target, move) => target.getLastXMoves().filter(m => m.move !== Moves.NONE && !m.virtual).length >= 1;
+const targetLastMoveIsNotStruggleCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => target.getLastXMoves(1).at(0)?.move !== Moves.STRUGGLE;
 
 export type MoveTargetSet = {
   targets: BattlerIndex[];
@@ -6212,6 +6213,7 @@ export function initMoves() {
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.DISABLED, false, true)
       .condition(targetHasMoveHistoryCondition)
+      .condition(targetLastMoveIsNotStruggleCondition)
       .condition(failOnMaxCondition),
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1)
