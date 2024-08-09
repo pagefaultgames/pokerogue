@@ -156,4 +156,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}}[[는]] 자신의 체력을 깎아서\n{{pokemonName}}에게 저주를 걸었다!",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}}[[는]]\n저주받고 있다!",
   "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}}[[는]]\n{{stockpiledCount}}개 비축했다!",
+  "battlerTagsSubstituteOnAdd": "{{pokemonNameWithAffix}}의\n대타가 나타났다!",
+  "battlerTagsSubstituteOnHit": "{{pokemonNameWithAffix}}[[를]] 대신하여\n대타가 공격을 받았다!",
+  "battlerTagsSubstituteOnRemove": "{{pokemonNameWithAffix}}의\n대타는 사라져 버렸다..."
 } as const;

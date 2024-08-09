@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, StockpilingTag, TypeBoostTag } from "./battler-tags";
+import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, StockpilingTag, SubstituteTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
@@ -91,11 +91,12 @@ export enum MoveFlags {
   /**
    * Enables all hits of a multi-hit move to be accuracy checked individually
    */
-  CHECK_ALL_HITS   = 1 << 17,
+  CHECK_ALL_HITS    = 1 << 17,
+  IGNORE_SUBSTITUTE = 1 << 18,
   /**
    * Indicates a move is able to be redirected to allies in a double battle if the attacker faints
    */
-  REDIRECT_COUNTER = 1 << 18,
+  REDIRECT_COUNTER  = 1 << 19,
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -308,6 +309,18 @@ export default class Move implements Localizable {
       break;
     }
     return false;
+  }
+
+  /**
+   * Checks if the move can bypass Substitute to directly hit its target
+   * @param user The {@linkcode Pokemon} using this move
+   * @returns `true` if the move can bypass the target's Substitute; `false` otherwise.
+   */
+  canIgnoreSubstitute(user: Pokemon): boolean {
+    return this.moveTarget === MoveTarget.USER
+        || user?.hasAbility(Abilities.INFILTRATOR)
+        || this.hasFlag(MoveFlags.SOUND_BASED)
+        || this.hasFlag(MoveFlags.IGNORE_SUBSTITUTE);
   }
 
   /**
@@ -550,6 +563,17 @@ export default class Move implements Localizable {
    */
   checkAllHits(checkAllHits: boolean = true): this { // TODO: is `true` the correct default?
     this.setFlag(MoveFlags.CHECK_ALL_HITS, checkAllHits);
+    return this;
+  }
+
+  /**
+   * Sets the {@linkcode MoveFlags.IGNORE_SUBSTITUTE} flag for the calling Move
+   * @param ignoresSubstitute The value (boolean) to set the flag to
+   * example: @see {@linkcode Moves.WHIRLWIND}
+   * @returns The {@linkcode Move} that called this function
+   */
+  ignoresSubstitute(ignoresSubstitute: boolean = true): this {
+    this.setFlag(MoveFlags.IGNORE_SUBSTITUTE, ignoresSubstitute);
     return this;
   }
 
@@ -1404,6 +1428,44 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute to put in a {@link https://bulbapedia.bulbagarden.net/wiki/Substitute_(doll) | Substitute Doll}
+ * for the user.
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ */
+export class AddSubstituteAttr extends MoveEffectAttr {
+  constructor() {
+    super(true);
+  }
+
+  /**
+   * Removes 1/4 of the user's maximum HP (rounded down) to create a substitute for the user
+   * @param user the {@linkcode Pokemon} that used the move.
+   * @param target n/a
+   * @param move the {@linkcode Move} with this attribute.
+   * @param args n/a
+   * @returns true if the attribute successfully applies, false otherwise
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    const hpCost = Math.floor(user.getMaxHp() / 4);
+    user.damageAndUpdate(hpCost, HitResult.OTHER, false, true, true);
+    user.addTag(BattlerTagType.SUBSTITUTE, 0, move.id, user.id);
+    return true;
+  }
+
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    if (user.isBoss() || user.getHpRatio() < 0.25) {
+      return -10;
+    }
+    return Math.ceil(user.getHpRatio() * 10);
+  }
+}
+
 export enum MultiHitType {
   _2,
   _2_TO_5,
@@ -1916,6 +1978,10 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!this.selfTarget && !!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
+      return false;
+    }
+
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     const statusCheck = moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance;
     if (statusCheck) {
@@ -2008,6 +2074,9 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
+      if (!!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
+        return resolve(false);
+      }
       const rand = Phaser.Math.RND.realInRange(0, 1);
       if (rand >= this.chance) {
         return resolve(false);
@@ -2074,6 +2143,10 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!this.berriesOnly && target.isPlayer()) { // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
+      return false;
+    }
+
+    if (!!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
       return false;
     }
 
@@ -2196,6 +2269,9 @@ export class StealEatBerryAttr extends EatBerryAttr {
    * @returns {boolean} true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
+      return false;
+    }
     const cancelled = new Utils.BooleanHolder(false);
     applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // check for abilities that block item theft
     if (cancelled.value === true) {
@@ -2243,6 +2319,10 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    if (!this.selfTarget && !!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
       return false;
     }
 
@@ -2423,7 +2503,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
       const lastMove = user.getLastXMoves().find(() => true);
       if (!lastMove || lastMove.move !== move.id || (lastMove.result !== MoveResult.OTHER && lastMove.turn !== user.scene.currentBattle.turn)) {
         (args[0] as Utils.BooleanHolder).value = true;
-        new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, () => {
+        new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, false, () => {
           user.scene.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
           if (this.tagType) {
             user.addTag(this.tagType, 1, move.id, user.id);
@@ -2523,7 +2603,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       if (args.length < 2 || !args[1]) {
-        new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, () => {
+        new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, false, () => {
           (args[0] as Utils.BooleanHolder).value = true;
           user.scene.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
           user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
@@ -2556,6 +2636,10 @@ export class StatChangeAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean | Promise<boolean> {
     if (!super.apply(user, target, move, args) || (this.condition && !this.condition(user, target, move))) {
+      return false;
+    }
+
+    if (!this.selfTarget && !!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
       return false;
     }
 
@@ -2744,6 +2828,10 @@ export class InvertStatsAttr extends MoveEffectAttr {
 export class ResetStatsAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    if (!!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
       return false;
     }
 
@@ -4465,11 +4553,25 @@ export class FlinchAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.FLINCHED, false);
   }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!target.getTag(SubstituteTag) || move.canIgnoreSubstitute(user)) {
+      return super.apply(user, target, move, args);
+    }
+    return false;
+  }
 }
 
 export class ConfuseAttr extends AddBattlerTagAttr {
   constructor(selfTarget?: boolean) {
     super(BattlerTagType.CONFUSED, selfTarget, false, 2, 5);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!target.getTag(SubstituteTag) || move.canIgnoreSubstitute(user)) {
+      return super.apply(user, target, move, args);
+    }
+    return false;
   }
 }
 
@@ -4539,6 +4641,36 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
 
     user.scene.queueMessage(i18next.t("moveTriggers:faintCountdown", {pokemonName: getPokemonNameWithAffix(target), turnCount: this.turnCountMin - 1}));
 
+    return true;
+  }
+}
+
+/**
+ * Attribute to remove all Substitutes from the field.
+ * @extends MoveEffectAttr
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Tidy_Up_(move) | Tidy Up}
+ * @see {@linkcode SubstituteTag}
+ */
+export class RemoveAllSubstitutesAttr extends MoveEffectAttr {
+  constructor() {
+    super(true);
+  }
+
+  /**
+   * Remove's the Substitute Doll effect from all active Pokemon on the field
+   * @param user {@linkcode Pokemon} the Pokemon using this move
+   * @param target n/a
+   * @param move {@linkcode Move} the move applying this effect
+   * @param args n/a
+   * @returns `true` if the effect successfully applies
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    user.scene.getField(true).forEach(pokemon =>
+      pokemon.findAndRemoveTags(tag => tag.tagType === BattlerTagType.SUBSTITUTE));
     return true;
   }
 }
@@ -4931,6 +5063,10 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     return (user, target, move) => {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
+
+      if (!this.user && !!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
+        return false;
+      }
 
       if (!this.user && move.category === MoveCategory.STATUS && (target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr) || target.isMax())) {
         return false;
@@ -6184,6 +6320,7 @@ export function initMoves() {
     new StatusMove(Moves.WHIRLWIND, Type.NORMAL, -1, 20, -1, -6, 1)
       .attr(ForceSwitchOutAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
+      .ignoresSubstitute()
       .hidesTarget()
       .windMove(),
     new AttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
@@ -6273,6 +6410,7 @@ export function initMoves() {
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
       .attr(DisableMoveAttr)
+      .ignoresSubstitute()
       .condition(failOnMaxCondition),
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1)
@@ -6410,6 +6548,7 @@ export function initMoves() {
       .attr(LevelDamageAttr),
     new StatusMove(Moves.MIMIC, Type.NORMAL, -1, 10, -1, 0, 1)
       .attr(MovesetCopyMoveAttr)
+      .ignoresSubstitute()
       .ignoresVirtual(),
     new StatusMove(Moves.SCREECH, Type.NORMAL, 85, 40, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, -2)
@@ -6438,6 +6577,7 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.LIGHT_SCREEN, 5, true)
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.HAZE, Type.ICE, -1, 30, -1, 0, 1)
+      .ignoresSubstitute()
       .target(MoveTarget.BOTH_SIDES)
       .attr(ResetStatsAttr),
     new StatusMove(Moves.REFLECT, Type.PSYCHIC, -1, 20, -1, 0, 1)
@@ -6581,14 +6721,15 @@ export function initMoves() {
       .attr(HighCritAttr)
       .slicingMove(),
     new SelfStatusMove(Moves.SUBSTITUTE, Type.NORMAL, -1, 10, -1, 0, 1)
-      .attr(RecoilAttr)
-      .unimplemented(),
+      .attr(AddSubstituteAttr)
+      .condition((user, target, move) => !user.getTag(SubstituteTag) && user.getHpRatio() > 0.25 && user.getMaxHp() > 1),
     new AttackMove(Moves.STRUGGLE, Type.NORMAL, MoveCategory.PHYSICAL, 50, -1, 1, -1, 0, 1)
       .attr(RecoilAttr, true, 0.25, true)
       .attr(TypelessAttr)
       .ignoresVirtual()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.SKETCH, Type.NORMAL, -1, 1, -1, 0, 2)
+      .ignoresSubstitute()
       .attr(SketchAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.TRIPLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, 0, 2)
@@ -6614,12 +6755,14 @@ export function initMoves() {
       .soundBased(),
     new StatusMove(Moves.CURSE, Type.GHOST, -1, 10, -1, 0, 2)
       .attr(CurseAttr)
+      .ignoresSubstitute()
       .ignoresProtect(true)
       .target(MoveTarget.CURSE),
     new AttackMove(Moves.FLAIL, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.CONVERSION_2, Type.NORMAL, -1, 30, -1, 0, 2)
       .attr(ResistLastMoveTypeAttr)
+      .ignoresSubstitute()
       .partial(), // Checks the move's original typing and not if its type is changed through some other means
     new AttackMove(Moves.AEROBLAST, Type.FLYING, MoveCategory.SPECIAL, 100, 95, 5, -1, 0, 2)
       .windMove()
@@ -6631,6 +6774,7 @@ export function initMoves() {
     new AttackMove(Moves.REVERSAL, Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.SPITE, Type.GHOST, 100, 10, -1, 0, 2)
+      .ignoresSubstitute()
       .attr(ReducePpMoveAttr, 4),
     new AttackMove(Moves.POWDER_SNOW, Type.ICE, MoveCategory.SPECIAL, 40, 100, 25, 10, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
@@ -6663,7 +6807,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .ballBombMove(),
     new StatusMove(Moves.FORESIGHT, Type.NORMAL, -1, 40, -1, 0, 2)
-      .attr(ExposedMoveAttr, BattlerTagType.IGNORE_GHOST),
+      .attr(ExposedMoveAttr, BattlerTagType.IGNORE_GHOST)
+      .ignoresSubstitute(),
     new SelfStatusMove(Moves.DESTINY_BOND, Type.GHOST, -1, 5, -1, 0, 2)
       .ignoresProtect()
       .attr(DestinyBondAttr),
@@ -6720,6 +6865,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1),
     new StatusMove(Moves.ATTRACT, Type.NORMAL, 100, 15, -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.INFATUATED)
+      .ignoresSubstitute()
       .condition((user, target, move) => user.isOppositeGender(target)),
     new SelfStatusMove(Moves.SLEEP_TALK, Type.NORMAL, -1, 10, -1, 0, 2)
       .attr(BypassSleepAttr)
@@ -6765,6 +6911,7 @@ export function initMoves() {
       .hidesUser(),
     new StatusMove(Moves.ENCORE, Type.NORMAL, 100, 5, -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
+      .ignoresSubstitute()
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target)),
     new AttackMove(Moves.PURSUIT, Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, 0, 2)
       .partial(),
@@ -6823,6 +6970,7 @@ export function initMoves() {
       .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.SPECIAL, 2)
       .target(MoveTarget.ATTACKER),
     new StatusMove(Moves.PSYCH_UP, Type.NORMAL, -1, 10, -1, 0, 2)
+      .ignoresSubstitute()
       .attr(CopyStatsAttr),
     new AttackMove(Moves.EXTREME_SPEED, Type.NORMAL, MoveCategory.PHYSICAL, 80, 100, 5, -1, 2, 2),
     new AttackMove(Moves.ANCIENT_POWER, Type.ROCK, MoveCategory.SPECIAL, 60, 100, 5, 10, 0, 2)
@@ -6871,6 +7019,7 @@ export function initMoves() {
       .attr(WeatherChangeAttr, WeatherType.HAIL)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.TORMENT, Type.DARK, 100, 15, -1, 0, 3)
+      .ignoresSubstitute()
       .unimplemented(),
     new StatusMove(Moves.FLATTER, Type.DARK, 100, 15, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, 1)
@@ -6901,13 +7050,16 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPDEF, 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.CHARGED, true, false),
     new StatusMove(Moves.TAUNT, Type.DARK, 100, 20, -1, 0, 3)
+      .ignoresSubstitute()
       .unimplemented(),
     new StatusMove(Moves.HELPING_HAND, Type.NORMAL, -1, 20, -1, 5, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
+      .ignoresSubstitute()
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.TRICK, Type.PSYCHIC, 100, 10, -1, 0, 3)
       .unimplemented(),
     new StatusMove(Moves.ROLE_PLAY, Type.PSYCHIC, -1, 10, -1, 0, 3)
+      .ignoresSubstitute()
       .attr(AbilityCopyAttr),
     new SelfStatusMove(Moves.WISH, Type.NORMAL, -1, 10, -1, 0, 3)
       .triageMove()
@@ -6940,8 +7092,10 @@ export function initMoves() {
       .attr(HpPowerAttr)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.SKILL_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 3)
+      .ignoresSubstitute()
       .attr(SwitchAbilitiesAttr),
     new SelfStatusMove(Moves.IMPRISON, Type.PSYCHIC, -1, 10, -1, 0, 3)
+      .ignoresSubstitute()
       .unimplemented(),
     new SelfStatusMove(Moves.REFRESH, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN)
@@ -7024,7 +7178,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE),
     new StatusMove(Moves.ODOR_SLEUTH, Type.NORMAL, -1, 40, -1, 0, 3)
-      .attr(ExposedMoveAttr, BattlerTagType.IGNORE_GHOST),
+      .attr(ExposedMoveAttr, BattlerTagType.IGNORE_GHOST)
+      .ignoresSubstitute(),
     new AttackMove(Moves.ROCK_TOMB, Type.ROCK, MoveCategory.PHYSICAL, 60, 95, 15, 100, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .makesContact(false),
@@ -7134,7 +7289,8 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.MIRACLE_EYE, Type.PSYCHIC, -1, 40, -1, 0, 4)
-      .attr(ExposedMoveAttr, BattlerTagType.IGNORE_DARK),
+      .attr(ExposedMoveAttr, BattlerTagType.IGNORE_DARK)
+      .ignoresSubstitute(),
     new AttackMove(Moves.WAKE_UP_SLAP, Type.FIGHTING, MoveCategory.PHYSICAL, 70, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => targetSleptOrComatoseCondition(user, target, move) ? 2 : 1)
       .attr(HealStatusEffectAttr, false, StatusEffect.SLEEP),
@@ -7211,6 +7367,7 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.NO_CRIT, 5, true, true)
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ME_FIRST, Type.NORMAL, -1, 20, -1, 0, 4)
+      .ignoresSubstitute()
       .ignoresVirtual()
       .target(MoveTarget.NEAR_ENEMY)
       .unimplemented(),
@@ -7218,8 +7375,10 @@ export function initMoves() {
       .attr(CopyMoveAttr)
       .ignoresVirtual(),
     new StatusMove(Moves.POWER_SWAP, Type.PSYCHIC, -1, 10, 100, 0, 4)
+      .ignoresSubstitute()
       .unimplemented(),
     new StatusMove(Moves.GUARD_SWAP, Type.PSYCHIC, -1, 10, 100, 0, 4)
+      .ignoresSubstitute()
       .unimplemented(),
     new AttackMove(Moves.PUNISHMENT, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
       .makesContact(true)
@@ -7234,6 +7393,7 @@ export function initMoves() {
       .attr(AddArenaTrapTagAttr, ArenaTagType.TOXIC_SPIKES)
       .target(MoveTarget.ENEMY_SIDE),
     new StatusMove(Moves.HEART_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 4)
+      .ignoresSubstitute()
       .attr(SwapStatsAttr),
     new SelfStatusMove(Moves.AQUA_RING, Type.WATER, -1, 20, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
@@ -7516,6 +7676,7 @@ export function initMoves() {
       .attr(AbilityGiveAttr),
     new StatusMove(Moves.AFTER_YOU, Type.NORMAL, -1, 15, -1, 0, 5)
       .ignoresProtect()
+      .ignoresSubstitute()
       .unimplemented(),
     new AttackMove(Moves.ROUND, Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .soundBased()
@@ -7553,6 +7714,7 @@ export function initMoves() {
     new AttackMove(Moves.SKY_DROP, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
       .attr(ChargeAttr, ChargeAnim.SKY_DROP_CHARGING, i18next.t("moveTriggers:tookTargetIntoSky", {pokemonName: "{USER}", targetName: "{TARGET}"}), BattlerTagType.FLYING) // TODO: Add 2nd turn message
       .condition(failOnGravityCondition)
+      .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
       .ignoresVirtual(),
     new SelfStatusMove(Moves.SHIFT_GEAR, Type.STEEL, -1, 10, -1, 0, 5)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
@@ -7567,6 +7729,7 @@ export function initMoves() {
     new AttackMove(Moves.ACROBATICS, Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
       .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.getHeldItems().filter(i => i.isTransferrable).reduce((v, m) => v + m.stackCount, 0))),
     new StatusMove(Moves.REFLECT_TYPE, Type.NORMAL, -1, 15, -1, 0, 5)
+      .ignoresSubstitute()
       .attr(CopyTypeAttr),
     new AttackMove(Moves.RETALIATE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 5, -1, 0, 5)
       .partial(),
@@ -7575,6 +7738,7 @@ export function initMoves() {
       .attr(SacrificialAttrOnHit),
     new StatusMove(Moves.BESTOW, Type.NORMAL, -1, 15, -1, 0, 5)
       .ignoresProtect()
+      .ignoresSubstitute()
       .unimplemented(),
     new AttackMove(Moves.INFERNO, Type.FIRE, MoveCategory.SPECIAL, 100, 50, 5, 100, 0, 5)
       .attr(StatusEffectAttr, StatusEffect.BURN),
@@ -7781,12 +7945,14 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new StatusMove(Moves.FAIRY_LOCK, Type.FAIRY, -1, 10, -1, 0, 6)
+      .ignoresSubstitute()
       .target(MoveTarget.BOTH_SIDES)
       .unimplemented(),
     new SelfStatusMove(Moves.KINGS_SHIELD, Type.STEEL, -1, 10, -1, 4, 6)
       .attr(ProtectAttr, BattlerTagType.KINGS_SHIELD),
     new StatusMove(Moves.PLAY_NICE, Type.NORMAL, -1, 20, -1, 0, 6)
-      .attr(StatChangeAttr, BattleStat.ATK, -1),
+      .attr(StatChangeAttr, BattleStat.ATK, -1)
+      .ignoresSubstitute(),
     new StatusMove(Moves.CONFIDE, Type.NORMAL, -1, 20, -1, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPATK, -1)
       .soundBased(),
@@ -7799,7 +7965,8 @@ export function initMoves() {
       .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.HYPERSPACE_HOLE, Type.PSYCHIC, MoveCategory.SPECIAL, 80, -1, 5, -1, 0, 6)
-      .ignoresProtect(),
+      .ignoresProtect()
+      .ignoresSubstitute(),
     new AttackMove(Moves.WATER_SHURIKEN, Type.WATER, MoveCategory.SPECIAL, 15, 100, 20, -1, 1, 6)
       .attr(MultiHitAttr)
       .attr(WaterShurikenPowerAttr)
@@ -7810,6 +7977,7 @@ export function initMoves() {
       .attr(ProtectAttr, BattlerTagType.SPIKY_SHIELD),
     new StatusMove(Moves.AROMATIC_MIST, Type.FAIRY, -1, 20, -1, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPDEF, 1)
+      .ignoresSubstitute()
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.EERIE_IMPULSE, Type.ELECTRIC, 100, 15, -1, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPATK, -2),
@@ -7817,6 +7985,7 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], -1, false, (user, target, move) => target.status?.effect === StatusEffect.POISON || target.status?.effect === StatusEffect.TOXIC)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.POWDER, Type.BUG, 100, 20, -1, 1, 6)
+      .ignoresSubstitute()
       .powderMove()
       .unimplemented(),
     new SelfStatusMove(Moves.GEOMANCY, Type.FAIRY, -1, 10, -1, 0, 6)
@@ -7825,6 +7994,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new StatusMove(Moves.MAGNETIC_FLUX, Type.ELECTRIC, -1, 20, -1, 0, 6)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, false, (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS].find(a => target.hasAbility(a, false)))
+      .ignoresSubstitute()
       .target(MoveTarget.USER_AND_ALLIES)
       .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => p.hasAbility(a, false)))),
     new StatusMove(Moves.HAPPY_HOUR, Type.NORMAL, -1, 30, -1, 0, 6) // No animation
@@ -7837,6 +8007,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new SelfStatusMove(Moves.CELEBRATE, Type.NORMAL, -1, 40, -1, 0, 6),
     new StatusMove(Moves.HOLD_HANDS, Type.NORMAL, -1, 40, -1, 0, 6)
+      .ignoresSubstitute()
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.BABY_DOLL_EYES, Type.FAIRY, 100, 30, -1, 1, 6)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
@@ -7882,6 +8053,7 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),
     new AttackMove(Moves.HYPERSPACE_FURY, Type.DARK, MoveCategory.PHYSICAL, 100, -1, 5, -1, 0, 6)
       .attr(StatChangeAttr, BattleStat.DEF, -1, true)
+      .ignoresSubstitute()
       .makesContact(false)
       .ignoresProtect(),
     /* Unused */
@@ -8040,6 +8212,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_CRIT, true, false),
     new StatusMove(Moves.GEAR_UP, Type.STEEL, -1, 20, -1, 0, 7)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, false, (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS].find(a => target.hasAbility(a, false)))
+      .ignoresSubstitute()
       .target(MoveTarget.USER_AND_ALLIES)
       .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => p.hasAbility(a, false)))),
     new AttackMove(Moves.THROAT_CHOP, Type.DARK, MoveCategory.PHYSICAL, 80, 100, 15, 100, 0, 7)
@@ -8069,6 +8242,7 @@ export function initMoves() {
         user.scene.queueMessage(i18next.t("moveTriggers:burnedItselfOut", {pokemonName: getPokemonNameWithAffix(user)}));
       }),
     new StatusMove(Moves.SPEED_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 7)
+      .ignoresSubstitute()
       .unimplemented(),
     new AttackMove(Moves.SMART_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 70, -1, 10, -1, 0, 7),
     new StatusMove(Moves.PURIFY, Type.POISON, -1, 20, -1, 0, 7)
@@ -8086,6 +8260,7 @@ export function initMoves() {
     new AttackMove(Moves.TROP_KICK, Type.GRASS, MoveCategory.PHYSICAL, 70, 100, 15, 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new StatusMove(Moves.INSTRUCT, Type.PSYCHIC, -1, 15, -1, 0, 7)
+      .ignoresSubstitute()
       .unimplemented(),
     new AttackMove(Moves.BEAK_BLAST, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
@@ -8151,6 +8326,7 @@ export function initMoves() {
     new AttackMove(Moves.PRISMATIC_LASER, Type.PSYCHIC, MoveCategory.SPECIAL, 160, 100, 10, -1, 0, 7)
       .attr(RechargeAttr),
     new AttackMove(Moves.SPECTRAL_THIEF, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 7)
+      .ignoresSubstitute()
       .partial(),
     new AttackMove(Moves.SUNSTEEL_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 7)
       .ignoresAbilities()
@@ -8810,7 +8986,8 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new SelfStatusMove(Moves.TIDY_UP, Type.NORMAL, -1, 10, -1, 0, 9)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true, null, true, true)
-      .attr(RemoveArenaTrapAttr, true),
+      .attr(RemoveArenaTrapAttr, true)
+      .attr(RemoveAllSubstitutesAttr),
     new StatusMove(Moves.SNOWSCAPE, Type.ICE, -1, 10, -1, 0, 9)
       .attr(WeatherChangeAttr, WeatherType.SNOW)
       .target(MoveTarget.BOTH_SIDES),

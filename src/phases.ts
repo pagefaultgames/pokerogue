@@ -19,7 +19,7 @@ import { biomeLinks, getBiomeName } from "./data/biomes";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
+import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag, TrappedTag } from "./data/battler-tags";
 import { getPokemonNameWithAffix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
@@ -1615,6 +1615,16 @@ export class SwitchSummonPhase extends SummonPhase {
 
     if (!this.batonPass) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
+      const substitute = pokemon.getTag(SubstituteTag);
+      if (!!substitute) {
+        this.scene.tweens.add({
+          targets: substitute.sprite,
+          duration: 250,
+          scale: substitute.sprite.scale * 0.5,
+          ease: "Sine.easeIn",
+          onComplete: () => substitute.sprite.destroy()
+        });
+      }
     }
 
     this.scene.ui.showText(this.player ?
@@ -1644,6 +1654,7 @@ export class SwitchSummonPhase extends SummonPhase {
   switchAndSummon() {
     const party = this.player ? this.getParty() : this.scene.getEnemyParty();
     const switchedInPokemon = party[this.slotIndex];
+    const switchedPokemon = party[this.fieldIndex];
     this.lastPokemon = this.getPokemon();
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (this.batonPass && switchedInPokemon) {
@@ -1667,8 +1678,18 @@ export class SwitchSummonPhase extends SummonPhase {
             pokemonName: this.getPokemon().getNameToRender()
           })
         );
-        // Ensure improperly persisted summon data (such as tags) is cleared upon switching
-        if (!this.batonPass) {
+        /**
+         * If this switch is passing a Substitute, make the switched Pokemon match the returned Pokemon's state as it left.
+         * Otherwise, clear any persisting tags on the returned Pokemon.
+         */
+        if (this.batonPass) {
+          const substitute = this.lastPokemon.getTag(SubstituteTag);
+          if (!!substitute) {
+            switchedPokemon.x += switchedPokemon.getSubstituteOffset()[0];
+            switchedPokemon.y += switchedPokemon.getSubstituteOffset()[1];
+            switchedPokemon.setAlpha(0.5);
+          }
+        } else {
           switchedInPokemon.resetBattleData();
           switchedInPokemon.resetSummonData();
         }
@@ -2613,7 +2634,7 @@ export class CommonAnimPhase extends PokemonPhase {
   }
 
   start() {
-    new CommonBattleAnim(this.anim, this.getPokemon(), this.targetIndex !== undefined ? (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField())[this.targetIndex] : this.getPokemon()).play(this.scene, () => {
+    new CommonBattleAnim(this.anim, this.getPokemon(), this.targetIndex !== undefined ? (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField())[this.targetIndex] : this.getPokemon()).play(this.scene, false, () => {
       this.end();
     });
   }
@@ -2792,6 +2813,8 @@ export class MovePhase extends BattlePhase {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
 
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+        this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
+
         moveQueue.shift(); // Remove the second turn of charge moves
         return this.end();
       }
@@ -2811,6 +2834,7 @@ export class MovePhase extends BattlePhase {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
 
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
+        this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
         moveQueue.shift();
         return this.end();
@@ -3056,7 +3080,7 @@ export class MoveEffectPhase extends PokemonPhase {
       const applyAttrs: Promise<void>[] = [];
 
       // Move animation only needs one target
-      new MoveAnim(move.id as Moves, user, this.getTarget()?.getBattlerIndex()!).play(this.scene, () => { // TODO: is the bang correct here?
+      new MoveAnim(move.id as Moves, user, this.getTarget()?.getBattlerIndex()!).play(this.scene, !move.canIgnoreSubstitute(user), () => { // TODO: is the bang correct here?
         /** Has the move successfully hit a target (for damage) yet? */
         let hasHit: boolean = false;
         for (const target of targets) {
@@ -3161,7 +3185,7 @@ export class MoveEffectPhase extends PokemonPhase {
                        * If the move hit, and the target doesn't have Shield Dust,
                        * apply the chance to flinch the target gained from King's Rock
                        */
-                      if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr)) {
+                      if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && (!target.getTag(BattlerTagType.SUBSTITUTE) || move.canIgnoreSubstitute(user))) {
                         const flinched = new Utils.BooleanHolder(false);
                         user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
                         if (flinched.value) {
@@ -3218,7 +3242,20 @@ export class MoveEffectPhase extends PokemonPhase {
         }
 
         // Wait for all move effects to finish applying, then end this phase
-        Promise.allSettled(applyAttrs).then(() => this.end());
+        Promise.allSettled(applyAttrs).then(() => {
+          /**
+           * Remove the target's substitute (if it exists and has expired)
+           * after all targeted effects have applied.
+           * This prevents blocked effects from applying until after this hit resolves.
+           */
+          targets.forEach(target => {
+            const substitute = target.getTag(SubstituteTag);
+            if (!!substitute && substitute.hp <= 0) {
+              target.lapseTag(BattlerTagType.SUBSTITUTE);
+            }
+          });
+          this.end();
+        });
       });
     });
   }
@@ -3404,7 +3441,9 @@ export class MoveAnimTestPhase extends BattlePhase {
     initMoveAnim(this.scene, moveId).then(() => {
       loadMoveAnimAssets(this.scene, [moveId], true)
         .then(() => {
-          new MoveAnim(moveId, player ? this.scene.getPlayerPokemon()! : this.scene.getEnemyPokemon()!, (player !== (allMoves[moveId] instanceof SelfStatusMove) ? this.scene.getEnemyPokemon()! : this.scene.getPlayerPokemon()!).getBattlerIndex()).play(this.scene, () => { // TODO: are the bangs correct here?
+          const user = player ? this.scene.getPlayerPokemon()! : this.scene.getEnemyPokemon()!;
+          const target = (player !== (allMoves[moveId] instanceof SelfStatusMove)) ? this.scene.getEnemyPokemon()! : this.scene.getPlayerPokemon()!;
+          new MoveAnim(moveId, user, target.getBattlerIndex()).play(this.scene, !allMoves[moveId].canIgnoreSubstitute(user), () => { // TODO: are the bangs correct here?
             if (player) {
               this.playMoveAnim(moveQueue, false);
             } else {
@@ -3746,7 +3785,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
           pokemon.status!.cureTurn = this.cureTurn; // TODO: is this bang correct?
         }
         pokemon.updateInfo(true);
-        new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(this.scene, () => {
+        new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(this.scene, false, () => {
           this.scene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined));
           if (pokemon.status?.isPostTurn()) {
             this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, this.battlerIndex));
@@ -3794,7 +3833,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
           this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage, false, true));
           pokemon.updateInfo();
         }
-        new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());
+        new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, false, () => this.end());
       } else {
         this.end();
       }
@@ -3900,7 +3939,7 @@ export class DamagePhase extends PokemonPhase {
       this.scene.damageNumberHandler.add(this.getPokemon(), this.amount, this.damageResult, this.critical);
     }
 
-    if (this.damageResult !== HitResult.OTHER) {
+    if (this.damageResult !== HitResult.OTHER && this.amount > 0) {
       const flashTimer = this.scene.time.addEvent({
         delay: 100,
         repeat: 5,
@@ -4030,7 +4069,7 @@ export class FaintPhase extends PokemonPhase {
         y: pokemon.y + 150,
         ease: "Sine.easeIn",
         onComplete: () => {
-          pokemon.setVisible(false);
+          pokemon.resetSprite();
           pokemon.y -= 150;
           pokemon.trySetStatus(StatusEffect.FAINT);
           if (pokemon.isPlayer()) {
@@ -5745,7 +5784,7 @@ export class ScanIvsPhase extends PokemonPhase {
         this.scene.ui.setMode(Mode.CONFIRM, () => {
           this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.ui.clearText();
-          new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(this.scene, () => {
+          new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(this.scene, false, () => {
             this.scene.ui.getMessageHandler().promptIvs(pokemon.id, pokemon.ivs, this.shownIvs).then(() => this.end());
           });
         }, () => {
