@@ -66,6 +66,9 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     this.runSelectMessageBoxContainer.add(this.message);
 
     this.runs = [];
+
+    this.scene.loadImage("hall_of_fame_red", "ui");
+    this.scene.loadImage("hall_of_fame_blue", "ui");
   }
 
   show(args: any[]): boolean {

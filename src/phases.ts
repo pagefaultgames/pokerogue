@@ -4318,7 +4318,7 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.saveRunHistory(this.scene, sessionData, this.victory);
           }
         }).catch(err => {
-          console.error(err);
+          console.error("Failed to store run to run history.");
         });
         const fadeDuration = this.victory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);

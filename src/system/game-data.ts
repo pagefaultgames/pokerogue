@@ -183,12 +183,12 @@ export const AbilityAttr = {
   ABILITY_HIDDEN: 4
 };
 
-export type RunHistoryData  = Record<number, RunEntry> 
+export type RunHistoryData = Record<number, RunEntry>;
 
 export interface RunEntry {
   entry: SessionSaveData;
-  victory: boolean;
-  favorite: boolean;
+  isVictory: boolean;
+  isFavorite: boolean;
 }
 
 export type StarterMoveset = [ Moves ] | [ Moves, Moves ] | [ Moves, Moves, Moves ] | [ Moves, Moves, Moves, Moves ];
@@ -454,7 +454,7 @@ export class GameData {
         if (versions[0] !== versions[1]) {
           const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
         }*/
-        const lsItemKey = `runHistoryData_${loggedInUser?.username}`
+        const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
         const lsItem = localStorage.getItem(lsItemKey);
         if (!lsItem) {
           localStorage.setItem(lsItemKey, encrypt("", true));
@@ -570,7 +570,7 @@ export class GameData {
     });
   }
 
-  public async getRunHistoryData(scene: BattleScene): Promise<Object> {
+  public async getRunHistoryData(scene: BattleScene): Promise<RunHistoryData> {
     if (!Utils.isLocal) {
       /**
        * Networking Code DO NOT DELETE!
@@ -585,7 +585,7 @@ export class GameData {
         if (cachedResponse) {
           cachedResponse = JSON.parse(decrypt(cachedResponse, true));
         }
-        const cachedRHData = cachedResponse ?? {};
+        const cachedRHData = (cachedResponse ?? {}) as RunHistoryData;
         // check to see whether cachedData or serverData is more up-to-date
         /**
        * Networking Code DO NOT DELETE!
@@ -628,7 +628,8 @@ export class GameData {
     const timestamp = (runEntry.timestamp).toString();
     runHistoryData[timestamp] = {
       entry: runEntry,
-      victory: victory,
+      isVictory: isVictory,
+      isFavorite: false,
     };
 
     localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), true));
@@ -638,7 +639,7 @@ export class GameData {
      *
     if (!Utils.isLocal) {
       try {
-        Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
+        await Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
         return true;
       } catch (err) {
         console.log("savedata/runHistory POST failed : ", err);
