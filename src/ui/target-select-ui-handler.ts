@@ -179,8 +179,8 @@ export default class TargetSelectUiHandler extends UiHandler {
 
   private highlightItems(targetId: number, val: number) : void {
     const targetItems = this.enemyModifiers.getAll("name", targetId.toString());
-    for (const item of targetItems) {
-      (item as Phaser.GameObjects.Container).setAlpha(val);
+    for (const item of targetItems as Phaser.GameObjects.Container[]) {
+      item.setAlpha(val);
     }
   }
 

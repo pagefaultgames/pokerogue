@@ -795,10 +795,7 @@ export default class BattleScene extends SceneBase {
    * @returns {ModifierBar}
    */
   getModifierBar(enemy?: boolean): ModifierBar {
-    if (enemy) {
-      return this.enemyModifierBar;
-    }
-    return this.modifierBar;
+    return enemy ? this.enemyModifierBar : this.modifierBar;
   }
 
   // store info toggles to be accessible by the ui
