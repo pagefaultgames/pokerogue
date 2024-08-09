@@ -2297,7 +2297,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     super(true);
   }
 
-  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     const targets = pokemon.getOpponents();
     if (!targets.length) {
       return false;
@@ -2309,25 +2309,25 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     } else {
       target = targets[0];
     }
+    return new Promise(resolve => {
+      pokemon.summonData.speciesForm = target.getSpeciesForm();
+      pokemon.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
+      pokemon.summonData.ability = target.getAbility().id;
+      pokemon.summonData.gender = target.getGender();
+      pokemon.summonData.fusionGender = target.getFusionGender();
+      pokemon.summonData.stats = [ pokemon.stats[Stat.HP] ].concat(target.stats.slice(1));
+      pokemon.summonData.battleStats = target.summonData.battleStats.slice(0);
+      pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m?.moveId!, m?.ppUsed, m?.ppUp));
+      pokemon.summonData.types = target.getTypes();
+      pokemon.updateInfo();
 
-    target = target!; // compiler doesn't know its guranteed to be defined
-    pokemon.summonData.speciesForm = target.getSpeciesForm();
-    pokemon.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
-    pokemon.summonData.ability = target.getAbility().id;
-    pokemon.summonData.gender = target.getGender();
-    pokemon.summonData.fusionGender = target.getFusionGender();
-    pokemon.summonData.stats = [ pokemon.stats[Stat.HP] ].concat(target.stats.slice(1));
-    pokemon.summonData.battleStats = target.summonData.battleStats.slice(0);
-    pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m!.moveId, m!.ppUsed, m!.ppUp)); // TODO: are those bangs correct?
-    pokemon.summonData.types = target.getTypes();
+      pokemon.scene.queueMessage(i18next.t("abilityTriggers:postSummonTransform", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), targetName: getPokemonNameWithAffix(target)}));
 
-    pokemon.scene.playSound("PRSFX- Transform");
-
-    pokemon.loadAssets(false).then(() => pokemon.playAnim());
-
-    pokemon.scene.queueMessage(i18next.t("abilityTriggers:postSummonTransform", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), targetName: target.name, }));
-
-    return true;
+      pokemon.loadAssets(false).then(() => {
+        pokemon.playAnim();
+        resolve(true);
+      });
+    });
   }
 }
 

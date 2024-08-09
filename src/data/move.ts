@@ -5777,8 +5777,9 @@ export class TransformAttr extends MoveEffectAttr {
       user.summonData.fusionGender = target.getFusionGender();
       user.summonData.stats = [ user.stats[Stat.HP] ].concat(target.stats.slice(1));
       user.summonData.battleStats = target.summonData.battleStats.slice(0);
-      user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m?.moveId!, m?.ppUsed, m?.ppUp)); // TODO: is this bang correct?
+      user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m?.moveId!, m?.ppUsed, m?.ppUp));
       user.summonData.types = target.getTypes();
+      user.updateInfo();
 
       user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", {pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target)}));
 
