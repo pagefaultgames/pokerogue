@@ -9,7 +9,7 @@ import * as messages from "#app/messages.js";
 import { MoveEffectPhase } from "#app/phases.js";
 import { allMoves } from "#app/data/move.js";
 
-jest.mock("#app/battle-scene.js");
+vi.mock("#app/battle-scene.js");
 
 const TIMEOUT = 5 * 1000; // 5 sec timeout
 
@@ -32,7 +32,7 @@ describe("BattlerTag - SubstituteTag", () => {
       } as Pokemon;
 
       vi.spyOn(messages, "getPokemonNameWithAffix").mockReturnValue("");
-      vi.spyOn(mockPokemon.scene, "getPokemonById").mockImplementation(pokemonId => mockPokemon.id === pokemonId ? mockPokemon : undefined);
+      vi.spyOn(mockPokemon.scene, "getPokemonById").mockImplementation(pokemonId => mockPokemon.id === pokemonId ? mockPokemon : null);
     });
 
     it(
