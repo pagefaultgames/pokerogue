@@ -7,7 +7,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { BattlerIndex } from "#app/battle.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { mockTurnOrder } from "../utils/testUtils";
 import { StatusEffect } from "#app/enums/status-effect.js";
 import { allAbilities, PostDefendContactApplyStatusEffectAbAttr } from "#app/data/ability.js";
 
@@ -46,7 +45,7 @@ describe("Moves - Safeguard", () => {
       const enemy = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.NUZZLE));
-      await mockTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toNextTurn();
 
       expect(enemy.status).toBeUndefined();
@@ -59,7 +58,7 @@ describe("Moves - Safeguard", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPORE));
-      await mockTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toNextTurn();
 
       expect(enemyPokemon.status).toBeUndefined();
@@ -73,7 +72,7 @@ describe("Moves - Safeguard", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.CONFUSE_RAY));
-      await mockTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toNextTurn();
 
       expect(enemyPokemon.summonData.tags).toEqual([]);
@@ -96,7 +95,7 @@ describe("Moves - Safeguard", () => {
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY_2);
 
-      await mockTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -113,7 +112,7 @@ describe("Moves - Safeguard", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.YAWN));
-      await mockTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toNextTurn();
 
       expect(enemyPokemon.summonData.tags).toEqual([]);
@@ -126,7 +125,7 @@ describe("Moves - Safeguard", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.YAWN));
-      await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toNextTurn();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
@@ -143,7 +142,7 @@ describe("Moves - Safeguard", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-      await mockTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toNextTurn();
 
       expect(enemyPokemon.status?.effect).toEqual(StatusEffect.BURN);
@@ -164,7 +163,7 @@ describe("Moves - Safeguard", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-      await mockTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toNextTurn();
       game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
