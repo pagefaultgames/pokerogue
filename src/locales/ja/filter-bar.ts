@@ -31,6 +31,6 @@ export const filterBar: SimpleTranslationEntries = {
   "sortByNumber": "No.",
   "sortByCost": "ポイント",
   "sortByCandies": "飴の数",
-  "sortByIVs": "IVs",
+  "sortByIVs": "個体値",
   "sortByName": "名前",
 };
