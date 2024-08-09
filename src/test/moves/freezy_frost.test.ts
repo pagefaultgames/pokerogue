@@ -10,7 +10,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { allMoves } from "#app/data/move.js";
 
-describe("Moves - Haze", () => {
+describe("Moves - Freezy Frost", () => {
   describe("integration tests", () => {
     let phaserGame: Phaser.Game;
     let game: GameManager;
@@ -64,7 +64,7 @@ describe("Moves - Haze", () => {
 
     it("Uses Swords Dance to raise own ATK by 2, Charm to lower enemy ATK by 2, enemy uses Freezy Frost to clear all stat changes", { timeout: 10000 }, async () => {
       game.override.enemyMoveset([Moves.FREEZY_FROST, Moves.FREEZY_FROST, Moves.FREEZY_FROST, Moves.FREEZY_FROST]);
-      await game.startBattle([Species.SHUCKLE]); // Shuckle for slower Swords Dance on first turn so Haze doesn't affect it.
+      await game.startBattle([Species.SHUCKLE]); // Shuckle for slower Swords Dance on first turn so Freezy Frost doesn't affect it.
       const user = game.scene.getPlayerPokemon()!;
       expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
