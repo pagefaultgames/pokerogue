@@ -55,6 +55,7 @@ export interface Starter {
   nature: Nature;
   moveset?: StarterMoveset;
   pokerus: boolean;
+  nickname?: string;
 }
 
 interface LanguageSetting {
@@ -1542,6 +1543,33 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             }
           }
+          options.push({
+            label: i18next.t("menu:rename"),
+            handler: () => {
+              ui.playSelect();
+              let nickname = starterAttributes.nickname ? String(starterAttributes.nickname) : "";
+              nickname = decodeURIComponent(escape(atob(nickname)));
+              ui.setModeWithoutClear(Mode.RENAME_POKEMON, {
+                buttonActions: [
+                  (sanitizedName: string) => {
+                    ui.playSelect();
+                    starterAttributes.nickname = sanitizedName;
+                    const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
+                    if (name.length > 0) {
+                      this.pokemonNameText.setText(name);
+                    } else {
+                      this.pokemonNameText.setText(species.name);
+                    }
+                    ui.setMode(Mode.STARTER_SELECT);
+                  },
+                  () => {
+                    ui.setMode(Mode.STARTER_SELECT);
+                  }
+                ]
+              }, nickname);
+              return true;
+            }
+          });
           const showUseCandies = () => { // this lets you use your candies
             const options: any[] = []; // TODO: add proper type
             if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
@@ -2573,7 +2601,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
       this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 4));
-      this.pokemonNameText.setText(species.name);
+      // if starterAttributes nickname is set, use it, otherwise use species name
+      if (starterAttributes?.nickname) {
+        const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
+        this.pokemonNameText.setText(name);
+      } else {
+        this.pokemonNameText.setText(species.name);
+      }
 
       if (this.speciesStarterDexEntry?.caughtAttr) {
         const colorScheme = starterColors[species.speciesId];
@@ -3215,7 +3249,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 passive: !(thisObj.scene.gameData.starterData[starterSpecies.speciesId].passiveAttr ^ (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)),
                 nature: thisObj.starterNatures[i] as Nature,
                 moveset: thisObj.starterMovesets[i],
-                pokerus: thisObj.pokerusSpecies.includes(starterSpecies)
+                pokerus: thisObj.pokerusSpecies.includes(starterSpecies),
+                nickname: thisObj.starterPreferences[starterSpecies.speciesId]?.nickname,
               };
             }));
           };
