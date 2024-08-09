@@ -10,7 +10,7 @@ export const filterBar: SimpleTranslationEntries = {
   "all": "Todo",
   "normal": "Normal",
   "uncaught": "No Capt.",
-  "passive": "Passive",
+  "passive": "Pasiva",
   "passiveUnlocked": "Pasiva desbloq.",
   "passiveLocked": "Pasiva bloq.",
   "costReduction": "Reducción de coste",
