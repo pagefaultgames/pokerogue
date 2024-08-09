@@ -916,9 +916,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.allSpecies.forEach((species, s) => {
         const icon = this.starterContainers[s].icon;
         const dexEntry = this.scene.gameData.dexData[species.speciesId];
-        if (!this.starterPreferences[species.speciesId]) {
-          this.starterPreferences[species.speciesId] = {};
-        }
+        this.starterPreferences[species.speciesId] = this.starterPreferences[species.speciesId] ?? {};
 
         if (dexEntry.caughtAttr) {
           icon.clearTint();
