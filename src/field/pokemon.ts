@@ -51,6 +51,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
+import { Challenges } from "#app/enums/challenges";
 
 export enum FieldPosition {
   CENTER,
@@ -922,7 +923,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getLearnableLevelMoves(): Moves[] {
     let levelMoves = this.getLevelMoves(1, true).map(lm => lm[1]);
-    if (this.metBiome === -1) {
+    if (this.metBiome === -1 && !this.scene.gameMode.challenges.some(c => c.id === Challenges.FRESH_START)) {
       levelMoves = this.getUnlockedEggMoves().concat(levelMoves);
     }
     return levelMoves.filter(lm => !this.moveset.some(m => m?.moveId === lm));
