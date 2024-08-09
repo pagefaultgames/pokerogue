@@ -37,18 +37,18 @@ describe("terrain", () => {
       mockI18next();
 
       const text = getTerrainStartMessage(terrainType);
-      expect(text).toBe(undefined);
+      expect(text).toBeNull();
     });
 
     it("should return the clear text", () => {
       mockI18next();
       const text = getTerrainClearMessage(terrainType);
-      expect(text).toBe(undefined);
+      expect(text).toBeNull();
     });
 
     it("should return the block text", async () => {
       await game.startBattle([Species.MAGIKARP]);
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
       expect(text).toBe("terrain:defaultBlockMessage");
@@ -80,7 +80,7 @@ describe("terrain", () => {
 
     it("should return the block text", async () => {
       await game.startBattle([Species.MAGIKARP]);
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
       expect(text).toBe("terrain:mistyBlockMessage");
@@ -112,7 +112,7 @@ describe("terrain", () => {
 
     it("should return the block text", async () => {
       await game.startBattle([Species.MAGIKARP]);
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
       expect(text).toBe("terrain:defaultBlockMessage");
@@ -144,7 +144,7 @@ describe("terrain", () => {
 
     it("should return the block text", async () => {
       await game.startBattle([Species.MAGIKARP]);
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
       expect(text).toBe("terrain:defaultBlockMessage");
@@ -176,7 +176,7 @@ describe("terrain", () => {
 
     it("should return the block text", async () => {
       await game.startBattle([Species.MAGIKARP]);
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
       expect(text).toBe("terrain:defaultBlockMessage");

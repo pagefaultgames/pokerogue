@@ -17,10 +17,10 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   protected inputContainers: Phaser.GameObjects.Container[];
   protected inputs: InputText[];
   protected errorMessage: Phaser.GameObjects.Text;
-  protected submitAction: Function;
+  protected submitAction: Function | null;
   protected tween: Phaser.Tweens.Tween;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
     this.editing = false;

@@ -35,7 +35,7 @@ describe("Final Boss", () => {
 
     expect(game.scene.currentBattle.waveIndex).toBe(FinalWave.Classic);
     expect(game.scene.arena.biomeType).toBe(Biome.END);
-    expect(game.scene.getEnemyPokemon().species.speciesId).toBe(Species.ETERNATUS);
+    expect(game.scene.getEnemyPokemon()!.species.speciesId).toBe(Species.ETERNATUS);
   });
 
   it("should NOT spawn Eternatus before wave 200 in END biome", async () => {
@@ -44,7 +44,7 @@ describe("Final Boss", () => {
 
     expect(game.scene.currentBattle.waveIndex).not.toBe(FinalWave.Classic);
     expect(game.scene.arena.biomeType).toBe(Biome.END);
-    expect(game.scene.getEnemyPokemon().species.speciesId).not.toBe(Species.ETERNATUS);
+    expect(game.scene.getEnemyPokemon()!.species.speciesId).not.toBe(Species.ETERNATUS);
   });
 
   it("should NOT spawn Eternatus outside of END biome", async () => {
@@ -53,7 +53,15 @@ describe("Final Boss", () => {
 
     expect(game.scene.currentBattle.waveIndex).toBe(FinalWave.Classic);
     expect(game.scene.arena.biomeType).not.toBe(Biome.END);
-    expect(game.scene.getEnemyPokemon().species.speciesId).not.toBe(Species.ETERNATUS);
+    expect(game.scene.getEnemyPokemon()!.species.speciesId).not.toBe(Species.ETERNATUS);
+  });
+
+  it("should not have passive enabled on Eternatus", async () => {
+    await runToFinalBossEncounter(game, [Species.BIDOOF]);
+
+    const eternatus = game.scene.getEnemyPokemon();
+    expect(eternatus?.species.speciesId).toBe(Species.ETERNATUS);
+    expect(eternatus?.hasPassive()).toBe(false);
   });
 
   it.todo("should change form on direct hit down to last boss fragment", () => {});

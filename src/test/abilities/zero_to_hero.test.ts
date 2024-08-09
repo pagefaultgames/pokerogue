@@ -45,7 +45,7 @@ describe("Abilities - ZERO TO HERO", () => {
 
       await game.startBattle([Species.MAGIKARP, Species.PALAFIN]);
 
-      const palafin = game.scene.getParty().find((p) => p.species.speciesId === Species.PALAFIN);
+      const palafin = game.scene.getParty().find((p) => p.species.speciesId === Species.PALAFIN)!;
       expect(palafin).not.toBe(undefined);
       expect(palafin.formIndex).toBe(heroForm);
 

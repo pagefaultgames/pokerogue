@@ -72,10 +72,10 @@ async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, pro
 
   await game.startBattle();
 
-  const leadPokemon = game.scene.getPlayerPokemon();
+  const leadPokemon = game.scene.getPlayerPokemon()!;
   expect(leadPokemon).not.toBe(undefined);
 
-  const enemyPokemon = game.scene.getEnemyPokemon();
+  const enemyPokemon = game.scene.getEnemyPokemon()!;
   expect(enemyPokemon).not.toBe(undefined);
 
   const enemyStartingHp = enemyPokemon.hp;
