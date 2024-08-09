@@ -39,6 +39,7 @@ describe("Moves - Safeguard", () => {
       .moveset([Moves.NUZZLE, Moves.SPORE, Moves.YAWN, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH);
   });
+
   it("protects from damaging moves with additional effects",
     async () => {
       await game.startBattle();
@@ -51,6 +52,7 @@ describe("Moves - Safeguard", () => {
       expect(enemy.status).toBeUndefined();
     }, TIMEOUT
   );
+
   it("protects from status moves",
     async () => {
       await game.startBattle();
@@ -63,6 +65,21 @@ describe("Moves - Safeguard", () => {
       expect(enemyPokemon.status).toBeUndefined();
     }, TIMEOUT
   );
+
+  it("protects from confusion",
+    async () => {
+      game.override.moveset([Moves.CONFUSE_RAY]);
+      await game.startBattle();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.CONFUSE_RAY));
+      await mockTurnOrder(game, [BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toNextTurn();
+
+      expect(enemyPokemon.summonData.tags).toEqual([]);
+    }, TIMEOUT
+  );
+
   it("protects ally from status",
     async () => {
       game.override.battleType("double");
@@ -90,7 +107,7 @@ describe("Moves - Safeguard", () => {
     }, TIMEOUT
   );
 
-  it.skip("protects from new volatile status", // not yet
+  it("protects from YAWN",
     async () => {
       await game.startBattle();
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -103,7 +120,7 @@ describe("Moves - Safeguard", () => {
     }, TIMEOUT
   );
 
-  it.skip("doesn't protect from already existing volatile status", // not yet
+  it("doesn't protect from already existing YAWN",
     async () => {
       await game.startBattle();
       const enemyPokemon = game.scene.getEnemyPokemon()!;
