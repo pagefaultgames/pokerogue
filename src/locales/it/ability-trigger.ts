@@ -10,6 +10,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "trace": "L'abilità {{abilityName}} di {{targetName}}\nviene copiata da {{pokemonName}} con Traccia!",
   "windPowerCharged": "Venire colpito da {{moveName}} ha caricato {{pokemonName}}!",
   "quickDraw":"{{pokemonName}} agisce più rapidamente del normale grazie a Colpolesto!",
+  "illusionBreak": "L'illusione di {{pokemonName}} si dissolve!",
   "blockItemTheft": "{{abilityName}} di {{pokemonNameWithAffix}}\nlo rende immune ai furti!",
   "typeImmunityHeal": "{{pokemonName}} recupera alcuni PS\ncon {{abilityName}}!",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}} evita il colpo\ncon {{abilityName}}!",

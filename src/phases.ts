@@ -25,7 +25,10 @@ import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
-import { CheckTrappedAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr, IgnoreMoveEffectsAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr, AddSecondStrikeAbAttr } from "./data/ability";
+import {
+  CheckTrappedAbAttr, PreSummonAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr,
+  applyAbAttrs, applyCheckTrappedAbAttrs, applyPreSummonAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr, IgnoreMoveEffectsAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr, AddSecondStrikeAbAttr
+} from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -853,6 +856,7 @@ export class EncounterPhase extends BattlePhase {
           });
         }
       }
+
       const enemyPokemon = this.scene.getEnemyParty()[e];
       if (e < (battle.double ? 2 : 1)) {
         enemyPokemon.setX(-66 + enemyPokemon.getFieldPositionOffset()[0]);
@@ -906,6 +910,8 @@ export class EncounterPhase extends BattlePhase {
       battle.enemyParty.forEach((enemyPokemon, e) => {
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
+
+            applyPreSummonAbAttrs(PreSummonAbAttr, enemyPokemon, []);
             this.scene.field.add(enemyPokemon);
             battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
             const playerPokemon = this.scene.getPlayerPokemon();
@@ -1070,7 +1076,7 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     enemyField.forEach((enemyPokemon, e) => {
-      if (enemyPokemon.isShiny()) {
+      if (enemyPokemon.isShiny(true)) {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
       }
     });
@@ -1399,6 +1405,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   start() {
     super.start();
 
+    applyPreSummonAbAttrs(PreSummonAbAttr, this.getPokemon());
     this.preSummon();
   }
 
@@ -1465,8 +1472,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
   summon(): void {
     const pokemon = this.getPokemon();
-
-    const pokeball = this.scene.addFieldSprite(this.player ? 36 : 248, this.player ? 80 : 44, "pb", getPokeballAtlasKey(pokemon.pokeball));
+    const pokeball = this.scene.addFieldSprite(this.player ? 36 : 248, this.player ? 80 : 44, "pb", getPokeballAtlasKey(pokemon.illusion.pokeball ?? pokemon.pokeball));
     pokeball.setVisible(false);
     pokeball.setOrigin(0.5, 0.625);
     this.scene.field.add(pokeball);
@@ -1512,7 +1518,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               }
               this.scene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
             }
-            addPokeballOpenParticles(this.scene, pokemon.x, pokemon.y - 16, pokemon.pokeball);
+            addPokeballOpenParticles(this.scene, pokemon.x, pokemon.y - 16, pokemon.illusion.pokeball ?? pokemon.pokeball);
             this.scene.updateModifiers(this.player);
             this.scene.updateFieldScale();
             pokemon.showInfo();
@@ -1520,7 +1526,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
             pokemon.setVisible(true);
             pokemon.getSprite().setVisible(true);
             pokemon.setScale(0.5);
-            pokemon.tint(getPokeballTintColor(pokemon.pokeball));
+            pokemon.tint(getPokeballTintColor(pokemon.illusion.pokeball ?? pokemon.pokeball));
             pokemon.untint(250, "Sine.easeIn");
             this.scene.updateFieldScale();
             this.scene.tweens.add({
@@ -1544,7 +1550,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   onEnd(): void {
     const pokemon = this.getPokemon();
 
-    if (pokemon.isShiny()) {
+    if (pokemon.isShiny(true)) {
       this.scene.unshiftPhase(new ShinySparklePhase(this.scene, pokemon.getBattlerIndex()));
     }
 
@@ -1606,6 +1612,7 @@ export class SwitchSummonPhase extends SummonPhase {
         this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
       }
     }
+    const pokemon: Pokemon = this.getPokemon();
 
     if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? this.scene.getParty() : this.scene.getEnemyParty())[this.slotIndex])) {
       if (this.player) {
@@ -1615,8 +1622,6 @@ export class SwitchSummonPhase extends SummonPhase {
         return;
       }
     }
-
-    const pokemon = this.getPokemon();
 
     if (!this.batonPass) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
@@ -1631,7 +1636,7 @@ export class SwitchSummonPhase extends SummonPhase {
     );
     this.scene.playSound("pb_rel");
     pokemon.hideInfo(); // this is also done by pokemon.leaveField(), but needs to go earlier for animation purposes
-    pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
+    pokemon.tint(getPokeballTintColor(pokemon.illusion.pokeball ?? pokemon.pokeball), 1, 250, "Sine.easeIn");
     this.scene.tweens.add({
       targets: pokemon,
       duration: 250,
@@ -1650,6 +1655,8 @@ export class SwitchSummonPhase extends SummonPhase {
     const party = this.player ? this.getParty() : this.scene.getEnemyParty();
     const switchedInPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
+
+    applyPreSummonAbAttrs(PreSummonAbAttr, switchedInPokemon);
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (this.batonPass && switchedInPokemon) {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id));
@@ -4697,6 +4704,7 @@ export class SwitchPhase extends BattlePhase {
       }
       this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
     }, PartyUiHandler.FilterNonFainted);
+
   }
 }
 

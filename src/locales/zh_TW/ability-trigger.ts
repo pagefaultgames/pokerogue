@@ -10,6 +10,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "trace": "{{pokemonName}} 複製了 {{targetName}} 的\n{{abilityName}}!",
   "windPowerCharged": "受 {{moveName}} 的影響， {{pokemonName}} 提升了能力！",
   "quickDraw":"{{pokemonName}} can act faster than normal, thanks to its Quick Draw!",
+  "illusionBreak": "{{pokemonName}}造成的\n幻覺解除了！",
   "blockItemTheft": "{{pokemonNameWithAffix}}'s {{abilityName}}\nprevents item theft!",
   "typeImmunityHeal": "{{pokemonNameWithAffix}}'s {{abilityName}}\nrestored its HP a little!",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}} avoided damage\nwith {{abilityName}}!",

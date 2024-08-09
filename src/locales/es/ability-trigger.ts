@@ -11,6 +11,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "windPowerCharged": "¡{{pokemonName}} se ha cargado de electricidad gracias a {{moveName}}!",
   "quickDraw": "{{pokemonName}} can act faster than normal, thanks to its Quick Draw!",
   "blockItemTheft": "{{pokemonNameWithAffix}}'s {{abilityName}}\nprevents item theft!",
+  "illusionBreak": "¡La ilusión de {{pokemonName}} se ha desvanecido!",
   "typeImmunityHeal": "{{pokemonNameWithAffix}}'s {{abilityName}}\nrestored its HP a little!",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}} avoided damage\nwith {{abilityName}}!",
   "postDefendDisguise": "{{pokemonNameWithAffix}}'s disguise was busted!",
