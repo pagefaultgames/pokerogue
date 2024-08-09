@@ -13,7 +13,7 @@ export const filterBar: SimpleTranslationEntries = {
   "passive": "Passive",
   "passiveUnlocked": "Passive freigeschaltet",
   "passiveLocked": "Passive gesperrt",
-  "costReduction": "Cost Reduction",
+  "costReduction": "Cost Reduction",//Also here
   "costReductionUnlocked": "Cost Reduction Unlocked",
   "costReductionLocked": "Cost Reduction Locked",
   "ribbon": "Band",
