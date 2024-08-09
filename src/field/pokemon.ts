@@ -4326,17 +4326,13 @@ export class PokemonMove {
   /**
    * Checks whether the move can be selected or performed by a Pokemon, without consideration for the move's targets.
    * The move is unusable if it is out of PP, disabled by an effect, or unimplemented.
-   *
    * @param {Pokemon} pokemon The Pokemon that would be using this move
    * @param ignorePp If true, skips the PP check
+   * @param ignoreDisableTags If true, skips the check for move-disabling tags
    * @returns True if the move can be selected and used by the Pokemon, otherwise false.
    */
   isUsable(pokemon: Pokemon, ignorePp?: boolean, ignoreDisableTags?: boolean): boolean {
-    if (!this.moveId) {
-      return false;
-    }
-
-    if (!ignoreDisableTags && pokemon.isMoveDisabled(this.moveId)) {
+    if (this.moveId && !ignoreDisableTags && pokemon.isMoveDisabled(this.moveId)) {
       return false;
     }
 
