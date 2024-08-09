@@ -2090,8 +2090,9 @@ export class CommandPhase extends FieldPhase {
         const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
         const trapped = new Utils.BooleanHolder(false);
         const batonPass = isSwitch && args[0] as boolean;
+        const trappedAbMessages: string[] = [];
         if (!batonPass) {
-          enemyField.forEach(enemyPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trapped, playerPokemon));
+          enemyField.forEach(enemyPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trapped, playerPokemon, true, trappedAbMessages));
         }
         if (batonPass || (!trapTag && !trapped.value)) {
           this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
@@ -2126,6 +2127,16 @@ export class CommandPhase extends FieldPhase {
                 this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
               }
             }, null, true);
+        } else if (trapped.value && trappedAbMessages.length > 0) {
+          if (!isSwitch) {
+            this.scene.ui.setMode(Mode.MESSAGE);
+          }
+          this.scene.ui.showText(trappedAbMessages[0], null, () => {
+            this.scene.ui.showText(null, 0);
+            if (!isSwitch) {
+              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+            }
+          }, null, true);
         }
       }
       break;
@@ -2220,7 +2231,7 @@ export class EnemyCommandPhase extends FieldPhase {
 
       const trapTag = enemyPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
       const trapped = new Utils.BooleanHolder(false);
-      opponents.forEach(playerPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, playerPokemon, trapped, enemyPokemon));
+      opponents.forEach(playerPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, playerPokemon, trapped, enemyPokemon, true, undefined));
       if (!trapTag && !trapped.value) {
         const partyMemberScores = trainer.getPartyMemberMatchupScores(enemyPokemon.trainerSlot, true);
 
