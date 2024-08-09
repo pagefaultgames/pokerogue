@@ -441,19 +441,28 @@ export default class MenuUiHandler extends MessageUiHandler {
       case MenuOptions.SAVE_AND_QUIT:
         if (this.scene.currentBattle) {
           success = true;
+          const doSaveQuit = () => {
+            ui.setMode(Mode.LOADING, {
+              buttonActions: [], fadeOut: () =>
+                this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => {
+
+                  this.scene.reset(true);
+                })
+            });
+          };
           if (this.scene.currentBattle.turn > 1) {
             ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
               if (!this.active) {
                 this.showText("", 0);
                 return;
               }
-              ui.setOverlayMode(Mode.CONFIRM, () => this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true)), () => {
+              ui.setOverlayMode(Mode.CONFIRM, doSaveQuit, () => {
                 ui.revertMode();
                 this.showText("", 0);
               }, false, -98);
             });
           } else {
-            this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true));
+            doSaveQuit();
           }
         } else {
           error = true;
@@ -462,12 +471,14 @@ export default class MenuUiHandler extends MessageUiHandler {
       case MenuOptions.LOG_OUT:
         success = true;
         const doLogout = () => {
-          Utils.apiFetch("account/logout", true).then(res => {
-            if (!res.ok) {
-              console.error(`Log out failed (${res.status}: ${res.statusText})`);
-            }
-            Utils.removeCookie(Utils.sessionIdKey);
-            updateUserInfo().then(() => this.scene.reset(true, true));
+          ui.setMode(Mode.LOADING, {
+            buttonActions: [], fadeOut: () => Utils.apiFetch("account/logout", true).then(res => {
+              if (!res.ok) {
+                console.error(`Log out failed (${res.status}: ${res.statusText})`);
+              }
+              Utils.removeCookie(Utils.sessionIdKey);
+              updateUserInfo().then(() => this.scene.reset(true, true));
+            })
           });
         };
         if (this.scene.currentBattle) {
