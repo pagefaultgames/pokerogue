@@ -630,8 +630,8 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterCost(species: Species, cost: Utils.NumberHolder): boolean {
-    if (defaultStarterSpecies.includes(species) && cost.value !== 3) {
-      cost.value = 3;
+    if (defaultStarterSpecies.includes(species)) {
+      cost.value = speciesStarters[species];
       return true;
     }
     return false;
