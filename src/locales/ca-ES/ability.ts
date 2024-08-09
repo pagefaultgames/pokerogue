@@ -2,23 +2,23 @@ import { AbilityTranslationEntries } from "#app/interfaces/locales.js";
 
 export const ability: AbilityTranslationEntries = {
   stench: {
-    name: "Stench",
-    description: "By releasing stench when attacking, this Pokémon may cause the target to flinch.",
+    name: "Pudent",
+    description: "En alliberar pudor en atacar, aquest Pokémon pot provocar que l'objectiu s'enfonsi.",
   },
   drizzle: {
-    name: "Drizzle",
-    description: "The Pokémon makes it rain when it enters a battle.",
+    name: "Plovisqueig",
+    description: "El Pokémon fa ploure quan entra en una batalla.",
   },
   speedBoost: {
-    name: "Speed Boost",
+    name: "Accelerador",
     description: "Its Speed stat is boosted every turn.",
   },
   battleArmor: {
-    name: "Battle Armor",
-    description: "Hard armor protects the Pokémon from critical hits.",
+    name: "Armadura batalla",
+    description: "Bloqueja els cops crítics.",
   },
   sturdy: {
-    name: "Sturdy",
+    name: "Ferm",
     description: "It cannot be knocked out with one hit. One-hit KO moves cannot knock it out, either.",
   },
   damp: {
@@ -214,8 +214,8 @@ export const ability: AbilityTranslationEntries = {
     description: "The Pokémon may pick up the item an opposing Pokémon held during a battle.",
   },
   truant: {
-    name: "Truant",
-    description: "The Pokémon can't use a move if it had used a move on the previous turn.",
+    name: "Absent",
+    description: "El Pokémon no atacarà en torns consecutius.",
   },
   hustle: {
     name: "Hustle",
@@ -302,8 +302,8 @@ export const ability: AbilityTranslationEntries = {
     description: "A hard shell protects the Pokémon from critical hits.",
   },
   airLock: {
-    name: "Air Lock",
-    description: "Eliminates the effects of weather.",
+    name: "Bucle Aire",
+    description: "Anul·la els efectes del temps atmosfèric.",
   },
   tangledFeet: {
     name: "Tangled Feet",
@@ -378,7 +378,7 @@ export const ability: AbilityTranslationEntries = {
     description: "Boosts the Sp. Atk stat in harsh sunlight, but HP decreases every turn.",
   },
   quickFeet: {
-    name: "Quick Feet",
+    name: "Peus ràpids",
     description: "Boosts the Speed stat if the Pokémon has a status condition.",
   },
   normalize: {
