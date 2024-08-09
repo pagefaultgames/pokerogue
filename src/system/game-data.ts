@@ -188,6 +188,7 @@ export type RunHistoryData = Record<number, RunEntry>;
 export interface RunEntry {
   entry: SessionSaveData;
   isVictory: boolean;
+  /*Automatically set to false at the moment - implementation TBD*/
   isFavorite: boolean;
 }
 
@@ -583,11 +584,12 @@ export class GameData {
       const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
       const lsItem = localStorage.getItem(lsItemKey);
       if (lsItem) {
-        let cachedResponse = lsItem;
+        const cachedResponse  = lsItem;
         if (cachedResponse) {
-          cachedResponse = JSON.parse(decrypt(cachedResponse, true));
+          const runHistory = JSON.parse(decrypt(cachedResponse, true));
+          return runHistory;
         }
-        const cachedRHData = (cachedResponse ?? {}) as RunHistoryData;
+        return {};
         // check to see whether cachedData or serverData is more up-to-date
         /**
        * Networking Code DO NOT DELETE!
@@ -596,19 +598,24 @@ export class GameData {
           return cachedRHData;
         }
         */
-        return cachedRHData;
       } else {
-        localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, JSON.parse(encrypt("", true)));
+        localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, "");
         return {};
       }
-      //return data;
     } else {
-      let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser?.username}`);
-      if (cachedResponse) {
-        cachedResponse = JSON.parse(decrypt(cachedResponse, true));
+      const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
+      const lsItem = localStorage.getItem(lsItemKey);
+      if (lsItem) {
+        const cachedResponse = lsItem;
+        if (cachedResponse) {
+          const runHistory : RunHistoryData = JSON.parse(decrypt(cachedResponse, true));
+          return runHistory;
+        }
+        return {};
+      } else {
+        localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, "");
+        return {};
       }
-      const cachedRHData = cachedResponse ?? {};
-      return cachedRHData;
     }
   }
 
@@ -624,7 +631,7 @@ export class GameData {
     // Arbitrary limit of 25 entries per User --> Can increase or decrease
     if (timestamps.length >= 25) {
       const oldestTimestamp = Math.min.apply(Math, timestampsNo);
-      delete runHistoryData[oldestTimestamp.toString()];
+      delete runHistoryData[oldestTimestamp];
     }
 
     const timestamp = (runEntry.timestamp).toString();
@@ -1397,7 +1404,7 @@ export class GameData {
                 const keys = Object.keys(data);
                 keys.forEach((key) => {
                   const entryKeys = Object.keys(data[key]);
-                  valid = ["favorite", "victory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
+                  valid = ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
                 });
                 if (valid) {
                   localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, dataStr);

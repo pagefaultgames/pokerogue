@@ -10,8 +10,7 @@ import i18next from "i18next";
 import {Button} from "../enums/buttons";
 import { BattleType } from "../battle";
 import { TrainerVariant } from "../field/trainer";
-import { RunHistoryData } from "../system/game-data";
-
+import { RunEntry } from "../system/game-data";
 
 export const runCount = 25;
 
@@ -23,7 +22,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   private runsContainer: Phaser.GameObjects.Container;
   private runSelectMessageBox: Phaser.GameObjects.NineSlice;
   private runSelectMessageBoxContainer: Phaser.GameObjects.Container;
-  private runs: RunEntry[];
+  private runs: RunEntryContainer[];
 
   private runSelectCallback: RunSelectCallback | null;
 
@@ -94,7 +93,6 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
         if (this.runs[cursor]) {
-          console.log(this.runs[cursor].entryData);
           this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, true);
         } else {
           return false;
@@ -137,6 +135,9 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   async populateruns(scene: BattleScene) {
     const response = await this.scene.gameData.getRunHistoryData(this.scene);
     const timestamps = Object.keys(response);
+    if (timestamps.length === 0) {
+      return;
+    }
     const timestampsNo = timestamps.map(Number);
     if (timestamps.length > 1) {
       timestampsNo.sort((a, b) => a - b);
@@ -144,7 +145,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     timestampsNo.reverse();
     const entryCount = timestamps.length;
     for (let s = 0; s < entryCount; s++) {
-      const entry = new RunEntry(this.scene, response, timestampsNo[s].toString(), s);
+      const entry = new RunEntryContainer(this.scene, response[timestampsNo[s]], s);
       this.scene.add.existing(entry);
       this.runsContainer.add(entry);
       this.runs.push(entry);
@@ -216,26 +217,26 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   }
 }
 
-class RunEntry extends Phaser.GameObjects.Container {
+class RunEntryContainer extends Phaser.GameObjects.Container {
   public slotId: number;
   public hasData: boolean;
-  public entryData: RunHistoryData;
+  public entryData: RunEntry;
   private loadingLabel: Phaser.GameObjects.Text;
 
-  constructor(scene: BattleScene, runHistory: any, timestamp: string, slotId: number) {
+  constructor(scene: BattleScene, entryData: RunEntry, slotId: number) {
     super(scene, 0, slotId*56);
 
     this.slotId = slotId;
     this.hasData = true;
-    this.entryData = runHistory[timestamp];
+    this.entryData = entryData;
 
     this.setup(this.entryData);
 
   }
 
-  setup(run: any) {
+  setup(run: RunEntry) {
 
-    const victory = run.victory;
+    const victory = run.isVictory;
     const data = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
 
     const slotWindow = addWindow(this.scene, 0, 0, 304, 52);
@@ -335,7 +336,7 @@ class RunEntry extends Phaser.GameObjects.Container {
 }
 
 
-interface RunEntry {
+interface RunEntryContainer {
   scene: BattleScene;
 }
 
