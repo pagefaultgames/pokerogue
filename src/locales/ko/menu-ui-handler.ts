@@ -5,6 +5,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "ACHIEVEMENTS": "업적",
   "STATS": "통계",
   "VOUCHERS": "바우처",
+  "POKEDEX": "Pokédex",
   "EGG_LIST": "알 목록",
   "EGG_GACHA": "알 뽑기",
   "MANAGE_DATA": "데이터 관리",
