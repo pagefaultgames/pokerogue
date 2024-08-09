@@ -8,7 +8,9 @@ import MockPolygon from "#test/utils/mocks/mocksContainer/mockPolygon";
 import { MockGameObject } from "./mockGameObject";
 import MockTexture from "#test/utils/mocks/mocksContainer/mockTexture";
 
-
+/**
+ * Stub class for Phaser.Textures.TextureManager
+ */
 export default class MockTextureManager {
   private textures: Map<string, any>;
   private scene;
@@ -55,6 +57,10 @@ export default class MockTextureManager {
     // }
   }
 
+  /**
+   * Returns a mock texture
+   * @param key
+   */
   get(key) {
     return new MockTexture(this, key, null);
   }
