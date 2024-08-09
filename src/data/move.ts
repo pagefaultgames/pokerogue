@@ -8735,7 +8735,6 @@ export function initMoves() {
     new AttackMove(Moves.TERA_BLAST, Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 9)
       .attr(TeraBlastCategoryAttr)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK, ], -1, true, (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR))
-      .makesContact(false)
       .partial(),
     new SelfStatusMove(Moves.SILK_TRAP, Type.BUG, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP),
