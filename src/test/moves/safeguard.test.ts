@@ -107,7 +107,7 @@ describe("Moves - Safeguard", () => {
     }, TIMEOUT
   );
 
-  it("protects from YAWN",
+  it("protects from Yawn",
     async () => {
       await game.startBattle();
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -120,7 +120,7 @@ describe("Moves - Safeguard", () => {
     }, TIMEOUT
   );
 
-  it("doesn't protect from already existing YAWN",
+  it("doesn't protect from already existing Yawn",
     async () => {
       await game.startBattle();
       const enemyPokemon = game.scene.getEnemyPokemon()!;
