@@ -486,7 +486,8 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
       const fetchAnimAndResolve = (move: Moves) => {
         scene.cachedFetch(`./battle-anims/${moveName}.json`)
           .then(response => {
-            if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            if (!response.ok || contentType?.indexOf("application/json") === -1) {
               console.error(`Could not load animation file for move '${moveName}'`, response.status, response.statusText);
               populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
               return resolve();
