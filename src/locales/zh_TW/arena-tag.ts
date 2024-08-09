@@ -50,4 +50,10 @@ export const arenaTag: SimpleTranslationEntries = {
   "tailwindOnRemoveEnemy": "The opposing team's Tailwind petered out!",
   "happyHourOnAdd": "Everyone is caught up in the happy atmosphere!",
   "happyHourOnRemove": "The atmosphere returned to normal.",
+  "safeguardOnAdd": "整個場地被\n神秘之幕包圍了！",
+  "safeguardOnAddPlayer": "我方被\n神秘之幕包圍了！",
+  "safeguardOnAddEnemy": "對手被\n神秘之幕包圍了！",
+  "safeguardOnRemove": "包圍整個場地的\n神秘之幕消失了！",
+  "safeguardOnRemovePlayer": "包圍我方的\n神秘之幕消失了！",
+  "safeguardOnRemoveEnemy": "包圍對手的\n神秘之幕消失了！",
 } as const;

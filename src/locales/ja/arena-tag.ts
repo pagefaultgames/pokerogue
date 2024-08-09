@@ -50,4 +50,10 @@ export const arenaTag: SimpleTranslationEntries = {
   "tailwindOnRemoveEnemy": "The opposing team's Tailwind petered out!",
   "happyHourOnAdd": "Everyone is caught up in the happy atmosphere!",
   "happyHourOnRemove": "The atmosphere returned to normal.",
+  "safeguardOnAdd": "The whole field is cloaked in a mystical veil!",
+  "safeguardOnAddPlayer": "Your team cloaked itself in a mystical veil!",
+  "safeguardOnAddEnemy": "The opposing team cloaked itself in a mystical veil!",
+  "safeguardOnRemove": "The field is no longer protected by Safeguard!",
+  "safeguardOnRemovePlayer": "Your team is no longer protected by Safeguard!",
+  "safeguardOnRemoveEnemy": "The opposing team is no longer protected by Safeguard!",
 } as const;

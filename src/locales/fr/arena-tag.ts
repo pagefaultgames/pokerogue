@@ -50,4 +50,10 @@ export const arenaTag: SimpleTranslationEntries = {
   "tailwindOnRemoveEnemy": "Le vent arrière soufflant\nsur l’équipe ennemie s’arrête !",
   "happyHourOnAdd": "L’ambiance est euphorique !",
   "happyHourOnRemove": "L’ambiance se calme !",
+  "safeguardOnAdd": "Un voile mystérieux recouvre\ntout le terrain !",
+  "safeguardOnAddPlayer": "Un voile mystérieux recouvre\nvotre équipe !",
+  "safeguardOnAddEnemy": "Un voile mystérieux recouvre\nl’équipe ennemie !",
+  "safeguardOnRemove": "Le terrain n’est plus protégé\npar le voile mystérieux !",
+  "safeguardOnRemovePlayer": "Votre équipe n’est plus protégée\npar le voile mystérieux !",
+  "safeguardOnRemoveEnemy": "L’équipe ennemie n’est plus protégée\npar le voile mystérieux !",
 } as const;
