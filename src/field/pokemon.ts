@@ -3634,7 +3634,7 @@ export class PlayerPokemon extends Pokemon {
       if (!this.isFainted()) {
         // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
         this.hp = Math.min(this.hp, this.stats[Stat.HP]);
-        this.status = getRandomStatus(this.status, pokemon.status); // Get a random valid status between the two
+        this.status = getRandomStatus(this.status!, pokemon.status!); // Get a random valid status between the two  // TODO: are the bangs correct?
       } else if (!pokemon.isFainted()) {
         // If this Pokemon fainted but the other hasn't, make sure the HP wasn't set to zero
         this.hp = Math.max(this.hp, 1);
@@ -4331,12 +4331,12 @@ export class PokemonMove {
    * @param ignorePp If true, skips the PP check
    * @returns True if the move can be selected and used by the Pokemon, otherwise false.
    */
-  isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
+  isUsable(pokemon: Pokemon, ignorePp?: boolean, ignoreDisableTags?: boolean): boolean {
     if (!this.moveId) {
       return false;
     }
 
-    if (pokemon.isMoveDisabled(this.moveId)) {
+    if (!ignoreDisableTags && pokemon.isMoveDisabled(this.moveId)) {
       return false;
     }
 

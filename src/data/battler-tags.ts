@@ -101,13 +101,26 @@ export abstract class DisablingBattlerTag extends BattlerTag {
   public abstract moveIsDisabled(move: Moves): boolean;
 
   constructor(tagType: BattlerTagType, turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
-    super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
+    super(tagType, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], turnCount, sourceMove, sourceId);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (!super.lapse(pokemon, lapseType)) {
-      // Duration has expired
-      return false;
+    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
+      // Cancel the affected pokemon's selected move
+      const phase = pokemon.scene.getCurrentPhase() as MovePhase;
+      const move = phase.move;
+
+      if (!this.moveIsDisabled(move.moveId)) {
+        return true;
+      }
+
+      pokemon.scene.queueMessage(this.interruptedText(pokemon, move.moveId));
+      phase.fail();
+    } else if (lapseType === BattlerTagLapseType.TURN_END) {
+      // On turn end, subtract from lifetime and remove this tag if 0
+      if (!super.lapse(pokemon, lapseType)) {
+        return false;
+      }
     }
 
     return true;
