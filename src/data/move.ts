@@ -4400,6 +4400,11 @@ export class AddLinkedBattlerTagAttr extends AddBattlerTagAttr {
       return false;
     }
 
+    // If either the user or the target already has the tag, do not apply
+    if (user.getTag(this.tagType) || target.getTag(this.tagType)) {
+      return false;
+    }
+
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
       /**
