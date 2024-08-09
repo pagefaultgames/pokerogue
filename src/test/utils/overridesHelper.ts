@@ -125,6 +125,17 @@ export class OverridesHelper {
   }
 
   /**
+   * Override the player (pokemon) {@linkcode StatusEffect | status-effect}
+   * @param statusEffect the {@linkcode StatusEffect | status-effect} to set
+   * @returns
+   */
+  statusEffect(statusEffect: StatusEffect): this {
+    vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
+    this.log(`Player Pokemon status-effect set to ${StatusEffect[statusEffect]} (=${statusEffect})!`);
+    return this;
+  }
+
+  /**
    * Override each wave to not have standard trainer battles
    * @returns this
    */
@@ -181,7 +192,7 @@ export class OverridesHelper {
    * @param battleType battle type to set
    * @returns this
    */
-  battleType(battleType: "single" | "double"): this {
+  battleType(battleType: "single" | "double" | null): this {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
     this.log(`Battle type set to ${battleType} only!`);
     return this;

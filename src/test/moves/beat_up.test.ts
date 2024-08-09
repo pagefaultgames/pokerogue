@@ -1,11 +1,10 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import GameManager from "#test/utils/gameManager";
 import { Species } from "#app/enums/species.js";
 import { Moves } from "#app/enums/moves.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { getMovePosition } from "../utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { MoveEffectPhase } from "#app/phases.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
 
@@ -27,15 +26,15 @@ describe("Moves - Beat Up", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
 
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(Array(4).fill(Moves.SPLASH));
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
+    game.override.enemySpecies(Species.SNORLAX);
+    game.override.enemyLevel(100);
+    game.override.enemyMoveset(Array(4).fill(Moves.SPLASH));
+    game.override.enemyAbility(Abilities.INSOMNIA);
 
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.BEAT_UP]);
+    game.override.startingLevel(100);
+    game.override.moveset([Moves.BEAT_UP]);
   });
 
   it(
@@ -43,8 +42,8 @@ describe("Moves - Beat Up", () => {
     async () => {
       await game.startBattle([Species.MAGIKARP, Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.PIKACHU, Species.EEVEE]);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       let enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BEAT_UP));
@@ -67,7 +66,7 @@ describe("Moves - Beat Up", () => {
     async () => {
       await game.startBattle([Species.MAGIKARP, Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.PIKACHU, Species.EEVEE]);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
 
       game.scene.getParty()[1].trySetStatus(StatusEffect.BURN);
 
@@ -82,11 +81,11 @@ describe("Moves - Beat Up", () => {
   it(
     "should hit twice for each player Pokemon if the user has Multi-Lens",
     async () => {
-      vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{name: "MULTI_LENS", count: 1}]);
+      game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
       await game.startBattle([Species.MAGIKARP, Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.PIKACHU, Species.EEVEE]);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       let enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BEAT_UP));

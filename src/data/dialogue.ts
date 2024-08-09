@@ -452,144 +452,304 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
   [TrainerType.ROCKET_GRUNT]: [
     {
       encounter: [
-        "dialogue:rocket_grunt.encounter.1"
+        "dialogue:rocket_grunt.encounter.1",
+        "dialogue:rocket_grunt.encounter.2",
+        "dialogue:rocket_grunt.encounter.3",
+        "dialogue:rocket_grunt.encounter.4",
+        "dialogue:rocket_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:rocket_grunt.victory.1"
+        "dialogue:rocket_grunt.victory.1",
+        "dialogue:rocket_grunt.victory.2",
+        "dialogue:rocket_grunt.victory.3",
+        "dialogue:rocket_grunt.victory.4",
+        "dialogue:rocket_grunt.victory.5",
       ]
     }
   ],
-  [TrainerType.ROCKET_ADMIN]: [
+  [TrainerType.ARCHER]: [
     {
       encounter: [
-        "dialogue:rocket_admin.encounter.1",
-        "dialogue:rocket_admin.encounter.2",
-        "dialogue:rocket_admin.encounter.3",
+        "dialogue:archer.encounter.1",
+        "dialogue:archer.encounter.2",
+        "dialogue:archer.encounter.3",
       ],
       victory: [
-        "dialogue:rocket_admin.victory.1",
-        "dialogue:rocket_admin.victory.2",
-        "dialogue:rocket_admin.victory.3",
+        "dialogue:archer.victory.1",
+        "dialogue:archer.victory.2",
+        "dialogue:archer.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.ARIANA]: [
+    {
+      encounter: [
+        "dialogue:ariana.encounter.1",
+        "dialogue:ariana.encounter.2",
+        "dialogue:ariana.encounter.3",
+      ],
+      victory: [
+        "dialogue:ariana.victory.1",
+        "dialogue:ariana.victory.2",
+        "dialogue:ariana.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.PROTON]: [
+    {
+      encounter: [
+        "dialogue:proton.encounter.1",
+        "dialogue:proton.encounter.2",
+        "dialogue:proton.encounter.3",
+      ],
+      victory: [
+        "dialogue:proton.victory.1",
+        "dialogue:proton.victory.2",
+        "dialogue:proton.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.PETREL]: [
+    {
+      encounter: [
+        "dialogue:petrel.encounter.1",
+        "dialogue:petrel.encounter.2",
+        "dialogue:petrel.encounter.3",
+      ],
+      victory: [
+        "dialogue:petrel.victory.1",
+        "dialogue:petrel.victory.2",
+        "dialogue:petrel.victory.3",
       ]
     }
   ],
   [TrainerType.MAGMA_GRUNT]: [
     {
       encounter: [
-        "dialogue:magma_grunt.encounter.1"
+        "dialogue:magma_grunt.encounter.1",
+        "dialogue:magma_grunt.encounter.2",
+        "dialogue:magma_grunt.encounter.3",
+        "dialogue:magma_grunt.encounter.4",
+        "dialogue:magma_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:magma_grunt.victory.1"
+        "dialogue:magma_grunt.victory.1",
+        "dialogue:magma_grunt.victory.2",
+        "dialogue:magma_grunt.victory.3",
+        "dialogue:magma_grunt.victory.4",
+        "dialogue:magma_grunt.victory.5",
       ]
     }
   ],
-  [TrainerType.MAGMA_ADMIN]: [
+  [TrainerType.TABITHA]: [
     {
       encounter: [
-        "dialogue:magma_admin.encounter.1",
-        "dialogue:magma_admin.encounter.2",
-        "dialogue:magma_admin.encounter.3",
+        "dialogue:tabitha.encounter.1",
+        "dialogue:tabitha.encounter.2",
+        "dialogue:tabitha.encounter.3",
       ],
       victory: [
-        "dialogue:magma_admin.victory.1",
-        "dialogue:magma_admin.victory.2",
-        "dialogue:magma_admin.victory.3",
+        "dialogue:tabitha.victory.1",
+        "dialogue:tabitha.victory.2",
+        "dialogue:tabitha.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.COURTNEY]: [
+    {
+      encounter: [
+        "dialogue:courtney.encounter.1",
+        "dialogue:courtney.encounter.2",
+        "dialogue:courtney.encounter.3",
+      ],
+      victory: [
+        "dialogue:courtney.victory.1",
+        "dialogue:courtney.victory.2",
+        "dialogue:courtney.victory.3",
       ]
     }
   ],
   [TrainerType.AQUA_GRUNT]: [
     {
       encounter: [
-        "dialogue:aqua_grunt.encounter.1"
+        "dialogue:aqua_grunt.encounter.1",
+        "dialogue:aqua_grunt.encounter.2",
+        "dialogue:aqua_grunt.encounter.3",
+        "dialogue:aqua_grunt.encounter.4",
+        "dialogue:aqua_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:aqua_grunt.victory.1"
+        "dialogue:aqua_grunt.victory.1",
+        "dialogue:aqua_grunt.victory.2",
+        "dialogue:aqua_grunt.victory.3",
+        "dialogue:aqua_grunt.victory.4",
+        "dialogue:aqua_grunt.victory.5",
       ]
     }
   ],
-  [TrainerType.AQUA_ADMIN]: [
+  [TrainerType.MATT]: [
     {
       encounter: [
-        "dialogue:aqua_admin.encounter.1",
-        "dialogue:aqua_admin.encounter.2",
-        "dialogue:aqua_admin.encounter.3",
+        "dialogue:matt.encounter.1",
+        "dialogue:matt.encounter.2",
+        "dialogue:matt.encounter.3",
       ],
       victory: [
-        "dialogue:aqua_admin.victory.1",
-        "dialogue:aqua_admin.victory.2",
-        "dialogue:aqua_admin.victory.3",
+        "dialogue:matt.victory.1",
+        "dialogue:matt.victory.2",
+        "dialogue:matt.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.SHELLY]: [
+    {
+      encounter: [
+        "dialogue:shelly.encounter.1",
+        "dialogue:shelly.encounter.2",
+        "dialogue:shelly.encounter.3",
+      ],
+      victory: [
+        "dialogue:shelly.victory.1",
+        "dialogue:shelly.victory.2",
+        "dialogue:shelly.victory.3",
       ]
     }
   ],
   [TrainerType.GALACTIC_GRUNT]: [
     {
       encounter: [
-        "dialogue:galactic_grunt.encounter.1"
+        "dialogue:galactic_grunt.encounter.1",
+        "dialogue:galactic_grunt.encounter.2",
+        "dialogue:galactic_grunt.encounter.3",
+        "dialogue:galactic_grunt.encounter.4",
+        "dialogue:galactic_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:galactic_grunt.victory.1"
+        "dialogue:galactic_grunt.victory.1",
+        "dialogue:galactic_grunt.victory.2",
+        "dialogue:galactic_grunt.victory.3",
+        "dialogue:galactic_grunt.victory.4",
+        "dialogue:galactic_grunt.victory.5",
       ]
     }
   ],
-  [TrainerType.GALACTIC_ADMIN]: [
+  [TrainerType.JUPITER]: [
     {
       encounter: [
-        "dialogue:galactic_admin.encounter.1",
-        "dialogue:galactic_admin.encounter.2",
-        "dialogue:galactic_admin.encounter.3",
+        "dialogue:jupiter.encounter.1",
+        "dialogue:jupiter.encounter.2",
+        "dialogue:jupiter.encounter.3",
       ],
       victory: [
-        "dialogue:galactic_admin.victory.1",
-        "dialogue:galactic_admin.victory.2",
-        "dialogue:galactic_admin.victory.3",
+        "dialogue:jupiter.victory.1",
+        "dialogue:jupiter.victory.2",
+        "dialogue:jupiter.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.MARS]: [
+    {
+      encounter: [
+        "dialogue:mars.encounter.1",
+        "dialogue:mars.encounter.2",
+        "dialogue:mars.encounter.3",
+      ],
+      victory: [
+        "dialogue:mars.victory.1",
+        "dialogue:mars.victory.2",
+        "dialogue:mars.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.SATURN]: [
+    {
+      encounter: [
+        "dialogue:saturn.encounter.1",
+        "dialogue:saturn.encounter.2",
+        "dialogue:saturn.encounter.3",
+      ],
+      victory: [
+        "dialogue:saturn.victory.1",
+        "dialogue:saturn.victory.2",
+        "dialogue:saturn.victory.3",
       ]
     }
   ],
   [TrainerType.PLASMA_GRUNT]: [
     {
       encounter: [
-        "dialogue:plasma_grunt.encounter.1"
+        "dialogue:plasma_grunt.encounter.1",
+        "dialogue:plasma_grunt.encounter.2",
+        "dialogue:plasma_grunt.encounter.3",
+        "dialogue:plasma_grunt.encounter.4",
+        "dialogue:plasma_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:plasma_grunt.victory.1"
+        "dialogue:plasma_grunt.victory.1",
+        "dialogue:plasma_grunt.victory.2",
+        "dialogue:plasma_grunt.victory.3",
+        "dialogue:plasma_grunt.victory.4",
+        "dialogue:plasma_grunt.victory.5",
       ]
     }
   ],
-  [TrainerType.PLASMA_SAGE]: [
+  [TrainerType.ZINZOLIN]: [
     {
       encounter: [
-        "dialogue:plasma_sage.encounter.1",
-        "dialogue:plasma_sage.encounter.2",
-        "dialogue:plasma_sage.encounter.3",
+        "dialogue:zinzolin.encounter.1",
+        "dialogue:zinzolin.encounter.2",
+        "dialogue:zinzolin.encounter.3",
       ],
       victory: [
-        "dialogue:plasma_sage.victory.1",
-        "dialogue:plasma_sage.victory.2",
-        "dialogue:plasma_sage.victory.3",
+        "dialogue:zinzolin.victory.1",
+        "dialogue:zinzolin.victory.2",
+        "dialogue:zinzolin.victory.3",
       ]
     }
   ],
   [TrainerType.FLARE_GRUNT]: [
     {
       encounter: [
-        "dialogue:flare_grunt.encounter.1"
+        "dialogue:flare_grunt.encounter.1",
+        "dialogue:flare_grunt.encounter.2",
+        "dialogue:flare_grunt.encounter.3",
+        "dialogue:flare_grunt.encounter.4",
+        "dialogue:flare_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:flare_grunt.victory.1"
+        "dialogue:flare_grunt.victory.1",
+        "dialogue:flare_grunt.victory.2",
+        "dialogue:flare_grunt.victory.3",
+        "dialogue:flare_grunt.victory.4",
+        "dialogue:flare_grunt.victory.5",
       ]
     }
   ],
-  [TrainerType.FLARE_ADMIN]: [
+  [TrainerType.BRYONY]: [
     {
       encounter: [
-        "dialogue:flare_admin.encounter.1",
-        "dialogue:flare_admin.encounter.2",
-        "dialogue:flare_admin.encounter.3",
+        "dialogue:bryony.encounter.1",
+        "dialogue:bryony.encounter.2",
+        "dialogue:bryony.encounter.3",
       ],
       victory: [
-        "dialogue:flare_admin.victory.1",
-        "dialogue:flare_admin.victory.2",
-        "dialogue:flare_admin.victory.3",
+        "dialogue:bryony.victory.1",
+        "dialogue:bryony.victory.2",
+        "dialogue:bryony.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.XEROSIC]: [
+    {
+      encounter: [
+        "dialogue:xerosic.encounter.1",
+        "dialogue:xerosic.encounter.2",
+        "dialogue:xerosic.encounter.3",
+      ],
+      victory: [
+        "dialogue:xerosic.victory.1",
+        "dialogue:xerosic.victory.2",
+        "dialogue:xerosic.victory.3",
       ]
     }
   ],
