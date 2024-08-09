@@ -651,7 +651,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     return changed;
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+  showText(text: string | null, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
     if (text === null) {
       text = defaultMessage;
     }
