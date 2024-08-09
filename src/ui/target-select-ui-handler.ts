@@ -99,6 +99,7 @@ export default class TargetSelectUiHandler extends UiHandler {
   setCursor(cursor: integer): boolean {
     const singleTarget = this.scene.getField()[cursor];
     const multipleTargets = this.targets.map(index => this.scene.getField()[index]);
+    const enemyModifiers = this.scene.getModifierBar(true);
 
     this.targetsHighlighted = this.isMultipleTargets ? multipleTargets : [ singleTarget ];
 
@@ -108,27 +109,27 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetFlashTween.stop();
       for (const pokemon of multipleTargets) {
         pokemon.setAlpha(1);
-        const targetItems = this.scene.enemyModifierBar.getAll("name", pokemon.id);
-        for (const target of targetItems) {
-          target.setAlpha(1);
+        const targetItems = enemyModifiers.getAll("name", pokemon.id);
+        for (const item of targetItems) {
+          (item as Phaser.GameObjects.Container).setAlpha(1);
         }
       }
     }
 
     this.targetFlashTween = this.scene.tweens.add({
       targets: [this.targetsHighlighted],
-      alpha: 0,
+      key: { start: 0.5, to: 1 },
       loop: -1,
-      loopDelay: 450,
+      loopDelay: 350,
       duration: Utils.fixedInt(250),
-      ease: "Sine.easeIn",
+      ease: "Sine.easeInOut",
       yoyo: true,
       onUpdate: t => {
         for (const target of this.targetsHighlighted) {
           target.setAlpha(t.getValue());
-          const targetItems = this.scene.enemyModifierBar.getAll("name", target.id);
-          for (const target of targetItems) {
-            target.setAlpha(t.getValue());
+          const targetItems = enemyModifiers.getAll("name", target.id);
+          for (const item of targetItems) {
+            (item as Phaser.GameObjects.Container).setAlpha(t.getValue());
           }
         }
       }
@@ -162,11 +163,13 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetFlashTween = null;
     }
 
+    const enemyModifiers = this.scene.getModifierBar(true);
+
     for (const pokemon of this.targetsHighlighted) {
       pokemon.setAlpha(1);
-      const targetItems = this.scene.enemyModifierBar.getAll("name", pokemon.id);
+      const targetItems = enemyModifiers.getAll("name", pokemon.id);
       for (const item of targetItems) {
-        item.setAlpha(1);
+        (item as Phaser.GameObjects.Container).setAlpha(1);
       }
     }
 
