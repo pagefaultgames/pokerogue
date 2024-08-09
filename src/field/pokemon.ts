@@ -731,12 +731,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
-    if (stat === Stat.HP) {
-      return this.getStat(Stat.HP);
-    }
-    const battleStat = (stat - 1) as BattleStat;
-    const statLevel = new Utils.IntegerHolder(this.summonData.battleStats[battleStat]);
+  getBattleStat(stat: PermanentStat & BattleStat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
+    const battleStat = (stat - 1) as BattleStat; // TODO: BattleStat
+    const statLevel = new Utils.IntegerHolder(this.getStatStage(stat));
     if (opponent) {
       if (isCritical) {
         switch (stat) {
@@ -756,9 +753,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     if (this.isPlayer()) {
-      this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
+      this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel); // TODO: TempBattleStat
     }
-    const statValue = new Utils.NumberHolder(this.getStat(stat));
+    const statValue = new Utils.NumberHolder(this.getStat(stat, false));
     this.scene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
 
     const fieldApplied = new Utils.BooleanHolder(false);
@@ -768,7 +765,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         break;
       }
     }
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue); // TODO: BattleStat
     let ret = statValue.value * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
     switch (stat) {
     case Stat.ATK:
@@ -816,9 +813,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.stats) {
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
     }
-    const baseStats = this.getSpeciesForm().baseStats.slice(0);
-    if (this.fusionSpecies) {
-      const fusionBaseStats = this.getFusionSpeciesForm().baseStats;
+
+    const baseStats = this.getSpeciesForm(true).baseStats.slice();
+    if (this.isFusion()) {
+      const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
       for (let s = 0; s < this.stats.length; s++) {
         baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
       }
@@ -827,13 +825,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         baseStats[s] = Math.ceil(baseStats[s] / 2);
       }
     }
+
     this.scene.applyModifiers(PokemonBaseStatModifier, this.isPlayer(), this, baseStats);
-    const stats = Utils.getEnumValues(Stat);
-    for (const s of stats) {
-      const isHp = s === Stat.HP;
+    for (let s = Stat.HP; s <= Stat.SPD; s++) {
       const baseStat = baseStats[s];
       let value = Math.floor(((2 * baseStat + this.ivs[s]) * this.level) * 0.01);
-      if (isHp) {
+      if (s === Stat.HP) {
         value = value + this.level + 10;
         if (this.hasAbility(Abilities.WONDER_GUARD, false, true)) {
           value = 1;
@@ -854,7 +851,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           value = Math.max(Math[natureStatMultiplier.value > 1 ? "ceil" : "floor"](value * natureStatMultiplier.value), 1);
         }
       }
-      this.stats[s] = value;
+
+      this.setStat(s as PermanentStat , value);
     }
   }
 
@@ -1740,8 +1738,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power/maxPower, 1), 0.5))]);
 
     // Weight damaging moves against the lower stat
-    const worseCategory: MoveCategory = this.stats[Stat.ATK] > this.stats[Stat.SPATK] ? MoveCategory.SPECIAL : MoveCategory.PHYSICAL;
-    const statRatio = worseCategory === MoveCategory.PHYSICAL ? this.stats[Stat.ATK]/this.stats[Stat.SPATK] : this.stats[Stat.SPATK]/this.stats[Stat.ATK];
+    const atk = this.getStat(Stat.ATK);
+    const spAtk = this.getStat(Stat.SPATK);
+    const worseCategory: MoveCategory = atk > spAtk ? MoveCategory.SPECIAL : MoveCategory.PHYSICAL;
+    const statRatio = worseCategory === MoveCategory.PHYSICAL ? atk / spAtk : spAtk / atk;
     movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === worseCategory ? statRatio : 1)]);
 
     let weightMultiplier = 0.9; // The higher this is the more the game weights towards higher level moves. At 0 all moves are equal weight.
@@ -1943,30 +1943,30 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return 1;
     }
 
-    const userAccuracyLevel = new Utils.IntegerHolder(this.summonData.battleStats[BattleStat.ACC]);
-    const targetEvasionLevel = new Utils.IntegerHolder(target.summonData.battleStats[BattleStat.EVA]);
+    const userAccStage = new Utils.IntegerHolder(this.getStatStage(Stat.ACC));
+    const targetEvaStage = new Utils.IntegerHolder(target.getStatStage(Stat.EVA));
 
-    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, userAccuracyLevel);
-    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, this, null, targetEvasionLevel);
-    applyAbAttrs(IgnoreOpponentEvasionAbAttr, this, null, targetEvasionLevel);
-    applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, target, sourceMove, targetEvasionLevel);
-    this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), TempBattleStat.ACC, userAccuracyLevel);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, userAccStage);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, this, null, targetEvaStage);
+    applyAbAttrs(IgnoreOpponentEvasionAbAttr, this, null, targetEvaStage);
+    applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, target, sourceMove, targetEvaStage);
+    this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), TempBattleStat.ACC, userAccStage);
 
     if (target.findTag(t => t instanceof ExposedTag)) {
-      targetEvasionLevel.value = Math.min(0, targetEvasionLevel.value);
+      targetEvaStage.value = Math.min(0, targetEvaStage.value);
     }
 
     const accuracyMultiplier = new Utils.NumberHolder(1);
-    if (userAccuracyLevel.value !== targetEvasionLevel.value) {
-      accuracyMultiplier.value = userAccuracyLevel.value > targetEvasionLevel.value
-        ? (3 + Math.min(userAccuracyLevel.value - targetEvasionLevel.value, 6)) / 3
-        : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
+    if (userAccStage.value !== targetEvaStage.value) {
+      accuracyMultiplier.value = userAccStage.value > targetEvaStage.value
+        ? (3 + Math.min(userAccStage.value - targetEvaStage.value, 6)) / 3
+        : 3 / (3 + Math.min(targetEvaStage.value - userAccStage.value, 6));
     }
 
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, BattleStat.ACC, accuracyMultiplier, sourceMove);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, BattleStat.ACC, accuracyMultiplier, sourceMove); // TODO: BattleStat
 
     const evasionMultiplier = new Utils.NumberHolder(1);
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier); // TODO: BattleStat
 
     accuracyMultiplier.value /= evasionMultiplier.value;
 
@@ -2493,7 +2493,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param source {@linkcode Pokemon} the pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
    */
   transferSummon(source: Pokemon): void {
-    const battleStats = Utils.getEnumValues(BattleStat);
     for (const stat of battleStats) {
       this.summonData.battleStats[stat] = source.summonData.battleStats[stat];
     }
@@ -3668,16 +3667,17 @@ export class PlayerPokemon extends Pokemon {
       this.scene.gameData.gameStats.pokemonFused++;
 
       // Store the average HP% that each Pokemon has
-      const newHpPercent = ((pokemon.hp / pokemon.stats[Stat.HP]) + (this.hp / this.stats[Stat.HP])) / 2;
+      const maxHp = this.getMaxHp();
+      const newHpPercent = ((pokemon.hp / pokemon.getMaxHp()) + (this.hp / maxHp)) / 2;
 
       this.generateName();
       this.calculateStats();
 
       // Set this Pokemon's HP to the average % of both fusion components
-      this.hp = Math.round(this.stats[Stat.HP] * newHpPercent);
+      this.hp = Math.round(maxHp * newHpPercent);
       if (!this.isFainted()) {
         // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
-        this.hp = Math.min(this.hp, this.stats[Stat.HP]);
+        this.hp = Math.min(this.hp, maxHp);
         this.status = getRandomStatus(this.status, pokemon.status); // Get a random valid status between the two
       } else if (!pokemon.isFainted()) {
         // If this Pokemon fainted but the other hasn't, make sure the HP wasn't set to zero
@@ -4153,7 +4153,7 @@ export class EnemyPokemon extends Pokemon {
     return true;
   }
 
-  handleBossSegmentCleared(segmentIndex: integer): void {
+  handleBossSegmentCleared(segmentIndex: integer): void { // TODO: BattleStat
     while (segmentIndex - 1 < this.bossSegmentIndex) {
       let boostedStat = BattleStat.RAND;
 
