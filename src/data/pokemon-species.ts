@@ -3434,7 +3434,7 @@ export const starterPassiveAbilities = {
   [Species.SUICUNE]: Abilities.UNAWARE,
   [Species.LARVITAR]: Abilities.SAND_RUSH,
   [Species.LUGIA]: Abilities.DELTA_STREAM,
-  [Species.HO_OH]: Abilities.MAGIC_GUARD,
+  [Species.HO_OH]: Abilities.ORICHALCUM_PULSE,
   [Species.CELEBI]: Abilities.GRASSY_SURGE,
   [Species.TREECKO]: Abilities.TINTED_LENS,
   [Species.TORCHIC]: Abilities.RECKLESS,
