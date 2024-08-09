@@ -2137,7 +2137,7 @@ export class CommandPhase extends FieldPhase {
             this.scene.ui.setMode(Mode.MESSAGE);
           }
           this.scene.ui.showText(trappedAbMessages[0], null, () => {
-            this.scene.ui.showText(null, 0);
+            this.scene.ui.showText("", 0);
             if (!isSwitch) {
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
             }
