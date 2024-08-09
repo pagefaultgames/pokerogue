@@ -61,5 +61,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "suppressAbilities": "Die Fähigkeit von {{pokemonName}} wirkt nicht mehr!",
   "swapArenaTags": "{{pokemonName}} hat die Effekte, die auf den beiden Seiten des Kampffeldes wirken, miteinander getauscht!",
   "exposedMove": "{{pokemonName}} erkennt {{targetPokemonName}}!",
-  "safeguard": "{{targetName}} is protected by Safeguard!",
+  "safeguard": "{{targetName}} wird durch Bodyguard geschützt!",
 } as const;

@@ -50,10 +50,11 @@ export const arenaTag: SimpleTranslationEntries = {
   "tailwindOnRemoveEnemy": "The opposing team's Tailwind petered out!",
   "happyHourOnAdd": "Everyone is caught up in the happy atmosphere!",
   "happyHourOnRemove": "The atmosphere returned to normal.",
-  "safeguardOnAdd": "The whole field is cloaked in a mystical veil!",
-  "safeguardOnAddPlayer": "Your team cloaked itself in a mystical veil!",
-  "safeguardOnAddEnemy": "The opposing team cloaked itself in a mystical veil!",
-  "safeguardOnRemove": "The field is no longer protected by Safeguard!",
-  "safeguardOnRemovePlayer": "Your team is no longer protected by Safeguard!",
-  "safeguardOnRemoveEnemy": "The opposing team is no longer protected by Safeguard!",
+  "safeguardOnAdd": "¡Todos los Pokémon están protegidos por Velo Sagrado!",
+  "safeguardOnAddPlayer": "¡Tu equipo se ha protegido con Velo Sagrado!",
+  "safeguardOnAddEnemy": "¡El equipo enemigo se ha protegido con Velo Sagrado!",
+  "safeguardOnRemove": "¡Velo Sagrado dejó de hacer efecto!",
+  "safeguardOnRemovePlayer": "El efecto de Velo Sagrado en tu equipo se ha disipado.",
+  "safeguardOnRemoveEnemy": "El efecto de Velo Sagrado en el equipo enemigo
+se ha disipado.",
 } as const;
