@@ -7,6 +7,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { mockTurnOrder } from "../utils/testUtils";
+import { BattlerIndex } from "#app/battle.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -49,6 +51,7 @@ describe("Moves - Purify", () => {
       enemyPokemon.status = new Status(StatusEffect.BURN);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.PURIFY));
+      await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEndPhase);
 
       expect(enemyPokemon.status).toBeNull();
@@ -68,6 +71,7 @@ describe("Moves - Purify", () => {
       const playerInitialHp = playerPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.PURIFY));
+      await mockTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.phaseInterceptor.to(MoveEndPhase);
 
       expect(playerPokemon.hp).toBe(playerInitialHp);
