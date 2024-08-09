@@ -53,6 +53,7 @@ import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 import { moveTriggers } from "./move-trigger";
+import { runHistory } from "./run-history-ui-handler";
 
 export const enConfig = {
   ability: ability,
@@ -112,5 +113,6 @@ export const enConfig = {
   weather: weather,
   partyUiHandler: partyUiHandler,
   modifierSelectUiHandler: modifierSelectUiHandler,
-  moveTriggers: moveTriggers
+  moveTriggers: moveTriggers,
+  runHistory: runHistory,
 };
