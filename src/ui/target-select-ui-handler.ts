@@ -109,7 +109,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetFlashTween.stop();
       for (const pokemon of multipleTargets) {
         pokemon.setAlpha(1);
-        const targetItems = enemyModifiers.getAll("name", pokemon.id);
+        const targetItems = enemyModifiers.getAll("name", (pokemon.id).toString());
         for (const item of targetItems) {
           (item as Phaser.GameObjects.Container).setAlpha(1);
         }
@@ -118,16 +118,16 @@ export default class TargetSelectUiHandler extends UiHandler {
 
     this.targetFlashTween = this.scene.tweens.add({
       targets: [this.targetsHighlighted],
-      key: { start: 0.5, to: 1 },
+      key: { start: 0.65, to: 1 },
       loop: -1,
-      loopDelay: 350,
-      duration: Utils.fixedInt(250),
+      loopDelay: 150,
+      duration: Utils.fixedInt(450),
       ease: "Sine.easeInOut",
       yoyo: true,
       onUpdate: t => {
         for (const target of this.targetsHighlighted) {
           target.setAlpha(t.getValue());
-          const targetItems = enemyModifiers.getAll("name", target.id);
+          const targetItems = enemyModifiers.getAll("name", (target.id).toString());
           for (const item of targetItems) {
             (item as Phaser.GameObjects.Container).setAlpha(t.getValue());
           }
@@ -167,7 +167,7 @@ export default class TargetSelectUiHandler extends UiHandler {
 
     for (const pokemon of this.targetsHighlighted) {
       pokemon.setAlpha(1);
-      const targetItems = enemyModifiers.getAll("name", pokemon.id);
+      const targetItems = enemyModifiers.getAll("name", (pokemon.id).toString());
       for (const item of targetItems) {
         (item as Phaser.GameObjects.Container).setAlpha(1);
       }
