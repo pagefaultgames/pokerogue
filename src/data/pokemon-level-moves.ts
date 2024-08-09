@@ -4076,9 +4076,6 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.SMEARGLE]: [
     [ 1, Moves.SKETCH ],
-    [ 1, Moves.SKETCH ],
-    [ 1, Moves.SKETCH ],
-    [ 1, Moves.SKETCH ],
   ],
   [Species.TYROGUE]: [
     [ 1, Moves.TACKLE ],
