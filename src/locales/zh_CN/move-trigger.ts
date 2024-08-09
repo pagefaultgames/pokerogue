@@ -61,5 +61,5 @@ export const moveTriggers: SimpleTranslationEntries = {
   "suppressAbilities": "{{pokemonName}}的特性\n变得无效了！",
   "swapArenaTags": "{{pokemonName}}\n交换了双方的场地效果！",
   "exposedMove": "{{pokemonName}}识破了\n{{targetPokemonName}}的原型！",
-  "safeguard": "{{targetName}} is protected by Safeguard!",
+  "safeguard": "{{targetName}}\n正受到神秘之幕的保护！",
 } as const;
