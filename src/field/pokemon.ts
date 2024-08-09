@@ -2924,7 +2924,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       // If this Pokemon has a Substitute when loading in, play an animation to add its sprite
       if (!!this.getTag(SubstituteTag)) {
         this.scene.triggerPokemonBattleAnim(this, PokemonAnimType.SUBSTITUTE_ADD);
-        this.getTag(SubstituteTag).sourceInFocus = false;
+        this.getTag(SubstituteTag)!.sourceInFocus = false;
       }
       this.summonDataPrimer = null;
     }

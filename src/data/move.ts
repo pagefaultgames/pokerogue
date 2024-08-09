@@ -572,7 +572,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.WHIRLWIND}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresSubstitute(ignoresSubstitute?: boolean): this {
+  ignoresSubstitute(ignoresSubstitute: boolean = true): this {
     this.setFlag(MoveFlags.IGNORE_SUBSTITUTE, ignoresSubstitute);
     return this;
   }

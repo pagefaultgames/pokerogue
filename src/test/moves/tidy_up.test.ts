@@ -105,7 +105,7 @@ describe("Moves - Tidy Up", () => {
     const pokemon = [ game.scene.getPlayerPokemon(), game.scene.getEnemyPokemon() ];
     pokemon.forEach(p => {
       expect(p).toBeDefined();
-      expect(p.getTag(SubstituteTag)).toBeUndefined();
+      expect(p!.getTag(SubstituteTag)).toBeUndefined();
     });
   }, 20000);
 

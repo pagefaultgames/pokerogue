@@ -48,7 +48,7 @@ describe("Moves - Substitute", () => {
     async () => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SUBSTITUTE));
 
@@ -65,7 +65,7 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.SKARMORY]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SUBSTITUTE));
 
@@ -91,7 +91,7 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SUBSTITUTE));
 
@@ -115,7 +115,7 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SUBSTITUTE));
 
@@ -133,7 +133,7 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SUBSTITUTE));
 
@@ -157,7 +157,7 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SUBSTITUTE));
 
@@ -178,7 +178,7 @@ describe("Moves - Substitute", () => {
     async () => {
       await game.startBattle([Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SUBSTITUTE));
 
@@ -201,10 +201,10 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, null, null, leadPokemon.id);
+      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
@@ -222,9 +222,9 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, null, null, leadPokemon.id);
+      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
@@ -242,9 +242,9 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, null, null, leadPokemon.id);
+      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
@@ -261,9 +261,9 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, null, null, leadPokemon.id);
+      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
@@ -282,9 +282,9 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, null, null, leadPokemon.id);
+      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
@@ -302,9 +302,9 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.BLASTOISE]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, null, null, enemyPokemon.id);
+      enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, enemyPokemon.id);
       const enemyNumItems = enemyPokemon.getHeldItems().length;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.KNOCK_OFF));
@@ -323,10 +323,10 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, null, null, leadPokemon.id);
+      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
@@ -347,9 +347,9 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, null, null, leadPokemon.id);
+      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
 
@@ -367,9 +367,9 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, null, null, leadPokemon.id);
+      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
 
@@ -387,16 +387,16 @@ describe("Moves - Substitute", () => {
 
       await game.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, null, null, leadPokemon.id);
+      leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
 
       game.doSwitchPokemon(1, true);
 
       await game.phaseInterceptor.to(MovePhase, false);
 
-      const switchedPokemon = game.scene.getPlayerPokemon();
-      const subTag = switchedPokemon.getTag(SubstituteTag);
+      const switchedPokemon = game.scene.getPlayerPokemon()!;
+      const subTag = switchedPokemon.getTag(SubstituteTag)!;
       expect(subTag).toBeDefined();
       expect(subTag.hp).toBe(Math.floor(leadPokemon.getMaxHp() * 1/4));
     }, TIMEOUT
