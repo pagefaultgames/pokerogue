@@ -4400,7 +4400,7 @@ export class AddLinkedBattlerTagAttr extends AddBattlerTagAttr {
       return false;
     }
 
-    const moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
       /**
        * Add the tag to both the user and the target.
