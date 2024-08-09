@@ -7,6 +7,7 @@ import { getMoveTargets } from "../data/move";
 import {Button} from "#enums/buttons";
 import { Moves } from "#enums/moves";
 import Pokemon from "#app/field/pokemon";
+import { ModifierBar } from "#app/modifier/modifier";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
@@ -19,6 +20,7 @@ export default class TargetSelectUiHandler extends UiHandler {
   private targets: BattlerIndex[];
   private targetsHighlighted: Pokemon[];
   private targetFlashTween: Phaser.Tweens.Tween | null;
+  private enemyModifiers: ModifierBar;
   private targetBattleInfoMoveTween: Phaser.Tweens.Tween[] = [];
 
   constructor(scene: BattleScene) {
@@ -47,6 +49,8 @@ export default class TargetSelectUiHandler extends UiHandler {
     if (!this.targets.length) {
       return false;
     }
+
+    this.enemyModifiers = this.scene.getModifierBar(true);
 
     this.setCursor(this.targets.includes(this.cursor) ? this.cursor : this.targets[0]);
 
@@ -99,7 +103,6 @@ export default class TargetSelectUiHandler extends UiHandler {
   setCursor(cursor: integer): boolean {
     const singleTarget = this.scene.getField()[cursor];
     const multipleTargets = this.targets.map(index => this.scene.getField()[index]);
-    const enemyModifiers = this.scene.getModifierBar(true);
 
     this.targetsHighlighted = this.isMultipleTargets ? multipleTargets : [ singleTarget ];
 
@@ -109,16 +112,13 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetFlashTween.stop();
       for (const pokemon of multipleTargets) {
         pokemon.setAlpha(1);
-        const targetItems = enemyModifiers.getAll("name", (pokemon.id).toString());
-        for (const item of targetItems) {
-          (item as Phaser.GameObjects.Container).setAlpha(1);
-        }
+        this.highlightItems(pokemon.id, 1);
       }
     }
 
     this.targetFlashTween = this.scene.tweens.add({
-      targets: [this.targetsHighlighted],
-      key: { start: 0.65, to: 1 },
+      targets: this.targetsHighlighted,
+      key: { start: 0.55, to: 1 },
       loop: -1,
       loopDelay: 150,
       duration: Utils.fixedInt(450),
@@ -127,13 +127,13 @@ export default class TargetSelectUiHandler extends UiHandler {
       onUpdate: t => {
         for (const target of this.targetsHighlighted) {
           target.setAlpha(t.getValue());
-          const targetItems = enemyModifiers.getAll("name", (target.id).toString());
-          for (const item of targetItems) {
-            (item as Phaser.GameObjects.Container).setAlpha(t.getValue());
-          }
+          this.highlightItems(target.id, t.getValue());
         }
       }
     });
+
+
+
     if (this.targetBattleInfoMoveTween.length >= 1) {
       this.targetBattleInfoMoveTween.filter(t => t !== undefined).forEach(tween => tween.stop());
       for (const pokemon of multipleTargets) {
@@ -163,14 +163,9 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetFlashTween = null;
     }
 
-    const enemyModifiers = this.scene.getModifierBar(true);
-
     for (const pokemon of this.targetsHighlighted) {
       pokemon.setAlpha(1);
-      const targetItems = enemyModifiers.getAll("name", (pokemon.id).toString());
-      for (const item of targetItems) {
-        (item as Phaser.GameObjects.Container).setAlpha(1);
-      }
+      this.highlightItems(pokemon.id, 1);
     }
 
     if (this.targetBattleInfoMoveTween.length >= 1) {
@@ -179,6 +174,13 @@ export default class TargetSelectUiHandler extends UiHandler {
     }
     for (const pokemon of this.targetsHighlighted) {
       pokemon.getBattleInfo().resetY();
+    }
+  }
+
+  private highlightItems(targetId: number, val: number) : void {
+    const targetItems = this.enemyModifiers.getAll("name", targetId.toString());
+    for (const item of targetItems) {
+      (item as Phaser.GameObjects.Container).setAlpha(val);
     }
   }
 
