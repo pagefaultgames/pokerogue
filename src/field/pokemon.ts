@@ -1271,6 +1271,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && !this.isPlayer())) {
       return true;
     }
+
+    // Final boss does not have passive
+    if (this.scene.currentBattle?.battleSpec === BattleSpec.FINAL_BOSS && this instanceof EnemyPokemon) {
+      return false;
+    }
+
     return this.passive || this.isBoss();
   }
 
@@ -3801,7 +3807,7 @@ export class PlayerPokemon extends Pokemon {
       if (!this.isFainted()) {
         // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
         this.hp = Math.min(this.hp, this.stats[Stat.HP]);
-        this.status = getRandomStatus(this.status!, pokemon.status!); // Get a random valid status between the two  // TODO: are the bangs correct?
+        this.status = getRandomStatus(this.status, pokemon.status); // Get a random valid status between the two
       } else if (!pokemon.isFainted()) {
         // If this Pokemon fainted but the other hasn't, make sure the HP wasn't set to zero
         this.hp = Math.max(this.hp, 1);
