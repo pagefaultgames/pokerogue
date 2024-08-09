@@ -367,16 +367,211 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Ich werde für das nächste Rennen tunen."
     },
   },
-  "rocket_grunt": {
+  "archer": {
     "encounter": {
-      1: `Jetzt gibt es Ärger!…
-          $und es kommt noch härter!
-          $Wir wollen über die Erde regieren…
-          $und naja du kennst den Rest…!`
+      1: "Bevor du weitergehst, lass uns sehen, wie du dich gegen uns, Team Rocket, schlägst!",
+      2: `Ich habe Berichte erhalten, dass deine Fähigkeiten nicht unbedeutend sind.
+          $Mal sehen, ob sie wahr sind.`,
+      3: `Ich bin Atlas, ein Vorstand von Team Rocket. 
+         $Und ich mache es den Feinden unserer Organisation nicht leicht.`
     },
     "victory": {
-      1: "Das war mal wieder ein Schuss in den Ofen!"
+      1: "Was für ein Fehler!",
+      2: "Mit meinen aktuellen Fähigkeiten war ich der Aufgabe doch nicht gewachsen.",
+      3: "V-verzeih mir, Giovanni... Dass ich von einem einfachen Trainer besiegt wurde..."
+    }
+  },
+  "ariana": {
+    "encounter": {
+      1: `Halt! Wir können niemanden herumlaufen lassen. 
+          $Es ist schädlich für den Stolz von Team Rocket, verstehst du.`,
+      2: `Ich weiß nicht und es ist mir egal, ob das, was ich tue, richtig oder falsch ist...
+          $Ich vertraue einfach auf Giovanni und tue, was mir gesagt wird.`,
+      3: "Dein Trip endet hier. Ich werde dich erledigen!"
     },
+    "victory": {
+      1: `Tch, du bist wirklich stark. Es ist schade. 
+          $Wenn du Team Rocket beitreten würdest, könntest du ein Vorstand werden.`,
+      2: "Ich... ich bin zerstört...",
+      3: "Aaaieeeee! Das kann nicht passieren! Ich habe hart gekämpft, aber trotzdem verloren..."
+    }
+  },
+  "proton": {
+    "encounter": {
+      1: "Was willst du? Wenn du unsere Arbeit unterbrichst, erwarte keine Gnade!",
+      2: `Was haben wir hier? Ich werde oft als der gruseligste und grausamste Typ bei Team Rocket bezeichnet…
+         $Ich rate dir dringend, dich nicht in unsere Geschäfte einzumischen!`,
+      3: "Ich bin Proton, ein Admin von Team Rocket. Ich bin hier, um deinem Einmischen ein Ende zu setzen!"
+    },
+    "victory": {
+      1: "Die Festung ist gefallen! Alle Mann zurückziehen!",
+      2: "Du hast diesmal gewonnen… Aber alles, was du getan hast, war, den Zorn von Team Rocket zu vergrößern…",
+      3: "Ich bin besiegt… Aber ich werde das nicht vergessen!"
+    }
+  },
+  "petrel": {
+    "encounter": {
+      1: `Muhahaha, wir haben auf dich gewartet. Ich? Du weißt nicht, wer ich bin? Ich bin Giovanni.
+          $Der majestätische Giovanni höchstpersönlich! Wahahaha!
+          $…Huh? Ich klinge überhaupt nicht wie Giovanni?
+          $Ich sehe nicht einmal aus wie Giovanni?
+          $Wie kommt das? Ich habe so hart daran gearbeitet, ihn nachzuahmen!`,
+      2: "Ich bin Lambda, ein Admin von Team Rocket. Ich werde nicht zulassen, dass du unsere Pläne störst!",
+      3: "Rocket Vorstand Lambda wird sich um diesen Eindringling kümmern!"
+    },
+    "victory": {
+      1: "OK, OK. Ich sage dir, wo er ist.",
+      2: "Ich… Ich konnte nichts tun… Giovanni, bitte vergib mir…",
+      3: "Nein, ich kann das nicht auf mich sitzen lassen. Ich muss die anderen informieren…"
+    }
+  },
+  "tabitha": {
+    "encounter": {
+      1: "Hehehe! Du bist also bis hierher gekommen! Aber du bist zu spät!",
+      2: `Hehehe... Schon hier, oder? Wir haben dich unterschätzt! Aber das war's! 
+          $Ich bin eine Klasse über den Rüpeln, die du bisher gesehen hast. Ich halte dich nicht hin.
+          $Ich werde dich zermalmen!`,
+      3: "Ich werde dir eine kleine Kostprobe des Schmerzes geben! Ergebe dich!"
+    },
+    "victory": {
+      1: `Hehehe! Du hast mich vielleicht besiegt, aber du hast keine Chance gegen den Boss!
+          $Wenn du jetzt aufgibst, musst du dich keiner ordentlichen Tracht Prügel stellen!`,
+      2: "Hehehe... Also habe ich auch verloren...",
+      3: "Ahya! Wie konnte das passieren? Ein Vorstand wie ich von einem zufälligen Trainer besiegt..."
+    }
+  },
+  "courtney": {
+    "encounter": {
+      1: `Das Ding... Das Ding, das du hältst... Das ist es, was...
+          $Das ist es, wonach wir von Team Magma suchen...`,
+      2: "... Nun dann... Auslöschen...",
+      3: `...?! Du... Hm... ♪ Das trifft sich ausgezeichnet... ♪
+         $Dann hole ich mir eben zuerst deine Pokémon... Her damit...`
+    },
+    "victory": {
+      1: "... ...Ändere... die Welt.",
+      2: `Wie erwartet. Unerwartet. Du. Ziel erfasst... abgeschlossen.
+         $Beginne... Experiment. Du. Für immer. Aha... ♪`,
+      3: "...Schon wieder? Das war unerwartet. ...Ich wusste es. Du... bist interessant! ...Haha. ♪"
+    }
+  },
+  "shelly": {
+    "encounter": {
+      1: `Ahahahaha! Du wirst dich in die Angelegenheiten von Team Aqua einmischen?
+         $Du bist entweder absolut furchtlos, einfach unwissend oder beides!
+         $Du bist so süß, dass es ekelhaft ist! Ich werde dich erledigen.`,
+      2: "Was ist das? Wer ist dieser verwöhnte Gör?",
+      3: "Beruhige dich. Sei geduldig. Ich werde dich gleich zermalmen."
+    },
+    "victory": {
+      1: `Ahahahaha! Wir wurden unerwartet gestört! Uns bleiben keine Optionen.
+         $Wir müssen uns zurückziehen. Aber das ist nicht das letzte Mal, dass du Team Aqua siehst!
+         $Wir haben andere Pläne! Vergiss das nicht!`,
+      2: "Ahhh?! War ich zu nachsichtig mit dir?!",
+      3: `Uh. Willst du mir sagen, dass du während des Kampfes noch besser geworden bist?
+         $Du bist ein Gör mit einer glänzenden Zukunft… 
+         $Meine Pokémon und ich haben keine Kraft mehr zu kämpfen…
+         $Geh weiter… Geh und werde von Adrian zerstört.`
+    }
+  },
+  "matt": {
+    "encounter": {
+      1: `Hoohahaha! Was, hast du eine Schraube locker oder so?
+          $Sieh dich an, kleiner Makuhita-ähnlicher Trainer!`,
+      2: "Oho! Du! Du bist das lustige Kind!",
+      3: "Was machst du hier? Bist du uns gefolgt?"
+    },
+    "victory": {
+      1: "Na gut, bis der Boss Zeit für dich hat, werde ich dein Gegner sein!",
+      2: `Ich kann es fühlen! Ich kann es spüren, das ist klar! Die Stärke, die von dir ausgeht!
+          $Mehr! Ich will noch mehr! Aber es sieht so aus, als hätten wir keine Zeit mehr...`,
+      3: `Das war Spaß! Ich wusste, dass du mir eine gute Zeit bieten würdest!
+         $Ich freue mich darauf, dich eines Tages wieder zu treffen!`
+    }
+  },
+  "mars": {
+    "encounter": {
+      1: "Ich bin Mars, eine der obersten Commander von Team Galaktik.",
+      2: "Die Vision von Team Galaktik für die Zukunft ist unbeirrt. Opposition wird gnadenlos zerschlagen!",
+      3: "Fühlst du dich nervös? Das solltest du!"
+    },
+    "victory": {
+      1: "Das kann nicht passieren! Wie habe ich verloren?!",
+      2: "Du hast etwas Können, das muss ich zugeben.",
+      3: "Besiegt... Das war ein teurer Fehler."
+    }
+  },
+  "jupiter": {
+    "encounter": {
+      1: "Jupiter, Commander von Team Galaktik, zu Diensten.",
+      2: "Widerstand ist zwecklos. Team Galaktik wird siegen!",
+      3: "Du zitterst... Schon Angst?"
+    },
+    "victory": {
+      1: "Unmöglich... Ich habe verloren?!",
+      2: "Beeindruckend, du hast Mut!",
+      3: "So zu verlieren... Wie peinlich."
+    }
+  },
+  "saturn": {
+    "encounter": {
+      1: "Ich bin Saturn, Commander von Team Galaktik.",
+      2: "Unsere Mission ist absolut. Jeder Widerstand wird vernichtet!",
+      3: "Ist das Angst, die ich in deinen Augen sehe?"
+    },
+    "victory": {
+      1: "Unmöglich... Von dir besiegt?!",
+      2: "Du hast dich als würdiger Gegner erwiesen.",
+      3: "Besiegt in der Niederlage... Das ist inakzeptabel."
+    }
+  },
+  "zinzolin": {
+    "encounter": {
+      1: "Du könntest eine Bedrohung für Team Plasma werden, also werden wir dich hier und jetzt eliminieren!",
+      2: "Oh, zum Heulen... Ich hatte nicht erwartet, in dieser eisigen Kälte kämpfen zu müssen!",
+      3: "Du bist ein beeindruckender Trainer, dass du es so weit geschafft hast. Aber hier endet es."
+    },
+    "victory": {
+      1: "G-Cis... Ich habe versagt...",
+      2: "Es ist bitterkalt. Ich zittere. Ich leide. Doch ich stehe immer noch siegreich da.",
+      3: "Hm. Du bist ein klügerer Trainer, als ich erwartet habe, aber nicht klug genug."
+    }
+  },
+  "rood": {
+    "encounter": {
+      1: "Du bist eine Bedrohung für Team Plasma. Wir können dich hier und jetzt nicht laufen lassen!",
+      2: "Oh, dieser eisige Wind... Ich hätte nie gedacht, dass ich hier kämpfen müsste!",
+      3: "Du bist ein bemerkenswerter Trainer, dass du es bis hierher geschafft hast. Aber hier wird es enden."
+    },
+    "victory": {
+      1: "G-Cis... Ich habe meine Mission nicht erfüllt...",
+      2: "Die Kälte ist durchdringend. Ich zittere. Ich leide. Doch ich habe gesiegt.",
+      3: "Hm. Du bist ein talentierter Trainer, aber leider nicht talentiert genug."
+    }
+  },
+  "xerosic": {
+    "encounter": {
+      1: "Ah ha ha! Es wäre mir ein Vergnügen. Komm schon, kleiner Trainer! Zeig mir, was du drauf hast!",
+      2: "Hm... Du bist mächtiger, als du aussiehst. Ich frage mich, wie viel Energie in dir steckt.",
+      3: "Ich habe auf dich gewartet! Ich muss ein wenig Forschung an dir betreiben! Komm, lass uns beginnen!"
+    },
+    "victory": {
+      1: "Ah, du bist ziemlich stark. Oh ja—sehr stark, in der Tat.",
+      2: "Ding-ding-ding! Du hast es geschafft! Dem Sieger gebührt die Beute!",
+      3: "Wunderbar! Erstaunlich! Du hast enorme Fähigkeiten und Mut!"
+    }
+  },
+  "bryony": {
+    "encounter": {
+      1: "Ich bin Begonia, und es wäre mir ein Vergnügen, gegen dich zu kämpfen. Zeig mir, was du drauf hast.",
+      2: "Beeindruckend... Du bist mächtiger, als du aussiehst. Zeig mir das wahre Ausmaß deiner Energie.",
+      3: "Ich habe deine Ankunft erwartet. Es ist Zeit für einen kleinen Test. Sollen wir beginnen?"
+    },
+    "victory": {
+      1: "Du bist ziemlich stark. Oh ja—sehr stark, in der Tat.",
+      2: "Ding-ding-ding! Du hast dich gut geschlagen. Der Sieg gehört dir.",
+      3: "Wunderbar! Bemerkenswert! Deine Fähigkeiten und dein Mut sind lobenswert."
+    }
   },
   "firebreather": {
     "encounter": {
@@ -402,45 +597,103 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Ich glaube, ich bin der der seekrank ist..."
     },
   },
-  "magma_grunt": {
+  "rocket_grunt": {
     "encounter": {
-      1: "Keiner, der sich Team Magma in den Weg stellt, bekommt Gnade, nicht einmal Kinder!"
+      1: `Jetzt gibt es Ärger!…
+          $und es kommt noch härter!
+          $Wir wollen über die Erde regieren…
+          $und naja du kennst den Rest…!`,
+      2: "Wir führen gerade eine große Operation durch. Hast du vor uns zu stören?",
+      3: "Gib uns deine Pokémon, oder stelle dich dem Zorn von Team Rocket!",
+      4: "Team Rocket wird seinen Plan zur Vollendung bringen, Aus dem Weg!",
+      5: "Los, gib uns deine Pokémon. Wir brauchen sie für unseren Plan!"
     },
     "victory": {
-      1: "Wie kann das sein? Ich bin Teil vom mächtigen Team Magma! Wir wollen doch nur die Welt verbessern…"
+      1: "Das war mal wieder ein Schuss in den Ofen!",
+      2: "Dem Boss wird das aber nicht gefallen!",
+      3: "Ich habe es vermasselt!",
+      4: "Meine Kollegen werden das nicht tolerieren!",
+      5: "Team Rocket wird wiederkehren! Das sage ich Jessie und James!"
+    },
+  },
+  "magma_grunt": {
+    "encounter": {
+      1: "Keiner, der sich Team Magma in den Weg stellt, bekommt Gnade, nicht einmal Kinder!",
+      2: "Störe besser nicht unsere Pläne! Wir formen die Welt nach unseren Vorstellungen!",
+      3: "Du stehst uns im Weg! Team Magma hat keine Zeit für Störenfriede wie dich!",
+      4: "Bereite dich auf die Hölle vor, denn es wird bald sehr heiß!",
+      5: "Wir werden die Macht des Vulkans entfesseln! Es wird gewaltig sein! Mach dich bereit!"
+    },
+    "victory": {
+      1: "Wie kann das sein? Ich bin Teil des mächtigen Team Magma! Wir streben nach der Verbesserung der Welt...",
+      2: "Unglaublich, dass ich verloren habe! Mit meinen mächtigen Pokémon.",
+      3: "Das kann nicht sein! Ich hab doch viel mehr Erfahrung als du!",
+      4: "Verdammt... Ich hätte sofort in unser Versteck fliehen sollen...",
+      5: "Du hast mich besiegt... Der Boss wird mich dafür zur Rechenschaft ziehen."
     },
   },
   "aqua_grunt": {
     "encounter": {
       1: "Du willst dich also mit Team Aqua anlegen? Du traust dich ja was… Dich werfe ich über Bord!",
+      2: "Du hast ganz schön Mut, dich mit Team Aqua anzulegen!",
+      3: "Ich hoffe du hast einen Regenschirm dabei. Hier wird es jetzt nass!",
+      4: "Wir, Team Aqua, existieren zum Wohle aller!",
+      5: "Bereite dich darauf vor, von den Fluten meiner Pokémon weggespült zu werden!"
     },
     "victory": {
       1: "Vielleicht sollte ich wohl lieber selber über die Planke gehen…",
+      2: "Arrgh, ich habe nicht damit gerechnet, von einer Landratte gestört zu werden!",
+      3: "Ich habe verloren?! Ich schätze, ich muss jetzt zurück zum Versteck schwimmen...",
+      4: "Oh Mann, was für eine Katastrophe... Der Boss wird wütend sein...",
+      5: "Du hast mich besiegt... Meinst du, der Boss wird mich dafür kielholen lassen?"
     },
   },
   "galactic_grunt": {
     "encounter": {
-      1: "Team Galaktik wird die Welt in eine bessere Welt verwandeln! Und du wirst uns nicht aufhalten!"
+      1: "Team Galaktik wird die Welt in eine bessere verwandeln! Und du wirst uns nicht aufhalten!",
+      2: "Erlebe die Macht unserer Technologie und die Zukunft, die wir uns vorstellen!",
+      3: "Im Namen von Team Galaktik werde ich jeden beseitigen, der uns im Weg steht!",
+      4: "Mach dich bereit zu verlieren!",
+      5: "Hoffentlich bist du bereit für eine kosmische Niederlage!"
     },
     "victory": {
-      1: "Zyrus wird uns für diese Niederlage bestrafen…"
+      1: "Zyrus wird uns für diese Niederlage bestrafen…",
+      2: "Dieser Rückschlag bedeutet nichts in Hinsicht unseres großen Plans.",
+      3: "Unsere Pläne sind größer als diese Niederlage.",
+      4: "Wie ist das möglich?!",
+      5: "Notiz an mich selbst: Pokémon-Kämpfe üben, so bald wie möglich."
     },
   },
   "plasma_grunt": {
     "encounter": {
-      1: "Pokémon sollten frei sein! Team Plasma wird sie befreien!"
+      1: "Pokémon sollten frei sein! Team Plasma wird sie befreien!",
+      2: "Wenn ich gegen dich gewinne, lass deine Pokémon frei!",
+      3: "Wenn du Team Plasma im Weg stehst, werde ich mich um dich kümmern!",
+      4: "Team Plasma wird Pokémon von egoistischen Menschen wie dir befreien!",
+      5: "Lass dich von unserem Aussehen nicht täuschen. Unsere Kampffähigkeiten sind überragend!"
     },
     "victory": {
-      1: "Wie konnte ich verlieren? Ich dachte, ich würde die Welt retten…"
+      1: "Wie konnte ich verlieren? Ich dachte, ich würde die Welt retten...",
+      2: "Wie konnte ich nur verlieren...",
+      3: "...Dieses Pokémon ist zu schwach, ich werde stärkere beschaffen müssen!",
+      4: "Große Pläne stoßen immer auf Hindernisse.",
+      5: "Das ist ein schwerer Rückschlag für Team Plasma..."
     },
   },
   "flare_grunt": {
     "encounter": {
-      1: `Ich bin ein Mitglied von Team Flare! Das sieht man mir doch an. Mein Stil ist unverkennbar!
-          $Du kannst definitiv ein Umstyling gebrauchen!`
+      1: "Deine Pokémon haben keine Chance gegen die Überlegenheit von Team Flare.",
+      2: "Mach dich bereit, denn gleich wird es hier lichterloh brennen!",
+      3: "Team Flare wird die Welt von allen Makeln befreien!",
+      4: "Bereite dich auf die unvergleichliche Macht von Team Flare vor!",
+      5: "Unsere Mission steht über allem, sogar über der Mode!"
     },
     "victory": {
-      1: "Stil ist wohl doch nicht alles…"
+      1: "Diese Niederlage wirft einen Schatten auf meine Zukunft.",
+      2: "Es scheint, dass ich meine Strategien überdenken muss. Zurück ans Reißbrett.",
+      3: "Unglaublich?! Ich habe verloren?!",
+      4: "Selbst in der Niederlage bleibt Team Flare unübertroffen in seiner Eleganz.",
+      5: "Du hast mich besiegt, aber Team Flare wird immer in Glanz und Stil erstrahlen."
     },
   },
   "rocket_boss_giovanni_1": {
@@ -476,7 +729,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
           $Wir brauchen mehr Landmassen um zu leben! Team Magma wird dieses Ziel mit aller Macht erreichen!`
     },
     "victory": {
-      1:"Ugh! Das entspricht nicht meinen Berechnungen! Wie konnte ich verlieren? Wir sehen uns wieder!"
+      1: "Ugh! Das entspricht nicht meinen Berechnungen! Wie konnte ich verlieren? Wir sehen uns wieder!"
     },
     "defeat": {
       1: "Team Magma wird weiterhin die Welt verbessern!"
@@ -542,7 +795,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "plasma_boss_ghetsis_1": {
     "encounter": {
-      1:"Ich werde nicht zulassen, dass mich jemand aufhält! Egal wer es auch sein mag!"
+      1: "Ich werde nicht zulassen, dass mich jemand aufhält! Egal wer es auch sein mag!"
     },
     "victory": {
       1: "Wie kann das sein? Ich bin der Schöpfer von Team Plasma! Ich bin perfekt!"
@@ -2586,7 +2839,7 @@ export const PGFdialogue: DialogueTranslationEntries = PGMdialogue;
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `Es scheint, als wäre es wieder mal an der Zeit.\nDu weißt, warum du hierher kommen musst, oder?
 	       $Dich hat es hierher gezogen, du warst bereits hier.\nUnzählige Male.
-	       $Obwohl, vielleicht doch nicht unzählig.\nUm genau zu sein, dies ist der 5.643.853te Zyklus.
+	       $Obwohl, vielleicht doch nicht unzählig.\nUm genau zu sein, dies ist der {{cycleCount}}te Zyklus.
            $Du verlierst jeden Zyklus dein Gedächtnis. Trotzdem \nbleibt etwas, ein Teil deines ehemaligen Ichs, erhalten.
            $Bis jetzt hast du es noch nicht vollbracht zu siegen, aber dieses Mal spüre ich eine andere Präsenz in dir.\n
            $Du bist der Einzige hier, aber es kommt mir so vor als wäre da...jemand anderes.
@@ -2604,7 +2857,7 @@ export const PGFbattleSpecDialogue: SimpleTranslationEntries = PGMbattleSpecDial
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is male
 export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending":
-      `@c{smile}Oh? Du hast gewonnen?@d{96} @c{smile_eclosed}Ich schätze, das hätte ich wissen sollen.
+        `@c{smile}Oh? Du hast gewonnen?@d{96} @c{smile_eclosed}Ich schätze, das hätte ich wissen sollen.
         $Aber, du bist jetzt zurück.
         $@c{smile}Es ist vorbei.@d{64} Du hast die Schleife beendet.
         $@c{serious_smile_fists}Du hast auch deinen Traum erfüllt, nicht wahr?\nDu hast nicht einmal verloren.
@@ -2615,7 +2868,7 @@ export const PGMmiscDialogue: SimpleTranslationEntries = {
         $@c{serious_smile_fists}Vielleicht können wir, wenn wir zurück sind, noch einen Kampf haben?
         $Wenn du dazu bereit bist.`,
   "ending_female":
-      `@c{shock}Du bist zurück?@d{32} Bedeutet das…@d{96} du hast gewonnen?!
+        `@c{shock}Du bist zurück?@d{32} Bedeutet das…@d{96} du hast gewonnen?!
        $@c{smile_ehalf}Ich hätte wissen sollen, dass du es in dir hast.
         $@c{smile_eclosed}Natürlich… ich hatte immer dieses Gefühl.
         $@c{smile}Es ist jetzt vorbei, richtig? Du hast die Schleife beendet.

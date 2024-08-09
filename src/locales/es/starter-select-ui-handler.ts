@@ -7,6 +7,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "¿Comenzar con estos Pokémon?",
+  "confirmExit": "Do you want to exit?",
   "invalidParty": "¡Este equipo no es válido!",
   "gen1": "I",
   "gen2": "II",
@@ -27,6 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "toggleIVs": "Mostrar IVs",
   "manageMoves": "Cambiar movs.",
   "manageNature": "Cambiar natur.",
+  "addToFavorites": "Add to Favorites",
+  "removeFromFavorites": "Remove from Favorites",
   "useCandies": "Usar Caramelos",
   "selectNature": "Elige Natur.",
   "selectMoveSwapOut": "Elige el movimiento que sustituir.",
@@ -40,6 +43,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "cycleAbility": ": Habilidad",
   "cycleNature": ": Naturaleza",
   "cycleVariant": ": Variante",
+  "goFilter": ": Ir a filtros",
   "enablePassive": "Activar Pasiva",
   "disablePassive": "Desactivar Pasiva",
   "locked": "Bloqueado",

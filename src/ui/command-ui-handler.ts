@@ -17,7 +17,7 @@ export enum Command {
 
 export default class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;

@@ -169,6 +169,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Undefeated",
     description: "Beat the game in classic mode",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Bring Your Child To Work Day",
+    description: "Beat the game in Classic Mode with at least one unevolved party member."
+  },
 
   "MONO_GEN_ONE": {
     name: "The Original Rival",
@@ -266,7 +270,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "FRESH_START": {
     name: "First Try!",
-    description: "Complete the fresh start challenge."
+    description: "Complete the Fresh Start challenge."
   }
 } as const;
 

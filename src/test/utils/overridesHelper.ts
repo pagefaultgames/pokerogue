@@ -8,19 +8,13 @@ import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierOverride } from "#app/modifier/modifier-type.js";
 import Overrides from "#app/overrides";
-import GameManager from "#test/utils/gameManager";
 import { vi } from "vitest";
+import { GameManagerHelper } from "./gameManagerHelper";
 
 /**
  * Helper to handle overrides in tests
  */
-export class OverridesHelper {
-  private readonly game: GameManager;
-
-  constructor(game: GameManager) {
-    this.game = game;
-  }
-
+export class OverridesHelper extends GameManagerHelper {
   /**
    * Override the starting biome
    * @warning Any event listeners that are attached to [NewArenaEvent](events\battle-scene.ts) may need to be handled down the line
@@ -125,6 +119,17 @@ export class OverridesHelper {
   }
 
   /**
+   * Override the player (pokemon) {@linkcode StatusEffect | status-effect}
+   * @param statusEffect the {@linkcode StatusEffect | status-effect} to set
+   * @returns
+   */
+  statusEffect(statusEffect: StatusEffect): this {
+    vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
+    this.log(`Player Pokemon status-effect set to ${StatusEffect[statusEffect]} (=${statusEffect})!`);
+    return this;
+  }
+
+  /**
    * Override each wave to not have standard trainer battles
    * @returns this
    */
@@ -181,7 +186,7 @@ export class OverridesHelper {
    * @param battleType battle type to set
    * @returns this
    */
-  battleType(battleType: "single" | "double"): this {
+  battleType(battleType: "single" | "double" | null): this {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
     this.log(`Battle type set to ${battleType} only!`);
     return this;
