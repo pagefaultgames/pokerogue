@@ -1685,9 +1685,9 @@ export class SwitchSummonPhase extends SummonPhase {
         if (this.batonPass) {
           const substitute = this.lastPokemon.getTag(SubstituteTag);
           if (!!substitute) {
-            switchedPokemon.x += switchedPokemon.getSubstituteOffset()[0];
-            switchedPokemon.y += switchedPokemon.getSubstituteOffset()[1];
-            switchedPokemon.setAlpha(0.5);
+            switchedInPokemon.x += switchedPokemon.getSubstituteOffset()[0];
+            switchedInPokemon.y += switchedPokemon.getSubstituteOffset()[1];
+            switchedInPokemon.setAlpha(0.5);
           }
         } else {
           switchedInPokemon.resetBattleData();

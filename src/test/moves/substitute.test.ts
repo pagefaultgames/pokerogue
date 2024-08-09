@@ -5,7 +5,7 @@ import { Species } from "#app/enums/species";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, MoveEndPhase, MovePhase } from "#app/phases";
+import { BerryPhase, CommandPhase, MoveEndPhase, MovePhase } from "#app/phases";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BattleStat } from "#app/data/battle-stat";
 import { allMoves, StealHeldItemChanceAttr } from "#app/data/move";
@@ -13,6 +13,8 @@ import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
 import { StatusEffect } from "#app/data/status-effect";
 import { BerryType } from "#app/enums/berry-type";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { Mode } from "#app/ui/ui.js";
+import { Command } from "#app/ui/command-ui-handler.js";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
 
@@ -391,7 +393,10 @@ describe("Moves - Substitute", () => {
 
       leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
 
-      game.doSwitchPokemon(1, true);
+      // Simulate a Baton switch for the player this turn
+      game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+        (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, 1, true);
+      });
 
       await game.phaseInterceptor.to(MovePhase, false);
 
