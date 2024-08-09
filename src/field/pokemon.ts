@@ -19,7 +19,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase, MoveEndPhase } from "../phases";
 import { BattleStat } from "../data/battle-stat";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, DisablingBattlerTag, ExposedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
@@ -2448,6 +2448,26 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.updateInfo();
   }
 
+  /**
+   * Gets whether a move is currently disabled for this Pokemon.
+   * @see {@linkcode DisablingBattlerTag}
+   */
+  isMoveDisabled(moveId: Moves): boolean {
+    return this.getDisablingTag(moveId) !== null;
+  }
+
+  /**
+   * Gets the {@link DisablingBattlerTag} that is disabling the given move, or null if that move is not disabled.
+   */
+  getDisablingTag(moveId: Moves): DisablingBattlerTag | null {
+    for (const tag of this.findTags(t => t instanceof DisablingBattlerTag)) {
+      if ((tag as DisablingBattlerTag).moveIsDisabled(moveId)) {
+        return tag as DisablingBattlerTag;
+      }
+    }
+    return null;
+  }
+
   getMoveHistory(): TurnMove[] {
     return this.battleSummonData.moveHistory;
   }
@@ -4205,8 +4225,6 @@ export interface AttackMoveResult {
 export class PokemonSummonData {
   public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public moveQueue: QueuedMove[] = [];
-  public disabledMove: Moves = Moves.NONE;
-  public disabledTurns: integer = 0;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
   public abilitiesApplied: Abilities[] = [];
@@ -4305,11 +4323,28 @@ export class PokemonMove {
     this.virtual = !!virtual;
   }
 
+  /**
+   * Checks whether the move can be selected or performed by a Pokemon, without consideration for the move's targets.
+   * The move is unusable if it is out of PP, disabled by an effect, or unimplemented.
+   *
+   * @param {Pokemon} pokemon The Pokemon that would be using this move
+   * @param ignorePp If true, skips the PP check
+   * @returns True if the move can be selected and used by the Pokemon, otherwise false.
+   */
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
-    if (this.moveId && pokemon.summonData?.disabledMove === this.moveId) {
+    if (!this.moveId) {
       return false;
     }
-    return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");
+
+    if (pokemon.isMoveDisabled(this.moveId)) {
+      return false;
+    }
+
+    if (this.getMove().name.endsWith(" (N)")) {
+      return false;
+    }
+
+    return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1);
   }
 
   getMove(): Move {

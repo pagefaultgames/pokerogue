@@ -1,4 +1,4 @@
-import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "./battle-anims";
+import { CommonAnim, CommonBattleAnim, MoveChargeAnim, ChargeAnim } from "./battle-anims";
 import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangeCallback, StatChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
@@ -93,8 +93,96 @@ export interface TerrainBattlerTag {
 }
 
 /**
- * BattlerTag that represents the "recharge" effects of moves like Hyper Beam.
+ * Base class for tags that disable moves. Descendants can override {@linkcode moveIsDisabled} to disable moves that
+ * match a condition. A disabled move gets cancelled before it is used. Players and enemies should not be allowed
+ * to select disabled moves.
  */
+export abstract class DisablingBattlerTag extends BattlerTag {
+  public abstract moveIsDisabled(move: Moves): boolean;
+
+  constructor(tagType: BattlerTagType, turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
+    super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (!super.lapse(pokemon, lapseType)) {
+      // Duration has expired
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * The text to display when a move's execution is prevented as a result of the disable.
+   * Because disabling effects also prevent selection of the move, this situation can only arise if a
+   * pokemon first selects a move, then gets outsped by a pokemon using a move that disables the selected move.
+   */
+  abstract interruptedText(pokemon: Pokemon, move: Moves): string;
+}
+
+/**
+ * Tag representing the "disabling" effect performed by {@linkcode Moves.DISABLE} and {@linkcode Abilities.CURSED_BODY}.
+ * When the tag is added, the last used move of the tag holder is set as the disabled move.
+ */
+export class DisabledTag extends DisablingBattlerTag {
+  /** The move being disabled. Gets set when {@linkcode onAdd} is called for this tag. */
+  public moveId: integer = 0;
+
+  public override moveIsDisabled(move: Moves): boolean {
+    return move === this.moveId;
+  }
+
+  constructor(sourceId: number) {
+    super(BattlerTagType.DISABLED, 4, Moves.DISABLE, sourceId);
+  }
+
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (!super.lapse(pokemon, lapseType)) {
+      return false;
+    }
+
+    if (this.moveId === 0) {
+      console.warn(`attempt to disable move ID 0 on ${pokemon}`);
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Ensures that move history exists and has a valid move. If so, sets the {@link moveId} and shows a message.
+   * Otherwise, something has gone wrong, so the move ID will not get assigned and this tag will get removed next turn.
+   */
+  override onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    const history = pokemon.getLastXMoves();
+    if (history.length === 0) {
+      return;
+    }
+
+    const move = history.find(m => m.move !== Moves.NONE);
+    if (move === undefined || move.move === Moves.STRUGGLE) {
+      return;
+    }
+
+    this.moveId = move.move;
+
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsDisabledOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name }));
+  }
+
+  override onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsDisabledLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name }));
+  }
+
+  override interruptedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
+  }
+}
+
 export class RechargingTag extends BattlerTag {
   constructor(sourceMove: Moves) {
     super(BattlerTagType.RECHARGING, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 2, sourceMove);
@@ -1895,6 +1983,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new StockpilingTag(sourceMove);
   case BattlerTagType.OCTOLOCK:
     return new OctolockTag(sourceId);
+  case BattlerTagType.DISABLED:
+    return new DisabledTag(sourceId);
   case BattlerTagType.IGNORE_GHOST:
     return new ExposedTag(tagType, sourceMove, Type.GHOST, [Type.NORMAL, Type.FIGHTING]);
   case BattlerTagType.IGNORE_DARK:

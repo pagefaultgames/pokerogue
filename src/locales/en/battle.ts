@@ -45,6 +45,7 @@ export const battle: SimpleTranslationEntries = {
   "moveNotImplemented": "{{moveName}} is not yet implemented and cannot be selected.",
   "moveNoPP": "There's no PP left for\nthis move!",
   "moveDisabled": "{{moveName}} is disabled!",
+  "disableInterruptedMove": "{{pokemonNameWithAffix}}'s {{moveName}}\nis disabled!",
   "noPokeballForce": "An unseen force\nprevents using Poké Balls.",
   "noPokeballTrainer": "You can't catch\nanother trainer's Pokémon!",
   "noPokeballMulti": "You can only throw a Poké Ball\nwhen there is one Pokémon remaining!",
@@ -155,5 +156,7 @@ export const battle: SimpleTranslationEntries = {
   "battlerTagsSaltCuredLapse": "{{pokemonNameWithAffix}} is hurt by {{moveName}}!",
   "battlerTagsCursedOnAdd": "{{pokemonNameWithAffix}} cut its own HP and put a curse on the {{pokemonName}}!",
   "battlerTagsCursedLapse": "{{pokemonNameWithAffix}} is afflicted by the Curse!",
-  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!"
+  "battlerTagsStockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
+  "battlerTagsDisabledOnAdd": "{{pokemonNameWithAffix}}'s {{moveName}}\nwas disabled!",
+  "battlerTagsDisabledLapse": "{{pokemonNameWithAffix}}'s {{moveName}}\nis no longer disabled.",
 } as const;
