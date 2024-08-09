@@ -183,6 +183,9 @@ export class DisabledTag extends DisablingBattlerTag {
   }
 }
 
+/**
+ * BattlerTag that represents the "recharge" effects of moves like Hyper Beam.
+ */
 export class RechargingTag extends BattlerTag {
   constructor(sourceMove: Moves) {
     super(BattlerTagType.RECHARGING, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 2, sourceMove);
