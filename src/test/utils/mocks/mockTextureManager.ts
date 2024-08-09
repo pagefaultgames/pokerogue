@@ -6,6 +6,7 @@ import MockImage from "#test/utils/mocks/mocksContainer/mockImage";
 import MockText from "#test/utils/mocks/mocksContainer/mockText";
 import MockPolygon from "#test/utils/mocks/mocksContainer/mockPolygon";
 import { MockGameObject } from "./mockGameObject";
+import MockTexture from "#test/utils/mocks/mocksContainer/mockTexture";
 
 
 export default class MockTextureManager {
@@ -52,6 +53,10 @@ export default class MockTextureManager {
     // if (whitelist.includes(key) || obj.texture?.key?.includes("trainer_")) {
     //   this.containers.push(obj);
     // }
+  }
+
+  get(key) {
+    return new MockTexture(this, key, null);
   }
 
   rectangle(x, y, width, height, fillColor) {
