@@ -148,7 +148,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     }
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+  showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number) {
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
 
     if (text?.indexOf("\n") === -1) {
@@ -162,7 +162,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     this.runSelectMessageBoxContainer.setVisible(!!text?.length);
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
@@ -175,7 +175,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     return changed;
   }
 
-  setScrollCursor(scrollCursor: integer): boolean {
+  setScrollCursor(scrollCursor: number): boolean {
     const changed = scrollCursor !== this.scrollCursor;
 
     if (changed) {
@@ -214,12 +214,12 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 }
 
 class RunEntry extends Phaser.GameObjects.Container {
-  public slotId: integer;
+  public slotId: number;
   public hasData: boolean;
   public entryData: RunHistoryData;
   private loadingLabel: Phaser.GameObjects.Text;
 
-  constructor(scene: BattleScene, runHistory: any, timestamp: string, slotId: integer) {
+  constructor(scene: BattleScene, runHistory: any, timestamp: string, slotId: number) {
     super(scene, 0, slotId*56);
 
     this.slotId = slotId;

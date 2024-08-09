@@ -183,11 +183,9 @@ export const AbilityAttr = {
   ABILITY_HIDDEN: 4
 };
 
-export interface RunHistoryData {
-  [key: integer]: RunEntries;
-}
+export type RunHistoryData  = Record<number, RunEntry> 
 
-export interface RunEntries {
+export interface RunEntry {
   entry: SessionSaveData;
   victory: boolean;
   favorite: boolean;
@@ -456,8 +454,10 @@ export class GameData {
         if (versions[0] !== versions[1]) {
           const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
         }*/
-        if (!localStorage.hasOwnProperty(`runHistoryData_${loggedInUser?.username}`)) {
-          localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt("", true));
+        const lsItemKey = `runHistoryData_${loggedInUser?.username}`
+        const lsItem = localStorage.getItem(lsItemKey);
+        if (!lsItem) {
+          localStorage.setItem(lsItemKey, encrypt("", true));
         }
 
         this.trainerId = systemData.trainerId;
@@ -578,8 +578,10 @@ export class GameData {
       const response = await Utils.apiFetch("savedata/runHistory", true);
       const data = await response.json();
       */
-      if (localStorage.hasOwnProperty(`runHistoryData_${loggedInUser?.username}`)) {
-        let cachedResponse = localStorage.getItem(`runHistoryData_${loggedInUser?.username}`);
+      const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
+      const lsItem = localStorage.getItem(lsItemKey);
+      if (lsItem) {
+        let cachedResponse = lsItem;
         if (cachedResponse) {
           cachedResponse = JSON.parse(decrypt(cachedResponse, true));
         }
@@ -608,7 +610,7 @@ export class GameData {
     }
   }
 
-  async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, victory: boolean): Promise<boolean> {
+  async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, isVictory: boolean): Promise<boolean> {
 
     let runHistoryData = await this.getRunHistoryData(scene);
     if (!runHistoryData) {
@@ -624,11 +626,10 @@ export class GameData {
     }
 
     const timestamp = (runEntry.timestamp).toString();
-    runHistoryData[timestamp] = {};
-    runHistoryData[timestamp]["entry"] = runEntry;
-    runHistoryData[timestamp]["victory"] = victory;
-    // Not implemented at the moment, but leaving room for future work
-    runHistoryData[timestamp]["favorite"] = false;
+    runHistoryData[timestamp] = {
+      entry: runEntry,
+      victory: victory,
+    };
 
     localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), true));
 
