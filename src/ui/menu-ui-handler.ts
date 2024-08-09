@@ -352,6 +352,7 @@ export default class MenuUiHandler extends MessageUiHandler {
           }
         }
       }
+      this.showText("", 0);
       switch (adjustedCursor) {
       case MenuOptions.GAME_SETTINGS:
         ui.setOverlayMode(Mode.SETTINGS);
@@ -442,9 +443,13 @@ export default class MenuUiHandler extends MessageUiHandler {
           success = true;
           if (this.scene.currentBattle.turn > 1) {
             ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+              if (!this.active) {
+                this.showText("", 0);
+                return;
+              }
               ui.setOverlayMode(Mode.CONFIRM, () => this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true)), () => {
                 ui.revertMode();
-                ui.showText("", 0);
+                this.showText("", 0);
               }, false, -98);
             });
           } else {
@@ -467,9 +472,13 @@ export default class MenuUiHandler extends MessageUiHandler {
         };
         if (this.scene.currentBattle) {
           ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+            if (!this.active) {
+              this.showText("", 0);
+              return;
+            }
             ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
               ui.revertMode();
-              ui.showText("", 0);
+              this.showText("", 0);
             }, false, -98);
           });
         } else {
