@@ -132,8 +132,6 @@ export default class TargetSelectUiHandler extends UiHandler {
       }
     });
 
-
-
     if (this.targetBattleInfoMoveTween.length >= 1) {
       this.targetBattleInfoMoveTween.filter(t => t !== undefined).forEach(tween => tween.stop());
       for (const pokemon of multipleTargets) {
