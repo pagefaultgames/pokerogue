@@ -4096,7 +4096,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
   args: any[],
   showAbilityInstant: boolean = false,
   quiet: boolean = false,
-  messages: string[] = undefined,
+  messages: string[] = [],
 ) {
   for (const passive of [false, true]) {
     if (!pokemon.canApplyAbility(passive)) {
@@ -4139,7 +4139,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
           if (!quiet) {
             pokemon.scene.queueMessage(message);
           }
-          if (messages !== undefined) {
+          if (messages.length !== 0) {
             messages.push(message);
           }
         }
