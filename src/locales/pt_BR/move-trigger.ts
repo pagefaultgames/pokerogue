@@ -56,6 +56,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "sacrificialFullRestore": "O Healing Wish de {{pokemonName}}\nfoi concedido!",
   "invertStats": "As mudanças de atributo de {{pokemonName}}\nforam revertidas!",
   "resetStats": "As mudanças de atributo de {{pokemonName}}\nforam eliminadas!",
+  "statEliminated": "Todas as mudanças de atributo foram eliminadas!",
   "faintCountdown": "{{pokemonName}}\nirá desmaiar em {{turnCount}} turnos.",
   "copyType": "O tipo de {{pokemonName}}\nmudou para combinar com {{targetPokemonName}}!",
   "suppressAbilities": "A habilidade de {{pokemonName}}\nfoi suprimida!",

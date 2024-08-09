@@ -28,6 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "toggleIVs": "개체값 토글",
   "manageMoves": "기술 관리",
   "manageNature": "성격 관리",
+  "addToFavorites": "즐겨찾기에 추가",
+  "removeFromFavorites": "즐겨찾기에서 제외",
   "useCandies": "사탕 사용",
   "selectNature": "교체할 성격을 선택해주세요.",
   "selectMoveSwapOut": "교체할 기술을 선택해주세요.",

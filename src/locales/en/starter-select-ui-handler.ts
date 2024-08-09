@@ -28,6 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "toggleIVs": "Toggle IVs",
   "manageMoves": "Manage Moves",
   "manageNature": "Manage Nature",
+  "addToFavorites": "Add to Favorites",
+  "removeFromFavorites": "Remove from Favorites",
   "useCandies": "Use Candies",
   "selectNature": "Select nature.",
   "selectMoveSwapOut": "Select a move to swap out.",
