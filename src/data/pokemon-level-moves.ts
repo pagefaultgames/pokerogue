@@ -2681,8 +2681,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.CYNDAQUIL]: [
     [ 1, Moves.TACKLE ],
     [ 1, Moves.LEER ],
-    [ 5, Moves.EMBER ], //Custom, moved to 5
-    [ 10, Moves.SMOKESCREEN ], //Custom, moved to 10
+    [ 5, Moves.EMBER ], //Custom, moved from 10 to 5
+    [ 10, Moves.SMOKESCREEN ], //Custom, moved from 6 to 10
     [ 13, Moves.QUICK_ATTACK ],
     [ 19, Moves.FLAME_WHEEL ],
     [ 22, Moves.DEFENSE_CURL ],
@@ -6724,6 +6724,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TACKLE ],
     [ 5, Moves.WITHDRAW ],
     [ 5, Moves.ABSORB ], //Custom, moved from 9 to 5
+    [ 9, Moves.LEAFAGE ], //Fill empty moveslot, from BDSP
     [ 13, Moves.RAZOR_LEAF ],
     [ 17, Moves.CURSE ],
     [ 21, Moves.BITE ],
@@ -8464,8 +8465,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.GIRATINA]: [
     [ 1, Moves.SHADOW_SNEAK ],
     [ 1, Moves.DEFOG ],
-    [ 1, Moves.TWISTER ], //Custom
-    [ 7, Moves.DRAGON_BREATH ],
+    [ 1, Moves.DRAGON_BREATH ], //USUM
+    [ 7, Moves.OMINOUS_WIND ], //USUM
     [ 14, Moves.ANCIENT_POWER ],
     [ 21, Moves.HEX ],
     [ 28, Moves.SLASH ],
@@ -9280,7 +9281,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 70, Moves.HYDRO_PUMP ],
   ],
   [Species.THROH]: [
-    [ 1, Moves.KARATE_CHOP ], //Custom
+    [ 1, Moves.ROCK_SMASH ], //Custom
     [ 1, Moves.LEER ],
     [ 1, Moves.BIDE ],
     [ 1, Moves.MAT_BLOCK ],
@@ -10066,7 +10067,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.VANILLITE]: [
     [ 1, Moves.HARDEN ],
     [ 1, Moves.ASTONISH ],
-    [ 1, Moves.POWDER_SNOW ], //Custom
+    [ 1, Moves.ICICLE_SPEAR ], //USUM
     [ 4, Moves.TAUNT ],
     [ 8, Moves.MIST ],
     [ 12, Moves.ICY_WIND ],
@@ -10085,6 +10086,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.HARDEN ],
     [ 1, Moves.TAUNT ],
     [ 1, Moves.ASTONISH ],
+    [ 1, Moves.ICICLE_SPEAR ], //USUM
     [ 12, Moves.ICY_WIND ],
     [ 16, Moves.AVALANCHE ],
     [ 20, Moves.HAIL ],
@@ -10104,6 +10106,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.WEATHER_BALL ],
     [ 1, Moves.ICICLE_CRASH ],
     [ 1, Moves.FREEZE_DRY ],
+    [ 1, Moves.ICICLE_SPEAR ], //USUM
     [ 12, Moves.ICY_WIND ],
     [ 16, Moves.AVALANCHE ],
     [ 20, Moves.HAIL ],
@@ -13811,7 +13814,9 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.MAGEARNA]: [
     [ 1, Moves.HELPING_HAND ],
     [ 1, Moves.GYRO_BALL ],
-    [ 1, Moves.FAIRY_WIND ], //Custom
+    [ 1, Moves.DISARMING_VOICE ], //Custom
+    [ 1, Moves.CRAFTY_SHIELD ],
+    [ 1, Moves.GEAR_UP ],
     [ 6, Moves.DEFENSE_CURL ],
     [ 12, Moves.ROLLOUT ],
     [ 18, Moves.IRON_DEFENSE ],
