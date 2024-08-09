@@ -271,7 +271,11 @@ export const PGMachv: AchievementTranslationEntries = {
   "FRESH_START": {
     name: "初次尝试！",
     description: "完成初次尝试挑战"
-  }
+  },
+  "EEVEE_TRAINER": {
+    name: "唯布独尊",
+    description: "完成伊布限定挑战。",
+  },
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)

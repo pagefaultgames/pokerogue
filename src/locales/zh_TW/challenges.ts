@@ -1,6 +1,8 @@
 import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
+  "on": "On",
+  "off": "Off",
   "title": "適用挑戰條件",
   "illegalEvolution": "{{pokemon}} 進化成了不符合\n挑戰條件的寶可夢！",
   "singleGeneration": {
@@ -21,6 +23,10 @@ export const challenges: TranslationEntries = {
     "name": "單屬性",
     "desc": "你只能使用{{type}}\n屬性的寶可夢",
     "desc_default": "你只能使用所選\n屬性的寶可夢"
+  },
+  "eeveeOnly": {
+    "name": "Eevee only",
+    "desc": "You can use only Eevee and its evolutions in this challenge",
   },
   "freshStart": {
     "name": "Fresh Start",

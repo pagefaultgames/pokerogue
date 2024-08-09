@@ -1,6 +1,8 @@
 import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
+  "on": "Ligado",
+  "off": "Desligado",
   "title": "Desafios",
   "illegalEvolution": "{{pokemon}} não pode ser escolhido\nnesse desafio!",
   "singleGeneration": {
@@ -19,8 +21,12 @@ export const challenges: TranslationEntries = {
   },
   "singleType": {
     "name": "Monotipo",
-    "desc": "Você só pode user Pokémon do tipo {{type}}.",
-    "desc_default": "Você só pode user Pokémon de um único tipo."
+    "desc": "Você só pode usar Pokémon do tipo {{type}}.",
+    "desc_default": "Você só pode usar Pokémon de um único tipo."
+  },
+  "eeveeOnly": {
+    "name": "Somente Eevees",
+    "desc": "Você só pode usar Eevee e suas evoluções nesse desafio",
   },
   "freshStart": {
     "name": "Novo Começo",

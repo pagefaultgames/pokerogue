@@ -268,6 +268,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Follettini e follettine",
   },
+  "EEVEE_TRAINER": {
+    name: "Eeveeallenatore",
+    description: "Completa la challenge mono-Eevee.",
+  },
   "FRESH_START": {
     name: "First Try!",
     description: "Complete the Fresh Start challenge."

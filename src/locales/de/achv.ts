@@ -269,6 +269,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Ein ewiges Abenteuer!",
   },
+  "EEVEE_TRAINER": {
+    name: "E wie Evoli",
+    description: "Beende die 'Nur-Evoli' Herausforderung.",
+  },
   "FRESH_START": {
     name: "Hussa, noch einmal von vorn!",
     description: "Schließe die 'Neuanfang' Herausforderung ab"
@@ -383,6 +387,7 @@ export const PGFachv: AchievementTranslationEntries = {
   "MONO_DRAGON": PGMachv.MONO_DRAGON,
   "MONO_DARK": PGMachv.MONO_DARK,
   "MONO_FAIRY": PGMachv.MONO_FAIRY,
-  "FRESH_START": PGMachv.FRESH_START
+  "FRESH_START": PGMachv.FRESH_START,
+  "EEVEE_TRAINER": PGMachv.EEVEE_TRAINER
 } as const;
 

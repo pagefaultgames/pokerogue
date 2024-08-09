@@ -6,7 +6,7 @@ import i18next from "i18next";
 import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
 import { ParseKeys } from "i18next";
-import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge } from "#app/data/challenge.js";
+import { Challenge, EeveeOnlyChallenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge } from "#app/data/challenge.js";
 import { ConditionFn } from "#app/@types/common.js";
 
 export enum AchvTier {
@@ -280,6 +280,8 @@ export function getAchievementDescription(localizationKey: string): string {
   case "MONO_DARK":
   case "MONO_FAIRY":
     return i18next.t(`${genderPrefix}achv:MonoType.description` as ParseKeys, {"type": i18next.t(`pokemonInfo:Type.${localizationKey.slice(5)}`)});
+  case "EEVEE_TRAINER":
+    return i18next.t(`${genderPrefix}achv:EEVEE_TRAINER.description` as ParseKeys);
   case "FRESH_START":
     return i18next.t(`${genderPrefix}achv:FRESH_START.description` as ParseKeys);
   default:
@@ -357,6 +359,7 @@ export const achvs = {
   MONO_DRAGON: new ChallengeAchv("MONO_DRAGON","", "MONO_DRAGON.description", "dragon_fang", 100, c => c instanceof SingleTypeChallenge && c.value === 16),
   MONO_DARK: new ChallengeAchv("MONO_DARK","", "MONO_DARK.description", "black_glasses", 100, c => c instanceof SingleTypeChallenge && c.value === 17),
   MONO_FAIRY: new ChallengeAchv("MONO_FAIRY","", "MONO_FAIRY.description", "fairy_feather", 100, c => c instanceof SingleTypeChallenge && c.value === 18),
+  EEVEE_TRAINER: new ChallengeAchv("EEVEE_TRAINER","", "EEVEE_TRAINER.description", "fire_stone", 100, c => c instanceof EeveeOnlyChallenge && c.value === 1),
   FRESH_START: new ChallengeAchv("FRESH_START","", "FRESH_START.description", "reviver_seed", 100, c => c instanceof FreshStartChallenge && c.value === 1),
 };
 

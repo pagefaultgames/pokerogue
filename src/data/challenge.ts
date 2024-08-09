@@ -56,6 +56,11 @@ export enum ChallengeType {
   */
   FIXED_BATTLES,
   /**
+   * Whether to allow duplicate species
+   * @param args [0] {@link Utils.BooleanHolder} False for not allowed, true for allowed
+  */
+  DUPLICATE_SPECIES,
+  /**
    * Modifies what level the AI pokemon are. UNIMPLEMENTED.
    */
   AI_LEVEL,
@@ -391,6 +396,15 @@ export abstract class Challenge {
   applyMoveWeight(pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.IntegerHolder): boolean {
     return false;
   }
+
+  /**
+   * An apply function for DUPLICATE_SPECIES. Derived classes should alter this.
+   * @param allowDuplicates {@link Utils.BooleanHolder} True to allow duplicate species
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyDuplicateSpecies(allowDuplicates: Utils.BooleanHolder): boolean {
+    return false;
+  }
 }
 
 type ChallengeCondition = (data: GameData) => boolean;
@@ -505,6 +519,67 @@ export class SingleGenerationChallenge extends Challenge {
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
     return newChallenge;
+  }
+}
+
+export class EeveeOnlyChallenge extends Challenge {
+  constructor() {
+    super(Challenges.EEVEE_ONLY, 1);
+  }
+
+  getValue(overrideValue?: integer): string {
+    if (overrideValue === undefined) {
+      overrideValue = this.value;
+    }
+    if (overrideValue === 0) {
+      return i18next.t("challenges:off");
+    }
+    return i18next.t("challenges:on");
+  }
+
+  getDescription(overrideValue?: integer): string {
+    if (overrideValue === undefined) {
+      overrideValue = this.value;
+    }
+
+    return i18next.t("challenges:eeveeOnly.desc");
+  }
+
+  applyPokemonInBattle(pokemon: Pokemon, valid: Utils.BooleanHolder): boolean {
+    if (pokemon.isPlayer() && (pokemon.species.getRootSpeciesId() !== Species.EEVEE || (pokemon.isFusion() && pokemon.species.getRootSpeciesId() !== Species.EEVEE))) {
+      valid.value = false;
+      return true;
+    }
+    return false;
+  }
+
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft?: boolean, checkEvolutions?: boolean, checkForms?: boolean): boolean {
+    if (pokemon.getRootSpeciesId() !== Species.EEVEE) {
+      valid.value = false;
+      return true;
+    }
+    return false;
+  }
+
+  applyStarterPoints(points: Utils.NumberHolder): boolean {
+    points.value = 24;
+    return true;
+  }
+
+  applyDuplicateSpecies(allowDuplicates: Utils.BooleanHolder): boolean {
+    allowDuplicates.value = true;
+    return true;
+  }
+
+  static loadChallenge(source: Challenge | any): Challenge {
+    const newChallenge = new EeveeOnlyChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+
+  getDifficulty(): integer {
+    return this.value > 0 ? 1 : 0;
   }
 }
 
@@ -843,6 +918,15 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.MOVE_WEIGHT, pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, weight: Utils.IntegerHolder): boolean;
+
+/**
+ * Apply all challenges that modify what weight a pokemon gives to move generation
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.DUPLICATE_SPECIES
+ * @param allowDuplicates {@link Utils.BooleanHolder} True to allow duplicate species
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.DUPLICATE_SPECIES, allowDuplicates: Utils.BooleanHolder): boolean;
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   gameMode.challenges.forEach(c => {
@@ -884,6 +968,9 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
       case ChallengeType.MOVE_WEIGHT:
         ret ||= c.applyMoveWeight(args[0], args[1], args[2], args[3]);
         break;
+      case ChallengeType.DUPLICATE_SPECIES:
+        ret ||= c.applyDuplicateSpecies(args[0]);
+        break;
       }
     }
   });
@@ -907,6 +994,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
     return LowerStarterPointsChallenge.loadChallenge(source);
   case Challenges.FRESH_START:
     return FreshStartChallenge.loadChallenge(source);
+  case Challenges.EEVEE_ONLY:
+    return EeveeOnlyChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -918,5 +1007,6 @@ export function initChallenges() {
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
     new FreshStartChallenge(),
+    new EeveeOnlyChallenge(),
   );
 }

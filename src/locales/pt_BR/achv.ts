@@ -273,6 +273,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "De Primeira!",
     description: "Complete o desafio de novo começo."
   },
+  "EEVEE_TRAINER": {
+    name: "Treinador de Eevee",
+    description: "Complete o desafio Somente Eevees.",
+  },
 } as const;
 
 // Achievement translations for the when the player character is female
@@ -547,5 +551,9 @@ export const PGFachv: AchievementTranslationEntries = {
   "FRESH_START": {
     name: "De Primeira!",
     description: "Complete o desafio de novo começo."
+  },
+  "EEVEE_TRAINER": {
+    name: "Treinador de Eevee",
+    description: "Complete o desafio Somente Eevees.",
   },
 } as const;

@@ -272,6 +272,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "첫트!",
     description: "새 출발 챌린지 모드 클리어."
   },
+  "EEVEE_TRAINER": {
+    name: "이브이 트레이너",
+    description: "이브이 모드 챌린지 클리어.",
+  },
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
