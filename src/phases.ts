@@ -2576,15 +2576,6 @@ export class BattleEndPhase extends BattlePhase {
 
     this.scene.updateModifiers().then(() => this.end());
   }
-
-  end() {
-    // removing pokemon at the end of a battle
-    for (const p of this.scene.getEnemyParty()) {
-      p.destroy();
-    }
-
-    super.end();
-  }
 }
 
 export class NewBattlePhase extends BattlePhase {
