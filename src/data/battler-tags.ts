@@ -1,5 +1,5 @@
 import { CommonAnim, CommonBattleAnim, MoveChargeAnim, ChargeAnim } from "./battle-anims";
-import { CommonAnimPhase, MessagePhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangeCallback, StatChangePhase, TurnEndPhase } from "../phases";
+import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangeCallback, StatChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
@@ -101,7 +101,7 @@ export abstract class DisablingBattlerTag extends BattlerTag {
   public abstract moveIsDisabled(move: Moves): boolean;
 
   constructor(tagType: BattlerTagType, turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
-    super(tagType, BattlerTagLapseType.PRE_MOVE, turnCount, sourceMove, sourceId);
+    super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -110,43 +110,15 @@ export abstract class DisablingBattlerTag extends BattlerTag {
       return false;
     }
 
-    // If the subject selected their move at the start of the turn before it got disabled, cancel it
-    const movePhase = pokemon.scene.getCurrentPhase() as MovePhase;
-    if (movePhase && this.moveIsDisabled(movePhase.move.moveId)) {
-      movePhase.cancel();
-
-      const interruptedText = this.interruptedText(pokemon, movePhase.move.moveId);
-      if (interruptedText !== null) {
-        pokemon.scene.queueMessage(interruptedText);
-      }
-    }
-
     return true;
   }
 
-  /** Called when the disable expires due to duration. */
-  onRemove(pokemon: Pokemon): void {
-    const text = this.finishedText(pokemon);
-    if (text === null) {
-      return;
-    }
-
-    // In the games, disable effects always show their finish message at the end of a turn, if they have one. This tag
-    //  lapses on PRE_MOVE, so we must manually insert a message phase after the next end of turn.
-    const turnEndPhaseIndex = pokemon.scene.phaseQueue.findIndex(p => p instanceof TurnEndPhase);
-    if (turnEndPhaseIndex >= 0) {
-      pokemon.scene.phaseQueue.splice(turnEndPhaseIndex, 0, new MessagePhase(pokemon.scene, text));
-    }
-  }
-
-  /** The text to display when the disable finishes. Can return {@link null}, in which case no message will be displayed. */
-  protected abstract finishedText(pokemon: Pokemon): string | null;
-
   /**
-   * The text to display when a move is prevented as a result of the disable. Can return null, in which case
-   * no message will be displayed.
+   * The text to display when a move's execution is prevented as a result of the disable.
+   * Because disabling effects also prevent selection of the move, this situation can only arise if a
+   * pokemon first selects a move, then gets outsped by a pokemon using a move that disables the selected move.
    */
-  protected abstract interruptedText(pokemon: Pokemon, move: Moves): string | null;
+  abstract interruptedText(pokemon: Pokemon, move: Moves): string;
 }
 
 /**
@@ -165,7 +137,7 @@ export class DisabledTag extends DisablingBattlerTag {
     super(BattlerTagType.DISABLED, 4, Moves.DISABLE, sourceId);
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (!super.lapse(pokemon, lapseType)) {
       return false;
     }
@@ -182,7 +154,7 @@ export class DisabledTag extends DisablingBattlerTag {
    * Ensures that move history exists and has a valid move. If so, sets the {@link moveId} and shows a message.
    * Otherwise, something has gone wrong, so the move ID will not get assigned and this tag will get removed next turn.
    */
-  public override onAdd(pokemon: Pokemon): void {
+  override onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
     const history = pokemon.getLastXMoves();
@@ -197,15 +169,17 @@ export class DisabledTag extends DisablingBattlerTag {
 
     this.moveId = move.move;
 
-    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsDisabledOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: this.getMoveName() }));
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsDisabledOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name }));
   }
 
-  protected override interruptedText(pokemon: Pokemon, move: Moves): string {
-    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: this.getMoveName() });
+  override onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsDisabledLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name }));
   }
 
-  protected override finishedText(pokemon: Pokemon): string {
-    return i18next.t("battle:battlerTagsDisabledLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: this.getMoveName() });
+  override interruptedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
   }
 }
 

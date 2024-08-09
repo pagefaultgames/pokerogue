@@ -2682,7 +2682,8 @@ export class MovePhase extends BattlePhase {
 
     if (!this.canMove()) {
       if (this.move.moveId && this.pokemon.isMoveDisabled(this.move.moveId)) {
-        this.scene.queueMessage(i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon), moveName: this.move.getName() }));
+        const interruptingTag = this.pokemon.getDisablingTag(this.move.moveId)!;
+        this.scene.queueMessage(interruptingTag.interruptedText(this.pokemon, this.move.moveId));
         this.pokemon.pushMoveHistory({ move: this.move.moveId, result: MoveResult.FAIL, virtual: false });
         this.fail();
       } else if (this.pokemon.isActive(true) && this.move.ppUsed >= this.move.getMovePp()) { // if the move PP was reduced from Spite or otherwise, the move fails

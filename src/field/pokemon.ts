@@ -2453,12 +2453,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @see {@linkcode DisablingBattlerTag}
    */
   isMoveDisabled(moveId: Moves): boolean {
+    return this.getDisablingTag(moveId) !== null;
+  }
+
+  /**
+   * Gets the {@link DisablingBattlerTag} that is disabling the given move, or null if that move is not disabled.
+   */
+  getDisablingTag(moveId: Moves): DisablingBattlerTag | null {
     for (const tag of this.findTags(t => t instanceof DisablingBattlerTag)) {
       if ((tag as DisablingBattlerTag).moveIsDisabled(moveId)) {
-        return true;
+        return tag as DisablingBattlerTag;
       }
     }
-    return false;
+    return null;
   }
 
   getMoveHistory(): TurnMove[] {
