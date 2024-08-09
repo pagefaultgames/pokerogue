@@ -50,5 +50,13 @@ export const moveTriggers: SimpleTranslationEntries = {
   "transformedIntoTarget": "{{pokemonName}}\n变身成了{{targetName}}！",
   "tryingToTakeFoeDown": "{{pokemonName}}\n想和对手同归于尽！",
   "addType": "{{pokemonName}}\n增加了{{typeName}}属性！",
-  "cannotUseMove": "{{pokemonName}}\n无法使用{{moveName}}！"
+  "cannotUseMove": "{{pokemonName}}\n无法使用{{moveName}}！",
+  "healHp": "{{pokemonName}}的\n体力回复了！",
+  "sacrificialFullRestore": "{{pokemonName}}的\n治愈之愿实现了！",
+  "invertStats": "{{pokemonName}}的\n能力变化颠倒过来了！",
+  "resetStats": "{{pokemonName}}的\n能力变化复原了！",
+  "faintCountdown": "{{pokemonName}}\n将在{{turnCount}}回合后灭亡！",
+  "copyType": "{{pokemonName}}\n变成了{{targetPokemonName}}的属性！",
+  "suppressAbilities": "{{pokemonName}}的特性\n变得无效了！",
+  "swapArenaTags": "{{pokemonName}}\n交换了双方的场地效果！",
 } as const;

@@ -33,7 +33,7 @@ export const statusEffect: StatusEffectTranslationEntries = {
     description: "Paralyse",
     obtain: "{{pokemonNameWithAffix}} wurde paralysiert!\nEs kann eventuell nicht handeln!",
     obtainSource: "{{pokemonNameWithAffix}} wurde durch {{sourceText}} paralysiert,\nEs kann eventuell nicht handeln!",
-    activation: "{{pokemonNameWithAffix}}ist paralysiert!\nEs kann nicht angreifen!",
+    activation: "{{pokemonNameWithAffix}} ist paralysiert!\nEs kann nicht angreifen!",
     overlap: "{{pokemonNameWithAffix}} ist bereits paralysiert!",
     heal: "Die Paralyse von {{pokemonNameWithAffix}} wurde aufgehoben!"
   },
