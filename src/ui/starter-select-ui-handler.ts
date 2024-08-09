@@ -2601,7 +2601,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
       this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 4));
-      // if starterAttributes nickname is set, use it, otherwise use species name
       if (starterAttributes?.nickname) {
         const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
         this.pokemonNameText.setText(name);
