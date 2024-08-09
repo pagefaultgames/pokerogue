@@ -24,7 +24,7 @@ export const filterBar: SimpleTranslationEntries = {
   "noHiddenAbility": "Abilità speciale - No",
   "pokerus": "Pokérus",
   "hasPokerus": "Pokérus - Sì",
-  "noPokerus": "Pokérus - Sì",
+  "noPokerus": "Pokérus - No",
   "sortByNumber": "Num. Dex",
   "sortByCost": "Costo",
   "sortByCandies": "Caramelle",
