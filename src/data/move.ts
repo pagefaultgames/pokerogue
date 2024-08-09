@@ -5777,7 +5777,12 @@ export class TransformAttr extends MoveEffectAttr {
       user.summonData.fusionGender = target.getFusionGender();
       user.summonData.stats = [ user.stats[Stat.HP] ].concat(target.stats.slice(1));
       user.summonData.battleStats = target.summonData.battleStats.slice(0);
-      user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m?.moveId!, m?.ppUsed, m?.ppUp));
+      user.summonData.moveset = target.getMoveset().map(m => {
+        const pp = m?.getMove().pp!;
+        // if PP value is less than 5, do nothing. If greater, we need to reduce the value to 5 using a negative ppUp value.
+        const ppUp = pp <= 5 ? 0 : (5 - pp) / Math.max(Math.floor(pp / 5), 1);
+        return new PokemonMove(m?.moveId!, 0, ppUp);
+      });
       user.summonData.types = target.getTypes();
       user.updateInfo();
 

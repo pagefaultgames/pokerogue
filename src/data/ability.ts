@@ -2317,7 +2317,12 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
       pokemon.summonData.fusionGender = target.getFusionGender();
       pokemon.summonData.stats = [ pokemon.stats[Stat.HP] ].concat(target.stats.slice(1));
       pokemon.summonData.battleStats = target.summonData.battleStats.slice(0);
-      pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m?.moveId!, m?.ppUsed, m?.ppUp));
+      pokemon.summonData.moveset = target.getMoveset().map(m => {
+        const pp = m?.getMove().pp!;
+        // if PP value is less than 5, do nothing. If greater, we need to reduce the value to 5 using a negative ppUp value.
+        const ppUp = pp <= 5 ? 0 : (5 - pp) / Math.max(Math.floor(pp / 5), 1);
+        return new PokemonMove(m?.moveId!, 0, ppUp);
+      });
       pokemon.summonData.types = target.getTypes();
       pokemon.updateInfo();
 
