@@ -61,5 +61,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}} hat den Typ von {{targetPokemonName}} angenommen!",
   "suppressAbilities": "Die Fähigkeit von {{pokemonName}} wirkt nicht mehr!",
   "swapArenaTags": "{{pokemonName}} hat die Effekte, die auf den beiden Seiten des Kampffeldes wirken, miteinander getauscht!",
-  "exposedMove": "{{pokemonName}} erkennt {{targetPokemonName}}!",
+  "trickOnSwap": "{{pokemonNameWithAffix}} tauscht Items mit dem Ziel!",
+  "trickFoeNewItem": "{{pokemonNameWithAffix}} erhält {{itemName}}.",
+  "exposedMove": "{{pokemonName}} erkennt {{targetPokemonName}}!"
 } as const;

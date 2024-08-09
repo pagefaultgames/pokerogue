@@ -61,5 +61,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}}\n变成了{{targetPokemonName}}的属性！",
   "suppressAbilities": "{{pokemonName}}的特性\n变得无效了！",
   "swapArenaTags": "{{pokemonName}}\n交换了双方的场地效果！",
-  "exposedMove": "{{pokemonName}}识破了\n{{targetPokemonName}}的原型！",
+  "trickOnSwap": "{{pokemonNameWithAffix}}\n互换了各自的道具！",
+  "trickFoeNewItem": "{{pokemonNameWithAffix}}\n获得了{{itemName}}！",
+  "exposedMove": "{{pokemonName}}识破了\n{{targetPokemonName}}的原型！"
 } as const;

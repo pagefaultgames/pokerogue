@@ -61,5 +61,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}}は　{{targetPokemonName}}と\n同じタイプに　なった！",
   "suppressAbilities": "{{pokemonName}}の　とくせいが　きかなくなった！",
   "swapArenaTags": "{{pokemonName}}は\nおたがいの　ばのこうかを　いれかえた！",
-  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
+  "trickOnSwap": "{{pokemonNameWithAffix}} switched items with its target!",
+  "trickFoeNewItem": "{{pokemonNameWithAffix}} obtained one {{itemName}}.",
+  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!"
 } as const;
