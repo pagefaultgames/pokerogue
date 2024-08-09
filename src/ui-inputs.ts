@@ -181,7 +181,9 @@ export class UiInputs {
       break;
     case Mode.MENU:
       this.scene.ui.revertMode();
-      this.scene.playSound("select");
+      if (this.scene.uiSoundEffects) {
+        this.scene.playSound("select");
+      }
       break;
     default:
       return;

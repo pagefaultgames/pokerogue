@@ -64,6 +64,7 @@ export const settings: SimpleTranslationEntries = {
   "masterVolume": "主音量",
   "bgmVolume": "音乐",
   "seVolume": "音效",
+  "uiSoundEffects": "UI音效",
   "musicPreference": "音乐偏好",
   "mixed": "全曲混合",
   "gamepadPleasePlug": "请链接手柄或按任意键",
