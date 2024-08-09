@@ -696,6 +696,94 @@ export const PGMdialogue: DialogueTranslationEntries = {
       5: "Du hast mich besiegt, aber Team Flare wird immer in Glanz und Stil erstrahlen."
     },
   },
+  "aether_grunt": {
+    "encounter": {
+      1: "Ich werde dich mit allem, was ich habe, bekämpfen. Ich werde dich auslöschen!",
+      2: `Mir ist egal, ob du ein simpler Trainer bist oder nicht.
+          $Ich werde dich hochkant rauswerfen, wenn du uns bedrohst!`,
+      3: "Mir wurde gesagt, Trainer abzuweisen, egal wer sie sind!",
+      4: "Ich zeige dir die Macht des Æther-Paradies",
+      5: "Jetzt da du die Wahre Natur des Æther-Paradies kennst, müssen wir dich leider beseitigen!"
+    },
+    "victory": {
+      1: "Hmph! Du scheinst ziemlich geschickt zu sein.",
+      2: "Was hat das zu bedeuten? Was hat das zu bedeuten!",
+      3: "Hey, du bist so stark, dass ich dich nicht abweisen kann!",
+      4: "Hmm... Es scheint, als hätte ich verloren.",
+      5: "Ich hätte das Blitzdings benutzen sollen..."
+    },
+  },
+  "faba": {
+    "encounter": {
+      1: "Ich bin Regionalleiter Fabian und ich werde dir zeigen, wie hart die Welt sein kann!",
+      2: "Die letzte Verteidigungslinie des Æther-Paradieses kämpft gegen einen simplen Trainer?",
+      3: `Ich Fabian, bin der Regionalleiter der Æther Foundation.
+          $Der einzige auf der Welt, ich bin unersetzlich.`
+    },
+    "victory": {
+      1: "Aiyee!",
+      2: "W-w-wie kann das sein?! Wie konnte dieser Trainer...",
+      3: "Das ist der Grund... warum ich andere Menschen nicht ausstehen kann."
+    },
+  },
+  "skull_grunt": {
+    "encounter": {
+      1: "Wir sind nicht böse, wir sind einfach nur nicht nett!",
+      2: "Willst du Stress, oder was? Das ist unsere Art, Hallo zu sagen! Tschüss, du Punk!",
+      3: "Wir sind nur ein paar Typen und Mädels mit großem Interesse an den Pokémon anderer Leute!",
+      4: "Wieso machst du einen auf hart, wenn wir schon hart wie Knochen sind, Brudi?",
+      5: `Yo, platz hier nich’ rein, ♪ wie’n wildes Kleinstein! ♪ Wenn du meinst, dass Team Skull ♪
+         $an nix denkt als Krawall, ♪ hast du leider ’nen Knall, ♪ denn das is’ nich’ der Fall! ♪
+         $Wir woll’n hier nur gammeln ♪ und gechillt Staub ansammeln! ♪`
+    },
+    "victory": {
+      1: "Wie jetzt? Schon vorbei?",
+      2: "Woah, lass uns lieber die Kurve kratzen, yo! Kein Bock, hier meinen Schädel zu riskieren...",
+      3: "Wir brauchen deine schwachen Pokémon eh nicht!",
+      4: "Was? Deine Stärke spür ich bis in die Knochen...",
+      5: "Mein Homie und ich sind also weniger wert als Pokémon? Willste uns dissen, oder was?"
+    },
+  },
+  "plumeria": {
+    "encounter": {
+      1: "...Hmph. Du siehst nicht so aus, als wärst du etwas Besonderes.",
+      2: "Die blöden Rüpel brauchen viel zu lange, um mit euch gewöhnlichen Trainern fertig zu werden...",
+      3: "Lege dich mit irgendjemandem in Team Skull an, und ich zeige dir, wie ernst ich werden kann."
+    },
+    "victory": {
+      1: "Du bist ziemlich stark. Das muss ich zugeben.",
+      2: "Jetzt versteh ich, warum meine Rüpel so viel Zeit damit verschwenden...",
+      3: "Ich denke, ich muss diese Niederlage einfach hinnehmen."
+    },
+  },
+  "macro_grunt": {
+    "encounter": {
+      1: "Achtung hier ist Endstation für dich!",
+      2: `Du bist ein Trainer, oder? Wir von MC Wertpapiere wissen so etwas. 
+          $Ich fürchte, das gibt dir trotzdem nicht das Recht, sich in unsere Arbeit einzumischen.`,
+      3: "Ich bin von MC Versicherungen! Hast du eine Lebensversicherung?"
+    },
+    "victory": {
+      1: "Ich habe keine andere Wahl, als respektvoll zurückzutreten.",
+      2: "Mein Erspartes aufzugeben bringt mich in die roten Zahlen...",
+      3: "Okay zurück an die Arbeit. Versicherungen verkauft sich nicht von alleine."
+    },
+  },
+  "oleana": {
+    "encounter": {
+      1: "Ich werde keine Störung von Präsident Roses Plänen zulassen!",
+      2: `Du hast es also durch die Mitarbeiter der Tochterunternehmen geschafft,
+         $die ich beauftragt habe, um dich aufzuhalten. Ich hätte nichts anderes erwartet.`,
+      3: `Für den Präsidenten! Ich werde nicht verlieren! 
+         $Mach dich bereit mit Macro Cosmos Airlines nach Hause zu fliegen!`
+    },
+    "victory": {
+      1: "Ich habe es nicht geschafft... Olivia... du bist wirklich eine hoffnungslose Frau.",
+      2: `Arghhh! Das ist unentschuldbar... Was habe ich mir dabei gedacht...
+          $Jeder Trainer, der es so weit geschafft hat, muss ein harter Brocken sein...`,
+      3: "Ich bin eine müde Olivia... Ob es Macro Cosmos Betten gibt?"
+    },
+  },
   "rocket_boss_giovanni_1": {
     "encounter": {
       1: `Ich bin beeindruckt, du hast es bis hierher geschafft!
@@ -837,6 +925,87 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Narren ohne Vision werden weiterhin diese wunderschöne Welt verunreinigen."
+    }
+  },
+  "aether_boss_lusamine_1": {
+    "encounter": {
+      1: `Du wirst mein süßes Biest erschrecken! Wie kannst du nur? Ultra-Besiten sind so niedlich!
+          $Es sieht so aus, als müsste ich dich zuerst zum Schweigen bringen.`
+    },
+    "victory": {
+      1: "Wie kann eine Person nur so grausam sein?!"
+    },
+    "defeat": {
+      1: "Und jetzt, mein süßes Biest, komm zu Mama!"
+    }
+  },
+  "aether_boss_lusamine_2": {
+    "encounter": {
+      1: `Wieso musst du mich weiterhin belästigen?! Ich habe die Nase voll von dir.
+         $Du machst mich krank! Genug mit diesem nutzlosen Gerede... 
+         $Mit der Kraft von Anego, von uns als UB-01 Schmarotzer klassifiziert,
+         $werde ich dir zeigen, wie falsch du warst, hierher zu kommen!`
+    },
+    "victory": {
+      1: "Aaauuuggghhhhhhhhh!!!"
+    },
+    "defeat": {
+      1: "Alles, was ich will, ist mein kostbares Biest! Der Rest von euch ist mir egal!"
+    }
+  },
+  "skull_boss_guzma_1": {
+    "encounter": {
+      1: `Kein Erbarmen! Keine Gnade! Ich bin dein schlimmster Alptraum! 
+         $Oh yeah, ich bin der große, böse Bromley!`
+    },
+    "victory": {
+      1: "Irgendwann mach ich dich platt! Ich hab noch ein Ass im Ärmel. Du wirst schon sehen."
+    },
+    "defeat": {
+      1: "Du hast den langen Weg hierher DAFÜR aufgenommen? Pah!"
+    }
+  },
+  "skull_boss_guzma_2": {
+    "encounter": {
+      1: "Mir ist egal, wer du bist. Ich mach dich platt!! Das schreibt mir mein Ego vor. Ich bin Bromley!"
+    },
+    "victory": {
+      1: "Bromley!!! Was ist falsch mit dir?!"
+    },
+    "defeat": {
+      1: "Ihr seid wirklich selten dämlich."
+    }
+  },
+  "macro_boss_rose_1": {
+    "encounter": {
+      1: `Mein Name ist Rose. Ich bin der Präsident der Galar Pokémon-Liga und Geschäftsführer von Macro Cosmos
+          $Ich habe eine Aufgabe, eine Berufung! Ich muss die Galar-Region mit unbegrenzter Energie versorgen,
+          damit sie sich bis in alle Ewigkeit in Frieden fortentwickeln kann!`
+    },
+    "victory": {
+      1: "Du versteht es einfach nicht...So können wir die Geschichte nicht verändern!"
+    },
+    "defeat": {
+      1: "Ohne deine Einmischung kann ich jetzt endlich weiterarbeiten!"
+    }
+  },
+  "macro_boss_rose_2": {
+    "encounter": {
+      1: `Ich bin fest entschlossen, das Energieproblem in der Galar-Region
+         $und natürlich auf der ganzen Welt zu lösen.
+         $Meine Erfahrungen und Erfolge, die Macro Cosmos zu einem Erfolg gemacht haben,
+         $sind der Beweis, dass meine Methoden funktionieren.
+         $Ich habe nicht vor, meine Meinung zu ändern, selbst wenn ich verliere.`
+
+    },
+    "victory": {
+      1: `Ich hatte vergessen, wie großartig Pokémon-Kämpfe sind! Es ist so lange her, dass ich gekämpft habe...
+          $Das war wirklich befriedigend, ich akzeptiere die Niederlage für diesen Kampf.`
+    },
+    "defeat": {
+      1: `Ich nehme an, es muss den Anschein haben, dass ich etwas Schreckliches tue.
+          $Ich erwarte nicht, dass du es verstehst. Aber ich muss der Galar-Region grenzenlose Energie
+          $bereitstellen, um ewigen Wohlstand zu gewährleisten.`
     }
   },
   "brock": {

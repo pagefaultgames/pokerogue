@@ -19,6 +19,9 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "Chefe da Equipe Galáctica",
   "plasma_boss": "Chefe da Equipe Plasma",
   "flare_boss": "Chefe da Equipe Flare",
+  "aether_boss": "Presidente Aether",
+  "skull_boss": "Chefe da Equipe Skull",
+  "macro_boss": "Presidente da Macro Cosmos",
 
   "rocket_admin": "Admin da Equipe Rocket",
   "rocket_admin_female": "Admin da Equipe Rocket",
@@ -32,6 +35,9 @@ export const titles: SimpleTranslationEntries = {
   "plasma_admin": "Admin da Equipe Plasma",
   "flare_admin": "Admin da Equipe Flare",
   "flare_admin_female": "Admin da Equipe Flare",
+  "aether_admin": "Admin da Fundação Aether",
+  "skull_admin": "Admin da Equipe Skull",
+  "macro_admin": "Macro Cosmos",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -156,6 +162,15 @@ export const trainerClasses: SimpleTranslationEntries = {
   "flare_grunt": "Capanga da Equipe Flare",
   "flare_grunt_female": "Capanga da Equipe Flare",
   "flare_grunts": "Capangas da Equipe Flare",
+  "aether_grunt": "Funcionário da Fundação Aether",
+  "aether_grunt_female": "Funcionária da Fundação Aether",
+  "aether_grunts": "Funcionários da Fundação Aether",
+  "skull_grunt": "Capanga da Equipe Skull",
+  "skull_grunt_female": "Capanga da Equipe Skull",
+  "skull_grunts": "Capangas da Equipe Skull",
+  "macro_grunt": "Treinador da Macro Cosmos",
+  "macro_grunt_female": "Treinadora da Macro Cosmos",
+  "macro_grunts": "Treinadores da Macro Cosmos",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -301,12 +316,18 @@ export const trainerNames: SimpleTranslationEntries = {
   "rood": "Rood",
   "xerosic": "Xerosic",
   "bryony": "Bryony",
+  "faba": "Faba",
+  "plumeria": "Plumeria",
+  "oleana": "Oleana",
 
   "maxie": "Maxie",
   "archie": "Archie",
   "cyrus": "Cyrus",
   "ghetsis": "Ghetsis",
   "lysandre": "Lysandre",
+  "lusamine": "Lusamine",
+  "guzma": "Guzma",
+  "rose": "Rose",
 
   // Double Names
   "blue_red_double": "Blue & Red",

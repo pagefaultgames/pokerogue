@@ -19,6 +19,9 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "Leader de la Team Galaxie",
   "plasma_boss": "Leader de la Team Plasma",
   "flare_boss": "Leader de la Team Flare",
+  "aether_boss": "Présidente d’Æther",
+  "skull_boss": "Boss de la Team Skull",
+  "macro_boss": "Président de Macro Cosmos",
 
   "rocket_admin": "Admin Team Rocket",
   "rocket_admin_female": "Admin Team Rocket",
@@ -32,6 +35,9 @@ export const titles: SimpleTranslationEntries = {
   "plasma_admin": "Admin Team Plasma",
   "flare_admin": "Manager de la Team Flare",
   "flare_admin_female": "Manageuse de la Team Flare",
+  "aether_admin": "Directeur d’Æther",
+  "skull_admin": "Admin Team Skull",
+  "macro_admin": "Macro Cosmos",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -156,6 +162,15 @@ export const trainerClasses: SimpleTranslationEntries = {
   "flare_grunt": "Sbire de la Team Flare",
   "flare_grunt_female": "Sbire de la Team Flare",
   "flare_grunts": "Sbires de la Team Flare",
+  "aether_grunt": "Employé de la Fondation Æther",
+  "aether_grunt_female": "Employée de la Fondation Æther",
+  "aether_grunts": "Employés de la Fondation Æther",
+  "skull_grunt": "Sbire de la Team Skull",
+  "skull_grunt_female": "Sbire de la Team Skull",
+  "skull_grunts": "Team Skull Grunts",
+  "macro_grunt": "Employé de Macro Cosmos",
+  "macro_grunt_female": "Employée de Macro Cosmos",
+  "macro_grunts": "Employés de Macro Cosmos",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -289,6 +304,9 @@ export const trainerNames: SimpleTranslationEntries = {
   "cyrus": "Hélio",
   "ghetsis": "Ghetis",
   "lysandre": "Lysandre",
+  "lusamine": "Elsa-Mina",
+  "guzma": "Guzma",
+  "rose": "Shehroz",
 
   // Evil Team Admins
   "archer": "Amos",
@@ -306,7 +324,9 @@ export const trainerNames: SimpleTranslationEntries = {
   "rood": "Carmine",
   "xerosic": "Xanthin",
   "bryony": "Brasénie",
-
+  "faba": "Saubohne",
+  "plumeria": "Apocyne",
+  "oleana": "Liv",
 
 
   // Double Names

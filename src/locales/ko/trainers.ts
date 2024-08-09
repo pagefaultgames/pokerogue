@@ -19,6 +19,9 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "갤럭시단 보스",
   "plasma_boss": "플라스마단 보스",
   "flare_boss": "플레어단 보스",
+  "aether_boss": "에테르재단 대표",
+  "skull_boss": "스컬단 보스",
+  "macro_boss": "매크로코스모스 사장",
 
   "rocket_admin": "로켓단 간부",
   "rocket_admin_female": "로켓단 간부",
@@ -32,6 +35,9 @@ export const titles: SimpleTranslationEntries = {
   "plasma_admin": "플라스마단 간부",
   "flare_admin": "플레어단 간부",
   "flare_admin_female": "플레어단 간부",
+  "aether_admin": "에테르재단 지부장",
+  "skull_admin": "스컬단 간부",
+  "macro_admin": "매크로코스모스 간부",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -156,7 +162,15 @@ export const trainerClasses: SimpleTranslationEntries = {
   "flare_grunt": "플레어단 조무래기",
   "flare_grunt_female": "플레어단 조무래기",
   "flare_grunts": "플레어단 조무래기들",
-
+  "aether_grunt": "에테르재단 직원",
+  "aether_grunt_female": "에테르재단 직원",
+  "aether_grunts": "에테르재단 직원들",
+  "skull_grunt": "스컬단 조무래기",
+  "skull_grunt_female": "스컬단 조무래기",
+  "skull_grunts": "스컬단 조무래기들",
+  "macro_grunt": "매크로코스모스 직원",
+  "macro_grunt_female": "매크로코스모스 직원",
+  "macro_grunts": "매크로코스모스 직원들",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -302,13 +316,18 @@ export const trainerNames: SimpleTranslationEntries = {
   "rood": "로트",
   "xerosic": "크세로시키",
   "bryony": "바라",
-
+  "faba": "자우보",
+  "plumeria": "플루메리",
+  "oleana": "올리브",
 
   "maxie": "마적",
   "archie": "아강",
   "cyrus": "태홍",
   "ghetsis": "게치스",
   "lysandre": "플라드리",
+  "lusamine": "루자미네",
+  "guzma": "구즈마",
+  "rose": "로즈",
 
   // Double Names
   "blue_red_double": "그린 & 레드",

@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "macro_grunt_f.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 74,
+				"h": 74
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 5,
+						"w": 31,
+						"h": 74
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 31,
+						"h": 74
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:a015c43d80f8fd1932758e0e2cfcec61:59fc8205ea5ca04295831b4a2eb623ec:30df2ea8e9dac9e95f70534ec43d5ecd$"
+	}
+}
