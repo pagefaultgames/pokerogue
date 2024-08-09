@@ -4139,9 +4139,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
           if (!quiet) {
             pokemon.scene.queueMessage(message);
           }
-          if (messages.length !== 0) {
-            messages.push(message);
-          }
+          messages.push(message);
         }
       }
     }
