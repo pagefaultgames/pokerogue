@@ -23,7 +23,7 @@ export const filterBar: SimpleTranslationEntries = {
   "hasHiddenAbility": "Hidden Ability - Yes",
   "noHiddenAbility": "Hidden Ability - No",
   "pokerus": "Pokérus",
-  "hasPokerus": "Pokérus - Yes",
+  "hasPokerus": "Pokérus - Sí",
   "noPokerus": "Pokérus - No",
   "sortByNumber": "Núm.",
   "sortByCost": "Coste",
