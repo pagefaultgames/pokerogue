@@ -622,6 +622,11 @@ export class SelectStarterPhase extends Phase {
       if (starter.pokerus) {
         starterPokemon.pokerus = true;
       }
+
+      if (starter.nickname) {
+        starterPokemon.nickname = starter.nickname;
+      }
+
       if (this.scene.gameMode.isSplicedOnly) {
         starterPokemon.generateFusionSpecies(true);
       }
