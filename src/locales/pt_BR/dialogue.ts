@@ -1,6 +1,6 @@
 import { DialogueTranslationEntries, SimpleTranslationEntries } from "#app/interfaces/locales";
 
-// Diálogo dos NPCs no jogo quando o personagem do jogador é masculino (ou não definido)
+// Dialogue of the NPCs in the game when the player character is male (or unset)
 export const PGMdialogue: DialogueTranslationEntries = {
   "youngster": {
     "encounter": {
@@ -385,295 +385,278 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "archer": {
     "encounter": {
-      1: "Before you go any further, let's see how you far against us, Team Rocket!",
-      2: "I have received reports that your skills are not insignificant. Let's see if they are true.",
-      3: "I am Archer, an Admin of Team Rocket. And I do not go easy on enemies of our organization."
+      1: "Antes de você ir mais longe, vamos ver como você se sai contra nós, Equipe Rocket!",
+      2: "Eu tenho recebido relatórios de que suas habilidades não são insignificantes. Vamos ver se são verdadeiros.",
+      3: "Eu sou Archer, um Admin da Equipe Rocket. E não tenho piedade dos inimigos da nossa organização."
     },
     "victory": {
-      1: "What a blunder!",
-      2: "With my current skills, I was not up to the task after all.",
-      3: "F-forgive me, Giovanni... For me to be defeated by a mere trainer..."
+      1: "Que vexame!",
+      2: "Com minhas habilidades atuais, eu não estava à altura da tarefa, afinal.",
+      3: "M-me perdoe, Giovanni... Por ser derrotado por um mero treinador..."
     },
   },
   "ariana": {
     "encounter": {
-      1: `Hold it right there! We can't someone on the loose." 
-          $It's harmful to Team Rocket's pride, you see.`,
-      2: `I don't know or care if what I'm doing is right or wrong...
-          $I just put my faith in Giovanni and do as I am told`,
-      3: "Your trip ends here. I'm going to take you down!"
+      1: "Pera aí! Não podemos deixar alguém solto por aí. Isso é prejudicial para o orgulho da Equipe Rocket, entende?",
+      2: "Eu não sei ou me importo se o que estou fazendo é certo ou errado... Eu apenas coloco minha fé em Giovanni e faço o que me é dito.",
+      3: "Sua viagem termina aqui. Vou te derrubar!"
     },
     "victory": {
-      1: `Tch, you really are strong. It's too bad. 
-          $If you were to join Team Rocket, you could become an Executive.`,
-      2: "I... I'm shattered...",
-      3: "Aaaieeeee! This can't be happening! I fought hard, but I still lost…"
+      1: "Uau, você é forte. Que desperdício. Se você se juntasse à Equipe Rocket, poderia se tornar um Executivo.",
+      2: "Eu... Eu estou arrasada...",
+      3: "Aaaieeeee! Isso não pode estar acontecendo! Eu lutei muito, mas ainda perdi…"
     },
   },
   "proton": {
     "encounter": {
-      1: "What do you want? If you interrupt our work, don't expect any mercy!",
-      2: `What do we have here? I am often labeled as the scariest and cruelest guy in Team Rocket…
-         $I strongly urge you not to interfere with our business!`,
-      3: "I am Proton, an Admin of Team Rocket. I am here to put an end to your meddling!"
+      1: "O que você quer? Se você interromper nosso trabalho, não espere misericórdia!",
+      2: "O que temos aqui? Costumam me chamar de o cara mais assustador e cruel da Equipe Rocket… Eu recomendo fortemente que você não interfira nos nossos negócios!",
+      3: "Eu sou Proton, um Admin da Equipe Rocket. Estou aqui para acabar com a sua intromissão!"
     },
     "victory": {
-      1: "The fortress came down!",
-      2: "You may have won this time… But all you did was make Team Rocket's wrath grow…",
-      3: "I am defeated… But I will not forget this!"
+      1: "A fortaleza caiu!",
+      2: "Você pode ter vencido desta vez… Mas tudo o que fez foi aumentar a ira da Equipe Rocket…",
+      3: "Fui derrotado… Mas não esquecerei disso!"
     },
   },
-
   "petrel": {
     "encounter": {
-      1: `Muhahaha, we've been waiting for you. Me? You don't know who I am? It is me, Giovanni.
-          $The majestic Giovanni himself! Wahahaha! …Huh? I don't sound anything like Giovanni?
-          $I don't even look like Giovanni? How come? I've worked so hard to mimic him!`,
-      2: "I am Petrel, an Admin of Team Rocket. I will not allow you to interfere with our plans!",
-      3: "Rocket Executive Petrel will deal with this intruder!"
+      1: "Muhahaha, estávamos esperando por você. Eu? Você não sabe quem eu sou? Sou eu, Giovanni. O majestoso Giovanni em pessoa! Wahahaha! ...Huh? Eu não pareço nada com Giovanni? Eu nem mesmo pareço com Giovanni? Como assim? Trabalhei tanto para imitá-lo!",
+      2: "Eu sou Petrel, um Admin da Equipe Rocket. Não permitirei que você interfira em nossos planos!",
+      3: "O Executivo da Rocket, Petrel, vai lidar com este intruso!"
     },
     "victory": {
-      1: "OK, OK. I'll tell you where he is.",
-      2: "I… I couldn't do a thing… Giovanni, please forgive me…",
-      3: "No, I can't let this affect me. I have to inform the others…"
+      1: "OK, OK. Vou te contar onde ele está.",
+      2: "Eu... Eu não consegui fazer nada... Giovanni, por favor, me perdoe...",
+      3: "Não, eu não posso deixar isso me afetar. Tenho que informar os outros…"
     },
   },
   "tabitha": {
     "encounter": {
-      1: "Hehehe! So you've come all the way here! But you're too late!",
-      2: `Hehehe... Got here already, did you? We underestimated you! But this is it! 
-          $I'm a cut above the Grunts you've seen so far. I'm not stalling for time.
-          $I'm going to pulverize you!`,
-      3: "I'm going to give you a little taste of pain! Resign yourself to it!"
+      1: "Hehehe! Então você veio até aqui! Mas você chegou tarde demais!",
+      2: "Hehehe... Já chegou aqui, não é? Nós subestimamos você! Mas é isso! Eu sou um passo acima dos Capangas que você viu até agora. Não estou ganhando tempo. Vou te pulverizar!",
+      3: "Vou te dar um gostinho da dor! Resigne-se a isso!"
     },
     "victory": {
-      1: `Hehehe! You might have beaten me, but you don't stand a chance against the Boss!
-          $If you get lost now, you won't have to face a sound whipping!`,
-      2: "Hehehe... So, I lost, too...",
-      3: "Ahya! How could this be? For an Admin like me to lose to some random trainer..."
+      1: "Hehehe! Você pode ter me derrotado, mas não tem chance contra o Chefe! Se você se perder agora, não terá que enfrentar uma surra sonora!",
+      2: "Hehehe... Então, eu também perdi...",
+      3: "Ahya! Como isso pode ser? Para um Admin como eu perder para um treinador qualquer..."
     },
   },
   "courtney": {
     "encounter": {
-      1: "The thing...The thing that you hold...That is what... That's what we of Team Magma seek...",
-      2: "... Well then...Deleting...",
-      3: "...Ha. ...Analyzing... ...Hah♪"
+      1: "A coisa... A coisa que você segura... É o que... É o que nós da Equipe Magma procuramos...",
+      2: "... Bem então... Deletando...",
+      3: "...Ha. ...Analisando... ...Hah♪"
     },
     "victory": {
-      1: "... ...Change...the world.",
-      2: `As anticipated. Unanticipated. You. Target lock...completed.
-         $Commencing...experiment. You. Forever. Aha... ♪`,
-      3: "...Again? That's unanticipated. ...I knew it. You...are interesting! ...Haha. ♪"
+      1: "... ...Mudar...o mundo.",
+      2: "Como antecipado. Não antecipado. Você. Bloqueio de alvo... concluído. Iniciando... experimento. Você. Para sempre. Aha... ♪",
+      3: "... De novo? Isso não foi antecipado. ...Eu sabia. Você... é interessante! ...Haha. ♪"
     },
   },
   "shelly": {
     "encounter": {
-      1: `Ahahahaha! You're going to meddle in Team Aqua's affairs?
-         $You're either absolutely fearless, simply ignorant, or both!
-         $You're so cute, you're disgusting! I'll put you down`,
-      2: "What's this? Who's this spoiled brat?",
-      3: "Cool your jets. Be patient. I'll crush you shortly."
+      1: "Ahahahaha! Você vai se meter nos assuntos da Equipe Aqua? Você é absolutamente destemido, simplesmente ignorante ou ambos! Você é tão fofo que chega a ser nojento! Vou te derrubar",
+      2: "O que é isso? Quem é essa criança mimada?",
+      3: "Relaxe. Seja paciente. Vou te esmagar em breve."
     },
     "victory": {
-      1: `Ahahahaha! We got meddled with unexpectedly! We're out of options.
-         $We'll have to pull out. But this isn't the last you'll see of Team Aqua!
-         $We have other plans! Don't you forget it!`,
-      2: "Ahhh?! Did I go too easy on you?!",
-      3: `Uh. Are you telling me you've upped your game even more during the fight?
-         $You're a brat with a bright future… My Pokémon and I don't have any strength left to fight…
-         $Go on… Go and be destroyed by Archie.`
+      1: "Ahahahaha! Fomos surpreendidos inesperadamente! Estamos sem opções. Teremos que recuar. Mas esta não é a última vez que você verá a Equipe Aqua! Temos outros planos! Não se esqueça disso!",
+      2: "Ahhh?! Fui muito fácil com você?!",
+      3: "Uh. Você está me dizendo que melhorou seu jogo ainda mais durante a luta? Você é um pirralho com um futuro brilhante… Meu Pokémon e eu não temos mais forças para lutar… Vá em frente… Vá e seja destruído por Archie."
     },
   },
   "matt": {
     "encounter": {
-      1: "Hoohahaha! What, you got a screw loose or something? Look at you, little Makuhita person!",
-      2: "Oho! You! You're that funny kid!",
-      3: "What are you doing here? Did you follow us?"
+      1: "Hoohahaha! O que, você tem um parafuso solto ou algo assim? Olhe para você, pequena pessoa Makuhita!",
+      2: "Oho! Você! Você é aquela criança engraçada!",
+      3: "O que você está fazendo aqui? Você nos seguiu?"
     },
     "victory": {
-      1: "All right then, until the Boss has time for you, I'll be your opponent!",
-      2: `I can feel it! I can feel it, all right! The strength coming offa you!
-          $More! I still want more! But looks like we're outta time...`,
-      3: "That was fun! I knew you'd show me a good time! I look forward to facing you again someday!"
+      1: "Muito bem, até que o Chefe tenha tempo para você, serei seu oponente!",
+      2: "Posso sentir! Posso sentir, tudo bem! A força saindo de você! Mais! Eu ainda quero mais! Mas parece que estamos sem tempo...",
+      3: "Isso foi divertido! Eu sabia que você me mostraria um bom tempo! Estou ansioso para enfrentá-lo novamente algum dia!"
     },
   },
   "mars": {
     "encounter": {
-      1: "I'm Mars, one of Team Galactic's top Commanders.",
-      2: "Team Galactic's vision for the future is unwavering. Opposition will be crushed without mercy!",
-      3: "Feeling nervous? You should be!"
+      1: "Sou Mars, uma das principais Comandantes da Equipe Galáctica.",
+      2: "A visão da Equipe Galáctica para o futuro é inabalável. A oposição será esmagada sem piedade!",
+      3: "Sentindo-se nervoso? Você deveria estar!"
     },
     "victory": {
-      1: "This can't be happening! How did I lose?!",
-      2: "You have some skill, I'll give you that.",
-      3: "Defeated... This was a costly mistake."
+      1: "Isso não pode estar acontecendo! Como eu perdi?!",
+      2: "Você tem alguma habilidade, eu admito isso.",
+      3: "Derrotada... Este foi um erro caro."
     }
   },
   "jupiter": {
     "encounter": {
-      1: "Jupiter, Commander of Team Galactic, at your service.",
-      2: "Resistance is futile. Team Galactic will prevail!",
-      3: "You're trembling... scared already?"
+      1: "Júpiter, Comandante da Equipe Galáctica, ao seu serviço.",
+      2: "A resistência é inútil. A Equipe Galáctica prevalecerá!",
+      3: "Você está tremendo... já está com medo?"
     },
     "victory": {
-      1: "No way... I lost?!",
-      2: "Impressive, you've got guts!",
-      3: "Losing like this... How embarrassing."
+      1: "De jeito nenhum... Eu perdi?!",
+      2: "Impressionante, você tem coragem!",
+      3: "Perder assim... Que embaraço."
     }
   },
   "saturn": {
     "encounter": {
-      1: "I am Saturn, Commander of Team Galactic.",
-      2: "Our mission is absolute. Any hindrance will be obliterated!",
-      3: "Is that fear I see in your eyes?"
+      1: "Eu sou Saturno, Comandante da Equipe Galáctica.",
+      2: "Nossa missão é absoluta. Qualquer obstáculo será obliterado!",
+      3: "É medo o que vejo em seus olhos?"
     },
     "victory": {
-      1: "Impossible... Defeated by you?!",
-      2: "You have proven yourself a worthy adversary.",
-      3: "Bestowed in defeat... This is unacceptable."
-    }},
+      1: "Impossível... Derrotado por você?!",
+      2: "Você provou ser um adversário digno.",
+      3: "Derrotado... Isso é inaceitável."
+    }
+  },
   "zinzolin": {
     "encounter": {
-      1: "You could become a threat to Team Plasma, so we will eliminate you here and now!",
-      2: "Oh, for crying out loud... I didn't expect to have to battle in this freezing cold!",
-      3: "You're an impressive Trainer to have made it this far. But it ends here."
+      1: "Você poderia se tornar uma ameaça para a Equipe Plasma, então vamos eliminá-lo aqui e agora!",
+      2: "Oh, pelo amor de Deus... Eu não esperava ter que lutar neste frio congelante!",
+      3: "Você é um treinador impressionante para ter chegado tão longe. Mas termina aqui."
     },
     "victory": {
-      1: "Ghetsis... I have failed you...",
-      2: "It's bitter cold. I'm shivering. I'm suffering. Yet, I still stand victorious.",
-      3: "Hmph. You're a smarter Trainer than I expected, but not smart enough."
+      1: "Ghetsis... Eu falhei com você...",
+      2: "Está amargamente frio. Estou tremendo. Estou sofrendo. Ainda assim, estou vitorioso.",
+      3: "Hmph. Você é um treinador mais esperto do que eu esperava, mas não esperto o suficiente."
     }
   },
   "rood": {
     "encounter": {
-      1: "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
-      2: "Oh, this icy wind... I never thought I'd have to fight here!",
-      3: "You are a remarkable Trainer to have made it this far. But this is where it ends."
+      1: "Você é uma ameaça para a Equipe Plasma. Não podemos deixá-lo ir embora daqui e agora!",
+      2: "Oh, este vento gelado... Eu nunca pensei que teria que lutar aqui!",
+      3: "Você é um treinador notável para ter chegado tão longe. Mas é aqui que termina."
     },
     "victory": {
-      1: "Ghetsis... I have failed my mission...",
-      2: "The cold is piercing. I'm shivering. I'm suffering. Yet, I have triumphed.",
-      3: "Hm. You are a talented Trainer, but unfortunately not talented enough."
+      1: "Ghetsis... Eu falhei em minha missão...",
+      2: "O frio é penetrante. Estou tremendo. Estou sofrendo. Ainda assim, triunfei.",
+      3: "Hm. Você é um treinador talentoso, mas infelizmente não talentoso o suficiente."
     }
   },
   "xerosic": {
     "encounter": {
-      1: "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
-      2: "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
-      3: "I've been waiting for you! I need to do a little research on you! Come, let us begin!"
+      1: "Ah ha ha! Será um prazer. Vamos lá, pequeno treinador! Vamos ver o que você tem!",
+      2: "Hmm... Você é mais poderoso do que parece. Eu me pergunto quanta energia há dentro de você.",
+      3: "Eu estava esperando por você! Preciso fazer uma pequena pesquisa sobre você! Vamos começar!"
     },
     "victory": {
-      1: "Ah, you're quite strong. Oh yes—very strong, indeed.",
-      2: "Ding-ding-ding! You did it! To the victor go the spoils!",
-      3: "Wonderful! Amazing! You have tremendous skill and bravery!"
+      1: "Ah, você é bastante forte. Oh sim—muito forte, de fato.",
+      2: "Ding-ding-ding! Você conseguiu! Ao vencedor, os despojos!",
+      3: "Maravilhoso! Incrível! Você tem uma tremenda habilidade e coragem!"
     }
   },
   "bryony": {
     "encounter": {
-      1: "I am Bryony, and it would be my pleasure to battle you. Show me what you've got.",
-      2: "Impressive... You're more powerful than you appear. Let's see the true extent of your energy.",
-      3: "I've anticipated your arrival. It's time for a little test. Shall we begin?"
+      1: "Eu sou Bryony, e será um prazer lutar com você. Mostre-me o que você tem.",
+      2: "Impressionante... Você é mais poderoso do que parece. Vamos ver a verdadeira extensão de sua energia.",
+      3: "Eu antecipei sua chegada. É hora de um pequeno teste. Vamos começar?"
     },
     "victory": {
-      1: "You're quite strong. Oh yes—very strong, indeed.",
-      2: "Ding-ding-ding! You've done well. Victory is yours.",
-      3: "Wonderful! Remarkable! Your skill and bravery are commendable."
+      1: "Você é bastante forte. Oh sim—muito forte, de fato.",
+      2: "Ding-ding-ding! Você se saiu bem. A vitória é sua.",
+      3: "Maravilhoso! Notável! Sua habilidade e coragem são admiráveis."
     }
   },
   "rocket_grunt": {
     "encounter": {
       1: "Se prepara pra encrenca!",
-      2: "We're pulling a big job here! Get lost, kid!",
-      3: "Hand over your Pokémon, or face the wrath of Team Rocket!",
-      4: "You're about to experience the true terror of Team Rocket!",
-      5: "Hey, kid! Me am a Team Rocket member kind of guy!" //Use of wrong grammar is deliberate
+      2: "Estamos realizando um grande trabalho aqui! Cai fora, moleque!",
+      3: "Entregue seus Pokémon ou enfrente a ira da Equipe Rocket!",
+      4: "Você está prestes a experimentar o verdadeiro terror da Equipe Rocket!",
+      5: "Ei, moleque! Eu sou um tipo de cara da Equipe Rocket!" //Uso de gramática incorreta é proposital
     },
     "victory": {
       1: "Equipe Rocket decolando de novo!",
-      2: "Oh no! I dropped the Lift Key!",
-      3: "I blew it!",
-      4: "My associates won't stand for this!",
-      5: "You say what? Team Rocket bye-bye a go-go? Broken it is says you?" //Use of wrong grammar is deliberate.
+      2: "Oh não! Eu deixei a Chave de Elevação cair!",
+      3: "Eu estraguei tudo!",
+      4: "Meus associados não vão tolerar isso!",
+      5: "Você diz o que? Equipe Rocket tchau-tchau a vai-vai? Quebrado é diz você?" //Uso de gramática incorreta é proposital
     },
   },
   "magma_grunt": {
     "encounter": {
       1: "Se você se meter com a Equipe Magma, não teremos piedade!",
-      2: "You'd better not interfere with our plans! We're making the world a better place!",
-      3: "You're in the way! Team Magma has no time for kids like you!",
-      4: "I hope you brought marshmallows because things are about to heat up!",
-      5: "We're going to use the power of a volcano! It's gonna be... explosive! Get it? Heh heh!"
+      2: "É melhor você não interferir em nossos planos! Estamos tornando o mundo um lugar melhor!",
+      3: "Você está no caminho! A Equipe Magma não tem tempo para crianças como você!",
+      4: "Espero que você tenha trazido marshmallows porque as coisas estão prestes a esquentar!",
+      5: "Vamos usar o poder de um vulcão! Vai ser... explosivo! Entendeu? Heh heh!"
     },
     "victory": {
       1: "Ahn? Eu perdi?!",
-      2: "I can't believe I lost! I even skipped lunch for this",
-      3: "No way! You're just a kid!",
-      4: "Urrrgh... I should've ducked into our hideout right away...",
-      5: "You beat me... Do you think the boss will dock my pay for this?"
+      2: "Não posso acreditar que perdi! Até pulei o almoço por isso.",
+      3: "De jeito nenhum! Você é apenas uma criança!",
+      4: "Urrrgh... Eu deveria ter me escondido em nosso esconderijo imediatamente...",
+      5: "Você me venceu... Você acha que o chefe vai cortar meu salário por isso?"
     },
   },
   "aqua_grunt": {
     "encounter": {
       1: "Não pegamos leve com quem se mete com a Equipe Aqua, nem mesmo crianças!",
-      2: "Grrr... You've got some nerve meddling with Team Aqua!",
-      3: "You're about to get soaked! And not just from my water Pokémon!",
-      4: "We, Team Aqua, exist for the good of all!",
-      5: "Prepare to be washed away by the tides of my... uh, Pokémon! Yeah, my Pokémon!"
+      2: "Grrr... Você tem coragem de se intrometer com a Equipe Aqua!",
+      3: "Você está prestes a se molhar! E não apenas por causa dos meus Pokémon aquáticos!",
+      4: "Nós, da Equipe Aqua, existimos para o bem de todos!",
+      5: "Prepare-se para ser levado pelas ondas do meu... uh, Pokémon! Sim, meu Pokémon!"
     },
     "victory": {
       1: "Tá de brincadeira!",
-      2: "Arrgh, I didn't count on being meddled with by some meddling kid!",
-      3: "I lost?! Guess I'll have to swim back to the hideout now...",
-      4: "Oh, man, what a disaster... The boss is going to be furious...",
-      5: "You beat me... Do you think the boss will make me walk the plank for this?"
+      2: "Arrgh, eu não contei que seria atrapalhado por uma criança intrometida!",
+      3: "Eu perdi?! Acho que vou ter que nadar de volta para o esconderijo agora...",
+      4: "Oh, cara, que desastre... O chefe vai ficar furioso...",
+      5: "Você me venceu... Você acha que o chefe vai me fazer andar na prancha por isso?"
     },
   },
   "galactic_grunt": {
     "encounter": {
-      1: "Não mexe com a Equipe Galáctica!",
-      2: "Witness the power of our technology and the future we envision!",
-      3: "In the name of Team Galactic, I'll eliminate anyone who stands in our way!",
-      4: "Get ready to lose!",
-      5: "Hope you're ready for a cosmic beatdown!"
+      1: "Não mexa com a Equipe Galáctica!",
+      2: "Presencie o poder da nossa tecnologia e o futuro que vislumbramos!",
+      3: "Em nome da Equipe Galáctica, eliminarei qualquer um que ficar em nosso caminho!",
+      4: "Prepare-se para perder!",
+      5: "Espero que você esteja pronto para uma surra cósmica!"
     },
     "victory": {
       1: "Fui amassado...",
-      2: "This setback means nothing in the grand scheme.",
-      3: "Our plans are bigger than this defeat.",
-      4: "How?!",
-      5: "Note to self: practice Pokémon battling, ASAP."
+      2: "Este contratempo não significa nada no grande esquema.",
+      3: "Nossos planos são maiores que esta derrota.",
+      4: "Como?!",
+      5: "Nota para mim mesmo: praticar batalhas Pokémon, o mais rápido possível."
     },
   },
   "plasma_grunt": {
     "encounter": {
       1: "Não toleramos pessoas que pensam diferente de nós!",
-      2: "If I win against you, release your Pokémon!",
-      3: "If you get in the way of Team Plasma, I'll take care of you!",
-      4: "Team Plasma will liberate Pokémon from selfish humans like you!",
-      5: "Our hairstyles are out of this world... but our battling skills? You'll find out soon enough."
+      2: "Se eu ganhar de você, liberte seus Pokémon!",
+      3: "Se você atrapalhar a Equipe Plasma, eu cuidarei de você!",
+      4: "A Equipe Plasma vai libertar os Pokémon de humanos egoístas como você!",
+      5: "Nossos penteados são de outro mundo... mas nossas habilidades de batalha? Você descobrirá em breve."
     },
     "victory": {
       1: "Plasmaaaaaaaaa!",
-      2: "How could I lose...",
-      3: "...What a weak Pokémon, I'll just have to go steal some better ones!",
-      4: "Great plans are always interrupted.",
-      5: "This is bad... Badbadbadbadbadbadbad! Bad for Team Plasma! Or Plasbad, for short!"
+      2: "Como eu pude perder...",
+      3: "...Que Pokémon fraco, vou ter que roubar alguns melhores!",
+      4: "Grandes planos são sempre interrompidos.",
+      5: "Isso é ruim... Ruim ruim ruim ruim ruim ruim ruim! Ruim para a Equipe Plasma! Ou Plasruim, para abreviar!"
     },
   },
   "flare_grunt": {
     "encounter": {
-      1: "Your Pokémon are no match for the elegance of Team Flare.",
-      2: "Hope you brought your sunglasses, because things are about to get bright!",
-      3: "Team Flare will cleanse the world of imperfection!",
-      4: "Prepare to face the brilliance of Team Flare!",
-      5: "Fashion is most important to us!"
+      1: "Seus Pokémon não são páreo para a elegância da Equipe Flare.",
+      2: "Espero que você tenha trazido seus óculos de sol, porque as coisas vão ficar brilhantes!",
+      3: "A Equipe Flare vai purificar o mundo da imperfeição!",
+      4: "Prepare-se para enfrentar o brilho da Equipe Flare!",
+      5: "A moda é o mais importante para nós!"
     },
     "victory": {
-      1: "The future doesn't look bright for me.",
-      2: "Perhaps there's more to battling than I thought. Back to the drawing board.",
-      3: "Gahh?! I lost?!",
-      4: "Even in defeat, Team Flare's elegance shines through.",
-      5: "You may have beaten me, but when I lose, I go out in style!"
+      1: "O futuro não parece brilhante para mim.",
+      2: "Talvez haja mais na batalha do que eu pensei. De volta à prancheta.",
+      3: "Gahh?! Eu perdi?!",
+      4: "Mesmo na derrota, a elegância da Equipe Flare brilha.",
+      5: "Você pode ter me vencido, mas quando eu perco, eu saio com estilo!"
     },
   },
   "rocket_boss_giovanni_1": {
@@ -1105,8 +1088,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "crasher_wake": {
     "encounter": {
-      1: "Crash! Crash! Cuidado!\nCrasher Wake… está… aqui!",
-      2: "Crash! Crash! Crasher Wake!",
+      1: "Crash! Crash! Cuidado!\nDemolidor Wake… está… aqui!",
+      2: "Crash! Crash! Demolidor Wake!",
       3: "Sou a onda de poder que vai te lavar!"
     },
     "victory": {
@@ -1448,7 +1431,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "allister": {
     "encounter": {
-      1: "'M Allister.\nA-aqui... vou eu..."
+      1: "Sou Allister.\nA-aqui... vou eu..."
     },
     "victory": {
       1: `Quase perdi minha máscara de tanto choque... Isso foi…
@@ -1579,7 +1562,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Eu… Eu não… acredito…"
     },
     "defeat": {
-      1: "Isso foi por pouco. Me pergunto o que você está faltando."
+      1: "Isso foi por pouco. Me pergunto o que está faltando em você."
     }
   },
   "malva": {
@@ -2004,7 +1987,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `Sabe de uma coisa? Estou realmente ansiosa para ter batalhas sérias com Treinadores fortes! 
                 $Quero dizer, vamos lá! Os Treinadores que chegam aqui são Treinadores que desejam a vitória com todas as fibras do seu ser! 
-                #E eles estão batalhando ao lado de Pokémon que passaram por inúmeras batalhas difíceis! 
+                $E eles estão batalhando ao lado de Pokémon que passaram por inúmeras batalhas difíceis! 
                 $Se eu batalhar com pessoas assim, não só eu ficarei mais forte, meus Pokémon também! 
                 $E nós vamos nos conhecer ainda melhor! OK! Prepare-se! 
                 $Sou Iris, a Campeã da Liga Pokémon, e vou te derrotar!`,
@@ -2288,7 +2271,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "encounter": {
       1: `Oh, se não é um jovem Treinador… É adorável conhecê-lo assim. 
                     $Então, suponho que você ganhou o direito a uma batalha, como recompensa por seus esforços. 
-                    $O elusivo Fada pode parecer frágil como a brisa e delicado como uma flor, mas é forte.`,
+                    $Uma elusiva Fada pode parecer frágil como a brisa e delicado como uma flor, mas é forte.`,
     },
     "victory": {
       1: "Espero que você encontre coisas para sorrir amanhã…"
@@ -2458,7 +2441,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "Não acredito que perdi... Mas você mereceu essa vitória. Bem feito!",
-      2: "Parece que ainda tenho muito a aprender. Grande batalha, porém!"
+      2: "Parece que ainda tenho muito a aprender. Porém, grande batalha!"
     },
     "defeat": {
       1: "Você lutou bem, mas eu tenho a vantagem! Melhor sorte na próxima vez!",
@@ -2649,7 +2632,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
             $@c{serious_mopen_fists}Prepare-se.`
     },
     "victory": {
-      1: "@c{neutral}O que…@d{64} O que você é?"
+      1: "@c{neutral}O que…@d{64} O que é você?"
     },
   },
   "rival_4_female": {
@@ -2664,7 +2647,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
             $@c{angry_mopen}Prepare-se.`
     },
     "victory": {
-      1: "@c{neutral}O que…@d{64} O que você é?"
+      1: "@c{neutral}O que…@d{64} O que é você?"
     },
     "defeat": {
       1: "$@c{smile}Você deveria se orgulhar de até onde chegou."
@@ -2736,7 +2719,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 };
 
 
-// Diálogo dos NPCs no jogo quando o personagem do jogador é feminino. Para idiomas que não possuem pronomes de gênero, isso pode ser definido como PGMdialogue.
+// Dialogue of the NPCs in the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMdialogue.
 export const PGFdialogue: DialogueTranslationEntries = {
   "youngster": {
     "encounter": {
@@ -2794,90 +2777,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       9: "Estou realmente cansando de batalhar… Deve haver algo novo para fazer…"
     }
   },
-  "breeder": {
-    "encounter": {
-      1: "Pokémon obedientes, Pokémon egoístas… Pokémon têm características únicas.",
-      2: "Embora minha criação e comportamento sejam ruins, criei meus Pokémon bem.",
-      3: "Hmm, você disciplina seus Pokémon? Mimar demais não é bom."
-    },
-    "victory": {
-      1: "É importante nutrir e treinar as características de cada Pokémon.",
-      2: "Ao contrário do meu lado diabólico, esses são bons Pokémon.",
-      3: "Muito elogio pode estragar tanto Pokémon quanto pessoas."
-    },
-    "defeat": {
-      1: "Você não deve ficar com raiva dos seus Pokémon, mesmo se perder uma batalha.",
-      2: "Certo? Pokémon bons, né? Eu sou adequado para criar coisas.",
-      3: "Não importa o quanto você ame seus Pokémon, ainda precisa discipliná-los quando se comportam mal."
-    }
-  },
-  "breeder_female": {
-    "encounter": {
-      1: "Pokémon nunca te traem. Eles retribuem todo o amor que você dá a eles.",
-      2: "Quer uma dica para treinar bons Pokémon?",
-      3: "Eu criei esses Pokémon muito especiais usando um método especial."
-    },
-    "victory": {
-      1: "Ugh… Não era para ser assim. Será que administrei a mistura errada?",
-      2: "Como isso aconteceu com meus Pokémon… O que você está dando de comer aos seus Pokémon?",
-      3: "Se eu perder, isso significa que eu estava só matando o tempo. Não machuca meu ego nem um pouco."
-    },
-    "defeat": {
-      1: "Isso prova que meus Pokémon aceitaram meu amor.",
-      2: "O verdadeiro truque para treinar bons Pokémon é capturar bons Pokémon.",
-      3: "Pokémon serão fortes ou fracos dependendo de como você os cria."
-    }
-  },
-  "fisherman": {
-    "encounter": {
-      1: "Anem! Você me fez perder uma fisgada!\nO que vai fazer sobre isso?",
-      2: "Sai daqui! Você está assustando os Pokémon!",
-      3: "Vamos ver se você consegue fisgar uma vitória!",
-    },
-    "victory": {
-      1: "Esqueça isso.",
-      2: "Da próxima vez, eu vou pescar a vitória!",
-      3: "Acho que subestimei a força das correntes dessa vez.",
-    },
-  },
-  "fisherman_female": {
-    "encounter": {
-      1: "Uau! Peguei um grande!",
-      2: "Linha lançada, pronta para pescar o sucesso!",
-      3: "Pronta para fazer ondas!"
-    },
-    "victory": {
-      1: "Vou voltar com um anzol mais forte.",
-      2: "Vou pescar a vitória na próxima vez.",
-      3: "Estou só afiando meus anzóis para a revanche!"
-    },
-  },
-  "swimmer": {
-    "encounter": {
-      1: "Hora de mergulhar!",
-      2: "Vamos surfar nas ondas da vitória!",
-      3: "Pronto para fazer um splash!",
-    },
-    "victory": {
-      1: "Molhado na derrota!",
-      2: "Uma onda de derrota!",
-      3: "De volta à praia, eu acho.",
-    },
-  },
-  "backpacker": {
-    "encounter": {
-      1: "Prepare-se, vamos começar!",
-      2: "Vamos ver se você consegue acompanhar!",
-      3: "Prepare-se, desafiante!",
-      4: "Passei 20 anos tentando me encontrar… Mas onde estou?"
-    },
-    "victory": {
-      1: "Dessa vez tropecei!",
-      2: "Ah, acho que estou perdido.",
-      3: "Caminho sem saída!",
-      4: "Espere um segundo! Ei! Você não sabe quem eu sou?"
-    },
-  },
   "ace_trainer": {
     "encounter": {
       1: "Você parece bastante confiante.",
@@ -2898,14 +2797,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       4: "Claro que sou forte e não perco. É importante ganhar com graça."
     }
   },
-  "parasol_lady": {
-    "encounter": {
-      1: "Hora de embelezar o campo de batalha com elegância e postura!",
-    },
-    "victory": {
-      1: "Minha elegância permanece inabalável!",
-    }
-  },
   "twins": {
     "encounter": {
       1: "Prepare-se, porque quando nos unimos, é o dobro do problema!",
@@ -2923,18 +2814,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       3: "Dobro de sorrisos, dobro da dança da vitória!"
     }
   },
-  "cyclist": {
-    "encounter": {
-      1: "Prepare-se para comer poeira!",
-      2: "Prepare-se, desafiante! Estou prestes a te deixar para trás!",
-      3: "Pé no pedal, vamos ver se você consegue acompanhar!"
-    },
-    "victory": {
-      1: "As rodas podem estar paradas, mas a determinação continua a pedalar.",
-      2: "Fui mais rápido!",
-      3: "O caminho para a vitória tem muitas curvas e voltas para explorar."
-    },
-  },
   "black_belt": {
     "encounter": {
       1: "Elogio sua coragem ao me desafiar! Pois eu sou o que tem o chute mais forte!",
@@ -2943,100 +2822,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "Oh. Os Pokémon fizeram a luta. Meu chute forte não ajudou em nada.",
       2: "Hmmm… Se eu ia perder de qualquer maneira, esperava ficar totalmente destruído no processo."
-    },
-  },
-  "battle_girl": {
-    "encounter": {
-      1: "Você não precisa tentar me impressionar. Você pode perder contra mim.",
-    },
-    "victory": {
-      1: "É difícil dizer adeus, mas estamos ficando sem tempo…",
-    },
-  },
-  "hiker": {
-    "encounter": {
-      1: "Minha barriga de meia-idade me deu tanta gravidade quanto as montanhas que eu escalo!",
-      2: "Herdei esse corpo ossudo dos meus pais… Sou como uma cadeia de montanhas viva…",
-    },
-    "victory": {
-      1: "Pelo menos não posso perder quando se trata de IMC!",
-      2: "Não é suficiente… Nunca é suficiente. Meu colesterol ruim não está alto o suficiente…"
-    },
-  },
-  "ranger": {
-    "encounter": {
-      1: "Quando estou cercado pela natureza, a maioria das outras coisas deixa de importar.",
-      2: "Quando estou vivendo sem natureza na minha vida, às vezes sinto uma crise de ansiedade se aproximando."
-    },
-    "victory": {
-      1: "Não importa para a vastidão da natureza se eu ganhar ou perder…",
-      2: "Algo assim é bastante trivial comparado aos sentimentos sufocantes da vida na cidade."
-    },
-    "defeat": {
-      1: "Ganhei a batalha. Mas a vitória não é nada comparada à vastidão da natureza…",
-      2: "Tenho certeza de que como você se sente não é tão ruim se comparar aos meus ataques de ansiedade…"
-    }
-  },
-  "scientist": {
-    "encounter": {
-      1: "Minha pesquisa levará este mundo à paz e alegria.",
-    },
-    "victory": {
-      1: "Sou um gênio… Não devo perder para alguém como você…",
-    },
-  },
-  "school_kid": {
-    "encounter": {
-      1: "Heehee. Estou confiante nos meus cálculos e análises.",
-      2: "Estou ganhando o máximo de experiência que posso porque quero ser um Líder de Ginásio um dia."
-    },
-    "victory": {
-      1: "Aff… Cálculo e análise talvez não sejam páreo para o acaso…",
-      2: "Até experiências difíceis e desafiadoras têm seu propósito, eu acho."
-    }
-  },
-  "artist": {
-    "encounter": {
-      1: "Eu costumava ser popular, mas agora estou acabado.",
-    },
-    "victory": {
-      1: "À medida que os tempos mudam, os valores também mudam. Percebi isso tarde demais.",
-    },
-  },
-  "guitarist": {
-    "encounter": {
-      1: "Prepare-se para sentir o ritmo da derrota enquanto eu toco minha vitória!",
-    },
-    "victory": {
-      1: "Silenciado por agora, mas minha melodia de resiliência continuará a tocar.",
-    },
-  },
-  "worker": {
-    "encounter": {
-      1: "Me incomoda que as pessoas sempre me entendam mal. Sou muito mais puro do que todos pensam.",
-    },
-    "victory": {
-      1: "Eu realmente não quero que minha pele queime, então quero ficar na sombra enquanto trabalho.",
-    },
-  },
-  "worker_female": {
-    "encounter": {
-      1: `Me incomoda que as pessoas sempre me entendam mal.
-                $Sou muito mais pura do que todos pensam.`
-    },
-    "victory": {
-      1: "Eu realmente não quero que minha pele queime, então quero ficar na sombra enquanto trabalho."
-    },
-    "defeat": {
-      1: "Meu corpo e mente nem sempre estão necessariamente em sincronia."
-    }
-  },
-  "worker_double": {
-    "encounter": {
-      1: "Vou te mostrar que podemos te quebrar. Estamos treinando no campo!",
-    },
-    "victory": {
-      1: "Que estranho… Como isso pode ser… Não deveria ter sido superado.",
     },
   },
   "hex_maniac": {
@@ -3050,34 +2835,8 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "New age se refere simplesmente aos compositores clássicos do século XX, certo?",
-      2: "Não fique preso na tristeza ou frustração. Você pode usar seus rancores para se motivar."
+      2: "Não fique presa na tristeza ou frustração. Você pode usar seus rancores para se motivar."
     }
-  },
-  "psychic": {
-    "encounter": {
-      1: "Oi! Concentre-se!",
-    },
-    "victory": {
-      1: "Perdi minha concentração!",
-    },
-  },
-  "officer": {
-    "encounter": {
-      1: "Prepare-se, porque a justiça está prestes a ser servida!",
-      2: "Pronto para defender a lei e servir a justiça no campo de batalha!"
-    },
-    "victory": {
-      1: "O peso da justiça parece mais pesado do que nunca…",
-      2: "As sombras da derrota pairam no distrito."
-    }
-  },
-  "beauty": {
-    "encounter": {
-      1: "Minha última batalha… É assim que eu gostaria que víssemos esta partida…",
-    },
-    "victory": {
-      1: "Foi divertido… Vamos ter outra última batalha algum dia…",
-    },
   },
   "baker": {
     "encounter": {
@@ -3087,31 +2846,11 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Vou assar uma revanche."
     },
   },
-  "biker": {
-    "encounter": {
-      1: "Hora de acelerar e te deixar na poeira!"
-    },
-    "victory": {
-      1: "Vou me ajustar para a próxima corrida."
-    },
-  },
-  "firebreather": {
-    "encounter": {
-      1: "Minhas chamas irão te consumir!",
-      2: "Minha alma está pegando fogo. Irei te mostrar como queima!",
-      3: "Cola aqui e dá uma olhada!"
-    },
-    "victory": {
-      1: "Fui reduzido a cinzas…",
-      2: "Uau! Isso foi quente!",
-      3: "Ai! Queimei minha língua!"
-    },
-  },
   "sailor": {
     "encounter": {
       1: "Mano, você vai andar na prancha se perder!",
       2: "Vem com tudo! Sou um marinheiro com orgulho!",
-      3: "Ahoy marujo! Tá enjoado, é?!"
+      3: "Ahoy maruja! Tá enjoada, é?!"
     },
     "victory": {
       1: "Argh! Perdi pra uma criança!",
@@ -3119,21 +2858,155 @@ export const PGFdialogue: DialogueTranslationEntries = {
       3: "Estou achando que quem tá enjoado sou eu..."
     },
   },
-  "brock": {
+  "ariana": {
     "encounter": {
-      1: "Minha especialidade em Pokémon do tipo Pedra vai te derrubar! Vamos lá!",
-      2: "Minha vontade firme como pedra vai te sobrecarregar!",
-      3: "Permita-me mostrar a verdadeira força dos meus Pokémon!"
+      1: "Pera aí! Não podemos deixar alguém solto por aí. Isso é prejudicial para o orgulho da Equipe Rocket, entende?",
+      2: "Eu não sei ou me importo se o que estou fazendo é certo ou errado... Eu apenas coloco minha fé em Giovanni e faço o que me é dito.",
+      3: "Sua viagem termina aqui. Vou te derrubar!"
     },
     "victory": {
-      1: "A força dos seus Pokémon superou minhas defesas de pedra!",
-      2: "O mundo é enorme! Estou feliz por ter tido a chance de batalhar com você.",
-      3: "Talvez eu deva voltar a perseguir meu sonho de ser Criador de Pokémon…"
+      1: "Uau, você é forte. Que desperdício. Se você se juntasse à Equipe Rocket, poderia se tornar uma Executiva.",
+      2: "Eu... Eu estou arrasada...",
+      3: "Aaaieeeee! Isso não pode estar acontecendo! Eu lutei muito, mas ainda perdi…"
+    },
+  },
+  "tabitha": {
+    "encounter": {
+      1: "Hehehe! Então você veio até aqui! Mas você chegou tarde demais!",
+      2: "Hehehe... Já chegou aqui, não é? Nós subestimamos você! Mas é isso! Eu sou um passo acima dos Capangas que você viu até agora. Não estou ganhando tempo. Vou te pulverizar!",
+      3: "Vou te dar um gostinho da dor! Resigne-se a isso!"
+    },
+    "victory": {
+      1: "Hehehe! Você pode ter me derrotado, mas não tem chance contra o Chefe! Se você se perder agora, não terá que enfrentar uma surra sonora!",
+      2: "Hehehe... Então, eu também perdi...",
+      3: "Ahya! Como isso pode ser? Para um Admin como eu perder para uma treinadora qualquer..."
+    },
+  },
+  "shelly": {
+    "encounter": {
+      1: "Ahahahaha! Você vai se meter nos assuntos da Equipe Aqua? Você é absolutamente destemida, simplesmente ignorante ou ambos! Você é tão fofa que chega a ser nojenta! Vou te derrubar",
+      2: "O que é isso? Quem é essa criança mimada?",
+      3: "Relaxe. Seja paciente. Vou te esmagar em breve."
+    },
+    "victory": {
+      1: "Ahahahaha! Fomos surpreendidos inesperadamente! Estamos sem opções. Teremos que recuar. Mas esta não é a última vez que você verá a Equipe Aqua! Temos outros planos! Não se esqueça disso!",
+      2: "Ahhh?! Fui muito fácil com você?!",
+      3: "Uh. Você está me dizendo que melhorou seu jogo ainda mais durante a luta? Você é uma pirralha com um futuro brilhante… Meu Pokémon e eu não temos mais forças para lutar… Vá em frente… Vá e seja destruída por Archie."
+    },
+  },
+  "matt": {
+    "encounter": {
+      1: "Hoohahaha! O que, você tem um parafuso solto ou algo assim? Olhe para você, pequena pessoa Makuhita!",
+      2: "Oho! Você! Você é aquela criança engraçada!",
+      3: "O que você está fazendo aqui? Você nos seguiu?"
+    },
+    "victory": {
+      1: "Muito bem, até que o Chefe tenha tempo para você, serei seu oponente!",
+      2: "Posso sentir! Posso sentir, tudo bem! A força saindo de você! Mais! Eu ainda quero mais! Mas parece que estamos sem tempo...",
+      3: "Isso foi divertido! Eu sabia que você me mostraria um bom tempo! Estou ansioso para enfrentá-la novamente algum dia!"
+    },
+  },
+  "mars": {
+    "encounter": {
+      1: "Sou Mars, uma das principais Comandantes da Equipe Galáctica.",
+      2: "A visão da Equipe Galáctica para o futuro é inabalável. A oposição será esmagada sem piedade!",
+      3: "Sentindo-se nervosa? Você deveria estar!"
+    },
+    "victory": {
+      1: "Isso não pode estar acontecendo! Como eu perdi?!",
+      2: "Você tem alguma habilidade, eu admito isso.",
+      3: "Derrotada... Este foi um erro caro."
+    }
+  },
+  "zinzolin": {
+    "encounter": {
+      1: "Você poderia se tornar uma ameaça para a Equipe Plasma, então vamos eliminá-la aqui e agora!",
+      2: "Oh, pelo amor de Deus... Eu não esperava ter que lutar neste frio congelante!",
+      3: "Você é uma treinadora impressionante para ter chegado tão longe. Mas termina aqui."
+    },
+    "victory": {
+      1: "Ghetsis... Eu falhei com você...",
+      2: "Está amargamente frio. Estou tremendo. Estou sofrendo. Ainda assim, estou vitorioso.",
+      3: "Hmph. Você é uma treinadora mais esperta do que eu esperava, mas não esperta o suficiente."
+    }
+  },
+  "rood": {
+    "encounter": {
+      1: "Você é uma ameaça para a Equipe Plasma. Não podemos deixá-la ir embora daqui e agora!",
+      2: "Oh, este vento gelado... Eu nunca pensei que teria que lutar aqui!",
+      3: "Você é uma treinadora notável para ter chegado tão longe. Mas é aqui que termina."
+    },
+    "victory": {
+      1: "Ghetsis... Eu falhei em minha missão...",
+      2: "O frio é penetrante. Estou tremendo. Estou sofrendo. Ainda assim, triunfei.",
+      3: "Hm. Você é uma treinadora talentosa, mas infelizmente não talentosa o suficiente."
+    }
+  },
+  "xerosic": {
+    "encounter": {
+      1: "Ah ha ha! Será um prazer. Vamos lá, pequena treinadora! Vamos ver o que você tem!",
+      2: "Hmm... Você é mais poderosa do que parece. Eu me pergunto quanta energia há dentro de você.",
+      3: "Eu estava esperando por você! Preciso fazer uma pequena pesquisa sobre você! Vamos começar!"
+    },
+    "victory": {
+      1: "Ah, você é bastante forte. Oh sim—muito forte, de fato.",
+      2: "Ding-ding-ding! Você conseguiu! À vencedora, os despojos!",
+      3: "Maravilhoso! Incrível! Você tem uma tremenda habilidade e coragem!"
+    }
+  },
+  "bryony": {
+    "encounter": {
+      1: "Eu sou Bryony, e será um prazer lutar com você. Mostre-me o que você tem.",
+      2: "Impressionante... Você é mais poderosa do que parece. Vamos ver a verdadeira extensão de sua energia.",
+      3: "Eu antecipei sua chegada. É hora de um pequeno teste. Vamos começar?"
+    },
+    "victory": {
+      1: "Você é bastante forte. Oh sim—muito forte, de fato.",
+      2: "Ding-ding-ding! Você se saiu bem. A vitória é sua.",
+      3: "Maravilhoso! Notável! Sua habilidade e coragem são admiráveis."
+    }
+  },
+  "rocket_grunt": {
+    "encounter": {
+      1: "Se prepara pra encrenca!",
+      2: "Estamos realizando um grande trabalho aqui! Cai fora, garota!",
+      3: "Entregue seus Pokémon ou enfrente a ira da Equipe Rocket!",
+      4: "Você está prestes a experimentar o verdadeiro terror da Equipe Rocket!",
+      5: "Ei, garota! Eu sou um tipo de cara da Equipe Rocket!" // Uso de gramática incorreta é proposital
+    },
+    "victory": {
+      1: "Equipe Rocket decolando de novo!",
+      2: "Oh não! Eu deixei a Chave de Elevação cair!",
+      3: "Eu estraguei tudo!",
+      4: "Meus associados não vão tolerar isso!",
+      5: "Você diz o que? Equipe Rocket tchau-tchau a vai-vai? Quebrado é diz você?" // Uso de gramática incorreta é proposital
+    },
+  },
+  "galactic_grunt": {
+    "encounter": {
+      1: "Não mexa com a Equipe Galáctica!",
+      2: "Presencie o poder da nossa tecnologia e o futuro que vislumbramos!",
+      3: "Em nome da Equipe Galáctica, eliminarei qualquer um que ficar em nosso caminho!",
+      4: "Prepare-se para perder!",
+      5: "Espero que você esteja pronta para uma surra cósmica!"
+    },
+    "victory": {
+      1: "Fui amassado...",
+      2: "Este contratempo não significa nada no grande esquema.",
+      3: "Nossos planos são maiores que esta derrota.",
+      4: "Como?!",
+      5: "Nota para mim mesmo: praticar batalhas Pokémon, o mais rápido possível."
+    },
+  },
+  "galactic_boss_cyrus_1": {
+    "encounter": {
+      1: "Você foi compelida a vir aqui por tal sentimentalismo vazio\nEu farei você se arrepender de ter ouvido seu coração!"
+    },
+    "victory": {
+      1: "Interessante. E bastante curioso."
     },
     "defeat": {
-      1: "A melhor defesa é um bom ataque!\nEssa é a minha maneira de fazer as coisas!",
-      2: "Venha estudar rochas comigo da próxima vez para aprender melhor a combatê-las!",
-      3: "Hah, todas as minhas viagens pelas regiões estão valendo a pena!"
+      1: "Eu criarei meu novo mundo..."
     }
   },
   "misty": {
@@ -3170,77 +3043,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       3: "Uma batalha de Pokémon é guerra, e eu te mostrei combate em primeira mão!"
     }
   },
-  "erika": {
-    "encounter": {
-      1: "Ah, o tempo está adorável aqui…\nOh, uma batalha? Muito bem então.",
-      2: "Minhas habilidades de batalha Pokémon rivalizam com minhas habilidades de arranjo de flores.",
-      3: "Oh, espero que o aroma agradável dos meus Pokémon não me faça dormir de novo…",
-      4: "Ver flores em um jardim é tão calmante."
-    },
-    "victory": {
-      1: "Oh! Eu concedo a derrota.",
-      2: "Aquela partida foi muito agradável.",
-      3: "Ah, parece que perdi…",
-      4: "Oh, meu Deus."
-    },
-    "defeat": {
-      1: "Tinha medo de adormecer…",
-      2: "Oh, meu Deus, parece que meus Pokémon de Grama te dominaram.",
-      3: "Essa batalha foi uma experiência tão calmante.",
-      4: "Oh… É só isso?"
-    }
-  },
-  "janine": {
-    "encounter": {
-      1: "Estou dominando a arte dos ataques venenosos.\nVou lutar com você hoje!",
-      2: "Meu pai confia que posso me defender.\nVou provar que ele está certo!",
-      3: "Minhas técnicas de ninja só perdem para as do meu pai!\nVocê consegue acompanhar?"
-    },
-    "victory": {
-      1: "Ainda preciso de treinamento… Entendi.",
-      2: "Sua técnica de batalha superou a minha.",
-      3: "Vou me aplicar de verdade e melhorar minhas habilidades."
-    },
-    "defeat": {
-      1: "Hehe… o veneno drenou todas as suas forças para lutar.",
-      2: "Ha! Você não teve chance contra minhas habilidades superiores de ninja!",
-      3: "A fé do meu pai em mim não foi mal colocada."
-    }
-  },
-  "sabrina": {
-    "encounter": {
-      1: "Através da minha habilidade psíquica, tive uma visão da sua chegada!",
-      2: "Não gosto de lutar, mas se você quiser, vou mostrar meus poderes!",
-      3: "Posso sentir grande ambição em você. Vou ver se não é infundada."
-    },
-    "victory": {
-      1: "Seu poder… Ele supera o que eu previa…",
-      2: "Não consegui prever seu poder com precisão.",
-      3: "Mesmo com meus imensos poderes psíquicos, não consigo sentir outro tão forte quanto você."
-    },
-    "defeat": {
-      1: "Essa vitória… É exatamente como previ nas minhas visões!",
-      2: "Talvez fosse outra pessoa que eu sentisse um grande desejo…",
-      3: "Aprimore suas habilidades antes de entrar em batalha precipitadamente.\nVocê nunca sabe o que o futuro pode reservar se fizer isso…"
-    }
-  },
-  "blaine": {
-    "encounter": {
-      1: "Hah! Espero que tenha trazido uma Cura de Queimadura!",
-      2: "Meus Pokémon de Fogo vão incinerar todos os desafiantes!",
-      3: "Prepare-se para brincar com fogo!"
-    },
-    "victory": {
-      1: "Queimei até não restar nada! Nem cinzas sobraram!",
-      2: "Não acendi as chamas alto o suficiente?",
-      3: "Estou completamente exausto… Mas isso faz minha motivação para melhorar queimar ainda mais!"
-    },
-    "defeat": {
-      1: "Meu inferno ardente não pode ser apagado!",
-      2: "Meus Pokémon foram fortalecidos com o calor desta vitória!",
-      3: "Hah! Minha paixão queima mais do que a sua!"
-    }
-  },
   "giovanni": {
     "encounter": {
       1: "Eu, o líder da Equipe Rocket, vou te fazer sentir um mundo de dor!",
@@ -3256,23 +3058,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Não ser capaz de medir sua própria força mostra que você ainda é apenas uma criança.",
       2: "Não tente interferir comigo novamente.",
       3: "Espero que entenda o quão tolo foi me desafiar."
-    }
-  },
-  "roxanne": {
-    "encounter": {
-      1: "Você poderia gentilmente demonstrar como batalha?",
-      2: "Você pode aprender muitas coisas batalhando com muitos treinadores.",
-      3: "Oh, você me pegou estrategizando.\nGostaria de batalhar?"
-    },
-    "victory": {
-      1: "Oh, parece que perdi.\nEu entendo.",
-      2: "Parece que ainda tenho muito mais a aprender quando se trata de batalhas.",
-      3: "Vou levar o que aprendi aqui hoje a sério."
-    },
-    "defeat": {
-      1: "Aprendi muitas coisas com nossa batalha.\nEspero que você também tenha aprendido.",
-      2: "Espero batalhar com você novamente.\nEspero que use o que aprendeu aqui.",
-      3: "Venci devido a tudo o que aprendi."
     }
   },
   "brawly": {
@@ -3304,43 +3089,9 @@ export const PGFdialogue: DialogueTranslationEntries = {
       3: "Obrigado pela emoção!\nWahahahaha!"
     },
     "defeat": {
-      1: "Você está totalmente carregado agora!\nWahahahaha!",
+      1: "Você está totalmente carregada agora!\nWahahahaha!",
       2: "Espero ver você faíscando em batalhas futuras!\nWahahahaha!",
       3: "Wahahahaha! Que batalha eletrizante!"
-    }
-  },
-  "flannery": {
-    "encounter": {
-      1: "Meus Pokémon de fogo estão prontos para queimar a concorrência!\nVamos nessa!",
-      2: "Prepare-se para sentir o calor da minha determinação!\nNão vou segurar nada!",
-      3: "Minhas habilidades vão incinerar você!\nPrepare-se para a batalha mais quente da sua vida!"
-    },
-    "victory": {
-      1: "Essa derrota só faz minha determinação queimar mais!",
-      2: "Essa perda não apagará minhas chamas!\nEstarei de volta mais forte!",
-      3: "Vou usar essa experiência para reacender meu espírito competitivo!"
-    },
-    "defeat": {
-      1: "Minhas chamas nunca se apagarão!\nSou muito apaixonada por isso!",
-      2: "Você foi incrível!\nVamos fazer isso de novo algum dia!",
-      3: "Que batalha ardente!\nMal posso esperar pela próxima!"
-    }
-  },
-  "norman": {
-    "encounter": {
-      1: "Você está pronta para enfrentar a força pura do meu time?\nVou te mostrar o poder do equilíbrio!",
-      2: "Minha experiência em batalha vai fazer você suar!\nPrepare-se!",
-      3: "Treinei meu time rigorosamente.\nVamos ver se você consegue igualar!"
-    },
-    "victory": {
-      1: "Parece que subestimei você.\nFoi uma batalha dura.",
-      2: "Você é forte, mas ainda há muito para aprender.",
-      3: "Essa derrota não abalará minha determinação.\nEstarei de volta mais forte!"
-    },
-    "defeat": {
-      1: "Você lutou bravamente!\nEspero batalhar com você novamente.",
-      2: "Sua força é incrível!\nNão posso esperar pela nossa próxima batalha.",
-      3: "Foi uma honra batalhar com você!\nAté a próxima!"
     }
   },
   "winona": {
@@ -3362,7 +3113,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "tate": {
     "encounter": {
-      1: "Hehehe... Ficou surpreso de me ver sem minha irmã?",
+      1: "Hehehe... Ficou surpresa de me ver sem minha irmã?",
       2: "Posso ver o que você está pensando...\nVocê quer batalhar!",
       3: "Como você pode derrotar alguém...\nQue sabe todos os seus movimentos?"
     },
@@ -3379,7 +3130,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "liza": {
     "encounter": {
-      1: "Fufufu... Ficou surpreso de me ver sem meu irmão?",
+      1: "Fufufu... Ficou surpresa de me ver sem meu irmão?",
       2: "Posso determinar o que você deseja...\nVocê quer batalhar, não quer?",
       3: "Como você pode derrotar alguém...\nQue é um com seus Pokémon?"
     },
@@ -3392,60 +3143,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Meus Pokémon e eu somos vitoriosos.",
       2: "Se você não consegue nem me derrotar, nunca será capaz de derrotar Tate também.",
       3: "Tudo graças ao meu treinamento rigoroso com Tate.\nPosso me sincronizar com meus Pokémon."
-    }
-  },
-  "juan": {
-    "encounter": {
-      1: "Agora não é hora de agir timidamente.\nVamos batalhar!",
-      2: "Ahahaha, você será testemunha da minha arte com Pokémon de Água!",
-      3: "Um tufão se aproxima!\nVocê será capaz de me testar?",
-      4: "Por favor, você será testemunha da nossa arte.\nUma grande ilusão de água esculpida por meus Pokémon e por mim!"
-    },
-    "victory": {
-      1: "Você pode ser um gênio que pode enfrentar Wallace!",
-      2: "Eu me concentrei na elegância enquanto você treinava.\nÉ natural que você me derrotasse.",
-      3: "Ahahaha!\nMuito bem, você venceu desta vez.",
-      4: "De você, sinto o brilho brilhante da habilidade que superará tudo."
-    },
-    "defeat": {
-      1: "Meus Pokémon e eu esculpimos uma ilusão de Água e saímos vitoriosos.",
-      2: "Ahahaha, eu venci, e você perdeu.",
-      3: "Posso emprestar meu traje? Pode te ajudar a batalhar!\nAhahaha, estou brincando!",
-      4: "Eu sou o vencedor! O que quer dizer, você perdeu."
-    }
-  },
-  "crasher_wake": {
-    "encounter": {
-      1: "Crash! Crash! Cuidado!\nCrasher Wake… está… aqui!",
-      2: "Crash! Crash! Crasher Wake!",
-      3: "Sou a onda de poder que vai te lavar!"
-    },
-    "victory": {
-      1: "Isso coloca um sorriso no meu rosto!\nGuhahaha! Foi uma explosão!",
-      2: "Hunwah! Acabou e terminou!\nComo vou dizer isso...\nQuero mais! Queria batalhar muito mais!",
-      3: "O QUÊ?!"
-    },
-    "defeat": {
-      1: "Siiiiim! Isso mesmo!",
-      2: "Eu venci, mas quero mais! Queria batalhar muito mais!",
-      3: "Até logo!"
-    }
-  },
-  "falkner": {
-    "encounter": {
-      1: "Vou mostrar o verdadeiro poder dos magníficos Pokémon pássaros!",
-      2: "Ventos, fiquem comigo!",
-      3: "Pai! Espero que esteja vendo minha batalha de cima!"
-    },
-    "victory": {
-      1: "Eu entendo... Vou sair graciosamente.",
-      2: "Uma derrota é uma derrota. Você é realmente forte.",
-      3: "...Droga! Sim, eu perdi."
-    },
-    "defeat": {
-      1: "Pai! Venci com seus amados Pokémon pássaros...",
-      2: "Pokémon pássaros são os melhores afinal!",
-      3: "Sinto que estou alcançando meu pai!"
     }
   },
   "nessa": {
@@ -3485,11 +3182,11 @@ export const PGFdialogue: DialogueTranslationEntries = {
   "marlon": {
     "encounter": {
       1: "Você parece forte! Vamos começar!",
-      2: "Sou forte como a amplitude do oceano. Você vai ser varrido, com certeza.",
+      2: "Sou forte como a amplitude do oceano. Você vai ser varrida, com certeza.",
       3: "Oh ho, então estou enfrentando você! Isso é fora do comum."
     },
     "victory": {
-      1: "Você foi incrível! Está criando alguns Pokémon incríveis. Você dominou a coisa de Treinador!",
+      1: "Você foi incrível! Está criando alguns Pokémon incríveis. Você dominou a coisa de Treinadora!",
       2: "Você não apenas parece forte, você é forte de verdade! Eh, eu também fui varrido!",
       3: "Você é forte como uma onda impressionante!"
     },
@@ -3518,7 +3215,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "marshal": {
     "encounter": {
-      1: "Meu mentor, Alder, vê seu potencial como Treinadora e está interessado em você.\nMeu objetivo é testá-lo—levar você aos limites da sua força. Kiai!",
+      1: "Meu mentor, Alder, vê seu potencial como Treinadora e está interessado em você.\nMeu objetivo é testá-la—levar você aos limites da sua força. Kiai!",
       2: "Vitória, vitória decisiva, é meu objetivo! Desafiante, aqui vou eu!",
       3: "Em mim mesmo, procuro desenvolver a força de um lutador e eliminar qualquer fraqueza em mim!\nPrevalecendo com a força de minhas convicções!"
     },
@@ -3548,40 +3245,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Como Líder de Ginásio, meu objetivo é ser um obstáculo para você superar.",
       2: "Tudo bem!",
       3: "Cheguei onde estou porque os Pokémon estavam ao meu lado.\nTalvez precisemos pensar por que os Pokémon nos ajudam, não em termos de Pokémon e Treinadores, mas como uma relação entre seres vivos."
-    }
-  },
-  "chili": {
-    "encounter": {
-      1: "Ihuuu! Hora de brincar com FOGO!! Sou o mais forte dos nossos irmãos!",
-      2: "Ta-da! O incendiário do tipo Fogo Chili—sou eu—será seu oponente!",
-      3: "Vou mostrar o que eu e meus tipos de Fogo podemos fazer!"
-    },
-    "victory": {
-      1: "Você me pegou. Estou... queimado...",
-      2: "Uau! Você está pegando fogo!",
-      3: "Ai! Você me pegou!"
-    },
-    "defeat": {
-      1: "Estou pegando fogo! Jogue comigo, e você se queimará!",
-      2: "Quando você brinca com fogo, você se queima!",
-      3: "Quero dizer, vamos lá, seu oponente era eu! Você não tinha chance!"
-    }
-  },
-  "cilan": {
-    "encounter": {
-      1: "Nada pessoal... Sem ressentimentos... Eu e meus Pokémon do tipo Grama vamos...\nUm... Vamos batalhar, aconteça o que acontecer.",
-      2: "Então, hum, se você está bem comigo, vou, hum, colocar tudo o que tenho em ser, er, você sabe, seu oponente.",
-      3: "OK… Então, hum, eu sou o Cilan, gosto de Pokémon do tipo Grama."
-    },
-    "victory": {
-      1: "Er... Acabou agora?",
-      2: "…Que surpresa. Você é muito forte, não é?\nAcho que meus irmãos também não teriam sido capazes de te derrotar...",
-      3: "…Huh. Parece que meu timing estava, hum, errado?"
-    },
-    "defeat": {
-      1: "Huh? Ganhei?",
-      2: "Acho...\nSuponho que ganhei, porque competi com meus irmãos Chili e Cress, e todos conseguimos ficar mais fortes.",
-      3: "Foi... uma experiência bastante emocionante..."
     }
   },
   "roark": {
@@ -3615,7 +3278,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "Ainda não sou bom o suficiente...",
-      2: "Eu vejo... Sua jornada o levou a lugares distantes e você testemunhou muito mais do que eu.\nEu invejo você por isso...",
+      2: "Eu vejo... Sua jornada a levou a lugares distantes e você testemunhou muito mais do que eu.\nEu invejo você por isso...",
       3: "Como isso é possível...",
       4: "Não acho que nossos potenciais sejam tão diferentes.\nMas você parece ter algo mais do que isso... Que seja.",
       5: "Acho que preciso de mais treinamento.",
@@ -3630,42 +3293,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       6: "Eu sabia que venceria!"
     }
   },
-  "crispin": {
-    "encounter": {
-      1: "Quero vencer, então é exatamente isso que vou fazer!",
-      2: "Eu batalho porque quero batalhar! E sabe de uma coisa? É assim que deve ser!"
-    },
-    "victory": {
-      1: "Queria vencer... mas perdi!",
-      2: "Eu perdi... porque não consegui vencer!"
-    },
-    "defeat": {
-      1: "Ei, espere um segundo. Eu acabei de vencer? Acho que acabei de vencer! Que satisfação!",
-      2: "Uou! Isso foi incrível!"
-    }
-  },
-  "amarys": {
-    "encounter": {
-      1: "Quero ser a pessoa a ajudar alguém em particular. Sendo assim, não posso me dar ao luxo de perder.\n... Nossa batalha começa agora."
-    },
-    "victory": {
-      1: "Eu sou... não o suficiente, eu vejo."
-    },
-    "defeat": {
-      1: "A vitória pertence a mim. Bem lutado."
-    }
-  },
-  "lacey": {
-    "encounter": {
-      1: "Vou enfrentar você com meu time usual como membro da Elite dos Quatro."
-    },
-    "victory": {
-      1: "Foi uma excelente batalha. Estou ansiosa para o próximo desafio."
-    },
-    "defeat": {
-      1: "Fufufu... Nada mal.\nDesafiantes que derrotam a Elite dos Quatro são dignos de notar."
-    }
-  },
   "drayton": {
     "encounter": {
       1: `Cara, eu amo cadeiras. Você não ama cadeiras? Que salva-vidas.
@@ -3675,7 +3302,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Acho que deveria ter esperado por isso!"
     },
     "defeat": {
-      1: "Heh heh! Não ligue para mim, só pegando uma vitória aqui. Entendo se você estiver chateado, mas não vá dar uma de Kieran comigo, OK?"
+      1: "Heh heh! Não ligue para mim, só pegando uma vitória aqui. Entendo se você estiver chateada, mas não vá dar uma de Kieran comigo, OK?"
     }
   },
   "ramos": {
@@ -3688,23 +3315,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Hohoho... De fato. Pequenas lâminas frágeis de grama conseguem quebrar até mesmo concreto."
-    }
-  },
-  "viola": {
-    "encounter": {
-      1: `Seja as lágrimas de frustração que seguem uma derrota ou o florescer da alegria que vem com a vitória…
-                $Ambos são ótimos temas para minha câmera! Fantástico! Isso vai ser simplesmente fantástico!
-                $Agora venha para cima de mim!`,
-      2: "Minha lente está sempre focada na vitória – não vou deixar nada estragar esta foto!"
-    },
-    "victory": {
-      1: "Você e seus Pokémon me mostraram uma nova profundidade de campo! Fantástico! Simplesmente fantástico!",
-      2: `O mundo que você vê através de uma lente, e o mundo que você vê com um Pokémon ao seu lado…
-                $O mesmo mundo pode parecer completamente diferente dependendo do seu ponto de vista.`
-    },
-    "defeat": {
-      1: "A foto do momento da minha vitória vai ser um verdadeiro sucesso!",
-      2: "Sim! Tirei ótimas fotos!"
     }
   },
   "candice": {
@@ -3735,40 +3345,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Sim! Meus Pokémon e eu somos perfeitamente bons!"
     }
   },
-  "aaron": {
-    "encounter": {
-      1: "Ok! Deixe-me enfrentar você!"
-    },
-    "victory": {
-      1: "Batalhar é um assunto profundo e complexo..."
-    },
-    "defeat": {
-      1: "Vencer um membro da Elite dos Quatro não é fácil."
-    }
-  },
-  "cress": {
-    "encounter": {
-      1: "Isso mesmo! Serei eu e meus estimados tipos Água que você deve enfrentar na batalha!"
-    },
-    "victory": {
-      1: "Perder? Eu? Não acredito nisso."
-    },
-    "defeat": {
-      1: "Este é o resultado apropriado quando eu sou seu oponente."
-    }
-  },
-  "allister": {
-    "encounter": {
-      1: "'M Allister.\nA-aqui... vou eu..."
-    },
-    "victory": {
-      1: `Quase perdi minha máscara de tanto choque... Isso foi…
-                $Uau. Posso ver sua habilidade pelo que ela é.`,
-    },
-    "defeat": {
-      1: "I-isso foi incrível!"
-    }
-  },
   "clay": {
     "encounter": {
       1: "Harrumph! Me deixou esperando, não foi, garota? Tudo bem, hora de ver o que você pode fazer!"
@@ -3786,73 +3362,10 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Vou te servir um prato completo de Pokémon do tipo Água! Mas não tente comê-los!"
     },
     "victory": {
-      1: "Vaultin' Veluza! Você é animada, não é! Um pouco ANIMADO DEMAIS, se me permite dizer!"
+      1: "Vaultin' Veluza! Você é animada, não é! Um pouco ANIMADA DEMAIS, se me permite dizer!"
     },
     "defeat": {
       1: "Volte para me ver novamente, ouviu?"
-    }
-  },
-  "tulip": {
-    "encounter": {
-      1: "Permita-me usar minhas habilidades para deixar seus lindos Pokémon ainda mais bonitos!"
-    },
-    "victory": {
-      1: "Sua força tem uma magia que não pode ser apagada."
-    },
-    "defeat": {
-      1: "Você sabe, na minha linha de trabalho, pessoas que carecem de talento em uma área ou outra frequentemente desaparecem rapidamente - nunca mais se ouve falar delas."
-    }
-  },
-  "sidney": {
-    "encounter": {
-      1: `Gostei desse olhar que você me deu. Acho que você vai ser um bom desafio.
-                $Isso é ótimo! Parece muito bom! Vamos nessa!
-                $Você e eu, vamos curtir uma batalha que só pode acontecer aqui!`,
-    },
-    "victory": {
-      1: "E aí, gostou? Eu perdi! Mas foi divertido, então não importa."
-    },
-    "defeat": {
-      1: "Sem ressentimentos, beleza?"
-    }
-  },
-  "phoebe": {
-    "encounter": {
-      1: `Enquanto treinava, adquiri a habilidade de me comunicar com Pokémon do tipo Fantasma. 
-                $Sim, o vínculo que desenvolvi com os Pokémon é extremamente forte. 
-                $Então, vamos lá, tente ver se você consegue até mesmo causar dano aos meus Pokémon!`,
-    },
-    "victory": {
-      1: "Ah, droga. Eu perdi."
-    },
-    "defeat": {
-      1: "Estou ansiosa para batalhar com você de novo algum dia!"
-    }
-  },
-  "glacia": {
-    "encounter": {
-      1: `Tudo o que vi foram desafios de Treinadores fracos e seus Pokémon. 
-                $E você? Ficaria extremamente satisfeita se pudesse dar tudo de mim contra você!`,
-    },
-    "victory": {
-      1: `Você e seus Pokémon… Como seus espíritos queimam!
-                $O calor consumido é esmagador. 
-                $Não é surpresa que minhas habilidades geladas falharam em te machucar.`,
-    },
-    "defeat": {
-      1: "Uma batalha intensamente apaixonada, sem dúvida."
-    }
-  },
-  "drake": {
-    "encounter": {
-      1: `Para nós, batalhar com Pokémon como parceiros, você sabe o que é necessário? Você sabe o que precisa? 
-                $Se não souber, nunca prevalecerá contra mim!`,
-    },
-    "victory": {
-      1: "Excelente, deve-se dizer."
-    },
-    "defeat": {
-      1: "Dei meu máximo nessa batalha!"
     }
   },
   "wallace": {
@@ -3863,7 +3376,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: `Bravo. Agora percebo sua autenticidade e magnificência como Treinadora de Pokémon. 
-                    $Tenho muita alegria em ter conhecido você e seus Pokémon. Você se mostrou digno.`,
+                    $Tenho muita alegria em ter conhecido você e seus Pokémon. Você se mostrou digna.`,
     },
     "defeat": {
       1: "Uma grande ilusão!"
@@ -3878,7 +3391,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Como ousa!"
     },
     "defeat": {
-      1: "Não há nada que você possa fazer quando está congelado."
+      1: "Não há nada que você possa fazer quando está congelada."
     }
   },
   "will": {
@@ -3890,7 +3403,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Eu… Eu não… acredito…"
     },
     "defeat": {
-      1: "Isso foi por pouco. Me pergunto o que você está faltando."
+      1: "Isso foi por pouco. Me pergunto o que está faltando em você."
     }
   },
   "malva": {
@@ -3903,17 +3416,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Estou encantada! Sim, encantada por poder esmagar você sob meu calcanhar."
-    }
-  },
-  "hala": {
-    "encounter": {
-      1: "O velho Hala está aqui para fazer você gritar!"
-    },
-    "victory": {
-      1: "Pude sentir o poder que você ganhou na sua jornada."
-    },
-    "defeat": {
-      1: "Haha! Que batalha deliciosa!"
     }
   },
   "molayne": {
@@ -3939,17 +3441,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Nahahaha! Você realmente é algo mais, garota!"
     }
   },
-  "bruno": {
-    "encounter": {
-      1: "Nós vamos te triturar com nosso poder superior! Hoo hah!"
-    },
-    "victory": {
-      1: "Por quê? Como eu poderia perder?"
-    },
-    "defeat": {
-      1: "Você pode me desafiar o quanto quiser, mas os resultados nunca vão mudar!"
-    }
-  },
   "bugsy": {
     "encounter": {
       1: "Sou Bugsy! Eu nunca perco quando se trata de Pokémon do tipo Inseto!"
@@ -3961,51 +3452,15 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Obrigado! Graças à nossa batalha, eu também pude fazer progressos na minha pesquisa!"
     }
   },
-  "koga": {
-    "encounter": {
-      1: "Fwahahahaha! Pokémon não são apenas sobre força bruta--você verá em breve!"
-    },
-    "victory": {
-      1: "Ah! Você provou seu valor!"
-    },
-    "defeat": {
-      1: "Você aprendeu a temer as técnicas do ninja?"
-    }
-  },
-  "bertha": {
-    "encounter": {
-      1: "Bem, você mostraria a esta velha senhora o quanto aprendeu?"
-    },
-    "victory": {
-      1: `Bem! Querida criança, devo dizer, isso foi muito impressionante. 
-                $Seus Pokémon acreditaram em você e fizeram o melhor para te dar a vitória. 
-                $Mesmo tendo perdido, me encontro com esse sorriso bobo!`,
-    },
-    "defeat": {
-      1: "Hahahahah! Parece que esta velha senhora ganhou!"
-    }
-  },
   "lenora": {
     "encounter": {
-      1: "Bem, desafiador, vou pesquisar como você batalha com os Pokémon que criou com tanto carinho!"
+      1: "Bem, desafiadora, vou pesquisar como você batalha com os Pokémon que criou com tanto carinho!"
     },
     "victory": {
       1: "Minha teoria sobre você estava correta. Você é mais do que talentosa… Você é motivada! Eu te saúdo!"
     },
     "defeat": {
       1: "Ah ha ha! Se você perder, certifique-se de analisar o porquê e use esse conhecimento na próxima batalha!"
-    }
-  },
-  "siebold": {
-    "encounter": {
-      1: "Enquanto eu estiver vivo, continuarei em busca da culinária suprema... e dos oponentes mais fortes em batalha!"
-    },
-    "victory": {
-      1: "Guardarei minha memória de você e seus Pokémon para sempre em meu coração."
-    },
-    "defeat": {
-      1: `Nossa batalha Pokémon foi como alimento para minha alma. Isso vai me manter em frente. 
-                $É assim que vou prestar meus respeitos a você por dar tudo de si na batalha!`,
     }
   },
   "roxie": {
@@ -4019,40 +3474,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Ei, vamos lá! Seja séria! Você tem que dar mais de si!"
     }
   },
-  "olivia": {
-    "encounter": {
-      1: "Não precisa de introdução aqui. Hora de batalhar comigo, Olivia!"
-    },
-    "victory": {
-      1: "Realmente encantador… Tanto você quanto seus Pokémon…"
-    },
-    "defeat": {
-      1: "Mmm-hmm."
-    }
-  },
-  "poppy": {
-    "encounter": {
-      1: "Oooh! Você quer ter uma batalha Pokémon comigo?"
-    },
-    "victory": {
-      1: "Uagh?! Mmmuuuggghhh…"
-    },
-    "defeat": {
-      1: `Yaaay! Eu consegui! Eu der-ro-tei você! Você pode vir para… Para… Uma revanche? 
-                $Venha para uma revanche quando quiser!`,
-    }
-  },
-  "agatha": {
-    "encounter": {
-      1: "Pokémon são para batalhas! Vou te mostrar como um verdadeiro Treinador batalha!"
-    },
-    "victory": {
-      1: "Oh meu! Você é algo especial, criança!"
-    },
-    "defeat": {
-      1: "Bahaha. É assim que uma batalha adequada é feita!"
-    }
-  },
   "flint": {
     "encounter": {
       1: "Espero que você esteja aquecida, porque aqui vem o Big Bang!"
@@ -4062,17 +3483,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Huh? Isso é tudo? Acho que você precisa de um pouco mais de paixão."
-    }
-  },
-  "grimsley": {
-    "encounter": {
-      1: "O vencedor leva tudo, e não sobra nada para o perdedor."
-    },
-    "victory": {
-      1: "Quando se perde, perde-se tudo… A próxima coisa que vou procurar será a vitória, também!"
-    },
-    "defeat": {
-      1: "Se alguém vence, a pessoa que lutou contra essa pessoa perde."
     }
   },
   "caitlin": {
@@ -4089,29 +3499,17 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Aspiro a reivindicar a vitória com elegância e graça."
     }
   },
-  "diantha": {
-    "encounter": {
-      1: `Batalhar contra você e seus Pokémon, todos vocês cheios de esperança para o futuro… 
-                $Honestamente, isso apenas me enche da energia que preciso para continuar enfrentando cada novo dia! Sim!`,
-    },
-    "victory": {
-      1: "Testemunhar os espíritos nobres de você e seus Pokémon em batalha realmente tocou meu coração…"
-    },
-    "defeat": {
-      1: "Oh, fantástico! O que achou? Minha equipe foi bem legal, né?"
-    }
-  },
   "wikstrom": {
     "encounter": {
-      1: `Bem encontrado, jovem desafiador! Verdadeiramente sou a lâmina famosa de aço endurecido, Duque Wikstrom! 
+      1: `Bem encontrado, jovem desafiadora! Verdadeiramente sou a lâmina famosa de aço endurecido, Duque Wikstrom! 
                 $Que a batalha comece! En garde!`,
     },
     "victory": {
-      1: "Glorioso! A confiança que você compartilha com seu honrado Pokémon supera até mesmo a minha!"
+      1: "Gloriosa! A confiança que você compartilha com seu honrado Pokémon supera até mesmo a minha!"
     },
     "defeat": {
       1: `Que tipo de magia é essa? Meu coração bate incessantemente no meu peito! 
-                $Vencer contra um oponente tão digno dá asas à minha alma--assim eu voo!`,
+                $Vencer contra uma oponente tão digna dá asas à minha alma--assim eu voo!`,
     }
   },
   "acerola": {
@@ -4125,18 +3523,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Ehaha! Que vitória incrível!"
     }
   },
-  "larry_elite": {
-    "encounter": {
-      1: `Olá… Sou eu, Larry.
-                $Eu também sou membro da Elite dos Quatro, sim… Infelizmente para mim.`,
-    },
-    "victory": {
-      1: "Bem, isso tirou o vento debaixo das nossas asas…"
-    },
-    "defeat": {
-      1: "É hora de uma reunião com o chefe."
-    }
-  },
   "lance": {
     "encounter": {
       1: "Estive esperando por você. Permita-me testar suas habilidades.",
@@ -4144,28 +3530,11 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "victory": {
       1: "Você me pegou. Você é magnífica!",
-      2: "Nunca esperei que outro Treinador me derrotasse… Estou surpreso."
+      2: "Nunca esperei que outra Treinadora me derrotasse… Estou surpreso."
     },
     "defeat": {
       1: "Isso foi por pouco. Quer tentar de novo?",
-      2: "Não é que você seja fraco. Não se incomode com isso."
-    }
-  },
-  "karen": {
-    "encounter": {
-      1: "Eu sou Karen. Você gostaria de um duelo com meus Pokémon do tipo Sombrio?",
-      2: "Sou diferente daqueles que você já conheceu.",
-      3: "Você montou uma equipe charmosa. Nossa batalha deve ser boa."
-    },
-    "victory": {
-      1: "Não! Eu não posso vencer. Como você ficou tão forte?",
-      2: "Não me desviarei do meu caminho escolhido.",
-      3: "O Campeão está ansioso para te conhecer."
-    },
-    "defeat": {
-      1: "Isso era o que eu esperava.",
-      2: "Bem, isso foi relativamente divertido.",
-      3: "Venha me visitar a qualquer momento."
+      2: "Não é que você seja fraca. Não se incomode com isso."
     }
   },
   "milo": {
@@ -4175,24 +3544,10 @@ export const PGFdialogue: DialogueTranslationEntries = {
                $Vou ter que usar a Dynamax no meu Pokémon se eu quiser vencer!`,
     },
     "victory": {
-      1: "O poder da Grama murchou… Que desafiador incrível!"
+      1: "O poder da Grama murchou… Que desafiadora incrível!"
     },
     "defeat": {
       1: "Isso realmente vai te deixar em choque e admiração."
-    }
-  },
-  "lucian": {
-    "encounter": {
-      1: `Só um momento, por favor. O livro que estou lendo está quase no clímax emocionante… 
-                $O herói obteve uma espada mística e está prestes a enfrentar sua prova final… Ah, tanto faz. 
-                $Já que você chegou tão longe, vou deixar isso de lado e batalhar com você. 
-                $Deixe-me ver se você alcançará tanta glória quanto o herói do meu livro!`,
-    },
-    "victory": {
-      1: "Eu vejo… Parece que você me colocou em xeque-mate."
-    },
-    "defeat": {
-      1: "Tenho uma reputação a manter."
     }
   },
   "drasna": {
@@ -4207,29 +3562,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Como isso é possível?"
     }
   },
-  "kahili": {
-    "encounter": {
-      1: "Então, aqui está você… Por que não vemos para quem os ventos favorecem hoje, você… ou eu?"
-    },
-    "victory": {
-      1: "É frustrante para mim como membro da Elite dos Quatro, mas parece que sua força é real."
-    },
-    "defeat": {
-      1: "Essa foi uma jogada de mestre!"
-    }
-  },
-  "hassel": {
-    "encounter": {
-      1: "Prepare-se para aprender em primeira mão como é a respiração ardente de uma batalha feroz!"
-    },
-    "victory": {
-      1: `A sorte sorriu para mim desta vez, mas… 
-                $Julgando pelo andamento da luta, quem sabe se serei tão sortudo na próxima vez.`,
-    },
-    "defeat": {
-      1: "Essa foi uma jogada de mestre!"
-    }
-  },
   "blue": {
     "encounter": {
       1: "Você deve ser muito boa para chegar tão longe."
@@ -4241,39 +3573,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Viu? Meu poder é o que me trouxe até aqui."
     }
   },
-  "piers": {
-    "encounter": {
-      1: "Prepare-se para uma mosh pit comigo e minha galera! Spikemuth, é hora de roquear!"
-    },
-    "victory": {
-      1: "Eu e minha equipe demos o nosso melhor. Vamos nos encontrar novamente para uma batalha algum dia…"
-    },
-    "defeat": {
-      1: "Minha garganta está desgastada de tanto gritar… Mas essa foi uma batalha empolgante!"
-    }
-  },
-  "red": {
-    "encounter": {
-      1: "…!"
-    },
-    "victory": {
-      1: "…?"
-    },
-    "defeat": {
-      1: "…!"
-    }
-  },
-  "jasmine": {
-    "encounter": {
-      1: "Oh… Seus Pokémon são impressionantes. Acho que vou gostar disso."
-    },
-    "victory": {
-      1: "Você é realmente forte. Vou ter que me esforçar muito mais também."
-    },
-    "defeat": {
-      1: "Eu nunca esperei ganhar."
-    }
-  },
   "lance_champion": {
     "encounter": {
       1: "Ainda sou o Campeão. Não vou segurar nada."
@@ -4283,96 +3582,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Defendi com sucesso meu Campeonato."
-    }
-  },
-  "steven": {
-    "encounter": {
-      1: `Diga-me… O que você viu na sua jornada com seus Pokémon? 
-                $O que você sentiu, encontrando tantos outros Treinadores por aí? 
-                $Viajar por esta terra rica… Isso despertou algo dentro de você? 
-                $Quero que você venha até mim com tudo o que aprendeu. 
-                $Meus Pokémon e eu responderemos com tudo o que sabemos!`,
-    },
-    "victory": {
-      1: "Então eu, o Campeão, caio em derrota…"
-    },
-    "defeat": {
-      1: "Esse tempo foi bem gasto! Obrigado!"
-    }
-  },
-  "cynthia": {
-    "encounter": {
-      1: "Eu, Cynthia, aceito seu desafio! Não haverá nenhuma trégua da minha parte!"
-    },
-    "victory": {
-      1: "Não importa o quão divertida a batalha seja, ela sempre terminará algum dia…"
-    },
-    "defeat": {
-      1: "Mesmo que você perca, nunca perca o amor pelos Pokémon."
-    }
-  },
-  "iris": {
-    "encounter": {
-      1: `Sabe de uma coisa? Estou realmente ansiosa para ter batalhas sérias com Treinadores fortes! 
-                $Quero dizer, vamos lá! Os Treinadores que chegam aqui são Treinadores que desejam a vitória com todas as fibras do seu ser! 
-                #E eles estão batalhando ao lado de Pokémon que passaram por inúmeras batalhas difíceis! 
-                $Se eu batalhar com pessoas assim, não só eu ficarei mais forte, meus Pokémon também! 
-                $E nós vamos nos conhecer ainda melhor! OK! Prepare-se! 
-                $Sou Iris, a Campeã da Liga Pokémon, e vou te derrotar!`,
-    },
-    "victory": {
-      1: "Aghhhh… Eu dei o meu melhor, mas nós perdemos…"
-    },
-    "defeat": {
-      1: "Yay! Nós vencemos!"
-    }
-  },
-  "hau": {
-    "encounter": {
-      1: `Eu me pergunto se um Treinador batalha de maneira diferente dependendo se ele é de uma região quente ou fria.
-                $Vamos testar isso!`,
-    },
-    "victory": {
-      1: "Isso foi incrível! Acho que entendi um pouco melhor seu estilo agora!"
-    },
-    "defeat": {
-      1: "Cara, essa foi uma batalha e tanto!"
-    }
-  },
-  "geeta": {
-    "encounter": {
-      1: `Decidi entrar na batalha mais uma vez. 
-                $Venha agora… Mostre-me os frutos do seu treinamento.`,
-    },
-    "victory": {
-      1: "Estou ansiosa para notícias de todas as suas conquistas!"
-    },
-    "defeat": {
-      1: "Qual o problema? Isso é tudo?"
-    }
-  },
-  "nemona": {
-    "encounter": {
-      1: "Yesss! Estou tão empolgada! Hora de soltar tudo!"
-    },
-    "victory": {
-      1: "Bem, isso foi ruim, mas ainda me diverti! Eu te pego na próxima!"
-    },
-    "defeat": {
-      1: "Bem, essa foi uma ótima batalha! Frutífera, com certeza."
-    }
-  },
-  "leon": {
-    "encounter": {
-      1: "Vamos ter um tempo absolutamente campeão!"
-    },
-    "victory": {
-      1: `Meu tempo como Campeão acabou… 
-                $Mas que tempo campeão foi! 
-                $Obrigado pela melhor batalha que já tive!`,
-    },
-    "defeat": {
-      1: "Um tempo absolutamente campeão, foi!"
     }
   },
   "whitney": {
@@ -4408,28 +3617,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Coma, meu adorável Vivillon!"
     }
   },
-  "pryce": {
-    "encounter": {
-      1: "A juventude sozinha não garante a vitória! Experiência é o que conta."
-    },
-    "victory": {
-      1: "Excelente! Isso foi perfeito. Tente não esquecer o que sente agora."
-    },
-    "defeat": {
-      1: "Exatamente como eu imaginei."
-    }
-  },
-  "clair": {
-    "encounter": {
-      1: "Você sabe quem eu sou? E ainda se atreve a me desafiar?"
-    },
-    "victory": {
-      1: "Eu me pergunto até onde você pode ir com seu nível de habilidade. Isso deve ser fascinante."
-    },
-    "defeat": {
-      1: "E é isso."
-    }
-  },
   "maylene": {
     "encounter": {
       1: `Vim desafiá-la agora e não vou segurar nada. 
@@ -4440,18 +3627,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Isso foi incrível."
-    }
-  },
-  "fantina": {
-    "encounter": {
-      1: `Você vai me desafiar, não é? Mas eu vou ganhar. 
-                    $É o que a Líder do Ginásio de Hearthome faz, não?`,
-    },
-    "victory": {
-      1: "Você é tão incrivelmente forte. Sei porque perdi."
-    },
-    "defeat": {
-      1: "Estou tão, tão, muito feliz!"
     }
   },
   "byron": {
@@ -4465,17 +3640,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Gwahahaha! Como foram meus Pokémon robustos?!"
-    }
-  },
-  "olympia": {
-    "encounter": {
-      1: "Um costume antigo decidindo o destino de alguém. A batalha começa!"
-    },
-    "victory": {
-      1: "Crie seu próprio caminho. Não deixe nada te atrapalhar. Seu destino, seu futuro."
-    },
-    "defeat": {
-      1: "Nosso caminho está claro agora."
     }
   },
   "volkner": {
@@ -4493,113 +3657,11 @@ export const PGFdialogue: DialogueTranslationEntries = {
                     $Isso não é o que eu queria!`,
     }
   },
-  "burgh": {
-    "encounter": {
-      1: `M'hm… Se eu ganhar esta batalha, sinto que posso desenhar um quadro diferente de qualquer outro. 
-                    $OK! Posso ouvir minha musa da batalha claramente. Vamos direto ao ponto!`,
-      2: `Claro, estou realmente orgulhoso de todos os meus Pokémon! 
-                    $Bem agora… Vamos direto ao ponto!`
-    },
-    "victory": {
-      1: "Acabou? Minha musa me abandonou?",
-      2: "Hmm… Acabou! Você é incrível!"
-    },
-    "defeat": {
-      1: "Uau… É bonito de alguma forma, não é…",
-      2: `Às vezes ouço as pessoas dizerem que foi uma vitória feia. 
-                    $Acho que se você está dando o seu melhor, qualquer vitória é bonita.`
-    }
-  },
-  "elesa": {
-    "encounter": {
-      1: `C'est fini! Quando tenho certeza disso, sinto um choque elétrico percorrer meu corpo! 
-                    $Quero sentir essa sensação, então agora meus amados Pokémon vão fazer sua cabeça girar!`,
-    },
-    "victory": {
-      1: "Eu queria fazer sua cabeça girar, mas você me surpreendeu."
-    },
-    "defeat": {
-      1: "Isso foi insatisfatório de alguma forma… Você dará tudo de si na próxima vez?"
-    }
-  },
-  "skyla": {
-    "encounter": {
-      1: `Finalmente é hora do confronto! Isso significa a batalha Pokémon que decide quem está no topo, certo? 
-                    $Eu amo estar no topo! Porque você pode ver para sempre e sempre de lugares altos! 
-                    $Então, que tal nós nos divertirmos?`,
-    },
-    "victory": {
-      1: "Ser seu oponente na batalha é uma nova fonte de força para mim. Obrigada!"
-    },
-    "defeat": {
-      1: "Ganhar ou perder, você sempre ganha algo com uma batalha, certo?"
-    }
-  },
-  "brycen": {
-    "encounter": {
-      1: `Há também força em estar com outras pessoas e Pokémon. 
-                    $Receber o apoio deles te fortalece. Vou te mostrar esse poder!`,
-    },
-    "victory": {
-      1: "A maravilhosa combinação de você e seus Pokémon! Que amizade linda!"
-    },
-    "defeat": {
-      1: "Condições extremas realmente testam e treinam você!"
-    }
-  },
-  "drayden": {
-    "encounter": {
-      1: `O que eu quero encontrar é um jovem Treinador que possa me mostrar um futuro brilhante. 
-                    $Vamos batalhar com tudo o que temos: sua habilidade, minha experiência e o amor com que criamos nossos Pokémon!`,
-    },
-    "victory": {
-      1: "Esse sentimento intenso que me invade após uma derrota… Não sei como descrevê-lo."
-    },
-    "defeat": {
-      1: "Harrumph! Sei que sua habilidade é maior que isso!"
-    }
-  },
-  "grant": {
-    "encounter": {
-      1: `Só há uma coisa que desejo. 
-                    $Que, superando um ao outro, encontremos um caminho para alturas ainda maiores.`,
-    },
-    "victory": {
-      1: "Você é uma parede que não consigo superar!"
-    },
-    "defeat": {
-      1: `Não desista. 
-                    $Isso é tudo o que realmente importa. 
-                    $As lições mais importantes da vida são simples.`,
-    }
-  },
-  "korrina": {
-    "encounter": {
-      1: "Hora da grande aparição de Lady Korrina!"
-    },
-    "victory": {
-      1: "É o seu próprio ser que permite que seus Pokémon evoluam!"
-    },
-    "defeat": {
-      1: "Que batalha explosiva!"
-    }
-  },
-  "clemont": {
-    "encounter": {
-      1: "Oh! Estou feliz por termos nos encontrado!"
-    },
-    "victory": {
-      1: "Sua paixão pela batalha me inspira!"
-    },
-    "defeat": {
-      1: "Parece que minha Máquina Treinadora-Crescer-Forte, Mach 2 está realmente funcionando!"
-    }
-  },
   "valerie": {
     "encounter": {
-      1: `Oh, se não é uma jovem Treinadora… É adorável conhecê-lo assim. 
+      1: `Oh, se não é uma jovem Treinadora… É adorável conhecê-la assim. 
                     $Então, suponho que você ganhou o direito a uma batalha, como recompensa por seus esforços. 
-                    $O elusivo Fada pode parecer frágil como a brisa e delicado como uma flor, mas é forte.`,
+                    $Uma elusiva Fada pode parecer frágil como a brisa e delicado como uma flor, mas é forte.`,
     },
     "victory": {
       1: "Espero que você encontre coisas para sorrir amanhã…"
@@ -4668,42 +3730,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Bom trabalho, eu suponho."
     }
   },
-  "gordie": {
-    "encounter": {
-      1: "Então, vamos acabar com isso."
-    },
-    "victory": {
-      1: "Eu só quero me enterrar em um buraco… Bem, acho que seria mais como cair daqui."
-    },
-    "defeat": {
-      1: "Batalhe como sempre faz, a vitória seguirá!"
-    }
-  },
-  "marnie": {
-    "encounter": {
-      1: `A verdade é que, quando tudo está dito e feito… Eu realmente só quero me tornar Campeã por mim mesma! 
-                    $Então, não leve para o pessoal quando eu chutar seu traseiro!`,
-    },
-    "victory": {
-      1: "OK, então eu perdi… Mas consegui ver muitos dos pontos bons de você e seus Pokémon!"
-    },
-    "defeat": {
-      1: "Espero que você tenha gostado das nossas táticas de batalha."
-    }
-  },
-  "raihan": {
-    "encounter": {
-      1: "Vou derrotar o Campeão, vencer todo o torneio e provar ao mundo o quão forte o grande Raihan realmente é!"
-    },
-    "victory": {
-      1: `Eu pareço bem mesmo quando perco. 
-                    $É uma verdadeira maldição. 
-                    $Acho que é hora de mais uma selfie!`,
-    },
-    "defeat": {
-      1: "Vamos tirar uma selfie para lembrar disso."
-    }
-  },
   "brassius": {
     "encounter": {
       1: "Pressuponho que você está pronta? Que nossa obra de arte colaborativa comece!"
@@ -4729,17 +3755,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Seus olhos são MEUS!"
     }
   },
-  "larry": {
-    "encounter": {
-      1: "Quando tudo está dito e feito, a simplicidade é mais forte."
-    },
-    "victory": {
-      1: "Uma porção de derrota, hein?"
-    },
-    "defeat": {
-      1: "Vou encerrar o dia."
-    }
-  },
   "ryme": {
     "encounter": {
       1: "Vamos lá, baby! Me agite até os ossos!"
@@ -4749,31 +3764,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Até mais, baby!"
-    }
-  },
-  "grusha": {
-    "encounter": {
-      1: "Tudo o que preciso fazer é garantir que o poder do meu Pokémon te arrependa até os ossos!"
-    },
-    "victory": {
-      1: "Sua paixão ardente... Eu meio que gosto, para ser honesto."
-    },
-    "defeat": {
-      1: "As coisas não esquentaram para você."
-    }
-  },
-  "marnie_elite": {
-    "encounter": {
-      1: "Você chegou até aqui, hein? Vamos ver se você pode lidar com meus Pokémon!",
-      2: "Vou dar o meu melhor, mas não pense que vou pegar leve com você!"
-    },
-    "victory": {
-      1: "Não acredito que perdi... Mas você mereceu essa vitória. Bem feito!",
-      2: "Parece que ainda tenho muito a aprender. Grande batalha, porém!"
-    },
-    "defeat": {
-      1: "Você lutou bem, mas eu tenho a vantagem! Melhor sorte na próxima vez!",
-      2: "Parece que meu treinamento valeu a pena. Obrigado pela batalha!"
     }
   },
   "nessa_elite": {
@@ -4788,20 +3778,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "A água sempre encontra um caminho. Essa foi uma batalha refrescante!",
       2: "Você lutou bem, mas o poder do oceano é imparável!"
-    }
-  },
-  "bea_elite": {
-    "encounter": {
-      1: "Prepare-se! Meu espírito de luta brilha intensamente!",
-      2: "Vamos ver se você consegue acompanhar meu ritmo implacável!"
-    },
-    "victory": {
-      1: "Sua força... É impressionante. Você realmente merece essa vitória.",
-      2: "Nunca senti essa intensidade antes. Trabalho incrível!"
-    },
-    "defeat": {
-      1: "Outra vitória para meu rigoroso regime de treinamento! Bem feito!",
-      2: "Você tem força, mas eu treinei mais. Grande batalha!"
     }
   },
   "allister_elite": {
@@ -4829,33 +3805,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
     },
     "defeat": {
       1: "Outra tempestade enfrentada, outra vitória conquistada! Bem lutado!",
-      2: "Você foi pego na minha tempestade! Melhor sorte na próxima vez!"
-    }
-  },
-  "alder": {
-    "encounter": {
-      1: "Se prepare para uma batalha contra o Treinador mais forte de Unova!"
-    },
-    "victory": {
-      1: "Muito bem! Você certamente é um talento incomparável."
-    },
-    "defeat": {
-      1: `Um vento fresco sopra em meu coração...
-          $Que esforço extraordinário!`
-    }
-  },
-  "kieran": {
-    "encounter": {
-      1: `Através do trabalho duro, eu me torno cada vez mais forte!
-          $Eu não perco.`
-    },
-    "victory": {
-      1: `Eu não acredito...
-          $Que batalha divertida e emocionante!`
-    },
-    "defeat": {
-      1: `Uau, que batalha!
-          $Hora de você treinar ainda mais.`
+      2: "Você foi pega na minha tempestade! Melhor sorte na próxima vez!"
     }
   },
   "rival": {
@@ -4904,7 +3854,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "rival_2_female": {
     "encounter": {
-      1: `@c{smile_wave}Oh, que surpresa te encontrar aqui. Parece que você ainda está invicto. @c{angry_mopen}Hum… Nada mal!
+      1: `@c{smile_wave}Oh, que surpresa te encontrar aqui. Parece que você ainda está invicta. @c{angry_mopen}Hum… Nada mal!
             $@c{angry_mopen}Eu sei o que você está pensando, e não, eu não estava te espionando. @c{smile_eclosed}Acontece que eu estava na área.
             $@c{smile_ehalf}Estou feliz por você, mas só quero te avisar que está tudo bem perder às vezes.
             $@c{smile}Aprendemos com nossos erros, muitas vezes mais do que se continuássemos vencendo.
@@ -4923,7 +3873,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "rival_3": {
     "encounter": {
-      1: `@c{smile}Eai, olha quem é! Faz um tempo.\n@c{neutral}Você… ainda está invicto? Hum.
+      1: `@c{smile}Eai, olha quem é! Faz um tempo.\n@c{neutral}Você… ainda está invicta? Hum.
             $@c{neutral_eclosed}As coisas têm sido meio… estranhas.\nNão é a mesma coisa em casa sem você.
             $@c{serious}Eu sei que é egoísta, mas preciso desabafar.\n@c{neutral_eclosed}Acho que você está se metendo em algo grande demais aqui.
             $@c{serious}Nunca perder é irrealista.\nPrecisamos perder às vezes para crescer.
@@ -4960,7 +3910,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
             $@c{serious_mopen_fists}Prepare-se.`
     },
     "victory": {
-      1: "@c{neutral}O que…@d{64} O que você é?"
+      1: "@c{neutral}O que…@d{64} O que é você?"
     },
   },
   "rival_4_female": {
@@ -4975,7 +3925,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
             $@c{angry_mopen}Prepare-se.`
     },
     "victory": {
-      1: "@c{neutral}O que…@d{64} O que você é?"
+      1: "@c{neutral}O que…@d{64} O que é você?"
     },
     "defeat": {
       1: "$@c{smile}Você deveria se orgulhar de até onde chegou."
@@ -5046,7 +3996,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
 };
 
-// Diálogo do chefe final do jogo quando o personagem do jogador é masculino (ou não definido)
+// Dialogue of the endboss of the game when the player character is male (Or unset)
 export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `Parece que a hora finalmente chegou novamente.\nVocê sabe por que veio aqui, não sabe?
                $Você foi atraído para cá, porque já esteve aqui antes.\nInúmeras vezes.
@@ -5061,7 +4011,7 @@ export const PGMbattleSpecDialogue: SimpleTranslationEntries = {
   "secondStageWin": "…Magnífico."
 };
 
-// Diálogo do chefe final do jogo quando o personagem do jogador é feminino. Para idiomas que não possuem pronomes de gênero, isso pode ser definido como PGMbattleSpecDialogue.
+// Dialogue of the endboss of the game when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMbattleSpecDialogue.
 export const PGFbattleSpecDialogue: SimpleTranslationEntries = {
   "encounter": `Parece que a hora finalmente chegou novamente.\nVocê sabe por que veio aqui, não sabe?
                $Você foi atraída para cá, porque já esteve aqui antes.\nInúmeras vezes.
@@ -5076,10 +4026,10 @@ export const PGFbattleSpecDialogue: SimpleTranslationEntries = {
   "secondStageWin": "…Magnífico."
 };
 
-// Diálogo que não se enquadra em nenhuma outra categoria (por exemplo, mensagens de tutorial ou o final do jogo). Para quando o personagem do jogador é masculino
+// Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is male
 export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending":
-      `@c{smile}Oh? Você venceu?@d{96} @c{smile_eclosed}Acho que eu deveria saber.\nMas, você está de volta agora.
+    `@c{smile}Oh? Você venceu?@d{96} @c{smile_eclosed}Acho que eu deveria saber.\nMas, você está de volta agora.
         $@c{smile}Acabou.@d{64} Você quebrou o ciclo.
         $@c{serious_smile_fists}Você também realizou seu sonho, não é?\nVocê não perdeu nenhuma vez.
         $@c{neutral}Eu sou o único que vai lembrar o que você fez.@d{96}\nAcho que está tudo bem, não é?
@@ -5087,7 +4037,7 @@ export const PGMmiscDialogue: SimpleTranslationEntries = {
         $@c{smile_eclosed}Enfim, já tive o suficiente deste lugar, não é? Vamos para casa.
         $@c{serious_smile_fists}Talvez quando voltarmos, possamos ter outra batalha?\nSe você estiver disposto.`,
   "ending_female":
-      `@c{shock}Você está de volta?@d{32} Isso significa que…@d{96} você venceu?!\n@c{smile_ehalf}Eu deveria saber que você conseguiria.
+    `@c{shock}Você está de volta?@d{32} Isso significa que…@d{96} você venceu?!\n@c{smile_ehalf}Eu deveria saber que você conseguiria.
         $@c{smile_eclosed}Claro… Eu sempre tive essa sensação.\n@c{smile}Acabou agora, certo? Você quebrou o ciclo.
         $@c{smile_ehalf}Você também realizou seu sonho, não foi?\nVocê não perdeu nenhuma vez.
         $Eu serei a única a lembrar o que você fez.\n@c{angry_mopen}Eu tentarei não esquecer!
@@ -5098,10 +4048,10 @@ export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending_name": "Desenvolvedores"
 };
 
-// Diálogo que não se enquadra em nenhuma outra categoria (por exemplo, mensagens de tutorial ou o final do jogo). Para quando o personagem do jogador é feminino. Para idiomas que não possuem pronomes de gênero, isso pode ser definido como PGMmiscDialogue.
+// Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is female. For languages that do not have gendered pronouns, this can be set to PGMmiscDialogue.
 export const PGFmiscDialogue: SimpleTranslationEntries = {
   "ending":
-      `@c{smile}Oh? Você venceu?@d{96} @c{smile_eclosed}Acho que eu deveria saber.\nMas, você está de volta agora.
+    `@c{smile}Oh? Você venceu?@d{96} @c{smile_eclosed}Acho que eu deveria saber.\nMas, você está de volta agora.
         $@c{smile}Acabou.@d{64} Você quebrou o ciclo.
         $@c{serious_smile_fists}Você também realizou seu sonho, não é?\nVocê não perdeu nenhuma vez.
         $@c{neutral}Eu sou o único que vai lembrar o que você fez.@d{96}\nAcho que está tudo bem, não é?
@@ -5109,7 +4059,7 @@ export const PGFmiscDialogue: SimpleTranslationEntries = {
         $@c{smile_eclosed}Enfim, já tive o suficiente deste lugar, não é? Vamos para casa.
         $@c{serious_smile_fists}Talvez quando voltarmos, possamos ter outra batalha?\nSe você estiver disposta.`,
   "ending_female":
-      `@c{shock}Você está de volta?@d{32} Isso significa que…@d{96} você venceu?!\n@c{smile_ehalf}Eu deveria saber que você conseguiria.
+    `@c{shock}Você está de volta?@d{32} Isso significa que…@d{96} você venceu?!\n@c{smile_ehalf}Eu deveria saber que você conseguiria.
         $@c{smile_eclosed}Claro… Eu sempre tive essa sensação.\n@c{smile}Acabou agora, certo? Você quebrou o ciclo.
         $@c{smile_ehalf}Você também realizou seu sonho, não foi?\nVocê não perdeu nenhuma vez.
         $Eu serei a única a lembrar o que você fez.\n@c{angry_mopen}Eu tentarei não esquecer!
@@ -5121,7 +4071,7 @@ export const PGFmiscDialogue: SimpleTranslationEntries = {
 };
 
 
-// Diálogo das batalhas duplas nomeadas no jogo. Para quando o jogador é masculino (ou não definido).
+// Dialogue of the named double battles in the game. For when the player is male (or unset).
 export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   "blue_red_double": {
     "encounter": {
@@ -5196,41 +4146,41 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "alder_iris_double": {
     "encounter": {
-      1:  `Alder: Somos os treinadores mais fortes de Unova!
+      1: `Alder: Somos os treinadores mais fortes de Unova!
                   $Iris: Lutas contra treinadores fortes são as melhores!`,
     },
     "victory": {
-      1:   `Alder: Uau! Você é super forte!
+      1: `Alder: Uau! Você é super forte!
                   $Iris: Vamos vencer da próxima vez!`,
     },
   },
   "iris_alder_double": {
     "encounter": {
-      1:   `Iris: Bem-vindo, Desafiante! Eu sou A Campeã de Unova!
+      1: `Iris: Bem-vindo, Desafiante! Eu sou A Campeã de Unova!
                   $Alder: Iris, você não está um pouco empolgada demais?`,
     },
     "victory": {
-      1:    `Iris: Uma derrota como essa não é fácil de engolir...
+      1: `Iris: Uma derrota como essa não é fácil de engolir...
                   $Alder: Mas só ficaremos mais fortes a cada derrota!`,
     },
   },
   "piers_marnie_double": {
     "encounter": {
-      1:   `Marnie: Irmão, vamos mostrar a eles o poder de Spikemuth!
+      1: `Marnie: Irmão, vamos mostrar a eles o poder de Spikemuth!
                   $Piers: Nós trazemos a escuridão!`,
     },
     "victory": {
-      1:  `Marnie: Você trouxe luz para nossa escuridão!
+      1: `Marnie: Você trouxe luz para nossa escuridão!
                   $Piers: Está muito claro...`,
     },
   },
   "marnie_piers_double": {
     "encounter": {
-      1:  `Piers: Prontos para um show?
+      1: `Piers: Prontos para um show?
                     $Marnie: Irmão... Eles estão aqui para lutar, não para cantar...`,
     },
     "victory": {
-      1:  `Piers: Agora esse foi um ótimo show!
+      1: `Piers: Agora esse foi um ótimo show!
                     $Marnie: Irmão...`,
     },
   },
@@ -5312,41 +4262,41 @@ export const PGFdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "alder_iris_double": {
     "encounter": {
-      1:  `Alder: Somos os treinadores mais fortes de Unova!
+      1: `Alder: Somos os treinadores mais fortes de Unova!
                   $Iris: Lutas contra treinadores fortes são as melhores!`,
     },
     "victory": {
-      1:   `Alder: Uau! Você é super forte!
+      1: `Alder: Uau! Você é super forte!
                   $Iris: Vamos vencer da próxima vez!`,
     },
   },
   "iris_alder_double": {
     "encounter": {
-      1:   `Iris: Bem-vinda, Desafiante! Eu sou A Campeã de Unova!
+      1: `Iris: Bem-vinda, Desafiante! Eu sou A Campeã de Unova!
                   $Alder: Iris, você não está um pouco empolgada demais?`,
     },
     "victory": {
-      1:    `Iris: Uma derrota como essa não é fácil de engolir...
+      1: `Iris: Uma derrota como essa não é fácil de engolir...
                   $Alder: Mas só ficaremos mais fortes a cada derrota!`,
     },
   },
   "piers_marnie_double": {
     "encounter": {
-      1:   `Marnie: Irmão, vamos mostrar a eles o poder de Spikemuth!
+      1: `Marnie: Irmão, vamos mostrar a eles o poder de Spikemuth!
                   $Piers: Nós trazemos a escuridão!`,
     },
     "victory": {
-      1:  `Marnie: Você trouxe luz para nossa escuridão!
+      1: `Marnie: Você trouxe luz para nossa escuridão!
                   $Piers: Está muito claro...`,
     },
   },
   "marnie_piers_double": {
     "encounter": {
-      1:  `Piers: Prontos para um show?
+      1: `Piers: Prontos para um show?
                     $Marnie: Irmão... Eles estão aqui para lutar, não para cantar...`,
     },
     "victory": {
-      1:  `Piers: Agora esse foi um ótimo show!
+      1: `Piers: Agora esse foi um ótimo show!
                     $Marnie: Irmão...`,
     },
   },

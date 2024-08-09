@@ -28,6 +28,8 @@ import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.j
 import overrides from "#app/overrides.js";
 import { removeEnemyHeldItems } from "./testUtils";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
+import { MoveHelper } from "./moveHelper";
+import { vi } from "vitest";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -39,6 +41,7 @@ export default class GameManager {
   public textInterceptor: TextInterceptor;
   public inputsHandler: InputsHandler;
   public readonly override: OverridesHelper;
+  public readonly move: MoveHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -55,6 +58,7 @@ export default class GameManager {
     this.textInterceptor = new TextInterceptor(this.scene);
     this.gameWrapper.setScene(this.scene);
     this.override = new OverridesHelper(this);
+    this.move = new MoveHelper(this);
   }
 
   /**
@@ -353,5 +357,20 @@ export default class GameManager {
       partyHandler.processInput(Button.ACTION); // select party slot
       partyHandler.processInput(Button.ACTION); // send out (or whatever option is at the top)
     });
+  }
+
+  /**
+   * Intercepts `TurnStartPhase` and mocks the getOrder's return value {@linkcode TurnStartPhase.getOrder}
+   * Used to modify the turn order.
+   * @param {BattlerIndex[]} order The turn order to set
+   * @example
+   * ```ts
+   * await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+   * ```
+   */
+  async setTurnOrder(order: BattlerIndex[]): Promise<void> {
+    await this.phaseInterceptor.to(TurnStartPhase, false);
+
+    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue(order);
   }
 }

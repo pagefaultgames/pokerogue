@@ -80,7 +80,7 @@ export class UiInputs {
       [Button.ACTION]:          () => this.buttonAb(Button.ACTION),
       [Button.CANCEL]:          () => this.buttonAb(Button.CANCEL),
       [Button.MENU]:            () => this.buttonMenu(),
-      [Button.STATS]:           () => this.buttonStats(true),
+      [Button.STATS]:           () => this.buttonGoToFilter(Button.STATS),
       [Button.CYCLE_SHINY]:     () => this.buttonCycleOption(Button.CYCLE_SHINY),
       [Button.CYCLE_FORM]:      () => this.buttonCycleOption(Button.CYCLE_FORM),
       [Button.CYCLE_GENDER]:    () => this.buttonCycleOption(Button.CYCLE_GENDER),
@@ -140,6 +140,17 @@ export class UiInputs {
       p.toggleStats(pressed);
     }
   }
+
+  buttonGoToFilter(button: Button): void {
+    const whitelist = [StarterSelectUiHandler];
+    const uiHandler = this.scene.ui?.getHandler();
+    if (whitelist.some(handler => uiHandler instanceof handler)) {
+      this.scene.ui.processInput(button);
+    } else {
+      this.buttonStats(true);
+    }
+  }
+
   buttonInfo(pressed: boolean = true): void {
     if (this.scene.showMovesetFlyout ) {
       for (const p of this.scene.getField().filter(p => p?.isActive(true))) {
