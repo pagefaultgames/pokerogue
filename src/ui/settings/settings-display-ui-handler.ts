@@ -11,7 +11,7 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
    * @param scene - The BattleScene instance.
    * @param mode - The UI mode, optional.
    */
-  constructor(scene: BattleScene, mode: Mode | null) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, SettingType.DISPLAY, mode);
     this.title = "Display";
 

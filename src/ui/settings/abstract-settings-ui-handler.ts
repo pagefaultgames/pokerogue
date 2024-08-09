@@ -292,6 +292,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       this.scene.inputController.moveTouchControlsHandler.enableConfigurationMode(this.getUi(), this.scene);
       return true;
     }
+    return false;
   }
 
   /**

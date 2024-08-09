@@ -70,9 +70,10 @@ export default class MoveTouchControlsHandler {
   private async changeOrientation(isLandscapeMode: boolean) {
     this.isLandscapeMode = isLandscapeMode;
     if (this.inConfigurationMode) {
-      document
-        .querySelector("#touchControls #orientation")
-        .textContent = this.isLandscapeMode? "Landscape" : "Portrait";
+      const orientation = document.querySelector("#touchControls #orientation");
+      if (orientation) {
+        orientation.textContent = this.isLandscapeMode? "Landscape" : "Portrait";
+      }
     }
     const positions = this.getSavedPositionsOfCurrentOrientation() ?? [];
     this.setPositions(positions);
@@ -111,7 +112,7 @@ export default class MoveTouchControlsHandler {
    * Places its elements at the top of the touch controls and adds event listeners to them.
    */
   private createToolbar() {
-    document.querySelector("#touchControls").prepend(this.createToolbarElement());
+    document.querySelector("#touchControls")?.prepend(this.createToolbarElement());
     const refs = this.getConfigToolbarRefs();
     if (!refs) {
       return;
@@ -144,9 +145,9 @@ export default class MoveTouchControlsHandler {
     }
     return {
       toolbar,
-      saveButton: toolbar.querySelector("#saveButton"),
-      resetButton: toolbar.querySelector("#resetButton"),
-      cancelButton: toolbar.querySelector("#cancelButton")
+      saveButton: toolbar.querySelector("#saveButton")!,
+      resetButton: toolbar.querySelector("#resetButton")!,
+      cancelButton: toolbar.querySelector("#cancelButton")!
     };
   }
 
@@ -156,7 +157,7 @@ export default class MoveTouchControlsHandler {
    * @param element Either an element in the left div or the right div.
    * @returns Whether the given element is inside the left div.
    */
-  private isLeft = (element: HTMLElement) => document.querySelector("#touchControls .left").contains(element);
+  private isLeft = (element: HTMLElement) => document.querySelector("#touchControls .left")?.contains(element);
 
   /**
    * Start dragging the given button.
@@ -330,7 +331,7 @@ export default class MoveTouchControlsHandler {
     this.overlay = container;
 
     // Display toolbar
-    document.querySelector("#touchControls").classList.add("config-mode");
+    document.querySelector("#touchControls")?.classList.add("config-mode");
   }
 
   /**
@@ -372,7 +373,7 @@ export default class MoveTouchControlsHandler {
 
     // Remove overlay
     this.overlay?.destroy();
-    document.querySelector("#touchControls").classList.remove("config-mode");
+    document.querySelector("#touchControls")?.classList.remove("config-mode");
     this.touchControls.enable();
   }
 
