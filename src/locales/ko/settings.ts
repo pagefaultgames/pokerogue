@@ -97,5 +97,6 @@ export const settings: SimpleTranslationEntries = {
   "controller": "컨트롤러",
   "gamepadSupport": "게임패드 지원",
   "showBgmBar": "BGM 제목 보여주기",
+  "moveTouchControls": "터치 컨트롤 이동",
   "shopOverlayOpacity": "상점 오버레이 투명도"
 } as const;
