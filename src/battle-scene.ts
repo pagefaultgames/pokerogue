@@ -792,7 +792,7 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
-   * @params isEnemy {@linkcode Boolean} accesses BattleScene.enemyModifierBar if true - optional, defaults to returning BattleScene.modifierBar if not present
+   * @param isEnemy Whether to return the enemy's modifier bar
    * @returns {ModifierBar}
    */
   getModifierBar(isEnemy?: boolean): ModifierBar {
