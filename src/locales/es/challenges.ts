@@ -27,5 +27,11 @@ export const challenges: TranslationEntries = {
   "eeveeOnly": {
     "name": "Solamente Eevee",
     "desc": "Solo puedes usar a Eevee o a sus evoluciones en este desafío",
+  },
+  "freshStart": {
+    "name": "Fresh Start",
+    "desc": "You can only use the original starters, and only as if you had just started PokéRogue.",
+    "value.0": "Off",
+    "value.1": "On",
   }
 } as const;

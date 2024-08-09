@@ -169,6 +169,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Invaincu",
     description: "Terminer le jeu en mode classique",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Le stagiaire de 3e",
+    description: "Terminer le mode Classique avec au moins un Pokémon non-évolué dans l’équipe."
+  },
 
   "MONO_GEN_ONE": {
     name: "Le rival originel",
@@ -268,6 +272,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "RP Pania",
     description: "Terminer un challenge Évoli.",
   },
+  "FRESH_START": {
+    name: "Du premier coup !",
+    description: "Terminer un challenge « Nouveau départ »."
+  }
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
@@ -439,6 +447,10 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Invaincue",
     description: "Terminer le jeu en mode classique",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Le stagiaire de 3e",
+    description: "Terminer le mode Classique avec au moins un Pokémon non-évolué dans l’équipe."
+  },
 
   "MONO_GEN_ONE": {
     name: "Le rival originel",
@@ -538,4 +550,8 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "RP Pania",
     description: "Terminer un challenge Évoli.",
   },
+  "FRESH_START": {
+    name: "Du premier coup !",
+    description: "Terminer un challenge « Nouveau départ »."
+  }
 } as const;

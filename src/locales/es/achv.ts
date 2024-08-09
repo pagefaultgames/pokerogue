@@ -169,6 +169,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Imbatible",
     description: "Completa el juego en modo clásico.",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Bring Your Child To Work Day",
+    description: "Beat the game in Classic Mode with at least one unevolved party member."
+  },
 
   "MONO_GEN_ONE": {
     name: "The Original Rival",
@@ -268,6 +272,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Entrenador de Eevee",
     description: "Completa el desafío de solo Eevee.",
   },
+  "FRESH_START": {
+    name: "First Try!",
+    description: "Complete the Fresh Start challenge."
+  }
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)

@@ -1,4 +1,4 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import BattleScene from "../../battle-scene";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg.js";
 import { Species } from "#enums/species";
@@ -6,7 +6,7 @@ import Phaser from "phaser";
 import { EggSourceType } from "#app/enums/egg-source-types.js";
 import { EggTier } from "#app/enums/egg-type.js";
 import { VariantTier } from "#app/enums/variant-tiers.js";
-import GameManager from "../utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import EggData from "#app/system/egg-data.js";
 import * as Utils from "#app/utils.js";
 

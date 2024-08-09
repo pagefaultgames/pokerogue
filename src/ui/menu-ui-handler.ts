@@ -1,5 +1,5 @@
 import BattleScene, { bypassLogin } from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
+import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { addWindow } from "./ui-theme";
@@ -38,30 +38,38 @@ export default class MenuUiHandler extends MessageUiHandler {
   private menuBg: Phaser.GameObjects.NineSlice;
   protected optionSelectText: Phaser.GameObjects.Text;
 
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
 
-  protected ignoredMenuOptions: MenuOptions[];
-  protected menuOptions: MenuOptions[];
+  private excludedMenus: () => ConditionalMenu[];
+  private menuOptions: MenuOptions[];
 
   protected manageDataConfig: OptionSelectConfig;
   protected communityConfig: OptionSelectConfig;
 
+  protected scale: number = 0.1666666667;
+
   public bgmBar: BgmBar;
 
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
-    this.ignoredMenuOptions = !bypassLogin
-      ? [ ]
-      : [ MenuOptions.LOG_OUT ];
-    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => !this.ignoredMenuOptions.includes(m));
+    this.excludedMenus = () => [
+      { condition: [Mode.COMMAND, Mode.TITLE].includes(mode ?? Mode.TITLE), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
+      { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
+    ];
+
+    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+      .map(m => parseInt(MenuOptions[m]) as MenuOptions)
+      .filter(m => {
+        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+      });
   }
 
-  setup() {
+  setup(): void {
     const ui = this.getUi();
     // wiki url directs based on languges available on wiki
-    const lang = i18next.resolvedLanguage.substring(0,2);
+    const lang = i18next.resolvedLanguage?.substring(0,2)!; // TODO: is this bang correct?
     if (["de", "fr", "ko", "zh"].includes(lang)) {
       wikiUrl = `https://wiki.pokerogue.net/${lang}:start`;
     }
@@ -80,18 +88,39 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuOverlay.setOrigin(0,0);
     this.menuContainer.add(this.menuOverlay);
 
-    const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
-    menuMessageText.setName("menu-message");
-    menuMessageText.setWordWrapWidth(1224);
-    menuMessageText.setOrigin(0, 0);
+    this.menuContainer.add(this.bgmBar);
+
+    this.menuContainer.setVisible(false);
+
+  }
+
+
+  render() {
+    const ui = this.getUi();
+    this.excludedMenus = () => [
+      { condition: ![Mode.COMMAND, Mode.TITLE].includes(ui.getModeChain()[0]), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
+      { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
+    ];
+
+    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+      .map(m => parseInt(MenuOptions[m]) as MenuOptions)
+      .filter(m => {
+        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+      });
 
     this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
     this.optionSelectText.setLineSpacing(12);
 
-    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25), 0, this.optionSelectText.displayWidth + 23, (this.scene.game.canvas.height / 6) - 2);
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, (this.scene as BattleScene).uiTheme).scale;
+    this.menuBg = addWindow(this.scene,
+      (this.scene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25),
+      0,
+      this.optionSelectText.displayWidth + 19+24*this.scale,
+      (this.scene.game.canvas.height / 6) - 2
+    );
     this.menuBg.setOrigin(0, 0);
 
-    this.optionSelectText.setPositionRelative(this.menuBg, 14, 6);
+    this.optionSelectText.setPositionRelative(this.menuBg, 10+24*this.scale, 6);
 
     this.menuContainer.add(this.menuBg);
 
@@ -108,15 +137,17 @@ export default class MenuUiHandler extends MessageUiHandler {
     menuMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageBox);
 
+    const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
+    menuMessageText.setName("menu-message");
+    menuMessageText.setWordWrapWidth(1224);
+    menuMessageText.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageText);
-
-    this.menuContainer.add(this.bgmBar);
 
     this.message = menuMessageText;
 
     this.menuContainer.add(this.menuMessageBoxContainer);
 
-    const manageDataOptions = [];
+    const manageDataOptions: any[] = []; // TODO: proper type
 
     const confirmSlot = (message: string, slotFilter: (i: integer) => boolean, callback: (i: integer) => void) => {
       ui.revertMode();
@@ -128,7 +159,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               handler: () => {
                 callback(i);
                 ui.revertMode();
-                ui.showText(null, 0);
+                ui.showText("", 0);
                 return true;
               }
             };
@@ -136,7 +167,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             label: i18next.t("menuUiHandler:cancel"),
             handler: () => {
               ui.revertMode();
-              ui.showText(null, 0);
+              ui.showText("", 0);
               return true;
             }
           }]),
@@ -228,7 +259,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: "Wiki",
         handler: () => {
-          window.open(wikiUrl, "_blank").focus();
+          window.open(wikiUrl, "_blank")?.focus();
           return true;
         },
         keepOpen: true
@@ -236,7 +267,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: "Discord",
         handler: () => {
-          window.open(discordUrl, "_blank").focus();
+          window.open(discordUrl, "_blank")?.focus();
           return true;
         },
         keepOpen: true
@@ -244,7 +275,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: "GitHub",
         handler: () => {
-          window.open(githubUrl, "_blank").focus();
+          window.open(githubUrl, "_blank")?.focus();
           return true;
         },
         keepOpen: true
@@ -252,7 +283,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: "Reddit",
         handler: () => {
-          window.open(redditUrl, "_blank").focus();
+          window.open(redditUrl, "_blank")?.focus();
           return true;
         },
         keepOpen: true
@@ -270,15 +301,18 @@ export default class MenuUiHandler extends MessageUiHandler {
       xOffset: 98,
       options: communityOptions
     };
-
     this.setCursor(0);
-
-    this.menuContainer.setVisible(false);
   }
 
   show(args: any[]): boolean {
-
+    this.render();
     super.show(args);
+
+    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+      .map(m => parseInt(MenuOptions[m]) as MenuOptions)
+      .filter(m => {
+        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+      });
 
     this.menuContainer.setVisible(true);
     this.setCursor(0);
@@ -305,11 +339,15 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     if (button === Button.ACTION) {
       let adjustedCursor = this.cursor;
-      for (const imo of this.ignoredMenuOptions) {
-        if (adjustedCursor >= imo) {
-          adjustedCursor++;
-        } else {
-          break;
+      const excludedMenu = this.excludedMenus().find(e => e.condition);
+      if (excludedMenu !== undefined && excludedMenu.options !== undefined && excludedMenu.options.length > 0) {
+        const sortedOptions = excludedMenu.options.sort();
+        for (const imo of sortedOptions) {
+          if (adjustedCursor >= imo) {
+            adjustedCursor++;
+          } else {
+            break;
+          }
         }
       }
       switch (adjustedCursor) {
@@ -348,7 +386,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === i18next.t("menuUiHandler:linkDiscord") || o.label === i18next.t("menuUiHandler:unlinkDiscord"))) {
           this.manageDataConfig.options.splice(this.manageDataConfig.options.length-1,0,
             {
-              label: loggedInUser.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
+              label: loggedInUser?.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
               handler: () => {
                 if (loggedInUser?.discordId === "") {
                   const token = Utils.getCookie(Utils.sessionIdKey);
@@ -404,7 +442,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
               ui.setOverlayMode(Mode.CONFIRM, () => this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true)), () => {
                 ui.revertMode();
-                ui.showText(null, 0);
+                ui.showText("", 0);
               }, false, -98);
             });
           } else {
@@ -429,7 +467,7 @@ export default class MenuUiHandler extends MessageUiHandler {
           ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
             ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
               ui.revertMode();
-              ui.showText(null, 0);
+              ui.showText("", 0);
             }, false, -98);
           });
         } else {
@@ -487,7 +525,8 @@ export default class MenuUiHandler extends MessageUiHandler {
       this.menuContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setPositionRelative(this.menuBg, 7, 9 + this.cursor * 16);
+    this.cursorObj.setScale(this.scale * 6);
+    this.cursorObj.setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
 
     return ret;
   }
@@ -505,4 +544,9 @@ export default class MenuUiHandler extends MessageUiHandler {
     }
     this.cursorObj = null;
   }
+}
+
+interface ConditionalMenu {
+  condition: boolean;
+  options: MenuOptions[];
 }
