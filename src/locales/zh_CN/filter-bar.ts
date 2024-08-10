@@ -16,7 +16,7 @@ export const filterBar: SimpleTranslationEntries = {
   "costReduction": "费用降低",
   "costReductionUnlocked": "已降费",
   "costReductionLocked": "未降费",
-  "favorite": "Favorite",//To be translated
+  "favorite": "最爱",//To be translated
   "isFavorite": "Favorite - Yes",
   "notFavorite": "Favorite - No",
   "ribbon": "缎带",
