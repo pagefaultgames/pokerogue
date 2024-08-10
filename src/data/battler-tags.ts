@@ -110,20 +110,15 @@ export abstract class DisablingBattlerTag extends BattlerTag {
       const phase = pokemon.scene.getCurrentPhase() as MovePhase;
       const move = phase.move;
 
-      if (!this.moveIsDisabled(move.moveId)) {
-        return true;
+      if (this.moveIsDisabled(move.moveId)) {
+        pokemon.scene.queueMessage(this.interruptedText(pokemon, move.moveId));
+        phase.fail();
       }
 
-      pokemon.scene.queueMessage(this.interruptedText(pokemon, move.moveId));
-      phase.fail();
-    } else if (lapseType === BattlerTagLapseType.TURN_END) {
-      // On turn end, subtract from lifetime and remove this tag if 0
-      if (!super.lapse(pokemon, lapseType)) {
-        return false;
-      }
+      return true;
     }
 
-    return true;
+    return super.lapse(pokemon, lapseType);
   }
 
   /**
