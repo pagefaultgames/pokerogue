@@ -68,6 +68,8 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 
     this.scene.loadImage("hall_of_fame_red", "ui");
     this.scene.loadImage("hall_of_fame_blue", "ui");
+    this.scene.loadAtlas("rival_f", "trainer");
+    this.scene.loadAtlas("rival_m", "trainer");
   }
 
   show(args: any[]): boolean {
@@ -291,7 +293,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
       gameModeLabel.appendText(`${i18next.t("gameMode:dailyRun")}`, false);
       break;
     case GameModes.SPLICED_ENDLESS:
-      gameModeLabel.appendText(`${i18next.t("gameMode:splicedEndless")}`, false);
+      gameModeLabel.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
       break;
     case GameModes.ENDLESS:
       gameModeLabel.appendText(`${i18next.t("gameMode:endless")}`, false);
@@ -310,7 +312,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     const timestampLabel = addTextObject(this.scene, 8, 33, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
     this.add(timestampLabel);
 
-    const pokemonIconsContainer = this.scene.add.container(125, 17);
+    const pokemonIconsContainer = this.scene.add.container(140, 17);
 
     data.party.forEach((p: PokemonData, i: integer) => {
       const iconContainer = this.scene.add.container(26 * i, 0);
