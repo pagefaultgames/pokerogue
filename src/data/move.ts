@@ -6017,9 +6017,6 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
 
 const unknownTypeCondition: MoveConditionFunc = (user, target, move) => !user.getTypes().includes(Type.UNKNOWN);
 
-/** Ensures that the target has at least one non-virtual, non-NONE move in its history. */
-const targetHasMoveHistoryCondition: MoveConditionFunc = (user, target, move) => target.getLastXMoves().filter(m => m.move !== Moves.NONE && !m.virtual).length >= 1;
-
 export type MoveTargetSet = {
   targets: BattlerIndex[];
   multiple: boolean;
@@ -6224,8 +6221,7 @@ export function initMoves() {
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.DISABLED, false, true)
-      .condition(targetHasMoveHistoryCondition)
-      .condition((user, target, move) => target.getLastXMoves().filter(m => m.move !== Moves.NONE && !m.virtual).at(0)?.move !== Moves.STRUGGLE)
+      .condition((user, target, move) => target.getMoveHistory().reverse().find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual) !== undefined)
       .condition(failOnMaxCondition),
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1)
