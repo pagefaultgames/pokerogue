@@ -1629,6 +1629,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       this.setUpgradeAnimation(starterContainer.icon, this.lastSpecies, true);
                     }
 
+                    starterContainer.starterPassiveBgs.setVisible(!!this.scene.gameData.starterData[this.lastSpecies.speciesId].passiveAttr);
+
                     return true;
                   }
                   return false;
