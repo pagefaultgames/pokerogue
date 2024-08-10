@@ -112,7 +112,7 @@ export abstract class DisablingBattlerTag extends BattlerTag {
 
       if (this.moveIsDisabled(move.moveId)) {
         pokemon.scene.queueMessage(this.interruptedText(pokemon, move.moveId));
-        phase.fail();
+        phase.cancel();
       }
 
       return true;
