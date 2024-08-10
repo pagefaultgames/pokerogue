@@ -44,8 +44,8 @@ describe("Moves - Disable", () => {
     game.override.battleType("single");
     game.override.ability(Abilities.NONE);
     game.override.enemyAbility(Abilities.NONE);
-    game.override.moveset([Moves.DISABLE, Moves.SPLASH, Moves.NONE, Moves.NONE]);
-    game.override.enemyMoveset([Moves.SPLASH,Moves.NONE,Moves.NONE,Moves.NONE]);
+    game.override.moveset([Moves.DISABLE, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
     game.override.starterSpecies(Species.PIKACHU);
     game.override.enemySpecies(Species.SHUCKLE);
   });
