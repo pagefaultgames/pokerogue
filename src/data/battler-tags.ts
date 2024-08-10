@@ -135,7 +135,7 @@ export abstract class DisablingBattlerTag extends BattlerTag {
  */
 export class DisabledTag extends DisablingBattlerTag {
   /** The move being disabled. Gets set when {@linkcode onAdd} is called for this tag. */
-  public moveId: integer = 0;
+  public moveId: Moves = Moves.NONE;
 
   public override moveIsDisabled(move: Moves): boolean {
     return move === this.moveId;
@@ -152,13 +152,9 @@ export class DisabledTag extends DisablingBattlerTag {
   override onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    const history = pokemon.getLastXMoves();
-    if (history.length === 0) {
-      return;
-    }
-
-    const move = history.find(m => m.move !== Moves.NONE);
-    if (move === undefined || move.move === Moves.STRUGGLE) {
+    const move = pokemon.getLastXMoves()
+      .find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual);
+    if (move === undefined) {
       return;
     }
 
