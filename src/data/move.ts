@@ -3757,7 +3757,7 @@ export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
       if (move.type === Type.STELLAR) {
         if (move.id === Moves.TERA_BLAST) {
           move.power = 200;
-          //200 instead of 100 to reflect lack of stellar being 2x dmg on any typew
+          //200 instead of 100 to reflect lack of stellar being 2x dmg on any type
         }
       }
     }
