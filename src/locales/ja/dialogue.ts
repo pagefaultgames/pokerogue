@@ -2517,65 +2517,65 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival": {
     "encounter": {
-      1: `@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
-                    $@c{smile_eclosed}So you're really pursuing your dream after all?\n I almost can't believe it.
-                    $@c{serious_smile_fists}Since we're here, how about a battle?\nAfter all, I want to make sure you're ready.
-                    $@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!`
+      1: `@c{smile}あっ、ここに　いたんだ! 旅に　出る前に　「じゃ　またね！」って　くらい　聞きたかったよ... 
+                    $@c{smile_eclosed}やっぱり　夢を　追ってこうと　しているんだ?\n　信じられない　ほどね...　
+                    $@c{serious_smile_fists}じゃあ、　ここまで　来たから　バトルしよっか？\n　覚悟してるかを　確かめたい　から！
+                    $@c{serious_mopen_fists}遠慮せずに　全力で　かかってこいぜ！Don't hold back, I want you to give me everything you've got!`
     },
     "victory": {
-      1: `@c{shock}Wow… You cleaned me out.\nAre you actually a beginner?
-                   $@c{smile}Maybe it was a bit of luck but…\nWho knows you might just be able to go all the way.
-                   $By the way, the professor asked me to give you these items. They look pretty cool.
-                   $@c{serious_smile_fists}Good luck out there!`
+      1: `@c{shock}ウワッ、カンゼンに　ぶっ壊したぜ。\n　初心者だとは　思えなほど...
+                   $@c{smile}たぶん　運が良っかった　だけが...\n　最後まで　行ける素質が　あるかもな！.
+                   $そうだ、こっちの　アイテムを　あげよう、\n博士に そう言いつけたからな。結構　スゴそうな　もんだ！
+                   $@c{serious_smile_fists}ここからも　ガンバレ！`
     },
   },
   "rival_female": {
     "encounter": {
-      1: `@c{smile_wave}There you are! I've been looking everywhere for you!\n@c{angry_mopen}Did you forget to say goodbye to your best friend?
-                    $@c{smile_ehalf}You're going after your dream, huh?\nThat day is really today isn't it…
-                    $@c{smile}Anyway, I'll forgive you for forgetting me, but on one condition. @c{smile_wave_wink}You have to battle me!
-                    $@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?`
+      1: `@c{smile_wave}あ、ついに　見つけた！　あちこち　探したのよ！\n@c{angry_mopen}だーい親友に　お別れを　言うまでも　忘れちゃった？
+                    $@c{smile_ehalf}大切な　夢を　追っていくのね？\nやっぱり、この日が　来たのね…
+                    $@c{smile}とにかく！　アタシを　忘れちゃったのを　許せる 条件は　一つ：\n@c{smile_wave_wink}アタシと　バトルだ!
+                    $@c{angry_mopen}全力で　かかってきなさい！\n冒険が　第一歩で　終わっちゃうと　もったいない　でしょう？`
     },
     "victory": {
-      1: `@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?
-                    $@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.
-                    $@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!
-                    $@c{smile_wave}Do your best like always! I believe in you!`
+      1: `@c{shock}始まった　バッカリなのに　そんなに強い？！\n完全に　チートだろう？
+                    $@c{smile_wave_wink}{smile_wave_wink}なんちゃって！@d{64} @c{smile_eclosed}正々堂々と　負けたよ。　冒険　上手く行ける　気がするね！
+                    $@c{smile}ところで、こっち！　博士からの　アイテムを　あげるわ。\n きっと　便利だと　思うよ！
+                    $@c{smile_wave}いつも通り　頑張ってね！　信じてるから！`
     },
   },
   "rival_2": {
     "encounter": {
-      1: `@c{smile}Hey, you're here too?\n@c{smile_eclosed}Still a perfect record, huh…?
-                $@c{serious_mopen_fists}I know it kind of looks like I followed you here, but that's mostly not true.
-                $@c{serious_smile_fists}Honestly though, I've been itching for a rematch since you beat me back at home.
-                $I've been doing a lot of my own training so I'll definitely put up a fight this time.
-                $@c{serious_mopen_fists}Don't hold back, just like before!\nLet's go!`
+      1: `@c{smile}おや、なんと　グウゼン。\n@c{smile_eclosed}今までも　パーフェクトに　勝ったよう　だな...
+                $@c{serious_mopen_fists}忍び寄った　みたいとは　分かるけど、そんなことない... ほとんどはな。I know it kind of looks like I followed you here, but that's mostly not true.
+                $@c{serious_smile_fists}ぶっちゃけ言うと、オレが　負けた時から　再戦したくて　ウズウズしてたぜ。
+                $張り切って　育成したから　今は　ちゃんと　勢い　見せるんだ。
+                $@c{serious_mopen_fists}今回も　遠慮しな！　行こうぜ！`
     },
     "victory": {
-      1: `@c{neutral_eclosed}Oh. I guess I was overconfident.
-                $@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n
-                $@c{smile}Oh, not that you really need the help, but I had an extra one of these lying around and figured you might want it.\n
-                $@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all.
-                $@c{smile}Anyway, take care!`
+      1: `@c{neutral_eclosed}あ。自信過剰かも。
+                $@c{smile}いいけどさ、こうなるのを　見込んだから。\n@c{serious_mopen_fists}次回まで　もっと頑張らなくちゃ　ってことだよな！
+                $@c{smile}きっと　助け　要らないんだが、もう一つの　アイテムが　欲しいかと　思ったから　あげるぜ。\n
+                $@c{serious_smile_fists}でも　それで　ラストだ！\n相手に　利点を　あげ続けると　行けないんだろう！
+                $@c{smile}ゲンキでな！`
     },
   },
   "rival_2_female": {
     "encounter": {
-      1: `@c{smile_wave}Oh, fancy meeting you here. Looks like you're still undefeated. @c{angry_mopen}Huh… Not bad!
-                $@c{angry_mopen}I know what you're thinking, and no, I wasn't creeping on you. @c{smile_eclosed}I just happened to be in the area.
-                $@c{smile_ehalf}I'm happy for you but I just want to let you know that it's OK to lose sometimes.
-                $@c{smile}We learn from our mistakes, often more than we would if we kept succeeding.
-                $@c{angry_mopen}In any case, I've been training hard for our rematch, so you'd better give it your all!`
+      1: `@c{smile_wave}あっ、こんなとこで　偶然だね！まだ　倒れないようだ。@c{angry_mopen}フム、えらいえらい！
+                $@c{angry_mopen}考えてるのは　分かる、つきまとってるワケ　じゃないから！　@c{smile_eclosed}この辺に　いただけよ。
+                $@c{smile_ehalf}ここまで　頑張っていて　良かったけど、時々　負けることも　大丈夫だと　知ってるよね？
+                $@c{smile}みんなは　失敗から　学ぶ…　いつまでも　成功し続ける　よりもね。
+                $@c{angry_mopen}とにかく！再戦の　ために　大変　トレーニングしてたから　全・勢・力で 戦おう！`
     },
     "victory": {
-      1: `@c{neutral}I… wasn't supposed to lose that time…
-                $@c{smile}Aw well. That just means I'll have to train even harder for next time!
-                $@c{smile_wave}I also got you another one of these!\n@c{smile_wave_wink}No need to thank me~.
-                $@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!
-                $@c{smile_wave}Keep at it!`
+      1: `@c{neutral}…今回は　負ける　はずじゃなかった…
+                $@c{smile}しょうがないね。次回まで　もっともっと　トレーニングしなくちゃ　ってこと！
+                $@c{smile_wave}そして！もう一つの　アイテム、どうぞ！\n@c{smile_wave_wink} 「ありがと」なんて　必要ない！
+                $@c{angry_mopen}でもね、それで　最後！ 今から　サービス　一つも　あげないよ～
+                $@c{smile_wave}頑張りましょう！`
     },
     "defeat": {
-      1: "It's OK to lose sometimes…"
+      1: "時々　負けることも　いいんだよ…"
     }
   },
   "rival_3": {
@@ -2623,21 +2623,21 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_4_female": {
     "encounter": {
-      1: `@c{neutral}It's me! You didn't forget about me again… did you?
-                $@c{smile}You should be proud of how far you made it. Congrats!\nBut it looks like it's the end of your journey.
-                $@c{smile_eclosed}You've awoken something in me I never knew was there.\nIt seems like all I do now is train.
-                $@c{smile_ehalf}I hardly even eat or sleep now, I just train my Pokémon all day, getting stronger every time.
-                $@c{neutral}In fact, I… hardly recognize myself.
-                $And now, I've finally reached peak performance.\nI don't think anyone could beat me now.
-                $And you know what? It's all because of you.\n@c{smile_ehalf}I don't know whether to thank you or hate you.
-                $@c{angry_mopen}Prepare yourself.`
+      1: `@c{neutral}アタシよ！もう　忘れちゃった...　のね?
+                $@c{smile}まあ、こんな　遠くまで　来たのは　鼻が高いことだよ！　おめでと～\nしかし、ここは　終着点だね。
+                $@c{smile_eclosed}アタシの　中にある　全然　知らなかった　部分を　目覚めたよ。\n今は　トレーニングしか　してない。
+                $@c{smile_ehalf}食べたり　寝たりも　しなくて　朝から晩まで　ポケモンを　育って、毎日　昨日より　強くなってる。
+                $@c{neutral}実は…　もう　じぶん　認識できない。
+                $けっきょく、　峠を越して　まるで　カミに　なった。\n今は　誰もが　アタシを　倒せないと　思う。And now, I've finally reached peak performance.\nI don't think anyone could beat me now.
+                $ねえ、分かる？全ては　アンタの　お陰で。\n@c{smile_ehalf}お礼を言うか　アンタのこと嫌いか　どうしたらいいの　分からない。
+                $@c{angry_mopen}覚悟しなさい。`
     },
     "victory": {
-      1: "@c{neutral}What…@d{64} What are you?"
+      1: "@c{neutral}一体…@d{64} 何モノだ…?"
 
     },
     "defeat": {
-      1: "$@c{smile}You should be proud of how far you made it."
+      1: "$@c{smile}ここまで　頑張ってたのを　誇りに思ってね。"
     }
   },
   "rival_5": {
@@ -2683,9 +2683,9 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_6_female": {
     "encounter": {
-      1: `@c{smile_ehalf}So it's just us again.
-                $@c{smile_eclosed}You know, I keep going around and around in my head…
-                $@c{smile_ehalf}There's something to all this, why everything seems so strange now…
+      1: `@c{smile_ehalf}まだ　アタシだけに　なった。So it's just us again.
+                $@c{smile_eclosed}ねえ、頭の中に　グルグル　巡ることが　あってよ。
+                $@c{smile_ehalf}アタシとアナタの　間に　起こしたことも,　この変な感情も…There's something to all this, why everything seems so strange now…
                 $@c{smile}You have your dream, and I have this ambition in me…
                 $I just can't help but feel there's a greater purpose to all this, to what we're doing, you and I.
                 $@c{smile_eclosed}I think I'm supposed to push you… to your limits.
