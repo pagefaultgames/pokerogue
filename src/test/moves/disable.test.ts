@@ -6,17 +6,15 @@ import { Species } from "#enums/species";
 import { CommandPhase, EnemyCommandPhase, TurnInitPhase } from "#app/phases.js";
 import { Mode } from "#app/ui/ui.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
+import { Command } from "#app/ui/command-ui-handler";
 import { MoveResult } from "#app/field/pokemon.js";
 import { Stat } from "#app/data/pokemon-stat.js";
-import { DisabledTag } from "#app/data/battler-tags.js";
-import { BattlerTagType } from "#enums/battler-tag-type";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Moves - Disable", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  /** If in CommandPhase, input a move */
   const _useMove = (move?: Moves) => {
     move ??= Moves.DISABLE;
 
@@ -39,71 +37,125 @@ describe("Moves - Disable", () => {
     game.phaseInterceptor.restoreOg();
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
     game.override.ability(Abilities.NONE);
     game.override.enemyAbility(Abilities.NONE);
     game.override.moveset([Moves.DISABLE, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-    game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     game.override.starterSpecies(Species.PIKACHU);
     game.override.enemySpecies(Species.SHUCKLE);
   });
 
-  it("DISABLE fails if enemy has no move history", async() => {
-    // Player goes first
+  it("disables moves", async () => {
     await game.startBattle();
-    expect(game.scene.getParty()[0].stats[Stat.SPD]).toBeGreaterThan(game.scene.getEnemyParty()[0].stats[Stat.SPD]);
+    const playerMon = game.scene.getPlayerPokemon()!;
+    const enemyMon = game.scene.getEnemyPokemon()!;
 
-    _useMove();
-
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
-    expect(game.scene.getParty()[0].getMoveHistory().at(0)!.result).toBe(MoveResult.FAIL);
-  }, 20000);
-
-  it("DISABLE works when user moves after enemy", async() => {
-    game.override.starterSpecies(Species.SHUCKLE);
-    game.override.enemySpecies(Species.PIKACHU);
-
-    await game.startBattle();
-    expect(game.scene.getParty()[0].stats[Stat.SPD]).toBeLessThan(game.scene.getEnemyParty()[0].stats[Stat.SPD]);
+    playerMon.stats[Stat.SPD] = 1;
+    enemyMon.stats[Stat.SPD] = 2;
 
     _useMove();
     await game.phaseInterceptor.to(CommandPhase);
 
-    expect(game.scene.getParty()[0].getMoveHistory().at(0)!.move).toBe(Moves.DISABLE);
-    expect(game.scene.getParty()[0].getMoveHistory().at(0)!.result).toBe(MoveResult.SUCCESS);
-    expect(game.scene.getEnemyParty()[0].getMoveHistory().at(0)!.move).toBe(Moves.SPLASH);
-    expect(game.scene.getEnemyParty()[0].summonData.tags).toHaveLength(1);
-    expect(game.scene.getEnemyParty()[0].summonData.tags[0]).toBeInstanceOf(DisabledTag);
-    expect((game.scene.getEnemyParty()[0].getTag(BattlerTagType.DISABLED) as DisabledTag).moveId).toBe(Moves.SPLASH);
-    expect(game.scene.getEnemyParty()[0].isMoveDisabled(Moves.SPLASH)).toBe(true);
+    expect(playerMon.getMoveHistory()).toHaveLength(1);
+    expect(enemyMon.getMoveHistory()).toHaveLength(1);
+    expect(playerMon.getMoveHistory()[0]).toMatchObject({ move: Moves.DISABLE, result: MoveResult.SUCCESS });
+    expect(enemyMon.isMoveDisabled(Moves.SPLASH)).toBe(true);
+  });
+
+  it("fails if enemy has no move history", async() => {
+    await game.startBattle();
+    const playerMon = game.scene.getPlayerPokemon()!;
+    const enemyMon = game.scene.getEnemyPokemon()!;
+
+    playerMon.stats[Stat.SPD] = 2;
+    enemyMon.stats[Stat.SPD] = 1;
 
     _useMove();
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
-    expect(game.scene.getEnemyParty()[0].getLastXMoves().at(0)!.move).toBe(Moves.STRUGGLE);
+    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
+
+    expect(playerMon.getMoveHistory()).toHaveLength(1);
+    expect(playerMon.getMoveHistory()[0]).toMatchObject({ move: Moves.DISABLE, result: MoveResult.FAIL });
   }, 20000);
 
-  it("DISABLE interrupts target's move when user moves first", async() => {
-    // Player goes first
+  it("causes STRUGGLE if all usable moves are disabled", async() => {
     await game.startBattle();
+    const playerMon = game.scene.getPlayerPokemon()!;
+    const enemyMon = game.scene.getEnemyPokemon()!;
 
+    playerMon.stats[Stat.SPD] = 1;
+    enemyMon.stats[Stat.SPD] = 2;
+
+    // Enemy will use SPLASH, we will disable it
+    _useMove();
+    await game.phaseInterceptor.to(CommandPhase);
+
+    // Enemy will use STRUGGLE
+    _useMove();
+    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
+
+    const enemyHistory = enemyMon.getMoveHistory();
+    expect(enemyHistory).toHaveLength(2);
+    expect(enemyHistory[0].move).toBe(Moves.SPLASH);
+    expect(enemyHistory[1].move).toBe(Moves.STRUGGLE);
+  }, 20000);
+
+  it("cannot disable STRUGGLE", async() => {
+    game.override.enemyMoveset(Array(4).fill(Moves.STRUGGLE));
+    await game.startBattle();
+    const playerMon = game.scene.getPlayerPokemon()!;
+    const enemyMon = game.scene.getEnemyPokemon()!;
+
+    playerMon.stats[Stat.SPD] = 1;
+    enemyMon.stats[Stat.SPD] = 2;
+
+    _useMove();
+    await game.phaseInterceptor.to(CommandPhase);
+
+    expect(playerMon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyMon.getLastXMoves()[0].move).toBe(Moves.STRUGGLE);
+    expect(enemyMon.isMoveDisabled(Moves.STRUGGLE)).toBe(false);
+  }, 20000);
+
+  it("interrupts target's move when target moves after", async() => {
+    await game.startBattle();
+    const playerMon = game.scene.getPlayerPokemon()!;
+    const enemyMon = game.scene.getEnemyPokemon()!;
+
+    playerMon.stats[Stat.SPD] = 2;
+    enemyMon.stats[Stat.SPD] = 1;
+
+    // Waste a turn to let the target make move history
     _useMove(Moves.SPLASH);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
 
-    expect(game.scene.getEnemyParty()[0].getMoveHistory()).toHaveLength(1);
-
     // Both mons just used Splash last turn; now have player use Disable.
+    _useMove(Moves.DISABLE);
+    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
+
+    const enemyHistory = enemyMon.getMoveHistory();
+    expect(enemyHistory).toHaveLength(2);
+    expect(enemyHistory[0]).toMatchObject({ move: Moves.SPLASH, result: MoveResult.SUCCESS });
+    expect(enemyHistory[1].result).toBe(MoveResult.FAIL);
+  }, 20000);
+
+  it("disables NATURE POWER, not the move invoked by it", async() => {
+    await game.startBattle();
+    const playerMon = game.scene.getPlayerPokemon()!;
+    const enemyMon = game.scene.getEnemyPokemon()!;
+
+    game.override.moveset(Array(4).fill(Moves.DISABLE));
+    game.override.enemyMoveset(Array(4).fill(Moves.NATURE_POWER));
+
+    playerMon.stats[Stat.SPD] = 1;
+    enemyMon.stats[Stat.SPD] = 2;
 
     _useMove(Moves.DISABLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
 
-    expect(game.scene.getPlayerPokemon()!.getMoveHistory().length).toBe(2);
-
-    expect(game.scene.getEnemyParty()[0].isMoveDisabled(Moves.SPLASH));
-    expect(game.scene.getEnemyParty()[0].getMoveHistory().length).toBe(2);
-    expect(game.scene.getEnemyParty()[0].getLastXMoves(2).at(0)!.result).toBe(MoveResult.FAIL);
-    expect(game.scene.getEnemyParty()[0].getLastXMoves(2).at(1)!.result).toBe(MoveResult.SUCCESS);
+    expect(enemyMon.isMoveDisabled(Moves.NATURE_POWER)).toBe(true);
+    expect(enemyMon.isMoveDisabled(enemyMon.getLastXMoves(2)[1].move)).toBe(false);
   }, 20000);
-
 });
