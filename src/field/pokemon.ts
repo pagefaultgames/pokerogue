@@ -50,7 +50,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
-import { PermanentStat, BattleStat } from "#app/enums/stat";
+import { PermanentStat, BattleStat, PERMANENT_STATS } from "#app/enums/stat";
 
 export enum FieldPosition {
   CENTER,
@@ -665,7 +665,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Retrieves the entire set of stats of the {@linkcode Pokemon}.
-   * @param ignoreOverride {@linkcode boolean} to prefer actual stats (`true` by default) or in-battle overriden stats (`false`)
+   * @param ignoreOverride prefer actual stats (`true` by default) or in-battle overriden stats (`false`)
    * @returns the numeric values of the {@linkcode Pokemon}'s stats
    */
   getStats(ignoreOverride: boolean = true): number[] {
@@ -678,11 +678,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Retrieves the corresponding {@linkcode PermanentStat} of the {@linkcode Pokemon}.
    * @param stat the desired {@linkcode PermanentStat}
-   * @param ignoreOverride {@linkcode boolean} to prefer actual stats (`true` by default) or in-battle overridden stats (`false`)
+   * @param ignoreOverride prefer actual stats (`true` by default) or in-battle overridden stats (`false`)
    * @returns the numeric value of the desired {@linkcode Stat}
    */
   getStat(stat: PermanentStat, ignoreOverride: boolean = true): number {
-    if (!ignoreOverride && this.summonData?.stats[stat] !== 0) {
+    if (!ignoreOverride && (this.summonData?.stats[stat] !== 0)) {
       return this.summonData.stats[stat];
     }
     return this.stats[stat];
@@ -694,7 +694,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Note that this does nothing if {@linkcode value} is less than 0.
    * @param stat the desired {@linkcode PermanentStat} to be overwritten
    * @param value the desired numeric value
-   * @param ignoreOverride {@linkcode boolean} to write to actual stats (`true` by default) or in-battle overridden stats (`false`)
+   * @param ignoreOverride write to actual stats (`true` by default) or in-battle overridden stats (`false`)
    */
   setStat(stat: PermanentStat, value: number, ignoreOverride: boolean = true): void {
     if (value >= 0) {
@@ -707,15 +707,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Retrieves the in-battle stage of the {@linkcode BattleStat}.
+   * Retrieves the entire set of in-battle stat stages of the {@linkcode Pokemon}.
+   * @returns the numeric values of the {@linkcode Pokemon}'s in-battle stat stages if available, undefined otherwise
+   */
+  getStatStages(): number[] | undefined {
+    return this.summonData ? this.summonData.statStages : undefined;
+  }
+
+  /**
+   * Retrieves the in-battle stage of the specified {@linkcode BattleStat}.
    * @param stat the {@linkcode BattleStat} whose stage is desired
    * @returns the stage of the desired {@linkcode BattleStat} if available, 0 otherwise
    */
   getStatStage(stat: BattleStat): number {
-    if (this.summonData) {
-      return this.summonData.statStages[stat - 1];
-    }
-    return 0;
+    return this.summonData ? this.summonData.statStages[stat - 1] : 0;
   }
 
   /**
@@ -827,7 +832,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.scene.applyModifiers(PokemonBaseStatModifier, this.isPlayer(), this, baseStats);
-    for (let s = Stat.HP; s <= Stat.SPD; s++) {
+    for (const s of PERMANENT_STATS) {
       const baseStat = baseStats[s];
       let value = Math.floor(((2 * baseStat + this.ivs[s]) * this.level) * 0.01);
       if (s === Stat.HP) {
@@ -852,7 +857,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
 
-      this.setStat(s as PermanentStat , value);
+      this.setStat(s, value);
     }
   }
 

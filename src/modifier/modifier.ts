@@ -24,6 +24,7 @@ import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
 import { Species } from "#enums/species";
+import { BATTLE_STATS } from "#app/enums/stat";
 import i18next from "i18next";
 
 import { allMoves } from "#app/data/move.js";
@@ -1395,42 +1396,48 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
 }
 
 /**
- * Modifier used for White Herb, which resets negative {@linkcode Stat} changes
+ * Modifier used for held items, namely White Herb, that restore adverse stat
+ * stages in battle.
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class PokemonResetNegativeStatStageModifier extends PokemonHeldItemModifier {
+export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }
 
   matchType(modifier: Modifier) {
-    return modifier instanceof PokemonResetNegativeStatStageModifier;
+    return modifier instanceof ResetNegativeStatStageModifier;
   }
 
   clone() {
-    return new PokemonResetNegativeStatStageModifier(this.type, this.pokemonId, this.stackCount);
+    return new ResetNegativeStatStageModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   /**
-   * Restores any negative stat stages of the mon to 0
-   * @param args args[0] is the {@linkcode Pokemon} whose stat stages are being checked
-   * @returns true if any stat changes were applied (item was used), false otherwise
+   * Goes through the holder's stat stages and, if any are negative, resets that
+   * stat stage back to 0.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   * @returns true if any stat stages were reset, false otherwise
    */
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    const loweredStats = pokemon.summonData.battleStats.filter(s => s < 0);
-    if (loweredStats.length) {
-      for (let s = 0; s < pokemon.summonData.battleStats.length; s++) {
-        pokemon.summonData.battleStats[s] = Math.max(0, pokemon.summonData.battleStats[s]);
+    let statRestored = false;
+
+    for (const s of BATTLE_STATS) {
+      if (pokemon.getStatStage(s) < 0) {
+        pokemon.setStatStage(s, 0);
+        statRestored = true;
       }
-      pokemon.scene.queueMessage(i18next.t("modifier:pokemonResetNegativeStatStageApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }));
-      return true;
     }
-    return false;
+
+    if (statRestored) {
+      pokemon.scene.queueMessage(i18next.t("modifier:resetNegativeStatStageApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }));
+    }
+    return statRestored;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(_pokemon: Pokemon): integer {
     return 2;
   }
 }

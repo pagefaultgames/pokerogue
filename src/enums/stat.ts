@@ -17,8 +17,10 @@ export enum Stat {
   EVA
 }
 
-export type PermanentStat = Exclude<Stat, Stat.ACC | Stat.EVA>;
+export const PERMANENT_STATS = [ Stat.HP, Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ] as const;
+export type PermanentStat = typeof PERMANENT_STATS[number];
 
-export type BattleStat = Exclude<Stat, Stat.HP>;
+export const BATTLE_STATS = [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD, Stat.ACC, Stat.EVA] as const;
+export type BattleStat = typeof BATTLE_STATS[number];
 
 export type TempBattleStat = Exclude<BattleStat, Stat.EVA>;
