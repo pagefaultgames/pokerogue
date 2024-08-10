@@ -38,7 +38,7 @@ export const menu: SimpleTranslationEntries = {
   "evolving": "Que?\n{{pokemonName}} està evolucionant!",
   "stoppedEvolving": "Prou?\nL'evolució de {{pokemonName}} s'ha aturat!",
   "pauseEvolutionsQuestion": "Vols aturar les evolucions de {{pokémon Name}}?\nSempre poden ser activades des de la pantalla del teu equip.",
-  "evolutionsPaused": "Evolutions have been paused for {{pokemonName}}.",
+  "evolutionsPaused": "L'evolució s'ha posat en pausa per a ",
   "evolutionDone": "Enhorabona!\n{{pokemonName}} ha evolucionat a {{evolvedPokemonName}}!",
   "dailyRankings": "Rànquings Diaris",
   "weeklyRankings": "Rànquings Setmanals",
