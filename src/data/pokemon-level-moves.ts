@@ -1063,7 +1063,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.CONFUSION ], //Custom
   ],
   [Species.KADABRA]: [
-    [ EVOLVE_MOVE, Moves.PSYBEAM ], //Custom
+    [ EVOLVE_MOVE, Moves.PSYBEAM ], //LGPE
     [ 1, Moves.DISABLE ],
     [ 1, Moves.TELEPORT ],
     [ 1, Moves.KINESIS ],
@@ -6723,8 +6723,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.TURTWIG]: [
     [ 1, Moves.TACKLE ],
     [ 5, Moves.WITHDRAW ],
-    [ 5, Moves.ABSORB ], //Custom, moved from 9 to 5
-    [ 9, Moves.LEAFAGE ], //Fill empty moveslot, from BDSP
+    [ 5, Moves.LEAFAGE ], //Custom, moved from 10 to 5, BDSP
+    [ 9, Moves.GROWTH ], //Fill empty moveslot, from BDSP level 6
     [ 13, Moves.RAZOR_LEAF ],
     [ 17, Moves.CURSE ],
     [ 21, Moves.BITE ],
@@ -6739,6 +6739,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TACKLE ],
     [ 1, Moves.ABSORB ],
     [ 1, Moves.WITHDRAW ],
+    [ 1, Moves.LEAFAGE ],
     [ 13, Moves.RAZOR_LEAF ],
     [ 17, Moves.CURSE ],
     [ 22, Moves.BITE ],
@@ -6753,6 +6754,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ EVOLVE_MOVE, Moves.EARTHQUAKE ],
     [ 1, Moves.TACKLE ],
     [ 1, Moves.ABSORB ],
+    [ 1, Moves.LEAFAGE ],
     [ 1, Moves.RAZOR_LEAF ],
     [ 1, Moves.WITHDRAW ],
     [ 1, Moves.WOOD_HAMMER ],
