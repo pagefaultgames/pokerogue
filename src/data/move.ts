@@ -3748,16 +3748,15 @@ export class PhotonGeyserCategoryAttr extends VariableMoveCategoryAttr {
 
 export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const category = (args[0] as Utils.IntegerHolder);
-	  
+    const category = (args[0] as Utils.IntegerHolder);  
     move.power = 80;
 
     if (user.isTerastallized()) {
-      move.type = user.getTeraType(); 
+      move.type = user.getTeraType();
       //changes type to tera type
       if (move.type === Type.STELLAR) {
         if (move.id === Moves.TERA_BLAST) {
-          move.power = 200; 
+          move.power = 200;
           //200 instead of 100 to reflect lack of stellar being 2x dmg on any typew
         }
       }
