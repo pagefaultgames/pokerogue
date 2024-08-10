@@ -2436,10 +2436,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     for (const tag of source.summonData.tags) {
 
       // bypass those can not be passed via Baton Pass
-      const excludeSourceMoves = new Set([Moves.YAWN]);
-      const excludeTagTypes = new Set([BattlerTagType.INFATUATED, BattlerTagType.FIRE_BOOST]);
+      const excludeTagTypes = new Set([BattlerTagType.DROWSY, BattlerTagType.INFATUATED, BattlerTagType.FIRE_BOOST]);
 
-      if (excludeSourceMoves.has(tag.sourceMove) || excludeTagTypes.has(tag.tagType)) {
+      if (excludeTagTypes.has(tag.tagType)) {
         continue;
       }
 
