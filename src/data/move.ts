@@ -6225,7 +6225,7 @@ export function initMoves() {
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.DISABLED, false, true)
       .condition(targetHasMoveHistoryCondition)
-      .condition((user, target, move) => target.getLastXMoves().at(0)?.move !== Moves.STRUGGLE)
+      .condition((user, target, move) => target.getLastXMoves().filter(m => m.move !== Moves.NONE && !m.virtual).at(0)?.move !== Moves.STRUGGLE)
       .condition(failOnMaxCondition),
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1)
