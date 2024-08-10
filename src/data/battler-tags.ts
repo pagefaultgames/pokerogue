@@ -98,8 +98,6 @@ export interface TerrainBattlerTag {
  * to select disabled moves.
  */
 export abstract class DisablingBattlerTag extends BattlerTag {
-  abstract moveIsDisabled(move: Moves): boolean;
-
   constructor(tagType: BattlerTagType, turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
     super(tagType, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], turnCount, sourceMove, sourceId);
   }
@@ -120,6 +118,12 @@ export abstract class DisablingBattlerTag extends BattlerTag {
 
     return super.lapse(pokemon, lapseType);
   }
+
+  /** Determines whether to disable a move. */
+  abstract moveIsDisabled(move: Moves): boolean;
+
+  /** The text to display when the player attempts to select a move disabled by this tag. */
+  abstract selectionDeniedText(pokemon: Pokemon, move: Moves): string;
 
   /**
    * The text to display when a move's execution is prevented as a result of the disable.
@@ -167,6 +171,10 @@ export class DisabledTag extends DisablingBattlerTag {
     super.onRemove(pokemon);
 
     pokemon.scene.queueMessage(i18next.t("battle:battlerTagsDisabledLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name }));
+  }
+
+  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
 
   override interruptedText(pokemon: Pokemon, move: Moves): string {
