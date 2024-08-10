@@ -2683,25 +2683,25 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_6_female": {
     "encounter": {
-      1: `@c{smile_ehalf}まだ　アタシだけに　なった。So it's just us again.
+      1: `@c{smile_ehalf}まだ　アタシたちだけに　なった。
                 $@c{smile_eclosed}ねえ、頭の中に　グルグル　巡ることが　あってよ。
-                $@c{smile_ehalf}アタシとアナタの　間に　起こしたことも,　この変な感情も…There's something to all this, why everything seems so strange now…
-                $@c{smile}You have your dream, and I have this ambition in me…
-                $I just can't help but feel there's a greater purpose to all this, to what we're doing, you and I.
-                $@c{smile_eclosed}I think I'm supposed to push you… to your limits.
-                $@c{smile_ehalf}I'm not sure if I've been doing a good job at that, but I've tried my best up to now.
-                $It's something about this strange and dreadful place… Everything seems so clear…
-                $This… is all the world's known for a long time now.
-                $@c{smile_eclosed}It's like I can barely remember the memories we cherished together.
-                $@c{smile_ehalf}Were they even real? They seem so far away now…
-                $@c{angry_mopen}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
-                $@c{smile_ehalf}I… don't know what all this means… but I feel it's true.
-                $@c{neutral}If you can't defeat me here and now, you won't stand a chance.`
+                $@c{smile_ehalf}アタシとアナタの　間に　起こしたことも,　この変な感情も……
+                $@c{smile}アナタの夢、アタシの要望…
+                $全ては　より高い　目的が　あると思うよ。 
+                $@c{smile_eclosed}最果ての　限界まで　押すこと…　それは　アタシの　役割。
+                $@c{smile_ehalf}今まで　その役割を　上手く　果たせたかは　分からないけど…　一生懸命　頑張った。
+                $こんな奇妙な　恐ろしい場所で なんか…　全てが　明らかに　見られるみたい。
+                $昔から... これだけしかは　この世界こそ　そのもの。
+                $@c{smile_eclosed}アタシたちが　大切にした　心にギュッと　抱いた思い出…　もう　思い出せない。
+                $@c{smile_ehalf}実際に　全部　ウソだったの？　今　遠い遠い　彼方に　あるみたい。
+                $@c{angry_mopen}アナタは　最後まで　戦い続けなければ　決して　終わらない。アナタしか　できないのよ。
+                $@c{smile_ehalf}この全ての　意味、全然　分からないけど…　真実だと　感じてる。
+                $@c{neutral}今ここで　アタシを　倒せないと　最後に　勝ち目は　ナイ。`
     },
     "victory": {
-      1: `@c{smile_ehalf}I… I think I fulfilled my purpose…
-                $@c{smile_eclosed}Promise me… After you heal the world… Please… come home safe.
-                $@c{smile_ehalf}…Thank you.`
+      1: `@c{smile_ehalf}役割…　果たせたと思う。
+                $@c{smile_eclosed}ね、約束して。この世界を　癒やしたら…　お願い　無事に　帰って。
+                $@c{smile_ehalf}…ありがとう。`
 
     },
   },
