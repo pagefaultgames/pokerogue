@@ -104,7 +104,7 @@ describe("Abilities - Flash Fire", () => {
     expect(chansey!.getTag(BattlerTagType.FIRE_BOOST)).toBeUndefined();
   }, 20000);
 
-  it("damage test", async() => {
+  it("boosts Fire-type move when the ability is activated", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.FIRE_PLEDGE)).moveset([Moves.EMBER, Moves.SPLASH]);
     game.override.enemyAbility(Abilities.FLASH_FIRE).ability(Abilities.NONE);
     await game.startBattle([Species.BLISSEY]);
