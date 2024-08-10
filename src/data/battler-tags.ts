@@ -98,7 +98,7 @@ export interface TerrainBattlerTag {
  * to select disabled moves.
  */
 export abstract class DisablingBattlerTag extends BattlerTag {
-  public abstract moveIsDisabled(move: Moves): boolean;
+  abstract moveIsDisabled(move: Moves): boolean;
 
   constructor(tagType: BattlerTagType, turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
     super(tagType, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], turnCount, sourceMove, sourceId);
@@ -148,19 +148,6 @@ export class DisabledTag extends DisablingBattlerTag {
 
   constructor(sourceId: number) {
     super(BattlerTagType.DISABLED, 4, Moves.DISABLE, sourceId);
-  }
-
-  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (!super.lapse(pokemon, lapseType)) {
-      return false;
-    }
-
-    if (this.moveId === 0) {
-      console.warn(`attempt to disable move ID 0 on ${pokemon}`);
-      return false;
-    }
-
-    return true;
   }
 
   /**
