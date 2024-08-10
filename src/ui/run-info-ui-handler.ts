@@ -194,7 +194,6 @@ export default class GameInfoUiHandler extends UiHandler {
         const tObjSpriteKey = tObj.config.getSpriteKey(this.runInfo.trainer.variant === TrainerVariant.FEMALE, false);
         //const tObjSprite = this.scene.add.image(2, 10, "rival_f");
         const tObjSprite = this.scene.add.sprite(0, 5, tObjSpriteKey);
-        console.log(tObjSpriteKey);
         if (this.runInfo.trainer.variant === TrainerVariant.DOUBLE) {
           const doubleContainer = this.scene.add.container(5, 8);
           tObjSprite.setPosition(-3, -3);
