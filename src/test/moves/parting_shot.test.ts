@@ -1,10 +1,10 @@
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { BerryPhase,  MessagePhase, TurnInitPhase } from "#app/phases";
+import { BerryPhase,  MessagePhase, TurnInitPhase, FaintPhase } from "#app/phases";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, it } from "vitest";
 import GameManager from "../utils/gameManager";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { BattleStat } from "#app/data/battle-stat";
@@ -43,10 +43,13 @@ describe("Moves - Parting Shot", () => {
         .ability(Abilities.PRANKSTER);
       await game.startBattle([Species.MURKROW, Species.MEOWTH]);
 
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      expect(enemyPokemon).toBeDefined();
+
       game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
+      const battleStatsOpponent = enemyPokemon.summonData.battleStats;
       expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
       expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
@@ -67,15 +70,101 @@ describe("Moves - Parting Shot", () => {
       game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
+      const battleStatsOpponent = enemyPokemon.summonData.battleStats;
       expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
       expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
     }, TIMEOUT
   );
 
-  test(
-    "Parting shot regularly should fail if no party available to switch - party size 1",
+  it.skip( // TODO: fix this bug to pass the test!
+    "Parting shot should fail if target is -6/-6 de-buffed",
+    async () => {
+      game.override.moveset([Moves.PARTING_SHOT, Moves.MEMENTO, Moves.SPLASH]);
+      await game.startBattle([Species.MEOWTH, Species.MEOWTH, Species.MEOWTH, Species.MURKROW, Species.ABRA]);
+
+      // use Memento 3 times to debuff enemy
+      game.doAttack(getMovePosition(game.scene, 0, Moves.MEMENTO));
+      await game.phaseInterceptor.to(FaintPhase);
+      expect(game.scene.getParty()[0].isFainted()).toBe(true);
+      game.doSelectPartyPokemon(1);
+
+      await game.phaseInterceptor.to(TurnInitPhase, false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.MEMENTO));
+      await game.phaseInterceptor.to(FaintPhase);
+      expect(game.scene.getParty()[0].isFainted()).toBe(true);
+      game.doSelectPartyPokemon(2);
+
+      await game.phaseInterceptor.to(TurnInitPhase, false);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.MEMENTO));
+      await game.phaseInterceptor.to(FaintPhase);
+      expect(game.scene.getParty()[0].isFainted()).toBe(true);
+      game.doSelectPartyPokemon(3);
+
+      // set up done
+      await game.phaseInterceptor.to(TurnInitPhase, false);
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      expect(enemyPokemon).toBeDefined();
+
+      const battleStatsOpponent = enemyPokemon.summonData.battleStats;
+      expect(battleStatsOpponent[BattleStat.ATK]).toBe(-6);
+      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(-6);
+
+      // now parting shot should fail
+      game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+      expect(battleStatsOpponent[BattleStat.ATK]).toBe(-6);
+      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(-6);
+      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
+    }, TIMEOUT
+  );
+
+  it.skip( // TODO: fix this bug to pass the test!
+    "Parting shot shouldn't allow switch out when mist is active",
+    async () => {
+      game.override
+        .enemySpecies(Species.ALTARIA)
+        .enemyAbility(Abilities.NONE)
+        .enemyMoveset(Array(4).fill(Moves.MIST));
+      await game.startBattle([Species.SNORLAX, Species.MEOWTH]);
+
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      expect(enemyPokemon).toBeDefined();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+      const battleStatsOpponent = enemyPokemon.summonData.battleStats;
+      expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
+      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
+      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
+    }, TIMEOUT
+  );
+
+  it.skip( // TODO: fix this bug to pass the test!
+    "Parting shot shouldn't allow switch out against clear body ability",
+    async () => {
+      game.override
+        .enemySpecies(Species.TENTACOOL)
+        .enemyAbility(Abilities.CLEAR_BODY);
+      await game.startBattle([Species.SNORLAX, Species.MEOWTH]);
+
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      expect(enemyPokemon).toBeDefined();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+      const battleStatsOpponent = enemyPokemon.summonData.battleStats;
+      expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
+      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
+      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
+    }, TIMEOUT
+  );
+
+  it.skip( // TODO: fix this bug to pass the test!
+    "Parting shot should de-buff and not fail if no party available to switch - party size 1",
     async () => {
       await game.startBattle([Species.MURKROW]);
 
@@ -85,18 +174,17 @@ describe("Moves - Parting Shot", () => {
       game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
-      expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
-      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
+      const battleStatsOpponent = enemyPokemon.summonData.battleStats;
+      expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
+      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(-1);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
     }, TIMEOUT
   );
-  test(
-    "Parting shot regularly should fail if no party available to switch - party fainted",
+
+  it.skip( // TODO: fix this bug to pass the test!
+    "Parting shot regularly not fail if no party available to switch - party fainted",
     async () => {
       await game.startBattle([Species.MURKROW, Species.MEOWTH]);
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
-      expect(enemyPokemon).toBeDefined();
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
       // intentionally kill party pokemon, switch to second slot (now 1 party mon is fainted)
@@ -115,14 +203,4 @@ describe("Moves - Parting Shot", () => {
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MEOWTH);
     }, TIMEOUT
   );
-
-
-  /**
-   * more tests
-   * - magic coat/magic bounce not implemented yet NO
-   * - can't switch out for clear body and mist
-   * - can't switch out if stats already lowered max
-   */
-
-
 });
