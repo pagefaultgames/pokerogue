@@ -12,8 +12,6 @@ import { BattleType } from "../battle";
 import { TrainerVariant } from "../field/trainer";
 import { RunEntry } from "../system/game-data";
 
-export const runCount = 25;
-
 export type RunSelectCallback = (cursor: integer) => void;
 
 export default class RunHistoryUiHandler extends MessageUiHandler {
@@ -52,18 +50,6 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     this.runsContainer = this.scene.add.container(8, this.runContainerInitialY);
     this.runSelectContainer.add(this.runsContainer);
 
-    this.runSelectMessageBoxContainer = this.scene.add.container(0, 0);
-    this.runSelectMessageBoxContainer.setVisible(false);
-    this.runSelectContainer.add(this.runSelectMessageBoxContainer);
-
-    this.runSelectMessageBox = addWindow(this.scene, 1, -1, 318, 28);
-    this.runSelectMessageBox.setOrigin(0, 1);
-    this.runSelectMessageBoxContainer.add(this.runSelectMessageBox);
-
-    this.message = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
-    this.message.setOrigin(0, 0);
-    this.runSelectMessageBoxContainer.add(this.message);
-
     this.runs = [];
 
     this.scene.loadImage("hall_of_fame_red", "ui");
@@ -81,6 +67,8 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 
     this.setScrollCursor(0);
     this.setCursor(0);
+
+    this.getUi().bringToTop(this.cursorObj);
 
     return true;
   }
@@ -118,7 +106,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       case Button.DOWN:
         if (this.cursor < 2) {
           success = this.setCursor(this.cursor + 1);
-        } else if (this.scrollCursor < runCount - 3) {
+        } else if (this.scrollCursor < this.runs.length - 3) {
           success = this.setScrollCursor(this.scrollCursor + 1);
         }
         break;
@@ -154,30 +142,15 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     }
   }
 
-  showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number) {
-    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
-
-    if (text?.indexOf("\n") === -1) {
-      this.runSelectMessageBox.setSize(318, 28);
-      this.message.setY(-22);
-    } else {
-      this.runSelectMessageBox.setSize(318, 42);
-      this.message.setY(-37);
-    }
-
-    this.runSelectMessageBoxContainer.setVisible(!!text?.length);
-  }
-
   setCursor(cursor: number): boolean {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 308, 56, 6, 6, 6, 6);
       this.cursorObj.setOrigin(0, 0);
       this.runsContainer.add(this.cursorObj);
     }
-    this.cursorObj.setPosition(4, 4 + (cursor + this.scrollCursor) * 56);
-
+    this.cursorObj.setPosition(-2, -2 + (cursor + this.scrollCursor) * 56);
     return changed;
   }
 
