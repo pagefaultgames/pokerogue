@@ -130,6 +130,8 @@ export default class BattleScene extends SceneBase {
   public doBiomePanels: boolean = false;
   public disableDailyShinies: boolean = true; // Disables shiny luck in Daily Runs to prevent affecting RNG
   public quickloadDisplayMode: string = "Dailies";
+  public waveShinyFlag: boolean = false;
+  public waveShinyChecked: boolean = false;
   public tempWaveSeed: string;
   public tempRngCounter: integer = 0;
   /**
@@ -1281,6 +1283,11 @@ export default class BattleScene extends SceneBase {
     this.restoreSeed()
   }
 
+  doShinyCheck() {
+    this.waveShinyChecked = true;
+    this.waveShinyFlag = runShinyCheck(this, 1, this.currentBattle.waveIndex);
+  }
+
   newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
     const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
     const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (_startingWave - 1)) + 1);
@@ -1291,6 +1298,8 @@ export default class BattleScene extends SceneBase {
     let battleConfig: FixedBattleConfig = null;
 
     this.resetSeed(newWaveIndex);
+    this.waveShinyChecked = false;
+    this.waveShinyFlag = false;
 
     const playerField = this.getPlayerField();
 

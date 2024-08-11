@@ -120,6 +120,8 @@ export default class Move implements Localizable {
   private flags: integer;
   private nameAppend: string;
 
+  public implementationTag: string;
+
   constructor(id: Moves, type: Type, category: MoveCategory, defaultMoveTarget: MoveTarget, power: integer, accuracy: integer, pp: integer, chance: integer, priority: integer, generation: integer) {
     this.id = id;
 
@@ -324,12 +326,29 @@ export default class Move implements Localizable {
     return this;
   }
 
+  isFullyImplemented(): boolean {
+    return this.implementationTag == "" || this.implementationTag == undefined;
+  }
+  isPartiallyImplemented(): boolean {
+    return this.implementationTag == "P";
+  }
+  isPartial(): boolean {
+    return this.implementationTag == "P";
+  }
+  isUnimplemented(): boolean {
+    return this.implementationTag == "N";
+  }
+  isNotImplemented(): boolean {
+    return this.implementationTag == "N";
+  }
+
   /**
    * Marks the move as "partial": appends texts to the move name
    * @returns the called object {@linkcode Move}
    */
   partial(): this {
     this.nameAppend += " (P)";
+    this.implementationTag = "P";
     return this;
   }
 
@@ -339,6 +358,7 @@ export default class Move implements Localizable {
    */
   unimplemented(): this {
     this.nameAppend += " (N)";
+    this.implementationTag = "N";
     return this;
   }
 

@@ -1785,6 +1785,8 @@ export class EncounterPhase extends BattlePhase {
     }
     LoggerTools.resetWaveActions(this.scene, undefined, true)
 
+    this.scene.doShinyCheck()
+
     if (LoggerTools.autoCheckpoints.includes(this.scene.currentBattle.waveIndex)) {
       //this.scene.gameData.saveGameToAuto(this.scene)
     }
@@ -6199,7 +6201,75 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const messageMode = this.scene.ui.getHandler() instanceof EvolutionSceneHandler
       ? Mode.EVOLUTION_SCENE
       : Mode.MESSAGE;
-
+    const noHandler = () => {
+      this.scene.ui.setMode(messageMode).then(() => {
+        this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
+          this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
+            this.scene.ui.setMode(messageMode);
+            var W = LoggerTools.getWave(LoggerTools.getDRPD(this.scene), this.scene.currentBattle.waveIndex, this.scene)
+            if (W.shop != "") {
+              LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + "; skip learning it")
+            } else {
+              var actions = LoggerTools.getActionCount(this.scene, this.scene.currentBattle.waveIndex)
+              LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Skip " + move.name)
+            }
+            this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => this.end(), null, true);
+          }, (false ? movesFullHandler : () => {
+            this.scene.ui.setMode(messageMode);
+            this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
+            this.end();
+          }));
+        });
+      });
+    };
+    const noHandlerInstant = () => {
+      this.scene.ui.setMode(messageMode);
+      var W = LoggerTools.getWave(LoggerTools.getDRPD(this.scene), this.scene.currentBattle.waveIndex, this.scene)
+      if (W.shop != "") {
+        LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + "; skip learning it")
+      } else {
+        var actions = LoggerTools.getActionCount(this.scene, this.scene.currentBattle.waveIndex)
+        LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Skip " + move.name)
+      }
+      this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => this.end(), null, true);
+    };
+    const movesFullHandler = () => {
+      this.scene.ui.showText(i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
+        this.scene.ui.showText(i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
+          this.scene.ui.showText(i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name }), null, () => {
+            this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
+              this.scene.ui.setMode(messageMode);
+              this.scene.ui.showText(i18next.t("battle:learnMoveForgetQuestion"), null, () => {
+                this.scene.ui.setModeWithoutClear(Mode.SUMMARY, this.getPokemon(), SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
+                  if (moveIndex === 4) {
+                    noHandler();
+                    return;
+                  }
+                  this.scene.ui.setMode(messageMode).then(() => {
+                    this.scene.ui.showText(i18next.t("battle:countdownPoof"), null, () => {
+                      this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
+                        this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
+                          var W = LoggerTools.getWave(LoggerTools.getDRPD(this.scene), this.scene.currentBattle.waveIndex, this.scene)
+                          if (W.shop != "") {
+                            LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + " → learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
+                          } else {
+                            var actions = LoggerTools.getActionCount(this.scene, this.scene.currentBattle.waveIndex)
+                            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
+                          }
+                          pokemon.setMove(moveIndex, Moves.NONE);
+                          this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
+                          this.end();
+                        }, null, true);
+                      }, null, true);
+                    }, null, true);
+                  });
+                });
+              }, null, true);
+            }, noHandler);
+          });
+        }, null, true);
+      }, null, true);
+    }
     if (emptyMoveIndex > -1) {
       pokemon.setMove(emptyMoveIndex, this.moveId);
       initMoveAnim(this.scene, this.moveId).then(() => {
@@ -6214,65 +6284,16 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
             });
           });
       });
-    } else {
+    } else if (move.isUnimplemented() && false) {
       this.scene.ui.setMode(messageMode).then(() => {
-        this.scene.ui.showText(i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
-          this.scene.ui.showText(i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
-            this.scene.ui.showText(i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name }), null, () => {
-              const noHandler = () => {
-                this.scene.ui.setMode(messageMode).then(() => {
-                  this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
-                    this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
-                      this.scene.ui.setMode(messageMode);
-                      var W = LoggerTools.getWave(LoggerTools.getDRPD(this.scene), this.scene.currentBattle.waveIndex, this.scene)
-                      if (W.shop != "") {
-                        LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + "; skip learning it")
-                      } else {
-                        var actions = LoggerTools.getActionCount(this.scene, this.scene.currentBattle.waveIndex)
-                        LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Skip " + move.name)
-                      }
-                      this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => this.end(), null, true);
-                    }, () => {
-                      this.scene.ui.setMode(messageMode);
-                      this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
-                      this.end();
-                    });
-                  });
-                });
-              };
-              this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
-                this.scene.ui.setMode(messageMode);
-                this.scene.ui.showText(i18next.t("battle:learnMoveForgetQuestion"), null, () => {
-                  this.scene.ui.setModeWithoutClear(Mode.SUMMARY, this.getPokemon(), SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
-                    if (moveIndex === 4) {
-                      noHandler();
-                      return;
-                    }
-                    this.scene.ui.setMode(messageMode).then(() => {
-                      this.scene.ui.showText(i18next.t("battle:countdownPoof"), null, () => {
-                        this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex].getName() }), null, () => {
-                          this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
-                            var W = LoggerTools.getWave(LoggerTools.getDRPD(this.scene), this.scene.currentBattle.waveIndex, this.scene)
-                            if (W.shop != "") {
-                              LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + " → learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
-                            } else {
-                              var actions = LoggerTools.getActionCount(this.scene, this.scene.currentBattle.waveIndex)
-                              LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
-                            }
-                            pokemon.setMove(moveIndex, Moves.NONE);
-                            this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
-                            this.end();
-                          }, null, true);
-                        }, null, true);
-                      }, null, true);
-                    });
-                  });
-                }, null, true);
-              }, noHandler);
-            });
-          }, null, true);
-        }, null, true);
+        this.scene.ui.showText(`${getPokemonNameWithAffix(pokemon)} wants to learn ${move.name}, but this move does nothing.`, null, () => {
+          this.scene.ui.showText(`Would you like to teach ${move.name} anyways? (This will be logged as normal)`, null, () => {
+            this.scene.ui.setModeWithoutClear(Mode.CONFIRM, movesFullHandler, noHandler)
+          })
+        })
       });
+    } else {
+      this.scene.ui.setMode(messageMode).then(movesFullHandler);
     }
   }
 }
@@ -6757,9 +6778,12 @@ export function shinyCheckStep(scene: BattleScene, predictionCost: Utils.Integer
   var isOk = true;
   const typeOptions: ModifierTypeOption[] = getPlayerModifierTypeOptions(modifierCount.value, scene.getParty(), undefined, scene, true, true);
   typeOptions.forEach((option, idx) => {
+    let lastTier = option.type.tier
     if (option.alternates && option.alternates.length > 0) {
       for (var i = 0; i < option.alternates.length; i++) {
-        if (option.alternates[i] > option.type.tier) {
+        if (option.alternates[i] > lastTier) {
+          //lastTier = option.alternates[i]
+          //console.log("Conflict found! (" + i + " luck, " + rerollOverride + " rolls, item " + (idx + 1) + ")")
           isOk = false // Shiny Luck affects this wave in some way
         }
       }
@@ -6774,14 +6798,25 @@ export function shinyCheckStep(scene: BattleScene, predictionCost: Utils.Integer
  * @param scene The current `BattleScene`.
  * @returns `true` if no changes were detected, `false` otherwise
  */
-export function runShinyCheck(scene: BattleScene, wv?: integer) {
-  scene.resetSeed(wv);
+export function runShinyCheck(scene: BattleScene, mode: integer, wv?: integer) {
+  if (mode == 1) {
+    scene.emulateReset(wv)
+  } else {
+    scene.resetSeed(wv);
+  }
   const predictionCost = new Utils.IntegerHolder(0)
   var isOk = true;
-  for (var i = 0; i < 14 && isOk; i++) {
+  for (var i = 0; isOk && predictionCost.value < scene.money && i < 20; i++) {
     isOk = isOk && shinyCheckStep(scene, predictionCost, i)
   }
-  scene.resetSeed(wv);
+  if (mode == 1) {
+    scene.restoreSeed(wv)
+  } else {
+    scene.resetSeed(wv);
+  }
+  if (!isOk) {
+    console.log("Conflict found!")
+  }
   return isOk
 }
 export class SelectModifierPhase extends BattlePhase {
@@ -6815,7 +6850,7 @@ export class SelectModifierPhase extends BattlePhase {
     if (modifierOverride) {
       //modifierCount.value = modifierOverride
     }
-    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, true, true);
+    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, true, true, true);
     typeOptions.forEach((option, idx) => {
       //console.log(option.type.name)
     })
@@ -7055,7 +7090,15 @@ export class SelectModifierPhase extends BattlePhase {
             for (var j = 0, currentTier = m.type.tier; j < m.alternates.length; j++) {
               if (m.alternates[j] > currentTier) {
                 currentTier = m.alternates[j]
-                console.log("    At " + j + " luck: " + tierNames[currentTier] + "-tier item")
+                if (m.advancedAlternates) {
+                  if (m.advancedAlternates[j] != "[Failed to generate]") {
+                    console.log("    At " + j + " luck: " + tierNames[currentTier] + "-tier item (failed to generate item from ModifierGenerator)")
+                  } else {
+                    console.log("    At " + j + " luck: " + m.advancedAlternates[j])
+                  }
+                } else {
+                  console.log("    At " + j + " luck: " + tierNames[currentTier] + "-tier item (failed to generate item)")
+                }
               }
             }
           } else {
@@ -7092,8 +7135,8 @@ export class SelectModifierPhase extends BattlePhase {
     return ModifierPoolType.PLAYER;
   }
 
-  getModifierTypeOptions(modifierCount: integer, shutUpBro?: boolean, calcAllLuck?: boolean): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.scene, shutUpBro, calcAllLuck);
+  getModifierTypeOptions(modifierCount: integer, shutUpBro?: boolean, calcAllLuck?: boolean, advanced?: boolean): ModifierTypeOption[] {
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.scene, shutUpBro, calcAllLuck, advanced);
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {
