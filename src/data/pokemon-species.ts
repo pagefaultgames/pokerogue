@@ -3468,7 +3468,7 @@ export const starterPassiveAbilities = {
   [Species.GULPIN]: Abilities.EARTH_EATER,
   [Species.CARVANHA]: Abilities.SHEER_FORCE,
   [Species.WAILMER]: Abilities.LEVITATE,
-  [Species.NUMEL]: Abilities.STAMINA,
+  [Species.NUMEL]: Abilities.FUR_COAT,
   [Species.TORKOAL]: Abilities.ANALYTIC,
   [Species.SPOINK]: Abilities.PSYCHIC_SURGE,
   [Species.SPINDA]: Abilities.SIMPLE,
