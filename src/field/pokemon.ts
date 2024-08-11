@@ -1083,11 +1083,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     // Classic Final boss and Endless Minor/Major bosses do not have passive
-    const waveIndex = this.scene.currentBattle?.waveIndex;
+    const { currentBattle, gameMode } = this.scene;
+    const waveIndex = currentBattle?.waveIndex;
     if (this instanceof EnemyPokemon &&
-      (this.scene.currentBattle?.battleSpec === BattleSpec.FINAL_BOSS ||
-      this.scene.gameMode.isEndlessMinorBoss(waveIndex) ||
-      this.scene.gameMode.isEndlessMajorBoss(waveIndex))) {
+      (currentBattle?.battleSpec === BattleSpec.FINAL_BOSS ||
+      gameMode.isEndlessMinorBoss(waveIndex) ||
+      gameMode.isEndlessMajorBoss(waveIndex))) {
       return false;
     }
 
