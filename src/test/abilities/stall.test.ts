@@ -26,6 +26,7 @@ describe("Ability - Stall", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
+    game.override.disableCrits();
     game.override.enemySpecies(Species.SLAKOTH);
     game.override.enemyAbility(Abilities.STALL);
     game.override.enemyMoveset([Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK]);
