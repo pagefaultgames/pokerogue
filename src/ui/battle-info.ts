@@ -136,7 +136,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.teamIcons[ballindex].setPositionRelative(this.nameText, 6 * ballindex, 11.75);
         this.add(this.teamIcons[ballindex]);
         this.teamIconOver[ballindex] = this.scene.add.sprite(0, 0, "pb_tray_ball", "empty")
-        this.teamIconOver[ballindex].setName("pb_teamball_" + ballindex);
+        this.teamIconOver[ballindex].setName("pb_teamball_gradient_" + ballindex);
         this.teamIconOver[ballindex].setVisible(true);
         this.teamIconOver[ballindex].setAlpha(0);
         this.teamIconOver[ballindex].setOrigin(0, 0);

@@ -3566,7 +3566,7 @@ export class TurnStartPhase extends FieldPhase {
         const move = pokemon.getMoveset().find(m => m.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
         if (pokemon.isPlayer()) {
           if (turnCommand.cursor === -1) {
-            console.log("turncommand cursor was -1 -- running TOP block")
+            //console.log("turncommand cursor was -1 -- running TOP block")
             this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move.targets, move));
             var targets = turnCommand.targets || turnCommand.move.targets
             var mv = move
@@ -3575,7 +3575,7 @@ export class TurnStartPhase extends FieldPhase {
               LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
               if (this.scene.currentBattle.double) {
                 var targIDs = ["Self", "Self", "Ally", "L", "R"]
-                if (pokemon.getBattlerIndex() == 1) targIDs = ["Counter", "Ally", "Self", "L", "R"]
+                if (pokemon.getBattlerIndex() == 1) targIDs = ["Self", "Ally", "Self", "L", "R"]
                 LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
               } else {
                 var targIDs = ["Self", "", "", "", ""]
@@ -3594,7 +3594,7 @@ export class TurnStartPhase extends FieldPhase {
               console.log(mv.getName(), targets)
             }
           } else {
-            console.log("turncommand = ", turnCommand, " -- running BOTTOM block")
+            //console.log("turncommand = ", turnCommand, " -- running BOTTOM block")
             const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move.targets, move, false, queuedMove.ignorePP);
             var targets = turnCommand.targets || turnCommand.move.targets
             var mv = move
@@ -3606,7 +3606,7 @@ export class TurnStartPhase extends FieldPhase {
                 LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
                 if (this.scene.currentBattle.double) {
                   var targIDs = ["Self", "Self", "Ally", "L", "R"]
-                  if (pokemon.getBattlerIndex() == 1) targIDs = ["Counter", "Ally", "Self", "L", "R"]
+                  if (pokemon.getBattlerIndex() == 1) targIDs = ["Self", "Ally", "Self", "L", "R"]
                   LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
                 } else {
                   var targIDs = ["Self", "", "", "", ""]
@@ -3638,7 +3638,8 @@ export class TurnStartPhase extends FieldPhase {
         break;
       case Command.POKEMON:
         if (pokemon.isPlayer()) {
-          LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch") + " " + LoggerTools.playerPokeName(this.scene, pokemon) + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor)
+          //  " " + LoggerTools.playerPokeName(this.scene, pokemon) + 
+          LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch") + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor)
         }
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
         break;
@@ -5990,7 +5991,7 @@ export class SwitchPhase extends BattlePhase {
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
         if (LoggerTools.isPreSwitch.value) {
-          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Pre-switch " + (option == PartyOption.PASS_BATON ? "+ Baton" : "") + " " + LoggerTools.playerPokeName(this.scene, fieldIndex) + "  to " + LoggerTools.playerPokeName(this.scene, slotIndex))
+          LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Pre-switch" + (option == PartyOption.PASS_BATON ? "+ Baton" : "") + " " + LoggerTools.playerPokeName(this.scene, fieldIndex) + " to " + LoggerTools.playerPokeName(this.scene, slotIndex))
         } else if (LoggerTools.isFaintSwitch.value) {
           LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (option == PartyOption.PASS_BATON ? "Baton" : "Send") + " in " + LoggerTools.playerPokeName(this.scene, slotIndex))
         } else {
@@ -6211,7 +6212,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
               LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + "; skip learning it")
             } else {
               var actions = LoggerTools.getActionCount(this.scene, this.scene.currentBattle.waveIndex)
-              LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Skip " + move.name)
+              LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Skip " + move.name)
             }
             this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => this.end(), null, true);
           }, (false ? movesFullHandler : () => {
@@ -6251,10 +6252,10 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                         this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
                           var W = LoggerTools.getWave(LoggerTools.getDRPD(this.scene), this.scene.currentBattle.waveIndex, this.scene)
                           if (W.shop != "") {
-                            LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + " → learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
+                            LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + " | " + new PokemonMove(this.moveId).getName() + " → " + pokemon.moveset[moveIndex].getName())
                           } else {
                             var actions = LoggerTools.getActionCount(this.scene, this.scene.currentBattle.waveIndex)
-                            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | Learn " + new PokemonMove(this.moveId).getName() + " → replace " + pokemon.moveset[moveIndex].getName())
+                            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | " + new PokemonMove(this.moveId).getName() + " → " + pokemon.moveset[moveIndex].getName())
                           }
                           pokemon.setMove(moveIndex, Moves.NONE);
                           this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
