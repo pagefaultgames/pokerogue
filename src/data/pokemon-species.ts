@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, variantColorCache } from "./variant";
 import { variantData } from "./variant";
 import { GrowthRate } from "./exp";
-import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
+import { EvolutionLevel,SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
 import { Type } from "./type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
 import { uncatchableSpecies } from "./biomes";
@@ -761,8 +761,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.speciesId;
   }
 
-  getEvolutionLevels(): [Species, integer][] {
-    const evolutionLevels: [Species, integer][] = [];
+  getEvolutionLevels(): EvolutionLevel[] {
+    const evolutionLevels: EvolutionLevel[] = [];
 
     //console.log(Species[this.speciesId], pokemonEvolutions[this.speciesId])
 
@@ -782,8 +782,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return evolutionLevels;
   }
 
-  getPrevolutionLevels(): [Species, integer][] {
-    const prevolutionLevels: [Species, integer][] = [];
+  getPrevolutionLevels(): EvolutionLevel[] {
+    const prevolutionLevels: EvolutionLevel[] = [];
 
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
     for (const p of allEvolvingPokemon) {
@@ -804,8 +804,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
-  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): [Species, integer][] {
-    const ret: [Species, integer][] = [];
+  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): EvolutionLevel[] {
+    const ret: EvolutionLevel[] = [];
     if (pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
       const prevolutionLevels = this.getPrevolutionLevels().reverse();
       const levelDiff = player ? 0 : forTrainer || isBoss ? forTrainer && isBoss ? 2.5 : 5 : 10;
