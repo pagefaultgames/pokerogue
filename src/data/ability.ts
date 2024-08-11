@@ -389,7 +389,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   }
 }
 
-export class TypeImmunityNeutralAbAttr extends TypeImmunityAbAttr {
+export class TypeImmunityAttackAbAttr extends TypeImmunityAbAttr {
   constructor(immuneType: Type, condition?: AbAttrCondition) {
     super(immuneType, condition);
   }
@@ -4449,7 +4449,7 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.LEVITATE, 3)
-      .attr(TypeImmunityNeutralAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))
+      .attr(AttackTypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))
       .ignorable(),
     new Ability(Abilities.EFFECT_SPORE, 3)
       .attr(EffectSporeAbAttr),
