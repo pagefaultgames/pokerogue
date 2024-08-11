@@ -2743,11 +2743,11 @@ export class ChangeMovePriorityAbAttr extends AbAttr {
   private moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean;
   private changeAmount: number;
 
-  constructor(moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean, increaseAmount = 1) {
+  constructor(moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean, changeAmount = 1) {
     super(true);
 
     this.moveIncrementFunc = moveIncrementFunc;
-    this.increaseAmount = increaseAmount;
+    this.changeAmount = changeAmount;
   }
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -2755,7 +2755,7 @@ export class ChangeMovePriorityAbAttr extends AbAttr {
       return false;
     }
 
-    (args[1] as Utils.IntegerHolder).value += this.increaseAmount;
+    (args[1] as Utils.IntegerHolder).value += this.changeAmount;
     return true;
   }
 }
