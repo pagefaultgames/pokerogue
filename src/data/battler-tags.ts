@@ -1573,20 +1573,13 @@ export class FormBlockDamageTag extends BattlerTag {
    */
   canAdd(pokemon: Pokemon): boolean {
     const isDefenseForm = pokemon.formIndex === 0;
-    if (this.tagType === BattlerTagType.ICE_FACE) {
-      const weatherType = pokemon.scene.arena.weather?.weatherType;
-      const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
+    const weatherType = pokemon.scene.arena.weather?.weatherType;
+    const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
 
-      // Hard code Eiscue for now, this is to prevent the game from crashing if fused pokemon has Ice Face
-      if ((pokemon.species.speciesId === Species.EISCUE && isDefenseForm) ||  isWeatherSnowOrHail) {
-        return true;
-      }
-    } else if (this.tagType === BattlerTagType.DISGUISE) {
-      // Hard code Mimikyu for now, this is to prevent the game from crashing if fused pokemon has Disguise
-      if (pokemon.species.speciesId === Species.MIMIKYU && isDefenseForm) {
-        return true;
-      }
+    if (isDefenseForm || (this.tagType === BattlerTagType.ICE_FACE && isWeatherSnowOrHail)) {
+      return true;
     }
+
     return false;
   }
 
