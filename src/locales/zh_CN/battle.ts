@@ -60,6 +60,7 @@ export const battle: SimpleTranslationEntries = {
   "turnEndHpRestore": "{{pokemonName}}的体力恢复了。",
   "hpIsFull": "{{pokemonName}}的体力已满！",
   "skipItemQuestion": "你确定要跳过拾取道具吗？",
+  "itemStackFull": "The stack for this item is full.\nYou will receive {{itemName}} instead.",
   "eggHatching": "咦？",
   "stealEatBerry": "{{pokemonName}}夺取并吃掉了\n{{targetName}}的{{berryName}}！",
   "ppHealBerry": "{{pokemonNameWithAffix}}用{{berryName}}\n回复了{{moveName}}的PP！",
