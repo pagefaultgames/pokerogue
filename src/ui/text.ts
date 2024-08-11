@@ -288,6 +288,9 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.STATS_LABEL:
     return !shadow ? "#f8b050" : "#c07800";
   case TextStyle.STATS_VALUE:
+    if (uiTheme) {
+      return !shadow ? "#484848" : "#d0d0c8";
+    }
     return !shadow ? "#f8f8f8" : "#6b5a73";
   case TextStyle.SUMMARY_GREEN:
     return !shadow ? "#78c850" : "#306850";
