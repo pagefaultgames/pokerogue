@@ -6,7 +6,7 @@ import { getNatureName } from "../data/nature";
 import { Type } from "../data/type";
 import Pokemon from "../field/pokemon";
 import i18next from "i18next";
-import { DexAttr } from "../system/game-data";
+import { DexAttr, DexEntry, StarterDataEntry } from "../system/game-data";
 import * as Utils from "../utils";
 import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
@@ -63,6 +63,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private pokemonMovesContainers: Phaser.GameObjects.Container[];
   private pokemonMoveBgs: Phaser.GameObjects.NineSlice[];
   private pokemonMoveLabels: Phaser.GameObjects.Text[];
+  private infoBg;
 
   private numCharsBeforeCutoff = 16;
 
@@ -83,9 +84,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     const currentLanguage = i18next.resolvedLanguage;
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
     const textSettings = languageSettings[langSettingKey];
-    const infoBg = addWindow(this.scene, 0, 0, this.infoWindowWidth, 132);
-    infoBg.setOrigin(0.5, 0.5);
-    infoBg.setName("window-info-bg");
+    this.infoBg = addWindow(this.scene, 0, 0, this.infoWindowWidth, 132);
+    this.infoBg.setOrigin(0.5, 0.5);
+    this.infoBg.setName("window-info-bg");
 
     this.pokemonMovesContainer = this.scene.add.container(6, 14);
     this.pokemonMovesContainer.setName("pkmn-moves");
@@ -133,7 +134,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
     this.statsContainer = new StatsContainer(this.scene, -48, -64, true);
 
-    this.add(infoBg);
+    this.add(this.infoBg);
     this.add(this.statsContainer);
 
     // The position should be set per language
@@ -207,9 +208,18 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.setVisible(false);
   }
 
-  show(pokemon: Pokemon, showMoves: boolean = false, speedMultiplier: number = 1): Promise<void> {
+  show(pokemon: Pokemon, showMoves: boolean = false, speedMultiplier: number = 1, dexEntry?: DexEntry, starterEntry?: StarterDataEntry, eggInfo = false): Promise<void> {
+
+    if (dexEntry === null) {
+      dexEntry = pokemon.scene.gameData.dexData[pokemon.species.speciesId];
+    }
+    if (starterEntry === null) {
+      starterEntry = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()];
+    }
+
+    const caughtAttr = BigInt(dexEntry.caughtAttr);
+
     return new Promise<void>(resolve => {
-      const caughtAttr = BigInt(pokemon.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr);
       if (pokemon.gender > Gender.GENDERLESS) {
         this.pokemonGenderText.setText(getGenderSymbol(pokemon.gender));
         this.pokemonGenderText.setColor(getGenderColor(pokemon.gender));
@@ -268,8 +278,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       const opponentPokemonAbilityIndex = (opponentPokemonOneNormalAbility && pokemon.abilityIndex === 1) ? 2 : pokemon.abilityIndex;
       const opponentPokemonAbilityAttr = Math.pow(2, opponentPokemonAbilityIndex);
 
-      const rootFormHasHiddenAbility = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & opponentPokemonAbilityAttr;
-
+      const rootFormHasHiddenAbility = starterEntry.abilityAttr & opponentPokemonAbilityAttr;
       if (!rootFormHasHiddenAbility) {
         this.pokemonAbilityLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
         this.pokemonAbilityLabelText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
@@ -280,7 +289,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       this.pokemonNatureText.setText(getNatureName(pokemon.getNature(), true, false, false, this.scene.uiTheme));
 
-      const dexNatures = pokemon.scene.gameData.dexData[pokemon.species.speciesId].natureAttr;
+      const dexNatures = dexEntry.natureAttr;
       const newNature = Math.pow(2, pokemon.nature + 1);
 
       if (!(dexNatures & newNature)) {
@@ -323,11 +332,11 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonFusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
       }
 
+      // if hatching an egg then use dexEntry ivs (if new catch then also use null IVs)
       const starterSpeciesId = pokemon.species.getRootSpeciesId();
-      const originalIvs: integer[] = this.scene.gameData.dexData[starterSpeciesId].caughtAttr
+      const originalIvs: integer[] = eggInfo ? (dexEntry.caughtAttr ? dexEntry.ivs : null) : (this.scene.gameData.dexData[starterSpeciesId].caughtAttr
         ? this.scene.gameData.dexData[starterSpeciesId].ivs
-        : null;
-
+        : null);
       this.statsContainer.updateIvs(pokemon.ivs, originalIvs);
 
       this.scene.tweens.add({
@@ -362,6 +371,56 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.shown = true;
       this.scene.hideEnemyModifierBar();
     });
+  }
+
+  changeToEggSummaryLayout() {
+    // The position should be set per language
+    // const currentLanguage = i18next.resolvedLanguage;
+    // const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
+    // const textSettings = languageSettings[langSettingKey];
+    const infoContainerLabelXPos = 25;
+    const infoContainerTextXPos = 29;
+
+    // The font size should be set by language
+    // const infoContainerTextSize = textSettings?.infoContainerTextSize || "64px";
+
+
+    this.pokemonGenderText.setPosition(75, 85);
+    this.pokemonGenderNewText.setPosition(80, 85);
+    this.pokemonShinyIcon.setPosition(-10,85);
+    this.pokemonShinyNewIcon.setPosition(0,85);
+
+
+    this.pokemonFormLabelText.setPosition(infoContainerLabelXPos, 152);
+    this.pokemonFormText.setPosition(infoContainerTextXPos, 152);
+    this.pokemonAbilityLabelText.setPosition(infoContainerLabelXPos, 110); // originally 29
+    this.pokemonAbilityText.setPosition(infoContainerTextXPos, 110); // originally 29
+    this.pokemonNatureLabelText.setPosition(infoContainerLabelXPos, 125); // originally 39
+    this.pokemonNatureText.setPosition(infoContainerTextXPos, 125); // originally 39
+
+
+    this.statsContainer.setScale(0.7);
+    // this.statsContainer.setPosition(30,50);
+    this.statsContainer.setPosition(30,-3);
+    this.remove(this.infoBg);
+
+    // this.pokemonShinyNewIcon.setPosition(25,-65);
+    this.pokemonMovesContainer.setVisible(false);
+    for (let m = 0; m < 4; m++) {
+      this.pokemonMovesContainers[m].setVisible(false);
+    }
+
+    // pokemonGenderText: Phaser.GameObjects.Text;
+    // pokemonGenderNewText: Phaser.GameObjects.Text;
+    // pokemonAbilityLabelText: Phaser.GameObjects.Text;
+    // pokemonAbilityText: Phaser.GameObjects.Text;
+    // pokemonNatureLabelText: Phaser.GameObjects.Text;
+    // pokemonNatureText: BBCodeText;
+    // pokemonShinyIcon: Phaser.GameObjects.Image;
+    // pokemonShinyNewIcon: Phaser.GameObjects.Text;
+    // pokemonFusionShinyIcon: Phaser.GameObjects.Image;
+    // pokemonMovesContainer: Phaser.GameObjects.Container;
+    // pokemonMovesContainers: Phaser.GameObjects.Container[];
   }
 
   makeRoomForConfirmUi(speedMultiplier: number = 1, fromCatch: boolean = false): Promise<void> {

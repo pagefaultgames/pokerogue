@@ -31,7 +31,7 @@ import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { ChallengeAchv, HealAchv, LevelAchv, achvs } from "./system/achv";
 import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
-import { EggHatchPhase, EggSummaryPhase } from "./egg-hatch-phase";
+import { EggHatchData, EggHatchPhase, EggSummaryPhase } from "./egg-hatch-phase";
 import { Egg, EGG_SEED } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { clientSessionId, loggedInUser, updateUserInfo } from "./account";
@@ -5338,9 +5338,7 @@ export class SelectModifierPhase extends BattlePhase {
 }
 
 export class EggLapsePhase extends Phase {
-  private pokemonHatched: PlayerPokemon[] = [];
-  private eggMoveIdx: integer[] = [];
-  private eggMoveUnlocks: boolean[] = [];
+  private eggHatchData: EggHatchData[] = [];
   constructor(scene: BattleScene) {
     super(scene);
   }
@@ -5353,11 +5351,10 @@ export class EggLapsePhase extends Phase {
     });
 
     let eggsToHatchCount: integer = eggsToHatch.length;
-    this.pokemonHatched = [];
-    this.eggMoveIdx= [];
+    this.eggHatchData= [];
     if (eggsToHatchCount > 0) {
 
-      if (eggsToHatchCount >= 5) {
+      if (eggsToHatchCount >= 1) {
         this.scene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
           // show prompt for skip
           this.scene.ui.showText("Lots of eggs ?", 0);
@@ -5365,14 +5362,14 @@ export class EggLapsePhase extends Phase {
             for (const egg of eggsToHatch) {
               this.hatchEggSilently(egg);
             }
-            this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.pokemonHatched, this.eggMoveIdx, this.eggMoveUnlocks));
+            this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
             this.end();
           }, () => {
             for (const egg of eggsToHatch) {
-              this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, this.pokemonHatched, this.eggMoveIdx, eggsToHatchCount, this.eggMoveUnlocks));
+              this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, this.eggHatchData, eggsToHatchCount));
               eggsToHatchCount--;
             }
-            this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.pokemonHatched, this.eggMoveIdx, this.eggMoveUnlocks));
+            this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
             this.end();
           }
           );
@@ -5380,21 +5377,27 @@ export class EggLapsePhase extends Phase {
       } else {
         this.scene.queueMessage(i18next.t("battle:eggHatching"));
         for (const egg of eggsToHatch) {
-          this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, this.pokemonHatched, this.eggMoveIdx, eggsToHatchCount, this.eggMoveUnlocks));
+          this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg, this.eggHatchData, eggsToHatchCount));
           eggsToHatchCount--;
         }
-        this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.pokemonHatched, this.eggMoveIdx, this.eggMoveUnlocks));
+        this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
         this.end();
       }
 
 
-      console.log(this.pokemonHatched);
+      console.log(this.eggHatchData);
     } else {
       this.end();
     }
   }
 
   hatchEggSilently(egg: Egg) {
+    const eggIndex = this.scene.gameData.eggs.findIndex(e => e.id === egg.id);
+    if (eggIndex === -1) {
+      return this.end();
+    }
+    this.scene.gameData.eggs.splice(eggIndex, 1);
+
     const pokemon = this.generatePokemon(egg);
     if (pokemon.fusionSpecies) {
       pokemon.clearFusionSpecies();
@@ -5420,6 +5423,7 @@ export class EggLapsePhase extends Phase {
 
   }
 
+  // TODO fix duplicated code neatly
   /**
    * Generates a Pokemon to be hatched by the egg
    * @returns the hatched PlayerPokemon
@@ -5429,11 +5433,10 @@ export class EggLapsePhase extends Phase {
 
     this.scene.executeWithSeedOffset(() => {
       ret = egg.generatePlayerPokemon(this.scene);
-      this.eggMoveIdx.push(egg.eggMoveIndex);
-
     }, egg.id, EGG_SEED.toString());
-
-    this.pokemonHatched.push(ret);
+    const newHatchData = new EggHatchData(this.scene, ret, egg.eggMoveIndex);
+    newHatchData.setDex();
+    this.eggHatchData.push(newHatchData);
     return ret;
   }
 
