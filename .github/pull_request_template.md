@@ -2,10 +2,10 @@
 <!-- Make sure that this PR is not overlapping with someone else's work -->
 <!-- Please try to keep the PR self-contained (and small) -->
 
-## What are the changes?
+## What are the changes the user will see?
 <!-- Summarize what are the changes from a user perspective on the application -->
 
-## Why am I doing these changes the user will see?
+## Why am I making these changes?
 <!-- Explain why you decided to introduce these changes -->
 <!-- Does it come from an issue or another PR? Please link it -->
 <!-- Explain why you believe this can enhance user experience -->

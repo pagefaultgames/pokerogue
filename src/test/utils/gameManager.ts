@@ -28,6 +28,8 @@ import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.j
 import overrides from "#app/overrides.js";
 import { removeEnemyHeldItems } from "./testUtils";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
+import { MoveHelper } from "./moveHelper";
+import { vi } from "vitest";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -39,6 +41,7 @@ export default class GameManager {
   public textInterceptor: TextInterceptor;
   public inputsHandler: InputsHandler;
   public readonly override: OverridesHelper;
+  public readonly move: MoveHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -55,6 +58,7 @@ export default class GameManager {
     this.textInterceptor = new TextInterceptor(this.scene);
     this.gameWrapper.setScene(this.scene);
     this.override = new OverridesHelper(this);
+    this.move = new MoveHelper(this);
   }
 
   /**
@@ -135,6 +139,38 @@ export default class GameManager {
     if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
       removeEnemyHeldItems(this);
     }
+  }
+
+  /**
+   * Helper function to run to the final boss encounter as it's a bit tricky due to extra dialogue
+   * Also handles Major/Minor bosses from endless modes
+   * @param game - The game manager
+   * @param species
+   * @param mode
+   */
+  async runToFinalBossEncounter(game: GameManager, species: Species[], mode: GameModes) {
+    console.log("===to final boss encounter===");
+    await game.runToTitle();
+
+    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+      game.scene.gameMode = getGameMode(mode);
+      const starters = generateStarter(game.scene, species);
+      const selectStarterPhase = new SelectStarterPhase(game.scene);
+      game.scene.pushPhase(new EncounterPhase(game.scene, false));
+      selectStarterPhase.initBattle(starters);
+    });
+
+    game.onNextPrompt("EncounterPhase", Mode.MESSAGE, async () => {
+      // This will skip all entry dialogue (I can't figure out a way to sequentially handle the 8 chained messages via 1 prompt handler)
+      game.setMode(Mode.MESSAGE);
+      const encounterPhase = game.scene.getCurrentPhase() as EncounterPhase;
+
+      // No need to end phase, this will do it for you
+      encounterPhase.doEncounterCommon(false);
+    });
+
+    await game.phaseInterceptor.to(EncounterPhase, true);
+    console.log("===finished run to final boss encounter===");
   }
 
   /**
@@ -353,5 +389,20 @@ export default class GameManager {
       partyHandler.processInput(Button.ACTION); // select party slot
       partyHandler.processInput(Button.ACTION); // send out (or whatever option is at the top)
     });
+  }
+
+  /**
+   * Intercepts `TurnStartPhase` and mocks the getOrder's return value {@linkcode TurnStartPhase.getOrder}
+   * Used to modify the turn order.
+   * @param {BattlerIndex[]} order The turn order to set
+   * @example
+   * ```ts
+   * await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+   * ```
+   */
+  async setTurnOrder(order: BattlerIndex[]): Promise<void> {
+    await this.phaseInterceptor.to(TurnStartPhase, false);
+
+    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue(order);
   }
 }

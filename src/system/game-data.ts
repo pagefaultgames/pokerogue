@@ -197,6 +197,9 @@ export interface StarterAttributes {
   variant?: integer;
   form?: integer;
   female?: boolean;
+  shiny?: boolean;
+  favorite?: boolean;
+  nickname?: string;
 }
 
 export interface StarterPreferences {
