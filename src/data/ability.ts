@@ -2741,7 +2741,7 @@ export class BlockOneHitKOAbAttr extends AbAttr {
 
 export class ChangeMovePriorityAbAttr extends AbAttr {
   private moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean;
-  private increaseAmount: number;
+  private changeAmount: number;
 
   constructor(moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean, increaseAmount = 1) {
     super(true);
