@@ -2741,7 +2741,7 @@ export class BlockOneHitKOAbAttr extends AbAttr {
 
 export class IncrementMovePriorityAbAttr extends AbAttr {
   private moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean;
-  private increaseAmount: integer;
+  private increaseAmount: number;
 
   constructor(moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean, increaseAmount = 1) {
     super(true);
@@ -4658,7 +4658,7 @@ export function initAbilities() {
       .attr(AlwaysHitAbAttr)
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.STALL, 4)
-      .attr(IncrementMovePriorityAbAttr, (pokemon, move: Move) => true, -12),
+      .attr(IncrementMovePriorityAbAttr, (pokemon, move: Move) => true, -0.5),
     new Ability(Abilities.TECHNICIAN, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
         const power = new Utils.NumberHolder(move.power);
