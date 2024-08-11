@@ -389,7 +389,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   }
 }
 
-export class TypeImmunityAttackAbAttr extends TypeImmunityAbAttr {
+export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
   constructor(immuneType: Type, condition?: AbAttrCondition) {
     super(immuneType, condition);
   }
