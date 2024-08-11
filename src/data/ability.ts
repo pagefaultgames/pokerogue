@@ -378,9 +378,6 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
       return false;
     }
     if (attacker !== pokemon && move.type === this.immuneType) {
-      if (move.category === MoveCategory.STATUS && !this.isPrototypeOf(TypeImmunityAbAttr)) {
-        return false;
-      }
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
@@ -389,6 +386,19 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
 
   override getCondition(): AbAttrCondition | null {
     return this.condition;
+  }
+}
+
+export class TypeImmunityNeutralAbAttr extends TypeImmunityAbAttr {
+  constructor(immuneType: Type, condition?: AbAttrCondition) {
+    super(immuneType, condition);
+  }
+
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (move.category !== MoveCategory.STATUS) {
+      return super.applyPreDefend(pokemon, passive, attacker, move, cancelled, args);
+    }
+    return false;
   }
 }
 
@@ -4439,7 +4449,7 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.LEVITATE, 3)
-      .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))
+      .attr(TypeImmunityNeutralAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))
       .ignorable(),
     new Ability(Abilities.EFFECT_SPORE, 3)
       .attr(EffectSporeAbAttr),
