@@ -66,7 +66,7 @@ describe("Endless Boss", () => {
     expect(eternatus?.formIndex).toBe(0);
   });
 
-  it(`should spawn a major boss every ${EndlessBosssWave.Major} waves in END biome in Spliced Endless`, async () => {
+  it(`should spawn a major boss every ${EndlessBossWave.Major} waves in END biome in Spliced Endless`, async () => {
     game.override.startingWave(EndlessBossWave.Major);
     await game.runToFinalBossEncounter(game, [Species.BIDOOF], GameModes.SPLICED_ENDLESS);
 
