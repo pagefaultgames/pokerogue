@@ -60,7 +60,7 @@ export const battle: SimpleTranslationEntries = {
   "turnEndHpRestore": "{{pokemonName}}'s HP was restored.",
   "hpIsFull": "{{pokemonName}}'s\nHP is full!",
   "skipItemQuestion": "¿Estás seguro de que no quieres coger un objeto?",
-  "itemStackFull": "The stack for this item is full.\nYou will receive {{itemName}} instead.",
+  "itemStackFull": "El máximo de este objeto ha sido alcanzado.\nRecibirás {{itemName}} en su lugar.",
   "eggHatching": "¿Y esto?",
   "ivScannerUseQuestion": "¿Quieres usar el Escáner de IVs en {{pokemonName}}?",
   "wildPokemonWithAffix": "El {{pokemonName}} salvaje",
