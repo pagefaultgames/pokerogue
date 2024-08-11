@@ -281,6 +281,13 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       this.flyoutTextPlayer.text += ", Sp.D: " + poke[i].ivs[4]
       this.flyoutTextPlayer.text += ", Speed: " + poke[i].ivs[5] + "\n\n"
     }
+    if (poke.length < 2) {
+      this.flyoutTextEnemy.text += "\n"
+    }
+    if (poke.length < 1) {
+      this.flyoutTextEnemy.text += "\n\n"
+    }
+    this.flyoutTextEnemy.text += ((this.scene as BattleScene).waveShinyChecked ? ((this.scene as BattleScene).waveShinyFlag ? "Shiny Luck: OK" : "Shiny Pokemon will change this floor's shop!") : "Shiny Luck: Not checked")
   }
 
   public printIVs() {

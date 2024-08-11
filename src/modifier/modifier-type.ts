@@ -2356,12 +2356,12 @@ function getItemIndex(thresholds, tier) {
  * @param party The player's party, used for generating some specific items
  * @returns An item name, or `[Failed to generate]` if a `ModifierTypeGenerator` was rolled, but no item was available to generate (It won't retry)
  */
-function getModifierTypeSimulated(pool, tier, index, party) {
+function getModifierTypeSimulated(pool, tier, index, party): string {
   let modifierType: ModifierType = (pool[tier][index]).modifierType;
   if (modifierType instanceof ModifierTypeGenerator) {
     modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
     if (modifierType === null) {
-      return "[Failed to generate]"
+      return ((pool[tier][index]).modifierType as ModifierType).identifier
     }
   }
   return modifierType.name;

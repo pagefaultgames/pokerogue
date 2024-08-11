@@ -1286,6 +1286,9 @@ export default class BattleScene extends SceneBase {
   doShinyCheck() {
     this.waveShinyChecked = true;
     this.waveShinyFlag = runShinyCheck(this, 1, this.currentBattle.waveIndex);
+    if (this.waveShinyFlag) {
+      this.arenaFlyout.display2()
+    }
   }
 
   newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {

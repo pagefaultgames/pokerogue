@@ -18,7 +18,7 @@ import { Phase } from "./phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { biomeLinks, getBiomeName } from "./data/biomes";
 import { ModifierTier } from "./modifier/modifier-tier";
-import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getLuckString, getModifierType, getPartyLuckValue, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
 import { getPokemonMessage, getPokemonNameWithAffix } from "./messages";
@@ -6865,7 +6865,7 @@ export class SelectModifierPhase extends BattlePhase {
 
     if (!this.rerollCount) {
       this.updateSeed();
-      console.log("\n\nPerforming reroll prediction\n\n")
+      console.log("\n\nPerforming reroll prediction\n\n\n")
       this.predictionCost = 0
       for (var idx = 0; idx < 10 && this.predictionCost < this.scene.money; idx++) {
         this.generateSelection(idx)
@@ -7087,17 +7087,22 @@ export class SelectModifierPhase extends BattlePhase {
         mp.forEach((m, i) => {
           console.log("  " + m.type.name)
           if (m.alternates) {
+            let showedLuckFlag = false
             for (var j = 0, currentTier = m.type.tier; j < m.alternates.length; j++) {
               if (m.alternates[j] > currentTier) {
                 currentTier = m.alternates[j]
                 if (m.advancedAlternates) {
-                  if (m.advancedAlternates[j] != "[Failed to generate]") {
-                    console.log("    At " + j + " luck: " + tierNames[currentTier] + "-tier item (failed to generate item from ModifierGenerator)")
-                  } else {
-                    console.log("    At " + j + " luck: " + m.advancedAlternates[j])
+                  if (!showedLuckFlag) {
+                    showedLuckFlag = true
+                    console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
                   }
+                  console.log("    At " + j + " luck (" + getLuckString(j) + "): " + m.advancedAlternates[j])
                 } else {
-                  console.log("    At " + j + " luck: " + tierNames[currentTier] + "-tier item (failed to generate item)")
+                  if (!showedLuckFlag) {
+                    showedLuckFlag = true
+                    console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
+                  }
+                  console.log("    At " + j + " luck (" + getLuckString(j) + "): " + tierNames[currentTier] + "-tier item (failed to generate item)")
                 }
               }
             }
