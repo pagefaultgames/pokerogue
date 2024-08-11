@@ -51,8 +51,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "Verdoppelt die Wahrscheinlichkeit, dass die nächsten {{battleCount}} Begegnungen mit wilden Pokémon ein Doppelkampf sind.",
     },
-    "TempBattleStatBoosterModifierType": {
-      description: "Erhöht die {{tempBattleStatName}} aller Teammitglieder für 5 Kämpfe um eine Stufe.",
+    "TempStatStageBoosterModifierType": {
+      description: "Erhöht die {{stat}} aller Teammitglieder für 5 Kämpfe um eine Stufe.",
     },
     "AttackTypeBoosterModifierType": {
       description: "Erhöht die Stärke aller {{moveType}}-Attacken eines Pokémon um 20%.",
@@ -185,6 +185,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SOOTHE_BELL": { name: "Sanftglocke" },
 
     "SCOPE_LENS": { name: "Scope-Linse", description: "Ein Item zum Tragen. Es erhöht die Volltrefferquote." },
+    "DIRE_HIT": { name: "X-Volltreffer", extra: { raises: "Volltrefferquote" } },
     "LEEK": { name: "Lauchstange", description: "Ein Item, das von Porenta getragen werden kann. Diese lange Lauchstange erhöht die Volltrefferquote stark." },
 
     "EVIOLITE": { name: "Evolith", description: "Ein mysteriöser Klumpen, der die Vert. u. Spez.-Vert. von Pokémon erhöht, die sich noch entwickeln können." },
@@ -253,29 +254,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "METAL_POWDER": { name: "Metallstaub", description: "Ein Item, das von Ditto getragen werden kann. Fein und doch hart, erhöht dieses sonderbare Pulver die Verteidigung." },
     "QUICK_POWDER": { name: "Flottstaub", description: "Ein Item, das Ditto zum Tragen gegeben werden kann. Fein und doch hart, erhöht dieses sonderbare Pulver die Initiative." }
   },
-  TempBattleStatBoosterItem: {
+  TempStatStageBoosterItem: {
     "x_attack": "X-Angriff",
     "x_defense": "X-Verteidigung",
     "x_sp_atk": "X-Sp.-Ang.",
     "x_sp_def": "X-Sp.-Vert.",
     "x_speed": "X-Tempo",
-    "x_accuracy": "X-Treffer",
-    "dire_hit": "X-Volltreffer",
+    "x_accuracy": "X-Treffer"
   },
-
-  TempBattleStatBoosterStatName: {
-    "ATK": "Angriff",
-    "DEF": "Verteidigung",
-    "SPATK": "Sp. Ang",
-    "SPDEF": "Sp. Vert",
-    "SPD": "Initiative",
-    "ACC": "Genauigkeit",
-    "CRIT": "Volltrefferquote",
-    "EVA": "Fluchtwert",
-    "DEFAULT": "???",
-  },
-
-
   AttackTypeBoosterItem: {
     "silk_scarf": "Seidenschal",
     "black_belt": "Schwarzgurt",

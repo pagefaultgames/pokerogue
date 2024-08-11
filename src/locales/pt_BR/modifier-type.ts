@@ -51,8 +51,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "Dobra as chances de encontrar uma batalha em dupla por {{battleCount}} batalhas.",
     },
-    "TempBattleStatBoosterModifierType": {
-      description: "Aumenta o atributo de {{tempBattleStatName}} para todos os membros da equipe por 5 batalhas.",
+    "TempStatStageBoosterModifierType": {
+      description: "Aumenta o atributo de {{stat}} para todos os membros da equipe por 5 batalhas.",
     },
     "AttackTypeBoosterModifierType": {
       description: "Aumenta o poder dos ataques do tipo {{moveType}} de um Pokémon em 20%.",
@@ -185,6 +185,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SOOTHE_BELL": { name: "Guizo" },
 
     "SCOPE_LENS": { name: "Lentes de Mira", description: "Estas lentes facilitam o foco em pontos fracos. Aumenta a chance de acerto crítico de quem a segurar." },
+    "DIRE_HIT": { name: "Direto", extra: { raises: "Chance de Acerto Crítico" } },
     "LEEK": { name: "Alho-poró", description: "Esse talo de alho-poró muito longo e rígido aumenta a taxa de acerto crítico dos movimentos do Farfetch'd." },
 
     "EVIOLITE": { name: "Eviolita", description: "Esse misterioso caroço evolutivo aumenta os atributos de Defesa e Def. Esp. quando segurado por um Pokémon que ainda pode evoluir." },
@@ -252,28 +253,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "METAL_POWDER": { name: "Pó Metálico", description: "Extremamente fino, porém duro, este pó estranho aumenta o atributo de Defesa de Ditto." },
     "QUICK_POWDER": { name: "Pó Veloz", description: "Extremamente fino, porém duro, este pó estranho aumenta o atributo de Velocidade de Ditto." }
   },
-  TempBattleStatBoosterItem: {
+  TempStatStageBoosterItem: {
     "x_attack": "Ataque X",
     "x_defense": "Defesa X",
     "x_sp_atk": "Ataque Esp. X",
     "x_sp_def": "Defesa Esp. X",
     "x_speed": "Velocidade X",
-    "x_accuracy": "Precisão X",
-    "dire_hit": "Direto",
+    "x_accuracy": "Precisão X"
   },
-
-  TempBattleStatBoosterStatName: {
-    "ATK": "Ataque",
-    "DEF": "Defesa",
-    "SPATK": "Ataque Esp.",
-    "SPDEF": "Defesa Esp.",
-    "SPD": "Velocidade",
-    "ACC": "Precisão",
-    "CRIT": "Chance de Acerto Crítico",
-    "EVA": "Evasão",
-    "DEFAULT": "???",
-  },
-
   AttackTypeBoosterItem: {
     "silk_scarf": "Lenço de Seda",
     "black_belt": "Faixa Preta",

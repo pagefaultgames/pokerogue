@@ -51,8 +51,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "Raddoppia la possibilità di imbattersi in doppie battaglie per {{battleCount}} battaglie.",
     },
-    "TempBattleStatBoosterModifierType": {
-      description: "Aumenta {{tempBattleStatName}} di un livello a tutti i Pokémon nel gruppo per 5 battaglie.",
+    "TempStatStageBoosterModifierType": {
+      description: "Aumenta {{stat}} di un livello a tutti i Pokémon nel gruppo per 5 battaglie.",
     },
     "AttackTypeBoosterModifierType": {
       description: "Aumenta la potenza delle mosse di tipo {{moveType}} del 20% per un Pokémon.",
@@ -185,6 +185,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SOOTHE_BELL": { name: "Calmanella" },
 
     "SCOPE_LENS": { name: "Mirino", description: "Lente che aumenta la probabilità di sferrare brutti colpi." },
+    "DIRE_HIT": { name: "Supercolpo", extra: { raises: "Tasso di brutti colpi" } },
     "LEEK": { name: "Porro", description: "Strumento da dare a Farfetch'd. Lungo gambo di porro che aumenta la probabilità di sferrare brutti colpi." },
 
     "EVIOLITE": { name: "Evolcondensa", description: "Misteriosa materia evolutiva. Aumenta la Difesa e la Difesa Speciale di un Pokémon che può ancora evolversi." },
@@ -252,28 +253,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "METAL_POWDER": { name: "Metalpolvere", description: "Strumento da dare a Ditto. Strana polvere finissima e al tempo stesso dura che migliora la Difesa." },
     "QUICK_POWDER": { name: "Velopolvere", description: "Strumento da dare a Ditto. Questa strana polvere, fine e al contempo dura, aumenta la Velocità." }
   },
-  TempBattleStatBoosterItem: {
+  TempStatStageBoosterItem: {
     "x_attack": "Attacco X",
     "x_defense": "Difesa X",
     "x_sp_atk": "Att. Speciale X",
     "x_sp_def": "Dif. Speciale X",
     "x_speed": "Velocità X",
     "x_accuracy": "Precisione X",
-    "dire_hit": "Supercolpo",
   },
-
-  TempBattleStatBoosterStatName: {
-    "ATK": "Attacco",
-    "DEF": "Difesa",
-    "SPATK": "Att. Speciale",
-    "SPDEF": "Dif. Speciale",
-    "SPD": "Velocità",
-    "ACC": "Precisione",
-    "CRIT": "Tasso di brutti colpi",
-    "EVA": "Elusione",
-    "DEFAULT": "???",
-  },
-
   AttackTypeBoosterItem: {
     "silk_scarf": "Sciarpa seta",
     "black_belt": "Cinturanera",

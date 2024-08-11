@@ -51,8 +51,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "Doubles the chance of an encounter being a double battle for {{battleCount}} battles.",
     },
-    "TempBattleStatBoosterModifierType": {
-      description: "Increases the {{tempBattleStatName}} of all party members by 1 stage for 5 battles.",
+    "TempStatStageBoosterModifierType": {
+      description: "Increases the {{stat}} of all party members by 1 stage for 5 battles.",
     },
     "AttackTypeBoosterModifierType": {
       description: "Increases the power of a Pokémon's {{moveType}}-type moves by 20%.",
@@ -185,6 +185,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SOOTHE_BELL": { name: "Soothe Bell" },
 
     "SCOPE_LENS": { name: "Scope Lens", description: "It's a lens for scoping out weak points. It boosts the holder's critical-hit ratio."},
+    "DIRE_HIT": { name: "Dire Hit", extra: { raises: "Critical Hit Ratio" } },
     "LEEK": { name: "Leek", description: "This very long and stiff stalk of leek boosts the critical-hit ratio of Farfetch'd's moves."},
 
     "EVIOLITE": { name: "Eviolite", description: "This mysterious evolutionary lump boosts the Defense and Sp. Def stats when held by a Pokémon that can still evolve." },
@@ -252,28 +253,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "METAL_POWDER": { name: "Metal Powder", description: "Extremely fine yet hard, this odd powder boosts Ditto's Defense stat." },
     "QUICK_POWDER": { name: "Quick Powder", description: "Extremely fine yet hard, this odd powder boosts Ditto's Speed stat." }
   },
-  TempBattleStatBoosterItem: {
+  TempStatStageBoosterItem: {
     "x_attack": "X Attack",
     "x_defense": "X Defense",
     "x_sp_atk": "X Sp. Atk",
     "x_sp_def": "X Sp. Def",
     "x_speed": "X Speed",
-    "x_accuracy": "X Accuracy",
-    "dire_hit": "Dire Hit",
+    "x_accuracy": "X Accuracy"
   },
-
-  TempBattleStatBoosterStatName: {
-    "ATK": "Attack",
-    "DEF": "Defense",
-    "SPATK": "Sp. Atk",
-    "SPDEF": "Sp. Def",
-    "SPD": "Speed",
-    "ACC": "Accuracy",
-    "CRIT": "Critical Hit Ratio",
-    "EVA": "Evasiveness",
-    "DEFAULT": "???",
-  },
-
   AttackTypeBoosterItem: {
     "silk_scarf": "Silk Scarf",
     "black_belt": "Black Belt",

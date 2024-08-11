@@ -51,8 +51,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "Duplica la posibilidad de que un encuentro sea una combate doble durante {{battleCount}} combates.",
     },
-    "TempBattleStatBoosterModifierType": {
-      description: "Aumenta la est. {{tempBattleStatName}} de todos los miembros del equipo en 1 nivel durante 5 combates.",
+    "TempStatStageBoosterModifierType": {
+      description: "Aumenta la est. {{stat}} de todos los miembros del equipo en 1 nivel durante 5 combates.",
     },
     "AttackTypeBoosterModifierType": {
       description: "Aumenta la potencia de los movimientos de tipo {{moveType}} de un Pokémon en un 20%.",
@@ -185,6 +185,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SOOTHE_BELL": { name: "Camp. Alivio" },
 
     "SCOPE_LENS": { name: "Periscopio", description: "Aumenta la probabilidad de asestar un golpe crítico." },
+    "DIRE_HIT": { name: "Crítico X", extra: { raises: "Critical Hit Ratio" } },
     "LEEK": { name: "Puerro", description: "Puerro muy largo y duro que aumenta la probabilidad de asestar un golpe crítico. Debe llevarlo Farfetch'd." },
 
     "EVIOLITE": { name: "Mineral Evolutivo", description: "Roca misteriosa. El Pokémon portador aumentará su Defensa y su Defensa Especial si aún puede evolucionar." },
@@ -252,26 +253,13 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "METAL_POWDER": { name: "Polvo Metálico", description: "Polvo muy fino, pero a la vez poderoso, que aumenta la Defensa. Debe llevarlo Ditto." },
     "QUICK_POWDER": { name: "Polvo Veloz", description: "Polvo muy fino, pero a la vez poderoso, que aumenta la Velocidad. Debe llevarlo Ditto." }
   },
-  TempBattleStatBoosterItem: {
+  TempStatStageBoosterItem: {
     "x_attack": "Ataque X",
     "x_defense": "Defensa X",
     "x_sp_atk": "Ataq. Esp. X",
     "x_sp_def": "Def. Esp. X",
     "x_speed": "Velocidad X",
-    "x_accuracy": "Precisión X",
-    "dire_hit": "Crítico X",
-  },
-
-  TempBattleStatBoosterStatName: {
-    "ATK": "Attack",
-    "DEF": "Defense",
-    "SPATK": "Sp. Atk",
-    "SPDEF": "Sp. Def",
-    "SPD": "Speed",
-    "ACC": "Accuracy",
-    "CRIT": "Critical Hit Ratio",
-    "EVA": "Evasiveness",
-    "DEFAULT": "???",
+    "x_accuracy": "Precisión X"
   },
   AttackTypeBoosterItem: {
     "silk_scarf": "Pañuelo Seda",

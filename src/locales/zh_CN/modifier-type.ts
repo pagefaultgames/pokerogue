@@ -51,8 +51,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "接下来的{{battleCount}}场战斗是双打的概率翻倍。",
     },
-    "TempBattleStatBoosterModifierType": {
-      description: "为所有成员宝可梦提升一级{{tempBattleStatName}}，持续5场战斗。",
+    "TempStatStageBoosterModifierType": {
+      description: "为所有成员宝可梦提升一级{{stat}}，持续5场战斗。",
     },
     "AttackTypeBoosterModifierType": {
       description: "一只宝可梦的{{moveType}}系招式威力提升20%。",
@@ -185,6 +185,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SOOTHE_BELL": { name: "安抚之铃" },
 
     "SCOPE_LENS": { name: "焦点镜", description: "能看见弱点的镜片。携带它的宝可梦的招式\n会变得容易击中要害。" },
+    "DIRE_HIT": { name: "要害攻击", extra: { raises: "会心" } },
     "LEEK": { name: "大葱", description: "非常长且坚硬的茎。让大葱鸭携带后，\n招式会变得容易击中要害。" },
 
     "EVIOLITE": { name: "进化奇石", description: "携带后，还能进化的宝可梦的\n防御和特防就会提高。" },
@@ -252,28 +253,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "METAL_POWDER": { name: "金属粉", description: "让百变怪携带后，防御就会提高的神奇粉末。\n非常细腻坚硬。" },
     "QUICK_POWDER": { name: "速度粉", description: "让百变怪携带后，速度就会提高的神奇粉末。\n非常细腻坚硬。" }
   },
-  TempBattleStatBoosterItem: {
+  TempStatStageBoosterItem: {
     "x_attack": "力量强化",
     "x_defense": "防御强化",
     "x_sp_atk": "特攻强化",
     "x_sp_def": "特防强化",
     "x_speed": "速度强化",
-    "x_accuracy": "命中强化",
-    "dire_hit": "要害攻击",
+    "x_accuracy": "命中强化"
   },
-
-  TempBattleStatBoosterStatName: {
-    "ATK": "攻击",
-    "DEF": "防御",
-    "SPATK": "特攻",
-    "SPDEF": "特防",
-    "SPD": "速度",
-    "ACC": "命中",
-    "CRIT": "会心",
-    "EVA": "闪避",
-    "DEFAULT": "???",
-  },
-
   AttackTypeBoosterItem: {
     "silk_scarf": "丝绸围巾",
     "black_belt": "黑带",

@@ -651,7 +651,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       }
 
       const battleStats = pokemon.summonData
-        ? pokemon.summonData.battleStats
+        ? pokemon.summonData.statStages // TODO: BattleStats
         : this.battleStatOrder.map(() => 0);
       const battleStatsStr = battleStats.join("");
 

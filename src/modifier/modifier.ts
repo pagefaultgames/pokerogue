@@ -11,7 +11,6 @@ import { EvolutionPhase } from "../evolution-phase";
 import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import { getPokemonNameWithAffix } from "../messages";
 import * as Utils from "../utils";
-import { TempBattleStat } from "../data/temp-battle-stat";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
 import { BattlerTagType} from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -24,7 +23,7 @@ import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
 import { Species } from "#enums/species";
-import { BATTLE_STATS } from "#app/enums/stat";
+import { BATTLE_STATS, TEMP_BATTLE_STATS, TempBattleStat } from "#app/enums/stat";
 import i18next from "i18next";
 
 import { allMoves } from "#app/data/move.js";
@@ -361,41 +360,89 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
   }
 }
 
-export class TempBattleStatBoosterModifier extends LapsingPersistentModifier {
-  private tempBattleStat: TempBattleStat;
+/**
+ * Modifier used for party-wide items, specifically the X items, that
+ * temporarily increments the stat stage of the corresponding {@linkcode TempBattleStat}.
+ * @extends LapsingPersistentModifier
+ * @see {@linkcode apply}
+ */
+export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
+  private stat: TempBattleStat;
 
-  constructor(type: ModifierTypes.TempBattleStatBoosterModifierType, tempBattleStat: TempBattleStat, battlesLeft?: integer, stackCount?: integer) {
+  constructor(type: ModifierType, stat: TempBattleStat, battlesLeft?: integer, stackCount?: number) {
     super(type, battlesLeft || 5, stackCount);
 
-    this.tempBattleStat = tempBattleStat;
+    this.stat = stat;
   }
 
   match(modifier: Modifier): boolean {
-    if (modifier instanceof TempBattleStatBoosterModifier) {
-      return (modifier as TempBattleStatBoosterModifier).tempBattleStat === this.tempBattleStat
-        && (modifier as TempBattleStatBoosterModifier).battlesLeft === this.battlesLeft;
+    if (modifier instanceof TempStatStageBoosterModifier) {
+      const modifierInstance = modifier as TempStatStageBoosterModifier;
+      return (modifierInstance.stat === this.stat) && (modifierInstance.battlesLeft === this.battlesLeft);
     }
     return false;
   }
 
-  clone(): TempBattleStatBoosterModifier {
-    return new TempBattleStatBoosterModifier(this.type as ModifierTypes.TempBattleStatBoosterModifierType, this.tempBattleStat, this.battlesLeft, this.stackCount);
+  clone() {
+    return new TempStatStageBoosterModifier(this.type, this.stat, this.battlesLeft, this.stackCount);
   }
 
   getArgs(): any[] {
-    return [ this.tempBattleStat, this.battlesLeft ];
+    return [ this.stat, this.battlesLeft ];
   }
 
+  /**
+   * Checks if {@linkcode args} contains the necessary elements and if the
+   * incoming stat is matches {@linkcode stat}.
+   * @param args [0] {@linkcode TempBattleStat} being checked at the time
+   *             [1] {@linkcode Utils.IntegerHolder} N/A
+   */
+  shouldApply(args: any[]): boolean {
+    return args && (args.length === 2) && TEMP_BATTLE_STATS.includes(args[0]) && (args[0] === this.stat) && (args[1] instanceof Utils.IntegerHolder);
+  }
+
+  /**
+   * Increments the incoming stat stage matching {@linkcode stat}.
+   * @param args [0] {@linkcode TempBattleStat} N/A
+   *             [1] {@linkcode Utils.IntegerHolder} that holds the resulting value of the stat stage
+   */
   apply(args: any[]): boolean {
-    const tempBattleStat = args[0] as TempBattleStat;
+    (args[1] as Utils.IntegerHolder).value++;
+    return true;
+  }
+}
 
-    if (tempBattleStat === this.tempBattleStat) {
-      const statLevel = args[1] as Utils.IntegerHolder;
-      statLevel.value = Math.min(statLevel.value + 1, 6);
-      return true;
-    }
+/**
+ * Modifier used for party-wide items, namely Dire Hit, that
+ * temporarily increments the critical-hit stage
+ * @extends LapsingPersistentModifier
+ * @see {@linkcode apply}
+ */
+export class TempCritBoosterModifier extends LapsingPersistentModifier {
+  constructor(type: ModifierType, battlesLeft?: integer, stackCount?: number) {
+    super(type, battlesLeft || 5, stackCount);
+  }
 
-    return false;
+  clone() {
+    return new TempCritBoosterModifier(this.type, this.stackCount);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return (modifier instanceof TempCritBoosterModifier);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return args && (args.length === 1) && (args[0] instanceof Utils.NumberHolder);
+  }
+
+  /**
+   * Increases the current critical-hit stage value by 1.
+   * @param args [0] {@linkcode Utils.IntegerHolder} that holds the resulting critical-hit level
+   * @returns true if the critical-hit stage boost applies successfully
+   */
+  apply(args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value++;
+    return true;
   }
 }
 

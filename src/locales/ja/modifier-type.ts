@@ -51,8 +51,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "バトル{{battleCount}}かいのあいだ ダブルバトルになるかくりつを2ばいにする",
     },
-    "TempBattleStatBoosterModifierType": {
-      description: "すべてのパーティメンバーの {{tempBattleStatName}}を5かいのバトルのあいだ 1だんかいあげる",
+    "TempStatStageBoosterModifierType": {
+      description: "すべてのパーティメンバーの {{stat}} を5かいのバトルのあいだ 1だんかいあげる",
     },
     "AttackTypeBoosterModifierType": {
       description: "ポケモンの {{moveType}}タイプのわざのいりょくを20パーセントあげる",
@@ -185,6 +185,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SOOTHE_BELL": { name: "やすらぎのすず" },
 
     "SCOPE_LENS": { name: "ピントレンズ", description: "弱点が 見える レンズ。持たせた ポケモンの技が 急所に 当たりやすくなる。"},
+    "DIRE_HIT": { name: "クリティカット", extra: { raises: "きゅうしょりつ" } },
     "LEEK": { name: "ながねぎ", description: "とても長くて 硬いクキ。カモネギに 持たせると 技が 急所に 当たりやすくなる。"},
 
     "EVIOLITE": { name: "しんかのきせき", description: "進化の不思議な かたまり。持たせると 進化前ポケモンの 防御と 特防が あがる。" },
@@ -252,28 +253,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "METAL_POWDER": { name: "メタルパウダー", description: "メタモンに 持たせると 防御が あがる 不思議な粉。とても こまかくて 硬い。" },
     "QUICK_POWDER": { name: "スピードパウダー", description: "メタモンに 持たせると 素早さが あがる 不思議 粉。とても こまかくて 硬い。" }
   },
-  TempBattleStatBoosterItem: {
+  TempStatStageBoosterItem: {
     "x_attack": "プラスパワー",
     "x_defense": "ディフェンダー",
     "x_sp_atk": "スペシャルアップ",
     "x_sp_def": "スペシャルガード",
     "x_speed": "スピーダー",
-    "x_accuracy": "ヨクアタール",
-    "dire_hit": "クリティカット",
+    "x_accuracy": "ヨクアタール"
   },
-
-  TempBattleStatBoosterStatName: {
-    "ATK": "こうげき",
-    "DEF": "ぼうぎょ",
-    "SPATK": "とくこう",
-    "SPDEF": "とくぼう",
-    "SPD": "すばやさ",
-    "ACC": "めいちゅう",
-    "CRIT": "きゅうしょりつ",
-    "EVA": "かいひ",
-    "DEFAULT": "???",
-  },
-
   AttackTypeBoosterItem: {
     "silk_scarf": "シルクのスカーフ",
     "black_belt": "くろおび",

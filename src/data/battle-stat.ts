@@ -35,6 +35,7 @@ export function getBattleStatName(stat: BattleStat) {
   }
 }
 
+// TODO: BattleStat
 export function getBattleStatLevelChangeDescription(pokemonNameWithAffix: string, stats: string, levels: integer, up: boolean, count: number = 1) {
   const stringKey = (() => {
     if (up) {

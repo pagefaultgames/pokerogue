@@ -51,9 +51,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     DoubleBattleChanceBoosterModifierType: {
       description: "接下來的{{battleCount}}場戰鬥是雙打的概率翻倍。",
     },
-    TempBattleStatBoosterModifierType: {
-      description:
-                "爲所有成員寶可夢提升一級{{tempBattleStatName}}，持續5場戰鬥。",
+    TempStatStageBoosterModifierType: {
+      description: "爲所有成員寶可夢提升一級{{stat}}，持續5場戰鬥。",
     },
     AttackTypeBoosterModifierType: {
       description: "一隻寶可夢的{{moveType}}系招式威力提升20%。",
@@ -195,6 +194,12 @@ export const modifierType: ModifierTypeTranslationEntries = {
       name: "焦點鏡",
       description: "能看見弱點的鏡片。攜帶它的寶可夢的招式 會變得容易擊中要害。"
     },
+    DIRE_HIT: {
+      name: "要害攻擊",
+      extra: {
+        raises: "會心"
+      }
+    },
     LEEK: {
       name: "大蔥",
       description: "非常長且堅硬的莖。讓大蔥鴨攜帶後，招式會 變得容易擊中要害。"
@@ -319,28 +324,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "METAL_POWDER": { name: "金屬粉", description: "讓百變怪攜帶後，防禦就會提高的神奇粉末。非常細緻堅硬。" },
     "QUICK_POWDER": { name: "速度粉", description: "讓百變怪攜帶後，速度就會提高的神奇粉末。非常細緻堅硬。" }
   },
-  TempBattleStatBoosterItem: {
+  TempStatStageBoosterItem: {
     x_attack: "力量強化",
     x_defense: "防禦強化",
     x_sp_atk: "特攻強化",
     x_sp_def: "特防強化",
     x_speed: "速度強化",
-    x_accuracy: "命中強化",
-    dire_hit: "要害攻擊",
+    x_accuracy: "命中強化"
   },
-
-  TempBattleStatBoosterStatName: {
-    "ATK": "攻擊",
-    "DEF": "防禦",
-    "SPATK": "特攻",
-    "SPDEF": "特防",
-    "SPD": "速度",
-    "ACC": "命中",
-    "CRIT": "會心",
-    "EVA": "閃避",
-    "DEFAULT": "???",
-  },
-
   AttackTypeBoosterItem: {
     silk_scarf: "絲綢圍巾",
     black_belt: "黑帶",

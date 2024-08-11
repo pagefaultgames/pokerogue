@@ -8,7 +8,6 @@ import { tmPoolTiers, tmSpecies } from "../data/tms";
 import { Type } from "../data/type";
 import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from "../ui/party-ui-handler";
 import * as Utils from "../utils";
-import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from "../data/temp-battle-stat";
 import { getBerryEffectDescription, getBerryName } from "../data/berry";
 import { Unlockables } from "../system/unlockables";
 import { StatusEffect, getStatusEffectDescriptor } from "../data/status-effect";
@@ -28,6 +27,7 @@ import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
+import { TEMP_BATTLE_STATS, TempBattleStat } from "#app/enums/stat";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -427,26 +427,28 @@ export class DoubleBattleChanceBoosterModifierType extends ModifierType {
   }
 }
 
-export class TempBattleStatBoosterModifierType extends ModifierType implements GeneratedPersistentModifierType {
-  public tempBattleStat: TempBattleStat;
+export class TempStatStageBoosterModifierType extends ModifierType implements GeneratedPersistentModifierType {
+  private stat: TempBattleStat;
+  private key: string;
 
-  constructor(tempBattleStat: TempBattleStat) {
-    super("", getTempBattleStatBoosterItemName(tempBattleStat).replace(/\./g, "").replace(/[ ]/g, "_").toLowerCase(),
-      (_type, _args) => new Modifiers.TempBattleStatBoosterModifier(this, this.tempBattleStat));
+  constructor(stat: TempBattleStat) {
+    const key = TempStatStageBoosterModifierTypeGenerator.items[stat];
+    super("", key, (_type, _args) => new Modifiers.TempStatStageBoosterModifier(this, this.stat));
 
-    this.tempBattleStat = tempBattleStat;
+    this.stat = stat;
+    this.key = key;
   }
 
   get name(): string {
-    return i18next.t(`modifierType:TempBattleStatBoosterItem.${getTempBattleStatBoosterItemName(this.tempBattleStat).replace(/\./g, "").replace(/[ ]/g, "_").toLowerCase()}`);
+    return i18next.t(`modifierType:TempStatStageBoosterItem.${this.key}`);
   }
 
-  getDescription(scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.TempBattleStatBoosterModifierType.description", { tempBattleStatName: getTempBattleStatName(this.tempBattleStat) });
+  getDescription(_scene: BattleScene): string {
+    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", { stat: i18next.t(`pokemonInfo:Stat.${Stat[this.stat]}`) });
   }
 
   getPregenArgs(): any[] {
-    return [ this.tempBattleStat ];
+    return [ this.stat ];
   }
 }
 
@@ -902,6 +904,27 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
+class TempStatStageBoosterModifierTypeGenerator extends ModifierTypeGenerator {
+  public static readonly items: Record<TempBattleStat, string> = {
+    [Stat.ATK]: "x_attack",
+    [Stat.DEF]: "x_defense",
+    [Stat.SPATK]: "x_sp_atk",
+    [Stat.SPDEF]: "x_sp_def",
+    [Stat.SPD]: "x_speed",
+    [Stat.ACC]: "x_accuracy"
+  };
+
+  constructor() {
+    super((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs && (pregenArgs.length === 1) && TEMP_BATTLE_STATS.includes(pregenArgs[0])) {
+        return new TempStatStageBoosterModifierType(pregenArgs[0]);
+      }
+      const randStat: TempBattleStat = Utils.randSeedInt(Stat.ACC, Stat.ATK);
+      return new TempStatStageBoosterModifierType(randStat);
+    });
+  }
+}
+
 /**
  * Modifier type generator for {@linkcode SpeciesStatBoosterModifierType}, which
  * encapsulates the logic for weighting the most useful held item from
@@ -910,7 +933,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
  */
 class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   /** Object comprised of the currently available species-based stat boosting held items */
-  public static items = {
+  public static readonly items = {
     LIGHT_BALL: { stats: [Stat.ATK, Stat.SPATK], multiplier: 2, species: [Species.PIKACHU] },
     THICK_CLUB: { stats: [Stat.ATK], multiplier: 2, species: [Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK] },
     METAL_POWDER: { stats: [Stat.DEF], multiplier: 2, species: [Species.DITTO] },
@@ -1273,22 +1296,21 @@ export const modifierTypes = {
 
   SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(),
 
-  TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-    if (pregenArgs) {
-      return new TempBattleStatBoosterModifierType(pregenArgs[0] as TempBattleStat);
+  TEMP_STAT_BOOSTER: () => new TempStatStageBoosterModifierTypeGenerator(),
+
+  DIRE_HIT: () => new class extends ModifierType {
+    getDescription(_scene: BattleScene): string {
+      return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", { stat: i18next.t("modifierType:ModifierType.DIRE_HIT.extra.raises") });
     }
-    const randTempBattleStat = Utils.randSeedInt(6) as TempBattleStat;
-    return new TempBattleStatBoosterModifierType(randTempBattleStat);
-  }),
-  DIRE_HIT: () => new TempBattleStatBoosterModifierType(TempBattleStat.CRIT),
+  }("modifierType:ModifierType.DIRE_HIT", "dire_hit", (type, _args) => new Modifiers.TempCritBoosterModifier(type)),
 
   BASE_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
       const stat = pregenArgs[0] as Stat;
-      return new PokemonBaseStatBoosterModifierType(getBaseStatBoosterItemName(stat), stat);
+      return new PokemonBaseStatBoosterModifierType(getBaseStatBoosterItemName(stat)!, stat); // TODO: Stat
     }
     const randStat = Utils.randSeedInt(6) as Stat;
-    return new PokemonBaseStatBoosterModifierType(getBaseStatBoosterItemName(randStat), randStat);
+    return new PokemonBaseStatBoosterModifierType(getBaseStatBoosterItemName(randStat)!, randStat); // TODO: Stat
   }),
 
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),

@@ -10,7 +10,7 @@ import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat } from "../data/pokemon-stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
+import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
@@ -20,7 +20,6 @@ import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase, MoveEndPhase } from "../phases";
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
-import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
 import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AddSecondStrikeAbAttr, IgnoreOpponentEvasionAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
@@ -50,7 +49,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
-import { PermanentStat, BattleStat, PERMANENT_STATS } from "#app/enums/stat";
+import { PermanentStat, BattleStat, PERMANENT_STATS } from "#app/enums/stat"; // TODO: Add type
 
 export enum FieldPosition {
   CENTER,
@@ -737,7 +736,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getBattleStat(stat: PermanentStat & BattleStat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
-    const battleStat = (stat - 1) as BattleStat; // TODO: BattleStat
     const statLevel = new Utils.IntegerHolder(this.getStatStage(stat));
     if (opponent) {
       if (isCritical) {
@@ -758,7 +756,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     if (this.isPlayer()) {
-      this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel); // TODO: TempBattleStat
+      this.scene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), stat, statLevel);
     }
     const statValue = new Utils.NumberHolder(this.getStat(stat, false));
     this.scene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
@@ -1955,7 +1953,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyAbAttrs(IgnoreOpponentStatChangesAbAttr, this, null, targetEvaStage);
     applyAbAttrs(IgnoreOpponentEvasionAbAttr, this, null, targetEvaStage);
     applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, target, sourceMove, targetEvaStage);
-    this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), TempBattleStat.ACC, userAccStage);
+    this.scene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), Stat.ACC, userAccStage);
 
     if (target.findTag(t => t instanceof ExposedTag)) {
       targetEvaStage.value = Math.min(0, targetEvaStage.value);
@@ -2062,7 +2060,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           const critLevel = new Utils.IntegerHolder(0);
           applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
           this.scene.applyModifiers(CritBoosterModifier, source.isPlayer(), source, critLevel);
-          this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
+          this.scene.applyModifiers(TempCritBoosterModifier, source.isPlayer(), critLevel);
           const bonusCrit = new Utils.BooleanHolder(false);
           //@ts-ignore
           if (applyAbAttrs(BonusCritAbAttr, source, null, bonusCrit)) { // TODO: resolve ts-ignore. This is a promise. Checking a promise is bogus.
@@ -2498,9 +2496,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param source {@linkcode Pokemon} the pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
    */
   transferSummon(source: Pokemon): void {
+    /** TODO: BattleStats
     for (const stat of battleStats) {
       this.summonData.battleStats[stat] = source.summonData.battleStats[stat];
     }
+    */
     for (const tag of source.summonData.tags) {
 
       // bypass yawn, and infatuation as those can not be passed via Baton Pass
@@ -2510,9 +2510,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       this.summonData.tags.push(tag);
     }
+    /** TODO: BattleStats
     if (this instanceof PlayerPokemon && source.summonData.battleStats.find(bs => bs === 6)) {
       this.scene.validateAchv(achvs.TRANSFER_MAX_BATTLE_STAT);
     }
+    */
     this.updateInfo();
   }
 

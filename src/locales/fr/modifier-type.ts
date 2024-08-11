@@ -51,8 +51,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
 	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats.",
     },
-    "TempBattleStatBoosterModifierType": {
-	  description: "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats.",
+    "TempStatStageBoosterModifierType": {
+	  description: "Augmente d’un cran {{stat}} pour toute l’équipe pendant 5 combats.",
     },
     "AttackTypeBoosterModifierType": {
       description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon.",
@@ -185,6 +185,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SOOTHE_BELL": { name: "Grelot Zen" },
 
     "SCOPE_LENS": { name: "Lentilscope", description: "Une lentille qui augmente d’un cran le taux de critiques du porteur." },
+    "DIRE_HIT": { name: "Muscle +", extra: { raises: "Taux de critique" } },
     "LEEK": { name: "Poireau", description: "À faire tenir à Canarticho ou Palarticho. Un poireau très long et solide qui augmente de 2 crans le taux de critiques." },
 
     "EVIOLITE": { name: "Évoluroc", description: "Augmente de 50% la Défense et Déf. Spé. si le porteur peut évoluer, 25% aux fusions dont une moitié le peut encore." },
@@ -252,28 +253,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "METAL_POWDER": { name: "Poudre Métal", description: "À faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, double sa Défense." },
     "QUICK_POWDER": { name: "Poudre Vite", description: "À faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, double sa Vitesse." }
   },
-  TempBattleStatBoosterItem: {
+  TempStatStageBoosterItem: {
     "x_attack": "Attaque +",
     "x_defense": "Défense +",
     "x_sp_atk": "Atq. Spé. +",
     "x_sp_def": "Déf. Spé. +",
     "x_speed": "Vitesse +",
-    "x_accuracy": "Précision +",
-    "dire_hit": "Muscle +",
+    "x_accuracy": "Précision +"
   },
-
-  TempBattleStatBoosterStatName: {
-    "ATK": "Attaque",
-    "DEF": "Défense",
-    "SPATK": "Atq. Spé.",
-    "SPDEF": "Déf. Spé.",
-    "SPD": "Vitesse",
-    "ACC": "Précision",
-    "CRIT": "Taux de critique",
-    "EVA": "Esquive",
-    "DEFAULT": "???",
-  },
-
   AttackTypeBoosterItem: {
     "silk_scarf": "Mouchoir Soie",
     "black_belt": "Ceinture Noire",

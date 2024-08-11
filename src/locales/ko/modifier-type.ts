@@ -51,8 +51,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "DoubleBattleChanceBoosterModifierType": {
       description: "{{battleCount}}번의 배틀 동안 더블 배틀이 등장할 확률이 두 배가 된다.",
     },
-    "TempBattleStatBoosterModifierType": {
-      description: "자신의 모든 포켓몬이 5번의 배틀 동안 {{tempBattleStatName}}[[가]] 한 단계 증가한다."
+    "TempStatStageBoosterModifierType": {
+      description: "자신의 모든 포켓몬이 5번의 배틀 동안 {{stat}}[[가]] 한 단계 증가한다."
     },
     "AttackTypeBoosterModifierType": {
       description: "지니게 하면 {{moveType}}타입 기술의 위력이 20% 상승한다.",
@@ -185,6 +185,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "SOOTHE_BELL": { name: "평온의방울" },
 
     "SCOPE_LENS": { name: "초점렌즈", description: "약점이 보이는 렌즈. 지니게 한 포켓몬의 기술이 급소에 맞기 쉬워진다." },
+    "DIRE_HIT": { name: "크리티컬커터", extra: { raises: "급소율" } },
     "LEEK": { name: "대파", description: "매우 길고 단단한 줄기. 파오리에게 지니게 하면 기술이 급소에 맞기 쉬워진다." },
 
     "EVIOLITE": { name: "진화의휘석", description: "진화의 이상한 덩어리. 지니게 하면 진화 전 포켓몬의 방어와 특수방어가 올라간다." },
@@ -252,28 +253,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "METAL_POWDER": { name: "금속파우더", description: "메타몽에게 지니게 하면 방어가 올라가는 이상한 가루. 매우 잘고 단단하다." },
     "QUICK_POWDER": { name: "스피드파우더", description: "메타몽에게 지니게 하면 스피드가 올라가는 이상한 가루. 매우 잘고 단단하다." }
   },
-  TempBattleStatBoosterItem: {
+  TempStatStageBoosterItem: {
     "x_attack": "플러스파워",
     "x_defense": "디펜드업",
     "x_sp_atk": "스페셜업",
     "x_sp_def": "스페셜가드",
     "x_speed": "스피드업",
-    "x_accuracy": "잘-맞히기",
-    "dire_hit": "크리티컬커터",
+    "x_accuracy": "잘-맞히기"
   },
-
-  TempBattleStatBoosterStatName: {
-    "ATK": "공격",
-    "DEF": "방어",
-    "SPATK": "특수공격",
-    "SPDEF": "특수방어",
-    "SPD": "스피드",
-    "ACC": "명중률",
-    "CRIT": "급소율",
-    "EVA": "회피율",
-    "DEFAULT": "???",
-  },
-
   AttackTypeBoosterItem: {
     "silk_scarf": "실크스카프",
     "black_belt": "검은띠",
