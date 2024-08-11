@@ -68,8 +68,6 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     this.setScrollCursor(0);
     this.setCursor(0);
 
-    this.getUi().bringToTop(this.cursorObj);
-
     return true;
   }
 
