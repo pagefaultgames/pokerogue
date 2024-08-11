@@ -1570,11 +1570,7 @@ export class FormBlockDamageTag extends BattlerTag {
    * @returns {boolean} True if the tag can be added, false otherwise.
    */
   canAdd(pokemon: Pokemon): boolean {
-    if (pokemon.formIndex === 0) {
-      return true;
-    }
-
-    return false;
+    return pokemon.formIndex === 0;
   }
 
   /**
@@ -1617,11 +1613,7 @@ export class IceFaceBlockDamageTag extends FormBlockDamageTag {
     const weatherType = pokemon.scene.arena.weather?.weatherType;
     const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
 
-    if (super.canAdd(pokemon) || isWeatherSnowOrHail) {
-      return true;
-    }
-
-    return false;
+    return super.canAdd(pokemon) || isWeatherSnowOrHail;
   }
 }
 
