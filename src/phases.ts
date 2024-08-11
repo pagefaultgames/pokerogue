@@ -6754,7 +6754,7 @@ export class SelectModifierPhase extends BattlePhase {
     if (modifierOverride) {
       //modifierCount.value = modifierOverride
     }
-    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
+    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, true);
     typeOptions.forEach((option, idx) => {
       //console.log(option.type.name)
     })
@@ -7021,8 +7021,8 @@ export class SelectModifierPhase extends BattlePhase {
     return ModifierPoolType.PLAYER;
   }
 
-  getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.scene);
+  getModifierTypeOptions(modifierCount: integer, shutUpBro?: boolean): ModifierTypeOption[] {
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.scene, shutUpBro);
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {
