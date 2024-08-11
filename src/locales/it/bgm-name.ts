@@ -5,7 +5,8 @@ export const bgmName: SimpleTranslationEntries = {
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "B2W2 Kanto Champion Battle",
   "battle_johto_champion": "B2W2 Johto Champion Battle",
-  "battle_hoenn_champion": "B2W2 Hoenn Champion Battle",
+  "battle_hoenn_champion_g5": "B2W2 Hoenn Champion Battle",
+  "battle_hoenn_champion_g6": "ORAS Hoenn Champion Battle",
   "battle_sinnoh_champion": "B2W2 Sinnoh Champion Battle",
   "battle_champion_alder": "BW Unova Champion Battle",
   "battle_champion_iris": "B2W2 Unova Champion Battle",
@@ -110,9 +111,9 @@ export const bgmName: SimpleTranslationEntries = {
   "plains": "PMD EoS Sky Peak Prairie",
   "power_plant": "PMD EoS Far Amp Plains",
   "ruins": "PMD EoS Deep Sealed Ruin",
-  "sea": "PMD EoS Brine Cave",
+  "sea": "Andr06 - Marine Mystique", // Name defined by the composer
   "seabed": "Firel - Seabed", // The composer thinks about a more creative name
-  "slum": "PMD EoS Sky Peak Coast",
+  "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
   "snowy_forest": "PMD EoS Sky Peak Snowfield",
   "space": "Firel - Aether",
   "swamp": "PMD EoS Surrounded Sea",

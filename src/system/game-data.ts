@@ -4,7 +4,7 @@ import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import * as Utils from "../utils";
-import * as Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";
@@ -40,6 +40,9 @@ import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
+import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
+import { WeatherType } from "#app/enums/weather-type.js";
+import { TerrainType } from "#app/data/terrain.js";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -77,7 +80,7 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
 export function encrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
     ? (data: string) => btoa(data)
-    : (data: string) => AES.encrypt(data, saveKey))(data);
+    : (data: string) => AES.encrypt(data, saveKey))(data) as unknown as string; // TODO: is this correct?
 }
 
 export function decrypt(data: string, bypassLogin: boolean): string {
@@ -229,7 +232,7 @@ export class StarterPrefs {
 }
 
 export interface StarterDataEntry {
-  moveset: StarterMoveset | StarterFormMoveData;
+  moveset: StarterMoveset | StarterFormMoveData | null;
   eggMoves: integer;
   candyCount: integer;
   friendship: integer;
@@ -278,7 +281,7 @@ export class GameData {
   public gender: PlayerGender;
 
   public dexData: DexData;
-  private defaultDexData: DexData;
+  private defaultDexData: DexData | null;
 
   public starterData: StarterData;
 
@@ -306,7 +309,8 @@ export class GameData {
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
       [Unlockables.MINI_BLACK_HOLE]: false,
-      [Unlockables.SPLICED_ENDLESS_MODE]: false
+      [Unlockables.SPLICED_ENDLESS_MODE]: false,
+      [Unlockables.EVIOLITE]: false
     };
     this.achvUnlocks = {};
     this.voucherUnlocks = {};
@@ -348,10 +352,10 @@ export class GameData {
       this.scene.ui.savingIcon.show();
       const data = this.getSystemSaveData();
 
-      const maxIntAttrValue = Math.pow(2, 31);
+      const maxIntAttrValue = 0x80000000;
       const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
 
-      localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemData, bypassLogin));
+      localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemData, bypassLogin));
 
       if (!bypassLogin) {
         Utils.apiPost(`savedata/system/update?clientSessionId=${clientSessionId}`, systemData, undefined, true)
@@ -383,7 +387,7 @@ export class GameData {
     return new Promise<boolean>(resolve => {
       console.log("Client Session:", clientSessionId);
 
-      if (bypassLogin && !localStorage.getItem(`data_${loggedInUser.username}`)) {
+      if (bypassLogin && !localStorage.getItem(`data_${loggedInUser?.username}`)) {
         return resolve(false);
       }
 
@@ -403,11 +407,11 @@ export class GameData {
               return resolve(false);
             }
 
-            const cachedSystem = localStorage.getItem(`data_${loggedInUser.username}`);
-            this.initSystem(response, cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : null).then(resolve);
+            const cachedSystem = localStorage.getItem(`data_${loggedInUser?.username}`);
+            this.initSystem(response, cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : undefined).then(resolve);
           });
       } else {
-        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), bypassLogin)).then(resolve);
+        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)).then(resolve); // TODO: is this bang correct?
       }
     });
   }
@@ -430,7 +434,7 @@ export class GameData {
 
         console.debug(systemData);
 
-        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(systemDataStr, bypassLogin));
+        localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, bypassLogin));
 
         /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
 
@@ -572,6 +576,8 @@ export class GameData {
       // Account for past key oversight
       dataStr = dataStr.replace(/\$pAttr/g, "$pa");
     }
+    dataStr = dataStr.replace(/"trainerId":\d+/g, `"trainerId":${this.trainerId}`);
+    dataStr = dataStr.replace(/"secretId":\d+/g, `"secretId":${this.secretId}`);
     const fromKeys = shorten ? Object.keys(systemShortKeys) : Object.values(systemShortKeys);
     const toKeys = shorten ? Object.values(systemShortKeys) : Object.keys(systemShortKeys);
     for (const k in fromKeys) {
@@ -603,9 +609,9 @@ export class GameData {
     if (bypassLogin) {
       return;
     }
-    localStorage.removeItem(`data_${loggedInUser.username}`);
+    localStorage.removeItem(`data_${loggedInUser?.username}`);
     for (let s = 0; s < 5; s++) {
-      localStorage.removeItem(`sessionData${s ? s : ""}_${loggedInUser.username}`);
+      localStorage.removeItem(`sessionData${s ? s : ""}_${loggedInUser?.username}`);
     }
   }
 
@@ -618,7 +624,7 @@ export class GameData {
   public saveSetting(setting: string, valueIndex: integer): boolean {
     let settings: object = {};
     if (localStorage.hasOwnProperty("settings")) {
-      settings = JSON.parse(localStorage.getItem("settings"));
+      settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
     }
 
     setSetting(this.scene, setting, valueIndex);
@@ -641,7 +647,7 @@ export class GameData {
     const key = deviceName.toLowerCase();  // Convert the gamepad name to lowercase to use as a key
     let mappingConfigs: object = {};  // Initialize an empty object to hold the mapping configurations
     if (localStorage.hasOwnProperty("mappingConfigs")) {// Check if 'mappingConfigs' exists in localStorage
-      mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs"));
+      mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs")!); // TODO: is this bang correct?
     }  // Parse the existing 'mappingConfigs' from localStorage
     if (!mappingConfigs[key]) {
       mappingConfigs[key] = {};
@@ -666,7 +672,7 @@ export class GameData {
       return false;
     }  // If 'mappingConfigs' does not exist, return false
 
-    const mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs"));  // Parse the existing 'mappingConfigs' from localStorage
+    const mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs")!);  // Parse the existing 'mappingConfigs' from localStorage // TODO: is this bang correct?
 
     for (const key of Object.keys(mappingConfigs)) {// Iterate over the keys of the mapping configurations
       this.scene.inputController.injectConfig(key, mappingConfigs[key]);
@@ -681,6 +687,7 @@ export class GameData {
     }  // If 'mappingConfigs' does not exist, return false
     localStorage.removeItem("mappingConfigs");
     this.scene.inputController.resetConfigs();
+    return true; // TODO: is `true` the correct return value?
   }
 
   /**
@@ -700,7 +707,7 @@ export class GameData {
     let settingsControls: object = {};  // Initialize an empty object to hold the gamepad settings
 
     if (localStorage.hasOwnProperty(localStoragePropertyName)) {  // Check if 'settingsControls' exists in localStorage
-      settingsControls = JSON.parse(localStorage.getItem(localStoragePropertyName));  // Parse the existing 'settingsControls' from localStorage
+      settingsControls = JSON.parse(localStorage.getItem(localStoragePropertyName)!);  // Parse the existing 'settingsControls' from localStorage // TODO: is this bang correct?
     }
 
     if (device === Device.GAMEPAD) {
@@ -731,11 +738,13 @@ export class GameData {
       return false;
     }
 
-    const settings = JSON.parse(localStorage.getItem("settings"));
+    const settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
 
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting, settings[setting]);
     }
+
+    return true; // TODO: is `true` the correct return value?
   }
 
   private loadGamepadSettings(): boolean {
@@ -744,18 +753,20 @@ export class GameData {
     if (!localStorage.hasOwnProperty("settingsGamepad")) {
       return false;
     }
-    const settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad"));
+    const settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad")!); // TODO: is this bang correct?
 
     for (const setting of Object.keys(settingsGamepad)) {
       setSettingGamepad(this.scene, setting as SettingGamepad, settingsGamepad[setting]);
     }
+
+    return true; // TODO: is `true` the correct return value?
   }
 
   public saveTutorialFlag(tutorial: Tutorial, flag: boolean): boolean {
     const key = getDataTypeKey(GameDataType.TUTORIALS);
     let tutorials: object = {};
     if (localStorage.hasOwnProperty(key)) {
-      tutorials = JSON.parse(localStorage.getItem(key));
+      tutorials = JSON.parse(localStorage.getItem(key)!); // TODO: is this bang correct?
     }
 
     Object.keys(Tutorial).map(t => t as Tutorial).forEach(t => {
@@ -781,7 +792,7 @@ export class GameData {
       return ret;
     }
 
-    const tutorials = JSON.parse(localStorage.getItem(key));
+    const tutorials = JSON.parse(localStorage.getItem(key)!); // TODO: is this bang correct?
 
     for (const tutorial of Object.keys(tutorials)) {
       ret[tutorial] = tutorials[tutorial];
@@ -809,7 +820,7 @@ export class GameData {
       return ret;
     }
 
-    const dialogues = JSON.parse(localStorage.getItem(key));
+    const dialogues = JSON.parse(localStorage.getItem(key)!); // TODO: is this bang correct?
 
     for (const dialogue of Object.keys(dialogues)) {
       ret[dialogue] = dialogues[dialogue];
@@ -840,7 +851,7 @@ export class GameData {
     } as SessionSaveData;
   }
 
-  getSession(slotId: integer): Promise<SessionSaveData> {
+  getSession(slotId: integer): Promise<SessionSaveData | null> {
     return new Promise(async (resolve, reject) => {
       if (slotId < 0) {
         return resolve(null);
@@ -855,7 +866,7 @@ export class GameData {
         }
       };
 
-      if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`)) {
+      if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)) {
         Utils.apiFetch(`savedata/session/get?slot=${slotId}&clientSessionId=${clientSessionId}`, true)
           .then(response => response.text())
           .then(async response => {
@@ -864,12 +875,12 @@ export class GameData {
               return resolve(null);
             }
 
-            localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`, encrypt(response, bypassLogin));
+            localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypt(response, bypassLogin));
 
             await handleSessionData(response);
           });
       } else {
-        const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`);
+        const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
         if (sessionData) {
           await handleSessionData(decrypt(sessionData, bypassLogin));
         } else {
@@ -931,7 +942,7 @@ export class GameData {
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
-          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1);
+          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1)!; // TODO: is this bang correct?
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
           scene.arena.init();
@@ -947,10 +958,10 @@ export class GameData {
           });
 
           scene.arena.weather = sessionData.arena.weather;
-          scene.arena.eventTarget.dispatchEvent(new WeatherChangedEvent(null, scene.arena.weather?.weatherType, scene.arena.weather?.turnsLeft));
+          scene.arena.eventTarget.dispatchEvent(new WeatherChangedEvent(WeatherType.NONE, scene.arena.weather?.weatherType!, scene.arena.weather?.turnsLeft!)); // TODO: is this bang correct?
 
           scene.arena.terrain = sessionData.arena.terrain;
-          scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(null, scene.arena.terrain?.terrainType, scene.arena.terrain?.turnsLeft));
+          scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, scene.arena.terrain?.terrainType!, scene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
           // TODO
           //scene.arena.tags = sessionData.arena.tags;
 
@@ -980,7 +991,7 @@ export class GameData {
           initSessionFromData(sessionData);
         } else {
           this.getSession(slotId)
-            .then(data => initSessionFromData(data))
+            .then(data => data && initSessionFromData(data))
             .catch(err => {
               reject(err);
               return;
@@ -996,7 +1007,7 @@ export class GameData {
   deleteSession(slotId: integer): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser.username}`);
+        localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
         return resolve(true);
       }
 
@@ -1006,8 +1017,8 @@ export class GameData {
         }
         Utils.apiFetch(`savedata/session/delete?slot=${slotId}&clientSessionId=${clientSessionId}`, true).then(response => {
           if (response.ok) {
-            loggedInUser.lastSessionSlot = -1;
-            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser.username}`);
+            loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
+            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
             resolve(true);
           }
           return response.text();
@@ -1037,7 +1048,7 @@ export class GameData {
 
       if (sessionData.gameMode === GameModes.DAILY) {
         if (localStorage.hasOwnProperty("daily")) {
-          daily = JSON.parse(atob(localStorage.getItem("daily")));
+          daily = JSON.parse(atob(localStorage.getItem("daily")!)); // TODO: is this bang correct?
           if (daily.includes(seed)) {
             return resolve(false);
           } else {
@@ -1059,7 +1070,7 @@ export class GameData {
   tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`);
+        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
         return resolve([true, true]);
       }
 
@@ -1070,8 +1081,8 @@ export class GameData {
         const sessionData = this.getSessionSaveData(scene);
         Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true).then(response => {
           if (response.ok) {
-            loggedInUser.lastSessionSlot = -1;
-            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser.username}`);
+            loggedInUser!.lastSessionSlot = -1; // TODO: is the bang correct?
+            localStorage.removeItem(`sessionData${this.scene.sessionSlotId ? this.scene.sessionSlotId : ""}_${loggedInUser?.username}`);
           }
           return response.json();
         }).then(jsonResponse => {
@@ -1158,10 +1169,10 @@ export class GameData {
         if (sync) {
           this.scene.ui.savingIcon.show();
         }
-        const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`), bypassLogin)) : this.getSessionSaveData(scene);
+        const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser?.username}`)!, bypassLogin)) : this.getSessionSaveData(scene); // TODO: is this bang correct?
 
-        const maxIntAttrValue = Math.pow(2, 31);
-        const systemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser.username}`), bypassLogin)) : this.getSystemSaveData();
+        const maxIntAttrValue = 0x80000000;
+        const systemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)) : this.getSystemSaveData(); // TODO: is this bang correct?
 
         const request = {
           system: systemData,
@@ -1170,9 +1181,9 @@ export class GameData {
           clientSessionId: clientSessionId
         };
 
-        localStorage.setItem(`data_${loggedInUser.username}`, encrypt(JSON.stringify(systemData, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), bypassLogin));
+        localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(JSON.stringify(systemData, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), bypassLogin));
 
-        localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
+        localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser?.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
 
         console.debug("Session data saved");
 
@@ -1209,7 +1220,7 @@ export class GameData {
 
   public tryExportData(dataType: GameDataType, slotId: integer = 0): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      const dataKey: string = `${getDataTypeKey(dataType, slotId)}_${loggedInUser.username}`;
+      const dataKey: string = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
       const handleData = (dataStr: string) => {
         switch (dataType) {
         case GameDataType.SYSTEM:
@@ -1248,7 +1259,7 @@ export class GameData {
   }
 
   public importData(dataType: GameDataType, slotId: integer = 0): void {
-    const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser.username}`;
+    const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
 
     let saveFile: any = document.getElementById("saveFile");
     if (saveFile) {
@@ -1267,7 +1278,7 @@ export class GameData {
         reader.onload = (_ => {
           return e => {
             let dataName: string;
-            let dataStr = AES.decrypt(e.target.result.toString(), saveKey).toString(enc.Utf8);
+            let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
             let valid = false;
             try {
               dataName = GameDataType[dataType].toLowerCase();
@@ -1290,10 +1301,11 @@ export class GameData {
               console.error(ex);
             }
 
-            const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
+            const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText("", 0), Utils.fixedInt(1500));
+            dataName = dataName!; // tell TS compiler that dataName is defined!
 
             if (!valid) {
-              return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
+              return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText("", 0), Utils.fixedInt(1500));
             }
 
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
@@ -1326,7 +1338,7 @@ export class GameData {
                 }
               }, () => {
                 this.scene.ui.revertMode();
-                this.scene.ui.showText(null, 0);
+                this.scene.ui.showText("", 0);
               }, false, -98);
             });
           };
@@ -1365,7 +1377,7 @@ export class GameData {
       const entry = data[defaultStarterSpecies[ds]] as DexEntry;
       entry.seenAttr = defaultStarterAttr;
       entry.caughtAttr = defaultStarterAttr;
-      entry.natureAttr = Math.pow(2, defaultStarterNatures[ds] + 1);
+      entry.natureAttr = 1 << (defaultStarterNatures[ds] + 1);
       for (const i in entry.ivs) {
         entry.ivs[i] = 10;
       }
@@ -1432,10 +1444,10 @@ export class GameData {
       dexEntry.caughtAttr |= dexAttr;
       if (speciesStarters.hasOwnProperty(species.speciesId)) {
         this.starterData[species.speciesId].abilityAttr |= pokemon.abilityIndex !== 1 || pokemon.species.ability2
-          ? Math.pow(2, pokemon.abilityIndex)
+          ? 1 << pokemon.abilityIndex
           : AbilityAttr.ABILITY_HIDDEN;
       }
-      dexEntry.natureAttr |= Math.pow(2, pokemon.nature + 1);
+      dexEntry.natureAttr |= 1 << (pokemon.nature + 1);
 
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
       const newCatch = !caughtAttr;
@@ -1471,7 +1483,7 @@ export class GameData {
         }
 
         if (!hasPrevolution && (!pokemon.scene.gameMode.isDaily || hasNewAttr || fromEgg)) {
-          this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant || 0) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
+          this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * (1 << (pokemon.variant ?? 0)) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
         }
       }
 
@@ -1542,7 +1554,7 @@ export class GameData {
         this.starterData[speciesId].eggMoves = 0;
       }
 
-      const value = Math.pow(2, eggMoveIndex);
+      const value = 1 << eggMoveIndex;
 
       if (this.starterData[speciesId].eggMoves & value) {
         resolve(false);
@@ -1634,7 +1646,7 @@ export class GameData {
   getSpeciesDefaultNature(species: PokemonSpecies): Nature {
     const dexEntry = this.dexData[species.speciesId];
     for (let n = 0; n < 25; n++) {
-      if (dexEntry.natureAttr & Math.pow(2, n + 1)) {
+      if (dexEntry.natureAttr & (1 << (n + 1))) {
         return n as Nature;
       }
     }
@@ -1642,17 +1654,17 @@ export class GameData {
   }
 
   getSpeciesDefaultNatureAttr(species: PokemonSpecies): integer {
-    return Math.pow(2, this.getSpeciesDefaultNature(species));
+    return 1 << (this.getSpeciesDefaultNature(species));
   }
 
   getDexAttrLuck(dexAttr: bigint): integer {
     return dexAttr & DexAttr.SHINY ? dexAttr & DexAttr.VARIANT_3 ? 3 : dexAttr & DexAttr.VARIANT_2 ? 2 : 1 : 0;
   }
 
-  getNaturesForAttr(natureAttr: integer): Nature[] {
+  getNaturesForAttr(natureAttr: integer = 0): Nature[] {
     const ret: Nature[] = [];
     for (let n = 0; n < 25; n++) {
-      if (natureAttr & Math.pow(2, n + 1)) {
+      if (natureAttr & (1 << (n + 1))) {
         ret.push(n);
       }
     }
@@ -1676,7 +1688,10 @@ export class GameData {
       value = decrementValue(value);
     }
 
-    return value;
+    const cost = new Utils.NumberHolder(value);
+    applyChallenges(this.scene.gameMode, ChallengeType.STARTER_COST, speciesId, cost);
+
+    return cost.value;
   }
 
   getFormIndex(attr: bigint): integer {
@@ -1691,7 +1706,7 @@ export class GameData {
   }
 
   getFormAttr(formIndex: integer): bigint {
-    return BigInt(Math.pow(2, 7 + formIndex));
+    return BigInt(1 << (7 + formIndex));
   }
 
   consolidateDexData(dexData: DexData): void {
@@ -1701,7 +1716,7 @@ export class GameData {
         entry.hatchedCount = 0;
       }
       if (!entry.hasOwnProperty("natureAttr") || (entry.caughtAttr && !entry.natureAttr)) {
-        entry.natureAttr = this.defaultDexData[k].natureAttr || Math.pow(2, Utils.randInt(25, 1));
+        entry.natureAttr = this.defaultDexData?.[k].natureAttr || (1 << Utils.randInt(25, 1));
       }
     }
   }

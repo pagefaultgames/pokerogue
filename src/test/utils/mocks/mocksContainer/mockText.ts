@@ -1,13 +1,15 @@
 import UI from "#app/ui/ui";
+import { MockGameObject } from "../mockGameObject";
 
-export default class MockText {
+export default class MockText implements MockGameObject {
   private phaserText;
   private wordWrapWidth;
   private splitRegExp;
   private scene;
   private textureManager;
-  public list = [];
+  public list: MockGameObject[] = [];
   public style;
+  public text = "";
 
   constructor(textureManager, x, y, content, styleOptions) {
     this.scene = textureManager.scene;
@@ -17,6 +19,8 @@ export default class MockText {
     // Phaser.GameObjects.Text.prototype.updateText = () => null;
     // Phaser.Textures.TextureManager.prototype.addCanvas = () => {};
     UI.prototype.showText = this.showText;
+    this.text = "";
+    this.phaserText = "";
     // super(scene, x, y);
     // this.phaserText = new Phaser.GameObjects.Text(scene, x, y, content, styleOptions);
   }
@@ -150,7 +154,8 @@ export default class MockText {
 
   setText(text) {
     // Sets the text this Game Object will display.
-    // return this.phaserText.setText(text);
+    // return this.phaserText.setText\(text);
+    this.text = text;
   }
 
   setAngle(angle) {

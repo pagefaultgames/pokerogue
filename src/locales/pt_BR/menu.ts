@@ -17,6 +17,7 @@ export const menu: SimpleTranslationEntries = {
   "username": "Nome de Usuário",
   "password": "Senha",
   "login": "Iniciar sessão",
+  "orUse": "Ou use",
   "register": "Registrar-se",
   "emptyUsername": "Nome de usuário vazio",
   "invalidLoginUsername": "Nome de usuário inválido",
@@ -53,5 +54,9 @@ export const menu: SimpleTranslationEntries = {
   "no": "Não",
   "disclaimer": "AVISO",
   "disclaimerDescription": "Este jogo é um produto inacabado; ele pode ter problemas de jogabilidade (incluindo possíveis\n perdas de dados salvos), sofrer alterações sem aviso prévio e pode ou não ser atualizado ou concluído.",
+  "choosePokemon": "Escolha um Pokémon.",
+  "renamePokemon": "Renomear Pokémon",
+  "rename": "Renomear",
+  "nickname": "Apelido",
   "errorServerDown": "Opa! Não foi possível conectar-se ao servidor.\n\nVocê pode deixar essa janela aberta,\npois o jogo irá se reconectar automaticamente.",
 } as const;

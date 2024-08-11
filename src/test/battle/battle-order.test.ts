@@ -1,20 +1,16 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import {
-  CommandPhase, EnemyCommandPhase, SelectTargetPhase,
-  TurnStartPhase
-} from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {Command} from "#app/ui/command-ui-handler";
-import {Stat} from "#app/data/pokemon-stat";
+import { Stat } from "#app/data/pokemon-stat";
+import { CommandPhase, EnemyCommandPhase, SelectTargetPhase, TurnStartPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { Command } from "#app/ui/command-ui-handler";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
+import { Button } from "#enums/buttons";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import {Button} from "#enums/buttons";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Battle order", () => {
@@ -33,11 +29,11 @@ describe("Battle order", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE]);
+    game.override.battleType("single");
+    game.override.enemySpecies(Species.MEWTWO);
+    game.override.enemyAbility(Abilities.INSOMNIA);
+    game.override.ability(Abilities.INSOMNIA);
+    game.override.moveset([Moves.TACKLE]);
   });
 
   it("opponent faster than player 50 vs 150", async() => {
@@ -83,8 +79,7 @@ describe("Battle order", () => {
   }, 20000);
 
   it("double - both opponents faster than player 50/50 vs 150/150", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("double");
     await game.startBattle([
       Species.BULBASAUR,
       Species.BLASTOISE,
@@ -126,8 +121,7 @@ describe("Battle order", () => {
   }, 20000);
 
   it("double - speed tie except 1 - 100/100 vs 100/150", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("double");
     await game.startBattle([
       Species.BULBASAUR,
       Species.BLASTOISE,
@@ -168,8 +162,7 @@ describe("Battle order", () => {
   }, 20000);
 
   it("double - speed tie 100/150 vs 100/150", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("double");
     await game.startBattle([
       Species.BULBASAUR,
       Species.BLASTOISE,

@@ -154,7 +154,7 @@ export class InputsController {
     });
 
     if (typeof this.scene.input.gamepad !== "undefined") {
-      this.scene.input.gamepad.on("connected", function (thisGamepad) {
+      this.scene.input.gamepad?.on("connected", function (thisGamepad) {
         if (!thisGamepad) {
           return;
         }
@@ -163,23 +163,23 @@ export class InputsController {
         this.onReconnect(thisGamepad);
       }, this);
 
-      this.scene.input.gamepad.on("disconnected", function (thisGamepad) {
+      this.scene.input.gamepad?.on("disconnected", function (thisGamepad) {
         this.onDisconnect(thisGamepad); // when a gamepad is disconnected
       }, this);
 
       // Check to see if the gamepad has already been setup by the browser
-      this.scene.input.gamepad.refreshPads();
-      if (this.scene.input.gamepad.total) {
+      this.scene.input.gamepad?.refreshPads();
+      if (this.scene.input.gamepad?.total) {
         this.refreshGamepads();
         for (const thisGamepad of this.gamepads) {
           this.scene.input.gamepad.emit("connected", thisGamepad);
         }
       }
 
-      this.scene.input.gamepad.on("down", this.gamepadButtonDown, this);
-      this.scene.input.gamepad.on("up", this.gamepadButtonUp, this);
-      this.scene.input.keyboard.on("keydown", this.keyboardKeyDown, this);
-      this.scene.input.keyboard.on("keyup", this.keyboardKeyUp, this);
+      this.scene.input.gamepad?.on("down", this.gamepadButtonDown, this);
+      this.scene.input.gamepad?.on("up", this.gamepadButtonUp, this);
+      this.scene.input.keyboard?.on("keydown", this.keyboardKeyDown, this);
+      this.scene.input.keyboard?.on("keyup", this.keyboardKeyUp, this);
     }
     this.touchControls = new TouchControl(this.scene);
   }
@@ -338,9 +338,9 @@ export class InputsController {
      */
   refreshGamepads(): void {
     // Sometimes, gamepads are undefined. For some reason.
-    this.gamepads = this.scene.input.gamepad.gamepads.filter(function (el) {
+    this.gamepads = this.scene.input.gamepad?.gamepads.filter(function (el) {
       return el !== null;
-    });
+    })!; // TODO: is this bang correct?
 
     for (const [index, thisGamepad] of this.gamepads.entries()) {
       thisGamepad.index = index; // Overwrite the gamepad index, in case we had undefined gamepads earlier

@@ -1,4 +1,5 @@
 import { Biome } from "#enums/biome";
+import { WeatherType } from "#enums/weather-type";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon from "../field/pokemon";
 import { Type } from "./type";
@@ -9,19 +10,7 @@ import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
 
-export enum WeatherType {
-  NONE,
-  SUNNY,
-  RAIN,
-  SANDSTORM,
-  HAIL,
-  SNOW,
-  FOG,
-  HEAVY_RAIN,
-  HARSH_SUN,
-  STRONG_WINDS
-}
-
+export { WeatherType };
 export class Weather {
   public weatherType: WeatherType;
   public turnsLeft: integer;
@@ -114,7 +103,7 @@ export class Weather {
     const field = scene.getField(true);
 
     for (const pokemon of field) {
-      let suppressWeatherEffectAbAttr = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr)[0];
+      let suppressWeatherEffectAbAttr: SuppressWeatherEffectAbAttr | null  = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr)[0];
       if (!suppressWeatherEffectAbAttr) {
         suppressWeatherEffectAbAttr = pokemon.hasPassive() ? pokemon.getPassiveAbility().getAttrs(SuppressWeatherEffectAbAttr)[0] : null;
       }
@@ -127,7 +116,7 @@ export class Weather {
   }
 }
 
-export function getWeatherStartMessage(weatherType: WeatherType): string {
+export function getWeatherStartMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
   case WeatherType.SUNNY:
     return i18next.t("weather:sunnyStartMessage");
@@ -152,7 +141,7 @@ export function getWeatherStartMessage(weatherType: WeatherType): string {
   return null;
 }
 
-export function getWeatherLapseMessage(weatherType: WeatherType): string {
+export function getWeatherLapseMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
   case WeatherType.SUNNY:
     return i18next.t("weather:sunnyLapseMessage");
@@ -177,7 +166,7 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string {
   return null;
 }
 
-export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string {
+export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string | null {
   switch (weatherType) {
   case WeatherType.SANDSTORM:
     return i18next.t("weather:sandstormDamageMessage", {pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)});
@@ -188,7 +177,7 @@ export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokem
   return null;
 }
 
-export function getWeatherClearMessage(weatherType: WeatherType): string {
+export function getWeatherClearMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
   case WeatherType.SUNNY:
     return i18next.t("weather:sunnyClearMessage");
@@ -213,7 +202,7 @@ export function getWeatherClearMessage(weatherType: WeatherType): string {
   return null;
 }
 
-export function getTerrainStartMessage(terrainType: TerrainType): string {
+export function getTerrainStartMessage(terrainType: TerrainType): string | null {
   switch (terrainType) {
   case TerrainType.MISTY:
     return i18next.t("terrain:mistyStartMessage");
@@ -223,10 +212,13 @@ export function getTerrainStartMessage(terrainType: TerrainType): string {
     return i18next.t("terrain:grassyStartMessage");
   case TerrainType.PSYCHIC:
     return i18next.t("terrain:psychicStartMessage");
+  default:
+    console.warn("getTerrainStartMessage not defined. Using default null");
+    return null;
   }
 }
 
-export function getTerrainClearMessage(terrainType: TerrainType): string {
+export function getTerrainClearMessage(terrainType: TerrainType): string | null {
   switch (terrainType) {
   case TerrainType.MISTY:
     return i18next.t("terrain:mistyClearMessage");
@@ -236,6 +228,9 @@ export function getTerrainClearMessage(terrainType: TerrainType): string {
     return i18next.t("terrain:grassyClearMessage");
   case TerrainType.PSYCHIC:
     return i18next.t("terrain:psychicClearMessage");
+  default:
+    console.warn("getTerrainClearMessage not defined. Using default null");
+    return null;
   }
 }
 

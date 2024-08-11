@@ -4,7 +4,7 @@ import BattleScene from "./battle-scene";
 import { allChallenges, applyChallenges, Challenge, ChallengeType, copyChallenge } from "./data/challenge";
 import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
-import * as Overrides from "./overrides";
+import Overrides from "#app/overrides";
 import * as Utils from "./utils";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
@@ -167,7 +167,7 @@ export class GameMode implements GameModeConfig {
     }
   }
 
-  getOverrideSpecies(waveIndex: integer): PokemonSpecies {
+  getOverrideSpecies(waveIndex: integer): PokemonSpecies | null {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
       const allFinalBossSpecies = allSpecies.filter(s => (s.subLegendary || s.legendary || s.mythical)
         && s.baseTotal >= 600 && s.speciesId !== Species.ETERNATUS && s.speciesId !== Species.ARCEUS);
@@ -210,7 +210,7 @@ export class GameMode implements GameModeConfig {
      * @returns true if waveIndex is a multiple of 50 in Endless
      */
   isEndlessBoss(waveIndex: integer): boolean {
-    return waveIndex % 50 &&
+    return !!(waveIndex % 50) &&
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
@@ -267,6 +267,8 @@ export class GameMode implements GameModeConfig {
       return 5000;
     case GameModes.DAILY:
       return 2500;
+    default:
+      return 0;
     }
   }
 
