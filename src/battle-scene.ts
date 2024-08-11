@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import UI from "./ui/ui";
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from "./phases";
+import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase, runShinyCheck } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import { Constructor } from "#app/utils";
@@ -16,7 +16,7 @@ import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { allMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
-import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
+import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig } from "./battle";
 import { GameMode, GameModes, getGameMode } from "./game-mode";
@@ -130,6 +130,8 @@ export default class BattleScene extends SceneBase {
   public doBiomePanels: boolean = false;
   public disableDailyShinies: boolean = true; // Disables shiny luck in Daily Runs to prevent affecting RNG
   public quickloadDisplayMode: string = "Dailies";
+  public tempWaveSeed: string;
+  public tempRngCounter: integer = 0;
   /**
    * Determines the condition for a notification should be shown for Candy Upgrades
    * - 0 = 'Off'
@@ -1055,6 +1057,230 @@ export default class BattleScene extends SceneBase {
     }
   }
 
+  generatePokemonForBattle(battle: Battle) {
+    var totalBst = 0;
+    battle.enemyLevels.forEach((level, e) => {
+      if (true) {
+        if (battle.battleType === BattleType.TRAINER) {
+          battle.enemyParty[e] = battle.trainer.genPartyMember(e);
+        } else {
+          LoggerTools.rarityslot[0] = e
+          const enemySpecies = this.randomSpecies(battle.waveIndex, level, true);
+          battle.enemyParty[e] = this.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!this.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
+          if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+            battle.enemyParty[e].ivs = new Array(6).fill(31);
+          }
+          this.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
+            applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, battle.enemyParty[e]);
+          });
+        }
+      }
+      const enemyPokemon = battle.enemyParty[e];
+
+      if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
+        if (this.gameMode.isClassic && (battle.battleSpec === BattleSpec.FINAL_BOSS || this.gameMode.isWaveFinal(battle.waveIndex))) {
+          if (battle.battleSpec !== BattleSpec.FINAL_BOSS) {
+            enemyPokemon.formIndex = 1;
+          }
+          enemyPokemon.setBoss();
+        } else if (!(battle.waveIndex % 1000)) {
+          enemyPokemon.formIndex = 1;
+        }
+      }
+
+      totalBst += enemyPokemon.getSpeciesForm().baseTotal;
+
+      console.log(enemyPokemon.name);
+    });
+  }
+  peekBattleContents(waveIndex: integer) {
+    // This function is in progress
+    return;
+    
+    const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
+    const originalWave = ((this.currentBattle?.waveIndex || (_startingWave - 1)) + 1);
+    const newWaveIndex = waveIndex;
+    const arenaBiome = this.arena.biomeType
+    this.emulateReset()
+    let newDouble: boolean;
+    let newBattleType: BattleType;
+    let newTrainer: Trainer;
+    let battleConfig: FixedBattleConfig = null;
+    let battleType: BattleType;
+    let trainerData: TrainerData;
+    let double: boolean;
+    const playerField = this.getPlayerField();
+
+    this.arena.biomeType = Biome.END
+
+    if (this.gameMode.isFixedBattle(newWaveIndex) && trainerData === undefined) {
+      battleConfig = this.gameMode.getFixedBattle(newWaveIndex);
+      newDouble = battleConfig.double;
+      newBattleType = battleConfig.battleType;
+      this.executeWithSeedOffset(() => newTrainer = battleConfig.getTrainer(this), (battleConfig.seedOffsetWaveIndex || newWaveIndex) << 8);
+      if (newTrainer) {
+        this.field.add(newTrainer);
+      }
+    } else {
+      if (!this.gameMode.hasTrainers) {
+        newBattleType = BattleType.WILD;
+        console.log("(wild battles only)")
+      } else if (battleType === undefined) {
+        newBattleType = this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD;
+        console.log(this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? "Trainer Battle" : "Wild battle")
+      } else {
+        newBattleType = battleType;
+        console.log(battleType == BattleType.WILD ? "Wild (manually set)" : (battleType == BattleType.TRAINER ? "Trainer (manually set)" : "Clear (manually set)"))
+      }
+
+      if (newBattleType === BattleType.TRAINER) {
+        const trainerType = this.arena.randomTrainerType(newWaveIndex);
+        let doubleTrainer = false;
+        if (trainerConfigs[trainerType].doubleOnly) {
+          doubleTrainer = true;
+        } else if (trainerConfigs[trainerType].hasDouble) {
+          const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
+          this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
+          playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
+          doubleTrainer = !Utils.randSeedInt(doubleChance.value);
+          // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
+          if (trainerConfigs[trainerType].trainerTypeDouble && !(trainerType === TrainerType.TATE || trainerType === TrainerType.LIZA)) {
+            doubleTrainer = false;
+          }
+        }
+        newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, doubleTrainer ? TrainerVariant.DOUBLE : Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+        this.field.add(newTrainer);
+      }
+    }
+
+    if (double === undefined && newWaveIndex > 1) {
+      if (newBattleType === BattleType.WILD && !this.gameMode.isWaveFinal(newWaveIndex)) {
+        const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
+        this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
+        playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
+        console.log(Math.floor((1/doubleChance.value) * 100) + "% chance of a Double Battle")
+        newDouble = !Utils.randSeedInt(doubleChance.value);
+        console.log("Double Battle: " + (newDouble ? "Yes" : "No"))
+      } else if (newBattleType === BattleType.TRAINER) {
+        //console.log("[Can't determine double trainer battles yet]")
+        newDouble = newTrainer.variant === TrainerVariant.DOUBLE;
+        console.log("Trainer Double Battle: " + (newDouble ? "Yes" : "No"))
+      }
+    } else if (!battleConfig) {
+      newDouble = !!double;
+      console.log("Double Battle: " + (newDouble ? "Yes" : "No") + " (manually set)")
+    }
+
+    if (Overrides.BATTLE_TYPE_OVERRIDE === "double") {
+      newDouble = true;
+      console.log("Double Battle: Yes (Player override)")
+    }
+    /* Override battles into single only if not fighting with trainers */
+    if (newBattleType !== BattleType.TRAINER && Overrides.BATTLE_TYPE_OVERRIDE === "single") {
+      newDouble = false;
+      console.log("Double Battle: No (Player override)")
+    }
+
+    const lastBattle = this.currentBattle;
+
+    if (lastBattle?.double && !newDouble) {
+      this.tryRemovePhase(p => p instanceof SwitchPhase);
+    }
+
+    const maxExpLevel = this.getMaxExpLevel();
+
+    this.lastEnemyTrainer = lastBattle?.trainer ?? null;
+
+    var simBattle = undefined
+    this.executeWithSeedOffset(() => {
+      simBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);
+    }, newWaveIndex << 3, this.waveSeed);
+    simBattle.incrementTurn(this);
+
+    //this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
+
+    if (!waveIndex && lastBattle) {
+      let isNewBiome = !(lastBattle.waveIndex % 10) || ((this.gameMode.hasShortBiomes || this.gameMode.isDaily) && (lastBattle.waveIndex % 50) === 49);
+      if (!isNewBiome && this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 10) < 9) {
+        let w = lastBattle.waveIndex - ((lastBattle.waveIndex % 10) - 1);
+        let biomeWaves = 1;
+        while (w < lastBattle.waveIndex) {
+          let wasNewBiome = false;
+          this.executeWithSeedOffset(() => {
+            wasNewBiome = !Utils.randSeedInt(6 - biomeWaves);
+          }, w << 4);
+          if (wasNewBiome) {
+            biomeWaves = 1;
+          } else {
+            biomeWaves++;
+          }
+          w++;
+        }
+
+        this.executeWithSeedOffset(() => {
+          isNewBiome = !Utils.randSeedInt(6 - biomeWaves);
+        }, lastBattle.waveIndex << 4);
+        if (isNewBiome) console.log("This wave attempted to switch biomes early")
+      }
+      const resetArenaState = isNewBiome || simBattle.battleType === BattleType.TRAINER || simBattle.battleSpec === BattleSpec.FINAL_BOSS;
+      //this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
+      //this.trySpreadPokerus();
+      if (!isNewBiome && (newWaveIndex % 10) === 5) {
+        this.arena.updatePoolsForTimeOfDay();
+      }
+      if (resetArenaState) {
+        this.arena.resetArenaEffects();
+        playerField.forEach((_, p) => {
+          //this.unshiftPhase(new ReturnPhase(this, p))
+          console.log("Pushed new ReturnPhase for " + this.getParty()[p].name)
+        });
+
+        for (const pokemon of this.getParty()) {
+          // Only trigger form change when Eiscue is in Noice form
+          // Hardcoded Eiscue for now in case it is fused with another pokemon
+          if (pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE) && pokemon.formIndex === 1) {
+            //this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+            console.log("Triggered form change for an Eiscue")
+          }
+
+          pokemon.resetBattleData();
+          applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
+        }
+
+        //this.unshiftPhase(new ShowTrainerPhase(this));
+        console.log("Inserted new ShowTrainerPhase to front of queue")
+      }
+
+      for (const pokemon of this.getParty()) {
+        //this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
+      }
+
+      if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
+        //this.pushPhase(new NextEncounterPhase(this));
+        console.log("Pushed new NextEncounterPhase")
+      } else {
+        //this.pushPhase(new SelectBiomePhase(this));
+        console.log("Pushed new SelectBiomePhase")
+        //this.pushPhase(new NewBiomeEncounterPhase(this))
+        console.log("Pushed new NewBiomeEncounterPhase");
+
+        const newMaxExpLevel = this.getMaxExpLevel();
+        if (newMaxExpLevel > maxExpLevel) {
+          //this.pushPhase(new LevelCapPhase(this));
+          console.log("Attempted to announce level cap change (Lv. " + newMaxExpLevel + ")")
+        }
+      }
+    }
+
+    this.generatePokemonForBattle(simBattle)
+
+    console.log("Generated battle", simBattle)
+
+    this.arena.biomeType = arenaBiome
+
+    this.restoreSeed()
+  }
+
   newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
     const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
     const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (_startingWave - 1)) + 1);
@@ -1394,6 +1620,25 @@ export default class BattleScene extends SceneBase {
         }
       }, this.currentBattle.waveIndex + (p << 8));
     });
+  }
+
+  emulateReset(waveIndex?: integer) {
+    const wave = waveIndex || this.currentBattle?.waveIndex || 0;
+    this.tempWaveSeed = this.waveSeed;
+    this.tempRngCounter = this.rngCounter;
+    this.waveSeed = Utils.shiftCharCodes(this.seed, wave);
+    Phaser.Math.RND.sow([ this.waveSeed ]);
+    console.log("Temporarily reset wave RNG");
+    this.rngCounter = 0;
+    //this.setScoreText("RNG: 0")
+  }
+  restoreSeed(waveIndex?: integer) {
+    const wave = waveIndex || this.currentBattle?.waveIndex || 0;
+    this.waveSeed = this.tempWaveSeed;
+    Phaser.Math.RND.sow([ this.waveSeed ]);
+    console.log("Restored wave RNG");
+    this.rngCounter = this.tempRngCounter;
+    //this.setScoreText("RNG: 0")
   }
 
   resetSeed(waveIndex?: integer): void {

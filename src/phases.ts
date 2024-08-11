@@ -3803,6 +3803,8 @@ export class TurnEndPhase extends FieldPhase {
       this.scene.arena.trySetTerrain(TerrainType.NONE, false);
     }
 
+    this.scene.peekBattleContents(50)
+
     this.end();
   }
 }
@@ -6728,6 +6730,60 @@ export class AttemptRunPhase extends PokemonPhase {
 
 
 //#region 71 SelectModifierPhase
+const tierNames = [
+  "Poké",
+  "Great",
+  "Ultra",
+  "Rogue",
+  "Master"
+]
+/**
+ * This function rolls for modifiers with a certain luck value, checking to see if shiny luck would affect your results.
+ * @param scene 
+ * @param predictionCost 
+ * @param rerollOverride 
+ * @param modifierOverride 
+ * @returns 
+ */
+export function shinyCheckStep(scene: BattleScene, predictionCost: Utils.IntegerHolder, rerollOverride: integer, modifierOverride?: integer) {
+  var modifierPredictions = []
+  const party = scene.getParty();
+  regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER, rerollOverride);
+  const modifierCount = new Utils.IntegerHolder(3);
+  scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
+  if (modifierOverride) {
+    //modifierCount.value = modifierOverride
+  }
+  var isOk = true;
+  const typeOptions: ModifierTypeOption[] = getPlayerModifierTypeOptions(modifierCount.value, scene.getParty(), undefined, scene, true, true);
+  typeOptions.forEach((option, idx) => {
+    if (option.alternates && option.alternates.length > 0) {
+      for (var i = 0; i < option.alternates.length; i++) {
+        if (option.alternates[i] > option.type.tier) {
+          isOk = false // Shiny Luck affects this wave in some way
+        }
+      }
+    }
+  })
+  modifierPredictions.push(typeOptions)
+  predictionCost.value += (Math.min(Math.ceil(scene.currentBattle.waveIndex / 10) * 250 * Math.pow(2, rerollOverride), Number.MAX_SAFE_INTEGER))
+  return isOk;
+}
+/**
+ * Simulates modifier rolls for as many rerolls as you can afford, checking to see if shiny luck will alter your results.
+ * @param scene The current `BattleScene`.
+ * @returns `true` if no changes were detected, `false` otherwise
+ */
+export function runShinyCheck(scene: BattleScene, wv?: integer) {
+  scene.resetSeed(wv);
+  const predictionCost = new Utils.IntegerHolder(0)
+  var isOk = true;
+  for (var i = 0; i < 14 && isOk; i++) {
+    isOk = isOk && shinyCheckStep(scene, predictionCost, i)
+  }
+  scene.resetSeed(wv);
+  return isOk
+}
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
   private modifierTiers: ModifierTier[];
@@ -6759,7 +6815,7 @@ export class SelectModifierPhase extends BattlePhase {
     if (modifierOverride) {
       //modifierCount.value = modifierOverride
     }
-    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, true);
+    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, true, true);
     typeOptions.forEach((option, idx) => {
       //console.log(option.type.name)
     })
@@ -6995,6 +7051,16 @@ export class SelectModifierPhase extends BattlePhase {
         console.log("Rerolls: " + r)
         mp.forEach((m, i) => {
           console.log("  " + m.type.name)
+          if (m.alternates) {
+            for (var j = 0, currentTier = m.type.tier; j < m.alternates.length; j++) {
+              if (m.alternates[j] > currentTier) {
+                currentTier = m.alternates[j]
+                console.log("    At " + j + " luck: " + tierNames[currentTier] + "-tier item")
+              }
+            }
+          } else {
+            console.log("    No alt-luck data")
+          }
         })
       })
     }
@@ -7026,8 +7092,8 @@ export class SelectModifierPhase extends BattlePhase {
     return ModifierPoolType.PLAYER;
   }
 
-  getModifierTypeOptions(modifierCount: integer, shutUpBro?: boolean): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.scene, shutUpBro);
+  getModifierTypeOptions(modifierCount: integer, shutUpBro?: boolean, calcAllLuck?: boolean): ModifierTypeOption[] {
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.scene, shutUpBro, calcAllLuck);
   }
 
   addModifier(modifier: Modifier): Promise<boolean> {
