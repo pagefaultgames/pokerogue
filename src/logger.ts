@@ -340,6 +340,9 @@ export function playerPokeName(scene: BattleScene, index: integer | Pokemon | Pl
       return scene.getParty()[index].name + " (Slot " + (index  + 1) + ")"
     return scene.getParty()[index].name
   }
+  if (!index.isPlayer()) {
+    return "[Not a player Pokemon??]"
+  }
   //console.log(index.name, species, dupeSpecies)
   if (dupeSpecies.includes(index.name))
     return index.name + " (Slot " + (scene.getParty().indexOf(index as PlayerPokemon) + 1) + ")"
@@ -368,6 +371,9 @@ export function enemyPokeName(scene: BattleScene, index: integer | Pokemon | Ene
     if (dupeSpecies.includes(scene.getEnemyParty()[index].name))
       return scene.getEnemyParty()[index].name + " (Slot " + (index  + 1) + ")"
     return scene.getEnemyParty()[index].name
+  }
+  if (index.isPlayer()) {
+    return "[Not an enemy Pokemon??]"
   }
   //console.log(index.name, species, dupeSpecies)
   if (dupeSpecies.includes(index.name))
