@@ -26,7 +26,6 @@ import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
 import { OverridesHelper } from "./overridesHelper";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
 import overrides from "#app/overrides.js";
-import { removeEnemyHeldItems } from "./testUtils";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
 import { MoveHelper } from "./moveHelper";
 import { vi } from "vitest";
@@ -137,7 +136,7 @@ export default class GameManager {
 
     await this.phaseInterceptor.run(EncounterPhase);
     if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
-      removeEnemyHeldItems(this);
+      this.removeEnemyHeldItems();
     }
   }
 
@@ -404,5 +403,14 @@ export default class GameManager {
     await this.phaseInterceptor.to(TurnStartPhase, false);
 
     vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue(order);
+  }
+
+  /**
+   * Removes all held items from enemy pokemon
+   */
+  removeEnemyHeldItems(): void {
+    this.scene.clearEnemyHeldItemModifiers();
+    this.scene.clearEnemyModifiers();
+    console.log("Enemy held items removed");
   }
 }
