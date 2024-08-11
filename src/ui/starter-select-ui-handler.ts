@@ -1685,37 +1685,35 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             }
 
-            // Same species egg menu option. Only visible if passive is bought
-            if (passiveAttr & PassiveAttr.UNLOCKED) {
-              const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarters[this.lastSpecies.speciesId]);
-              options.push({
-                label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
-                handler: () => {
-                  if (this.scene.gameData.eggs.length < 99 && (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost)) {
-                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                      starterData.candyCount -= sameSpeciesEggCost;
-                    }
-                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
-
-                    const egg = new Egg({scene: this.scene, species: this.lastSpecies.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG});
-                    egg.addEggToGameData(this.scene);
-
-                    this.scene.gameData.saveSystem().then(success => {
-                      if (!success) {
-                        return this.scene.reset(true);
-                      }
-                    });
-                    ui.setMode(Mode.STARTER_SELECT);
-                    this.scene.playSound("buy");
-
-                    return true;
+            // Same species egg menu option.
+            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarters[this.lastSpecies.speciesId]);
+            options.push({
+              label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
+              handler: () => {
+                if (this.scene.gameData.eggs.length < 99 && (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost)) {
+                  if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                    starterData.candyCount -= sameSpeciesEggCost;
                   }
-                  return false;
-                },
-                item: "candy",
-                itemArgs: starterColors[this.lastSpecies.speciesId]
-              });
-            }
+                  this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+
+                  const egg = new Egg({scene: this.scene, species: this.lastSpecies.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG});
+                  egg.addEggToGameData(this.scene);
+
+                  this.scene.gameData.saveSystem().then(success => {
+                    if (!success) {
+                      return this.scene.reset(true);
+                    }
+                  });
+                  ui.setMode(Mode.STARTER_SELECT);
+                  this.scene.playSound("buy");
+
+                  return true;
+                }
+                return false;
+              },
+              item: "candy",
+              itemArgs: starterColors[this.lastSpecies.speciesId]
+            });
             options.push({
               label: i18next.t("menu:cancel"),
               handler: () => {
