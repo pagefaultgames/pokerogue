@@ -1916,8 +1916,10 @@ export class EncounterPhase extends BattlePhase {
       }
     }
     handleTutorial(this.scene, Tutorial.Access_Menu).then(() => {
+      // Auto-show the flyout
       if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
         this.scene.arenaFlyout.toggleFlyout(true)
+        this.scene.arenaFlyout.isAuto = true
       }
       super.end()
     });
@@ -2856,6 +2858,9 @@ export class TurnInitPhase extends FieldPhase {
 
   start() {
     super.start();
+
+    // If the flyout was shown automatically, and the user hasn't made it go away, auto-hide it
+    this.scene.arenaFlyout.dismiss()
 
     this.scene.getPlayerField().forEach(p => {
       // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch

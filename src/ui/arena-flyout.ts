@@ -102,6 +102,8 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
   private readonly onFieldEffectChangedEvent = (event: Event) => this.onFieldEffectChanged(event);
 
+  public isAuto: boolean = false;
+
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0);
     this.setName("arena-flyout");
@@ -455,6 +457,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * @param visible Should the flyout be shown?
    */
   public toggleFlyout(visible: boolean): void {
+    this.isAuto = false;
     this.scene.tweens.add({
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
@@ -463,6 +466,12 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       alpha: visible ? 1 : 0,
       onComplete: () => this.timeOfDayWidget.parentVisible = visible,
     });
+  }
+
+  public dismiss(): void {
+    if (this.isAuto) {
+      this.toggleFlyout(false)
+    }
   }
 
   public destroy(fromScene?: boolean): void {
