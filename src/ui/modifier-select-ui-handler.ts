@@ -11,6 +11,7 @@ import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
 import i18next from "i18next";
+import { GameModes } from "#app/game-mode.js";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -31,8 +32,17 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private transferButtonWidth: integer;
   private checkButtonWidth: integer;
 
+  public args: any[] = [];
+  public refreshIndex: integer = 0;
+  public optionP: ModifierTypeOption[][];
+
   public options: ModifierOption[];
   public shopOptionsRows: ModifierOption[][];
+
+  private rerollUpContainer: Phaser.GameObjects.Container;
+  private rerollDownContainer: Phaser.GameObjects.Container;
+  private rerollUpLabel: Phaser.GameObjects.Text;
+  private rerollDownLabel: Phaser.GameObjects.Text;
 
   private cursorObj: Phaser.GameObjects.Image;
 
@@ -92,6 +102,32 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollCostText.setPositionRelative(rerollButtonText, rerollButtonText.displayWidth + 5, 1);
     this.rerollButtonContainer.add(this.rerollCostText);
 
+    
+
+    this.rerollUpContainer = this.scene.add.container(100, -78);
+    this.rerollUpContainer.setName("reroll-brn");
+    this.rerollUpContainer.setVisible(false);
+    ui.add(this.rerollUpContainer);
+
+    this.rerollUpLabel = addTextObject(this.scene, -4, -2, "+1 Reroll", TextStyle.PARTY);
+    this.rerollUpLabel.setName("text-reroll-btn");
+    this.rerollUpLabel.setOrigin(0, 0);
+    this.rerollUpContainer.add(this.rerollUpLabel);
+
+
+
+    this.rerollDownContainer = this.scene.add.container(100, -64);
+    this.rerollDownContainer.setName("reroll-brn");
+    this.rerollDownContainer.setVisible(false);
+    ui.add(this.rerollDownContainer);
+
+    this.rerollDownLabel = addTextObject(this.scene, -4, -2, "-1 Reroll", TextStyle.PARTY);
+    this.rerollDownLabel.setName("text-reroll-btn");
+    this.rerollDownLabel.setOrigin(0, 0);
+    this.rerollDownContainer.add(this.rerollDownLabel);
+
+    
+
     this.lockRarityButtonContainer = this.scene.add.container(16, -64);
     this.lockRarityButtonContainer.setVisible(false);
     ui.add(this.lockRarityButtonContainer);
@@ -117,6 +153,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   }
 
   show(args: any[]): boolean {
+    this.args = args
     if (this.active) {
       if (args.length >= 3) {
         this.awaitingActionInput = true;
@@ -151,6 +188,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonContainer.setVisible(false);
     this.lockRarityButtonContainer.setAlpha(0);
 
+    this.rerollUpContainer.setVisible(false)
+    this.rerollUpContainer.setAlpha(0)
+    this.rerollDownContainer.setVisible(false)
+    this.rerollDownContainer.setAlpha(0)
+
     this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
     this.rerollCost = args[3] as integer;
@@ -158,6 +200,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.updateRerollCostText();
 
     const typeOptions = args[1] as ModifierTypeOption[];
+    //const typeOptionP = args[4] as ModifierTypeOption[][];
+    //this.optionP = typeOptionP;
     const shopTypeOptions = !this.scene.gameMode.hasNoShop
       ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1))
       : [];
@@ -235,9 +279,15 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.rerollButtonContainer.setAlpha(0);
       this.checkButtonContainer.setAlpha(0);
       this.lockRarityButtonContainer.setAlpha(0);
+      this.rerollUpContainer.setAlpha(0)
+      this.rerollDownContainer.setAlpha(0)
       this.rerollButtonContainer.setVisible(true);
       this.checkButtonContainer.setVisible(true);
       this.lockRarityButtonContainer.setVisible(canLockRarities);
+      this.rerollUpContainer.setVisible(false)
+      this.rerollDownContainer.setVisible(false)
+
+      // , this.rerollUpContainer, this.rerollDownContainer
 
       this.scene.tweens.add({
         targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer, this.checkButtonContainer ],
@@ -256,6 +306,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     });
 
     return true;
+  }
+
+  refresh() {
+    this.clear()
+    this.args[1] = this.optionP[this.refreshIndex]
+    this.show(this.args)
   }
 
   processInput(button: Button): boolean {
