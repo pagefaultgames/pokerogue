@@ -135,10 +135,13 @@ function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean)
   var offset = 0
   scene.getModifiers(BypassSpeedChanceModifier, true).forEach(m => {
     //console.log(m, m.getPokemon(this.scene), pokemon)
-    if (m.getPokemon(scene).isActive()) {
-      console.log(m.getPokemon(scene).name + " has a Quick Claw")
-      offset++
-    }
+    var p = m.getPokemon(scene)
+    scene.getField().forEach((p2, idx) => {
+      if (p == p2) {
+        console.log(m.getPokemon(scene).name + " (Position: " + (idx + 1) + ") has a Quick Claw")
+        offset++
+      }
+    })
   })
   scene.currentBattle.multiInt(scene, rolls, offset + 3, 65536)
   //console.log(rolls)
