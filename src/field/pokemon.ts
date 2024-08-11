@@ -256,6 +256,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.fieldPosition = FieldPosition.CENTER;
 
     this.initBattleInfo();
+    this.battleInfo.updateInfo(this);
 
     this.scene.fieldUI.addAt(this.battleInfo, 0);
 

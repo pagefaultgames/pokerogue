@@ -100,6 +100,7 @@ export const SettingKeys = {
   Fusion_Palette_Swaps: "FUSION_PALETTE_SWAPS",
   Player_Gender: "PLAYER_GENDER",
   Type_Hints: "TYPE_HINTS",
+  Health_Bar_Color: "HEALTH_BAR_COLOR",
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
   SE_Volume: "SE_VOLUME",
@@ -498,6 +499,34 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY
   },
   {
+    key: SettingKeys.Health_Bar_Color,
+    label:  i18next.t("settings:hpColor"),
+    options: [
+      {
+        value: "Original",
+        label: i18next.t("settings:Original")
+      },
+      {
+        value: "Deutan",
+        label: i18next.t("settings:Deutan")
+      },
+      {
+        value: "Protan",
+        label: i18next.t("settings:Protan")
+      },
+      {
+        value: "Tritan",
+        label: i18next.t("settings:Tritan")
+      },
+      {
+        value: "Black/White",
+        label: i18next.t("settings:Black/White")
+      }
+    ],
+    default: 0,
+    type: SettingType.DISPLAY,
+  },
+  {
     key: SettingKeys.Show_BGM_Bar,
     label: i18next.t("settings:showBgmBar"),
     options: OFF_ON,
@@ -702,6 +731,24 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Vibration:
     scene.enableVibration = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
     break;
+  case SettingKeys.Health_Bar_Color:
+    switch (Setting[index].options[value].value) {
+    case "Original":
+      scene.hpColor = 0;
+      break;
+    case "Deutan":
+      scene.hpColor = 1;
+      break;
+    case "Protan":
+      scene.hpColor = 2;
+      break;
+    case "Tritan":
+      scene.hpColor = 3;
+      break;
+    case "B/W":
+      scene.hpColor = 4;
+      break;
+    }
   case SettingKeys.Type_Hints:
     scene.typeHints = Setting[index].options[value].value === "On";
     break;

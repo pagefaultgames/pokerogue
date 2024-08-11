@@ -175,6 +175,8 @@ export default class BattleScene extends SceneBase {
    */
   public typeHints: boolean = false;
 
+  public hpColor: integer = 0;
+
   public disableMenu: boolean = false;
 
   public gameData: GameData;

@@ -273,6 +273,179 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.effectivenessContainer.add(this.effectivenessText);
     }
   }
+  updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
+    return new Promise(resolve => {
+      if (!this.scene) {
+        return resolve();
+      }
+
+      const nameUpdated = this.lastName !== pokemon.getNameToRender();
+
+      if (nameUpdated) {
+        this.updateNameText(pokemon);
+        this.genderText.setPositionRelative(this.nameText, this.nameText.displayWidth, 0);
+      }
+
+      const teraType = pokemon.getTeraType();
+      const teraTypeUpdated = this.lastTeraType !== teraType;
+
+      if (teraTypeUpdated) {
+        this.teraIcon.setVisible(teraType !== Type.UNKNOWN);
+        this.teraIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1, 2);
+        this.teraIcon.setTintFill(Phaser.Display.Color.GetColor(...getTypeRgb(teraType)));
+        this.lastTeraType = teraType;
+      }
+
+      if (nameUpdated || teraTypeUpdated) {
+        this.splicedIcon.setVisible(!!pokemon.fusionSpecies);
+
+        this.teraIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1, 2);
+        this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 1.5);
+        this.shinyIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0) + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0), 2.5);
+      }
+
+      if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
+        this.lastStatus = pokemon.status?.effect || StatusEffect.NONE;
+
+        if (this.lastStatus !== StatusEffect.NONE) {
+          this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
+        }
+
+        const offsetX = !this.player ? (this.ownedIcon.visible ? 8 : 0) + (this.championRibbon.visible ? 8 : 0) : 0;
+        this.statusIndicator.setPositionRelative(this.nameText, offsetX, 11.5);
+
+        this.statusIndicator.setVisible(!!this.lastStatus);
+      }
+
+      const types = pokemon.getTypes(true);
+      this.type1Icon.setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`);
+      this.type1Icon.setFrame(Type[types[0]].toLowerCase());
+      this.type2Icon.setVisible(types.length > 1);
+      this.type3Icon.setVisible(types.length > 2);
+      if (types.length > 1) {
+        this.type2Icon.setFrame(Type[types[1]].toLowerCase());
+      }
+      if (types.length > 2) {
+        this.type3Icon.setFrame(Type[types[2]].toLowerCase());
+      }
+
+      const updateHpFrame = (hpColor) => {
+        const colorSchemes = {
+          0: {
+            high: 0x00FF00, // Green
+            highshadow: 0x5595e9,
+            medium: 0xFFFF00, // Yellow
+            low: 0xFF0000 // Red
+          },
+          1: {
+            high: 0xf89890, // PINK
+            highshadow: 0xfca2a2,
+            medium: 0xf8b050, // Orange
+            mediumshadow: 0xc07800,
+            low: 0x40c8f8, // Purple
+            lowshadow: 0x006090
+          },
+          2: {
+            high: 0x00ff00, // Green
+            highshadow: 0x5595e9,
+            medium: 0xffff00, // Yellow
+            low: 0xff0000 // Red
+          },
+          3: {
+            high: 0xff55ff, // Blue
+            highshadow: 0x5595e9,
+            medium: 0xff55ff, // Orange
+            low: 0xff55ff // Purple
+          },
+          4: {
+            high: 0x0000ff, // Blue
+            highshadow: 0x5595e9,
+            medium: 0x0000ff, // O range
+            low: 0x0000ff // Purple
+          }
+        };
+
+        const hpFrame = this.hpBar.scaleX > 0.5 ? "high" : this.hpBar.scaleX > 0.25 ? "medium" : "low";
+        const colors = colorSchemes[hpColor];
+        if (hpFrame === "high") {
+          this.hpBar.setTintFill(colors.high, colors.high, colors.highshadow, colors.highshadow);
+        } else if (hpFrame === "medium") {
+          this.hpBar.setTintFill(colors.medium, colors.medium, colors.mediumshadow, colors.mediumshadow);
+        } else if (hpFrame === "low") {
+          this.hpBar.setTintFill(colors.low, colors.low, colors.lowshadow, colors.lowshadow);
+        }
+        this.lastHpFrame = hpFrame;
+      };
+
+
+      const updatePokemonHp = () => {
+        updateHpFrame((this.scene as BattleScene).hpColor);
+        let duration = !instant ? Utils.clampInt(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000) : 0;
+        const speed = (this.scene as BattleScene).hpBarSpeed;
+        if (speed) {
+          duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
+        }
+        this.scene.tweens.add({
+          targets: this.hpBar,
+          ease: "Sine.easeOut",
+          scaleX: pokemon.getHpRatio(true),
+          duration: duration,
+          onUpdate: () => {
+            if (this.player && this.lastHp !== pokemon.hp) {
+              const tweenHp = Math.ceil(this.hpBar.scaleX * pokemon.getMaxHp());
+              this.setHpNumbers(tweenHp, pokemon.getMaxHp());
+              this.lastHp = tweenHp;
+            }
+
+            updateHpFrame((this.scene as BattleScene).hpColor);
+          },
+          onComplete: () => {
+            updateHpFrame((this.scene as BattleScene).hpColor);
+            resolve();
+          }
+        });
+        if (!this.player) {
+          this.lastHp = pokemon.hp;
+        }
+        this.lastMaxHp = pokemon.getMaxHp();
+      };
+
+      if (this.player) {
+        const isLevelCapped = pokemon.level >= (this.scene as BattleScene).getMaxExpLevel();
+
+        if ((this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level)) {
+          const originalResolve = resolve;
+          const durationMultipler = Math.max(Phaser.Tweens.Builders.GetEaseFunction("Cubic.easeIn")(1 - (Math.min(pokemon.level - this.lastLevel, 10) / 10)), 0.1);
+          resolve = () => this.updatePokemonExp(pokemon, false, durationMultipler).then(() => originalResolve());
+        } else if (isLevelCapped !== this.lastLevelCapped) {
+          this.setLevel(pokemon.level);
+        }
+
+        this.lastLevelCapped = isLevelCapped;
+      }
+
+      if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
+        return updatePokemonHp();
+      } else if (!this.player && this.lastLevel !== pokemon.level) {
+        this.setLevel(pokemon.level);
+        this.lastLevel = pokemon.level;
+      }
+
+      const battleStats = pokemon.summonData
+        ? pokemon.summonData.battleStats
+        : battleStatOrder.map(() => 0);
+      const battleStatsStr = battleStats.join("");
+
+      if (this.lastBattleStats !== battleStatsStr) {
+        this.updateBattleStats(battleStats);
+        this.lastBattleStats = battleStatsStr;
+      }
+
+      this.shinyIcon.setVisible(pokemon.isShiny());
+
+      resolve();
+    });
+  }
 
   initInfo(pokemon: Pokemon) {
     this.updateNameText(pokemon);
@@ -372,6 +545,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.hpBar.setScale(pokemon.getHpRatio(true), 1);
     this.lastHpFrame = this.hpBar.scaleX > 0.5 ? "high" : this.hpBar.scaleX > 0.25 ? "medium" : "low";
     this.hpBar.setFrame(this.lastHpFrame);
+
+    this.updateInfo(pokemon);
+
     if (this.player) {
       this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
     }
@@ -504,137 +680,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.baseY = this.y;
   }
 
-  updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
-    return new Promise(resolve => {
-      if (!this.scene) {
-        return resolve();
-      }
-
-      const nameUpdated = this.lastName !== pokemon.getNameToRender();
-
-      if (nameUpdated) {
-        this.updateNameText(pokemon);
-        this.genderText.setPositionRelative(this.nameText, this.nameText.displayWidth, 0);
-      }
-
-      const teraType = pokemon.getTeraType();
-      const teraTypeUpdated = this.lastTeraType !== teraType;
-
-      if (teraTypeUpdated) {
-        this.teraIcon.setVisible(teraType !== Type.UNKNOWN);
-        this.teraIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1, 2);
-        this.teraIcon.setTintFill(Phaser.Display.Color.GetColor(...getTypeRgb(teraType)));
-        this.lastTeraType = teraType;
-      }
-
-      if (nameUpdated || teraTypeUpdated) {
-        this.splicedIcon.setVisible(!!pokemon.fusionSpecies);
-
-        this.teraIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1, 2);
-        this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 1.5);
-        this.shinyIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0) + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0), 2.5);
-      }
-
-      if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
-        this.lastStatus = pokemon.status?.effect || StatusEffect.NONE;
-
-        if (this.lastStatus !== StatusEffect.NONE) {
-          this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
-        }
-
-        const offsetX = !this.player ? (this.ownedIcon.visible ? 8 : 0) + (this.championRibbon.visible ? 8 : 0) : 0;
-        this.statusIndicator.setPositionRelative(this.nameText, offsetX, 11.5);
-
-        this.statusIndicator.setVisible(!!this.lastStatus);
-      }
-
-      const types = pokemon.getTypes(true);
-      this.type1Icon.setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`);
-      this.type1Icon.setFrame(Type[types[0]].toLowerCase());
-      this.type2Icon.setVisible(types.length > 1);
-      this.type3Icon.setVisible(types.length > 2);
-      if (types.length > 1) {
-        this.type2Icon.setFrame(Type[types[1]].toLowerCase());
-      }
-      if (types.length > 2) {
-        this.type3Icon.setFrame(Type[types[2]].toLowerCase());
-      }
-
-      const updateHpFrame = () => {
-        const hpFrame = this.hpBar.scaleX > 0.5 ? "high" : this.hpBar.scaleX > 0.25 ? "medium" : "low";
-        if (hpFrame !== this.lastHpFrame) {
-          this.hpBar.setFrame(hpFrame);
-          this.lastHpFrame = hpFrame;
-        }
-      };
-
-      const updatePokemonHp = () => {
-        let duration = !instant ? Utils.clampInt(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000) : 0;
-        const speed = (this.scene as BattleScene).hpBarSpeed;
-        if (speed) {
-          duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
-        }
-        this.scene.tweens.add({
-          targets: this.hpBar,
-          ease: "Sine.easeOut",
-          scaleX: pokemon.getHpRatio(true),
-          duration: duration,
-          onUpdate: () => {
-            if (this.player && this.lastHp !== pokemon.hp) {
-              const tweenHp = Math.ceil(this.hpBar.scaleX * pokemon.getMaxHp());
-              this.setHpNumbers(tweenHp, pokemon.getMaxHp());
-              this.lastHp = tweenHp;
-            }
-
-            updateHpFrame();
-          },
-          onComplete: () => {
-            updateHpFrame();
-            resolve();
-          }
-        });
-        if (!this.player) {
-          this.lastHp = pokemon.hp;
-        }
-        this.lastMaxHp = pokemon.getMaxHp();
-      };
-
-      if (this.player) {
-        const isLevelCapped = pokemon.level >= (this.scene as BattleScene).getMaxExpLevel();
-
-        if ((this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level)) {
-          const originalResolve = resolve;
-          const durationMultipler = Math.max(Phaser.Tweens.Builders.GetEaseFunction("Cubic.easeIn")(1 - (Math.min(pokemon.level - this.lastLevel, 10) / 10)), 0.1);
-          resolve = () => this.updatePokemonExp(pokemon, false, durationMultipler).then(() => originalResolve());
-        } else if (isLevelCapped !== this.lastLevelCapped) {
-          this.setLevel(pokemon.level);
-        }
-
-        this.lastLevelCapped = isLevelCapped;
-      }
-
-      if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
-        return updatePokemonHp();
-      } else if (!this.player && this.lastLevel !== pokemon.level) {
-        this.setLevel(pokemon.level);
-        this.lastLevel = pokemon.level;
-      }
-
-      const battleStats = pokemon.summonData
-        ? pokemon.summonData.battleStats
-        : battleStatOrder.map(() => 0);
-      const battleStatsStr = battleStats.join("");
-
-      if (this.lastBattleStats !== battleStatsStr) {
-        this.updateBattleStats(battleStats);
-        this.lastBattleStats = battleStatsStr;
-      }
-
-      this.shinyIcon.setVisible(pokemon.isShiny());
-
-      resolve();
-    });
-  }
 
   updateNameText(pokemon: Pokemon): void {
     let displayName = pokemon.getNameToRender().replace(/[♂♀]/g, "");
