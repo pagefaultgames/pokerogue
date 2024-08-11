@@ -3630,7 +3630,9 @@ export class TurnStartPhase extends FieldPhase {
         this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets[0] % 2, turnCommand.cursor));
         break;
       case Command.POKEMON:
-        LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch") + " " + LoggerTools.playerPokeName(this.scene, pokemon) + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor)
+        if (pokemon.isPlayer()) {
+          LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args[0] as boolean) ? "Baton" : "Switch") + " " + LoggerTools.playerPokeName(this.scene, pokemon) + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor)
+        }
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
         break;
       case Command.RUN:
@@ -3670,10 +3672,12 @@ export class TurnStartPhase extends FieldPhase {
     this.scene.pushPhase(new TurnEndPhase(this.scene));
 
     this.scene.arenaFlyout.updateFieldText()
-
+    
+    if (LoggerTools.Actions.length > 1 && !this.scene.currentBattle.double) {
+      LoggerTools.Actions.pop() // If this is a single battle, but we somehow have two actions, delete the second
+    }
     if (LoggerTools.Actions.length > 1 && (LoggerTools.Actions[0] == "" || LoggerTools.Actions[0] == undefined || LoggerTools.Actions[0] == null))
       LoggerTools.Actions.shift() // If the left slot isn't doing anything, delete its entry
-
     LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.Actions.join(" & "))
 
     /**
