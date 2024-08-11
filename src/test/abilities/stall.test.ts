@@ -47,18 +47,13 @@ describe("Ability - Stall", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
 
     await game.phaseInterceptor.to(MovePhase, false);
-    const movePhase1 = game.scene.getCurrentPhase() as MovePhase;
+    // The player Pokemon (without Stall) goes first despite having lower speed than the opponent.
+     expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(leadIndex);
+     
     await game.phaseInterceptor.run(MovePhase);
     await game.phaseInterceptor.to(MovePhase, false);
-    const movePhase2 = game.scene.getCurrentPhase() as MovePhase;
-
-    /**
-   * Expect:
-   * - The player Pokemon (without Stall) goes first despite having lower speed than the opponent.
-   * - The opponent Pokemon (with Stall) goes last despite having higher speed than the player Pokemon.
-   **/
-    expect(movePhase1.pokemon.getBattlerIndex()).toBe(leadIndex);
-    expect(movePhase2.pokemon.getBattlerIndex()).toBe(enemyIndex);
+    // The opponent Pokemon (with Stall) goes last despite having higher speed than the player Pokemon.
+    expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(enemyIndex);
   }, 20000);
 
   it("Pokemon with Stall will go first if a move that is in a higher priority bracket than the opponent's move is used", async() => {
@@ -70,18 +65,13 @@ describe("Ability - Stall", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
     await game.phaseInterceptor.to(MovePhase, false);
-    const movePhase1 = game.scene.getCurrentPhase() as MovePhase;
+    // The opponent Pokemon (with Stall) goes first because its move is still within a higher priority bracket than its opponent.
+    expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(enemyIndex);
+     
     await game.phaseInterceptor.run(MovePhase);
     await game.phaseInterceptor.to(MovePhase, false);
-    const movePhase2 = game.scene.getCurrentPhase() as MovePhase;
-
-    /**
-   * Expect:
-   * - The opponent Pokemon (with Stall) goes first because its move is still within a higher priority bracket than its opponent.
-   * - The player Pokemon goes second because its move is in a lower priority bracket.
-   **/
-    expect(movePhase1.pokemon.getBattlerIndex()).toBe(enemyIndex);
-    expect(movePhase2.pokemon.getBattlerIndex()).toBe(leadIndex);
+    // The player Pokemon goes second because its move is in a lower priority bracket.
+    expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(leadIndex);
   }, 20000);
 
   it("If both Pokemon have stall and use the same move, speed is used to determine who goes first.", async() => {
@@ -94,17 +84,12 @@ describe("Ability - Stall", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
 
     await game.phaseInterceptor.to(MovePhase, false);
-    const movePhase1 = game.scene.getCurrentPhase() as MovePhase;
+    // The opponent Pokemon (with Stall) goes first because it has a higher speed.
+    expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(enemyIndex);
+     
     await game.phaseInterceptor.run(MovePhase);
     await game.phaseInterceptor.to(MovePhase, false);
-    const movePhase2 = game.scene.getCurrentPhase() as MovePhase;
-
-    /**
-   * Expect:
-   * - The opponent Pokemon (with Stall) goes first because it has a higher speed.
-   * - The player Pokemon (with Stall) goes second because its speed is lower.
-   **/
-    expect(movePhase1.pokemon.getBattlerIndex()).toBe(enemyIndex);
-    expect(movePhase2.pokemon.getBattlerIndex()).toBe(leadIndex);
+    // The player Pokemon (with Stall) goes second because its speed is lower.
+    expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(leadIndex);
   }, 20000);
 });
