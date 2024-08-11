@@ -1562,8 +1562,8 @@ export class GroundedTag extends BattlerTag {
  * Provides the effects of the Disguise and Ice Face abilities
  */
 export class FormBlockDamageTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, sourceMove: Moves) {
-    super(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove);
+  constructor(tagType: BattlerTagType) {
+    super(tagType, BattlerTagLapseType.CUSTOM, 1);
   }
 
   /**
@@ -1896,7 +1896,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
   case BattlerTagType.DISGUISE:
-    return new FormBlockDamageTag(tagType, sourceMove);
+    return new FormBlockDamageTag(tagType);
   case BattlerTagType.STOCKPILING:
     return new StockpilingTag(sourceMove);
   case BattlerTagType.OCTOLOCK:
