@@ -4658,7 +4658,7 @@ export function initAbilities() {
       .attr(AlwaysHitAbAttr)
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.STALL, 4)
-      .unimplemented(),
+      .attr(IncrementMovePriorityAbAttr, (pokemon, move: Move) => true, -12),
     new Ability(Abilities.TECHNICIAN, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
         const power = new Utils.NumberHolder(move.power);
