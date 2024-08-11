@@ -3748,7 +3748,7 @@ export class PhotonGeyserCategoryAttr extends VariableMoveCategoryAttr {
 
 export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const category = (args[0] as Utils.IntegerHolder);  
+    const category = (args[0] as Utils.IntegerHolder);
 
     if (user.isTerastallized() && user.getBattleStat(Stat.ATK, target, move) > user.getBattleStat(Stat.SPATK, target, move)) {
       category.value = MoveCategory.PHYSICAL;
