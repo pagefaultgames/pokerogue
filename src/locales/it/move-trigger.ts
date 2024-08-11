@@ -61,6 +61,6 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}} assume il tipo\ndi {{targetPokemonName}}!",
   "suppressAbilities": "L’abilità di {{pokemonName}}\nperde ogni efficacia!",
   "swapArenaTags": "{{pokemonName}} ha invertito gli effetti attivi\nnelle due metà del campo!",
-  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
-  "safeguard": "{{targetName}} is protected by Safeguard!",
+  "exposedMove": "{{targetPokemonName}} è stato identificato\n da {{pokemonName}}!",
+  "safeguard": "Salvaguardia protegge {{targetName}}!",
 } as const;
