@@ -622,6 +622,11 @@ export class SelectStarterPhase extends Phase {
       if (starter.pokerus) {
         starterPokemon.pokerus = true;
       }
+
+      if (starter.nickname) {
+        starterPokemon.nickname = starter.nickname;
+      }
+
       if (this.scene.gameMode.isSplicedOnly) {
         starterPokemon.generateFusionSpecies(true);
       }
@@ -2575,15 +2580,6 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     this.scene.updateModifiers().then(() => this.end());
-  }
-
-  end() {
-    // removing pokemon at the end of a battle
-    for (const p of this.scene.getEnemyParty()) {
-      p.destroy();
-    }
-
-    super.end();
   }
 }
 

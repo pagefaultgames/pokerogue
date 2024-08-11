@@ -97,5 +97,6 @@ export const settings: SimpleTranslationEntries = {
   "controller": "Controller",
   "gamepadSupport": "Controllerunterstützung",
   "showBgmBar": "Musiknamen anzeigen",
+  "moveTouchControls": "Bewegung Touch Steuerung",
   "shopOverlayOpacity": "Shop Overlay Deckkraft",
 } as const;

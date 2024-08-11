@@ -242,6 +242,7 @@ function createFetchResponse(data) {
   return {
     ok: true,
     status: 200,
+    headers: new Headers(),
     json: () => Promise.resolve(data),
     text: () => Promise.resolve(JSON.stringify(data)),
   };
@@ -251,6 +252,7 @@ function createFetchBadResponse(data) {
   return {
     ok: false,
     status: 404,
+    headers: new Headers(),
     json: () => Promise.resolve(data),
     text: () => Promise.resolve(JSON.stringify(data)),
   };
