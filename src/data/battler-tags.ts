@@ -1558,9 +1558,7 @@ export class GroundedTag extends BattlerTag {
   }
 }
 
-/**
- * Provides the effects of the Disguise and Ice Face abilities
- */
+/** Common attributes of form change abilities that block damage */
 export class FormBlockDamageTag extends BattlerTag {
   constructor(tagType: BattlerTagType) {
     super(tagType, BattlerTagLapseType.CUSTOM, 1);
@@ -1572,11 +1570,7 @@ export class FormBlockDamageTag extends BattlerTag {
    * @returns {boolean} True if the tag can be added, false otherwise.
    */
   canAdd(pokemon: Pokemon): boolean {
-    const isDefenseForm = pokemon.formIndex === 0;
-    const weatherType = pokemon.scene.arena.weather?.weatherType;
-    const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
-
-    if (isDefenseForm || (this.tagType === BattlerTagType.ICE_FACE && isWeatherSnowOrHail)) {
+    if (pokemon.formIndex === 0) {
       return true;
     }
 
@@ -1605,6 +1599,29 @@ export class FormBlockDamageTag extends BattlerTag {
     super.onRemove(pokemon);
 
     pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+  }
+}
+
+/** Provides the additional weather-based effects of the Ice Face ability */
+export class IceFaceBlockDamageTag extends FormBlockDamageTag {
+  constructor(tagType: BattlerTagType) {
+    super(tagType);
+  }
+
+  /**
+   * Determines if the tag can be added to the Pokémon.
+   * @param {Pokemon} pokemon The Pokémon to which the tag might be added.
+   * @returns {boolean} True if the tag can be added, false otherwise.
+   */
+  canAdd(pokemon: Pokemon): boolean {
+    const weatherType = pokemon.scene.arena.weather?.weatherType;
+    const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
+
+    if (super.canAdd(pokemon) || isWeatherSnowOrHail) {
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -1888,6 +1905,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.DESTINY_BOND:
     return new DestinyBondTag(sourceMove, sourceId);
   case BattlerTagType.ICE_FACE:
+    return new IceFaceBlockDamageTag(tagType);
   case BattlerTagType.DISGUISE:
     return new FormBlockDamageTag(tagType);
   case BattlerTagType.STOCKPILING:
