@@ -9,6 +9,7 @@ import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
 import {Button} from "#enums/buttons";
 import i18next from "i18next";
+import { UiTheme } from "#app/enums/ui-theme.js";
 
 interface DisplayStat {
   label_key?: string;
@@ -274,9 +275,10 @@ export default class GameStatsUiHandler extends UiHandler {
     this.gameStatsContainer.add(this.statsContainer);
 
     // arrows to show that we can scroll through the stats
-    this.arrowDown = this.scene.add.sprite(statsBgWidth, this.scene.game.canvas.height / 6 - (this.scene.uiTheme? 9 : 5), "prompt");
+    const legacyTheme = this.scene.uiTheme === UiTheme.LEGACY;
+    this.arrowDown = this.scene.add.sprite(statsBgWidth, this.scene.game.canvas.height / 6 - (legacyTheme? 9 : 5), "prompt");
     this.gameStatsContainer.add(this.arrowDown);
-    this.arrowUp = this.scene.add.sprite(statsBgWidth, headerBg.height + (this.scene.uiTheme? 7 : 3), "prompt");
+    this.arrowUp = this.scene.add.sprite(statsBgWidth, headerBg.height + (legacyTheme? 7 : 3), "prompt");
     this.arrowUp.flipY = true;
     this.gameStatsContainer.add(this.arrowUp);
 
@@ -296,7 +298,7 @@ export default class GameStatsUiHandler extends UiHandler {
 
     this.arrowUp.play("prompt");
     this.arrowDown.play("prompt");
-    if (this.scene.uiTheme) {
+    if (this.scene.uiTheme === UiTheme.LEGACY) {
       this.arrowUp.setTint(0x484848);
       this.arrowDown.setTint(0x484848);
     }
