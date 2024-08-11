@@ -103,6 +103,7 @@ interface SystemSaveData {
   eggs: EggData[];
   gameVersion: string;
   timestamp: integer;
+  pokerusSpecies: PokemonSpecies[];
   eggPity: integer[];
   unlockPity: integer[];
 }
@@ -287,6 +288,7 @@ export class GameData {
   private defaultDexData: DexData | null;
 
   public starterData: StarterData;
+  public pokerusSpecies: PokemonSpecies[];
 
   public gameStats: GameStats;
 
@@ -308,6 +310,7 @@ export class GameData {
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
     this.starterData = {};
+    this.pokerusSpecies = [];
     this.gameStats = new GameStats();
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
@@ -337,6 +340,7 @@ export class GameData {
       gender: this.gender,
       dexData: this.dexData,
       starterData: this.starterData,
+      pokerusSpecies: this.pokerusSpecies,
       gameStats: this.gameStats,
       unlocks: this.unlocks,
       achvUnlocks: this.achvUnlocks,
@@ -525,6 +529,8 @@ export class GameData {
           });
         }
 
+        this.pokerusSpecies = this.getPokerusSpecies();
+
         this.eggs = systemData.eggs
           ? systemData.eggs.map(e => e.toEgg())
           : [];
@@ -606,6 +612,44 @@ export class GameData {
     }
 
     return true;
+  }
+
+  private generatePokerusSpecies(): void {
+    this.pokerusSpecies = [];
+    const date = new Date();
+    date.setUTCHours(0, 0, 0, 0);
+    this.scene.executeWithSeedOffset(() => {
+      for (let c = 0; c < 3; c++) {
+        let randomSpeciesId: Species;
+        let species: PokemonSpecies | undefined;
+
+        const generateSpecies = () => {
+          //randomSpeciesId = Species[Utils.randSeedItem(Object.keys(speciesStarters))];
+          randomSpeciesId = Utils.randSeedItem(Object.keys(speciesStarters));
+          species = getPokemonSpecies(randomSpeciesId);
+        };
+
+        let dupe = false;
+
+        do {
+          dupe = false;
+          generateSpecies();
+          for (let ps = 0; ps < c; ps++) {
+            if (this.pokerusSpecies[ps] === species) {
+              dupe = true;
+              break;
+            }
+          }
+        } while (dupe);
+
+        this.pokerusSpecies.push(species!); // TODO: is the bang correct?
+      }
+    }, 0, date.getTime().toString());
+  }
+
+  public getPokerusSpecies(): PokemonSpecies[] {
+    this.generatePokerusSpecies();
+    return this.pokerusSpecies;
   }
 
   public clearLocalData(): void {
