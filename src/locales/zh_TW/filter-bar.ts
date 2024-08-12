@@ -27,8 +27,8 @@ export const filterBar: SimpleTranslationEntries = {
   "hiddenAbility": "隱藏特性",
   "hasHiddenAbility": "有隱藏特性",
   "noHiddenAbility": "無隱藏特性",
-  "egg": "Egg",//Add translation here
-  "eggPurchasable": "Purchasable Egg",//Add translation here
+  "egg": "蛋",
+  "eggPurchasable": "可購買蛋",
   "pokerus": "病毒",
   "hasPokerus": "有病毒",
   "noPokerus": "無病毒",
