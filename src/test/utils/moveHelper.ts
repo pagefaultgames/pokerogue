@@ -20,7 +20,7 @@ export class MoveHelper extends GameManagerHelper {
    * Intercepts `MoveEffectPhase` and mocks the hitCheck's
    * return value to `false` {@linkcode MoveEffectPhase.hitCheck}.
    * Used to force a move to miss.
-   * @param firstTargetOnly Whether the move should force miss on the first target only, in the case of multi-hit moves.
+   * @param firstTargetOnly Whether the move should force miss on the first target only, in the case of multi-target moves.
    */
   async forceMiss(firstTargetOnly: boolean = false): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
