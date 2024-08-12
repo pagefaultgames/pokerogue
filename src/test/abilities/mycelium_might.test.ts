@@ -46,7 +46,7 @@ describe("Abilities - Mycelium Might", () => {
 
     const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyPokemon = game.scene.getEnemyPokemon();
-    const enemyIndex = enemyPokemon.getBattlerIndex();
+    const enemyIndex = enemyPokemon?.getBattlerIndex();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
 
@@ -60,7 +60,7 @@ describe("Abilities - Mycelium Might", () => {
     // The player Pokemon (with Mycelium Might) goes last despite having higher speed than the opponent.
     expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(leadIndex);
     await game.phaseInterceptor.to(TurnEndPhase);
-    expect(enemyPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
+    expect(enemyPokemon?.summonData.battleStats[BattleStat.ATK]).toBe(-1);
   }, 20000);
 
   it("Pokemon with Mycelium Might will go first if a status move that is in a higher priority bracket than the opponent's move is used", async() => {
@@ -69,7 +69,7 @@ describe("Abilities - Mycelium Might", () => {
 
     const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyPokemon = game.scene.getEnemyPokemon();
-    const enemyIndex = enemyPokemon.getBattlerIndex();
+    const enemyIndex = enemyPokemon?.getBattlerIndex();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
 
@@ -82,7 +82,7 @@ describe("Abilities - Mycelium Might", () => {
     // The enemy Pokemon goes second because its move is in a lower priority bracket.
     expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(enemyIndex);
     await game.phaseInterceptor.to(TurnEndPhase);
-    expect(enemyPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
+    expect(enemyPokemon?.summonData.battleStats[BattleStat.ATK]).toBe(-1);
   }, 20000);
 
   it("Order is established normally if the Pokemon uses a non-status move", async() => {
