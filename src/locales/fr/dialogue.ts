@@ -41,7 +41,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Je te connais pas. Ça te dis de te battre ?",
       4: "Prenons du bon temps avec ce combat Pokémon !",
       5: "Je vais t’apprendre à te battre avec tes Pokémon !",
-      6: "Un combat doit être pris au sérieux. T’es prêt à te battre ?",
+      6: "Un combat doit toujours être pris au sérieux.\nT’es prêt à te battre ?",
       7: "Tu seras pas jeune éternellement. T’as qu’une chance pendant un combat. Bientôt, tu seras plus qu’un souvenir.",
       8: "Tu ferais mieux d’y aller doucement avec moi. Mais je vais me battre sérieusement !",
       9: "Je m’ennuie à l’école. Y’a rien à y faire. *Baille*\nJe me bats juste pour passer le temps."
@@ -2596,7 +2596,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
       3: "Je te connais pas. Ça te dis de te battre ?",
       4: "Prenons du bon temps avec ce combat Pokémon !",
       5: "Je vais t’apprendre à te battre avec tes Pokémon !",
-      6: "Un combat doit être pris au sérieux. T’es prête à te battre ?",
+      6: "Un combat doit toujours être pris au sérieux.\nT’es prête à te battre ?",
       7: "Tu seras pas jeune éternellement. T’as qu’une chance pendant un combat. Bientôt, tu seras plus qu’un souvenir.",
       8: "Tu ferais mieux d’y aller doucement avec moi. Mais je vais me battre sérieusement !",
       9: "Je m’ennuie à l’école. Y’a rien à y faire. *Baille*\nJe me bats juste pour passer le temps."
