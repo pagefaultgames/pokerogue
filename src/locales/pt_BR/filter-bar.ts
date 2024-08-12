@@ -16,7 +16,7 @@ export const filterBar: SimpleTranslationEntries = {
   "passiveUnlockable": "Passiva - Pode Desbloquear",
   "costReduction": "Redução de Custo",
   "costReductionUnlocked": "Redução de Custo Desbloq.",
-  "costReductionLocked": "Redução de Custo Bloq.",
+  "costReductionLocked": "Redução de Custo Bloqueada",
   "costReductionUnlockable": "Redução de Custo - Pode Desbloquear",
   "favorite": "Favoritos",
   "isFavorite": "Favoritos - Sim",
