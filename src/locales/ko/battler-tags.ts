@@ -9,7 +9,6 @@ export const battlerTags: SimpleTranslationEntries = {
   "nightmareDesc": "악몽",
   "ingrainDesc": "뿌리",
   "drowsyDesc": "졸음",
-
   "rechargingLapse": "공격의 반동으로\n{{pokemonNameWithAffix}}[[는]] 움직일 수 없다!",
   "trappedOnAdd": "{{pokemonNameWithAffix}}[[는]]\n이제 도망칠 수 없다!",
   "trappedOnRemove": "{{pokemonNameWithAffix}}[[는]]\n{{moveName}}로부터 풀려났다!",

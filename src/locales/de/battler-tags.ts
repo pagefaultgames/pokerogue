@@ -9,7 +9,6 @@ export const battlerTags: SimpleTranslationEntries = {
   "nightmareDesc": "Nachtmahr",
   "ingrainDesc": "Verwurzlung",
   "drowsyDesc": "Schläfrigkeit",
-
   "rechargingLapse": "{{pokemonNameWithAffix}} kann sich wegen des Rückstoßes durch den Angriff nicht bewegen!",
   "trappedOnAdd": "{{pokemonNameWithAffix}} kann nicht mehr fliehen!",
   "trappedOnRemove": "{{pokemonNameWithAffix}} wurde von {{moveName}} befreit.",

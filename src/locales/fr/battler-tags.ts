@@ -9,7 +9,6 @@ export const battlerTags: SimpleTranslationEntries = {
   "nightmareDesc": "les cauchemars",
   "ingrainDesc": "l’enracinement",
   "drowsyDesc": "la somnolence",
-
   "rechargingLapse": "Le contrecoup empêche {{pokemonNameWithAffix}}\n de bouger !",
   "trappedOnAdd": "{{pokemonNameWithAffix}}\nne peut plus s’échapper !",
   "trappedOnRemove": "{{pokemonNameWithAffix}} est libéré\nde la capacité {{moveName}} !",

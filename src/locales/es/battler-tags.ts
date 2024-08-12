@@ -9,7 +9,6 @@ export const battlerTags: SimpleTranslationEntries = {
   "nightmareDesc": "nightmares",
   "ingrainDesc": "roots",
   "drowsyDesc": "drowsiness",
-
   "rechargingLapse": "{{pokemonNameWithAffix}} must\nrecharge!",
   "trappedOnAdd": "{{pokemonNameWithAffix}} can no\nlonger escape!",
   "trappedOnRemove": "{{pokemonNameWithAffix}} was freed\nfrom {{moveName}}!",

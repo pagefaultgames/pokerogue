@@ -9,7 +9,6 @@ export const battlerTags: SimpleTranslationEntries = {
   "nightmareDesc": "os pesadelos",
   "ingrainDesc": "o enraizamento",
   "drowsyDesc": "a sonolência",
-
   "rechargingLapse": "{{pokemonNameWithAffix}} precisa\nrecarregar!",
   "trappedOnAdd": "{{pokemonNameWithAffix}} não pode\nmais escapar!",
   "trappedOnRemove": "{{pokemonNameWithAffix}} foi liberto\nde {{moveName}}!",

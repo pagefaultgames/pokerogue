@@ -9,7 +9,6 @@ export const battlerTags: SimpleTranslationEntries = {
   "nightmareDesc": "惡夢",
   "ingrainDesc": "扎根",
   "drowsyDesc": "瞌睡",
-
   "rechargingLapse": "{{pokemonNameWithAffix}}因攻擊的反作用力而無法動彈！",
   "trappedOnAdd": "{{pokemonNameWithAffix}}不能逃跑！",
   "trappedOnRemove": "{{pokemonNameWithAffix}}擺脫了{{moveName}}！",
