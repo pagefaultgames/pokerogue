@@ -7,7 +7,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "使用这些宝可梦开始游戏吗？",
-  "confirmExit": "Do you want to exit?",
+  "confirmExit": "确定要退出吗？",
   "invalidParty": "初始队伍不可用！",
   "gen1": "I",
   "gen2": "II",
@@ -28,6 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "toggleIVs": "显示个体",
   "manageMoves": "管理招式",
   "manageNature": "管理性格",
+  "addToFavorites": "Add to Favorites",
+  "removeFromFavorites": "Remove from Favorites",
   "useCandies": "使用糖果",
   "selectNature": "选择性格",
   "selectMoveSwapOut": "选择要替换的招式。",
@@ -41,6 +43,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "cycleAbility": ": 特性",
   "cycleNature": ": 性格",
   "cycleVariant": ": 变种",
+  "goFilter": ": 转到筛选",
   "enablePassive": "启用被动",
   "disablePassive": "禁用被动",
   "locked": "未解锁",

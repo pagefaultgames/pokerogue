@@ -1,17 +1,13 @@
 import { BattleStat } from "#app/data/battle-stat.js";
-import {
-  MoveEffectPhase,
-  MoveEndPhase,
-  StatChangePhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { MoveEndPhase, StatChangePhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -59,8 +55,8 @@ describe("Moves - Make It Rain", () => {
 
     await game.startBattle([Species.CHARIZARD]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
 
@@ -95,11 +91,8 @@ describe("Moves - Make It Rain", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
-
     // Make Make It Rain miss the first target
-    const moveEffectPhase = game.scene.getCurrentPhase() as MoveEffectPhase;
-    vi.spyOn(moveEffectPhase, "hitCheck").mockReturnValueOnce(false);
+    await game.move.forceMiss(true);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 

@@ -1,14 +1,14 @@
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { getMovePosition } from "../utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { WeatherType } from "#app/enums/weather-type.js";
 
 
-describe("Ability Timing", () => {
+describe("Abilities - Sand Spit", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -42,7 +42,7 @@ describe("Ability Timing", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
 
-    expect(game.scene.arena.weather.weatherType).toBe(WeatherType.SANDSTORM);
+    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
   }, 20000);
 
   it("should not trigger when targetted with status moves", async() => {

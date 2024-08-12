@@ -21,6 +21,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isGlowing": "{{pokemonName}} became cloaked in a harsh light!",
   "bellChimed": "A bell chimed!",
   "foresawAnAttack": "{{pokemonName}} foresaw\nan attack!",
+  "isTighteningFocus": "{{pokemonName}} is\ntightening its focus!",
   "hidUnderwater": "{{pokemonName}} hid\nunderwater!",
   "soothingAromaWaftedThroughArea": "A soothing aroma wafted through the area!",
   "sprangUp": "{{pokemonName}} sprang up!",
@@ -55,8 +56,10 @@ export const moveTriggers: SimpleTranslationEntries = {
   "sacrificialFullRestore": "{{pokemonName}}'s Healing Wish\nwas granted!",
   "invertStats": "{{pokemonName}}'s stat changes\nwere all reversed!",
   "resetStats": "{{pokemonName}}'s stat changes\nwere eliminated!",
+  "statEliminated": "¡Los cambios en estadísticas fueron eliminados!",
   "faintCountdown": "{{pokemonName}}\nwill faint in {{turnCount}} turns.",
   "copyType": "{{pokemonName}}'s type\nchanged to match {{targetPokemonName}}'s!",
   "suppressAbilities": "{{pokemonName}}'s ability\nwas suppressed!",
   "swapArenaTags": "{{pokemonName}} swapped the battle effects affecting each side of the field!",
+  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
 } as const;

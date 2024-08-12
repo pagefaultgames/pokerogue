@@ -7,7 +7,8 @@ import i18next from "i18next";
 export enum DropDownState {
     ON = 0,
     OFF = 1,
-    EXCLUDE = 2
+    EXCLUDE = 2,
+    UNLOCKABLE = 3
 }
 
 export enum DropDownType {
@@ -46,6 +47,7 @@ export class DropDownOption extends Phaser.GameObjects.Container {
   private onColor = 0x33bbff;
   private offColor = 0x272727;
   private excludeColor = 0xff5555;
+  private unlockableColor = 0xffff00;
 
   constructor(scene: SceneBase, val: any, labels: DropDownLabel | DropDownLabel[]) {
     super(scene);
@@ -113,6 +115,9 @@ export class DropDownOption extends Phaser.GameObjects.Container {
       break;
     case DropDownState.EXCLUDE:
       this.toggle.setTint(this.excludeColor);
+      break;
+    case DropDownState.UNLOCKABLE:
+      this.toggle.setTint(this.unlockableColor);
       break;
     }
   }
@@ -233,9 +238,9 @@ export class DropDownOption extends Phaser.GameObjects.Container {
   /**
    * @returns the x position to use for the current label depending on if it has a sprite or not
    */
-  getCurrentLabelX(): number {
+  getCurrentLabelX(): number | undefined {
     if (this.labels[this.currentLabelIndex].sprite) {
-      return this.labels[this.currentLabelIndex].sprite.x;
+      return this.labels[this.currentLabelIndex].sprite?.x;
     }
     return this.text.x;
   }
@@ -313,7 +318,7 @@ export class DropDown extends Phaser.GameObjects.Container {
       }
     });
 
-    this.window = addWindow(scene, 0, 0, optionWidth, options[options.length - 1].y + optionHeight + optionPaddingY, false, false, null, null, WindowVariant.XTHIN);
+    this.window = addWindow(scene, 0, 0, optionWidth, options[options.length - 1].y + optionHeight + optionPaddingY, false, false, undefined, undefined, WindowVariant.XTHIN);
     this.add(this.window);
     this.add(options);
     this.add(this.cursorObj);
@@ -465,7 +470,7 @@ export class DropDown extends Phaser.GameObjects.Container {
    * - the settings dictionary is like this { val: any, state: DropDownState, cursor: boolean, dir: SortDirection }
    */
   private getSettings(): any[] {
-    const settings = [];
+    const settings : any[] = [];
     for (let i = 0; i < this.options.length; i++) {
       settings.push({ val: this.options[i].val, state: this.options[i].state , cursor: (this.cursor === i), dir: this.options[i].dir });
     }
@@ -570,7 +575,7 @@ export class DropDown extends Phaser.GameObjects.Container {
       const optionWidth = this.options[i].getWidth();
       if (optionWidth > maxWidth) {
         maxWidth = optionWidth;
-        x = this.options[i].getCurrentLabelX();
+        x = this.options[i].getCurrentLabelX() ?? 0;
       }
     }
     this.window.width = maxWidth + x - this.window.x + 6;

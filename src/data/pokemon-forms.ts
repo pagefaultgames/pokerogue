@@ -181,7 +181,7 @@ export class SpeciesFormChange {
     return true;
   }
 
-  findTrigger(triggerType: Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger {
+  findTrigger(triggerType: Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger | null {
     if (!this.trigger.hasTriggerType(triggerType)) {
       return null;
     }
@@ -189,7 +189,7 @@ export class SpeciesFormChange {
     const trigger = this.trigger;
 
     if (trigger instanceof SpeciesFormChangeCompoundTrigger) {
-      return trigger.triggers.find(t => t.hasTriggerType(triggerType));
+      return trigger.triggers.find(t => t.hasTriggerType(triggerType))!; // TODO: is this bang correct?
     }
 
     return trigger;
@@ -198,11 +198,11 @@ export class SpeciesFormChange {
 
 export class SpeciesFormChangeCondition {
   public predicate: SpeciesFormChangeConditionPredicate;
-  public enforceFunc: SpeciesFormChangeConditionEnforceFunc;
+  public enforceFunc: SpeciesFormChangeConditionEnforceFunc | null;
 
   constructor(predicate: SpeciesFormChangeConditionPredicate, enforceFunc?: SpeciesFormChangeConditionEnforceFunc) {
     this.predicate = predicate;
-    this.enforceFunc = enforceFunc;
+    this.enforceFunc = enforceFunc!; // TODO: is this bang correct?
   }
 }
 
@@ -314,7 +314,7 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return (!!pokemon.moveset.filter(m => m.moveId === this.move).length) === this.known;
+    return (!!pokemon.moveset.filter(m => m?.moveId === this.move).length) === this.known;
   }
 }
 
@@ -332,7 +332,7 @@ export abstract class SpeciesFormChangeMoveTrigger extends SpeciesFormChangeTrig
 export class SpeciesFormChangePreMoveTrigger extends SpeciesFormChangeMoveTrigger {
   canChange(pokemon: Pokemon): boolean {
     const command = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
-    return command?.move && this.movePredicate(command.move.move) === this.used;
+    return !!command?.move && this.movePredicate(command.move.move) === this.used;
   }
 }
 
@@ -371,6 +371,9 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
   }
   if (isRevert) {
     return i18next.t("battlePokemonForm:revertChange", { pokemonName: getPokemonNameWithAffix(pokemon) });
+  }
+  if (pokemon.getAbility().id === Abilities.DISGUISE) {
+    return i18next.t("battlePokemonForm:disguiseChange");
   }
   return i18next.t("battlePokemonForm:formChange", { preName });
 }
@@ -828,6 +831,12 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.EISCUE]: [
     new SpeciesFormChange(Species.EISCUE, "", "no-ice", new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.EISCUE, "no-ice", "", new SpeciesFormChangeManualTrigger(), true),
+  ],
+  [Species.CRAMORANT]: [
+    new SpeciesFormChange(Species.CRAMORANT, "", "gulping", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() >= .5)),
+    new SpeciesFormChange(Species.CRAMORANT, "", "gorging", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() < .5)),
+    new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeManualTrigger, true),
+    new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeManualTrigger, true),
   ]
 };
 

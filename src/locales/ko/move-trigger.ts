@@ -21,6 +21,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isGlowing": "{{pokemonName}}를(을)\n강렬한 빛이 감쌌다!",
   "bellChimed": "방울소리가 울려 퍼졌다!",
   "foresawAnAttack": "{{pokemonName}}는(은)\n미래의 공격을 예지했다!",
+  "isTighteningFocus": "{{pokemonName}}[[는]]\n집중력을 높이고 있다!",
   "hidUnderwater": "{{pokemonName}}는(은)\n물속에 몸을 숨겼다!",
   "soothingAromaWaftedThroughArea": "기분 좋은 향기가 퍼졌다!",
   "sprangUp": "{{pokemonName}}는(은)\n높이 뛰어올랐다!",
@@ -55,8 +56,10 @@ export const moveTriggers: SimpleTranslationEntries = {
   "sacrificialFullRestore": "{{pokemonName}}의\n치유소원이 이루어졌다!",
   "invertStats": "{{pokemonName}}[[는]]\n능력 변화가 뒤집혔다!",
   "resetStats": "{{pokemonName}}의 모든 상태가\n원래대로 되돌아왔다!",
+  "statEliminated": "모든 상태가 원래대로 되돌아왔다!",
   "faintCountdown": "{{pokemonName}}[[는]]\n{{turnCount}}턴 후에 쓰러져 버린다!",
   "copyType": "{{pokemonName}}[[는]]\n{{targetPokemonName}}[[와]] 같은 타입이 되었다!",
   "suppressAbilities": "{{pokemonName}}의\n특성이 효과를 발휘하지 못하게 되었다!",
   "swapArenaTags": "{{pokemonName}}[[는]]\n서로의 필드 효과를 교체했다!",
+  "exposedMove": "{{pokemonName}}[[는]]\n{{targetPokemonName}}의 정체를 꿰뚫어 보았다!",
 } as const;

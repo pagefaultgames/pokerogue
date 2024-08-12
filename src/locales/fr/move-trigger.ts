@@ -21,6 +21,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isGlowing": "{{pokemonName}} est entouré\nd’une lumière intense !",
   "bellChimed": "Un grelot sonne !",
   "foresawAnAttack": "{{pokemonName}}\nprévoit une attaque !",
+  "isTighteningFocus": "{{pokemonName}} se concentre\nau maximum !",
   "hidUnderwater": "{{pokemonName}}\nse cache sous l’eau !",
   "soothingAromaWaftedThroughArea": "Une odeur apaisante flotte dans l’air !",
   "sprangUp": "{{pokemonName}}\nse propulse dans les airs !",
@@ -55,8 +56,10 @@ export const moveTriggers: SimpleTranslationEntries = {
   "sacrificialFullRestore": "Le Vœu Soin est exaucé et profite\nà {{pokemonName}} !",
   "invertStats": "Les changements de stats\nde {{pokemonName}} sont inversés !",
   "resetStats": "Les changements de stats\nde {{pokemonName}} ont tous été annulés !",
+  "statEliminated": "Les changements de stats ont tous été annulés !",
   "faintCountdown": "{{pokemonName}}\nsera K.O. dans {{turnCount}} tours !",
   "copyType": "{{pokemonName}} prend le type\nde {{targetPokemonName}} !",
   "suppressAbilities": "Le talent de {{pokemonName}}\na été rendu inactif !",
   "swapArenaTags": "Les effets affectant chaque côté du terrain\nont été échangés par {{pokemonName}} !",
+  "exposedMove": "{{targetPokemonName}} est identifié\npar {{pokemonName}} !",
 } as const;

@@ -15,6 +15,7 @@ export const settings: SimpleTranslationEntries = {
   "skipSeenDialogues": "본 대화 생략",
   "battleStyle": "시합 룰",
   "enableRetries": "재도전 허용",
+  "hideIvs": "개체값탐지기 효과 끄기",
   "tutorials": "튜토리얼",
   "touchControls": "터치 컨트롤",
   "vibrations": "진동",
@@ -96,5 +97,6 @@ export const settings: SimpleTranslationEntries = {
   "controller": "컨트롤러",
   "gamepadSupport": "게임패드 지원",
   "showBgmBar": "BGM 제목 보여주기",
+  "moveTouchControls": "터치 컨트롤 이동",
   "shopOverlayOpacity": "상점 오버레이 투명도"
 } as const;
