@@ -394,6 +394,11 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
     super(immuneType, condition);
   }
 
+  /**
+   * Applies immunity if the move used is not a status move.
+   * Type immunity abilities that do not give additional benefits (HP recovery, stat boosts, etc) are not immune to status moves of the type
+   * Example: Levitate
+   */
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (move.category !== MoveCategory.STATUS) {
       return super.applyPreDefend(pokemon, passive, attacker, move, cancelled, args);
