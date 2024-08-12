@@ -1920,6 +1920,7 @@ export class EncounterPhase extends BattlePhase {
     handleTutorial(this.scene, Tutorial.Access_Menu).then(() => {
       // Auto-show the flyout
       if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+        this.scene.arenaFlyout.display2()
         this.scene.arenaFlyout.toggleFlyout(true)
         this.scene.arenaFlyout.isAuto = true
       }
@@ -6851,7 +6852,7 @@ export class SelectModifierPhase extends BattlePhase {
     if (modifierOverride) {
       //modifierCount.value = modifierOverride
     }
-    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, true, true, true);
+    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, true, true);
     typeOptions.forEach((option, idx) => {
       //console.log(option.type.name)
     })
