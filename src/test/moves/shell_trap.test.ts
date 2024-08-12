@@ -1,7 +1,6 @@
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "#test/utils/gameManager";
-import { Abilities } from "#app/enums/abilities.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
 import { allMoves } from "#app/data/move.js";
@@ -30,10 +29,8 @@ describe("Moves - Shell Trap", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("double")
-      .ability(Abilities.UNNERVE)
-      .moveset([Moves.SHELL_TRAP, Moves.SPLASH])
+      .moveset([Moves.SHELL_TRAP, Moves.SPLASH, Moves.BULLDOZE])
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.INSOMNIA)
       .enemyMoveset(Array(4).fill(Moves.RAZOR_LEAF))
       .startingLevel(100)
       .enemyLevel(100);
@@ -114,6 +111,32 @@ describe("Moves - Shell Trap", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       enemyPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
+    }, TIMEOUT
+  );
+
+  it(
+    "should not activate from an ally's attack",
+    async () => {
+      game.override.enemyMoveset(SPLASH_ONLY);
+
+      await game.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+
+      const playerPokemon = game.scene.getPlayerField();
+      const enemyPokemon = game.scene.getEnemyField();
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SHELL_TRAP));
+      game.doAttack(getMovePosition(game.scene, 1, Moves.BULLDOZE));
+
+      await game.phaseInterceptor.to(MoveEndPhase);
+
+      const movePhase = game.scene.getCurrentPhase();
+      expect(movePhase instanceof MovePhase).toBeTruthy();
+      expect((movePhase as MovePhase).pokemon).not.toBe(playerPokemon[1]);
+
+      const enemyStartingHp = enemyPokemon.map(p => p.hp);
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+      enemyPokemon.forEach((p, i) => expect(p.hp).toBe(enemyStartingHp[i]));
     }, TIMEOUT
   );
 });
