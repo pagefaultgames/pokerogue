@@ -876,10 +876,10 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CLAWITZER, 37, null, null)
   ],
   [Species.TYRUNT]: [
-    new SpeciesEvolution(Species.TYRANTRUM, 39, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.TYRANTRUM, 39, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY))
   ],
   [Species.AMAURA]: [
-    new SpeciesEvolution(Species.AURORUS, 39, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.AURORUS, 39, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT))
   ],
   [Species.GOOMY]: [
     new SpeciesEvolution(Species.HISUI_SLIGGOO, 40, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.LONG),
@@ -921,7 +921,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.TOUCANNON, 28, null, null)
   ],
   [Species.YUNGOOS]: [
-    new SpeciesEvolution(Species.GUMSHOOS, 20, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.GUMSHOOS, 20, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY))
   ],
   [Species.GRUBBIN]: [
     new SpeciesEvolution(Species.CHARJABUG, 20, null, null)
@@ -939,7 +939,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.ARAQUANID, 22, null, null)
   ],
   [Species.FOMANTIS]: [
-    new SpeciesEvolution(Species.LURANTIS, 34, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.LURANTIS, 34, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY))
   ],
   [Species.MORELULL]: [
     new SpeciesEvolution(Species.SHIINOTIC, 24, null, null)
@@ -976,7 +976,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.MELMETAL, 48, null, null)
   ],
   [Species.ALOLA_RATTATA]: [
-    new SpeciesEvolution(Species.ALOLA_RATICATE, 20, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.ALOLA_RATICATE, 20, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT))
   ],
   [Species.ALOLA_DIGLETT]: [
     new SpeciesEvolution(Species.ALOLA_DUGTRIO, 26, null, null)
@@ -1099,7 +1099,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.GALAR_LINOONE, 20, null, null)
   ],
   [Species.GALAR_LINOONE]: [
-    new SpeciesEvolution(Species.OBSTAGOON, 35, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.OBSTAGOON, 35, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT))
   ],
   [Species.GALAR_YAMASK]: [
     new SpeciesEvolution(Species.RUNERIGUS, 34, null, null)
@@ -1207,7 +1207,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.GLIMMORA, 35, null, null)
   ],
   [Species.GREAVARD]: [
-    new SpeciesEvolution(Species.HOUNDSTONE, 30, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.HOUNDSTONE, 30, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT))
   ],
   [Species.FRIGIBAX]: [
     new SpeciesEvolution(Species.ARCTIBAX, 35, null, null)
