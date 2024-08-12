@@ -414,7 +414,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "ブレイズカセット",
     "CHILL_DRIVE": "フリーズカセット",
     "DOUSE_DRIVE": "アクアカセット",
-    "ULTRANECROZIUM_Z": "Ultranecrozium Z",
+    "ULTRANECROZIUM_Z": "ウルトラネクロZ",
 
     "FIST_PLATE": "Fist Plate",
     "SKY_PLATE": "Sky Plate",
