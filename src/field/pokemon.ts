@@ -10,7 +10,7 @@ import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat } from "../data/pokemon-stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
+import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
@@ -707,10 +707,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Retrieves the entire set of in-battle stat stages of the {@linkcode Pokemon}.
-   * @returns the numeric values of the {@linkcode Pokemon}'s in-battle stat stages if available, undefined otherwise
+   * @returns the numeric values of the {@linkcode Pokemon}'s in-battle stat stages if available, a fresh stat stage array otherwise
    */
-  getStatStages(): number[] | undefined {
-    return this.summonData ? this.summonData.statStages : undefined;
+  getStatStages(): number[] {
+    return this.summonData ? this.summonData.statStages : [ 0, 0, 0, 0, 0, 0, 0 ];
   }
 
   /**
@@ -817,22 +817,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
     }
 
+    // Get and manipulate base stats
     const baseStats = this.getSpeciesForm(true).baseStats.slice();
     if (this.isFusion()) {
       const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
-      for (let s = 0; s < this.stats.length; s++) {
+      for (const s of PERMANENT_STATS) {
         baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
       }
     } else if (this.scene.gameMode.isSplicedOnly) {
-      for (let s = 0; s < this.stats.length; s++) {
+      for (const s of PERMANENT_STATS) {
         baseStats[s] = Math.ceil(baseStats[s] / 2);
       }
     }
+    this.scene.applyModifiers(BaseStatModifier, this.isPlayer(), this, baseStats);
 
-    this.scene.applyModifiers(PokemonBaseStatModifier, this.isPlayer(), this, baseStats);
+    // Using base stats, calculate and store stats one by one
     for (const s of PERMANENT_STATS) {
-      const baseStat = baseStats[s];
-      let value = Math.floor(((2 * baseStat + this.ivs[s]) * this.level) * 0.01);
+      let value = Math.floor(((2 * baseStats[s] + this.ivs[s]) * this.level) * 0.01);
       if (s === Stat.HP) {
         value = value + this.level + 10;
         if (this.hasAbility(Abilities.WONDER_GUARD, false, true)) {

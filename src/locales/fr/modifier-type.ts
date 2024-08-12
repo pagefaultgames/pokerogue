@@ -63,8 +63,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AllPokemonLevelIncrementModifierType": {
       description: "Fait monter toute l’équipe de {{levels}} niveau·x.",
     },
-    "PokemonBaseStatBoosterModifierType": {
-      description: "Augmente de 10% {{statName}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
+    "BaseStatBoosterModifierType": {
+      description: "Augmente de 10% {{stat}} de base de son porteur. Plus les IV sont hauts, plus il peut en porter.",
     },
     "AllPokemonFullHpRestoreModifierType": {
       description: "Restaure tous les PV de toute l’équipe.",

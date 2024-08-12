@@ -63,8 +63,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AllPokemonLevelIncrementModifierType": {
       description: "すべてのパーティメンバーのレベルを1あげる",
     },
-    "PokemonBaseStatBoosterModifierType": {
-      description: "ポケモンの{{statName}}のきほんステータスを10パーセントあげる。こたいちがたかいほどスタックのげんかいもたかくなる。",
+    "BaseStatBoosterModifierType": {
+      description: "ポケモンの{{stat}}のきほんステータスを10パーセントあげる。こたいちがたかいほどスタックのげんかいもたかくなる。",
     },
     "AllPokemonFullHpRestoreModifierType": {
       description: "すべてのポケモンのHPを100パーセントかいふくする",

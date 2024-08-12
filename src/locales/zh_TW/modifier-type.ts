@@ -63,9 +63,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     AllPokemonLevelIncrementModifierType: {
       description: "Increases all party members' level by {{levels}}.",
     },
-    PokemonBaseStatBoosterModifierType: {
+    BaseStatBoosterModifierType: {
       description:
-                "增加持有者的{{statName}}10%，個體值越高堆疊\n上限越高。",
+                "增加持有者的{{stat}}10%，個體值越高堆疊\n上限越高。",
     },
     AllPokemonFullHpRestoreModifierType: {
       description: "所有寶可夢完全恢復HP。",

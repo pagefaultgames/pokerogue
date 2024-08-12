@@ -6,7 +6,7 @@ import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { PokemonBaseStatModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
+import { BaseStatModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
 import { allMoves, ForceSwitchOutAttr } from "../data/move";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
@@ -996,8 +996,8 @@ export default class PartyUiHandler extends MessageUiHandler {
       if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && this.transferQuantitiesMax[option] > 1) {
         const itemModifier = itemModifiers[option];
 
-        /** Not sure why getMaxHeldItemCount had an error, but it only checks the Pokemon parameter if the modifier is PokemonBaseStatModifier */
-        if (itemModifier === undefined || itemModifier instanceof PokemonBaseStatModifier) {
+        /** Not sure why getMaxHeldItemCount had an error, but it only checks the Pokemon parameter if the modifier is BaseStatModifier */
+        if (itemModifier === undefined || itemModifier instanceof BaseStatModifier) {
           continue;
         }
 

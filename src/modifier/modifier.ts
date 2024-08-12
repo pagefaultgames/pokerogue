@@ -23,7 +23,7 @@ import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
 import { Species } from "#enums/species";
-import { BATTLE_STATS, TEMP_BATTLE_STATS, TempBattleStat } from "#app/enums/stat";
+import { BATTLE_STATS, PermanentStat, TEMP_BATTLE_STATS, TempBattleStat } from "#app/enums/stat"; // TODO: Add Type
 import i18next from "i18next";
 
 import { allMoves } from "#app/data/move.js";
@@ -708,24 +708,30 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
   }
 }
 
-export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
-  protected stat: Stat;
+/**
+ * Modifier used for held items, specifically vitamins like Carbos, Hp Up, etc., that
+ * increase the value of a given {@linkcode PermanentStat}.
+ * @extends LapsingPersistentModifier
+ * @see {@linkcode apply}
+ */
+export class BaseStatModifier extends PokemonHeldItemModifier {
+  protected stat: PermanentStat;
   readonly isTransferrable: boolean = false;
 
-  constructor(type: ModifierTypes.PokemonBaseStatBoosterModifierType, pokemonId: integer, stat: Stat, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: integer, stat: PermanentStat, stackCount?: integer) {
     super(type, pokemonId, stackCount);
     this.stat = stat;
   }
 
   matchType(modifier: Modifier): boolean {
-    if (modifier instanceof PokemonBaseStatModifier) {
-      return (modifier as PokemonBaseStatModifier).stat === this.stat;
+    if (modifier instanceof BaseStatModifier) {
+      return (modifier as BaseStatModifier).stat === this.stat;
     }
     return false;
   }
 
   clone(): PersistentModifier {
-    return new PokemonBaseStatModifier(this.type as ModifierTypes.PokemonBaseStatBoosterModifierType, this.pokemonId, this.stat, this.stackCount);
+    return new BaseStatModifier(this.type, this.pokemonId, this.stat, this.stackCount);
   }
 
   getArgs(): any[] {
@@ -733,12 +739,12 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   }
 
   shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+    return super.shouldApply(args) && args.length === 2 && Array.isArray(args[1]);
   }
 
   apply(args: any[]): boolean {
-    args[1][this.stat] = Math.min(Math.floor(args[1][this.stat] * (1 + this.getStackCount() * 0.1)), 999999);
-
+    const baseStats = args[1] as number[];
+    baseStats[this.stat] = Math.floor(baseStats[this.stat] * (1 + this.getStackCount() * 0.1));
     return true;
   }
 

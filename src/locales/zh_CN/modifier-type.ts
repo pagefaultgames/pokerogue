@@ -63,8 +63,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AllPokemonLevelIncrementModifierType": {
       description: "使一只寶可夢的等級提升{{levels}}級。",
     },
-    "PokemonBaseStatBoosterModifierType": {
-      description: "增加10%持有者的{{statName}}，\n个体值越高堆叠上限越高。",
+    "BaseStatBoosterModifierType": {
+      description: "增加10%持有者的{{stat}}，\n个体值越高堆叠上限越高。",
     },
     "AllPokemonFullHpRestoreModifierType": {
       description: "所有宝可梦完全回复HP。",

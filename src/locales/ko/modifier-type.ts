@@ -63,8 +63,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "AllPokemonLevelIncrementModifierType": {
       description: "자신의 모든 포켓몬의 레벨이 {{levels}}만큼 상승한다.",
     },
-    "PokemonBaseStatBoosterModifierType": {
-      description: "지니게 하면 {{statName}} 종족값을 10% 올려준다. 개체값이 높을수록 더 많이 누적시킬 수 있다.",
+    "BaseStatBoosterModifierType": {
+      description: "지니게 하면 {{stat}} 종족값을 10% 올려준다. 개체값이 높을수록 더 많이 누적시킬 수 있다.",
     },
     "AllPokemonFullHpRestoreModifierType": {
       description: "자신의 포켓몬의 HP를 모두 회복한다.",
