@@ -8,7 +8,7 @@ import { getMovePosition } from "../utils/gameManagerUtils";
 import { MoveEffectPhase } from "#app/phases.js";
 import { BattlerIndex } from "#app/battle.js";
 
-describe("Internals", () => {
+describe("Moves - Miracle Eye", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
