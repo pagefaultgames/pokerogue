@@ -8,7 +8,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
-describe("Ability - Stall", () => {
+describe("Abilities - Stall", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
