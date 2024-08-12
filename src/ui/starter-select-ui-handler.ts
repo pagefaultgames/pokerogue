@@ -973,13 +973,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
    * Set the selections for all filters to their default starting value
    */
   resetFilters() : void {
-    const genDropDown: DropDown = this.filterBar.getFilter(DropDownColumn.GEN);
+    const caughtDropDown: DropDown = this.filterBar.getFilter(DropDownColumn.CAUGHT);
 
     this.filterBar.setValsToDefault();
 
-    if (!this.scene.gameMode.isChallenge) {
-      // if not in a challenge, in Gen hybrid filter hovering mode, set the cursor to the Gen1
-      genDropDown.setCursor(1);
+    // initial setting, in caught filter, select the options excluding the uncaught option
+    for (let i = 0; i < caughtDropDown.options.length; i++) {
+      // if the option is not "ALL" or "UNCAUGHT", toggle it
+      if (caughtDropDown.options[i].val !== "ALL" && caughtDropDown.options[i].val !== "UNCAUGHT") {
+        caughtDropDown.toggleOptionState(i);
+      }
     }
   }
 
