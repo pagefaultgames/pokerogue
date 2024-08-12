@@ -343,17 +343,33 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
     if ([ MoveTarget.BOTH_SIDES, MoveTarget.ENEMY_SIDE, MoveTarget.USER_SIDE ].includes(move.moveTarget)) {
       return false;
     }
-
     if (attacker !== pokemon && move.type === this.immuneType) {
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
-
     return false;
   }
 
   override getCondition(): AbAttrCondition | null {
     return this.condition;
+  }
+}
+
+export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
+  constructor(immuneType: Type, condition?: AbAttrCondition) {
+    super(immuneType, condition);
+  }
+
+  /**
+   * Applies immunity if the move used is not a status move.
+   * Type immunity abilities that do not give additional benefits (HP recovery, stat boosts, etc) are not immune to status moves of the type
+   * Example: Levitate
+   */
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (move.category !== MoveCategory.STATUS) {
+      return super.applyPreDefend(pokemon, passive, attacker, move, cancelled, args);
+    }
+    return false;
   }
 }
 
@@ -4375,7 +4391,7 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.LEVITATE, 3)
-      .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))
+      .attr(AttackTypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))
       .ignorable(),
     new Ability(Abilities.EFFECT_SPORE, 3)
       .attr(EffectSporeAbAttr),
