@@ -916,13 +916,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * excluding any moves already known.
    *
    * Available egg moves are only included if the {@linkcode Pokemon} was
-   * in the starting party of the run.
+   * in the starting party of the run and if Fresh Start is not active.
    * @returns an array of {@linkcode Moves}, the length of which is determined
    * by how many learnable moves there are for the {@linkcode Pokemon}.
    */
   getLearnableLevelMoves(): Moves[] {
     let levelMoves = this.getLevelMoves(1, true).map(lm => lm[1]);
-    if (this.metBiome === -1) {
+    if (this.metBiome === -1 && !this.scene.gameMode.isFreshStartChallenge()) {
       levelMoves = this.getUnlockedEggMoves().concat(levelMoves);
     }
     return levelMoves.filter(lm => !this.moveset.some(m => m?.moveId === lm));
