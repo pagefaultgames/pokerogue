@@ -9233,6 +9233,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 60, Moves.FOCUS_PUNCH ],
   ],
   [Species.TYMPOLE]: [
+    [ 1, Moves.BUBBLE ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.ECHOED_VOICE ],
     [ 4, Moves.ACID ],
@@ -9249,6 +9250,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 48, Moves.HYDRO_PUMP ],
   ],
   [Species.PALPITOAD]: [
+    [ 1, Moves.BUBBLE ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.SUPERSONIC ],
     [ 1, Moves.ACID ],
@@ -9266,6 +9268,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.SEISMITOAD]: [
     [ EVOLVE_MOVE, Moves.DRAIN_PUNCH ],
+    [ 1, Moves.BUBBLE ],
     [ 1, Moves.GROWL ],
     [ 1, Moves.SUPERSONIC ],
     [ 1, Moves.ACID ],
@@ -10069,7 +10072,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.VANILLITE]: [
     [ 1, Moves.HARDEN ],
     [ 1, Moves.ASTONISH ],
-    [ 1, Moves.ICICLE_SPEAR ], //USUM
+    [ 1, Moves.POWDER_SNOW ], //Custom
     [ 4, Moves.TAUNT ],
     [ 8, Moves.MIST ],
     [ 12, Moves.ICY_WIND ],
@@ -10088,7 +10091,6 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.HARDEN ],
     [ 1, Moves.TAUNT ],
     [ 1, Moves.ASTONISH ],
-    [ 1, Moves.ICICLE_SPEAR ], //USUM
     [ 12, Moves.ICY_WIND ],
     [ 16, Moves.AVALANCHE ],
     [ 20, Moves.HAIL ],
@@ -10108,7 +10110,6 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.WEATHER_BALL ],
     [ 1, Moves.ICICLE_CRASH ],
     [ 1, Moves.FREEZE_DRY ],
-    [ 1, Moves.ICICLE_SPEAR ], //USUM
     [ 12, Moves.ICY_WIND ],
     [ 16, Moves.AVALANCHE ],
     [ 20, Moves.HAIL ],
