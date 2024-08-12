@@ -18,7 +18,7 @@ const GACHA_SHINY_UP_SHINY_RATE = 64;
 const SAME_SPECIES_EGG_SHINY_RATE = 24;
 const SAME_SPECIES_EGG_HA_RATE = 8;
 const MANAPHY_EGG_MANAPHY_RATE = 8;
-const VOUCHER_EGG_HA_RATE = 192;
+const GACHA_EGG_HA_RATE = 192;
 
 // 1/x for legendary eggs, 1/x*2 for epic eggs, 1/x*4 for rare eggs, and 1/x*8 for common eggs
 const DEFAULT_RARE_EGGMOVE_RATE = 6;
@@ -216,8 +216,8 @@ export class Egg {
     // the override is set or the egg hits the chance
     let abilityIndex: number | undefined = undefined;
     const sameSpeciesEggHACheck = (this._sourceType === EggSourceType.SAME_SPECIES_EGG && !Utils.randSeedInt(SAME_SPECIES_EGG_HA_RATE));
-    const voucherEggHACheck = (!(this._sourceType === EggSourceType.SAME_SPECIES_EGG) && !Utils.randSeedInt(VOUCHER_EGG_HA_RATE));
-    if (pokemonSpecies.abilityHidden && (this._overrideHiddenAbility || sameSpeciesEggHACheck || voucherEggHACheck)) {
+    const gachaEggHACheck = (!(this._sourceType === EggSourceType.SAME_SPECIES_EGG) && !Utils.randSeedInt(GACHA_EGG_HA_RATE));
+    if (pokemonSpecies.abilityHidden && (this._overrideHiddenAbility || sameSpeciesEggHACheck || gachaEggHACheck)) {
       abilityIndex = 2;
     }
 
