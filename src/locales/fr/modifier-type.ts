@@ -42,17 +42,17 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonPpUpModifierType": {
-	  description: "Augmente le max de PP de {{upPoints}} à une capacité d’un Pokémon pour chaque 5 PP max (max : 3).",
+      description: "Augmente le max de PP de {{upPoints}} à une capacité d’un Pokémon pour chaque 5 PP max (max : 3).",
     },
     "PokemonNatureChangeModifierType": {
       name: "Aromate {{natureName}}",
-	  description: "Donne la nature {{natureName}} à un Pokémon et la débloque pour le starter lui étant lié.",
+      description: "Donne la nature {{natureName}} à un Pokémon et la débloque pour le starter lui étant lié.",
     },
     "DoubleBattleChanceBoosterModifierType": {
-	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats.",
+      description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats.",
     },
     "TempBattleStatBoosterModifierType": {
-	  description: "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats.",
+      description: "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats.",
     },
     "AttackTypeBoosterModifierType": {
       description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon.",
@@ -93,7 +93,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Augmente de {{accuracyAmount}} la précision des capacités (maximum 100).",
     },
     "PokemonMultiHitModifierType": {
-	  description: "Frappe une fois de plus en échange d’une baisse de puissance de respectivement 60/75/82,5% par cumul.",
+      description: "Frappe une fois de plus en échange d’une baisse de puissance de respectivement 60/75/82,5% par cumul.",
     },
     "TmModifierType": {
       name: "CT{{moveId}} - {{moveName}}",
