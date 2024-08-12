@@ -3087,8 +3087,8 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "uku",
   },
   type_null: {
-    fusionPrefix: "Type: N",
-    fusionSuffix: "e: Null",
+    fusionPrefix: "Código C",
+    fusionSuffix: "ero",
   },
   silvally: {
     fusionPrefix: "Silv",
@@ -3935,52 +3935,52 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ambit",
   },
   great_tusk: {
-    fusionPrefix: "Great",
-    fusionSuffix: "usk",
+    fusionPrefix: "Colmil",
+    fusionSuffix: "ilargo",
   },
   scream_tail: {
-    fusionPrefix: "Scream",
-    fusionSuffix: "am Tail",
+    fusionPrefix: "Colagr",
+    fusionSuffix: "agrito",
   },
   brute_bonnet: {
-    fusionPrefix: "Brut",
-    fusionSuffix: "onnet",
+    fusionPrefix: "Furios",
+    fusionSuffix: "ioseta",
   },
   flutter_mane: {
-    fusionPrefix: "Flut",
-    fusionSuffix: "ane",
+    fusionPrefix: "Melenal",
+    fusionSuffix: "aleteo",
   },
   slither_wing: {
-    fusionPrefix: "Slit",
-    fusionSuffix: "er Wing",
+    fusionPrefix: "Reptal",
+    fusionSuffix: "alada",
   },
   sandy_shocks: {
-    fusionPrefix: "Sandy S",
-    fusionSuffix: "ocks",
+    fusionPrefix: "Pelar",
+    fusionSuffix: "arena",
   },
   iron_treads: {
-    fusionPrefix: "Iron Tr",
-    fusionSuffix: "ads",
+    fusionPrefix: "Ferrod",
+    fusionSuffix: "odada",
   },
   iron_bundle: {
-    fusionPrefix: "Iron Bun",
-    fusionSuffix: "undle",
+    fusionPrefix: "Ferrosa",
+    fusionSuffix: "aco",
   },
   iron_hands: {
-    fusionPrefix: "Iron H",
-    fusionSuffix: "ands",
+    fusionPrefix: "Ferropalm",
+    fusionSuffix: "almas",
   },
   iron_jugulis: {
-    fusionPrefix: "Iron J",
-    fusionSuffix: "ulis",
+    fusionPrefix: "Ferroc",
+    fusionSuffix: "ello",
   },
   iron_moth: {
-    fusionPrefix: "Iron M",
-    fusionSuffix: "on Moth",
+    fusionPrefix: "Ferropol",
+    fusionSuffix: "illa",
   },
   iron_thorns: {
-    fusionPrefix: "Iron Th",
-    fusionSuffix: "orns",
+    fusionPrefix: "Ferrop",
+    fusionSuffix: "opúas",
   },
   frigibax: {
     fusionPrefix: "Frig",
@@ -4019,12 +4019,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "-Yu",
   },
   roaring_moon: {
-    fusionPrefix: "Roar",
-    fusionSuffix: "ing Moon",
+    fusionPrefix: "Bramal",
+    fusionSuffix: "maluna",
   },
   iron_valiant: {
-    fusionPrefix: "Iron V",
-    fusionSuffix: "iant",
+    fusionPrefix: "Ferropala",
+    fusionSuffix: "aladín",
   },
   koraidon: {
     fusionPrefix: "Kor",
@@ -4035,12 +4035,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "iraidon",
   },
   walking_wake: {
-    fusionPrefix: "Walk",
-    fusionSuffix: "ake",
+    fusionPrefix: "Ond",
+    fusionSuffix: "agua",
   },
   iron_leaves: {
-    fusionPrefix: "Iron L",
-    fusionSuffix: "aves",
+    fusionPrefix: "Ferrov",
+    fusionSuffix: "erdor",
   },
   dipplin: {
     fusionPrefix: "Dip",
@@ -4079,20 +4079,20 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "ydrapple",
   },
   gouging_fire: {
-    fusionPrefix: "Goug",
-    fusionSuffix: "ing Fire",
+    fusionPrefix: "Flamar",
+    fusionSuffix: "ete",
   },
   raging_bolt: {
-    fusionPrefix: "Rag",
-    fusionSuffix: "ing Bolt",
+    fusionPrefix: "Electrof",
+    fusionSuffix: "uria",
   },
   iron_boulder: {
-    fusionPrefix: "Iron Boul",
-    fusionSuffix: "ulder",
+    fusionPrefix: "Ferrom",
+    fusionSuffix: "omole",
   },
   iron_crown: {
-    fusionPrefix: "Iron C",
-    fusionSuffix: "on Crown",
+    fusionPrefix: "Ferrote",
+    fusionSuffix: "otesta",
   },
   terapagos: {
     fusionPrefix: "Terap",
