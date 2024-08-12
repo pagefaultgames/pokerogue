@@ -81,7 +81,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_plasma_grunt": "NB - Vs. Team Plasma",
   "battle_flare_grunt": "XY - Vs. Team Flare",
   "battle_rocket_boss": "USUL - Vs. Giovanni",
-  "battle_aqua_magma_boss": "ROSA - Vs. Max/Arthur",
+  "battle_aqua_magma_boss": "ROSA - Vs. Arthur/Max",
   "battle_galactic_boss": "DÉPS - Vs. Hélio",
   "battle_plasma_boss": "N2B2 - Vs. Ghetis",
   "battle_flare_boss": "XY - Vs. Lysandre",
