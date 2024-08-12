@@ -184,6 +184,45 @@ export function getLogs() {
       }
     }
   }
+  /*
+  logs.forEach((log, idx) => {
+    var dat = JSON.parse(localStorage.getItem(logs[idx][1])) as DRPD;
+    logs[idx][4] = dat.version + "-" + dat.date
+  })
+  logs.sort((a, b) => {
+    var data1 = a[4].split("-")
+    var data2 = b[4].split("-")
+    var S = 0
+    // Sort by game version
+    if (S == 0) {
+      S = acceptedVersions.indexOf(data1[0]) - acceptedVersions.indexOf(b[0])
+      if (acceptedVersions.indexOf(data1[0]) == -1) {
+        S = -1
+        if (acceptedVersions.indexOf(data2[0]) == -1) {
+          S = 0
+        }
+      } else if (acceptedVersions.indexOf(data2[0]) == -1) {
+        S = 1
+      }
+    }
+    // Sort by year
+    if (S == 0) {
+      S = (Number(data1[1]) - Number(data2[1]))
+    }
+    // Sort by month
+    if (S == 0) {
+      S = (Number(data1[2]) - Number(data2[2]))
+    }
+    // Sort by day
+    if (S == 0) {
+      S = (Number(data1[3]) - Number(data2[3]))
+    }
+    return S;
+  })
+  logs.forEach((log, idx) => {
+    logs[idx][4] = ""
+  })
+  */
 }
 /**
  * Returns a string for the name of the current game mode.

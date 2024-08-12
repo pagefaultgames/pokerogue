@@ -28,6 +28,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import * as LoggerTools from "../logger"
 
 export enum MoveCategory {
   PHYSICAL,
@@ -1941,7 +1942,21 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const rand = Phaser.Math.RND.realInRange(0, 1);
+      // Swap to RNG state for a reload
+      const tempState = Phaser.Math.RND.state()
+      Phaser.Math.RND.state(user.scene.battleRNGState)
+      const rand_reload = Phaser.Math.RND.realInRange(0, 1);
+      user.scene.battleRNGState = Phaser.Math.RND.state()
+      Phaser.Math.RND.state(tempState)
       console.log("Phaser.Math.RND.realInRange(0, 1)", rand)
+      if (rand >= this.chance && rand_reload < this.chance) {
+        console.error("Reload discrepancy: Fails now, but succeeds after reload")
+        LoggerTools.flagReset(user.scene, user.scene.currentBattle.waveIndex)
+      }
+      if (rand_reload >= this.chance && rand < this.chance) {
+        console.error("Reload discrepancy: Succeeds now, but fails after reload")
+        LoggerTools.flagReset(user.scene, user.scene.currentBattle.waveIndex)
+      }
       if (rand >= this.chance) {
         return resolve(false);
       }

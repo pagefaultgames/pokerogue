@@ -241,6 +241,9 @@ export default class BattleScene extends SceneBase {
   private enemyModifierBar: ModifierBar;
   public arenaFlyout: ArenaFlyout;
 
+  public battleRNGState: string;
+  public battleBaseRNGState: string;
+
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlayShown: boolean = false;
@@ -1444,6 +1447,10 @@ export default class BattleScene extends SceneBase {
       }
     }
 
+    this.battleRNGState = Phaser.Math.RND.state()
+
+    console.log(this.battleBaseRNGState, this.battleRNGState)
+
     return this.currentBattle;
   }
 
@@ -1659,6 +1666,8 @@ export default class BattleScene extends SceneBase {
     Phaser.Math.RND.sow([ this.waveSeed ]);
     console.log("Wave Seed:", this.waveSeed, wave);
     this.rngCounter = 0;
+    this.battleRNGState = Phaser.Math.RND.state()
+    this.battleBaseRNGState = Phaser.Math.RND.state()
     //this.setScoreText("RNG: 0")
   }
 
