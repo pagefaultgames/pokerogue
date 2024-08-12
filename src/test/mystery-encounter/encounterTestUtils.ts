@@ -18,7 +18,7 @@ import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
  * @param secondaryOptionSelect -
  * @param isBattle - if selecting option should lead to battle, set to true
  */
-export async function runMysteryEncounterToEnd(game: GameManager, optionNo: number, secondaryOptionSelect: { pokemonNo: number, optionNo: number } = null, isBattle: boolean = false) {
+export async function runMysteryEncounterToEnd(game: GameManager, optionNo: number, secondaryOptionSelect: { pokemonNo: number, optionNo?: number } = null, isBattle: boolean = false) {
   vi.spyOn(EncounterPhaseUtils, "selectPokemonForOption");
   await runSelectMysteryEncounterOption(game, optionNo, secondaryOptionSelect);
 
@@ -65,7 +65,7 @@ export async function runMysteryEncounterToEnd(game: GameManager, optionNo: numb
   }
 }
 
-export async function runSelectMysteryEncounterOption(game: GameManager, optionNo: number, secondaryOptionSelect: { pokemonNo: number, optionNo: number } = null) {
+export async function runSelectMysteryEncounterOption(game: GameManager, optionNo: number, secondaryOptionSelect: { pokemonNo: number, optionNo?: number } = null) {
   // Handle any eventual queued messages (e.g. weather phase, etc.)
   game.onNextPrompt("MessagePhase", Mode.MESSAGE, () => {
     const uiHandler = game.scene.ui.getHandler<MessageUiHandler>();
@@ -112,7 +112,7 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
   }
 }
 
-async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number, optionNo: number) {
+async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number, optionNo?: number) {
   // Handle secondary option selections
   const partyUiHandler = game.scene.ui.handlers[Mode.PARTY] as PartyUiHandler;
   vi.spyOn(partyUiHandler, "show");

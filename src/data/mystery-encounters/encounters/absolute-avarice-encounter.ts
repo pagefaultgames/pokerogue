@@ -254,13 +254,12 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
           };
 
           setEncounterRewards(scene, { fillRemaining: true }, null, givePartyPokemonReviverSeeds);
-          encounter.startOfBattleEffects.push(
-            {
-              sourceBattlerIndex: BattlerIndex.ENEMY,
-              targets: [BattlerIndex.ENEMY],
-              move: new PokemonMove(Moves.STUFF_CHEEKS),
-              ignorePp: true
-            });
+          encounter.startOfBattleEffects.push({
+            sourceBattlerIndex: BattlerIndex.ENEMY,
+            targets: [BattlerIndex.ENEMY],
+            move: new PokemonMove(Moves.STUFF_CHEEKS),
+            ignorePp: true
+          });
 
           transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
           await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);

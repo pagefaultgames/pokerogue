@@ -7,6 +7,7 @@ import { BattlerIndex } from "../battle";
 import { Element } from "json-stable-stringify";
 import { Moves } from "#enums/moves";
 import { isNullOrUndefined } from "../utils";
+import Phaser from "phaser";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
@@ -111,7 +112,8 @@ export enum CommonAnim {
 export enum EncounterAnim {
   MAGMA_BG,
   MAGMA_SPOUT,
-  SMOKESCREEN
+  SMOKESCREEN,
+  DANCE
 }
 
 export class AnimConfig {
@@ -1264,11 +1266,13 @@ export class MoveChargeAnim extends MoveAnim {
 
 export class EncounterBattleAnim extends BattleAnim {
   public encounterAnim: EncounterAnim;
+  public oppAnim: boolean;
 
-  constructor(encounterAnim: EncounterAnim, user: Pokemon, target?: Pokemon) {
-    super(user, target || user);
+  constructor(encounterAnim: EncounterAnim, user: Pokemon, target?: Pokemon, oppAnim?: boolean) {
+    super(user, target || user, true);
 
     this.encounterAnim = encounterAnim;
+    this.oppAnim = oppAnim ?? false;
   }
 
   getAnim(): AnimConfig {
@@ -1276,7 +1280,7 @@ export class EncounterBattleAnim extends BattleAnim {
   }
 
   isOppAnim(): boolean {
-    return false;
+    return this.oppAnim;
   }
 }
 

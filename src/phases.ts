@@ -1,11 +1,12 @@
 import BattleScene, { bypassLogin } from "./battle-scene";
 import { DamageResult, default as Pokemon, EnemyPokemon, FieldPosition, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "./field/pokemon";
 import * as Utils from "./utils";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr } from "./data/move";
+import { isNullOrUndefined } from "./utils";
+import { allMoves, applyFilteredMoveAttrs, applyMoveAttrs, AttackMove, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, FixedDamageAttr, ForceSwitchOutAttr, getMoveTargets, HealStatusEffectAttr, HitsTagAttr, IncrementMovePriorityAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveEffectTrigger, MoveFlags, MoveTarget, MoveTargetSet, MultiHitAttr, NoEffectAttr, OverrideMoveEffectAttr, PostVictoryStatChangeAttr, PreMoveMessageAttr, SelfStatusMove, VariableTargetAttr } from "./data/move";
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier, PokemonResetNegativeStatStageModifier } from "./modifier/modifier";
+import { BerryModifier, BypassSpeedChanceModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, IvScannerModifier, LapsingPersistentModifier, LapsingPokemonHeldItemModifier, MapModifier, Modifier, MoneyInterestModifier, MoneyMultiplierModifier, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, PokemonMultiHitModifier, PokemonResetNegativeStatStageModifier, SwitchEffectTransferModifier, TurnHealModifier, TurnHeldItemTransferModifier, TurnStatusEffectModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, initEncounterAnims, initMoveAnim, loadEncounterAnimAssets, loadMoveAnimAssets, MoveAnim } from "./data/battle-anims";
@@ -23,10 +24,12 @@ import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, MysteryEncounterP
 import { getPokemonMessage, getPokemonNameWithAffix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
-import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
+import { getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage, Weather, WeatherType } from "./data/weather";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
-import { CheckTrappedAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr, IgnoreMoveEffectsAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr, AddSecondStrikeAbAttr } from "./data/ability";
-import { Unlockables, getUnlockableName } from "./system/unlockables";
+import {
+  AddSecondStrikeAbAttr, AlwaysHitAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostFaintAbAttrs, applyPostKnockOutAbAttrs, applyPostMoveUsedAbAttrs, applyPostStatChangeAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostVictoryAbAttrs, applyPostWeatherLapseAbAttrs, applyPreAttackAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, BlockRedirectAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr, CheckTrappedAbAttr, HealFromBerryUseAbAttr, IgnoreMoveEffectsAbAttr, IncreasePpAbAttr, IncrementMovePriorityAbAttr, MaxMultiHitAbAttr, PokemonTypeChangeAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostBiomeChangeAbAttr, PostDefendAbAttr, PostFaintAbAttr, PostKnockOutAbAttr, PostMoveUsedAbAttr, PostStatChangeAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostVictoryAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreventBerryUseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeCopyAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr
+} from "./data/ability";
+import { getUnlockableName, Unlockables } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattlerIndex, BattleType, TurnCommand } from "./battle";
 import { achvs, ChallengeAchv, HealAchv, LevelAchv } from "./system/achv";
@@ -48,7 +51,7 @@ import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameMode, GameModes, getGameMode } from "./game-mode";
 import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import i18next from "./plugins/i18n";
-import { TextStyle, addTextObject } from "./ui/text";
+import { addTextObject, TextStyle } from "./ui/text";
 import { Type } from "./data/type";
 import { BerryUsedEvent, EncounterPhaseEvent, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "./events/battle-scene";
 import { Abilities } from "#enums/abilities";
@@ -69,7 +72,6 @@ import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifie
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import Overrides from "#app/overrides";
-import { isNullOrUndefined } from "./utils";
 
 const { t } = i18next;
 
@@ -949,8 +951,7 @@ export class EncounterPhase extends BattlePhase {
             enemyPokemon.setVisible(false);
             this.scene.currentBattle.trainer.tint(0, 0.5);
           } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
-            enemyPokemon.setVisible(false);
-            this.scene.currentBattle?.trainer?.tint(0, 0.5);
+            // TODO: this may not be necessary, but leaving as placeholder
           }
           if (battle.double) {
             enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);

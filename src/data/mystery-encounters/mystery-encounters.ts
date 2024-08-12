@@ -22,6 +22,8 @@ import { ATrainersTestEncounter } from "#app/data/mystery-encounters/encounters/
 import { TrashToTreasureEncounter } from "#app/data/mystery-encounters/encounters/trash-to-treasure-encounter";
 import { BerriesAboundEncounter } from "#app/data/mystery-encounters/encounters/berries-abound-encounter";
 import { ClowningAroundEncounter } from "#app/data/mystery-encounters/encounters/clowning-around-encounter";
+import { PartTimerEncounter } from "#app/data/mystery-encounters/encounters/part-timer-encounter";
+import { DancingLessonsEncounter } from "#app/data/mystery-encounters/encounters/dancing-lessons-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -135,7 +137,8 @@ export const allMysteryEncounters: { [encounterType: number]: IMysteryEncounter 
 const extremeBiomeEncounters: MysteryEncounterType[] = [];
 
 const nonExtremeBiomeEncounters: MysteryEncounterType[] = [
-  MysteryEncounterType.FIELD_TRIP
+  MysteryEncounterType.FIELD_TRIP,
+  MysteryEncounterType.DANCING_LESSONS, // Is also in BADLANDS, DESERT, VOLCANO, WASTELAND, ABYSS
 ];
 
 const humanTransitableBiomeEncounters: MysteryEncounterType[] = [
@@ -146,7 +149,8 @@ const humanTransitableBiomeEncounters: MysteryEncounterType[] = [
 ];
 
 const civilizationBiomeEncounters: MysteryEncounterType[] = [
-  MysteryEncounterType.DEPARTMENT_STORE_SALE
+  MysteryEncounterType.DEPARTMENT_STORE_SALE,
+  MysteryEncounterType.PART_TIMER
 ];
 
 /**
@@ -200,23 +204,32 @@ export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.LAKE, []],
   [Biome.SEABED, []],
   [Biome.MOUNTAIN, []],
-  [Biome.BADLANDS, []],
+  [Biome.BADLANDS, [
+    MysteryEncounterType.DANCING_LESSONS
+  ]],
   [Biome.CAVE, [
     MysteryEncounterType.THE_STRONG_STUFF
   ]],
-  [Biome.DESERT, []],
+  [Biome.DESERT, [
+    MysteryEncounterType.DANCING_LESSONS
+  ]],
   [Biome.ICE_CAVE, []],
   [Biome.MEADOW, []],
   [Biome.POWER_PLANT, []],
   [Biome.VOLCANO, [
-    MysteryEncounterType.FIERY_FALLOUT
+    MysteryEncounterType.FIERY_FALLOUT,
+    MysteryEncounterType.DANCING_LESSONS
   ]],
   [Biome.GRAVEYARD, []],
   [Biome.DOJO, []],
   [Biome.FACTORY, []],
   [Biome.RUINS, []],
-  [Biome.WASTELAND, []],
-  [Biome.ABYSS, []],
+  [Biome.WASTELAND, [
+    MysteryEncounterType.DANCING_LESSONS
+  ]],
+  [Biome.ABYSS, [
+    MysteryEncounterType.DANCING_LESSONS
+  ]],
   [Biome.SPACE, []],
   [Biome.CONSTRUCTION_SITE, []],
   [Biome.JUNGLE, [
@@ -252,6 +265,8 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.TRASH_TO_TREASURE] = TrashToTreasureEncounter;
   allMysteryEncounters[MysteryEncounterType.BERRIES_ABOUND] = BerriesAboundEncounter;
   allMysteryEncounters[MysteryEncounterType.CLOWNING_AROUND] = ClowningAroundEncounter;
+  allMysteryEncounters[MysteryEncounterType.PART_TIMER] = PartTimerEncounter;
+  allMysteryEncounters[MysteryEncounterType.DANCING_LESSONS] = DancingLessonsEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {
