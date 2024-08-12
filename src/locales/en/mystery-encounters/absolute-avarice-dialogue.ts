@@ -1,5 +1,5 @@
 export const absoluteAvariceDialogue = {
-  intro: "A Greedent ambushed you\nand stole your party's berries!",
+  intro: "A Greedent ambushes you\nand steals your party's berries!",
   title: "Absolute Avarice",
   description: "The Greedent has caught you totally off guard now all your berries are gone!\n\nThe Greedent looks like it's about to eat them when it pauses to look at you, interested.",
   query: "What will you do?",

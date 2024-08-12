@@ -423,7 +423,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
                   return true;
                 },
                 onHover: () => {
-                  scene.ui.showText("Return to encounter option select.");
+                  scene.ui.showText(i18next.t("mysteryEncounter:cancel_option"));
                 }
               });
 
@@ -671,18 +671,22 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
 export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide: boolean = true, destroy: boolean = true, duration: number = 750): Promise<boolean> {
   return new Promise(resolve => {
     const introVisuals = scene.currentBattle.mysteryEncounter.introVisuals;
+    const enemyPokemon = scene.getEnemyField();
+    if (enemyPokemon) {
+      scene.currentBattle.enemyParty = [];
+    }
     if (introVisuals) {
       if (!hide) {
         // Make sure visuals are in proper state for showing
         introVisuals.setVisible(true);
-        introVisuals.x += 16;
-        introVisuals.y -= 16;
+        introVisuals.x = 244;
+        introVisuals.y = 60;
         introVisuals.alpha = 0;
       }
 
       // Transition
       scene.tweens.add({
-        targets: introVisuals,
+        targets: [introVisuals, enemyPokemon],
         x: `${hide? "+" : "-"}=16`,
         y: `${hide ? "-" : "+"}=16`,
         alpha: hide ? 0 : 1,
@@ -690,9 +694,12 @@ export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide:
         duration,
         onComplete: () => {
           if (hide && destroy) {
-            scene.field.remove(introVisuals);
-            introVisuals.setVisible(false);
-            introVisuals.destroy();
+            scene.field.remove(introVisuals, true);
+
+            enemyPokemon.forEach(pokemon => {
+              scene.field.remove(pokemon, true);
+            });
+
             scene.currentBattle.mysteryEncounter.introVisuals = null;
           }
           resolve(true);

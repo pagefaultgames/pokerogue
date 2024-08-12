@@ -10,6 +10,36 @@ export const STEALING_MOVES = [
   Moves.SWITCHEROO
 ];
 
+export const CHARMING_MOVES = [
+  Moves.CHARM,
+  Moves.FLATTER,
+  Moves.DRAGON_CHEER,
+  Moves.ALLURING_VOICE,
+  Moves.ATTRACT,
+  Moves.SWEET_SCENT,
+  Moves.CAPTIVATE,
+  Moves.AROMATIC_MIST
+];
+
+/**
+ * Moves for the Dancer ability
+ */
+export const DANCING_MOVES = [
+  Moves.AQUA_STEP,
+  Moves.CLANGOROUS_SOUL,
+  Moves.DRAGON_DANCE,
+  Moves.FEATHER_DANCE,
+  Moves.FIERY_DANCE,
+  Moves.LUNAR_DANCE,
+  Moves.PETAL_DANCE,
+  Moves.REVELATION_DANCE,
+  Moves.QUIVER_DANCE,
+  Moves.SWORDS_DANCE,
+  Moves.TEETER_DANCE,
+  Moves.VICTORY_DANCE,
+  Moves.KNOCK_OFF
+];
+
 export const DISTRACTION_MOVES = [
   Moves.FAKE_OUT,
   Moves.FOLLOW_ME,
