@@ -1604,7 +1604,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.SOUL_DEW, 7),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
     new WeightedModifierType(modifierTypes.SOOTHE_BELL, 4),
-    new WeightedModifierType(modifierTypes.ABILITY_CHARM, 6),
+    new WeightedModifierType(modifierTypes.ABILITY_CHARM, skipInClassicAfterWave(189, 6)),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
     new WeightedModifierType(modifierTypes.LOCK_CAPSULE, 3),
