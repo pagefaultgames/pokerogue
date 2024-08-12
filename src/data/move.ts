@@ -5838,6 +5838,18 @@ export class DestinyBondAttr extends MoveEffectAttr {
   constructor() {
     super(true, MoveEffectTrigger.PRE_APPLY);
   }
+  getCondition(): MoveConditionFunc {
+    return (user: Pokemon, target: Pokemon, move: Move) => {
+      const moves = user.getMoveHistory();
+      if (moves.length > 0) {
+        const lastMove = moves[moves.length - 1];
+        if (lastMove.move === move.id && lastMove.result === MoveResult.SUCCESS) {
+          return false;
+        }
+      }
+      return true;
+    };
+  }
 
   /**
    * Applies {@linkcode BattlerTagType.DESTINY_BOND} to the user.
