@@ -979,10 +979,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     if (!this.scene.gameMode.isChallenge) {
       // if not in a challenge, in caught hybrid filter select mode, select the options excluding the uncaught option
-      caughtDropDown.toggleOptionState(1);
-      caughtDropDown.toggleOptionState(2);
-      caughtDropDown.toggleOptionState(3);
-      caughtDropDown.toggleOptionState(4);
+      for (let i = 0; i < caughtDropDown.options.length; i++) {
+        // if the option is not "ALL" or "UNCAUGHT", toggle it
+        if (caughtDropDown.options[i].val !== "ALL" && caughtDropDown.options[i].val !== "UNCAUGHT") {
+          caughtDropDown.toggleOptionState(i);
+        }
+      }
     }
   }
 
