@@ -1,5 +1,5 @@
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals, updatePlayerMoney } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals, updatePlayerMoney } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
@@ -87,10 +87,10 @@ export const PartTimerEncounter: IMysteryEncounter =
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
 
-          // Calculate the "baseline" stat value (100 base stat, 31 IVs, neutral nature, same level as pokemon) to compare
+          // Calculate the "baseline" stat value (90 base stat, 16 IVs, neutral nature, same level as pokemon) to compare
           // Resulting money is 2.5 * (% difference from baseline), with minimum of 1 and maximum of 4.
           // Calculation from Pokemon.calculateStats
-          const baselineValue = Math.floor(((2 * 100 + 31) * pokemon.level) * 0.01) + 5;
+          const baselineValue = Math.floor(((2 * 90 + 16) * pokemon.level) * 0.01) + 5;
           const percentDiff = (pokemon.getStat(Stat.SPD) - baselineValue) / baselineValue;
           const moneyMultiplier = Math.min(Math.max(2.5 * (1+ percentDiff), 1), 4);
 
@@ -103,6 +103,8 @@ export const PartTimerEncounter: IMysteryEncounter =
             const newPpUsed = move.getMovePp() - 2;
             move.ppUsed = move.ppUsed < newPpUsed ? newPpUsed : move.ppUsed;
           });
+
+          setEncounterExp(scene, pokemon.id, 100);
 
           // Hide intro visuals
           transitionMysteryEncounterIntroVisuals(scene, true, false);
@@ -161,15 +163,15 @@ export const PartTimerEncounter: IMysteryEncounter =
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
 
-          // Calculate the "baseline" stat value (100 base stat, 31 IVs, neutral nature, same level as pokemon) to compare
+          // Calculate the "baseline" stat value (75 base stat, 16 IVs, neutral nature, same level as pokemon) to compare
           // Resulting money is 2.5 * (% difference from baseline), with minimum of 1 and maximum of 4.
           // Calculation from Pokemon.calculateStats
-          const baselineHp = Math.floor(((2 * 80 + 31) * pokemon.level) * 0.01) + pokemon.level + 10;
-          const baselineAtkDef = Math.floor(((2 * 80 + 31) * pokemon.level) * 0.01) + 5;
+          const baselineHp = Math.floor(((2 * 75 + 16) * pokemon.level) * 0.01) + pokemon.level + 10;
+          const baselineAtkDef = Math.floor(((2 * 75 + 16) * pokemon.level) * 0.01) + 5;
           const baselineValue = baselineHp + 1.5 * (baselineAtkDef * 2);
           const strongestValue = pokemon.getStat(Stat.HP) + 1.5 * (pokemon.getStat(Stat.ATK) + pokemon.getStat(Stat.DEF));
           const percentDiff = (strongestValue - baselineValue) / baselineValue;
-          const moneyMultiplier = Math.min(Math.max(2.5 * (1+ percentDiff), 1), 4);
+          const moneyMultiplier = Math.min(Math.max(2.5 * (1 + percentDiff), 1), 4);
 
           encounter.misc = {
             moneyMultiplier
@@ -180,6 +182,8 @@ export const PartTimerEncounter: IMysteryEncounter =
             const newPpUsed = move.getMovePp() - 2;
             move.ppUsed = move.ppUsed < newPpUsed ? newPpUsed : move.ppUsed;
           });
+
+          setEncounterExp(scene, pokemon.id, 100);
 
           // Hide intro visuals
           transitionMysteryEncounterIntroVisuals(scene, true, false);
@@ -245,6 +249,8 @@ export const PartTimerEncounter: IMysteryEncounter =
             const newPpUsed = move.getMovePp() - 2;
             move.ppUsed = move.ppUsed < newPpUsed ? newPpUsed : move.ppUsed;
           });
+
+          setEncounterExp(scene, selectedPokemon.id, 100);
 
           // Hide intro visuals
           transitionMysteryEncounterIntroVisuals(scene, true, false);

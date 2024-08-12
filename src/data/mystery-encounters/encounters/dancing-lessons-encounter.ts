@@ -1,4 +1,4 @@
-import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
@@ -23,6 +23,7 @@ import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { BattlerIndex } from "#app/battle";
 import { catchPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { PokeballType } from "#enums/pokeball";
+import { modifierTypes } from "#app/modifier/modifier-type";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:dancingLessons";
@@ -179,6 +180,7 @@ export const DancingLessonsEncounter: IMysteryEncounter =
             ignorePp: true
           });
 
+          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.BATON], fillRemaining: true });
           await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
         })
         .build()
@@ -223,7 +225,7 @@ export const DancingLessonsEncounter: IMysteryEncounter =
         .withDialogue({
           buttonLabel: `${namespace}.option.3.label`,
           buttonTooltip: `${namespace}.option.3.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.3.tooltip`,
+          disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
           secondOptionPrompt: `${namespace}.option.3.select_prompt`,
           selected: [
             {
@@ -242,9 +244,11 @@ export const DancingLessonsEncounter: IMysteryEncounter =
                 const option: OptionSelectItem = {
                   label: move.getName(),
                   handler: () => {
-                  // Pokemon and second option selected
+                    // Pokemon and second option selected
                     encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
                     encounter.setDialogueToken("selectedMove", move.getName());
+                    encounter.misc.selectedMove = move;
+
                     return true;
                   },
                 };
@@ -267,8 +271,19 @@ export const DancingLessonsEncounter: IMysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Show the Oricorio a dance, and recruit it
-          const oricorio = scene.currentBattle.mysteryEncounter.misc.oricorioData.toPokemon(scene);
+          const encounter = scene.currentBattle.mysteryEncounter;
+          const oricorio = encounter.misc.oricorioData.toPokemon(scene);
           oricorio.passive = true;
+
+          // Ensure the Oricorio's moveset gains the Dance move the player used
+          const move = encounter.misc.selectedMove?.getMove().id;
+          if (!oricorio.moveset.some(m => m.getMove().id === move)) {
+            if (oricorio.moveset.length < 4) {
+              oricorio.moveset.push(new PokemonMove(move));
+            } else {
+              oricorio.moveset[3] = new PokemonMove(move);
+            }
+          }
 
           transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
           await catchPokemon(scene, oricorio, null, PokeballType.POKEBALL, false);
