@@ -26,7 +26,7 @@ export const filterBar: SimpleTranslationEntries = {
   "hasNotWon": "Ruban - Sans",
   "hiddenAbility": "Talent caché",
   "hasHiddenAbility": "Talent caché - Avec",
-  "noHiddenAbility": "Talent caché  - Sans",
+  "noHiddenAbility": "Talent caché - Sans",
   "egg": "Œuf",
   "eggPurchasable": "Œuf achetable",
   "pokerus": "Pokérus",
