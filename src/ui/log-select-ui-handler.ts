@@ -317,14 +317,22 @@ class SessionSlot extends Phaser.GameObjects.Container {
       //if (getPokemonSpecies(Utils.getEnumValues(Species)[p.id]) == undefined)
         //return;
 
-      const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[allSpecies[Utils.getEnumValues(Species).indexOf(p.id)].speciesId]), 0, 0, 0, 0, 0);
+      if (allSpecies[Utils.getEnumValues(Species).indexOf(p.id)] == undefined) {
+        // Do nothing
+        console.log(p.id)
+        const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[p.id]), 0, 0, 0, 0, 0);
+        iconContainer.add(icon);
+      } else {
+        const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[p.id]), 0, 0, 0, 0, 0);
+        //const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[allSpecies[Utils.getEnumValues(Species).indexOf(p.id)].speciesId]), 0, 0, 0, 0, 0);
+        iconContainer.add(icon);
+      }
 
       const text = addTextObject(this.scene, 32, 20, ``, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, null);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);
 
-      iconContainer.add(icon);
       iconContainer.add(text);
 
       pokemonIconsContainer.add(iconContainer);
