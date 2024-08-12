@@ -13,7 +13,7 @@ import { allMoves } from "../data/move";
 import { Nature, getNatureName } from "../data/nature";
 import { pokemonFormChanges } from "../data/pokemon-forms";
 import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
-import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities, getPokerusStarters } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { GameModes } from "../game-mode";
 import { SelectChallengePhase, TitlePhase } from "../phases";
@@ -894,7 +894,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterPreferences = StarterPrefs.load();
     }
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
-    this.pokerusSpecies = this.scene.gameData.getPokerusSpecies();
+    this.pokerusSpecies = getPokerusStarters(this.scene as BattleScene);
 
     if (args.length >= 1 && args[0] instanceof Function) {
       super.show(args);

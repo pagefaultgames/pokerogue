@@ -3317,6 +3317,23 @@ export function getStarterValueFriendshipCap(value: integer): integer {
   }
 }
 
+export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
+  const pokerusStarters : PokemonSpecies[] = [];
+  const date = new Date();
+  const starterCount = 3; //for easy future adjustment!
+  date.setUTCHours(0, 0, 0, 0);
+  scene.executeWithSeedOffset(() => {
+    while (pokerusStarters.length < starterCount) {
+      const randomSpeciesId = parseInt(Utils.randSeedItem(Object.keys(speciesStarters)), 10);
+      const species = getPokemonSpecies(randomSpeciesId);
+      if (!pokerusStarters.includes(species)) {
+        pokerusStarters.push(species);
+      }
+    }
+  }, 0, date.getTime().toString());
+  return pokerusStarters;
+}
+
 export const starterPassiveAbilities = {
   [Species.BULBASAUR]: Abilities.GRASSY_SURGE,
   [Species.CHARMANDER]: Abilities.BEAST_BOOST,
