@@ -27,8 +27,8 @@ export const filterBar: SimpleTranslationEntries = {
   "hiddenAbility": "Versteckte Fähigkeit",
   "hasHiddenAbility": "Versteckte Fähigkeit - Ja",
   "noHiddenAbility": "Versteckte Fähigkeit - Nein",
-  "egg": "Egg",//Add translation here
-  "eggPurchasable": "Purchasable Egg",//Add translation here
+  "egg": "Ei",
+  "eggPurchasable": "Kauf möglich",
   "pokerus": "Pokérus",
   "hasPokerus": "Pokérus - Ja",
   "noPokerus": "Pokérus - Nein",
