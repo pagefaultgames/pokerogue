@@ -13,11 +13,11 @@ export const filterBar: SimpleTranslationEntries = {
   "passive": "パッシブ",
   "passiveUnlocked": "パッシブ - 解放済み",
   "passiveLocked": "パッシブ - 未解放",
-  "passiveUnlockable": "パッシブ - 解放可能",//Add translation here
+  "passiveUnlockable": "パッシブ - 解放可能",
   "costReduction": "ポイント削減",
   "costReductionUnlocked": "ポイント削減 - 解放済み",
   "costReductionLocked": "ポイント削減 - 未解放",
-  "costReductionUnlockable": "ポイント削減 - 解放可能",//Add translation here
+  "costReductionUnlockable": "ポイント削減 - 解放可能",
   "favorite": "お気に入り",
   "isFavorite": "お気に入り - あり",
   "notFavorite": "お気に入り - なし",
@@ -27,8 +27,8 @@ export const filterBar: SimpleTranslationEntries = {
   "hiddenAbility": "隠れ特性",
   "hasHiddenAbility": "隠れ特性 - あり",
   "noHiddenAbility": "隠れ特性 - なし",
-  "egg": "タマゴ",//Add translation here
-  "eggPurchasable": "タマゴ - 購入可能",//Add translation here
+  "egg": "タマゴ",
+  "eggPurchasable": "タマゴ - 購入可能",
   "pokerus": "ポケルス",
   "hasPokerus": "ポケルス - あり",
   "noPokerus": "ポケルス - なし",
