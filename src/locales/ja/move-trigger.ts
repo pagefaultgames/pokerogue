@@ -56,6 +56,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "sacrificialFullRestore": "{{pokemonName}}の\nねがいごとが　かなった！",
   "invertStats": "{{pokemonName}}の\nのうりょくへんかが　ぎゃくてんした！",
   "resetStats": "{{pokemonName}}の\nのうりょくへんかが　もとにもどった！",
+  "statEliminated": "All stat changes were eliminated!",
   "faintCountdown": "{{pokemonName}}は\n{{turnCount}}ターンごに　ほろびてしまう！",
   "copyType": "{{pokemonName}}は　{{targetPokemonName}}と\n同じタイプに　なった！",
   "suppressAbilities": "{{pokemonName}}の　とくせいが　きかなくなった！",

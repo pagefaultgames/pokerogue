@@ -2,10 +2,10 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const voucher: SimpleTranslationEntries = {
   "vouchers": "クーポン",
-  "eggVoucher": "たまごクーポン",
-  "eggVoucherPlus": "たまごクーポンプラス",
-  "eggVoucherPremium": "たまごクーポンプレミアム",
-  "eggVoucherGold": "たまごクーポンゴールド",
-  "locked": "Locked",
-  "defeatTrainer": "Defeat {{trainerName}}"
+  "eggVoucher": "タマゴクーポン",
+  "eggVoucherPlus": "タマゴクーポン・プラス",
+  "eggVoucherPremium": "タマゴクーポン・プレミアム",
+  "eggVoucherGold": "タマゴクーポン・ゴールド",
+  "locked": "なし",
+  "defeatTrainer": "{{trainerName}}を　倒す"
 } as const;

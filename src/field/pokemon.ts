@@ -916,13 +916,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * excluding any moves already known.
    *
    * Available egg moves are only included if the {@linkcode Pokemon} was
-   * in the starting party of the run.
+   * in the starting party of the run and if Fresh Start is not active.
    * @returns an array of {@linkcode Moves}, the length of which is determined
    * by how many learnable moves there are for the {@linkcode Pokemon}.
    */
   getLearnableLevelMoves(): Moves[] {
     let levelMoves = this.getLevelMoves(1, true).map(lm => lm[1]);
-    if (this.metBiome === -1) {
+    if (this.metBiome === -1 && !this.scene.gameMode.isFreshStartChallenge()) {
       levelMoves = this.getUnlockedEggMoves().concat(levelMoves);
     }
     return levelMoves.filter(lm => !this.moveset.some(m => m?.moveId === lm));
@@ -1082,8 +1082,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return true;
     }
 
-    // Final boss does not have passive
-    if (this.scene.currentBattle?.battleSpec === BattleSpec.FINAL_BOSS && this instanceof EnemyPokemon) {
+    // Classic Final boss and Endless Minor/Major bosses do not have passive
+    const { currentBattle, gameMode } = this.scene;
+    const waveIndex = currentBattle?.waveIndex;
+    if (this instanceof EnemyPokemon &&
+      (currentBattle?.battleSpec === BattleSpec.FINAL_BOSS ||
+      gameMode.isEndlessMinorBoss(waveIndex) ||
+      gameMode.isEndlessMajorBoss(waveIndex))) {
       return false;
     }
 
@@ -2435,8 +2440,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     for (const tag of source.summonData.tags) {
 
-      // bypass yawn, and infatuation as those can not be passed via Baton Pass
-      if (tag.sourceMove === Moves.YAWN || tag.tagType === BattlerTagType.INFATUATED) {
+      // bypass those can not be passed via Baton Pass
+      const excludeTagTypes = new Set([BattlerTagType.DROWSY, BattlerTagType.INFATUATED, BattlerTagType.FIRE_BOOST]);
+
+      if (excludeTagTypes.has(tag.tagType)) {
         continue;
       }
 
@@ -3614,7 +3621,7 @@ export class PlayerPokemon extends Pokemon {
       if (!this.isFainted()) {
         // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
         this.hp = Math.min(this.hp, this.stats[Stat.HP]);
-        this.status = getRandomStatus(this.status!, pokemon.status!); // Get a random valid status between the two  // TODO: are the bangs correct?
+        this.status = getRandomStatus(this.status, pokemon.status); // Get a random valid status between the two
       } else if (!pokemon.isFainted()) {
         // If this Pokemon fainted but the other hasn't, make sure the HP wasn't set to zero
         this.hp = Math.max(this.hp, 1);

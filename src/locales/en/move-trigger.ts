@@ -56,6 +56,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "sacrificialFullRestore": "{{pokemonName}}'s Healing Wish\nwas granted!",
   "invertStats": "{{pokemonName}}'s stat changes\nwere all reversed!",
   "resetStats": "{{pokemonName}}'s stat changes\nwere eliminated!",
+  "statEliminated": "All stat changes were eliminated!",
   "faintCountdown": "{{pokemonName}}\nwill faint in {{turnCount}} turns.",
   "copyType": "{{pokemonName}}'s type became the same as\n{{targetPokemonName}}'s type!",
   "suppressAbilities": "{{pokemonName}}'s ability\nwas suppressed!",

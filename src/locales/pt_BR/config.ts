@@ -35,6 +35,7 @@ import { modifier } from "./modifier";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
+import { moveTriggers } from "./move-trigger";
 import { nature } from "./nature";
 import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
@@ -53,7 +54,6 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
-import { moveTriggers } from "./move-trigger";
 
 export const ptBrConfig = {
   ability: ability,
@@ -90,9 +90,12 @@ export const ptBrConfig = {
   menu: menu,
   menuUiHandler: menuUiHandler,
   modifier: modifier,
+  modifierSelectUiHandler: modifierSelectUiHandler,
   modifierType: modifierType,
   move: move,
+  moveTriggers: moveTriggers,
   nature: nature,
+  partyUiHandler: partyUiHandler,
   pokeball: pokeball,
   pokemon: pokemon,
   pokemonForm: pokemonForm,
@@ -111,8 +114,5 @@ export const ptBrConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather,
-  partyUiHandler: partyUiHandler,
-  modifierSelectUiHandler: modifierSelectUiHandler,
-  moveTriggers: moveTriggers
+  weather: weather
 };
