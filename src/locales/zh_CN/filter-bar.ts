@@ -13,11 +13,11 @@ export const filterBar: SimpleTranslationEntries = {
   "passive": "被动",
   "passiveUnlocked": "被动解锁",
   "passiveLocked": "被动未解锁",
-  "passiveUnlockable": "Passive - Can Unlock",
+  "passiveUnlockable": "Passive - Can Unlock",//Add translation here
   "costReduction": "费用降低",
   "costReductionUnlocked": "已降费",
   "costReductionLocked": "未降费",
-  "costReductionUnlockable": "Cost Reduction - Can Unlock",
+  "costReductionUnlockable": "Cost Reduction - Can Unlock",//Add translation here
   "favorite": "最爱",
   "isFavorite": "包含最爱",
   "notFavorite": "不包含最爱",
@@ -27,8 +27,8 @@ export const filterBar: SimpleTranslationEntries = {
   "hiddenAbility": "梦特",
   "hasHiddenAbility": "有梦特",
   "noHiddenAbility": "无梦特",
-  "egg": "Egg",
-  "eggPurchasable": "Purchasable Egg",
+  "egg": "Egg",//Add translation here
+  "eggPurchasable": "Purchasable Egg",//Add translation here
   "pokerus": "病毒",
   "hasPokerus": "有病毒",
   "noPokerus": "无病毒",
