@@ -93,6 +93,9 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   /** The {@linkcode Phaser.GameObjects.Text} used to indicate neutral effects */
   private flyoutTextField: Phaser.GameObjects.Text;
 
+  private shinyCharmIcon: Phaser.GameObjects.Sprite;
+  public shinyState: integer = 0;
+
   /** Container for all field effects observed by this object */
   private readonly fieldEffectInfo: ArenaEffectInfo[] = [];
 
@@ -189,6 +192,34 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     // Subscribes to required events available on game start
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent);
     this.battleScene.eventTarget.addEventListener(BattleSceneEventType.TURN_END,  this.onTurnEndEvent);
+
+    this.shinyCharmIcon = this.scene.add.sprite(this.flyoutWidth - 8, 8, "items", "shiny_charm")
+    this.shinyCharmIcon.setScale(0.4)
+    this.shinyCharmIcon.setInteractive(new Phaser.Geom.Rectangle(2, 2, 26, 27), Phaser.Geom.Rectangle.Contains);
+    this.flyoutContainer.add(this.shinyCharmIcon)
+  }
+
+  doShinyCharmTooltip() {
+    if ((this.scene as BattleScene).currentBattle.waveIndex % 10 == 0 || (this.scene as BattleScene).currentBattle.trainer) {
+      this.shinyCharmIcon.setVisible(false)
+      return;
+    }
+    this.shinyCharmIcon.setVisible(true)
+    if (true) { // this.shinyCharmIcon.visible
+      this.shinyCharmIcon.removeAllListeners()
+      if (!(this.scene as BattleScene).waveShinyChecked) {
+        this.shinyCharmIcon.setVisible(false)
+        return;
+        //this.shinyCharmIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `???`));
+      } else if ((this.scene as BattleScene).waveShinyFlag) {
+        this.shinyCharmIcon.clearTint()
+        this.shinyCharmIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shinies are OK`));
+      } else {
+        this.shinyCharmIcon.setTintFill(0x000000)
+        this.shinyCharmIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shinies change shop`));
+      }
+      this.shinyCharmIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+    }
   }
 
   private onNewArena(event: Event) {
@@ -212,7 +243,8 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextPlayer.setFontSize(48);
   }
 
-  display1() {    
+  display1() {
+    this.doShinyCharmTooltip()
     this.flyoutTextPlayer.text = ""
     this.flyoutTextField.text = ""
     this.flyoutTextEnemy.text = ""
@@ -253,6 +285,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   }
 
   display2() {
+    this.doShinyCharmTooltip()
     this.clearText()
     var poke = (this.scene as BattleScene).getEnemyField()
     this.flyoutTextPlayer.text = ""
@@ -282,12 +315,12 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       this.flyoutTextPlayer.text += ", Speed: " + poke[i].ivs[5] + "\n\n"
     }
     if (poke.length < 2) {
-      this.flyoutTextEnemy.text += "\n"
+      //this.flyoutTextEnemy.text += "\n"
     }
     if (poke.length < 1) {
-      this.flyoutTextEnemy.text += "\n\n"
+      //this.flyoutTextEnemy.text += "\n\n"
     }
-    this.flyoutTextEnemy.text += ((this.scene as BattleScene).waveShinyChecked ? ((this.scene as BattleScene).waveShinyFlag ? "Shiny Luck: OK" : "Shiny Pokemon will change this floor's shop!") : "Shiny Luck: Not checked")
+    //this.flyoutTextEnemy.text += ((this.scene as BattleScene).waveShinyChecked ? ((this.scene as BattleScene).waveShinyFlag ? "Shiny Luck: OK" : "Shiny Pokemon will change this floor's shop!") : "Shiny Luck: Not checked")
   }
 
   public printIVs() {
@@ -296,6 +329,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
   /** Parses through all set Arena Effects and puts them into the proper {@linkcode Phaser.GameObjects.Text} object */
   public updateFieldText() {
+    this.doShinyCharmTooltip()
     this.clearText();
 
     this.fieldEffectInfo.sort((infoA, infoB) => infoA.duration - infoB.duration);
