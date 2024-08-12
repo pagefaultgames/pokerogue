@@ -13,11 +13,11 @@ export const filterBar: SimpleTranslationEntries = {
   "passive": "Passive",
   "passiveUnlocked": "Passiva sbloccata",
   "passiveLocked": "Passiva bloccata",
-  "passiveUnlockable": "Passive - Can Unlock",//Add translation here
+  "passiveUnlockable": "Passiva sbloccabile",
   "costReduction": "Costo ridotto",
   "costReductionUnlocked": "Costo ridotto sbloccato",
   "costReductionLocked": "Costo ridotto bloccato",
-  "costReductionUnlockable": "Cost Reduction - Can Unlock",//Add translation here
+  "costReductionUnlockable": "Costo ridotto sbloccabile",
   "favorite": "Preferiti",
   "isFavorite": "Preferiti - Sì",
   "notFavorite": "Preferiti - No",
@@ -27,8 +27,8 @@ export const filterBar: SimpleTranslationEntries = {
   "hiddenAbility": "Abilità speciale",
   "hasHiddenAbility": "Abilità speciale - Sì",
   "noHiddenAbility": "Abilità speciale - No",
-  "egg": "Egg",//Add translation here
-  "eggPurchasable": "Purchasable Egg",//Add translation here
+  "egg": "Uova",
+  "eggPurchasable": "Uovo acquistabile",
   "pokerus": "Pokérus",
   "hasPokerus": "Pokérus - Sì",
   "noPokerus": "Pokérus - No",
