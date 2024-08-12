@@ -116,7 +116,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.infoContainer = new PokemonInfoContainer(this.scene, 115, 9);
     this.infoContainer.setup();
     this.infoContainer.changeToEggSummaryLayout();
-    this.infoContainer.setVisible(false);
+    this.infoContainer.setVisible(true);
     this.eggListContainer.add(this.infoContainer);
 
     const eggListMessageBox = addWindow(this.scene, 1, -1, 318, 28);
@@ -130,10 +130,9 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.pokemonEggMoveContainers = [];
     this.pokemonEggMoveBgs = [];
     this.pokemonEggMoveLabels = [];
-    this.pokemonEggMovesContainer = this.scene.add.container(300, 200);
+    this.pokemonEggMovesContainer = this.scene.add.container(0, 200);
     this.pokemonEggMovesContainer.setVisible(false);
-    this.pokemonEggMovesContainer.setZ(3);
-    this.pokemonEggMovesContainer.setScale(3);
+    this.pokemonEggMovesContainer.setScale(0.5);
 
     const eggMovesLabel = addTextObject(this.scene, -46, 0, i18next.t("starterSelectUiHandler:eggMoves"), TextStyle.WINDOW_ALT);
     eggMovesLabel.setOrigin(0.5, 0);
@@ -141,13 +140,13 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.pokemonEggMovesContainer.add(eggMovesLabel);
 
     for (let m = 0; m < 4; m++) {
-      const eggMoveContainer = this.scene.add.container(0, 16 + 14 * m);
+      const eggMoveContainer = this.scene.add.container(0, 16 + 5.25 * m);
 
-      const eggMoveBg = this.scene.add.nineslice(0, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
+      const eggMoveBg = this.scene.add.nineslice(75, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
       eggMoveBg.setOrigin(1, 0);
       eggMoveBg.setZ(3);
 
-      const eggMoveLabel = addTextObject(this.scene, -eggMoveBg.width / 2, 0, "???", TextStyle.PARTY);
+      const eggMoveLabel = addTextObject(this.scene, 75 -eggMoveBg.width / 2, 0, "???", TextStyle.PARTY);
       eggMoveLabel.setOrigin(0.5, 0);
       eggMoveLabel.setZ(3);
 
@@ -156,13 +155,14 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
       eggMoveContainer.add(eggMoveBg);
       eggMoveContainer.add(eggMoveLabel);
+      eggMoveContainer.setScale(0.375);
 
       this.pokemonEggMoveContainers.push(eggMoveContainer);
 
       this.pokemonEggMovesContainer.add(eggMoveContainer);
     }
 
-    this.displayContainer.add(this.pokemonEggMovesContainer);
+    this.infoContainer.add(this.pokemonEggMoveContainers);
 
     this.cursor = -1;
   }
@@ -437,7 +437,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       this.pokemonNameText.setText(species.name);
 
       // TODO show egg moves
-
       const hasEggMoves = species && speciesEggMoves.hasOwnProperty(species.speciesId);
 
       for (let em = 0; em < 4; em++) {
