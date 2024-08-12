@@ -56,6 +56,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "sacrificialFullRestore": "{{pokemonName}}의\n치유소원이 이루어졌다!",
   "invertStats": "{{pokemonName}}[[는]]\n능력 변화가 뒤집혔다!",
   "resetStats": "{{pokemonName}}의 모든 상태가\n원래대로 되돌아왔다!",
+  "statEliminated": "모든 상태가 원래대로 되돌아왔다!",
   "faintCountdown": "{{pokemonName}}[[는]]\n{{turnCount}}턴 후에 쓰러져 버린다!",
   "copyType": "{{pokemonName}}[[는]]\n{{targetPokemonName}}[[와]] 같은 타입이 되었다!",
   "suppressAbilities": "{{pokemonName}}의\n특성이 효과를 발휘하지 못하게 되었다!",

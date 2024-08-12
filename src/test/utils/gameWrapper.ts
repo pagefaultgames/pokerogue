@@ -89,6 +89,7 @@ export default class GameWrapper {
       frames: {},
     });
     Pokemon.prototype.enableMask = () => null;
+    Pokemon.prototype.updateFusionPalette = () => null;
   }
 
   setScene(scene: BattleScene) {
@@ -128,7 +129,9 @@ export default class GameWrapper {
       manager: {
         game: this.game,
       },
+      destroy: () => null,
       setVolume: () => null,
+      stop: () => null,
       stopByKey: () => null,
       on: (evt, callback) => callback(),
       key: "",
@@ -202,6 +205,7 @@ export default class GameWrapper {
     };
     const mockTextureManager = new MockTextureManager(this.scene);
     this.scene.add = mockTextureManager.add;
+    this.scene.textures = mockTextureManager;
     this.scene.sys.displayList =  this.scene.add.displayList;
     this.scene.sys.updateList = new UpdateList(this.scene);
     this.scene.systems = this.scene.sys;
@@ -242,6 +246,7 @@ function createFetchResponse(data) {
   return {
     ok: true,
     status: 200,
+    headers: new Headers(),
     json: () => Promise.resolve(data),
     text: () => Promise.resolve(JSON.stringify(data)),
   };
@@ -251,6 +256,7 @@ function createFetchBadResponse(data) {
   return {
     ok: false,
     status: 404,
+    headers: new Headers(),
     json: () => Promise.resolve(data),
     text: () => Promise.resolve(JSON.stringify(data)),
   };
