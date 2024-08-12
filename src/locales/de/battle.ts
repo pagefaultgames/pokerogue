@@ -57,7 +57,7 @@ export const battle: SimpleTranslationEntries = {
   "escapeVerbSwitch": "auswechseln",
   "escapeVerbFlee": "flucht",
   "skipItemQuestion": "Bist du sicher, dass du kein Item nehmen willst?",
-  "itemStackFull": "Du hast bereits zu viele von diesem Gegenstand. Du erhältst stattdessen {{itemName}}.",
+  "itemStackFull": "Du hast bereits zu viele von diesem Gegenstand. Du erhältst stattdessen {{itemName}}.", // Check the english translation
   "notDisabled": "{{moveName}} von {{pokemonName}} ist nicht mehr deaktiviert!",
   "turnEndHpRestore": "Die KP von {{pokemonName}} wurden wiederhergestellt.",
   "hpIsFull": "Die KP von {{pokemonName}} sind voll!",

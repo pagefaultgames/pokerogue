@@ -2222,7 +2222,7 @@ export default class BattleScene extends SceneBase {
           }
         } else if (!virtual) {
           const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
-          this.queueMessage(i18next.t("battle:itemStackFull", { itemName: defaultModifierType.name, fullItemName: modifier.type.name }), undefined, true);
+          this.queueMessage(i18next.t("battle:itemStackFull", { fullItemName: modifier.type.name, itemName: defaultModifierType.name }), undefined, true);
           return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant).then(success => resolve(success));
         }
 
