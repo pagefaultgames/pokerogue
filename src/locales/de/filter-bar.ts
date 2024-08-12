@@ -13,7 +13,7 @@ export const filterBar: SimpleTranslationEntries = {
   "passive": "Passive",
   "passiveUnlocked": "Passive freigeschaltet",
   "passiveLocked": "Passive gesperrt",
-  "passiveUnlockable": "Passive - Can Unlock",//Add translation here
+  "passiveUnlockable": "Passive - Freischalten möglich",
   "costReduction": "Kostenreduzierung",
   "costReductionUnlocked": "Kostenreduzierung möglich",
   "costReductionLocked": "Kostenreduzierung nicht möglich",
