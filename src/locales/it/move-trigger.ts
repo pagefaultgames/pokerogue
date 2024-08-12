@@ -33,7 +33,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isChargingPower": "{{pokemonName}} accumula energia!",
   "burnedItselfOut": "Le fiamme di {{pokemonName}} si sono spente!",
   "startedHeatingUpBeak": "{{pokemonName}} inizia a\nscaldare il becco!",
-  "setUpShellTrap": "{{pokemonName}} set up a shell trap!",
+  "setUpShellTrap": "{{pokemonName}} set a shell trap!",
   "isOverflowingWithSpacePower": "La forza dell’universo pervade {{pokemonName}}!",
   "usedUpAllElectricity": "{{pokemonName}} ha usato tutta la sua elettricità!",
   "stoleItem": "{{pokemonName}} ruba\nil/lo/la {{itemName}} di {{targetName}}!",
