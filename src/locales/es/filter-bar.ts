@@ -28,7 +28,7 @@ export const filterBar: SimpleTranslationEntries = {
   "hasHiddenAbility": "Habilidad oculta - Sí",
   "noHiddenAbility": "Habilidad oculta - No",
   "egg": "Huevo",
-  "eggPurchasable": "Huevo obtenible",
+  "eggPurchasable": "Huevo - puede comprar",
   "pokerus": "Pokérus",
   "hasPokerus": "Pokérus - Sí",
   "noPokerus": "Pokérus - No",
