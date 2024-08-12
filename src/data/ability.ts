@@ -2666,19 +2666,27 @@ export class BlockOneHitKOAbAttr extends AbAttr {
   }
 }
 
+/**
+ * This governs abilities that alter the priority of moves
+ * Abilities: Prankster, Gale Wings, Triage, Mycellium Might, Stall
+ */
 export class ChangeMovePriorityAbAttr extends AbAttr {
-  private moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean;
+  private moveFunc: (pokemon: Pokemon, move: Move) => boolean;
   private changeAmount: number;
 
-  constructor(moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean, changeAmount = 1) {
+  /**
+   * @param {(pokemon, move) => boolean} moveFunc applies priority-change to moves within a provided category
+   * @param {number} changeAmount the amount of priority added or subtracted
+   */
+  constructor(moveFunc: (pokemon: Pokemon, move: Move) => boolean, changeAmount: number) {
     super(true);
 
-    this.moveIncrementFunc = moveIncrementFunc;
+    this.moveFunc = moveFunc;
     this.changeAmount = changeAmount;
   }
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (!this.moveIncrementFunc(pokemon, args[0] as Move)) {
+    if (!this.moveFunc(pokemon, args[0] as Move)) {
       return false;
     }
 
@@ -4772,7 +4780,7 @@ export function initAbilities() {
       .attr(TypeImmunityStatChangeAbAttr, Type.GRASS, BattleStat.ATK, 1)
       .ignorable(),
     new Ability(Abilities.PRANKSTER, 5)
-      .attr(ChangeMovePriorityAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS),
+      .attr(ChangeMovePriorityAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS, 1),
     new Ability(Abilities.SAND_FORCE, 5)
       .attr(MoveTypePowerBoostAbAttr, Type.ROCK, 1.3)
       .attr(MoveTypePowerBoostAbAttr, Type.GROUND, 1.3)
@@ -4837,7 +4845,7 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.GALE_WINGS, 6)
-      .attr(ChangeMovePriorityAbAttr, (pokemon, move) => pokemon.isFullHp() && move.type === Type.FLYING),
+      .attr(ChangeMovePriorityAbAttr, (pokemon, move) => pokemon.isFullHp() && move.type === Type.FLYING, 1),
     new Ability(Abilities.MEGA_LAUNCHER, 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5),
     new Ability(Abilities.GRASS_PELT, 6)
@@ -5281,8 +5289,8 @@ export function initAbilities() {
       .partial() // Healing not blocked by Heal Block
       .ignorable(),
     new Ability(Abilities.MYCELIUM_MIGHT, 9)
-      .attr(MoveAbilityBypassAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS)
-      .partial(),
+      .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS, -0.5)
+      .attr(MoveAbilityBypassAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS),
     new Ability(Abilities.MINDS_EYE, 9)
       .attr(IgnoreTypeImmunityAbAttr, Type.GHOST, [Type.NORMAL, Type.FIGHTING])
       .attr(ProtectStatAbAttr, BattleStat.ACC)
