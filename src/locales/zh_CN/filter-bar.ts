@@ -17,7 +17,7 @@ export const filterBar: SimpleTranslationEntries = {
   "costReduction": "费用降低",
   "costReductionUnlocked": "已降费",
   "costReductionLocked": "未降费",
-  "costReductionUnlockable": "Cost Reduction - Can Unlock",//Add translation here
+  "costReductionUnlockable": "可降费",
   "favorite": "最爱",
   "isFavorite": "包含最爱",
   "notFavorite": "不包含最爱",
