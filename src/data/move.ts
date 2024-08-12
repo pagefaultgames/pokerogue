@@ -1,5 +1,5 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PokemonHealPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, StockpilingTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
@@ -1481,7 +1481,7 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
       return false;
     }
     const partyPokemon = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
-    partyPokemon.forEach(p => this.cureStatus(p));
+    partyPokemon.forEach(p => this.cureStatus(p, user.id));
 
     if (this.message) {
       user.scene.queueMessage(this.message);
@@ -1490,17 +1490,16 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
     return true;
   }
 
-  cureStatus(pokemon: Pokemon) {
-    if (!pokemon.isOnField()) {
+  cureStatus(pokemon: Pokemon, userId: number) {
+    if (!pokemon.isOnField() || pokemon.id === userId) { // user always cures its own status, regardless of ability
       pokemon.resetStatus(false);
       pokemon.updateInfo();
     } else if (!pokemon.hasAbility(this.abilityCondition)) {
       pokemon.resetStatus();
       pokemon.updateInfo();
+    } else {
+      pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id, pokemon.getPassiveAbility()?.id === this.abilityCondition));
     }
-    // else {
-    //   pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id, pokemon.getPassiveAbility()?.id === this.abilityCondition));
-    // }
   }
 }
 
