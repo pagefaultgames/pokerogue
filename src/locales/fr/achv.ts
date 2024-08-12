@@ -349,7 +349,6 @@ export const PGFachv: AchievementTranslationEntries = {
   "CATCH_SUB_LEGENDARY": PGMachv.CATCH_SUB_LEGENDARY,
   "CATCH_LEGENDARY": PGMachv.CATCH_LEGENDARY,
   "SEE_SHINY": PGMachv.SEE_SHINY,
-  },
   "SHINY_PARTY": {
     name: "Shasseuse",
     description: "Avoir une équipe exclusivement composée de Pokémon chromatiques",
