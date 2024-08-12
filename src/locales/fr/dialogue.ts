@@ -386,33 +386,33 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "rocket_grunt": {
     "encounter": {
       1: "Nous sommes de retour !",
-      2: "We're pulling a big job here! Get lost, kid!",
-      3: "Hand over your Pokémon, or face the wrath of Team Rocket!",
-      4: "You're about to experience the true terror of Team Rocket!",
-      5: "Hey, kid! Me am a Team Rocket member kind of guy!" //Use of wrong grammar is deliberate
+      2: "Ça bosse dur, ici ! Alors du balai !",
+      3: "File-nous tes Pokémon ou vas gouter à la colère de la Team Rocket !",
+      4: "Sois témoin de la vraie de ce qu’est une vraie terreur de la Team Rocket!",
+      5: "Hé gamin ! Moi être guy member of la Team Rocket !" //Use of wrong grammar is deliberate
     },
     "victory": {
       1: "Une fois de plus la Team Rocket s’envole vers d’autres cieux !",
-      2: "Oh no! I dropped the Lift Key!",
-      3: "I blew it!",
-      4: "My associates won't stand for this!",
-      5: "You say what? Team Rocket bye-bye a go-go? Broken it is says you?" //Use of wrong grammar is deliberate.
+      2: "Mince! J’ai laissé tomber\nla Clé Ascenseur !",
+      3: "J’ai tout foiré !",
+      4: "Mes compagnons vont me venger !",
+      5: "Toi dire quoi ? Forget que tu m’as vu !\nYou n’as rien seen !" //Use of wrong grammar is deliberate.
     },
   },
   "magma_grunt": {
     "encounter": {
       1: "N’espère pas recevoir de la pitié si tu te mets sur le chemin de la Team Magma !",
-      2: "You'd better not interfere with our plans! We're making the world a better place!",
-      3: "You're in the way! Team Magma has no time for kids like you!",
-      4: "I hope you brought marshmallows because things are about to heat up!",
-      5: "We're going to use the power of a volcano! It's gonna be... explosive! Get it? Heh heh!"
+      2: "Ne te mêle pas de nos affaires ! On va rendre ce monde meilleur !",
+      3: "Hors de mon chemin ! La Team Magma n’a pas de temps pour les gamins !",
+      4: "J’espère que t’as quelques marshmallows, car ça va chauffer !",
+      5: "On va utiliser le puissance d’un volcan ! Ça être… explosif ! Tu l’as… ? Héhé !"
     },
     "victory": {
       1: "Je…?\nJ’ai perdu ?!",
-      2: "I can't believe I lost! I even skipped lunch for this",
-      3: "No way! You're just a kid!",
-      4: "Urrrgh... I should've ducked into our hideout right away...",
-      5: "You beat me... Do you think the boss will dock my pay for this?"
+      2: "Je peux pas croire que j’ai pas pris mon déjeuner juste pour ça…",
+      3: "Impossible ! T’es qu'un gosse !",
+      4: "Aahhh…\nJ'aurais dû directement rentrer à la planque…",
+      5: "Tu m'as démoli… Tu crois que le boss va suspendre mon salaire ?"
     },
   },
   "aqua_grunt": {
@@ -3137,18 +3137,34 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "rocket_grunt": {
     "encounter": {
-      1: "Nous sommes de retour !"
+      1: "Nous sommes de retour !",
+      2: "Ça bosse dur, ici ! Alors du balai !",
+      3: "File-nous tes Pokémon ou vas gouter à la colère de la Team Rocket !",
+      4: "Sois témoin de la vraie de ce qu’est une vraie terreur de la Team Rocket!",
+      5: "Hé gamine ! Moi être guy member of la Team Rocket !" //Use of wrong grammar is deliberate
     },
     "victory": {
-      1: "Une fois de plus la Team Rocket s’envole vers d’autres cieux !"
+      1: "Une fois de plus la Team Rocket s’envole vers d’autres cieux !",
+      2: "Mince! J’ai laissé tomber\nla Clé Ascenseur !",
+      3: "J’ai tout foiré !",
+      4: "Mes compagnons vont me venger !",
+      5: "Toi dire quoi ? Forget que tu m’as vu !\nYou n’as rien seen !" //Use of wrong grammar is deliberate.
     },
   },
   "magma_grunt": {
     "encounter": {
-      1: "N’espère pas recevoir de la pitié si tu te mets sur le chemin de la Team Magma !"
+      1: "N’espère pas recevoir de la pitié si tu te mets sur le chemin de la Team Magma !",
+      2: "Ne te mêle pas de nos affaires ! On va rendre ce monde meilleur !",
+      3: "Hors de mon chemin ! La Team Magma n’a pas de temps pour les gamins !",
+      4: "J’espère que t’as quelques marshmallows, car ça va chauffer !",
+      5: "On va utiliser le puissance d’un volcan ! Ça être… explosif ! Tu l’as… ? Héhé !"
     },
     "victory": {
-      1: "Je…?\nJ’ai perdu ?!"
+      1: "Je…?\nJ’ai perdu ?!",
+      2: "Je peux pas croire que j’ai pas pris mon déjeuner juste pour ça…",
+      3: "Impossible ! T’es qu'une gosse !",
+      4: "Aahhh…\nJ'aurais dû directement rentrer à la planque…",
+      5: "Tu m'as démoli… Tu crois que le boss va suspendre mon salaire ?"
     },
   },
   "aqua_grunt": {
