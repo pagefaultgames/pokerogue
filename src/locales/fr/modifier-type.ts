@@ -42,17 +42,17 @@ export const modifierType: ModifierTypeTranslationEntries = {
       }
     },
     "PokemonPpUpModifierType": {
-	  description: "Augmente le max de PP de {{upPoints}} à une capacité d’un Pokémon pour chaque 5 PP max (max : 3).",
+      description: "Augmente le max de PP de {{upPoints}} à une capacité d’un Pokémon pour chaque 5 PP max (max : 3).",
     },
     "PokemonNatureChangeModifierType": {
       name: "Aromate {{natureName}}",
-	  description: "Donne la nature {{natureName}} à un Pokémon et la débloque pour le starter lui étant lié.",
+      description: "Donne la nature {{natureName}} à un Pokémon et la débloque pour le starter lui étant lié.",
     },
     "DoubleBattleChanceBoosterModifierType": {
-	  description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats.",
+      description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats.",
     },
     "TempBattleStatBoosterModifierType": {
-	  description: "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats.",
+      description: "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats.",
     },
     "AttackTypeBoosterModifierType": {
       description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon.",
@@ -93,7 +93,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Augmente de {{accuracyAmount}} la précision des capacités (maximum 100).",
     },
     "PokemonMultiHitModifierType": {
-	  description: "Frappe une fois de plus en échange d’une baisse de puissance de respectivement 60/75/82,5% par cumul.",
+      description: "Frappe une fois de plus en échange d’une baisse de puissance de respectivement 60/75/82,5% par cumul.",
     },
     "TmModifierType": {
       name: "CT{{moveId}} - {{moveName}}",
@@ -132,9 +132,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "RARE_CANDY": { name: "Super Bonbon" },
     "RARER_CANDY": { name: "Hyper Bonbon" },
 
-    "MEGA_BRACELET": { name: "Méga-Bracelet", description: "Débloque les Méga-Gemmes." },
+    "MEGA_BRACELET": { name: "Méga-Bracelet", description: "Débloque les Méga-Gemmes dans la boutique." },
     "DYNAMAX_BAND": { name: "Poignet Dynamax", description: "Débloque le Dynamax." },
-    "TERA_ORB": { name: "Orbe Téracristal", description: "Débloque les Téra-Éclats." },
+    "TERA_ORB": { name: "Orbe Téracristal", description: "Débloque les Téra-Éclats dans la boutique." },
 
     "MAP": { name: "Carte", description: "Vous permet de choisir votre destination à un croisement." },
 
@@ -211,7 +211,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 30% de chances qu’une Baie utilisée ne soit pas consommée." },
 
-    "FOCUS_BAND": { name: "Bandeau", description: "Ajoute 10% de chances de survivre avec 1 PV si les dégâts reçus pouvaient mettre K.O." },
+    "FOCUS_BAND": { name: "Bandeau", description: "Ajoute 10% de chances de survivre avec 1 PV si les dégâts reçus pouvaient mettre K.O. ." },
 
     "QUICK_CLAW": { name: "Vive Griffe", description: "Ajoute 10% de chances d’agir en premier, indépendamment de la vitesse (après la priorité)." },
 
@@ -226,7 +226,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BATON": { name: "Bâton", description: "Permet de transmettre les effets en cas de changement de Pokémon. Ignore les pièges." },
 
     "SHINY_CHARM": { name: "Charme Chroma", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage chromatique." },
-    "ABILITY_CHARM": { name: "Charme Talent", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage avec un Talent Caché." },
+    "ABILITY_CHARM": { name: "Charme Talent", description: "Augmente énormément les chances de rencontrer un Pokémon sauvage avec un talent caché." },
 
     "IV_SCANNER": { name: "Scanner d’IV", description: "Révèle la qualité de deux IV d’un Pokémon sauvage par scanner possédé. Les meilleurs IV sont révélés en priorité." },
 
