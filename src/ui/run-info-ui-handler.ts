@@ -394,7 +394,7 @@ export default class GameInfoUiHandler extends UiHandler {
       const pName = pokemon.getNameToRender();
       const passiveLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:passive") : (i18next.t("starterSelectUiHandler:passive") as string).charAt(0);
       const abilityLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:ability") : (i18next.t("starterSelectUiHandler:ability") as string).charAt(0);
-      const pPassiveInfo = pokemon.passive ? `${passiveLabel+": "+pokemon.getPassiveAbility().name}` : "";
+      const pPassiveInfo = pokemon.passive ? `${passiveLabel}: ${pokemon.getPassiveAbility().name}` : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
       const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
       pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`);
