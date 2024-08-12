@@ -648,8 +648,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.getSpeciesForLevel(level, allowEvolving, false, (isBoss ? PartyMemberStrength.WEAKER : PartyMemberStrength.AVERAGE) + (gameMode?.isEndless ? 1 : 0));
   }
 
-  getTrainerSpeciesForLevel(level: integer, allowEvolving: boolean = false, strength: PartyMemberStrength): Species {
-    return this.getSpeciesForLevel(level, allowEvolving, true, strength);
+  getTrainerSpeciesForLevel(level: integer, allowEvolving: boolean = false, strength: PartyMemberStrength, currentWave: number): Species {
+    return this.getSpeciesForLevel(level, allowEvolving, true, strength, currentWave);
   }
 
   private getStrengthLevelDiff(strength: PartyMemberStrength): integer {
@@ -669,7 +669,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     }
   }
 
-  getSpeciesForLevel(level: integer, allowEvolving: boolean = false, forTrainer: boolean = false, strength: PartyMemberStrength = PartyMemberStrength.WEAKER): Species {
+  getSpeciesForLevel(level: integer, allowEvolving: boolean = false, forTrainer: boolean = false, strength: PartyMemberStrength = PartyMemberStrength.WEAKER, currentWave: number = 0): Species {
     const prevolutionLevels = this.getPrevolutionLevels();
 
     if (prevolutionLevels.length) {
@@ -730,6 +730,11 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
           evolutionChance = Math.min(0.65 * easeInFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel) + 0.35 * easeOutFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel * 2.5) / (preferredMinLevel * 2.5)), 1);
         }
       }
+      // (Most) Trainers shouldn't be using unevolved Pokemon by the third gym leader
+      if (currentWave >= 80 && forTrainer && strength > PartyMemberStrength.WEAKER) {
+        evolutionChance = 1;
+        noEvolutionChance = 0;
+      }
 
       if (evolutionChance > 0) {
         if (isRegionalEvolution) {
@@ -754,7 +759,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
     for (const weight of evolutionPool.keys()) {
       if (randValue < weight) {
-        return getPokemonSpecies(evolutionPool.get(weight)!).getSpeciesForLevel(level, true, forTrainer, strength); // TODO: is the bang correct?
+        return getPokemonSpecies(evolutionPool.get(weight)!).getSpeciesForLevel(level, true, forTrainer, strength, currentWave); // TODO: is the bang correct?
       }
     }
 

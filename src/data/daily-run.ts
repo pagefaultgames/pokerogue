@@ -49,7 +49,7 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
       const costSpecies = Object.keys(speciesStarters)
         .map(s => parseInt(s) as Species)
         .filter(s => speciesStarters[s] === cost);
-      const starterSpecies = getPokemonSpecies(getPokemonSpecies(Utils.randSeedItem(costSpecies)).getTrainerSpeciesForLevel(startingLevel, true, PartyMemberStrength.STRONGER));
+      const starterSpecies = getPokemonSpecies(getPokemonSpecies(Utils.randSeedItem(costSpecies)).getTrainerSpeciesForLevel(startingLevel, true, PartyMemberStrength.STRONGER, 0));
       starters.push(getDailyRunStarter(scene, starterSpecies, startingLevel));
     }
   }, 0, seed);
