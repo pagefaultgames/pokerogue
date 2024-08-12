@@ -2669,6 +2669,7 @@ export class BlockOneHitKOAbAttr extends AbAttr {
 /**
  * This governs abilities that alter the priority of moves
  * Abilities: Prankster, Gale Wings, Triage, Mycellium Might, Stall
+ * Note - Quick Claw has a separate and distinct implementation outside of priority
  */
 export class ChangeMovePriorityAbAttr extends AbAttr {
   private moveFunc: (pokemon: Pokemon, move: Move) => boolean;
