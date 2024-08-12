@@ -2440,8 +2440,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     for (const tag of source.summonData.tags) {
 
-      // bypass yawn, and infatuation as those can not be passed via Baton Pass
-      if (tag.sourceMove === Moves.YAWN || tag.tagType === BattlerTagType.INFATUATED) {
+      // bypass those can not be passed via Baton Pass
+      const excludeTagTypes = new Set([BattlerTagType.DROWSY, BattlerTagType.INFATUATED, BattlerTagType.FIRE_BOOST]);
+
+      if (excludeTagTypes.has(tag.tagType)) {
         continue;
       }
 
