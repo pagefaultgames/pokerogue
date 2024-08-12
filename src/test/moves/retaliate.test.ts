@@ -31,32 +31,23 @@ describe("Moves - Retaliate", () => {
 
     game.override.moveset([Moves.RETALIATE, Moves.SPLASH]);
     game.override.startingHeldItems([{name: "WIDE_LENS", count: 3}]);
-    game.override.startingLevel(70);
+    game.override.startingLevel(80);
     game.override.disableCrits();
   });
 
   it("increases power if ally died previous turn", async () => {
     await game.startBattle([Species.ABRA, Species.COBALION]);
+    expect(retaliate.calculateBattlePower(game.scene.getPlayerPokemon()!, game.scene.getEnemyPokemon()!)).equals(70);
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     game.doSelectPartyPokemon(1);
 
     await game.toNextTurn();
-    game.doAttack(getMovePosition(game.scene, 0, Moves.RETALIATE));
-    //await game.phaseInterceptor.to(DamagePhase);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     console.log("ALLO1");
-    let snorlax = game.scene.getEnemyPokemon()!;
-    let cobalion = game.scene.getPlayerPokemon()!;
+    const snorlax = game.scene.getEnemyPokemon()!;
+    const cobalion = game.scene.getPlayerPokemon()!;
     expect(cobalion.name).equals("Cobalion");
     expect(retaliate.calculateBattlePower(cobalion, snorlax)).equals(140);
-    expect(retaliate.calculateBattlePower(snorlax, cobalion)).equals(70);
-    console.log(game.scene.getEnemyPokemon()!.hp);
-    console.log(game.scene.getPlayerPokemon()!.hp);
-    //await game.toNextTurn();
-    console.log("ALLO2");
-    game.doAttack(getMovePosition(game.scene, 0, Moves.RETALIATE));
-    snorlax = game.scene.getEnemyPokemon()!;
-    cobalion = game.scene.getPlayerPokemon()!;
-    expect(retaliate.calculateBattlePower(cobalion, snorlax)).equals(70);
     expect(retaliate.calculateBattlePower(snorlax, cobalion)).equals(70);
   });
 });
