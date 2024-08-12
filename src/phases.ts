@@ -1,7 +1,7 @@
 import BattleScene, { bypassLogin } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from "./utils";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr, MoveHeaderAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr, MoveHeaderAttr, UnselectableMoveAttr } from "./data/move";
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -2021,7 +2021,9 @@ export class CommandPhase extends FieldPhase {
         // Decides between a Disabled, Not Implemented, or No PP translation message
         const errorMessage =
             playerPokemon.summonData.disabledMove === move.moveId ? "battle:moveDisabled" :
-              move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
+              move.moveId === Moves.STUFF_CHEEKS ? "battle:moveDisabledStuffCheeks" :
+                move.getMove().hasAttr(UnselectableMoveAttr) ? "battle:moveDisabledGravity" :
+                  move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
         const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
         this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
@@ -2689,6 +2691,14 @@ export class MovePhase extends BattlePhase {
         this.fail();
         this.showMoveText();
         this.showFailedText();
+      }
+      if (!this.move.isUsable(this.pokemon)) {
+        this.fail();
+        this.showMoveText();
+        const failedText = this.move.moveId === Moves.STUFF_CHEEKS ? "battle:moveDisabledStuffCheeks" :
+          this.move.getMove().hasAttr(UnselectableMoveAttr) ? "battle:moveDisabledGravity" :
+            null;
+        this.showFailedText(failedText !== null ? i18next.t(failedText, {moveName: this.move.getName()}) : null);
       }
       return this.end();
     }

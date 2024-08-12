@@ -4317,7 +4317,7 @@ export class PokemonMove {
       return false;
     }
     if (this.getMove().hasAttr(UnselectableMoveAttr)) {
-      return this.getMove().applyConditions(pokemon, null, this.getMove());
+      return this.getMove().applyConditions(pokemon, null!, this.getMove());
     }
     return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");
   }
