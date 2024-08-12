@@ -60,6 +60,7 @@ export const battle: SimpleTranslationEntries = {
   "turnEndHpRestore": "{{pokemonName}}'s HP was restored.",
   "hpIsFull": "{{pokemonName}}'s\nHP is full!",
   "skipItemQuestion": "你要跳過拾取道具嗎？",
+  "itemStackFull": "{{fullItemName}}持有數已達到上限，\n你獲得了{{itemName}}作爲代替。",
   "eggHatching": "咦？",
   "ivScannerUseQuestion": "對 {{pokemonName}} 使用個體值掃描儀？",
   "wildPokemonWithAffix": "野生的 {{pokemonName}}",
