@@ -3317,6 +3317,11 @@ export function getStarterValueFriendshipCap(value: integer): integer {
   }
 }
 
+/**
+* Method to get the daily list of starters with Pokerus.
+* @param scene {@linkcode BattleScene} used as part of RNG
+* @returns A list of starters with Pokerus
+*/
 export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
   const pokerusStarters : PokemonSpecies[] = [];
   const date = new Date();
