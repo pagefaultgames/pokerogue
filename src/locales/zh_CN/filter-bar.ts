@@ -13,7 +13,7 @@ export const filterBar: SimpleTranslationEntries = {
   "passive": "被动",
   "passiveUnlocked": "被动解锁",
   "passiveLocked": "被动未解锁",
-  "passiveUnlockable": "Passive - Can Unlock",//Add translation here
+  "passiveUnlockable": "被动可解锁",
   "costReduction": "费用降低",
   "costReductionUnlocked": "已降费",
   "costReductionLocked": "未降费",
