@@ -4019,12 +4019,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "Yu",
   },
   roaring_moon: {
-    fusionPrefix: "Roaring",
-    fusionSuffix: "Moon",
+    fusionPrefix: "Lua",
+    fusionSuffix: "Estrondo",
   },
   iron_valiant: {
-    fusionPrefix: "Iron",
-    fusionSuffix: "Valiant",
+    fusionPrefix: "Valentia",
+    fusionSuffix: "Férrea",
   },
   koraidon: {
     fusionPrefix: "Korai",
@@ -4035,12 +4035,12 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "don",
   },
   walking_wake: {
-    fusionPrefix: "Walking",
-    fusionSuffix: "Wake",
+    fusionPrefix: "Onda",
+    fusionSuffix: "Ando",
   },
   iron_leaves: {
-    fusionPrefix: "Iron",
-    fusionSuffix: "Leaves",
+    fusionPrefix: "Folhas",
+    fusionSuffix: "Férreas",
   },
   dipplin: {
     fusionPrefix: "Dip",
@@ -4079,20 +4079,20 @@ export const fusionAffixes: FusionTranslationEntries = {
     fusionSuffix: "pple",
   },
   gouging_fire: {
-    fusionPrefix: "Gouging",
-    fusionSuffix: "Fire",
+    fusionPrefix: "Fogo",
+    fusionSuffix: "Corossão",
   },
   raging_bolt: {
-    fusionPrefix: "Raging",
-    fusionSuffix: "Bolt",
+    fusionPrefix: "Raio",
+    fusionSuffix: "Fúria",
   },
   iron_boulder: {
-    fusionPrefix: "Iron",
-    fusionSuffix: "Boulder",
+    fusionPrefix: "Rocha",
+    fusionSuffix: "Férrea",
   },
   iron_crown: {
-    fusionPrefix: "Iron",
-    fusionSuffix: "Crown",
+    fusionPrefix: "Chifres",
+    fusionSuffix: "Férreos",
   },
   terapagos: {
     fusionPrefix: "Tera",
