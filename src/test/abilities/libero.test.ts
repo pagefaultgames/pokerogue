@@ -16,7 +16,7 @@ import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
-describe("Abilities - Protean", () => {
+describe("Abilities - Libero", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
