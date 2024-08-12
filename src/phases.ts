@@ -25,7 +25,7 @@ import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
-import { CheckTrappedAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, ChangeMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr, IgnoreMoveEffectsAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr, AddSecondStrikeAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, ChangeMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, PreventBypassSpeedChanceAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr, IgnoreMoveEffectsAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr, AddSecondStrikeAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -2304,8 +2304,12 @@ export class TurnStartPhase extends FieldPhase {
 
     this.scene.getField(true).filter(p => p.summonData).map(p => {
       const bypassSpeed = new Utils.BooleanHolder(false);
+      const canCheckHeldItems = new Utils.BooleanHolder(true);
       applyAbAttrs(BypassSpeedChanceAbAttr, p, null, bypassSpeed);
-      this.scene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
+      applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, bypassSpeed, canCheckHeldItems);
+      if (canCheckHeldItems.value) {
+        this.scene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
+      }
       battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
     });
 
@@ -2335,6 +2339,11 @@ export class TurnStartPhase extends FieldPhase {
         applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority); //TODO: is the bang correct here?
 
         if (aPriority.value !== bPriority.value) {
+          const bracketDifference = Math.ceil(aPriority.value) - Math.ceil(bPriority.value);
+          const hasSpeedDifference = battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value;
+          if (bracketDifference === 0 && hasSpeedDifference) {
+            return battlerBypassSpeed[a].value ? -1 : 1;
+          }
           return aPriority.value < bPriority.value ? 1 : -1;
         }
       }

@@ -2668,7 +2668,7 @@ export class BlockOneHitKOAbAttr extends AbAttr {
 
 /**
  * This governs abilities that alter the priority of moves
- * Abilities: Prankster, Gale Wings, Triage, Mycellium Might, Stall
+ * Abilities: Prankster, Gale Wings, Triage, Mycelium Might, Stall
  * Note - Quick Claw has a separate and distinct implementation outside of priority
  */
 export class ChangeMovePriorityAbAttr extends AbAttr {
@@ -4085,6 +4085,41 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
   }
 }
 
+/**
+ * This attribute checks if a Pokemon's move meets a provided condition to determine if the Pokemon can use Quick Claw
+ * It was created because Pokemon with the ability Mycelium Might cannot access Quick Claw's benefits when using status moves.
+*/
+export class PreventBypassSpeedChanceAbAttr extends AbAttr {
+  private condition: ((pokemon: Pokemon, move: Move) => boolean);
+
+  /**
+   * @param {function} condition - checks if a move meets certain conditions
+   */
+  constructor(condition: (pokemon: Pokemon, move: Move) => boolean) {
+    super(true);
+    this.condition = condition;
+  }
+
+  /**
+   * @argument {boolean} bypassSpeed - determines if a Pokemon is able to bypass speed at the moment
+   * @argument {boolean} canCheckHeldItems - determines if a Pokemon has access to Quick Claw's effects or not
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const bypassSpeed = args[0] as Utils.BooleanHolder;
+    const canCheckHeldItems = args[1] as Utils.BooleanHolder;
+
+    const turnCommand = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
+    const isCommandFight = turnCommand?.command === Command.FIGHT;
+    const move = turnCommand?.move?.move ? allMoves[turnCommand.move.move] : null;
+    if (this.condition(pokemon, move!) && isCommandFight) {
+      bypassSpeed.value = false;
+      canCheckHeldItems.value = false;
+      return false;
+    }
+    return true;
+  }
+}
+
 async function applyAbAttrsInternal<TAttr extends AbAttr>(
   attrType: Constructor<TAttr>,
   pokemon: Pokemon | null,
@@ -5291,6 +5326,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.MYCELIUM_MIGHT, 9)
       .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS, -0.5)
+      .attr(PreventBypassSpeedChanceAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS)
       .attr(MoveAbilityBypassAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS),
     new Ability(Abilities.MINDS_EYE, 9)
       .attr(IgnoreTypeImmunityAbAttr, Type.GHOST, [Type.NORMAL, Type.FIGHTING])
