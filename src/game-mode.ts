@@ -69,7 +69,7 @@ export class GameMode implements GameModeConfig {
    * Helper function to see if the game mode is using fresh start
    * @returns true if a fresh start challenge is being applied
    */
-  isFreshStart(): boolean {
+  isFreshStartChallenge(): boolean {
     return this.hasChallenge(Challenges.FRESH_START);
   }
 
