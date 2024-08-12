@@ -16,7 +16,7 @@ export const filterBar: SimpleTranslationEntries = {
   "costReduction": "Cost Reduction",//Also here
   "costReductionUnlocked": "Cost Reduction Unlocked",
   "costReductionLocked": "Cost Reduction Locked",
-  "favorite": "Favorite",//Also here
+  "favorite": "最愛",
   "isFavorite": "包含最愛",
   "notFavorite": "不包含最愛",
   "ribbon": "緞帶",
