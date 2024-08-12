@@ -10,7 +10,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "MoneyAchv": {
-    description: "Récolter un total de {{moneyAmount}} ₽",
+    description: "Récolter un total de {{moneyAmount}} ₽.",
   },
   "10K_MONEY": {
     name: "Épargnant",
@@ -26,7 +26,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "DamageAchv": {
-    description: "Infliger {{damageAmount}} de dégâts en un coup",
+    description: "Infliger {{damageAmount}} de dégâts en un coup.",
   },
   "250_DMG": {
     name: "Caïd",
@@ -42,7 +42,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "HealAchv": {
-    description: "Soigner {{healAmount}} {{HP}} en une fois avec une capacité, un talent ou un objet tenu",
+    description: "Soigner {{healAmount}} {{HP}} en une fois avec une capacité, un talent ou un objet tenu.",
   },
   "250_HEAL": {
     name: "Infirmier",
@@ -58,7 +58,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "LevelAchv": {
-    description: "Monter un Pokémon au N.{{level}}",
+    description: "Monter un Pokémon au N.{{level}}.",
   },
   "LV_100": {
     name: "Et c’est pas fini !",
@@ -71,7 +71,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "RibbonAchv": {
-    description: "Accumuler un total de {{ribbonAmount}} Rubans",
+    description: "Accumuler un total de {{ribbonAmount}} Rubans.",
   },
   "10_RIBBONS": {
     name: "Maitre de la Ligue",
@@ -91,83 +91,83 @@ export const PGMachv: AchievementTranslationEntries = {
 
   "TRANSFER_MAX_BATTLE_STAT": {
     name: "Travail d’équipe",
-    description: "Utiliser Relais avec au moins une statistique montée à fond",
+    description: "Utiliser Relais avec au moins une statistique montée à fond.",
   },
   "MAX_FRIENDSHIP": {
     name: "Copinage",
-    description: "Atteindre le niveau de bonheur maximal avec un Pokémon",
+    description: "Atteindre le niveau de bonheur maximal avec un Pokémon.",
   },
   "MEGA_EVOLVE": {
     name: "Mégamorph",
-    description: "Méga-évoluer un Pokémon",
+    description: "Méga-évoluer un Pokémon.",
   },
   "GIGANTAMAX": {
     name: "Kaijū",
-    description: "Gigamaxer un Pokémon",
+    description: "Gigamaxer un Pokémon.",
   },
   "TERASTALLIZE": {
     name: "J’aime les STAB",
-    description: "Téracristalliser un Pokémon",
+    description: "Téracristalliser un Pokémon.",
   },
   "STELLAR_TERASTALLIZE": {
     name: "Le type enfoui",
-    description: "Téracristalliser un Pokémon en type Stellaire",
+    description: "Téracristalliser un Pokémon en type Stellaire.",
   },
   "SPLICE": {
     name: "Infinite Fusion",
-    description: "Fusionner deux Pokémon avec le Pointeau ADN",
+    description: "Fusionner deux Pokémon avec le Pointeau ADN.",
   },
   "MINI_BLACK_HOLE": {
     name: "Item-stellar",
-    description: "Obtenir un Mini Trou Noir",
+    description: "Obtenir un Mini Trou Noir.",
   },
   "CATCH_MYTHICAL": {
     name: "Fabuleux",
-    description: "Capturer un Pokémon fabuleux",
+    description: "Capturer un Pokémon fabuleux.",
   },
   "CATCH_SUB_LEGENDARY": {
     name: "(Semi-)Légendaire",
-    description: "Capturer un Pokémon semi-légendaire",
+    description: "Capturer un Pokémon semi-légendaire.",
   },
   "CATCH_LEGENDARY": {
     name: "Légendaire",
-    description: "Capturer un Pokémon légendaire",
+    description: "Capturer un Pokémon légendaire.",
   },
   "SEE_SHINY": {
     name: "Chromatique",
-    description: "Trouver un Pokémon sauvage chromatique",
+    description: "Trouver un Pokémon sauvage chromatique.",
   },
   "SHINY_PARTY": {
     name: "Shasseur",
-    description: "Avoir une équipe exclusivement composée de Pokémon chromatiques",
+    description: "Avoir une équipe exclusivement composée de Pokémon chromatiques.",
   },
   "HATCH_MYTHICAL": {
     name: "Œuf fabuleux",
-    description: "Obtenir un Pokémon fabuleux dans un Œuf",
+    description: "Obtenir un Pokémon fabuleux dans un Œuf.",
   },
   "HATCH_SUB_LEGENDARY": {
     name: "Œuf semi-légendaire",
-    description: "Obtenir un Pokémon semi-légendaire dans un Œuf",
+    description: "Obtenir un Pokémon semi-légendaire dans un Œuf.",
   },
   "HATCH_LEGENDARY": {
     name: "Œuf légendaire",
-    description: "Obtenir un Pokémon légendaire dans un Œuf",
+    description: "Obtenir un Pokémon légendaire dans un Œuf.",
   },
   "HATCH_SHINY": {
     name: "Œuf chromatique",
-    description: "Obtenir un Pokémon chromatique dans un Œuf",
+    description: "Obtenir un Pokémon chromatique dans un Œuf.",
   },
   "HIDDEN_ABILITY": {
     name: "Potentiel enfoui",
-    description: "Capturer un Pokémon possédant un talent caché",
+    description: "Capturer un Pokémon possédant un talent caché.",
   },
   "PERFECT_IVS": {
     name: "Certificat d’authenticité",
-    description: "Avoir des IV parfaits sur un Pokémon",
+    description: "Avoir des IV parfaits sur un Pokémon.",
   },
   "CLASSIC_VICTORY": {
     name: "Invaincu",
-    description: "Terminer le jeu en mode classique",
+    description: "Terminer le jeu en mode Classique.",
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
     name: "Le stagiaire de 3e",
