@@ -204,6 +204,7 @@ export default class GameInfoUiHandler extends UiHandler {
           tObjSprite.setScale(0.20);
           doubleContainer.add(tObjSprite);
           doubleContainer.add(tObjPartnerSprite);
+          doubleContainer.setPosition(12, 38);
           enemyContainer.add(doubleContainer);
         } else {
           tObjSprite.setScale(0.35, 0.35);
@@ -241,7 +242,7 @@ export default class GameInfoUiHandler extends UiHandler {
               enemySprite2.setTint(teraColor.color);
             }
           }
-          enemyIcon.setPosition(39*(e%3), (35*pokemonRowHeight));
+          enemyIcon.setPosition(39*(e%3)+5, (35*pokemonRowHeight));
           const enemyLevel = addTextObject(this.scene, 43*(e%3), (27*(pokemonRowHeight+1)), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
           enemyLevel.setShadow(0, 0, undefined);
           enemyLevel.setStroke("#424242", 14);
@@ -285,6 +286,8 @@ export default class GameInfoUiHandler extends UiHandler {
           rules.push(i18next.t(`runHistory:challengeMonoGen${runChallenges[i].value}` as const));
         } else if (runChallenges[i].id === Challenges.SINGLE_TYPE && runChallenges[i].value !== 0) {
           rules.push(i18next.t(`pokemonInfo:Type.${Type[runChallenges[i].value-1]}` as const));
+        } else if (runChallenges[i].id === Challenges.FRESH_START && runChallenges[i].value !== 0) {
+          rules.push(i18next.t("challenges:freshStart.name"));
         }
       }
       if (rules) {
