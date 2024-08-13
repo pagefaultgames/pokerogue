@@ -70,4 +70,6 @@ export const battlerTags: SimpleTranslationEntries = {
   "cursedOnAdd": "{{pokemonNameWithAffix}} cut its own HP and put a curse on the {{pokemonName}}!",
   "cursedLapse": "{{pokemonNameWithAffix}} is afflicted by the Curse!",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
+  "disabledOnAdd": "{{pokemonNameWithAffix}}'s {{moveName}}\nwas disabled!",
+  "disabledLapse": "{{pokemonNameWithAffix}}'s {{moveName}}\nis no longer disabled.",
 } as const;
