@@ -26,11 +26,11 @@ describe("Moves - Chilly Reception", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.moveset([Moves.CHILLY_RECEPTION, Moves.SPLASH, Moves.SNOWSCAPE]);
-    game.override.enemyMoveset(SPLASH_ONLY);
-    game.override.startingLevel(5);
-    game.override.enemyLevel(5);
+    game.override.battleType("single")
+      .moveset([Moves.CHILLY_RECEPTION, Moves.SPLASH, Moves.SNOWSCAPE])
+      .enemyMoveset(SPLASH_ONLY)
+      .startingLevel(5)
+      .enemyLevel(5);
 
   });
 
