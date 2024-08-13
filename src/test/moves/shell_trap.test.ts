@@ -8,6 +8,7 @@ import { BattlerIndex } from "#app/battle.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { BerryPhase, MoveEndPhase, MovePhase } from "#app/phases.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { MoveResult } from "#app/field/pokemon.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -137,6 +138,26 @@ describe("Moves - Shell Trap", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       enemyPokemon.forEach((p, i) => expect(p.hp).toBe(enemyStartingHp[i]));
+    }, TIMEOUT
+  );
+
+  it(
+    "should not activate from a subsequent physical attack",
+    async () => {
+      game.override.battleType("single");
+      vi.spyOn(allMoves[Moves.RAZOR_LEAF], "priority", "get").mockReturnValue(-4);
+
+      await game.startBattle([Species.CHARIZARD]);
+
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SHELL_TRAP));
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+
+      expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     }, TIMEOUT
   );
 });

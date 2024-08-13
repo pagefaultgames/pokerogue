@@ -170,7 +170,6 @@ export class ShellTrapTag extends BattlerTag {
   }
 
   onAdd(pokemon: Pokemon): void {
-    // TODO: localize
     pokemon.scene.queueMessage(i18next.t("moveTriggers:setUpShellTrap", { pokemonName: getPokemonNameWithAffix(pokemon) }));
   }
 
