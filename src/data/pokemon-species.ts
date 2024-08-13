@@ -3249,7 +3249,7 @@ export const speciesStarters = {
   [Species.IRON_MOTH]: 6,
   [Species.IRON_THORNS]: 6,
   [Species.FRIGIBAX]: 4,
-  [Species.GIMMIGHOUL]: 5,
+  [Species.GIMMIGHOUL]: 4,
   [Species.WO_CHIEN]: 6,
   [Species.CHIEN_PAO]: 7,
   [Species.TING_LU]: 6,
