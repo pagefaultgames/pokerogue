@@ -450,33 +450,33 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "plasma_grunt": {
     "encounter": {
       1: "Pas de quatiers à ceux qui ne suivent pas notre idéal !",
-      2: "If I win against you, release your Pokémon!",
-      3: "If you get in the way of Team Plasma, I'll take care of you!",
-      4: "Team Plasma will liberate Pokémon from selfish humans like you!",
-      5: "Our hairstyles are out of this world... but our battling skills? You'll find out soon enough."
+      2: "Si je gagne, tu relâches tous tes Pokémon !",
+      3: "Si tu te mets en travers de la Team Plasma, je m’occuperai de toi personnellement !",
+      4: "La Team Plasma va libérer les Pokémon de tous les humains égoïstes dans ton genre !",
+      5: "Nos coupes sont lunaires… Mais en combat ?\nTu vas vite le découvrir."
     },
     "victory": {
       1: "Plasmaaaaaaaaa !",
-      2: "How could I lose...",
-      3: "...What a weak Pokémon, I'll just have to go steal some better ones!",
-      4: "Great plans are always interrupted.",
-      5: "This is bad... Badbadbadbadbadbadbad! Bad for Team Plasma! Or Plasbad, for short!"
+      2: "Comment ai-je pu perdre…",
+      3: "… Ce Pokémon est nul, j’vais aller en voler de meilleurs !",
+      4: "Les plans ambitieux connaissent toujours leurs lots d’interruptions.",
+      5: "C'est mauvais… MAUVAIS MAUVAIS MAUVAIS MAUVAIS !\nVa falloir battre en retraite, c’est la méga cata !"
     },
   },
   "flare_grunt": {
     "encounter": {
-      1: "Your Pokémon are no match for the elegance of Team Flare.",
-      2: "Hope you brought your sunglasses, because things are about to get bright!",
-      3: "Team Flare will cleanse the world of imperfection!",
-      4: "Prepare to face the brilliance of Team Flare!",
-      5: "Fashion is most important to us!"
+      1: "Tes Pokémon ne sont pas dignes de l’élégance de la Team Flare.",
+      2: "T’as des lunettes de soleil j’espère ?\nCar prépare-toi à être ébloui !",
+      3: "La Team Flare va purifier ce monde de toute imperfection !",
+      4: "Prépare-toi à découvrir l’indiscutable sens du style de la Team Flare !",
+      5: "La mode, c’est important !"
     },
     "victory": {
-      1: "The future doesn't look bright for me.",
-      2: "Perhaps there's more to battling than I thought. Back to the drawing board.",
-      3: "Gahh?! I lost?!",
-      4: "Even in defeat, Team Flare's elegance shines through.",
-      5: "You may have beaten me, but when I lose, I go out in style!"
+      1: "Mon futur n’a pas l’air si radieux.",
+      2: "Les combats semblent être plus complexes que je le pensais.\nRetour aux aux planches à dessin.",
+      3: "Ehhhh ?! J’ai perdu ?!",
+      4: "Même dans la défaite, l’élégance de la Team Flare continue de rayonner sur ce monde.",
+      5: "J’appelle pas ça perdre, j’appelle ça échouer avec panache !"
     },
   },
   "rocket_boss_giovanni_1": {
@@ -3201,18 +3201,34 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "plasma_grunt": {
     "encounter": {
-      1: "Pas de quatiers à ceux qui ne suivent pas notre idéal !"
+      1: "Pas de quatiers à ceux qui ne suivent pas notre idéal !",
+      2: "Si je gagne, tu relâches tous tes Pokémon !",
+      3: "Si tu te mets en travers de la Team Plasma, je m’occuperai de toi personnellement !",
+      4: "La Team Plasma va libérer les Pokémon de tous les humains égoïstes dans ton genre !",
+      5: "Nos coupes sont lunaires… Mais en combat ?\nTu vas vite le découvrir."
     },
     "victory": {
-      1: "Plasmaaaaaaaaa !"
+      1: "Plasmaaaaaaaaa !",
+      2: "Comment ai-je pu perdre…",
+      3: "… Ce Pokémon est nul, j’vais aller en voler de meilleurs !",
+      4: "Les plans ambitieux connaissent toujours leurs lots d’interruptions.",
+      5: "C'est mauvais… MAUVAIS MAUVAIS MAUVAIS MAUVAIS !\nVa falloir battre en retraite, c’est la méga cata !"
     },
   },
   "flare_grunt": {
     "encounter": {
-      1: "Le style et le bon gout, il n’y a que ça qui compte !"
+      1: "Tes Pokémon ne sont pas dignes de l’élégance de la Team Flare.",
+      2: "T’as des lunettes de soleil j’espère ?\nCar prépare-toi à être éblouie !",
+      3: "La Team Flare va purifier ce monde de toute imperfection !",
+      4: "Prépare-toi à découvrir l’indiscutable sens du style de la Team Flare !",
+      5: "La mode, c’est important !"
     },
     "victory": {
-      1: "Mon futur me semble guère radieux."
+      1: "Mon futur n’a pas l’air si radieux.",
+      2: "Les combats semblent être plus complexes que je le pensais.\nRetour aux aux planches à dessin.",
+      3: "Ehhhh ?! J’ai perdu ?!",
+      4: "Même dans la défaite, l’élégance de la Team Flare continue de rayonner sur ce monde.",
+      5: "J’appelle pas ça perdre, j’appelle ça échouer avec panache !"
     },
   },
   "rocket_boss_giovanni_1": {
