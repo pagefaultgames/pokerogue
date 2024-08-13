@@ -420,8 +420,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Aucune pitié si tu te mets sur le chemin de la Team Aqua, même pour un gamin !",
       2: "Grrr…\nTu as eu le culot de t’opposer à la Team Aqua !",
       3: "Je vais te liquéfier !\nEt ce sera pas qu’à cause des mes Pokémon Eau !",
-      4: "Nous, la Team Aqua, existons pout le bien commun !",
-      5: "Préapre-toi à te faire emporter par le courant de…`\nEuh… Mes Pokémon ! Oui, mes Pokémon !"
+      4: "Nous, la Team Aqua, existons pour le bien commun !",
+      5: "Préapre-toi à te faire emporter par le courant de…\nEuh… Mes Pokémon ! Oui, mes Pokémon !"
     },
     "victory": {
       1: "Comment ça ?",
@@ -3172,8 +3172,8 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: "Aucune pitié si tu te mets sur le chemin de la Team Aqua, même pour un gamin !",
       2: "Grrr…\nTu as eu le culot de t’opposer à la Team Aqua !",
       3: "Je vais te liquéfier !\nEt ce sera pas qu’à cause des mes Pokémon Eau !",
-      4: "Nous, la Team Aqua, existons pout le bien commun !",
-      5: "Préapre-toi à te faire emporter par le courant de…`\nEuh… Mes Pokémon ! Oui, mes Pokémon !"
+      4: "Nous, la Team Aqua, existons pour le bien commun !",
+      5: "Préapre-toi à te faire emporter par le courant de…\nEuh… Mes Pokémon ! Oui, mes Pokémon !"
     },
     "victory": {
       1: "Comment ça ?",
@@ -3189,7 +3189,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
       2: "Soit témoin de la puissance de notre technologie et du futur qui se profile !",
       3: "Au nom de la Team Galaxie, j’éliminerai quiconque se mettera sur notre route !",
       4: "Prépare ta défaite !",
-      5: "J’espère que t’es prêt à te prendre une raclée de l’espace !"
+      5: "J’espère que t’es prête à te prendre une raclée de l’espace !"
     },
     "victory": {
       1: "Désactivation…",
