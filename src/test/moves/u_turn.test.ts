@@ -1,5 +1,5 @@
 import { Abilities } from "#app/enums/abilities.js";
-import { SwitchPhase, TurnEndPhase } from "#app/phases";
+import { BerryPhase, SwitchPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -8,6 +8,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { StatusEffect } from "#app/enums/status-effect.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { Mode } from "#app/ui/ui.js";
 
 describe("Moves - U-turn", () => {
   let phaserGame: Phaser.Game;
@@ -95,6 +96,29 @@ describe("Moves - U-turn", () => {
     expect(playerPkm.species.speciesId).toEqual(Species.RAICHU);
     expect(playerPkm.status?.effect).toEqual(StatusEffect.POISON);
     expect(game.scene.getEnemyPokemon()!.battleData.abilityRevealed).toBe(true); // proxy for asserting ability activated
+    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+  }, 20000);
+
+  it("does not switch out the user if the move fails", async () => {
+    // arrange
+    game.override
+      .enemySpecies(Species.DUGTRIO)
+      .moveset(Moves.VOLT_SWITCH); // cheating a little here but no types are immune to bug
+    await game.startBattle([
+      Species.RAICHU,
+      Species.SHUCKLE
+    ]);
+
+    // act
+    game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
+    game.onNextPrompt("SwitchPhase", Mode.PARTY, () => {
+      expect.fail("Switch was forced");
+    }, () => game.isCurrentPhase(BerryPhase));
+    await game.phaseInterceptor.to(BerryPhase, false);
+
+    // assert
+    const playerPkm = game.scene.getPlayerPokemon()!;
+    expect(playerPkm.species.speciesId).toEqual(Species.RAICHU);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
   }, 20000);
 });
