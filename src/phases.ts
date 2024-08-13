@@ -1,7 +1,7 @@
 import BattleScene, { bypassLogin } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from "./utils";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr, MoveHeaderAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, MoveTarget, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, PreMoveMessageAttr, HealStatusEffectAttr, NoEffectAttr, BypassRedirectAttr, FixedDamageAttr, PostVictoryStatChangeAttr, ForceSwitchOutAttr, VariableTargetAttr, IncrementMovePriorityAttr, MoveHeaderAttr, MoveCategory } from "./data/move";
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -24,7 +24,7 @@ import { getPokemonNameWithAffix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
-import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
+import { ArenaTagSide, ArenaTrapTag, ConditionalProtectTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { CheckTrappedAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, BlockRedirectAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, ChangeMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, PreventBypassSpeedChanceAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr, PokemonTypeChangeAbAttr, applyPreAttackAbAttrs, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr, MaxMultiHitAbAttr, HealFromBerryUseAbAttr, IgnoreMoveEffectsAbAttr, BlockStatusDamageAbAttr, BypassSpeedChanceAbAttr, AddSecondStrikeAbAttr, ReduceBurnDamageAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
@@ -832,7 +832,7 @@ export class EncounterPhase extends BattlePhase {
       this.scene.unshiftPhase(new GameOverPhase(this.scene));
     }
 
-    const loadEnemyAssets: Promise<any>[] = [];
+    const loadEnemyAssets: Promise<void>[] = [];
 
     const battle = this.scene.currentBattle;
 
@@ -3038,8 +3038,7 @@ export class MoveEffectPhase extends PokemonPhase {
       /**
        * Log to be entered into the user's move history once the move result is resolved.
        * Note that `result` (a {@linkcode MoveResult}) logs whether the move was successfully
-       * used in the sense of it not failing or missing; it does not account for the move's
-       * effectiveness (which is logged as a {@linkcode HitResult}).
+       * used in the sense of "Does it have an effect on the user?".
        */
       const moveHistoryEntry = { move: this.move.moveId, targets: this.targets, result: MoveResult.PENDING, virtual: this.move.virtual };
 
@@ -3091,8 +3090,20 @@ export class MoveEffectPhase extends PokemonPhase {
             continue;
           }
 
-          /** Is the invoked move blocked by a protection effect on the target? */
-          const isProtected = !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
+          /** The {@linkcode ArenaTagSide} to which the target belongs */
+          const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+          /** Has the invoked move been cancelled by conditional protection (e.g Quick Guard)? */
+          const hasConditionalProtectApplied = new Utils.BooleanHolder(false);
+          /** Does the applied conditional protection bypass Protect-ignoring effects? */
+          const bypassIgnoreProtect = new Utils.BooleanHolder(false);
+          // If the move is not targeting a Pokemon on the user's side, try to apply conditional protection effects
+          if (!this.move.getMove().isAllyTarget()) {
+            this.scene.arena.applyTagsForSide(ConditionalProtectTag, targetSide, hasConditionalProtectApplied, user, target, move.id, bypassIgnoreProtect);
+          }
+
+          /** Is the target protected by Protect, etc. or a relevant conditional protection effect? */
+          const isProtected = (bypassIgnoreProtect.value || !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target))
+            && (hasConditionalProtectApplied.value || target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType)));
 
           /** Does this phase represent the invoked move's first strike? */
           const firstHit = (user.turnData.hitsLeft === user.turnData.hitCount);
@@ -3104,8 +3115,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
           /**
            * Since all fail/miss checks have applied, the move is considered successfully applied.
-           * It's worth noting that if the move has no effect or is protected against, it's move
-           * result is still logged as a SUCCESS.
+           * It's worth noting that if the move has no effect or is protected against, this assignment
+           * is overwritten and the move is logged as a FAIL.
            */
           moveHistoryEntry.result = MoveResult.SUCCESS;
 
@@ -3134,6 +3145,14 @@ export class MoveEffectPhase extends PokemonPhase {
           const firstTarget = dealsDamage && !hasHit;
           if (firstTarget) {
             hasHit = true;
+          }
+
+          /**
+           * If the move has no effect on the target (i.e. the target is protected or immune),
+           * change the logged move result to FAIL.
+           */
+          if (hitResult === HitResult.NO_EFFECT) {
+            moveHistoryEntry.result = MoveResult.FAIL;
           }
 
           /** Does this phase represent the invoked move's last strike? */
@@ -3191,6 +3210,9 @@ export class MoveEffectPhase extends PokemonPhase {
                         return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move.getMove(), hitResult).then(() => {
                           // If the invoked move is an enemy attack, apply the enemy's status effect-inflicting tags and tokens
                           target.lapseTag(BattlerTagType.BEAK_BLAST_CHARGING);
+                          if (move.category === MoveCategory.PHYSICAL && user.isPlayer() !== target.isPlayer()) {
+                            target.lapseTag(BattlerTagType.SHELL_TRAP);
+                          }
                           if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
                             user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
                           }
