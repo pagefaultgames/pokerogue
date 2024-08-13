@@ -195,7 +195,7 @@ export class TitlePhase extends Phase {
 
     this.scene.playBgm("title", true);
 
-    this.scene.gameData.getSession(loggedInUser!.lastSessionSlot).then(sessionData => { // TODO: is this bang correct?
+    this.scene.gameData.getSession(loggedInUser?.lastSessionSlot ?? -1).then(sessionData => {
       if (sessionData) {
         this.lastSessionData = sessionData;
         const biomeKey = getBiomeKey(sessionData.arena.biome);
@@ -394,7 +394,11 @@ export class TitlePhase extends Phase {
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
       if (!Utils.isLocal) {
         fetchDailyRunSeed().then(seed => {
-          generateDaily(seed!); // TODO: is this bang correct?
+          if (seed) {
+            generateDaily(seed);
+          } else {
+            throw new Error("Daily run seed is null!");
+          }
         }).catch(err => {
           console.error("Failed to load daily run:\n", err);
         });
@@ -468,7 +472,7 @@ export class ReloadSessionPhase extends Phase {
   constructor(scene: BattleScene, systemDataStr?: string) {
     super(scene);
 
-    this.systemDataStr = systemDataStr!; // TODO: is this bang correct?
+    this.systemDataStr = systemDataStr ?? null;
   }
 
   start(): void {

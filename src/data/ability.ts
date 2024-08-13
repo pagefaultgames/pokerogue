@@ -325,7 +325,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
     super();
 
     this.immuneType = immuneType;
-    this.condition = condition!; // TODO: is this bang correct?
+    this.condition = condition ?? null;
   }
 
   /**
@@ -1507,7 +1507,7 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
 
     this.battleStat = battleStat;
     this.multiplier = multiplier;
-    this.condition = condition!; // TODO: is this bang correct?
+    this.condition = condition ?? null;
   }
 
   applyBattleStat(pokemon: Pokemon, passive: boolean, battleStat: BattleStat, statValue: Utils.NumberHolder, args: any[]): boolean | Promise<boolean> {
@@ -1560,7 +1560,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   constructor(stealCondition?: PokemonAttackCondition) {
     super();
 
-    this.stealCondition = stealCondition!; // TODO: is this bang correct?
+    this.stealCondition = stealCondition ?? null;
   }
 
   applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
@@ -1649,7 +1649,7 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   constructor(condition?: PokemonDefendCondition) {
     super();
 
-    this.condition = condition!; // TODO: is this bang correct?
+    this.condition = condition ?? null;
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
@@ -2400,11 +2400,11 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
   constructor(protectedStat?: BattleStat) {
     super();
 
-    this.protectedStat = protectedStat!; // TODO: is this bang correct?
+    this.protectedStat = protectedStat ?? null;
   }
 
   applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.protectedStat === undefined || stat === this.protectedStat) {
+    if (!this.protectedStat || stat === this.protectedStat) {
       cancelled.value = true;
       return true;
     }
@@ -2737,7 +2737,7 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
   constructor(affectsImmutable?: boolean) {
     super();
 
-    this.affectsImmutable = affectsImmutable!; // TODO: is this bang correct?
+    this.affectsImmutable = !!affectsImmutable;
   }
 
   applyPreWeatherEffect(pokemon: Pokemon, passive: boolean, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -2801,11 +2801,11 @@ function getAnticipationCondition(): AbAttrCondition {
           return true;
         }
         // move is a OHKO
-        if (move!.getMove().hasAttr(OneHitKOAttr)) { // TODO: is this bang correct?
+        if (move?.getMove().hasAttr(OneHitKOAttr)) {
           return true;
         }
         // edge case for hidden power, type is computed
-        if (move!.getMove().id === Moves.HIDDEN_POWER) { // TODO: is this bang correct?
+        if (move?.getMove().id === Moves.HIDDEN_POWER) {
           const iv_val = Math.floor(((opponent.ivs[Stat.HP] & 1)
               +(opponent.ivs[Stat.ATK] & 1) * 2
               +(opponent.ivs[Stat.DEF] & 1) * 4
@@ -2853,13 +2853,13 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
     let movePower = 0;
     for (const opponent of pokemon.getOpponents()) {
       for (const move of opponent.moveset) {
-        if (move!.getMove() instanceof StatusMove) { // TODO: is this bang correct?
+        if (move?.getMove() instanceof StatusMove) {
           movePower = 1;
-        } else if (move!.getMove().hasAttr(OneHitKOAttr)) { // TODO: is this bang correct?
+        } else if (move?.getMove().hasAttr(OneHitKOAttr)) {
           movePower = 150;
-        } else if (move!.getMove().id === Moves.COUNTER || move!.getMove().id === Moves.MIRROR_COAT || move!.getMove().id === Moves.METAL_BURST) { // TODO: are those bangs correct?
+        } else if (move?.getMove().id === Moves.COUNTER || move?.getMove().id === Moves.MIRROR_COAT || move?.getMove().id === Moves.METAL_BURST) {
           movePower = 120;
-        } else if (move!.getMove().power === -1) { // TODO: is this bang correct?
+        } else if (move?.getMove().power === -1) {
           movePower = 80;
         } else {
           movePower = move!.getMove().power; // TODO: is this bang correct?
