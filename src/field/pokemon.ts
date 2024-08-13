@@ -3787,7 +3787,7 @@ export class EnemyPokemon extends Pokemon {
         : [
           new PokemonMove(Moves.ETERNABEAM),
           new PokemonMove(Moves.SLUDGE_BOMB),
-          new PokemonMove(Moves.DRAGON_DANCE),
+          new PokemonMove(Moves.FLAMETHROWER),
           new PokemonMove(Moves.COSMIC_POWER)
         ];
       break;
