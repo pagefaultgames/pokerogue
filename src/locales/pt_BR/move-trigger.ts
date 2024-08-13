@@ -1,13 +1,13 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const moveTriggers: SimpleTranslationEntries = {
-  "hitWithRecoil" : "{{pokemonName}} foi ferido pelo dano reverso!",
+  "hitWithRecoil": "{{pokemonName}} foi ferido pelo dano reverso!",
   "cutHpPowerUpMove": "{{pokemonName}} diminuiu seus PS para aumentar o poder do ataque!",
   "absorbedElectricity": "{{pokemonName}} absorveu eletricidade!",
   "switchedStatChanges": "{{pokemonName}} trocou as mudanças de atributo com o alvo!",
   "goingAllOutForAttack": "{{pokemonName}} está arriscando tudo nesse ataque!",
   "regainedHealth": "{{pokemonName}} recuperou/nsaúde!",
-  "keptGoingAndCrashed": "{{pokemonName}} continuou/nindo e bateu!",
+  "keptGoingAndCrashed": "{{pokemonName}} errou o alvo/ne se arrebentou!",
   "fled": "{{pokemonName}} fugiu!",
   "cannotBeSwitchedOut": "{{pokemonName}} não pode ser trocado!",
   "swappedAbilitiesWithTarget": "{{pokemonName}} trocou/nde habilidades com o alvo!",
@@ -33,6 +33,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isChargingPower": "{{pokemonName}} está absorvendo energia!",
   "burnedItselfOut": "{{pokemonName}} apagou seu próprio fogo!",
   "startedHeatingUpBeak": "{{pokemonName}} começou\na esquentar seu bico!",
+  "setUpShellTrap": "{{pokemonName}} armou uma armadilha de carapaça!",
   "isOverflowingWithSpacePower": "{{pokemonName}} está sobrecarregado\ncom energia espacial!",
   "usedUpAllElectricity": "{{pokemonName}} usou toda a sua eletricidade!",
   "stoleItem": "{{pokemonName}} roubou/no(a) {{itemName}} de {{targetName}}!",

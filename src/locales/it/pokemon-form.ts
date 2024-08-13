@@ -13,6 +13,7 @@ export const battlePokemonForm: SimpleTranslationEntries = {
   "eternamaxChange": "{{preName}} si Dynamaxxa infinitamente\nin {{pokemonName}}!",
   "revertChange": "{{pokemonName}} è tornato\nalla sua forma originaria!",
   "formChange": "{{preName}} ha cambiato forma!",
+  "disguiseChange": "Its disguise served it as a decoy!",
 } as const;
 
 export const pokemonForm: SimpleTranslationEntries = {
@@ -87,6 +88,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "landorusIncarnate": "Incarnazione",
   "keldeoOrdinary": "Normale",
   "meloettaAria": "Canto",
+  "meloettaPirouette": "Danza",
   // 6G
   "froakieBattleBond": "Morfosintonia",
   "scatterbugMeadow": "Giardinfiore",

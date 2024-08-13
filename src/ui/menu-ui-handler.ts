@@ -225,10 +225,11 @@ export default class MenuUiHandler extends MessageUiHandler {
       handler: () => {
         this.scene.gameData.tryExportData(GameDataType.SYSTEM);
         return true;
-      }
+      },
+      keepOpen: true
     },
     {
-      label: "Consent Preferences",
+      label: i18next.t("menuUiHandler:consentPreferences"),
       handler: () => {
         const consentLink = document.querySelector(".termly-display-preferences") as HTMLInputElement;
         const clickEvent = new MouseEvent("click", {

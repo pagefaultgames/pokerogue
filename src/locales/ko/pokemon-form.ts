@@ -13,6 +13,7 @@ export const battlePokemonForm: SimpleTranslationEntries = {
   "eternamaxChange": "{{preName}}[[는]]\n{{pokemonName}}가 되었다!",
   "revertChange": "{{pokemonName}}[[는]]\n원래 모습으로 되돌아왔다!",
   "formChange": "{{preName}}[[는]]\n다른 모습으로 변화했다!",
+  "disguiseChange": "탈이 대타가 되었다!",
 } as const;
 
 export const pokemonForm: SimpleTranslationEntries = {
@@ -87,6 +88,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "landorusIncarnate": "화신폼",
   "keldeoOrdinary": "평상시 모습",
   "meloettaAria": "보이스폼",
+  "meloettaPirouette": "스텝폼",
   // 6G
   "froakieBattleBond": "유대변화",
   "scatterbugMeadow": "화원의 모양",

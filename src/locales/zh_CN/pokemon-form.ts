@@ -13,6 +13,7 @@ export const battlePokemonForm: SimpleTranslationEntries = {
   "eternamaxChange": "{{preName}}无极巨化成了\n{{pokemonName}}！",
   "revertChange": "{{pokemonName}}变回了\n原本的样子！",
   "formChange": "{{preName}}变成其他样子了。",
+  "disguiseChange": "它的画皮被当作诱饵使用了！",
 } as const;
 
 export const pokemonForm: SimpleTranslationEntries = {
@@ -87,6 +88,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "landorusIncarnate": "化身",
   "keldeoOrdinary": "通常",
   "meloettaAria": "歌声",
+  "meloettaPirouette": "Pirouette",
   // 6G
   "froakieBattleBond": "牵绊变身",
   "scatterbugMeadow": "花园花纹",
