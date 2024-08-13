@@ -63,7 +63,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 
     this.getUi().bringToTop(this.runSelectContainer);
     this.runSelectContainer.setVisible(true);
-    this.populateruns(this.scene);
+    this.populateRuns(this.scene);
 
     this.setScrollCursor(0);
     this.setCursor(0);
@@ -120,7 +120,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   }
 
 
-  async populateruns(scene: BattleScene) {
+  async populateRuns(scene: BattleScene) {
     const response = await this.scene.gameData.getRunHistoryData(this.scene);
     const timestamps = Object.keys(response);
     if (timestamps.length === 0) {
@@ -128,9 +128,8 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     }
     const timestampsNo = timestamps.map(Number);
     if (timestamps.length > 1) {
-      timestampsNo.sort((a, b) => a - b);
+      timestampsNo.sort((a, b) => b - a);
     }
-    timestampsNo.reverse();
     const entryCount = timestamps.length;
     for (let s = 0; s < entryCount; s++) {
       const entry = new RunEntryContainer(this.scene, response[timestampsNo[s]], s);
@@ -244,7 +243,8 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
         this.add(enemyContainer);
       } else if (data.battleType === BattleType.TRAINER) {
         const tObj = data.trainer.toTrainer(this.scene);
-        if (data.trainer.trainerType >= 375) {
+        const RIVAL_TRAINER_ID_THRESHOLD = 375;
+        if (data.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
           const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival")}`, TextStyle.WINDOW);
           // otherwise it becomes Rival_5 in Ivy's case
           this.add(gameOutcomeLabel);
@@ -259,23 +259,25 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     }
 
     const gameModeLabel = addTextObject(this.scene, 8, 19, "", TextStyle.WINDOW);
+    let mode = "";
     switch (data.gameMode) {
     case GameModes.DAILY:
-      gameModeLabel.appendText(`${i18next.t("gameMode:dailyRun")}`, false);
+      mode = i18next.t("gameMode:dailyRun");
       break;
     case GameModes.SPLICED_ENDLESS:
-      gameModeLabel.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
+      mode = i18next.t("gameMode:endlessSpliced");
       break;
     case GameModes.ENDLESS:
-      gameModeLabel.appendText(`${i18next.t("gameMode:endless")}`, false);
+      mode = i18next.t("gameMode:endless");
       break;
     case GameModes.CLASSIC:
-      gameModeLabel.appendText(`${i18next.t("gameMode:classic")}`, false);
+      mode = i18next.t("gameMode:classic");
       break;
     case GameModes.CHALLENGE:
-      gameModeLabel.appendText(`${i18next.t("gameMode:challenge")}`, false);
+      mode = i18next.t("gameMode:challenge");
       break;
     }
+    gameModeLabel.appendText(mode, false);
     gameModeLabel.appendText(" - ", false);
     gameModeLabel.appendText(i18next.t("saveSlotSelectUiHandler:wave")+" "+data.waveIndex, false);
     this.add(gameModeLabel);

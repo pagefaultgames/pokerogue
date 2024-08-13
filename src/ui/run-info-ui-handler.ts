@@ -168,6 +168,7 @@ export default class GameInfoUiHandler extends UiHandler {
           enemy.destroy();
           break;
         case 2:
+          //Wild - Doubles
           this.runInfo.enemyParty.forEach((enemyData, e) => {
             const enemyIconContainer = this.scene.add.container(0, 0);
             const bossStatus = enemyData.boss;
@@ -392,8 +393,11 @@ export default class GameInfoUiHandler extends UiHandler {
       const textContainerFontSize = "34px";
       const pNature = getNatureName(pokemon.nature);
       const pName = pokemon.getNameToRender();
-      const passiveLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:passive") : (i18next.t("starterSelectUiHandler:passive") as string).charAt(0);
-      const abilityLabel = (currentLanguage==="ko"||currentLanguage==="zh_CN"||currentLanguage==="zh_TW") ? i18next.t("starterSelectUiHandler:ability") : (i18next.t("starterSelectUiHandler:ability") as string).charAt(0);
+      //With the exception of Korean/Traditional Chinese/Simplified Chinese, the code shortens the terms for ability and passive to their first letter.
+      //These languages are exempted because they are already short enough.
+      const exemptedLanguages = ["ko", "zh_CN", "zh_TW"];
+      const passiveLabel = exemptedLanguages.includes(currentLanguage) ? i18next.t("starterSelectUiHandler:passive") : (i18next.t("starterSelectUiHandler:passive") as string).charAt(0);
+      const abilityLabel = exemptedLanguages.includes(currentLanguage) ? i18next.t("starterSelectUiHandler:ability") : (i18next.t("starterSelectUiHandler:ability") as string).charAt(0);
       const pPassiveInfo = pokemon.passive ? `${passiveLabel}: ${pokemon.getPassiveAbility().name}` : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
       const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
@@ -644,7 +648,8 @@ export default class GameInfoUiHandler extends UiHandler {
     let success = false;
     const error = false;
 
-    if (button === Button.CANCEL) {
+    switch (button) {
+    case Button.CANCEL:
       success = true;
       this.runInfoContainer.removeAll(true);
       this.runResultContainer.removeAll(true);
@@ -659,18 +664,17 @@ export default class GameInfoUiHandler extends UiHandler {
       super.clear();
       this.gameStatsContainer.setVisible(false);
       ui.revertMode();
-    } else {
-      switch (button) {
-      case Button.DOWN:
-      case Button.UP:
-        break;
-      case Button.CYCLE_FORM:
-      case Button.CYCLE_SHINY:
-      case Button.CYCLE_ABILITY:
-        this.buttonCycleOption(button);
-        break;
-      }
+      break;
+    case Button.DOWN:
+    case Button.UP:
+      break;
+    case Button.CYCLE_FORM:
+    case Button.CYCLE_SHINY:
+    case Button.CYCLE_ABILITY:
+      this.buttonCycleOption(button);
+      break;
     }
+
     if (success) {
       ui.playSelect();
     } else if (error) {
