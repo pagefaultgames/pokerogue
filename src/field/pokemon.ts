@@ -1120,10 +1120,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const suppressed = new Utils.BooleanHolder(false);
       this.scene.getField(true).filter(p => p !== this).map(p => {
         if (p.getAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility()) {
-          p.getAbility().getAttrs(SuppressFieldAbilitiesAbAttr).map(a => a.apply(this, false, suppressed, [ability]));
+          p.getAbility().getAttrs(SuppressFieldAbilitiesAbAttr).map(a => a.apply(this, false, false, suppressed, [ability]));
         }
         if (p.getPassiveAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility(true)) {
-          p.getPassiveAbility().getAttrs(SuppressFieldAbilitiesAbAttr).map(a => a.apply(this, true, suppressed, [ability]));
+          p.getPassiveAbility().getAttrs(SuppressFieldAbilitiesAbAttr).map(a => a.apply(this, true, false, suppressed, [ability]));
         }
       });
       if (suppressed.value) {
@@ -1904,7 +1904,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
     }
 
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, BattleStat.ACC, accuracyMultiplier, sourceMove);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, BattleStat.ACC, accuracyMultiplier, false, sourceMove);
 
     const evasionMultiplier = new Utils.NumberHolder(1);
     applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier);
@@ -1974,7 +1974,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       if (!cancelled.value) {
         applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
-        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, typeMultiplier));
+        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, false, typeMultiplier));
       }
 
       if (cancelled.value) {
@@ -2066,7 +2066,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           numTargets = effectPhase.getTargets().length;
         }
         const twoStrikeMultiplier = new Utils.NumberHolder(1);
-        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, source, this, move, numTargets, new Utils.IntegerHolder(0), twoStrikeMultiplier);
+        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, source, this, move, false, numTargets, new Utils.IntegerHolder(0), twoStrikeMultiplier);
 
         if (!isTypeImmune) {
           const levelMultiplier = (2 * source.level / 5 + 2);
@@ -2092,7 +2092,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             }
           }
 
-          applyPreAttackAbAttrs(DamageBoostAbAttr, source, this, move, damage);
+          applyPreAttackAbAttrs(DamageBoostAbAttr, source, this, move, false, damage);
 
           /**
            * For each {@link HitsTagAttr} the move has, doubles the damage of the move if:
@@ -2150,7 +2150,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
           }
 
-          applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, damage);
+          applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, false, damage);
         }
 
         // This attribute may modify damage arbitrarily, so be careful about changing its order of application.
@@ -2712,7 +2712,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         // Check if the source Pokemon has an ability that cancels the Poison/Toxic immunity
         const cancelImmunity = new Utils.BooleanHolder(false);
         if (sourcePokemon) {
-          applyAbAttrs(IgnoreTypeStatusEffectImmunityAbAttr, sourcePokemon, cancelImmunity, effect, defType);
+          applyAbAttrs(IgnoreTypeStatusEffectImmunityAbAttr, sourcePokemon, cancelImmunity, false, effect, defType);
           if (cancelImmunity.value) {
             return false;
           }
