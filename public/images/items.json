@@ -4,8 +4,8 @@
 			"image": "items.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 423,
-				"h": 423
+				"w": 444,
+				"h": 444
 			},
 			"scale": 1,
 			"frames": [
@@ -8386,6 +8386,27 @@
 						"y": 392,
 						"w": 16,
 						"h": 16
+					}
+				},
+				{
+					"filename": "ultranecrozium_z",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 8,
+						"w": 30,
+						"h": 15
+					},
+					"frame": {
+						"x": 414,
+						"y": 429,
+						"w": 30,
+						"h": 15
 					}
 				}
 			]
