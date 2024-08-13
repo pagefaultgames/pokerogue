@@ -632,7 +632,6 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.MELOETTA]: [
     new SpeciesFormChange(Species.MELOETTA, "aria", "pirouette", new SpeciesFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
     new SpeciesFormChange(Species.MELOETTA, "pirouette", "aria", new SpeciesFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
-    new SpeciesFormChange(Species.MELOETTA, "pirouette", "aria", new SpeciesFormChangeActiveTrigger(false), true)
   ],
   [Species.GENESECT]: [
     new SpeciesFormChange(Species.GENESECT, "", "shock", new SpeciesFormChangeItemTrigger(FormChangeItem.SHOCK_DRIVE)),
