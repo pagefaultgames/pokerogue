@@ -3255,9 +3255,12 @@ export class PlayerPokemon extends Pokemon {
         this.variant = Overrides.VARIANT_OVERRIDE;
       }
     }
-
     if (!dataSource) {
-      this.moveset = [];
+      if (this.scene.gameMode.isDaily) {
+        this.generateAndPopulateMoveset();
+      } else {
+        this.moveset = [];
+      }
     }
     this.generateCompatibleTms();
   }
