@@ -276,6 +276,22 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
 
+  enemyParty(species: Species[]) {
+    vi.spyOn(Overrides, "TRAINER_PARTY_OVERRIDE", "get").mockReturnValue(species);
+    this.log("Enemy trainer party set to:", species);
+    return this;
+  }
+
+  /**
+   * Forces the AI to always switch out
+   * @returns this
+   */
+  forceTrainerSwitches() {
+    vi.spyOn(Overrides, "TRAINER_ALWAYS_SWITCHES_OVERRIDE", "get").mockReturnValue(true);
+    this.log("Trainers will always switch out");
+    return this;
+  }
+
   private log(...params: any[]) {
     console.log("Overrides:", ...params);
   }
