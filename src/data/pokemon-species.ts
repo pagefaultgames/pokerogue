@@ -455,7 +455,7 @@ export abstract class PokemonSpeciesForm {
     return new Promise(resolve => {
       const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant);
       scene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
-      scene.load.audio(this.getCryKey(formIndex), `audio/cry/${this.getCryKey(formIndex)}.m4a`);
+      scene.load.audio("cry/"+this.getCryKey(formIndex), `audio/cry/${this.getCryKey(formIndex)}.m4a`);
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot
@@ -511,7 +511,7 @@ export abstract class PokemonSpeciesForm {
     if (cry?.pendingRemove) {
       cry = null;
     }
-    cry = scene.playSound(cry || cryKey, soundConfig);
+    cry = scene.playSound("cry/"+(cry || cryKey), soundConfig);
     if (ignorePlay) {
       cry.stop();
     }

@@ -93,7 +93,7 @@ export class LoginPhase extends Phase {
             this.scene.ui.showText(i18next.t("menu:logInOrCreateAccount"));
           }
 
-          this.scene.playSound("menu_open");
+          this.scene.playSound("ui/menu_open");
 
           const loadData = () => {
             updateUserInfo().then(success => {
@@ -112,7 +112,7 @@ export class LoginPhase extends Phase {
                 this.scene.ui.playSelect();
                 loadData();
               }, () => {
-                this.scene.playSound("menu_open");
+                this.scene.playSound("ui/menu_open");
                 this.scene.ui.setMode(Mode.REGISTRATION_FORM, {
                   buttonActions: [
                     () => {
@@ -1501,7 +1501,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
           angle: 1440,
           y: (this.player ? 132 : 86) + fpOffset[1],
           onComplete: () => {
-            this.scene.playSound("pb_rel");
+            this.scene.playSound("se/pb_rel");
             pokeball.destroy();
             this.scene.add.existing(pokemon);
             this.scene.field.add(pokemon);
@@ -1629,7 +1629,7 @@ export class SwitchSummonPhase extends SummonPhase {
         pokemonName: getPokemonNameWithAffix(pokemon)
       })
     );
-    this.scene.playSound("pb_rel");
+    this.scene.playSound("se/pb_rel");
     pokemon.hideInfo(); // this is also done by pokemon.leaveField(), but needs to go earlier for animation purposes
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     this.scene.tweens.add({
@@ -3561,7 +3561,7 @@ export class StatChangePhase extends PokemonPhase {
       statSprite.setScale(6);
       statSprite.setOrigin(0.5, 1);
 
-      this.scene.playSound(`stat_${levels.value >= 1 ? "up" : "down"}`);
+      this.scene.playSound(`se/stat_${levels.value >= 1 ? "up" : "down"}`);
 
       statSprite.setMask(new Phaser.Display.Masks.BitmapMask(this.scene, pokemonMaskSprite ?? undefined));
 
@@ -3881,14 +3881,14 @@ export class DamagePhase extends PokemonPhase {
   applyDamage() {
     switch (this.damageResult) {
     case HitResult.EFFECTIVE:
-      this.scene.playSound("hit");
+      this.scene.playSound("se/hit");
       break;
     case HitResult.SUPER_EFFECTIVE:
     case HitResult.ONE_HIT_KO:
-      this.scene.playSound("hit_strong");
+      this.scene.playSound("se/hit_strong");
       break;
     case HitResult.NOT_VERY_EFFECTIVE:
-      this.scene.playSound("hit_weak");
+      this.scene.playSound("se/hit_weak");
       break;
     }
 
@@ -4019,7 +4019,7 @@ export class FaintPhase extends PokemonPhase {
         pokemon.addFriendship(-10);
       }
       pokemon.hideInfo();
-      this.scene.playSound("faint");
+      this.scene.playSound("se/faint");
       this.scene.tweens.add({
         targets: pokemon,
         duration: 500,
@@ -5051,7 +5051,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.pokeball.setOrigin(0.5, 0.625);
     this.scene.field.add(this.pokeball);
 
-    this.scene.playSound("pb_throw");
+    this.scene.playSound("se/pb_throw");
     this.scene.time.delayedCall(300, () => {
       this.scene.field.moveBelow(this.pokeball as Phaser.GameObjects.GameObject, pokemon);
     });
@@ -5064,7 +5064,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       onComplete: () => {
         this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
         this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
-        this.scene.playSound("pb_rel");
+        this.scene.playSound("se/pb_rel");
         pokemon.tint(getPokeballTintColor(this.pokeballType));
 
         addPokeballOpenParticles(this.scene, this.pokeball.x, this.pokeball.y, this.pokeballType);
@@ -5078,7 +5078,7 @@ export class AttemptCapturePhase extends PokemonPhase {
           onComplete: () => {
             this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
             pokemon.setVisible(false);
-            this.scene.playSound("pb_catch");
+            this.scene.playSound("se/pb_catch");
             this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}`));
 
             const doShake = () => {
@@ -5106,13 +5106,13 @@ export class AttemptCapturePhase extends PokemonPhase {
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < 3) {
                     if (pokeballMultiplier === -1 || pokemon.randSeedInt(65536) < y) {
-                      this.scene.playSound("pb_move");
+                      this.scene.playSound("se/pb_move");
                     } else {
                       shakeCounter.stop();
                       this.failCatch(shakeCount);
                     }
                   } else {
-                    this.scene.playSound("pb_lock");
+                    this.scene.playSound("se/pb_lock");
                     addPokeballCaptureStars(this.scene, this.pokeball);
 
                     const pbTint = this.scene.add.sprite(this.pokeball.x, this.pokeball.y, "pb", "pb");
@@ -5153,7 +5153,7 @@ export class AttemptCapturePhase extends PokemonPhase {
   failCatch(shakeCount: integer) {
     const pokemon = this.getPokemon();
 
-    this.scene.playSound("pb_rel");
+    this.scene.playSound("se/pb_rel");
     pokemon.setY(this.originalY);
     if (pokemon.status?.effect !== StatusEffect.SLEEP) {
       pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
@@ -5301,7 +5301,7 @@ export class AttemptRunPhase extends PokemonPhase {
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, escapeChance);
 
     if (playerPokemon.randSeedInt(256) < escapeChance.value) {
-      this.scene.playSound("flee");
+      this.scene.playSound("se/flee");
       this.scene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
       this.scene.tweens.add({
@@ -5389,7 +5389,7 @@ export class SelectModifierPhase extends BattlePhase {
               this.scene.updateMoneyText();
               this.scene.animateMoneyChanged(false);
             }
-            this.scene.playSound("buy");
+            this.scene.playSound("se/buy");
           }
           break;
         case 1:
@@ -5448,7 +5448,7 @@ export class SelectModifierPhase extends BattlePhase {
                 this.scene.updateMoneyText();
                 this.scene.animateMoneyChanged(false);
               }
-              this.scene.playSound("buy");
+              this.scene.playSound("se/buy");
               (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
             } else {
               this.scene.ui.playError();

@@ -1761,6 +1761,7 @@ export default class BattleScene extends SceneBase {
       config = { volume: this.masterVolume * this.seVolume };
     }
     // PRSFX sounds are mixed too loud
+    console.log(typeof sound === "string" ? sound : sound.key);
     if ((typeof sound === "string" ? sound : sound.key).startsWith("PRSFX- ")) {
       config["volume"] *= 0.5;
     }
