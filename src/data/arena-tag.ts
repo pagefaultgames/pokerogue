@@ -7,7 +7,7 @@ import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
-import { BlockNonDirectDamageAbAttr, IncrementMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
 import { BattleStat } from "./battle-stat";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import i18next from "i18next";
@@ -266,7 +266,7 @@ const QuickGuardConditionFunc: ProtectConditionFunc = (arena, moveId) => {
   if (effectPhase instanceof MoveEffectPhase) {
     const attacker = effectPhase.getUserPokemon()!;
     applyMoveAttrs(IncrementMovePriorityAttr, attacker, null, move, priority);
-    applyAbAttrs(IncrementMovePriorityAbAttr, attacker, null, move, priority);
+    applyAbAttrs(ChangeMovePriorityAbAttr, attacker, null, move, priority);
   }
   return priority.value > 0;
 };
