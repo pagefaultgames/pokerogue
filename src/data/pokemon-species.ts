@@ -511,7 +511,7 @@ export abstract class PokemonSpeciesForm {
     if (cry?.pendingRemove) {
       cry = null;
     }
-    cry = scene.playSound(`cry/${(cry || cryKey)}`, soundConfig);
+    cry = scene.playSound(`cry/${(cry ?? cryKey)}`, soundConfig);
     if (ignorePlay) {
       cry.stop();
     }

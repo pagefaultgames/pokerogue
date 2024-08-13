@@ -107,6 +107,7 @@ export const SettingKeys = {
   Type_Hints: "TYPE_HINTS",
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
+  Field_Volume: "FIELD_VOLUME",
   SE_Volume: "SE_VOLUME",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
@@ -532,6 +533,13 @@ export const Setting: Array<Setting> = [
     type: SettingType.AUDIO
   },
   {
+    key: SettingKeys.Field_Volume,
+    label: i18next.t("settings:fieldVolume"),
+    options: VOLUME_OPTIONS,
+    default: 10,
+    type: SettingType.AUDIO
+  },
+  {
     key: SettingKeys.SE_Volume,
     label: i18next.t("settings:seVolume"),
     options: VOLUME_OPTIONS,
@@ -618,6 +626,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.BGM_Volume:
     scene.bgmVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+    scene.updateSoundVolume();
+    break;
+  case SettingKeys.Field_Volume:
+    scene.fieldVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     scene.updateSoundVolume();
     break;
   case SettingKeys.SE_Volume:

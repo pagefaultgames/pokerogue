@@ -63,6 +63,7 @@ export const settings: SimpleTranslationEntries = {
   "typeHints": "Dicas de Tipo",
   "masterVolume": "Volume Mestre",
   "bgmVolume": "Volume de BGM",
+  "fieldVolume":"Field Volume",
   "seVolume": "Volume de SE",
   "musicPreference": "Preferência de Música",
   "mixed": "Misto",
