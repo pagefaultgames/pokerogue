@@ -21,6 +21,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportRunHistory":"Export Run History",
   "importData": "Importar dados",
   "exportData": "Exportar dados",
+  "consentPreferences": "Opções de Privacidade",
   "linkDiscord": "Conectar Discord",
   "unlinkDiscord": "Desconectar Discord",
   "linkGoogle": "Conectar Google",
