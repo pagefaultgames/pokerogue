@@ -14,6 +14,7 @@ import { getNatureDecrease, getNatureIncrease, getNatureName } from "#app/data/n
 import * as LoggerTools from "../logger"
 import { BattleEndPhase } from "#app/phases.js";
 import { Gender } from "#app/data/gender.js";
+import { getBiomeName } from "#app/data/biomes.js";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -200,7 +201,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   }
 
   doShinyCharmTooltip() {
-    if ((this.scene as BattleScene).currentBattle.waveIndex % 10 == 0 || (this.scene as BattleScene).currentBattle.trainer) {
+    if ((this.scene as BattleScene).currentBattle.waveIndex % 10 == 0) {
       this.shinyCharmIcon.setVisible(false)
       return;
     }
@@ -295,6 +296,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextHeaderPlayer.text = ""
     this.flyoutTextHeaderEnemy.text = ""
     this.flyoutTextHeader.text = "IVs"
+    this.flyoutTextHeader.text = getBiomeName((this.scene as BattleScene).arena.biomeType) + " - " + (this.scene as BattleScene).currentBattle.waveIndex
     for (var i = 0; i < poke.length; i++) {
       if (i == 1 || true) {
         var formtext = ""
