@@ -21,6 +21,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import { Abilities } from "#app/enums/abilities.js";
+import { SpeciesFormChangeWeatherSuppressedFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms.js";
 
 export class Arena {
   public scene: BattleScene;
@@ -329,6 +331,28 @@ export class Arena {
     });
 
     return true;
+  }
+
+  /**
+   * Function to trigger all weather based form changes
+   */
+  triggerWeatherBasedFormChanges(): void {
+    this.scene.getField(true).forEach( p => {
+      if (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM) {
+        this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
+      }
+    });
+  }
+
+  /**
+   * Function to trigger all weather based form changes back into their normal forms
+   */
+  triggerWeatherBasedFormChangesToNormal(): void {
+    this.scene.getField(true).forEach( p => {
+      if (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM) {
+        return this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherSuppressedFormTrigger);
+      }
+    });
   }
 
   trySetTerrain(terrain: TerrainType, hasPokemonSource: boolean, ignoreAnim: boolean = false): boolean {

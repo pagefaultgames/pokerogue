@@ -14,7 +14,7 @@ import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { Stat, getStatName } from "./pokemon-stat";
 import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
-import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
+import { SpeciesFormChangeManualTrigger, SpeciesFormChangeWeatherSuppressedFormTrigger, SpeciesFormChangeWeatherTrigger } from "./pokemon-forms";
 import i18next from "i18next";
 import { Localizable } from "#app/interfaces/locales.js";
 import { Command } from "../ui/command-ui-handler";
@@ -26,6 +26,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import BattleScene from "#app/battle-scene.js";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -2274,6 +2275,67 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Reverts weather-based forms to their normal forms when the user is summoned.
+ * Used by Cloud Nine and Air Lock.
+ * @extends PostSummonAbAttr
+ */
+export class PostSummonWeatherSuppressedFormChangeAbAttr extends PostSummonAbAttr {
+  /**
+   * Triggers {@linkcode Arena.triggerWeatherBasedFormChangesToNormal | triggerWeatherBasedFormChangesToNormal}
+   * @param {Pokemon} pokemon the Pokemon with this ability
+   * @param passive n/a
+   * @param args n/a
+   * @returns whether a Pokemon was reverted to its normal form
+   */
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]) {
+    const pokemonToTransform = getPokemonWithWeatherBasedForms(pokemon.scene);
+
+    if (pokemonToTransform.length < 1) {
+      return false;
+    }
+
+    pokemonToTransform.forEach(p => {
+      p.scene.arena.triggerWeatherBasedFormChangesToNormal();
+    });
+
+    return true;
+  }
+}
+
+/**
+ * Triggers weather-based form change when summoned into an active weather.
+ * Used by Forecast.
+ * @extends PostSummonAbAttr
+ */
+export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
+  private ability: Abilities;
+
+  constructor(ability: Abilities) {
+    super(false);
+
+    this.ability = ability;
+  }
+
+  /**
+   * Calls the SpeciesFormChangeWeatherTrigger {@linkcode SpeciesFormChangeWeatherTrigger} and SpeciesFormChangeWeatherSuppressedFormTrigger
+   * {@linkcode SpeciesFormChangeWeatherSuppressedFormTrigger} if it is the specific Pokemon and ability
+   * @param pokemon the Pokemon with this ability
+   * @param passive n/a
+   * @param args n/a
+   * @returns whether the form change was triggered
+   */
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    if (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherSuppressedFormTrigger);
+      queueShowAbility(pokemon, passive);
+      return true;
+    }
+    return false;
+  }
+}
+
 export class PreSwitchOutAbAttr extends AbAttr {
   constructor() {
     super(true);
@@ -2892,6 +2954,34 @@ export class FriskAbAttr extends PostSummonAbAttr {
 
 export class PostWeatherChangeAbAttr extends AbAttr {
   applyPostWeatherChange(pokemon: Pokemon, passive: boolean, weather: WeatherType, args: any[]): boolean {
+    return false;
+  }
+}
+
+/**
+ * Triggers weather-based form change when weather changes.
+ * Used by Forecast.
+ * @extends PostWeatherChangeAbAttr
+ */
+export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  /**
+   * Calls {@linkcode Arena.triggerWeatherBasedFormChanges | triggerWeatherBasedFormChanges} when the
+   * specified conditions are met
+   * @param {Pokemon} pokemon the Pokemon that changed the weather
+   * @param passive n/a
+   * @param weather n/a
+   * @param args n/a
+   * @returns whether the form change was triggered
+   */
+  applyPostWeatherChange(pokemon: Pokemon, passive: boolean, weather: WeatherType, args: any[]): boolean {
+    if (pokemon.species.speciesId === Species.CASTFORM && pokemon.hasAbility(Abilities.FORECAST)) {
+      pokemon.scene.arena.triggerWeatherBasedFormChanges();
+      return true;
+    }
     return false;
   }
 }
@@ -3575,6 +3665,39 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
 export class PostFaintAbAttr extends AbAttr {
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     return false;
+  }
+}
+
+/**
+ * Used for weather suppressing abilities to trigger weather-based form changes upon being fainted.
+ * Used by Cloud Nine and Air Lock.
+ * @extends PostFaintAbAttr
+ */
+export class PostFaintUnsuppressedWeatherFormChangeAbAttr extends PostFaintAbAttr {
+  /**
+   * Triggers {@linkcode Arena.triggerWeatherBasedFormChanges | triggerWeatherBasedFormChanges}
+   * when the user of the ability faints
+   * @param {Pokemon} pokemon the fainted Pokemon
+   * @param passive n/a
+   * @param attacker n/a
+   * @param move n/a
+   * @param hitResult n/a
+   * @param args n/a
+   * @returns whether the form change was triggered
+   */
+  applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+    // TODO: check for MEMENTO
+    const pokemonToTransform = getPokemonWithWeatherBasedForms(pokemon.scene);
+
+    if (pokemonToTransform.length < 1) {
+      return false;
+    }
+
+    pokemonToTransform.forEach(p => {
+      p.scene.arena.triggerWeatherBasedFormChanges();
+    });
+
+    return true;
   }
 }
 
@@ -4301,6 +4424,16 @@ function setAbilityRevealed(pokemon: Pokemon): void {
   }
 }
 
+/**
+ * Returns the Pokemon with weather-based forms
+ * @param {BattleScene} scene - The current scene
+ */
+function getPokemonWithWeatherBasedForms(scene: BattleScene) {
+  return scene.getField(true).filter(p =>
+    p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM
+  );
+}
+
 export const allAbilities = [ new Ability(Abilities.NONE, 3) ];
 
 export function initAbilities() {
@@ -4347,7 +4480,10 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
       .attr(SuppressWeatherEffectAbAttr, true)
-      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared."),
+      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared.")
+      .attr(PostSummonWeatherSuppressedFormChangeAbAttr, true)
+      .attr(PostFaintUnsuppressedWeatherFormChangeAbAttr, true)
+      .bypassFaint(),
     new Ability(Abilities.COMPOUND_EYES, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3),
     new Ability(Abilities.INSOMNIA, 3)
@@ -4491,8 +4627,10 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.FORECAST, 3)
       .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .unimplemented(),
+      .attr(PostSummonFormChangeByWeatherAbAttr, Abilities.FORECAST)
+      .attr(PostWeatherChangeFormChangeAbAttr),
     new Ability(Abilities.STICKY_HOLD, 3)
       .attr(BlockItemTheftAbAttr)
       .bypassFaint()
@@ -4542,7 +4680,10 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.AIR_LOCK, 3)
       .attr(SuppressWeatherEffectAbAttr, true)
-      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared."),
+      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared.")
+      .attr(PostSummonWeatherSuppressedFormChangeAbAttr, true)
+      .attr(PostFaintUnsuppressedWeatherFormChangeAbAttr, true)
+      .bypassFaint(),
     new Ability(Abilities.TANGLED_FEET, 4)
       .conditionalAttr(pokemon => !!pokemon.getTag(BattlerTagType.CONFUSED), BattleStatMultiplierAbAttr, BattleStat.EVA, 2)
       .ignorable(),
