@@ -4316,7 +4316,7 @@ export class PokemonMove {
     if (this.moveId && pokemon.summonData?.disabledMove === this.moveId) {
       return false;
     }
-    if (this.getMove().hasAttr(UnselectableMoveAttr)) {
+    if (this.getMove().hasAttr(UnselectableMoveAttr)) { // Some moves are unselectable under certain conditions: i.e. Stuff Cheeks, High Jump Kick, etc.
       return this.getMove().applyConditions(pokemon, null!, this.getMove());
     }
     return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");
