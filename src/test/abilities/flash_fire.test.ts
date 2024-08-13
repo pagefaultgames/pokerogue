@@ -30,6 +30,7 @@ describe("Abilities - Flash Fire", () => {
     game.override
       .battleType("single")
       .ability(Abilities.FLASH_FIRE)
+      .enemyAbility(Abilities.BALL_FETCH)
       .startingLevel(20)
       .enemyLevel(20)
       .disableCrits();
