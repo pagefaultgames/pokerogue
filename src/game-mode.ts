@@ -74,6 +74,14 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
+   * Helper function to see if the game mode is using inverse battle
+   * @returns true if an inverse battle challenge is being applied
+   */
+  isInverseBattleChallenge(): boolean {
+    return this.hasChallenge(Challenges.INVERSE_BATTLE);
+  }
+
+  /**
    * @returns either:
    * - override from overrides.ts
    * - 20 for Daily Runs

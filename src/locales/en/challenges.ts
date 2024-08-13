@@ -28,5 +28,11 @@ export const challenges: TranslationEntries = {
     "desc": "You can only use the original starters, and only as if you had just started PokéRogue.",
     "value.0": "Off",
     "value.1": "On",
-  }
+  },
+  "inverseBattle": {
+    "name": "Inverse Battle",
+    "desc": "Type matchups are reversed and no type is immune to any other type.",
+    "value.0": "Off",
+    "value.1": "On",
+  },
 } as const;

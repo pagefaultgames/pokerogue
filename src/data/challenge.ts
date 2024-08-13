@@ -667,6 +667,29 @@ export class FreshStartChallenge extends Challenge {
 }
 
 /**
+ * Implements an inverse battle challenge.
+ */
+export class InverseBattleChallenge extends Challenge {
+  constructor() {
+    super(Challenges.INVERSE_BATTLE, 1);
+  }
+  /**
+   * @overrides
+   */
+  getDifficulty(): number {
+    return 0;
+  }
+
+  static loadChallenge(source: InverseBattleChallenge | any): InverseBattleChallenge {
+    const newChallenge = new InverseBattleChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+
+/**
  * Lowers the amount of starter points available.
  */
 export class LowerStarterMaxCostChallenge extends Challenge {
@@ -907,6 +930,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
     return LowerStarterPointsChallenge.loadChallenge(source);
   case Challenges.FRESH_START:
     return FreshStartChallenge.loadChallenge(source);
+  case Challenges.INVERSE_BATTLE:
+    return InverseBattleChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -918,5 +943,6 @@ export function initChallenges() {
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
     new FreshStartChallenge(),
+    new InverseBattleChallenge(),
   );
 }
