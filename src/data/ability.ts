@@ -3428,6 +3428,30 @@ export class BypassBurnDamageReductionAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Causes Pokemon to take reduced damage from the {@linkcode StatusEffect.BURN | Burn} status
+ * @param multiplier Multiplied with the damage taken
+*/
+export class ReduceBurnDamageAbAttr extends AbAttr {
+  constructor(protected multiplier: number) {
+    super(false);
+  }
+
+  /**
+   * Applies the damage reduction
+   * @param pokemon N/A
+   * @param passive N/A
+   * @param cancelled N/A
+   * @param args `[0]` {@linkcode Utils.NumberHolder} The damage value being modified
+   * @returns `true`
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value = Math.max(Math.floor((args[0] as Utils.NumberHolder).value * this.multiplier), 1);
+
+    return true;
+  }
+}
+
 export class DoubleBerryEffectAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     (args[0] as Utils.NumberHolder).value *= 2;
@@ -4613,6 +4637,7 @@ export function initAbilities() {
       .unimplemented(),
     new Ability(Abilities.HEATPROOF, 4)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
+      .attr(ReduceBurnDamageAbAttr, 0.5)
       .ignorable(),
     new Ability(Abilities.SIMPLE, 4)
       .attr(StatChangeMultiplierAbAttr, 2)
