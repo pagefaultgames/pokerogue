@@ -4098,7 +4098,8 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
   applyFunc: AbAttrApplyFunc<TAttr>,
   args: any[],
   showAbilityInstant: boolean = false,
-  quiet: boolean = false,
+  isQuiet: boolean = false,
+  messages: string[] = [],
 ) {
   for (const passive of [false, true]) {
     if (!pokemon?.canApplyAbility(passive)) {
@@ -4128,7 +4129,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
           pokemon.battleData.abilitiesApplied.push(ability.id);
         }
 
-        if (attr.showAbility && !quiet) {
+        if (attr.showAbility && !isQuiet) {
           if (showAbilityInstant) {
             pokemon.scene.abilityBar.showAbility(pokemon, passive);
           } else {
@@ -4136,11 +4137,12 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
           }
         }
 
-        if (!quiet) {
-          const message = attr.getTriggerMessage(pokemon, ability.name, args);
-          if (message) {
+        const message = attr.getTriggerMessage(pokemon, ability.name, args);
+        if (message) {
+          if (!isQuiet) {
             pokemon.scene.queueMessage(message);
           }
+          messages.push(message);
         }
       }
     }
@@ -4271,8 +4273,8 @@ export function applyPostTerrainChangeAbAttrs(attrType: Constructor<PostTerrainC
 }
 
 export function applyCheckTrappedAbAttrs(attrType: Constructor<CheckTrappedAbAttr>,
-  pokemon: Pokemon, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, trapped, otherPokemon, args), args);
+  pokemon: Pokemon, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, isQuiet: boolean, messages: string[], ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, trapped, otherPokemon, args), args, false, isQuiet, messages);
 }
 
 export function applyPostBattleAbAttrs(attrType: Constructor<PostBattleAbAttr>,
