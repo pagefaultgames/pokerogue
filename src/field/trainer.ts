@@ -263,6 +263,17 @@ export default class Trainer extends Phaser.GameObjects.Container {
     let ret: EnemyPokemon;
 
     this.scene.executeWithSeedOffset(() => {
+      if (Overrides.TRAINER_PARTY_OVERRIDE?.length) {
+        ret = this.scene.addEnemyPokemon(
+          getPokemonSpecies(Overrides.TRAINER_PARTY_OVERRIDE[index % Overrides.TRAINER_PARTY_OVERRIDE.length]),
+          level,
+          !this.isDouble() || !(index % 2)
+            ? TrainerSlot.TRAINER
+            : TrainerSlot.TRAINER_PARTNER
+        );
+        return;
+      }
+
       const template = this.getPartyTemplate();
       const strength: PartyMemberStrength = template.getStrength(index);
 
