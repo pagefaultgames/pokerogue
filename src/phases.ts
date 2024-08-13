@@ -3513,6 +3513,10 @@ export class StatChangePhase extends PokemonPhase {
 
       for (const stat of filteredStats) {
         if (levels.value > 0 && pokemon.summonData.battleStats[stat] + levels.value <= 6) {
+          if (!pokemon.turnData) {
+            // Temporary fix for missing turn data struct on turn 1
+            pokemon.resetTurnData();
+          }
           pokemon.turnData.battleStatsChange[stat] += levels.value;
         }
 
