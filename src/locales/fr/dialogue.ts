@@ -418,33 +418,33 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "aqua_grunt": {
     "encounter": {
       1: "Aucune pitié si tu te mets sur le chemin de la Team Aqua, même pour un gamin !",
-      2: "Grrr... You've got some nerve meddling with Team Aqua!",
-      3: "You're about to get soaked! And not just from my water Pokémon!",
-      4: "We, Team Aqua, exist for the good of all!",
-      5: "Prepare to be washed away by the tides of my... uh, Pokémon! Yeah, my Pokémon!"
+      2: "Grrr…\nTu as eu le culot de t’opposer à la Team Aqua !",
+      3: "Je vais te liquéfier !\nEt ce sera pas qu’à cause des mes Pokémon Eau !",
+      4: "Nous, la Team Aqua, existons pout le bien commun !",
+      5: "Préapre-toi à te faire emporter par le courant de…`\nEuh… Mes Pokémon ! Oui, mes Pokémon !"
     },
     "victory": {
       1: "Comment ça ?",
-      2: "Arrgh, I didn't count on being meddled with by some meddling kid!",
-      3: "I lost?! Guess I'll have to swim back to the hideout now...",
-      4: "Oh, man, what a disaster... The boss is going to be furious...",
-      5: "You beat me... Do you think the boss will make me walk the plank for this?"
+      2: "Ah, j'avais pas prévu d’être gêné par un mouflet qui se mêle de tout !",
+      3: "J’ai perdu ?! Super, j’ai plus qu’à nager jusqu’à la planque maintenant…",
+      4: "Oh non quelle angoisse…\nLe boss va me démonter…",
+      5: "Je suis battu… Tu penses que le boss va me faire subir le supplice de la planche ?…"
     },
   },
   "galactic_grunt": {
     "encounter": {
       1: "Ne te mets pas en travers de la Team Galaxie !",
-      2: "Witness the power of our technology and the future we envision!",
-      3: "In the name of Team Galactic, I'll eliminate anyone who stands in our way!",
-      4: "Get ready to lose!",
-      5: "Hope you're ready for a cosmic beatdown!"
+      2: "Soit témoin de la puissance de notre technologie et du futur qui se profile !",
+      3: "Au nom de la Team Galaxie, j’éliminerai quiconque se mettera sur notre route !",
+      4: "Prépare ta défaite !",
+      5: "J’espère que t’es prêt à te prendre une raclée de l’espace !"
     },
     "victory": {
       1: "Désactivation…",
-      2: "This setback means nothing in the grand scheme.",
-      3: "Our plans are bigger than this defeat.",
-      4: "How?!",
-      5: "Note to self: practice Pokémon battling, ASAP."
+      2: "Cet échec n’est qu’une poussière face à nos ambitions débordantes.",
+      3: "Notre projet est bien plus important que cette défaite.",
+      4: "Comment ?!",
+      5: "Note à moi-même :\nM’entrainer aux combats Pokémon. Ça urge…"
     },
   },
   "plasma_grunt": {
@@ -3169,18 +3169,34 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "aqua_grunt": {
     "encounter": {
-      1: "Aucune pitié si tu te mets sur le chemin de la Team Aqua, même pour une gamine !"
+      1: "Aucune pitié si tu te mets sur le chemin de la Team Aqua, même pour un gamin !",
+      2: "Grrr…\nTu as eu le culot de t’opposer à la Team Aqua !",
+      3: "Je vais te liquéfier !\nEt ce sera pas qu’à cause des mes Pokémon Eau !",
+      4: "Nous, la Team Aqua, existons pout le bien commun !",
+      5: "Préapre-toi à te faire emporter par le courant de…`\nEuh… Mes Pokémon ! Oui, mes Pokémon !"
     },
     "victory": {
-      1: "Comment ça ?"
+      1: "Comment ça ?",
+      2: "Ah, j'avais pas prévu d’être gêné par un mouflet qui se mêle de tout !",
+      3: "J’ai perdu ?! Super, j’ai plus qu’à nager jusqu’à la planque maintenant…",
+      4: "Oh non quelle angoisse…\nLe boss va me démonter…",
+      5: "Je suis battu… Tu penses que le boss va me faire subir le supplice de la planche ?…"
     },
   },
   "galactic_grunt": {
     "encounter": {
-      1: "Ne te mets pas en travers de la Team Galaxie !"
+      1: "Ne te mets pas en travers de la Team Galaxie !",
+      2: "Soit témoin de la puissance de notre technologie et du futur qui se profile !",
+      3: "Au nom de la Team Galaxie, j’éliminerai quiconque se mettera sur notre route !",
+      4: "Prépare ta défaite !",
+      5: "J’espère que t’es prêt à te prendre une raclée de l’espace !"
     },
     "victory": {
-      1: "Désactivation…"
+      1: "Désactivation…",
+      2: "Cet échec n’est qu’une poussière face à nos ambitions débordantes.",
+      3: "Notre projet est bien plus important que cette défaite.",
+      4: "Comment ?!",
+      5: "Note à moi-même :\nM’entrainer aux combats Pokémon. Ça urge…"
     },
   },
   "plasma_grunt": {
