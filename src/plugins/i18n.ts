@@ -35,15 +35,17 @@ const rangesByLanguage = {
 };
 
 const fonts: Array<LoadingFontFaceProperty> = [
-  {
-    face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: rangesByLanguage.korean }),
-  },
+  // unicode (special character from PokePT)
   {
     face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: unicodeRanges.specialCharacters }),
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: unicodeRanges.specialCharacters }),
     extraOptions: { sizeAdjust: "133%" },
+  },
+  // unicode (korean)
+  {
+    face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: rangesByLanguage.korean }),
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: rangesByLanguage.korean }),
