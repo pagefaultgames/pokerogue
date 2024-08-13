@@ -497,6 +497,10 @@ export default class UI extends Phaser.GameObjects.Container {
     return this.setModeInternal(mode, false, false, true, args);
   }
 
+  resetModeChain(): void {
+    this.modeChain = [];
+  }
+
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (!this?.modeChain?.length) {

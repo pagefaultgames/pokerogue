@@ -321,6 +321,7 @@ export class TitlePhase extends Phase {
   loadSaveSlot(slotId: integer): void {
     this.scene.sessionSlotId = slotId > -1 || !loggedInUser ? slotId : loggedInUser.lastSessionSlot;
     this.scene.ui.setMode(Mode.MESSAGE);
+    this.scene.ui.resetModeChain();
     this.scene.gameData.loadSession(this.scene, slotId, slotId === -1 ? this.lastSessionData : undefined).then((success: boolean) => {
       if (success) {
         this.loaded = true;
