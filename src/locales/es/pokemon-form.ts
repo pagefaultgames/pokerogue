@@ -88,7 +88,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "landorusIncarnate": "Incarnate",
   "keldeoOrdinary": "Ordinary",
   "meloettaAria": "Lírica",
-  "meloettaPirouette": "Danza", 
+  "meloettaPirouette": "Danza",
   // 6G
   "froakieBattleBond": "Fuerte Afecto",
   "scatterbugMeadow": "Floral",
