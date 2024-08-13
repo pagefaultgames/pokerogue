@@ -525,7 +525,7 @@ export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const attackPriority = new Utils.IntegerHolder(move.priority);
     applyMoveAttrs(IncrementMovePriorityAttr,attacker,null,move,attackPriority);
-    applyAbAttrs(IncrementMovePriorityAbAttr, attacker, null, move, attackPriority);
+    applyAbAttrs(ChangeMovePriorityAbAttr, attacker, null, move, attackPriority);
 
     if (move.moveTarget===MoveTarget.USER || move.moveTarget===MoveTarget.NEAR_ALLY) {
       return false;
@@ -2682,23 +2682,32 @@ export class BlockOneHitKOAbAttr extends AbAttr {
   }
 }
 
-export class IncrementMovePriorityAbAttr extends AbAttr {
-  private moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean;
-  private increaseAmount: integer;
+/**
+ * This governs abilities that alter the priority of moves
+ * Abilities: Prankster, Gale Wings, Triage, Mycelium Might, Stall
+ * Note - Quick Claw has a separate and distinct implementation outside of priority
+ */
+export class ChangeMovePriorityAbAttr extends AbAttr {
+  private moveFunc: (pokemon: Pokemon, move: Move) => boolean;
+  private changeAmount: number;
 
-  constructor(moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean, increaseAmount = 1) {
+  /**
+   * @param {(pokemon, move) => boolean} moveFunc applies priority-change to moves within a provided category
+   * @param {number} changeAmount the amount of priority added or subtracted
+   */
+  constructor(moveFunc: (pokemon: Pokemon, move: Move) => boolean, changeAmount: number) {
     super(true);
 
-    this.moveIncrementFunc = moveIncrementFunc;
-    this.increaseAmount = increaseAmount;
+    this.moveFunc = moveFunc;
+    this.changeAmount = changeAmount;
   }
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (!this.moveIncrementFunc(pokemon, args[0] as Move)) {
+    if (!this.moveFunc(pokemon, args[0] as Move)) {
       return false;
     }
 
-    (args[1] as Utils.IntegerHolder).value += this.increaseAmount;
+    (args[1] as Utils.IntegerHolder).value += this.changeAmount;
     return true;
   }
 }
@@ -4092,6 +4101,41 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
   }
 }
 
+/**
+ * This attribute checks if a Pokemon's move meets a provided condition to determine if the Pokemon can use Quick Claw
+ * It was created because Pokemon with the ability Mycelium Might cannot access Quick Claw's benefits when using status moves.
+*/
+export class PreventBypassSpeedChanceAbAttr extends AbAttr {
+  private condition: ((pokemon: Pokemon, move: Move) => boolean);
+
+  /**
+   * @param {function} condition - checks if a move meets certain conditions
+   */
+  constructor(condition: (pokemon: Pokemon, move: Move) => boolean) {
+    super(true);
+    this.condition = condition;
+  }
+
+  /**
+   * @argument {boolean} bypassSpeed - determines if a Pokemon is able to bypass speed at the moment
+   * @argument {boolean} canCheckHeldItems - determines if a Pokemon has access to Quick Claw's effects or not
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const bypassSpeed = args[0] as Utils.BooleanHolder;
+    const canCheckHeldItems = args[1] as Utils.BooleanHolder;
+
+    const turnCommand = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
+    const isCommandFight = turnCommand?.command === Command.FIGHT;
+    const move = turnCommand?.move?.move ? allMoves[turnCommand.move.move] : null;
+    if (this.condition(pokemon, move!) && isCommandFight) {
+      bypassSpeed.value = false;
+      canCheckHeldItems.value = false;
+      return false;
+    }
+    return true;
+  }
+}
+
 async function applyAbAttrsInternal<TAttr extends AbAttr>(
   attrType: Constructor<TAttr>,
   pokemon: Pokemon | null,
@@ -4613,7 +4657,7 @@ export function initAbilities() {
       .attr(AlwaysHitAbAttr)
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.STALL, 4)
-      .unimplemented(),
+      .attr(ChangeMovePriorityAbAttr, (pokemon, move: Move) => true, -0.5),
     new Ability(Abilities.TECHNICIAN, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
         const power = new Utils.NumberHolder(move.power);
@@ -4790,7 +4834,7 @@ export function initAbilities() {
       .attr(TypeImmunityStatChangeAbAttr, Type.GRASS, BattleStat.ATK, 1)
       .ignorable(),
     new Ability(Abilities.PRANKSTER, 5)
-      .attr(IncrementMovePriorityAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS),
+      .attr(ChangeMovePriorityAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS, 1),
     new Ability(Abilities.SAND_FORCE, 5)
       .attr(MoveTypePowerBoostAbAttr, Type.ROCK, 1.3)
       .attr(MoveTypePowerBoostAbAttr, Type.GROUND, 1.3)
@@ -4855,7 +4899,7 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.GALE_WINGS, 6)
-      .attr(IncrementMovePriorityAbAttr, (pokemon, move) => pokemon.isFullHp() && move.type === Type.FLYING),
+      .attr(ChangeMovePriorityAbAttr, (pokemon, move) => pokemon.isFullHp() && move.type === Type.FLYING, 1),
     new Ability(Abilities.MEGA_LAUNCHER, 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5),
     new Ability(Abilities.GRASS_PELT, 6)
@@ -4944,7 +4988,7 @@ export function initAbilities() {
     new Ability(Abilities.LIQUID_VOICE, 7)
       .attr(MoveTypeChangeAttr, Type.WATER, 1, (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED)),
     new Ability(Abilities.TRIAGE, 7)
-      .attr(IncrementMovePriorityAbAttr, (pokemon, move) => move.hasFlag(MoveFlags.TRIAGE_MOVE), 3),
+      .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.hasFlag(MoveFlags.TRIAGE_MOVE), 3),
     new Ability(Abilities.GALVANIZE, 7)
       .attr(MoveTypeChangeAttr, Type.ELECTRIC, 1.2, (user, target, move) => move.type === Type.NORMAL),
     new Ability(Abilities.SURGE_SURFER, 7)
@@ -5299,8 +5343,9 @@ export function initAbilities() {
       .partial() // Healing not blocked by Heal Block
       .ignorable(),
     new Ability(Abilities.MYCELIUM_MIGHT, 9)
-      .attr(MoveAbilityBypassAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS)
-      .partial(),
+      .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS, -0.5)
+      .attr(PreventBypassSpeedChanceAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS)
+      .attr(MoveAbilityBypassAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS),
     new Ability(Abilities.MINDS_EYE, 9)
       .attr(IgnoreTypeImmunityAbAttr, Type.GHOST, [Type.NORMAL, Type.FIGHTING])
       .attr(ProtectStatAbAttr, BattleStat.ACC)
