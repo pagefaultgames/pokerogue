@@ -1,12 +1,12 @@
 import { Abilities } from "#app/enums/abilities.js";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import * as overrides from "#app/overrides";
-import { TurnEndPhase, TurnStartPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -26,19 +26,19 @@ describe("Abilities - Damp", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("single");
+    game.override.disableCrits();
+    game.override.enemySpecies(Species.BIDOOF);
   });
 
   it("prevents explosive attacks used by others", async() => {
     const moveToUse = Moves.EXPLOSION;
     const enemyAbility = Abilities.DAMP;
 
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.BIDOOF);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(enemyAbility);
+    game.override.ability(Abilities.NONE);
+    game.override.moveset(Array(4).fill(moveToUse));
+    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyAbility(enemyAbility);
 
     await game.startBattle();
 
@@ -54,11 +54,11 @@ describe("Abilities - Damp", () => {
     const moveToUse = Moves.EXPLOSION;
     const playerAbility = Abilities.DAMP;
 
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(playerAbility);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.BIDOOF);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    game.override.ability(playerAbility);
+    game.override.moveset(Array(4).fill(moveToUse));
+    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemySpecies(Species.BIDOOF);
+    game.override.enemyAbility(Abilities.NONE);
 
     await game.startBattle();
 
@@ -76,11 +76,11 @@ describe("Abilities - Damp", () => {
     const playerAbility = Abilities.DAMP;
     const enemyAbility = Abilities.AFTERMATH;
 
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(playerAbility);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.BIDOOF);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(enemyAbility);
+    game.override.ability(playerAbility);
+    game.override.moveset(Array(4).fill(moveToUse));
+    game.override.enemyAbility(enemyAbility);
+    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemySpecies(Species.BIDOOF);
 
     await game.startBattle();
 
@@ -101,17 +101,16 @@ describe("Abilities - Damp", () => {
     const moveToUse = Moves.SPLASH;
     const playerAbility = Abilities.DAMP;
 
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(playerAbility);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.EXPLOSION, Moves.SELF_DESTRUCT, Moves.MIND_BLOWN, Moves.MISTY_EXPLOSION]);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.BIDOOF);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+    game.override.ability(playerAbility);
+    game.override.moveset(Array(4).fill(moveToUse));
+    game.override.enemyAbility(Abilities.NONE);
+    game.override.enemyMoveset([Moves.EXPLOSION, Moves.SELF_DESTRUCT, Moves.MIND_BLOWN, Moves.MISTY_EXPLOSION]);
 
     await game.startBattle();
 
     game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
-    await game.phaseInterceptor.to(TurnStartPhase);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   }, TIMEOUT);
