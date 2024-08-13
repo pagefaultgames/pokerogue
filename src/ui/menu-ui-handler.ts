@@ -214,14 +214,16 @@ export default class MenuUiHandler extends MessageUiHandler {
       handler: () => {
         this.scene.gameData.importData(GameDataType.RUN_HISTORY);
         return true;
-      }
+      },
+      keepOpen: true
     });
     manageDataOptions.push({
       label: i18next.t("menuUiHandler:exportRunHistory"),
       handler: () => {
         this.scene.gameData.tryExportData(GameDataType.RUN_HISTORY);
         return true;
-      }
+      },
+      keepOpen: true
     });
     if (Utils.isLocal || Utils.isBeta) {
       manageDataOptions.push({
