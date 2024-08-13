@@ -363,7 +363,7 @@ export default class GameInfoUiHandler extends UiHandler {
  	parsePartyInfo(): void {
 
     const party = this.runInfo.party;
-    const currentLanguage = i18next.resolvedLanguage;
+    const currentLanguage = i18next.resolvedLanguage ?? "en";
  		const windowHeight = ((this.scene.game.canvas.height / 6) - 23)/6;
 
  		party.forEach((p: PokemonData, i: integer) => {
@@ -396,9 +396,13 @@ export default class GameInfoUiHandler extends UiHandler {
       //With the exception of Korean/Traditional Chinese/Simplified Chinese, the code shortens the terms for ability and passive to their first letter.
       //These languages are exempted because they are already short enough.
       const exemptedLanguages = ["ko", "zh_CN", "zh_TW"];
-      const passiveLabel = exemptedLanguages.includes(currentLanguage) ? i18next.t("starterSelectUiHandler:passive") : (i18next.t("starterSelectUiHandler:passive") as string).charAt(0);
-      const abilityLabel = exemptedLanguages.includes(currentLanguage) ? i18next.t("starterSelectUiHandler:ability") : (i18next.t("starterSelectUiHandler:ability") as string).charAt(0);
-      const pPassiveInfo = pokemon.passive ? `${passiveLabel}: ${pokemon.getPassiveAbility().name}` : "";
+      let passiveLabel = i18next.t("starterSelectUiHandler:passive") ?? "-";
+      let abilityLabel = i18next.t("starterSelectUiHandler:ability") ?? "-";
+      if (!exemptedLanguages.includes(currentLanguage)) {
+        passiveLabel = passiveLabel.charAt(0);
+        abilityLabel = abilityLabel.charAt(0);
+      }
+      const pPassiveInfo = pokemon.passive ? passiveLabel+": "+pokemon.getPassiveAbility().name : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
       const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
       pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`);
