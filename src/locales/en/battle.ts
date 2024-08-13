@@ -97,6 +97,4 @@ export const battle: SimpleTranslationEntries = {
   "congratulations": "Congratulations!",
   "beatModeFirstTime": "{{speciesName}} beat {{gameMode}} Mode for the first time!\nYou received {{newModifier}}!",
   "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!",
-  "battlerTagsDisabledOnAdd": "{{pokemonNameWithAffix}}'s {{moveName}}\nwas disabled!",
-  "battlerTagsDisabledLapse": "{{pokemonNameWithAffix}}'s {{moveName}}\nis no longer disabled.",
 } as const;
