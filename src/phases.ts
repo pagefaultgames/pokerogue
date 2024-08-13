@@ -832,7 +832,7 @@ export class EncounterPhase extends BattlePhase {
       this.scene.unshiftPhase(new GameOverPhase(this.scene));
     }
 
-    const loadEnemyAssets: Promise<any>[] = [];
+    const loadEnemyAssets: Promise<void>[] = [];
 
     const battle = this.scene.currentBattle;
 
