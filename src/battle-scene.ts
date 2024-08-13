@@ -944,7 +944,7 @@ export default class BattleScene extends SceneBase {
   }
 
   randBattleSeedInt(range: integer, min: integer = 0): integer {
-    return this.currentBattle.randSeedInt(this, range, min);
+    return this.currentBattle?.randSeedInt(this, range, min);
   }
 
   reset(clearScene: boolean = false, clearData: boolean = false, reloadI18n: boolean = false): void {
@@ -2397,7 +2397,7 @@ export default class BattleScene extends SceneBase {
       }
 
       party.forEach((enemyPokemon: EnemyPokemon, i: integer) => {
-        const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer?.config.isBoss);
+        const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && !!this.currentBattle.trainer?.config.isBoss);
         let upgradeChance = 32;
         if (isBoss) {
           upgradeChance /= 2;
@@ -2405,7 +2405,7 @@ export default class BattleScene extends SceneBase {
         if (isFinalBoss) {
           upgradeChance /= 8;
         }
-        const modifierChance = this.gameMode.getEnemyModifierChance(isBoss!); // TODO: is this bang correct?
+        const modifierChance = this.gameMode.getEnemyModifierChance(isBoss);
         let pokemonModifierChance = modifierChance;
         if (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer)
           pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i)); // eslint-disable-line
