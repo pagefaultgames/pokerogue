@@ -224,7 +224,8 @@ export default class MenuUiHandler extends MessageUiHandler {
       handler: () => {
         this.scene.gameData.tryExportData(GameDataType.SYSTEM);
         return true;
-      }
+      },
+      keepOpen: true
     },
     {
       label: "Consent Preferences",
