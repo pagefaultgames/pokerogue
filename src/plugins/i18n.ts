@@ -26,9 +26,10 @@ const unicodeRanges = {
   kana: "U+3040-30FF",
   CJKCommon: "U+2E80-2EFF,U+3000-303F,U+31C0-31EF,U+3200-32FF,U+3400-4DBF,U+F900-FAFF,U+FE30-FE4F",
   CJKIdeograph: "U+4E00-9FFF",
+  specialCharacters: "U+266A,U+2605,U+2665,U+2663" //♪.★,♥,♣
 };
 const rangesByLanguage = {
-  korean: [unicodeRanges.CJKCommon, unicodeRanges.hangul].join(","),
+  korean: [unicodeRanges.CJKCommon, unicodeRanges.hangul,unicodeRanges.specialCharacters].join(","),
   chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
   japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(",")
 };
