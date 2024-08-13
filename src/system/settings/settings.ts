@@ -560,8 +560,8 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.UI_Sound_Effects,
     label: i18next.t("settings:uiSoundEffects"),
-    options: OFF_ON,
-    default: 1,
+    options: VOLUME_OPTIONS,
+    default: 10,
     type: SettingType.AUDIO
   },
   {
@@ -679,7 +679,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.updateSoundVolume();
     break;
   case SettingKeys.UI_Sound_Effects:
-    scene.uiSoundEffects = Setting[index].options[value].value === "On";
+    scene.uiVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     break;
   case SettingKeys.Music_Preference:
     scene.musicPreference = value;

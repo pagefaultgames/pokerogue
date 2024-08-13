@@ -340,9 +340,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.getUi().hideTooltip();
 
-    if (this.scene.uiSoundEffects) {
-      this.scene.playSound("ui/menu_open");
-    }
+    this.scene.playSound("ui/menu_open");
 
     handleTutorial(this.scene, Tutorial.Menu);
 

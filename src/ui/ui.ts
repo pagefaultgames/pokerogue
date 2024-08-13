@@ -399,15 +399,11 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   playSelect(): void {
-    if ((this.scene as BattleScene).uiSoundEffects) {
-      (this.scene as BattleScene).playSound("ui/select");
-    }
+    (this.scene as BattleScene).playSound("ui/select");
   }
 
   playError(): void {
-    if ((this.scene as BattleScene).uiSoundEffects) {
-      (this.scene as BattleScene).playSound("ui/error");
-    }
+    (this.scene as BattleScene).playSound("ui/error");
   }
 
   fadeOut(duration: integer): Promise<void> {

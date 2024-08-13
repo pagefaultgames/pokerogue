@@ -126,7 +126,7 @@ export default class BattleScene extends SceneBase {
   public bgmVolume: number = 1;
   public fieldVolume: number = 1;
   public seVolume: number = 1;
-  public uiSoundEffects: boolean = true;
+  public uiVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
@@ -1800,11 +1800,14 @@ export default class BattleScene extends SceneBase {
           config["volume"] *= 0.5;
         }
         break;
-      case "se":
       case "ui":
+        config["volume"] = this.masterVolume * this.uiVolume;
+        break;
+      case "se":
       default:
         config["volume"] = this.masterVolume * this.seVolume;
         break;
+
       }
       this.sound.play(key, config);
       return this.sound.get(key) as AnySound;
