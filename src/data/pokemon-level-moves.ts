@@ -9233,7 +9233,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 60, Moves.FOCUS_PUNCH ],
   ],
   [Species.TYMPOLE]: [
-    [ 1, Moves.BUBBLE ],
+    [ 1, Moves.BUBBLE ], //USUM
     [ 1, Moves.GROWL ],
     [ 1, Moves.ECHOED_VOICE ],
     [ 4, Moves.ACID ],
@@ -9250,7 +9250,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 48, Moves.HYDRO_PUMP ],
   ],
   [Species.PALPITOAD]: [
-    [ 1, Moves.BUBBLE ],
+    [ 1, Moves.BUBBLE ], //USUM
     [ 1, Moves.GROWL ],
     [ 1, Moves.SUPERSONIC ],
     [ 1, Moves.ACID ],
@@ -9268,7 +9268,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.SEISMITOAD]: [
     [ EVOLVE_MOVE, Moves.DRAIN_PUNCH ],
-    [ 1, Moves.BUBBLE ],
+    [ 1, Moves.BUBBLE ], //USUM
     [ 1, Moves.GROWL ],
     [ 1, Moves.SUPERSONIC ],
     [ 1, Moves.ACID ],
@@ -16855,7 +16855,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.CONFUSE_RAY ],
     [ 1, Moves.SPITE ],
     [ 1, Moves.ASTONISH ],
-    [ 7, Moves.PSYBEAM ],
+    [ 1, Moves.PSYBEAM ], //Custom, moved from 7 to 1
     [ 14, Moves.MEAN_LOOK ],
     [ 21, Moves.MEMENTO ],
     [ 28, Moves.WISH ],
