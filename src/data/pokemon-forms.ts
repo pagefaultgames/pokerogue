@@ -581,10 +581,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.GIRATINA, "altered", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.GRISEOUS_CORE))
   ],
   [Species.SHAYMIN]: [
-    new SpeciesFormChange(Species.SHAYMIN, "land", "sky", new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeTimeOfDayTrigger(TimeOfDay.DAY, TimeOfDay.DUSK),
-      new SpeciesFormChangeItemTrigger(FormChangeItem.GRACIDEA), new SpeciesFormChangeStatusEffectTrigger(StatusEffect.FREEZE, true))),
-    new SpeciesFormChange(Species.SHAYMIN, "sky", "land", new SpeciesFormChangeTimeOfDayTrigger(TimeOfDay.DAWN, TimeOfDay.NIGHT)),
-    new SpeciesFormChange(Species.SHAYMIN, "sky", "land", new SpeciesFormChangeStatusEffectTrigger(StatusEffect.FREEZE))
+    new SpeciesFormChange(Species.SHAYMIN, "land", "sky", new SpeciesFormChangeItemTrigger(FormChangeItem.GRACIDEA)),
   ],
   [Species.ARCEUS]: [
     new SpeciesFormChange(Species.ARCEUS, "normal", "fighting", new SpeciesFormChangeItemTrigger(FormChangeItem.FIST_PLATE)),
