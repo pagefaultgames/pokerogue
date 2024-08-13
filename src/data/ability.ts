@@ -3719,7 +3719,7 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
 export class BlockRedirectAbAttr extends AbAttr { }
 
 /**
- * Prevents other Pokemon from using moves that match the given {@linkcode moveCondition}.
+ * Prevents other Pokemon from using moves that are in the {@link preventedMoves}.
  *
  * @param args [0] {@linkcode Move} The move being checked
  * @param args [1] {@linkcode Pokemon} The user of the attack
