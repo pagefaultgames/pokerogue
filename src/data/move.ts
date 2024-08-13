@@ -3762,11 +3762,10 @@ export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
 export class TeraBlastPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
-    
     if (user.isTerastallized() && move.type === Type.STELLAR) {
       power.value = 200;
       //200 instead of 100 to reflect lack of stellar being 2x dmg on any type
-      return true
+      return true;
     }
 
     return false;
@@ -4029,8 +4028,7 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
 export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.isTerastallized()) {
-      move.type = user.getTeraType(); 
-      //changes move type to tera type
+      move.type = user.getTeraType(); //changes move type to tera type
       return true;
     }
 
