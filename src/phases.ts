@@ -5990,6 +5990,7 @@ export class SwitchPhase extends BattlePhase {
     const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? this.fieldIndex : 0;
 
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
+      if (this.isModal) {console.error("Forced Switch Detected")}
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
         if (LoggerTools.isPreSwitch.value) {
           LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Pre-switch" + (option == PartyOption.PASS_BATON ? "+ Baton" : "") + " " + LoggerTools.playerPokeName(this.scene, fieldIndex) + " to " + LoggerTools.playerPokeName(this.scene, slotIndex))
@@ -6958,9 +6959,9 @@ export class SelectModifierPhase extends BattlePhase {
               const itemModifier = itemModifiers[itemIndex];
               if (isAll) {
                 if (isFirst)
-                  LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Transfer [" + (fromSlotIndex + 1) + "] " + this.scene.getParty()[fromSlotIndex].name + " (All) → [" + (toSlotIndex + 1) + "] " + this.scene.getParty()[toSlotIndex].name)
+                  LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, `Transfer ALL | ${LoggerTools.playerPokeName(this.scene, fromSlotIndex)} → ${LoggerTools.playerPokeName(this.scene, toSlotIndex)}`)
               } else {
-                LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Transfer [" + (fromSlotIndex + 1) + "] " + this.scene.getParty()[fromSlotIndex].name + " (" + itemModifier.type.name + (itemQuantity == itemModifier.getStackCount() ? "" : " x" + itemQuantity) + ") → [" + (toSlotIndex + 1) + "] " + this.scene.getParty()[toSlotIndex].name)
+                LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, `Transfer ${itemModifier.type.name + (itemQuantity == itemModifier.getStackCount() ? "" : " x" + itemQuantity)} | ${LoggerTools.playerPokeName(this.scene, fromSlotIndex)} → ${LoggerTools.playerPokeName(this.scene, toSlotIndex)}`)
               }
               this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity);
             } else {
