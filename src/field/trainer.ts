@@ -437,7 +437,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const party = this.scene.getEnemyParty();
     const nonFaintedLegalPartyMembers = party.slice(this.scene.currentBattle.getBattlerCount()).filter(p => p.isAllowedInBattle()).filter(p => !trainerSlot || p.trainerSlot === trainerSlot);
 
-    if (Overrides.TRAINER_ALWAYS_SWITCHES) {
+    if (Overrides.TRAINER_ALWAYS_SWITCHES_OVERRIDE) {
       return nonFaintedLegalPartyMembers.map(p => [party.indexOf(p), 100]);
     }
 

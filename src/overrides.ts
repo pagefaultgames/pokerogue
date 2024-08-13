@@ -119,7 +119,10 @@ class DefaultOverrides {
   // --------------------------
   // TRAINER/AI OVERRIDES
   // --------------------------
-  readonly TRAINER_ALWAYS_SWITCHES: boolean = false;
+  /**
+   * Force enemy AI to always switch pkmn
+   */
+  readonly TRAINER_ALWAYS_SWITCHES_OVERRIDE: boolean = false;
 
   // -------------
   // EGG OVERRIDES
