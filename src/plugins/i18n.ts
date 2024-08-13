@@ -29,7 +29,7 @@ const unicodeRanges = {
   specialCharacters: "U+266A,U+2605,U+2665,U+2663" //♪.★,♥,♣
 };
 const rangesByLanguage = {
-  korean: [unicodeRanges.CJKCommon, unicodeRanges.hangul,unicodeRanges.specialCharacters].join(","),
+  korean: [unicodeRanges.CJKCommon, unicodeRanges.hangul].join(","),
   chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
   japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(",")
 };
@@ -37,6 +37,13 @@ const rangesByLanguage = {
 const fonts: Array<LoadingFontFaceProperty> = [
   {
     face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: rangesByLanguage.korean }),
+  },
+  {
+    face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: unicodeRanges.specialCharacters }),
+  },
+  {
+    face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: unicodeRanges.specialCharacters }),
+    extraOptions: { sizeAdjust: "133%" },
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: rangesByLanguage.korean }),
