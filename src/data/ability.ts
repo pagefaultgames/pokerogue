@@ -7,7 +7,7 @@ import { MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "
 import { getPokemonNameWithAffix } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag, GroundedTag, GulpMissileTag, SemiInvulnerableTag } from "./battler-tags";
-import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
+import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, ChargeAttr, SacrificialAttr, SacrificialAttrOnHit } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
@@ -368,9 +368,9 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
    * Type immunity abilities that do not give additional benefits (HP recovery, stat boosts, etc) are not immune to status moves of the type
    * Example: Levitate
    */
-  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (move.category !== MoveCategory.STATUS) {
-      return super.applyPreDefend(pokemon, passive, attacker, move, cancelled, args);
+      return super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
     }
     return false;
   }
@@ -580,7 +580,7 @@ export class MoveImmunityAbAttr extends PreDefendAbAttr {
  * @extends PreDefendAbAttr
  */
 export class WonderSkinAbAttr extends PreDefendAbAttr {
-  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const moveAccuracy = args[0] as Utils.NumberHolder;
     if (move.category === MoveCategory.STATUS && moveAccuracy.value >= 50) {
       moveAccuracy.value = 50;
@@ -910,7 +910,7 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
     this.turns = turns;
   }
 
-  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+  applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
       if (pokemon.getTag(BattlerTagType.PERISH_SONG) || attacker.getTag(BattlerTagType.PERISH_SONG)) {
         return false;
@@ -1076,7 +1076,7 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
    * @param args [0]: {@linkcode Utils.NumberHolder} Move additional effect chance. Has to be higher than or equal to 0.
    *             [1]: {@linkcode Moves } Move used by the ability user.
    */
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     // Disable showAbility during getTargetBenefitScore
     this.showAbility = args[4];
     if ((args[0] as Utils.NumberHolder).value <= 0 || (args[1] as Move).id === Moves.ORDER_UP) {
@@ -1099,7 +1099,7 @@ export class IgnoreMoveEffectsAbAttr extends PreDefendAbAttr {
   /**
    * @param args [0]: {@linkcode Utils.NumberHolder} Move additional effect chance.
    */
-  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
 
     if ((args[0] as Utils.NumberHolder).value <= 0) {
       return false;
@@ -1307,7 +1307,7 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
    * @param {Utils.NumberHolder} args\[2\] the damage multiplier for the current strike
    * @returns
    */
-  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
+  applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
     const numTargets = args[0] as integer;
     const hitCount = args[1] as Utils.IntegerHolder;
     const multiplier = args[2] as Utils.NumberHolder;
@@ -1800,7 +1800,7 @@ export class IgnoreOpponentEvasionAbAttr extends AbAttr {
    * @param args [0] {@linkcode Utils.IntegerHolder} of BattleStat.EVA
    * @returns if evasion level was successfully considered as 0
    */
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]) {
+  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]) {
     (args[0] as Utils.IntegerHolder).value = 0;
     return true;
   }
@@ -1876,9 +1876,11 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
     this.arenaTags = arenaTags;
   }
 
-  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
-    for (const arenaTag of this.arenaTags) {
-      pokemon.scene.arena.removeTag(arenaTag);
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    if (!simulated) {
+      for (const arenaTag of this.arenaTags) {
+        pokemon.scene.arena.removeTag(arenaTag);
+      }
     }
     return true;
   }
@@ -1912,8 +1914,10 @@ export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr {
     this.message = message;
   }
 
-  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    pokemon.scene.queueMessage(this.message);
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    if (!simulated) {
+      pokemon.scene.queueMessage(this.message);
+    }
 
     return true;
   }
@@ -2019,14 +2023,16 @@ export class PostSummonClearAllyStatsAbAttr extends PostSummonAbAttr {
     super();
   }
 
-  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const target = pokemon.getAlly();
     if (target?.isActive(true)) {
-      for (let s = 0; s < target.summonData.battleStats.length; s++) {
-        target.summonData.battleStats[s] = 0;
-      }
+      if (!simulated) {
+        for (let s = 0; s < target.summonData.battleStats.length; s++) {
+          target.summonData.battleStats[s] = 0;
+        }
 
-      target.scene.queueMessage(i18next.t("abilityTriggers:postSummonClearAllyStats", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+        target.scene.queueMessage(i18next.t("abilityTriggers:postSummonClearAllyStats", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+      }
 
       return true;
     }
@@ -2210,7 +2216,7 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
    * @param args - n/a
    * @returns A boolean or a promise that resolves to a boolean indicating the result of the ability application.
    */
-  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     const party = pokemon instanceof PlayerPokemon ? pokemon.scene.getPlayerField() : pokemon.scene.getEnemyField();
     const allowedParty = party.filter(p => p.isAllowedInBattle());
 
@@ -2218,14 +2224,15 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
       return false;
     }
 
-    for (const pokemon of allowedParty) {
-      if (pokemon.status && this.statusEffect.includes(pokemon.status.effect)) {
-        pokemon.scene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
-        pokemon.resetStatus(false);
-        pokemon.updateInfo();
+    if (!simulated) {
+      for (const pokemon of allowedParty) {
+        if (pokemon.status && this.statusEffect.includes(pokemon.status.effect)) {
+          pokemon.scene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
+          pokemon.resetStatus(false);
+          pokemon.updateInfo();
+        }
       }
     }
-
     return true;
   }
 }
@@ -2233,7 +2240,7 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
 
 /** Attempt to copy the stat changes on an ally pokemon */
 export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
-  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     if (!pokemon.scene.currentBattle.double) {
       return false;
     }
@@ -2243,8 +2250,10 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
       return false;
     }
 
-    pokemon.summonData.battleStats = ally.summonData.battleStats;
-    pokemon.updateInfo();
+    if (!simulated) {
+      pokemon.summonData.battleStats = ally.summonData.battleStats;
+      pokemon.updateInfo();
+    }
 
     return true;
   }
@@ -2329,7 +2338,7 @@ export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
    * @param args N/A
    * @returns {boolean} Returns true if the weather clears, otherwise false.
    */
-  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     const weatherType = pokemon.scene.arena.weather?.weatherType;
     let turnOffWeather = false;
 
@@ -2353,6 +2362,10 @@ export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
         turnOffWeather = true;
       }
       break;
+    }
+
+    if (simulated) {
+      return turnOffWeather;
     }
 
     if (turnOffWeather) {
@@ -2398,10 +2411,12 @@ export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
    * @param args N/A
    * @returns true if the form change was successful
    */
-  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     const formIndex = this.formFunc(pokemon);
     if (formIndex !== pokemon.formIndex) {
-      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+      if (!simulated) {
+        pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+      }
       return true;
     }
 
@@ -2469,9 +2484,9 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
    * @param args [0] {@linkcode StatusEffect} applied by move
    * @returns true if defender is confused
    */
-  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (this.effects.indexOf(args[0]) > -1 && !defender.isFainted()) {
-      return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedInt(3,2), move.id, defender.id);
+      return simulated || defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedInt(3,2), move.id, defender.id);
     }
     return false;
   }
@@ -2647,7 +2662,7 @@ export class ConditionalCritAbAttr extends AbAttr {
    *             [1] {@linkcode Pokemon} Target.
    *             [2] {@linkcode Move} used by ability user.
    */
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const target = (args[1] as Pokemon);
     const move = (args[2] as Move);
     if (!this.condition(pokemon,target,move)) {
@@ -2688,7 +2703,7 @@ export class BlockStatusDamageAbAttr extends AbAttr {
    * @param {any[]} args N/A
    * @returns Returns true if status damage is blocked
    */
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (pokemon.status && this.effects.includes(pokemon.status.effect)) {
       cancelled.value = true;
       return true;
@@ -3074,13 +3089,15 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
    * @param {any[]} args N/A
    * @returns Returns true if healed from status, false if not
    */
-  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     if (pokemon.status && this.effects.includes(pokemon.status.effect)) {
       if (!pokemon.isFullHp()) {
-        const scene = pokemon.scene;
-        const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
-        scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-          Math.max(Math.floor(pokemon.getMaxHp() / 8), 1), i18next.t("abilityTriggers:poisonHeal", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName }), true));
+        if (!simulated) {
+          const scene = pokemon.scene;
+          const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
+          scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
+            Math.max(Math.floor(pokemon.getMaxHp() / 8), 1), i18next.t("abilityTriggers:poisonHeal", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName }), true));
+        }
         return true;
       }
     }
@@ -3136,7 +3153,7 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
     super();
   }
 
-  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const pass = Phaser.Math.RND.realInRange(0, 1);
     // Clamp procChance to [0, 1]. Skip if didn't proc (less than pass)
     if (Math.max(Math.min(this.procChance(pokemon), 1), 0) < pass) {
@@ -3278,15 +3295,18 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
    * Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1)
    * @param {Pokemon} pokemon Pokemon that has this ability
    * @param {boolean} passive N/A
+   * @param {boolean} simulated true if applying in a simulated call.
    * @param {any[]} args N/A
    * @returns {boolean} true if any opponents are sleeping
    */
-  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     let hadEffect: boolean = false;
     for (const opp of pokemon.getOpponents()) {
       if ((opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
-        opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER);
-        pokemon.scene.queueMessage(i18next.t("abilityTriggers:badDreams", {pokemonName: getPokemonNameWithAffix(opp)}));
+        if (!simulated) {
+          opp.damageAndUpdate(Math.floor(Math.max(1, opp.getMaxHp() / 8)), HitResult.OTHER);
+          pokemon.scene.queueMessage(i18next.t("abilityTriggers:badDreams", {pokemonName: getPokemonNameWithAffix(opp)}));
+        }
         hadEffect = true;
       }
 
@@ -3311,7 +3331,10 @@ export class FetchBallAbAttr extends PostTurnAbAttr {
    * @param args N/A
    * @returns true if player has used a pokeball and this pokemon is owned by the player
    */
-  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    if (simulated) {
+      return false;
+    }
     const lastUsed = pokemon.scene.currentBattle.lastUsedPokeball;
     if (lastUsed !== null && !!pokemon.isPlayer) {
       pokemon.scene.pokeballCounts[lastUsed]++;
@@ -3490,18 +3513,19 @@ export class HealFromBerryUseAbAttr extends AbAttr {
     this.healPercent = Math.max(Math.min(healPercent, 1), 0);
   }
 
-  apply(pokemon: Pokemon, passive: boolean, ...args: [Utils.BooleanHolder, any[]]): boolean {
+  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, ...args: [Utils.BooleanHolder, any[]]): boolean {
     const { name: abilityName } = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
-    pokemon.scene.unshiftPhase(
-      new PokemonHealPhase(
-        pokemon.scene,
-        pokemon.getBattlerIndex(),
-        Math.max(Math.floor(pokemon.getMaxHp() * this.healPercent), 1),
-        i18next.t("abilityTriggers:healFromBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }),
-        true
-      )
-    );
-
+    if (!simulated) {
+      pokemon.scene.unshiftPhase(
+        new PokemonHealPhase(
+          pokemon.scene,
+          pokemon.getBattlerIndex(),
+          Math.max(Math.floor(pokemon.getMaxHp() * this.healPercent), 1),
+          i18next.t("abilityTriggers:healFromBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }),
+          true
+        )
+      );
+    }
     return true;
   }
 }
@@ -3951,7 +3975,7 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
     this.defenderType = defenderType;
   }
 
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (this.statusEffect.includes(args[0] as StatusEffect) && this.defenderType.includes(args[1] as Type)) {
       cancelled.value = true;
       return true;
@@ -3978,7 +4002,10 @@ export class MoneyAbAttr extends PostBattleAbAttr {
    * @param args N/A
    * @returns true
    */
-  applyPostBattle(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+  applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    if (simulated) {
+      return false;
+    }
     pokemon.scene.currentBattle.moneyScattered += pokemon.scene.getWaveMoneyAmount(0.2);
     return true;
   }
@@ -4018,11 +4045,11 @@ export class PostSummonStatChangeOnArenaAbAttr extends PostSummonStatChangeAbAtt
    * @param {any[]} args - Additional arguments.
    * @returns {boolean} - Returns true if the stat change was applied, otherwise false.
    */
-  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const side = pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
     if (pokemon.scene.arena.getTagOnSide(this.tagType, side)) {
-      return super.applyPostSummon(pokemon, passive, args);
+      return super.applyPostSummon(pokemon, passive, simulated, args);
     }
     return false;
   }
@@ -4060,12 +4087,14 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
    * @param {any[]} args Additional arguments.
    * @returns {boolean} Whether the immunity was applied.
    */
-  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (this.condition(pokemon, attacker, move)) {
-      (args[0] as Utils.NumberHolder).value = this.multiplier;
-      pokemon.removeTag(this.tagType);
-      if (this.recoilDamageFunc) {
-        pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), HitResult.OTHER);
+      if (!simulated) {
+        (args[0] as Utils.NumberHolder).value = this.multiplier;
+        pokemon.removeTag(this.tagType);
+        if (this.recoilDamageFunc) {
+          pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), HitResult.OTHER);
+        }
       }
       return true;
     }
@@ -4109,7 +4138,10 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
    * @param {any[]} args [0] {@linkcode Utils.BooleanHolder} set to true when the ability activated
    * @returns {boolean} - whether the ability was activated.
    */
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (simulated) {
+      return false;
+    }
     const bypassSpeed = args[0] as Utils.BooleanHolder;
 
     if (!bypassSpeed.value && pokemon.randSeedInt(100) < this.chance) {
