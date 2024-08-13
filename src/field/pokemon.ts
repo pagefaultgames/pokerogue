@@ -4255,6 +4255,7 @@ export class PokemonTurnData {
   public damageTaken: integer = 0;
   public attacksReceived: AttackMoveResult[] = [];
   public order: number;
+  public battleStatsChange: number[] = [0, 0, 0, 0, 0, 0, 0];
 }
 
 export enum AiType {

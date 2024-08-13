@@ -3513,7 +3513,7 @@ export class StatChangePhase extends PokemonPhase {
 
       for (const stat of filteredStats) {
         if (levels.value > 0 && pokemon.summonData.battleStats[stat] + levels.value <= 6) {
-          pokemon.addTag(BattlerTagType.STATS_BOOSTED, 1);
+          pokemon.turnData.battleStatsChange[stat] += levels.value;
         }
 
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);

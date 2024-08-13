@@ -5872,7 +5872,7 @@ export class AddBattlerTagIfBoostedAttr extends AddBattlerTagAttr {
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (target.getTag(BattlerTagType.STATS_BOOSTED)) {
+    if (target.turnData.battleStatsChange.find(v => v > 0)) {
       super.apply(user, target, move, args);
     }
     return true;
@@ -5900,7 +5900,7 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (target.getTag(BattlerTagType.STATS_BOOSTED)) {
+    if (target.turnData.battleStatsChange.find(v => v > 0)) {
       target.trySetStatus(this.effect, true, user);
     }
     return true;

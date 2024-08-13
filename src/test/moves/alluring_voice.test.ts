@@ -49,7 +49,6 @@ describe("Moves - Alluring Voice", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.ALLURING_VOICE));
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to(BerryPhase);
-    console.log(enemy.getTag(BattlerTagType.CONFUSED));
 
     expect(enemy.getTag(BattlerTagType.CONFUSED)?.tagType).toBe("CONFUSED");
   }, TIMEOUT);
