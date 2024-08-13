@@ -228,7 +228,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       keepOpen: true
     },
     {
-      label: "Consent Preferences",
+      label: i18next.t("menuUiHandler:consentPreferences"),
       handler: () => {
         const consentLink = document.querySelector(".termly-display-preferences") as HTMLInputElement;
         const clickEvent = new MouseEvent("click", {
