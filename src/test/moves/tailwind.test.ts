@@ -10,7 +10,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 
-describe("Abilities - Wind Rider", () => {
+describe("Moves - Tailwind", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 

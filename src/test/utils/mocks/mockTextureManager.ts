@@ -6,8 +6,11 @@ import MockImage from "#test/utils/mocks/mocksContainer/mockImage";
 import MockText from "#test/utils/mocks/mocksContainer/mockText";
 import MockPolygon from "#test/utils/mocks/mocksContainer/mockPolygon";
 import { MockGameObject } from "./mockGameObject";
+import MockTexture from "#test/utils/mocks/mocksContainer/mockTexture";
 
-
+/**
+ * Stub class for Phaser.Textures.TextureManager
+ */
 export default class MockTextureManager {
   private textures: Map<string, any>;
   private scene;
@@ -52,6 +55,14 @@ export default class MockTextureManager {
     // if (whitelist.includes(key) || obj.texture?.key?.includes("trainer_")) {
     //   this.containers.push(obj);
     // }
+  }
+
+  /**
+   * Returns a mock texture
+   * @param key
+   */
+  get(key) {
+    return new MockTexture(this, key, null);
   }
 
   rectangle(x, y, width, height, fillColor) {

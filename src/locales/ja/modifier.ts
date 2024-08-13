@@ -1,14 +1,14 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const modifier: SimpleTranslationEntries = {
-  "surviveDamageApply": "{{pokemonNameWithAffix}} hung on\nusing its {{typeName}}!",
-  "turnHealApply": "{{pokemonNameWithAffix}} restored a little HP using\nits {{typeName}}!",
-  "hitHealApply": "{{pokemonNameWithAffix}} restored a little HP using\nits {{typeName}}!",
-  "pokemonInstantReviveApply": "{{pokemonNameWithAffix}} was revived\nby its {{typeName}}!",
-  "pokemonResetNegativeStatStageApply": "{{pokemonNameWithAffix}}'s lowered stats were restored\nby its {{typeName}}!",
-  "moneyInterestApply": "You received interest of ₽{{moneyAmount}}\nfrom the {{typeName}}!",
-  "turnHeldItemTransferApply": "{{pokemonNameWithAffix}}'s {{itemName}} was absorbed\nby {{pokemonName}}'s {{typeName}}!",
-  "contactHeldItemTransferApply": "{{pokemonNameWithAffix}}'s {{itemName}} was snatched\nby {{pokemonName}}'s {{typeName}}!",
-  "enemyTurnHealApply": "{{pokemonNameWithAffix}}\nrestored some HP!",
-  "bypassSpeedChanceApply": "{{pokemonName}} can act faster than normal, thanks to its {{itemName}}!",
+  "surviveDamageApply": "{{pokemonNameWithAffix}}は\n{{typeName}}で　もちこたえた！",
+  "turnHealApply": "{{pokemonNameWithAffix}}は\n{{typeName}}で　少し　回復！",
+  "hitHealApply": "{{pokemonNameWithAffix}}は\n{{typeName}}で　少し　回復！",
+  "pokemonInstantReviveApply": "{{pokemonNameWithAffix}}は\n{{typeName}}で　復活した！",
+  "pokemonResetNegativeStatStageApply": "{{pokemonNameWithAffix}}は　{{typeName}}で\n下がった能力が　元に戻った！",
+  "moneyInterestApply": "{{typeName}}から　{{moneyAmount}}円　取得した！",
+  "turnHeldItemTransferApply": "{{pokemonName}}の {{typeName}}が\n{{pokemonNameWithAffix}}の {{itemName}}を 吸い取った！",
+  "contactHeldItemTransferApply": "{{pokemonName}}の {{typeName}}が\n{{pokemonNameWithAffix}}の {{itemName}}を うばい取った！",
+  "enemyTurnHealApply": "{{pokemonNameWithAffix}}は\n体力を　回復！",
+  "bypassSpeedChanceApply": "{{pokemonName}}は　{{itemName}}で\n行動が　はやくなった！",
 } as const;
