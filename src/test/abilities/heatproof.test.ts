@@ -71,6 +71,7 @@ describe("Abilities - Heatproof", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
 
+    // Normal burn damage is /16
     expect(enemy.hp).toBe(enemy.getMaxHp() - Math.floor(enemy.getMaxHp() / 32));
   });
 });
