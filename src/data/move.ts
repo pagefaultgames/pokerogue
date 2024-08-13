@@ -4421,7 +4421,7 @@ export class CurseAttr extends MoveEffectAttr {
       const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
       user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
       user.scene.queueMessage(
-        i18next.t("battle:battlerTagsCursedOnAdd", {
+        i18next.t("battle:cursedOnAdd", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),
           pokemonName: getPokemonNameWithAffix(target)
         })

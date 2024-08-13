@@ -8,7 +8,7 @@ import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { WeatherType } from "#app/enums/weather-type.js";
 
 
-describe("Ability Timing", () => {
+describe("Abilities - Sand Spit", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
