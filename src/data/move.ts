@@ -3770,7 +3770,7 @@ export class TeraBlastPowerAttr extends VariablePowerAttr {
    * @param move {@linkcode Move} {@linkcode Move.TERA_BLAST}
    * @param {any[]} args N/A
    * @returns true or false
-   */  
+   */
     const power = args[0] as Utils.NumberHolder;
     if (user.isTerastallized() && move.type === Type.STELLAR) {
       power.value = 200;
