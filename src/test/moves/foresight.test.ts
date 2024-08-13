@@ -7,7 +7,7 @@ import { Moves } from "#app/enums/moves.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { MoveEffectPhase } from "#app/phases.js";
 
-describe("Internals", () => {
+describe("Moves - Foresight", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 

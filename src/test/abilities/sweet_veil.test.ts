@@ -8,7 +8,7 @@ import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { BattlerIndex } from "#app/battle.js";
-import { mockHitCheck, SPLASH_ONLY } from "#test/utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Sweet Veil", () => {
   let phaserGame: Phaser.Game;
@@ -80,11 +80,11 @@ describe("Abilities - Sweet Veil", () => {
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     // First pokemon move
-    await mockHitCheck(game, true);
+    await game.move.forceHit();
 
     // Second pokemon move
     await game.phaseInterceptor.to(MovePhase, false);
-    await mockHitCheck(game, true);
+    await game.move.forceHit();
 
     expect(game.scene.getPlayerField().some(p => !!p.getTag(BattlerTagType.DROWSY))).toBe(true);
 

@@ -56,6 +56,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "sacrificialFullRestore": "{{pokemonName}}的\n治癒之願實現了！",
   "invertStats": "{{pokemonName}}的\n能力變化顛倒過來了！",
   "resetStats": "{{pokemonName}}的\n能力變化復原了！",
+  "statEliminated": "所有能力都復原了！",
   "faintCountdown": "{{pokemonName}}\n將在{{turnCount}}回合後滅亡！",
   "copyType": "{{pokemonName}}變成了{{targetPokemonName}}的屬性！",
   "suppressAbilities": "{{pokemonName}}的特性\n變得無效了！",
