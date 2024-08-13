@@ -7,7 +7,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { MovePhase, TurnEndPhase } from "#app/phases";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { Status, StatusEffect } from "#app/data/status-effect.js";
+import { StatusEffect } from "#app/data/status-effect.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { BattlerIndex } from "#app/battle.js";
 
@@ -76,12 +76,10 @@ describe("Abilities - Flash Fire", () => {
 
   it("activated after being frozen", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.EMBER)).moveset(SPLASH_ONLY);
+    game.override.statusEffect(StatusEffect.FREEZE);
     await game.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
-
-    blissey!.status = new Status(StatusEffect.FREEZE);
-    expect(blissey.status?.effect).toBe(StatusEffect.FREEZE);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
