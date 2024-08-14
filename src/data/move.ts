@@ -1943,6 +1943,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
     return new Promise<boolean>(resolve => {
       const rand = Phaser.Math.RND.realInRange(0, 1);
       // Swap to RNG state for a reload
+      /*
       const tempState = Phaser.Math.RND.state()
       Phaser.Math.RND.state(user.scene.battleRNGState)
       const rand_reload = Phaser.Math.RND.realInRange(0, 1);
@@ -1957,6 +1958,8 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
         console.error("Reload discrepancy: Succeeds now, but fails after reload")
         LoggerTools.flagReset(user.scene, user.scene.currentBattle.waveIndex)
       }
+       */
+      
       if (rand >= this.chance) {
         return resolve(false);
       }
