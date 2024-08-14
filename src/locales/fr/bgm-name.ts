@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "Musique : ",
+  "music": "♪ : ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "N2B2 - Vs. Maitre de Kanto",
   "battle_johto_champion": "N2B2 - Vs. Maitre de Johto",
@@ -87,41 +87,41 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_flare_boss": "XY - Vs. Lysandre",
 
   // Biome Music
-  "abyss": "PDM EdS - Cratère Obscur",
-  "badlands": "PDM EdS - Vallée Stérile",
-  "beach": "PDM EdS - Falaise Trempée",
-  "cave": "PDM EdS - Pic Céleste (grotte)",
-  "construction_site": "PDM EdS - Carrière Rocher",
-  "desert": "PDM EdS - Désert du Nord",
-  "dojo": "PDM EdS - Dojo Ossatueur",
-  "end": "PDM EdS - Tour Céleste",
-  "factory": "PDM EdS - Ruines Cachées",
-  "fairy_cave": "PDM EdS - Caverne Étoile",
-  "forest": "PDM EdS - Forêt Crépuscule",
-  "grass": "PDM EdS - Bois aux Pommes",
-  "graveyard": "PDM EdS - Forêt Trompeuse",
-  "ice_cave": "PDM EdS - Montagne Glacier",
-  "island": "PDM EdS - Côte Escarpée",
+  "abyss": "PDM ÉdS - Cratère Obscur",
+  "badlands": "PDM ÉdS - Vallée Stérile",
+  "beach": "PDM ÉdS - Falaise Trempée",
+  "cave": "PDM ÉdS - Pic Céleste (grotte)",
+  "construction_site": "PDM ÉdS - Carrière Rocher",
+  "desert": "PDM ÉdS - Désert du Nord",
+  "dojo": "PDM ÉdS - Dojo Ossatueur",
+  "end": "PDM ÉdS - Tour Céleste",
+  "factory": "PDM ÉdS - Ruines Cachées",
+  "fairy_cave": "PDM ÉdS - Caverne Étoile",
+  "forest": "PDM ÉdS - Forêt Crépuscule",
+  "grass": "PDM ÉdS - Bois aux Pommes",
+  "graveyard": "PDM ÉdS - Forêt Trompeuse",
+  "ice_cave": "PDM ÉdS - Montagne Glacier",
+  "island": "PDM ÉdS - Côte Escarpée",
   "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
   "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
-  "lake": "PDM EdS - Caverne Cristal",
-  "meadow": "PDM EdS - Pic Céleste (forêt)",
+  "lake": "PDM ÉdS - Caverne Cristal",
+  "meadow": "PDM ÉdS - Pic Céleste (forêt)",
   "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
-  "mountain": "PDM EdS - Mt Corne",
-  "plains": "PDM EdS - Pic Céleste (prairie)",
-  "power_plant": "PDM EdS - Plaines Élek",
-  "ruins": "PDM EdS - Ruine Scellée",
+  "mountain": "PDM ÉdS - Mt Corne",
+  "plains": "PDM ÉdS - Pic Céleste (prairie)",
+  "power_plant": "PDM ÉdS - Plaines Élek",
+  "ruins": "PDM ÉdS - Ruine Scellée",
   "sea": "Andr06 - Marine Mystique", // Name defined by the composer
   "seabed": "Firel - Seabed", // The composer thinks about a more creative name
   "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
-  "snowy_forest": "PDM EdS - Pic Céleste (plaine enneigée)",
+  "snowy_forest": "PDM ÉdS - Pic Céleste (plaine enneigée)",
   "space": "Firel - Aether",
-  "swamp": "PDM EdS - Mer Fermée",
+  "swamp": "PDM ÉdS - Mer Fermée",
   "tall_grass": "PDM EdS - Forêt Brumeuse",
-  "temple": "PDM EdS - Grotte Égide",
-  "town": "PDM EdS - Donjon aléatoire - Thème 3",
-  "volcano": "PDM EdS - Grotte Étuve",
-  "wasteland": "PDM EdS - Terres Illusoires",
+  "temple": "PDM ÉdS - Grotte Égide",
+  "town": "PDM ÉdS - Donjon aléatoire - Thème 3",
+  "volcano": "PDM ÉdS - Grotte Étuve",
+  "wasteland": "PDM ÉdS - Terres Illusoires",
 
   // Encounter
   "encounter_ace_trainer": "NB - Regards croisés (Topdresseur·euse)",
@@ -141,6 +141,6 @@ export const bgmName: SimpleTranslationEntries = {
 
   // Other
   "heal": "NB - Soin de Pokémon",
-  "menu": "PDM EdS - Bienvenue dans le monde de Pokémon !",
-  "title": "PDM EdS - Menu Principal",
+  "menu": "PDM ÉdS - Bienvenue dans le monde de Pokémon !",
+  "title": "PDM ÉdS - Menu Principal",
 } as const;
