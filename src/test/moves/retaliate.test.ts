@@ -43,7 +43,6 @@ describe("Moves - Retaliate", () => {
 
     await game.toNextTurn();
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-    console.log("ALLO1");
     const snorlax = game.scene.getEnemyPokemon()!;
     const cobalion = game.scene.getPlayerPokemon()!;
     expect(cobalion.name).equals("Cobalion");
