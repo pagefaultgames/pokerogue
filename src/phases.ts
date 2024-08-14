@@ -2352,7 +2352,7 @@ export class TurnStartPhase extends FieldPhase {
         // If the moves share the same original priority bracket, it can check for differences in battlerBypassSpeed and return the result.
         // This conditional is used to ensure that Quick Claw can still activate with abilities like Stall and Mycelium Might (attack moves only)
         // Otherwise, the game returns the user of the move with the highest priority.
-        const isSameBracket = Math.abs(aPriority.value - bPriority.value) === 0.5;
+        const isSameBracket = Math.ceil(aPriority.value) - Math.ceil(bPriority.value) === 0;
         if (aPriority.value !== bPriority.value) {
           if (isSameBracket && battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
             return battlerBypassSpeed[a].value ? -1 : 1;
