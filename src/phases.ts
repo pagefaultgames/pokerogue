@@ -4933,7 +4933,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                       this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => this.end(), null, true);
                     }, () => {
                       this.scene.ui.setMode(messageMode);
-                      this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
+                      this.scene.unshiftPhase();
                       this.end();
                     });
                   });
@@ -4952,7 +4952,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                         this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex]!.getName() }), null, () => { // TODO: is the bang correct?
                           this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
                             pokemon.setMove(moveIndex, Moves.NONE);
-                            this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
+                            this.scene.unshiftPhase();
                             this.end();
                           }, null, true);
                         }, null, true);
