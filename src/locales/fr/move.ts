@@ -491,7 +491,7 @@ export const move: MoveTranslationEntries = {
   },
   "smog": {
     name: "Purédpois",
-    effect: "Le lanceur attaque à l'aide d'une éruption de gaz répugnants qui peuvent aussi empoisonner la cible."
+    effect: "Le lanceur attaque à l’aide d’une éruption de gaz répugnants qui peuvent aussi empoisonner la cible."
   },
   "sludge": {
     name: "Détritus",
