@@ -15,6 +15,7 @@ import * as LoggerTools from "../logger"
 import { BattleEndPhase } from "#app/phases.js";
 import { Gender } from "#app/data/gender.js";
 import { getBiomeName } from "#app/data/biomes.js";
+import { getLuckString } from "#app/modifier/modifier-type.js";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -95,6 +96,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   private flyoutTextField: Phaser.GameObjects.Text;
 
   private shinyCharmIcon: Phaser.GameObjects.Sprite;
+  private shinyCharmLuckCount: Phaser.GameObjects.Text;
   public shinyState: integer = 0;
 
   /** Container for all field effects observed by this object */
@@ -198,26 +200,38 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.shinyCharmIcon.setScale(0.4)
     this.shinyCharmIcon.setInteractive(new Phaser.Geom.Rectangle(2, 2, 26, 27), Phaser.Geom.Rectangle.Contains);
     this.flyoutContainer.add(this.shinyCharmIcon)
+
+    this.shinyCharmLuckCount = addTextObject(this.scene, this.flyoutWidth - 9, 5, "?", TextStyle.BATTLE_INFO);
+    this.shinyCharmLuckCount.setLineSpacing(-1);
+    this.shinyCharmLuckCount.setFontSize(40);
+    this.shinyCharmLuckCount.setAlign("center");
+    this.shinyCharmLuckCount.setOrigin(0, 0);
+    this.flyoutContainer.add(this.shinyCharmLuckCount)
   }
 
   doShinyCharmTooltip() {
     if ((this.scene as BattleScene).currentBattle.waveIndex % 10 == 0) {
       this.shinyCharmIcon.setVisible(false)
+      this.shinyCharmLuckCount.setVisible(false)
       return;
     }
     this.shinyCharmIcon.setVisible(true)
+    this.shinyCharmLuckCount.setVisible(true)
     if (true) { // this.shinyCharmIcon.visible
       this.shinyCharmIcon.removeAllListeners()
       if (!(this.scene as BattleScene).waveShinyChecked) {
         this.shinyCharmIcon.setVisible(false)
+        this.shinyCharmLuckCount.setVisible(false)
         return;
         //this.shinyCharmIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `???`));
       } else if ((this.scene as BattleScene).waveShinyFlag) {
         this.shinyCharmIcon.clearTint()
         this.shinyCharmIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shinies are OK`));
+        this.shinyCharmLuckCount.setVisible(false)
       } else {
         this.shinyCharmIcon.setTintFill(0x000000)
-        this.shinyCharmIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shinies change shop`));
+        this.shinyCharmIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shinies change shop with luck ${(this.scene as BattleScene).waveShinyMinToBreak} or higher`));
+        this.shinyCharmLuckCount.text = getLuckString((this.scene as BattleScene).waveShinyMinToBreak)
       }
       this.shinyCharmIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
     }

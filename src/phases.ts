@@ -3368,6 +3368,9 @@ export class EnemyCommandPhase extends FieldPhase {
         txt = txt.concat(findBest(this.scene, pk))
       })
     }
+    if (txt.length > 2) {
+      txt = ["Turn: " + this.scene.currentBattle.turn]
+    }
 
     this.scene.arenaFlyout.updateFieldText()
 
@@ -6770,6 +6773,7 @@ const tierNames = [
  * @returns 
  */
 export function shinyCheckStep(scene: BattleScene, predictionCost: Utils.IntegerHolder, rerollOverride: integer, modifierOverride?: integer) {
+  var minLuck = -1
   var modifierPredictions = []
   const party = scene.getParty();
   regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER, rerollOverride);
@@ -6788,13 +6792,15 @@ export function shinyCheckStep(scene: BattleScene, predictionCost: Utils.Integer
           //lastTier = option.alternates[i]
           //console.log("Conflict found! (" + i + " luck, " + rerollOverride + " rolls, item " + (idx + 1) + ")")
           isOk = false // Shiny Luck affects this wave in some way
+          if (minLuck == -1 && i != 0)
+            minLuck = i
         }
       }
     }
   })
   modifierPredictions.push(typeOptions)
   predictionCost.value += (Math.min(Math.ceil(scene.currentBattle.waveIndex / 10) * 250 * Math.pow(2, rerollOverride), Number.MAX_SAFE_INTEGER))
-  return isOk;
+  return [isOk, minLuck];
 }
 /**
  * Simulates modifier rolls for as many rerolls as you can afford, checking to see if shiny luck will alter your results.
@@ -6802,6 +6808,7 @@ export function shinyCheckStep(scene: BattleScene, predictionCost: Utils.Integer
  * @returns `true` if no changes were detected, `false` otherwise
  */
 export function runShinyCheck(scene: BattleScene, mode: integer, wv?: integer) {
+  var minLuck: integer = -1
   if (mode == 1) {
     scene.emulateReset(wv)
   } else {
@@ -6809,8 +6816,18 @@ export function runShinyCheck(scene: BattleScene, mode: integer, wv?: integer) {
   }
   const predictionCost = new Utils.IntegerHolder(0)
   var isOk = true;
-  for (var i = 0; isOk && predictionCost.value < scene.money && i < 20; i++) {
-    isOk = isOk && shinyCheckStep(scene, predictionCost, i)
+  for (var i = 0; predictionCost.value < scene.money && i < 8; i++) {
+    var r = shinyCheckStep(scene, predictionCost, i)
+    isOk = isOk && (r[0] as boolean)
+    if (isOk || (r[1] as integer) === -1) {
+      // Do nothing
+    } else if (minLuck == -1) {
+      minLuck = (r[1] as integer)
+      console.log("Luck " + r[1] + " breaks")
+    } else {
+      console.log("Updated from " + minLuck + " to " + Math.min(minLuck, (r[1] as integer)))
+      minLuck = Math.min(minLuck, (r[1] as integer))
+    }
   }
   if (mode == 1) {
     scene.restoreSeed(wv)
@@ -6820,7 +6837,10 @@ export function runShinyCheck(scene: BattleScene, mode: integer, wv?: integer) {
   if (!isOk) {
     console.log("Conflict found!")
   }
-  return isOk
+  if (minLuck == 15) {
+    //minLuck = 0
+  }
+  return [isOk, minLuck]
 }
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;

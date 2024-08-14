@@ -1958,8 +1958,8 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
         console.error("Reload discrepancy: Succeeds now, but fails after reload")
         LoggerTools.flagReset(user.scene, user.scene.currentBattle.waveIndex)
       }
-       */
-      
+      //*/
+
       if (rand >= this.chance) {
         return resolve(false);
       }
