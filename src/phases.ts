@@ -2903,12 +2903,15 @@ export class TurnInitPhase extends FieldPhase {
 
     if (true) {
       this.scene.getField().forEach((pokemon, i) => {
+        if (pokemon != undefined && pokemon != null)
+          console.log("Handle " + pokemon.name)
         if (pokemon?.isActive()) {
           if (pokemon.isPlayer()) {
             this.scene.currentBattle.addParticipant(pokemon as PlayerPokemon);
           } else {
-            pokemon.flyout.setText()
+            console.log("Marked " + pokemon.name + " as used")
             pokemon.usedInBattle = true;
+            pokemon.flyout.setText()
             pokemon.getBattleInfo().iconsActive = true
           }
           pokemon.resetTurnData();

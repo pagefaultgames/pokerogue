@@ -1295,6 +1295,7 @@ export default class BattleScene extends SceneBase {
     if (this.waveShinyFlag) {
       this.arenaFlyout.display2()
     }
+    LoggerTools.logLuck(this)
   }
 
   newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {

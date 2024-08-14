@@ -1676,20 +1676,22 @@ export function logPlayerTeam(scene: BattleScene) {
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
- * TODO
- * 
- * Checks the minimum luck that will break this floor's shop.
+ * Checks the minimum luck that will break this floor's shop, and updates the appropriate values.
  * @param scene  The BattleScene.
  */
 export function logLuck(scene: BattleScene) {
   var drpd = getDRPD(scene)
-  console.log(`Logging player starters: ${scene.getParty().map(p => p.name).join(", ")}`)
-  var P = scene.getParty()
-  for (var i = 0; i < P.length; i++) {
-    drpd.starters[i] = exportPokemon(P[i])
+  if (scene.waveShinyMinToBreak > 0) {
+    console.log(`Logging luck stats`)
+    drpd.maxluck = Math.min(drpd.maxluck, scene.waveShinyMinToBreak - 1)
+    for (var i = scene.waveShinyMinToBreak; i <= 14; i++) {
+      drpd.minSafeLuckFloor[i] = Math.max(drpd.minSafeLuckFloor[i], scene.currentBattle.waveIndex)
+    }
+    console.log("--> ", drpd)
+    localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
+  } else {
+    console.log(`Skipped logging luck stats: Luck has no effect on this floor`)
   }
-  console.log("--> ", drpd)
-  localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 /**
  * Logs a wild Pokémon to a wave's data.

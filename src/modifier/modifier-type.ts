@@ -2359,9 +2359,11 @@ function getItemIndex(thresholds, tier) {
 function getModifierTypeSimulated(pool, tier, index, party): string {
   let modifierType: ModifierType = (pool[tier][index]).modifierType;
   if (modifierType instanceof ModifierTypeGenerator) {
+    modifierType.getDescription
     modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
     if (modifierType === null) {
-      return ((pool[tier][index]).modifierType as ModifierType).identifier
+      return "[nothing generated]"
+      return ((pool[tier][index]).modifierType as ModifierType).name
     }
   }
   return modifierType.name;
