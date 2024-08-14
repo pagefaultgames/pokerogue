@@ -52,7 +52,7 @@ describe("Battle order", () => {
     });
     await game.phaseInterceptor.run(EnemyCommandPhase);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
-    const order = phase.getOrder();
+    const order = phase.getCommandOrder();
     expect(order[0]).toBe(2);
     expect(order[1]).toBe(0);
   }, 20000);
@@ -73,7 +73,7 @@ describe("Battle order", () => {
     });
     await game.phaseInterceptor.run(EnemyCommandPhase);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
-    const order = phase.getOrder();
+    const order = phase.getCommandOrder();
     expect(order[0]).toBe(0);
     expect(order[1]).toBe(2);
   }, 20000);
@@ -113,7 +113,7 @@ describe("Battle order", () => {
     });
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
-    const order = phase.getOrder();
+    const order = phase.getCommandOrder();
     expect(order.indexOf(0)).toBeGreaterThan(order.indexOf(2));
     expect(order.indexOf(0)).toBeGreaterThan(order.indexOf(3));
     expect(order.indexOf(1)).toBeGreaterThan(order.indexOf(2));
@@ -155,7 +155,7 @@ describe("Battle order", () => {
     });
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
-    const order = phase.getOrder();
+    const order = phase.getCommandOrder();
     expect(order.indexOf(3)).toBeLessThan(order.indexOf(0));
     expect(order.indexOf(3)).toBeLessThan(order.indexOf(1));
     expect(order.indexOf(3)).toBeLessThan(order.indexOf(2));
@@ -196,7 +196,7 @@ describe("Battle order", () => {
     });
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
-    const order = phase.getOrder();
+    const order = phase.getCommandOrder();
     expect(order.indexOf(1)).toBeLessThan(order.indexOf(0));
     expect(order.indexOf(1)).toBeLessThan(order.indexOf(2));
     expect(order.indexOf(3)).toBeLessThan(order.indexOf(0));
