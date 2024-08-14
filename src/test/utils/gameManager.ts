@@ -191,7 +191,7 @@ export default class GameManager {
 
     // Use `null` when it's necessary to call `doSelectTarget()` manually
     if (targetIndex !== null) {
-      this.doSelectTarget(targetIndex ? targetIndex : BattlerIndex.ENEMY, movePosition);
+      this.doSelectTarget(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY, movePosition);
     }
   }
 
