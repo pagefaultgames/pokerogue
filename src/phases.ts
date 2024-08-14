@@ -705,35 +705,6 @@ export class BattlePhase extends Phase {
 type PokemonFunc = (pokemon: Pokemon) => void;
 
 export abstract class FieldPhase extends BattlePhase {
-  getOrder(): BattlerIndex[] {
-    const playerField = this.scene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
-    const enemyField = this.scene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
-
-    // We shuffle the list before sorting so speed ties produce random results
-    let orderedTargets: Pokemon[] = playerField.concat(enemyField);
-    // We seed it with the current turn to prevent an inconsistency where it
-    // was varying based on how long since you last reloaded
-    this.scene.executeWithSeedOffset(() => {
-      orderedTargets = Utils.randSeedShuffle(orderedTargets);
-    }, this.scene.currentBattle.turn, this.scene.waveSeed);
-
-    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
-      const aSpeed = a?.getBattleStat(Stat.SPD) || 0;
-      const bSpeed = b?.getBattleStat(Stat.SPD) || 0;
-
-      return bSpeed - aSpeed;
-    });
-
-    const speedReversed = new Utils.BooleanHolder(false);
-    this.scene.arena.applyTags(TrickRoomTag, speedReversed);
-
-    if (speedReversed.value) {
-      orderedTargets = orderedTargets.reverse();
-    }
-
-    return orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : 0));
-  }
-
   executeForAll(func: PokemonFunc): void {
     const field = this.scene.getField(true).filter(p => p.summonData);
     field.forEach(pokemon => func(pokemon));
@@ -2305,12 +2276,37 @@ export class TurnStartPhase extends FieldPhase {
     super(scene);
   }
 
-  start() {
-    super.start();
+  getOrder(): BattlerIndex[] {
+    const playerField = this.scene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
+    const enemyField = this.scene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
 
-    const field = this.scene.getField();
-    const order = this.getOrder();
+    // We shuffle the list before sorting so speed ties produce random results
+    let orderedTargets: Pokemon[] = playerField.concat(enemyField);
+    // We seed it with the current turn to prevent an inconsistency where it
+    // was varying based on how long since you last reloaded
+    this.scene.executeWithSeedOffset(() => {
+      orderedTargets = Utils.randSeedShuffle(orderedTargets);
+    }, this.scene.currentBattle.turn, this.scene.waveSeed);
 
+    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
+      const aSpeed = a?.getBattleStat(Stat.SPD) || 0;
+      const bSpeed = b?.getBattleStat(Stat.SPD) || 0;
+
+      return bSpeed - aSpeed;
+    });
+
+    //Next, a check for Trick Room is applied. If Trick Room is present, the order is reversed.
+    const speedReversed = new Utils.BooleanHolder(false);
+    this.scene.arena.applyTags(TrickRoomTag, speedReversed);
+
+    if (speedReversed.value) {
+      orderedTargets = orderedTargets.reverse();
+    }
+
+    orderedTargets = orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : 0));
+
+    //The creation of the battlerBypassSpeed object contains checks for the ability Quick Draw and the held item Quick Claw
+    //The ability Mycelium Might disables Quick Claw's activation when using a status move
     const battlerBypassSpeed = {};
 
     this.scene.getField(true).filter(p => p.summonData).map(p => {
@@ -2324,7 +2320,7 @@ export class TurnStartPhase extends FieldPhase {
       battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
     });
 
-    const moveOrder = order.slice(0);
+    const moveOrder = orderedTargets.slice(0);
 
     moveOrder.sort((a, b) => {
       const aCommand = this.scene.currentBattle.turnCommands[a];
@@ -2340,6 +2336,7 @@ export class TurnStartPhase extends FieldPhase {
         const aMove = allMoves[aCommand.move!.move];//TODO: is the bang correct here?
         const bMove = allMoves[bCommand!.move!.move];//TODO: is the bang correct here?
 
+        //The game now considers priority
         const aPriority = new Utils.IntegerHolder(aMove.priority);
         const bPriority = new Utils.IntegerHolder(bMove.priority);
 
@@ -2363,15 +2360,23 @@ export class TurnStartPhase extends FieldPhase {
         return battlerBypassSpeed[a].value ? -1 : 1;
       }
 
-      const aIndex = order.indexOf(a);
-      const bIndex = order.indexOf(b);
+      const aIndex = orderedTargets.indexOf(a);
+      const bIndex = orderedTargets.indexOf(b);
 
       return aIndex < bIndex ? -1 : aIndex > bIndex ? 1 : 0;
     });
+    return moveOrder;
+  }
+
+  start() {
+    super.start();
+
+    const field = this.scene.getField();
+    const order = this.getOrder();
 
     let orderIndex = 0;
 
-    for (const o of moveOrder) {
+    for (const o of order) {
 
       const pokemon = field[o];
       const turnCommand = this.scene.currentBattle.turnCommands[o];
@@ -2431,7 +2436,6 @@ export class TurnStartPhase extends FieldPhase {
         break;
       }
     }
-
 
     this.scene.pushPhase(new WeatherEffectPhase(this.scene));
 
