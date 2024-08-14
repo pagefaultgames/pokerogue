@@ -191,7 +191,7 @@ export default class GameManager {
 
     // Use `null` when it's necessary to call `doSelectTarget()` manually
     if (targetIndex !== null) {
-      this.doSelectTarget(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY, movePosition);
+      this.doSelectTarget(targetIndex, movePosition);
     }
   }
 
@@ -200,12 +200,15 @@ export default class GameManager {
    * usually called after {@linkcode doAttack} in a double battle.
    * @param {BattlerIndex} targetIndex the index of the attack target
    */
-  doSelectTarget(targetIndex: BattlerIndex, movePosition: integer) {
+  doSelectTarget(targetIndex: BattlerIndex | undefined, movePosition: integer) {
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
       const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
       if (!move.isMultiTarget()) {
-        handler.setCursor(targetIndex);
+        handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
+      }
+      if (move.isMultiTarget() && targetIndex !== undefined) {
+        throw new Error(`targetIndex was passed to doAttack() but move ("${move.name}") is not targetted`);
       }
       handler.processInput(Button.ACTION);
     }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MovePhase) || this.isCurrentPhase(TurnStartPhase) || this.isCurrentPhase(TurnEndPhase));
