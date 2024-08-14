@@ -3743,7 +3743,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
             return;
           }
 
-          const damage = Math.ceil(pokemon.getMaxHp() / 16);
+          const damage = Math.floor(pokemon.getMaxHp() / 16);
 
           this.scene.queueMessage(getWeatherDamageMessage(this.weather?.weatherType!, pokemon)!); // TODO: are those bangs correct?
           pokemon.damageAndUpdate(damage, HitResult.EFFECTIVE, false, false, true);
