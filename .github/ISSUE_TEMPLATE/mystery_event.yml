@@ -1,15 +1,15 @@
-name: Mystery Event
-description: Propose a new mystery event
-title: "[Event] "
-labels: ["event proposal", "balance review"]
-projects: ["AsdarDevelops/1"]
+name: Mysterious Encounter
+description: Propose a new mysterious encounter
+title: "[M.E.] (Rarity)"
+labels: ["New Mystery Encounter", "Balance Adjustment"]
+projects: ["AsdarDevelops/MEs / Events Project"]
 body:
   - type: input
     id: name
     attributes:
-      label: Event Name
-      description: Name of the event
-      placeholder: e.g. "Fight or Flight"
+      label: M.E. Name
+      description: Name of the M.E. Remember to check out the [M.E. Proposal Guide](https://github.com/AsdarDevelops/PokeRogue-Events/blob/mystery-battle-events/MEs_Proposal_Guide.md) if you have not yet!
+      placeholder: e.g. "Fight or Flight" or "No matter how small (Three Beast Trio - Part 1)"
     validations:
       required: true
   - type: markdown # SEPARATOR
@@ -20,7 +20,7 @@ body:
     id: rarity
     attributes:
       label: Rarity Tier
-      description: Check out the [Event Proposal Guide](https://github.com/AsdarDevelops/PokeRogue-Events/blob/mystery-battle-events/MEs_Proposal_Guide.md) if you have not yet!
+      description: Check out the [M.E. Proposal Guide](https://github.com/AsdarDevelops/PokeRogue-Events/blob/mystery-battle-events/MEs_Proposal_Guide.md) to better know how to propose a tier.
       multiple: false
       options:
         - Common
@@ -46,8 +46,8 @@ body:
     id: waves
     attributes:
       label: Waves
-      description: Classic/Challenge ranges 1-200. Currently only 11-179 is supported.
-      placeholder: 11-179
+      description: Classic/Challenge ranges 1-200. Currently only 10-180 are supported.
+      placeholder: i.e. "10-180" or "40-180, only on the three first waves of each biome"
     validations:
       required: true
   - type: markdown # SEPARATOR
@@ -58,8 +58,8 @@ body:
     id: description
     attributes:
       label: Description
-      description: Describe the event you are proposing. Explain its theme and how it's different from others. If the Event has any requirements to even trigger, detail them here too.
-      placeholder: e.g. "Fight or Flight is a common event where the player can fight a boss PKMN of the biome. The PKMN is stronger than usual, but also holds an item that's better than usual."
+      description: Describe the M.E. you are proposing. Explain its theme and how it's different from others. If the M.E. has any requirements to even trigger, detail them here too. If the M.E. is part of a Quest, link the other issues or edit them in later.
+      placeholder: e.g. "Fight or Flight is a common M.E. where the player can fight a boss PKMN of the biome. The PKMN is stronger than usual, but also holds an item that's better than usual."
     validations:
       required: true
   - type: markdown # SEPARATOR
@@ -70,47 +70,48 @@ body:
     id: biomes
     attributes:
       label: Biomes
-      description: Select all biomes where the event can occur. "ANY, NON-EXTREME, CIVILIZATION and HUMAN are groups of biomes. Check the [Biomes part of the guide](https://github.com/AsdarDevelops/PokeRogue-Events/blob/mystery-battle-events/MEs_Proposal_Guide.md#biomes)."
+      description: Select all biomes where the M.E. can occur. "ANY", "NON-EXTREME", "CIVILIZATION" and "HUMAN" are groups of biomes. Check the [Biomes part of the guide](https://github.com/AsdarDevelops/PokeRogue-Events/blob/mystery-battle-events/MEs_Proposal_Guide.md#biomes)."
       multiple: true
       options:
         - ANY
         - NON-EXTREME
         - HUMAN
         - CIVILIZATION
-        - TOWN
-        - PLAINS
-        - GRASS
-        - TALL_GRASS
-        - METROPOLIS
-        - FOREST
-        - SEA
-        - SWAMP
-        - BEACH
-        - LAKE
-        - SEABED
-        - MOUNTAIN
+        - ABYSS
+        - ANCIENT_RUINS
         - BADLANDS
+        - BEACH
         - CAVE
+        - CONSTRUCTION_SITE
         - DESERT
-        - ICE_CAVE
-        - MEADOW
-        - POWER_PLANT
-        - VOLCANO
-        - GRAVEYARD
         - DOJO
         - FACTORY
-        - RUINS
-        - WASTELAND
-        - ABYSS
-        - SPACE
-        - CONSTRUCTION_SITE
-        - JUNGLE
         - FAIRY_CAVE
-        - TEMPLE
+        - FOREST
+        - GRASSY_FIELDS
+        - GRAVEYARD
+        - ICE_CAVE
+        - ISLAND
+        - JUNGLE
+        - LABORATORY
+        - LAKE
+        - MEADOW
+        - METROPOLIS
+        - MOUNTAIN
+        - PLAINS
+        - POWER_PLANT
+        - RUINS
+        - SEA
+        - SEABED
         - SLUM
         - SNOWY_FOREST
-        - ISLAND
-        - LABORATORY
+        - SPACE
+        - SWAMP
+        - TALL_GRASS
+        - TEMPLE
+        - VOLCANO
+        - WASTELAND
+        - TOWN
         - END
         - OTHER (please specify)
     validations:
@@ -120,8 +121,8 @@ body:
     id: biome-other
     attributes:
       label: Biome - Other. Please Specify
-      description: If you chose `Other` on the `Biome` please specify it here
-      placeholder: e.g. "I would like to only trigger at Graveyard at night!"
+      description: If `Other`, please specify here. Avoid adding more than 2-3 specific biomes.
+      placeholder: Good examples - "HUMAN + Volcano" (Group + Biome), or "Sea + Volcano" (Two Biomes).\nBad examples - "Forest" + "Jungle" + "Tall Grass" + "Sea" (Too many specific biomes).
     validations:
       required: false 
   - type: markdown # SEPARATOR
@@ -135,14 +136,18 @@ body:
       description: A maximum of four options can be displayed at a time
       placeholder: Remember that only up to four options can be displayed at a time
       value: |
-        - [ ] OPTION-1 Label
-            - _OPTION-1 description._
-        - [ ] OPTION-2 Label
-            - _OPTION-2 description._
-        - [ ] OPTION-3 Label
-            - _OPTION-3 description._
-        - [ ] OPTION-4 Label
-            - _OPTION-4 description._
+        - Option-1 Label
+            - Option-1 description.
+            - Option 1 outcome.
+        - Option-2 Label
+            - Option-2 description.
+            - Option 2 outcome.
+        - Option-3 Label
+            - Option-3 description.
+            - Option 3 outcome.
+        - Option-4 Label
+            - Option-4 description.
+            - Option 4 outcome.
     validations:
       required: true
   - type: markdown # SEPARATOR
@@ -153,8 +158,8 @@ body:
     id: design-notes
     attributes:
       label: Explanation/Notes on Design
-      description: Explain why you think this design is right and what this Event brings to the table
-      placeholder: e.g. "We need more simple Events that mix slightly higher stakes with slightly better rewards"
+      description: Explain why you think this design is right and what this M.E. brings to the table
+      placeholder: e.g. "We need more simple M.E.s that mix slightly higher stakes with slightly better rewards"
     validations:
       required: true
   - type: markdown # SEPARATOR
@@ -165,8 +170,8 @@ body:
     id: artist-notes
     attributes:
       label: Notes to Artists
-      description: Does your Event need custom spriting? If so, please detail them here (reference screenshots are helpful)
-      placeholder: Ie. "We currently don't have a Cynthia sprite while dressed in a Garchomp costume. RAWR! This is highly needed for my Event!"
+      description: Does your M.E. need custom spriting? If so, please detail them here (reference screenshots are helpful)
+      placeholder: Ie. "We currently don't have a Cynthia sprite while dressed in a Garchomp costume. RAWR! This is highly needed for my M.E.!"
     validations:
       required: false
   - type: markdown # SEPARATOR
