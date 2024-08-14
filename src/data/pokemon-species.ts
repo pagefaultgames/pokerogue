@@ -54,6 +54,7 @@ export function getFusedSpeciesName(speciesA: PokemonSpecies, speciesB: PokemonS
   let firstKey = "fusionPrefix";
   let secondKey = "fusionSuffix";
 
+  // First swap： If fusion name should reverse, swap prefix and suffix (got speciesA_suffix + speciesB_prefix).
   if (i18next.t("fusionAffixes:shouldReverse") === "true") {
     firstKey = "fusionSuffix";
     secondKey = "fusionPrefix";
@@ -62,6 +63,7 @@ export function getFusedSpeciesName(speciesA: PokemonSpecies, speciesB: PokemonS
   const desKey = i18next.t(`fusionAffixes:${Species[speciesB.speciesId].toLowerCase()}.${secondKey}`);
   let prefix = radKey;
   let suffix = desKey;
+  // Second swap： If fusion name should reverse, swap two whole part (got speciesB_prefix + speciesA_suffix).
   if (i18next.t("fusionAffixes:shouldReverse") === "true") {
     prefix = desKey;
     suffix = radKey;
