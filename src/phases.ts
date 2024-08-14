@@ -2295,7 +2295,7 @@ export class TurnStartPhase extends FieldPhase {
       return bSpeed - aSpeed;
     });
 
-    //Next, a check for Trick Room is applied. If Trick Room is present, the order is reversed.
+    // Next, a check for Trick Room is applied. If Trick Room is present, the order is reversed.
     const speedReversed = new Utils.BooleanHolder(false);
     this.scene.arena.applyTags(TrickRoomTag, speedReversed);
 
@@ -2305,8 +2305,9 @@ export class TurnStartPhase extends FieldPhase {
 
     orderedTargets = orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : 0));
 
-    //The creation of the battlerBypassSpeed object contains checks for the ability Quick Draw and the held item Quick Claw
-    //The ability Mycelium Might disables Quick Claw's activation when using a status move
+    // The creation of the battlerBypassSpeed object contains checks for the ability Quick Draw and the held item Quick Claw
+    // The ability Mycelium Might disables Quick Claw's activation when using a status move
+    // This occurs before the main loop because of battles with more than two Pokemon
     const battlerBypassSpeed = {};
 
     this.scene.getField(true).filter(p => p.summonData).map(p => {
@@ -2320,9 +2321,10 @@ export class TurnStartPhase extends FieldPhase {
       battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
     });
 
-    const moveOrder = orderedTargets.slice(0);
-
-    moveOrder.sort((a, b) => {
+    // The function begins sorting orderedTargets based on command priority, move priority, and possible speed bypasses.
+    // Non-FIGHT commands (SWITCH, BALL, RUN) have a higher command priority and will always occur before any FIGHT commands.
+    orderedTargets = orderedTargets.slice(0);
+    orderedTargets.sort((a, b) => {
       const aCommand = this.scene.currentBattle.turnCommands[a];
       const bCommand = this.scene.currentBattle.turnCommands[b];
 
@@ -2336,9 +2338,10 @@ export class TurnStartPhase extends FieldPhase {
         const aMove = allMoves[aCommand.move!.move];//TODO: is the bang correct here?
         const bMove = allMoves[bCommand!.move!.move];//TODO: is the bang correct here?
 
-        //The game now considers priority
+        // The game now considers priority and applies the relevant move and ability attributes
         const aPriority = new Utils.IntegerHolder(aMove.priority);
         const bPriority = new Utils.IntegerHolder(bMove.priority);
+        const isSameBracket = aPriority === bPriority;
 
         applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority); //TODO: is the bang correct here?
         applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority); //TODO: is the bang correct here?
@@ -2346,16 +2349,19 @@ export class TurnStartPhase extends FieldPhase {
         applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority); //TODO: is the bang correct here?
         applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority); //TODO: is the bang correct here?
 
+        // The game now checks for differences in priority levels.
+        // If the moves share the same original priority bracket, it can check for differences in battlerBypassSpeed and return the result.
+        // This conditional is used to ensure that Quick Claw can still activate with abilities like Stall and Mycelium Might (attack moves only)
+        // Otherwise, the game returns the user of the move with the highest priority.
         if (aPriority.value !== bPriority.value) {
-          const bracketDifference = Math.ceil(aPriority.value) - Math.ceil(bPriority.value);
-          const hasSpeedDifference = battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value;
-          if (bracketDifference === 0 && hasSpeedDifference) {
+          if (isSameBracket && battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
             return battlerBypassSpeed[a].value ? -1 : 1;
           }
           return aPriority.value < bPriority.value ? 1 : -1;
         }
       }
 
+      // If there is no difference between the move's calculated priorities, the game checks for differences in battlerBypassSpeed and returns the result.
       if (battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
         return battlerBypassSpeed[a].value ? -1 : 1;
       }
@@ -2365,7 +2371,8 @@ export class TurnStartPhase extends FieldPhase {
 
       return aIndex < bIndex ? -1 : aIndex > bIndex ? 1 : 0;
     });
-    return moveOrder;
+    // The function finally returns BattlerIndex[] object
+    return orderedTargets;
   }
 
   start() {
