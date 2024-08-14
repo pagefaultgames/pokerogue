@@ -108,7 +108,7 @@ export default class GameManager {
    * @returns A promise that resolves when the title phase is reached.
    */
   async runToTitle(): Promise<void> {
-    await this.phaseInterceptor.whenAboutToRun(LoginPhase);
+    await this.phaseInterceptor.to(LoginPhase, false);
     this.phaseInterceptor.pop();
     await this.phaseInterceptor.run(TitlePhase);
 

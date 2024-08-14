@@ -213,21 +213,6 @@ export default class PhaseInterceptor {
     });
   }
 
-  whenAboutToRun(phaseTarget, skipFn?): Promise<void> {
-    const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
-    this.scene.moveAnimations = null; // Mandatory to avoid crash
-    return new Promise(async (resolve, reject) => {
-      ErrorInterceptor.getInstance().add(this);
-      const interval = setInterval(async () => {
-        const currentPhase = this.onHold[0];
-        if (currentPhase?.name === targetName) {
-          clearInterval(interval);
-          resolve();
-        }
-      });
-    });
-  }
-
   pop() {
     this.onHold.pop();
     this.scene.shiftPhase();
