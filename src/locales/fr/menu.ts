@@ -50,7 +50,7 @@ export const menu: SimpleTranslationEntries = {
   "disclaimer": "AVERTISSEMENT",
   "disclaimerDescription": "Ce jeu n’est pas un produit fini et peut contenir des problèmes de jouabilité, dont de possibles pertes de sauvegardes,\ndes modifications sans avertissement et pourrait ou non encore être mis à jour ou terminé.",
   "choosePokemon": "Sélectionnez un Pokémon.",
-  "renamePokemon": "Renommer Pokémon",
+  "renamePokemon": "Renommer le Pokémon",
   "rename": "Renommer",
   "nickname": "Surnom",
   "errorServerDown": "Oupsi ! Un problème de connexion au serveur est survenu.\n\nVous pouvez garder cette fenêtre ouverte,\nle jeu se reconnectera automatiquement.",
