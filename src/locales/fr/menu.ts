@@ -44,7 +44,7 @@ export const menu: SimpleTranslationEntries = {
   "wave": "Vague",
   "loading": "Chargement…",
   "loadingAsset": "Chargement de la ressource : {{assetName}}",
-  "playersOnline": "Joueurs Connectés",
+  "playersOnline": "Joueurs connectés",
   "yes":"Oui",
   "no":"Non",
   "disclaimer": "AVERTISSEMENT",
