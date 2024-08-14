@@ -384,6 +384,7 @@ export default class GameManager {
    */
   async setTurnOrder(order: BattlerIndex[]): Promise<void> {
     await this.phaseInterceptor.to(TurnStartPhase, false);
+    console.log("Base turn order (before priority) set to:", order);
 
     vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue(order);
   }
