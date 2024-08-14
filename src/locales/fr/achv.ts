@@ -42,7 +42,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "HealAchv": {
-    description: "Soigner {{healAmount}} {{HP}} en une fois avec une capacité, un talent ou un objet tenu.",
+    description: "Soigner {{healAmount}} {{HP}} en une fois avec une capacité,\nun talent ou un objet tenu.",
   },
   "250_HEAL": {
     name: "Infirmier",
