@@ -5625,6 +5625,7 @@ export class AbilityChangeAttr extends MoveEffectAttr {
     }
 
     (this.selfTarget ? user : target).summonData.ability = this.ability;
+    user.scene.arena.triggerWeatherBasedFormChangesToNormal();
 
     user.scene.queueMessage(i18next.t("moveTriggers:acquiredAbility", {pokemonName: getPokemonNameWithAffix((this.selfTarget ? user : target)), abilityName: allAbilities[this.ability].name}));
 
@@ -5735,6 +5736,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
     }
 
     target.summonData.abilitySuppressed = true;
+    target.scene.arena.triggerWeatherBasedFormChangesToNormal();
 
     target.scene.queueMessage(i18next.t("moveTriggers:suppressAbilities", {pokemonName: getPokemonNameWithAffix(target)}));
 

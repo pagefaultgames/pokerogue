@@ -411,12 +411,14 @@ export class SpeciesFormChangeWeatherSuppressedFormTrigger extends SpeciesFormCh
    * @returns `true` if the Pokemon will revert to its original form, `false` otherwise
    */
   canChange(pokemon: Pokemon): boolean {
-    if (pokemon.hasAbility(this.ability)) {
+    if (pokemon.hasAbility(this.ability, false, true)) {
       const currentWeather = pokemon.scene.arena.weather?.weatherType ?? WeatherType.NONE;
       const isWeatherSuppressed = pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene);
       const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
+      const summonDataAbility = pokemon.summonData.ability;
+      const isAbilityChanged = summonDataAbility !== this.ability && summonDataAbility !== Abilities.NONE;
 
-      if (this.weathers.includes(currentWeather) || isWeatherSuppressed || isAbilitySuppressed) {
+      if (this.weathers.includes(currentWeather) || isWeatherSuppressed || isAbilitySuppressed || isAbilityChanged) {
         return true;
       }
     }

@@ -4,7 +4,7 @@ import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
 import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
-import { CommonAnimPhase } from "../phases";
+import { CommonAnimPhase, ShowAbilityPhase } from "../phases";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
 import Move from "../data/move";
@@ -339,6 +339,7 @@ export class Arena {
   triggerWeatherBasedFormChanges(): void {
     this.scene.getField(true).forEach( p => {
       if (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM) {
+        new ShowAbilityPhase(this.scene, p.getBattlerIndex());
         this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
       }
     });
@@ -349,7 +350,8 @@ export class Arena {
    */
   triggerWeatherBasedFormChangesToNormal(): void {
     this.scene.getField(true).forEach( p => {
-      if (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM) {
+      if (p.hasAbility(Abilities.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM) {
+        new ShowAbilityPhase(this.scene, p.getBattlerIndex());
         return this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherSuppressedFormTrigger);
       }
     });
