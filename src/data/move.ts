@@ -1034,8 +1034,7 @@ export class AddBattlerTagHeaderAttr extends MoveHeaderAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.addTag(this.tagType);
-    return true;
+    return user.addTag(this.tagType);
   }
 }
 
@@ -6877,7 +6876,7 @@ export function initMoves() {
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target)),
     new AttackMove(Moves.PURSUIT, Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, 0, 2)
       .attr(PursuitAccuracyAttr)
-      .attr(AddBattlerTagOnMoveReadyAttr, BattlerTagType.ANTICIPATING_ACTION)
+      .attr(AddBattlerTagHeaderAttr, BattlerTagType.ANTICIPATING_ACTION)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.ANTICIPATING_ACTION], true, MoveEffectTrigger.POST_APPLY)
       .attr(MovePowerMultiplierAttr, (user, target) => isPursuingFunc(user, target) ? 2 : 1),
     new AttackMove(Moves.RAPID_SPIN, Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, 100, 0, 2)
