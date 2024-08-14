@@ -541,6 +541,7 @@ describe("Moves - Pursuit", () => {
 
       // act
       game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+      game.doSelectTarget(BattlerIndex.ENEMY);
       playerUsesPursuit(1);
       enemyUses(Moves.SPLASH);
       await runCombatTurn();
