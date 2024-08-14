@@ -179,7 +179,8 @@ export default class GameManager {
 
   /**
    * Emulate a player attack
-   * @param movePosition the index of the move in the pokemon's moveset array
+   * @param movePosition The index of the move in the pokemon's moveset array
+   * @param targetIndex The {@linkcode BattlerIndex} of the Pokemon to target, or `null` if a manual call to `doSelectTarget()` is required
    */
   doAttack(movePosition: integer, targetIndex?: BattlerIndex | null) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -189,7 +190,6 @@ export default class GameManager {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
-    // Use `null` when it's necessary to call `doSelectTarget()` manually
     if (targetIndex !== null) {
       this.doSelectTarget(targetIndex, movePosition);
     }
@@ -197,8 +197,9 @@ export default class GameManager {
 
   /**
    * Emulate a player's target selection after an attack is chosen,
-   * usually called after {@linkcode doAttack} in a double battle.
-   * @param {BattlerIndex} targetIndex the index of the attack target
+   * usually called automatically by {@linkcode doAttack}.
+   * @param {BattlerIndex} targetIndex The index of the attack target, or `undefined` for multi-target attacks
+   * @param movePosition The index of the move in the pokemon's moveset array
    */
   doSelectTarget(targetIndex: BattlerIndex | undefined, movePosition: integer) {
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
