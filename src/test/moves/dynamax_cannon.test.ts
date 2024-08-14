@@ -166,7 +166,7 @@ describe("Moves - Dynamax Cannon", () => {
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
     // Force user to act before enemy
-    vi.spyOn((game.scene.getCurrentPhase() as TurnStartPhase), "getOrder").mockReturnValue([ BattlerIndex.PLAYER, BattlerIndex. ENEMY]);
+    vi.spyOn((game.scene.getCurrentPhase() as TurnStartPhase), "getCommandOrder").mockReturnValue([ BattlerIndex.PLAYER, BattlerIndex. ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(dynamaxCannon.id);

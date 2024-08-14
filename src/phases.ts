@@ -2276,7 +2276,7 @@ export class TurnStartPhase extends FieldPhase {
     super(scene);
   }
 
-  getOrder(): BattlerIndex[] {
+  getSpeedOrder(): BattlerIndex[] {
     const playerField = this.scene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
     const enemyField = this.scene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
 
@@ -2303,8 +2303,12 @@ export class TurnStartPhase extends FieldPhase {
       orderedTargets = orderedTargets.reverse();
     }
 
-    let moveOrder : BattlerIndex[] = orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : 0));
+    return orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : 0));
+  }
 
+  getCommandOrder(): BattlerIndex[] {
+
+    let moveOrder = this.getSpeedOrder();
     // The creation of the battlerBypassSpeed object contains checks for the ability Quick Draw and the held item Quick Claw
     // The ability Mycelium Might disables Quick Claw's activation when using a status move
     // This occurs before the main loop because of battles with more than two Pokemon
@@ -2378,7 +2382,7 @@ export class TurnStartPhase extends FieldPhase {
     super.start();
 
     const field = this.scene.getField();
-    const order = this.getOrder();
+    const order = this.getCommandOrder();
 
     let orderIndex = 0;
 
