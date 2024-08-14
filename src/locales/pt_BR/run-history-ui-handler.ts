@@ -29,7 +29,7 @@ export const runHistory: SimpleTranslationEntries = {
   "viewHeldItems": "Itens Segurados",
   "hallofFameText": "Bem-vindo(a) ao Hall da Fama!",
   "viewHallOfFame": "Veja o Hall da Fama!",
-  "viewEndingSplash":"View ending art!"
+  "viewEndingSplash":"Veja a arte final!"
 } as const;
 
 // Mode Information found in game-mode.ts
