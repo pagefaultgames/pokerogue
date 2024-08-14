@@ -2341,7 +2341,7 @@ export class TurnStartPhase extends FieldPhase {
         // The game now considers priority and applies the relevant move and ability attributes
         const aPriority = new Utils.IntegerHolder(aMove.priority);
         const bPriority = new Utils.IntegerHolder(bMove.priority);
-        const isSameBracket = aPriority.value === bPriority.value;
+        const isSameBracket = Math.abs(aPriority.value - bPriority.value) === 0.5;
 
         applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority); //TODO: is the bang correct here?
         applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority); //TODO: is the bang correct here?
