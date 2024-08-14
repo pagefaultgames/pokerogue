@@ -365,6 +365,10 @@ export default class GameManager {
    */
   doSelectPartyPokemon(slot: number, inPhase = "SwitchPhase") {
     this.onNextPrompt(inPhase, Mode.PARTY, () => {
+      if (this.scene.getParty()[slot].isActive(true)) {
+        throw new Error("Attempting to switch in a party member that is already active");
+      }
+
       const partyHandler = this.scene.ui.getHandler() as PartyUiHandler;
 
       partyHandler.setCursor(slot);

@@ -603,14 +603,13 @@ describe("Moves - Pursuit", () => {
       expectPursuitSucceeded(game.scene.getPlayerField()[1]);
     });
 
-    // fails: mysterious crash
     it("should not hit a switching ally for double damage (hard-switch, player field)", async () => {
       // arrange
       await startBattle();
       forceMovesLast(game.scene.getPlayerField());
 
       // act
-      playerSwitches(0);
+      playerSwitches(2);
       playerUsesPursuit(1, BattlerIndex.PLAYER);
       enemyUses(Moves.SPLASH);
       await runCombatTurn();

@@ -343,6 +343,7 @@ export default class PhaseInterceptor {
           lastTime = currentTime;
 
           if (timeSpentInPrompt > PROMPT_TIMEOUT && !warned) {
+            warned = true;
             console.error("Prompt handling stalled waiting for prompt:", actionForNextPrompt);
             expect.fail("Prompt timeout");
           }
