@@ -2372,8 +2372,8 @@ export class TurnStartPhase extends FieldPhase {
         }
       }
 
-      if (battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
-        return battlerBypassSpeed[a].value ? -1 : 1;
+      if (battlerBypassSpeed[a]?.value !== battlerBypassSpeed[b]?.value) {
+        return battlerBypassSpeed[a]?.value ? -1 : 1;
       }
 
       const aIndex = order.indexOf(a);
