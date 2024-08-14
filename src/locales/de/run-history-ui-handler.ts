@@ -29,7 +29,7 @@ export const runHistory: SimpleTranslationEntries = {
   "viewHeldItems":"Getragene Items",
   "hallofFameText":"Willkommen in der Ruhmeshalle",
   "viewHallOfFame":"Ruhmeshalle ansehen!",
-  "viewEndingSplash":"View ending art!"
+  "viewEndingSplash":"Endgrafik anzeigen!"
 } as const;
 
 // Mode Information found in game-mode.ts
