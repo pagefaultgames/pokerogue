@@ -271,8 +271,8 @@ export default class UI extends Phaser.GameObjects.Container {
     return handler.processInput(button);
   }
 
-  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void {
-    if (prompt && text.indexOf("$") > -1) {
+  showText(text: string | null, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void {
+    if (text && prompt && text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
       let showMessageAndCallback = () => callback && callback();
       for (let p = messagePages.length - 1; p >= 0; p--) {
@@ -282,10 +282,16 @@ export default class UI extends Phaser.GameObjects.Container {
       showMessageAndCallback();
     } else {
       const handler = this.getHandler();
-      if (handler instanceof MessageUiHandler) {
-        (handler as MessageUiHandler).showText(text, delay, callback, callbackDelay, prompt, promptDelay);
-      } else {
-        this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+      if (handler instanceof PartyUiHandler) {
+        (handler as PartyUiHandler).showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+        return;
+      }
+      if (text) {
+        if (handler instanceof MessageUiHandler) {
+          (handler as MessageUiHandler).showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+        } else {
+          this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+        }
       }
     }
   }
@@ -495,6 +501,10 @@ export default class UI extends Phaser.GameObjects.Container {
 
   setOverlayMode(mode: Mode, ...args: any[]): Promise<void> {
     return this.setModeInternal(mode, false, false, true, args);
+  }
+
+  resetModeChain(): void {
+    this.modeChain = [];
   }
 
   revertMode(): Promise<boolean> {

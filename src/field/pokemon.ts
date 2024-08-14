@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, StatusMoveTypeImmunityAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, MoveFlags, NeutralDamageAgainstFlyingTypeMultiplierAttr, OneHitKOAccuracyAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, StatusMoveTypeImmunityAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, OneHitKOAccuracyAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
@@ -1386,7 +1386,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const evolutionChain = this.species.getSimulatedEvolutionChain(this.level, this.hasTrainer(), this.isBoss(), this.isPlayer());
       for (let e = 0; e < evolutionChain.length; e++) {
         // TODO: Might need to pass specific form index in simulated evolution chain
-        const speciesLevelMoves = getPokemonSpeciesForm(evolutionChain[e][0] as Species, this.formIndex).getLevelMoves();
+        const speciesLevelMoves = getPokemonSpeciesForm(evolutionChain[e][0], this.formIndex).getLevelMoves();
         if (includeRelearnerMoves) {
           levelMoves.push(...speciesLevelMoves);
         } else {
@@ -1401,7 +1401,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const fusionEvolutionChain = this.fusionSpecies.getSimulatedEvolutionChain(this.level, this.hasTrainer(), this.isBoss(), this.isPlayer());
         for (let e = 0; e < fusionEvolutionChain.length; e++) {
           // TODO: Might need to pass specific form index in simulated evolution chain
-          const speciesLevelMoves = getPokemonSpeciesForm(fusionEvolutionChain[e][0] as Species, this.fusionFormIndex).getLevelMoves();
+          const speciesLevelMoves = getPokemonSpeciesForm(fusionEvolutionChain[e][0], this.fusionFormIndex).getLevelMoves();
           if (includeRelearnerMoves) {
             levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && lm[0] === 0) || lm[0] !== 0));
           } else {
@@ -1413,29 +1413,52 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     levelMoves.sort((lma: [integer, integer], lmb: [integer, integer]) => lma[0] > lmb[0] ? 1 : lma[0] < lmb[0] ? -1 : 0);
-    const uniqueMoves: Moves[] = [];
+
+
+    /**
+     * Filter out moves not within the correct level range(s)
+     * Includes moves below startingLevel, or of specifically level 0 if
+     * includeRelearnerMoves or includeEvolutionMoves are true respectively
+     */
     levelMoves = levelMoves.filter(lm => {
-      if (uniqueMoves.find(m => m === lm[1])) {
-        return false;
-      }
-      uniqueMoves.push(lm[1]);
-      return true;
+      const level = lm[0];
+      const isRelearner = level < startingLevel;
+      const allowedEvolutionMove = (level === 0) && includeEvolutionMoves;
+
+      return !(level > this.level)
+          && (includeRelearnerMoves || !isRelearner || allowedEvolutionMove);
     });
 
+    /**
+     * This must be done AFTER filtering by level, else if the same move shows up
+     * in levelMoves multiple times all but the lowest level one will be skipped.
+     * This causes problems when there are intentional duplicates (i.e. Smeargle with Sketch)
+     */
     if (levelMoves) {
-      for (const lm of levelMoves) {
-        const level = lm[0];
-        if (!includeRelearnerMoves && ((level > 0 && level < startingLevel) || (!includeEvolutionMoves && level === 0) || level < 0)) {
-          continue;
-        } else if (level > this.level) {
-          break;
-        }
-        ret.push(lm);
-      }
+      this.getUniqueMoves(levelMoves,ret);
     }
 
     return ret;
   }
+
+  /**
+   * Helper function for getLevelMoves.
+   * Finds all non-duplicate items from the input, and pushes them into the output.
+   * Two items count as duplicate if they have the same Move, regardless of level.
+   *
+   * @param levelMoves the input array to search for non-duplicates from
+   * @param ret the output array to be pushed into.
+   */
+  private getUniqueMoves(levelMoves: LevelMoves, ret: LevelMoves ): void {
+    const uniqueMoves : Moves[] = [];
+    for (const lm of levelMoves) {
+      if (!uniqueMoves.find(m => m === lm[1])) {
+        uniqueMoves.push(lm[1]);
+        ret.push(lm);
+      }
+    }
+  }
+
 
   setMove(moveIndex: integer, moveId: Moves): void {
     const move = moveId ? new PokemonMove(moveId) : null;
@@ -1946,20 +1969,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (types.find(t => move.isTypeImmune(source, this, t))) {
       typeMultiplier.value = 0;
-    }
-
-    // Apply arena tags for conditional protection
-    if (!move.checkFlag(MoveFlags.IGNORE_PROTECT, source, this) && !move.isAllyTarget()) {
-      this.scene.arena.applyTagsForSide(ArenaTagType.QUICK_GUARD, defendingSide, cancelled, this, move.priority);
-      this.scene.arena.applyTagsForSide(ArenaTagType.WIDE_GUARD, defendingSide, cancelled, this, move.moveTarget);
-      this.scene.arena.applyTagsForSide(ArenaTagType.MAT_BLOCK, defendingSide, cancelled, this, move.category);
-      this.scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
-    }
-
-    // Apply exceptional condition of Crafty Shield if the move used is Curse
-    if (move.id === Moves.CURSE) {
-      const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-      this.scene.arena.applyTagsForSide(ArenaTagType.CRAFTY_SHIELD, defendingSide, cancelled, this, move.category, move.moveTarget);
     }
 
     switch (moveCategory) {
@@ -3291,9 +3300,12 @@ export class PlayerPokemon extends Pokemon {
         this.variant = Overrides.VARIANT_OVERRIDE;
       }
     }
-
     if (!dataSource) {
-      this.moveset = [];
+      if (this.scene.gameMode.isDaily) {
+        this.generateAndPopulateMoveset();
+      } else {
+        this.moveset = [];
+      }
     }
     this.generateCompatibleTms();
   }
@@ -3797,7 +3809,7 @@ export class EnemyPokemon extends Pokemon {
         : [
           new PokemonMove(Moves.ETERNABEAM),
           new PokemonMove(Moves.SLUDGE_BOMB),
-          new PokemonMove(Moves.DRAGON_DANCE),
+          new PokemonMove(Moves.FLAMETHROWER),
           new PokemonMove(Moves.COSMIC_POWER)
         ];
       break;

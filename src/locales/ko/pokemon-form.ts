@@ -88,6 +88,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "landorusIncarnate": "화신폼",
   "keldeoOrdinary": "평상시 모습",
   "meloettaAria": "보이스폼",
+  "meloettaPirouette": "스텝폼",
   // 6G
   "froakieBattleBond": "유대변화",
   "scatterbugMeadow": "화원의 모양",
