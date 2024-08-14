@@ -322,10 +322,10 @@ export default class PhaseInterceptor {
    * Method to start the prompt handler.
    */
   startPromptHandler() {
-    const PROMPT_TIMEOUT = 1000;
+    const PROMPT_TIMEOUT = 2000;
 
     let timeSpentInPrompt = 0;
-    let lastTime = Date.now();
+    let lastTime: number | undefined = undefined;
     let lastPhase, lastPromptPhase, lastMode;
     let warned = false;
 
@@ -337,9 +337,9 @@ export default class PhaseInterceptor {
         const currentPhase = this.scene.getCurrentPhase().constructor.name;
         const currentHandler = this.scene.ui.getHandler();
 
-        if (lastPhase === currentPhase && lastPromptPhase === actionForNextPrompt.phaseTarget && lastMode === currentMode) {
+        if (lastPhase === currentPhase && lastPromptPhase === actionForNextPrompt.phaseTarget && lastMode === currentMode && currentMode !== Mode.MESSAGE) {
           const currentTime = Date.now();
-          timeSpentInPrompt += currentTime - lastTime;
+          timeSpentInPrompt += lastTime === undefined ? 0 : currentTime - lastTime;
           lastTime = currentTime;
 
           if (timeSpentInPrompt > PROMPT_TIMEOUT && !warned) {
@@ -358,8 +358,12 @@ export default class PhaseInterceptor {
         if (expireFn) {
           this.prompts.shift();
           console.log(`Prompt for ${actionForNextPrompt.phaseTarget} (mode ${actionForNextPrompt.mode}) has expired`);
+          timeSpentInPrompt = 0;
+          lastTime = undefined;
         } else if (currentMode === actionForNextPrompt.mode && currentPhase === actionForNextPrompt.phaseTarget && currentHandler.active && (!actionForNextPrompt.awaitingActionInput || (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))) {
           console.log(`Prompt for ${actionForNextPrompt.phaseTarget} (mode ${actionForNextPrompt.mode}) has triggered`);
+          timeSpentInPrompt = 0;
+          lastTime = undefined;
           this.prompts.shift().callback();
         }
       }
