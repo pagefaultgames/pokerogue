@@ -2341,7 +2341,7 @@ export class TurnStartPhase extends FieldPhase {
         // The game now considers priority and applies the relevant move and ability attributes
         const aPriority = new Utils.IntegerHolder(aMove.priority);
         const bPriority = new Utils.IntegerHolder(bMove.priority);
-        const isSameBracket = Math.abs(aPriority.value - bPriority.value) === 0.5;
+
 
         applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority); //TODO: is the bang correct here?
         applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority); //TODO: is the bang correct here?
@@ -2353,6 +2353,7 @@ export class TurnStartPhase extends FieldPhase {
         // If the moves share the same original priority bracket, it can check for differences in battlerBypassSpeed and return the result.
         // This conditional is used to ensure that Quick Claw can still activate with abilities like Stall and Mycelium Might (attack moves only)
         // Otherwise, the game returns the user of the move with the highest priority.
+        const isSameBracket = Math.abs(aPriority.value - bPriority.value) === 0.5;
         if (aPriority.value !== bPriority.value) {
           if (isSameBracket && battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
             return battlerBypassSpeed[a].value ? -1 : 1;
