@@ -143,7 +143,7 @@ function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean)
       }
     })
   })
-  scene.currentBattle.multiInt(scene, rolls, offset + 3, 65536)
+  scene.currentBattle.multiInt(scene, rolls, offset + 3, 65536, undefined, "Catch prediction")
   //console.log(rolls)
   //console.log(rolls.slice(offset, offset + 3))
   if (scene.pokeballCounts[0] == 0 && !override) rates[0] = 0
@@ -2974,23 +2974,25 @@ export class TurnInitPhase extends FieldPhase {
 
     this.scene.pushPhase(new TurnStartPhase(this.scene));
 
-    var txt = ["Turn: " + this.scene.currentBattle.turn]
-    if (!this.scene.getEnemyField()[0].hasTrainer()) {
-      this.scene.getEnemyField().forEach((pk, i) => {
-        if (pk.isActive() && pk.hp > 0)
-        txt = txt.concat(findBest(this.scene, pk))
-      })
-    }
-    if (txt.length > 2) {
-      txt = ["Turn: " + this.scene.currentBattle.turn]
-    }
-
-    this.scene.arenaFlyout.updateFieldText()
-
-    this.scene.setScoreText(txt.join(" / "))
+    updateCatchRate()
 
     this.end();
   }
+}
+function updateCatchRate() {
+  var txt = ["Turn: " + this.scene.currentBattle.turn]
+  if (!this.scene.getEnemyField()[0].hasTrainer()) {
+    this.scene.getEnemyField().forEach((pk, i) => {
+      if (pk.isActive() && pk.hp > 0)
+      txt = txt.concat(findBest(this.scene, pk))
+    })
+  }
+  if (txt.length > 2) {
+    txt = ["Turn: " + this.scene.currentBattle.turn]
+  }
+  this.scene.arenaFlyout.updateFieldText()
+
+  this.scene.setScoreText(txt.join(" / "))
 }
 //#endregion
 
@@ -3310,20 +3312,7 @@ export class EnemyCommandPhase extends FieldPhase {
 
             enemyPokemon.flyout.setText()
 
-            var txt = ["Turn: " + this.scene.currentBattle.turn]
-            if (!this.scene.getEnemyField()[0].hasTrainer()) {
-              this.scene.getEnemyField().forEach((pk, i) => {
-                if (pk.isActive() && pk.hp > 0)
-                txt = txt.concat(findBest(this.scene, pk))
-              })
-            }
-            if (txt.length > 2) {
-              txt = ["Turn: " + this.scene.currentBattle.turn]
-            }
-        
-            this.scene.arenaFlyout.updateFieldText()
-        
-            this.scene.setScoreText(txt.join(" / "))
+            updateCatchRate()
 
             return this.end();
           }
@@ -3364,20 +3353,7 @@ export class EnemyCommandPhase extends FieldPhase {
     //LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + nextMove.targets.map((m) => targetLabels[m + 1])
     this.scene.arenaFlyout.updateFieldText()
 
-    var txt = ["Turn: " + this.scene.currentBattle.turn]
-    if (!this.scene.getEnemyField()[0].hasTrainer()) {
-      this.scene.getEnemyField().forEach((pk, i) => {
-        if (pk.isActive() && pk.hp > 0)
-        txt = txt.concat(findBest(this.scene, pk))
-      })
-    }
-    if (txt.length > 2) {
-      txt = ["Turn: " + this.scene.currentBattle.turn]
-    }
-
-    this.scene.arenaFlyout.updateFieldText()
-
-    this.scene.setScoreText(txt.join(" / "))
+    updateCatchRate()
 
     this.end();
   }

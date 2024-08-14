@@ -356,7 +356,7 @@ export default class Battle {
     return null;
   }
 
-  multiInt(scene: BattleScene, out: integer[], count: integer, range: integer, min: integer = 0, offset?: integer): integer {
+  multiInt(scene: BattleScene, out: integer[], count: integer, range: integer, min: integer = 0, reason: string = "Unlabeled randSeedInt", offset?: integer): integer {
     if (range <= 1) {
       return min;
     }
@@ -376,6 +376,7 @@ export default class Battle {
     for (var i = 0; i < count; i++) {
       out.push(Utils.randSeedInt(range, min))
     }
+    console.log("[SIMULATED] " + reason + " (x" + count + (offset ? " + offset " + offset : "") + ")", out)
     Phaser.Math.RND.state(state);
     //scene.setScoreText("RNG: " + tempRngCounter + " (Last sim: " + this.rngCounter + ")")
     scene.rngCounter = tempRngCounter;
