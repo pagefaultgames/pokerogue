@@ -2326,6 +2326,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return maxForms.includes(this.getFormKey()) || (!!this.getFusionFormKey() && maxForms.includes(this.getFusionFormKey()!));
   }
 
+  canAddTag(tagType: BattlerTagType): boolean {
+    if (this.getTag(tagType)) {
+      return false;
+    }
+
+    const stubTag = new BattlerTag(tagType, 0, 0);
+
+    const cancelled = new Utils.BooleanHolder(false);
+    applyPreApplyBattlerTagAbAttrs(BattlerTagImmunityAbAttr, this, stubTag, cancelled, true);
+
+    const userField = this.getAlliedField();
+    userField.forEach(pokemon => applyPreApplyBattlerTagAbAttrs(UserFieldBattlerTagImmunityAbAttr, pokemon, stubTag, cancelled, true));
+
+    return !cancelled.value;
+  }
+
   addTag(tagType: BattlerTagType, turnCount: integer = 0, sourceMove?: Moves, sourceId?: integer): boolean {
     const existingTag = this.getTag(tagType);
     if (existingTag) {
