@@ -27,15 +27,15 @@ export const move: MoveTranslationEntries = {
   },
   "firePunch": {
     name: "Poing Feu",
-    effect: "Un coup de poing enflammé vient frapper la cible, ce qui peut la bruler (10% de chances)."
+    effect: "Un coup de poing enflammé vient frapper la cible, a 10% de chances de la bruler."
   },
   "icePunch": {
     name: "Poing Glace",
-    effect: "Un coup de poing glacé vient frapper la cible, ce qui peut la geler (10% de chances)."
+    effect: "Un coup de poing glacé vient frapper la cible, a 10% de chances de la geler."
   },
   "thunderPunch": {
     name: "Poing Éclair",
-    effect: "Un coup de poing électrique vient frapper la cible, ce qui peut la paralyser (10% de chances)."
+    effect: "Un coup de poing électrique vient frapper la cible, a 10% de chances de la paralyser."
   },
   "scratch": {
     name: "Griffe",
@@ -91,7 +91,7 @@ export const move: MoveTranslationEntries = {
   },
   "stomp": {
     name: "Écrasement",
-    effect: "Écrase la cible avec un énorme pied, ce qui peut aussi l’apeurer (30% de chances)."
+    effect: "Écrase la cible avec un énorme pied, a 30% de chances de l’apeurer."
   },
   "doubleKick": {
     name: "Double Pied",
@@ -107,7 +107,7 @@ export const move: MoveTranslationEntries = {
   },
   "rollingKick": {
     name: "Mawashi Geri",
-    effect: "Le lanceur effectue un coup de pied tournoyant et extrêmement rapide. Peut apeurer l’ennemi (30% de chances)."
+    effect: "Le lanceur effectue un coup de pied tournoyant et extrêmement rapide. A 30% de chances d’apeurer l’ennemi."
   },
   "sandAttack": {
     name: "Jet de Sable",
@@ -115,7 +115,7 @@ export const move: MoveTranslationEntries = {
   },
   "headbutt": {
     name: "Coup d’Boule",
-    effect: "Le lanceur donne un coup de tête à la cible qui peut aussi l’apeurer (30% de chances)."
+    effect: "Le lanceur donne un coup de tête à la cible qui a aussi 30% de chances de l’apeurer."
   },
   "hornAttack": {
     name: "Koud’Korne",
@@ -135,7 +135,7 @@ export const move: MoveTranslationEntries = {
   },
   "bodySlam": {
     name: "Plaquage",
-    effect: "Le lanceur se laisse tomber sur la cible de tout son poids, ce qui peut aussi la paralyser (30% de chances)."
+    effect: "Le lanceur se laisse tomber sur la cible de tout son poids, a 30% de chances de la paralyser."
   },
   "wrap": {
     name: "Ligotage",
@@ -159,11 +159,11 @@ export const move: MoveTranslationEntries = {
   },
   "poisonSting": {
     name: "Dard-Venin",
-    effect: "Un dard toxique transperce la cible et peut aussi l’empoisonner (30% de chances)."
+    effect: "Un dard toxique transperce la cible qui a 30% de chances de l’empoisonner."
   },
   "twineedle": {
     name: "Double Dard",
-    effect: "Un double coup de dard qui transperce l’ennemi deux fois d’affilée. Peut aussi l’empoisonner (36% de chances)."
+    effect: "Un double coup de dard qui transperce l’ennemi deux fois d’affilée. A 36% de chances de l’empoisonner."
   },
   "pinMissile": {
     name: "Dard-Nuée",
@@ -175,7 +175,7 @@ export const move: MoveTranslationEntries = {
   },
   "bite": {
     name: "Morsure",
-    effect: "Le lanceur utilise ses canines tranchantes pour mordre la cible, ce qui peut aussi l’apeurer (30% de chances)."
+    effect: "Le lanceur utilise ses canines tranchantes pour mordre la cible, a 30% de chances de l’apeurer."
   },
   "growl": {
     name: "Rugissement",
@@ -211,7 +211,7 @@ export const move: MoveTranslationEntries = {
   },
   "flamethrower": {
     name: "Lance-Flammes",
-    effect: "La cible reçoit un torrent de flammes qui peut aussi la bruler (10% de chances)."
+    effect: "La cible reçoit un torrent de flammes qui a 10% de chances de la bruler."
   },
   "mist": {
     name: "Brume",
@@ -235,7 +235,7 @@ export const move: MoveTranslationEntries = {
   },
   "blizzard": {
     name: "Blizzard",
-    effect: "Une violente tempête de neige s’abat sur la cible, ce qui peut aussi la geler (10% de chances)."
+    effect: "Une violente tempête de neige s’abat sur la cible, a 10% de chances de la geler."
   },
   "psybeam": {
     name: "Rafale Psy",
@@ -335,11 +335,11 @@ export const move: MoveTranslationEntries = {
   },
   "thunderShock": {
     name: "Éclair",
-    effect: "Une décharge électrique tombe sur la cible, ce qui peut aussi la paralyser (10% de chances)."
+    effect: "Une décharge électrique tombe sur la cible, a 10% de chances de la paralyser."
   },
   "thunderbolt": {
     name: "Tonnerre",
-    effect: "Une grosse décharge électrique tombe sur la cible, ce qui peut aussi la paralyser (10% de chances)."
+    effect: "Une grosse décharge électrique tombe sur la cible, a 10% de chances de la paralyser."
   },
   "thunderWave": {
     name: "Cage Éclair",
@@ -347,7 +347,7 @@ export const move: MoveTranslationEntries = {
   },
   "thunder": {
     name: "Fatal-Foudre",
-    effect: "La foudre tombe sur la cible pour lui infliger des dégâts, ce qui peut aussi la paralyser (30% de chances)."
+    effect: "La foudre tombe sur la cible pour lui infliger des dégâts, a 30% de chances de la paralyser."
   },
   "rockThrow": {
     name: "Jet-Pierres",
@@ -487,7 +487,7 @@ export const move: MoveTranslationEntries = {
   },
   "lick": {
     name: "Léchouille",
-    effect: "Un grand coup de langue qui inflige des dégâts à la cible et peut aussi la paralyser (30% de chances)."
+    effect: "Un grand coup de langue qui inflige des dégâts à la cible et qui a aussi 30% de chances de la paralyser."
   },
   "smog": {
     name: "Purédpois",
@@ -495,19 +495,19 @@ export const move: MoveTranslationEntries = {
   },
   "sludge": {
     name: "Détritus",
-    effect: "Des détritus toxiques sont projetés sur la cible, ce qui peut aussi l’empoisonner (30% de chances)."
+    effect: "Des détritus toxiques sont projetés sur la cible, a 30% de chances de l’empoisonner."
   },
   "boneClub": {
     name: "Massd’Os",
-    effect: "Le lanceur frappe l’ennemi à grands coups d’os. Peut aussi l’apeurer (10% de chances)."
+    effect: "Le lanceur frappe l’ennemi à grands coups d’os. A 10% de chances de l’apeurer."
   },
   "fireBlast": {
     name: "Déflagration",
-    effect: "Un déluge de flammes ardentes submerge la cible, ce qui peut aussi la bruler (10% de chances)."
+    effect: "Un déluge de flammes ardentes submerge la cible, a 10% de chances de la bruler."
   },
   "waterfall": {
     name: "Cascade",
-    effect: "Le lanceur charge la cible avec une intensité remarquable, ce qui peut l’apeurer (20% de chances)."
+    effect: "Le lanceur charge la cible avec une intensité remarquable, a 20% de chances de l’apeurer."
   },
   "clamp": {
     name: "Claquoir",
@@ -571,7 +571,7 @@ export const move: MoveTranslationEntries = {
   },
   "skyAttack": {
     name: "Piqué",
-    effect: "Une attaque en deux tours au taux de critiques élevé, qui peut aussi apeurer la cible (30% de chances)."
+    effect: "Une attaque en deux tours au taux de critiques élevé, a 30% de chances d’apeurer la cible."
   },
   "transform": {
     name: "Morphing",
@@ -627,11 +627,11 @@ export const move: MoveTranslationEntries = {
   },
   "rockSlide": {
     name: "Éboulement",
-    effect: "Le lanceur envoie de gros rochers sur la cible pour lui infliger des dégâts, ce qui peut aussi l’apeurer (30% de chances)."
+    effect: "Le lanceur envoie de gros rochers sur la cible pour lui infliger des dégâts, a 30% de chances de l’apeurer."
   },
   "hyperFang": {
     name: "Croc de Mort",
-    effect: "Le lanceur mord l’ennemi à l’aide de ses incisives aiguisées. Peut aussi l’apeurer (10% de chances)."
+    effect: "Le lanceur mord l’ennemi à l’aide de ses incisives aiguisées. A 10% de chances d’apeurer la cible."
   },
   "sharpen": {
     name: "Affutage",
@@ -643,7 +643,7 @@ export const move: MoveTranslationEntries = {
   },
   "triAttack": {
     name: "Triplattaque",
-    effect: "Le lanceur envoie trois boules d’énergie simultanément qui peuvent aussi paralyser, bruler ou geler la cible (6.67% de chances)."
+    effect: "Le lanceur envoie trois boules d’énergie simultanément qui a 6,67% de chances paralyser, bruler ou geler la cible."
   },
   "superFang": {
     name: "Croc Fatal",
@@ -691,7 +691,7 @@ export const move: MoveTranslationEntries = {
   },
   "snore": {
     name: "Ronflement",
-    effect: "Une attaque qui ne fonctionne que si le lanceur est endormi. Le boucan peut aussi apeurer la cible (30% de chances)."
+    effect: "Une attaque qui ne fonctionne que si le lanceur est endormi. Le boucan a aussi 30% de de chances d’apeurer la cible."
   },
   "curse": {
     name: "Malédiction",
@@ -723,7 +723,7 @@ export const move: MoveTranslationEntries = {
   },
   "powderSnow": {
     name: "Poudreuse",
-    effect: "Le lanceur projette de la neige poudreuse qui peut aussi geler la cible (10% de chances)."
+    effect: "Le lanceur projette de la neige poudreuse qui a aussi 10% de chances de geler la cible."
   },
   "protect": {
     name: "Abri",
@@ -751,7 +751,7 @@ export const move: MoveTranslationEntries = {
   },
   "sludgeBomb": {
     name: "Bombe Beurk",
-    effect: "Des détritus toxiques sont projetés sur la cible, ce qui peut aussi l’empoisonner (30% de chances)."
+    effect: "Des détritus toxiques sont projetés sur la cible, a 30% de chances de l’empoisonner."
   },
   "mudSlap": {
     name: "Coud’Boue",
@@ -835,7 +835,7 @@ export const move: MoveTranslationEntries = {
   },
   "spark": {
     name: "Étincelle",
-    effect: "Le lanceur envoie une charge électrique sur la cible qui peut aussi la paralyser (30% de chances)."
+    effect: "Le lanceur envoie une charge électrique sur la cible qui a aussi 30% de chances de la paralyser."
   },
   "furyCutter": {
     name: "Taillade",
@@ -883,7 +883,7 @@ export const move: MoveTranslationEntries = {
   },
   "sacredFire": {
     name: "Feu Sacré",
-    effect: "Le lanceur génère un feu mystique d’une intensité redoutable pour attaquer l’ennemi. Peut aussi le bruler (50% de chances)."
+    effect: "Le lanceur génère un feu mystique d’une intensité redoutable pour attaquer l’ennemi. A 50% de chances de le bruler."
   },
   "magnitude": {
     name: "Ampleur",
@@ -899,7 +899,7 @@ export const move: MoveTranslationEntries = {
   },
   "dragonBreath": {
     name: "Draco-Souffle",
-    effect: "Le lanceur souffle fort sur la cible pour lui infliger des dégâts, ce qui peut aussi la paralyser (30% de chances)."
+    effect: "Le lanceur souffle fort sur la cible pour lui infliger des dégâts, a 30% de chances de la paralyser."
   },
   "batonPass": {
     name: "Relais",
@@ -955,7 +955,7 @@ export const move: MoveTranslationEntries = {
   },
   "twister": {
     name: "Ouragan",
-    effect: "Le lanceur déclenche un terrible ouragan sur la cible, ce qui peut aussi apeurer celle-ci (20% de chances)."
+    effect: "Le lanceur déclenche un terrible ouragan sur la cible, a 20% de chances d’apeurer celle-ci."
   },
   "rainDance": {
     name: "Danse Pluie",
@@ -1195,7 +1195,7 @@ export const move: MoveTranslationEntries = {
   },
   "blazeKick": {
     name: "Pied Bruleur",
-    effect: "Le lanceur envoie un coup de pied au taux de critiques élevé. Peut aussi bruler la cible (10% de chances)."
+    effect: "Le lanceur envoie un coup de pied au taux de critiques élevé. A 10% de chances de bruler la cible."
   },
   "mudSport": {
     name: "Lance-Boue",
@@ -1207,7 +1207,7 @@ export const move: MoveTranslationEntries = {
   },
   "needleArm": {
     name: "Poing Dard",
-    effect: "Le lanceur attaque en fouettant l’ennemi de ses bras épineux. Peut aussi l’apeurer (30% de chances)."
+    effect: "Le lanceur attaque en fouettant l’ennemi de ses bras épineux. A 30% de chances de l’apeurer."
   },
   "slackOff": {
     name: "Paresse",
@@ -1219,7 +1219,7 @@ export const move: MoveTranslationEntries = {
   },
   "poisonFang": {
     name: "Crochet Venin",
-    effect: "Le lanceur mord la cible avec ses crocs toxiques, ce qui peut aussi l’empoisonner gravement (50% de chances)."
+    effect: "Le lanceur mord la cible avec ses crocs toxiques, ce qui a aussi 50% de chances de l’empoisonner gravement."
   },
   "crushClaw": {
     name: "Éclate Griffe",
@@ -1239,7 +1239,7 @@ export const move: MoveTranslationEntries = {
   },
   "astonish": {
     name: "Étonnement",
-    effect: "Le lanceur attaque la cible en poussant un cri terrifiant qui peut aussi l’apeurer (30% de chances)."
+    effect: "Le lanceur attaque la cible en poussant un cri terrifiant qui a aussi 30% de chances de l’apeurer."
   },
   "weatherBall": {
     name: "Ball’Météo",
@@ -1375,7 +1375,7 @@ export const move: MoveTranslationEntries = {
   },
   "voltTackle": {
     name: "Électacle",
-    effect: "Le lanceur électrifie son corps avant de charger. Le choc blesse aussi gravement le lanceur et peut paralyser la cible (10% de chances)."
+    effect: "Le lanceur électrifie son corps avant de charger. Le choc blesse aussi gravement le lanceur et a 10% de chances de paralyser la cible."
   },
   "magicalLeaf": {
     name: "Feuille Magik",
@@ -1591,7 +1591,7 @@ export const move: MoveTranslationEntries = {
   },
   "poisonJab": {
     name: "Direct Toxik",
-    effect: "Le lanceur attaque la cible avec un tentacule, un bras, ou un autre membre imprégné de poison, ce qui peut aussi empoisonner la cible (30% de chances)."
+    effect: "Le lanceur attaque la cible avec un tentacule, un bras, ou un autre membre imprégné de poison, ce qui a aussi 30% de chances d’empoisonner la cible."
   },
   "darkPulse": {
     name: "Vibrobscur",
@@ -1611,7 +1611,7 @@ export const move: MoveTranslationEntries = {
   },
   "airSlash": {
     name: "Lame d’Air",
-    effect: "Le lanceur attaque avec une lame d’air capable de fendre le ciel, ce qui peut aussi apeurer la cible (30% de chances)."
+    effect: "Le lanceur attaque avec une lame d’air capable de fendre le ciel, ce qui a aussi 30% de chances d’apeurer la cible."
   },
   "xScissor": {
     name: "Plaie Croix",
@@ -1627,7 +1627,7 @@ export const move: MoveTranslationEntries = {
   },
   "dragonRush": {
     name: "Draco-Charge",
-    effect: "Le lanceur frappe la cible en prenant un air menaçant, ce qui peut aussi l’apeurer (20% de chances)."
+    effect: "Le lanceur frappe la cible en prenant un air menaçant, ce qui a aussi 20% de chances de l’apeurer."
   },
   "powerGem": {
     name: "Rayon Gemme",
@@ -1687,15 +1687,15 @@ export const move: MoveTranslationEntries = {
   },
   "thunderFang": {
     name: "Crocs Éclair",
-    effect: "Le lanceur utilise une morsure électrifiée qui peut aussi paralyser (10% de chances) ou apeurer la cible (10% de chances)."
+    effect: "Le lanceur utilise une morsure électrifiée qui a aussi 10% de chances de paralyser ou 10% de chances d’apeurer la cible."
   },
   "iceFang": {
     name: "Crocs Givre",
-    effect: "Le lanceur utilise une morsure glaciale qui peut aussi geler (10% de chances) ou apeurer la cible (10% de chances)."
+    effect: "Le lanceur utilise une morsure glaciale qui a aussi 10% de chances de geler ou 10% de chances d’apeurer la cible."
   },
   "fireFang": {
     name: "Crocs Feu",
-    effect: "Le lanceur utilise une morsure enflammée qui peut aussi bruler (10% de chances) ou apeurer (10% de chances) la cible."
+    effect: "Le lanceur utilise une morsure enflammée qui a aussi 10% de chances de bruler ou 10% de chances d’apeurer la cible."
   },
   "shadowSneak": {
     name: "Ombre Portée",
@@ -1711,7 +1711,7 @@ export const move: MoveTranslationEntries = {
   },
   "zenHeadbutt": {
     name: "Psykoud’Boul",
-    effect: "Le lanceur concentre sa volonté et donne un coup de tête à la cible, ce qui peut aussi apeurer celle-ci (20% de chances)."
+    effect: "Le lanceur concentre sa volonté et donne un coup de tête à la cible, ce qui a aussi 20% de chances d’apeurer celle-ci."
   },
   "mirrorShot": {
     name: "Miroi-Tir",
@@ -1739,11 +1739,11 @@ export const move: MoveTranslationEntries = {
   },
   "discharge": {
     name: "Coup d’Jus",
-    effect: "Un flamboiement d’électricité frappe tous les Pokémon autour du lanceur. Peut aussi les paralyser (30% de chances)."
+    effect: "Un flamboiement d’électricité frappe tous les Pokémon autour du lanceur. A 30% de chances de les paralyser."
   },
   "lavaPlume": {
     name: "Ébullilave",
-    effect: "Des flammes s’abattent sur tous les Pokémon autour du lanceur, ce qui peut aussi les bruler (10% de chances)."
+    effect: "Des flammes s’abattent sur tous les Pokémon autour du lanceur, ce qui a aussi 10% de chances de les brule."
   },
   "leafStorm": {
     name: "Tempête Verte",
@@ -1763,11 +1763,11 @@ export const move: MoveTranslationEntries = {
   },
   "gunkShot": {
     name: "Détricanon",
-    effect: "Le lanceur envoie des détritus sur la cible, ce qui peut aussi l’empoisonner (30% de chances)."
+    effect: "Le lanceur envoie des détritus sur la cible, ce qui a aussi 30% de chances de l’empoisonner."
   },
   "ironHead": {
     name: "Tête de Fer",
-    effect: "Le lanceur heurte la cible avec sa tête dure comme de l’acier, ce qui peut aussi l’apeurer (30% de chances)."
+    effect: "Le lanceur heurte la cible avec sa tête dure comme de l’acier, ce qui a aussi 30% de chances de l’apeurer."
   },
   "magnetBomb": {
     name: "Bombe Aimant",
@@ -1927,7 +1927,7 @@ export const move: MoveTranslationEntries = {
   },
   "sludgeWave": {
     name: "Cradovague",
-    effect: "Une vague de détritus attaque tous les Pokémon autour du lanceur. Peut aussi empoisonner (10% de chances)."
+    effect: "Une vague de détritus attaque tous les Pokémon autour du lanceur. A 10% de chances de l’empoisonner."
   },
   "quiverDance": {
     name: "Papillodanse",
@@ -2123,7 +2123,7 @@ export const move: MoveTranslationEntries = {
   },
   "heartStamp": {
     name: "Crève-Cœur",
-    effect: "Déconcentre l’ennemi avec des mouvements mignons avant de le frapper violemment. Peut aussi l’apeurer (30% de chances)."
+    effect: "Déconcentre l’ennemi avec des mouvements mignons avant de le frapper violemment. A 30% de chances de l’apeurer."
   },
   "hornLeech": {
     name: "Encornebois",
@@ -2147,7 +2147,7 @@ export const move: MoveTranslationEntries = {
   },
   "steamroller": {
     name: "Bulldoboule",
-    effect: "Le lanceur se roule en boule et écrase son ennemi. Peut aussi l’apeurer (30% de chances)."
+    effect: "Le lanceur se roule en boule et écrase son ennemi. A 30% de chances de l’apeurer."
   },
   "cottonGuard": {
     name: "Cotogarde",
@@ -2179,7 +2179,7 @@ export const move: MoveTranslationEntries = {
   },
   "searingShot": {
     name: "Incendie",
-    effect: "Des boules de feu s’abattent sur tous les Pokémon autour du lanceur. Peut aussi les bruler (30% de chances)."
+    effect: "Des boules de feu s’abattent sur tous les Pokémon autour du lanceur. A 30% de chances de les bruler."
   },
   "technoBlast": {
     name: "Techno-Buster",
@@ -2199,11 +2199,11 @@ export const move: MoveTranslationEntries = {
   },
   "boltStrike": {
     name: "Charge Foudre",
-    effect: "Le lanceur s’enveloppe d’une charge électrique surpuissante et se jette sur l’ennemi. Peut aussi le paralyser (20% de chances)."
+    effect: "Le lanceur s’enveloppe d’une charge électrique surpuissante et se jette sur l’ennemi. A 20% de chances de le paralyser."
   },
   "blueFlare": {
     name: "Flamme Bleue",
-    effect: "De magnifiques et redoutables flammes bleues fondent sur l’ennemi. Peut aussi le bruler (20% de chances)."
+    effect: "De magnifiques et redoutables flammes bleues fondent sur l’ennemi. A 20% de chances de le bruler."
   },
   "fieryDance": {
     name: "Danse du Feu",
@@ -2211,11 +2211,11 @@ export const move: MoveTranslationEntries = {
   },
   "freezeShock": {
     name: "Éclair Gelé",
-    effect: "Projette un bloc de glace électrifié sur l’ennemi au second tour. Peut aussi le paralyser (30% de chances)."
+    effect: "Projette un bloc de glace électrifié sur l’ennemi au second tour. A 30% de chances de le paralyser."
   },
   "iceBurn": {
     name: "Feu Glacé",
-    effect: "Au second tour, le lanceur projette un souffle de vent glacial dévastateur sur l’ennemi. Peut aussi le bruler (30% de chances)."
+    effect: "Au second tour, le lanceur projette un souffle de vent glacial dévastateur sur l’ennemi. A 30% de chances de le bruler."
   },
   "snarl": {
     name: "Aboiement",
@@ -2223,7 +2223,7 @@ export const move: MoveTranslationEntries = {
   },
   "icicleCrash": {
     name: "Chute Glace",
-    effect: "Le lanceur envoie de gros blocs de glace sur la cible pour lui infliger des dégâts, ce qui peut aussi l’apeurer (30% de chances)."
+    effect: "Le lanceur envoie de gros blocs de glace sur la cible pour lui infliger des dégâts, ce qui a aussi 30% de chances de l’apeurer."
   },
   "vCreate": {
     name: "Coup Victoire",
@@ -2967,7 +2967,7 @@ export const move: MoveTranslationEntries = {
   },
   "doubleIronBash": {
     name: "Écrous d’Poing",
-    effect: "Le lanceur fait pivoter l’écrou de sa poitrine deux fois d’affilée pour frapper l’adversaire avec ses bras. Peut apeurer l’ennemi (30% de chances)."
+    effect: "Le lanceur fait pivoter l’écrou de sa poitrine deux fois d’affilée pour frapper l’adversaire avec ses bras. A 30% de chances d’apeurer l’ennemi."
   },
   "maxGuard": {
     name: "Gardomax",
@@ -3107,7 +3107,7 @@ export const move: MoveTranslationEntries = {
   },
   "decorate": {
     name: "Nappage",
-    effect: "Augmente fortement l’Attaque et l’Attaque Spéciale du lanceur."
+    effect: "Le lanceur augmente beaucoup l’Attaque et l’Attaque Spéciale de la cible en la nappant de glaçage."
   },
   "drumBeating": {
     name: "Tambour Battant",
@@ -3119,7 +3119,7 @@ export const move: MoveTranslationEntries = {
   },
   "pyroBall": {
     name: "Ballon Brulant",
-    effect: "Le lanceur attaque avec un ballon fait à partir d’un caillou enflammé. Peut aussi bruler la cible (10% de chances)."
+    effect: "Le lanceur attaque avec un ballon fait à partir d’un caillou enflammé. A 10% de chances de bruler la cible."
   },
   "behemothBlade": {
     name: "Gladius Maximus",
@@ -3283,11 +3283,11 @@ export const move: MoveTranslationEntries = {
   },
   "freezingGlare": {
     name: "Regard Glaçant",
-    effect: "Les yeux du lanceur tirent des rayons psychiques qui attaquent la cible et peuvent aussi la geler (10% de chances)."
+    effect: "Les yeux du lanceur tirent des rayons psychiques qui attaquent la cible et ont aussi 10% de chances la geler."
   },
   "fieryWrath": {
     name: "Fureur Ardente",
-    effect: "Le lanceur canalise sa colère et la transforme en émanation brulante, avec laquelle il attaque la cible, ce qui peut aussi apeurer celle-ci (20% de chances)."
+    effect: "Le lanceur canalise sa colère et la transforme en émanation brulante, avec laquelle il attaque la cible, ce qui a aussi 20% de chances d’apeurer celle-ci."
   },
   "thunderousKick": {
     name: "Coup Fulgurant",
@@ -3371,11 +3371,11 @@ export const move: MoveTranslationEntries = {
   },
   "tripleArrows": {
     name: "Triple Flèche",
-    effect: "Le lanceur donne un coup de pied et tire trois flèches simultanément, ce qui peut baisser la Défense de la cible ou l’apeurer (30% de chances). Taux de critiques élevé."
+    effect: "Le lanceur donne un coup de pied et tire trois flèches simultanément, ce qui a aussi 30% de chances baisser la Défense de la cible ou l’apeurer. Taux de critiques élevé."
   },
   "infernalParade": {
     name: "Cortège Funèbre",
-    effect: "Une multitude de boules de feu frappent la cible, ce qui peut aussi la bruler (30% de chances et 50% en Style Puissant). La puissance est doublée si celle-ci souffre d’une altération de statut."
+    effect: "Une multitude de boules de feu frappent la cible, ce qui peut aussi la bruler. La puissance est doublée si celle-ci souffre d’une altération de statut."
   },
   "ceaselessEdge": {
     name: "Vagues à Lames",
@@ -3387,11 +3387,11 @@ export const move: MoveTranslationEntries = {
   },
   "wildboltStorm": {
     name: "Typhon Fulgurant",
-    effect: "Le lanceur déclenche un violent typhon orageux dont les rafales et la foudre frappent la cible, ce qui peut aussi la paralyser (30% de chances en Style Normal et 50% en Style Puissant)."
+    effect: "Le lanceur déclenche un violent typhon orageux dont les rafales et la foudre frappent la cible, ce qui peut aussi la paralyser."
   },
   "sandsearStorm": {
     name: "Typhon Pyrosable",
-    effect: "Le lanceur déclenche un violent typhon mêlé à du sable ardent qui s’abat sur la cible, ce qui peut la bruler (30% de chances et 50% en Style Puissant)."
+    effect: "Le lanceur déclenche un violent typhon mêlé à du sable ardent qui s’abat sur la cible, ce qui peut la bruler."
   },
   "lunarBlessing": {
     name: "Prière Lunaire",
