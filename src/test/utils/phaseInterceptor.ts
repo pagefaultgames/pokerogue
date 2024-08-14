@@ -290,6 +290,13 @@ export default class PhaseInterceptor {
    * Method to start the prompt handler.
    */
   startPromptHandler() {
+    const PROMPT_TIMEOUT = 1000;
+
+    let timeSpentInPrompt = 0;
+    let lastTime = Date.now();
+    let lastPhase, lastPromptPhase, lastMode;
+    let warned = false;
+
     this.promptInterval = setInterval(() => {
       if (this.prompts.length) {
         const actionForNextPrompt = this.prompts[0];
@@ -297,9 +304,30 @@ export default class PhaseInterceptor {
         const currentMode = this.scene.ui.getMode();
         const currentPhase = this.scene.getCurrentPhase().constructor.name;
         const currentHandler = this.scene.ui.getHandler();
+
+        if (lastPhase === currentPhase && lastPromptPhase === actionForNextPrompt.phaseTarget && lastMode === currentMode) {
+          const currentTime = Date.now();
+          timeSpentInPrompt += currentTime - lastTime;
+          lastTime = currentTime;
+
+          if (timeSpentInPrompt > PROMPT_TIMEOUT && !warned) {
+            console.error("Prompt handling stalled waiting for prompt:", actionForNextPrompt);
+            expect.fail("Prompt timeout");
+          }
+        } else {
+          warned = false;
+          lastMode = currentMode;
+          lastPhase = currentPhase;
+          lastPromptPhase = actionForNextPrompt.phaseTarget;
+          timeSpentInPrompt = 0;
+        }
+
+
         if (expireFn) {
           this.prompts.shift();
+          console.log(`Prompt for ${actionForNextPrompt.phaseTarget} (mode ${actionForNextPrompt.mode}) has expired`);
         } else if (currentMode === actionForNextPrompt.mode && currentPhase === actionForNextPrompt.phaseTarget && currentHandler.active && (!actionForNextPrompt.awaitingActionInput || (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))) {
+          console.log(`Prompt for ${actionForNextPrompt.phaseTarget} (mode ${actionForNextPrompt.mode}) has triggered`);
           this.prompts.shift().callback();
         }
       }
@@ -321,6 +349,7 @@ export default class PhaseInterceptor {
       expireFn,
       awaitingActionInput
     });
+    console.log(`Prompt added for ${phaseTarget} (mode ${mode})`);
   }
 
   /**
