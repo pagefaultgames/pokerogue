@@ -4144,16 +4144,19 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
   }
 
   /**
-   * @argument {boolean} canBypassSpeed - determines if a Pokemon is able to bypass speed at the moment
+   * @argument {boolean} bypassSpeed - determines if a Pokemon is able to bypass speed at the moment
+   * @argument {boolean} canCheckHeldItems - determines if a Pokemon has access to Quick Claw's effects or not
    */
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const canBypassSpeed = args[0] as Utils.BooleanHolder;
+    const bypassSpeed = args[0] as Utils.BooleanHolder;
+    const canCheckHeldItems = args[1] as Utils.BooleanHolder;
 
     const turnCommand = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
     const isCommandFight = turnCommand?.command === Command.FIGHT;
     const move = turnCommand?.move?.move ? allMoves[turnCommand.move.move] : null;
     if (this.condition(pokemon, move!) && isCommandFight) {
-      canBypassSpeed.value = false;
+      bypassSpeed.value = false;
+      canCheckHeldItems.value = false;
       return false;
     }
     return true;

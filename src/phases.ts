@@ -2305,6 +2305,21 @@ export class TurnStartPhase extends FieldPhase {
 
     orderedTargets = orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : 0));
 
+    //The creation of the battlerBypassSpeed object contains checks for the ability Quick Draw and the held item Quick Claw
+    //The ability Mycelium Might disables Quick Claw's activation when using a status move
+    const battlerBypassSpeed = {};
+
+    this.scene.getField(true).filter(p => p.summonData).map(p => {
+      const bypassSpeed = new Utils.BooleanHolder(false);
+      const canCheckHeldItems = new Utils.BooleanHolder(true);
+      applyAbAttrs(BypassSpeedChanceAbAttr, p, null, bypassSpeed);
+      applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, bypassSpeed, canCheckHeldItems);
+      if (canCheckHeldItems.value) {
+        this.scene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
+      }
+      battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
+    });
+
     const moveOrder = orderedTargets.slice(0);
 
     moveOrder.sort((a, b) => {
@@ -2321,7 +2336,7 @@ export class TurnStartPhase extends FieldPhase {
         const aMove = allMoves[aCommand.move!.move];//TODO: is the bang correct here?
         const bMove = allMoves[bCommand!.move!.move];//TODO: is the bang correct here?
 
-        //The game now considers priority and checks if IncrementMovePriorityAttr / ChangeMovePriorityAbAttr applies
+        //The game now considers priority
         const aPriority = new Utils.IntegerHolder(aMove.priority);
         const bPriority = new Utils.IntegerHolder(bMove.priority);
 
@@ -2331,31 +2346,18 @@ export class TurnStartPhase extends FieldPhase {
         applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority); //TODO: is the bang correct here?
         applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority); //TODO: is the bang correct here?
 
-        const battlerBypassSpeed = {};
-
-        //If the two moves compared here share the same base priority, the game then determines if the ability Quick Draw / Quick Claw can activate
-        //The ability Mycelium Might, however, disables Quick Claw if the holder uses a status move.
-        if (Math.ceil(aPriority.value) - Math.ceil(bPriority.value) === 0) {
-          this.scene.getField(true).filter(p => p.summonData).map(p => {
-            const canBypassSpeed = new Utils.BooleanHolder(true);
-            applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, canBypassSpeed);
-            const bypassSpeed = new Utils.BooleanHolder(false);
-            if (canBypassSpeed.value) {
-              applyAbAttrs(BypassSpeedChanceAbAttr, p, null, bypassSpeed);
-              this.scene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
-            }
-            battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
-          });
-
-          if (battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
+        if (aPriority.value !== bPriority.value) {
+          const bracketDifference = Math.ceil(aPriority.value) - Math.ceil(bPriority.value);
+          const hasSpeedDifference = battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value;
+          if (bracketDifference === 0 && hasSpeedDifference) {
             return battlerBypassSpeed[a].value ? -1 : 1;
           }
-        }
-
-        //If the two moves compared here do not share the same base priority, the game does not consider battlerBypassSpeed
-        if (aPriority.value !== bPriority.value) {
           return aPriority.value < bPriority.value ? 1 : -1;
         }
+      }
+
+      if (battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
+        return battlerBypassSpeed[a].value ? -1 : 1;
       }
 
       const aIndex = orderedTargets.indexOf(a);
