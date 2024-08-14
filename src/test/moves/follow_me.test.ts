@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle.js";
 import { Stat } from "#app/data/pokemon-stat";
 import { Abilities } from "#app/enums/abilities.js";
-import { CommandPhase, SelectTargetPhase, TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -42,22 +42,11 @@ describe("Moves - Follow Me", () => {
       await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
       const playerPokemon = game.scene.getPlayerField();
-      expect(playerPokemon.length).toBe(2);
-      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
-
-      const enemyPokemon = game.scene.getEnemyField();
-      expect(enemyPokemon.length).toBe(2);
-      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       const playerStartingHp = playerPokemon.map(p => p.hp);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
-      await game.phaseInterceptor.to(CommandPhase);
-
-      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-
-      game.doSelectTarget(BattlerIndex.ENEMY);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK), BattlerIndex.ENEMY);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       expect(playerPokemon[0].hp).toBeLessThan(playerStartingHp[0]);
@@ -71,18 +60,10 @@ describe("Moves - Follow Me", () => {
       await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
       const playerPokemon = game.scene.getPlayerField();
-      expect(playerPokemon.length).toBe(2);
-      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
-
-      const enemyPokemon = game.scene.getEnemyField();
-      expect(enemyPokemon.length).toBe(2);
-      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       const playerStartingHp = playerPokemon.map(p => p.hp);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
-      await game.phaseInterceptor.to(CommandPhase);
-
       game.doAttack(getMovePosition(game.scene, 1, Moves.FOLLOW_ME));
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
@@ -102,24 +83,12 @@ describe("Moves - Follow Me", () => {
 
       await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
-      const playerPokemon = game.scene.getPlayerField();
-      expect(playerPokemon.length).toBe(2);
-      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
-
       const enemyPokemon = game.scene.getEnemyField();
-      expect(enemyPokemon.length).toBe(2);
-      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY);
-      await game.phaseInterceptor.to(CommandPhase);
-
-      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY_2);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK), BattlerIndex.ENEMY);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK), BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       // If redirection was bypassed, both enemies should be damaged
@@ -136,24 +105,12 @@ describe("Moves - Follow Me", () => {
 
       await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
-      const playerPokemon = game.scene.getPlayerField();
-      expect(playerPokemon.length).toBe(2);
-      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
-
       const enemyPokemon = game.scene.getEnemyField();
-      expect(enemyPokemon.length).toBe(2);
-      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SNIPE_SHOT));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY);
-      await game.phaseInterceptor.to(CommandPhase);
-
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SNIPE_SHOT));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY_2);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SNIPE_SHOT), BattlerIndex.ENEMY);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SNIPE_SHOT), BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       // If redirection was bypassed, both enemies should be damaged

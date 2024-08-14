@@ -48,11 +48,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
       Species.ZEKROM
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, fusionFlare.id));
-    game.doSelectTarget(BattlerIndex.ENEMY);
-
-    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id));
-    game.doSelectTarget(BattlerIndex.ENEMY);
+    game.doAttack(getMovePosition(game.scene, 0, fusionFlare.id), BattlerIndex.ENEMY);
+    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id), BattlerIndex.ENEMY);
 
     // Force user party to act before enemy party
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
@@ -74,11 +71,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
       Species.ZEKROM
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id));
-    game.doSelectTarget(BattlerIndex.ENEMY);
-
-    game.doAttack(getMovePosition(game.scene, 0, fusionFlare.id));
-    game.doSelectTarget(BattlerIndex.ENEMY);
+    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id), BattlerIndex.ENEMY);
+    game.doAttack(getMovePosition(game.scene, 0, fusionFlare.id), BattlerIndex.ENEMY);
 
     // Force user party to act before enemy party
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
@@ -100,11 +94,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
       Species.ZEKROM
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, fusionFlare.id));
-    game.doSelectTarget(0);
-
-    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id));
-    game.doSelectTarget(0);
+    game.doAttack(getMovePosition(game.scene, 0, fusionFlare.id), BattlerIndex.PLAYER);
+    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id), BattlerIndex.PLAYER);
 
     // Force first enemy to act (and fail) in between party
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
@@ -132,11 +123,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
       Species.ZEKROM
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, fusionFlare.id));
-    game.doSelectTarget(BattlerIndex.ENEMY);
-
-    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id));
-    game.doSelectTarget(BattlerIndex.ENEMY);
+    game.doAttack(getMovePosition(game.scene, 0, fusionFlare.id), BattlerIndex.ENEMY);
+    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id), BattlerIndex.ENEMY);
 
     // Force first enemy to act in between party
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
@@ -162,11 +150,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
       Species.RESHIRAM
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id));
-    game.doSelectTarget(BattlerIndex.PLAYER_2);
-
-    game.doAttack(getMovePosition(game.scene, 0, fusionFlare.id));
-    game.doSelectTarget(BattlerIndex.PLAYER);
+    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id), BattlerIndex.PLAYER_2);
+    game.doAttack(getMovePosition(game.scene, 0, fusionFlare.id), BattlerIndex.PLAYER);
 
     // Force user party to act before enemy party
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
@@ -214,11 +199,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     vi.spyOn(party[1], "stats", "get").mockReturnValue(stats.player[0].map((val, i) => (i === Stat.SPDEF ? 250 : val)));
     vi.spyOn(party[1], "stats", "get").mockReturnValue(stats.player[1].map((val, i) => (i === Stat.SPDEF ? 250 : val)));
 
-    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id));
-    game.doSelectTarget(BattlerIndex.ENEMY);
-
-    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id));
-    game.doSelectTarget(BattlerIndex.ENEMY);
+    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id), BattlerIndex.ENEMY);
+    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id), BattlerIndex.ENEMY);
 
     // Force first enemy to act in between party
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
@@ -276,11 +258,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     vi.spyOn(party[1], "stats", "get").mockReturnValue(stats.player[0].map((val, i) => (i === Stat.SPDEF ? 250 : val)));
     vi.spyOn(party[1], "stats", "get").mockReturnValue(stats.player[1].map((val, i) => (i === Stat.SPDEF ? 250 : val)));
 
-    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id));
-    game.doSelectTarget(BattlerIndex.PLAYER_2);
-
-    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id));
-    game.doSelectTarget(BattlerIndex.PLAYER);
+    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id), BattlerIndex.PLAYER_2);
+    game.doAttack(getMovePosition(game.scene, 0, fusionBolt.id), BattlerIndex.PLAYER);
 
     // Force first enemy to act in between party
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);

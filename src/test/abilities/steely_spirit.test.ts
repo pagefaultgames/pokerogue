@@ -1,7 +1,7 @@
 import { allAbilities } from "#app/data/ability.js";
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { MoveEffectPhase, SelectTargetPhase } from "#app/phases.js";
+import { MoveEffectPhase } from "#app/phases.js";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -46,9 +46,7 @@ describe("Abilities - Steely Spirit", () => {
 
     expect(boostSource.hasAbility(Abilities.STEELY_SPIRIT)).toBe(true);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(enemyToCheck.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 0, moveToCheck), enemyToCheck.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -65,12 +63,8 @@ describe("Abilities - Steely Spirit", () => {
 
     expect(game.scene.getPlayerField().every(p => p.hasAbility(Abilities.STEELY_SPIRIT))).toBe(true);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(enemyToCheck.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, moveToCheck));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(enemyToCheck.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 0, moveToCheck), enemyToCheck.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 1, moveToCheck), enemyToCheck.getBattlerIndex());
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(allMoves[moveToCheck].calculateBattlePower).toHaveReturnedWith(ironHeadPower * Math.pow(steelySpiritMultiplier, 2));
@@ -89,9 +83,7 @@ describe("Abilities - Steely Spirit", () => {
     expect(boostSource.hasAbility(Abilities.STEELY_SPIRIT)).toBe(false);
     expect(boostSource.summonData.abilitySuppressed).toBe(true);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(enemyToCheck.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 0, moveToCheck), enemyToCheck.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(MoveEffectPhase);
 

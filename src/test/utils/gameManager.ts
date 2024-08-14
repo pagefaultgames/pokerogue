@@ -181,7 +181,7 @@ export default class GameManager {
    * Emulate a player attack
    * @param movePosition the index of the move in the pokemon's moveset array
    */
-  doAttack(movePosition: integer) {
+  doAttack(movePosition: integer, targetIndex?: BattlerIndex | null) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       this.scene.ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
@@ -189,14 +189,10 @@ export default class GameManager {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
-    // Confirm target selection if move is multi-target
-    this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
-      if (move.isMultiTarget()) {
-        handler.processInput(Button.ACTION);
-      }
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MovePhase) || this.isCurrentPhase(TurnEndPhase));
+    // Use `null` when it's necessary to call `doSelectTarget()` manually
+    if (targetIndex !== null) {
+      this.doSelectTarget(targetIndex ? targetIndex : BattlerIndex.ENEMY, movePosition);
+    }
   }
 
   /**
@@ -204,12 +200,15 @@ export default class GameManager {
    * usually called after {@linkcode doAttack} in a double battle.
    * @param {BattlerIndex} targetIndex the index of the attack target
    */
-  doSelectTarget(targetIndex: BattlerIndex) {
+  doSelectTarget(targetIndex: BattlerIndex, movePosition: integer) {
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.setCursor(targetIndex);
+      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
+      if (!move.isMultiTarget()) {
+        handler.setCursor(targetIndex);
+      }
       handler.processInput(Button.ACTION);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnStartPhase));
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MovePhase) || this.isCurrentPhase(TurnStartPhase) || this.isCurrentPhase(TurnEndPhase));
   }
 
   /** Faint all opponents currently on the field */

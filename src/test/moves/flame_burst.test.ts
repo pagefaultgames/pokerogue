@@ -2,7 +2,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
-import { SelectTargetPhase, TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#app/enums/abilities.js";
@@ -50,9 +50,7 @@ describe("Moves - Flame Burst", () => {
     await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
     const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(leftEnemy.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST), leftEnemy.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -66,9 +64,7 @@ describe("Moves - Flame Burst", () => {
     await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
     const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(leftEnemy.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST), leftEnemy.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -82,9 +78,7 @@ describe("Moves - Flame Burst", () => {
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[Abilities.FLASH_FIRE]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(leftEnemy.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST), leftEnemy.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -98,9 +92,7 @@ describe("Moves - Flame Burst", () => {
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[Abilities.MAGIC_GUARD]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(leftEnemy.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST), leftEnemy.getBattlerIndex());
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 

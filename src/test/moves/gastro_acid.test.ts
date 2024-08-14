@@ -46,10 +46,8 @@ describe("Moves - Gastro Acid", () => {
 
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GASTRO_ACID));
-    game.doSelectTarget(BattlerIndex.ENEMY);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.doSelectTarget(BattlerIndex.PLAYER_2);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.GASTRO_ACID), BattlerIndex.ENEMY);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH), BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
@@ -57,10 +55,8 @@ describe("Moves - Gastro Acid", () => {
     expect(enemyField[0].summonData.abilitySuppressed).toBe(true);
     expect(enemyField[1].summonData.abilitySuppressed).toBe(false);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
-    game.doSelectTarget(BattlerIndex.ENEMY);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
-    game.doSelectTarget(BattlerIndex.ENEMY_2);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN), BattlerIndex.ENEMY);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN), BattlerIndex.ENEMY_2);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 

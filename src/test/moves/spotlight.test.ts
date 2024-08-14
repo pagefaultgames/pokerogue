@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle.js";
 import { Stat } from "#app/data/pokemon-stat";
-import { CommandPhase, SelectTargetPhase, TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -40,24 +40,12 @@ describe("Moves - Spotlight", () => {
     async () => {
       await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
-      const playerPokemon = game.scene.getPlayerField();
-      expect(playerPokemon.length).toBe(2);
-      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
-
       const enemyPokemon = game.scene.getEnemyField();
-      expect(enemyPokemon.length).toBe(2);
-      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPOTLIGHT));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY);
-      await game.phaseInterceptor.to(CommandPhase);
-
-      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY_2);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPOTLIGHT), BattlerIndex.ENEMY);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK), BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       expect(enemyPokemon[0].hp).toBeLessThan(enemyStartingHp[0]);
@@ -72,13 +60,7 @@ describe("Moves - Spotlight", () => {
 
       await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
-      const playerPokemon = game.scene.getPlayerField();
-      expect(playerPokemon.length).toBe(2);
-      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
-
       const enemyPokemon = game.scene.getEnemyField();
-      expect(enemyPokemon.length).toBe(2);
-      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       /**
        * Spotlight will target the slower enemy. In this situation without Spotlight being used,
@@ -90,14 +72,8 @@ describe("Moves - Spotlight", () => {
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPOTLIGHT));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(spotTarget);
-      await game.phaseInterceptor.to(CommandPhase);
-
-      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(attackTarget);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPOTLIGHT), spotTarget);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK), attackTarget);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       expect(enemyPokemon[1].hp).toBeLessThan(enemyStartingHp[1]);

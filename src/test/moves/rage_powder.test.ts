@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle.js";
-import { CommandPhase, SelectTargetPhase, TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -52,14 +52,8 @@ describe("Moves - Rage Powder", () => {
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY);
-      await game.phaseInterceptor.to(CommandPhase);
-
-      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY_2);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK), BattlerIndex.ENEMY);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK), BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       // If redirection was bypassed, both enemies should be damaged
@@ -87,14 +81,8 @@ describe("Moves - Rage Powder", () => {
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY);
-      await game.phaseInterceptor.to(CommandPhase);
-
-      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY_2);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK), BattlerIndex.ENEMY);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK), BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       // If redirection was bypassed, both enemies should be damaged
