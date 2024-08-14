@@ -1034,7 +1034,7 @@ export class AddBattlerTagHeaderAttr extends MoveHeaderAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    return user.addTag(this.tagType);
+    return user.addTag(this.tagType, 0, move.id);
   }
 }
 
