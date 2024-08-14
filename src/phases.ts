@@ -2303,7 +2303,7 @@ export class TurnStartPhase extends FieldPhase {
       orderedTargets = orderedTargets.reverse();
     }
 
-    orderedTargets = orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : 0));
+    let moveOrder : BattlerIndex[] = orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : 0));
 
     // The creation of the battlerBypassSpeed object contains checks for the ability Quick Draw and the held item Quick Claw
     // The ability Mycelium Might disables Quick Claw's activation when using a status move
@@ -2323,8 +2323,8 @@ export class TurnStartPhase extends FieldPhase {
 
     // The function begins sorting orderedTargets based on command priority, move priority, and possible speed bypasses.
     // Non-FIGHT commands (SWITCH, BALL, RUN) have a higher command priority and will always occur before any FIGHT commands.
-    orderedTargets = orderedTargets.slice(0);
-    orderedTargets.sort((a, b) => {
+    moveOrder = moveOrder.slice(0);
+    moveOrder.sort((a, b) => {
       const aCommand = this.scene.currentBattle.turnCommands[a];
       const bCommand = this.scene.currentBattle.turnCommands[b];
 
@@ -2366,13 +2366,12 @@ export class TurnStartPhase extends FieldPhase {
         return battlerBypassSpeed[a].value ? -1 : 1;
       }
 
-      const aIndex = orderedTargets.indexOf(a);
-      const bIndex = orderedTargets.indexOf(b);
+      const aIndex = moveOrder.indexOf(a);
+      const bIndex = moveOrder.indexOf(b);
 
       return aIndex < bIndex ? -1 : aIndex > bIndex ? 1 : 0;
     });
-    // The function finally returns BattlerIndex[] object
-    return orderedTargets;
+    return moveOrder;
   }
 
   start() {
