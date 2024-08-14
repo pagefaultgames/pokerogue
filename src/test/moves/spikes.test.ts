@@ -39,7 +39,7 @@ describe("Moves - Spikes", () => {
     // player set spikes on the field and do splash for 3 turns
     // opponent do splash for 4 turns
     // nobody should take damage
-    await game.runToSummon([
+    await game.classicMode.runToSummon([
       Species.MIGHTYENA,
       Species.POOCHYENA,
     ]);
@@ -64,7 +64,7 @@ describe("Moves - Spikes", () => {
     // player set spikes on the field and switch back to back
     // opponent do splash for 2 turns
     // nobody should take damage
-    await game.runToSummon([
+    await game.classicMode.runToSummon([
       Species.MIGHTYENA,
       Species.POOCHYENA,
     ]);
@@ -87,7 +87,7 @@ describe("Moves - Spikes", () => {
     // player set spikes on the field and do splash for 3 turns
     // opponent do splash for 4 turns
     // nobody should take damage
-    await game.runToSummon([
+    await game.classicMode.runToSummon([
       Species.MIGHTYENA,
       Species.POOCHYENA,
     ]);
@@ -107,7 +107,7 @@ describe("Moves - Spikes", () => {
     // turn 1: player set spikes, opponent do splash
     // turn 2: player do splash, opponent switch pokemon
     // opponent pokemon should trigger spikes and lose HP
-    await game.runToSummon([
+    await game.classicMode.runToSummon([
       Species.MIGHTYENA,
       Species.POOCHYENA,
     ]);

@@ -39,7 +39,7 @@ describe("Abilities - Intimidate", () => {
   });
 
   it("single - wild with switch", async () => {
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -69,7 +69,7 @@ describe("Abilities - Intimidate", () => {
 
   it("single - boss should only trigger once then switch", async () => {
     game.override.startingWave(10);
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -98,7 +98,7 @@ describe("Abilities - Intimidate", () => {
 
   it("single - trainer should only trigger once with switch", async () => {
     game.override.startingWave(5);
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -128,7 +128,7 @@ describe("Abilities - Intimidate", () => {
   it("double - trainer should only trigger once per pokemon", async () => {
     game.override.battleType("double");
     game.override.startingWave(5);
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -154,7 +154,7 @@ describe("Abilities - Intimidate", () => {
   it("double - wild: should only trigger once per pokemon", async () => {
     game.override.battleType("double");
     game.override.startingWave(3);
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -180,7 +180,7 @@ describe("Abilities - Intimidate", () => {
   it("double - boss: should only trigger once per pokemon", async () => {
     game.override.battleType("double");
     game.override.startingWave(10);
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -334,7 +334,7 @@ describe("Abilities - Intimidate", () => {
   it("double - wild vs only 1 on player side", async () => {
     game.override.battleType("double");
     game.override.startingWave(3);
-    await game.runToSummon([Species.MIGHTYENA]);
+    await game.classicMode.runToSummon([Species.MIGHTYENA]);
     await game.phaseInterceptor.to(CommandPhase, false);
     const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);

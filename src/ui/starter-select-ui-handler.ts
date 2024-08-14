@@ -17,7 +17,7 @@ import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, g
 import { Type } from "../data/type";
 import { GameModes } from "../game-mode";
 import { SelectChallengePhase, TitlePhase } from "../phases";
-import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "../system/game-data";
+import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "../system/game-data";
 import { Tutorial, handleTutorial } from "../tutorial";
 import * as Utils from "../utils";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
@@ -118,16 +118,16 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 };
 
 const starterCandyCosts: { passive: integer, costReduction: [integer, integer], egg: integer }[] = [
-  { passive: 50, costReduction: [30, 75], egg: 35 }, // 1
-  { passive: 45, costReduction: [25, 60], egg: 35 }, // 2
-  { passive: 40, costReduction: [20, 50], egg: 35 }, // 3
-  { passive: 30, costReduction: [15, 40], egg: 30 }, // 4
-  { passive: 25, costReduction: [12, 35], egg: 25 }, // 5
-  { passive: 20, costReduction: [10, 30], egg: 20 }, // 6
-  { passive: 15, costReduction: [8, 20], egg: 15 },  // 7
-  { passive: 10, costReduction: [5, 15], egg: 10 },  // 8
-  { passive: 10, costReduction: [3, 10], egg: 10 },  // 9
-  { passive: 10, costReduction: [3, 10], egg: 10 },  // 10
+  { passive: 40, costReduction: [25, 60], egg: 30 }, // 1 Cost
+  { passive: 40, costReduction: [25, 60], egg: 30 }, // 2 Cost
+  { passive: 35, costReduction: [20, 50], egg: 25 }, // 3 Cost
+  { passive: 30, costReduction: [15, 40], egg: 20 }, // 4 Cost
+  { passive: 25, costReduction: [12, 35], egg: 18 }, // 5 Cost
+  { passive: 20, costReduction: [10, 30], egg: 15 }, // 6 Cost
+  { passive: 15, costReduction: [8, 20], egg: 12 },  // 7 Cost
+  { passive: 10, costReduction: [5, 15], egg: 8 },  // 8 Cost
+  { passive: 10, costReduction: [5, 15], egg: 8 },  // 9 Cost
+  { passive: 10, costReduction: [5, 15], egg: 8 },  // 10 Cost
 ];
 
 // Position of UI elements
@@ -3026,8 +3026,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const speciesMoveData = this.scene.gameData.starterData[species.speciesId].moveset;
         const moveData: StarterMoveset | null = speciesMoveData
           ? Array.isArray(speciesMoveData)
-            ? speciesMoveData as StarterMoveset
-            : (speciesMoveData as StarterFormMoveData)[formIndex!] // TODO: is this bang correct?
+            ? speciesMoveData
+            : speciesMoveData[formIndex!] // TODO: is this bang correct?
           : null;
         const availableStarterMoves = this.speciesStarterMoves.concat(speciesEggMoves.hasOwnProperty(species.speciesId) ? speciesEggMoves[species.speciesId].filter((_, em: integer) => this.scene.gameData.starterData[species.speciesId].eggMoves & (1 << em)) : []);
         this.starterMoveset = (moveData || (this.speciesStarterMoves.slice(0, 4) as StarterMoveset)).filter(m => availableStarterMoves.find(sm => sm === m)) as StarterMoveset;
@@ -3464,7 +3464,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  checkIconId(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, female, formIndex, shiny, variant) {
+  checkIconId(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, female: boolean, formIndex: number, shiny: boolean, variant: number) {
     if (icon.frame.name !== species.getIconId(female, formIndex, shiny, variant)) {
       console.log(`${species.name}'s variant icon does not exist. Replacing with default.`);
       icon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
