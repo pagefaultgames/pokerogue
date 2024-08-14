@@ -276,6 +276,11 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
 
+  /**
+   * Overrides the trainer AI's party
+   * @param species List of pokemon to generate in the party
+   * @returns this
+   */
   enemyParty(species: Species[]) {
     vi.spyOn(Overrides, "TRAINER_PARTY_OVERRIDE", "get").mockReturnValue(species);
     this.log("Enemy trainer party set to:", species);
@@ -283,12 +288,12 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Forces the AI to always switch out
+   * Forces the AI to always switch out, or reset to allow normal switching decisions
    * @returns this
    */
-  forceTrainerSwitches() {
-    vi.spyOn(Overrides, "TRAINER_ALWAYS_SWITCHES_OVERRIDE", "get").mockReturnValue(true);
-    this.log("Trainers will always switch out");
+  forceTrainerSwitches(newValue: boolean = true) {
+    vi.spyOn(Overrides, "TRAINER_ALWAYS_SWITCHES_OVERRIDE", "get").mockReturnValue(newValue);
+    this.log("Trainers will always switch out set to:", newValue);
     return this;
   }
 
