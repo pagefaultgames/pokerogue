@@ -4037,6 +4037,7 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
 }
 
 /**
+ * Changes the type of Tera Blast to match the user's tera type
  * @extends VariableMoveTypeAttr
  */
 export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
