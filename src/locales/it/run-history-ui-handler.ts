@@ -29,7 +29,7 @@ export const runHistory: SimpleTranslationEntries = {
   "viewHeldItems":"Oggetti equipaggiati ",
   "hallofFameText":"Benvenuto alla Sala d'Onore!",
   "viewHallOfFame":"Visualizza Sala d'Onore!",
-  "viewEndingSplash":"View ending art!"
+  "viewEndingSplash":"Visualizza arte finale!"
 } as const;
 
 // Mode Information found in game-mode.ts
