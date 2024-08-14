@@ -126,6 +126,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
   /** Sets and formats the text property for all {@linkcode Phaser.GameObjects.Text} in the flyoutText array */
   setText(highlight?: integer) {
+    highlight = undefined // Disable move highlighting - for now, it shows what the pokemon used last turn, which is confusing
     var e = this.battleScene.getEnemyField()
     console.log(this.moveInfo.map(v => v.move.name))
     for (let i = 0; i < this.flyoutText.length; i++) {

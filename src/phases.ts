@@ -186,9 +186,9 @@ function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean)
     }
   })
   if (func_output != "") {
-    return func_output
+    //return func_output
   }
-  return "Can't catch"
+  //return "Can't catch"
   var n = ""
   switch (rates2[0]) {
     case rates[0]:
@@ -215,7 +215,7 @@ function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean)
         return "No balls"
       }
   }
-  return n + " (FAIL)"
+  //return n + " (FAIL)"
   return n + Math.round(rates2[0] * 100) + "%";
 }
 export function parseSlotData(slotId: integer): SessionSaveData {
@@ -2901,7 +2901,7 @@ export class TurnInitPhase extends FieldPhase {
     LoggerTools.enemyPlan[2] = ""
     LoggerTools.enemyPlan[3] = ""
 
-    if (false) {
+    if (true) {
       this.scene.getField().forEach((pokemon, i) => {
         if (pokemon?.isActive()) {
           if (pokemon.isPlayer()) {
@@ -3302,8 +3302,8 @@ export class EnemyCommandPhase extends FieldPhase {
             console.log(enemyPokemon.name + " selects:", "Switch to " + this.scene.getEnemyParty()[index].name)
             battle.enemySwitchCounter++;
 
-            LoggerTools.enemyPlan[this.fieldIndex*2] = "Switching out"
-            LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + this.scene.getEnemyParty()[index].name
+            //LoggerTools.enemyPlan[this.fieldIndex*2] = "Switching out"
+            //LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + this.scene.getEnemyParty()[index].name
 
             enemyPokemon.flyout.setText()
 
@@ -3357,8 +3357,8 @@ export class EnemyCommandPhase extends FieldPhase {
     console.log(enemyPokemon.name + " selects:", mv.getName() + " → " + nextMove.targets.map((m) => targetLabels[m + 1]))
     this.scene.currentBattle.enemySwitchCounter = Math.max(this.scene.currentBattle.enemySwitchCounter - 1, 0);
 
-    LoggerTools.enemyPlan[this.fieldIndex*2] = mv.getName()
-    LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + nextMove.targets.map((m) => targetLabels[m + 1])
+    //LoggerTools.enemyPlan[this.fieldIndex*2] = mv.getName()
+    //LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + nextMove.targets.map((m) => targetLabels[m + 1])
     this.scene.arenaFlyout.updateFieldText()
 
     var txt = ["Turn: " + this.scene.currentBattle.turn]
@@ -3367,6 +3367,9 @@ export class EnemyCommandPhase extends FieldPhase {
         if (pk.isActive() && pk.hp > 0)
         txt = txt.concat(findBest(this.scene, pk))
       })
+    }
+    if (txt.length > 2) {
+      txt = ["Turn: " + this.scene.currentBattle.turn]
     }
 
     this.scene.arenaFlyout.updateFieldText()
@@ -6770,6 +6773,7 @@ const tierNames = [
  * @returns 
  */
 export function shinyCheckStep(scene: BattleScene, predictionCost: Utils.IntegerHolder, rerollOverride: integer, modifierOverride?: integer) {
+  var minLuck = -1
   var modifierPredictions = []
   const party = scene.getParty();
   regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER, rerollOverride);
@@ -6788,13 +6792,15 @@ export function shinyCheckStep(scene: BattleScene, predictionCost: Utils.Integer
           //lastTier = option.alternates[i]
           //console.log("Conflict found! (" + i + " luck, " + rerollOverride + " rolls, item " + (idx + 1) + ")")
           isOk = false // Shiny Luck affects this wave in some way
+          if (minLuck == -1 && i != 0)
+            minLuck = i
         }
       }
     }
   })
   modifierPredictions.push(typeOptions)
   predictionCost.value += (Math.min(Math.ceil(scene.currentBattle.waveIndex / 10) * 250 * Math.pow(2, rerollOverride), Number.MAX_SAFE_INTEGER))
-  return isOk;
+  return [isOk, minLuck];
 }
 /**
  * Simulates modifier rolls for as many rerolls as you can afford, checking to see if shiny luck will alter your results.
@@ -6802,6 +6808,7 @@ export function shinyCheckStep(scene: BattleScene, predictionCost: Utils.Integer
  * @returns `true` if no changes were detected, `false` otherwise
  */
 export function runShinyCheck(scene: BattleScene, mode: integer, wv?: integer) {
+  var minLuck: integer = -1
   if (mode == 1) {
     scene.emulateReset(wv)
   } else {
@@ -6809,8 +6816,18 @@ export function runShinyCheck(scene: BattleScene, mode: integer, wv?: integer) {
   }
   const predictionCost = new Utils.IntegerHolder(0)
   var isOk = true;
-  for (var i = 0; isOk && predictionCost.value < scene.money && i < 20; i++) {
-    isOk = isOk && shinyCheckStep(scene, predictionCost, i)
+  for (var i = 0; predictionCost.value < scene.money && i < 8; i++) {
+    var r = shinyCheckStep(scene, predictionCost, i)
+    isOk = isOk && (r[0] as boolean)
+    if (isOk || (r[1] as integer) === -1) {
+      // Do nothing
+    } else if (minLuck == -1) {
+      minLuck = (r[1] as integer)
+      console.log("Luck " + r[1] + " breaks")
+    } else {
+      console.log("Updated from " + minLuck + " to " + Math.min(minLuck, (r[1] as integer)))
+      minLuck = Math.min(minLuck, (r[1] as integer))
+    }
   }
   if (mode == 1) {
     scene.restoreSeed(wv)
@@ -6820,7 +6837,10 @@ export function runShinyCheck(scene: BattleScene, mode: integer, wv?: integer) {
   if (!isOk) {
     console.log("Conflict found!")
   }
-  return isOk
+  if (minLuck == 15) {
+    //minLuck = 0
+  }
+  return [isOk, minLuck]
 }
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;

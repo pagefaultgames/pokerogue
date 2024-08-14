@@ -131,6 +131,7 @@ export default class BattleScene extends SceneBase {
   public disableDailyShinies: boolean = true; // Disables shiny luck in Daily Runs to prevent affecting RNG
   public quickloadDisplayMode: string = "Dailies";
   public waveShinyFlag: boolean = false;
+  public waveShinyMinToBreak: integer = 0;
   public waveShinyChecked: boolean = false;
   public tempWaveSeed: string;
   public tempRngCounter: integer = 0;
@@ -1288,7 +1289,9 @@ export default class BattleScene extends SceneBase {
 
   doShinyCheck() {
     this.waveShinyChecked = true;
-    this.waveShinyFlag = runShinyCheck(this, 1, this.currentBattle.waveIndex);
+    var r = runShinyCheck(this, 1, this.currentBattle.waveIndex)
+    this.waveShinyFlag = r[0] as boolean;
+    this.waveShinyMinToBreak = r[1] as integer;
     if (this.waveShinyFlag) {
       this.arenaFlyout.display2()
     }
