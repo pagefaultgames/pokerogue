@@ -59,6 +59,6 @@ export const moveTriggers: SimpleTranslationEntries = {
   "copyType": "{{pokemonName}}は　{{targetPokemonName}}と\n同じタイプに　なった！",
   "suppressAbilities": "{{pokemonName}}の　とくせいが　きかなくなった！",
   "swapArenaTags": "{{pokemonName}}は\nおたがいの　ばのこうかを　いれかえた！",
-  "chillyReception": "{{pokemonName}} is preparing to tell a chillingly bad joke!",
+  "chillyReception": "{{pokemonName}}は\nさむい　ギャグを　かました！",
   "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
 } as const;
