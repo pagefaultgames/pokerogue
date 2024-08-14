@@ -23,9 +23,9 @@ export const challenges: TranslationEntries = {
     "desc_default": "你只能使用所選\n屬性的寶可夢"
   },
   "freshStart": {
-    "name": "Fresh Start",
-    "desc": "You can only use the original starters, and only as if you had just started PokéRogue.",
-    "value.0": "Off",
-    "value.1": "On",
+    "name": "初次嘗試",
+    "desc": "你只能使用禦三家，就像是你第一次玩寶可夢肉鴿一樣。",
+    "value.0": "關閉",
+    "value.1": "開啓",
   }
 } as const;

@@ -2,7 +2,7 @@ import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
 
 export const statusEffect: StatusEffectTranslationEntries = {
   none: {
-    name: "None",
+    name: "無",
     description: "",
     obtain: "",
     obtainSource: "",
@@ -11,57 +11,57 @@ export const statusEffect: StatusEffectTranslationEntries = {
     heal: ""
   },
   poison: {
-    name: "Poison",
-    description: "poisoning",
-    obtain: "{{pokemonNameWithAffix}}\nwas poisoned!",
-    obtainSource: "{{pokemonNameWithAffix}}\nwas poisoned by the {{sourceText}}!",
-    activation: "{{pokemonNameWithAffix}} is hurt\nby poison!",
-    overlap: "{{pokemonNameWithAffix}} is\nalready poisoned!",
-    heal: "{{pokemonNameWithAffix}} was\ncured of its poison!"
+    name: "中毒",
+    description: "中毒",
+    obtain: "{{pokemonNameWithAffix}}中毒了！",
+    obtainSource: "{{pokemonNameWithAffix}}因{{sourceText}}中毒了！",
+    activation: "{{pokemonNameWithAffix}}受到了毒的傷害！",
+    overlap: "{{pokemonNameWithAffix}}已經中毒了！",
+    heal: "{{pokemonNameWithAffix}}中的毒徹底清除了！"
   },
   toxic: {
-    name: "Toxic",
-    description: "poisoning",
-    obtain: "{{pokemonNameWithAffix}}\nwas badly poisoned!",
-    obtainSource: "{{pokemonNameWithAffix}}\nwas badly poisoned by the {{sourceText}}!",
-    activation: "{{pokemonNameWithAffix}} is hurt\nby poison!",
-    overlap: "{{pokemonNameWithAffix}} is\nalready poisoned!",
-    heal: "{{pokemonNameWithAffix}} was\ncured of its poison!"
+    name: "劇毒",
+    description: "中毒",
+    obtain: "{{pokemonNameWithAffix}}中了劇毒！",
+    obtainSource: "{{pokemonNameWithAffix}}因{{sourceText}}中了劇毒！",
+    activation: "{{pokemonNameWithAffix}}受到了毒的傷害！",
+    overlap: "{{pokemonNameWithAffix}}已經中毒了！",
+    heal: "{{pokemonNameWithAffix}}中的毒徹底清除了！"
   },
   paralysis: {
-    name: "Paralysis",
-    description: "paralysis",
-    obtain: "{{pokemonNameWithAffix}} was paralyzed,\nIt may be unable to move!",
-    obtainSource: "{{pokemonNameWithAffix}} was paralyzed by the {{sourceText}},\nIt may be unable to move!",
-    activation: "{{pokemonNameWithAffix}} is paralyzed!\nIt can't move!",
-    overlap: "{{pokemonNameWithAffix}} is\nalready paralyzed!",
-    heal: "{{pokemonNameWithAffix}} was\nhealed of paralysis!"
+    name: "麻痹",
+    description: "麻痹",
+    obtain: "{{pokemonNameWithAffix}}麻痹了，很難使出招式！",
+    obtainSource: "{{pokemonNameWithAffix}}被{{sourceText}}麻痹了，很難使出招式！",
+    activation: "{{pokemonNameWithAffix}}因身體麻痹而無法行動！",
+    overlap: "{{pokemonNameWithAffix}}已經麻痹了！",
+    heal: "{{pokemonNameWithAffix}}的麻痹治愈了！"
   },
   sleep: {
-    name: "Sleep",
-    description: "sleep",
-    obtain: "{{pokemonNameWithAffix}}\nfell asleep!",
-    obtainSource: "{{pokemonNameWithAffix}}\nfell asleep from the {{sourceText}}!",
-    activation: "{{pokemonNameWithAffix}} is fast asleep.",
-    overlap: "{{pokemonNameWithAffix}} is\nalready asleep!",
-    heal: "{{pokemonNameWithAffix}} woke up!"
+    name: "睡眠",
+    description: "睡眠",
+    obtain: "{{pokemonNameWithAffix}}睡著了！",
+    obtainSource: "{{pokemonNameWithAffix}}因{{sourceText}}睡著了！",
+    activation: "{{pokemonNameWithAffix}}正在呼呼大睡。",
+    overlap: "{{pokemonNameWithAffix}}已經睡著了！",
+    heal: "{{pokemonNameWithAffix}}醒了！"
   },
   freeze: {
-    name: "Freeze",
-    description: "freezing",
-    obtain: "{{pokemonNameWithAffix}}\nwas frozen solid!",
-    obtainSource: "{{pokemonNameWithAffix}}\nwas frozen solid by the {{sourceText}}!",
-    activation: "{{pokemonNameWithAffix}} is\nfrozen solid!",
-    overlap: "{{pokemonNameWithAffix}} is\nalready frozen!",
-    heal: "{{pokemonNameWithAffix}} was\ndefrosted!"
+    name: "冰凍",
+    description: "冰凍",
+    obtain: "{{pokemonNameWithAffix}}凍住了！",
+    obtainSource: "{{pokemonNameWithAffix}}因{{sourceText}}凍住了！",
+    activation: "{{pokemonNameWithAffix}}因凍住了而無法行動！",
+    overlap: "{{pokemonNameWithAffix}}已經凍住了！",
+    heal: "{{pokemonNameWithAffix}}治愈了冰凍狀態！"
   },
   burn: {
-    name: "Burn",
-    description: "burn",
-    obtain: "{{pokemonNameWithAffix}}\nwas burned!",
-    obtainSource: "{{pokemonNameWithAffix}}\nwas burned by the {{sourceText}}!",
-    activation: "{{pokemonNameWithAffix}} is hurt\nby its burn!",
-    overlap: "{{pokemonNameWithAffix}} is\nalready burned!",
-    heal: "{{pokemonNameWithAffix}} was\nhealed of its burn!"
+    name: "灼傷",
+    description: "灼傷",
+    obtain: "{{pokemonNameWithAffix}}被灼傷了！",
+    obtainSource: "{{pokemonNameWithAffix}}因{{sourceText}}被灼傷了！",
+    activation: "{{pokemonNameWithAffix}}受到了灼傷的傷害！",
+    overlap: "{{pokemonNameWithAffix}}已經被灼傷了！",
+    heal: "{{pokemonNameWithAffix}}的灼傷治愈了！"
   },
 } as const;

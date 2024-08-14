@@ -59,10 +59,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "一隻寶可夢的{{moveType}}系招式威力提升20%。",
     },
     PokemonLevelIncrementModifierType: {
-      description: "Increases a Pokémon's level by {{levels}}.",
+      description: "使一只寶可夢的等級提升{{levels}}級。",
     },
     AllPokemonLevelIncrementModifierType: {
-      description: "Increases all party members' level by {{levels}}.",
+      description: "使一只寶可夢的等級提升{{levels}}級。",
     },
     PokemonBaseStatBoosterModifierType: {
       description:
@@ -99,8 +99,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "教會一隻寶可夢{{moveName}}。",
     },
     TmModifierTypeWithInfo: {
-      name: "TM{{moveId}} - {{moveName}}",
-      description: "教會一隻寶可夢{{moveName}}\n(Hold C or Shift for more info)。",
+      name: "招式學習器\n{{moveId}} - {{moveName}}",
+      description: "教會一隻寶可夢{{moveName}}\n(按住C或者Shift查看更多信息)。",
     },
     EvolutionItemModifierType: { description: "使某些寶可夢進化。" },
     FormChangeItemModifierType: { description: "使某些寶可夢更改形態。" },
@@ -156,8 +156,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "受到技能攻擊傷害瀕死時，\n恢復該瀕死寶可夢的HP至1/2。",
     },
     WHITE_HERB: {
-      name: "White Herb",
-      description: "An item to be held by a Pokémon. It will restore any lowered stat in battle.",
+      name: "白色香草",
+      description: "當攜帶它的寶可夢能力降低時，\n僅能回到之前的狀態１次。",
     },
     ETHER: { name: "PP單項小補劑" },
     MAX_ETHER: { name: "PP單項全補劑" },

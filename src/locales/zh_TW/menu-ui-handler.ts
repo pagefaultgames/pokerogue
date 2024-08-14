@@ -19,11 +19,11 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "importData": "導入數據",
   "exportData": "導出數據",
   "consentPreferences": "同意偏好",
-  "linkDiscord": "Link Discord",
-  "unlinkDiscord": "Unlink Discord",
-  "linkGoogle": "Link Google",
-  "unlinkGoogle": "Unlink Google",
+  "linkDiscord": "關聯Discord",
+  "unlinkDiscord": "解除關聯Discord",
+  "linkGoogle": "關聯Google",
+  "unlinkGoogle": "解除關聯Google",
   "cancel": "取消",
   "losingProgressionWarning": "你將失去自戰鬥開始以來的所有進度。是否\n繼續？",
-  "noEggs": "You are not hatching\nany eggs at the moment!"
+  "noEggs": "當前沒有任何蛋\n正在孵化中！"
 } as const;

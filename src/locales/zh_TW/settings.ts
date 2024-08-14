@@ -96,7 +96,7 @@ export const settings: SimpleTranslationEntries = {
   "mute": "靜音",
   "controller": "控制器",
   "gamepadSupport": "手柄支持",
-  "showBgmBar": "Show Music Names",
+  "showBgmBar": "顯示音樂名稱",
   "moveTouchControls": "移動觸控控制",
-  "shopOverlayOpacity": "Shop Overlay Opacity"
+  "shopOverlayOpacity": "商店顯示不透明度"
 } as const;

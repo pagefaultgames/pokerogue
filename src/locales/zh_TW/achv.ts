@@ -170,8 +170,8 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "在經典模式中通關遊戲",
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
-    name: "Bring Your Child To Work Day",
-    description: "Beat the game in Classic Mode with at least one unevolved party member."
+    name: "帶孩上班",
+    description: "通關經典模式時隊伍中至少有一名未進化的寶可夢"
   },
 
   "MONO_GEN_ONE": {
@@ -269,8 +269,8 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "林克，醒醒！",
   },
   "FRESH_START": {
-    name: "First Try!",
-    description: "Complete the Fresh Start challenge."
+    name: "初次嘗試！",
+    description: "完成初次嘗試挑戰"
   }
 } as const;
 

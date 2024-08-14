@@ -7,7 +7,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "使用這些寶可夢開始嗎?",
-  "confirmExit": "Do you want to exit?",
+  "confirmExit": "確定要退出嗎？",
   "invalidParty": "此為無效隊伍!",
   "gen1": "I",
   "gen2": "II",
@@ -29,8 +29,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "toggleIVs": "查看個體值",
   "manageMoves": "管理技能",
   "manageNature": "管理性格",
-  "addToFavorites": "Add to Favorites",
-  "removeFromFavorites": "Remove from Favorites",
+  "addToFavorites": "添加到最愛",
+  "removeFromFavorites": "移出最愛",
   "useCandies": "使用糖果",
   "selectNature": "選擇性格",
   "selectMoveSwapOut": "選擇想要替換走的招式",

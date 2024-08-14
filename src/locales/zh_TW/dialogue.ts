@@ -384,427 +384,427 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "archer": {
     "encounter": {
-      1: "Before you go any further, let's see how you far against us, Team Rocket!",
-      2: "I have received reports that your skills are not insignificant. Let's see if they are true.",
-      3: "I am Archer, an Admin of Team Rocket. And I do not go easy on enemies of our organization."
+      1: "在你繼續前進之前，\n讓我看看你要如何和對付火箭隊。",
+      2: "我收到報告說你的實力與衆不同，\n就讓我來看看這是否屬實吧。",
+      3: "我是阿波羅，火箭對的幹部。\n我不會對組織的敵人手軟。"
     },
     "victory": {
-      1: "What a blunder!",
-      2: "With my current skills, I was not up to the task after all.",
-      3: "F-forgive me, Giovanni... For me to be defeated by a mere trainer..."
+      1: "大失誤……",
+      2: "以我現在的實力，無法勝任我的任務……",
+      3: "原……諒我，坂木。\n我竟被一名訓練師打敗了。."
     },
   },
   "ariana": {
     "encounter": {
-      1: `Hold it right there! We can't someone on the loose." 
-          $It's harmful to Team Rocket's pride, you see.`,
-      2: `I don't know or care if what I'm doing is right or wrong...
-          $I just put my faith in Giovanni and do as I am told`,
-      3: "Your trip ends here. I'm going to take you down!"
+      1: `站住！我們可不能放過你！" 
+          $這會損傷火箭對的名譽，明白嗎？`,
+      2: `我不知道也不想知道我的所作所爲正確與否…
+          $我只要遵從坂木老大的指令就可以了！`,
+      3: "你的旅途到此爲止了，我會把你狠狠扳倒！"
     },
     "victory": {
-      1: `Tch, you really are strong. It's too bad. 
-          $If you were to join Team Rocket, you could become an Executive.`,
-      2: "I... I'm shattered...",
-      3: "Aaaieeeee! This can't be happening! I fought hard, but I still lost…"
+      1: `切，你好強，可惡。
+          $如果你加入火箭隊，肯定能成爲幹部。`,
+      2: "好……好崩潰……",
+      3: "嗯啊啊！這不可能！我使出全力還是輸了！"
     },
   },
   "proton": {
     "encounter": {
-      1: "What do you want? If you interrupt our work, don't expect any mercy!",
-      2: `What do we have here? I am often labeled as the scariest and cruelest guy in Team Rocket…
-         $I strongly urge you not to interfere with our business!`,
-      3: "I am Proton, an Admin of Team Rocket. I am here to put an end to your meddling!"
+      1: "你想幹什麽？如果你要妨礙我們的事業，我可不會手下留情。",
+      2: `你在這幹什麽？別人總說我是火箭隊裏最殘忍和恐怖的人…
+         $我強烈推薦你別來礙我們的事！`,
+      3: "我是蘭斯，火箭隊的幹部。就讓來掃除你對我們的阻撓。"
     },
     "victory": {
-      1: "The fortress came down!",
-      2: "You may have won this time… But all you did was make Team Rocket's wrath grow…",
-      3: "I am defeated… But I will not forget this!"
+      1: "我的防線崩潰了……",
+      2: "你雖然這次贏了，但是這只是讓火箭隊的怒火繼續燃燒！",
+      3: "我輸了…但是我不會忘記的。"
     },
   },
 
   "petrel": {
     "encounter": {
-      1: `Muhahaha, we've been waiting for you. Me? You don't know who I am? It is me, Giovanni.
-          $The majestic Giovanni himself! Wahahaha! …Huh? I don't sound anything like Giovanni?
-          $I don't even look like Giovanni? How come? I've worked so hard to mimic him!`,
-      2: "I am Petrel, an Admin of Team Rocket. I will not allow you to interfere with our plans!",
-      3: "Rocket Executive Petrel will deal with this intruder!"
+      1: `哇哈哈哈，我們一直在等你。我？你不知道我是誰？是我，坂木啊。
+          $偉大的坂木大人本人！哇哈哈哈！…啊？我聽起來不像坂木嗎？
+          $我連看起來都不像？怎麽會呢，我可認真的變裝了！`,
+      2: "我是拉姆達，火箭隊的幹部。我不會允許你幹涉我們的計劃！",
+      3: "火箭隊幹部拉姆達來會會這個入侵者！"
     },
     "victory": {
-      1: "OK, OK. I'll tell you where he is.",
-      2: "I… I couldn't do a thing… Giovanni, please forgive me…",
-      3: "No, I can't let this affect me. I have to inform the others…"
+      1: "好好好，我會說他在哪的",
+      2: "我……我什麽也做不了……坂木，請原諒我……",
+      3: "不，我不能慌了神，必須通知其他人…"
     },
   },
   "tabitha": {
     "encounter": {
-      1: "Hehehe! So you've come all the way here! But you're too late!",
-      2: `Hehehe... Got here already, did you? We underestimated you! But this is it! 
-          $I'm a cut above the Grunts you've seen so far. I'm not stalling for time.
-          $I'm going to pulverize you!`,
-      3: "I'm going to give you a little taste of pain! Resign yourself to it!"
+      1: "呵呵呵！原來你都一路來到這裏了！但你來晚了！",
+      2: `呵呵呵……你終于來了？我們小瞧你了，沒不過事！ 
+          $我比你見過的所有隊員都要厲害，我可不會拖延時間。
+          $我會把你碾碎！`,
+      3: "我要讓你嘗嘗痛苦的滋味！認命吧！"
     },
     "victory": {
-      1: `Hehehe! You might have beaten me, but you don't stand a chance against the Boss!
-          $If you get lost now, you won't have to face a sound whipping!`,
-      2: "Hehehe... So, I lost, too...",
-      3: "Ahya! How could this be? For an Admin like me to lose to some random trainer..."
+      1: `呵呵呵！雖然你打敗了我，但你根本沒機會打敗老大！
+          $如果你現在輸了，你就不用面對那樣嚴厲的鞭笞了！`,
+      2: "呵呵呵……所以，我也輸了……",
+      3: "啊哈！怎麽會這樣？像我這樣的幹部\n竟然輸給了一個隨處可見的訓練師……"
     },
   },
   "courtney": {
     "encounter": {
-      1: "The thing...The thing that you hold...That is what... That's what we of Team Magma seek...",
-      2: "... Well then...Deleting...",
-      3: "...Ha. ...Analyzing... ...Hah♪"
+      1: "那個東西……你所擁有的那個東西……\n那就是……那就是我們熔岩隊所尋找的東西……",
+      2: "……那麽……刪除記憶……",
+      3: "……哈……分析中……啊哈♪"
     },
     "victory": {
-      1: "... ...Change...the world.",
-      2: `As anticipated. Unanticipated. You. Target lock...completed.
-         $Commencing...experiment. You. Forever. Aha... ♪`,
-      3: "...Again? That's unanticipated. ...I knew it. You...are interesting! ...Haha. ♪"
+      1: "……改變……世界。",
+      2: `如預期。出乎意料。目標鎖定…鎖定你……完成。
+         $開始……實驗。材料是你…永遠…啊哈……♪`,
+      3: "……又來了？出乎意料……我就知道。你……很有趣！……啊哈哈！♪"
     },
   },
   "shelly": {
     "encounter": {
-      1: `Ahahahaha! You're going to meddle in Team Aqua's affairs?
-         $You're either absolutely fearless, simply ignorant, or both!
-         $You're so cute, you're disgusting! I'll put you down`,
-      2: "What's this? Who's this spoiled brat?",
-      3: "Cool your jets. Be patient. I'll crush you shortly."
+      1: `啊哈哈哈哈！你要插手海洋隊的事？
+         $你要麽是絕對無畏，要麽就是無知，或者兩者兼有！
+         $你太可愛了，太惡心了！我要把你打倒！`,
+      2: "怎麽回事？這個小鬼頭是誰？",
+      3: "冷靜點，耐心點。我很快就會把你擊潰。"
     },
     "victory": {
-      1: `Ahahahaha! We got meddled with unexpectedly! We're out of options.
-         $We'll have to pull out. But this isn't the last you'll see of Team Aqua!
-         $We have other plans! Don't you forget it!`,
-      2: "Ahhh?! Did I go too easy on you?!",
-      3: `Uh. Are you telling me you've upped your game even more during the fight?
-         $You're a brat with a bright future… My Pokémon and I don't have any strength left to fight…
-         $Go on… Go and be destroyed by Archie.`
+      1: `啊哈哈哈哈！我們意外地被人幹擾了！我們別無選擇。
+         $不得不撤退了，但這會不是你最後一次面對海洋隊！
+         $我們還有其他計劃！別忘了！`,
+      2: "啊？！我是不是對你太溫柔了？！",
+      3: `唉…難道在對戰中你也一刻不停地在變強嗎？
+         $你真是個前途光明的小鬼……\n我和我的寶可夢已經沒有任何力量去戰鬥了……
+         $繼續吧……准備去被水梧桐摧毀吧。`
     },
   },
   "matt": {
     "encounter": {
-      1: "Hoohahaha! What, you got a screw loose or something? Look at you, little Makuhita person!",
-      2: "Oho! You! You're that funny kid!",
-      3: "What are you doing here? Did you follow us?"
+      1: "嚯！哈哈哈！怎麽，你是不是腦子不正常了？\n看看你，像個幕下力士！",
+      2: "“哦吼！你！你真是個有趣的孩子！",
+      3: "你在這裏幹什麽？你跟蹤我們了嗎？"
     },
     "victory": {
-      1: "All right then, until the Boss has time for you, I'll be your opponent!",
-      2: `I can feel it! I can feel it, all right! The strength coming offa you!
-          $More! I still want more! But looks like we're outta time...`,
-      3: "That was fun! I knew you'd show me a good time! I look forward to facing you again someday!"
+      1: "好吧，在老大有時間對付你之前，我來成爲你的對手！",
+      2: `我能感覺到！我感覺到了，沒錯！你身上散發出的力量！
+          $更多！還想要更多！但看起來我們沒時間了……`,
+      3: "真有趣！我就知道你會讓我盡興的！\n我期待有一天再次面對你！"
     },
   },
   "mars": {
     "encounter": {
-      1: "I'm Mars, one of Team Galactic's top Commanders.",
-      2: "Team Galactic's vision for the future is unwavering. Opposition will be crushed without mercy!",
-      3: "Feeling nervous? You should be!"
+      1: "我是夥星，銀河隊的頂級幹部之一。",
+      2: "銀河隊對未來的願景堅定不移。\n反對者將被無情地粉碎！",
+      3: "“緊張嗎？你是該感到緊張了！"
     },
     "victory": {
-      1: "This can't be happening! How did I lose?!",
-      2: "You have some skill, I'll give you that.",
-      3: "Defeated... This was a costly mistake."
+      1: "這不可能！我怎麽會輸？！",
+      2: "你很有本事，我承認。",
+      3: "輸了……犯了一個代價高昂的大錯。"
     }
   },
   "jupiter": {
     "encounter": {
-      1: "Jupiter, Commander of Team Galactic, at your service.",
-      2: "Resistance is futile. Team Galactic will prevail!",
-      3: "You're trembling... scared already?"
+      1: "歲星，銀河隊幹部，爲您效勞。",
+      2: "抵抗是徒勞的。銀河隊必將獲勝！",
+      3: "你在發抖啊……已經害怕了嗎？"
     },
     "victory": {
-      1: "No way... I lost?!",
-      2: "Impressive, you've got guts!",
-      3: "Losing like this... How embarrassing."
+      1: "不會吧……我輸了？！",
+      2: "厲害，你膽子真大！",
+      3: "輸成這樣……真丟人。"
     }
   },
   "saturn": {
     "encounter": {
-      1: "I am Saturn, Commander of Team Galactic.",
-      2: "Our mission is absolute. Any hindrance will be obliterated!",
-      3: "Is that fear I see in your eyes?"
+      1: "我是鎮星，銀河隊的幹部。",
+      2: "我們的使命是絕對的，任何阻礙都將被消滅！",
+      3: "我從你的眼中看到的是恐懼嗎？"
     },
     "victory": {
-      1: "Impossible... Defeated by you?!",
-      2: "You have proven yourself a worthy adversary.",
-      3: "Bestowed in defeat... This is unacceptable."
+      1: "不可能……被你打敗了？！",
+      2: "你證明了自己是一個值得尊敬的對手。",
+      3: "失敗的苦澀……難以接受……。"
     }},
   "zinzolin": {
     "encounter": {
-      1: "You could become a threat to Team Plasma, so we will eliminate you here and now!",
-      2: "Oh, for crying out loud... I didn't expect to have to battle in this freezing cold!",
-      3: "You're an impressive Trainer to have made it this far. But it ends here."
+      1: "你可能會對等離子隊構成威脅，所以我們現在就消滅你！",
+      2: "哦，天哪……我沒想到要在這麽冷的天氣裏戰鬥！",
+      3: "能走到今天這一步，你真是個了不起的訓練師。\n但一切到此結束。"
     },
     "victory": {
-      1: "Ghetsis... I have failed you...",
-      2: "It's bitter cold. I'm shivering. I'm suffering. Yet, I still stand victorious.",
-      3: "Hmph. You're a smarter Trainer than I expected, but not smart enough."
+      1: "魁奇思大人……我讓你失望了……",
+      2: "好冷，我不僅發抖，還要遭罪。",
+      3: "哼。你比我想象的要聰明，但還不夠。"
     }
   },
   "rood": {
     "encounter": {
-      1: "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
-      2: "Oh, this icy wind... I never thought I'd have to fight here!",
-      3: "You are a remarkable Trainer to have made it this far. But this is where it ends."
+      1: "你對等離子隊是個威脅。我們現在不能讓你離開這裏！",
+      2: "哦，這寒風……我從沒想過我必須在這裏戰鬥！",
+      3: "能走到今天這一步，你是一位了不起的訓練師，但這就是你的結局了。"
     },
     "victory": {
-      1: "Ghetsis... I have failed my mission...",
-      2: "The cold is piercing. I'm shivering. I'm suffering. Yet, I have triumphed.",
-      3: "Hm. You are a talented Trainer, but unfortunately not talented enough."
+      1: "魁奇思大人……我的任務失敗了",
+      2: "寒風刺骨。我瑟瑟發抖。我痛苦不堪。",
+      3: "嗯，你是很有才。但是要打敗等離子隊還不夠……！"
     }
   },
   "xerosic": {
     "encounter": {
-      1: "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
-      2: "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
-      3: "I've been waiting for you! I need to do a little research on you! Come, let us begin!"
+      1: "啊哈哈！我很樂意。\n來吧，小訓練師！讓我們看看你有什麽本事！",
+      2: "嗯……你比看上去更強大。\n我想知道你體內有多少能量。",
+      3: "我一直在等你！我需要對你做一點研究！\n來吧，我們開始吧！"
     },
     "victory": {
-      1: "Ah, you're quite strong. Oh yes—very strong, indeed.",
-      2: "Ding-ding-ding! You did it! To the victor go the spoils!",
-      3: "Wonderful! Amazing! You have tremendous skill and bravery!"
+      1: "啊，你好強大啊……嗯……確實非常強大。",
+      2: "叮叮叮！你成功了！\n戰利品歸勝利者！",
+      3: "太棒了！太神奇了！\n你的技巧和勇氣都無與倫比！"
     }
   },
   "bryony": {
     "encounter": {
-      1: "I am Bryony, and it would be my pleasure to battle you. Show me what you've got.",
-      2: "Impressive... You're more powerful than you appear. Let's see the true extent of your energy.",
-      3: "I've anticipated your arrival. It's time for a little test. Shall we begin?"
+      1: "我是芭拉，能與你一戰是我的榮幸。\n讓我看看你的實力。",
+      2: "令人印象深刻……你比你看上去的還要強大。\n讓我們看看你真正的實力。",
+      3: "我預料到了你的到來。\n是時候進行一個小實驗了，我們開始吧？"
     },
     "victory": {
-      1: "You're quite strong. Oh yes—very strong, indeed.",
-      2: "Ding-ding-ding! You've done well. Victory is yours.",
-      3: "Wonderful! Remarkable! Your skill and bravery are commendable."
+      1: "你很強大。哦，嗯嗯！確實非常強大",
+      2: "叮叮叮！你做得很好。勝利屬于你。",
+      3: "太棒了！了不起！你的技巧和勇氣值得稱贊。"
     }
   },
   "rocket_grunt": {
     "encounter": {
-      1: "Prepare for trouble!",
-      2: "We're pulling a big job here! Get lost, kid!",
-      3: "Hand over your Pokémon, or face the wrath of Team Rocket!",
-      4: "You're about to experience the true terror of Team Rocket!",
-      5: "Hey, kid! Me am a Team Rocket member kind of guy!" //Use of wrong grammar is deliberate
+      1: "你要有麻煩了！",
+      2: "我們要幹大事了！\n閃一邊去，小子！",
+      3: "把你的寶可夢交過來，\n不然就嘗嘗火箭隊的厲害！",
+      4: "你准備好感受火箭隊真正的恐怖了嗎！",
+      5: "喂，小子！俺可是火箭隊滴！" //Use of wrong grammar is deliberate
     },
     "victory": {
-      1: "Team Rocket blasting off again!",
-      2: "Oh no! I dropped the Lift Key!",
-      3: "I blew it!",
-      4: "My associates won't stand for this!",
-      5: "You say what? Team Rocket bye-bye a go-go? Broken it is says you?" //Use of wrong grammar is deliberate.
+      1: "好討厭的感覺啊！",
+      2: "哎呀！不小心丟掉電梯鑰匙啦！",
+      3: "我搞砸了。",
+      4: "我的夥計們不會放過你……！",
+      5: "你說啥？俺們火箭隊要玩完了？" //Use of wrong grammar is deliberate.
     },
   },
   "magma_grunt": {
     "encounter": {
-      1: "If you get in the way of Team Magma, don’t expect any mercy!",
-      2: "You'd better not interfere with our plans! We're making the world a better place!",
-      3: "You're in the way! Team Magma has no time for kids like you!",
-      4: "I hope you brought marshmallows because things are about to heat up!",
-      5: "We're going to use the power of a volcano! It's gonna be... explosive! Get it? Heh heh!"
+      1: "如果你擋在熔岩隊路上，那就別指望我們手下留情！",
+      2: "你最好別妨礙我們的計劃！\n我們會讓世界變得更美好！",
+      3: "少礙事！熔岩隊沒時間理你這樣的小孩！",
+      4: "你有棉花糖沒？我來給你好好烤烤！",
+      5: "我們會利用火山的力量！\n它馬上要…爆發了！懂嗎？嘿嘿嘿……"
     },
     "victory": {
-      1: "Huh? I lost?!",
-      2: "I can't believe I lost! I even skipped lunch for this",
-      3: "No way! You're just a kid!",
-      4: "Urrrgh... I should've ducked into our hideout right away...",
-      5: "You beat me... Do you think the boss will dock my pay for this?"
+      1: "哈？我輸了？！",
+      2: "我怎麽會輸！我爲了訓練飯都不吃了！",
+      3: "不會吧，不就是一個小孩！",
+      4: "唉啊…我得趕快逃回基地…",
+      5: "你打敗我了…你覺得老大會扣我工資嗎？"
     },
   },
   "aqua_grunt": {
     "encounter": {
-      1: "No one who crosses Team Aqua gets any mercy, not even kids!",
-      2: "Grrr... You've got some nerve meddling with Team Aqua!",
-      3: "You're about to get soaked! And not just from my water Pokémon!",
-      4: "We, Team Aqua, exist for the good of all!",
-      5: "Prepare to be washed away by the tides of my... uh, Pokémon! Yeah, my Pokémon!"
+      1: "即使是小孩，如果要和海洋隊作對，也別指望我們手下留情！",
+      2: "嚯…你好大的膽子，敢惹我們海洋隊！",
+      3: "不僅是我的水系寶可夢，整片大海即將淹沒你！",
+      4: "我們海洋隊，是爲了大義！",
+      5: "准備好被我的…唉…我寶可夢的海流沖走吧！"
     },
     "victory": {
-      1: "You're kidding me!",
-      2: "Arrgh, I didn't count on being meddled with by some meddling kid!",
-      3: "I lost?! Guess I'll have to swim back to the hideout now...",
-      4: "Oh, man, what a disaster... The boss is going to be furious...",
-      5: "You beat me... Do you think the boss will make me walk the plank for this?"
+      1: "你在開玩笑吧？",
+      2: "害，沒想到這種小屁孩也要管我的閑事！",
+      3: "我輸了？看來我得自己遊回基地了。",
+      4: "不是吧，怎麽會，老大要生氣了……",
+      5: "你打敗了我…老大不會要讓我上跳板吧……"
     },
   },
   "galactic_grunt": {
     "encounter": {
-      1: "Don't mess with Team Galactic!",
-      2: "Witness the power of our technology and the future we envision!",
-      3: "In the name of Team Galactic, I'll eliminate anyone who stands in our way!",
-      4: "Get ready to lose!",
-      5: "Hope you're ready for a cosmic beatdown!"
+      1: "別惹銀河隊！",
+      2: "見識下我們的科技，和我們所設想的未來！",
+      3: "以銀河隊之名，我會掃清一切擋路的人！",
+      4: "准備輸的一敗塗地吧！",
+      5: "希望你做好被宇宙力量碾壓的准備。"
     },
     "victory": {
-      1: "Shut down...",
-      2: "This setback means nothing in the grand scheme.",
-      3: "Our plans are bigger than this defeat.",
-      4: "How?!",
-      5: "Note to self: practice Pokémon battling, ASAP."
+      1: "停機了…",
+      2: "從長遠來看，這次的挫折不用在意。",
+      3: "小失敗不會影響我們的宏圖偉業！",
+      4: "咋回事！？",
+      5: "個人記錄：提升對戰水平，優先級，高……"
     },
   },
   "plasma_grunt": {
     "encounter": {
-      1: "We won't tolerate people who have different ideas!",
-      2: "If I win against you, release your Pokémon!",
-      3: "If you get in the way of Team Plasma, I'll take care of you!",
-      4: "Team Plasma will liberate Pokémon from selfish humans like you!",
-      5: "Our hairstyles are out of this world... but our battling skills? You'll find out soon enough."
+      1: "異端不共戴天！",
+      2: "要是我贏了你！就把你的寶可夢放生！",
+      3: "要是敢和等離子隊作對，我來好好關照你！",
+      4: "等離子隊會從你們這種自私的人手裏解放寶可夢！",
+      5: "我們的發型帥的一批，而我們的戰鬥水平呢，\n馬上讓你見識一下。"
     },
     "victory": {
-      1: "Plasmaaaaaaaaa!",
-      2: "How could I lose...",
-      3: "...What a weak Pokémon, I'll just have to go steal some better ones!",
-      4: "Great plans are always interrupted.",
-      5: "This is bad... Badbadbadbadbadbadbad! Bad for Team Plasma! Or Plasbad, for short!"
+      1: "等離子子子子子子！",
+      2: "我怎麽會輸……",
+      3: "…沒用的家夥！我得去偷個厲害點的寶可夢！",
+      4: "偉大的事業總會被人阻撓…",
+      5: "爛完了…爛爛爛爛爛！等離子隊爛了！\n說短點就是，等爛子隊！"
     },
   },
   "flare_grunt": {
     "encounter": {
-      1: "Your Pokémon are no match for the elegance of Team Flare.",
-      2: "Hope you brought your sunglasses, because things are about to get bright!",
-      3: "Team Flare will cleanse the world of imperfection!",
-      4: "Prepare to face the brilliance of Team Flare!",
-      5: "Fashion is most important to us!"
+      1: "你的寶可夢無法與閃焰隊的優雅相提並論",
+      2: "帶個墨鏡吧，別被我閃瞎狗眼了！",
+      3: "閃焰隊將淨化這個不完美的世界！",
+      4: "准備面對閃焰隊的美！",
+      5: "時尚對我們來說最重要！"
     },
     "victory": {
-      1: "The future doesn't look bright for me.",
-      2: "Perhaps there's more to battling than I thought. Back to the drawing board.",
-      3: "Gahh?! I lost?!",
-      4: "Even in defeat, Team Flare's elegance shines through.",
-      5: "You may have beaten me, but when I lose, I go out in style!"
+      1: "我的未來看起來並不明亮…",
+      2: "這戰鬥比我想的更難搞，我得重頭訓練了。",
+      3: "啊啊？我輸了？！",
+      4: "就算是在失敗當中，閃焰隊依舊優雅動人！",
+      5: "你雖然打敗了我，但是我輸的也這麽潇灑！"
     },
   },
   "rocket_boss_giovanni_1": {
     "encounter": {
-      1: "So! I must say, I am impressed you got here!"
+      1: "我不得不說，能來到這裏，你的確很不簡單！"
     },
     "victory": {
-      1: "WHAT! This cannot be!"
+      1: "什麽！這不可能！"
     },
     "defeat": {
-      1: "Mark my words. Not being able to measure your own strength shows that you are still a child."
+      1: "記住我的話。無法衡量自己的力量，說明你還是個孩子。"
     }
   },
   "rocket_boss_giovanni_2": {
     "encounter": {
-      1: "My old associates need me... Are you going to get in my way?"
+      1: "我的老夥計還需要我…你要擋我的路嗎？"
     },
     "victory": {
-      1: "How is this possible...?\nThe precious dream of Team Rocket has become little more than an illusion..."
+      1: "這怎麽可能…？\n火箭隊的夢想…就這麽成爲泡影了…"
     },
     "defeat": {
-      1: "Team Rocket will be reborn again, and I will rule the world!"
+      1: "火箭隊會重生，而我會統治世界！"
     }
   },
   "magma_boss_maxie_1": {
     "encounter": {
-      1: "I will bury you by my own hand. I hope you appreciate this honor!"
+      1: "我會親手埋葬你，希望你能喜歡！"
     },
     "victory": {
-      1: "Ugh! You are... quite capable...\nI fell behind, but only by an inch..."
+      1: "啊！你…很厲害…我落後了…一點…"
     },
     "defeat": {
-      1: "Team Magma will prevail!"
+      1: "熔岩隊必勝！"
     }
   },
   "magma_boss_maxie_2": {
     "encounter": {
-      1: "You are the final obstacle remaining between me and my goals.\nBrace yourself for my ultimate attack! Fuhahaha!"
+      1: "你是我實現目標最後的障礙。\n准備好迎接我最強的一擊吧！哈哈哈哈！"
     },
     "victory": {
-      1: "This... This is not.. Ngh..."
+      1: "這…這不…唉"
     },
     "defeat": {
-      1: "And now... I will transform this planet to a land ideal for humanity."
+      1: "現在…我要把這個星球變成人類的理想國度！"
     }
   },
   "aqua_boss_archie_1": {
     "encounter": {
-      1: "I'm leader of Team Aqua, so I'm afraid it's the rope's end for you."
+      1: "我是海洋隊的老大，所以，你的路大概走到頭了。"
     },
     "victory": {
-      1: "Let's meet again somewhere. I'll be sure to remember that face."
+      1: "下次再見吧。我會記住你的臉的。"
     },
     "defeat": {
-      1: "Brilliant! My team won't hold back now!"
+      1: "天才！我的隊伍不會再退縮了！"
     }
   },
   "aqua_boss_archie_2": {
     "encounter": {
-      1: "I've been waiting so long for this day to come.\nThis is the true power of my team!"
+      1: "我等這一天很久了。\n這就是我的真實力量！"
     },
     "victory": {
-      1: "Like I figured..."
+      1: "果然很強……啊！"
     },
     "defeat": {
-      1: "I'll return everything in this world to its original, pure state!!"
+      1: "我會讓這世界上的一切回歸到最初的純淨狀態！！"
     }
   },
   "galactic_boss_cyrus_1": {
     "encounter": {
-      1: "You were compelled to come here by such vacuous sentimentality\nI will make you regret paying heed to your heart!"
+      1: "但在這之前，讓我見識見識你那敢向銀河隊叫板的實力吧。"
     },
     "victory": {
-      1: "Interesting. And quite curious."
+      1: "有意思，簡直太有意思了。"
     },
     "defeat": {
-      1: "I will create my new world..."
+      1: "我要創造我的新世界…"
     }
   },
   "galactic_boss_cyrus_2": {
     "encounter": {
-      1: "So we meet again. It seems our fates have become intertwined.\nBut here and now, I will finally break that bond!"
+      1: "是啊，我和你還真是有緣呢。\n不過，這段孽緣…就讓我在此斬斷吧！"
     },
     "victory": {
-      1: "How? How? HOW?!"
+      1: "怎麽可能！怎麽可能！怎麽可能！"
     },
     "defeat": {
-      1: "Farewell."
+      1: "永別了。"
     }
   },
   "plasma_boss_ghetsis_1": {
     "encounter": {
-      1: "I won't allow anyone to stop me! No matter who does what!"
+      1: "無論是誰做了什麽！都無法阻止我！"
     },
     "victory": {
-      1: "How can this be? I'm the creator of Team Plasma! I'm perfect!"
+      1: "怎麽回事？我可是建立了等離子隊的完美的人啊！\n是要改變世界的完美的統治者！"
     },
     "defeat": {
-      1: "I am the perfect ruler of a perfect new world! Mwa ha ha!"
+      1: "我是坐擁世界的完美統治者！哇哈哈哈！"
     }
   },
   "plasma_boss_ghetsis_2": {
     "encounter": {
-      1: "Come now! I want to see your face at the moment you lose all hope!"
+      1: "來吧！讓我看看你徹底絕望時的那張臉！"
     },
     "victory": {
-      1: "My calculations... No! My careful schemes! The world should be mine!"
+      1: "不！我的偉大目標！我要完全支配世界啊！"
     },
     "defeat": {
-      1: "Kyurem! Use Absofusion!"
+      1: "酋雷姆！融合吧！"
     }
   },
   "flare_boss_lysandre_1": {
     "encounter": {
-      1: "Do you want to stop me? Show me in battle."
+      1: "你想要阻止我？在對戰中展示給我看吧！"
     },
     "victory": {
-      1: "You are here to stop me. But I ask you to wait. "
+      1: "看來你的確是想要阻止我。但是，先等一下。"
     },
     "defeat": {
-      1: "Pokemon...Shall no longer exist."
+      1: "寶可夢…不該存在。"
     }
   },
   "flare_boss_lysandre_2": {
     "encounter": {
-      1: "The future you want, or the future I want... Let us see which one is more deserving, shall we?"
+      1: "你我的未來…究竟哪個才正確，\n就讓我們來問問各自的寶可夢吧！"
     },
     "victory": {
-      1: "Whaugh!"
+      1: "哇啊啊啊！"
     },
     "defeat": {
-      1: "Fools with no vision will continue to befoul this beautiful world."
+      1: "沒有遠見的蠢貨會繼續玷汙這個美麗的世界。"
     }
   },
   "brock": {
