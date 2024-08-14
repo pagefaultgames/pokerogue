@@ -471,11 +471,11 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "Cherche Miel",
-    description: "The Pokémon gathers Honey after a battle. The Honey is then sold for money.",
+    description: "Le Pokémon trouve du Miel après un combat directement revendu contre de l’argent.",
   },
   frisk: {
     name: "Fouille",
-    description: "Lorsqu'il entre en combat, le Pokémon peut vérifier la capacité d'un Pokémon adverse.",
+    description: "Lorsqu’il entre en combat, le Pokémon peut vérifier la capacité d’un Pokémon adverse.",
   },
   reckless: {
     name: "Téméraire",
