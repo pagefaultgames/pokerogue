@@ -27,7 +27,7 @@ export const move: MoveTranslationEntries = {
   },
   "firePunch": {
     name: "Poing Feu",
-    effect: "Un coup de poing enflammé vient frapper la cible, ce qui peut la brûler (10% de chances)."
+    effect: "Un coup de poing enflammé vient frapper la cible, ce qui peut la bruler (10% de chances)."
   },
   "icePunch": {
     name: "Poing Glace",
@@ -207,11 +207,11 @@ export const move: MoveTranslationEntries = {
   },
   "ember": {
     name: "Flammèche",
-    effect: "La cible est attaquée par une faible flamme qui peut aussi la brûler."
+    effect: "La cible est attaquée par une faible flamme qui peut aussi la bruler."
   },
   "flamethrower": {
     name: "Lance-Flammes",
-    effect: "La cible reçoit un torrent de flammes qui peut aussi la brûler (10% de chances)."
+    effect: "La cible reçoit un torrent de flammes qui peut aussi la bruler (10% de chances)."
   },
   "mist": {
     name: "Brume",
@@ -358,7 +358,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur provoque un tremblement de terre touchant tous les Pokémon autour de lui."
   },
   "fissure": {
-    name: "Abîme",
+    name: "Abime",
     effect: "Le lanceur fait tomber la cible dans une crevasse. Si cette attaque réussit, elle met K.O. sur le coup."
   },
   "dig": {
@@ -503,7 +503,7 @@ export const move: MoveTranslationEntries = {
   },
   "fireBlast": {
     name: "Déflagration",
-    effect: "Un déluge de flammes ardentes submerge la cible, ce qui peut aussi la brûler (10% de chances)."
+    effect: "Un déluge de flammes ardentes submerge la cible, ce qui peut aussi la bruler (10% de chances)."
   },
   "waterfall": {
     name: "Cascade",
@@ -583,7 +583,7 @@ export const move: MoveTranslationEntries = {
   },
   "dizzyPunch": {
     name: "Uppercut",
-    effect: "Un enchaînement de coups de poing cadencés frappe l’ennemi. Peut aussi le rendre confus."
+    effect: "Un enchainement de coups de poing cadencés frappe l’ennemi. Peut aussi le rendre confus."
   },
   "spore": {
     name: "Spore",
@@ -634,7 +634,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur mord l’ennemi à l’aide de ses incisives aiguisées. Peut aussi l’apeurer (10% de chances)."
   },
   "sharpen": {
-    name: "Affûtage",
+    name: "Affutage",
     effect: "Le lanceur réduit son nombre de polygones pour accentuer ses angles et augmenter son Attaque."
   },
   "conversion": {
@@ -643,7 +643,7 @@ export const move: MoveTranslationEntries = {
   },
   "triAttack": {
     name: "Triplattaque",
-    effect: "Le lanceur envoie trois boules d’énergie simultanément qui peuvent aussi paralyser, brûler ou geler la cible (6.67% de chances)."
+    effect: "Le lanceur envoie trois boules d’énergie simultanément qui peuvent aussi paralyser, bruler ou geler la cible (6.67% de chances)."
   },
   "superFang": {
     name: "Croc Fatal",
@@ -663,7 +663,7 @@ export const move: MoveTranslationEntries = {
   },
   "sketch": {
     name: "Gribouille",
-    effect: "Le lanceur apprend la dernière capacité utilisée par la cible. Gribouille disparaît après utilisation."
+    effect: "Le lanceur apprend la dernière capacité utilisée par la cible. Gribouille disparait après utilisation."
   },
   "tripleKick": {
     name: "Triple Pied",
@@ -687,7 +687,7 @@ export const move: MoveTranslationEntries = {
   },
   "flameWheel": {
     name: "Roue de Feu",
-    effect: "Le lanceur s’entoure de feu et charge la cible, ce qui peut aussi la brûler (10% de chances)."
+    effect: "Le lanceur s’entoure de feu et charge la cible, ce qui peut aussi la bruler (10% de chances)."
   },
   "snore": {
     name: "Ronflement",
@@ -883,7 +883,7 @@ export const move: MoveTranslationEntries = {
   },
   "sacredFire": {
     name: "Feu Sacré",
-    effect: "Le lanceur génère un feu mystique d’une intensité redoutable pour attaquer l’ennemi. Peut aussi le brûler (50% de chances)."
+    effect: "Le lanceur génère un feu mystique d’une intensité redoutable pour attaquer l’ennemi. Peut aussi le bruler (50% de chances)."
   },
   "magnitude": {
     name: "Ampleur",
@@ -1027,7 +1027,7 @@ export const move: MoveTranslationEntries = {
   },
   "heatWave": {
     name: "Canicule",
-    effect: "Le lanceur provoque une vague de chaleur qui peut aussi brûler la cible (10% de chances)."
+    effect: "Le lanceur provoque une vague de chaleur qui peut aussi bruler la cible (10% de chances)."
   },
   "hail": {
     name: "Grêle",
@@ -1043,7 +1043,7 @@ export const move: MoveTranslationEntries = {
   },
   "willOWisp": {
     name: "Feu Follet",
-    effect: "Le lanceur projette des flammes maléfiques à la cible pour lui infliger une brûlure."
+    effect: "Le lanceur projette des flammes maléfiques à la cible pour lui infliger une brulure."
   },
   "memento": {
     name: "Souvenir",
@@ -1051,7 +1051,7 @@ export const move: MoveTranslationEntries = {
   },
   "facade": {
     name: "Façade",
-    effect: "Une capacité dont la puissance double lorsque le lanceur est empoisonné, paralysé ou brûlé."
+    effect: "Une capacité dont la puissance double lorsque le lanceur est empoisonné, paralysé ou brulé."
   },
   "focusPunch": {
     name: "Mitra-Poing",
@@ -1147,7 +1147,7 @@ export const move: MoveTranslationEntries = {
   },
   "refresh": {
     name: "Régénération",
-    effect: "Le lanceur se repose pour guérir d’un empoisonnement, d’une brûlure ou d’une paralysie."
+    effect: "Le lanceur se repose pour guérir d’un empoisonnement, d’une brulure ou d’une paralysie."
   },
   "grudge": {
     name: "Rancune",
@@ -1194,8 +1194,8 @@ export const move: MoveTranslationEntries = {
     effect: "Danse qui rend confus tous les Pokémon autour du lanceur."
   },
   "blazeKick": {
-    name: "Pied Brûleur",
-    effect: "Le lanceur envoie un coup de pied au taux de critiques élevé. Peut aussi brûler la cible (10% de chances)."
+    name: "Pied Bruleur",
+    effect: "Le lanceur envoie un coup de pied au taux de critiques élevé. Peut aussi bruler la cible (10% de chances)."
   },
   "mudSport": {
     name: "Lance-Boue",
@@ -1575,7 +1575,7 @@ export const move: MoveTranslationEntries = {
   },
   "flareBlitz": {
     name: "Boutefeu",
-    effect: "Le lanceur s’embrase avant de charger la cible, ce qui peut la brûler (10% de chances). Le choc blesse aussi gravement le lanceur."
+    effect: "Le lanceur s’embrase avant de charger la cible, ce qui peut la bruler (10% de chances). Le choc blesse aussi gravement le lanceur."
   },
   "forcePalm": {
     name: "Forte-Paume",
@@ -1687,7 +1687,7 @@ export const move: MoveTranslationEntries = {
   },
   "thunderFang": {
     name: "Crocs Éclair",
-    effect: "Le lanceur utilise une morsure électrifiée qui peut aussi paralyser  (10% de chances) ou apeurer la cible (10% de chances)."
+    effect: "Le lanceur utilise une morsure électrifiée qui peut aussi paralyser (10% de chances) ou apeurer la cible (10% de chances)."
   },
   "iceFang": {
     name: "Crocs Givre",
@@ -1695,7 +1695,7 @@ export const move: MoveTranslationEntries = {
   },
   "fireFang": {
     name: "Crocs Feu",
-    effect: "Le lanceur utilise une morsure enflammée qui peut aussi brûler (10% de chances) ou apeurer (10% de chances) la cible."
+    effect: "Le lanceur utilise une morsure enflammée qui peut aussi bruler (10% de chances) ou apeurer (10% de chances) la cible."
   },
   "shadowSneak": {
     name: "Ombre Portée",
@@ -1743,7 +1743,7 @@ export const move: MoveTranslationEntries = {
   },
   "lavaPlume": {
     name: "Ébullilave",
-    effect: "Des flammes s’abattent sur tous les Pokémon autour du lanceur, ce qui peut aussi les brûler (10% de chances)."
+    effect: "Des flammes s’abattent sur tous les Pokémon autour du lanceur, ce qui peut aussi les bruler (10% de chances)."
   },
   "leafStorm": {
     name: "Tempête Verte",
@@ -1798,7 +1798,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur libère une myriade de rayons de lumière. Le type varie selon la plaque que tient le lanceur."
   },
   "bugBite": {
-    name: "Piqûre",
+    name: "Piqure",
     effect: "Le lanceur pique la cible. Si celle-ci tient une Baie, le lanceur la dévore et obtient son effet."
   },
   "chargeBeam": {
@@ -1867,7 +1867,7 @@ export const move: MoveTranslationEntries = {
   },
   "shadowForce": {
     name: "Revenant",
-    effect: "Le lanceur disparaît au premier tour et frappe la cible au deuxième. Cette capacité fonctionne même si la cible se protège."
+    effect: "Le lanceur disparait au premier tour et frappe la cible au deuxième. Cette capacité fonctionne même si la cible se protège."
   },
   "honeClaws": {
     name: "Aiguisage",
@@ -2011,7 +2011,7 @@ export const move: MoveTranslationEntries = {
   },
   "scald": {
     name: "Ébullition",
-    effect: "Le lanceur projette un jet d’eau bouillante sur la cible, ce qui peut aussi la brûler (30% de chances)."
+    effect: "Le lanceur projette un jet d’eau bouillante sur la cible, ce qui peut aussi la bruler (30% de chances)."
   },
   "shellSmash": {
     name: "Exuviation",
@@ -2039,7 +2039,7 @@ export const move: MoveTranslationEntries = {
   },
   "incinerate": {
     name: "Calcination",
-    effect: "Des flammes calcinent la cible. Si elle tient un objet, une Baie par exemple, celui-ci est brûlé et devient inutilisable."
+    effect: "Des flammes calcinent la cible. Si elle tient un objet, une Baie par exemple, celui-ci est brulé et devient inutilisable."
   },
   "quash": {
     name: "À la Queue",
@@ -2067,19 +2067,19 @@ export const move: MoveTranslationEntries = {
   },
   "inferno": {
     name: "Feu d’Enfer",
-    effect: "La cible est entourée d’un torrent de flammes ardentes qui la brûlent."
+    effect: "La cible est entourée d’un torrent de flammes ardentes qui la brulent."
   },
   "waterPledge": {
     name: "Aire d’Eau",
-    effect: "Une masse d’eau s’abat sur la cible. Si cette capacité est utilisée en même temps qu’Aire de Feu, la puissance augmente et un arc-en-ciel apparaît."
+    effect: "Une masse d’eau s’abat sur la cible. Si cette capacité est utilisée en même temps qu’Aire de Feu, la puissance augmente et un arc-en-ciel apparait."
   },
   "firePledge": {
     name: "Aire de Feu",
-    effect: "Une masse de feu s’abat sur la cible. Si cette capacité est utilisée en même temps qu’Aire d’Herbe, la puissance augmente et une mer de feu apparaît."
+    effect: "Une masse de feu s’abat sur la cible. Si cette capacité est utilisée en même temps qu’Aire d’Herbe, la puissance augmente et une mer de feu apparait."
   },
   "grassPledge": {
     name: "Aire d’Herbe",
-    effect: "Une masse végétale s’abat sur la cible. Si cette capacité est utilisée en même temps qu’Aire d’Eau, la puissance augmente et un marécage apparaît."
+    effect: "Une masse végétale s’abat sur la cible. Si cette capacité est utilisée en même temps qu’Aire d’Eau, la puissance augmente et un marécage apparait."
   },
   "voltSwitch": {
     name: "Change Éclair",
@@ -2179,7 +2179,7 @@ export const move: MoveTranslationEntries = {
   },
   "searingShot": {
     name: "Incendie",
-    effect: "Des boules de feu s’abattent sur tous les Pokémon autour du lanceur. Peut aussi les brûler (30% de chances)."
+    effect: "Des boules de feu s’abattent sur tous les Pokémon autour du lanceur. Peut aussi les bruler (30% de chances)."
   },
   "technoBlast": {
     name: "Techno-Buster",
@@ -2203,7 +2203,7 @@ export const move: MoveTranslationEntries = {
   },
   "blueFlare": {
     name: "Flamme Bleue",
-    effect: "De magnifiques et redoutables flammes bleues fondent sur l’ennemi. Peut aussi le brûler (20% de chances)."
+    effect: "De magnifiques et redoutables flammes bleues fondent sur l’ennemi. Peut aussi le bruler (20% de chances)."
   },
   "fieryDance": {
     name: "Danse du Feu",
@@ -2215,7 +2215,7 @@ export const move: MoveTranslationEntries = {
   },
   "iceBurn": {
     name: "Feu Glacé",
-    effect: "Au second tour, le lanceur projette un souffle de vent glacial dévastateur sur l’ennemi. Peut aussi le brûler (30% de chances)."
+    effect: "Au second tour, le lanceur projette un souffle de vent glacial dévastateur sur l’ennemi. Peut aussi le bruler (30% de chances)."
   },
   "snarl": {
     name: "Aboiement",
@@ -2263,7 +2263,7 @@ export const move: MoveTranslationEntries = {
   },
   "phantomForce": {
     name: "Hantise",
-    effect: "Le lanceur disparaît au premier tour et frappe au second. Cette attaque passe outre les protections."
+    effect: "Le lanceur disparait au premier tour et frappe au second. Cette attaque passe outre les protections."
   },
   "trickOrTreat": {
     name: "Halloween",
@@ -2335,7 +2335,7 @@ export const move: MoveTranslationEntries = {
   },
   "fairyWind": {
     name: "Vent Féérique",
-    effect: "Le lanceur déchaîne un vent magique qui cingle la cible."
+    effect: "Le lanceur déchaine un vent magique qui cingle la cible."
   },
   "moonblast": {
     name: "Pouvoir Lunaire",
@@ -2347,7 +2347,7 @@ export const move: MoveTranslationEntries = {
   },
   "fairyLock": {
     name: "Verrou Enchanté",
-    effect: "Des chaînes entourent la zone de combat, empêchant tous les Pokémon de quitter le terrain au tour suivant."
+    effect: "Des chaines entourent la zone de combat, empêchant tous les Pokémon de quitter le terrain au tour suivant."
   },
   "kingsShield": {
     name: "Bouclier Royal",
@@ -2367,7 +2367,7 @@ export const move: MoveTranslationEntries = {
   },
   "steamEruption": {
     name: "Jet de Vapeur",
-    effect: "Le lanceur projette de la vapeur extrêmement chaude sur la cible, ce qui peut aussi la brûler (30% de chances)."
+    effect: "Le lanceur projette de la vapeur extrêmement chaude sur la cible, ce qui peut aussi la bruler (30% de chances)."
   },
   "hyperspaceHole": {
     name: "TrouDimensionnel",
@@ -2379,7 +2379,7 @@ export const move: MoveTranslationEntries = {
   },
   "mysticalFire": {
     name: "Feu Ensorcelé",
-    effect: "Le lanceur attaque en soufflant des flammes brûlantes par la bouche et diminue l’Attaque Spéciale de la cible."
+    effect: "Le lanceur attaque en soufflant des flammes brulantes par la bouche et diminue l’Attaque Spéciale de la cible."
   },
   "spikyShield": {
     name: "Pico-Défense",
@@ -2519,7 +2519,7 @@ export const move: MoveTranslationEntries = {
   },
   "tectonicRagePhysical": {
     name: "Éruption Géo-Sismique",
-    effect: "Le Pokémon utilise la Force Z pour entraîner l’adversaire dans les profondeurs de la terre. La puissance varie selon celle de la capacité originale."
+    effect: "Le Pokémon utilise la Force Z pour entrainer l’adversaire dans les profondeurs de la terre. La puissance varie selon celle de la capacité originale."
   },
   "tectonicRageSpecial": {
     name: "Éruption Géo-Sismique",
@@ -2655,7 +2655,7 @@ export const move: MoveTranslationEntries = {
   },
   "sparklingAria": {
     name: "Aria de l’Écume",
-    effect: "Le lanceur émet plusieurs bulles en chantant. Soigne les brûlures des Pokémon touchés par ces bulles."
+    effect: "Le lanceur émet plusieurs bulles en chantant. Soigne les brulures des Pokémon touchés par ces bulles."
   },
   "iceHammer": {
     name: "Marteau de Glace",
@@ -2759,7 +2759,7 @@ export const move: MoveTranslationEntries = {
   },
   "beakBlast": {
     name: "Bec-Canon",
-    effect: "Le lanceur fait chauffer son bec avant d’attaquer. S’il subit une attaque directe pendant la montée en température, l’attaquant sera brûlé."
+    effect: "Le lanceur fait chauffer son bec avant d’attaquer. S’il subit une attaque directe pendant la montée en température, l’attaquant sera brulé."
   },
   "clangingScales": {
     name: "Vibrécaille",
@@ -2791,7 +2791,7 @@ export const move: MoveTranslationEntries = {
   },
   "guardianOfAlola": {
     name: "Colère du Gardien d’Alola",
-    effect: "Le Pokémon Tutélaire utilise la Force Z et déchaîne toute la puissance d’Alola sur sa cible. Inflige des dégâts en fonction des PV restants de celle-ci."
+    effect: "Le Pokémon Tutélaire utilise la Force Z et déchaine toute la puissance d’Alola sur sa cible. Inflige des dégâts en fonction des PV restants de celle-ci."
   },
   "soulStealing7StarStrike": {
     name: "Fauche-Âme des Sept Étoiles",
@@ -2867,7 +2867,7 @@ export const move: MoveTranslationEntries = {
   },
   "naturesMadness": {
     name: "Ire de la Nature",
-    effect: "Le lanceur déchaîne toute la colère de la nature pour baisser les PV de la cible de moitié."
+    effect: "Le lanceur déchaine toute la colère de la nature pour baisser les PV de la cible de moitié."
   },
   "multiAttack": {
     name: "Coup Varia-Type",
@@ -2875,7 +2875,7 @@ export const move: MoveTranslationEntries = {
   },
   "tenMillionVoltThunderbolt": {
     name: "Giga-Tonnerre",
-    effect: "Le Pikachu à casquette utilise la Force Z pour augmenter sa puissance électrique avant de la déchaîner sur la cible. Taux de critique élevé."
+    effect: "Le Pikachu à casquette utilise la Force Z pour augmenter sa puissance électrique avant de la déchainer sur la cible. Taux de critique élevé."
   },
   "mindBlown": {
     name: "Caboche-Kaboum",
@@ -2895,11 +2895,11 @@ export const move: MoveTranslationEntries = {
   },
   "searingSunrazeSmash": {
     name: "Hélio-Choc Dévastateur",
-    effect: "Baigné dans la Force Z, Solgaleo attaque en déchaînant toute sa puissance. Ignore le talent de la cible."
+    effect: "Baigné dans la Force Z, Solgaleo attaque en déchainant toute sa puissance. Ignore le talent de la cible."
   },
   "menacingMoonrazeMaelstrom": {
     name: "Rayons Séléno-Explosifs",
-    effect: "Baigné dans la Force Z, Lunala attaque en déchaînant toute sa puissance. Ignore le talent de la cible."
+    effect: "Baigné dans la Force Z, Lunala attaque en déchainant toute sa puissance. Ignore le talent de la cible."
   },
   "letsSnuggleForever": {
     name: "Patati-Patattrape",
@@ -2939,7 +2939,7 @@ export const move: MoveTranslationEntries = {
   },
   "sizzlySlide": {
     name: "Évo-Flambo",
-    effect: "Évoli s’embrase et percure violemment l’adversaire. Brûle aussi l’ennemi."
+    effect: "Évoli s’embrase et percure violemment l’adversaire. Brule aussi l’ennemi."
   },
   "glitzyGlow": {
     name: "Évo-Psycho",
@@ -2963,7 +2963,7 @@ export const move: MoveTranslationEntries = {
   },
   "veeveeVolley": {
     name: "Évo-Chardasso",
-    effect: "Le lanceur lance une attaque dès lors qu’un signe apparaît sur le terrain. Les dégâts infligés sont proportionnels à l’affection de votre Pokémon"
+    effect: "Le lanceur lance une attaque dès lors qu’un signe apparait sur le terrain. Les dégâts infligés sont proportionnels à l’affection de votre Pokémon"
   },
   "doubleIronBash": {
     name: "Écrous d’Poing",
@@ -3007,7 +3007,7 @@ export const move: MoveTranslationEntries = {
   },
   "teatime": {
     name: "Thérémonie",
-    effect: "Le lanceur invite tous les Pokémon sur le terrain à prendre le goûter autour d’une tasse de thé. Ceux qui tiennent une Baie la mangent."
+    effect: "Le lanceur invite tous les Pokémon sur le terrain à prendre le gouter autour d’une tasse de thé. Ceux qui tiennent une Baie la mangent."
   },
   "octolock": {
     name: "Octoprise",
@@ -3118,8 +3118,8 @@ export const move: MoveTranslationEntries = {
     effect: "Bloque l’ennemi pendant 4 à 5 tours."
   },
   "pyroBall": {
-    name: "Ballon Brûlant",
-    effect: "Le lanceur attaque avec un ballon fait à partir d’un caillou enflammé. Peut aussi brûler la cible (10% de chances)."
+    name: "Ballon Brulant",
+    effect: "Le lanceur attaque avec un ballon fait à partir d’un caillou enflammé. Peut aussi bruler la cible (10% de chances)."
   },
   "behemothBlade": {
     name: "Gladius Maximus",
@@ -3191,7 +3191,7 @@ export const move: MoveTranslationEntries = {
   },
   "steelRoller": {
     name: "Métalliroue",
-    effect: "Une attaque qui inflige des dégâts et fait disparaître le champ actif, mais qui échoue s’il n’y en a pas à ce moment."
+    effect: "Une attaque qui inflige des dégâts et fait disparaitre le champ actif, mais qui échoue s’il n’y en a pas à ce moment."
   },
   "scaleShot": {
     name: "Rafale Écailles",
@@ -3227,7 +3227,7 @@ export const move: MoveTranslationEntries = {
   },
   "burningJealousy": {
     name: "Feu Envieux",
-    effect: "Le lanceur attaque sa cible avec toute sa jalousie. Cette capacité brûle tout Pokémon dont les stats ont augmenté pendant ce tour."
+    effect: "Le lanceur attaque sa cible avec toute sa jalousie. Cette capacité brule tout Pokémon dont les stats ont augmenté pendant ce tour."
   },
   "lashOut": {
     name: "Cent Rancunes",
@@ -3259,7 +3259,7 @@ export const move: MoveTranslationEntries = {
   },
   "scorchingSands": {
     name: "Sable Ardent",
-    effect: "Le lanceur projette du sable chauffé à blanc sur la cible, ce qui peut aussi la brûler (30% de chances)."
+    effect: "Le lanceur projette du sable chauffé à blanc sur la cible, ce qui peut aussi la bruler (30% de chances)."
   },
   "jungleHealing": {
     name: "Selve Salvatrice",
@@ -3267,11 +3267,11 @@ export const move: MoveTranslationEntries = {
   },
   "wickedBlow": {
     name: "Poing Obscur",
-    effect: "Le lanceur assène un coup puissant à la cible. Cette technique qui inflige toujours un coup critique est réservée à ceux qui maîtrisent la puissance des Ténèbres."
+    effect: "Le lanceur assène un coup puissant à la cible. Cette technique qui inflige toujours un coup critique est réservée à ceux qui maitrisent la puissance des Ténèbres."
   },
   "surgingStrikes": {
     name: "Torrent de Coups",
-    effect: "Le lanceur assène trois coups fluides à la cible. Cette technique qui inflige toujours un coup critique est réservée à ceux qui maîtrisent la puissance de l’Eau."
+    effect: "Le lanceur assène trois coups fluides à la cible. Cette technique qui inflige toujours un coup critique est réservée à ceux qui maitrisent la puissance de l’Eau."
   },
   "thunderCage": {
     name: "Voltageôle",
@@ -3287,7 +3287,7 @@ export const move: MoveTranslationEntries = {
   },
   "fieryWrath": {
     name: "Fureur Ardente",
-    effect: "Le lanceur canalise sa colère et la transforme en émanation brûlante, avec laquelle il attaque la cible, ce qui peut aussi apeurer celle-ci (20% de chances)."
+    effect: "Le lanceur canalise sa colère et la transforme en émanation brulante, avec laquelle il attaque la cible, ce qui peut aussi apeurer celle-ci (20% de chances)."
   },
   "thunderousKick": {
     name: "Coup Fulgurant",
@@ -3331,7 +3331,7 @@ export const move: MoveTranslationEntries = {
   },
   "ragingFury": {
     name: "Grand Courroux",
-    effect: "Le lanceur se déchaîne et attaque en projetant de violentes flammes pendant deux ou trois tours. Il devient ensuite confus."
+    effect: "Le lanceur se déchaine et attaque en projetant de violentes flammes pendant deux ou trois tours. Il devient ensuite confus."
   },
   "waveCrash": {
     name: "Aquatacle",
@@ -3375,7 +3375,7 @@ export const move: MoveTranslationEntries = {
   },
   "infernalParade": {
     name: "Cortège Funèbre",
-    effect: "Une multitude de boules de feu frappent la cible, ce qui peut aussi la brûler (30% de chances et 50% en Style Puissant). La puissance est doublée si celle-ci souffre d’une altération de statut."
+    effect: "Une multitude de boules de feu frappent la cible, ce qui peut aussi la bruler (30% de chances et 50% en Style Puissant). La puissance est doublée si celle-ci souffre d’une altération de statut."
   },
   "ceaselessEdge": {
     name: "Vagues à Lames",
@@ -3391,7 +3391,7 @@ export const move: MoveTranslationEntries = {
   },
   "sandsearStorm": {
     name: "Typhon Pyrosable",
-    effect: "Le lanceur déclenche un violent typhon mêlé à du sable ardent qui s’abat sur la cible, ce qui peut la brûler (30% de chances et 50% en Style Puissant)."
+    effect: "Le lanceur déclenche un violent typhon mêlé à du sable ardent qui s’abat sur la cible, ce qui peut la bruler (30% de chances et 50% en Style Puissant)."
   },
   "lunarBlessing": {
     name: "Prière Lunaire",
@@ -3531,7 +3531,7 @@ export const move: MoveTranslationEntries = {
   },
   "gMaxRapidFlow": {
     name: "Multicoup G-Max",
-    effect: "Une attaque de type Eau que seul un Shifours Gigamax peut utiliser. Cet enchaînement de coups permet d’ignorer la capacité Gardomax."
+    effect: "Une attaque de type Eau que seul un Shifours Gigamax peut utiliser. Cet enchainement de coups permet d’ignorer la capacité Gardomax."
   },
   "teraBlast": {
     name: "Téra Explosion",
@@ -3714,8 +3714,8 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur projette de l’eau pressurisée qui entaille la cible comme une lame. Taux de critiques élevé."
   },
   "blazingTorque": {
-    name: "Crash Brûlant",
-    effect: "Crash Brûlant inflige des dégâts et possède 30 % de chances de brûler l’adversaire."
+    name: "Crash Brulant",
+    effect: "Crash Brulant inflige des dégâts et possède 30 % de chances de bruler l’adversaire."
   },
   "wickedTorque": {
     name: "Crash Obscur",
@@ -3739,7 +3739,7 @@ export const move: MoveTranslationEntries = {
   },
   "matchaGotcha": {
     name: "Mortier Matcha",
-    effect: "Le lanceur remue son thé et en bombarde la cible. La moitié des dégâts infligés sont convertis en PV pour le lanceur. Cette capacité peut aussi brûler la cible."
+    effect: "Le lanceur remue son thé et en bombarde la cible. La moitié des dégâts infligés sont convertis en PV pour le lanceur. Cette capacité peut aussi bruler la cible."
   },
   "syrupBomb": {
     name: "Bombe au Sirop",
@@ -3762,8 +3762,8 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur attaque en tirant un rayon lumineux. Il arrive parfois que toutes les têtes agissent ensemble, ce qui double la puissance de la capacité."
   },
   "burningBulwark": {
-    name: "Rempart Brûlant",
-    effect: "Le lanceur se protège contre les attaques grâce à son pelage incandescent, et si un assaillant utilise une attaque directe contre lui, il le brûle."
+    name: "Rempart Brulant",
+    effect: "Le lanceur se protège contre les attaques grâce à son pelage incandescent, et si un assaillant utilise une attaque directe contre lui, il le brule."
   },
   "thunderclap": {
     name: "Vif Éclair",
@@ -3786,7 +3786,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur galvanise ses alliés avec un encouragement draconique qui augmente leur taux de critiques. L’effet est plus puissant si les alliés ont le type Dragon."
   },
   "alluringVoice": {
-    name: "Voix Envoûtante",
+    name: "Voix Envoutante",
     effect: "Le lanceur attaque la cible avec sa voix angélique. Cette capacité rend la cible confuse si ses stats ont augmenté pendant ce tour."
   },
   "temperFlare": {
@@ -3806,7 +3806,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur réagit instinctivement au moindre mouvement et donne un coup de paume qui apeure la cible. Échoue si cette dernière n’a pas utilisé une attaque prioritaire."
   },
   "malignantChain": {
-    name: "Chaîne Malsaine",
-    effect: "Le lanceur ligote la cible avec une chaîne faite de poison et lui injecte un venin corrosif, ce qui peut aussi gravement l’empoisonner."
+    name: "Chaine Malsaine",
+    effect: "Le lanceur ligote la cible avec une chaine faite de poison et lui injecte un venin corrosif, ce qui peut aussi gravement l’empoisonner."
   }
 } as const;
