@@ -170,7 +170,7 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "在经典模式中通关游戏",
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
-    name: "带孩子来上班",
+    name: "带孩上班",
     description: "通关经典模式时队伍中至少有一名未进化的宝可梦"
   },
 

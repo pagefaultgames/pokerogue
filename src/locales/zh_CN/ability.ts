@@ -471,7 +471,7 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "采蜜",
-    description: "The Pokémon gat\nhers Honey afte\nr a battle. The\n Honey is then \nsold for money.",
+    description: "战斗结束时，有时候会捡来甜甜蜜。\n甜甜蜜会兑换成钱。",
   },
   frisk: {
     name: "察觉",

@@ -19,7 +19,7 @@ export const battlePokemonForm: SimpleTranslationEntries = {
 export const pokemonForm: SimpleTranslationEntries = {
   // Starters forms
   // 1G
-  "pikachuCosplay": "服装",
+  "pikachuCosplay": "换装",
   "pikachuCoolCosplay": "摇滚巨星",
   "pikachuBeautyCosplay": "贵妇",
   "pikachuCuteCosplay": "流行偶像",
@@ -88,7 +88,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "landorusIncarnate": "化身",
   "keldeoOrdinary": "通常",
   "meloettaAria": "歌声",
-  "meloettaPirouette": "Pirouette",
+  "meloettaPirouette": "舞步",
   // 6G
   "froakieBattleBond": "牵绊变身",
   "scatterbugMeadow": "花园花纹",
