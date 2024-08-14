@@ -4191,7 +4191,7 @@ export interface TurnMove {
   targets?: BattlerIndex[];
   result: MoveResult;
   virtual?: boolean;
-  turn?: integer;
+  turn?: number;
 }
 
 export interface QueuedMove {
@@ -4203,17 +4203,17 @@ export interface QueuedMove {
 export interface AttackMoveResult {
   move: Moves;
   result: DamageResult;
-  damage: integer;
+  damage: number;
   critical: boolean;
-  sourceId: integer;
+  sourceId: number;
   sourceBattlerIndex: BattlerIndex;
 }
 
 export class PokemonSummonData {
-  public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
+  public battleStats: number[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public moveQueue: QueuedMove[] = [];
   public disabledMove: Moves = Moves.NONE;
-  public disabledTurns: integer = 0;
+  public disabledTurns: number = 0;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
   public abilitiesApplied: Abilities[] = [];
@@ -4223,14 +4223,14 @@ export class PokemonSummonData {
   public ability: Abilities = Abilities.NONE;
   public gender: Gender;
   public fusionGender: Gender;
-  public stats: integer[];
+  public stats: number[];
   public moveset: (PokemonMove | null)[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = [];
 }
 
 export class PokemonBattleData {
-  public hitCount: integer = 0;
+  public hitCount: number = 0;
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];
@@ -4239,7 +4239,7 @@ export class PokemonBattleData {
 
 export class PokemonBattleSummonData {
   /** The number of turns the pokemon has passed since entering the battle */
-  public turnCount: integer = 1;
+  public turnCount: number = 1;
   /** The list of moves the pokemon has used since entering the battle */
   public moveHistory: TurnMove[] = [];
 }
@@ -4247,11 +4247,11 @@ export class PokemonBattleSummonData {
 export class PokemonTurnData {
   public flinched: boolean = false;
   public acted: boolean = false;
-  public hitCount: integer;
-  public hitsLeft: integer;
-  public damageDealt: integer = 0;
-  public currDamageDealt: integer = 0;
-  public damageTaken: integer = 0;
+  public hitCount: number;
+  public hitsLeft: number;
+  public damageDealt: number = 0;
+  public currDamageDealt: number = 0;
+  public damageTaken: number = 0;
   public attacksReceived: AttackMoveResult[] = [];
   public order: number;
   public battleStatsChange: number[] = [0, 0, 0, 0, 0, 0, 0];
