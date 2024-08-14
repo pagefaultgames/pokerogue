@@ -66,8 +66,7 @@ export function getFusedSpeciesName(speciesA: PokemonSpecies, speciesB: PokemonS
     prefix = desKey;
     suffix = radKey;
   }
-  const fusedName =`${prefix}${suffix}`;
-  return fusedName;
+  return `${prefix}${suffix}`;
 }
 
 export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;
