@@ -356,7 +356,7 @@ export default class Battle {
     return null;
   }
 
-  multiInt(scene: BattleScene, out: integer[], count: integer, range: integer, min: integer = 0): integer {
+  multiInt(scene: BattleScene, out: integer[], count: integer, range: integer, min: integer = 0, offset?: integer): integer {
     if (range <= 1) {
       return min;
     }
@@ -368,6 +368,10 @@ export default class Battle {
     } else {
       Phaser.Math.RND.sow([ Utils.shiftCharCodes(this.battleSeed, this.turn << 6) ]);
       console.log("Battle Seed:", this.battleSeed);
+    }
+    for (var i = 0; i < offset; i++) {
+      // Perform useless rolls to offset RNG counter
+      Utils.randSeedInt(5)
     }
     for (var i = 0; i < count; i++) {
       out.push(Utils.randSeedInt(range, min))
