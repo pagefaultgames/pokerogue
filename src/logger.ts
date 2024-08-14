@@ -488,8 +488,8 @@ export function newDocument(name: string = "Untitled Run", authorName: string | 
     date: new Date().getUTCFullYear() + "-" + (new Date().getUTCMonth() + 1 < 10 ? "0" : "") + (new Date().getUTCMonth() + 1) + "-" + (new Date().getUTCDate() < 10 ? "0" : "") + new Date().getUTCDate(),
     waves: new Array(50),
     starters: new Array(3),
-    maxluck: 14,
-    minSafeLuckFloor: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    //maxluck: 14,
+    //minSafeLuckFloor: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   }
   var RState = Phaser.Math.RND.state()
   ret.uuid = Phaser.Math.RND.uuid()
@@ -1680,6 +1680,7 @@ export function logPlayerTeam(scene: BattleScene) {
  * @param scene  The BattleScene.
  */
 export function logLuck(scene: BattleScene) {
+  return;
   var drpd = getDRPD(scene)
   if (scene.waveShinyMinToBreak > 0) {
     console.log(`Logging luck stats`)
