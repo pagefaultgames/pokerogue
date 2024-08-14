@@ -11,7 +11,7 @@ import { AES, enc } from "crypto-js";
 import { updateUserInfo } from "#app/account";
 import InputsHandler from "#app/test/utils/inputsHandler";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import Pokemon from "#app/field/pokemon";
 import { MockClock } from "#app/test/utils/mocks/mockClock";
 import PartyUiHandler from "#app/ui/party-ui-handler";
 import CommandUiHandler, { Command } from "#app/ui/command-ui-handler";
@@ -181,7 +181,7 @@ export default class GameManager {
    * Emulate a player attack
    * @param movePosition the index of the move in the pokemon's moveset array
    */
-  doAttack(movePosition: integer) {
+  doAttack(movePosition: number) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       this.scene.ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
@@ -189,7 +189,7 @@ export default class GameManager {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
-    // Confirm target selection if move is multi-target
+    // Confirm target selection if move hits multiple field members (no target selection available)
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
       const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
@@ -319,7 +319,7 @@ export default class GameManager {
     return updateUserInfo();
   }
 
-  async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
+  async killPokemon(pokemon: Pokemon) {
     (this.scene.time as MockClock).overrideDelay = 0.01;
     return new Promise<void>(async(resolve, reject) => {
       pokemon.hp = 0;
