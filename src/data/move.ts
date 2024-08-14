@@ -3774,8 +3774,8 @@ export class TeraBlastPowerAttr extends VariablePowerAttr {
    */
     const power = args[0] as Utils.NumberHolder;
     if (user.isTerastallized() && move.type === Type.STELLAR) {
-      power.value = 200;
       //200 instead of 100 to reflect lack of stellar being 2x dmg on any type
+      power.value = 200;
       return true;
     }
 
