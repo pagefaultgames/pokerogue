@@ -2322,7 +2322,7 @@ export class TurnStartPhase extends FieldPhase {
       const bypassSpeed = new Utils.BooleanHolder(false);
       const canCheckHeldItems = new Utils.BooleanHolder(true);
       applyAbAttrs(BypassSpeedChanceAbAttr, p, null, false, bypassSpeed);
-      applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, bypassSpeed, canCheckHeldItems);
+      applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, false, bypassSpeed, canCheckHeldItems);
       if (canCheckHeldItems.value) {
         this.scene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
       }
@@ -3830,7 +3830,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
           break;
         case StatusEffect.BURN:
           damage.value = Math.max(pokemon.getMaxHp() >> 4, 1);
-          applyAbAttrs(ReduceBurnDamageAbAttr, pokemon, null, damage);
+          applyAbAttrs(ReduceBurnDamageAbAttr, pokemon, null, false, damage);
           break;
         }
         if (damage.value) {
