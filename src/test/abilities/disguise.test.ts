@@ -43,7 +43,7 @@ describe("Abilities - Disguise", () => {
 
     const mimikyu = game.scene.getEnemyPokemon()!;
     const maxHp = mimikyu.getMaxHp();
-    const disguiseDamage = Math.floor(maxHp / 8);
+    const disguiseDamage = Math.max(Math.floor(maxHp / 8), 1);
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
@@ -76,7 +76,7 @@ describe("Abilities - Disguise", () => {
 
     const mimikyu = game.scene.getEnemyPokemon()!;
     const maxHp = mimikyu.getMaxHp();
-    const disguiseDamage = Math.floor(maxHp / 8);
+    const disguiseDamage = Math.max(Math.floor(maxHp / 8), 1);
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
@@ -117,7 +117,7 @@ describe("Abilities - Disguise", () => {
 
     const mimikyu = game.scene.getPlayerPokemon()!;
     const maxHp = mimikyu.getMaxHp();
-    const disguiseDamage = Math.floor(maxHp / 8);
+    const disguiseDamage = Math.max(Math.floor(maxHp / 8), 1);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 

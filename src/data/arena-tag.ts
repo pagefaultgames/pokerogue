@@ -582,7 +582,7 @@ class SpikesTag extends ArenaTrapTag {
 
       if (!cancelled.value) {
         const damageHpRatio = 1 / (10 - 2 * this.layers);
-        const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
+        const damage = Math.max(Math.floor(pokemon.getMaxHp() * damageHpRatio), 1);
 
         pokemon.scene.queueMessage(i18next.t("arenaTag:spikesActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
         pokemon.damageAndUpdate(damage, HitResult.OTHER);
@@ -742,7 +742,7 @@ class StealthRockTag extends ArenaTrapTag {
     const damageHpRatio = this.getDamageHpRatio(pokemon);
 
     if (damageHpRatio) {
-      const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
+      const damage = Math.max(Math.floor(pokemon.getMaxHp() * damageHpRatio), 1);
       pokemon.scene.queueMessage(i18next.t("arenaTag:stealthRockActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       pokemon.damageAndUpdate(damage, HitResult.OTHER);
       if (pokemon.turnData) {

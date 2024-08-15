@@ -296,7 +296,7 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
 
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (this.condition(pokemon, attacker, move)) {
-      (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * this.damageMultiplier);
+      (args[0] as Utils.NumberHolder).value = Math.max(Math.floor((args[0] as Utils.NumberHolder).value * this.damageMultiplier), 1);
 
       return true;
     }
@@ -876,8 +876,8 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
-      attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
-      attacker.turnData.damageTaken += Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio));
+      attacker.damageAndUpdate(Math.max(Math.floor(attacker.getMaxHp() * (1 / this.damageRatio)), 1), HitResult.OTHER);
+      attacker.turnData.damageTaken += Math.max(Math.floor(attacker.getMaxHp() * (1 / this.damageRatio)), 1);
       return true;
     }
 
@@ -2345,7 +2345,7 @@ export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
 export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
   applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     if (!pokemon.isFullHp()) {
-      const healAmount = Math.floor(pokemon.getMaxHp() * 0.33);
+      const healAmount = Math.max(Math.floor(pokemon.getMaxHp() * 0.33), 1);
       pokemon.heal(healAmount);
       pokemon.updateInfo();
       return true;
@@ -2984,7 +2984,7 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
     }
     const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
     scene.queueMessage(i18next.t("abilityTriggers:postWeatherLapseDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }));
-    pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / (16 / this.damageFactor)), HitResult.OTHER);
+    pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / (16 / this.damageFactor)), HitResult.OTHER), 1);
     return true;
   }
 }
@@ -3676,8 +3676,8 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
       if (cancelled.value || attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
         return false;
       }
-      attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
-      attacker.turnData.damageTaken += Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio));
+      attacker.damageAndUpdate(Math.max(Math.floor(attacker.getMaxHp() * (1 / this.damageRatio)), 1), HitResult.OTHER);
+      attacker.turnData.damageTaken += Math.max(Math.floor(attacker.getMaxHp() * (1 / this.damageRatio)), 1);
       return true;
     }
 
@@ -3755,7 +3755,7 @@ export class ReduceStatusEffectDurationAbAttr extends AbAttr {
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (args[0] === this.statusEffect) {
-      (args[1] as Utils.IntegerHolder).value = Math.floor((args[1] as Utils.IntegerHolder).value / 2);
+      (args[1] as Utils.IntegerHolder).value = Math.max(Math.floor((args[1] as Utils.IntegerHolder).value / 2), 1);
       return true;
     }
 
@@ -5037,7 +5037,7 @@ export function initAbilities() {
       .conditionalAttr(pokemon => pokemon.formIndex === 0, PostSummonAddBattlerTagAbAttr, BattlerTagType.DISGUISE, 0, false)
       .attr(FormBlockDamageAbAttr, (target, user, move) => !!target.getTag(BattlerTagType.DISGUISE) && target.getAttackTypeEffectiveness(move.type, user) > 0, 0, BattlerTagType.DISGUISE,
         (pokemon, abilityName) => i18next.t("abilityTriggers:disguiseAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }),
-        (pokemon) => Math.floor(pokemon.getMaxHp() / 8))
+        (pokemon) => Math.max(Math.floor(pokemon.getMaxHp() / 8), 1))
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .ignorable(),
     new Ability(Abilities.BATTLE_BOND, 7)

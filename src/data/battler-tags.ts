@@ -342,7 +342,7 @@ export class ConfusedTag extends BattlerTag {
       if (pokemon.randSeedInt(3) === 0) {
         const atk = pokemon.getBattleStat(Stat.ATK);
         const def = pokemon.getBattleStat(Stat.DEF);
-        const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
+        const damage = Math.max(Math.floor(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100)), 1);
         pokemon.scene.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
         pokemon.damageAndUpdate(damage);
         pokemon.battleData.hitCount++;
@@ -565,7 +565,7 @@ export class NightmareTag extends BattlerTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / 4));
+        pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / 4)), 1);
       }
     }
 
@@ -709,7 +709,7 @@ export class IngrainTag extends TrappedTag {
         new PokemonHealPhase(
           pokemon.scene,
           pokemon.getBattlerIndex(),
-          Math.floor(pokemon.getMaxHp() / 16),
+          Math.max(Math.floor(pokemon.getMaxHp() / 16), 1),
           i18next.t("battlerTags:ingrainLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
           true
         )
@@ -772,7 +772,7 @@ export class AquaRingTag extends BattlerTag {
         new PokemonHealPhase(
           pokemon.scene,
           pokemon.getBattlerIndex(),
-          Math.floor(pokemon.getMaxHp() / 16),
+          Math.max(Math.floor(pokemon.getMaxHp() / 16), 1),
           i18next.t("battlerTags:aquaRingLapse", {
             moveName: this.getMoveName(),
             pokemonName: getPokemonNameWithAffix(pokemon)
@@ -878,7 +878,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / 8));
+        pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / 8)), 1);
       }
     }
 
@@ -1062,7 +1062,7 @@ export class ContactDamageProtectedTag extends ProtectedTag {
       if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
         const attacker = effectPhase.getPokemon();
         if (!attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
-          attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+          attacker.damageAndUpdate(Math.max(Math.floor(attacker.getMaxHp() * (1 / this.damageRatio)), 1), HitResult.OTHER);
         }
       }
     }

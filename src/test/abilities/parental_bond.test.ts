@@ -68,7 +68,7 @@ describe("Abilities - Parental Bond", () => {
       const secondStrikeDamage = enemyStartingHp - enemyPokemon.hp;
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
-      expect(secondStrikeDamage).toBe(Math.ceil(0.25 * firstStrikeDamage));
+      expect(secondStrikeDamage).toBe(Math.max(Math.floor(0.25 * firstStrikeDamage), 1));
     }, TIMEOUT
   );
 
@@ -298,7 +298,7 @@ describe("Abilities - Parental Bond", () => {
       // This test will time out if the user faints
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(leadPokemon.hp).toBe(Math.floor(leadPokemon.getMaxHp()/2));
+      expect(leadPokemon.hp).toBe(Math.max(Math.floor(leadPokemon.getMaxHp()/2), 1));
     }, TIMEOUT
   );
 
