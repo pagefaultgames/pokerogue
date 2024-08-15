@@ -84,7 +84,15 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_galactic_boss": "BDSP Cyrus Battle",
   "battle_plasma_boss": "B2W2 Ghetsis Battle",
   "battle_flare_boss": "XY Lysandre Battle",
-  "battle_friendly_colosseum": "PC Friendly Battle",
+  "battle_friendly_colosseum": "COL Friendly Battle",
+  "battle_cipher_admin_col": "COL Cipher Admin Battle Theme",
+  "battle_cipher_admin_xd": "XD Cipher Admin's Theme",
+  "battle_cipher_boss": "XD Final Battle (VS Greevil)",
+  "battle_cipher_peon": "XD Cipher Peon Battle",
+  "battle_evice": "COL Final Battle Theme",
+  "battle_miror_b": "COL Miror B's Retro Groove",
+  "battle_nascour": "COL Nascour Battle",
+  "battle_normal_colosseum": "COL Normal Battle Theme",
 
   // Biome Music
   "abyss": "PMD EoS Dark Crater",

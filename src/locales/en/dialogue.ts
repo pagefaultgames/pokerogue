@@ -1136,6 +1136,18 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "Heh heh! Don't mind me, just scooping up a W over here. I get it if you're upset, but don't go full Kieran on me, OK?"
     }
   },
+  "miror_b": {
+    "encounter": {
+      1: "I can tell you've got some very cute Pokémon with you. Well, they'll all soon be mine! Let the music play! ",
+      2: "Fuhohoho! I'll be showing you my power now. Try not to be blown away by a sense of wow! Let the music play!"
+    },
+    "victory": {
+      1: "I can't keep up with the tempo! Oh, no, no, what a no-no!"
+    },
+    "defeat": {
+      1: "Fuhohoho! I'll beat you as often as you wish!"
+    }
+  },
   "ramos": {
     "encounter": {
       1: `Did yeh enjoy the garden playground I made with all these sturdy plants o' mine?
