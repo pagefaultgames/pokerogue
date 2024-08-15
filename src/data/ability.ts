@@ -2207,7 +2207,7 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const targets = pokemon.getOpponents();
-    if (simulated || !targets.length) {
+    if (!targets.length) {
       return false;
     }
 
@@ -2226,11 +2226,13 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
       return false;
     }
 
-    this.target = target!;
-    this.targetAbilityName = allAbilities[target!.getAbility().id].name;
-    pokemon.summonData.ability = target!.getAbility().id;
-    setAbilityRevealed(target!);
-    pokemon.updateInfo();
+    if (!simulated) {
+      this.target = target!;
+      this.targetAbilityName = allAbilities[target!.getAbility().id].name;
+      pokemon.summonData.ability = target!.getAbility().id;
+      setAbilityRevealed(target!);
+      pokemon.updateInfo();
+    }
 
     return true;
   }
@@ -3123,7 +3125,7 @@ export class PostTerrainChangeAddBattlerTagAttr extends PostTerrainChangeAbAttr 
   }
 
   applyPostTerrainChange(pokemon: Pokemon, passive: boolean, simulated: boolean, terrain: TerrainType, args: any[]): boolean {
-    if (simulated || !this.terrainTypes.find(t => t === terrain)) {
+    if (!this.terrainTypes.find(t => t === terrain)) {
       return false;
     }
 
@@ -4510,7 +4512,7 @@ export function applyPostTerrainChangeAbAttrs(attrType: Constructor<PostTerrainC
 }
 
 export function applyCheckTrappedAbAttrs(attrType: Constructor<CheckTrappedAbAttr>,
-  pokemon: Pokemon, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, isQuiet: boolean, messages: string[], simulated: boolean = false, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, messages: string[], simulated: boolean = false, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, simulated, trapped, otherPokemon, args), args, false, simulated, messages);
 }
 
