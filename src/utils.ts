@@ -548,3 +548,15 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
   }
   return null;
 }
+
+/**
+ * Convert a float value to an integer value.
+ *
+ * @param value - The float value to convert.
+ * @param minValue - The minimum integer value to return. Defaults to 1.
+ * @returns The converted value as an integer.
+ */
+
+export function toIntValue(value: number, minValue: number = 1) {
+  return Math.max(Math.floor(value), minValue);
+}
