@@ -49,7 +49,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "baker": "Boulangère",
   "battle_girl": "Combattante",
   "beauty": "Canon",
-  "beginners": "Beginners",
+  "beginners": "Débutants",
   "biker": "Motard",
   "black_belt": "Karatéka",
   "breeder": "Éleveur",
