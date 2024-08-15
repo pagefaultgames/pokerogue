@@ -30,6 +30,7 @@ export class Arena {
   public tags: ArenaTag[];
   public bgm: string;
   public ignoreAbilities: boolean;
+  public ignoreAbilitySource: BattlerIndex | null;
 
   private lastTimeOfDay: TimeOfDay;
 
@@ -536,8 +537,13 @@ export class Arena {
     }
   }
 
-  setIgnoreAbilities(ignoreAbilities: boolean = true): void {
+  setIgnoreAbilities(ignoreAbilities: boolean, ignoreAbilitySource: BattlerIndex | null = null): void {
     this.ignoreAbilities = ignoreAbilities;
+    if (ignoreAbilities) {
+      this.ignoreAbilitySource = ignoreAbilitySource;
+    } else {
+      this.ignoreAbilitySource = null;
+    }
   }
 
   applyTagsForSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide, ...args: unknown[]): void {
