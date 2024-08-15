@@ -1,4 +1,4 @@
-import {SimpleTranslationEntries} from "#app/interfaces/locales";
+7import {SimpleTranslationEntries} from "#app/interfaces/locales";
 
 // Titles of special trainers like gym leaders, elite four, and the champion
 export const titles: SimpleTranslationEntries = {
@@ -106,7 +106,7 @@ export const trainerClasses: SimpleTranslationEntries = {
   "pokémon_rangers": "Pokémon Rangers",
   "ranger": "Ranger",
   "restaurant_staff": "Serveurs",
-  "rich": "Rich",
+  "rich": "Gentleman",
   "rich_female": "Mondaine",
   "rich_boy": "Gentleman",
   "rich_couple": "Couple de Bourgeois",
