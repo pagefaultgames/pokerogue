@@ -1,7 +1,8 @@
 name: Mysterious Encounter
 description: Propose a new mysterious encounter
-title: "[M.E.] (Rarity)"
-labels: ["New Mystery Encounter", "Balance Adjustment"]
+title: "[M.E.] NameOfM.E. (RarityProposed)"
+labels: ["Mystery Encounter Proposal"]
+status: ["Idea review"]
 projects: ["AsdarDevelops/MEs / Events Project"]
 body:
   - type: input
