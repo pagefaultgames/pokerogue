@@ -21,6 +21,7 @@ import { berriesAboundDialogue } from "#app/locales/en/mystery-encounters/berrie
 import { clowningAroundDialogue } from "#app/locales/en/mystery-encounters/clowning-around-dialogue";
 import { partTimerDialogue } from "#app/locales/en/mystery-encounters/part-timer-dialogue";
 import { dancingLessonsDialogue } from "#app/locales/en/mystery-encounters/dancing-lessons-dialogue";
+import { weirdDreamDialogue } from "#app/locales/en/mystery-encounters/weird-dream-dialogue";
 
 /**
  * Injection patterns that can be used:
@@ -69,5 +70,6 @@ export const mysteryEncounter = {
   berriesAbound: berriesAboundDialogue,
   clowningAround: clowningAroundDialogue,
   partTimer: partTimerDialogue,
-  dancingLessons: dancingLessonsDialogue
+  dancingLessons: dancingLessonsDialogue,
+  weirdDream: weirdDreamDialogue
 } as const;

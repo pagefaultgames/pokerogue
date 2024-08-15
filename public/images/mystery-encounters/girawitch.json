@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "girawitch.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 46,
+				"h": 76
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 46,
+						"h": 76
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 46,
+						"h": 76
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 46,
+						"h": 76
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:e68bbc186f511d505c53b2beec3c3741:7108795fc29d953a1d3729ad93d70936:1661aeeeb2f0e4561c644aff254770b3$"
+	}
+}

@@ -24,6 +24,7 @@ import { BerriesAboundEncounter } from "#app/data/mystery-encounters/encounters/
 import { ClowningAroundEncounter } from "#app/data/mystery-encounters/encounters/clowning-around-encounter";
 import { PartTimerEncounter } from "#app/data/mystery-encounters/encounters/part-timer-encounter";
 import { DancingLessonsEncounter } from "#app/data/mystery-encounters/encounters/dancing-lessons-encounter";
+import { WeirdDreamEncounter } from "#app/data/mystery-encounters/encounters/weird-dream-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -165,7 +166,8 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.A_TRAINERS_TEST,
   MysteryEncounterType.TRASH_TO_TREASURE,
   MysteryEncounterType.BERRIES_ABOUND,
-  MysteryEncounterType.CLOWNING_AROUND
+  MysteryEncounterType.CLOWNING_AROUND,
+  MysteryEncounterType.WEIRD_DREAM
 ];
 
 /**
@@ -267,6 +269,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.CLOWNING_AROUND] = ClowningAroundEncounter;
   allMysteryEncounters[MysteryEncounterType.PART_TIMER] = PartTimerEncounter;
   allMysteryEncounters[MysteryEncounterType.DANCING_LESSONS] = DancingLessonsEncounter;
+  allMysteryEncounters[MysteryEncounterType.WEIRD_DREAM] = WeirdDreamEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {

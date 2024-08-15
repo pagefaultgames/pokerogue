@@ -19,6 +19,7 @@ import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-enco
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { Gender } from "#app/data/gender";
+import { Stat } from "#enums/stat";
 
 export function getSpriteKeysFromSpecies(species: Species, female?: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): { spriteKey: string, fileRoot: string } {
   const spriteKey = getPokemonSpecies(species).getSpriteKey(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
@@ -78,6 +79,28 @@ export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: bool
     }
 
     pokemon = pokemon ? pokemon?.level < p?.level ? p : pokemon : p;
+    return true;
+  });
+
+  return pokemon;
+}
+
+/**
+ * Ties are broken by whatever mon is closer to the front of the party
+ * @param scene
+ * @param stat - stat to search for
+ * @param unfainted - default false. If true, only picks from unfainted mons.
+ * @returns
+ */
+export function getHighestStatPlayerPokemon(scene: BattleScene, stat: Stat, unfainted: boolean = false): PlayerPokemon {
+  const party = scene.getParty();
+  let pokemon: PlayerPokemon;
+  party.every(p => {
+    if (unfainted && p.isFainted()) {
+      return true;
+    }
+
+    pokemon = pokemon ? pokemon.getStat(stat) < p?.getStat(stat) ? p : pokemon : p;
     return true;
   });
 

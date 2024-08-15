@@ -5,6 +5,7 @@ import MockNineslice from "#app/test/utils/mocks/mocksContainer/mockNineslice";
 import MockImage from "#app/test/utils/mocks/mocksContainer/mockImage";
 import MockText from "#app/test/utils/mocks/mocksContainer/mockText";
 import MockPolygon from "#app/test/utils/mocks/mocksContainer/mockPolygon";
+import MockVideo from "#test/utils/mocks/mocksContainer/mockVideo";
 
 
 export default class MockTextureManager {
@@ -30,6 +31,7 @@ export default class MockTextureManager {
       text: this.text.bind(this),
       bitmapText: this.text.bind(this),
       displayList: this.displayList,
+      video: this.video.bind(this)
     };
   }
 
@@ -81,5 +83,11 @@ export default class MockTextureManager {
     const polygon = new MockPolygon(this, x, y, content, fillColor, fillAlpha);
     this.list.push(polygon);
     return polygon;
+  }
+
+  video(x: number, y: number, key?: string) {
+    const video = new MockVideo(this, x, y, key);
+    this.list.push(video);
+    return video;
   }
 }

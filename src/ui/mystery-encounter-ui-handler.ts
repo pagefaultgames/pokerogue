@@ -85,12 +85,6 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     dexProgressIndicator.setScale(0.80);
     this.dexProgressContainer.add(dexProgressIndicator);
     this.dexProgressContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, 24, 28), Phaser.Geom.Rectangle.Contains);
-    this.dexProgressContainer.on("pointerover", () => {
-      (this.scene as BattleScene).ui.showTooltip(null, i18next.t("mysteryEncounter:affects_pokedex"), true);
-    });
-    this.dexProgressContainer.on("pointerout", () => {
-      (this.scene as BattleScene).ui.hideTooltip();
-    });
   }
 
   show(args: any[]): boolean {
@@ -555,7 +549,15 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         targets: this.dexProgressContainer,
         y: -63,
         ease: "Sine.easeInOut",
-        duration: 750
+        duration: 750,
+        onComplete: () => {
+          this.dexProgressContainer.on("pointerover", () => {
+            (this.scene as BattleScene).ui.showTooltip(null, i18next.t("mysteryEncounter:affects_pokedex"), true);
+          });
+          this.dexProgressContainer.on("pointerout", () => {
+            (this.scene as BattleScene).ui.hideTooltip();
+          });
+        }
       });
     } else if (!show && this.showDexProgress) {
       this.showDexProgress = false;
@@ -565,6 +567,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         y: -43,
         ease: "Sine.easeInOut",
         duration: 750,
+        onComplete: () => {
+          this.dexProgressContainer.off("pointerover");
+          this.dexProgressContainer.off("pointerout");
+        }
       });
     }
   }
