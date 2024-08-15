@@ -3839,7 +3839,7 @@ export const starterPassiveAbilities = {
   [Species.FRIGIBAX]: Abilities.SNOW_WARNING,
   [Species.GIMMIGHOUL]: Abilities.HONEY_GATHER,
   [Species.WO_CHIEN]: Abilities.VESSEL_OF_RUIN,
-  [Species.CHIEN_PAO]: Abilities.INTREPID_SWORD,
+  [Species.CHIEN_PAO]: Abilities.INTIMIDATE,
   [Species.TING_LU]: Abilities.STAMINA,
   [Species.CHI_YU]: Abilities.TURBOBLAZE,
   [Species.ROARING_MOON]: Abilities.TOUGH_CLAWS,
