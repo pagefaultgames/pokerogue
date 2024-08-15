@@ -25,11 +25,11 @@ export const runHistory: SimpleTranslationEntries = {
   "SPDshortened":"速率",
   "runInfo":"游戏记录",
   "money":"金钱",
-  "runLength":"游戏",
+  "runLength":"游戏时长",
   "viewHeldItems":"持有道具",
   "hallofFameText":"欢迎来到名人堂！",
   "viewHallOfFame":"浏览名人堂！",
-  "viewEndingSplash":"View ending art!"
+  "viewEndingSplash":"浏览结算画面"
 } as const;
 
 // Mode Information found in game-mode.ts
