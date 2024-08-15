@@ -18,6 +18,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "내보낼 슬롯을 골라주세요.",
   "importData": "데이터 불러오기",
   "exportData": "데이터 내보내기",
+  "consentPreferences": "쿠키 설정 동의",
   "linkDiscord": "디스코드 연동",
   "unlinkDiscord": "디스코드 연동해제",
   "linkGoogle": "구글 연동",

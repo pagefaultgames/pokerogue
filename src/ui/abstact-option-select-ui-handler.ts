@@ -197,11 +197,15 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       case Button.UP:
         if (this.cursor) {
           success = this.setCursor(this.cursor - 1);
+        } else if (this.cursor === 0) {
+          success = this.setCursor(options.length -1);
         }
         break;
       case Button.DOWN:
         if (this.cursor < options.length - 1) {
           success = this.setCursor(this.cursor + 1);
+        } else {
+          success = this.setCursor(0);
         }
         break;
       }
@@ -268,11 +272,13 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     let isScroll = false;
     const options = this.getOptionsWithScroll();
     if (changed && this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {
-      const optionsScrollTotal = options.length;
       if (Math.abs(cursor - this.cursor) === options.length - 1) {
+        // Wrap around the list
+        const optionsScrollTotal = this.config.options.length;
         this.scrollCursor = cursor ? optionsScrollTotal - (this.config.maxOptions - 1) : 0;
         this.setupOptions();
       } else {
+        // Move the cursor up or down by 1
         const isDown = cursor && cursor > this.cursor;
         if (isDown) {
           if (options[cursor].label === scrollDownLabel) {

@@ -1,7 +1,6 @@
 import { Moves } from "#app/enums/moves.js";
 import i18next, { type ParseKeys } from "i18next";
 import { vi } from "vitest";
-import GameManager from "./gameManager";
 
 /** Ready to use array of Moves.SPLASH x4 */
 export const SPLASH_ONLY = [Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH];
@@ -25,14 +24,4 @@ export function mockI18next() {
  */
 export function arrayOfRange(start: integer, end: integer) {
   return Array.from({ length: end - start }, (_v, k) => k + start);
-}
-
-/**
- * Removes all held items from enemy pokemon
- * @param game The {@link GameManager} instance
- */
-export function removeEnemyHeldItems(game: GameManager): void {
-  game.scene.clearEnemyHeldItemModifiers();
-  game.scene.clearEnemyModifiers();
-  console.log("Enemy held items removed");
 }

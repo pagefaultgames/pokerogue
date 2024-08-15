@@ -684,8 +684,8 @@ export abstract class BattleAnim {
   private dstLine: number[];
 
   constructor(user?: Pokemon, target?: Pokemon) {
-    this.user = user!; // TODO: is this bang correct?
-    this.target = target!; // TODO: is this bang correct?
+    this.user = user ?? null;
+    this.target = target ?? null;
     this.sprites = [];
   }
 
