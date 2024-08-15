@@ -26,10 +26,10 @@ export const runHistory: SimpleTranslationEntries = {
   "runInfo":"Info Run",
   "money":"Patrimonio",
   "runLength":"Durata Run",
-  "viewHeldItems":"Oggetti equipaggiati ",
+  "viewHeldItems":"Oggetti equip.",
   "hallofFameText":"Benvenuto alla Sala d'Onore!",
-  "viewHallOfFame":"Visualizza Sala d'Onore!",
-  "viewEndingSplash":"Visualizza arte finale!"
+  "viewHallOfFame":"Vai alla Sala d'Onore!",
+  "viewEndingSplash":"Vai all'arte finale!"
 } as const;
 
 // Mode Information found in game-mode.ts
