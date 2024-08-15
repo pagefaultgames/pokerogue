@@ -2777,9 +2777,11 @@ export class MovePhase extends BattlePhase {
         }
       });
       //Check if this move is immune to being redirected, and restore its target to the intended target if it is.
-      if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) || this.move.getMove().hasAttr(BypassRedirectAttr))) {
+      const abilityRedirectImmune = this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr);
+      const moveRedirectImmune = this.move.getMove().getAttrs(BypassRedirectAttr).some(attr => attr.apply(this.pokemon, this.scene.getField(false)[oldTarget], this.move.getMove()));
+      if (abilityRedirectImmune || moveRedirectImmune) {
         //If an ability prevented this move from being redirected, display its ability pop up.
-        if ((this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr) && !this.move.getMove().hasAttr(BypassRedirectAttr)) && oldTarget !== moveTarget.value) {
+        if (abilityRedirectImmune && !moveRedirectImmune && oldTarget !== moveTarget.value) {
           this.scene.unshiftPhase(new ShowAbilityPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr)));
         }
         moveTarget.value = oldTarget;

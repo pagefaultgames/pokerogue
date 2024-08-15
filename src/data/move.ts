@@ -4203,8 +4203,21 @@ export class TypelessAttr extends MoveAttr { }
 /**
 * Attribute used for moves which ignore redirection effects, and always target their original target, i.e. Snipe Shot
 * Bypasses Storm Drain, Follow Me, Ally Switch, and the like.
+*
+* Optionally accepts a function to run which can be used to conditionally bypass redirection effects.
 */
-export class BypassRedirectAttr extends MoveAttr { }
+export class BypassRedirectAttr extends MoveAttr {
+  private bypassConditionFn?: (user: Pokemon | null, target: Pokemon | null, move: Move) => boolean;
+
+  constructor(bypassConditionFn?: (user: Pokemon | null, target: Pokemon | null, move: Move) => boolean) {
+    super();
+    this.bypassConditionFn = bypassConditionFn;
+  }
+
+  apply(user: Pokemon | null, target: Pokemon | null, move: Move) {
+    return this.bypassConditionFn?.(user, target, move) ?? true;
+  }
+}
 
 export class DisableMoveAttr extends MoveEffectAttr {
   constructor() {
@@ -6876,6 +6889,7 @@ export function initMoves() {
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target)),
     new AttackMove(Moves.PURSUIT, Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, 0, 2)
       .attr(PursuitAccuracyAttr)
+      .attr(BypassRedirectAttr, (user, target) => Boolean(user && target && isPursuingFunc(user, target)))
       .attr(AddBattlerTagHeaderAttr, BattlerTagType.ANTICIPATING_ACTION)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.ANTICIPATING_ACTION], true, MoveEffectTrigger.POST_APPLY)
       .attr(MovePowerMultiplierAttr, (user, target) => isPursuingFunc(user, target) ? 2 : 1),

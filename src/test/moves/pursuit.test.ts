@@ -495,7 +495,6 @@ describe("Moves - Pursuit", () => {
       game.override.battleType("double");
     });
 
-    // fails: pursuit does not ignore follow me
     it("should bypass follow me when hitting a switching target", async () => {
       // arrange
       await startBattle();
@@ -509,13 +508,32 @@ describe("Moves - Pursuit", () => {
       await runCombatTurn(game.scene.getEnemyField()[1]);
 
       // assert
-      expectPursuitPowerUnchanged();
+      expectPursuitPowerDoubled();
       expectWasHit(findPartyMember(game.scene.getParty(), Species.RAICHU))
         .and(expectNotOnField);
       expectWasNotHit(findPartyMember(game.scene.getParty(), playerLead));
     });
 
-    // fails: fainting a pursuiter still runs the enemy SwitchSummonPhase
+    it("should not bypass follow me when hitting a non-switching target", async () => {
+      // arrange
+      await startBattle();
+      forceMovesLast(game.scene.getEnemyPokemon());
+
+      // act
+      game.override.moveset([Moves.FOLLOW_ME, Moves.SPLASH]);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      enemyUses(Moves.PURSUIT);
+      game.move.forceAiTargets(game.scene.getEnemyPokemon(), BattlerIndex.PLAYER_2);
+      await runCombatTurn(game.scene.getEnemyField()[1]);
+
+      // assert
+      expectPursuitPowerUnchanged();
+      expectWasHit(findPartyMember(game.scene.getParty(), playerLead));
+      expectWasNotHit(findPartyMember(game.scene.getParty(), Species.RAICHU));
+    });
+
+    // fails: fainting an escapee still runs the enemy SwitchSummonPhase
     it("should fail if both pokemon use pursuit on a target that is switching out and it faints after the first one", async () => {
       // arrange
       await startBattle();
