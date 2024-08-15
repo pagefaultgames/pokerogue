@@ -198,8 +198,8 @@ describe("Moves - Parting Shot", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
       const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
-      expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
-      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
+      expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
+      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(-1);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MEOWTH);
     }, TIMEOUT
   );
