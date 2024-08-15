@@ -3375,7 +3375,7 @@ export const starterPassiveAbilities = {
   [Species.MAGIKARP]: Abilities.MULTISCALE,
   [Species.LAPRAS]: Abilities.LIGHTNING_ROD,
   [Species.DITTO]: Abilities.ADAPTABILITY,
-  [Species.EEVEE]: Abilities.ADAPTABILITY,
+  [Species.EEVEE]: Abilities.PICKUP,
   [Species.PORYGON]: Abilities.PROTEAN,
   [Species.OMANYTE]: Abilities.STURDY,
   [Species.KABUTO]: Abilities.TOUGH_CLAWS,
