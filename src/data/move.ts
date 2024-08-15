@@ -599,7 +599,8 @@ export default class Move implements Localizable {
     // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
     switch (flag) {
     case MoveFlags.MAKES_CONTACT:
-      if (user.hasAbilityWithAttr(IgnoreContactAbAttr)) {
+      if (user.hasAbilityWithAttr(IgnoreContactAbAttr) ||
+          (target?.getTag(BattlerTagType.SUBSTITUTE) && !this.canIgnoreSubstitute(user))) {
         return false;
       }
       break;
@@ -612,8 +613,9 @@ export default class Move implements Localizable {
         }
       }
     case MoveFlags.IGNORE_PROTECT:
-      if (user.hasAbilityWithAttr(IgnoreProtectOnContactAbAttr) &&
-          this.checkFlag(MoveFlags.MAKES_CONTACT, user, target)) {
+      if (user.hasAbilityWithAttr(IgnoreProtectOnContactAbAttr)
+          && this.hasFlag(MoveFlags.MAKES_CONTACT)
+          && !user.hasAbilityWithAttr(IgnoreContactAbAttr)) {
         return true;
       }
     }

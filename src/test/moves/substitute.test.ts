@@ -406,4 +406,22 @@ describe("Moves - Substitute", () => {
       expect(subTag.hp).toBe(Math.floor(leadPokemon.getMaxHp() * 1/4));
     }, TIMEOUT
   );
+
+  it (
+    "should prevent the source's Rough Skin from activating when hit",
+    async () => {
+      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.ability(Abilities.ROUGH_SKIN);
+
+      await game.startBattle([Species.BLASTOISE]);
+
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SUBSTITUTE));
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+
+      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    }, TIMEOUT
+  );
 });
