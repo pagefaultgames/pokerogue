@@ -539,11 +539,7 @@ export class Arena {
 
   setIgnoreAbilities(ignoreAbilities: boolean, ignoreAbilitySource: BattlerIndex | null = null): void {
     this.ignoreAbilities = ignoreAbilities;
-    if (ignoreAbilities) {
-      this.ignoreAbilitySource = ignoreAbilitySource;
-    } else {
-      this.ignoreAbilitySource = null;
-    }
+    this.ignoreAbilitySource = ignoreAbilities ? ignoreAbilitySource : null;
   }
 
   applyTagsForSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide, ...args: unknown[]): void {
