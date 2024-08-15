@@ -419,7 +419,7 @@ export const ability: AbilityTranslationEntries = {
   snowWarning: { name: "降雪", description: "出場時，會將天氣變為下雪。" },
   honeyGather: {
     name: "採蜜",
-    description: "戰鬥結束時，有時候會撿來甜甜蜜。\n甜甜蜜會兌換成錢。",
+    description: "戰鬥結束時，有時候會撿來甜甜蜜。\n甜甜蜜會轉換成金錢。",
   },
   frisk: {
     name: "察覺",

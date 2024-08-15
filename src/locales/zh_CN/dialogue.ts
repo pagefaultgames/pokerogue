@@ -391,7 +391,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "大失误……",
       2: "以我现在的实力，无法胜任我的任务……",
-      3: "原……谅我，坂木。\n我竟被一名训练师打败了。."
+      3: "原……谅我，坂木。\n我竟被一名训练师打败了。"
     },
   },
   "ariana": {
@@ -1111,7 +1111,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "我真是笑得合不拢嘴啊！$哈哈哈！那真是太有趣了！",
       2: "呼哇！结束收尾了！$我该怎么说呢……$我还想再对战！我还想再继续战斗！",
-      3: "啊啊啊啊啊！?",
+      3: "啊啊啊啊啊！？",
     },
     "defeat": {
       1: "耶！就是这样！",
@@ -1902,7 +1902,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "…！",
     },
     "victory": {
-      1: "…?",
+      1: "…？",
     },
     "defeat": {
       1: "…！",
@@ -2177,7 +2177,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "grant": {
     "encounter": {
-      1: "我只期待一件事。. $通过超越彼此，\n我们找到通往更高境界的道路。",
+      1: "我只期待一件事。 $通过超越彼此，\n我们找到通往更高境界的道路。",
     },
     "victory": {
       1: "你是一堵我无法逾越的墙！",
@@ -2503,7 +2503,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_3_female": {
     "encounter": {
-      1: "@c{smile_wave}好久不见！还没输过，对吧。$@c{angry}我觉得你点烦了。@c{smile_wave_wink}开玩笑啦！$@c{smile_ehalf}但说真的，你现在不想家吗？\n不想…我吗?$我……我的意思是，我们真的很想你。$@c{smile_eclosed}我支持你的一切，包括你的梦想。\n但现实就是你早晚会经历失败。$@c{smile}当你失败的时候，我想像往常一样陪在你身边。$@c{angry_mopen}现在，给你看看我变得多强了吧！",
+      1: "@c{smile_wave}好久不见！还没输过，对吧。$@c{angry}我觉得你点烦了。@c{smile_wave_wink}开玩笑啦！$@c{smile_ehalf}但说真的，你现在不想家吗？\n不想…我吗？$我……我的意思是，我们真的很想你。$@c{smile_eclosed}我支持你的一切，包括你的梦想。\n但现实就是你早晚会经历失败。$@c{smile}当你失败的时候，我想像往常一样陪在你身边。$@c{angry_mopen}现在，给你看看我变得多强了吧！",
     },
     "victory": {
       1: "@c{shock}都这样了……还是不够吗？$这样下去，你就永远不会回来了……",
@@ -2595,7 +2595,7 @@ export const PGFbattleSpecDialogue: SimpleTranslationEntries = PGMbattleSpecDial
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is male
 export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending":
-      `@c{smile}哦?你赢了？@d{96} @c{smile_eclosed}我应该早猜到了\n你回来了。
+      `@c{smile}哦？你赢了？@d{96} @c{smile_eclosed}我应该早猜到了\n你回来了。
         $@c{smile}结束了。@d{64} 你终结了这个循环。
         $@c{serious_smile_fists}你也完成了自己的梦想，不是吗？\n你甚至一次都没失败。
         $@c{neutral}我是唯一能够记得你所作所为的人@d{96}\n我觉得这应该也还行吧？

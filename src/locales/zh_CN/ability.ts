@@ -471,7 +471,7 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "采蜜",
-    description: "战斗结束时，有时候会捡来甜甜蜜。\n甜甜蜜会兑换成钱。",
+    description: "战斗结束时，有时候会捡来甜甜蜜。\n甜甜蜜会转换成金钱。",
   },
   frisk: {
     name: "察觉",

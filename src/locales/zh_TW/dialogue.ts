@@ -1111,7 +1111,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "我真是笑得合不攏嘴啊！$哈哈哈！那真是太有趣了！",
       2: "呼哇！結束收尾了！$我該怎麼說呢……$我還想再對戰！我還想再繼續戰鬥！",
-      3: "啊啊啊啊啊！?",
+      3: "啊啊啊啊啊！？",
     },
     "defeat": {
       1: "耶！就是這樣！",
@@ -1902,7 +1902,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "…！",
     },
     "victory": {
-      1: "…?",
+      1: "…？",
     },
     "defeat": {
       1: "…！",
@@ -2503,7 +2503,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "rival_3_female": {
     "encounter": {
-      1: "@c{smile_wave}好久不見！還沒輸過，對吧。$@c{angry}我覺得你點煩了。@c{smile_wave_wink}開玩笑啦！$@c{smile_ehalf}但說真的，你現在不想家嗎？\n 不想…我嗎?$我……我的意思是，我們真的很想你。$@c{smile_eclosed}我支持你的一切，包括你的夢想。\n但現實就是你早晚會經歷失敗。$@c{smile}當你失敗的時候，我想像往常一樣陪在你身邊。$@c{angry_mopen}現在，給你看看我變得多強了吧！",
+      1: "@c{smile_wave}好久不見！還沒輸過，對吧。$@c{angry}我覺得你點煩了。@c{smile_wave_wink}開玩笑啦！$@c{smile_ehalf}但說真的，你現在不想家嗎？\n 不想…我嗎？$我……我的意思是，我們真的很想你。$@c{smile_eclosed}我支持你的一切，包括你的夢想。\n但現實就是你早晚會經歷失敗。$@c{smile}當你失敗的時候，我想像往常一樣陪在你身邊。$@c{angry_mopen}現在，給你看看我變得多強了吧！",
     },
     "victory": {
       1: "@c{shock}都這樣了……還是不夠嗎？$這樣下去，你就永遠不會回來了……",
@@ -2594,7 +2594,7 @@ export const PGFbattleSpecDialogue: SimpleTranslationEntries = PGMbattleSpecDial
 // Dialogue that does not fit into any other category (e.g. tutorial messages, or the end of the game). For when the player character is male
 export const PGMmiscDialogue: SimpleTranslationEntries = {
   "ending":
-      `@c{smile}哦?你贏了？@d{96} @c{smile_eclosed}我應該早猜到了\n你回來了。
+      `@c{smile}哦？你贏了？@d{96} @c{smile_eclosed}我應該早猜到了\n你回來了。
         $@c{smile}結束了。@d{64} 你終結了這個循環。
         $@c{serious_smile_fists}你也完成了自己的夢想，不是嗎？\n你甚至一次都沒失敗。
         $@c{neutral}我是唯一能夠記得你所作所為的人@d{96}\n我覺得這應該也還行吧？

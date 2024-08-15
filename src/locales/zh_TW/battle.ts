@@ -17,7 +17,7 @@ export const battle: SimpleTranslationEntries = {
   "moneyPickedUp": "撿到了₽{{moneyAmount}}！",
   "pokemonCaught": "{{pokemonName}}被抓住了！",
   "addedAsAStarter": "增加了{{pokemonName}}作爲\n一個新的基礎寶可夢！",
-  "partyFull": "你的隊伍已滿員。是否放生其他寶可夢\n爲{{pokemonName}}騰出空間?",
+  "partyFull": "你的隊伍已滿員。是否放生其他寶可夢\n爲{{pokemonName}}騰出空間？",
   "pokemon": "寶可夢",
   "sendOutPokemon": "上吧！\n{{pokemonName}}！",
   "hitResultCriticalHit": "擊中了要害！",

@@ -26,7 +26,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "tooManyItems": "{{pokemonName}}擁有\n太多這個道具了！",
   "anyEffect": "即便使用也無效果哦。",
   "unpausedEvolutions": "{{pokemonName}}的進化停止了。",
-  "unspliceConfirmation": "真的要把{{fusionName}}\n從{{pokemonName}}身上分離嗎? {{fusionName}}會就此消失。",
+  "unspliceConfirmation": "真的要把{{fusionName}}\n從{{pokemonName}}身上分離嗎？{{fusionName}}會就此消失。",
   "wasReverted": "{{fusionName}}恢複成了{{pokemonName}}。",
   "releaseConfirmation": "你真要放生{{pokemonName}}嗎？",
   "releaseInBattle": "你無法放生正在戰鬥中的寶可夢！",
