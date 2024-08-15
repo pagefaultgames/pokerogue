@@ -11,9 +11,9 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { CommandPhase } from "#app/phases/command-phase.js";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
-import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
-import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { SelectTargetPhase } from "#app/phases/select-target-phase";
+import { TurnStartPhase } from "#app/phases/turn-start-phase";
 
 
 describe("Battle order", () => {
