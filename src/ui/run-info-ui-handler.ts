@@ -22,6 +22,12 @@ import {modifierSortFunc} from "../modifier/modifier";
 import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 
+enum RunInfoUiMode {
+  MAIN,
+  HALL_OF_FAME,
+  ENDING_ART
+}
+
 export default class GameInfoUiHandler extends UiHandler {
   private runInfo: SessionSaveData;
   private isVictory: boolean;
@@ -44,7 +50,7 @@ export default class GameInfoUiHandler extends UiHandler {
   private partyVisibility: Boolean;
   private modifiersModule: any;
 
-  private statValues: Phaser.GameObjects.Text[];
+  private pageMode: RunInfoUiMode;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.RUN_INFO);
@@ -344,7 +350,7 @@ export default class GameInfoUiHandler extends UiHandler {
         const icon = modifier?.getIcon(this.scene, false);
         if (icon) {
           const rowHeightModifier = Math.floor(visibleModifierIndex/7);
-          icon.setPosition(24 * (visibleModifierIndex%7), 20+(35*rowHeightModifier));
+          icon.setPosition(24 * (visibleModifierIndex%7), 20 + (35 * rowHeightModifier));
           modifierIconsContainer.add(icon);
         }
 
@@ -525,11 +531,10 @@ export default class GameInfoUiHandler extends UiHandler {
               break;
             }
             const itemIcon = item?.getIcon(this.scene, true);
-            //itemIcon.setFrame(item.type.iconImage);
             itemIcon.setScale(heldItemsScale);
-            itemIcon.setPosition((index%19)*10, row*10);
+            itemIcon.setPosition((index%19) * 10, row * 10);
             heldItemsContainer.add(itemIcon);
-            if (index !== 0 && index%18 === 0) {
+            if (index !== 0 && index % 18 === 0) {
               row++;
             }
           }
@@ -580,10 +585,12 @@ export default class GameInfoUiHandler extends UiHandler {
     this.endCardContainer.add(text);
   }
 
-
-
+  /** createHallofFame() - if the run is victorious, this creates a hall of fame image for the player to view
+   * Additional Notes TBD
+   */
   createHallofFame(): void {
     // Issue Note (08-05-2024): It seems as if fused pokemon do not appear with the averaged color b/c pokemonData's loadAsset requires there to be some active battle?
+    // As an alternative, the icons of the second/bottom fused Pokemon have been placed next to their fellow fused Pokemon in Hall of Fame
     this.hallofFameContainer = this.scene.add.container(0, 0);
     // Thank you Hayuna for the code
     const endCard = this.scene.add.image(0, 0, `end_${this.scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}`);
@@ -609,7 +616,6 @@ export default class GameInfoUiHandler extends UiHandler {
       const formIndex = pkmn.formIndex;
       const variant = pkmn.variant;
       const species = pkmn.getSpeciesForm();
-      //const species = pkmn.isFusion() ? pkmn.getFusionSpeciesForm() : pkmn.getSpeciesForm();
       const pokemonSprite: Phaser.GameObjects.Sprite = this.scene.add.sprite(60 + 40 * i, 40 + row  * 80, "pkmn__sub");
       pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
       this.hallofFameContainer.add(pokemonSprite);
@@ -623,17 +629,6 @@ export default class GameInfoUiHandler extends UiHandler {
         pokemonSprite.setPipelineData("shiny", shiny);
         pokemonSprite.setPipelineData("variant", variant);
         pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
-        /**
-        pkmn.resetSummonData();
-        [ "spriteColors", "fusionSpriteColors" ].map(k => {
-          delete pokemonSprite.pipelineData[`${k}Base`];
-          if (pkmn.summonData?.speciesForm) {
-            k += "Base";
-          }
-          const temp = pkmn.getSprite();
-          console.log(temp);
-          pokemonSprite.pipelineData[k] = pkmn.getSprite().pipelineData[k];
-        });*/
         pokemonSprite.setVisible(true);
       });
       if (pkmn.isFusion()) {
@@ -690,11 +685,14 @@ export default class GameInfoUiHandler extends UiHandler {
     return success || error;
   }
 
-
-  // The use of non-directional / A / B buttons is named in relation to functions used during starter-select.
-  // Button.CYCLE_FORM (F key) --> displays ending art (victory only)
-  // Button.CYCLE_SHINY (R key) --> displays hall of fame (victory only)
-  // Button.CYCLE_ABILITY (E key) --> shows pokemon held items
+  /**
+   * buttonCycleOption : takes a parameter button to execute different actions in the run-info page
+   * The use of non-directional / A / B buttons is named in relation to functions used during starter-select.
+   * Button.CYCLE_FORM (F key) --> displays ending art (victory only)
+   * Button.CYCLE_SHINY (R key) --> displays hall of fame (victory only)
+   * Button.CYCLE_ABILITY (E key) --> shows pokemon held items
+   *
+   */
   buttonCycleOption(button: Button) {
     switch (button) {
     case Button.CYCLE_FORM:
