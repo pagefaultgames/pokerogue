@@ -70,4 +70,7 @@ export const battlerTags: SimpleTranslationEntries = {
   "cursedOnAdd": "{{pokemonNameWithAffix}} sacrifie des PV\net lance une malédiction sur {{pokemonName}} !",
   "cursedLapse": "{{pokemonNameWithAffix}} est touché par la malédiction !",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}} utilise\nla capacité Stockage {{stockpiledCount}} fois !",
+  "substituteOnAdd": "{{pokemonNameWithAffix}}\ncrée un clone !",
+  "substituteOnHit": "Le clone subit les dégâts à la place\nde {{pokemonNameWithAffix}} !",
+  "substituteOnRemove": "Le clone de {{pokemonNameWithAffix}}\ndisparait…",
 } as const;

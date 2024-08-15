@@ -70,4 +70,7 @@ export const battlerTags: SimpleTranslationEntries = {
   "cursedOnAdd": "{{pokemonNameWithAffix}}削减了自己的体力，\n并诅咒了{{pokemonName}}！",
   "cursedLapse": "{{pokemonNameWithAffix}}\n正受到诅咒！",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}}蓄力了{{stockpiledCount}}次！",
+  "substituteOnAdd": "{{pokemonNameWithAffix}}的\n替身出现了！",
+  "substituteOnHit": "替身代替{{pokemonNameWithAffix}}\n承受了攻击！",
+  "substituteOnRemove": "{{pokemonNameWithAffix}}的\n替身消失了……",
 } as const;

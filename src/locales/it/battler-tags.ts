@@ -70,4 +70,7 @@ export const battlerTags: SimpleTranslationEntries = {
   "cursedOnAdd": "{{pokemonNameWithAffix}} ha sacrificato metà dei suoi PS per\nlanciare una maledizione su {{pokemonName}}!",
   "cursedLapse": "{{pokemonNameWithAffix}} subisce la maledizione!",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}} ha usato Accumulo per la\n{{stockpiledCount}}ª volta!",
+  "substituteOnAdd": "Appare un sostituto di {{pokemonNameWithAffix}}!",
+  "substituteOnHit": "Il sostituto viene colpito al posto di {{pokemonNameWithAffix}}!",
+  "substituteOnRemove": "Il sostituto di {{pokemonNameWithAffix}} svanisce!",
 } as const;

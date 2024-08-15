@@ -1843,7 +1843,7 @@ export class SubstituteTag extends BattlerTag {
 
     // Queue battle animation and message
     pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_ADD);
-    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsSubstituteOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
 
     // Remove any trapping effects from the user
     pokemon.findAndRemoveTags(tag => tag instanceof TrappedTag);
@@ -1857,7 +1857,7 @@ export class SubstituteTag extends BattlerTag {
     } else {
       this.sprite.destroy();
     }
-    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsSubstituteOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1896,7 +1896,7 @@ export class SubstituteTag extends BattlerTag {
       const firstHit = (attacker.turnData.hitCount === attacker.turnData.hitsLeft);
 
       if (firstHit && !move.canIgnoreSubstitute(attacker)) {
-        pokemon.scene.queueMessage(i18next.t("battle:battlerTagsSubstituteOnHit", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+        pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnHit", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       }
     }
   }

@@ -96,7 +96,4 @@ export const battle: SimpleTranslationEntries = {
   "congratulations": "축하합니다!",
   "beatModeFirstTime": "{{speciesName}}[[가]] {{gameMode}} 모드를 처음으로 클리어했다!\n{{newModifier}}[[를]] 손에 넣었다!",
   "ppReduced": "{{targetName}}의\n{{moveName}}[[를]] {{reduction}} 깎았다!",
-  "battlerTagsSubstituteOnAdd": "{{pokemonNameWithAffix}}의\n대타가 나타났다!",
-  "battlerTagsSubstituteOnHit": "{{pokemonNameWithAffix}}[[를]] 대신하여\n대타가 공격을 받았다!",
-  "battlerTagsSubstituteOnRemove": "{{pokemonNameWithAffix}}의\n대타는 사라져 버렸다..."
 } as const;

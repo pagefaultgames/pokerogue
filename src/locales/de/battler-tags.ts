@@ -70,4 +70,7 @@ export const battlerTags: SimpleTranslationEntries = {
   "cursedOnAdd": "{{pokemonNameWithAffix}} nimmt einen Teil seiner KP und legt einen Fluch auf {{pokemonName}}!",
   "cursedLapse": "{{pokemonNameWithAffix}} wurde durch den Fluch verletzt!",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
+  "substituteOnAdd": "Ein Delegator von {{pokemonNameWithAffix}} ist erschienen!",
+  "substituteOnHit": "Der Delegator steckt den Schlag für {{pokemonNameWithAffix}} ein!",
+  "substituteOnRemove": "Der Delegator von {{pokemonNameWithAffix}} hört auf zu wirken!",
 } as const;

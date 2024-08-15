@@ -96,7 +96,4 @@ export const battle: SimpleTranslationEntries = {
   "congratulations": "Congratulazioni!",
   "beatModeFirstTime": "{{speciesName}} ha completato la modalità {{gameMode}} per la prima volta!\nHai ricevuto {{newModifier}}!",
   "ppReduced": "I PP della mossa {{moveName}} di\n{{targetName}} sono stati ridotti di {{reduction}}!",
-  "battlerTagsSubstituteOnAdd": "Appare un sostituto di {{pokemonNameWithAffix}}!",
-  "battlerTagsSubstituteOnHit": "Il sostituto viene colpito al posto di {{pokemonNameWithAffix}}!",
-  "battlerTagsSubstituteOnRemove": "Il sostituto di {{pokemonNameWithAffix}} svanisce!"
 } as const;

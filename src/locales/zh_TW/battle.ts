@@ -85,7 +85,4 @@ export const battle: SimpleTranslationEntries = {
   "unlockedSomething": "{{unlockedThing}}\nhas been unlocked.",
   "congratulations": "Congratulations!",
   "beatModeFirstTime": "{{speciesName}} beat {{gameMode}} Mode for the first time!\nYou received {{newModifier}}!",
-  "battlerTagsSubstituteOnAdd": "{{pokemonNameWithAffix}}的\n替身出現了！",
-  "battlerTagsSubstituteOnHit": "替身代替{{pokemonNameWithAffix}}承受了攻擊！",
-  "battlerTagsSubstituteOnRemove": "{{pokemonNameWithAffix}}的\n替身消失了……"
 } as const;

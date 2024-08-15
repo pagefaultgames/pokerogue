@@ -70,4 +70,7 @@ export const battlerTags: SimpleTranslationEntries = {
   "cursedOnAdd": "{{pokemonNameWithAffix}}は　自分の　体力を　削って\n{{pokemonName}}に　のろいを　かけた!",
   "cursedLapse": "{{pokemonNameWithAffix}}は　のろわれている！",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}}は　{{stockpiledCount}}つ　たくわえた!",
+  "substituteOnAdd": "{{pokemonNameWithAffix}} put in a substitute!",
+  "substituteOnHit": "The substitute took damage for {{pokemonNameWithAffix}}!",
+  "substituteOnRemove": "{{pokemonNameWithAffix}}'s substitute faded!",
 } as const;

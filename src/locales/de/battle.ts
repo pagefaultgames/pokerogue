@@ -96,7 +96,4 @@ export const battle: SimpleTranslationEntries = {
   "unlockedSomething": "{{unlockedThing}} wurde freigeschaltet.",
   "congratulations": "Glückwunsch!",
   "beatModeFirstTime": "{{speciesName}} hat den {{gameMode}} Modus zum ersten Mal beendet! Du erhältst {{newModifier}}!",
-  "battlerTagsSubstituteOnAdd": "Ein Delegator von {{pokemonNameWithAffix}} ist erschienen!",
-  "battlerTagsSubstituteOnHit": "Der Delegator steckt den Schlag für {{pokemonNameWithAffix}} ein!",
-  "battlerTagsSubstituteOnRemove": "Der Delegator von {{pokemonNameWithAffix}} hört auf zu wirken!"
 } as const;

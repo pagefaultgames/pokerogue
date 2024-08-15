@@ -96,7 +96,4 @@ export const battle: SimpleTranslationEntries = {
   "unlockedSomething": "{{unlockedThing}}\nfoi desbloqueado.",
   "congratulations": "Parabéns!",
   "beatModeFirstTime": "{{speciesName}} venceu o Modo {{gameMode}} pela primeira vez!\nVocê recebeu {{newModifier}}!",
-  "battlerTagsSubstituteOnAdd": "{{pokemonNameWithAffix}} colocou um substituto!",
-  "battlerTagsSubstituteOnHit": "O substituto tomou o dano pelo {{pokemonNameWithAffix}}!",
-  "battlerTagsSubstituteOnRemove": "O substituto de {{pokemonNameWithAffix}} desbotou!"
 } as const;
