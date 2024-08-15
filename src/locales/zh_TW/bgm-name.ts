@@ -59,7 +59,7 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_legendary_dusk_dawn": "究極日月「戰鬥！日食・月食 奈克洛茲瑪」",
   "battle_legendary_ultra_nec": "究極日月「戰鬥！究極奈克洛茲瑪」",
   "battle_legendary_zac_zam": "劍盾「戰鬥！蒼響・藏瑪然特」",
-  "battle_legendary_glas_spec": "劍盾「戰鬥! 雪暴馬・靈幽馬」",
+  "battle_legendary_glas_spec": "劍盾「戰鬥！ 雪暴馬・靈幽馬」",
   "battle_legendary_calyrex": "劍盾「戰鬥！蕾冠王」",
   "battle_legendary_birds_galar": "劍盾「戰鬥！傳說的鳥寶可夢」",
   "battle_legendary_ruinous": "朱紫「戰鬥！災厄寶可夢」",

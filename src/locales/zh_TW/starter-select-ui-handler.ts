@@ -8,7 +8,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "使用這些寶可夢開始嗎?",
   "confirmExit": "確定要退出嗎？",
-  "invalidParty": "此為無效隊伍!",
+  "invalidParty": "此為無效隊伍！",
   "gen1": "I",
   "gen2": "II",
   "gen3": "III",

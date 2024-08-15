@@ -8,7 +8,7 @@ export const splashMessages: SimpleTranslationEntries = {
   "optionalSaveScumming": "可用SL大法！",
   "biomes": "35种地区！",
   "openSource": "开源！",
-  "playWithSpeed": "请五倍速游玩!",
+  "playWithSpeed": "请五倍速游玩！",
   "liveBugTesting": "随时修复BUG！",
   "heavyInfluence": "深受雨中冒险2影响！",
   "pokemonRiskAndPokemonRain": "雨中宝可梦冒险！",

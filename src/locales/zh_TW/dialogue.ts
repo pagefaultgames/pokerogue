@@ -1104,14 +1104,14 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "crasher_wake": {
     "encounter": {
-      1: "極限! 極限! 看好了!$極限假面…就此…登場!",
-      2: "極限! 極限! 極限假面!",
+      1: "極限！ 極限！ 看好了！$極限假面…就此…登場！",
+      2: "極限！ 極限！ 極限假面！",
       3: "我是滔滔巨浪，將你沖走！",
     },
     "victory": {
       1: "我真是笑得合不攏嘴啊！$哈哈哈！那真是太有趣了！",
       2: "呼哇！結束收尾了！$我該怎麼說呢……$我還想再對戰！我還想再繼續戰鬥！",
-      3: "啊啊啊啊啊!?",
+      3: "啊啊啊啊啊！?",
     },
     "defeat": {
       1: "耶！就是這樣！",
@@ -1128,7 +1128,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: "明白了……我會禮貌地退場。",
       2: "輸了就是輸了。你確實很強大。",
-      3: "…行吧! 嗯, 我輸了。",
+      3: "…行吧！ 嗯, 我輸了。",
     },
     "defeat": {
       1: "爸爸！我用你珍愛的飛行寶可夢贏了……",
@@ -1450,7 +1450,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "clay": {
     "encounter": {
-      1: "咳咳! 讓我好等，不是嗎，孩子？$好吧，是時候看看你能做到什麼了！",
+      1: "咳咳！ 讓我好等，不是嗎，孩子？$好吧，是時候看看你能做到什麼了！",
     },
     "victory": {
       1: "真是的……我先說好，\n我可沒有手下留情。",
@@ -1676,7 +1676,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "夠野的！你的想法比我的還要毒！",
     },
     "defeat": {
-      1: "嘿，拜託！認真點！\n你要加把勁啊!",
+      1: "嘿，拜託！認真點！\n你要加把勁啊！",
     }
   },
   "olivia": {
@@ -1758,7 +1758,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "wikstrom": {
     "encounter": {
-      1: "年輕的挑戰者，幸會！\n我乃是著名的鋼鐵之刃，公爵雁鎧! $讓我們開始戰鬥吧！預備！",
+      1: "年輕的挑戰者，幸會！\n我乃是著名的鋼鐵之刃，公爵雁鎧！ $讓我們開始戰鬥吧！預備！",
     },
     "victory": {
       1: "輝煌！你與你尊貴的\n寶可夢之間的信任居然勝過了我！",
@@ -1795,7 +1795,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       2: "我知道你能走這麼遠。讓我們開始吧。",
     },
     "victory": {
-      1: "被你拿下了啊。你太出色了!",
+      1: "被你拿下了啊。你太出色了！",
       2: "我從沒想到會有另一個訓練師打敗我……$我很驚訝。",
     },
     "defeat": {
@@ -1899,13 +1899,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "red": {
     "encounter": {
-      1: "…!",
+      1: "…！",
     },
     "victory": {
       1: "…?",
     },
     "defeat": {
-      1: "…!",
+      1: "…！",
     }
   },
   "jasmine": {
@@ -2287,7 +2287,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "marnie": {
     "encounter": {
-      1: "事實上，言而總之… \n人家自己也想當冠軍呀! $所以別認為我在針對你！",
+      1: "事實上，言而總之… \n人家自己也想當冠軍呀！ $所以別認為我在針對你！",
     },
     "victory": {
       1: "好吧，我還是輸了……\n但是我看到了很多你和你寶可夢的優點哦",
@@ -2342,13 +2342,13 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "ryme": {
     "encounter": {
-      1: "寶貝, 一起! \n搖滾搖到骨子裡!",
+      1: "寶貝, 一起！ \n搖滾搖到骨子裡！",
     },
     "victory": {
       1: "你好酷！我佩服！\n我的靈魂為你哭！",
     },
     "defeat": {
-      1: "再會, 寶貝!",
+      1: "再會, 寶貝！",
     }
   },
   "grusha": {
@@ -2626,10 +2626,10 @@ export const PGMdoubleBattleDialogue: DialogueTranslationEntries = {
   },
   "red_blue_double": {
     "encounter": {
-      1: "赤紅: ...!$青綠：他人狠話不多。$青綠： 他人狠話不多。$青綠： 但別被他耍了，\n畢竟他可是個冠軍！",
+      1: "赤紅: ...！$青綠：他人狠話不多。$青綠： 他人狠話不多。$青綠： 但別被他耍了，\n畢竟他可是個冠軍！",
     },
     "victory": {
-      1: "赤紅: ...!$青綠: 下次我們一定會贏你！",
+      1: "赤紅: ...！$青綠: 下次我們一定會贏你！",
     },
   },
   "tate_liza_double": {
