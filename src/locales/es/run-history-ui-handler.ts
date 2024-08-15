@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const runHistory: SimpleTranslationEntries = {
-  "victory": "Victory!",
+  "victory": "¡Victoria!",
   "defeatedWild": "Derrotado por ",
   "defeatedTrainer": "Derrotado por ",
   "defeatedTrainerDouble": "Derrotado por un dúo",

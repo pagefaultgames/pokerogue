@@ -321,7 +321,7 @@ export default class GameInfoUiHandler extends UiHandler {
     const runInfoText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize : "50px", lineSpacing:3});
     const runTime = Utils.getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
-    runInfoText.appendText(`[color=#e8e8a8]\u20BD${Utils.formatLargeNumber(this.runInfo.money, 1000)}[/color]`);
+    runInfoText.appendText(`[color=${LIGHT_YELLOW}]\u20BD${Utils.formatLargeNumber(this.runInfo.money, 1000)}[/color]`);
     const luckText = addBBCodeTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, {fontSize: "55px"});
     const luckValue = Phaser.Math.Clamp(this.runInfo.party.map(p => p.toPokemon(this.scene).getLuck()).reduce((total: integer, value: integer) => total += value, 0), 0, 14);
     let luckInfo = i18next.t("runHistory:luck")+": "+getLuckString(luckValue);
@@ -565,11 +565,11 @@ export default class GameInfoUiHandler extends UiHandler {
   showParty(partyVisible: boolean): void {
     const allContainers = this.partyContainer.getAll("name", "PkmnInfo");
     allContainers.forEach((c: Phaser.GameObjects.Container) => {
-      (c.getByName("PkmnMoves") as Phaser.GameObjects.Container).setVisible(partyVisible);
-      (c.getByName("PkmnInfoText") as Phaser.GameObjects.Container).setVisible(partyVisible);
-      (c.getByName("PkmnStatsText") as Phaser.GameObjects.Container).setVisible(partyVisible);
-      (c.getByName("PkmnMarks") as Phaser.GameObjects.Container).setVisible(partyVisible);
-      (c.getByName("heldItems") as Phaser.GameObjects.Container).setVisible(!partyVisible);
+      c.getByName<Phaser.GameObjects.Container>("PkmnMoves").setVisible(partyVisible);
+      c.getByName<Phaser.GameObjects.Container>("PkmnInfoText").setVisible(partyVisible);
+      c.getByName<Phaser.GameObjects.Container>("PkmnStatsText").setVisible(partyVisible);
+      c.getByName<Phaser.GameObjects.Container>("PkmnMarks").setVisible(partyVisible);
+      c.getByName<Phaser.GameObjects.Container>("heldItems").setVisible(!partyVisible);
       this.partyVisibility = partyVisible;
     });
   }
