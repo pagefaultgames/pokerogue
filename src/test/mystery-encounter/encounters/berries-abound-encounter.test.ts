@@ -6,9 +6,7 @@ import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
 import { CommandPhase, SelectModifierPhase } from "#app/phases";
-import { Moves } from "#enums/moves";
 import BattleScene from "#app/battle-scene";
-import { PokemonMove } from "#app/field/pokemon";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { BerryModifier } from "#app/modifier/modifier";
@@ -16,13 +14,11 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { BerriesAboundEncounter } from "#app/data/mystery-encounters/encounters/berries-abound-encounter";
-import * as Utils from "utils";
-import { isNullOrUndefined } from "utils";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import * as EncounterDialogueUtils from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 
 const namespace = "mysteryEncounter:berriesAbound";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [Species.PYUKUMUKU];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -105,10 +101,10 @@ describe("Berries Abound - Mystery Encounter", () => {
 
   describe("Option 1 - Fight", () => {
     it("should have the correct properties", () => {
-      const option1 = BerriesAboundEncounter.options[0];
-      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
-      expect(option1.dialogue).toBeDefined();
-      expect(option1.dialogue).toStrictEqual({
+      const option = BerriesAboundEncounter.options[0];
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
+      expect(option.dialogue).toBeDefined();
+      expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}.option.1.label`,
         buttonTooltip: `${namespace}.option.1.tooltip`,
         selected: [
@@ -166,32 +162,25 @@ describe("Berries Abound - Mystery Encounter", () => {
     });
   });
 
-  describe("Option 2 - Attempt to Steal", () => {
+  describe("Option 2 - Race to the Bush", () => {
     it("should have the correct properties", () => {
-      const option1 = BerriesAboundEncounter.options[1];
-      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL);
-      expect(option1.dialogue).toBeDefined();
-      expect(option1.dialogue).toStrictEqual({
+      const option = BerriesAboundEncounter.options[1];
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
+      expect(option.dialogue).toBeDefined();
+      expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}.option.2.label`,
         buttonTooltip: `${namespace}.option.2.tooltip`,
       });
     });
 
-    it("should start battle on failing to steal", async () => {
+    it("should start battle if fastest pokemon is slower than boss", async () => {
+      const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
       const config = game.scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
       const speciesToSpawn = config.pokemonConfigs[0].species.speciesId;
-
-      const realFn = Utils.randSeedInt;
-      vi.spyOn(Utils, "randSeedInt").mockImplementation((range, min) => {
-        if (range === 16 && isNullOrUndefined(min)) {
-          // Mock the steal roll
-          return 12;
-        } else {
-          return realFn(range, min);
-        }
-      });
+      // Setting enemy's level arbitrarily high to outspeed
+      config.pokemonConfigs[0].dataSource.level = 1000;
 
       await runMysteryEncounterToEnd(game, 2, null, true);
 
@@ -202,60 +191,33 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       // Should be enraged
       expect(enemyField[0].summonData.battleStats).toEqual([1, 1, 1, 1, 1, 0, 0]);
+      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}.option.2.selected_bad`);
     });
 
-    it("Should skip battle when succeed on steal", async () => {
-      const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
-
-      await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
-
-      const realFn = Utils.randSeedInt;
-      vi.spyOn(Utils, "randSeedInt").mockImplementation((range, min) => {
-        if (range === 16 && isNullOrUndefined(min)) {
-          // Mock the steal roll
-          return 6;
-        } else {
-          return realFn(range, min);
-        }
-      });
-
-      await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
-
-      expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
-      for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id).toContain("BERRY");
-      }
-
-      expect(leaveEncounterWithoutBattleSpy).toBeCalled();
-    });
-
-    it("Should skip fight when special requirements are met", async () => {
+    it("Should skip battle when fastest pokemon is faster than boss", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
       const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
 
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
-      // Mock moveset
-      scene.getParty()[0].moveset = [new PokemonMove(Moves.KNOCK_OFF)];
+      // Setting party pokemon's level arbitrarily high to outspeed
+      const fastestPokemon = scene.getParty()[0];
+      fastestPokemon.level = 1000;
+      fastestPokemon.calculateStats();
 
       await runMysteryEncounterToEnd(game, 2);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
-      expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
 
+      expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
       for (const option of modifierSelectHandler.options) {
         expect(option.modifierTypeOption.type.id).toContain("BERRY");
       }
 
-      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}.option.2.special_result`);
+      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}.option.2.selected`);
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
   });

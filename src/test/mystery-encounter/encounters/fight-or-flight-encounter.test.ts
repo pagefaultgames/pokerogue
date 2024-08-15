@@ -4,7 +4,7 @@ import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
+import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
 import { CommandPhase, SelectModifierPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import BattleScene from "#app/battle-scene";
@@ -14,11 +14,9 @@ import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
-import * as Utils from "utils";
-import { isNullOrUndefined } from "utils";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import * as EncounterDialogueUtils from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { FightOrFlightEncounter } from "#app/data/mystery-encounters/encounters/fight-or-flight-encounter";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 
 const namespace = "mysteryEncounter:fightOrFlight";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -104,10 +102,10 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
   describe("Option 1 - Fight", () => {
     it("should have the correct properties", () => {
-      const option1 = FightOrFlightEncounter.options[0];
-      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
-      expect(option1.dialogue).toBeDefined();
-      expect(option1.dialogue).toStrictEqual({
+      const option = FightOrFlightEncounter.options[0];
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
+      expect(option.dialogue).toBeDefined();
+      expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}.option.1.label`,
         buttonTooltip: `${namespace}.option.1.tooltip`,
         selected: [
@@ -152,74 +150,43 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
   describe("Option 2 - Attempt to Steal", () => {
     it("should have the correct properties", () => {
-      const option1 = FightOrFlightEncounter.options[1];
-      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL);
-      expect(option1.dialogue).toBeDefined();
-      expect(option1.dialogue).toStrictEqual({
+      const option = FightOrFlightEncounter.options[1];
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL);
+      expect(option.dialogue).toBeDefined();
+      expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}.option.2.label`,
         buttonTooltip: `${namespace}.option.2.tooltip`,
+        disabledButtonTooltip: `${namespace}.option.2.disabled_tooltip`,
+        selected: [
+          {
+            text: `${namespace}.option.2.selected`,
+          }
+        ],
       });
     });
 
-    it("should start battle on failing to steal", async () => {
+    it("should NOT be selectable if the player doesn't have a Stealing move", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
+      scene.getParty().forEach(p => p.moveset = []);
+      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const config = game.scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
-      const speciesToSpawn = config.pokemonConfigs[0].species.speciesId;
+      const encounterPhase = scene.getCurrentPhase();
+      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
+      vi.spyOn(mysteryEncounterPhase, "continueEncounter");
+      vi.spyOn(mysteryEncounterPhase, "handleOptionSelect");
+      vi.spyOn(scene.ui, "playError");
 
-      const realFn = Utils.randSeedInt;
-      vi.spyOn(Utils, "randSeedInt").mockImplementation((range, min) => {
-        if (range === 16 && isNullOrUndefined(min)) {
-          // Mock the steal roll
-          return 12;
-        } else {
-          return realFn(range, min);
-        }
-      });
+      await runSelectMysteryEncounterOption(game, 2);
 
-      await runMysteryEncounterToEnd(game, 2, null, true);
-
-      const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
-      expect(enemyField.length).toBe(1);
-      expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
-
-      // Should be enraged
-      expect(enemyField[0].summonData.battleStats).toEqual([1, 1, 1, 1, 1, 0, 0]);
+      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
+      expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
+      expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
     });
 
-    it("Should skip battle when succeed on steal", async () => {
+    it("Should skip fight when player meets requirements", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
-
-      await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
-
-      const item = game.scene.currentBattle.mysteryEncounter.misc;
-      const realFn = Utils.randSeedInt;
-      vi.spyOn(Utils, "randSeedInt").mockImplementation((range, min) => {
-        if (range === 16 && isNullOrUndefined(min)) {
-          // Mock the steal roll
-          return 6;
-        } else {
-          return realFn(range, min);
-        }
-      });
-
-      await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
-      expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(item.type.name).toBe(modifierSelectHandler.options[0].modifierTypeOption.type.name);
-
-      expect(leaveEncounterWithoutBattleSpy).toBeCalled();
-    });
-
-    it("Should skip fight when special requirements are met", async () => {
-      const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
-      const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
 
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
 
@@ -237,7 +204,6 @@ describe("Fight or Flight - Mystery Encounter", () => {
       expect(modifierSelectHandler.options.length).toEqual(1);
       expect(item.type.name).toBe(modifierSelectHandler.options[0].modifierTypeOption.type.name);
 
-      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}.option.2.special_result`);
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
   });

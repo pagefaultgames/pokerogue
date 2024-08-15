@@ -702,6 +702,7 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
 
 export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   private statModifier: integer;
+  readonly isTransferrable: boolean = false;
 
   constructor(type: ModifierTypes.PokemonBaseStatTotalModifierType, pokemonId: integer, statModifier: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -709,10 +710,7 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   }
 
   matchType(modifier: Modifier): boolean {
-    if (modifier instanceof PokemonBaseStatTotalModifier) {
-      return (modifier as PokemonBaseStatTotalModifier).statModifier === this.statModifier;
-    }
-    return false;
+    return modifier instanceof PokemonBaseStatTotalModifier;
   }
 
   clone(): PersistentModifier {
@@ -728,6 +726,7 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   }
 
   apply(args: any[]): boolean {
+    // Modifies the passed in baseStats[] array
     args[1].forEach((v, i) => {
       const newVal = Math.floor(v + this.statModifier);
       args[1][i] = Math.min(Math.max(newVal, 1), 999999);
@@ -736,16 +735,61 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getTransferrable(_withinParty: boolean): boolean {
-    return false;
-  }
-
   getScoreMultiplier(): number {
     return 1.2;
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 2;
+  }
+}
+
+export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
+  private statModifier: integer;
+  private stats: Stat[];
+  readonly isTransferrable: boolean = false;
+
+  constructor (type: ModifierType, pokemonId: integer, statModifier: integer, stats: Stat[], stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.statModifier = statModifier;
+    this.stats = stats;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonBaseStatFlatModifier;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonBaseStatFlatModifier(this.type, this.pokemonId, this.statModifier, this.stats, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.statModifier, this.stats);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  }
+
+  apply(args: any[]): boolean {
+    // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats
+    args[1].forEach((v, i) => {
+      if (this.stats.includes(i)) {
+        const newVal = Math.floor(v + this.statModifier);
+        args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+      }
+    });
+
+    return true;
+  }
+
+  getScoreMultiplier(): number {
+    return 1.1;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 1;
   }
 }
 

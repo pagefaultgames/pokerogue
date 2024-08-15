@@ -76,6 +76,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
         "cursed": "cursed"
       },
     },
+    "PokemonBaseStatFlatModifierType": {
+      name: "Old Gateau",
+      description: "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream.",
+    },
     "AllPokemonFullHpRestoreModifierType": {
       description: "Restores 100% HP for all Pokémon.",
     },
@@ -258,6 +262,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { name: "Shuckle Juice" },
     "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { name: "Black Sludge", description: "The stench is so powerful that healing items are no longer available to purchase in shops." },
+    "MYSTERY_ENCOUNTER_OLD_GATEAU": { name: "Old Gateau", description: "Increases the holder's {{stats}} stats by {{statValue}}." },
   },
   SpeciesBoosterItem: {
     "LIGHT_BALL": { name: "Light Ball", description: "It's a mysterious orb that boosts Pikachu's Attack and Sp. Atk stats." },

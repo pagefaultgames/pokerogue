@@ -212,4 +212,8 @@ export default class MockContainer {
     return this.list;
   }
 
+  getByName(key: string) {
+    return this.list.find(v => v.name === key) ?? new MockContainer(this.textureManager, 0, 0);
+  }
+
 }
