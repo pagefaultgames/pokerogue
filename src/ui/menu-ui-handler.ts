@@ -142,7 +142,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
     menuMessageText.setName("menu-message");
     menuMessageText.setOrigin(0, 0);
-    menuMessageText.setWordWrapWidth(menuMessageBox.getBounds().width * 0.96);
+    menuMessageText.setWordWrapWidth(menuMessageBox.getBounds().width - this.menuBg.width * 0.04);
     menuMessageText.setData("originalFont",menuMessageText.style.fontSize);
 
     this.menuMessageBoxContainer.add(menuMessageText);
@@ -524,14 +524,14 @@ export default class MenuUiHandler extends MessageUiHandler {
       const fontSize = fontSizeToNumber(messageText.getData("originalFont"));
       const textSize = Phaser.GameObjects.GetTextSize(messageText,messageText.style.getTextMetrics(),messageText.getWrappedText(text));
       messageText.setFontSize(fontSize);
+      const padding = messageText.x / 2;
 
-      if (messageText.getWrappedText(text).length > messageText.style.maxLines || textSize.width > messageBox.getBounds().width) {
+      if (messageText.getWrappedText(text).length > messageText.style.maxLines || (textSize.width + padding * 17) > messageBox.getBounds().width) {
         let fontDecrement = fontSize;
-        while (messageText.getWrappedText(text).length > messageText.style.maxLines || Phaser.GameObjects.GetTextSize(messageText,messageText.style.getTextMetrics(),messageText.getWrappedText(text)).width > messageBox.getBounds().width) {
+        while (messageText.getWrappedText(text).length > messageText.style.maxLines || (Phaser.GameObjects.GetTextSize(messageText,messageText.style.getTextMetrics(),messageText.getWrappedText(text)).width + padding * 17) > messageBox.getBounds().width) {
           fontDecrement -= 1;
           messageText.setFontSize(fontDecrement);
         }
-        const padding = messageText.x / 2;
         messageText.setFontSize(fontDecrement - padding);
       }
     }
