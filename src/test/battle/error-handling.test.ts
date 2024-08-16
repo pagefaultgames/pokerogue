@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Test Battle Phase", () => {
+describe("Error Handling", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 

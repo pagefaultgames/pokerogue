@@ -115,11 +115,11 @@ export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB
 * @param statusA The first Status
 * @param statusB The second Status
 */
-export function getRandomStatus(statusA: Status, statusB: Status): Status {
-  if (statusA === undefined || statusA.effect === StatusEffect.NONE || statusA.effect === StatusEffect.FAINT) {
+export function getRandomStatus(statusA: Status | null, statusB: Status | null): Status | null {
+  if (!statusA || statusA.effect === StatusEffect.NONE || statusA.effect === StatusEffect.FAINT) {
     return statusB;
   }
-  if (statusB === undefined || statusB.effect === StatusEffect.NONE || statusB.effect === StatusEffect.FAINT) {
+  if (!statusB || statusB.effect === StatusEffect.NONE || statusB.effect === StatusEffect.FAINT) {
     return statusA;
   }
 

@@ -8,7 +8,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { Status, StatusEffect } from "#app/data/status-effect.js";
 
-describe("Test Battle Phase", () => {
+describe("Double Battles", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 

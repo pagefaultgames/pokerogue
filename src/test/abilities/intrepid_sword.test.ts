@@ -30,7 +30,7 @@ describe("Abilities - Intrepid Sword", () => {
   });
 
   it("INTREPID SWORD on player", async() => {
-    await game.runToSummon([
+    await game.classicMode.runToSummon([
       Species.ZACIAN,
     ]);
     await game.phaseInterceptor.to(CommandPhase, false);

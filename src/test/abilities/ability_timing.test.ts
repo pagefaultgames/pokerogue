@@ -39,7 +39,7 @@ describe("Ability Timing", () => {
   it("should trigger after switch check", async() => {
     initI18n();
     i18next.changeLanguage("en");
-    await game.runToSummon([Species.EEVEE, Species.FEEBAS]);
+    await game.classicMode.runToSummon([Species.EEVEE, Species.FEEBAS]);
 
     game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
       game.setMode(Mode.MESSAGE);
