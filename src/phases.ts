@@ -3743,7 +3743,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
             return;
           }
 
-          const damage = Utils.toIntValue(pokemon.getMaxHp() / 16);
+          const damage = Utils.toDmgValue(pokemon.getMaxHp() / 16);
 
           this.scene.queueMessage(getWeatherDamageMessage(this.weather?.weatherType!, pokemon)!); // TODO: are those bangs correct?
           pokemon.damageAndUpdate(damage, HitResult.EFFECTIVE, false, false, true);
@@ -3826,7 +3826,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
           damage.value = Math.max(pokemon.getMaxHp() >> 3, 1);
           break;
         case StatusEffect.TOXIC:
-          damage.value = Utils.toIntValue((pokemon.getMaxHp() / 16) * pokemon.status.turnCount);
+          damage.value = Utils.toDmgValue((pokemon.getMaxHp() / 16) * pokemon.status.turnCount);
           break;
 
         case StatusEffect.BURN:

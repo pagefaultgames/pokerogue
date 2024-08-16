@@ -7,7 +7,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { BattleStat } from "#app/data/battle-stat";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { toIntValue } from "#app/utils";
+import { toDmgValue } from "#app/utils";
 
 const TIMEOUT = 20 * 1000;
 /** HP Cost of Move */
@@ -46,7 +46,7 @@ describe("Moves - FILLET AWAY", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
-      const hpLost = toIntValue(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.FILLET_AWAY));
       await game.phaseInterceptor.to(TurnEndPhase);
@@ -63,7 +63,7 @@ describe("Moves - FILLET AWAY", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
-      const hpLost = toIntValue(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
 
       //Here - BattleStat.SPD -> 0 and BattleStat.SPATK -> 3
       leadPokemon.summonData.battleStats[BattleStat.ATK] = 6;
@@ -104,7 +104,7 @@ describe("Moves - FILLET AWAY", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
-      const hpLost = toIntValue(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
       leadPokemon.hp = hpLost - PREDAMAGE;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.FILLET_AWAY));

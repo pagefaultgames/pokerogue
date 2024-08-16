@@ -424,7 +424,7 @@ class WishTag extends ArenaTag {
       if (user) {
         this.battlerIndex = user.getBattlerIndex();
         this.triggerMessage = i18next.t("arenaTag:wishTagOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(user) });
-        this.healHp = Utils.toIntValue(user.getMaxHp() / 2);
+        this.healHp = Utils.toDmgValue(user.getMaxHp() / 2);
       } else {
         console.warn("Failed to get source for WishTag onAdd");
       }
@@ -582,7 +582,7 @@ class SpikesTag extends ArenaTrapTag {
 
       if (!cancelled.value) {
         const damageHpRatio = 1 / (10 - 2 * this.layers);
-        const damage = Utils.toIntValue(pokemon.getMaxHp() * damageHpRatio);
+        const damage = Utils.toDmgValue(pokemon.getMaxHp() * damageHpRatio);
 
         pokemon.scene.queueMessage(i18next.t("arenaTag:spikesActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
         pokemon.damageAndUpdate(damage, HitResult.OTHER);
@@ -742,7 +742,7 @@ class StealthRockTag extends ArenaTrapTag {
     const damageHpRatio = this.getDamageHpRatio(pokemon);
 
     if (damageHpRatio) {
-      const damage = Utils.toIntValue(pokemon.getMaxHp() * damageHpRatio);
+      const damage = Utils.toDmgValue(pokemon.getMaxHp() * damageHpRatio);
       pokemon.scene.queueMessage(i18next.t("arenaTag:stealthRockActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       pokemon.damageAndUpdate(damage, HitResult.OTHER);
       if (pokemon.turnData) {

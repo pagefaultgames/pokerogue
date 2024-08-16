@@ -11,7 +11,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { toIntValue } from "#app/utils";
+import { toDmgValue } from "#app/utils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -69,7 +69,7 @@ describe("Abilities - Parental Bond", () => {
       const secondStrikeDamage = enemyStartingHp - enemyPokemon.hp;
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
-      expect(secondStrikeDamage).toBe(toIntValue(0.25 * firstStrikeDamage));
+      expect(secondStrikeDamage).toBe(toDmgValue(0.25 * firstStrikeDamage));
     }, TIMEOUT
   );
 
@@ -299,7 +299,7 @@ describe("Abilities - Parental Bond", () => {
       // This test will time out if the user faints
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(leadPokemon.hp).toBe(toIntValue(leadPokemon.getMaxHp()/2));
+      expect(leadPokemon.hp).toBe(toDmgValue(leadPokemon.getMaxHp()/2));
     }, TIMEOUT
   );
 

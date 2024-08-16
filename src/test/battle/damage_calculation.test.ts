@@ -8,7 +8,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { toIntValue } from "#app/utils";
+import { toDmgValue } from "#app/utils";
 
 describe("Round Down and Minimun 1 test in Damage Calculation", () => {
   let phaserGame: Phaser.Game;
@@ -62,7 +62,7 @@ describe("Round Down and Minimun 1 test in Damage Calculation", () => {
     const charizard = game.scene.getEnemyPokemon()!;
 
     const maxHp = charizard.getMaxHp();
-    const damage_prediction = toIntValue(charizard.getMaxHp() / 2);
+    const damage_prediction = toDmgValue(charizard.getMaxHp() / 2);
     const currentHp = charizard.hp;
     const expectedHP = maxHp - damage_prediction;
 

@@ -6,7 +6,7 @@ import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { BattleStat } from "#app/data/battle-stat";
-import { toIntValue } from "#app/utils";
+import { toDmgValue } from "#app/utils";
 
 const TIMEOUT = 20 * 1000;
 // RATIO : HP Cost of Move
@@ -45,7 +45,7 @@ describe("Moves - BELLY DRUM", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
-      const hpLost = toIntValue(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
       await game.phaseInterceptor.to(TurnEndPhase);
@@ -60,7 +60,7 @@ describe("Moves - BELLY DRUM", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
-      const hpLost = toIntValue(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
 
       // Here - BattleStat.ATK -> -3 and BattleStat.SPATK -> 6
       leadPokemon.summonData.battleStats[BattleStat.ATK] = -3;
@@ -96,7 +96,7 @@ describe("Moves - BELLY DRUM", () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
-      const hpLost = toIntValue(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
       leadPokemon.hp = hpLost - PREDAMAGE;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
