@@ -2479,7 +2479,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "@c{smile}嘿，你也在这里吗？$@c{smile_eclosed}一路过关斩将，是吧？$@c{serious_mopen_fists}我知道看起来好像我尾随着你来到这里，\n怎么可能啦。$@c{serious_smile_fists}说真的，自从你在老家打败我后，\n我就一直很渴望再比一场。$我自己也进行了很多训练，\n所以这次我肯定会好好打一场。$@c{serious_mopen_fists}不要手下留情，就像以前一样！$让我们开始吧！",
     },
     "victory": {
-      1: "@c{neutral_eclosed}哦。我过于自信了。$@c{smile}不过没关系。我猜到可能会这样。$@c{serious_mopen_fists}这只意味着我下次需要更努力！$$@c{smile}呃，不是特意帮你，我正好有多余的这个，\n我觉得你可能想要。$$@c{serious_smile_fists}不过这次之后别指望再有了！$我不能一直给我的对手优势。$@c{smile}反正，保重, and enjoy the event！",
+      1: "@c{neutral_eclosed}哦。我过于自信了。$@c{smile}不过没关系。我猜到可能会这样。$@c{serious_mopen_fists}这只意味着我下次需要更努力！$$@c{smile}呃，不是特意帮你，我正好有多余的这个，\n我觉得你可能想要。$$@c{serious_smile_fists}不过这次之后别指望再有了！$我不能一直给我的对手优势。$@c{smile}反正，保重，要享受活动哦！",
     },
   },
   "rival_2_female": {
