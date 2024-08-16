@@ -62,6 +62,7 @@ export default class GameInfoUiHandler extends UiHandler {
     this.modifiersModule = await import("../modifier/modifier");
     this.gameStatsContainer.setVisible(false);
     this.isPGF = this.scene.gameData.gender === PlayerGender.FEMALE;
+    this.pageMode = RunInfoUiMode.MAIN;
  	}
 
  	show(args: any[]): boolean {
@@ -153,122 +154,133 @@ export default class GameInfoUiHandler extends UiHandler {
 
     if (!this.isVictory) {
       const enemyContainer = this.scene.add.container(0, 0);
-
       // Wild - Single and Doubles
       if (this.runInfo.battleType === BattleType.WILD) {
         switch (this.runInfo.enemyParty.length) {
         case 1:
           // Wild - Singles
-          const enemyIconContainer = this.scene.add.container(0, 0);
-          const enemyData = this.runInfo.enemyParty[0];
-          const bossStatus = enemyData.boss;
-          enemyData.boss = false;
-          enemyData["player"] = true;
-          //addPokemonIcon() throws an error if the Pokemon used is a boss
-          const enemy = enemyData.toPokemon(this.scene);
-          const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
-          const enemyLevel = addTextObject(this.scene, 36, 26, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "44px", color: "#f8f8f8" });
-          enemyLevel.setShadow(0, 0, undefined);
-          enemyLevel.setStroke("#424242", 14);
-          enemyLevel.setOrigin(1, 0);
-          enemyIconContainer.add(enemyIcon);
-          enemyIconContainer.add(enemyLevel);
-          enemyContainer.add(enemyIconContainer);
-          enemyContainer.setPosition(27, 12);
-          enemy.destroy();
+          this.parseWildSingleDefeat(enemyContainer);
           break;
         case 2:
           //Wild - Doubles
-          this.runInfo.enemyParty.forEach((enemyData, e) => {
-            const enemyIconContainer = this.scene.add.container(0, 0);
-            const bossStatus = enemyData.boss;
-            enemyData.boss = false;
-            enemyData["player"] = true;
-            const enemy = enemyData.toPokemon(this.scene);
-            const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
-            const enemyLevel = addTextObject(this.scene, 36, 26, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "44px", color: "#f8f8f8" });
-            enemyLevel.setShadow(0, 0, undefined);
-            enemyLevel.setStroke("#424242", 14);
-            enemyLevel.setOrigin(1, 0);
-            enemyIconContainer.add(enemyIcon);
-            enemyIconContainer.add(enemyLevel);
-            enemyIconContainer.setPosition(e*35, 0);
-            enemyContainer.add(enemyIconContainer);
-            enemy.destroy();
-          });
-          enemyContainer.setPosition(8, 14);
+          this.parseWildDoubleDefeat(enemyContainer);
           break;
         }
-      // Trainer - Single and Double
       } else if (this.runInfo.battleType === BattleType.TRAINER) {
-        const tObj = this.runInfo.trainer.toTrainer(this.scene);
-        const tObjSpriteKey = tObj.config.getSpriteKey(this.runInfo.trainer.variant === TrainerVariant.FEMALE, false);
-        //const tObjSprite = this.scene.add.image(2, 10, "rival_f");
-        const tObjSprite = this.scene.add.sprite(0, 5, tObjSpriteKey);
-        if (this.runInfo.trainer.variant === TrainerVariant.DOUBLE) {
-          const doubleContainer = this.scene.add.container(5, 8);
-          tObjSprite.setPosition(-3, -3);
-          const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
-          const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
-          tObjPartnerSprite.setScale(0.20);
-          tObjSprite.setScale(0.20);
-          doubleContainer.add(tObjSprite);
-          doubleContainer.add(tObjPartnerSprite);
-          doubleContainer.setPosition(12, 38);
-          enemyContainer.add(doubleContainer);
-        } else {
-          tObjSprite.setScale(0.35, 0.35);
-          tObjSprite.setPosition(12, 28);
-          enemyContainer.add(tObjSprite);
-        }
-
-        const teraPokemon = {};
-        this.runInfo.enemyModifiers.forEach((m) => {
-          const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
-          if (modifier instanceof TerastallizeModifier) {
-            const teraDetails = modifier?.getArgs();
-            const pkmnId = teraDetails[0];
-            teraPokemon[pkmnId] = teraDetails[1];
-          }
-        });
-
-        const enemyPartyContainer = this.scene.add.container(0, 0);
-        this.runInfo.enemyParty.forEach((enemyData, e) => {
-          const pokemonRowHeight = Math.floor(e/3);
-          const enemyIconContainer = this.scene.add.container(0, 0);
-          enemyIconContainer.setScale(0.6);
-          const isBoss = enemyData.boss;
-          enemyData.boss = false;
-          enemyData["player"] = true;
-          const enemy = enemyData.toPokemon(this.scene);
-          const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
-          const enemySprite1 = enemyIcon.list[0] as Phaser.GameObjects.Sprite;
-          const enemySprite2 = (enemyIcon.list.length > 1) ? enemyIcon.list[1] as Phaser.GameObjects.Sprite : undefined;
-          if (teraPokemon[enemyData.id]) {
-            const teraTint = getTypeRgb(teraPokemon[enemyData.id]);
-            const teraColor = new Phaser.Display.Color(teraTint[0], teraTint[1], teraTint[2]);
-            enemySprite1.setTint(teraColor.color);
-            if (enemySprite2) {
-              enemySprite2.setTint(teraColor.color);
-            }
-          }
-          enemyIcon.setPosition(39*(e%3)+5, (35*pokemonRowHeight));
-          const enemyLevel = addTextObject(this.scene, 43*(e%3), (27*(pokemonRowHeight+1)), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
-          enemyLevel.setShadow(0, 0, undefined);
-          enemyLevel.setStroke("#424242", 14);
-          enemyLevel.setOrigin(0, 0);
-
-          enemyIconContainer.add(enemyIcon);
-          enemyIconContainer.add(enemyLevel);
-          enemyPartyContainer.add(enemyIconContainer);
-          enemy.destroy();
-        });
-        enemyPartyContainer.setPosition(25, 15);
-        enemyContainer.add(enemyPartyContainer);
+        this.parseTrainerDefeat(enemyContainer);
       }
       this.runResultContainer.add(enemyContainer);
     }
     this.gameStatsContainer.add(this.runResultContainer);
+  }
+
+  private parseWildSingleDefeat(enemyContainer: Phaser.GameObjects.Container) {
+    const enemyIconContainer = this.scene.add.container(0, 0);
+    const enemyData = this.runInfo.enemyParty[0];
+    const bossStatus = enemyData.boss;
+    enemyData.boss = false;
+    enemyData["player"] = true;
+    //addPokemonIcon() throws an error if the Pokemon used is a boss
+    const enemy = enemyData.toPokemon(this.scene);
+    const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
+    const enemyLevelStyle = bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY;
+    const enemyLevel = addTextObject(this.scene, 36, 26, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, enemyLevelStyle, { fontSize: "44px", color: "#f8f8f8" });
+    enemyLevel.setShadow(0, 0, undefined);
+    enemyLevel.setStroke("#424242", 14);
+    enemyLevel.setOrigin(1, 0);
+    enemyIconContainer.add(enemyIcon);
+    enemyIconContainer.add(enemyLevel);
+    enemyContainer.add(enemyIconContainer);
+    enemyContainer.setPosition(27, 12);
+    enemy.destroy();
+  }
+
+  private parseWildDoubleDefeat(enemyContainer: Phaser.GameObjects.Container) {
+    this.runInfo.enemyParty.forEach((enemyData, e) => {
+      const enemyIconContainer = this.scene.add.container(0, 0);
+      const bossStatus = enemyData.boss;
+      enemyData.boss = false;
+      enemyData["player"] = true;
+      const enemy = enemyData.toPokemon(this.scene);
+      const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
+      const enemyLevel = addTextObject(this.scene, 36, 26, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "44px", color: "#f8f8f8" });
+      enemyLevel.setShadow(0, 0, undefined);
+      enemyLevel.setStroke("#424242", 14);
+      enemyLevel.setOrigin(1, 0);
+      enemyIconContainer.add(enemyIcon);
+      enemyIconContainer.add(enemyLevel);
+      enemyIconContainer.setPosition(e*35, 0);
+      enemyContainer.add(enemyIconContainer);
+      enemy.destroy();
+    });
+    enemyContainer.setPosition(8, 14);
+  }
+
+  private parseTrainerDefeat(enemyContainer: Phaser.GameObjects.Container) {
+    const tObj = this.runInfo.trainer.toTrainer(this.scene);
+    const tObjSpriteKey = tObj.config.getSpriteKey(this.runInfo.trainer.variant === TrainerVariant.FEMALE, false);
+    const tObjSprite = this.scene.add.sprite(0, 5, tObjSpriteKey);
+    if (this.runInfo.trainer.variant === TrainerVariant.DOUBLE) {
+      const doubleContainer = this.scene.add.container(5, 8);
+      tObjSprite.setPosition(-3, -3);
+      const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
+      const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
+      tObjPartnerSprite.setScale(0.20);
+      tObjSprite.setScale(0.20);
+      doubleContainer.add(tObjSprite);
+      doubleContainer.add(tObjPartnerSprite);
+      doubleContainer.setPosition(12, 38);
+      enemyContainer.add(doubleContainer);
+    } else {
+      tObjSprite.setScale(0.35, 0.35);
+      tObjSprite.setPosition(12, 28);
+      enemyContainer.add(tObjSprite);
+    }
+
+    const teraPokemon = {};
+    this.runInfo.enemyModifiers.forEach((m) => {
+      const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
+      if (modifier instanceof TerastallizeModifier) {
+        const teraDetails = modifier?.getArgs();
+        const pkmnId = teraDetails[0];
+        teraPokemon[pkmnId] = teraDetails[1];
+      }
+    });
+
+    const enemyPartyContainer = this.scene.add.container(0, 0);
+    this.runInfo.enemyParty.forEach((enemyData, e) => {
+      const pokemonRowHeight = Math.floor(e/3);
+      const enemyIconContainer = this.scene.add.container(0, 0);
+      enemyIconContainer.setScale(0.6);
+      const isBoss = enemyData.boss;
+      enemyData.boss = false;
+      enemyData["player"] = true;
+      const enemy = enemyData.toPokemon(this.scene);
+      const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
+      const enemySprite1 = enemyIcon.list[0] as Phaser.GameObjects.Sprite;
+      const enemySprite2 = (enemyIcon.list.length > 1) ? enemyIcon.list[1] as Phaser.GameObjects.Sprite : undefined;
+      if (teraPokemon[enemyData.id]) {
+        const teraTint = getTypeRgb(teraPokemon[enemyData.id]);
+        const teraColor = new Phaser.Display.Color(teraTint[0], teraTint[1], teraTint[2]);
+        enemySprite1.setTint(teraColor.color);
+        if (enemySprite2) {
+          enemySprite2.setTint(teraColor.color);
+        }
+      }
+      enemyIcon.setPosition(39*(e%3)+5, (35*pokemonRowHeight));
+      const enemyLevel = addTextObject(this.scene, 43*(e%3), (27*(pokemonRowHeight+1)), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
+      enemyLevel.setShadow(0, 0, undefined);
+      enemyLevel.setStroke("#424242", 14);
+      enemyLevel.setOrigin(0, 0);
+
+      enemyIconContainer.add(enemyIcon);
+      enemyIconContainer.add(enemyLevel);
+      enemyPartyContainer.add(enemyIconContainer);
+      enemy.destroy();
+    });
+
+    enemyPartyContainer.setPosition(25, 15);
+    enemyContainer.add(enemyPartyContainer);
   }
 
   async parseRunInfo(windowX: number, windowY: number) {
@@ -658,19 +670,25 @@ export default class GameInfoUiHandler extends UiHandler {
     switch (button) {
     case Button.CANCEL:
       success = true;
-      this.runInfoContainer.removeAll(true);
-      this.runResultContainer.removeAll(true);
-      this.partyContainer.removeAll(true);
-      this.gameStatsContainer.removeAll(true);
-      if (this.isVictory) {
-        this.hallofFameContainer.removeAll(true);
-        if (this.endCardContainer) {
-          this.endCardContainer.removeAll(true);
+      if (this.pageMode === RunInfoUiMode.MAIN) {
+        this.runInfoContainer.removeAll(true);
+        this.runResultContainer.removeAll(true);
+        this.partyContainer.removeAll(true);
+        this.gameStatsContainer.removeAll(true);
+        if (this.isVictory) {
+          this.hallofFameContainer.removeAll(true);
         }
+        super.clear();
+        this.gameStatsContainer.setVisible(false);
+        ui.revertMode();
+      } else if (this.pageMode === RunInfoUiMode.HALL_OF_FAME) {
+        this.hallofFameContainer.setVisible(false);
+        this.pageMode = RunInfoUiMode.MAIN;
+      } else if (this.pageMode === RunInfoUiMode.ENDING_ART) {
+        this.endCardContainer.setVisible(false);
+        this.gameStatsContainer.remove(this.endCardContainer);
+        this.pageMode = RunInfoUiMode.MAIN;
       }
-      super.clear();
-      this.gameStatsContainer.setVisible(false);
-      ui.revertMode();
       break;
     case Button.DOWN:
     case Button.UP:
@@ -706,9 +724,11 @@ export default class GameInfoUiHandler extends UiHandler {
           this.createVictorySplash();
           this.endCardContainer.setVisible(true);
           this.gameStatsContainer.add(this.endCardContainer);
+          this.pageMode = RunInfoUiMode.ENDING_ART;
         } else {
           this.endCardContainer.setVisible(false);
           this.gameStatsContainer.remove(this.endCardContainer);
+          this.pageMode = RunInfoUiMode.MAIN;
         }
       }
       break;
@@ -716,8 +736,10 @@ export default class GameInfoUiHandler extends UiHandler {
       if (this.isVictory) {
         if (!this.hallofFameContainer.visible) {
           this.hallofFameContainer.setVisible(true);
+          this.pageMode = RunInfoUiMode.HALL_OF_FAME;
         } else {
           this.hallofFameContainer.setVisible(false);
+          this.pageMode = RunInfoUiMode.MAIN;
         }
       }
       break;
