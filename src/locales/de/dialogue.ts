@@ -2676,7 +2676,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $@c{smile}Nicht, dass du wirklich Hilfe benötigen würdest, aber ich habe hier noch eins von diesen Dingern herumliegen.
                 $Du kannst es haben.\n
                 $@c{serious_smile_fists}Erwarte aber nicht, dass ich dir noch mehr gebe!\nIch kann meinen Rivalen doch keine Vorteile verschaffen.
-                $@c{smile}Egal, pass auf dich auf, and enjoy the event!`
+                $@c{smile}Egal, pass auf dich auf und genieße das Event!`
     },
   },
   "rival_2_female": {
