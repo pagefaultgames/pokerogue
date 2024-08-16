@@ -114,7 +114,7 @@ describe("Evolution", () => {
     expect(golem.hp).toBe(1);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
-    await game.phaseInterceptor.to("EvolutionPhase");
+    await game.phaseInterceptor.to("EndEvolutionPhase");
 
     expect(totodile.hp).toBe(totodile.getMaxHp());
     expect(totodile.hp).toBeGreaterThan(hpBefore);
@@ -125,17 +125,17 @@ describe("Evolution", () => {
       .enemySpecies(Species.GOLEM)
       .enemyMoveset(SPLASH_ONLY)
       .startingWave(21)
-      .startingLevel(16)
-      .enemyLevel(50);
+      .startingLevel(13)
+      .enemyLevel(30);
 
-    await game.startBattle([Species.TOTODILE]);
+    await game.startBattle([Species.CYNDAQUIL]);
 
-    const totodile = game.scene.getPlayerPokemon()!;
-    totodile.hp = totodile.getMaxHp() / 2;
-    const hpBefore = totodile.hp;
-    const maxHpBefore = totodile.getMaxHp();
+    const cyndaquil = game.scene.getPlayerPokemon()!;
+    cyndaquil.hp = Math.floor(cyndaquil.getMaxHp() / 2);
+    const hpBefore = cyndaquil.hp;
+    const maxHpBefore = cyndaquil.getMaxHp();
 
-    expect(totodile.hp).toBe(totodile.getMaxHp() / 2);
+    expect(cyndaquil.hp).toBe(Math.floor(cyndaquil.getMaxHp() / 2));
 
     const golem = game.scene.getEnemyPokemon()!;
     golem.hp = 1;
@@ -143,10 +143,10 @@ describe("Evolution", () => {
     expect(golem.hp).toBe(1);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
-    await game.phaseInterceptor.to("EvolutionPhase");
+    await game.phaseInterceptor.to("EndEvolutionPhase");
 
-    expect(totodile.getMaxHp()).toBeGreaterThan(maxHpBefore);
-    expect(totodile.hp).toBeGreaterThan(hpBefore);
-    expect(totodile.hp).toBeLessThan(totodile.getMaxHp());
+    expect(cyndaquil.getMaxHp()).toBeGreaterThan(maxHpBefore);
+    expect(cyndaquil.hp).toBeGreaterThan(hpBefore);
+    expect(cyndaquil.hp).toBeLessThan(cyndaquil.getMaxHp());
   }, TIMEOUT);
 });

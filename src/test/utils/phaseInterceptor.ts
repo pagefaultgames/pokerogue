@@ -38,7 +38,7 @@ import UI, { Mode } from "#app/ui/ui";
 import { Phase } from "#app/phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import { QuietFormChangePhase } from "#app/form-change-phase";
-import { EvolutionPhase } from "#app/evolution-phase.js";
+import { EndEvolutionPhase, EvolutionPhase } from "#app/evolution-phase.js";
 
 export default class PhaseInterceptor {
   public scene;
@@ -94,6 +94,7 @@ export default class PhaseInterceptor {
     [SwitchPhase, this.startPhase],
     [SwitchSummonPhase, this.startPhase],
     [EvolutionPhase, this.startPhase],
+    [EndEvolutionPhase, this.startPhase],
   ];
 
   private endBySetMode = [
