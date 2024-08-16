@@ -23,10 +23,13 @@ export const MockFetch = (input, init) => {
     }
   }
 
-  return Promise.resolve({
+  const response: Partial<Response> = {
     ok: true,
     status: 200,
     json: responseHandler,
     text: responseText,
-  });
+    headers: new Headers({}),
+  };
+
+  return Promise.resolve(response);
 };
