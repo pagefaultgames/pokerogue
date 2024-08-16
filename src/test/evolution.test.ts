@@ -1,10 +1,9 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import { Species } from "#app/enums/species.js";
+import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#app/data/pokemon-evolutions.js";
 import { Abilities } from "#app/enums/abilities.js";
-import Overrides from "#app/overrides";
-import { pokemonEvolutions } from "#app/data/pokemon-evolutions.js";
+import { Species } from "#app/enums/species.js";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Evolution", () => {
   let phaserGame: Phaser.Game;
@@ -24,16 +23,16 @@ describe("Evolution", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
 
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
 
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(60);
+    game.override.startingLevel(60);
   });
 
   it("should keep hidden ability after evolving", async () => {
-    await game.runToSummon([Species.EEVEE, Species.TRAPINCH]);
+    await game.classicMode.runToSummon([Species.EEVEE, Species.TRAPINCH]);
 
     const eevee = game.scene.getParty()[0];
     const trapinch = game.scene.getParty()[1];
@@ -48,7 +47,7 @@ describe("Evolution", () => {
   }, TIMEOUT);
 
   it("should keep same ability slot after evolving", async () => {
-    await game.runToSummon([Species.BULBASAUR, Species.CHARMANDER]);
+    await game.classicMode.runToSummon([Species.BULBASAUR, Species.CHARMANDER]);
 
     const bulbasaur = game.scene.getParty()[0];
     const charmander = game.scene.getParty()[1];
@@ -63,9 +62,9 @@ describe("Evolution", () => {
   }, TIMEOUT);
 
   it("should handle illegal abilityIndex values", async () => {
-    await game.runToSummon([Species.SQUIRTLE]);
+    await game.classicMode.runToSummon([Species.SQUIRTLE]);
 
-    const squirtle = game.scene.getPlayerPokemon();
+    const squirtle = game.scene.getPlayerPokemon()!;
     squirtle.abilityIndex = 5;
 
     squirtle.evolve(pokemonEvolutions[Species.SQUIRTLE][0], squirtle.getSpeciesForm());
@@ -73,9 +72,9 @@ describe("Evolution", () => {
   }, TIMEOUT);
 
   it("should handle nincada's unique evolution", async () => {
-    await game.runToSummon([Species.NINCADA]);
+    await game.classicMode.runToSummon([Species.NINCADA]);
 
-    const nincada = game.scene.getPlayerPokemon();
+    const nincada = game.scene.getPlayerPokemon()!;
     nincada.abilityIndex = 2;
 
     nincada.evolve(pokemonEvolutions[Species.NINCADA][0], nincada.getSpeciesForm());
@@ -84,4 +83,10 @@ describe("Evolution", () => {
     expect(ninjask.abilityIndex).toBe(2);
     expect(shedinja.abilityIndex).toBe(1);
   }, TIMEOUT);
+
+  it("should set wild delay to NONE by default", () => {
+    const speciesFormEvo = new SpeciesFormEvolution(Species.ABRA, null, null, 1000, null, null);
+
+    expect(speciesFormEvo.wildDelay).toBe(SpeciesWildEvolutionDelay.NONE);
+  });
 });

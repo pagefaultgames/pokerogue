@@ -25,4 +25,3 @@ export function mockI18next() {
 export function arrayOfRange(start: integer, end: integer) {
   return Array.from({ length: end - start }, (_v, k) => k + start);
 }
-

@@ -1,12 +1,13 @@
 import UI from "#app/ui/ui";
+import { MockGameObject } from "../mockGameObject";
 
-export default class MockText {
+export default class MockText implements MockGameObject {
   private phaserText;
   private wordWrapWidth;
   private splitRegExp;
   private scene;
   private textureManager;
-  public list = [];
+  public list: MockGameObject[] = [];
   public style;
   public text = "";
 
