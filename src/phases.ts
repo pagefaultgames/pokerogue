@@ -2303,7 +2303,7 @@ export class TurnStartPhase extends FieldPhase {
       orderedTargets = orderedTargets.reverse();
     }
 
-    return orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : 0));
+    return orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : BattlerIndex.PLAYER));
   }
 
   getCommandOrder(): BattlerIndex[] {
