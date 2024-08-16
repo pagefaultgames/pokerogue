@@ -46,12 +46,18 @@ describe("Moves - Tera Blast", () => {
   });
 
   it("changes type to match user's tera type", async() => {
-
-    await game.startBattle([Species.CHIKORITA]);
+    game.override
+      .enemySpecies(Species.FURRET)
+      .startingHeldItems([{name: "TERA_SHARD", type: Type.FIGHTING}]);
+    await game.startBattle();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemyPokemon, "apply");
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
-    
-    expect(moveToCheck.type).toBe(Type.FIRE);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.SUPER_EFFECTIVE);
   }, 20000);
 
   it("increases power if user is Stellar tera type", async() => {
