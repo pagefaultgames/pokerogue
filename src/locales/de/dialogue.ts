@@ -2692,7 +2692,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $@c{smile}Na gut. Das bedeutet ich muss noch härter tranieren!
                 $@c{smile_wave}Ich habe noch eins von diesen Dingern!\n@c{smile_wave_wink}Kein Grund mir zu danken~.
                 $@c{angry_mopen}Das ist aber das Letzte! Du bekommst ab jett keine Geschenke mehr von mir!
-                $@c{smile_wave}Bleib stark, and enjoy the event!`
+                $@c{smile_wave}Bleib stark und genieße das Event!`
     },
     "defeat": {
       1: "Es ist Ok manchmal zu verlieren…"
