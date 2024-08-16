@@ -34,7 +34,7 @@ export const gameStatsUiHandler: SimpleTranslationEntries = {
   "shiniesSeen": "見つけた色違い",
   "shiniesCaught": "捕まえた色違い",
   "shiniesHatched": "ふかした色違い",
-  "pokemonFused": "結合したポケモン",
+  "pokemonFused": "合体したポケモン",
   "trainersDefeated": "倒したトレーナー",
   "eggsPulled": "引いたタマゴ",
   "rareEggsPulled": "引いたレアタマゴ",
