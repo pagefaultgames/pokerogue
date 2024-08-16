@@ -613,36 +613,36 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "brock": {
     "encounter": {
-      1: "My expertise on Rock-type Pokémon will take you down! Come on!",
-      2: "My rock-hard willpower will overwhelm you!",
-      3: "Allow me to show you the true strength of my Pokémon!"
+      1: "Mon expertise des type Roche va te mettre au sol ! En garde !",
+      2: "Tu veux toujours te battre avec moi ? Même en sachant que tu vas perdre ?",
+      3: "Laisse-moi de montrer la véritable force de mes Pokémon Roche !"
     },
     "victory": {
-      1: "Your Pokémon's strength have overcome my rock-hard defenses!",
-      2: "The world is huge! I'm glad to have had a chance to battle you.",
-      3: "Perhaps I should go back to pursuing my dream as a Pokémon Breeder…"
+      1: "J’étais trop sûr de moi, c’est pour ça que j’ai perdu.",
+      2: "Ce monde est vaste ! Je suis honoré d’avoir pu t’affronter.",
+      3: "Peut-être bie nque je n’aurais pas dû abandonner ma vocation d’Éleveur…"
     },
     "defeat": {
-      1: "The best offense is a good defense!\nThat's my way of doing things!",
-      2: "Come study rocks with me next time to better learn how to fight them!",
-      3: "Hah, all my traveling around the regions is paying off!"
+      1: "La défense est la meilleure des attaques !\nTelle est ma méthode !",
+      2: "Viens étudier des roches avec moi la prochaine fois si tu veux apprendre à lmieux les aborder !",
+      3: "Tout ce temps à voyager autour du monde paie enfin !"
     }
   },
   "misty": {
     "encounter": {
-      1: "My policy is an all out offensive with Water-type Pokémon!",
-      2: "Hiya, I'll show you the strength of my aquatic Pokémon!",
-      3: "My dream was to go on a journey and battle powerful trainers…\nWill you be a sufficient challenge?"
+      1: "Ma tactique ? Attaquer avec des Pokémon Eau !",
+      2: "Je vais te prouver le tsuanmi que sont mes Pokémon aquatiques !",
+      3: "Mon rêve, c’était de voyager et de défier des Dresseurs super forts. Seras-tu à la hauteur ?"
     },
     "victory": {
-      1: "You really are strong… I'll admit that you are skilled…",
-      2: "Grrr… You know you just got lucky, right?!",
-      3: "Wow, you're too much! I can't believe you beat me!"
+      1: "OK. T’es pas naze… Je le reconnais…",
+      2: "Pfff… T’as juste eu de la chance hein ?!",
+      3: "Ouah ! T’es super balèze !"
     },
     "defeat": {
-      1: "Was the mighty Misty too much for you?",
-      2: "I hope you saw my Pokémon's elegant swimming techniques!",
-      3: "Your Pokémon were no match for my pride and joys!"
+      1: "Qu’en dis-tu? C’est ça, la puissance des Pokémon Eau !",
+      2: "J’espère que t’as pris note des élégantes techniques de nage de mes Pokémon !",
+      3: "Tes Pokémon ne jouent visiblement pas dans le même bassin…"
     }
   },
   "lt_surge": {
@@ -3365,36 +3365,36 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "brock": {
     "encounter": {
-      1: "My expertise on Rock-type Pokémon will take you down! Come on!",
-      2: "My rock-hard willpower will overwhelm you!",
-      3: "Allow me to show you the true strength of my Pokémon!"
+      1: "Mon expertise des type Roche va te mettre au sol ! En garde !",
+      2: "Tu veux toujours te battre avec moi ? Même en sachant que tu vas perdre ?",
+      3: "Laisse-moi de montrer la véritable force de mes Pokémon Roche !"
     },
     "victory": {
-      1: "Your Pokémon's strength have overcome my rock-hard defenses!",
-      2: "The world is huge! I'm glad to have had a chance to battle you.",
-      3: "Perhaps I should go back to pursuing my dream as a Pokémon Breeder…"
+      1: "J’étais trop sûr de moi, c’est pour ça que j’ai perdu.",
+      2: "Ce monde est vaste ! Je suis honoré d’avoir pu t’affronter.",
+      3: "Peut-être bie nque je n’aurais pas dû abandonner ma vocation d’Éleveur…"
     },
     "defeat": {
-      1: "The best offense is a good defense!\nThat's my way of doing things!",
-      2: "Come study rocks with me next time to better learn how to fight them!",
-      3: "Hah, all my traveling around the regions is paying off!"
+      1: "La défense est la meilleure des attaques !\nTelle est ma méthode !",
+      2: "Viens étudier des roches avec moi la prochaine fois si tu veux apprendre à lmieux les aborder !",
+      3: "Tout ce temps à voyager autour du monde paie enfin !"
     }
   },
   "misty": {
     "encounter": {
-      1: "My policy is an all out offensive with Water-type Pokémon!",
-      2: "Hiya, I'll show you the strength of my aquatic Pokémon!",
-      3: "My dream was to go on a journey and battle powerful trainers…\nWill you be a sufficient challenge?"
+      1: "Ma tactique ? Attaquer avec des Pokémon Eau !",
+      2: "Je vais te prouver le tsuanmi que sont mes Pokémon aquatiques !",
+      3: "Mon rêve, c’était de voyager et de défier des Dresseurs super forts. Seras-tu à la hauteur ?"
     },
     "victory": {
-      1: "You really are strong… I'll admit that you are skilled…",
-      2: "Grrr… You know you just got lucky, right?!",
-      3: "Wow, you're too much! I can't believe you beat me!"
+      1: "OK. T’es pas naze… Je le reconnais…",
+      2: "Pfff… T’as juste eu de la chance hein ?!",
+      3: "Ouah ! T’es super balèze !"
     },
     "defeat": {
-      1: "Was the mighty Misty too much for you?",
-      2: "I hope you saw my Pokémon's elegant swimming techniques!",
-      3: "Your Pokémon were no match for my pride and joys!"
+      1: "Qu’en dis-tu? C’est ça, la puissance des Pokémon Eau !",
+      2: "J’espère que t’as pris note des élégantes techniques de nage de mes Pokémon !",
+      3: "Tes Pokémon ne jouent visiblement pas dans le même bassin…"
     }
   },
   "lt_surge": {
