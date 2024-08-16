@@ -5070,7 +5070,6 @@ export const PGFdialogue: DialogueTranslationEntries = {
 					$@c{smile}D’ailleurs, le prof veut que je te donne ces quelques objets. Ils te seront utiles, pour sûr !
 					$@c{smile_wave}Fais de ton mieux, comme toujours !\nJe crois fort en toi !
 					$@c{smile}Oh, et profite bien de l’évènement !`
-     
     },
   },
   "rival_2": {
