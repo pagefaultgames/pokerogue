@@ -2642,7 +2642,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                    $ja wirklich ganz groß raus zu kommen.
                    $Übrigens, der Professor hat mich gebeten dir diese Items zu geben. Die sehen wirklich cool aus.
                    $@c{serious_smile_fists}Viel Glück da draußen!
-                   $@c{smile}Oh- and I hope you enjoy the event!`
+                    $@c{smile}Oh-und genieße das Event!`
     },
   },
   "rival_female": {
