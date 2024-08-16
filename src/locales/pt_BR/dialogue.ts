@@ -2542,7 +2542,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $@c{smile}Talvez tenha sido um pouco de sorte, mas…\nQuem sabe você consiga chegar até o fim.
                 $Aliás, o professor me pediu para te dar esses itens. Eles parecem bem legais.
                 $@c{serious_smile_fists}Boa sorte lá fora!
-                $@c{smile}Oh- and I hope you enjoy the event!`
+                $@c{smile}Ah- e eu espero que você aproveite o evento!`
     },
   },
   "rival_female": {
