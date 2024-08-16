@@ -2074,7 +2074,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (!isTypeImmune) {
           const levelMultiplier = (2 * source.level / 5 + 2);
           const randomMultiplier = ((this.scene.randBattleSeedInt(16) + 85) / 100);
-          damage.value = Utils.toIntValue((((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2)
+          damage.value = Utils.toDmgValue((((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2)
                                    * stabMultiplier.value
                                    * typeMultiplier.value
                                    * arenaAttackTypeMultiplier.value
@@ -2090,7 +2090,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
               applyAbAttrs(BypassBurnDamageReductionAbAttr, source, burnDamageReductionCancelled);
               if (!burnDamageReductionCancelled.value) {
-                damage.value = Utils.toIntValue(damage.value / 2);
+                damage.value = Utils.toDmgValue(damage.value / 2);
               }
             }
           }
@@ -2111,7 +2111,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         if (this.scene.arena.terrain?.terrainType === TerrainType.MISTY && this.isGrounded() && move.type === Type.DRAGON) {
-          damage.value = Utils.toIntValue(damage.value / 2);
+          damage.value = Utils.toDmgValue(damage.value / 2);
         }
 
         const fixedDamage = new Utils.IntegerHolder(0);
@@ -3417,7 +3417,7 @@ export class PlayerPokemon extends Pokemon {
 
           pokemon.resetTurnData();
           pokemon.resetStatus();
-          pokemon.heal(Math.min(Utils.toIntValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
+          pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
           this.scene.queueMessage(`${pokemon.name} was revived!`,0,true);
 
           if (this.scene.currentBattle.double && this.scene.getParty().length > 1) {
@@ -4344,7 +4344,7 @@ export class PokemonMove {
   }
 
   getMovePp(): integer {
-    return this.getMove().pp + this.ppUp * Utils.toIntValue(this.getMove().pp / 5);
+    return this.getMove().pp + this.ppUp * Utils.toDmgValue(this.getMove().pp / 5);
   }
 
   getPpRatio(): number {
