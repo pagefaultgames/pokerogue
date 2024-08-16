@@ -2471,7 +2471,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "@c{smile_wave}你在这儿啊！我到处找你呢！$@c{angry_mopen}你忘了和你最好的朋友说再见了吗？$@c{smile_ehalf}你要去追逐梦想了，对吧？\n从今天开始，是不是…$@c{smile}不管怎样，忘了我的事就原谅你吧，\n但有个条件。@c{smile_wave_wink}你必须和我对战！$@c{angry_mopen}全力以赴！\n你也不想让你的冒险在开始之前就结束了，对吧？",
     },
     "victory": {
-      1: "@c{shock}你刚开始就已经这么强了？！@d{96}$@c{angry}你是不是开了？$@c{smile_wave_wink}只是开个玩笑啦！@d{64} @c{smile_eclosed}我输地心服口服了…\n我感觉你出去挺有天赋的。$@c{smile}顺便说一下，博士想让我给你一些东西。\n希望它们能帮上忙！$@c{smile_wave}像往常一样尽力而为！\n我相信你！$@c{smile}Oh- and I hope you enjoy the event! ",
+      1: "@c{shock}你刚开始就已经这么强了？！@d{96}$@c{angry}你是不是开了？$@c{smile_wave_wink}只是开个玩笑啦！@d{64} @c{smile_eclosed}我输地心服口服了…\n我感觉你出去挺有天赋的。$@c{smile}顺便说一下，博士想让我给你一些东西。\n希望它们能帮上忙！$@c{smile_wave}像往常一样尽力而为！\n我相信你！$@c{smile}哦！我希望你能喜欢这次的活动！ ",
     },
   },
   "rival_2": {
