@@ -2373,7 +2373,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 				   $@c{smile}T’as peut-être eu de la chance, mais…\nPeut-être que t’arriveras jusqu’au bout du chemin.
 				   $D’ailleurs, le prof m’a demandé de te filer ces objets.\nIls ont l’air sympas.
                    $@c{serious_smile_fists}Bonne chance à toi !
-                   $@c{smile}Oh- and I hope you enjoy the event!`
+                   $@c{smile}Oh, et profite bien de l’évènement !`
     },
   },
   "rival_female": {
