@@ -1,4 +1,5 @@
 import UI from "#app/ui/ui";
+import { vi } from "vitest";
 import { MockGameObject } from "../mockGameObject";
 
 export default class MockText implements MockGameObject {
@@ -10,6 +11,7 @@ export default class MockText implements MockGameObject {
   public list: MockGameObject[] = [];
   public style;
   public text = "";
+  private name?: string;
 
   constructor(textureManager, x, y, content, styleOptions) {
     this.scene = textureManager.scene;
@@ -219,9 +221,9 @@ export default class MockText implements MockGameObject {
     // return this.phaserText.setAlpha(alpha);
   }
 
-  setName(name) {
-    // return this.phaserText.setName(name);
-  }
+  setName = vi.fn((name: string) => {
+    this.name = name;
+  });
 
   setAlign(align) {
     // return this.phaserText.setAlign(align);
