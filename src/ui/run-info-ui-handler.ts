@@ -22,19 +22,23 @@ import {modifierSortFunc} from "../modifier/modifier";
 import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 
+/**
+ * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
+ * MAIN <-- default overlay that can return back to RunHistoryUiHandler + should eventually have its own enum once more pages are added to RunInfoUiHandler
+ * HALL_OF_FAME, ENDING_ART, etc. <-- overlays that should return back to MAIN
+ */
 enum RunInfoUiMode {
   MAIN,
   HALL_OF_FAME,
   ENDING_ART
 }
 
-export default class GameInfoUiHandler extends UiHandler {
+export default class RunInfoUiHandler extends UiHandler {
   private runInfo: SessionSaveData;
   private isVictory: boolean;
   private isPGF: boolean;
 
-  private gameStatsContainer: Phaser.GameObjects.Container;
-  private statsContainer: Phaser.GameObjects.Container;
+  private runContainer: Phaser.GameObjects.Container;
 
   private runResultContainer: Phaser.GameObjects.Container;
   private runInfoContainer: Phaser.GameObjects.Container;
@@ -58,65 +62,66 @@ export default class GameInfoUiHandler extends UiHandler {
   }
 
   async setup() {
- 		this.gameStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+ 		this.runContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    // The import of the modifiersModule is loaded here to sidestep async/await issues.
     this.modifiersModule = await import("../modifier/modifier");
-    this.gameStatsContainer.setVisible(false);
-    this.isPGF = this.scene.gameData.gender === PlayerGender.FEMALE;
-    this.pageMode = RunInfoUiMode.MAIN;
+    this.runContainer.setVisible(false);
  	}
 
+  /**
+   * This takes a run's RunEntry and uses the information provided to display essential information about the player's run.
+   * @param args[0] : a RunEntry object
+   *
+   * show() creates these UI objects in order -
+   * A solid-color background used to hide RunHistoryUiHandler
+   * Header: Page Title + Option to Display Modifiers
+   * Run Result Container:
+   * Party Container:
+   * this.isVictory === true --> Hall of Fame Container:
+   */
  	show(args: any[]): boolean {
  		super.show(args);
 
     const gameStatsBg = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height, 0x006860);
     gameStatsBg.setOrigin(0, 0);
-    this.gameStatsContainer.add(gameStatsBg);
-
-    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
-    headerBg.setOrigin(0, 0);
-    const headerBgCoords = headerBg.getTopRight();
-
-    const abilityButtonContainer = this.scene.add.container(0, 0);
-    const abilityButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {fontSize:"34px"});
-    const abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "E.png");
-    abilityButtonContainer.add([abilityButtonText, abilityButtonElement]);
-    abilityButtonContainer.setPosition(headerBgCoords.x - abilityButtonText.displayWidth - abilityButtonElement.displayWidth - 8, 10);
-    const headerText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:runInfo"), TextStyle.SETTINGS_LABEL);
-    headerText.setOrigin(0, 0);
-    headerText.setPositionRelative(headerBg, 8, 4);
-    this.gameStatsContainer.add(headerBg);
-    this.gameStatsContainer.add(abilityButtonContainer);
-    this.gameStatsContainer.add(headerText);
+    this.runContainer.add(gameStatsBg);
 
     const run = args[0];
+    // Assigning information necessary for the UI's creation
     this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
     this.isVictory = run.isVictory;
+    this.isPGF = this.scene.gameData.gender === PlayerGender.FEMALE;
+    this.pageMode = RunInfoUiMode.MAIN;
+
+    // Creates Header and adds to this.runContainer
+    this.addHeader();
 
     this.statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 3;
 
+    // Creates Run Result Container
     this.runResultContainer = this.scene.add.container(0, 24);
     const runResultWindow = addWindow(this.scene, 0, 0, this.statsBgWidth-11, 65);
     runResultWindow.setOrigin(0, 0);
     this.runResultContainer.add(runResultWindow);
     this.parseRunResult();
 
-    this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 23);
-
-    this.setCursor(0);
-
+    // Creates Run Info Container
     this.runInfoContainer = this.scene.add.container(0, 89);
     const runInfoWindow = addWindow(this.scene, 0, 0, this.statsBgWidth-11, 90);
     const runInfoWindowCoords = runInfoWindow.getBottomRight();
     this.runInfoContainer.add(runInfoWindow);
  		this.parseRunInfo(runInfoWindowCoords.x, runInfoWindowCoords.y);
 
+    // Creates Player Party Container
+    this.partyContainer = this.scene.add.container(this.statsBgWidth-10, 23);
     this.parsePartyInfo();
     this.showParty(true);
 
-    this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
-    this.getUi().bringToTop(this.gameStatsContainer);
-    this.gameStatsContainer.setVisible(true);
+    this.runContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.getUi().bringToTop(this.runContainer);
+    this.runContainer.setVisible(true);
 
+    // Creates Hall of Fame if the run entry contains a victory
     if (this.isVictory) {
       this.createHallofFame();
       this.getUi().bringToTop(this.hallofFameContainer);
@@ -124,13 +129,43 @@ export default class GameInfoUiHandler extends UiHandler {
 
     this.setCursor(0);
 
-    this.getUi().add(this.gameStatsContainer);
+    this.getUi().add(this.runContainer);
 
     this.getUi().hideTooltip();
 
     return true;
  	}
 
+  /**
+   * Creates and adds the header background, title text, and important buttons to RunInfoUiHandler
+   * It does check if the run has modifiers before adding a button for the user to display their party's held items
+   * It does not check if the run has any PokemonHeldItemModifiers though.
+   */
+  private addHeader() {
+    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
+    headerBg.setOrigin(0, 0);
+    if (this.runInfo.modifiers.length !== 0) {
+      const headerBgCoords = headerBg.getTopRight();
+      const abilityButtonContainer = this.scene.add.container(0, 0);
+      const abilityButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {fontSize:"34px"});
+      const abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "E.png");
+      abilityButtonContainer.add([abilityButtonText, abilityButtonElement]);
+      abilityButtonContainer.setPosition(headerBgCoords.x - abilityButtonText.displayWidth - abilityButtonElement.displayWidth - 8, 10);
+      this.runContainer.add(abilityButtonContainer);
+    }
+    const headerText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:runInfo"), TextStyle.SETTINGS_LABEL);
+    headerText.setOrigin(0, 0);
+    headerText.setPositionRelative(headerBg, 8, 4);
+    this.runContainer.add(headerBg);
+    this.runContainer.add(headerText);
+  }
+
+  /**
+   * Shows the run's end result
+   *
+   * Victory : The run will display
+   *
+   */
   async parseRunResult() {
     const runResultTextStyle = this.isVictory ? TextStyle.SUMMARY : TextStyle.SUMMARY_RED;
     const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : (this.isPGF ? i18next.t("runHistory:defeatedF") : i18next.t("runHistory:defeatedM"));
@@ -171,7 +206,7 @@ export default class GameInfoUiHandler extends UiHandler {
       }
       this.runResultContainer.add(enemyContainer);
     }
-    this.gameStatsContainer.add(this.runResultContainer);
+    this.runContainer.add(this.runResultContainer);
   }
 
   private parseWildSingleDefeat(enemyContainer: Phaser.GameObjects.Container) {
@@ -382,7 +417,7 @@ export default class GameInfoUiHandler extends UiHandler {
 
     this.runInfoContainer.add(modeText);
     this.runInfoContainer.add(runInfoTextContainer);
-    this.gameStatsContainer.add(this.runInfoContainer);
+    this.runContainer.add(this.runInfoContainer);
   }
 
  	parsePartyInfo(): void {
@@ -575,7 +610,7 @@ export default class GameInfoUiHandler extends UiHandler {
       this.partyContainer.add(pokemonInfoContainer);
       pokemon.destroy();
  		});
-    this.gameStatsContainer.add(this.partyContainer);
+    this.runContainer.add(this.partyContainer);
  	}
 
   showParty(partyVisible: boolean): void {
@@ -658,7 +693,7 @@ export default class GameInfoUiHandler extends UiHandler {
       pkmn.destroy();
     });
     this.hallofFameContainer.setVisible(false);
-    this.gameStatsContainer.add(this.hallofFameContainer);
+    this.runContainer.add(this.hallofFameContainer);
   }
 
  	processInput(button: Button): boolean {
@@ -674,19 +709,19 @@ export default class GameInfoUiHandler extends UiHandler {
         this.runInfoContainer.removeAll(true);
         this.runResultContainer.removeAll(true);
         this.partyContainer.removeAll(true);
-        this.gameStatsContainer.removeAll(true);
+        this.runContainer.removeAll(true);
         if (this.isVictory) {
           this.hallofFameContainer.removeAll(true);
         }
         super.clear();
-        this.gameStatsContainer.setVisible(false);
+        this.runContainer.setVisible(false);
         ui.revertMode();
       } else if (this.pageMode === RunInfoUiMode.HALL_OF_FAME) {
         this.hallofFameContainer.setVisible(false);
         this.pageMode = RunInfoUiMode.MAIN;
       } else if (this.pageMode === RunInfoUiMode.ENDING_ART) {
         this.endCardContainer.setVisible(false);
-        this.gameStatsContainer.remove(this.endCardContainer);
+        this.runContainer.remove(this.endCardContainer);
         this.pageMode = RunInfoUiMode.MAIN;
       }
       break;
@@ -723,11 +758,11 @@ export default class GameInfoUiHandler extends UiHandler {
         if (!this.endCardContainer || !this.endCardContainer.visible) {
           this.createVictorySplash();
           this.endCardContainer.setVisible(true);
-          this.gameStatsContainer.add(this.endCardContainer);
+          this.runContainer.add(this.endCardContainer);
           this.pageMode = RunInfoUiMode.ENDING_ART;
         } else {
           this.endCardContainer.setVisible(false);
-          this.gameStatsContainer.remove(this.endCardContainer);
+          this.runContainer.remove(this.endCardContainer);
           this.pageMode = RunInfoUiMode.MAIN;
         }
       }
