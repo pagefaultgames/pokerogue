@@ -106,15 +106,47 @@ describe("Evolution", () => {
     const totodile = game.scene.getPlayerPokemon()!;
     const hpBefore = totodile.hp;
 
-    const enemyGolem = game.scene.getEnemyPokemon()!;
-    enemyGolem.hp = 1;
-
     expect(totodile.hp).toBe(totodile.getMaxHp());
+
+    const golem = game.scene.getEnemyPokemon()!;
+    golem.hp = 1;
+
+    expect(golem.hp).toBe(1);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
     await game.phaseInterceptor.to("EvolutionPhase");
 
     expect(totodile.hp).toBe(totodile.getMaxHp());
     expect(totodile.hp).toBeGreaterThan(hpBefore);
+  }, TIMEOUT);
+
+  it("should not fully heal HP when evolving", async () => {
+    game.override.moveset([Moves.SURF])
+      .enemySpecies(Species.GOLEM)
+      .enemyMoveset(SPLASH_ONLY)
+      .startingWave(21)
+      .startingLevel(16)
+      .enemyLevel(50);
+
+    await game.startBattle([Species.TOTODILE]);
+
+    const totodile = game.scene.getPlayerPokemon()!;
+    totodile.hp = totodile.getMaxHp() / 2;
+    const hpBefore = totodile.hp;
+    const maxHpBefore = totodile.getMaxHp();
+
+    expect(totodile.hp).toBe(totodile.getMaxHp() / 2);
+
+    const golem = game.scene.getEnemyPokemon()!;
+    golem.hp = 1;
+
+    expect(golem.hp).toBe(1);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
+    await game.phaseInterceptor.to("EvolutionPhase");
+
+    expect(totodile.getMaxHp()).toBeGreaterThan(maxHpBefore);
+    expect(totodile.hp).toBeGreaterThan(hpBefore);
+    expect(totodile.hp).toBeLessThan(totodile.getMaxHp());
   }, TIMEOUT);
 });
