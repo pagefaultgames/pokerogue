@@ -25,5 +25,5 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "unlinkGoogle": "Desconectar Google",
   "cancel": "Cancelar",
   "losingProgressionWarning": "Perderás cualquier progreso desde el inicio de la batalla. ¿Continuar?",
-  "noEggs": "You are not hatching any eggs at the moment!"
+  "noEggs": "No hay huevos incubándose ahora mismo."
 } as const;
