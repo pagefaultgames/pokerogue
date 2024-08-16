@@ -2,11 +2,16 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const runHistory: SimpleTranslationEntries = {
   "victory": "Victoire !",
-  "defeatedWild": "Battu par ",
-  "defeatedTrainer": "Battu par ",
-  "defeatedTrainerDouble": "Battu par Duo",
-  "defeatedRival": "Battu par Rival",
-  "defeated":"Vaincu",
+  "defeatedWildM": "Battu par ",
+  "defeatedTrainerM": "Battu par ",
+  "defeatedTrainerDoubleM": "Battu par Duo",
+  "defeatedRivalM": "Battu par Rival",
+  "defeatedM":"Vaincu",
+  "defeatedWildF": "Battu par ",
+  "defeatedTrainerF": "Battu par ",
+  "defeatedTrainerDoubleF": "Battu par Duo",
+  "defeatedRivalF": "Battu par Rival",
+  "defeatedF":"Vaincu",
   "luck":"Chance ",
   "score":"Score",
   "mode":"Mode ",
@@ -27,9 +32,10 @@ export const runHistory: SimpleTranslationEntries = {
   "money":"Argent",
   "runLength":"Durée session ",
   "viewHeldItems":"Objets tenus",
-  "hallofFameText":"Bienvenue au Panthéon !",
+  "hallofFameTextM":"Bienvenue au Panthéon !",
+  "hallofFameTextF":"Bienvenue au Panthéon !",
   "viewHallOfFame":"Voir le Panthéon",
-  "viewEndingSplash":"Voir l’illustration de fin"
+  "viewEndingSplash":"Voir l’illustration\nde fin"
 } as const;
 
 // Mode Information found in game-mode.ts

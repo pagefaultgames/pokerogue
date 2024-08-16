@@ -2,11 +2,16 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const runHistory: SimpleTranslationEntries = {
   "victory": "Vitória!",
-  "defeatedWild": "Derrotado por ",
-  "defeatedTrainer": "Derrotado por ",
-  "defeatedTrainerDouble": "Derrotado por Dupla",
-  "defeatedRival": "Derrotado por Rival",
-  "defeated": "Derrotado",
+  "defeatedWildM": "Derrotado por ",
+  "defeatedTrainerM": "Derrotado por ",
+  "defeatedTrainerDoubleM": "Derrotado por Dupla",
+  "defeatedRivalM": "Derrotado por Rival",
+  "defeatedM": "Derrotado",
+  "defeatedWildF": "Derrotado por ",
+  "defeatedTrainerF": "Derrotado por ",
+  "defeatedTrainerDoubleF": "Derrotado por Dupla",
+  "defeatedRivalF": "Derrotado por Rival",
+  "defeatedF": "Derrotado",
   "luck": "Sorte",
   "score": "Pontuação",
   "mode": "Modo",
@@ -27,7 +32,8 @@ export const runHistory: SimpleTranslationEntries = {
   "money": "Dinheiro",
   "runLength": "Duração do Jogo",
   "viewHeldItems": "Itens Segurados",
-  "hallofFameText": "Bem-vindo(a) ao Hall da Fama!",
+  "hallofFameTextM": "Bem-vindo ao Hall da Fama!",
+  "hallofFameTextF": "Bem-vinda ao Hall da Fama!",
   "viewHallOfFame": "Veja o Hall da Fama!",
   "viewEndingSplash":"Veja a arte final!"
 } as const;

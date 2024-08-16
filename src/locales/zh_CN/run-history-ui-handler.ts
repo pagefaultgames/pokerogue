@@ -6,7 +6,12 @@ export const runHistory: SimpleTranslationEntries = {
   "defeatedTrainer": "被打败",
   "defeatedTrainerDouble": "被组合打败",
   "defeatedRival": "被劲敌打败",
-  "defeated":"被打败",
+  "defeatedM":"被打败",
+  "defeatedWildF": "被打败",
+  "defeatedTrainerF": "被打败",
+  "defeatedTrainerDoubleF": "被组合打败",
+  "defeatedRivalF": "被劲敌打败",
+  "defeatedF":"被打败",
   "luck":"幸运",
   "score":"分数",
   "mode":"模式",
@@ -27,7 +32,8 @@ export const runHistory: SimpleTranslationEntries = {
   "money":"金钱",
   "runLength":"游戏时长",
   "viewHeldItems":"持有道具",
-  "hallofFameText":"欢迎来到名人堂！",
+  "hallofFameTextM":"欢迎来到名人堂！",
+  "hallofFameTextF":"欢迎来到名人堂！",
   "viewHallOfFame":"浏览名人堂！",
   "viewEndingSplash":"浏览结算画面"
 } as const;

@@ -2,11 +2,16 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const runHistory: SimpleTranslationEntries = {
   "victory": "¡Victoria!",
-  "defeatedWild": "Derrotado por ",
-  "defeatedTrainer": "Derrotado por ",
-  "defeatedTrainerDouble": "Derrotado por un dúo",
-  "defeatedRival": "Derrotado por el rival",
-  "defeated":"Derrotado",
+  "defeatedWildM": "Derrotado por ",
+  "defeatedTrainerM": "Derrotado por ",
+  "defeatedTrainerDoubleM": "Derrotado por un dúo",
+  "defeatedRivalM": "Derrotado por el rival",
+  "defeatedM":"Derrotado",
+  "defeatedWildF": "Derrotado por ",
+  "defeatedTrainerF": "Derrotado por ",
+  "defeatedTrainerDoubleF": "Derrotado por un dúo",
+  "defeatedRivalF": "Derrotado por el rival",
+  "defeatedF":"Derrotado",
   "luck":"Suerte",
   "score":"Puntuación",
   "mode":"Modo",
@@ -27,7 +32,8 @@ export const runHistory: SimpleTranslationEntries = {
   "money":"Dinero",
   "runLength":"Duración de partida",
   "viewHeldItems":"Objetos equipados",
-  "hallofFameText":"¡Bienvenido al Hall de la Fama!",
+  "hallofFameTextM":"¡Bienvenido al Hall de la Fama!",
+  "hallofFameTextF":"¡Bienvenido al Hall de la Fama!",
   "viewHallOfFame":"¡Ver Hall de la Fama!",
   "viewEndingSplash":"¡Ver la imagen final!"
 } as const;

@@ -2,11 +2,16 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const runHistory: SimpleTranslationEntries = {
   "victory": "勝利！",
-  "defeatedWild": "被打敗",
-  "defeatedTrainer": "被打敗",
-  "defeatedTrainerDouble": "被組合打敗",
-  "defeatedRival": "被勁敵打敗",
-  "defeated":"被打敗",
+  "defeatedWildM": "被打敗",
+  "defeatedTrainerM": "被打敗",
+  "defeatedTrainerDoubleM": "被組合打敗",
+  "defeatedRivalM": "被勁敵打敗",
+  "defeatedM":"被打敗",
+  "defeatedWildF": "被打敗",
+  "defeatedTrainerF": "被打敗",
+  "defeatedTrainerDoubleF": "被組合打敗",
+  "defeatedRivalF": "被勁敵打敗",
+  "defeatedF":"被打敗",
   "luck":"幸運",
   "score":"分數",
   "mode":"模式",
@@ -27,7 +32,8 @@ export const runHistory: SimpleTranslationEntries = {
   "money":"金錢",
   "runLength":"遊戲時長",
   "viewHeldItems":"持有道具",
-  "hallofFameText":"歡迎來到名人堂！",
+  "hallofFameTextM":"歡迎來到名人堂！",
+  "hallofFameTextF":"歡迎來到名人堂！",
   "viewHallOfFame":"浏覽名人堂！",
   "viewEndingSplash":"浏覽結算畫面"
 } as const;

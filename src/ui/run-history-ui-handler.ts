@@ -9,8 +9,8 @@ import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
 import {Button} from "../enums/buttons";
 import { BattleType } from "../battle";
-import { TrainerVariant } from "../field/trainer";
 import { RunEntry } from "../system/game-data";
+import { PlayerGender } from "#enums/player-gender";
 
 export type RunSelectCallback = (cursor: integer) => void;
 
@@ -171,19 +171,19 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   clear() {
     super.clear();
     this.runSelectContainer.setVisible(false);
-    this.eraseCursor();
+    this.clearCursor();
     this.runSelectCallback = null;
-    this.clearruns();
+    this.clearRuns();
   }
 
-  eraseCursor() {
+  clearCursor() {
     if (this.cursorObj) {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
   }
 
-  clearruns() {
+  clearRuns() {
     this.runs.splice(0, this.runs.length);
     this.runsContainer.removeAll(true);
   }
@@ -214,14 +214,14 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     const slotWindow = addWindow(this.scene, 0, 0, 304, 52);
     this.add(slotWindow);
 
-
     if (victory) {
       const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:victory")}`, TextStyle.WINDOW);
       this.add(gameOutcomeLabel);
     } else {
+      const genderLabel = (this.scene.gameData.gender === PlayerGender.FEMALE) ? "F" : "M";
       if (data.battleType === BattleType.WILD) {
         const enemyContainer = this.scene.add.container(8, 5);
-        const gameOutcomeLabel = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:defeatedWild")}`, TextStyle.WINDOW);
+        const gameOutcomeLabel = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:defeatedWild"+genderLabel)}`, TextStyle.WINDOW);
         enemyContainer.add(gameOutcomeLabel);
         data.enemyParty.forEach((enemyData, e) => {
           // This allows the enemyParty to be shown - doubles or singles -> 58+(e*8)
@@ -245,14 +245,11 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
         const tObj = data.trainer.toTrainer(this.scene);
         const RIVAL_TRAINER_ID_THRESHOLD = 375;
         if (data.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival")}`, TextStyle.WINDOW);
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival"+genderLabel)}`, TextStyle.WINDOW);
           // otherwise it becomes Rival_5 in Ivy's case
           this.add(gameOutcomeLabel);
-        } else if (data.trainer.variant === TrainerVariant.DOUBLE) {
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer")+tObj.config.nameDouble+" "+tObj.getName(0, false)}`, TextStyle.WINDOW);
-          this.add(gameOutcomeLabel);
         } else {
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer")}${tObj.getName(0, true)}`, TextStyle.WINDOW);
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer"+genderLabel)}${tObj.getName(0, true)}`, TextStyle.WINDOW);
           this.add(gameOutcomeLabel);
         }
       }
@@ -265,8 +262,6 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
       mode = i18next.t("gameMode:dailyRun");
       break;
     case GameModes.SPLICED_ENDLESS:
-      mode = i18next.t("gameMode:endlessSpliced");
-      break;
     case GameModes.ENDLESS:
       mode = i18next.t("gameMode:endless");
       break;
@@ -278,7 +273,16 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
       break;
     }
     gameModeLabel.appendText(mode, false);
-    gameModeLabel.appendText(" - ", false);
+    if (data.gameMode === GameModes.SPLICED_ENDLESS) {
+      const splicedIcon = this.scene.add.image(0, 0, "icon_spliced");
+      splicedIcon.setScale(0.75);
+      const coords = gameModeLabel.getTopRight();
+      splicedIcon.setPosition(coords.x+5, 27);
+      this.add(splicedIcon);
+      gameModeLabel.appendText("    - ", false);
+    } else {
+      gameModeLabel.appendText(" - ", false);
+    }
     gameModeLabel.appendText(i18next.t("saveSlotSelectUiHandler:wave")+" "+data.waveIndex, false);
     this.add(gameModeLabel);
 

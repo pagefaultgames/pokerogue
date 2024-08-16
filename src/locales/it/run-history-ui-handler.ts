@@ -2,11 +2,16 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const runHistory: SimpleTranslationEntries = {
   "victory": "Vittoria!",
-  "defeatedWild": "Sconfitti da ",
-  "defeatedTrainer": "Sconfitti da ",
-  "defeatedTrainerDouble": "Sconfitti dalla coppia ",
-  "defeatedRival": "Sconfitti dal rivale",
-  "defeated":"Sconfitti",
+  "defeatedWildM": "Sconfitti da ",
+  "defeatedTrainerM": "Sconfitti da ",
+  "defeatedTrainerDoubleM": "Sconfitti dalla coppia ",
+  "defeatedRivalM": "Sconfitti dal rivale",
+  "defeatedM":"Sconfitti",
+  "defeatedWildF": "Sconfitti da ",
+  "defeatedTrainerF": "Sconfitti da ",
+  "defeatedTrainerDoubleF": "Sconfitti dalla coppia ",
+  "defeatedRivalF": "Sconfitti dal rivale",
+  "defeatedF":"Sconfitti",
   "luck":"Fortuna",
   "score":"Punteggio",
   "mode":"Modalità",
@@ -27,7 +32,8 @@ export const runHistory: SimpleTranslationEntries = {
   "money":"Patrimonio",
   "runLength":"Durata Run",
   "viewHeldItems":"Oggetti equip.",
-  "hallofFameText":"Benvenuto alla Sala d'Onore!",
+  "hallofFameTextM":"Benvenuto alla Sala d'Onore!",
+  "hallofFameTextF":"Benvenuto alla Sala d'Onore!",
   "viewHallOfFame":"Vai alla Sala d'Onore!",
   "viewEndingSplash":"Vai all'arte finale!"
 } as const;

@@ -2,11 +2,16 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const runHistory: SimpleTranslationEntries = {
   "victory": "Sieg!",
-  "defeatedWild": "Besiegt durch ",
-  "defeatedTrainer": "Besiegt durch ",
-  "defeatedTrainerDouble": "Besiegt durch Doppelkampf",
-  "defeatedRival": "Besiegt durch Rivale",
-  "defeated":"Besiegt",
+  "defeatedWildM": "Besiegt durch ",
+  "defeatedTrainerM": "Besiegt durch ",
+  "defeatedTrainerDoubleM": "Besiegt durch Doppelkampf",
+  "defeatedRivalM": "Besiegt durch Rivale",
+  "defeatedM":"Besiegt",
+  "defeatedWildF": "Besiegt durch ",
+  "defeatedTrainerF": "Besiegt durch ",
+  "defeatedTrainerDoubleF": "Besiegt durch Doppelkampf",
+  "defeatedRivalF": "Besiegt durch Rivale",
+  "defeatedF":"Besiegt",
   "luck":"Glück",
   "score":"Punkte",
   "mode":"Modus",
@@ -27,7 +32,8 @@ export const runHistory: SimpleTranslationEntries = {
   "money":"Geld",
   "runLength":"Durchlauf Dauer",
   "viewHeldItems":"Getragene Items",
-  "hallofFameText":"Willkommen in der Ruhmeshalle",
+  "hallofFameTextM":"Willkommen in der Ruhmeshalle",
+  "hallofFameTextF":"Willkommen in der Ruhmeshalle",
   "viewHallOfFame":"Ruhmeshalle ansehen!",
   "viewEndingSplash":"Endgrafik anzeigen!"
 } as const;

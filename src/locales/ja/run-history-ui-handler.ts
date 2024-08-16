@@ -7,6 +7,11 @@ export const runHistory: SimpleTranslationEntries = {
   "defeatedTrainerDouble": "倒された相手：",
   "defeatedRival": "倒された相手：",
   "defeated":"敗北",
+  "defeatedWildF": "倒された相手：",
+  "defeatedTrainerF": "倒された相手：",
+  "defeatedTrainerDoubleF": "倒された相手：",
+  "defeatedRivalF": "倒された相手：",
+  "defeatedF":"敗北",
   "luck":"運",
   "score":"スコア",
   "mode":"モード",
@@ -27,7 +32,8 @@ export const runHistory: SimpleTranslationEntries = {
   "money":"お金",
   "runLength":"ラン最高ウェーブ",
   "viewHeldItems":"手持ちアイテム",
-  "hallofFameText":"殿堂へようこそ！",
+  "hallofFameTextM":"殿堂へようこそ！",
+  "hallofFameTextF":"殿堂へようこそ！",
   "viewHallOfFame":"殿堂登録を見る！",
   "viewEndingSplash":"クリア後のアートを見る！"
 } as const;

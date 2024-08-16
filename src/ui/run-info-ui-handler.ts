@@ -2,7 +2,7 @@ import BattleScene from "../battle-scene";
 import { GameModes } from "../game-mode";
 import UiHandler from "./ui-handler";
 import { SessionSaveData } from "../system/game-data";
-import { TextStyle, addTextObject, addBBCodeTextObject } from "./text";
+import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
@@ -31,6 +31,7 @@ enum RunInfoUiMode {
 export default class GameInfoUiHandler extends UiHandler {
   private runInfo: SessionSaveData;
   private isVictory: boolean;
+  private isPGF: boolean;
 
   private gameStatsContainer: Phaser.GameObjects.Container;
   private statsContainer: Phaser.GameObjects.Container;
@@ -56,11 +57,11 @@ export default class GameInfoUiHandler extends UiHandler {
     super(scene, Mode.RUN_INFO);
   }
 
-  	async setup() {
- 		//const page = 0;
+  async setup() {
  		this.gameStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
     this.modifiersModule = await import("../modifier/modifier");
     this.gameStatsContainer.setVisible(false);
+    this.isPGF = this.scene.gameData.gender === PlayerGender.FEMALE;
  	}
 
  	show(args: any[]): boolean {
@@ -72,12 +73,13 @@ export default class GameInfoUiHandler extends UiHandler {
 
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
+    const headerBgCoords = headerBg.getTopRight();
 
     const abilityButtonContainer = this.scene.add.container(0, 0);
     const abilityButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {fontSize:"34px"});
     const abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "E.png");
     abilityButtonContainer.add([abilityButtonText, abilityButtonElement]);
-    abilityButtonContainer.setPositionRelative(headerBg, 275, 10);
+    abilityButtonContainer.setPosition(headerBgCoords.x - abilityButtonText.displayWidth - abilityButtonElement.displayWidth - 8, 10);
     const headerText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:runInfo"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
@@ -103,8 +105,9 @@ export default class GameInfoUiHandler extends UiHandler {
 
     this.runInfoContainer = this.scene.add.container(0, 89);
     const runInfoWindow = addWindow(this.scene, 0, 0, this.statsBgWidth-11, 90);
+    const runInfoWindowCoords = runInfoWindow.getBottomRight();
     this.runInfoContainer.add(runInfoWindow);
- 		this.parseRunInfo();
+ 		this.parseRunInfo(runInfoWindowCoords.x, runInfoWindowCoords.y);
 
     this.parsePartyInfo();
     this.showParty(true);
@@ -121,7 +124,6 @@ export default class GameInfoUiHandler extends UiHandler {
     this.setCursor(0);
 
     this.getUi().add(this.gameStatsContainer);
-    //this.updateStats();
 
     this.getUi().hideTooltip();
 
@@ -129,7 +131,9 @@ export default class GameInfoUiHandler extends UiHandler {
  	}
 
   async parseRunResult() {
-    const runResultText = addBBCodeTextObject(this.scene, 6, 5, `${(this.isVictory ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated")+" - Wave "+this.runInfo.waveIndex)}`, this.isVictory ? TextStyle.SUMMARY : TextStyle.SUMMARY_RED, {fontSize : "65px", lineSpacing: 0.1});
+    const runResultTextStyle = this.isVictory ? TextStyle.SUMMARY : TextStyle.SUMMARY_RED;
+    const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : (this.isPGF ? i18next.t("runHistory:defeatedF") : i18next.t("runHistory:defeatedM"));
+    const runResultText = addBBCodeTextObject(this.scene, 6, 5, `${runResultTitle} - Wave ${this.runInfo.waveIndex}`, runResultTextStyle, {fontSize : "65px", lineSpacing: 0.1});
 
     if (this.isVictory) {
       const hallofFameInstructionContainer = this.scene.add.container(0, 0);
@@ -267,7 +271,7 @@ export default class GameInfoUiHandler extends UiHandler {
     this.gameStatsContainer.add(this.runResultContainer);
   }
 
-  async parseRunInfo() {
+  async parseRunInfo(windowX: number, windowY: number) {
     const modeText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize : "50px", lineSpacing:3});
     modeText.setPosition(7, 5);
     modeText.appendText(i18next.t("runHistory:mode")+": ", false);
@@ -321,7 +325,7 @@ export default class GameInfoUiHandler extends UiHandler {
     const runInfoText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize : "50px", lineSpacing:3});
     const runTime = Utils.getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
-    runInfoText.appendText(`[color=${LIGHT_YELLOW}]\u20BD${Utils.formatLargeNumber(this.runInfo.money, 1000)}[/color]`);
+    runInfoText.appendText(`[color=${getTextColor(TextStyle.MONEY)}]\u20BD${Utils.formatLargeNumber(this.runInfo.money, 1000)}[/color]`);
     const luckText = addBBCodeTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, {fontSize: "55px"});
     const luckValue = Phaser.Math.Clamp(this.runInfo.party.map(p => p.toPokemon(this.scene).getLuck()).reduce((total: integer, value: integer) => total += value, 0), 0, 14);
     let luckInfo = i18next.t("runHistory:luck")+": "+getLuckString(luckValue);
@@ -332,7 +336,7 @@ export default class GameInfoUiHandler extends UiHandler {
     }
     luckText.appendText("[align=right]"+luckInfo+"[/align]", false);
     runInfoText.setPosition(7, 70);
-    luckText.setPosition(62,77);
+    luckText.setPosition(windowX-luckText.displayWidth-5, windowY-13);
     runInfoTextContainer.add(runInfoText);
     runInfoTextContainer.add(luckText);
 
@@ -576,7 +580,7 @@ export default class GameInfoUiHandler extends UiHandler {
 
   createVictorySplash(): void {
     this.endCardContainer = this.scene.add.container(0,0);
-    const endCard = this.scene.add.image(0, 0, `end_${this.scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}`);
+    const endCard = this.scene.add.image(0, 0, `end_${this.isPGF ? "f" : "m"}`);
     endCard.setOrigin(0);
     endCard.setScale(0.5);
     const text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, i18next.t("battle:congratulations"), TextStyle.SUMMARY, { fontSize: "128px" });
@@ -593,11 +597,12 @@ export default class GameInfoUiHandler extends UiHandler {
     // As an alternative, the icons of the second/bottom fused Pokemon have been placed next to their fellow fused Pokemon in Hall of Fame
     this.hallofFameContainer = this.scene.add.container(0, 0);
     // Thank you Hayuna for the code
-    const endCard = this.scene.add.image(0, 0, `end_${this.scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}`);
+    const endCard = this.scene.add.image(0, 0, `end_${this.isPGF ? "f" : "m"}`);
     endCard.setOrigin(0);
     endCard.setPosition(-1, -1);
     endCard.setScale(0.5);
-    const overlayColor = this.scene.gameData.gender === PlayerGender.FEMALE ? "red" : "blue";
+    const endCardCoords = endCard.getBottomCenter();
+    const overlayColor = this.isPGF ? "red" : "blue";
     const hallofFameBg = this.scene.add.image(0, 0, "hall_of_fame_"+overlayColor);
     hallofFameBg.setPosition(159, 89);
     hallofFameBg.setSize(this.scene.game.canvas.width, this.scene.game.canvas.height+10);
@@ -605,8 +610,8 @@ export default class GameInfoUiHandler extends UiHandler {
     this.hallofFameContainer.add(endCard);
     this.hallofFameContainer.add(hallofFameBg);
 
-    const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText"), TextStyle.WINDOW);
-    hallofFameText.setPosition(84, 164);
+    const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText"+(this.isPGF ? "F" : "M")), TextStyle.WINDOW);
+    hallofFameText.setPosition(endCardCoords.x-(hallofFameText.displayWidth/2), 164);
     this.hallofFameContainer.add(hallofFameText);
     this.runInfo.party.forEach((p, i) => {
       const pkmn = p.toPokemon(this.scene);

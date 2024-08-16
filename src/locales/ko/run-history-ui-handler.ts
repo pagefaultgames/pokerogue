@@ -6,7 +6,12 @@ export const runHistory: SimpleTranslationEntries = {
   "defeatedTrainer": "트레이너에게 패배: ",
   "defeatedTrainerDouble": "더블 배틀에서 패배",
   "defeatedRival": "라이벌에게 패배",
-  "defeated":"패배",
+  "defeatedM":"패배",
+  "defeatedWildF": "야생에서 패배: ",
+  "defeatedTrainerF": "트레이너에게 패배: ",
+  "defeatedTrainerDoubleF": "더블 배틀에서 패배",
+  "defeatedRivalF": "라이벌에게 패배",
+  "defeatedF":"패배",
   "luck":"행운",
   "score":"점수",
   "mode":"모드",
@@ -27,7 +32,8 @@ export const runHistory: SimpleTranslationEntries = {
   "money":"소지금",
   "runLength":"플레이 타임",
   "viewHeldItems":"도구",
-  "hallofFameText":"전당 등록을 축하합니다!",
+  "hallofFameTextM":"전당 등록을 축하합니다!",
+  "hallofFameTextF":"전당 등록을 축하합니다!",
   "viewHallOfFame":"전당 보기",
   "viewEndingSplash":"엔딩 화면 보기"
 } as const;

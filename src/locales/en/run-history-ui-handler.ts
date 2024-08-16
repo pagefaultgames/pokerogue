@@ -2,11 +2,16 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const runHistory: SimpleTranslationEntries = {
   "victory": "Victory!",
-  "defeatedWild": "Defeated by ",
-  "defeatedTrainer": "Defeated by ",
-  "defeatedTrainerDouble": "Defeated by Duo",
-  "defeatedRival": "Defeated by Rival",
-  "defeated":"Defeated",
+  "defeatedWildM": "Defeated by ",
+  "defeatedTrainerM": "Defeated by ",
+  "defeatedTrainerDoubleM": "Defeated by Duo",
+  "defeatedRivalM": "Defeated by Rival",
+  "defeatedM":"Defeated",
+  "defeatedWildF": "Defeated by ",
+  "defeatedTrainerF": "Defeated by ",
+  "defeatedTrainerDoubleF": "Defeated by Duo",
+  "defeatedRivalF": "Defeated by Rival",
+  "defeatedF":"Defeated",
   "luck":"Luck",
   "score":"Score",
   "mode":"Mode",
@@ -27,7 +32,8 @@ export const runHistory: SimpleTranslationEntries = {
   "money":"Money",
   "runLength":"Run Length",
   "viewHeldItems":"Held Items",
-  "hallofFameText":"Welcome to the Hall of Fame!",
+  "hallofFameTextM":"Welcome to the Hall of Fame!",
+  "hallofFameTextF":"Welcome to the Hall of Fame!",
   "viewHallOfFame":"View Hall of Fame!",
   "viewEndingSplash":"View ending art!"
 } as const;
