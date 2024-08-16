@@ -25,5 +25,5 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "unlinkGoogle": "Délier Google",
   "cancel": "Retour",
   "losingProgressionWarning": "Vous allez perdre votre progression depuis le début du combat. Continuer ?",
-  "noEggs": "Vous ne faitesactuellement éclore aucun Œuf !"
+  "noEggs": "Vous ne faites actuellement éclore aucun Œuf !"
 } as const;
