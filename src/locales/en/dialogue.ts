@@ -2604,7 +2604,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: `@c{neutral_eclosed}Oh. I guess I was overconfident.
                 $@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n
-                $@c{smile}Oh, not that you really need the help, but I had an extra one of these lying around and figured you might want it.\n
+                $@c{smile}Oh, not that you really need the help, but I had an extra one of each of these lying around and figured you might want them.\n
                 $@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all.
                 $@c{smile}Anyway, take care, and enjoy the event!`
     },
@@ -2620,7 +2620,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: `@c{neutral}I… wasn't supposed to lose that time…
                 $@c{smile}Aw well. That just means I'll have to train even harder for next time!
-                $@c{smile_wave}I also got you another one of these!\n@c{smile_wave_wink}No need to thank me~.
+                $@c{smile_wave}I also got you another two of these!\n@c{smile_wave_wink}No need to thank me~.
                 $@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!
                 $@c{smile_wave}Keep at it, and enjoy the event!`
     },
