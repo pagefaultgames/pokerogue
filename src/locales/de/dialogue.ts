@@ -2658,7 +2658,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                     $@c{smile_wave_wink}Ich mach nur Spaß!@d{64} @c{smile_eclosed}Ich habe ehrlich verloren… Ich habe das Gefühl, dass du es dort draußen weit bringen wirst.
                     $@c{smile}Übrigens, der Professor hat mich gebeten dir diese Items zu geben. Ich hoffe sie sind hilfreich!
                     $@c{smile_wave}Gib wie immer dein Bestes! Ich glaube an dich!
-                    $@c{smile}Oh- and I hope you enjoy the event!`
+                    $@c{smile}Oh-und genieße das Event!`
     },
   },
   "rival_2": {
