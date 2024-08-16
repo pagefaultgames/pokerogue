@@ -274,11 +274,11 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
         this.add(enemyContainer);
       } else if (data.battleType === BattleType.TRAINER) { // Defeats from Trainers show the trainer's title and name
         const tObj = data.trainer.toTrainer(this.scene);
-        // Because of the interesting mechanics behind rival names, if the trainer is a rival, the run result text says 'Defeated by Rival' instead of their names
+        // Because of the interesting mechanics behind rival names, the rival name and title have to be retrieved differently
         const RIVAL_TRAINER_ID_THRESHOLD = 375;
         if (data.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival"+genderLabel)}`, TextStyle.WINDOW);
-          // otherwise it becomes Rival_5 in Ivy's case
+          const rivalName = (this.scene.gameData.gender === PlayerGender.FEMALE) ? "trainerNames:rival" : "trainerNames:rival_female";
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival"+genderLabel)} ${i18next.t(rivalName)}`, TextStyle.WINDOW);
           this.add(gameOutcomeLabel);
         } else {
           const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer"+genderLabel)}${tObj.getName(0, true)}`, TextStyle.WINDOW);
