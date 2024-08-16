@@ -549,8 +549,6 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
   return null;
 }
 /**
- * Convert a float value to an integer damage value.
- *
  * This function is used in the context of a Pokémon battle game to calculate the actual integer damage value from a float result.
  * Many damage calculation formulas involve various parameters and result in float values.
  * The actual damage applied to a Pokémon's HP must be an integer.
