@@ -33,6 +33,7 @@ const redditUrl = "https://www.reddit.com/r/pokerogue";
 export default class MenuUiHandler extends MessageUiHandler {
   private menuContainer: Phaser.GameObjects.Container;
   private menuMessageBoxContainer: Phaser.GameObjects.Container;
+  private messageBoxBg: Phaser.GameObjects.NineSlice;
   private menuOverlay: Phaser.GameObjects.Rectangle;
 
   private menuBg: Phaser.GameObjects.NineSlice;
@@ -49,7 +50,6 @@ export default class MenuUiHandler extends MessageUiHandler {
   protected scale: number = 0.1666666667;
 
   public bgmBar: BgmBar;
-
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
@@ -134,16 +134,18 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuMessageBoxContainer.setVisible(false);
     this.menuContainer.add(this.menuMessageBoxContainer);
 
-    const menuMessageBox = addWindow(this.scene, 0, -0, 220, 48);
+    const menuMessageBox = addWindow(this.scene, 0, -0, (this.scene.game.canvas.width / 6) - this.menuBg.width - 1, 48);
     menuMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageBox);
+    this.messageBoxBg = menuMessageBox;
 
     const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
     menuMessageText.setName("menu-message");
-    menuMessageText.setWordWrapWidth(1224);
     menuMessageText.setOrigin(0, 0);
-    this.menuMessageBoxContainer.add(menuMessageText);
+    menuMessageText.setWordWrapWidth(menuMessageBox.getBounds().width * 0.96);
+    menuMessageText.setData("originalFont",menuMessageText.style.fontSize);
 
+    this.menuMessageBoxContainer.add(menuMessageText);
     this.message = menuMessageText;
 
     this.menuContainer.add(this.menuMessageBoxContainer);
@@ -253,7 +255,8 @@ export default class MenuUiHandler extends MessageUiHandler {
     });
 
     this.manageDataConfig = {
-      xOffset: 98,
+      xOffset: this.menuBg.width,
+      yOffset: 0,
       options: manageDataOptions
     };
 
@@ -300,7 +303,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     ];
 
     this.communityConfig = {
-      xOffset: 98,
+      xOffset: this.menuBg.width,
       options: communityOptions
     };
     this.setCursor(0);
@@ -445,7 +448,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               ui.setOverlayMode(Mode.CONFIRM, () => this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true)), () => {
                 ui.revertMode();
                 ui.showText("", 0);
-              }, false, -98);
+              }, false, this.menuBg.width * -1);
             });
           } else {
             this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => this.scene.reset(true));
@@ -470,7 +473,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
               ui.revertMode();
               ui.showText("", 0);
-            }, false, -98);
+            }, false, this.menuBg.width * -1);
           });
         } else {
           doLogout();
@@ -514,6 +517,24 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
     this.menuMessageBoxContainer.setVisible(!!text);
+    const messageText = this.message;
+    const messageBox = this.messageBoxBg;
+    if (messageBox && messageText) {
+      const fontSizeToNumber = (fs:number|string):number=>(parseInt(fs.toString().replace("px","")));
+      const fontSize = fontSizeToNumber(messageText.getData("originalFont"));
+      const textSize = Phaser.GameObjects.GetTextSize(messageText,messageText.style.getTextMetrics(),messageText.getWrappedText(text));
+      messageText.setFontSize(fontSize);
+
+      if (messageText.getWrappedText(text).length > messageText.style.maxLines || textSize.width > messageBox.getBounds().width) {
+        let fontDecrement = fontSize;
+        while (messageText.getWrappedText(text).length > messageText.style.maxLines || Phaser.GameObjects.GetTextSize(messageText,messageText.style.getTextMetrics(),messageText.getWrappedText(text)).width > messageBox.getBounds().width) {
+          fontDecrement -= 1;
+          messageText.setFontSize(fontDecrement);
+        }
+        const padding = messageText.x / 2;
+        messageText.setFontSize(fontDecrement - padding);
+      }
+    }
 
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
