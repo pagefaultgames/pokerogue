@@ -178,8 +178,12 @@ export default class GameManager {
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
-  async startBattle(species?: Species[]) {
-    await this.classicMode.runToSummon(species);
+  async startBattle(species?: Species[], isClassicMode = true) {
+    if (isClassicMode) {
+      await this.classicMode.runToSummon(species);
+    } else {
+      await this.runToSummon(species);
+    }
 
     this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
       this.setMode(Mode.MESSAGE);

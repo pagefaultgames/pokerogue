@@ -51,7 +51,7 @@ describe("Inverse Battle", () => {
     game.override.enemyAbility(Abilities.SAND_VEIL);
     game.override.starterSpecies(Species.PIKACHU);
 
-    await game.startBattle();
+    await game.startBattle(undefined, false);
 
     const pikachu = game.scene.getPlayerPokemon()!;
     const sandshrew = game.scene.getEnemyPokemon()!;
@@ -64,7 +64,7 @@ describe("Inverse Battle", () => {
     game.override.enemyAbility(Abilities.KEEN_EYE);
     game.override.starterSpecies(Species.PIKACHU);
 
-    await game.startBattle();
+    await game.startBattle(undefined, false);
 
     const pikachu = game.scene.getPlayerPokemon()!;
     const pidgey = game.scene.getEnemyPokemon()!;
@@ -77,7 +77,7 @@ describe("Inverse Battle", () => {
     game.override.enemyAbility(Abilities.OVERGROW);
     game.override.starterSpecies(Species.PIKACHU);
 
-    await game.startBattle();
+    await game.startBattle(undefined, false);
 
     const pikachu = game.scene.getPlayerPokemon()!;
     const chikorita = game.scene.getEnemyPokemon()!;
@@ -92,7 +92,7 @@ describe("Inverse Battle", () => {
     game.override.starterSpecies(Species.PIKACHU);
     game.override.enemyLevel(100);
 
-    await game.startBattle();
+    await game.startBattle(undefined, false);
 
     const charizard = game.scene.getEnemyPokemon()!;
 
@@ -111,7 +111,7 @@ describe("Inverse Battle", () => {
     game.override.enemyAbility(Abilities.TORRENT);
     game.override.starterSpecies(Species.ARTICUNO);
 
-    await game.startBattle();
+    await game.startBattle(undefined, false);
 
     const squirtle = game.scene.getEnemyPokemon()!;
     const articuno = game.scene.getPlayerPokemon()!;
@@ -127,7 +127,7 @@ describe("Inverse Battle", () => {
     game.override.starterSpecies(Species.DRATINI);
     game.override.moveset(SPLASH_ONLY);
 
-    await game.startBattle();
+    await game.startBattle(undefined, false);
 
     const sandshrew = game.scene.getEnemyPokemon()!;
     sandshrew.aiType = AiType.SMART;
@@ -144,7 +144,7 @@ describe("Inverse Battle", () => {
     game.override.enemySpecies(Species.PIKACHU);
     game.override.enemyAbility(Abilities.WATER_ABSORB);
 
-    await game.startBattle();
+    await game.startBattle(undefined, false);
 
     const pikachu = game.scene.getEnemyPokemon()!;
     pikachu.hp = pikachu.getMaxHp() - 1;
@@ -160,7 +160,8 @@ describe("Inverse Battle", () => {
     game.override.moveset([Moves.WILL_O_WISP]);
     game.override.enemySpecies(Species.CHARMANDER);
     game.override.enemyMoveset(SPLASH_ONLY);
-    await game.startBattle();
+
+    await game.startBattle(undefined, false);
 
     const charmander = game.scene.getEnemyPokemon()!;
     charmander.addTag(BattlerTagType.ALWAYS_GET_HIT, 99);
@@ -177,7 +178,8 @@ describe("Inverse Battle", () => {
     game.override.moveset([Moves.NUZZLE]);
     game.override.enemySpecies(Species.PIKACHU);
     game.override.enemyMoveset(SPLASH_ONLY);
-    await game.startBattle();
+
+    await game.startBattle(undefined, false);
 
     const pikachu = game.scene.getEnemyPokemon()!;
 
@@ -193,7 +195,8 @@ describe("Inverse Battle", () => {
     game.override.moveset([Moves.THUNDER_WAVE]);
     game.override.enemySpecies(Species.SANDSHREW);
     game.override.enemyMoveset(SPLASH_ONLY);
-    await game.startBattle();
+
+    await game.startBattle(undefined, false);
 
     const sandshrew = game.scene.getEnemyPokemon()!;
 
@@ -212,7 +215,8 @@ describe("Inverse Battle", () => {
     game.override.enemySpecies(Species.SANDSHREW);
     game.override.enemyAbility(Abilities.ANTICIPATION);
     game.override.enemyMoveset(SPLASH_ONLY);
-    await game.startBattle();
+
+    await game.startBattle(undefined, false);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDERBOLT));
 
@@ -226,7 +230,8 @@ describe("Inverse Battle", () => {
     game.override.enemyAbility(Abilities.MULTISCALE);
     game.override.enemyMoveset([Moves.DRAGON_CLAW, Moves.DRAGON_CLAW, Moves.DRAGON_CLAW, Moves.DRAGON_CLAW]);
     game.override.enemyLevel(10);
-    await game.startBattle();
+
+    await game.startBattle(undefined, false);
 
     const porygon = game.scene.getPlayerPokemon()!;
 
