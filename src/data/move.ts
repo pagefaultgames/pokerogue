@@ -6051,7 +6051,7 @@ export class SwapHeldItemsAttr extends MoveEffectAttr {
     const targetHeldItems = target.getHeldItems().filter(i => i.isTransferrable);
     const userHeldItems = user.getHeldItems().filter(i => i.isTransferrable);
 
-    if (!user.isPlayer() || target.hasAbility(Abilities.STICKY_HOLD) || (!userHeldItems.length && !targetHeldItems.length)) {
+    if (!user.hasTrainer() || target.hasAbility(Abilities.STICKY_HOLD) || (!userHeldItems.length && !targetHeldItems.length)) {
       user.scene.queueMessage(i18next.t("battle:attackFailed"));
       return false;
     }
