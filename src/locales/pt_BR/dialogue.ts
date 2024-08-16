@@ -2573,7 +2573,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
             $@c{smile}Tudo bem, no entanto. Eu imaginei que isso poderia acontecer.\n@c{serious_mopen_fists}Isso só significa que preciso me esforçar mais para a próxima vez!\n
             $@c{smile}Ah, não que você precise realmente de ajuda, mas eu tinha um extra desses itens e pensei que você poderia querer.
             $@c{serious_smile_fists}Não espere outro depois deste!\nNão posso continuar dando vantagem ao meu oponente.
-            $@c{smile}Enfim, cuide-se, and enjoy the event!`
+            $@c{smile}Enfim, cuide-se, e aproveite o evento!`
     },
   },
   "rival_2_female": {
