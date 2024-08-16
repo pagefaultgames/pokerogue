@@ -5,7 +5,7 @@ export const runHistory: SimpleTranslationEntries = {
   "defeatedWildM": "Besiegt durch ",
   "defeatedTrainerM": "Besiegt durch ",
   "defeatedTrainerDoubleM": "Besiegt durch Doppelkampf",
-  "defeatedRivalM": "Besiegt durch Rivale",
+  "defeatedRivalM": "Besiegt durch Rivalin",
   "defeatedM":"Besiegt",
   "defeatedWildF": "Besiegt durch ",
   "defeatedTrainerF": "Besiegt durch ",
