@@ -1065,6 +1065,11 @@ export class StatusMoveTypeImmunityAttr extends MoveAttr {
 
     this.immuneType = immuneType;
   }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const ret = !user.scene.gameMode.isInverseBattleChallenge();
+    return ret;
+  }
 }
 
 export class IgnoreOpponentStatChangesAttr extends MoveAttr {
@@ -6027,7 +6032,8 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
     const userTypes = user.getTypes();
-    const validTypes = getTypeResistances(moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
+    const isInverseBattle = user.scene.gameMode.isInverseBattleChallenge();
+    const validTypes = getTypeResistances(moveData.type, isInverseBattle).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
     if (!validTypes.length) {
       return false;
     }
