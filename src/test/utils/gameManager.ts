@@ -127,7 +127,9 @@ export default class GameManager {
     await this.runToTitle();
 
     this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      this.scene.gameMode = getGameMode(GameModes.CLASSIC);
+      if (!this.scene.gameMode) {
+        this.scene.gameMode = getGameMode(GameModes.CLASSIC);
+      }
       const starters = generateStarter(this.scene, species);
       const selectStarterPhase = new SelectStarterPhase(this.scene);
       this.scene.pushPhase(new EncounterPhase(this.scene, false));
