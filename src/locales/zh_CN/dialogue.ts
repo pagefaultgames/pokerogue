@@ -2463,7 +2463,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "@c{smile}嘿，我在找你呢！我知道你急着上路，\n但至少说个再见吧…$@c{smile_eclosed}所以你终于要开始追逐梦想了？\n我几乎不敢相信。$@c{serious_smile_fists}来都来了，来一场对战怎么样？\n毕竟，我想看看你是不是准备周全了。$@c{serious_mopen_fists}不要手下留情，我想让你全力以赴！",
     },
     "victory": {
-      1: "@c{shock}哇…你彻底击败了我。\n你是真初学者吗？$@c{smile}也许是靠点运气，但是…\n谁知道，你可能真的能一路走下去。$顺便说一下，博士让我给你这些东西。它们看起来可牛了。$@c{serious_smile_fists}祝你好运！$@c{smile}Oh- and I hope you enjoy the event! ",
+      1: "@c{shock}哇…你彻底击败了我。\n你是真初学者吗？$@c{smile}也许是靠点运气，但是…\n谁知道，你可能真的能一路走下去。$顺便说一下，博士让我给你这些东西。它们看起来可牛了。$@c{serious_smile_fists}祝你好运！$@c{smile}哦！我希望你能喜欢这次的活动！ ",
     },
   },
   "rival_female": {
