@@ -84,13 +84,15 @@ describe("Moves - Tera Blast", () => {
 
   it("causes stat drops if user is Stellar tera type", async() => {
     game.override.startingHeldItems([{name: "TERA_SHARD", type: Type.STELLAR}]);
-    await game.startBattle([Species.CHIKORITA]);
+    await game.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    
+
     game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(playerPokemon[0].summonData.battleStats[BattleStat.SPATK, BattleStat.ATK]).toBe(-1);
-
+    expect(playerPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(-1);
+    expect(playerPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
   }, 20000);
 });
