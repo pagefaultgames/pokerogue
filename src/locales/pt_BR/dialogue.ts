@@ -2589,7 +2589,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
             $@c{smile}Ah bem. Isso só significa que vou ter que treinar ainda mais para a próxima vez!
             $@c{smile_wave}Também consegui mais um desses para você!\n@c{smile_wave_wink}Não precisa me agradecer~.
             $@c{angry_mopen}Este é o último, hein! Você não vai ganhar mais nenhum presente de mim depois desse!
-            $@c{smile_wave}Continue assim, and enjoy the event!`
+            $@c{smile_wave}Continue assim, e aproveite o evento!`
     },
     "defeat": {
       1: "Está tudo bem perder às vezes…"
