@@ -2404,7 +2404,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 				$@c{smile}Pas grave, c’est OK. Je me doutais que ça arriverait.\n@c{serious_mopen_fists}Je vais juste devoir encore plus m’entrainer !\n
                 $@c{smile}Ah, et pas que t’aies réellement besoin d’aide, mais j’ai ça en trop sur moi qui pourrait t’intéresser.\n
 				$@c{serious_smile_fists}Mais n’espère plus en avoir d’autres !\nJe peux pas passer mon temps à aider mon adversaire.
-                $@c{smile}Bref, prends soin de toi, and enjoy the event !`
+                $@c{smile}Bref, prends soin de toi et profite bien de l’évènement !`
     },
   },
   "rival_2_female": {
