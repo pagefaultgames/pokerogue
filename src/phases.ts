@@ -1643,9 +1643,9 @@ export class SwitchSummonPhase extends SummonPhase {
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        // 250ms delay on leaveField is necessary to avoid calling hideInfo() twice
+        // 300ms delay on leaveField is necessary to avoid calling hideInfo() twice
         // and double-animating the stats panel slideout
-        this.scene.time.delayedCall(250, () => pokemon.leaveField(!this.batonPass));
+        this.scene.time.delayedCall(300, () => pokemon.leaveField(!this.batonPass));
         this.scene.time.delayedCall(750, () => this.switchAndSummon());
       }
     });
