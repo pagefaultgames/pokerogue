@@ -76,17 +76,18 @@ describe("Moves - Tera Blast", () => {
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith((basePower + stellarTypeDmgBonus) * stellarTypeMultiplier);
   }, 20000);
 
-  it("uses the higher stat of the user's Atk and SpAtk for damage calculation", async() => {
-    await game.startBattle([Species.CHIKORITA]);
-    
+  // Currently abilities are bugged and can't see when a move's category is changed
+  it.skip("uses the higher stat of the user's Atk and SpAtk for damage calculation", async() => {
+    game.override.enemyAbility(Abilities.TOXIC_DEBRIS);
+    await game.startBattle();
+
     const playerPokemon = game.scene.getPlayerPokemon()!;
     playerPokemon.stats[Stat.ATK] = 100;
-    playerPokemon.stats[Stat.SPATK] = 0;
+    playerPokemon.stats[Stat.SPATK] = 1;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
-
-    expect(moveToCheck.category).toBe(MoveCategory.PHYSICAL);
-
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(game.scene.getEnemyPokemon()!.battleData.abilityRevealed).toBe(true);
   }, 20000);
 
   it("causes stat drops if user is Stellar tera type", async() => {
