@@ -1,4 +1,4 @@
-import { allMoves, MoveCategory } from "#app/data/move";
+import { allMoves } from "#app/data/move";
 import GameManager from "#test/utils/gameManager";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -7,10 +7,11 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { Abilities } from "#app/enums/abilities.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { Type } from "#app/data/type.js";
-import { getModeForFileReference } from "typescript";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { Stat } from "#app/enums/stat.js";
+import { BattlerIndex } from "#app/battle.js";
+import { HitResult } from "#app/field/pokemon.js";
 
 describe("Moves - Tera Blast", () => {
   let phaserGame: Phaser.Game;
