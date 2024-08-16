@@ -23,12 +23,13 @@ import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { BattlerIndex } from "#app/battle.js";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
-import { OverridesHelper } from "./overridesHelper";
+import { OverridesHelper } from "./helpers/overridesHelper";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
-import overrides from "#app/overrides.js";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
-import { MoveHelper } from "./moveHelper";
+import { MoveHelper } from "./helpers/moveHelper";
 import { vi } from "vitest";
+import { ClassicModeHelper } from "./helpers/classicModeHelper";
+import { DailyModeHelper } from "./helpers/dailyModeHelper";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -41,6 +42,8 @@ export default class GameManager {
   public inputsHandler: InputsHandler;
   public readonly override: OverridesHelper;
   public readonly move: MoveHelper;
+  public readonly classicMode: ClassicModeHelper;
+  public readonly dailyMode: DailyModeHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -58,6 +61,8 @@ export default class GameManager {
     this.gameWrapper.setScene(this.scene);
     this.override = new OverridesHelper(this);
     this.move = new MoveHelper(this);
+    this.classicMode = new ClassicModeHelper(this);
+    this.dailyMode = new DailyModeHelper(this);
   }
 
   /**
@@ -127,9 +132,6 @@ export default class GameManager {
     await this.runToTitle();
 
     this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      if (!this.scene.gameMode) {
-        this.scene.gameMode = getGameMode(GameModes.CLASSIC);
-      }
       const starters = generateStarter(this.scene, species);
       const selectStarterPhase = new SelectStarterPhase(this.scene);
       this.scene.pushPhase(new EncounterPhase(this.scene, false));
@@ -137,9 +139,6 @@ export default class GameManager {
     });
 
     await this.phaseInterceptor.run(EncounterPhase);
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
-      this.removeEnemyHeldItems();
-    }
   }
 
   /**
@@ -180,7 +179,7 @@ export default class GameManager {
    * @returns A promise that resolves when the battle is started.
    */
   async startBattle(species?: Species[]) {
-    await this.runToSummon(species);
+    await this.classicMode.runToSummon(species);
 
     this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
       this.setMode(Mode.MESSAGE);
