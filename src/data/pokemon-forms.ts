@@ -919,9 +919,9 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.CASTFORM, "", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
     new SpeciesFormChange(Species.CASTFORM, "sunny", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
     new SpeciesFormChange(Species.CASTFORM, "rainy", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
-    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeWeatherSuppressedFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS]), true),
-    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeWeatherSuppressedFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS]), true),
-    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeWeatherSuppressedFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeWeatherSuppressedFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeWeatherSuppressedFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeWeatherSuppressedFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
   ],
 };
 
