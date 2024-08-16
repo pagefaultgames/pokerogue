@@ -54,6 +54,8 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 
     this.scene.loadImage("hall_of_fame_red", "ui");
     this.scene.loadImage("hall_of_fame_blue", "ui");
+    // For some reason, the game deletes/unloads the rival sprites. As a result, Run Info cannot access the rival sprites.
+    // The rivals are loaded here to have some way of accessing those sprites.
     this.scene.loadAtlas("rival_f", "trainer");
     this.scene.loadAtlas("rival_m", "trainer");
   }
@@ -71,6 +73,13 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     return true;
   }
 
+  /**
+   * Performs a certain action based on the button pressed by the user
+   * @param button
+   * The user can navigate through the runs with Button.UP/Button.DOWN.
+   * Button.ACTION allows the user to access more information about their runs.
+   * Button.CANCEL allows the user to go back.
+   */
   processInput(button: Button): boolean {
     const ui = this.getUi();
 
@@ -119,7 +128,12 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     return success || error;
   }
 
-
+  /**
+   * This retrieves the player's run history and facilitates the processes necessary for the output display.
+   * @param scene: BattleScene
+   * Runs are displayed from newest --> oldest in descending order.
+   * In the for loop, each run is processed to create an RunEntryContainer used to display and store the run's unique information
+   */
   async populateRuns(scene: BattleScene) {
     const response = await this.scene.gameData.getRunHistoryData(this.scene);
     const timestamps = Object.keys(response);
@@ -168,6 +182,10 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     return changed;
   }
 
+  /**
+   * Called when the player returns back to the menu
+   * Uses the functions clearCursor() and clearRuns()
+   */
   clear() {
     super.clear();
     this.runSelectContainer.setVisible(false);
@@ -189,23 +207,35 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   }
 }
 
+/**
+ * RunEntryContainer : stores/displays an individual run
+ * slotId: necessary for positioning
+ * entryData: the data of an individual run
+ */
 class RunEntryContainer extends Phaser.GameObjects.Container {
   public slotId: number;
-  public hasData: boolean;
   public entryData: RunEntry;
-  private loadingLabel: Phaser.GameObjects.Text;
 
   constructor(scene: BattleScene, entryData: RunEntry, slotId: number) {
     super(scene, 0, slotId*56);
 
     this.slotId = slotId;
-    this.hasData = true;
     this.entryData = entryData;
 
     this.setup(this.entryData);
 
   }
 
+  /**
+   * This processes the individual run's data for display.
+   *
+   * Each RunEntryContainer displayed should have the following information:
+   * Run Result: Victory || Defeat
+   * Game Mode + Final Wave
+   * Time Stamp
+   *
+   * The player's party and their levels at the time of the last wave of the run are also displayed.
+   */
   setup(run: RunEntry) {
 
     const victory = run.isVictory;
@@ -214,17 +244,18 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     const slotWindow = addWindow(this.scene, 0, 0, 304, 52);
     this.add(slotWindow);
 
+    // Run Result: Victory
     if (victory) {
       const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:victory")}`, TextStyle.WINDOW);
       this.add(gameOutcomeLabel);
-    } else {
+    } else { // Run Result: Defeats
       const genderLabel = (this.scene.gameData.gender === PlayerGender.FEMALE) ? "F" : "M";
+      // Defeats from wild Pokemon battles will show the Pokemon responsible by the text of the run result.
       if (data.battleType === BattleType.WILD) {
         const enemyContainer = this.scene.add.container(8, 5);
         const gameOutcomeLabel = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:defeatedWild"+genderLabel)}`, TextStyle.WINDOW);
         enemyContainer.add(gameOutcomeLabel);
         data.enemyParty.forEach((enemyData, e) => {
-          // This allows the enemyParty to be shown - doubles or singles -> 58+(e*8)
           const enemyIconContainer = this.scene.add.container(65+(e*25),-8);
           enemyIconContainer.setScale(0.75);
           enemyData.boss = false;
@@ -241,8 +272,9 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
           enemy.destroy();
         });
         this.add(enemyContainer);
-      } else if (data.battleType === BattleType.TRAINER) {
+      } else if (data.battleType === BattleType.TRAINER) { // Defeats from Trainers show the trainer's title and name
         const tObj = data.trainer.toTrainer(this.scene);
+        // Because of the interesting mechanics behind rival names, if the trainer is a rival, the run result text says 'Defeated by Rival' instead of their names
         const RIVAL_TRAINER_ID_THRESHOLD = 375;
         if (data.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
           const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival"+genderLabel)}`, TextStyle.WINDOW);
@@ -255,6 +287,9 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
       }
     }
 
+    // Game Mode + Waves
+    // Because Endless (Spliced) tends to have the longest name across languages, the line tends to spill into the party icons.
+    // To fix this, the Spliced icon is used to indicate an Endless Spliced run
     const gameModeLabel = addTextObject(this.scene, 8, 19, "", TextStyle.WINDOW);
     let mode = "";
     switch (data.gameMode) {
@@ -279,6 +314,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
       const coords = gameModeLabel.getTopRight();
       splicedIcon.setPosition(coords.x+5, 27);
       this.add(splicedIcon);
+      // 4 spaces of room for the Spliced icon
       gameModeLabel.appendText("    - ", false);
     } else {
       gameModeLabel.appendText(" - ", false);
@@ -289,6 +325,9 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     const timestampLabel = addTextObject(this.scene, 8, 33, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
     this.add(timestampLabel);
 
+    // pokemonIconsContainer holds the run's party Pokemon icons and levels
+    // Icons should be level with each other here, but there are significant number of icons that have a center axis / position far from the norm.
+    // The code here does not account for icon weirdness.
     const pokemonIconsContainer = this.scene.add.container(140, 17);
 
     data.party.forEach((p: PokemonData, i: integer) => {
@@ -313,7 +352,6 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     this.add(pokemonIconsContainer);
   }
 }
-
 
 interface RunEntryContainer {
   scene: BattleScene;
