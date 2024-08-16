@@ -60,11 +60,13 @@ describe("Moves - Tera Blast", () => {
     const stellarTypeDmgBonus = 20;
     const basePower = moveToCheck.power;
     
-    await game.startBattle([Species.CHIKORITA]);
+    await game.startBattle();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(moveToCheck.calculateBattlePower).toBe((basePower + stellarTypeDmgBonus) * stellarTypeMultiplier);
+    expect(moveToCheck.calculateBattlePower).toHaveReturnedWith((basePower + stellarTypeDmgBonus) * stellarTypeMultiplier);
   }, 20000);
 
   it("uses the higher stat of the user's Atk and SpAtk for damage calculation", async() => {
