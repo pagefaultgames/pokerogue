@@ -10,7 +10,7 @@ export const mswSavedataHandlers = (baseUrl: string) => [
    */
   http.get(`${baseUrl}/savedata/system/get`, async () => {
     try {
-      const lsData = localStorage.getItem("data_Guest");
+      const lsData = localStorage.getItem("data_Guest") ?? "";
       const data = atob(lsData);
       const json = JSON.parse(data);
       return HttpResponse.json(json);
