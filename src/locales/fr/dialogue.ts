@@ -2420,7 +2420,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 				$@c{smile}Bon. Ça veut juste dire que je vais devoir encore plus m’entrainer !
 				$@c{smile_wave}J’ai aussi ça en rab pour toi !\n@c{smile_wave_wink}Inutile de me remercier ~.
                 $@c{angry_mopen}C’était le dernier, terminé les cadeaux après celui-là !
-                $@c{smile_wave}Allez, tiens le coup, and enjoy the event !`
+                $@c{smile_wave}Allez, tiens le coup et profite bien de l’évènement !`
     },
     "defeat": {
       1: "Je suppose que c’est parfois normal de perdre…"
