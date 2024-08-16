@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import UI from "./ui/ui";
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase, runShinyCheck } from "./phases";
+import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase, runShinyCheck, findBest } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import { Constructor } from "#app/utils";
@@ -1296,6 +1296,22 @@ export default class BattleScene extends SceneBase {
       this.arenaFlyout.display2()
     }
     LoggerTools.logLuck(this)
+  }
+
+  updateCatchRate() {
+    var txt = ["Turn: " + this.currentBattle.turn]
+    if (!this.getEnemyField()[0].hasTrainer()) {
+      this.getEnemyField().forEach((pk, i) => {
+        if (pk.isActive() && pk.hp > 0)
+        txt = txt.concat(findBest(this, pk))
+      })
+    }
+    if (txt.length > 2) {
+      txt = ["Turn: " + this.currentBattle.turn]
+    }
+    this.arenaFlyout.updateFieldText()
+  
+    this.setScoreText(txt.join(" / "))
   }
 
   newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
