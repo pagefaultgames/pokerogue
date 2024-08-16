@@ -2388,7 +2388,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                     $@c{smile_wave_wink}J’déconne !@d{64} @c{smile_eclosed}J’ai perdu dans les règles…\nJ’ai le sentiment que tu vas très bien t’en sortir.
 					$@c{smile}D’ailleurs, le prof veut que je te donne ces quelques objets. Ils te seront utiles, pour sûr !
 					$@c{smile_wave}Fais de ton mieux, comme toujours !\nJe crois fort en toi !
-     					$@c{smile}Oh- and I hope you enjoy the event!`
+    					$@c{smile}Oh, et profite bien de l’évènement !`
     },
   },
   "rival_2": {
