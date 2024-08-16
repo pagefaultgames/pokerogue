@@ -2557,7 +2557,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $@c{smile_wave_wink}Brincadeirinha!@d{64} @c{smile_eclosed}Eu perdi de forma justa… Tenho a sensação de que você vai se sair muito bem lá fora.
                 $@c{smile}Aliás, o professor pediu para eu te dar alguns itens. Espero que sejam úteis!
                 $@c{smile_wave}Dê o seu melhor, como sempre! Eu acredito em você!
-                $@c{smile}Oh- and I hope you enjoy the event!`
+                $@c{smile}Ah- e eu espero que você aproveite o evento!`
     },
   },
   "rival_2": {
