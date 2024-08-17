@@ -10,4 +10,5 @@ export const modifier: SimpleTranslationEntries = {
   "turnHeldItemTransferApply": "{{pokemonNameWithAffix}}'s {{itemName}} was absorbed\nby {{pokemonName}}'s {{typeName}}!",
   "contactHeldItemTransferApply": "{{pokemonNameWithAffix}}'s {{itemName}} was snatched\nby {{pokemonName}}'s {{typeName}}!",
   "enemyTurnHealApply": "{{pokemonNameWithAffix}}\nrestored some HP!",
+  "bypassSpeedChanceApply": "¡Gracias {{itemName}} {{pokemonName}} puede tener prioridad!",
 } as const;

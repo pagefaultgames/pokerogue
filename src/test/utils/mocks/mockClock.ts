@@ -2,7 +2,7 @@ import Clock = Phaser.Time.Clock;
 
 
 export class MockClock extends Clock {
-  public overrideDelay: number;
+  public overrideDelay: number | undefined;
   constructor(scene) {
     super(scene);
     this.overrideDelay = undefined;

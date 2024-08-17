@@ -15,8 +15,8 @@ export function getNatureName(nature: Nature, includeStatEffects: boolean = fals
   }
   if (includeStatEffects) {
     const stats = Utils.getEnumValues(Stat).slice(1);
-    let increasedStat: Stat = null;
-    let decreasedStat: Stat = null;
+    let increasedStat: Stat | null = null;
+    let decreasedStat: Stat | null = null;
     for (const stat of stats) {
       const multiplier = getNatureStatMultiplier(nature, stat);
       if (multiplier > 1) {

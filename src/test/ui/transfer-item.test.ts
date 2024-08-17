@@ -1,20 +1,16 @@
 import { BerryType } from "#app/enums/berry-type";
+import { Button } from "#app/enums/buttons";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import { Button } from "#app/enums/buttons";
-import Overrides from "#app/overrides";
-import {
-  BattleEndPhase,
-  SelectModifierPhase
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
+import { BattleEndPhase, SelectModifierPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { getMovePosition } from "../utils/gameManagerUtils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 
 describe("UI - Transfer Items", () => {
@@ -33,17 +29,17 @@ describe("UI - Transfer Items", () => {
 
   beforeEach(async () => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(1);
-    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([
+    game.override.battleType("single");
+    game.override.startingLevel(100);
+    game.override.startingWave(1);
+    game.override.startingHeldItems([
       { name: "BERRY", count: 1, type: BerryType.SITRUS },
       { name: "BERRY", count: 2, type: BerryType.APICOT },
       { name: "BERRY", count: 2, type: BerryType.LUM },
     ]);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DRAGON_CLAW]);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
+    game.override.moveset([Moves.DRAGON_CLAW]);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyMoveset([Moves.SPLASH]);
 
     await game.startBattle([Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA]);
 

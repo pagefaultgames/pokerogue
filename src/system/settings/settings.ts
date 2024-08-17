@@ -65,6 +65,10 @@ export interface Setting {
   default: number
   type: SettingType
   requireReload?: boolean
+  /** Whether the setting can be activated or not */
+  activatable?: boolean
+  /** Determines whether the setting should be hidden from the UI */
+  isHidden?: () => boolean
 }
 
 /**
@@ -79,6 +83,7 @@ export const SettingKeys = {
   Skip_Seen_Dialogues: "SKIP_SEEN_DIALOGUES",
   Battle_Style: "BATTLE_STYLE",
   Enable_Retries: "ENABLE_RETRIES",
+  Hide_IVs: "HIDE_IVS",
   Tutorials: "TUTORIALS",
   Touch_Controls: "TOUCH_CONTROLS",
   Vibration: "VIBRATION",
@@ -105,6 +110,7 @@ export const SettingKeys = {
   SE_Volume: "SE_VOLUME",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
 };
 
@@ -246,6 +252,13 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Enable_Retries,
     label: i18next.t("settings:enableRetries"),
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Hide_IVs,
+    label: i18next.t("settings:hideIvs"),
     options: OFF_ON,
     default: 0,
     type: SettingType.GENERAL
@@ -543,13 +556,27 @@ export const Setting: Array<Setting> = [
     requireReload: true
   },
   {
+    key: SettingKeys.Move_Touch_Controls,
+    label: i18next.t("settings:moveTouchControls"),
+    options: [
+      {
+        value: "Configure",
+        label: i18next.t("settings:change")
+      }
+    ],
+    default: 0,
+    type: SettingType.GENERAL,
+    activatable: true,
+    isHidden: () => !hasTouchscreen()
+  },
+  {
     key: SettingKeys.Shop_Overlay_Opacity,
     label: i18next.t("settings:shopOverlayOpacity"),
     options: SHOP_OVERLAY_OPACITY_OPTIONS,
     default: 7,
     type: SettingType.DISPLAY,
     requireReload: false
-  },
+  }
 ];
 
 /**
@@ -617,6 +644,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Enable_Retries:
     scene.enableRetries = Setting[index].options[value].value === "On";
+    break;
+  case SettingKeys.Hide_IVs:
+    scene.hideIvs = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Skip_Seen_Dialogues:
     scene.skipSeenDialogues = Setting[index].options[value].value === "On";
@@ -763,6 +793,14 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
               label: "한국어",
               handler: () => changeLocaleHandler("ko")
             },
+            {
+              label: "日本語",
+              handler: () => changeLocaleHandler("ja")
+            },
+            // {
+            //   label: "Català",
+            //   handler: () => changeLocaleHandler("ca-ES")
+            // },
             {
               label: i18next.t("settings:back"),
               handler: () => cancelHandler()

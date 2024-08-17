@@ -169,6 +169,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "무패",
     description: "클래식 모드 클리어",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "우리집 꿈나무",
+    description: "최종 진화형이 아닌 포켓몬을 데리고 클래식 모드 클리어."
+  },
 
   "MONO_GEN_ONE": {
     name: "근본 라이벌",
@@ -263,6 +267,10 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "MONO_FAIRY": {
     name: "설마 자시안으로?",
+  },
+  "FRESH_START": {
+    name: "첫트!",
+    description: "새 출발 챌린지 모드 클리어."
   },
 } as const;
 

@@ -169,6 +169,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "戰無不勝",
     description: "在經典模式中通關遊戲",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Bring Your Child To Work Day",
+    description: "Beat the game in Classic Mode with at least one unevolved party member."
+  },
 
   "MONO_GEN_ONE": {
     name: "最初的勁敵",
@@ -264,6 +268,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "林克，醒醒！",
   },
+  "FRESH_START": {
+    name: "First Try!",
+    description: "Complete the Fresh Start challenge."
+  }
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)

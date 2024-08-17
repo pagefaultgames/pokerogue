@@ -1,15 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import GameManager from "../utils/gameManager";
-import {
-  Moves
-} from "#app/enums/moves.js";
-import Overrides from "#app/overrides";
-import { Abilities } from "#app/enums/abilities.js";
 import { BattlerIndex } from "#app/battle.js";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { MoveResult } from "#app/field/pokemon.js";
-import { Stat } from "#app/data/pokemon-stat.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
+import { MoveResult } from "#app/field/pokemon.js";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -29,14 +26,14 @@ describe("Moves - Gastro Acid", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(1);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.BIDOOF);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WATER_ABSORB);
+    game.override.battleType("double");
+    game.override.startingLevel(1);
+    game.override.enemyLevel(100);
+    game.override.ability(Abilities.NONE);
+    game.override.moveset([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
+    game.override.enemySpecies(Species.BIDOOF);
+    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyAbility(Abilities.WATER_ABSORB);
   });
 
   it("suppresses effect of ability", async () => {
@@ -72,15 +69,13 @@ describe("Moves - Gastro Acid", () => {
   }, TIMEOUT);
 
   it("fails if used on an enemy with an already-suppressed ability", async () => {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(null);
+    game.override.battleType(null);
 
     await game.startBattle();
 
-    // Force player to be slower to enable Core Enforcer to proc its suppression effect
-    game.scene.getPlayerPokemon().stats[Stat.SPD] = 1;
-    game.scene.getEnemyPokemon().stats[Stat.SPD] = 2;
-
     game.doAttack(getMovePosition(game.scene, 0, Moves.CORE_ENFORCER));
+    // Force player to be slower to enable Core Enforcer to proc its suppression effect
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
@@ -88,6 +83,6 @@ describe("Moves - Gastro Acid", () => {
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
-    expect(game.scene.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   }, TIMEOUT);
 });
