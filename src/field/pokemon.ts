@@ -4222,7 +4222,7 @@ export interface AttackMoveResult {
 }
 
 export class PokemonSummonData {
-  public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
+  public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ]; // [Atk, Def, SpAtk, SpDef, Spd, Acc]
   public moveQueue: QueuedMove[] = [];
   public disabledMove: Moves = Moves.NONE;
   public disabledTurns: integer = 0;
