@@ -31,7 +31,7 @@ export const challenges: TranslationEntries = {
   },
   "inverseBattle": {
     "name": "Umkehrkampf",
-    "desc": "Die Typen-Effektivität wird umgekehrt, und kein Typ ist gegen einen anderen Typ immun. Deaktiviert die Erfolge anderer Herausforderungen.",
+    "desc": "Die Typen Effektivität wird umgekehrt, und kein Typ ist gegen einen anderen Typ immun.\nDeaktiviert die Erfolge anderer Herausforderungen.",
     "value.0": "Aus",
     "value.1": "An",
   }
