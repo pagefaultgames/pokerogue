@@ -1795,6 +1795,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const formCount = this.lastSpecies.forms.length;
             let newFormIndex = props.formIndex;
             do {
+              console.log(`newFormIndex: ${newFormIndex}, formIndex: ${props.formIndex}, formCount: ${formCount}`);
               newFormIndex = (newFormIndex + 1) % formCount;
               if (this.lastSpecies.forms[newFormIndex].isStarterSelectable && this.speciesStarterDexEntry!.caughtAttr! & this.scene.gameData.getFormAttr(newFormIndex)) { // TODO: are those bangs correct?
                 break;
@@ -2975,7 +2976,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female!, formIndex, shiny, variant));
           currentFilteredContainer.checkIconId(female, formIndex, shiny, variant);
         }
-        this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
+        this.canCycleShiny = !!(dexEntry.caughtAttr && DexAttr.NON_SHINY && (DexAttr.SHINY || DexAttr.VARIANT_2 || DexAttr.VARIANT_3));
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
         this.canCycleAbility = [ abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
         this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
