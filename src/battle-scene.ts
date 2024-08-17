@@ -829,9 +829,9 @@ export default class BattleScene extends SceneBase {
     return activeOnly ? this.infoToggles.filter(t => t?.isActive()) : this.infoToggles;
   }
 
-  getPokemonById(pokemonId: integer): Pokemon | null {
+  getPokemonById(pokemonId: integer): Pokemon | undefined {
     const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
-    return (findInParty(this.getParty()) || findInParty(this.getEnemyParty())) ?? null;
+    return (findInParty(this.getParty()) || findInParty(this.getEnemyParty())) || undefined;
   }
 
   addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
@@ -1098,10 +1098,13 @@ export default class BattleScene extends SceneBase {
 
   generatePokemonForBattle(battle: Battle) {
     var totalBst = 0;
-    battle.enemyLevels.forEach((level, e) => {
+    battle.enemyLevels?.forEach((level, e) => {
       if (true) {
         if (battle.battleType === BattleType.TRAINER) {
-          battle.enemyParty[e] = battle.trainer.genPartyMember(e);
+          const P = battle.trainer?.genPartyMember(e)
+          if (P != undefined) {
+            battle.enemyParty[e] = P;
+          }
         } else {
           LoggerTools.rarityslot[0] = e
           const enemySpecies = this.randomSpecies(battle.waveIndex, level, true);

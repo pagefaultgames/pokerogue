@@ -139,7 +139,7 @@ function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean)
     var p = m.getPokemon(scene)
     scene.getField().forEach((p2, idx) => {
       if (p == p2) {
-        console.log(m.getPokemon(scene).name + " (Position: " + (idx + 1) + ") has a Quick Claw")
+        console.log(m.getPokemon(scene)?.name + " (Position: " + (idx + 1) + ") has a Quick Claw")
         offset++
       }
     })
@@ -219,8 +219,8 @@ function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean)
   return n + " (FAIL)"
   return n + Math.round(rates2[0] * 100) + "%";
 }
-export function parseSlotData(slotId: integer): SessionSaveData {
-  var S = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser.username}`)
+export function parseSlotData(slotId: integer): SessionSaveData | undefined {
+  var S = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)
   if (S == null) {
     // No data in this slot
     return undefined;
@@ -285,8 +285,8 @@ export function parseSlotData(slotId: integer): SessionSaveData {
   }) as SessionSaveData;
   Save.slot = slotId
   Save.description = (slotId + 1) + " - "
-  var challengeParts: ChallengeData[] = new Array(5)
-  var nameParts: string[] = new Array(5)
+  var challengeParts: ChallengeData[] | undefined[] = new Array(5)
+  var nameParts: string[] | undefined[] = new Array(5)
   if (Save.challenges != undefined) {
     for (var i = 0; i < Save.challenges.length; i++) {
       switch (Save.challenges[i].id) {
@@ -309,11 +309,11 @@ export function parseSlotData(slotId: integer): SessionSaveData {
           break;
         case Challenges.LOWER_MAX_STARTER_COST:
           challengeParts[2] = Save.challenges[i]
-          nameParts[3] = (10 - challengeParts[0].value) + "cost"
+          nameParts[3] = (10 - challengeParts[0]!.value) + "cost"
           break;
         case Challenges.LOWER_STARTER_POINTS:
           challengeParts[3] = Save.challenges[i]
-          nameParts[4] = (10 - challengeParts[0].value) + "pt"
+          nameParts[4] = (10 - challengeParts[0]!.value) + "pt"
           break;
         case Challenges.FRESH_START:
           challengeParts[4] = Save.challenges[i]
@@ -335,18 +335,18 @@ export function parseSlotData(slotId: integer): SessionSaveData {
     }
   }
   if (challengeParts.length == 1 && false) {
-    switch (challengeParts[0].id) {
+    switch (challengeParts[0]!.id) {
       case Challenges.SINGLE_TYPE:
-        Save.description += "Mono " + challengeParts[0].toChallenge().getValue()
+        Save.description += "Mono " + challengeParts[0]!.toChallenge().getValue()
         break;
       case Challenges.SINGLE_GENERATION:
-        Save.description += "Gen " + challengeParts[0].value
+        Save.description += "Gen " + challengeParts[0]!.value
         break;
       case Challenges.LOWER_MAX_STARTER_COST:
-        Save.description += "Max cost " + (10 - challengeParts[0].value)
+        Save.description += "Max cost " + (10 - challengeParts[0]!.value)
         break;
       case Challenges.LOWER_STARTER_POINTS:
-        Save.description += (10 - challengeParts[0].value) + "-point"
+        Save.description += (10 - challengeParts[0]!.value) + "-point"
         break;
       case Challenges.FRESH_START:
         Save.description += "Fresh Start"
@@ -533,7 +533,7 @@ export class TitlePhase extends Phase {
             handler: () => {
               callback(i);
               this.scene.ui.revertMode();
-              this.scene.ui.showText(null, 0);
+              this.scene.ui.showText("", 0);
               return true;
             }
           };
@@ -574,7 +574,7 @@ export class TitlePhase extends Phase {
     });
   }
 
-  getLastSave(log?: boolean, dailyOnly?: boolean, noDaily?: boolean): SessionSaveData {
+  getLastSave(log?: boolean, dailyOnly?: boolean, noDaily?: boolean): SessionSaveData | undefined {
     var saves: Array<Array<any>> = [];
     for (var i = 0; i < 5; i++) {
       var s = parseSlotData(i);
@@ -590,27 +590,27 @@ export class TitlePhase extends Phase {
     if (saves[0] == undefined) return undefined;
     return saves[0][1]
   }
-  getLastSavesOfEach(log?: boolean): SessionSaveData[] {
-    var saves: Array<Array<any>> = [];
+  getLastSavesOfEach(log?: boolean): SessionSaveData[] | undefined {
+    var saves: Array<Array<SessionSaveData | number>> = [];
     for (var i = 0; i < 5; i++) {
       var s = parseSlotData(i);
       if (s != undefined) {
         saves.push([i, s, s.timestamp]);
       }
     }
-    saves.sort((a, b): integer => {return b[2] - a[2]})
+    saves.sort((a, b): integer => {return (b[2] as number) - (a[2] as number)})
     if (log) console.log(saves)
     if (saves == undefined) return undefined;
     if (saves[0] == undefined) return undefined;
-    var validSaves = []
+    var validSaves: Array<Array<SessionSaveData | number>> = []
     var hasNormal = false;
     var hasDaily = false;
     for (var i = 0; i < saves.length; i++) {
-      if (saves[i][1].gameMode == GameModes.DAILY && !hasDaily) {
+      if ((saves[i][1] as SessionSaveData).gameMode == GameModes.DAILY && !hasDaily) {
         hasDaily = true;
         validSaves.push(saves[i])
       }
-      if (saves[i][1].gameMode != GameModes.DAILY && !hasNormal) {
+      if ((saves[i][1] as SessionSaveData).gameMode != GameModes.DAILY && !hasNormal) {
         hasNormal = true;
         validSaves.push(saves[i])
       }
@@ -618,9 +618,9 @@ export class TitlePhase extends Phase {
     console.log(saves, validSaves)
     if (validSaves.length == 0)
       return undefined;
-    return validSaves.map(f => f[1]);
+    return validSaves.map(f => f[1] as SessionSaveData);
   }
-  getSaves(log?: boolean, dailyOnly?: boolean): SessionSaveData[] {
+  getSaves(log?: boolean, dailyOnly?: boolean): SessionSaveData[] | undefined {
     var saves: Array<Array<any>> = [];
     for (var i = 0; i < 5; i++) {
       var s = parseSlotData(i);
@@ -635,7 +635,7 @@ export class TitlePhase extends Phase {
     if (saves == undefined) return undefined;
     return saves.map(f => f[1]);
   }
-  getSavesUnsorted(log?: boolean, dailyOnly?: boolean): SessionSaveData[] {
+  getSavesUnsorted(log?: boolean, dailyOnly?: boolean): SessionSaveData[] | undefined {
     var saves: Array<Array<any>> = [];
     for (var i = 0; i < 5; i++) {
       var s = parseSlotData(i);
@@ -756,16 +756,16 @@ export class TitlePhase extends Phase {
     var ls2 = this.getLastSavesOfEach()
     this.scene.quickloadDisplayMode = "Both"
     switch (true) {
-      case (this.scene.quickloadDisplayMode == "Daily" && this.getLastSave(false, true) != undefined):
+      case (this.scene.quickloadDisplayMode == "Daily" && ls1 != undefined):
         options.push({
           label: (ls1.description ? ls1.description : "[???]"),
           handler: () => {
-            this.loadSaveSlot(ls1.slot);
+            this.loadSaveSlot(ls1!.slot);
             return true;
           }
         })
         break;
-      case this.scene.quickloadDisplayMode == "Dailies" && this.getLastSave(false, true) != undefined:
+      case this.scene.quickloadDisplayMode == "Dailies" && lastsaves != undefined && ls1 != undefined:
         lastsaves.forEach(lastsave1 => {
           options.push({
             label: (lastsave1.description ? lastsave1.description : "[???]"),
@@ -776,11 +776,11 @@ export class TitlePhase extends Phase {
           })
         })
         break;
-      case lastsave != undefined && (this.scene.quickloadDisplayMode == "Latest" || ((this.scene.quickloadDisplayMode == "Daily" || this.scene.quickloadDisplayMode == "Dailies") && this.getLastSave(false, true) == undefined)):
+      case lastsave != undefined && (this.scene.quickloadDisplayMode == "Latest" || ((this.scene.quickloadDisplayMode == "Daily" || this.scene.quickloadDisplayMode == "Dailies") && ls1 == undefined)):
         options.push({
           label: (lastsave.description ? lastsave.description : "[???]"),
           handler: () => {
-            this.loadSaveSlot(lastsave.slot);
+            this.loadSaveSlot(lastsave!.slot);
             return true;
           }
         })
@@ -1060,8 +1060,8 @@ export class TitlePhase extends Phase {
     // TODO
     var saves = this.getSaves()
     var saveNames = new Array(5).fill("")
-    for (var i = 0; i < saves.length; i++) {
-      saveNames[saves[i][0]] = saves[i][1].description
+    for (var i = 0; i < saves!.length; i++) {
+      saveNames[saves![i][0]] = saves![i][1].description
     }
     const ui = this.scene.ui
     const confirmSlot = (message: string, slotFilter: (i: integer) => boolean, callback: (i: integer) => void) => {
@@ -1074,7 +1074,7 @@ export class TitlePhase extends Phase {
               handler: () => {
                 callback(i);
                 ui.revertMode();
-                ui.showText(null, 0);
+                ui.showText("", 0);
                 return true;
               }
             };
@@ -1082,7 +1082,7 @@ export class TitlePhase extends Phase {
             label: i18next.t("menuUiHandler:cancel"),
             handler: () => {
               ui.revertMode();
-              ui.showText(null, 0);
+              ui.showText("", 0);
               return true;
             }
           }]),
@@ -2715,7 +2715,7 @@ export class CheckSwitchPhase extends BattlePhase {
 
     for (var i = 0; i < this.scene.getEnemyField().length; i++) {
       var pk = this.scene.getEnemyField()[i]
-      var maxIVs = []
+      var maxIVs: string[] = []
       var ivnames = ["HP", "Atk", "Def", "Sp.Atk", "Sp.Def", "Speed"]
       pk.ivs.forEach((iv, j) => {if (iv == 31) maxIVs.push(ivnames[j])})
       var ivDesc = maxIVs.join(",")
@@ -2757,7 +2757,7 @@ export class CheckSwitchPhase extends BattlePhase {
 
     for (var i = 0; i < this.scene.getEnemyField().length; i++) {
       var pk = this.scene.getEnemyField()[i]
-      var maxIVs = []
+      var maxIVs: string[] = []
       var ivnames = ["HP", "Atk", "Def", "Sp.Atk", "Sp.Def", "Speed"]
       pk.ivs.forEach((iv, j) => {if (iv == 31) maxIVs.push(ivnames[j])})
       var ivDesc = maxIVs.join(",")
@@ -2958,8 +2958,8 @@ export class TurnInitPhase extends FieldPhase {
     }
 
     var Pt = this.scene.getEnemyParty()
-    var Pt1 = []
-    var Pt2 = []
+    var Pt1: EnemyPokemon[] = []
+    var Pt2: EnemyPokemon[] = []
     for (var i = 0; i < Pt.length; i++) {
       if (i % 2 == 0) {
         Pt1.push(Pt[i])
@@ -3310,7 +3310,7 @@ export class EnemyCommandPhase extends FieldPhase {
     super.start();
 
     const enemyPokemon = this.scene.getEnemyField()[this.fieldIndex];
-    console.log(enemyPokemon.getMoveset().map(m => m.getName()))
+    console.log(enemyPokemon.getMoveset().map(m => m?.getName()))
 
     const battle = this.scene.currentBattle;
 
@@ -3482,7 +3482,7 @@ export class TurnStartPhase extends FieldPhase {
       if (this.scene.getEnemyField()[i] != null)
       targets[this.scene.getEnemyField()[i].getBattlerIndex() + 1] = this.scene.getEnemyField()[i].name
     }
-    var targetFull = []
+    var targetFull: string[] = []
     for (var i = 0; i < t.length; i++) {
       targetFull.push(targets[t[i] + 1])
     }
@@ -3491,7 +3491,7 @@ export class TurnStartPhase extends FieldPhase {
   }
 
   getBattlers(user: Pokemon): Pokemon[] {
-    var battlers = []
+    var battlers: Pokemon[] = []
     battlers[0] = this.scene.getField()[0]
     battlers[1] = this.scene.getField()[1]
     battlers[2] = this.scene.getEnemyField()[0]
@@ -3508,7 +3508,7 @@ export class TurnStartPhase extends FieldPhase {
 
     const battlerBypassSpeed = {};
 
-    const playerActions = []
+    const playerActions: string[] = []
 
     const moveOrder = order.slice(0);
 
@@ -3521,11 +3521,11 @@ export class TurnStartPhase extends FieldPhase {
       const pokemon = field[o];
       const turnCommand = this.scene.currentBattle.turnCommands[o];
 
-      if (turnCommand.skip || !pokemon.isPlayer()) {
+      if (turnCommand?.skip || !pokemon.isPlayer()) {
         continue;
       }
 
-      switch (turnCommand.command) {
+      switch (turnCommand?.command) {
       case Command.FIGHT:
         const queuedMove = turnCommand.move;
         if (!queuedMove) {
@@ -3542,8 +3542,8 @@ export class TurnStartPhase extends FieldPhase {
           "Master Ball",
           "Luxury Ball"
         ]
-        LoggerTools.Actions[pokemon.getBattlerIndex()] = ballNames[turnCommand.cursor]
-        playerActions.push(ballNames[turnCommand.cursor])
+        LoggerTools.Actions[pokemon.getBattlerIndex()] = ballNames[turnCommand.cursor!]
+        playerActions.push(ballNames[turnCommand.cursor!])
         //this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets[0] % 2, turnCommand.cursor));
         break;
       case Command.POKEMON:
@@ -3697,7 +3697,7 @@ export class TurnStartPhase extends FieldPhase {
           }
         } else {
           this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP));//TODO: is the bang correct here?
-          var targets = turnCommand.targets || turnCommand.move.targets
+          var targets = turnCommand.targets || turnCommand.move!.targets
           var mv = new PokemonMove(queuedMove.move)
         }
         break;
@@ -3874,8 +3874,6 @@ export class TurnEndPhase extends FieldPhase {
       this.scene.arena.trySetTerrain(TerrainType.NONE, false);
     }
 
-    this.scene.peekBattleContents(50)
-
     this.end();
   }
 }
@@ -3936,9 +3934,9 @@ export class BattleEndPhase extends BattlePhase {
     var drpd: LoggerTools.DRPD = LoggerTools.getDRPD(this.scene)
     var wv: LoggerTools.Wave = LoggerTools.getWave(drpd, this.scene.currentBattle.waveIndex, this.scene)
     var lastcount = 0;
-    var lastval = undefined;
-    var tempActions = wv.actions.slice();
-    var prevWaveActions = []
+    var lastval;
+    var tempActions: string[] = wv.actions.slice();
+    var prevWaveActions: string[] = []
     wv.actions = []
     // Loop through each action
     for (var i = 0; i < tempActions.length; i++) {
@@ -6532,10 +6530,10 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                         this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
                           var W = LoggerTools.getWave(LoggerTools.getDRPD(this.scene), this.scene.currentBattle.waveIndex, this.scene)
                           if (W.shop != "") {
-                            LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + " | " + new PokemonMove(this.moveId).getName() + " → " + pokemon.moveset[moveIndex].getName())
+                            LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, W.shop + " | " + new PokemonMove(this.moveId).getName() + " → " + pokemon.moveset[moveIndex]!.getName())
                           } else {
                             var actions = LoggerTools.getActionCount(this.scene, this.scene.currentBattle.waveIndex)
-                            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | " + new PokemonMove(this.moveId).getName() + " → " + pokemon.moveset[moveIndex].getName())
+                            LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, (actions == 0 ? "" : "") + LoggerTools.playerPokeName(this.scene, pokemon) + " | " + new PokemonMove(this.moveId).getName() + " → " + pokemon.moveset[moveIndex]!.getName())
                           }
                           pokemon.setMove(moveIndex, Moves.NONE);
                           this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
@@ -7049,7 +7047,7 @@ const tierNames = [
  */
 export function shinyCheckStep(scene: BattleScene, predictionCost: Utils.IntegerHolder, rerollOverride: integer, modifierOverride?: integer) {
   var minLuck = -1
-  var modifierPredictions = []
+  var modifierPredictions: ModifierTypeOption[][] = []
   const party = scene.getParty();
   regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER, rerollOverride);
   const modifierCount = new Utils.IntegerHolder(3);
@@ -7060,7 +7058,7 @@ export function shinyCheckStep(scene: BattleScene, predictionCost: Utils.Integer
   var isOk = true;
   const typeOptions: ModifierTypeOption[] = getPlayerModifierTypeOptions(modifierCount.value, scene.getParty(), undefined, scene, true, true);
   typeOptions.forEach((option, idx) => {
-    let lastTier = option.type.tier
+    let lastTier = option.type!.tier
     if (option.alternates && option.alternates.length > 0) {
       for (var i = 0; i < option.alternates.length; i++) {
         if (option.alternates[i] > lastTier) {
@@ -7225,7 +7223,7 @@ export class SelectModifierPhase extends BattlePhase {
             } else {
               this.scene.reroll = true;
               LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "+1 Reroll")
-              this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1, typeOptions.map(o => o.type.tier), this.predictionCost, this.modifierPredictions));
+              this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1, typeOptions.map(o => o.type!.tier), this.predictionCost, this.modifierPredictions));
               this.scene.ui.clearText();
               this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
               if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
@@ -7241,7 +7239,7 @@ export class SelectModifierPhase extends BattlePhase {
             {
               this.scene.reroll = true;
               LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "-1 Reroll")
-              this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount - 1, typeOptions.map(o => o.type.tier), this.predictionCost, this.modifierPredictions));
+              this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount - 1, typeOptions.map(o => o.type!.tier), this.predictionCost, this.modifierPredictions));
               this.scene.ui.clearText();
               this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
               if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
@@ -7369,7 +7367,7 @@ export class SelectModifierPhase extends BattlePhase {
                     : modifierType.newModifier(party[slotIndex], option as integer)
                   : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
                 if (isPpRestoreModifier) {
-                  LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, modifierType.name + " → " + this.scene.getParty()[slotIndex].name + " → " + this.scene.getParty()[slotIndex].moveset[option - PartyOption.MOVE_1].getName())
+                  LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, modifierType.name + " → " + this.scene.getParty()[slotIndex].name + " → " + this.scene.getParty()[slotIndex].moveset[option - PartyOption.MOVE_1]!.getName())
                 } else if (isRememberMoveModifier) {
                   LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, modifierType.name + " → " + this.scene.getParty()[slotIndex].name)
                 } else if (isTmModifier) {
@@ -7385,7 +7383,7 @@ export class SelectModifierPhase extends BattlePhase {
           }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId, isPpRestoreModifier);
         }
       } else {
-        LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, modifierType.name)
+        LoggerTools.logShop(this.scene, this.scene.currentBattle.waveIndex, modifierType!.name)
         applyModifier(modifierType!.newModifier()!); // TODO: is the bang correct?
       }
 
@@ -7395,10 +7393,10 @@ export class SelectModifierPhase extends BattlePhase {
       this.modifierPredictions.forEach((mp, r) => {
         console.log("Rerolls: " + r)
         mp.forEach((m, i) => {
-          console.log("  " + m.type.name)
+          console.log("  " + m.type!.name)
           if (m.alternates) {
             let showedLuckFlag = false
-            for (var j = 0, currentTier = m.type.tier; j < m.alternates.length; j++) {
+            for (var j = 0, currentTier = m.type!.tier; j < m.alternates.length; j++) {
               if (m.alternates[j] > currentTier) {
                 currentTier = m.alternates[j]
                 if (m.advancedAlternates) {

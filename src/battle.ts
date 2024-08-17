@@ -47,7 +47,7 @@ export default class Battle {
   public waveIndex: integer;
   public battleType: BattleType;
   public battleSpec: BattleSpec;
-  public trainer: Trainer | null;
+  public trainer: Trainer | undefined;
   public enemyLevels: integer[] | undefined;
   public enemyParty: EnemyPokemon[];
   public seenEnemyPartyMemberIds: Set<integer>;
@@ -74,7 +74,7 @@ export default class Battle {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
-    this.trainer = trainer ?? null;
+    this.trainer = trainer ?? undefined;
     this.initBattleSpec();
     this.enemyLevels = battleType !== BattleType.TRAINER
       ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
@@ -357,7 +357,7 @@ export default class Battle {
     return null;
   }
 
-  multiInt(scene: BattleScene, out: integer[], count: integer, range: integer, min: integer = 0): integer {
+  multiInt(scene: BattleScene, out: integer[], count: integer, range: integer, min: integer = 0) {
     if (range <= 1) {
       return min;
     }

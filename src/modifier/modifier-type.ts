@@ -737,7 +737,7 @@ class AllPokemonFullHpRestoreModifierType extends ModifierType {
   constructor(localeKey: string, iconImage: string, descriptionKey?: string, newModifierFunc?: NewModifierFunc) {
     super(localeKey, iconImage, newModifierFunc || ((_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100, false)));
 
-    this.descriptionKey = descriptionKey!;
+    this.descriptionKey = descriptionKey!; // TODO: is this bang correct?
   }
 
   get identifier(): string {
@@ -1147,8 +1147,11 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 
 class TmModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(tier: ModifierTier) {
-    super((party: Pokemon[]) => {
-      const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m.moveId === tm)));
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Moves)) {
+        return new TmModifierType(pregenArgs[0] as Moves, tier);
+      }
+      const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m?.moveId === tm)));
       const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter(tm => !allMoves[tm].name.endsWith(" (N)")).filter((tm, i, array) => array.indexOf(tm) === i);
       if (!tierUniqueCompatibleTms.length) {
         return null;
@@ -2099,18 +2102,20 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
   new Array(count).fill(0).map((_, i) => {
-    let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined, undefined, undefined, scene, shutUpBro, generateAltTiers, advanced);
+    let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined);
     let r = 0;
-    const aT = candidate!.alternates
-    const aT2 = candidate!.advancedAlternates
+    const aT = candidate?.alternates
+    const aT2 = candidate?.advancedAlternates
     while (options.length && ++r < retryCount && options.filter(o => o.type?.name === candidate?.type?.name || o.type?.group === candidate?.type?.group).length) {
       candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate?.type?.tier, candidate?.upgradeCount, undefined, scene, shutUpBro, generateAltTiers, advanced);
     }
-    if (candidate!.alternates == undefined) {
-      candidate!.alternates = aT
-      candidate!.advancedAlternates = aT2
+    if (candidate && candidate.alternates == undefined) {
+      candidate.alternates = aT
+      candidate.advancedAlternates = aT2
     }
-    options.push(candidate!);
+    if (candidate) {
+      options.push(candidate);
+    }
   });
 
   overridePlayerModifierTypeOptions(options, party);
@@ -2181,19 +2186,31 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
 }
 
 export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: Modifiers.PersistentModifier[], scene: BattleScene): Modifiers.EnemyPersistentModifier {
-  const tierStackCount = tier === ModifierTier.ULTRA ? 5 : tier === ModifierTier.GREAT ? 3 : 1;
-  const retryCount = 50;
-  let candidate = getNewModifierTypeOption([], ModifierPoolType.ENEMY_BUFF, tier, undefined, undefined, scene);
-  let r = 0;
-  const aT = candidate!.alternates
-  const aT2 = candidate!.advancedAlternates
-  let matchingModifier: Modifiers.PersistentModifier | undefined;
-  while (++r < retryCount && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate?.type?.id)) && matchingModifier.getMaxStackCount(scene) < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1)) {
-    candidate = getNewModifierTypeOption([], ModifierPoolType.ENEMY_BUFF, tier, undefined, undefined, scene);
+  let tierStackCount: number;
+  switch (tier) {
+  case ModifierTier.ULTRA:
+    tierStackCount = 5;
+    break;
+  case ModifierTier.GREAT:
+    tierStackCount = 3;
+    break;
+  default:
+    tierStackCount = 1;
+    break;
   }
-  if (candidate!.alternates == undefined) {
-    candidate!.alternates = aT
-    candidate!.advancedAlternates = aT2
+
+  const retryCount = 50;
+  let candidate = getNewModifierTypeOption(scene.getEnemyParty(), ModifierPoolType.ENEMY_BUFF, tier, undefined, undefined, scene);
+  let r = 0;
+  const aT = candidate?.alternates
+  const aT2 = candidate?.advancedAlternates
+  let matchingModifier: Modifiers.PersistentModifier;
+  while (++r < retryCount && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate?.type?.id)!) && matchingModifier.getMaxStackCount(scene) < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1)) {
+    candidate = getNewModifierTypeOption(scene.getEnemyParty(), ModifierPoolType.ENEMY_BUFF, tier, undefined, undefined, scene);
+  }
+  if (candidate && candidate.alternates == undefined) {
+    candidate.alternates = aT
+    candidate.advancedAlternates = aT2
   }
 
   const modifier = candidate?.type?.newModifier() as Modifiers.EnemyPersistentModifier;
@@ -2229,7 +2246,7 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[], scene?: Batt
         tier = ModifierTier.MASTER;
       }
 
-      const modifier = getNewModifierTypeOption(party, ModifierPoolType.DAILY_STARTER, tier)?.type?.newModifier(p) as Modifiers.PokemonHeldItemModifier;
+      const modifier = getNewModifierTypeOption(party, ModifierPoolType.DAILY_STARTER, tier, undefined, undefined, scene)?.type?.newModifier(p) as Modifiers.PokemonHeldItemModifier;
       ret.push(modifier);
     }
   }
@@ -2242,29 +2259,31 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
   const pool = getModifierPoolForType(poolType);
   let thresholds: object;
   switch (poolType) {
-    case ModifierPoolType.PLAYER:
-      thresholds = modifierPoolThresholds;
-      break;
-    case ModifierPoolType.WILD:
-      thresholds = enemyModifierPoolThresholds;
-      break;
-    case ModifierPoolType.TRAINER:
-      thresholds = enemyModifierPoolThresholds;
-      break;
-    case ModifierPoolType.ENEMY_BUFF:
-      thresholds = enemyBuffModifierPoolThresholds;
-      break;
-    case ModifierPoolType.DAILY_STARTER:
-      thresholds = dailyStarterModifierPoolThresholds;
-      break;
+  case ModifierPoolType.PLAYER:
+    thresholds = modifierPoolThresholds;
+    break;
+  case ModifierPoolType.WILD:
+    thresholds = enemyModifierPoolThresholds;
+    break;
+  case ModifierPoolType.TRAINER:
+    thresholds = enemyModifierPoolThresholds;
+    break;
+  case ModifierPoolType.ENEMY_BUFF:
+    thresholds = enemyBuffModifierPoolThresholds;
+    break;
+  case ModifierPoolType.DAILY_STARTER:
+    thresholds = dailyStarterModifierPoolThresholds;
+    break;
   }
+  var alternateTiers: ModifierTier[] = []
+  var alternateTierContents: string[] = []
   if (tier === undefined) {
     if (generateAltTiers) {
       for (var luck = 0; luck <= 14; luck++) {
         var state = Phaser.Math.RND.state()
         var tierValueTemp = Utils.randSeedInt(1024);
         var upgradeCountTemp = 0;
-        var tierTemp;
+        var tierTemp: ModifierTier;
         if (upgradeCount) {
           upgradeCountTemp = upgradeCount;
         }
@@ -2385,10 +2404,53 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     tier--;
   }
 
+  let index = getItemIndex(thresholds, tier);
+
+  if (index === undefined) {
+    return null;
+  }
+
+  if (player) {
+    if (!shutUpBro) console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
+  }
+  let modifierType: ModifierType = (pool[tier][index]).modifierType;
+  if (modifierType instanceof ModifierTypeGenerator) {
+    modifierType = (modifierType as ModifierTypeGenerator).generateType(party)!;
+    if (modifierType === null) {
+      if (player) {
+        if (!shutUpBro) console.log(ModifierTier[tier], upgradeCount);
+      }
+      return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount, scene, shutUpBro, generateAltTiers);
+    }
+  }
+
+  if (!shutUpBro) console.log(modifierType, !player ? "(enemy)" : "");
+
+  var Option = new ModifierTypeOption(modifierType as ModifierType, upgradeCount!);
+  if (alternateTiers.length > 0) {
+    //console.log(Option.type.name, alternateTiers)
+    Option.alternates = alternateTiers
+  }
+  if (alternateTierContents.length > 0) {
+    //console.log(Option.type.name, alternateTiers)
+    Option.advancedAlternates = alternateTierContents
+  }
+  if (!generateAltTiers) {
+    //Option.alternates = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+  }
+  return Option;
+}
+/**
+ * Gets an item index to add to shop rewards. Used for reroll predictions.
+ * @param thresholds The "loot table" for this floor
+ * @param tier The rarity tier to pull from
+ * @returns An index for use in {@linkcode getModifierTypeSimulated}
+ */
+function getItemIndex(thresholds, tier) {
   const tierThresholds = Object.keys(thresholds[tier]);
   const totalWeight = parseInt(tierThresholds[tierThresholds.length - 1]);
   const value = Utils.randSeedInt(totalWeight);
-  let index: integer | undefined;
+  let index: integer;
   for (const t of tierThresholds) {
     const threshold = parseInt(t);
     if (value < threshold) {
@@ -2396,7 +2458,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
       break;
     }
   }
-  return index;
+  return index!;
 }
 /**
  * Uses an index (generated from {@linkcode getItemIndex}) to get a reward item
@@ -2407,20 +2469,15 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
  * @returns An item name, or `[Failed to generate]` if a `ModifierTypeGenerator` was rolled, but no item was available to generate (It won't retry)
  */
 function getModifierTypeSimulated(pool, tier, index, party): string {
-  let modifierType: ModifierType | null = (pool[tier][index]).modifierType;
+  let modifierType: ModifierType = (pool[tier][index]).modifierType;
   if (modifierType instanceof ModifierTypeGenerator) {
-    modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
+    modifierType = (modifierType as ModifierTypeGenerator).generateType(party)!;
     if (modifierType === null) {
-      if (player) {
-        console.log(ModifierTier[tier], upgradeCount);
-      }
-      return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount);
+      return "[nothing generated]"
+      return ((pool[tier][index]).modifierType as ModifierType).name
     }
   }
-
-  console.log(modifierType, !player ? "(enemy)" : "");
-
-  return new ModifierTypeOption(modifierType as ModifierType, upgradeCount);
+  return modifierType.name;
 }
 
 export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {
