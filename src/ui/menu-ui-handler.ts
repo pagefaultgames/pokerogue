@@ -143,7 +143,10 @@ export default class MenuUiHandler extends MessageUiHandler {
     menuMessageText.setName("menu-message");
     menuMessageText.setOrigin(0, 0);
     menuMessageText.setWordWrapWidth(menuMessageBox.getBounds().width - this.menuBg.width * 0.04);
+<<<<<<< HEAD
     menuMessageText.setData("originalFont", menuMessageText.style.fontSize);
+=======
+>>>>>>> 84bb19a8de2 (Refactor and create adjustText function)
 
     this.menuMessageBoxContainer.add(menuMessageText);
     this.message = menuMessageText;
@@ -519,22 +522,10 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuMessageBoxContainer.setVisible(!!text);
     const messageText = this.message;
     const messageBox = this.messageBoxBg;
-    if (messageBox && messageText) {
-      const fontSizeToNumber = (fs:number|string):number=>(parseInt(fs.toString().replace("px","")));
-      const fontSize = fontSizeToNumber(messageText.getData("originalFont"));
-      const textSize = Phaser.GameObjects.GetTextSize(messageText,messageText.style.getTextMetrics(),messageText.getWrappedText(text));
-      messageText.setFontSize(fontSize);
-      const padding = messageText.x / 2;
-
-      if (messageText.getWrappedText(text).length > messageText.style.maxLines || (textSize.width + padding * 17) > messageBox.getBounds().width) {
-        let fontDecrement = fontSize;
-        while (messageText.getWrappedText(text).length > messageText.style.maxLines || (Phaser.GameObjects.GetTextSize(messageText,messageText.style.getTextMetrics(),messageText.getWrappedText(text)).width + padding * 17) > messageBox.getBounds().width) {
-          fontDecrement -= 1;
-          messageText.setFontSize(fontDecrement);
-        }
-        messageText.setFontSize(fontDecrement - padding);
-      }
-    }
+    this.adjustText(text,messageText,messageBox.getBounds().width,{
+      padding: messageText.x / 2,
+      ignoreTextBalance: "all"
+    });
 
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
