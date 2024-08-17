@@ -5580,7 +5580,7 @@ export class SelectModifierPhase extends BattlePhase {
     } else if (lockRarities) {
       const tierValues = [50, 125, 300, 750, 2000];
       for (const opt of typeOptions) {
-        baseValue += opt.type?.tier ? tierValues[opt.type.tier] : 0;
+        baseValue += tierValues[opt.type.tier ?? 0];
       }
     } else {
       baseValue = 250;
