@@ -25,5 +25,5 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "unlinkGoogle": "解除关联Google",
   "cancel": "取消",
   "losingProgressionWarning": "你将失去自战斗开始以来的所有进度。是否继续？",
-  "noEggs": "当前没有任何蛋 正在孵化中！"
+  "noEggs": "当前没有任何蛋正在孵化中！"
 } as const;
