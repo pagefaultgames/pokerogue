@@ -84,6 +84,12 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
 
+  startingModifier(modifiers: ModifierOverride[]): this {
+    vi.spyOn(Overrides, "STARTING_MODIFIER_OVERRIDE", "get").mockReturnValue(modifiers);
+    this.log(`Player starting modifiers set to: ${modifiers}`);
+    return this;
+  }
+
   /**
    * Override the player (pokemon) {@linkcode Abilities | ability}
    * @param ability the (pokemon) {@linkcode Abilities | ability} to set
