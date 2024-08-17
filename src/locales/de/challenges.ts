@@ -28,5 +28,11 @@ export const challenges: TranslationEntries = {
     "desc": "Du kannst nur die ursprünglichen Starter verwenden, genau so, als hättest du gerade erst mit Pokérogue begonnen.",
     "value.0": "Aus",
     "value.1": "An",
+  },
+  "inverseBattle": {
+    "name": "Inverse Battle",
+    "desc": "Type matchups are reversed and no type is immune to any other type.\nDisables other challenges' achievements.",
+    "value.0": "Off",
+    "value.1": "On",
   }
 } as const;

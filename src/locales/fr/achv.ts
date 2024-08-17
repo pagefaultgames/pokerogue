@@ -271,6 +271,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "FRESH_START": {
     name: "Du premier coup !",
     description: "Terminer un challenge « Nouveau départ »."
+  },
+  "INVERSE_BATTLE": {
+    name: "Mirror rorriM",
+    description: "Complete the Inverse Battle challenge.\n.egnellahc elttaB esrevnI eht etelpmoC"
   }
 } as const;
 
@@ -393,5 +397,6 @@ export const PGFachv: AchievementTranslationEntries = {
   "MONO_DRAGON": PGMachv.MONO_DRAGON,
   "MONO_DARK": PGMachv.MONO_DARK,
   "MONO_FAIRY": PGMachv.MONO_FAIRY,
-  "FRESH_START": PGMachv.FRESH_START
+  "FRESH_START": PGMachv.FRESH_START,
+  "INVERSE_BATTLE": PGMachv.INVERSE_BATTLE
 } as const;

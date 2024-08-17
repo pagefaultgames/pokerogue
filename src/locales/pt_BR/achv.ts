@@ -273,6 +273,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "De Primeira!",
     description: "Complete o desafio de novo começo."
   },
+  "INVERSE_BATTLE": {
+    name: "Mirror rorriM",
+    description: "Complete the Inverse Battle challenge.\n.egnellahc elttaB esrevnI eht etelpmoC"
+  }
 } as const;
 
 // Achievement translations for the when the player character is female
@@ -548,4 +552,8 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "De Primeira!",
     description: "Complete o desafio de novo começo."
   },
+  "INVERSE_BATTLE": {
+    name: "Mirror rorriM",
+    description: "Complete the Inverse Battle challenge.\n.egnellahc elttaB esrevnI eht etelpmoC"
+  }
 } as const;

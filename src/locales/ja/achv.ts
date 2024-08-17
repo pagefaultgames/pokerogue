@@ -271,6 +271,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "FRESH_START": {
     name: "一発で！",
     description: "出直しチャレンジを　クリアする"
+  },
+  "INVERSE_BATTLE": {
+    name: "Mirror rorriM",
+    description: "Complete the Inverse Battle challenge.\n.egnellahc elttaB esrevnI eht etelpmoC"
   }
 } as const;
 

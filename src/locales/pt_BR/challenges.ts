@@ -27,5 +27,11 @@ export const challenges: TranslationEntries = {
     "desc": "Você só pode usar os iniciais originais, como se tivesse acabado de começar o PokéRogue.",
     "value.0": "Desligado",
     "value.1": "Ligado",
+  },
+  "inverseBattle": {
+    "name": "Inverse Battle",
+    "desc": "Type matchups are reversed and no type is immune to any other type.\nDisables other challenges' achievements.",
+    "value.0": "Off",
+    "value.1": "On",
   }
 } as const;

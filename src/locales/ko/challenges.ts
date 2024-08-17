@@ -28,5 +28,11 @@ export const challenges: TranslationEntries = {
     "desc": "포켓로그를 처음 시작했던 때처럼 강화가 전혀 되지 않은 오리지널 스타팅 포켓몬만 고를 수 있습니다.",
     "value.0": "해제",
     "value.1": "설정",
+  },
+  "inverseBattle": {
+    "name": "거꾸로 배틀",
+    "desc": "타입 상성이 반대로 바뀌고 면역 타입은 약점타입이 됩니다.\n활성화시 다른 챌린지 업적은 달성할 수 없습니다.",
+    "value.0": "해제",
+    "value.1": "설정",
   }
 } as const;

@@ -28,4 +28,10 @@ export const challenges: TranslationEntries = {
     "value.0": "关闭",
     "value.1": "开启",
   },
+  "inverseBattle": {
+    "name": "Inverse Battle",
+    "desc": "Type matchups are reversed and no type is immune to any other type.\nDisables other challenges' achievements.",
+    "value.0": "Off",
+    "value.1": "On",
+  }
 } as const;

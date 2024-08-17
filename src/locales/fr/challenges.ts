@@ -28,5 +28,11 @@ export const challenges: TranslationEntries = {
     "desc": "Vous ne pouvez choisir que les starters de base du jeu, comme si vous le recommenciez.",
     "value.0": "Non",
     "value.1": "Oui",
+  },
+  "inverseBattle": {
+    "name": "Inverse Battle",
+    "desc": "Type matchups are reversed and no type is immune to any other type.\nDisables other challenges' achievements.",
+    "value.0": "Off",
+    "value.1": "On",
   }
 } as const;

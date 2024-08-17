@@ -31,7 +31,7 @@ export const challenges: TranslationEntries = {
   },
   "inverseBattle": {
     "name": "Inverse Battle",
-    "desc": "Type matchups are reversed and no type is immune to any other type.",
+    "desc": "Type matchups are reversed and no type is immune to any other type.\nDisables other challenges' achievements.",
     "value.0": "Off",
     "value.1": "On",
   }
