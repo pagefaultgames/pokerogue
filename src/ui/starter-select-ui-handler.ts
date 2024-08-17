@@ -1795,7 +1795,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const formCount = this.lastSpecies.forms.length;
             let newFormIndex = props.formIndex;
             do {
-              console.log(`newFormIndex: ${newFormIndex}, formIndex: ${props.formIndex}, formCount: ${formCount}`);
               newFormIndex = (newFormIndex + 1) % formCount;
               if (this.lastSpecies.forms[newFormIndex].isStarterSelectable && this.speciesStarterDexEntry!.caughtAttr! & this.scene.gameData.getFormAttr(newFormIndex)) { // TODO: are those bangs correct?
                 break;
