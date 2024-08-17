@@ -11,6 +11,7 @@ import {Button} from "../enums/buttons";
 import { BattleType } from "../battle";
 import { RunEntry } from "../system/game-data";
 import { PlayerGender } from "#enums/player-gender";
+import { TrainerVariant } from "../field/trainer";
 
 export type RunSelectCallback = (cursor: integer) => void;
 
@@ -279,7 +280,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
         // Because of the interesting mechanics behind rival names, the rival name and title have to be retrieved differently
         const RIVAL_TRAINER_ID_THRESHOLD = 375;
         if (data.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
-          const rivalName = (this.scene.gameData.gender === PlayerGender.FEMALE) ? "trainerNames:rival" : "trainerNames:rival_female";
+          const rivalName = (tObj.variant === TrainerVariant.FEMALE) ? "trainerNames:rival_female" : "trainerNames:rival";
           const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival"+genderLabel)} ${i18next.t(rivalName)}`, TextStyle.WINDOW);
           this.add(gameOutcomeLabel);
         } else {
