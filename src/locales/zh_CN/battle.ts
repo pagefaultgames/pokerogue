@@ -45,6 +45,8 @@ export const battle: SimpleTranslationEntries = {
   "moveNotImplemented": "{{moveName}}尚未实装，无法选择。",
   "moveNoPP": "这个技能的PP用完了",
   "moveDisabled": "{{moveName}}被禁用！",
+  "moveDisabledGravity": "{{pokemonName}} can't use {{moveName}} because of gravity!",
+  "moveDisabledStuffCheeks": "{{pokemonName}} can't use {{moveName}} because it doesn't have a Berry!",
   "noPokeballForce": "一股无形的力量阻止了你使用精灵球。",
   "noPokeballTrainer": "你不能捕捉其他训练家的宝可梦！",
   "noPokeballMulti": "只能在剩下一只宝可梦时才能扔出精灵球！",

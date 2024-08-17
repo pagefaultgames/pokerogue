@@ -42,6 +42,8 @@ export const battle: SimpleTranslationEntries = {
   "moveNotImplemented": "{{moveName}} 未實裝，無法選擇。",
   "moveNoPP": "這個技能的PP用完了",
   "moveDisabled": "{{moveName}} 被禁用！",
+  "moveDisabledGravity": "{{pokemonName}} can't use {{moveName}} because of gravity!",
+  "moveDisabledStuffCheeks": "{{pokemonName}} can't use {{moveName}} because it doesn't have a Berry!",
   "noPokeballForce": "一股無形的力量阻止了你使用精靈球。",
   "noPokeballTrainer": "你不能捕捉其他訓練家的寶可夢！",
   "noPokeballMulti": "只能在剩下一隻寶可夢時才能扔出精靈球！",

@@ -2024,14 +2024,27 @@ export class CommandPhase extends FieldPhase {
         this.scene.ui.setMode(Mode.MESSAGE);
 
         // Decides between a Disabled, Not Implemented, or No PP translation message
-        const errorMessage =
-            playerPokemon.summonData.disabledMove === move.moveId ? "battle:moveDisabled" :
-              move.moveId === Moves.STUFF_CHEEKS ? "battle:moveDisabledStuffCheeks" :
-                move.getMove().hasAttr(UnselectableMoveAttr) ? "battle:moveDisabledGravity" :
-                  move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
+        let errorMessage: string;
+        let pokemonName: string | null;
+        if (move.moveId === playerPokemon.summonData.disabledMove) {
+          errorMessage = "battle:moveDisabled";
+          pokemonName = null;
+        } else if (move.moveId === Moves.STUFF_CHEEKS) {
+          errorMessage = "battle:moveDisabledStuffCheeks";
+          pokemonName = getPokemonNameWithAffix(playerPokemon);
+        } else if (move.getMove().hasAttr(UnselectableMoveAttr)) {
+          errorMessage = "battle:moveDisabledGravity";
+          pokemonName = getPokemonNameWithAffix(playerPokemon);
+        } else if (move.getName().endsWith(" (N)")) {
+          errorMessage = "battle:moveNotImplemented";
+          pokemonName = null;
+        } else {
+          errorMessage = "battle:moveNoPP";
+          pokemonName = null;
+        }
         const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
-        this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
+        this.scene.ui.showText(i18next.t(errorMessage, pokemonName !== null ? { pokemonName: pokemonName, moveName: moveName } : { moveName: moveName }), null, () => {
           this.scene.ui.clearText();
           this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
         }, null, true);
@@ -2723,7 +2736,7 @@ export class MovePhase extends BattlePhase {
         const failedText = this.move.moveId === Moves.STUFF_CHEEKS ? "battle:moveDisabledStuffCheeks" :
           this.move.getMove().hasAttr(UnselectableMoveAttr) ? "battle:moveDisabledGravity" :
             null;
-        this.showFailedText(failedText !== null ? i18next.t(failedText, {moveName: this.move.getName()}) : null);
+        this.showFailedText(failedText !== null ? i18next.t(failedText, { pokemonName: getPokemonNameWithAffix(this.pokemon), moveName: this.move.getName() }) : null);
       }
       return this.end();
     }

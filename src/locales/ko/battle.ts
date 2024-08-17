@@ -45,6 +45,8 @@ export const battle: SimpleTranslationEntries = {
   "moveNotImplemented": "{{moveName}}[[는]] 아직 구현되지 않아 사용할 수 없다…",
   "moveNoPP": "기술의 남은 포인트가 없다!",
   "moveDisabled": "{{moveName}}[[를]] 쓸 수 없다!",
+  "moveDisabledGravity": "{{pokemonName}} can't use {{moveName}} because of gravity!",
+  "moveDisabledStuffCheeks": "{{pokemonName}} can't use {{moveName}} because it doesn't have a Berry!",
   "noPokeballForce": "본 적 없는 힘이\n볼을 사용하지 못하게 한다.",
   "noPokeballTrainer": "다른 트레이너의 포켓몬은 잡을 수 없다!",
   "noPokeballMulti": "안돼! 2마리 있어서\n목표를 정할 수가 없어…!",

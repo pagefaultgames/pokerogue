@@ -45,6 +45,8 @@ export const battle: SimpleTranslationEntries = {
   "moveNotImplemented": "{{moveName}}は　まだ　実装されておらず　選択できません。",
   "moveNoPP": "しかし　技の\n残りポイントが　なかった！",
   "moveDisabled": "かなしばりで\n{{moveName}}が　出せない！",
+  "moveDisabledGravity": "{{pokemonName}} can't use {{moveName}} because of gravity!",
+  "moveDisabledStuffCheeks": "{{pokemonName}} can't use {{moveName}} because it doesn't have a Berry!",
   "noPokeballForce": "見えない　力の　せいで\nボールが　投げられない！",
   "noPokeballTrainer": "人の　ものを　取ったら　泥棒！",
   "noPokeballMulti": "相手の　ポケモンが　一つしか\nいない　前に　ボールが　使えない!",

@@ -45,6 +45,8 @@ export const battle: SimpleTranslationEntries = {
   "moveNotImplemented": "{{moveName}} n’est pas encore implémenté et ne peut pas être sélectionné.",
   "moveNoPP": "Il n’y a plus de PP pour\ncette capacité !",
   "moveDisabled": "{{moveName}} est sous entrave !",
+  "moveDisabledGravity": "{{pokemonName}} can't use {{moveName}} because of gravity!",
+  "moveDisabledStuffCheeks": "{{pokemonName}} can't use {{moveName}} because it doesn't have a Berry!",
   "noPokeballForce": "Une force mystérieuse\nempêche l’utilisation des Poké Balls.",
   "noPokeballTrainer": "Le Dresseur détourne la Ball\nVoler, c’est mal !",
   "noPokeballMulti": "Impossible ! On ne peut pas viser\nquand il y a deux Pokémon !",

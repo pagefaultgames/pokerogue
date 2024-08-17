@@ -7184,6 +7184,10 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ROOSTED, true, false)
       .triageMove(),
     new StatusMove(Moves.GRAVITY, Type.PSYCHIC, -1, 5, -1, 0, 4)
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING)
+      .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
+      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.MIRACLE_EYE, Type.PSYCHIC, -1, 40, -1, 0, 4)
