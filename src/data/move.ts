@@ -6243,7 +6243,6 @@ export function initMoves() {
     new AttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
       .attr(ChargeAttr, ChargeAnim.FLY_CHARGING, i18next.t("moveTriggers:flewUpHigh", {pokemonName: "{USER}"}), BattlerTagType.FLYING)
       .attr(UnselectableMoveAttr, failOnGravityCondition)
-      .condition(failOnGravityCondition)
       .ignoresVirtual(),
     new AttackMove(Moves.BIND, Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, 0, 1)
       .attr(TrapAttr, BattlerTagType.BIND),
@@ -6260,7 +6259,6 @@ export function initMoves() {
       .attr(MissEffectAttr, crashDamageFunc)
       .attr(NoEffectAttr, crashDamageFunc)
       .attr(UnselectableMoveAttr, failOnGravityCondition)
-      .condition(failOnGravityCondition)
       .recklessMove(),
     new AttackMove(Moves.ROLLING_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 85, 15, 30, 0, 1)
       .attr(FlinchAttr),
@@ -6555,7 +6553,6 @@ export function initMoves() {
       .attr(MissEffectAttr, crashDamageFunc)
       .attr(NoEffectAttr, crashDamageFunc)
       .attr(UnselectableMoveAttr, failOnGravityCondition)
-      .condition(failOnGravityCondition)
       .recklessMove(),
     new StatusMove(Moves.GLARE, Type.NORMAL, 100, 30, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
@@ -6598,8 +6595,7 @@ export function initMoves() {
     new AttackMove(Moves.PSYWAVE, Type.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 15, -1, 0, 1)
       .attr(RandomLevelDamageAttr),
     new SelfStatusMove(Moves.SPLASH, Type.NORMAL, -1, 40, -1, 0, 1)
-      .attr(UnselectableMoveAttr, failOnGravityCondition)
-      .condition(failOnGravityCondition),
+      .attr(UnselectableMoveAttr, failOnGravityCondition),
     new SelfStatusMove(Moves.ACID_ARMOR, Type.POISON, -1, 20, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, 2, true),
     new AttackMove(Moves.CRABHAMMER, Type.WATER, MoveCategory.PHYSICAL, 100, 90, 10, -1, 0, 1)
@@ -7146,7 +7142,6 @@ export function initMoves() {
       .attr(ChargeAttr, ChargeAnim.BOUNCE_CHARGING, i18next.t("moveTriggers:sprangUp", {pokemonName: "{USER}"}), BattlerTagType.FLYING)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .attr(UnselectableMoveAttr, failOnGravityCondition)
-      .condition(failOnGravityCondition)
       .ignoresVirtual(),
     new AttackMove(Moves.MUD_SHOT, Type.GROUND, MoveCategory.SPECIAL, 55, 95, 15, 100, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPD, -1),
@@ -7523,7 +7518,6 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),
     new StatusMove(Moves.TELEKINESIS, Type.PSYCHIC, -1, 15, -1, 0, 5)
       .attr(UnselectableMoveAttr, failOnGravityCondition)
-      .condition(failOnGravityCondition)
       .unimplemented(),
     new StatusMove(Moves.MAGIC_ROOM, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
@@ -7613,7 +7607,6 @@ export function initMoves() {
     new AttackMove(Moves.SKY_DROP, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
       .attr(ChargeAttr, ChargeAnim.SKY_DROP_CHARGING, i18next.t("moveTriggers:tookTargetIntoSky", {pokemonName: "{USER}", targetName: "{TARGET}"}), BattlerTagType.FLYING) // TODO: Add 2nd turn message
       .attr(UnselectableMoveAttr, failOnGravityCondition)
-      .condition(failOnGravityCondition)
       .ignoresVirtual(),
     new SelfStatusMove(Moves.SHIFT_GEAR, Type.STEEL, -1, 10, -1, 0, 5)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
@@ -7759,8 +7752,7 @@ export function initMoves() {
       .attr(MinimizeAccuracyAttr)
       .attr(FlyingTypeMultiplierAttr)
       .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
-      .attr(UnselectableMoveAttr, failOnGravityCondition)
-      .condition(failOnGravityCondition),
+      .attr(UnselectableMoveAttr, failOnGravityCondition),
     new StatusMove(Moves.MAT_BLOCK, Type.FIGHTING, -1, 10, -1, 0, 6)
       .target(MoveTarget.USER_SIDE)
       .attr(AddArenaTagAttr, ArenaTagType.MAT_BLOCK, 1, true, true)
@@ -8334,9 +8326,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, -1, 0, 8) // TODO: Stuff Cheeks should not be selectable when the user does not have a berry, see wiki
       .attr(EatBerryAttr)
       .attr(StatChangeAttr, BattleStat.DEF, 2, true)
-      .attr(UnselectableMoveAttr, failOnNoBerryCondition)
-      .condition(failOnNoBerryCondition)
-      .partial(),
+      .attr(UnselectableMoveAttr, failOnNoBerryCondition),
     new SelfStatusMove(Moves.NO_RETREAT, Type.FIGHTING, -1, 5, -1, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1)
