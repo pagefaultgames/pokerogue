@@ -37,7 +37,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     super(scene, Mode.RUN_HISTORY);
   }
 
-  setup() {
+  override setup() {
     const ui = this.getUi();
 
     this.runSelectContainer = this.scene.add.container(0, 0);
@@ -63,7 +63,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     this.scene.loadAtlas("rival_m", "trainer");
   }
 
-  show(args: any[]): boolean {
+  override show(args: any[]): boolean {
     super.show(args);
 
     this.getUi().bringToTop(this.runSelectContainer);
@@ -137,7 +137,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
    * Runs are displayed from newest --> oldest in descending order.
    * In the for loop, each run is processed to create an RunEntryContainer used to display and store the run's unique information
    */
-  async populateRuns(scene: BattleScene) {
+  private async populateRuns(scene: BattleScene) {
     const response = await this.scene.gameData.getRunHistoryData(this.scene);
     const timestamps = Object.keys(response);
     if (timestamps.length === 0) {
@@ -168,7 +168,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     return changed;
   }
 
-  setScrollCursor(scrollCursor: number): boolean {
+  private setScrollCursor(scrollCursor: number): boolean {
     const changed = scrollCursor !== this.scrollCursor;
 
     if (changed) {
@@ -181,7 +181,6 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
         ease: "Sine.easeInOut"
       });
     }
-
     return changed;
   }
 
@@ -197,14 +196,14 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     this.clearRuns();
   }
 
-  clearCursor() {
+  private clearCursor() {
     if (this.cursorObj) {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
   }
 
-  clearRuns() {
+  private clearRuns() {
     this.runs.splice(0, this.runs.length);
     this.runsContainer.removeAll(true);
   }
@@ -216,7 +215,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
  * entryData: the data of an individual run
  */
 class RunEntryContainer extends Phaser.GameObjects.Container {
-  public slotId: number;
+  private slotId: number;
   public entryData: RunEntry;
 
   constructor(scene: BattleScene, entryData: RunEntry, slotId: number) {
@@ -239,7 +238,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
    *
    * The player's party and their levels at the time of the last wave of the run are also displayed.
    */
-  setup(run: RunEntry) {
+  private setup(run: RunEntry) {
 
     const victory = run.isVictory;
     const data = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));

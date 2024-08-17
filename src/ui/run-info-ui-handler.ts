@@ -33,12 +33,18 @@ enum RunInfoUiMode {
   ENDING_ART
 }
 
+/**
+ * Some variables are protected because this UI class will most likely be extended in the future to display more information.
+ * These variables will most likely be shared across 'classes' aka pages.
+ * I believe that it is possible that the contents/methods of the first page will be placed in their own class that is an extension of RunInfoUiHandler as more pages are added.
+ * For now, I leave as is.
+ */
 export default class RunInfoUiHandler extends UiHandler {
-  private runInfo: SessionSaveData;
-  private isVictory: boolean;
-  private isPGF: boolean;
-
-  private runContainer: Phaser.GameObjects.Container;
+  protected runInfo: SessionSaveData;
+  protected isVictory: boolean;
+  protected isPGF: boolean;
+  protected pageMode: RunInfoUiMode;
+  protected runContainer: Phaser.GameObjects.Container;
 
   private runResultContainer: Phaser.GameObjects.Container;
   private runInfoContainer: Phaser.GameObjects.Container;
@@ -55,13 +61,11 @@ export default class RunInfoUiHandler extends UiHandler {
   private partyVisibility: Boolean;
   private modifiersModule: any;
 
-  private pageMode: RunInfoUiMode;
-
   constructor(scene: BattleScene) {
     super(scene, Mode.RUN_INFO);
   }
 
-  async setup() {
+  override async setup() {
  		this.runContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
     // The import of the modifiersModule is loaded here to sidestep async/await issues.
     this.modifiersModule = await import("../modifier/modifier");
@@ -79,7 +83,7 @@ export default class RunInfoUiHandler extends UiHandler {
    * Party Container:
    * this.isVictory === true --> Hall of Fame Container:
    */
- 	show(args: any[]): boolean {
+ 	override show(args: any[]): boolean {
  		super.show(args);
 
     const gameStatsBg = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height, 0x006860);
@@ -168,7 +172,7 @@ export default class RunInfoUiHandler extends UiHandler {
    * Defeat can call either parseWildSingleDefeat(), parseWildDoubleDefeat(), or parseTrainerDefeat()
    *
    */
-  async parseRunResult() {
+  private async parseRunResult() {
     const runResultTextStyle = this.isVictory ? TextStyle.SUMMARY : TextStyle.SUMMARY_RED;
     const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : (this.isPGF ? i18next.t("runHistory:defeatedF") : i18next.t("runHistory:defeatedM"));
     const runResultText = addBBCodeTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, {fontSize : "65px", lineSpacing: 0.1});
@@ -350,7 +354,7 @@ export default class RunInfoUiHandler extends UiHandler {
    * @param windowX
    * @param windowY These two params are the coordinates of the window's bottom right corner. This is used to dynamically position Luck based on its length, creating a nice layout regardless of language / luck value.
    */
-  async parseRunInfo(windowX: number, windowY: number) {
+  private async parseRunInfo(windowX: number, windowY: number) {
     // Parsing and displaying the mode.
     // In the future, parsing Challenges + Challenge Rules may have to be reworked as PokeRogue adds additional challenges and users can stack these challenges in various ways.
     const modeText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize : "50px", lineSpacing:3});
@@ -464,7 +468,7 @@ export default class RunInfoUiHandler extends UiHandler {
    * Default Information: Icon, Level, Nature, Ability, Passive, Shiny Status, Fusion Status, Stats, and Moves.
    * B-Side Information: Icon + Held Items (Can be displayed to the user through pressing the abilityButton)
    */
- 	parsePartyInfo(): void {
+ 	private parsePartyInfo(): void {
     const party = this.runInfo.party;
     const currentLanguage = i18next.resolvedLanguage ?? "en";
  		const windowHeight = ((this.scene.game.canvas.height / 6) - 23)/6;
@@ -658,7 +662,7 @@ export default class RunInfoUiHandler extends UiHandler {
    * True -> Shows the Pokemon's default information and hides held items
    * False -> Shows the Pokemon's held items and hides default information
    */
-  showParty(partyVisible: boolean): void {
+  private showParty(partyVisible: boolean): void {
     const allContainers = this.partyContainer.getAll("name", "PkmnInfo");
     allContainers.forEach((c: Phaser.GameObjects.Container) => {
       c.getByName<Phaser.GameObjects.Container>("PkmnMoves").setVisible(partyVisible);
@@ -673,7 +677,7 @@ export default class RunInfoUiHandler extends UiHandler {
   /**
    * Shows the ending art.
    */
-  createVictorySplash(): void {
+  private createVictorySplash(): void {
     this.endCardContainer = this.scene.add.container(0,0);
     const endCard = this.scene.add.image(0, 0, `end_${this.isPGF ? "f" : "m"}`);
     endCard.setOrigin(0);
@@ -686,8 +690,9 @@ export default class RunInfoUiHandler extends UiHandler {
 
   /** createHallofFame() - if the run is victorious, this creates a hall of fame image for the player to view
    * Overlay created by Koda (Thank you!)
+   * This could be adapted into a public-facing method for victory screens. Perhaps.
    */
-  createHallofFame(): void {
+  private createHallofFame(): void {
     // Issue Note (08-05-2024): It seems as if fused pokemon do not appear with the averaged color b/c pokemonData's loadAsset requires there to be some active battle?
     // As an alternative, the icons of the second/bottom fused Pokemon have been placed next to their fellow fused Pokemon in Hall of Fame
     this.hallofFameContainer = this.scene.add.container(0, 0);
@@ -750,7 +755,7 @@ export default class RunInfoUiHandler extends UiHandler {
    * Button.CANCEL - removes all containers related to RunInfo and returns the user to Run History
    * Button.CYCLE_FORM, Button.CYCLE_SHINY, Button.CYCLE_ABILITY - runs the function buttonCycleOption()
    */
- 	processInput(button: Button): boolean {
+ 	override processInput(button: Button): boolean {
     const ui = this.getUi();
 
     let success = false;
@@ -803,9 +808,8 @@ export default class RunInfoUiHandler extends UiHandler {
    * Button.CYCLE_FORM (F key) --> displays ending art (victory only)
    * Button.CYCLE_SHINY (R key) --> displays hall of fame (victory only)
    * Button.CYCLE_ABILITY (E key) --> shows pokemon held items
-   *
    */
-  buttonCycleOption(button: Button) {
+  private buttonCycleOption(button: Button) {
     switch (button) {
     case Button.CYCLE_FORM:
       if (this.isVictory) {
