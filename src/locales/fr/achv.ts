@@ -274,7 +274,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "INVERSE_BATTLE": {
     name: "La teté à verlan",
-    description: "Terminer un challenge en Combat Inversé.\n..ésrevnI tabmoC ne egnellahc nu renimreT"
+    description: "Terminer un challenge en Combat Inversé.\n.ésrevnI tabmoC ne egnellahc nu renimreT"
   }
 } as const;
 
