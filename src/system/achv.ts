@@ -332,7 +332,6 @@ export const achvs = {
   PERFECT_IVS: new Achv("PERFECT_IVS","",  "PERFECT_IVS.description","blunder_policy", 100),
   CLASSIC_VICTORY: new Achv("CLASSIC_VICTORY","",  "CLASSIC_VICTORY.description","relic_crown", 150),
   UNEVOLVED_CLASSIC_VICTORY: new Achv("UNEVOLVED_CLASSIC_VICTORY", "", "UNEVOLVED_CLASSIC_VICTORY.description", "eviolite", 175, c => c.getParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)),
-
   MONO_GEN_ONE_VICTORY: new ChallengeAchv("MONO_GEN_ONE","",  "MONO_GEN_ONE.description", "ribbon_gen1", 100, c => c instanceof SingleGenerationChallenge && c.value === 1),
   MONO_GEN_TWO_VICTORY: new ChallengeAchv("MONO_GEN_TWO","",  "MONO_GEN_TWO.description", "ribbon_gen2", 100, c => c instanceof SingleGenerationChallenge && c.value === 2),
   MONO_GEN_THREE_VICTORY: new ChallengeAchv("MONO_GEN_THREE","",  "MONO_GEN_THREE.description", "ribbon_gen3", 100, c => c instanceof SingleGenerationChallenge && c.value === 3),
