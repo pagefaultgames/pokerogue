@@ -2295,13 +2295,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       container.cost = this.scene.gameData.getSpeciesStarterValue(container.species.speciesId);
 
       // First, ensure you have the caught attributes for the species else default to bigint 0
-      const caughtVariants = this.scene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
+      const isCaught = this.scene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
 
       // Define the variables based on whether their respective variants have been caught
-      const isVariant3Caught = !!(caughtVariants & DexAttr.VARIANT_3);
-      const isVariant2Caught = !!(caughtVariants & DexAttr.VARIANT_2);
-      const isVariantCaught = !!(caughtVariants & DexAttr.SHINY);
-      const isCaught = !!(caughtVariants & DexAttr.NON_SHINY);
+      const isVariant3Caught = !!(isCaught & DexAttr.VARIANT_3);
+      const isVariant2Caught = !!(isCaught & DexAttr.VARIANT_2);
+      const isVariantCaught = !!(isCaught & DexAttr.SHINY);
       const isUncaught = !isCaught && !isVariantCaught && !isVariant2Caught && !isVariant3Caught;
       const isPassiveUnlocked = this.scene.gameData.starterData[container.species.speciesId].passiveAttr > 0;
       const isPassiveUnlockable = this.isPassiveAvailable(container.species.speciesId) && !isPassiveUnlocked;
@@ -2913,6 +2912,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (species) {
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
       const abilityAttr = this.scene.gameData.starterData[species.speciesId].abilityAttr;
+
+      const isCaught = this.scene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0);
+      const isVariant3Caught = !!(isCaught & DexAttr.VARIANT_3);
+      const isVariant2Caught = !!(isCaught & DexAttr.VARIANT_2);
+      const isVariantCaught = !!(isCaught & DexAttr.SHINY);
+      const isMaleCaught = !!(isCaught & DexAttr.MALE);
+      const isFemaleCaught = !!(isCaught & DexAttr.FEMALE);
+
       if (!dexEntry.caughtAttr) {
         const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
         const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
@@ -2975,15 +2982,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female!, formIndex, shiny, variant));
           currentFilteredContainer.checkIconId(female, formIndex, shiny, variant);
         }
-        // First, ensure you have the caught attributes for the species else default to bigint 0
-        const caughtVariants = this.scene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0);
-        // Define the variables based on whether their respective variants have been caught
-        const isVariant3Caught = !!(caughtVariants & DexAttr.VARIANT_3);
-        const isVariant2Caught = !!(caughtVariants & DexAttr.VARIANT_2);
-        const isVariantCaught = !!(caughtVariants & DexAttr.SHINY);
 
         this.canCycleShiny = isVariantCaught || isVariant2Caught || isVariant3Caught;
-        this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
+        this.canCycleGender = isMaleCaught && isFemaleCaught;
         this.canCycleAbility = [ abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
         this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
           .map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(f => f).length > 1;
@@ -2992,7 +2993,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
-        const gender = !female ? Gender.MALE : Gender.FEMALE;
+        let gender: Gender;
+        if ((female && isFemaleCaught) || (!female && !isMaleCaught)) {
+          gender = Gender.FEMALE;
+        } else {
+          gender = Gender.MALE;
+        }
         this.pokemonGenderText.setText(getGenderSymbol(gender));
         this.pokemonGenderText.setColor(getGenderColor(gender));
         this.pokemonGenderText.setShadowColor(getGenderColor(gender, true));
