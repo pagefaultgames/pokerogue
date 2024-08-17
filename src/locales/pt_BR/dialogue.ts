@@ -2541,7 +2541,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `@c{shock}Caramba… Você me limpou.\nVocê é mesmo um novato?
                 $@c{smile}Talvez tenha sido um pouco de sorte, mas…\nQuem sabe você consiga chegar até o fim.
                 $Aliás, o professor me pediu para te dar esses itens. Eles parecem bem legais.
-                $@c{serious_smile_fists}Boa sorte lá fora!`
+                $@c{serious_smile_fists}Boa sorte lá fora!
+                $@c{smile}Ah- e eu espero que você aproveite o evento!`
     },
   },
   "rival_female": {
@@ -2555,7 +2556,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `@c{shock}Você acabou de começar e já está tão forte?!@d{96}\n@c{angry}Você trapaceou, não foi?
                 $@c{smile_wave_wink}Brincadeirinha!@d{64} @c{smile_eclosed}Eu perdi de forma justa… Tenho a sensação de que você vai se sair muito bem lá fora.
                 $@c{smile}Aliás, o professor pediu para eu te dar alguns itens. Espero que sejam úteis!
-                $@c{smile_wave}Dê o seu melhor, como sempre! Eu acredito em você!`
+                $@c{smile_wave}Dê o seu melhor, como sempre! Eu acredito em você!
+                $@c{smile}Ah- e eu espero que você aproveite o evento!`
     },
   },
   "rival_2": {
@@ -2571,7 +2573,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
             $@c{smile}Tudo bem, no entanto. Eu imaginei que isso poderia acontecer.\n@c{serious_mopen_fists}Isso só significa que preciso me esforçar mais para a próxima vez!\n
             $@c{smile}Ah, não que você precise realmente de ajuda, mas eu tinha um extra desses itens e pensei que você poderia querer.
             $@c{serious_smile_fists}Não espere outro depois deste!\nNão posso continuar dando vantagem ao meu oponente.
-            $@c{smile}Enfim, cuide-se!`
+            $@c{smile}Enfim, cuide-se, e aproveite o evento!`
     },
   },
   "rival_2_female": {
@@ -2585,9 +2587,9 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "victory": {
       1: `@c{neutral}Eu… não era para eu perder dessa vez…
             $@c{smile}Ah bem. Isso só significa que vou ter que treinar ainda mais para a próxima vez!
-            $@c{smile_wave}Também consegui mais um desses para você!\n@c{smile_wave_wink}Não precisa me agradecer~.
-            $@c{angry_mopen}Este é o último, hein! Você não vai ganhar mais nenhum presente de mim depois desse!
-            $@c{smile_wave}Continue assim!`
+            $@c{smile_wave}Também consegui mais dois desses para você!\n@c{smile_wave_wink}Não precisa me agradecer~.
+            $@c{angry_mopen}Estes são os últimos, hein! Você não vai ganhar mais nenhum presente de mim depois desse!
+            $@c{smile_wave}Continue assim, e aproveite o evento!`
     },
     "defeat": {
       1: "Está tudo bem perder às vezes…"
@@ -3819,7 +3821,8 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: `@c{shock}Caramba… Você me limpou.\nVocê é mesmo uma novata?
                 $@c{smile}Talvez tenha sido um pouco de sorte, mas…\nQuem sabe você consiga chegar até o fim.
                 $Aliás, o professor me pediu para te dar esses itens. Eles parecem bem legais.
-                $@c{serious_smile_fists}Boa sorte lá fora!`
+                $@c{serious_smile_fists}Boa sorte lá fora!
+                $@c{smile}Ah- e eu espero que você aproveite o evento!`
     },
   },
   "rival_female": {
@@ -3833,7 +3836,8 @@ export const PGFdialogue: DialogueTranslationEntries = {
       1: `@c{shock}Você acabou de começar e já está tão forte?!@d{96}\n@c{angry}Você trapaceou, não foi?
                 $@c{smile_wave_wink}Brincadeirinha!@d{64} @c{smile_eclosed}Eu perdi de forma justa… Tenho a sensação de que você vai se sair muito bem lá fora.
                 $@c{smile}Aliás, o professor pediu para eu te dar alguns itens. Espero que sejam úteis!
-                $@c{smile_wave}Dê o seu melhor, como sempre! Eu acredito em você!`
+                $@c{smile_wave}Dê o seu melhor, como sempre! Eu acredito em você!
+                $@c{smile}Ah- e eu espero que você aproveite o evento!`
     },
   },
   "rival_2": {
@@ -3849,7 +3853,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
             $@c{smile}Tudo bem, no entanto. Eu imaginei que isso poderia acontecer.\n@c{serious_mopen_fists}Isso só significa que preciso me esforçar mais para a próxima vez!\n
             $@c{smile}Ah, não que você precise realmente de ajuda, mas eu tinha um extra desses itens e pensei que você poderia querer.
             $@c{serious_smile_fists}Não espere outro depois deste!\nNão posso continuar dando vantagem ao meu oponente.
-            $@c{smile}Enfim, cuide-se!`
+            $@c{smile}Enfim, cuide-se, e aproveite o evento!`
     },
   },
   "rival_2_female": {
@@ -3863,9 +3867,9 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "victory": {
       1: `@c{neutral}Eu… não era para eu perder dessa vez…
             $@c{smile}Ah bem. Isso só significa que vou ter que treinar ainda mais para a próxima vez!
-            $@c{smile_wave}Também consegui mais um desses para você!\n@c{smile_wave_wink}Não precisa me agradecer~.
-            $@c{angry_mopen}Este é o último, hein! Você não vai ganhar mais nenhum presente de mim depois desse!
-            $@c{smile_wave}Continue assim!`
+            $@c{smile_wave}Também consegui mais dois desses para você!\n@c{smile_wave_wink}Não precisa me agradecer~.
+            $@c{angry_mopen}Estes são os últimos, hein! Você não vai ganhar mais nenhum presente de mim depois desse!
+            $@c{smile_wave}Continue assim, e aproveite o evento!`
     },
     "defeat": {
       1: "Está tudo bem perder às vezes…"
