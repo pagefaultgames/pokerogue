@@ -2601,7 +2601,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $@c{smile}그래, 또 지고 말았네.\n@c{serious_mopen_fists}좀 더 열심히 훈련을 해야겠어!\n
                 $@c{smile}너한테 도움이 필요할 것 같지는 않지만, 이거.\n남는 게 있어서 말이야.
                 $@c{serious_smile_fists}물론 이번이 마지막이야, 알겠지?\n공평하게 하지 않으면 그게 내 핑계거리가 되고 말거야.
-                $@c{smile}이제 갈게. 앞으로도 조심하고, and enjoy the event!`
+                $@c{smile}이제 갈게. 앞으로도 조심하고, 이벤트도 즐겁게 보내!`
     },
   },
   "rival_2_female": {
