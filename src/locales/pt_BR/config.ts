@@ -2,6 +2,7 @@ import { ability } from "./ability";
 import { abilityTriggers } from "./ability-trigger";
 import { PGFachv, PGMachv } from "./achv";
 import { arenaFlyout } from "./arena-flyout";
+import { arenaTag } from "./arena-tag";
 import { battle } from "./battle";
 import { battleInfo } from "./battle-info";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
@@ -24,6 +25,7 @@ import {
 } from "./dialogue";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
+import { filterBar } from "./filter-bar";
 import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";
@@ -33,11 +35,12 @@ import { modifier } from "./modifier";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
+import { moveTriggers } from "./move-trigger";
 import { nature } from "./nature";
 import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
 import { pokemon } from "./pokemon";
-import { pokemonForm } from "./pokemon-form";
+import { battlePokemonForm, pokemonForm } from "./pokemon-form";
 import { pokemonInfo } from "./pokemon-info";
 import { pokemonInfoContainer } from "./pokemon-info-container";
 import { pokemonSummary } from "./pokemon-summary";
@@ -55,9 +58,11 @@ export const ptBrConfig = {
   ability: ability,
   abilityTriggers: abilityTriggers,
   arenaFlyout: arenaFlyout,
+  arenaTag: arenaTag,
   battle: battle,
   battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
+  battlePokemonForm: battlePokemonForm,
   battlerTags: battlerTags,
   berry: berry,
   bgmName: bgmName,
@@ -77,15 +82,19 @@ export const ptBrConfig = {
   PGFdoubleBattleDialogue: PGFdoubleBattleDialogue,
   egg: egg,
   fightUiHandler: fightUiHandler,
+  filterBar: filterBar,
   gameMode: gameMode,
   gameStatsUiHandler: gameStatsUiHandler,
   growth: growth,
   menu: menu,
   menuUiHandler: menuUiHandler,
   modifier: modifier,
+  modifierSelectUiHandler: modifierSelectUiHandler,
   modifierType: modifierType,
   move: move,
+  moveTriggers: moveTriggers,
   nature: nature,
+  partyUiHandler: partyUiHandler,
   pokeball: pokeball,
   pokemon: pokemon,
   pokemonForm: pokemonForm,
@@ -103,7 +112,5 @@ export const ptBrConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather,
-  partyUiHandler: partyUiHandler,
-  modifierSelectUiHandler: modifierSelectUiHandler
+  weather: weather
 };

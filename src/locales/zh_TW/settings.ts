@@ -15,6 +15,7 @@ export const settings: SimpleTranslationEntries = {
   "skipSeenDialogues": "跳過已讀對話",
   "battleStyle": "對戰模式",
   "enableRetries": "允許重試",
+  "hideIvs": "禁用個體值探測器信息",
   "tutorials": "教程",
   "touchControls": "觸摸操作",
   "vibrations": "手柄震動",
@@ -96,5 +97,6 @@ export const settings: SimpleTranslationEntries = {
   "controller": "控制器",
   "gamepadSupport": "手柄支持",
   "showBgmBar": "Show Music Names",
+  "moveTouchControls": "移動觸控控制",
   "shopOverlayOpacity": "Shop Overlay Opacity"
 } as const;

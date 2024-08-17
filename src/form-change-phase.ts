@@ -11,6 +11,7 @@ import { BattleSpec } from "#enums/battle-spec";
 import { BattlePhase, MovePhase, PokemonHealPhase } from "./phases";
 import { getTypeRgb } from "./data/type";
 import { getPokemonNameWithAffix } from "./messages";
+import { SemiInvulnerableTag } from "./data/battler-tags";
 
 export class FormChangePhase extends EvolutionPhase {
   private formChange: SpeciesFormChange;
@@ -194,7 +195,7 @@ export class QuietFormChangePhase extends BattlePhase {
 
     const preName = getPokemonNameWithAffix(this.pokemon);
 
-    if (!this.pokemon.isOnField()) {
+    if (!this.pokemon.isOnField() || this.pokemon.getTag(SemiInvulnerableTag)) {
       this.pokemon.changeForm(this.formChange).then(() => {
         this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), 1500);
       });

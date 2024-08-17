@@ -159,7 +159,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
     const foundInfo = this.moveInfo.find(x => x?.move.id === moveUsedEvent.move.id);
     if (foundInfo) {
-      foundInfo.ppUsed = Math.min(foundInfo.ppUsed + moveUsedEvent.ppUsed, foundInfo.maxPp);
+      foundInfo.ppUsed = moveUsedEvent.ppUsed;
     } else {
       var idx = this.pokemon.moveset.indexOf(this.pokemon.moveset.find((v) => (v.getMove().id == moveUsedEvent.move.id)))
       if (idx == -1) {

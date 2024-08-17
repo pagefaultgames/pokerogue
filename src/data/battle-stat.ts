@@ -1,4 +1,4 @@
-import i18next, {ParseKeys} from "i18next";
+import i18next, { ParseKeys } from "i18next";
 
 export enum BattleStat {
   ATK,
@@ -8,7 +8,8 @@ export enum BattleStat {
   SPD,
   ACC,
   EVA,
-  RAND
+  RAND,
+  HP
 }
 
 export function getBattleStatName(stat: BattleStat) {
@@ -27,12 +28,14 @@ export function getBattleStatName(stat: BattleStat) {
     return i18next.t("pokemonInfo:Stat.ACC");
   case BattleStat.EVA:
     return i18next.t("pokemonInfo:Stat.EVA");
+  case BattleStat.HP:
+    return i18next.t("pokemonInfo:Stat.HPStat");
   default:
     return "???";
   }
 }
 
-export function getBattleStatLevelChangeDescription(pokemonNameWithAffix: string, stats: string, levels: integer, up: boolean, count: integer = 1) {
+export function getBattleStatLevelChangeDescription(pokemonNameWithAffix: string, stats: string, levels: integer, up: boolean, count: number = 1) {
   const stringKey = (() => {
     if (up) {
       switch (levels) {

@@ -33,11 +33,11 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   private sessionSlots: SessionSlot[];
 
   private uiMode: SaveSlotUiMode;
-  private saveSlotSelectCallback: SaveSlotSelectCallback;
+  private saveSlotSelectCallback: SaveSlotSelectCallback | null;
 
   private scrollCursor: integer = 0;
 
-  private cursorObj: Phaser.GameObjects.NineSlice;
+  private cursorObj: Phaser.GameObjects.NineSlice | null;
 
   private sessionSlotsContainerInitialY: number;
 
@@ -113,15 +113,15 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
               ui.showText("This will revert slot " + (this.sessionSlots[cursor].slotId + 1) + " to wave " + (this.sessionSlots[cursor].wv) + ".\nIs that okay?", null, () => {
                 ui.setOverlayMode(Mode.CONFIRM, () => {
                   this.saveSlotSelectCallback = null;
-                  originalCallback(this.sessionSlots[cursor].slotId, this.sessionSlots[cursor].autoSlot);
+                  originalCallback && originalCallback(cursor);
                 }, () => {
                   ui.revertMode();
-                  ui.showText(null, 0);
+                  ui.showText("", 0);
                 }, false, 0, 19, 500);
               });
             } else {
               this.saveSlotSelectCallback = null;
-              originalCallback(this.sessionSlots[cursor].slotId, this.sessionSlots[cursor].autoSlot);
+              originalCallback && originalCallback(cursor);
             }
             break;
           case SaveSlotUiMode.SAVE:
@@ -131,12 +131,12 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
               var dataslot = this.sessionSlots[cursor].slotId
               for (var i = 0; i < LoggerTools.autoCheckpoints.length; i++) {
                 // Delete any autosaves associated with this slot
-                localStorage.removeItem(`sessionData${dataslot ? dataslot : ""}_${loggedInUser.username}_auto${i}`)
+                localStorage.removeItem(`sessionData${dataslot ? dataslot : ""}_${loggedInUser ? loggedInUser.username : "Guest"}_auto${i}`)
               }
               ui.revertMode();
-              ui.showText(null, 0);
+              ui.showText("", 0);
               ui.setMode(Mode.MESSAGE);
-              originalCallback(this.sessionSlots[cursor].slotId, this.sessionSlots[cursor].autoSlot);
+              originalCallback && originalCallback(this.sessionSlots[cursor].slotId, this.sessionSlots[cursor].autoSlot);
             };
             if (this.sessionSlots[cursor].autoSlot != undefined) {
               return false;
@@ -153,7 +153,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
                   });
                 }, () => {
                   ui.revertMode();
-                  ui.showText(null, 0);
+                  ui.showText("", 0);
                 }, false, 0, 19, 2000);
               });
             } else if (this.sessionSlots[cursor].hasData === false) {
@@ -167,7 +167,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
         }
       } else {
         this.saveSlotSelectCallback = null;
-        originalCallback(-1);
+        originalCallback && originalCallback(-1);
         success = true;
       }
     } else {
@@ -242,7 +242,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", null, 296, 44, 6, 6, 6, 6);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
       this.cursorObj.setOrigin(0, 0);
       this.sessionSlotsContainer.add(this.cursorObj);
     }
@@ -291,7 +291,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
 class SessionSlot extends Phaser.GameObjects.Container {
   public slotId: integer;
-  public autoSlot: integer;
+  public autoSlot: integer | undefined;
   public hasData: boolean;
   public wv: integer;
   private loadingLabel: Phaser.GameObjects.Text;
@@ -358,7 +358,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
       const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
       const text = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
-      text.setShadow(0, 0, null);
+      text.setShadow(0, 0, undefined);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);
 
@@ -391,16 +391,18 @@ class SessionSlot extends Phaser.GameObjects.Container {
       if (modifier instanceof PokemonHeldItemModifier) {
         continue;
       }
-      const icon = modifier.getIcon(this.scene, false);
-      icon.setPosition(24 * visibleModifierIndex, 0);
-      modifierIconsContainer.add(icon);
+      const icon = modifier?.getIcon(this.scene, false);
+      if (icon) {
+        icon.setPosition(24 * visibleModifierIndex, 0);
+        modifierIconsContainer.add(icon);
+      }
       if (++visibleModifierIndex === (numberOfModifiers == itemDisplayLimit ? itemDisplayLimit : itemDisplayLimit - 1)) {
         break;
       }
     }
     if (numberOfModifiers > itemDisplayLimit) {
       var plusText = addTextObject(this.scene, 24 * visibleModifierIndex + 20, 4, `+${numberOfModifiers - visibleModifierIndex}`, TextStyle.PARTY, { fontSize: "80px", color: "#f8f8f8" });
-      plusText.setShadow(0, 0, null);
+      plusText.setShadow(0, 0, undefined);
       plusText.setStroke("#424242", 14);
       plusText.setOrigin(1, 0);
       modifierIconsContainer.add(plusText);
@@ -425,7 +427,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     })
     if (true) {
       const vsLabel = addTextObject(this.scene, 24 * 9 + 20, 15, `vs`, TextStyle.PARTY, { fontSize: "80px", color: "#f8f8f8" });
-      vsLabel.setShadow(0, 0, null);
+      vsLabel.setShadow(0, 0, undefined);
       vsLabel.setStroke("#424242", 14);
       vsLabel.setOrigin(1, 0);
       modifierIconsContainer.add(vsLabel);
