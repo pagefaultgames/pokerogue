@@ -31,7 +31,7 @@ export const challenges: TranslationEntries = {
   },
   "inverseBattle": {
     "name": "Combat Inversé",
-    "desc": "La table des types est inversée et disparition des immunités.\nDésactive les succès des autres challenges.",
+    "desc": "Les affinités de la table des types sont inversées et plus aucun type n’a d’immunité.\nDésactive les succès des autres challenges.",
     "value.0": "Non",
     "value.1": "Oui",
   }
