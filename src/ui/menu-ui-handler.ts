@@ -143,7 +143,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     menuMessageText.setName("menu-message");
     menuMessageText.setOrigin(0, 0);
     menuMessageText.setWordWrapWidth(menuMessageBox.getBounds().width - this.menuBg.width * 0.04);
-    menuMessageText.setData("originalFont",menuMessageText.style.fontSize);
+    menuMessageText.setData("originalFont", menuMessageText.style.fontSize);
 
     this.menuMessageBoxContainer.add(menuMessageText);
     this.message = menuMessageText;
