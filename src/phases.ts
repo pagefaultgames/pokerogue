@@ -66,6 +66,7 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { applyChallenges, ChallengeType } from "./data/challenge";
 import { pokemonEvolutions } from "./data/pokemon-evolutions";
+import { Challenges } from "#enums/challenges";
 
 const { t } = i18next;
 
@@ -4487,7 +4488,16 @@ export class GameOverPhase extends BattlePhase {
           this.scene.ui.clearText();
 
           if (this.victory && this.scene.gameMode.isChallenge) {
-            this.scene.gameMode.challenges.forEach(c => this.scene.validateAchvs(ChallengeAchv, c));
+            // if it is inverse battle challenge, does not validate achvs except inverse battle achvs
+            if (!this.scene.gameMode.isInverseBattleChallenge()) {
+              this.scene.gameMode.challenges.forEach(c => this.scene.validateAchvs(ChallengeAchv, c));
+            } else {
+              this.scene.gameMode.challenges.forEach(c => {
+                if (c.id === Challenges.INVERSE_BATTLE) {
+                  this.scene.validateAchvs(ChallengeAchv, c);
+                }
+              });
+            }
           }
 
           const clear = (endCardPhase?: EndCardPhase) => {
