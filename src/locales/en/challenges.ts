@@ -34,5 +34,5 @@ export const challenges: TranslationEntries = {
     "desc": "Type matchups are reversed and no type is immune to any other type.",
     "value.0": "Off",
     "value.1": "On",
-  },
+  }
 } as const;
