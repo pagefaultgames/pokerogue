@@ -2617,7 +2617,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $@c{smile}으, 그래. 더 열심히 훈련하면 되겠지!
                 $@c{smile_wave}이것도 하나 더 챙겨왔으니 받아!\n@c{smile_wave_wink}감사 인사는 됐다구~.
                 $@c{angry_mopen}하지만, 마지막이야!\n또 이렇게 공짜로 나눠주진 않을 테니까!
-                $@c{smile_wave}그럼, 건강 조심하고. 이벤트도 즐겨줘!`
+                $@c{smile_wave}그럼! 이벤트 잘 즐기고!`
     },
     "defeat": {
       1: "가끔은 지는 것도 괜찮아…"
