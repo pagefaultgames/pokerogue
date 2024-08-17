@@ -579,50 +579,31 @@ export class GameData {
    * At the moment, only retrievable from locale cache
    */
   async getRunHistoryData(scene: BattleScene): Promise<RunHistoryData> {
-    if (!Utils.isLocal) {
-      /**
-       * Networking Code DO NOT DELETE!
-       *
-      const response = await Utils.apiFetch("savedata/runHistory", true);
-      const data = await response.json();
-      */
-      const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
-      const lsItem = localStorage.getItem(lsItemKey);
-      if (lsItem) {
-        const cachedResponse  = lsItem;
-        if (cachedResponse) {
-          const runHistory = JSON.parse(decrypt(cachedResponse, true));
-          return runHistory;
-        }
-        return {};
-        // check to see whether cachedData or serverData is more up-to-date
-        /**
-       * Networking Code DO NOT DELETE!
-       *
-        if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
-          return cachedRHData;
-        }
-        */
-      } else {
-        localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, "");
+    const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
+    const lsItem = localStorage.getItem(lsItemKey);
+    if (lsItem) {
+      try {
+        const runHistory = JSON.parse(decrypt(lsItem, true));
+        return runHistory;
+      } catch {
+        console.log("Error: Failed to parse run history. Possible corruption?");
         return {};
       }
     } else {
-      const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
-      const lsItem = localStorage.getItem(lsItemKey);
-      if (lsItem) {
-        const cachedResponse = lsItem;
-        if (cachedResponse) {
-          const runHistory : RunHistoryData = JSON.parse(decrypt(cachedResponse, true));
-          return runHistory;
-        }
-        return {};
-      } else {
-        localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, "");
-        return {};
-      }
+      localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, "");
+      return {};
     }
   }
+
+  /**
+  * Networking Code for getRunHistoryData() DO NOT DELETE!
+  *
+  * const response = await Utils.apiFetch("savedata/runHistory", true);
+  * const data = await response.json();
+  * if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
+  * return cachedRHData;
+  * }
+  */
 
   /**
    * Saves a new entry to Run History
