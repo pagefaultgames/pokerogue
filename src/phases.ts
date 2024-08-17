@@ -1635,7 +1635,7 @@ export class SwitchSummonPhase extends SummonPhase {
       })
     );
     this.scene.playSound("pb_rel");
-    pokemon.hideInfo(); // this is also done by pokemon.leaveField(), but needs to go earlier for animation purposes
+    pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     this.scene.tweens.add({
       targets: pokemon,
@@ -1643,9 +1643,7 @@ export class SwitchSummonPhase extends SummonPhase {
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        // 300ms delay on leaveField is necessary to avoid calling hideInfo() twice
-        // and double-animating the stats panel slideout
-        this.scene.time.delayedCall(300, () => pokemon.leaveField(!this.batonPass));
+        pokemon.leaveField(!this.batonPass, false);
         this.scene.time.delayedCall(750, () => this.switchAndSummon());
       }
     });
