@@ -4877,7 +4877,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
   	// Check if the move category is not STATUS or if the switch out condition is not met
       if (!this.getSwitchOutCondition()(user, target, move)) {
-        console.log("switching out condition is false in the apply");
         return resolve(false);
       }
 
@@ -4886,8 +4885,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  const switchOutTarget = this.user ? user : target;
 	  if (switchOutTarget instanceof PlayerPokemon) {
         switchOutTarget.leaveField(!this.batonPass);
-        console.log("switching out , what isgoing on here");
-
         if (switchOutTarget.hp > 0) {
           user.scene.prependToPhase(new SwitchPhase(user.scene, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
           resolve(true);
@@ -7805,7 +7802,6 @@ export function initMoves() {
     new StatusMove(Moves.PARTING_SHOT, Type.DARK, 100, 20, -1, 0, 6)
       .attr(PartingShotAttr, true, false)
       .soundBased(),
-
     new StatusMove(Moves.TOPSY_TURVY, Type.DARK, -1, 20, -1, 0, 6)
       .attr(InvertStatsAttr),
     new AttackMove(Moves.DRAINING_KISS, Type.FAIRY, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 6)
