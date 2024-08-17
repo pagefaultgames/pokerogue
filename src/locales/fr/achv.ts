@@ -273,8 +273,8 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Terminer un challenge « Nouveau départ »."
   },
   "INVERSE_BATTLE": {
-    name: "La teté à verlan",
-    description: "Terminer un challenge en Combat Inversé.\n.ésrevnI tabmoC ne egnellahc nu renimreT"
+    name: "La teuté à verlan",
+    description: "Terminer un challenge en Combat Inversé.\nMineter un lenjcha en Ba-con Versin."
   }
 } as const;
 
