@@ -640,9 +640,11 @@ export class GameData {
     const timestampsNo = timestamps.map(Number);
 
     // Arbitrary limit of 25 entries per user --> Can increase or decrease
-    while (timestamps.length >= RUN_HISTORY_LIMIT ) {
+    let tsLength = timestamps.length;
+    while (tsLength >= RUN_HISTORY_LIMIT ) {
       const oldestTimestamp = Math.min.apply(Math, timestampsNo);
       delete runHistoryData[oldestTimestamp];
+      tsLength = Object.keys(runHistoryData).length;
     }
 
     const timestamp = (runEntry.timestamp).toString();
