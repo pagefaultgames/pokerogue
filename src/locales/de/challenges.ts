@@ -30,9 +30,9 @@ export const challenges: TranslationEntries = {
     "value.1": "An",
   },
   "inverseBattle": {
-    "name": "Inverse Battle",
-    "desc": "Type matchups are reversed and no type is immune to any other type.\nDisables other challenges' achievements.",
-    "value.0": "Off",
-    "value.1": "On",
+    "name": "Umkehrkampf",
+    "desc": "Die Typen-Effektivität wird umgekehrt, und kein Typ ist gegen einen anderen Typ immun. Deaktiviert die Erfolge anderer Herausforderungen.",
+    "value.0": "Aus",
+    "value.1": "An",
   }
 } as const;
