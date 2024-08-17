@@ -60,6 +60,7 @@ export const battle: SimpleTranslationEntries = {
   "turnEndHpRestore": "{{pokemonName}}の　体力が　回復した！",
   "hpIsFull": "{{pokemonName}}の\n体力が　満タンだ!",
   "skipItemQuestion": "本当に　アイテムを　取らずに　進みますか？",
+  "itemStackFull": "{{fullItemName}}の　スタックが　いっぱいです。\n代わりに　{{itemName}}を　取得します。",
   "eggHatching": "おや？",
   "ivScannerUseQuestion": "{{pokemonName}}を\n個体値スキャナーで　操作しますか?",
   "wildPokemonWithAffix": "野生の　{{pokemonName}}",

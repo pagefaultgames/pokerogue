@@ -69,5 +69,5 @@ export const battlerTags: SimpleTranslationEntries = {
   "saltCuredLapse": "{{pokemonNameWithAffix}} est blessé\npar la capacité {{moveName}} !",
   "cursedOnAdd": "{{pokemonNameWithAffix}} sacrifie des PV\net lance une malédiction sur {{pokemonName}} !",
   "cursedLapse": "{{pokemonNameWithAffix}} est touché par la malédiction !",
-  "stockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
+  "stockpilingOnAdd": "{{pokemonNameWithAffix}} utilise\nla capacité Stockage {{stockpiledCount}} fois !",
 } as const;

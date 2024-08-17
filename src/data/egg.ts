@@ -15,9 +15,10 @@ export const EGG_SEED = 1073741824;
 // Rates for specific random properties in 1/x
 const DEFAULT_SHINY_RATE = 128;
 const GACHA_SHINY_UP_SHINY_RATE = 64;
-const SAME_SPECIES_EGG_SHINY_RATE = 32;
-const SAME_SPECIES_EGG_HA_RATE = 16;
+const SAME_SPECIES_EGG_SHINY_RATE = 24;
+const SAME_SPECIES_EGG_HA_RATE = 8;
 const MANAPHY_EGG_MANAPHY_RATE = 8;
+const GACHA_EGG_HA_RATE = 192;
 
 // 1/x for legendary eggs, 1/x*2 for epic eggs, 1/x*4 for rare eggs, and 1/x*8 for common eggs
 const DEFAULT_RARE_EGGMOVE_RATE = 6;
@@ -211,11 +212,12 @@ export class Egg {
       pokemonSpecies = getPokemonSpecies(Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE) ? Species.PHIONE : Species.MANAPHY);
     }
 
-    // Sets the hidden ability if a hidden ability exists and the override is set
-    // or if the same species egg hits the chance
+    // Sets the hidden ability if a hidden ability exists and
+    // the override is set or the egg hits the chance
     let abilityIndex: number | undefined = undefined;
-    if (pokemonSpecies.abilityHidden && (this._overrideHiddenAbility
-      || (this._sourceType === EggSourceType.SAME_SPECIES_EGG && !Utils.randSeedInt(SAME_SPECIES_EGG_HA_RATE)))) {
+    const sameSpeciesEggHACheck = (this._sourceType === EggSourceType.SAME_SPECIES_EGG && !Utils.randSeedInt(SAME_SPECIES_EGG_HA_RATE));
+    const gachaEggHACheck = (!(this._sourceType === EggSourceType.SAME_SPECIES_EGG) && !Utils.randSeedInt(GACHA_EGG_HA_RATE));
+    if (pokemonSpecies.abilityHidden && (this._overrideHiddenAbility || sameSpeciesEggHACheck || gachaEggHACheck)) {
       abilityIndex = 2;
     }
 
@@ -396,8 +398,7 @@ export class Egg {
      * 2 cost mons get 1.5x
      * 4, 6, 8 cost mons get 1.75x
      * 3, 5, 7, 9 cost mons get 1x
-     * Alolan, Galarian, and Paldean mons get 0.5x
-     * Hisui mons get 0.125x
+     * Alolan, Galarian, Hisui, and Paldean mons get 0.5x
      *
      * The total weight is also being calculated EACH time there is an egg hatch instead of being generated once
      * and being the same each time
@@ -408,7 +409,7 @@ export class Egg {
       let weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
       const species = getPokemonSpecies(speciesId);
       if (species.isRegional()) {
-        weight = Math.floor(weight / (species.isRareRegional() ? 8 : 2));
+        weight = Math.floor(weight / 2);
       }
       speciesWeights.push(totalWeight + weight);
       totalWeight += weight;
