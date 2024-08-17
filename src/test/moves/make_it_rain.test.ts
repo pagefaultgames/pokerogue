@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat.js";
+import { Stat } from "#enums/stat";
 import { MoveEndPhase, StatChangePhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
@@ -36,17 +36,17 @@ describe("Moves - Make It Rain", () => {
     game.override.enemyLevel(100);
   });
 
-  it("should only reduce Sp. Atk. once in a double battle", async () => {
+  it("should only lower SPATK stat stage by 1 once in a double battle", async () => {
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerField();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    expect(playerPokemon[0].summonData.battleStats[BattleStat.SPATK]).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
   }, TIMEOUT);
 
   it("should apply effects even if the target faints", async () => {
@@ -63,7 +63,7 @@ describe("Moves - Make It Rain", () => {
     await game.phaseInterceptor.to(StatChangePhase);
 
     expect(enemyPokemon.isFainted()).toBe(true);
-    expect(playerPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
   }, TIMEOUT);
 
   it("should reduce Sp. Atk. once after KOing two enemies", async () => {
@@ -71,7 +71,7 @@ describe("Moves - Make It Rain", () => {
 
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerField();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyField();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
@@ -80,13 +80,13 @@ describe("Moves - Make It Rain", () => {
     await game.phaseInterceptor.to(StatChangePhase);
 
     enemyPokemon.forEach(p => expect(p.isFainted()).toBe(true));
-    expect(playerPokemon[0].summonData.battleStats[BattleStat.SPATK]).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
   }, TIMEOUT);
 
-  it("should reduce Sp. Atk if it only hits the second target", async () => {
+  it("should lower SPATK stat stage by 1 if it only hits the second target", async () => {
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerField();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
@@ -96,6 +96,6 @@ describe("Moves - Make It Rain", () => {
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    expect(playerPokemon[0].summonData.battleStats[BattleStat.SPATK]).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
   }, TIMEOUT);
 });

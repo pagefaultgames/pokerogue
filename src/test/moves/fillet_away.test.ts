@@ -5,7 +5,7 @@ import { TurnEndPhase } from "#app/phases";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
@@ -51,9 +51,9 @@ describe("Moves - FILLET AWAY", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
-      expect(leadPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(2);
-      expect(leadPokemon.summonData.battleStats[BattleStat.SPD]).toBe(2);
+      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
+      expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(2);
+      expect(leadPokemon.getStatStage(Stat.SPD)).toBe(2);
     }, TIMEOUT
   );
 
@@ -64,17 +64,17 @@ describe("Moves - FILLET AWAY", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
-      //Here - BattleStat.SPD -> 0 and BattleStat.SPATK -> 3
-      leadPokemon.summonData.battleStats[BattleStat.ATK] = 6;
-      leadPokemon.summonData.battleStats[BattleStat.SPATK] = 3;
+      //Here - Stat.SPD -> 0 and Stat.SPATK -> 3
+      leadPokemon.setStatStage(Stat.ATK, 6);
+      leadPokemon.setStatStage(Stat.SPATK, 3);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.FILLET_AWAY));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(6);
-      expect(leadPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(5);
-      expect(leadPokemon.summonData.battleStats[BattleStat.SPD]).toBe(2);
+      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
+      expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(5);
+      expect(leadPokemon.getStatStage(Stat.SPD)).toBe(2);
     }, TIMEOUT
   );
 
@@ -84,17 +84,17 @@ describe("Moves - FILLET AWAY", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      leadPokemon.summonData.battleStats[BattleStat.ATK] = 6;
-      leadPokemon.summonData.battleStats[BattleStat.SPATK] = 6;
-      leadPokemon.summonData.battleStats[BattleStat.SPD] = 6;
+      leadPokemon.setStatStage(Stat.ATK, 6);
+      leadPokemon.setStatStage(Stat.SPATK, 6);
+      leadPokemon.setStatStage(Stat.SPD, 6);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.FILLET_AWAY));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(6);
-      expect(leadPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(6);
-      expect(leadPokemon.summonData.battleStats[BattleStat.SPD]).toBe(6);
+      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
+      expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
+      expect(leadPokemon.getStatStage(Stat.SPD)).toBe(6);
     }, TIMEOUT
   );
 
@@ -110,9 +110,9 @@ describe("Moves - FILLET AWAY", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
-      expect(leadPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(0);
-      expect(leadPokemon.summonData.battleStats[BattleStat.SPD]).toBe(0);
+      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
+      expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(0);
+      expect(leadPokemon.getStatStage(Stat.SPD)).toBe(0);
     }, TIMEOUT
   );
 });

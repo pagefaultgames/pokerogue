@@ -84,7 +84,7 @@ describe("Moves - Spotlight", () => {
        * Spotlight will target the slower enemy. In this situation without Spotlight being used,
        * the faster enemy would normally end up with the Center of Attention tag.
        */
-      enemyPokemon.sort((a, b) => b.getBattleStat(Stat.SPD) - a.getBattleStat(Stat.SPD));
+      enemyPokemon.sort((a, b) => b.getEffectiveStat(Stat.SPD) - a.getEffectiveStat(Stat.SPD));
       const spotTarget = enemyPokemon[1].getBattlerIndex();
       const attackTarget = enemyPokemon[0].getBattlerIndex();
 

@@ -3,11 +3,11 @@ import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./t
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import MessageUiHandler from "./message-ui-handler";
-import { getStatName, Stat } from "../data/pokemon-stat";
 import { addWindow } from "./ui-theme";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import {Button} from "#enums/buttons";
 import i18next from "i18next";
+import { Stat, getStatKey, PERMANENT_STATS } from "#app/enums/stat.js";
 
 export default class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsContainer: Phaser.GameObjects.Container;
@@ -98,9 +98,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     const levelUpStatsLabelsContent = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 73, -94, "", TextStyle.WINDOW, { maxLines: 6 });
     let levelUpStatsLabelText = "";
 
-    const stats = Utils.getEnumValues(Stat);
-    for (const s of stats) {
-      levelUpStatsLabelText += `${getStatName(s)}\n`;
+    for (const s of PERMANENT_STATS) {
+      levelUpStatsLabelText += `${getStatKey(s)}\n`;
     }
     levelUpStatsLabelsContent.text = levelUpStatsLabelText;
     levelUpStatsLabelsContent.x -= levelUpStatsLabelsContent.displayWidth;

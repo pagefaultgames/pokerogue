@@ -89,7 +89,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Campione Lega Assoluta",
   },
 
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     name: "Lavoro di Squadra",
     description: "Trasferisci almeno sei bonus statistiche tramite staffetta",
   },

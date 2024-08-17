@@ -89,7 +89,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Fita de Diamante",
   },
 
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     name: "Trabalho em Equipe",
     description: "Use Baton Pass com pelo menos um atributo aumentado ao máximo",
   },
@@ -364,7 +364,7 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Fita de Diamante",
   },
 
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     name: "Trabalho em Equipe",
     description: "Use Baton Pass com pelo menos um atributo aumentado ao máximo",
   },

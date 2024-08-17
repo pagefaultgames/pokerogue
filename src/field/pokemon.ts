@@ -3,13 +3,13 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, StatusMoveTypeImmunityAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, MoveFlags, NeutralDamageAgainstFlyingTypeMultiplierAttr, OneHitKOAccuracyAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, StatusMoveTypeImmunityAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, MoveFlags, NeutralDamageAgainstFlyingTypeMultiplierAttr, OneHitKOAccuracyAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
-import { Stat } from "../data/pokemon-stat";
+import { BATTLE_STATS, EFFECTIVE_STATS, Stat } from "#enums/stat";
 import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
@@ -17,11 +17,11 @@ import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
 import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
-import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase, MoveEndPhase } from "../phases";
+import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatStageChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase, MoveEndPhase } from "../phases";
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AddSecondStrikeAbAttr, IgnoreOpponentEvasionAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr } from "../data/ability";
+import { Ability, AbAttr, StatStageMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStageChangesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatStageMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, IgnoreOpponentEvasionAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -49,7 +49,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
-import { PermanentStat, BattleStat, PERMANENT_STATS } from "#app/enums/stat"; // TODO: Add type
+import { PermanentStat, BattleStat, PERMANENT_STATS, EffectiveStat } from "#app/enums/stat"; // TODO: Add type
 
 export enum FieldPosition {
   CENTER,
@@ -735,7 +735,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  getBattleStat(stat: PermanentStat & BattleStat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
+  getEffectiveStat(stat: EffectiveStat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
     const statLevel = new Utils.IntegerHolder(this.getStatStage(stat));
     if (opponent) {
       if (isCritical) {
@@ -750,7 +750,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           break;
         }
       }
-      applyAbAttrs(IgnoreOpponentStatChangesAbAttr, opponent, null, statLevel);
+      applyAbAttrs(IgnoreOpponentStatStageChangesAbAttr, opponent, null, statLevel);
       if (move) {
         applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, opponent, move, statLevel);
       }
@@ -763,12 +763,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const fieldApplied = new Utils.BooleanHolder(false);
     for (const pokemon of this.scene.getField(true)) {
-      applyFieldBattleStatMultiplierAbAttrs(FieldMultiplyBattleStatAbAttr, pokemon, stat, statValue, this, fieldApplied);
+      applyFieldStatMultiplierAbAttrs(FieldMultiplyStatAbAttr, pokemon, stat, statValue, this, fieldApplied);
       if (fieldApplied.value) {
         break;
       }
     }
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue); // TODO: BattleStat
+    applyStatStageMultiplierAbAttrs(StatStageMultiplierAbAttr, this, stat, statValue);
     let ret = statValue.value * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
     switch (stat) {
     case Stat.ATK:
@@ -1374,7 +1374,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const types = this.getTypes(true);
     const enemyTypes = opponent.getTypes(true, true);
     /** Is this Pokemon faster than the opponent? */
-    const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, opponent) : this.getStat(Stat.SPD)) >= opponent.getBattleStat(Stat.SPD, this);
+    const outspeed = (this.isActive(true) ? this.getEffectiveStat(Stat.SPD, opponent) : this.getStat(Stat.SPD, false)) >= opponent.getEffectiveStat(Stat.SPD, this);
     /**
      * Based on how effective this Pokemon's types are offensively against the opponent's types.
      * This score is increased by 25 percent if this Pokemon is faster than the opponent.
@@ -1730,7 +1730,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].hasAttr(SacrificialAttr) ? 0.5 : 1)]);
       movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].hasAttr(SacrificialAttrOnHit) ? 0.5 : 1)]);
       // Trainers get a weight bump to stat buffing moves
-      movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].getAttrs(StatChangeAttr).some(a => a.levels > 1 && a.selfTarget) ? 1.25 : 1)]);
+      movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].getAttrs(StatStageChangeAttr).some(a => a.stages > 1 && a.selfTarget) ? 1.25 : 1)]);
       // Trainers get a weight decrease to multiturn moves
       movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].hasAttr(ChargeAttr) || !!allMoves[m[0]].hasAttr(RechargeAttr) ? 0.7 : 1)]);
     }
@@ -1950,8 +1950,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const userAccStage = new Utils.IntegerHolder(this.getStatStage(Stat.ACC));
     const targetEvaStage = new Utils.IntegerHolder(target.getStatStage(Stat.EVA));
 
-    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, userAccStage);
-    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, this, null, targetEvaStage);
+    applyAbAttrs(IgnoreOpponentStatStageChangesAbAttr, target, null, userAccStage);
+    applyAbAttrs(IgnoreOpponentStatStageChangesAbAttr, this, null, targetEvaStage);
     applyAbAttrs(IgnoreOpponentEvasionAbAttr, this, null, targetEvaStage);
     applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, target, sourceMove, targetEvaStage);
     this.scene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), Stat.ACC, userAccStage);
@@ -1967,10 +1967,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         : 3 / (3 + Math.min(targetEvaStage.value - userAccStage.value, 6));
     }
 
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, BattleStat.ACC, accuracyMultiplier, sourceMove); // TODO: BattleStat
+    applyStatStageMultiplierAbAttrs(StatStageMultiplierAbAttr, this, Stat.ACC, accuracyMultiplier, sourceMove); // TODO: BattleStat
 
     const evasionMultiplier = new Utils.NumberHolder(1);
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier); // TODO: BattleStat
+    applyStatStageMultiplierAbAttrs(StatStageMultiplierAbAttr, target, Stat.EVA, evasionMultiplier); // TODO: BattleStat
 
     accuracyMultiplier.value /= evasionMultiplier.value;
 
@@ -2087,8 +2087,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             isCritical = false;
           }
         }
-        const sourceAtk = new Utils.IntegerHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, isCritical));
-        const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, isCritical));
+        const sourceAtk = new Utils.IntegerHolder(source.getEffectiveStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, isCritical));
+        const targetDef = new Utils.IntegerHolder(this.getEffectiveStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, isCritical));
         const criticalMultiplier = new Utils.NumberHolder(isCritical ? 1.5 : 1);
         applyAbAttrs(MultCritAbAttr, source, null, criticalMultiplier);
         const screenMultiplier = new Utils.NumberHolder(1);
@@ -2497,11 +2497,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param source {@linkcode Pokemon} the pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
    */
   transferSummon(source: Pokemon): void {
-    /** TODO: BattleStats
-    for (const stat of battleStats) {
-      this.summonData.battleStats[stat] = source.summonData.battleStats[stat];
+    // Copy all stat stages
+    for (const s of BATTLE_STATS) {
+      const sourceStage = source.getStatStage(s);
+      if ((this instanceof PlayerPokemon) && (sourceStage === 6)) {
+        this.scene.validateAchv(achvs.TRANSFER_MAX_STAT_STAGE);
+      }
+      this.setStatStage(s, sourceStage);
     }
-    */
+
     for (const tag of source.summonData.tags) {
 
       // bypass yawn, and infatuation as those can not be passed via Baton Pass
@@ -2511,11 +2515,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       this.summonData.tags.push(tag);
     }
-    /** TODO: BattleStats
-    if (this instanceof PlayerPokemon && source.summonData.battleStats.find(bs => bs === 6)) {
-      this.scene.validateAchv(achvs.TRANSFER_MAX_BATTLE_STAT);
-    }
-    */
+
     this.updateInfo();
   }
 
@@ -4161,45 +4161,46 @@ export class EnemyPokemon extends Pokemon {
     return true;
   }
 
-  handleBossSegmentCleared(segmentIndex: integer): void { // TODO: BattleStat
+  handleBossSegmentCleared(segmentIndex: integer): void {
     while (segmentIndex - 1 < this.bossSegmentIndex) {
-      let boostedStat = BattleStat.RAND;
+      // Filter out already maxed out stat stages and weigh the rest based on existing stats
+      const leftoverStats = EFFECTIVE_STATS.filter((s: EffectiveStat) => this.getStatStage(s) < 6);
+      const statWeights = leftoverStats.map((s: EffectiveStat) => this.getStat(s, false));
 
-      const battleStats = Utils.getEnumValues(BattleStat).slice(0, -3);
-      const statWeights = new Array().fill(battleStats.length).filter((bs: BattleStat) => this.summonData.battleStats[bs] < 6).map((bs: BattleStat) => this.getStat(bs + 1));
-      const statThresholds: integer[] = [];
+      let boostedStat: EffectiveStat;
+      const statThresholds: number[] = [];
       let totalWeight = 0;
-      for (const bs of battleStats) {
-        totalWeight += statWeights[bs];
+
+      for (const i in statWeights) {
+        totalWeight += statWeights[i];
         statThresholds.push(totalWeight);
       }
 
+      // Pick a random stat from the leftover stats to increase its stages
       const randInt = Utils.randSeedInt(totalWeight);
-
-      for (const bs of battleStats) {
-        if (randInt < statThresholds[bs]) {
-          boostedStat = bs;
+      for (const i in statThresholds) {
+        if (randInt < statThresholds[i]) {
+          boostedStat = leftoverStats[i];
           break;
         }
       }
 
-      let statLevels = 1;
-
+      // Increment the amount of stages the chosen stat will be raised
+      let stages = 1;
       switch (segmentIndex) {
       case 1:
         if (this.bossSegments >= 3) {
-          statLevels++;
+          stages++;
         }
         break;
       case 2:
         if (this.bossSegments >= 5) {
-          statLevels++;
+          stages++;
         }
         break;
       }
 
-      this.scene.unshiftPhase(new StatChangePhase(this.scene, this.getBattlerIndex(), true, [ boostedStat ], statLevels, true, true));
-
+      this.scene.unshiftPhase(new StatStageChangePhase(this.scene, this.getBattlerIndex(), true, [ boostedStat! ], stages, true, true));
       this.bossSegmentIndex--;
     }
   }

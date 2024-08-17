@@ -89,9 +89,9 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Master League Champion",
   },
 
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     name: "Teamwork",
-    description: "Baton pass to another party member with at least one stat maxed out",
+    description: "Baton pass to another party member with at least one stat stage maxed out",
   },
   "MAX_FRIENDSHIP": {
     name: "Friendmaxxing",

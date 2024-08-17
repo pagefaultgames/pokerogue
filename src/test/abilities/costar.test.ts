@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat.js";
+import { Stat } from "#enums/stat";
 import { Abilities } from "#app/enums/abilities.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
@@ -35,7 +35,7 @@ describe("Abilities - COSTAR", () => {
 
 
   test(
-    "ability copies positive stat changes",
+    "ability copies positive stat stages",
     async () => {
       game.override.enemyAbility(Abilities.BALL_FETCH);
 
@@ -48,8 +48,8 @@ describe("Abilities - COSTAR", () => {
       game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
       await game.toNextTurn();
 
-      expect(leftPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(+2);
-      expect(rightPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(0);
+      expect(leftPokemon.getStatStage(Stat.SPATK)).toBe(2);
+      expect(rightPokemon.getStatStage(Stat.SPATK)).toBe(0);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(CommandPhase);
@@ -57,14 +57,14 @@ describe("Abilities - COSTAR", () => {
       await game.phaseInterceptor.to(MessagePhase);
 
       [leftPokemon, rightPokemon] = game.scene.getPlayerField();
-      expect(leftPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(+2);
-      expect(rightPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(+2);
+      expect(leftPokemon.getStatStage(Stat.SPATK)).toBe(2);
+      expect(rightPokemon.getStatStage(Stat.SPATK)).toBe(2);
     },
     TIMEOUT,
   );
 
   test(
-    "ability copies negative stat changes",
+    "ability copies negative stat stages",
     async () => {
       game.override.enemyAbility(Abilities.INTIMIDATE);
 
@@ -72,8 +72,8 @@ describe("Abilities - COSTAR", () => {
 
       let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
 
-      expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
-      expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
+      expect(leftPokemon.getStatStage(Stat.ATK)).toBe(-2);
+      expect(leftPokemon.getStatStage(Stat.ATK)).toBe(-2);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(CommandPhase);
@@ -81,8 +81,8 @@ describe("Abilities - COSTAR", () => {
       await game.phaseInterceptor.to(MessagePhase);
 
       [leftPokemon, rightPokemon] = game.scene.getPlayerField();
-      expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
-      expect(rightPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
+      expect(leftPokemon.getStatStage(Stat.ATK)).toBe(-2);
+      expect(rightPokemon.getStatStage(Stat.ATK)).toBe(-2);
     },
     TIMEOUT,
   );

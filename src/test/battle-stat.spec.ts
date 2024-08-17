@@ -1,8 +1,8 @@
-import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "#app/data/battle-stat.js";
+import { BattleStat, getStatKey } from "#enums/stat";
 import { describe, expect, it } from "vitest";
 import { arrayOfRange, mockI18next } from "./utils/testUtils";
 
-const TEST_BATTLE_STAT = -99 as unknown as BattleStat;
+const TEST_BATTLE_STAT = -99 as BattleStat;
 const TEST_POKEMON = "Testmon";
 const TEST_STAT = "Teststat";
 
@@ -25,7 +25,7 @@ describe("battle-stat", () => {
     });
 
     it("should fall back to ??? for an unknown BattleStat", () => {
-      expect(getBattleStatName(TEST_BATTLE_STAT)).toBe("???");
+      expect(getStatKey(TEST_BATTLE_STAT)).toBe("???");
     });
   });
 

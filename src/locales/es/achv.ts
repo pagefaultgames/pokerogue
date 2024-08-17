@@ -89,7 +89,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Campeón Liga Master",
   },
 
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     name: "Trabajo en Equipo",
     description: "Haz relevo a otro miembro del equipo con al menos una estadística al máximo.",
   },

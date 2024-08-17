@@ -41,13 +41,13 @@ describe("Abilities - Hustle", () => {
     const pikachu = game.scene.getPlayerPokemon()!;
     const atk = pikachu.stats[Stat.ATK];
 
-    vi.spyOn(pikachu, "getBattleStat");
+    vi.spyOn(pikachu, "getEffectiveStat");
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
     await game.move.forceHit();
     await game.phaseInterceptor.to(DamagePhase);
 
-    expect(pikachu.getBattleStat).toHaveReturnedWith(atk * 1.5);
+    expect(pikachu.getEffectiveStat).toHaveReturnedWith(atk * 1.5);
   });
 
   it("lowers the accuracy of the user's physical moves by 20%", async () => {
@@ -67,13 +67,13 @@ describe("Abilities - Hustle", () => {
     const pikachu = game.scene.getPlayerPokemon()!;
     const spatk = pikachu.stats[Stat.SPATK];
 
-    vi.spyOn(pikachu, "getBattleStat");
+    vi.spyOn(pikachu, "getEffectiveStat");
     vi.spyOn(pikachu, "getAccuracyMultiplier");
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.GIGA_DRAIN));
     await game.phaseInterceptor.to(DamagePhase);
 
-    expect(pikachu.getBattleStat).toHaveReturnedWith(spatk);
+    expect(pikachu.getEffectiveStat).toHaveReturnedWith(spatk);
     expect(pikachu.getAccuracyMultiplier).toHaveReturnedWith(1);
   });
 

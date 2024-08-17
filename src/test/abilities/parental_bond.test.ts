@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat.js";
+import { Stat } from "#enums/stat";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { Type } from "#app/data/type.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
@@ -91,7 +91,7 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
+      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
     }, TIMEOUT
   );
 
@@ -111,7 +111,7 @@ describe("Abilities - Parental Bond", () => {
       game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(enemyPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
+      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
     }, TIMEOUT
   );
 
@@ -563,7 +563,7 @@ describe("Abilities - Parental Bond", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
+      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(-1);
     }, TIMEOUT
   );
 
@@ -585,7 +585,7 @@ describe("Abilities - Parental Bond", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(enemyPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(1);
+      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(1);
     }, TIMEOUT
   );
 

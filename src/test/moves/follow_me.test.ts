@@ -86,7 +86,7 @@ describe("Moves - Follow Me", () => {
       game.doAttack(getMovePosition(game.scene, 1, Moves.FOLLOW_ME));
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
-      playerPokemon.sort((a, b) => a.getBattleStat(Stat.SPD) - b.getBattleStat(Stat.SPD));
+      playerPokemon.sort((a, b) => a.getEffectiveStat(Stat.SPD) - b.getEffectiveStat(Stat.SPD));
 
       expect(playerPokemon[1].hp).toBeLessThan(playerStartingHp[1]);
       expect(playerPokemon[0].hp).toBe(playerStartingHp[0]);

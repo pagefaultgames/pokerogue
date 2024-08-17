@@ -1,5 +1,5 @@
 import { allSpecies } from "#app/data/pokemon-species";
-import { TempBattleStat } from "#app/data/temp-battle-stat.js";
+import { Stat } from "#enums/stat";
 import { GameModes } from "#app/game-mode";
 import { getGameMode } from "#app/game-mode.js";
 import {
@@ -339,7 +339,7 @@ describe("Test Battle Phase", () => {
       .startingLevel(100)
       .moveset([moveToUse])
       .enemyMoveset(SPLASH_ONLY)
-      .startingHeldItems([{ name: "TEMP_STAT_BOOSTER", type: TempBattleStat.ACC }]);
+      .startingHeldItems([{ name: "TEMP_STAT_BOOSTER", type: Stat.ACC }]);
 
     await game.startBattle();
     game.scene.getPlayerPokemon()!.hp = 1;

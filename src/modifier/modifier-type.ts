@@ -26,7 +26,7 @@ import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
-import { PermanentStat, TEMP_BATTLE_STATS, TempBattleStat, Stat } from "#app/enums/stat";
+import { PermanentStat, TEMP_BATTLE_STATS, TempBattleStat, Stat, getStatKey } from "#app/enums/stat";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -443,7 +443,7 @@ export class TempStatStageBoosterModifierType extends ModifierType implements Ge
   }
 
   getDescription(_scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", { stat: i18next.t(`pokemonInfo:Stat.${Stat[this.stat]}`) });
+    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", { stat: i18next.t(getStatKey(this.stat)) });
   }
 
   getPregenArgs(): any[] {
@@ -609,7 +609,7 @@ export class BaseStatBoosterModifierType extends PokemonHeldItemModifierType imp
   }
 
   getDescription(_scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.BaseStatBoosterModifierType.description", { stat: i18next.t(`pokemonInfo:Stat.${Stat[this.stat]}`) });
+    return i18next.t("modifierType:ModifierType.BaseStatBoosterModifierType.description", { stat: i18next.t(getStatKey(this.stat)) });
   }
 
   getPregenArgs(): any[] {

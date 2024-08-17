@@ -3,14 +3,14 @@ import Pokemon from "#app/field/pokemon.js";
 import BattleScene from "#app/battle-scene.js";
 import { BattlerTag, BattlerTagLapseType, OctolockTag, TrappedTag } from "#app/data/battler-tags.js";
 import { StatChangePhase } from "#app/phases.js";
-import { BattleStat } from "#app/data/battle-stat.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { Stat } from "#enums/stat";
 
 vi.mock("#app/battle-scene.js");
 
 describe("BattlerTag - OctolockTag", () => {
   describe("lapse behavior", () => {
-    it("unshifts a StatChangePhase with expected stat changes", { timeout: 10000 }, async () => {
+    it("unshifts a StatChangePhase with expected stat stage changes", { timeout: 10000 }, async () => {
       const mockPokemon = {
         scene: new BattleScene(),
         getBattlerIndex: () => 0,
@@ -20,8 +20,8 @@ describe("BattlerTag - OctolockTag", () => {
 
       vi.spyOn(mockPokemon.scene, "unshiftPhase").mockImplementation(phase => {
         expect(phase).toBeInstanceOf(StatChangePhase);
-        expect((phase as StatChangePhase)["levels"]).toEqual(-1);
-        expect((phase as StatChangePhase)["stats"]).toEqual([BattleStat.DEF, BattleStat.SPDEF]);
+        expect((phase as StatChangePhase)["stages"]).toEqual(-1);
+        expect((phase as StatChangePhase)["stats"]).toEqual([ Stat.DEF, Stat.SPDEF ]);
       });
 
       subject.lapse(mockPokemon, BattlerTagLapseType.TURN_END);

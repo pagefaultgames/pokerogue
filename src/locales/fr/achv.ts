@@ -89,7 +89,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Master Maitre de la Ligue",
   },
 
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     name: "Travail d’équipe",
     description: "Utiliser Relais avec au moins une statistique montée à fond",
   },
@@ -363,7 +363,7 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Master Maitresse de la Ligue",
   },
 
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     name: "Travail d’équipe",
     description: "Utiliser Relais avec au moins une statistique montée à fond",
   },

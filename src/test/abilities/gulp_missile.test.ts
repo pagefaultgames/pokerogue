@@ -13,7 +13,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { BattleStat } from "#app/data/battle-stat.js";
+import { Stat } from "#enums/stat";
 import { StatusEffect } from "#app/enums/status-effect.js";
 import Pokemon from "#app/field/pokemon.js";
 
@@ -95,7 +95,7 @@ describe("Abilities - Gulp Missile", () => {
     expect(cramorant.formIndex).toBe(GULPING_FORM);
   });
 
-  it("deals ¼ of the attacker's maximum HP when hit by a damaging attack", async () => {
+  it("deals 1/4 of the attacker's maximum HP when hit by a damaging attack", async () => {
     game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
     await game.startBattle([Species.CRAMORANT]);
 
@@ -127,7 +127,7 @@ describe("Abilities - Gulp Missile", () => {
     expect(cramorant.formIndex).toBe(GULPING_FORM);
   });
 
-  it("lowers the attacker's Defense by 1 stage when hit in Gulping form", async () => {
+  it("lowers attacker's DEF stat stage by 1 when hit in Gulping form", async () => {
     game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
     await game.startBattle([Species.CRAMORANT]);
 
@@ -146,7 +146,7 @@ describe("Abilities - Gulp Missile", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemy.damageAndUpdate).toHaveReturnedWith(getEffectDamage(enemy));
-    expect(enemy.summonData.battleStats[BattleStat.DEF]).toBe(-1);
+    expect(enemy.getStatStage(Stat.DEF)).toBe(-1);
     expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeUndefined();
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
   });
@@ -207,7 +207,7 @@ describe("Abilities - Gulp Missile", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemy.hp).toBe(enemyHpPreEffect);
-    expect(enemy.summonData.battleStats[BattleStat.DEF]).toBe(-1);
+    expect(enemy.getStatStage(Stat.DEF)).toBe(-1);
     expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeUndefined();
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
   });

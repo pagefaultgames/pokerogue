@@ -90,7 +90,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Bänder-Meister",
   },
 
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     name: "Teamwork",
     description: "Nutze Staffette, während der Anwender mindestens eines Statuswertes maximiert hat.",
   },
@@ -333,7 +333,7 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Bänder-Meisterin",
   },
 
-  "TRANSFER_MAX_BATTLE_STAT": PGMachv.TRANSFER_MAX_BATTLE_STAT,
+  "TRANSFER_MAX_STAT_STAGE": PGMachv.TRANSFER_MAX_STAT_STAGE,
   "MAX_FRIENDSHIP": PGMachv.MAX_FRIENDSHIP,
   "MEGA_EVOLVE": PGMachv.MEGA_EVOLVE,
   "GIGANTAMAX": PGMachv.GIGANTAMAX,

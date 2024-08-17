@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import { Type } from "#app/data/type";
 import { Species } from "#app/enums/species.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
@@ -64,9 +64,8 @@ describe("Moves - Dragon Rage", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
-    const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(dragonRageDamage);
+    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });
 
   it("ignores resistances", async () => {
@@ -75,20 +74,18 @@ describe("Moves - Dragon Rage", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
-    const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(dragonRageDamage);
+    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });
 
-  it("ignores stat changes", async () => {
+  it("ignores SPATK stat stages", async () => {
     game.override.disableCrits();
-    partyPokemon.summonData.battleStats[BattleStat.SPATK] = 2;
+    partyPokemon.setStatStage(Stat.SPATK, 2);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
-    const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(dragonRageDamage);
+    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });
 
   it("ignores stab", async () => {
@@ -97,9 +94,8 @@ describe("Moves - Dragon Rage", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
-    const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(dragonRageDamage);
+    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });
 
   it("ignores criticals", async () => {
@@ -107,20 +103,18 @@ describe("Moves - Dragon Rage", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
-    const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(dragonRageDamage);
+    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });
 
-  it("ignores damage modification from abilities such as ice scales", async () => {
+  it("ignores damage modification from abilities, for example ICE_SCALES", async () => {
     game.override.disableCrits();
     game.override.enemyAbility(Abilities.ICE_SCALES);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
-    const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(dragonRageDamage);
+    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });
 
   it("ignores multi hit", async () => {
@@ -129,8 +123,7 @@ describe("Moves - Dragon Rage", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
-    const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
-    expect(damageDealt).toBe(dragonRageDamage);
+    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });
 });

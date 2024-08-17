@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat.js";
+import { Stat } from "#enums/stat";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import { MoveEndPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
@@ -60,7 +60,6 @@ describe("Moves - Tidy Up", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.TIDY_UP));
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.STEALTH_ROCK)).toBeUndefined();
-
   }, 20000);
 
   it("toxic spikes are cleared", async() => {
@@ -73,7 +72,6 @@ describe("Moves - Tidy Up", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.TIDY_UP));
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.TOXIC_SPIKES)).toBeUndefined();
-
   }, 20000);
 
   it("sticky webs are cleared", async() => {
@@ -87,7 +85,6 @@ describe("Moves - Tidy Up", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.TIDY_UP));
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.STICKY_WEB)).toBeUndefined();
-
   }, 20000);
 
   it.skip("substitutes are cleared", async() => {
@@ -101,22 +98,20 @@ describe("Moves - Tidy Up", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.TIDY_UP));
     await game.phaseInterceptor.to(MoveEndPhase);
     // TODO: check for subs here once the move is implemented
-
   }, 20000);
 
   it("user's stats are raised with no traps set", async() => {
     await game.startBattle();
-    const player = game.scene.getPlayerPokemon()!.summonData.battleStats;
 
-    expect(player[BattleStat.ATK]).toBe(0);
-    expect(player[BattleStat.SPD]).toBe(0);
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TIDY_UP));
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(player[BattleStat.ATK]).toBe(+1);
-    expect(player[BattleStat.SPD]).toBe(+1);
-
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
+    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
   }, 20000);
-
 });
