@@ -87,7 +87,7 @@ export default class GameChallengesUiHandler extends UiHandler {
 
     this.descriptionText = new BBCodeText(this.scene, descriptionBg.x + 6, descriptionBg.y + 4, "", {
       fontFamily: "emerald",
-      fontSize: 96,
+      fontSize: 84,
       color: Color.ORANGE,
       padding: {
         bottom: 6
