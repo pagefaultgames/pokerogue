@@ -3223,6 +3223,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Causes a Pokemon to leave the field (such as in preparation for a switch out/escape).
    * @param clearEffects Indicates if effects should be cleared (true) or passed
    * to the next pokemon, such as during a baton pass (false)
+   * @param hideInfo Indicates if this should also play the animation to hide the Pokemon's
+   * info container.
    */
   leaveField(clearEffects: boolean = true, hideInfo: boolean = true) {
     this.resetTurnData();
