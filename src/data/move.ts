@@ -5007,7 +5007,7 @@ export class PartingShotAttr extends ForceSwitchOutAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       // conditions on if move should fail or not don't depend on if user is able to switch
-      // getCondition() is called before move is applied: move will only switch out if canLowerStats
+      // getCondition() is called before move is applied: move will only switch out if canLowerStats === true
       if (target.hasAbility(Abilities.CLEAR_BODY, true, false) ||
           (target.summonData.battleStats[0] === -6 && target.summonData.battleStats[2] === -6) || target.scene.arena.findTagsOnSide(t => t.tagType === ArenaTagType.MIST, ArenaTagSide.ENEMY).length > 0
       ) {
