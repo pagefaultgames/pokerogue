@@ -16,6 +16,7 @@ import { BattleEndPhase } from "#app/phases.js";
 import { Gender } from "#app/data/gender.js";
 import { getBiomeName } from "#app/data/biomes.js";
 import { getLuckString } from "#app/modifier/modifier-type.js";
+import { Species } from "#app/enums/species.js";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -316,8 +317,11 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
         var formtext = ""
         if (poke[i].species.forms?.[poke[i].formIndex]?.formName) {
           formtext = " (" + poke[i].species.forms?.[poke[i].formIndex]?.formName + ")"
-          if (formtext == " (Normal)") {
+          if (formtext == " (Normal)" || formtext == " (Hero of Many Battles)") {
             formtext = ""
+          }
+          if (poke[i].species.speciesId == Species.MINIOR) {
+            formtext = " (" + poke[i].species.forms?.[poke[i].formIndex]?.formName.split(" ")[0] + ")"
           }
         }
         this.flyoutTextPlayer.text += poke[i].name + formtext + " " + (poke[i].gender == Gender.MALE ? "♂" : (poke[i].gender == Gender.FEMALE ? "♀" : "-")) + " " + poke[i].level + "\n"
