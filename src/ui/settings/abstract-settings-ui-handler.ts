@@ -32,7 +32,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
 
-  private reloadSettings: Array<Setting>;
+  private reloadSettings: Array<integer | null>;
   private reloadRequired: boolean;
 
   protected rowsToDisplay: number;
@@ -91,7 +91,6 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.settingLabels = [];
     this.optionValueLabels = [];
 
-    this.reloadSettings = this.settings.filter(s => s?.requireReload);
 
     this.settings
       .forEach((setting, s) => {
@@ -183,6 +182,12 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     const settings: object = localStorage.hasOwnProperty(this.localStorageKey) ? JSON.parse(localStorage.getItem(this.localStorageKey)!) : {}; // TODO: is this bang correct?
 
     this.settings.forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting.key) ? settings[setting.key] : this.settings[s].default));
+    this.reloadSettings = this.settings.map((setting, s) => {
+      if (setting.requireReload) {
+        return settings.hasOwnProperty(setting.key) ? settings[setting.key] : this.settings[s].default;
+      }
+      return null;
+    });
 
     this.settingsContainer.setVisible(true);
     this.setCursor(0);
@@ -345,9 +350,10 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
     if (save) {
       this.scene.gameData.saveSetting(setting.key, cursor);
-      if (this.reloadSettings.includes(setting)) {
-        this.reloadRequired = true;
-      }
+
+      this.reloadRequired = this.reloadSettings.some((s,i)=>
+        s !== null && s !== this.optionCursors[i]
+      );
     }
 
     return true;
