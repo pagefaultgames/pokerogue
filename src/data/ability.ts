@@ -414,9 +414,9 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
 
 class TypeImmunityStatStageChangeAbAttr extends TypeImmunityAbAttr {
   private stat: BattleStat;
-  private stages: integer;
+  private stages: number;
 
-  constructor(immuneType: Type, stat: BattleStat, stages: integer, condition?: AbAttrCondition) {
+  constructor(immuneType: Type, stat: BattleStat, stages: number, condition?: AbAttrCondition) {
     super(immuneType, condition);
 
     this.stat = stat;
@@ -643,9 +643,9 @@ export class WonderSkinAbAttr extends PreDefendAbAttr {
 
 export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
   private stat: BattleStat;
-  private stages: integer;
+  private stages: number;
 
-  constructor(immuneCondition: PreDefendAbAttrCondition, stat: BattleStat, stages: integer) {
+  constructor(immuneCondition: PreDefendAbAttrCondition, stat: BattleStat, stages: number) {
     super(immuneCondition);
     this.stat = stat;
     this.stages = stages;
@@ -693,11 +693,11 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
 export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
   private stat: BattleStat;
-  private stages: integer;
+  private stages: number;
   private selfTarget: boolean;
   private allOthers: boolean;
 
-  constructor(condition: PokemonDefendCondition, stat: BattleStat, stages: integer, selfTarget: boolean = true, allOthers: boolean = false) {
+  constructor(condition: PokemonDefendCondition, stat: BattleStat, stages: number, selfTarget: boolean = true, allOthers: boolean = false) {
     super(true);
 
     this.condition = condition;
@@ -728,10 +728,10 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
   private hpGate: number;
   private stats: BattleStat[];
-  private stages: integer;
+  private stages: number;
   private selfTarget: boolean;
 
-  constructor(condition: PokemonDefendCondition, hpGate: number, stats: BattleStat[], stages: integer, selfTarget: boolean = true) {
+  constructor(condition: PokemonDefendCondition, hpGate: number, stats: BattleStat[], stages: number, selfTarget: boolean = true) {
     super(true);
 
     this.condition = condition;
@@ -901,7 +901,7 @@ export class PostDefendCritStatStageChangeAbAttr extends PostDefendAbAttr {
   private stat: BattleStat;
   private stages: integer;
 
-  constructor(stat: BattleStat, stages: integer) {
+  constructor(stat: BattleStat, stages: number) {
     super();
 
     this.stat = stat;
@@ -1085,9 +1085,9 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
 export class PostStatStageChangeStatStageChangeAbAttr extends PostStatStageChangeAbAttr {
   private condition: PokemonStatStageChangeCondition;
   private statsToChange: BattleStat[];
-  private stages: integer;
+  private stages: number;
 
-  constructor(condition: PokemonStatStageChangeCondition, statsToChange: BattleStat[], stages: integer) {
+  constructor(condition: PokemonStatStageChangeCondition, statsToChange: BattleStat[], stages: number) {
     super(true);
 
     this.condition = condition;
@@ -1739,9 +1739,9 @@ export class PostVictoryAbAttr extends AbAttr {
 
 class PostVictoryStatStageChangeAbAttr extends PostVictoryAbAttr {
   private stat: BattleStat | ((p: Pokemon) => BattleStat);
-  private stages: integer;
+  private stages: number;
 
-  constructor(stat: BattleStat | ((p: Pokemon) => BattleStat), stages: integer) {
+  constructor(stat: BattleStat | ((p: Pokemon) => BattleStat), stages: number) {
     super();
 
     this.stat = stat;
@@ -1786,9 +1786,9 @@ export class PostKnockOutAbAttr extends AbAttr {
 
 export class PostKnockOutStatStageChangeAbAttr extends PostKnockOutAbAttr {
   private stat: BattleStat | ((p: Pokemon) => BattleStat);
-  private stages: integer;
+  private stages: number;
 
-  constructor(stat: BattleStat | ((p: Pokemon) => BattleStat), stages: integer) {
+  constructor(stat: BattleStat | ((p: Pokemon) => BattleStat), stages: number) {
     super();
 
     this.stat = stat;
@@ -1875,10 +1875,10 @@ export class IntimidateImmunityAbAttr extends AbAttr {
 
 export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
   private stats: BattleStat[];
-  private stages: integer;
+  private stages: number;
   private overwrites: boolean;
 
-  constructor(stats: BattleStat[], stages: integer, overwrites?: boolean) {
+  constructor(stats: BattleStat[], stages: number, overwrites?: boolean) {
     super(true);
     this.stats = stats;
     this.stages = stages;
@@ -1982,11 +1982,11 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
 
 export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private stats: BattleStat[];
-  private stages: integer;
+  private stages: number;
   private selfTarget: boolean;
   private intimidate: boolean;
 
-  constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean, intimidate?: boolean) {
+  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
     super(false);
 
     this.stats = stats;
@@ -3245,9 +3245,9 @@ export class MoodyAbAttr extends PostTurnAbAttr {
 
 export class PostTurnStatStageChangeAbAttr extends PostTurnAbAttr {
   private stats: BattleStat[];
-  private stages: integer;
+  private stages: number;
 
-  constructor(stats: BattleStat[], stages: integer) {
+  constructor(stats: BattleStat[], stages: number) {
     super(true);
 
     this.stats = Array.isArray(stats)
@@ -3800,9 +3800,9 @@ export class FlinchEffectAbAttr extends AbAttr {
 
 export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
   private stats: BattleStat[];
-  private stages: integer;
+  private stages: number;
 
-  constructor(stats: BattleStat[], stages: integer) {
+  constructor(stats: BattleStat[], stages: number) {
     super();
 
     this.stats = Array.isArray(stats)
