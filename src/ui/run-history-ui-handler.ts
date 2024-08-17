@@ -14,6 +14,8 @@ import { PlayerGender } from "#enums/player-gender";
 
 export type RunSelectCallback = (cursor: integer) => void;
 
+export const RUN_HISTORY_LIMIT: number = 25;
+
 export default class RunHistoryUiHandler extends MessageUiHandler {
 
   private runSelectContainer: Phaser.GameObjects.Container;

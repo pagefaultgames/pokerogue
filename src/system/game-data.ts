@@ -43,6 +43,7 @@ import { Species } from "#enums/species";
 import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 import { WeatherType } from "#app/enums/weather-type.js";
 import { TerrainType } from "#app/data/terrain.js";
+import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -573,7 +574,11 @@ export class GameData {
     });
   }
 
-  public async getRunHistoryData(scene: BattleScene): Promise<RunHistoryData> {
+  /**
+   * Retrieves current run history data, organized by time stamp.
+   * At the moment, only retrievable from locale cache
+   */
+  async getRunHistoryData(scene: BattleScene): Promise<RunHistoryData> {
     if (!Utils.isLocal) {
       /**
        * Networking Code DO NOT DELETE!
@@ -619,8 +624,14 @@ export class GameData {
     }
   }
 
+  /**
+   * Saves a new entry to Run History
+   * @param scene: BattleScene object
+   * @param runEntry: most recent SessionSaveData of the run
+   * @param isVictory: result of the run
+   * Arbitrary limit of 25 runs per player - Will delete runs, starting with the oldest one, if needed
+   */
   async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, isVictory: boolean): Promise<boolean> {
-
     let runHistoryData = await this.getRunHistoryData(scene);
     if (!runHistoryData) {
       runHistoryData = {};
@@ -628,8 +639,8 @@ export class GameData {
     const timestamps = Object.keys(runHistoryData);
     const timestampsNo = timestamps.map(Number);
 
-    // Arbitrary limit of 25 entries per User --> Can increase or decrease
-    if (timestamps.length >= 25) {
+    // Arbitrary limit of 25 entries per user --> Can increase or decrease
+    while (timestamps.length >= RUN_HISTORY_LIMIT ) {
       const oldestTimestamp = Math.min.apply(Math, timestampsNo);
       delete runHistoryData[oldestTimestamp];
     }
@@ -640,9 +651,7 @@ export class GameData {
       isVictory: isVictory,
       isFavorite: false,
     };
-
     localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), true));
-
     /**
      * Networking Code DO NOT DELETE
      *

@@ -144,6 +144,7 @@ export default class RunInfoUiHandler extends UiHandler {
   private addHeader() {
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
+    this.runContainer.add(headerBg);
     if (this.runInfo.modifiers.length !== 0) {
       const headerBgCoords = headerBg.getTopRight();
       const abilityButtonContainer = this.scene.add.container(0, 0);
@@ -156,14 +157,15 @@ export default class RunInfoUiHandler extends UiHandler {
     const headerText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:runInfo"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
-    this.runContainer.add(headerBg);
     this.runContainer.add(headerText);
   }
 
   /**
    * Shows the run's end result
    *
-   * Victory : The run will display
+   * Victory : The run will display options to allow the player to view the Hall of Fame + Ending Art
+   * Defeat : The run will show the opposing Pokemon (+ Trainer) that the trainer was defeated by.
+   * Defeat can call either parseWildSingleDefeat(), parseWildDoubleDefeat(), or parseTrainerDefeat()
    *
    */
   async parseRunResult() {
@@ -209,6 +211,10 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runContainer.add(this.runResultContainer);
   }
 
+  /**
+   * This function is called to edit an enemyContainer to represent a loss from a defeat by a wild single Pokemon battle.
+   * @param enemyContainer - container holding enemy visual and level information
+   */
   private parseWildSingleDefeat(enemyContainer: Phaser.GameObjects.Container) {
     const enemyIconContainer = this.scene.add.container(0, 0);
     const enemyData = this.runInfo.enemyParty[0];
@@ -230,6 +236,11 @@ export default class RunInfoUiHandler extends UiHandler {
     enemy.destroy();
   }
 
+  /**
+   * This function is called to edit a container to represent a loss from a defeat by a wild double Pokemon battle.
+   * This function and parseWildSingleDefeat can technically be merged, but I find it tricky to manipulate the different 'centers' a single battle / double battle container will hold.
+   * @param enemyContainer - container holding enemy visuals and level information
+   */
   private parseWildDoubleDefeat(enemyContainer: Phaser.GameObjects.Container) {
     this.runInfo.enemyParty.forEach((enemyData, e) => {
       const enemyIconContainer = this.scene.add.container(0, 0);
@@ -251,7 +262,16 @@ export default class RunInfoUiHandler extends UiHandler {
     enemyContainer.setPosition(8, 14);
   }
 
+  /**
+   * This edits a container to represent a loss from a defeat by a trainer battle.
+   * @param enemyContainer - container holding enemy visuals and level information
+   * The trainers are placed to the left of their party.
+   * Depending on the trainer icon, there may be overlap between the edges of the box or their party. (Capes...)
+   *
+   * Party Pokemon have their icons, terastalization status, and level shown.
+   */
   private parseTrainerDefeat(enemyContainer: Phaser.GameObjects.Container) {
+    // Creating the trainer sprite and adding it to enemyContainer
     const tObj = this.runInfo.trainer.toTrainer(this.scene);
     const tObjSpriteKey = tObj.config.getSpriteKey(this.runInfo.trainer.variant === TrainerVariant.FEMALE, false);
     const tObjSprite = this.scene.add.sprite(0, 5, tObjSpriteKey);
@@ -260,6 +280,7 @@ export default class RunInfoUiHandler extends UiHandler {
       tObjSprite.setPosition(-3, -3);
       const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
       const tObjPartnerSprite = this.scene.add.sprite(5, -3, tObjPartnerSpriteKey);
+      // Double Trainers have smaller sprites than Single Trainers
       tObjPartnerSprite.setScale(0.20);
       tObjSprite.setScale(0.20);
       doubleContainer.add(tObjSprite);
@@ -272,6 +293,8 @@ export default class RunInfoUiHandler extends UiHandler {
       enemyContainer.add(tObjSprite);
     }
 
+    // Determining which Terastallize Modifier belongs to which Pokemon
+    // Creates a dictionary {PokemonId: TeraShardType}
     const teraPokemon = {};
     this.runInfo.enemyModifiers.forEach((m) => {
       const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
@@ -282,6 +305,8 @@ export default class RunInfoUiHandler extends UiHandler {
       }
     });
 
+    // Creates the Pokemon icons + level information and adds it to enemyContainer
+    // 2 Rows x 3 Columns
     const enemyPartyContainer = this.scene.add.container(0, 0);
     this.runInfo.enemyParty.forEach((enemyData, e) => {
       const pokemonRowHeight = Math.floor(e/3);
@@ -292,6 +317,8 @@ export default class RunInfoUiHandler extends UiHandler {
       enemyData["player"] = true;
       const enemy = enemyData.toPokemon(this.scene);
       const enemyIcon = this.scene.addPokemonIcon(enemy, 0, 0, 0, 0);
+      // Applying Terastallizing Type tint to Pokemon icon
+      // If the Pokemon is a fusion, it has two sprites and so, the tint has to be applied to each icon separately
       const enemySprite1 = enemyIcon.list[0] as Phaser.GameObjects.Sprite;
       const enemySprite2 = (enemyIcon.list.length > 1) ? enemyIcon.list[1] as Phaser.GameObjects.Sprite : undefined;
       if (teraPokemon[enemyData.id]) {
@@ -313,12 +340,19 @@ export default class RunInfoUiHandler extends UiHandler {
       enemyPartyContainer.add(enemyIconContainer);
       enemy.destroy();
     });
-
     enemyPartyContainer.setPosition(25, 15);
     enemyContainer.add(enemyPartyContainer);
   }
 
+  /**
+   * Shows information about the run like the run's mode, duration, luck, money, and player held items
+   * The values for luck and money are from the end of the run, not the player's luck at the start of the run.
+   * @param windowX
+   * @param windowY These two params are the coordinates of the window's bottom right corner. This is used to dynamically position Luck based on its length, creating a nice layout regardless of language / luck value.
+   */
   async parseRunInfo(windowX: number, windowY: number) {
+    // Parsing and displaying the mode.
+    // In the future, parsing Challenges + Challenge Rules may have to be reworked as PokeRogue adds additional challenges and users can stack these challenges in various ways.
     const modeText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize : "50px", lineSpacing:3});
     modeText.setPosition(7, 5);
     modeText.appendText(i18next.t("runHistory:mode")+": ", false);
@@ -358,6 +392,7 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.ENDLESS:
       modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
+      // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
       if (this.runInfo.waveIndex === this.scene.gameData.gameStats.highestEndlessWave) {
         modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`, false);
         modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
@@ -368,11 +403,16 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     }
 
+    // Duration + Money
     const runInfoTextContainer = this.scene.add.container(0, 0);
     const runInfoText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize : "50px", lineSpacing:3});
     const runTime = Utils.getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
     runInfoText.appendText(`[color=${getTextColor(TextStyle.MONEY)}]\u20BD${Utils.formatLargeNumber(this.runInfo.money, 1000)}[/color]`);
+    runInfoText.setPosition(7, 70);
+    runInfoTextContainer.add(runInfoText);
+    // Luck
+    // Uses the parameters windowX and windowY to dynamically position the luck value neatly into the bottom right corner
     const luckText = addBBCodeTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, {fontSize: "55px"});
     const luckValue = Phaser.Math.Clamp(this.runInfo.party.map(p => p.toPokemon(this.scene).getLuck()).reduce((total: integer, value: integer) => total += value, 0), 0, 14);
     let luckInfo = i18next.t("runHistory:luck")+": "+getLuckString(luckValue);
@@ -382,12 +422,11 @@ export default class RunInfoUiHandler extends UiHandler {
       luckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
     luckText.appendText("[align=right]"+luckInfo+"[/align]", false);
-    runInfoText.setPosition(7, 70);
     luckText.setPosition(windowX-luckText.displayWidth-5, windowY-13);
-    runInfoTextContainer.add(runInfoText);
     runInfoTextContainer.add(luckText);
 
-
+    // Player Held Items
+    // A max of 20 items can be displayed. A + sign will be added if the run's held items pushes past this maximum to show the user that there are more.
     if (this.runInfo.modifiers.length) {
       let visibleModifierIndex = 0;
 
@@ -420,8 +459,12 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runContainer.add(this.runInfoContainer);
   }
 
+  /**
+   * Parses and displays the run's player party.
+   * Default Information: Icon, Level, Nature, Ability, Passive, Shiny Status, Fusion Status, Stats, and Moves.
+   * B-Side Information: Icon + Held Items (Can be displayed to the user through pressing the abilityButton)
+   */
  	parsePartyInfo(): void {
-
     const party = this.runInfo.party;
     const currentLanguage = i18next.resolvedLanguage ?? "en";
  		const windowHeight = ((this.scene.game.canvas.height / 6) - 23)/6;
@@ -449,6 +492,7 @@ export default class RunInfoUiHandler extends UiHandler {
 
       this.getUi().bringToTop(icon);
 
+      // Contains Name, Level + Nature, Ability, Passive
       const pokeInfoTextContainer = this.scene.add.container(-85, 3.5);
       const textContainerFontSize = "34px";
       const pNature = getNatureName(pokemon.nature);
@@ -470,16 +514,16 @@ export default class RunInfoUiHandler extends UiHandler {
       pokeInfoText.appendText(pPassiveInfo);
       pokeInfoTextContainer.add(pokeInfoText);
 
+      // Pokemon Stats
+      // Colored Arrows (Red/Blue) are placed by stats that are boosted from natures
       const pokeStatTextContainer = this.scene.add.container(-35, 6);
       const pStats : string[]= [];
       pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element,1)));
-
       for (let i = 0; i < pStats.length; i++) {
         const isMult = getNatureStatMultiplier(pokemon.nature, i);
         pStats[i] = (isMult < 1) ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
         pStats[i] = (isMult > 1) ? pStats[i] + "[color=#f89890]↑[/color]" : pStats[i];
       }
-
       const hp = i18next.t("pokemonInfo:Stat.HPshortened")+": "+pStats[0];
       const atk = i18next.t("pokemonInfo:Stat.ATKshortened")+": "+pStats[1];
       const def = i18next.t("pokemonInfo:Stat.DEFshortened")+": "+pStats[2];
@@ -487,7 +531,6 @@ export default class RunInfoUiHandler extends UiHandler {
       const spdef = i18next.t("pokemonInfo:Stat.SPDEFshortened")+": "+pStats[4];
       const speedLabel = (currentLanguage==="es"||currentLanguage==="pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
       const speed = speedLabel+": "+pStats[5];
-
       // Column 1: HP Atk Def
       const pokeStatText1 = addBBCodeTextObject(this.scene, -5, 0, hp, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
       pokeStatText1.appendText(atk);
@@ -499,8 +542,8 @@ export default class RunInfoUiHandler extends UiHandler {
       pokeStatText2.appendText(speed);
       pokeStatTextContainer.add(pokeStatText2);
 
+      // Shiny + Fusion Status
       const marksContainer = this.scene.add.container(0, 0);
-
       if (pokemon.fusionSpecies) {
         const splicedIcon = this.scene.add.image(0, 0, "icon_spliced");
         splicedIcon.setScale(0.35);
@@ -509,10 +552,8 @@ export default class RunInfoUiHandler extends UiHandler {
         marksContainer.add(splicedIcon);
         this.getUi().bringToTop(splicedIcon);
       }
-
       if (pokemon.isShiny()) {
         const doubleShiny = pokemon.isFusion() && pokemon.shiny && pokemon.fusionShiny;
-
         const shinyStar = this.scene.add.image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`);
         shinyStar.setOrigin(0, 0);
         shinyStar.setScale(0.65);
@@ -520,7 +561,6 @@ export default class RunInfoUiHandler extends UiHandler {
         shinyStar.setTint(getVariantTint(!doubleShiny ? pokemon.getVariant() : pokemon.variant));
         marksContainer.add(shinyStar);
         this.getUi().bringToTop(shinyStar);
-
         if (doubleShiny) {
           const fusionShinyStar = this.scene.add.image(0, 0, "shiny_star_small_2");
           fusionShinyStar.setOrigin(0, 0);
@@ -532,6 +572,8 @@ export default class RunInfoUiHandler extends UiHandler {
         }
       }
 
+      // Pokemon Moveset
+      // Need to check if dynamically typed moves
       const pokemonMoveset = pokemon.getMoveset();
       const movesetContainer = this.scene.add.container(70, -29);
       const pokemonMoveBgs : Phaser.GameObjects.NineSlice[] = [];
@@ -540,27 +582,23 @@ export default class RunInfoUiHandler extends UiHandler {
       for (let m = 0; m < pokemonMoveset?.length; m++) {
       	const moveContainer = this.scene.add.container(movePos[m][0], movePos[m][1]);
         moveContainer.setScale(0.5);
-
       	const moveBg = this.scene.add.nineslice(0, 0, "type_bgs", "unknown", 85, 15, 2, 2, 2, 2);
       	moveBg.setOrigin(1, 0);
-
       	const moveLabel = addTextObject(this.scene, -moveBg.width / 2, 2, "-", TextStyle.PARTY);
       	moveLabel.setOrigin(0.5, 0);
       	moveLabel.setName("text-move-label");
-
       	pokemonMoveBgs.push(moveBg);
       	pokemonMoveLabels.push(moveLabel);
-
       	moveContainer.add(moveBg);
       	moveContainer.add(moveLabel);
-
       	movesetContainer.add(moveContainer);
-
       	const move = pokemonMoveset[m]?.getMove();
         pokemonMoveBgs[m].setFrame(Type[move ? move.type : Type.UNKNOWN].toString().toLowerCase());
         pokemonMoveLabels[m].setText(move ? move.name : "-");
     	}
 
+      // Pokemon Held Items - not displayed by default
+      // Endless/Endless Spliced have a different scale because Pokemon tend to accumulate more items in these runs.
       const heldItemsScale = (this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS) ? 0.25 : 0.5;
       const heldItemsContainer = this.scene.add.container(-82, 6);
       const heldItemsList : PokemonHeldItemModifier[] = [];
@@ -594,6 +632,7 @@ export default class RunInfoUiHandler extends UiHandler {
       heldItemsContainer.setName("heldItems");
       heldItemsContainer.setVisible(false);
 
+      // Labels are applied for future differentiation in showParty()
       pokemonInfoContainer.add(pokemonInfoWindow);
       iconContainer.add(icon);
       pokemonInfoContainer.add(iconContainer);
@@ -613,6 +652,12 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runContainer.add(this.partyContainer);
  	}
 
+  /**
+   * Changes what is displayed of the Pokemon's held items
+   * @param partyVisible {boolean}
+   * True -> Shows the Pokemon's default information and hides held items
+   * False -> Shows the Pokemon's held items and hides default information
+   */
   showParty(partyVisible: boolean): void {
     const allContainers = this.partyContainer.getAll("name", "PkmnInfo");
     allContainers.forEach((c: Phaser.GameObjects.Container) => {
@@ -625,6 +670,9 @@ export default class RunInfoUiHandler extends UiHandler {
     });
   }
 
+  /**
+   * Shows the ending art.
+   */
   createVictorySplash(): void {
     this.endCardContainer = this.scene.add.container(0,0);
     const endCard = this.scene.add.image(0, 0, `end_${this.isPGF ? "f" : "m"}`);
@@ -637,7 +685,7 @@ export default class RunInfoUiHandler extends UiHandler {
   }
 
   /** createHallofFame() - if the run is victorious, this creates a hall of fame image for the player to view
-   * Additional Notes TBD
+   * Overlay created by Koda (Thank you!)
    */
   createHallofFame(): void {
     // Issue Note (08-05-2024): It seems as if fused pokemon do not appear with the averaged color b/c pokemonData's loadAsset requires there to be some active battle?
@@ -696,6 +744,12 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runContainer.add(this.hallofFameContainer);
   }
 
+  /**
+   * Takes input from the user to perform a desired action.
+   * @param button - Button object to be processed
+   * Button.CANCEL - removes all containers related to RunInfo and returns the user to Run History
+   * Button.CYCLE_FORM, Button.CYCLE_SHINY, Button.CYCLE_ABILITY - runs the function buttonCycleOption()
+   */
  	processInput(button: Button): boolean {
     const ui = this.getUi();
 
