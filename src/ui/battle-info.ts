@@ -580,6 +580,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     } else {
       P = party
     }
+    console.log("Updating ball icons for party (Pokemon: " + P.length + ")", P)
     var staticparty = (this.scene as BattleScene).getEnemyParty()
     var states = new Array(6)
     for (var i = 0; i < 6; i++) {
@@ -591,8 +592,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         states[i] = "ball"
         if (!P[i].hp) {
           states[i] = "faint"
+          console.log(P[i].name + " - fainted")
         } else if (P[i].status) {
           states[i] = (this.scene as BattleScene).showTeamSprites ? "ball" : "status"
+          console.log(P[i].name + " - ball (status condition)")
+        } else {
+          console.log(P[i].name + " - ball")
         }
         if (P[i].isOnField()) {
           //console.log(P[i].name + " is in battle; set it as seen")
@@ -600,9 +605,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         }
         if (P[i].usedInBattle) total_visible++;
         //console.log(P[i].name, P[i].getIconAtlasKey(true))
+      } else {
+        console.log("[undefined]: empty")
       }
     }
-    console.log("Updating ball icons for party (" + P.length + ")")
     if (staticparty.length > 0) {
       for (var i = 0; i < staticparty.length; i++) {
         //console.log(i, staticparty[i].name)
@@ -1022,10 +1028,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       targets: this.teamIconOver,
       duration: Utils.fixedInt(125),
       ease: "Sine.easeInOut",
-      alphaTopLeft: visible ? 0.4 : 0,
-      alphaTopRight: visible ? 0.4 : 0,
-      alphaBottomLeft: visible ? 0.7 : 0,
-      alphaBottomRight: visible ? 0.7 : 0,
+      alphaTopLeft: !this.teamIconsShow ? 0 : (visible ? 0.4 : 0),
+      alphaTopRight: !this.teamIconsShow ? 0 : (visible ? 0.4 : 0),
+      alphaBottomLeft: !this.teamIconsShow ? 0 : (visible ? 0.7 : 0),
+      alphaBottomRight: !this.teamIconsShow ? 0 : (visible ? 0.7 : 0),
     });
     this.scene.tweens.add({
       targets: [ this.championRibbon, this.ownedIcon ],

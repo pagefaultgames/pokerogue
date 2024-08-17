@@ -129,7 +129,7 @@ function catchCalcRaw(pokemon: EnemyPokemon) {
  * @param override Show the best Poké Ball to use, even if you don't have any.
  * @returns The name and % rate of the best Poké Ball.
  */
-function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean) {
+export function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean) {
   var rates = catchCalc(pokemon)
   var rates_raw = catchCalcRaw(pokemon)
   var rolls = []
@@ -144,7 +144,7 @@ function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean)
       }
     })
   })
-  scene.currentBattle.multiInt(scene, rolls, offset + 3, 65536)
+  scene.currentBattle.multiInt(scene, rolls, offset + 3, 65536, undefined, "Catch prediction")
   //console.log(rolls)
   //console.log(rolls.slice(offset, offset + 3))
   if (scene.pokeballCounts[0] == 0 && !override) rates[0] = 0
@@ -2922,12 +2922,15 @@ export class TurnInitPhase extends FieldPhase {
 
     if (false) {
       this.scene.getField().forEach((pokemon, i) => {
+        if (pokemon != undefined && pokemon != null)
+          console.log("Handle " + pokemon.name)
         if (pokemon?.isActive()) {
           if (pokemon.isPlayer()) {
             this.scene.currentBattle.addParticipant(pokemon as PlayerPokemon);
           } else {
-            pokemon.flyout.setText()
+            console.log("Marked " + pokemon.name + " as used")
             pokemon.usedInBattle = true;
+            pokemon.flyout.setText()
             pokemon.getBattleInfo().iconsActive = true
           }
           pokemon.resetTurnData();
@@ -2990,20 +2993,7 @@ export class TurnInitPhase extends FieldPhase {
 
     this.scene.pushPhase(new TurnStartPhase(this.scene));
 
-    var txt = ["Turn: " + this.scene.currentBattle.turn]
-    if (!this.scene.getEnemyField()[0].hasTrainer()) {
-      this.scene.getEnemyField().forEach((pk, i) => {
-        if (pk.isActive() && pk.hp > 0)
-        txt = txt.concat(findBest(this.scene, pk))
-      })
-    }
-    if (txt.length > 2) {
-      txt = ["Turn: " + this.scene.currentBattle.turn]
-    }
-
-    this.scene.arenaFlyout.updateFieldText()
-
-    this.scene.setScoreText(txt.join(" / "))
+    this.scene.updateCatchRate()
 
     this.end();
   }
@@ -3355,20 +3345,7 @@ export class EnemyCommandPhase extends FieldPhase {
 
             enemyPokemon.flyout.setText()
 
-            var txt = ["Turn: " + this.scene.currentBattle.turn]
-            if (!this.scene.getEnemyField()[0].hasTrainer()) {
-              this.scene.getEnemyField().forEach((pk, i) => {
-                if (pk.isActive() && pk.hp > 0)
-                txt = txt.concat(findBest(this.scene, pk))
-              })
-            }
-            if (txt.length > 2) {
-              txt = ["Turn: " + this.scene.currentBattle.turn]
-            }
-        
-            this.scene.arenaFlyout.updateFieldText()
-        
-            this.scene.setScoreText(txt.join(" / "))
+            this.scene.updateCatchRate()
 
             return this.end();
           }
@@ -3410,23 +3387,19 @@ export class EnemyCommandPhase extends FieldPhase {
     LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + nextMove.targets.map((m) => targetLabels[m + 1])
     this.scene.arenaFlyout.updateFieldText()
 
-    var txt = ["Turn: " + this.scene.currentBattle.turn]
-    if (!this.scene.getEnemyField()[0].hasTrainer()) {
-      this.scene.getEnemyField().forEach((pk, i) => {
-        if (pk.isActive() && pk.hp > 0)
-        txt = txt.concat(findBest(this.scene, pk))
-      })
-    }
-    if (txt.length > 2) {
-      txt = ["Turn: " + this.scene.currentBattle.turn]
-    }
-
-    this.scene.arenaFlyout.updateFieldText()
-
-    this.scene.setScoreText(txt.join(" / "))
+    this.scene.updateCatchRate()
 
     this.end();
   }
+}
+export function enemyTurnCalc(scene: BattleScene) {
+  scene.getField().forEach(pokemon => {
+    if (pokemon.isActive()) {
+      if (!pokemon.isPlayer()) {
+        var pk = pokemon as EnemyPokemon;
+      }
+    }
+  })
 }
 //#endregion
 

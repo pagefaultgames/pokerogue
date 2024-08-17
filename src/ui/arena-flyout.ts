@@ -16,6 +16,7 @@ import { BattleEndPhase } from "#app/phases.js";
 import { Gender } from "#app/data/gender.js";
 import { getBiomeName } from "#app/data/biomes.js";
 import { getLuckString } from "#app/modifier/modifier-type.js";
+import { Species } from "#app/enums/species.js";
 
 /** Enum used to differentiate {@linkcode Arena} effects */
 enum ArenaEffectType {
@@ -316,12 +317,29 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
         var formtext = ""
         if (poke[i].species.forms?.[poke[i].formIndex]?.formName) {
           formtext = " (" + poke[i].species.forms?.[poke[i].formIndex]?.formName + ")"
-          if (formtext == " (Normal)") {
+          if (formtext == " (Normal)" || formtext == " (Hero of Many Battles)") {
             formtext = ""
           }
+          if (poke[i].species.speciesId == Species.MINIOR) {
+            formtext = " (" + poke[i].species.forms?.[poke[i].formIndex]?.formName.split(" ")[0] + ")"
+          }
+          if (poke[i].species.speciesId == Species.SQUAWKABILLY) {
+            formtext = " (" + poke[i].species.forms?.[poke[i].formIndex]?.formName.substring(0, poke[i].species.forms?.[poke[i].formIndex]?.formName.length - " Plumage".length) + ")"
+          }
+          if (poke[i].species.speciesId == Species.ORICORIO) {
+            formtext = " (" + poke[i].species.forms?.[poke[i].formIndex]?.formName.substring(0, poke[i].species.forms?.[poke[i].formIndex]?.formName.length - " Style".length) + ")"
+          }
         }
-        this.flyoutTextPlayer.text += poke[i].name + formtext + " " + (poke[i].gender == Gender.MALE ? "♂" : (poke[i].gender == Gender.FEMALE ? "♀" : "-")) + " " + poke[i].level + "\n"
-        this.flyoutTextEnemy.text += poke[i].getAbility().name + " / " + (poke[i].isBoss() ? poke[i].getPassiveAbility().name + " / " : "") + getNatureName(poke[i].nature) + (getNatureIncrease(poke[i].nature) != "" ? " (+" + getNatureIncrease(poke[i].nature) + " -" + getNatureDecrease(poke[i].nature) + ")" : "") + "\n\n\n"
+        const beforeText1 = this.flyoutTextPlayer.text
+        const beforeText2 = this.flyoutTextEnemy.text
+        this.flyoutTextPlayer.text = poke[i].name + formtext + " " + (poke[i].gender == Gender.MALE ? "♂" : (poke[i].gender == Gender.FEMALE ? "♀" : "-")) + " " + poke[i].level
+        this.flyoutTextEnemy.text = poke[i].getAbility().name + (poke[i].isBoss() ? ", " + poke[i].getPassiveAbility().name : "") + " / " + getNatureName(poke[i].nature) + (getNatureIncrease(poke[i].nature) != "" ? " (+" + getNatureIncrease(poke[i].nature) + " -" + getNatureDecrease(poke[i].nature) + ")" : "")
+        if (this.flyoutTextEnemy.width + this.flyoutTextPlayer.width > this.flyoutWidth * 6 - 120) {
+          this.flyoutTextEnemy.text = poke[i].getAbility().name + (poke[i].isBoss() ? ", " + poke[i].getPassiveAbility().name : "") + " / " + getNatureName(poke[i].nature)
+        }
+        //console.log(this.flyoutTextEnemy.width + this.flyoutTextPlayer.width, this.flyoutWidth * 6 - 120)
+        this.flyoutTextPlayer.text = beforeText1 + this.flyoutTextPlayer.text + "\n"
+        this.flyoutTextEnemy.text = beforeText2 + this.flyoutTextEnemy.text + "\n\n\n"
       }
       this.flyoutTextPlayer.text += "HP: " + poke[i].ivs[0]
       this.flyoutTextPlayer.text += ", Atk: " + poke[i].ivs[1]

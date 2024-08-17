@@ -45,7 +45,7 @@ SECTIONS
 /** The number of enemy actions to log. */
 export const EnemyEventLogCount = 3
 /** The current DRPD version. */
-export const DRPD_Version = "1.1.0"
+export const DRPD_Version = "1.1.0a"
 /** (Unused / reference only) All the log versions that this mod can keep updated.
  * @see updateLog
 */
@@ -53,6 +53,7 @@ export const acceptedVersions = [
   "1.0.0",
   "1.0.0a",
   "1.1.0",
+  "1.1.0a",
 ]
 
 // Value holders
@@ -455,7 +456,10 @@ export interface DRPD {
    */
   waves: Wave[],
   /** The Pokemon that the player started with. Daily runs will have 3. @see PokeData */
-  starters?: PokeData[]
+  starters?: PokeData[],
+  /** The maximum luck value you can have. If your luck value is higher than this, some floors may break. */
+  maxluck?: integer;
+  minSafeLuckFloor?: integer[];
 }
 /**
  * Imports a string as a DRPD.
@@ -476,12 +480,14 @@ export function newDocument(name: string = "Untitled Run", authorName: string | 
     version: DRPD_Version,
     seed: "",
     title: name,
-    label: "",
+    label: "unnamedRoute",
     uuid: "",
     authors: (Array.isArray(authorName) ? authorName : [authorName]),
     date: new Date().getUTCFullYear() + "-" + (new Date().getUTCMonth() + 1 < 10 ? "0" : "") + (new Date().getUTCMonth() + 1) + "-" + (new Date().getUTCDate() < 10 ? "0" : "") + new Date().getUTCDate(),
     waves: new Array(50),
     starters: new Array(3),
+    //maxluck: 14,
+    //minSafeLuckFloor: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   }
   var RState = Phaser.Math.RND.state()
   ret.uuid = Phaser.Math.RND.uuid()
@@ -587,6 +593,11 @@ function updateLog(drpd: DRPD): DRPD {
     Phaser.Math.RND.state(RState)
     drpd.label = "route"
   } // 1.0.0a → 1.1.0
+  if (drpd.version == "1.1.0") {
+    drpd.version = "1.1.0a"
+    drpd.maxluck = 14
+    drpd.minSafeLuckFloor = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  } // 1.1.0 → 1.1.0a
   return drpd;
 }
 // #endregion
@@ -1680,6 +1691,25 @@ export function logPlayerTeam(scene: BattleScene) {
   }
   console.log("--> ", drpd)
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
+}
+/**
+ * Checks the minimum luck that will break this floor's shop, and updates the appropriate values.
+ * @param scene  The BattleScene.
+ */
+export function logLuck(scene: BattleScene) {
+  //return;
+  var drpd = getDRPD(scene)
+  if (scene.waveShinyMinToBreak > 0) {
+    console.log(`Logging luck stats`)
+    drpd.maxluck = Math.min(drpd.maxluck!, scene.waveShinyMinToBreak - 1)
+    for (var i = scene.waveShinyMinToBreak; i <= 14; i++) {
+      drpd.minSafeLuckFloor![i] = Math.max(drpd.minSafeLuckFloor![i], scene.currentBattle.waveIndex)
+    }
+    console.log("--> ", drpd)
+    localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
+  } else {
+    console.log(`Skipped logging luck stats: Luck has no effect on this floor`)
+  }
 }
 /**
  * Logs a wild Pokémon to a wave's data.
