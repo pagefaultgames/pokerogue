@@ -485,7 +485,8 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
       const fetchAnimAndResolve = (move: Moves) => {
         scene.cachedFetch(`./battle-anims/${moveName}.json`)
           .then(response => {
-            if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            if (!response.ok || contentType?.indexOf("application/json") === -1) {
               console.error(`Could not load animation file for move '${moveName}'`, response.status, response.statusText);
               populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
               return resolve();
@@ -682,8 +683,8 @@ export abstract class BattleAnim {
   private dstLine: number[];
 
   constructor(user?: Pokemon, target?: Pokemon) {
-    this.user = user!; // TODO: is this bang correct?
-    this.target = target!; // TODO: is this bang correct?
+    this.user = user ?? null;
+    this.target = target ?? null;
     this.sprites = [];
   }
 

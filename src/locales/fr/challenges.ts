@@ -4,7 +4,7 @@ export const challenges: TranslationEntries = {
   "title": "Paramètres du Challenge",
   "illegalEvolution": "{{pokemon}} est devenu\ninéligible pour ce challenge !",
   "singleGeneration": {
-    "name": "Mono-génération",
+    "name": "Monogénération",
     "desc": "Vous ne pouvez choisir que des Pokémon de {{gen}} génération.",
     "desc_default": "Vous ne pouvez choisir que des Pokémon de la génération sélectionnée.",
     "gen_1": "1re",
@@ -18,7 +18,7 @@ export const challenges: TranslationEntries = {
     "gen_9": "9e",
   },
   "singleType": {
-    "name": "Mono-type",
+    "name": "Monotype",
     "desc": "Vous ne pouvez choisir que des Pokémon de type {{type}}.",
     "desc_default": "Vous ne pouvez choisir que des Pokémon du type sélectionné."
     //type in pokemon-info

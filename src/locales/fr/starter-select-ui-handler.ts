@@ -28,6 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "toggleIVs": "Voir les IV",
   "manageMoves": "Modifier les Capacités",
   "manageNature": "Modifier la Nature",
+  "addToFavorites": "Ajouter aux Favoris",
+  "removeFromFavorites": "Retirer des Favoris",
   "useCandies": "Utiliser des Bonbons",
   "selectNature": "Sélectionnez une nature.",
   "selectMoveSwapOut": "Sélectionnez la capacité à échanger.",
