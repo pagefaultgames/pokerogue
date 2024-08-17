@@ -274,8 +274,8 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Schließe die 'Neuanfang' Herausforderung ab"
   },
   "INVERSE_BATTLE": {
-    name: "Mirror rorriM",
-    description: "Complete the Inverse Battle challenge.\n.egnellahc elttaB esrevnI eht etelpmoC"
+    name: "Spieglein, Spieglein an der Wand",
+    description: "Schließe die 'Umkehrkampf' Herausforderung ab"
   }
 } as const;
 
