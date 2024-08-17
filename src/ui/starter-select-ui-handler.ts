@@ -2975,7 +2975,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female!, formIndex, shiny, variant));
           currentFilteredContainer.checkIconId(female, formIndex, shiny, variant);
         }
-        this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
+        // First, ensure you have the caught attributes for the species else default to bigint 0
+        const caughtVariants = this.scene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0);
+        // Define the variables based on whether their respective variants have been caught
+        const isVariant3Caught = !!(caughtVariants & DexAttr.VARIANT_3);
+        const isVariant2Caught = !!(caughtVariants & DexAttr.VARIANT_2);
+        const isVariantCaught = !!(caughtVariants & DexAttr.SHINY);
+
+        this.canCycleShiny = isVariantCaught || isVariant2Caught || isVariant3Caught;
         this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
         this.canCycleAbility = [ abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
         this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
