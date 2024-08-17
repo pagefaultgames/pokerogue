@@ -66,8 +66,32 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.bg.setVisible(true);
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
-    messageHandler.message.setWordWrapWidth(1110);
-    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", {pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon())}), 0);
+    const currentLanguage = i18next.resolvedLanguage!;
+    const ignoreBalanceText = [];
+    const messageMaxWidth = this.scene.game.canvas.width - messageHandler.commandWindow.getBounds().width - messageHandler.message.getBounds().x;
+    messageHandler.message.setWordWrapWidth(messageMaxWidth);
+    const commandMessage = i18next.t("commandUiHandler:actionMessage", {pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon())});
+    const textWrapped = messageHandler.message.getWrappedText(commandMessage);
+    const fontSizeToNumber = (fs:number|string):number=>(parseInt(fs.toString().replace("px","")));
+    const fontSize = fontSizeToNumber(messageHandler.message.getData("originalFontSize") ?? messageHandler.message.style.fontSize);
+    messageHandler.message.setFontSize(fontSize);
+    messageHandler.message.setData("originalFontSize",messageHandler.message.getData("originalFontSize") ?? fontSize);
+
+    // Text Balance
+    if (!ignoreBalanceText.some(localKey=>localKey===currentLanguage) && textWrapped[1] && textWrapped.length <= messageHandler.message.style.maxLines && textWrapped[0].replace(" ","").length * 0.25 > textWrapped[1].replace(" ","").length) {
+      messageHandler.message.setWordWrapWidth((this.scene.game.canvas.width - messageHandler.commandWindow.getBounds().width - messageHandler.message.parentContainer.getBounds().x) * 0.65);
+    }
+
+    // Ajust Text
+    if (messageHandler.message.getWrappedText(commandMessage).length > messageHandler.message.style.maxLines) {
+      let fontDecrement = fontSize;
+      while (messageHandler.message.getWrappedText(commandMessage).length > messageHandler.message.style.maxLines) {
+        fontDecrement -= 1;
+        messageHandler.message.setFontSize(fontDecrement);
+      }
+    }
+
+    messageHandler.showText(commandMessage, 0);
     this.setCursor(this.getCursor());
 
     return true;
