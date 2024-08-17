@@ -24,6 +24,6 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "linkGoogle": "Link Google",
   "unlinkGoogle": "Unlink Google",
   "cancel": "取消",
-  "losingProgressionWarning": "你將失去自戰鬥開始以來的所有進度。是否 繼續？",
-  "noEggs": "You are not hatching any eggs at the moment!"
+  "losingProgressionWarning": "你將失去自戰鬥開始以來的所有進度。是否繼續？",
+  "noEggs": "當前沒有任何蛋正在孵化中！"
 } as const;
