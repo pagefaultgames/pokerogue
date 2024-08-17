@@ -31,7 +31,7 @@ export const challenges: TranslationEntries = {
   },
   "inverseBattle": {
     "name": "거꾸로 배틀",
-    "desc": "타입 상성이 반대로 바뀌고 면역 타입은 약점타입이 됩니다.\n활성화시 다른 챌린지 업적은 달성할 수 없습니다.",
+    "desc": "타입 상성이 반대로 바뀌고 면역 타입은 약점 타입이 됩니다.\n활성화시 다른 챌린지 업적은 달성할 수 없습니다.",
     "value.0": "해제",
     "value.1": "설정",
   }
