@@ -28,6 +28,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { MoveUsedEvent } from "#app/events/battle-scene.js";
+import { ModifierTier } from "#app/modifier/modifier-tier.js";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -6061,17 +6062,58 @@ export class SwapHeldItemsAttr extends MoveEffectAttr {
     }));
 
     if (targetHeldItems.length) {
-      const targetItemToSwap = targetHeldItems[target.randSeedInt(targetHeldItems.length)];
-      user.scene.tryTransferHeldItemModifier(targetItemToSwap, user, false);
+      const swapItemIdx = 0;
+      const targetPool = target.isPlayer() ? ModifierPoolType.PLAYER : ModifierPoolType.TRAINER;
+
+      for (let idx = 1; idx < targetHeldItems.length; idx++) {
+        const currentItemFlameOrToxic = targetHeldItems[swapItemIdx].type.id === "TOXIC_ORB" || targetHeldItems[swapItemIdx].type.id === "FLAME_ORB";
+        const nextItemNotFlameOrToxic = targetHeldItems[idx].type.id !== "TOXIC_ORB" && targetHeldItems[idx].type.id !== "FLAME_ORB";
+        let nextItemTier = targetHeldItems[idx].type.getOrInferTier(targetPool);
+        let currentItemTier = targetHeldItems[swapItemIdx].type.getOrInferTier(targetPool);
+        nextItemTier = nextItemTier !== null ? nextItemTier : ModifierTier.COMMON;
+        currentItemTier = currentItemTier !== null ? currentItemTier : ModifierTier.COMMON;
+
+        if (nextItemNotFlameOrToxic && (nextItemTier > currentItemTier || currentItemFlameOrToxic)) {
+          targetHeldItems[swapItemIdx] = targetHeldItems[idx];
+        }
+
+        if (targetHeldItems[swapItemIdx].type.tier === ModifierTier.LUXURY) {
+          break;
+        }
+      }
+      user.scene.tryTransferHeldItemModifier(targetHeldItems[swapItemIdx], user, false);
     }
 
     if (userHeldItems.length) {
-      const userItemToSwap = userHeldItems[user.randSeedInt(userHeldItems.length)];
-      target.scene.tryTransferHeldItemModifier(userItemToSwap, target, false);
+      let swapItemIdx = 0;
+      const userPool = user.isPlayer() ? ModifierPoolType.PLAYER : ModifierPoolType.TRAINER;
+
+      for (let idx = 1; idx < userHeldItems.length; idx++) {
+        if (userHeldItems[swapItemIdx].type.id === "TOXIC_ORB" || userHeldItems[swapItemIdx].type.id === "FLAME_ORB") {
+          break;
+        }
+
+        if (userHeldItems[idx].type.id === "TOXIC_ORB" || userHeldItems[idx].type.id === "FLAME_ORB") {
+          swapItemIdx = idx;
+          break;
+        }
+
+        let nextItemTier = userHeldItems[idx].type.getOrInferTier(userPool);
+        let currentItemTier = userHeldItems[swapItemIdx].type.getOrInferTier(userPool);
+        nextItemTier = nextItemTier !== null ? nextItemTier : ModifierTier.COMMON;
+        currentItemTier = currentItemTier !== null ? currentItemTier : ModifierTier.COMMON;
+
+        if (nextItemTier < currentItemTier) {
+          swapItemIdx = idx;
+        }
+      }
+
+      const swappedItemName = userHeldItems[swapItemIdx].type.name;
+      target.scene.tryTransferHeldItemModifier(userHeldItems[swapItemIdx], target, false);
 
       user.scene.queueMessage(i18next.t("moveTriggers:trickFoeNewItem", {
         pokemonNameWithAffix: getPokemonNameWithAffix(target),
-        itemName: userItemToSwap.type.name,
+        itemName: swappedItemName,
       }));
     }
     return true;
