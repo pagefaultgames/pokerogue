@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const gameStatsUiHandler: SimpleTranslationEntries = {
-  "stats": "実績",
+  "stats": "統計",
   "playTime": "プレー時間",
   "totalBattles": "合計バトル数",
   "starters": "スターター数",
