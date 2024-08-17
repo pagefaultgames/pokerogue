@@ -273,7 +273,7 @@ export default class FightUiHandler extends UiHandler {
 
     const moveColors = opponents.map((opponent) => {
       return opponent.getMoveEffectiveness(pokemon, pokemonMove);
-    }).filter((eff) => !!eff).sort((a, b) => b - a).map((effectiveness) => {
+    }).filter((eff) => eff !== null && eff !== undefined && eff !== false && !Number.isNaN(eff) && eff !== "").sort((a, b) => b - a).map((effectiveness) => {
       return getTypeDamageMultiplierColor(effectiveness, "offense");
     });
 
