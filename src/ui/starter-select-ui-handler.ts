@@ -2416,7 +2416,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     });
 
-    this.starterSelectScrollBar.setPages(Math.ceil((this.filteredStarterContainers.length - 81) / 9) + 1);
+    this.starterSelectScrollBar.setPages(Math.ceil(this.filteredStarterContainers.length / 9));
     this.starterSelectScrollBar.setPage(0);
 
     // sort
