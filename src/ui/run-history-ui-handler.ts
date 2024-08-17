@@ -83,7 +83,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
    * Button.ACTION allows the user to access more information about their runs.
    * Button.CANCEL allows the user to go back.
    */
-  processInput(button: Button): boolean {
+  override processInput(button: Button): boolean {
     const ui = this.getUi();
 
     let success = false;
@@ -156,7 +156,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     }
   }
 
-  setCursor(cursor: number): boolean {
+  override setCursor(cursor: number): boolean {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
@@ -189,7 +189,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
    * Called when the player returns back to the menu
    * Uses the functions clearCursor() and clearRuns()
    */
-  clear() {
+  override clear() {
     super.clear();
     this.runSelectContainer.setVisible(false);
     this.clearCursor();
