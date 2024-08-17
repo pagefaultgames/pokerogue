@@ -186,9 +186,9 @@ export function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: b
     }
   })
   if (func_output != "") {
-    //return func_output
+    return func_output
   }
-  //return "Can't catch"
+  return "Can't catch"
   var n = ""
   switch (rates2[0]) {
     case rates[0]:
@@ -215,7 +215,7 @@ export function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: b
         return "No balls"
       }
   }
-  //return n + " (FAIL)"
+  return n + " (FAIL)"
   return n + Math.round(rates2[0] * 100) + "%";
 }
 export function parseSlotData(slotId: integer): SessionSaveData {
@@ -2901,7 +2901,7 @@ export class TurnInitPhase extends FieldPhase {
     LoggerTools.enemyPlan[2] = ""
     LoggerTools.enemyPlan[3] = ""
 
-    if (true) {
+    if (false) {
       this.scene.getField().forEach((pokemon, i) => {
         if (pokemon != undefined && pokemon != null)
           console.log("Handle " + pokemon.name)
@@ -3292,8 +3292,8 @@ export class EnemyCommandPhase extends FieldPhase {
             console.log(enemyPokemon.name + " selects:", "Switch to " + this.scene.getEnemyParty()[index].name)
             battle.enemySwitchCounter++;
 
-            //LoggerTools.enemyPlan[this.fieldIndex*2] = "Switching out"
-            //LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + this.scene.getEnemyParty()[index].name
+            LoggerTools.enemyPlan[this.fieldIndex*2] = "Switching out"
+            LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + this.scene.getEnemyParty()[index].name
 
             enemyPokemon.flyout.setText()
 
@@ -3334,8 +3334,8 @@ export class EnemyCommandPhase extends FieldPhase {
     console.log(enemyPokemon.name + " selects:", mv.getName() + " → " + nextMove.targets.map((m) => targetLabels[m + 1]))
     this.scene.currentBattle.enemySwitchCounter = Math.max(this.scene.currentBattle.enemySwitchCounter - 1, 0);
 
-    //LoggerTools.enemyPlan[this.fieldIndex*2] = mv.getName()
-    //LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + nextMove.targets.map((m) => targetLabels[m + 1])
+    LoggerTools.enemyPlan[this.fieldIndex*2] = mv.getName()
+    LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + nextMove.targets.map((m) => targetLabels[m + 1])
     this.scene.arenaFlyout.updateFieldText()
 
     this.scene.updateCatchRate()
