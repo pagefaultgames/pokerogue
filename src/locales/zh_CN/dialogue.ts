@@ -2487,7 +2487,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "@c{smile_wave}哦，真巧，在这里遇见你。\n看来你还没输过嘛。@c{angry_mopen}哈……好家伙！$@c{angry_mopen}我知道你在想什么，\n不，我才不会跟踪你什么呢。 @c{smile_eclosed}我只是碰巧在附近。$@c{smile_ehalf}我为你感到高兴，但我只想让你知道\n有时输了是可以接受的。$@c{smile}我们从错误中学到的东西\n往往比我们一直成功时学到的还要多。$@c{angry_mopen}无论如何，我为了我们的复赛已经努力训练了\n所以你最好全力以赴！",
     },
     "victory": {
-      1: "@c{neutral}我……没打算会输来着……$@c{smile}嗷……好吧。看来我要再更加努力训练了！$@c{smile_wave}我还给你带了个这个$@c{smile_wave_wink}不用谢我哦~.$@c{angry_mopen}不过，这是最后一个啦！\n你可别想再从我这赚小便宜了~$@c{smile_wave}要保重哦, and enjoy the event！",
+      1: "@c{neutral}我……没打算会输来着……$@c{smile}嗷……好吧。看来我要再更加努力训练了！$@c{smile_wave}我还给你带了个这个$@c{smile_wave_wink}不用谢我哦~.$@c{angry_mopen}不过，这是最后一个啦！\n你可别想再从我这赚小便宜了~$@c{smile_wave}要保重哦，要享受活动哦！",
     },
     "defeat": {
       1: "输了有时候也不要紧的…",
