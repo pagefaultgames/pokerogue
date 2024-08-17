@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
-import { getTypeDamageMultiplierColor, Type } from "../data/type";
+import {getTypeDamageMultiplierColor, Type, TypeDamageMultiplier} from "../data/type";
 import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
@@ -273,9 +273,9 @@ export default class FightUiHandler extends UiHandler {
 
     const moveColors = opponents.map((opponent) => {
       return opponent.getMoveEffectiveness(pokemon, pokemonMove);
-    }).filter((eff): eff is number => {
-      return typeof eff === "number";
-    }).sort((a, b) => b - a).map((effectiveness) => {
+    }).filter((eff): eff is TypeDamageMultiplier => {
+      return true;
+    }).sort((a, b) => (b ?? 0) - (a ?? 0)).map((effectiveness) => {
       return getTypeDamageMultiplierColor(effectiveness, "offense");
     });
 
