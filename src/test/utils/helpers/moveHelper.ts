@@ -1,6 +1,8 @@
 import { vi } from "vitest";
 import { MoveEffectPhase } from "#app/phases.js";
 import { GameManagerHelper } from "./gameManagerHelper";
+import { Moves } from "#app/enums/moves.js";
+import { getMovePosition } from "../gameManagerUtils";
 
 /**
  * Helper to handle a Pokemon's move
@@ -31,5 +33,14 @@ export class MoveHelper extends GameManagerHelper {
     } else {
       hitCheck.mockReturnValue(false);
     }
+  }
+
+  /**
+     * Select the move to be used by the given Pokemon(-index)
+     * @param move the move to use
+     * @param pkmIndex the pokemon index. Relevant for double-battles only (defaults to 0)
+     */
+  select(move: Moves, pkmIndex: 0 | 1 = 0) {
+    this.game.selectMove(getMovePosition(this.game.scene, pkmIndex, move));
   }
 }
