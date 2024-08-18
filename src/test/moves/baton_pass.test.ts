@@ -65,7 +65,7 @@ describe("Moves - Baton Pass", () => {
     // arrange
     game.override
       .startingWave(5)
-      .enemyMoveset(new Array(4).fill([Moves.NASTY_PLOT]);
+      .enemyMoveset(new Array(4).fill([Moves.NASTY_PLOT]));
     await game.startBattle([
       Species.RAICHU,
       Species.SHUCKLE
