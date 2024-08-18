@@ -261,7 +261,6 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
             this.pokemonFormText.disableInteractive();
           }
         }
-
       } else {
         this.pokemonFormLabelText.setVisible(false);
         this.pokemonFormText.setVisible(false);
