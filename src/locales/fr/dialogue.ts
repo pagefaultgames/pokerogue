@@ -647,39 +647,39 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "lt_surge": {
     "encounter": {
-      1: "My Electric Pokémon saved me during the war! I'll show you how!",
-      2: "Ten-hut! I'll shock you into surrender!",
-      3: "I'll zap you just like I do to all my enemies in battle!"
+      1: "T’as pas froid aux yeux, soldat ! Les combats Pokémon, c’est la guerre !",
+      2: "Tu as du guts pour venir me fight ici ! Je vais te shock !",
+      3: "Compte tes dents, tu vas morfler !\nMes Pokémon Électrik vont t’atomiser !"
     },
     "victory": {
-      1: "Whoa! Your team's the real deal, kid!",
-      2: "Aaargh, you're strong! Even my electric tricks lost against you.",
-      3: "That was an absolutely shocking loss!"
+      1: "Whoo ! T’iras loin toi.",
+      2: "Oh noes ! Mes tricks électriques sont à plat…\nYou are very fortiche!",
+      3: "Tu es very costaud ! Je vais training very dur mes Pokémon, moi too, et on sera Number One !"
     },
     "defeat": {
-      1: "Oh yeah! When it comes to Electric-type Pokémon, I'm number one in the world!",
-      2: "Hahaha! That was an electrifying battle, kid!",
-      3: "A Pokémon battle is war, and I have showed you first-hand combat!"
+      1: "Oh yeah !\nMes Pokémon Électrik sont les best du monde !",
+      2: "Oh yeah, baby ! I am trop fort !",
+      3: "Une combat Pokémon, c’est comme une guerre et t’as eu droit à une bataille de premier ordre !"
     }
   },
   "erika": {
     "encounter": {
-      1: "Ah, the weather is lovely here…\nOh, a battle? Very well then.",
-      2: "My Pokémon battling skills rival that of my flower arranging skills.",
-      3: "Oh, I hope the pleasant aroma of my Pokémon doesn't put me to sleep again…",
-      4: "Seeing flowers in a garden is so soothing."
+      1: "Il fait beau, aujourd’hui, n'est-ce pas… ?\nQuoi un combat… ? Très bien…",
+      2: "L’arrangement floral est ma spécialité, et mes Pokémon sont de type Plante. Quoi ? Tu veux te battre ?",
+      3: "Il fait beau… Le soleil brille… Les plantes bourgeonnent… Je m’ennuie…",
+      4: "Voir un tel jardin rempli de fleurs et si apaisant…"
     },
     "victory": {
-      1: "Oh! I concede defeat.",
-      2: "That match was most delightful.",
-      3: "Ah, it appears it is my loss…",
-      4: "Oh, my goodness."
+      1: "Bien joué, c’est mértié.",
+      2: "Dommage, on s’amusait si bien…",
+      3: "Oh non, le combat est terminé…",
+      4: "Aaah, ça fait du bien !\nMerci, j’en avais besoin."
     },
     "defeat": {
-      1: "I was afraid I would doze off…",
-      2: "Oh my, it seems my Grass Pokémon overwhelmed you.",
-      3: "That battle was such a soothing experience.",
-      4: "Oh… Is that all?"
+      1: "J’ai failli m’endormir…",
+      2: "Oh non… Mes Pokémon Plante ont l’air de t’avoir bien endormi…",
+      3: "Ce combat était si apaisant…",
+      4: "Oh non… C’est tout ?"
     }
   },
   "janine": {
@@ -3399,39 +3399,39 @@ export const PGFdialogue: DialogueTranslationEntries = {
   },
   "lt_surge": {
     "encounter": {
-      1: "My Electric Pokémon saved me during the war! I'll show you how!",
-      2: "Ten-hut! I'll shock you into surrender!",
-      3: "I'll zap you just like I do to all my enemies in battle!"
+      1: "T’as pas froid aux yeux, soldat ! Les combats Pokémon, c’est la guerre !",
+      2: "Tu as du guts pour venir me fight ici ! Je vais te shock !",
+      3: "Compte tes dents, tu vas morfler !\nMes Pokémon Électrik vont t’atomiser !"
     },
     "victory": {
-      1: "Whoa! Your team's the real deal, kid!",
-      2: "Aaargh, you're strong! Even my electric tricks lost against you.",
-      3: "That was an absolutely shocking loss!"
+      1: "Whoo ! T’iras loin toi.",
+      2: "Oh noes ! Mes tricks électriques sont à plat…\nYou are very fortiche!",
+      3: "Tu es very costaud ! Je vais training very dur mes Pokémon, moi too, et on sera Number One !"
     },
     "defeat": {
-      1: "Oh yeah! When it comes to Electric-type Pokémon, I'm number one in the world!",
-      2: "Hahaha! That was an electrifying battle, kid!",
-      3: "A Pokémon battle is war, and I have showed you first-hand combat!"
+      1: "Oh yeah !\nMes Pokémon Électrik sont les best du monde !",
+      2: "Oh yeah, baby ! I am trop fort !",
+      3: "Une combat Pokémon, c’est comme une guerre et t’as eu droit à une bataille de premier ordre !"
     }
   },
   "erika": {
     "encounter": {
-      1: "Ah, the weather is lovely here…\nOh, a battle? Very well then.",
-      2: "My Pokémon battling skills rival that of my flower arranging skills.",
-      3: "Oh, I hope the pleasant aroma of my Pokémon doesn't put me to sleep again…",
-      4: "Seeing flowers in a garden is so soothing."
+      1: "Il fait beau, aujourd’hui, n'est-ce pas… ?\nQuoi un combat… ? Très bien…",
+      2: "L’arrangement floral est ma spécialité, et mes Pokémon sont de type Plante. Quoi ? Tu veux te battre ?",
+      3: "Il fait beau… Le soleil brille… Les plantes bourgeonnent… Je m’ennuie…",
+      4: "Voir un tel jardin rempli de fleurs et si apaisant…"
     },
     "victory": {
-      1: "Oh! I concede defeat.",
-      2: "That match was most delightful.",
-      3: "Ah, it appears it is my loss…",
-      4: "Oh, my goodness."
+      1: "Bien joué, c’est mértié.",
+      2: "Dommage, on s’amusait si bien…",
+      3: "Oh non, le combat est terminé…",
+      4: "Aaah, ça fait du bien !\nMerci, j’en avais besoin."
     },
     "defeat": {
-      1: "I was afraid I would doze off…",
-      2: "Oh my, it seems my Grass Pokémon overwhelmed you.",
-      3: "That battle was such a soothing experience.",
-      4: "Oh… Is that all?"
+      1: "J’ai failli m’endormir…",
+      2: "Oh non… Mes Pokémon Plante ont l’air de t’avoir bien endormie…",
+      3: "Ce combat était si apaisant…",
+      4: "Oh non… C’est tout ?"
     }
   },
   "janine": {
