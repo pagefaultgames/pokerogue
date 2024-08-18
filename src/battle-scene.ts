@@ -2666,7 +2666,9 @@ export default class BattleScene extends SceneBase {
     if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
       this.fadeOutBgm(Utils.fixedInt(2000), false);
       this.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.species.name, undefined, () => {
-        this.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
+        const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier;
+        finalBossMBH.setTransferrableFalse();
+        this.addEnemyModifier(finalBossMBH, false, true);
         pokemon.generateAndPopulateMoveset(1);
         this.setFieldScale(0.75);
         this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
