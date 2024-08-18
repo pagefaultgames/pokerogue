@@ -4033,13 +4033,24 @@ export class FaintPhase extends PokemonPhase {
     }
 
     if (this.player) {
-      const nonFaintedLegalPartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
-      const nonFaintedPartyMemberCount = nonFaintedLegalPartyMembers.length;
-      if (!nonFaintedPartyMemberCount) {
+      /** The total number of Pokemon in the player's party that can legally fight */
+      const legalPlayerPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
+      /** The total number of legal player Pokemon that aren't currently on the field */
+      const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
+      if (!legalPlayerPokemon.length) {
+        /** If the player doesn't have any legal Pokemon, end the game */
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
-      } else if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double) {
+      } else if (this.scene.currentBattle.double && legalPlayerPokemon.length === 1 && legalPlayerPartyPokemon.length === 0) {
+        /**
+         * If the player has exactly one Pokemon in total at this point in a double battle, and that Pokemon
+         * is already on the field, unshift a phase that moves that Pokemon to center position.
+         */
         this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
-      } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount()) {
+      } else if (legalPlayerPartyPokemon.length > 0) {
+        /**
+         * If previous conditions weren't met, and the player has at least 1 legal Pokemon off the field,
+         * push a phase that prompts the player to summon a Pokemon from their party.
+         */
         this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
       }
     } else {
