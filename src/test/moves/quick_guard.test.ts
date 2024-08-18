@@ -1,12 +1,11 @@
+import { BattleStat } from "#app/data/battle-stat.js";
+import { BerryPhase, CommandPhase } from "#app/phases.js";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "../utils/gameManager";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, CommandPhase } from "#app/phases.js";
-import { BattleStat } from "#app/data/battle-stat.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -46,11 +45,11 @@ describe("Moves - Quick Guard", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.move.select(Moves.QUICK_GUARD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -68,11 +67,11 @@ describe("Moves - Quick Guard", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.move.select(Moves.QUICK_GUARD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -90,11 +89,11 @@ describe("Moves - Quick Guard", () => {
       const leadPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.move.select(Moves.QUICK_GUARD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.selectMove(getMovePosition(game.scene, 1, Moves.FOLLOW_ME));
+      game.move.select(Moves.FOLLOW_ME, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

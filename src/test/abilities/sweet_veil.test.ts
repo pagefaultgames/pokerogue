@@ -1,14 +1,14 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
-import { Species } from "#enums/species";
+import { BattlerIndex } from "#app/battle.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { CommandPhase, MovePhase, TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerIndex } from "#app/battle.js";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Sweet Veil", () => {
   let phaserGame: Phaser.Game;
@@ -36,8 +36,8 @@ describe("Abilities - Sweet Veil", () => {
   it("prevents the user and its allies from falling asleep", async () => {
     await game.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -48,8 +48,8 @@ describe("Abilities - Sweet Veil", () => {
     game.override.enemyMoveset(SPLASH_ONLY);
     await game.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.selectMove(getMovePosition(game.scene, 1, Moves.REST));
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.REST, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -60,8 +60,8 @@ describe("Abilities - Sweet Veil", () => {
     game.override.enemyMoveset([Moves.YAWN, Moves.YAWN, Moves.YAWN, Moves.YAWN]);
     await game.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -76,8 +76,8 @@ describe("Abilities - Sweet Veil", () => {
 
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE, Species.SWIRLIX]);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH, 1);
 
     // First pokemon move
     await game.move.forceHit();

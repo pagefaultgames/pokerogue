@@ -2,10 +2,9 @@ import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import { MoveEffectPhase, TurnEndPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -40,14 +39,14 @@ describe("Arena - Gravity", () => {
 
     // Setup Gravity on first turn
     await game.startBattle([Species.PIKACHU]);
-    game.selectMove(getMovePosition(game.scene, 0, Moves.GRAVITY));
+    game.move.select(Moves.GRAVITY);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
 
     // Use non-OHKO move on second turn
     await game.toNextTurn();
-    game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100 * 1.67);
@@ -64,14 +63,14 @@ describe("Arena - Gravity", () => {
 
     // Setup Gravity on first turn
     await game.startBattle([Species.PIKACHU]);
-    game.selectMove(getMovePosition(game.scene, 0, Moves.GRAVITY));
+    game.move.select(Moves.GRAVITY);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
 
     // Use OHKO move on second turn
     await game.toNextTurn();
-    game.selectMove(getMovePosition(game.scene, 0, Moves.FISSURE));
+    game.move.select(Moves.FISSURE);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(30);

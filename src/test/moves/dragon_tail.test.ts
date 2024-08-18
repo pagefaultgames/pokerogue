@@ -1,14 +1,13 @@
+import { BattlerIndex } from "#app/battle.js";
 import { allMoves } from "#app/data/move.js";
-import { SPLASH_ONLY } from "../utils/testUtils";
-import { BattleEndPhase, BerryPhase, TurnEndPhase} from "#app/phases.js";
+import { BattleEndPhase, BerryPhase, TurnEndPhase } from "#app/phases.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { BattlerIndex } from "#app/battle.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -46,7 +45,7 @@ describe("Moves - Dragon Tail", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+      game.move.select(Moves.DRAGON_TAIL);
 
       await game.phaseInterceptor.to(BerryPhase);
 
@@ -71,7 +70,7 @@ describe("Moves - Dragon Tail", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+      game.move.select(Moves.DRAGON_TAIL);
 
       await game.phaseInterceptor.to(BerryPhase);
 
@@ -83,7 +82,7 @@ describe("Moves - Dragon Tail", () => {
   );
 
   test(
-    "Double battles should proceed without crashing" ,
+    "Double battles should proceed without crashing",
     async () => {
       game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
       game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER])
@@ -100,10 +99,10 @@ describe("Moves - Dragon Tail", () => {
       expect(enemyLeadPokemon).toBeDefined();
       expect(enemySecPokemon).toBeDefined();
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+      game.move.select(Moves.DRAGON_TAIL);
       game.doSelectTarget(BattlerIndex.ENEMY);
 
-      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -116,9 +115,9 @@ describe("Moves - Dragon Tail", () => {
 
       // second turn
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
+      game.move.select(Moves.FLAMETHROWER);
       game.doSelectTarget(BattlerIndex.ENEMY_2);
-      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase);
       expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
@@ -126,7 +125,7 @@ describe("Moves - Dragon Tail", () => {
   );
 
   test(
-    "Flee move redirection works" ,
+    "Flee move redirection works",
     async () => {
       game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
       game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER]);
@@ -143,11 +142,11 @@ describe("Moves - Dragon Tail", () => {
       expect(enemyLeadPokemon).toBeDefined();
       expect(enemySecPokemon).toBeDefined();
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+      game.move.select(Moves.DRAGON_TAIL);
       game.doSelectTarget(BattlerIndex.ENEMY);
 
       // target the same pokemon, second move should be redirected after first flees
-      game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+      game.move.select(Moves.DRAGON_TAIL);
       game.doSelectTarget(BattlerIndex.ENEMY);
 
       await game.phaseInterceptor.to(BerryPhase);

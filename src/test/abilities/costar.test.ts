@@ -3,11 +3,10 @@ import { Abilities } from "#app/enums/abilities.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
 import { CommandPhase, MessagePhase } from "#app/phases.js";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -43,15 +42,15 @@ describe("Abilities - COSTAR", () => {
 
       let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.NASTY_PLOT));
+      game.move.select(Moves.NASTY_PLOT);
       await game.phaseInterceptor.to(CommandPhase);
-      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
       await game.toNextTurn();
 
       expect(leftPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(+2);
       expect(rightPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(0);
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(CommandPhase);
       game.doSwitchPokemon(2);
       await game.phaseInterceptor.to(MessagePhase);
@@ -75,7 +74,7 @@ describe("Abilities - COSTAR", () => {
       expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
       expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(CommandPhase);
       game.doSwitchPokemon(2);
       await game.phaseInterceptor.to(MessagePhase);

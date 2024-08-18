@@ -2,13 +2,13 @@ import { allAbilities } from "#app/data/ability.js";
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { MoveEffectPhase, SelectTargetPhase } from "#app/phases.js";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Steely Spirit", () => {
   let phaserGame: Phaser.Game;
@@ -49,7 +49,7 @@ describe("Abilities - Steely Spirit", () => {
     game.selectMove(getMovePosition(game.scene, 0, moveToCheck));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
-    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(allMoves[moveToCheck].calculateBattlePower).toHaveReturnedWith(ironHeadPower * steelySpiritMultiplier);
@@ -92,7 +92,7 @@ describe("Abilities - Steely Spirit", () => {
     game.selectMove(getMovePosition(game.scene, 0, moveToCheck));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
-    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(allMoves[moveToCheck].calculateBattlePower).toHaveReturnedWith(ironHeadPower);

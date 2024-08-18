@@ -1,12 +1,11 @@
+import { BattleStat } from "#app/data/battle-stat.js";
+import { BerryPhase, CommandPhase, TurnEndPhase } from "#app/phases.js";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "../utils/gameManager";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, CommandPhase, TurnEndPhase } from "#app/phases.js";
-import { BattleStat } from "#app/data/battle-stat.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -46,11 +45,11 @@ describe("Moves - Mat Block", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.MAT_BLOCK));
+      game.move.select(Moves.MAT_BLOCK);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -67,11 +66,11 @@ describe("Moves - Mat Block", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.MAT_BLOCK));
+      game.move.select(Moves.MAT_BLOCK);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -86,18 +85,18 @@ describe("Moves - Mat Block", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(CommandPhase);
-      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const leadStartingHp = leadPokemon.map(p => p.hp);
 
       await game.phaseInterceptor.to(CommandPhase, false);
-      game.selectMove(getMovePosition(game.scene, 0, Moves.MAT_BLOCK));
+      game.move.select(Moves.MAT_BLOCK);
       await game.phaseInterceptor.to(CommandPhase);
-      game.selectMove(getMovePosition(game.scene, 1, Moves.MAT_BLOCK));
+      game.move.select(Moves.MAT_BLOCK, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

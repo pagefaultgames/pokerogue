@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { BattleStat } from "#app/data/battle-stat.js";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { CommandPhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase, TurnInitPhase } from "#app/phases.js";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { SPLASH_ONLY } from "../utils/testUtils";
 import { Mode } from "#app/ui/ui.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -47,7 +46,7 @@ describe("Abilities - Disguise", () => {
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
+    game.move.select(Moves.SHADOW_SNEAK);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -62,7 +61,7 @@ describe("Abilities - Disguise", () => {
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.VACUUM_WAVE));
+    game.move.select(Moves.VACUUM_WAVE);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -80,7 +79,7 @@ describe("Abilities - Disguise", () => {
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SURGING_STRIKES));
+    game.move.select(Moves.SURGING_STRIKES);
 
     // First hit
     await game.phaseInterceptor.to(MoveEffectPhase);
@@ -99,7 +98,7 @@ describe("Abilities - Disguise", () => {
     const mimikyu = game.scene.getEnemyPokemon()!;
     expect(mimikyu.hp).toBe(mimikyu.getMaxHp());
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.TOXIC_THREAD));
+    game.move.select(Moves.TOXIC_THREAD);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -119,7 +118,7 @@ describe("Abilities - Disguise", () => {
     const maxHp = mimikyu.getMaxHp();
     const disguiseDamage = Math.floor(maxHp / 8);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -144,7 +143,7 @@ describe("Abilities - Disguise", () => {
     const mimikyu = game.scene.getParty()[1]!;
     expect(mimikyu.formIndex).toBe(bustedForm);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
 
@@ -164,7 +163,7 @@ describe("Abilities - Disguise", () => {
 
     expect(mimikyu.formIndex).toBe(bustedForm);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
 
@@ -184,11 +183,11 @@ describe("Abilities - Disguise", () => {
 
     expect(mimikyu1.formIndex).toBe(bustedForm);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.killPokemon(mimikyu1);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => { // TODO: Make tests run in set mode instead of switch mode
       game.setMode(Mode.MESSAGE);

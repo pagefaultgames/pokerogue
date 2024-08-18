@@ -5,7 +5,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const TIMEOUT = 20 * 1000;
@@ -53,7 +52,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
       zygarde!.status = new Status(StatusEffect.FAINT);
       expect(zygarde!.isFainted()).toBe(true);
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       await game.doKillOpponents();
       await game.phaseInterceptor.to(TurnEndPhase);
       game.doSelectModifier();

@@ -6,7 +6,6 @@ import { MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -31,8 +30,8 @@ describe("Moves - Roost", () => {
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([ Moves.STOMPING_TANTRUM ]);
-    game.override.enemyMoveset([Moves.ROOST,Moves.ROOST,Moves.ROOST,Moves.ROOST]);
+    game.override.moveset([Moves.STOMPING_TANTRUM]);
+    game.override.enemyMoveset([Moves.ROOST, Moves.ROOST, Moves.ROOST, Moves.ROOST]);
   });
 
   test(
@@ -44,7 +43,7 @@ describe("Moves - Roost", () => {
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.STOMPING_TANTRUM));
+      game.move.select(Moves.STOMPING_TANTRUM);
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 

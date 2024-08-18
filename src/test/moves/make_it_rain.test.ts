@@ -1,13 +1,12 @@
 import { BattleStat } from "#app/data/battle-stat.js";
 import { MoveEndPhase, StatChangePhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -41,8 +40,8 @@ describe("Moves - Make It Rain", () => {
 
     const playerPokemon = game.scene.getPlayerField();
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
-    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.MAKE_IT_RAIN);
+    game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -58,7 +57,7 @@ describe("Moves - Make It Rain", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
+    game.move.select(Moves.MAKE_IT_RAIN);
 
     await game.phaseInterceptor.to(StatChangePhase);
 
@@ -74,8 +73,8 @@ describe("Moves - Make It Rain", () => {
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
-    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.MAKE_IT_RAIN);
+    game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to(StatChangePhase);
 
@@ -88,8 +87,8 @@ describe("Moves - Make It Rain", () => {
 
     const playerPokemon = game.scene.getPlayerField();
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
-    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.MAKE_IT_RAIN);
+    game.move.select(Moves.SPLASH, 1);
 
     // Make Make It Rain miss the first target
     await game.move.forceMiss(true);

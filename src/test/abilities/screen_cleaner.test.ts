@@ -1,10 +1,9 @@
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import { PostSummonPhase, TurnEndPhase, } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -35,7 +34,7 @@ describe("Abilities - Screen Cleaner", () => {
 
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.HAIL));
+    game.move.select(Moves.HAIL);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.AURORA_VEIL)).toBeDefined();
@@ -52,7 +51,7 @@ describe("Abilities - Screen Cleaner", () => {
 
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.LIGHT_SCREEN)).toBeDefined();
@@ -69,7 +68,7 @@ describe("Abilities - Screen Cleaner", () => {
 
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.REFLECT)).toBeDefined();

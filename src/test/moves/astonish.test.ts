@@ -4,10 +4,9 @@ import { BerryPhase, CommandPhase, MoveEndPhase, TurnEndPhase } from "#app/phase
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -47,7 +46,7 @@ describe("Moves - Astonish", () => {
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.ASTONISH));
+      game.move.select(Moves.ASTONISH);
 
       await game.phaseInterceptor.to(MoveEndPhase, false);
 
@@ -60,7 +59,7 @@ describe("Moves - Astonish", () => {
 
       await game.phaseInterceptor.to(CommandPhase, false);
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

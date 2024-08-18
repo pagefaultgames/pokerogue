@@ -1,14 +1,14 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
-import { Species } from "#enums/species";
+import { BattlerIndex } from "#app/battle.js";
+import { allAbilities } from "#app/data/ability.js";
+import { StatusEffect } from "#app/data/status-effect.js";
+import { Abilities } from "#app/enums/abilities.js";
 import { CommandPhase, TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { StatusEffect } from "#app/data/status-effect.js";
-import { allAbilities } from "#app/data/ability.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerIndex } from "#app/battle.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Pastel Veil", () => {
   let phaserGame: Phaser.Game;
@@ -41,8 +41,8 @@ describe("Abilities - Pastel Veil", () => {
 
     expect(ponyta.hasAbility(Abilities.PASTEL_VEIL)).toBe(true);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -57,8 +57,8 @@ describe("Abilities - Pastel Veil", () => {
 
     expect(ponyta.hasAbility(Abilities.PASTEL_VEIL)).toBe(true);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(game.scene.getPlayerField().some(p => p.status?.effect === StatusEffect.POISON)).toBe(true);

@@ -1,17 +1,17 @@
+import { BattlerIndex } from "#app/battle.js";
 import { Stat } from "#app/data/pokemon-stat";
 import { Status, StatusEffect } from "#app/data/status-effect.js";
 import { QuietFormChangePhase } from "#app/form-change-phase";
 import { CommandPhase, DamagePhase, EnemyCommandPhase, MessagePhase, PostSummonPhase, SwitchPhase, SwitchSummonPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import { BattlerIndex } from "#app/battle.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -160,7 +160,7 @@ describe("Abilities - ZEN MODE", () => {
       darmanitan.status = new Status(StatusEffect.FAINT);
       expect(darmanitan.isFainted()).toBe(true);
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       await game.doKillOpponents();
       await game.phaseInterceptor.to(TurnEndPhase);
       game.doSelectModifier();

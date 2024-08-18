@@ -1,10 +1,9 @@
 import { BattlerIndex } from "#app/battle.js";
 import { CommandPhase, SelectTargetPhase, TurnEndPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -31,16 +30,16 @@ describe("Moves - Rage Powder", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
-    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
   test(
     "move effect should be bypassed by Grass type",
     async () => {
-      game.override.enemyMoveset([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
+      game.override.enemyMoveset([Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER]);
 
-      await game.startBattle([ Species.AMOONGUSS, Species.VENUSAUR ]);
+      await game.startBattle([Species.AMOONGUSS, Species.VENUSAUR]);
 
       const playerPokemon = game.scene.getPlayerField();
       expect(playerPokemon.length).toBe(2);
@@ -52,12 +51,12 @@ describe("Moves - Rage Powder", () => {
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+      game.move.select(Moves.QUICK_ATTACK);
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY);
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.selectMove(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
+      game.move.select(Moves.QUICK_ATTACK, 1);
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);
@@ -72,10 +71,10 @@ describe("Moves - Rage Powder", () => {
     "move effect should be bypassed by Overcoat",
     async () => {
       game.override.ability(Abilities.OVERCOAT);
-      game.override.enemyMoveset([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
+      game.override.enemyMoveset([Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER]);
 
       // Test with two non-Grass type player Pokemon
-      await game.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);
+      await game.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
       const playerPokemon = game.scene.getPlayerField();
       expect(playerPokemon.length).toBe(2);
@@ -87,12 +86,12 @@ describe("Moves - Rage Powder", () => {
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+      game.move.select(Moves.QUICK_ATTACK);
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY);
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.selectMove(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
+      game.move.select(Moves.QUICK_ATTACK, 1);
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);

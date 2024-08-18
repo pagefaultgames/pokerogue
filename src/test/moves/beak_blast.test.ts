@@ -1,13 +1,12 @@
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "#test/utils/gameManager";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { BerryPhase, MovePhase, TurnEndPhase } from "#app/phases";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
+import { BerryPhase, MovePhase, TurnEndPhase } from "#app/phases";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -46,7 +45,7 @@ describe("Moves - Beak Blast", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.move.select(Moves.BEAK_BLAST);
 
       await game.phaseInterceptor.to(MovePhase, false);
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
@@ -66,7 +65,7 @@ describe("Moves - Beak Blast", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.move.select(Moves.BEAK_BLAST);
 
       await game.phaseInterceptor.to(MovePhase, false);
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
@@ -86,7 +85,7 @@ describe("Moves - Beak Blast", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.move.select(Moves.BEAK_BLAST);
 
       await game.phaseInterceptor.to(MovePhase, false);
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
@@ -99,13 +98,13 @@ describe("Moves - Beak Blast", () => {
   it(
     "should only hit twice with Multi-Lens",
     async () => {
-      game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
+      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
       await game.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.move.select(Moves.BEAK_BLAST);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(leadPokemon.turnData.hitCount).toBe(2);
@@ -122,7 +121,7 @@ describe("Moves - Beak Blast", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.move.select(Moves.BEAK_BLAST);
 
       await game.phaseInterceptor.to(MovePhase, false);
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();

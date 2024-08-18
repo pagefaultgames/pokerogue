@@ -2,12 +2,12 @@ import { getMoveTargets } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Species } from "#app/enums/species.js";
 import { TurnEndPhase } from "#app/phases.js";
-import GameManager from "#test/utils/gameManager";
 import { Moves } from "#enums/moves";
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -95,8 +95,8 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
     game.scene.getEnemyField()[1].abilityIndex = ability;
   }
 
-  game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
-  game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+  game.move.select(Moves.SPLASH);
+  game.move.select(Moves.SPLASH, 1);
 
 
   await game.phaseInterceptor.to(TurnEndPhase);
@@ -107,7 +107,7 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
   const initialHp = game.scene.getEnemyField()[0].hp;
   game.selectMove(getMovePosition(game.scene, 0, attackMove));
   if (!killAlly) {
-    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.SPLASH, 1);
   }
 
   await game.phaseInterceptor.to(TurnEndPhase);

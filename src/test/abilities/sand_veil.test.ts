@@ -5,10 +5,9 @@ import { CommandPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -62,11 +61,11 @@ describe("Abilities - Sand Veil", () => {
       expect(leadPokemon[0].hasAbility(Abilities.SAND_VEIL)).toBe(true);
       expect(leadPokemon[1].hasAbility(Abilities.SAND_VEIL)).toBe(false);
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
 

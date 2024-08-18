@@ -8,7 +8,6 @@ import { CommandPhase, MoveEndPhase, SelectTargetPhase } from "#app/phases.js";
 import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000; // 20 seconds
 
@@ -58,13 +57,13 @@ describe("Items - Grip Claw", () => {
 
       const enemyHeldItemCt = enemyPokemon.map(p => p.getHeldItems.length);
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.POPULATION_BOMB));
+      game.move.select(Moves.POPULATION_BOMB);
 
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY);
 
       await game.phaseInterceptor.to(CommandPhase, false);
-      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(MoveEndPhase, false);
 

@@ -2,13 +2,12 @@ import { BattleStat } from "#app/data/battle-stat";
 import { Species } from "#app/enums/species.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { DamagePhase, TurnEndPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Fissure", () => {
   let phaserGame: Phaser.Game;
@@ -56,7 +55,7 @@ describe("Moves - Fissure", () => {
     game.override.ability(Abilities.NO_GUARD);
     game.override.enemyAbility(Abilities.FUR_COAT);
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.FISSURE));
+    game.move.select(Moves.FISSURE);
     await game.phaseInterceptor.to(DamagePhase, true);
 
     expect(enemyPokemon.isFainted()).toBe(true);
@@ -67,7 +66,7 @@ describe("Moves - Fissure", () => {
 
     enemyPokemon.summonData.battleStats[BattleStat.ACC] = -6;
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.FISSURE));
+    game.move.select(Moves.FISSURE);
 
     // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -80,7 +79,7 @@ describe("Moves - Fissure", () => {
 
     enemyPokemon.summonData.battleStats[BattleStat.EVA] = 6;
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.FISSURE));
+    game.move.select(Moves.FISSURE);
 
     // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
     await game.phaseInterceptor.to(TurnEndPhase);

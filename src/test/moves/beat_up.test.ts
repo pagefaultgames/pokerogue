@@ -1,12 +1,11 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
-import { Species } from "#app/enums/species.js";
-import { Moves } from "#app/enums/moves.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { MoveEffectPhase } from "#app/phases.js";
+import { Moves } from "#app/enums/moves.js";
+import { Species } from "#app/enums/species.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
+import { MoveEffectPhase } from "#app/phases.js";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
 
@@ -46,7 +45,7 @@ describe("Moves - Beat Up", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       let enemyStartingHp = enemyPokemon.hp;
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAT_UP));
+      game.move.select(Moves.BEAT_UP);
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -70,7 +69,7 @@ describe("Moves - Beat Up", () => {
 
       game.scene.getParty()[1].trySetStatus(StatusEffect.BURN);
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAT_UP));
+      game.move.select(Moves.BEAT_UP);
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -81,14 +80,14 @@ describe("Moves - Beat Up", () => {
   it(
     "should hit twice for each player Pokemon if the user has Multi-Lens",
     async () => {
-      game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
+      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
       await game.startBattle([Species.MAGIKARP, Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.PIKACHU, Species.EEVEE]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       let enemyStartingHp = enemyPokemon.hp;
 
-      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAT_UP));
+      game.move.select(Moves.BEAT_UP);
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 

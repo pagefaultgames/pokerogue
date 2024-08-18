@@ -2,13 +2,12 @@ import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Stat } from "#app/enums/stat.js";
 import { DamagePhase, MoveEffectPhase } from "#app/phases.js";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Hustle", () => {
   let phaserGame: Phaser.Game;
@@ -43,7 +42,7 @@ describe("Abilities - Hustle", () => {
 
     vi.spyOn(pikachu, "getBattleStat");
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
     await game.move.forceHit();
     await game.phaseInterceptor.to(DamagePhase);
 
@@ -56,7 +55,7 @@ describe("Abilities - Hustle", () => {
 
     vi.spyOn(pikachu, "getAccuracyMultiplier");
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(pikachu.getAccuracyMultiplier).toHaveReturnedWith(0.8);
@@ -70,7 +69,7 @@ describe("Abilities - Hustle", () => {
     vi.spyOn(pikachu, "getBattleStat");
     vi.spyOn(pikachu, "getAccuracyMultiplier");
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.GIGA_DRAIN));
+    game.move.select(Moves.GIGA_DRAIN);
     await game.phaseInterceptor.to(DamagePhase);
 
     expect(pikachu.getBattleStat).toHaveReturnedWith(spatk);
@@ -88,7 +87,7 @@ describe("Abilities - Hustle", () => {
     vi.spyOn(pikachu, "getAccuracyMultiplier");
     vi.spyOn(allMoves[Moves.FISSURE], "calculateBattleAccuracy");
 
-    game.selectMove(getMovePosition(game.scene, 0, Moves.FISSURE));
+    game.move.select(Moves.FISSURE);
     await game.phaseInterceptor.to(DamagePhase);
 
     expect(enemyPokemon.turnData.damageTaken).toBe(enemyPokemon.getMaxHp());
