@@ -2419,13 +2419,7 @@ export default class BattleScene extends SceneBase {
           count = Math.max(count, Math.floor(chances / 2));
         }
         getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance)
-          .map(mt => {
-            const enemyModifier = mt.newModifier(enemyPokemon);
-            if (enemyModifier instanceof TurnHeldItemTransferModifier) {
-              enemyModifier.setTransferrableFalse();
-            }
-            enemyModifier.add(this.enemyModifiers, false, this);
-          });
+          .map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
       });
       this.updateModifiers(false).then(() => resolve());
     });

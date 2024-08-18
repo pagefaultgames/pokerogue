@@ -878,6 +878,10 @@ export class EncounterPhase extends BattlePhase {
         } else if (!(battle.waveIndex % 1000)) {
           enemyPokemon.formIndex = 1;
           enemyPokemon.updateScale();
+          const bossMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;
+          this.scene.removeModifier(bossMBH!);
+          bossMBH?.setTransferrableFalse();
+          this.scene.addEnemyModifier(bossMBH!);
         }
       }
 
