@@ -21,7 +21,7 @@ import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature
 import i18next from "i18next";
 import { getModifierTierTextTint } from "#app/ui/text";
 import Overrides from "#app/overrides";
-import { MoneyMultiplierModifier, TurnHeldItemTransferModifier } from "./modifier";
+import { MoneyMultiplierModifier } from "./modifier";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -2057,9 +2057,7 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
 export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER, upgradeChance: integer = 0): PokemonHeldItemModifierType[] {
   const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !Utils.randSeedInt(upgradeChance) ? 1 : 0)?.type as PokemonHeldItemModifierType);
   if (!(waveIndex % 1000)) {
-    const bossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE) as TurnHeldItemTransferModifier;
-    bossMBH.setTransferrableFalse();
-    ret.push(bossMBH);
+    ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemModifierType);
   }
   return ret;
 }
