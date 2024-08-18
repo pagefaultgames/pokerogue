@@ -3559,7 +3559,7 @@ export const starterPassiveAbilities = {
   [Species.HEATRAN]: Abilities.EARTH_EATER,
   [Species.REGIGIGAS]: Abilities.MINDS_EYE,
   [Species.GIRATINA]: Abilities.SHADOW_SHIELD,
-  [Species.CRESSELIA]: Abilities.MAGIC_BOUNCE,
+  [Species.CRESSELIA]: Abilities.UNAWARE,
   [Species.PHIONE]: Abilities.SIMPLE,
   [Species.MANAPHY]: Abilities.PRIMORDIAL_SEA,
   [Species.DARKRAI]: Abilities.UNNERVE,

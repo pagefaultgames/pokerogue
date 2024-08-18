@@ -922,7 +922,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getLearnableLevelMoves(): Moves[] {
     let levelMoves = this.getLevelMoves(1, true).map(lm => lm[1]);
-    if (this.metBiome === -1 && !this.scene.gameMode.isFreshStartChallenge()) {
+    if (this.metBiome === -1 && !this.scene.gameMode.isFreshStartChallenge() && !this.scene.gameMode.isDaily) {
       levelMoves = this.getUnlockedEggMoves().concat(levelMoves);
     }
     return levelMoves.filter(lm => !this.moveset.some(m => m?.moveId === lm));
@@ -3223,14 +3223,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Causes a Pokemon to leave the field (such as in preparation for a switch out/escape).
    * @param clearEffects Indicates if effects should be cleared (true) or passed
    * to the next pokemon, such as during a baton pass (false)
+   * @param hideInfo Indicates if this should also play the animation to hide the Pokemon's
+   * info container.
    */
-  leaveField(clearEffects: boolean = true) {
+  leaveField(clearEffects: boolean = true, hideInfo: boolean = true) {
     this.resetTurnData();
     if (clearEffects) {
       this.resetSummonData();
       this.resetBattleData();
     }
-    this.hideInfo();
+    if (hideInfo) {
+      this.hideInfo();
+    }
     this.setVisible(false);
     this.scene.field.remove(this);
     this.scene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
@@ -3780,7 +3784,7 @@ export class EnemyPokemon extends Pokemon {
       this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
         ? [
           new PokemonMove(Moves.DYNAMAX_CANNON),
-          new PokemonMove(Moves.CROSS_POISON),
+          new PokemonMove(Moves.SLUDGE_BOMB),
           new PokemonMove(Moves.FLAMETHROWER),
           new PokemonMove(Moves.RECOVER, 0, -4)
         ]
