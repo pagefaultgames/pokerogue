@@ -2268,7 +2268,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.SILICOBRA, 8, false, false, false, "Sand Snake Pokémon", Type.GROUND, null, 2.2, 7.6, Abilities.SAND_SPIT, Abilities.SHED_SKIN, Abilities.SAND_VEIL, 315, 52, 57, 75, 35, 50, 46, 255, 50, 63, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.SANDACONDA, 8, false, false, false, "Sand Snake Pokémon", Type.GROUND, null, 3.8, 65.5, Abilities.SAND_SPIT, Abilities.SHED_SKIN, Abilities.SAND_VEIL, 510, 72, 107, 125, 65, 70, 71, 120, 50, 179, GrowthRate.MEDIUM_FAST, 50, false, true,
       new PokemonForm("Normal", "", Type.GROUND, null, 3.8, 65.5, Abilities.SAND_SPIT, Abilities.SHED_SKIN, Abilities.SAND_VEIL, 510, 72, 107, 125, 65, 70, 71, 120, 50, 179, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.GROUND, null, 22, 65.5, Abilities.SAND_STREAM, Abilities.SAND_STREAM, Abilities.SAND_STREAM, 610, 112, 137, 140, 45, 95, 81, 120, 50, 179),
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.GROUND, null, 22, 65.5, Abilities.SAND_SPIT, Abilities.SAND_SPIT, Abilities.SAND_SPIT, 610, 112, 137, 140, 45, 95, 81, 120, 50, 179),
     ),
     new PokemonSpecies(Species.CRAMORANT, 8, false, false, false, "Gulp Pokémon", Type.FLYING, Type.WATER, 0.8, 18, Abilities.GULP_MISSILE, Abilities.NONE, Abilities.NONE, 475, 70, 85, 55, 85, 95, 85, 45, 50, 166, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Normal", "", Type.FLYING, Type.WATER, 0.8, 18, Abilities.GULP_MISSILE, Abilities.NONE, Abilities.NONE, 475, 70, 85, 55, 85, 95, 85, 45, 50, 166, false, null, true),
