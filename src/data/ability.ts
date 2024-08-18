@@ -2404,7 +2404,7 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
   }
 
   applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.protectedStat === undefined || this.protectedStat === null || stat === this.protectedStat) {
+    if (Utils.isNullOrUndefined(this.protectedStat) || stat === this.protectedStat) {
       cancelled.value = true;
       return true;
     }

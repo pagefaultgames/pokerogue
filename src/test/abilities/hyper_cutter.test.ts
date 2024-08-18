@@ -33,7 +33,7 @@ describe("Abilities - Hyper Cutter", () => {
       .enemyMoveset(SPLASH_ONLY);
   });
 
-// Reference Link: https://bulbapedia.bulbagarden.net/wiki/Hyper_Cutter_(Ability)
+  // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Hyper_Cutter_(Ability)
 
   it("only prevents ATK drops", async () => {
     await game.startBattle();
