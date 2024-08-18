@@ -2350,8 +2350,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       });
 
       const fitsWin = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
-        if (container.species.speciesId < 10) {
-        }
         if (misc.val === "WIN" && misc.state === DropDownState.ON) {
           return isWin;
         } else if (misc.val === "WIN" && misc.state === DropDownState.EXCLUDE) {
@@ -2894,21 +2892,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
       const abilityAttr = this.scene.gameData.starterData[species.speciesId].abilityAttr;
 
-      const isCaught = this.scene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0);
-      const isVariant3Caught = !!(isCaught & DexAttr.VARIANT_3);
-      const isVariant2Caught = !!(isCaught & DexAttr.VARIANT_2);
-      const isDefaultVariantCaught = !!(isCaught & DexAttr.DEFAULT_VARIANT);
-      const isVariantCaught = !!(isCaught & DexAttr.SHINY);
-      const isMaleCaught = !!(isCaught & DexAttr.MALE);
-      const isFemaleCaught = !!(isCaught & DexAttr.FEMALE);
-
-      const starterAttributes = this.starterPreferences[species.speciesId];
-
-      const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
-      const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-      const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
+      const caughtAttr = this.scene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0);
+      const isVariant3Caught = !!(caughtAttr & DexAttr.VARIANT_3);
+      const isVariant2Caught = !!(caughtAttr & DexAttr.VARIANT_2);
+      const isVariantCaught = !!(caughtAttr & DexAttr.SHINY);
+      const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
+      const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
+      const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
 
       if (!dexEntry.caughtAttr) {
+        const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
+        const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+        const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
+
         if (shiny === undefined || shiny !== props.shiny) {
           shiny = props.shiny;
         }
@@ -2926,83 +2922,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
         if (natureIndex === undefined || natureIndex !== defaultNature) {
           natureIndex = defaultNature;
-        }
-      } else {
-        // compare current shiny, formIndex, female, variant, abilityIndex, natureIndex with the caught ones
-        // if the current ones are not caught, we need to find the next caught ones
-        if (shiny) {
-          if (!(isVariantCaught || isVariant2Caught || isVariant3Caught)) {
-            shiny = false;
-            starterAttributes.shiny = false;
-            variant = 0;
-            starterAttributes.variant = 0;
-          } else {
-            shiny = true;
-            starterAttributes.shiny = true;
-            if (variant === 0 && !isDefaultVariantCaught) {
-              if (isVariant2Caught) {
-                variant = 1;
-                starterAttributes.variant = 1;
-              } else if (isVariant3Caught) {
-                variant = 2;
-                starterAttributes.variant = 2;
-              } else {
-                variant = 0;
-                starterAttributes.variant = 0;
-              }
-            } else if (variant === 1 && !isVariant2Caught) {
-              if (isVariantCaught) {
-                variant = 0;
-                starterAttributes.variant = 0;
-              } else if (isVariant3Caught) {
-                variant = 2;
-                starterAttributes.variant = 2;
-              } else {
-                variant = 0;
-                starterAttributes.variant = 0;
-              }
-            } else if (variant === 2 && !isVariant3Caught) {
-              if (isVariantCaught) {
-                variant = 0;
-                starterAttributes.variant = 0;
-              } else if (isVariant2Caught) {
-                variant = 1;
-                starterAttributes.variant = 1;
-              } else {
-                variant = 0;
-                starterAttributes.variant = 0;
-              }
-            }
-          }
-        }
-        if (female) {
-          if (!isFemaleCaught) {
-            female = false;
-            starterAttributes.female = false;
-          }
-        } else {
-          if (!isMaleCaught) {
-            female = true;
-            starterAttributes.female = true;
-          }
-        }
-
-        if (species.forms) {
-          const formCount = species.forms.length;
-          let newFormIndex = formIndex??0;
-          if (species.forms[newFormIndex]) {
-            const isValidForm = species.forms[newFormIndex].isStarterSelectable && dexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex);
-            if (!isValidForm) {
-              do {
-                newFormIndex = (newFormIndex + 1) % formCount;
-                if (species.forms[newFormIndex].isStarterSelectable && dexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex)) {
-                  break;
-                }
-              } while (newFormIndex !== props.formIndex);
-              formIndex = newFormIndex;
-              starterAttributes.form = formIndex;
-            }
-          }
         }
       }
 
@@ -3045,7 +2964,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           currentFilteredContainer.checkIconId(female, formIndex, shiny, variant);
         }
 
-        this.canCycleShiny = isVariantCaught || isVariant2Caught || isVariant3Caught;
+        this.canCycleShiny = isNonShinyCaught && (isVariantCaught || isVariant2Caught || isVariant3Caught);
         this.canCycleGender = isMaleCaught && isFemaleCaught;
         const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
         let hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
