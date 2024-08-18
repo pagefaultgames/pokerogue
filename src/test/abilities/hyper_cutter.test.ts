@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat.js";
+import { BattleStat } from "#app/data/battle-stat";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -32,6 +32,8 @@ describe("Abilities - Hyper Cutter", () => {
       .enemyAbility(Abilities.HYPER_CUTTER)
       .enemyMoveset(SPLASH_ONLY);
   });
+
+// Reference Link: https://bulbapedia.bulbagarden.net/wiki/Hyper_Cutter_(Ability)
 
   it("only prevents ATK drops", async () => {
     await game.startBattle();
