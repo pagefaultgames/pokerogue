@@ -191,15 +191,15 @@ Now that the enemy Pokémon with the best matchup score is on the field (assumin
 
   We then need to apply a 2x multiplier for the move's type effectiveness and a 1.5x multiplier since STAB applies. After applying these multipliers, the final score for this move is **75**.
 
-- **Swords Dance**: As a non-attacking move, this move's benefit score is derived entirely from the sum of its attributes' benefit scores. Swords Dance's `StatChangeAttr` has a user benefit score of 0 and a target benefit score that, in this case, simplifies to
+- **Swords Dance**: As a non-attacking move, this move's benefit score is derived entirely from the sum of its attributes' benefit scores. Swords Dance's `StatStageChangeAttr` has a user benefit score of 0 and a target benefit score that, in this case, simplifies to
 
   $\text{TBS}=4\times \text{levels} + (-2\times \text{sign(levels)})$
 
   where `levels` is the number of stat stages added by the attribute (in this case, +2). The final score for this move is **6** (Note: because this move is self-targeted, we don't flip the sign of TBS when computing the target score).
 
-- **Crush Claw**: This move is a 75-power Normal-type physical attack with a 50 percent chance to lower the target's Defense by one stage. The additional effect is implemented by the same `StatChangeAttr` as Swords Dance, so we can use the same formulas from before to compute the total TBS and base target score.
+- **Crush Claw**: This move is a 75-power Normal-type physical attack with a 50 percent chance to lower the target's Defense by one stage. The additional effect is implemented by the same `StatStageChangeAttr` as Swords Dance, so we can use the same formulas from before to compute the total TBS and base target score.
   
-  $\text{TBS}=\text{getTargetBenefitScore(StatChangeAttr)}-\text{attackScore}$
+  $\text{TBS}=\text{getTargetBenefitScore(StatStageChangeAttr)}-\text{attackScore}$
 
   $\text{TBS}=(-4 + 2)-(-2\times 2 + \lfloor \frac{75}{5} \rfloor)=-2-11=-13$
 

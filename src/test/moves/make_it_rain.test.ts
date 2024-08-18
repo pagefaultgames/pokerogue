@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import { MoveEndPhase, StatChangePhase } from "#app/phases";
+import { MoveEndPhase, StatStageChangePhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -60,7 +60,7 @@ describe("Moves - Make It Rain", () => {
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
 
-    await game.phaseInterceptor.to(StatChangePhase);
+    await game.phaseInterceptor.to(StatStageChangePhase);
 
     expect(enemyPokemon.isFainted()).toBe(true);
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
@@ -77,7 +77,7 @@ describe("Moves - Make It Rain", () => {
     game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
-    await game.phaseInterceptor.to(StatChangePhase);
+    await game.phaseInterceptor.to(StatStageChangePhase);
 
     enemyPokemon.forEach(p => expect(p.isFainted()).toBe(true));
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);

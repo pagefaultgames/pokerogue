@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, StatusMoveTypeImmunityAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, MoveFlags, NeutralDamageAgainstFlyingTypeMultiplierAttr, OneHitKOAccuracyAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, StatusMoveTypeImmunityAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, MoveFlags, NeutralDamageAgainstFlyingTypeMultiplierAttr, OneHitKOAccuracyAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
@@ -21,7 +21,7 @@ import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusE
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
-import { Ability, AbAttr, StatStageMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStageChangesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatStageMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, IgnoreOpponentEvasionAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr } from "../data/ability";
+import { Ability, AbAttr, StatStageMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatStageMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, IgnoreOpponentEvasionAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -681,7 +681,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns the numeric value of the desired {@linkcode Stat}
    */
   getStat(stat: PermanentStat, ignoreOverride: boolean = true): number {
-    if (!ignoreOverride && (this.summonData?.stats[stat] !== 0)) {
+    if (!ignoreOverride && this.summonData && (this.summonData.stats[stat] !== 0)) {
       return this.summonData.stats[stat];
     }
     return this.stats[stat];
@@ -725,13 +725,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Writes the value to the in-battle stage of the corresponding {@linkcode BattleStat} of the {@linkcode Pokemon}.
    *
-   * Note that this does nothing if {@linkcode value} is less than -6 and greater than 6.
+   * Note that, if the value is not within a range of [-6, 6], it will be forced to the closest range bound.
    * @param stat the {@linkcode BattleStat} whose stage is to be overwritten
    * @param value the desired numeric value
    */
   setStatStage(stat: BattleStat, value: number): void {
-    if ((value >= -6) && (value >= 6) && this.summonData) {
-      this.summonData.statStages[stat - 1] = value;
+    if (this.summonData) {
+      if (value >= -6) {
+        this.summonData.statStages[stat - 1] = Math.min(value, 6);
+      } else {
+        this.summonData.statStages[stat - 1] = Math.max(value, -6);
+      }
     }
   }
 
@@ -750,9 +754,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           break;
         }
       }
-      applyAbAttrs(IgnoreOpponentStatStageChangesAbAttr, opponent, null, statLevel);
+      applyAbAttrs(IgnoreOpponentStatStagesAbAttr, opponent, null, statLevel);
       if (move) {
-        applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, opponent, move, statLevel);
+        applyMoveAttrs(IgnoreOpponentStatStagesAttr, this, opponent, move, statLevel);
       }
     }
     if (this.isPlayer()) {
@@ -1950,10 +1954,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const userAccStage = new Utils.IntegerHolder(this.getStatStage(Stat.ACC));
     const targetEvaStage = new Utils.IntegerHolder(target.getStatStage(Stat.EVA));
 
-    applyAbAttrs(IgnoreOpponentStatStageChangesAbAttr, target, null, userAccStage);
-    applyAbAttrs(IgnoreOpponentStatStageChangesAbAttr, this, null, targetEvaStage);
+    applyAbAttrs(IgnoreOpponentStatStagesAbAttr, target, null, userAccStage);
+    applyAbAttrs(IgnoreOpponentStatStagesAbAttr, this, null, targetEvaStage);
     applyAbAttrs(IgnoreOpponentEvasionAbAttr, this, null, targetEvaStage);
-    applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, target, sourceMove, targetEvaStage);
+    applyMoveAttrs(IgnoreOpponentStatStagesAttr, this, target, sourceMove, targetEvaStage);
     this.scene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), Stat.ACC, userAccStage);
 
     if (target.findTag(t => t instanceof ExposedTag)) {
@@ -1967,10 +1971,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         : 3 / (3 + Math.min(targetEvaStage.value - userAccStage.value, 6));
     }
 
-    applyStatStageMultiplierAbAttrs(StatStageMultiplierAbAttr, this, Stat.ACC, accuracyMultiplier, sourceMove); // TODO: BattleStat
+    applyStatStageMultiplierAbAttrs(StatStageMultiplierAbAttr, this, Stat.ACC, accuracyMultiplier, sourceMove);
 
     const evasionMultiplier = new Utils.NumberHolder(1);
-    applyStatStageMultiplierAbAttrs(StatStageMultiplierAbAttr, target, Stat.EVA, evasionMultiplier); // TODO: BattleStat
+    applyStatStageMultiplierAbAttrs(StatStageMultiplierAbAttr, target, Stat.EVA, evasionMultiplier);
 
     accuracyMultiplier.value /= evasionMultiplier.value;
 

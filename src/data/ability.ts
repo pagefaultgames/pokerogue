@@ -1821,7 +1821,7 @@ export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
   }
 }
 
-export class IgnoreOpponentStatStageChangesAbAttr extends AbAttr {
+export class IgnoreOpponentStatStagesAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
@@ -2010,8 +2010,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
         applyAbAttrs(PostIntimidateStatStageChangeAbAttr, opponent, cancelled);
       }
       if (!cancelled.value) {
-        const statChangePhase = new StatStageChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, this.stages);
-        pokemon.scene.unshiftPhase(statChangePhase);
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, this.stages));
       }
     }
     return true;
@@ -4690,7 +4689,7 @@ export function initAbilities() {
     new Ability(Abilities.FOREWARN, 4)
       .attr(ForewarnAbAttr),
     new Ability(Abilities.UNAWARE, 4)
-      .attr(IgnoreOpponentStatStageChangesAbAttr)
+      .attr(IgnoreOpponentStatStagesAbAttr)
       .ignorable(),
     new Ability(Abilities.TINTED_LENS, 4)
       //@ts-ignore

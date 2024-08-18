@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle.js";
-import { Stat } from "#app/data/pokemon-stat";
+import { Stat } from "#enums/stat";
 import { Abilities } from "#app/enums/abilities.js";
 import { CommandPhase, SelectTargetPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";

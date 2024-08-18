@@ -81,7 +81,7 @@ describe("Abilities - Intimidate", () => {
     await game.phaseInterceptor.to(CommandPhase, false);
 
     const playerField = game.scene.getPlayerField()!;
-    const enemyField = game.scene.getEnemyPokemon()!;
+    const enemyField = game.scene.getEnemyField()!;
 
     expect(enemyField[0].getStatStage(Stat.ATK)).toBe(-2);
     expect(enemyField[1].getStatStage(Stat.ATK)).toBe(-2);

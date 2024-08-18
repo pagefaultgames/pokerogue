@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { MoveEffectPhase, MovePhase, MoveEndPhase, DamagePhase } from "#app/phases";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { Stat } from "#app/data/pokemon-stat";
+import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/move";
 import { BattlerIndex } from "#app/battle";
 import { Species } from "#enums/species";

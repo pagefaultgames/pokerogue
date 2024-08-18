@@ -1,4 +1,4 @@
-import { PokemonHealPhase, StatChangePhase } from "../phases";
+import { PokemonHealPhase, StatStageChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { HitResult } from "../field/pokemon";
 import { getStatusEffectHealText } from "./status-effect";
@@ -99,7 +99,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       const stat: BattleStat = berryType - BerryType.ENIGMA;
       const statStages = new Utils.NumberHolder(1);
       applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statStages);
-      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ stat ], statStages.value));
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ stat ], statStages.value));
     };
   case BerryType.LANSAT:
     return (pokemon: Pokemon) => {
@@ -114,9 +114,9 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         pokemon.battleData.berriesEaten.push(berryType);
       }
       const randStat = Utils.randSeedInt(Stat.EVA, Stat.ATK);
-      const statLevels = new Utils.NumberHolder(2);
-      applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statLevels);
-      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ randStat ], statLevels.value)); // TODO: BattleStats
+      const stages = new Utils.NumberHolder(2);
+      applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, stages);
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ randStat ], stages.value));
     };
   case BerryType.LEPPA:
     return (pokemon: Pokemon) => {

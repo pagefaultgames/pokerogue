@@ -1,4 +1,4 @@
-import { Stat } from "#app/data/pokemon-stat";
+import { Stat } from "#enums/stat";
 import { Status, StatusEffect } from "#app/data/status-effect.js";
 import { QuietFormChangePhase } from "#app/form-change-phase";
 import { CommandPhase, DamagePhase, EnemyCommandPhase, MessagePhase, PostSummonPhase, SwitchPhase, SwitchSummonPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";

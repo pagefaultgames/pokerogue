@@ -1066,7 +1066,7 @@ export class StatusMoveTypeImmunityAttr extends MoveAttr {
   }
 }
 
-export class IgnoreOpponentStatChangesAttr extends MoveAttr {
+export class IgnoreOpponentStatStagesAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     (args[0] as Utils.IntegerHolder).value = 0;
 
@@ -2614,14 +2614,14 @@ export class StatStageChangeAttr extends MoveEffectAttr {
 
 export class PostVictoryStatStageChangeAttr extends MoveAttr {
   private stats: BattleStat[];
-  private levels: integer;
+  private stages: number;
   private condition: MoveConditionFunc | null;
   private showMessage: boolean;
 
-  constructor(stats: BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false) {
+  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false) {
     super();
     this.stats = stats;
-    this.levels = levels;
+    this.stages = stages;
     this.condition = condition!; // TODO: is this bang correct?
     this.showMessage = showMessage;
   }
@@ -2629,7 +2629,7 @@ export class PostVictoryStatStageChangeAttr extends MoveAttr {
     if (this.condition && !this.condition(user, target, move)) {
       return;
     }
-    const statChangeAttr = new StatStageChangeAttr(this.stats, this.levels, this.showMessage);
+    const statChangeAttr = new StatStageChangeAttr(this.stats, this.stages, this.showMessage);
     statChangeAttr.apply(user, target, move);
   }
 }
@@ -3313,9 +3313,9 @@ export class HitCountPowerAttr extends VariablePowerAttr {
 }
 
 /**
- * Turning a once was (StatChangeCountPowerAttr) statement and making it available to call for any attribute.
- * @param {Pokemon} pokemon The pokemon that is being used to calculate the count of positive stats
- * @returns {number} Returns the amount of positive stats
+ * Tallies the number of positive stages for a given {@linkcode Pokemon}.
+ * @param pokemon The {@linkcode Pokemon} that is being used to calculate the count of positive stats
+ * @returns the amount of positive stats
  */
 const countPositiveStatStages = (pokemon: Pokemon): number => {
   return pokemon.getStatStages().reduce((total, stat) => (stat && stat > 0) ? total + stat : total, 0);
@@ -6666,7 +6666,7 @@ export function initMoves() {
       .attr(ConfuseAttr),
     new SelfStatusMove(Moves.BELLY_DRUM, Type.NORMAL, -1, 10, -1, 0, 2)
       .attr(CutHpStatStageBoostAttr, [ Stat.ATK ], 12, 2, (user) => {
-        user.scene.queueMessage(i18next.t("moveTriggers:cutOwnHpAndMaximizedStat", { pokemonName: getPokemonNameWithAffix(user), statName: i18next.t(getStatKey(Stat.ATK)) })); // TODO: BattleStats
+        user.scene.queueMessage(i18next.t("moveTriggers:cutOwnHpAndMaximizedStat", { pokemonName: getPokemonNameWithAffix(user), statName: i18next.t(getStatKey(Stat.ATK)) }));
       }),
     new AttackMove(Moves.SLUDGE_BOMB, Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 30, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.POISON)
@@ -7544,7 +7544,7 @@ export function initMoves() {
       .attr(ConsecutiveUseMultiBasePowerAttr, 5, false)
       .soundBased(),
     new AttackMove(Moves.CHIP_AWAY, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 5)
-      .attr(IgnoreOpponentStatChangesAttr),
+      .attr(IgnoreOpponentStatStagesAttr),
     new AttackMove(Moves.CLEAR_SMOG, Type.POISON, MoveCategory.SPECIAL, 50, -1, 15, -1, 0, 5)
       .attr(ResetStatsAttr, false),
     new AttackMove(Moves.STORED_POWER, Type.PSYCHIC, MoveCategory.SPECIAL, 20, 100, 10, -1, 0, 5)
@@ -7636,7 +7636,7 @@ export function initMoves() {
       .attr(HitHealAttr)
       .triageMove(),
     new AttackMove(Moves.SACRED_SWORD, Type.FIGHTING, MoveCategory.PHYSICAL, 90, 100, 15, -1, 0, 5)
-      .attr(IgnoreOpponentStatChangesAttr)
+      .attr(IgnoreOpponentStatStagesAttr)
       .slicingMove(),
     new AttackMove(Moves.RAZOR_SHELL, Type.WATER, MoveCategory.PHYSICAL, 75, 95, 10, 50, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1)
@@ -8028,7 +8028,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, true)
       .makesContact(false),
     new AttackMove(Moves.DARKEST_LARIAT, Type.DARK, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7)
-      .attr(IgnoreOpponentStatChangesAttr),
+      .attr(IgnoreOpponentStatStagesAttr),
     new AttackMove(Moves.SPARKLING_ARIA, Type.WATER, MoveCategory.SPECIAL, 90, 100, 10, 100, 0, 7)
       .attr(HealStatusEffectAttr, false, StatusEffect.BURN)
       .soundBased()

@@ -1,4 +1,4 @@
-import { Stat } from "#app/data/pokemon-stat";
+import { Stat } from "#enums/stat";
 import { CommandPhase, EnemyCommandPhase, SelectTargetPhase, TurnStartPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

@@ -2,6 +2,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodete
 import BattleScene from "../battle-scene";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { getStatKey, PERMANENT_STATS } from "#app/enums/stat.js";
+import i18next from "i18next";
 
 const ivChartSize = 24;
 const ivChartStatCoordMultipliers = [[0, -1], [0.825, -0.5], [0.825, 0.5], [-0.825, -0.5], [-0.825, 0.5], [0, 1]];
@@ -54,7 +55,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     this.ivStatValueTexts = [];
 
     for (const s of PERMANENT_STATS) {
-      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[s][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[s][1] * 1.325 - 4 + ivLabelOffset[s], getStatKey(s), TextStyle.TOOLTIP_CONTENT);
+      const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[s][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[s][1] * 1.325 - 4 + ivLabelOffset[s], i18next.t(getStatKey(s)), TextStyle.TOOLTIP_CONTENT);
       statLabel.setOrigin(0.5);
 
       this.ivStatValueTexts[s] = addBBCodeTextObject(this.scene, statLabel.x, statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);

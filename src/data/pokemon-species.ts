@@ -15,7 +15,7 @@ import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-
 import { VariantSet } from "./variant";
 import i18next from "i18next";
 import { Localizable } from "#app/interfaces/locales";
-import { Stat } from "./pokemon-stat";
+import { Stat } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";

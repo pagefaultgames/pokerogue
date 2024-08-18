@@ -1,5 +1,5 @@
 import { ArenaTagSide } from "#app/data/arena-tag.js";
-import { Stat } from "#app/data/pokemon-stat.js";
+import { Stat } from "#enums/stat";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import { TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";

@@ -1,5 +1,5 @@
 import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "./battle-anims";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangeCallback, StatStageChangePhase } from "../phases";
+import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatStageChangeCallback, StatStageChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { StatusEffect } from "./status-effect";
@@ -1629,7 +1629,7 @@ export class StockpilingTag extends BattlerTag {
     super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
-  private onStatsChanged: StatChangeCallback = (_, statsChanged, statChanges) => {
+  private onStatStagesChanged: StatStageChangeCallback = (_, statsChanged, statChanges) => {
     const defChange = statChanges[statsChanged.indexOf(Stat.DEF)] ?? 0;
     const spDefChange = statChanges[statsChanged.indexOf(Stat.SPDEF)] ?? 0;
 
@@ -1669,7 +1669,7 @@ export class StockpilingTag extends BattlerTag {
       // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
       pokemon.scene.unshiftPhase(new StatStageChangePhase(
         pokemon.scene, pokemon.getBattlerIndex(), true,
-        [Stat.SPDEF, Stat.DEF], 1, true, false, true, this.onStatsChanged
+        [Stat.SPDEF, Stat.DEF], 1, true, false, true, this.onStatStagesChanged
       ));
     }
   }

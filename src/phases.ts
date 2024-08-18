@@ -3446,19 +3446,19 @@ export class ShowAbilityPhase extends PokemonPhase {
   }
 }
 
-export type StatChangeCallback = (target: Pokemon | null, changed: BattleStat[], relativeChanges: number[]) => void;
+export type StatStageChangeCallback = (target: Pokemon | null, changed: BattleStat[], relativeChanges: number[]) => void;
 
-export class StatStageChangePhase extends PokemonPhase { // TODO: BattleStat
+export class StatStageChangePhase extends PokemonPhase {
   private stats: BattleStat[];
   private selfTarget: boolean;
   private stages: integer;
   private showMessage: boolean;
   private ignoreAbilities: boolean;
   private canBeCopied: boolean;
-  private onChange: StatChangeCallback | null;
+  private onChange: StatStageChangeCallback | null;
 
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], stages: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true, onChange: StatChangeCallback | null = null) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], stages: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true, onChange: StatStageChangeCallback | null = null) {
     super(scene, battlerIndex);
 
     this.selfTarget = selfTarget;
@@ -3473,20 +3473,11 @@ export class StatStageChangePhase extends PokemonPhase { // TODO: BattleStat
   start() {
     const pokemon = this.getPokemon();
 
-    let random = false;
-
-    if (this.stats.length === 1 && this.stats[0] === BattleStat.RAND) {
-      this.stats[0] = this.getRandomStat();
-      random = true;
-    }
-
-    this.aggregateStatChanges(random);
-
     if (!pokemon.isActive(true)) {
       return this.end();
     }
 
-    const filteredStats = this.stats.map(s => s !== BattleStat.RAND ? s : this.getRandomStat()).filter(stat => {
+    const filteredStats = this.stats.filter(stat => {
       const cancelled = new Utils.BooleanHolder(false);
 
       if (!this.selfTarget && this.stages < 0) {
@@ -3494,42 +3485,41 @@ export class StatStageChangePhase extends PokemonPhase { // TODO: BattleStat
       }
 
       if (!cancelled.value && !this.selfTarget && this.stages < 0) {
-        applyPreStatStageChangeAbAttrs(ProtectStatAbAttr, this.getPokemon(), stat, cancelled);
+        applyPreStatStageChangeAbAttrs(ProtectStatAbAttr, pokemon, stat, cancelled);
       }
 
       return !cancelled.value;
     });
 
-    const levels = new Utils.IntegerHolder(this.stages);
+    const stages = new Utils.IntegerHolder(this.stages);
 
     if (!this.ignoreAbilities) {
-      applyAbAttrs(StatStageChangeMultiplierAbAttr, pokemon, null, levels);
+      applyAbAttrs(StatStageChangeMultiplierAbAttr, pokemon, null, stages);
     }
 
-    const battleStats = this.getPokemon().summonData.battleStats;
-    const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats![stat] + levels.value, 6) : Math.max(battleStats![stat] + levels.value, -6)) - battleStats![stat]);
+    const relLevels = filteredStats.map(s => (stages.value >= 1 ? Math.min(pokemon.getStatStage(s) + stages.value, 6) : Math.max(pokemon.getStatStage(s) + stages.value, -6)) - pokemon.getStatStage(s));
 
     this.onChange && this.onChange(this.getPokemon(), filteredStats, relLevels);
 
     const end = () => {
       if (this.showMessage) {
-        const messages = this.getStatChangeMessages(filteredStats, levels.value, relLevels);
+        const messages = this.getStatStageChangeMessages(filteredStats, stages.value, relLevels);
         for (const message of messages) {
           this.scene.queueMessage(message);
         }
       }
 
-      for (const stat of filteredStats) {
-        pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
+      for (const s of filteredStats) {
+        pokemon.setStatStage(s, pokemon.getStatStage(s) + stages.value);
       }
 
-      if (levels.value > 0 && this.canBeCopied) {
+      if (stages.value > 0 && this.canBeCopied) {
         for (const opponent of pokemon.getOpponents()) {
-          applyAbAttrs(StatStageChangeCopyAbAttr, opponent, null, this.stats, levels.value);
+          applyAbAttrs(StatStageChangeCopyAbAttr, opponent, null, this.stats, stages.value);
         }
       }
 
-      applyPostStatStageChangeAbAttrs(PostStatStageChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget);
+      applyPostStatStageChangeAbAttrs(PostStatStageChangeAbAttr, pokemon, filteredStats, this.stages, this.selfTarget);
 
       // Look for any other stat change phases; if this is the last one, do White Herb check
       const existingPhase = this.scene.findPhase(p => p instanceof StatStageChangePhase && p.battlerIndex === this.battlerIndex);
@@ -3556,20 +3546,20 @@ export class StatStageChangePhase extends PokemonPhase { // TODO: BattleStat
       const pokemonMaskSprite = pokemon.maskSprite;
 
       const tileX = (this.player ? 106 : 236) * pokemon.getSpriteScale() * this.scene.field.scale;
-      const tileY = ((this.player ? 148 : 84) + (levels.value >= 1 ? 160 : 0)) * pokemon.getSpriteScale() * this.scene.field.scale;
+      const tileY = ((this.player ? 148 : 84) + (stages.value >= 1 ? 160 : 0)) * pokemon.getSpriteScale() * this.scene.field.scale;
       const tileWidth = 156 * this.scene.field.scale * pokemon.getSpriteScale();
       const tileHeight = 316 * this.scene.field.scale * pokemon.getSpriteScale();
 
       // On increase, show the red sprite located at ATK
       // On decrease, show the blue sprite located at SPD
-      const spriteColor = levels.value >= 1 ? Stat[Stat.ATK].toLowerCase() : Stat[Stat.SPD].toLowerCase();
+      const spriteColor = stages.value >= 1 ? Stat[Stat.ATK].toLowerCase() : Stat[Stat.SPD].toLowerCase();
       const statSprite = this.scene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor);
       statSprite.setPipeline(this.scene.fieldSpritePipeline);
       statSprite.setAlpha(0);
       statSprite.setScale(6);
       statSprite.setOrigin(0.5, 1);
 
-      this.scene.playSound(`stat_${levels.value >= 1 ? "up" : "down"}`);
+      this.scene.playSound(`stat_${stages.value >= 1 ? "up" : "down"}`);
 
       statSprite.setMask(new Phaser.Display.Masks.BitmapMask(this.scene, pokemonMaskSprite ?? undefined));
 
@@ -3590,7 +3580,7 @@ export class StatStageChangePhase extends PokemonPhase { // TODO: BattleStat
       this.scene.tweens.add({
         targets: statSprite,
         duration: 1500,
-        y: `${levels.value >= 1 ? "-" : "+"}=${160 * 6}`
+        y: `${stages.value >= 1 ? "-" : "+"}=${160 * 6}`
       });
 
       this.scene.time.delayedCall(1750, () => {
@@ -3602,34 +3592,24 @@ export class StatStageChangePhase extends PokemonPhase { // TODO: BattleStat
     }
   }
 
-  getRandomStat(): BattleStat {
-    const allStats = Utils.getEnumValues(BattleStat);
-    return this.getPokemon() ? allStats[this.getPokemon()!.randSeedInt(BattleStat.SPD + 1)] : BattleStat.ATK; // TODO: return default ATK on random? idk...
-  }
-
-  aggregateStatChanges(random: boolean = false): void {
-    const isAccEva = [BattleStat.ACC, BattleStat.EVA].some(s => this.stats.includes(s));
-    let existingPhase: StatChangePhase;
+  aggregateStatStageChanges(): void {
+    const accEva: BattleStat[] = [ Stat.ACC, Stat.EVA ];
+    const isAccEva = accEva.some(s => this.stats.includes(s));
+    let existingPhase: StatStageChangePhase;
     if (this.stats.length === 1) {
-      while ((existingPhase = (this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex && p.stats.length === 1
-        && (p.stats[0] === this.stats[0] || (random && p.stats[0] === BattleStat.RAND))
-        && p.selfTarget === this.selfTarget && p.showMessage === this.showMessage && p.ignoreAbilities === this.ignoreAbilities) as StatChangePhase))) {
-        if (existingPhase.stats[0] === BattleStat.RAND) {
-          existingPhase.stats[0] = this.getRandomStat();
-          if (existingPhase.stats[0] !== this.stats[0]) {
-            continue;
-          }
-        }
-        this.levels += existingPhase.levels;
+      while ((existingPhase = (this.scene.findPhase(p => p instanceof StatStageChangePhase && p.battlerIndex === this.battlerIndex && p.stats.length === 1
+        && (p.stats[0] === this.stats[0])
+        && p.selfTarget === this.selfTarget && p.showMessage === this.showMessage && p.ignoreAbilities === this.ignoreAbilities) as StatStageChangePhase))) {
+        this.stages += existingPhase.stages;
 
         if (!this.scene.tryRemovePhase(p => p === existingPhase)) {
           break;
         }
       }
     }
-    while ((existingPhase = (this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex && p.selfTarget === this.selfTarget
-      && ([BattleStat.ACC, BattleStat.EVA].some(s => p.stats.includes(s)) === isAccEva)
-      && p.levels === this.levels && p.showMessage === this.showMessage && p.ignoreAbilities === this.ignoreAbilities) as StatChangePhase))) {
+    while ((existingPhase = (this.scene.findPhase(p => p instanceof StatStageChangePhase && p.battlerIndex === this.battlerIndex && p.selfTarget === this.selfTarget
+      && (accEva.some(s => p.stats.includes(s)) === isAccEva)
+      && p.stages === this.stages && p.showMessage === this.showMessage && p.ignoreAbilities === this.ignoreAbilities) as StatStageChangePhase))) {
       this.stats.push(...existingPhase.stats);
       if (!this.scene.tryRemovePhase(p => p === existingPhase)) {
         break;
@@ -3637,37 +3617,37 @@ export class StatStageChangePhase extends PokemonPhase { // TODO: BattleStat
     }
   }
 
-  getStatChangeMessages(stats: BattleStat[], levels: integer, relLevels: integer[]): string[] {
+  getStatStageChangeMessages(stats: BattleStat[], stages: integer, relStages: integer[]): string[] {
     const messages: string[] = [];
 
-    const relLevelStatIndexes = {};
-    for (let rl = 0; rl < relLevels.length; rl++) {
-      const relLevel = relLevels[rl];
-      if (!relLevelStatIndexes[relLevel]) {
-        relLevelStatIndexes[relLevel] = [];
+    const relStageStatIndexes = {};
+    for (let rl = 0; rl < relStages.length; rl++) {
+      const relStage = relStages[rl];
+      if (!relStageStatIndexes[relStage]) {
+        relStageStatIndexes[relStage] = [];
       }
-      relLevelStatIndexes[relLevel].push(rl);
+      relStageStatIndexes[relStage].push(rl);
     }
 
-    Object.keys(relLevelStatIndexes).forEach(rl => {
-      const relLevelStats = stats.filter((_, i) => relLevelStatIndexes[rl].includes(i));
+    Object.keys(relStageStatIndexes).forEach(rl => {
+      const relStageStats = stats.filter((_, i) => relStageStatIndexes[rl].includes(i));
       let statsFragment = "";
 
-      if (relLevelStats.length > 1) {
-        statsFragment = relLevelStats.length >= 5
+      if (relStageStats.length > 1) {
+        statsFragment = relStageStats.length >= 5
           ? i18next.t("battle:stats")
-          : `${relLevelStats.slice(0, -1).map(s => i18next.t(getStatKey(s))).join(", ")}${relLevelStats.length > 2 ? "," : ""} ${i18next.t("battle:statsAnd")} ${i18next.t(getStatKey(relLevelStats[relLevelStats.length - 1]))}`;
-        messages.push(i18next.t(getStatStageChangeDescriptionKey(Math.abs(parseInt(rl)), levels >= 1), {
+          : `${relStageStats.slice(0, -1).map(s => i18next.t(getStatKey(s))).join(", ")}${relStageStats.length > 2 ? "," : ""} ${i18next.t("battle:statsAnd")} ${i18next.t(getStatKey(relStageStats[relStageStats.length - 1]))}`;
+        messages.push(i18next.t(getStatStageChangeDescriptionKey(Math.abs(parseInt(rl)), stages >= 1), {
           pokemonNameWithAffix: getPokemonNameWithAffix(this.getPokemon()),
           stats: statsFragment,
-          count: relLevelStats.length
+          count: relStageStats.length
         }));
       } else {
-        statsFragment = i18next.t(getStatKey(relLevelStats[0]));
-        messages.push(i18next.t(getStatStageChangeDescriptionKey(Math.abs(parseInt(rl)), levels >= 1), {
+        statsFragment = i18next.t(getStatKey(relStageStats[0]));
+        messages.push(i18next.t(getStatStageChangeDescriptionKey(Math.abs(parseInt(rl)), stages >= 1), {
           pokemonNameWithAffix: getPokemonNameWithAffix(this.getPokemon()),
           stats: statsFragment,
-          count: relLevelStats.length
+          count: relStageStats.length
         }));
       }
     });

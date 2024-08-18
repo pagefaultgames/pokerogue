@@ -69,8 +69,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   public flyoutMenu?: BattleFlyout;
 
   private statOrder: Stat[];
-  private statOrderPlayer = [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD ];
-  private statOrderEnemy = [ Stat.HP, Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD ];
+  private readonly statOrderPlayer = [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD ];
+  private readonly statOrderEnemy = [ Stat.HP, Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD ];
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
@@ -650,12 +650,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastLevel = pokemon.level;
       }
 
-      const battleStats = pokemon.getStatStages();
-      const battleStatsStr = battleStats.join("");
+      const stats = pokemon.getStatStages();
+      const statsStr = stats.join("");
 
-      if (this.lastStats !== battleStatsStr) {
-        this.updateStats(battleStats);
-        this.lastStats = battleStatsStr;
+      if (this.lastStats !== statsStr) {
+        this.updateStats(stats);
+        this.lastStats = statsStr;
       }
 
       this.shinyIcon.setVisible(pokemon.isShiny());
@@ -770,7 +770,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   updateStats(stats: integer[]): void {
     this.statOrder.map((s, i) => {
       if (s !== Stat.HP) {
-        this.statNumbers[i].setFrame(stats[s].toString());
+        this.statNumbers[i].setFrame(stats[s - 1].toString());
       }
     });
   }
