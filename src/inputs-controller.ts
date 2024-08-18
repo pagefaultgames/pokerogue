@@ -343,7 +343,7 @@ export class InputsController {
     // Sometimes, gamepads are undefined. For some reason.
     this.gamepads = this.scene.input.gamepad?.gamepads.filter(function (el) {
       return el !== null;
-    })!; // TODO: is this bang correct?
+    }) ?? [];
 
     for (const [index, thisGamepad] of this.gamepads.entries()) {
       thisGamepad.index = index; // Overwrite the gamepad index, in case we had undefined gamepads earlier

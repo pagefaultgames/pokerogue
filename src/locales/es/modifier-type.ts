@@ -413,6 +413,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "PiroROM",
     "CHILL_DRIVE": "CrioROM",
     "DOUSE_DRIVE": "HidroROM",
+    "ULTRANECROZIUM_Z": "Ultranecrostal Z",
 
     "FIST_PLATE": "Tabla Fuerte",
     "SKY_PLATE": "Tabla Cielo",
