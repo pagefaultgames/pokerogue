@@ -2427,7 +2427,6 @@ export default class BattleScene extends SceneBase {
             enemyModifier.add(this.enemyModifiers, false, this);
           });
       });
-
       this.updateModifiers(false).then(() => resolve());
     });
   }
