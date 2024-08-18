@@ -5,6 +5,7 @@ import { version } from "../package.json";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
+import TextEditPlugin from "phaser3-rex-plugins/plugins/textedit-plugin.js";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
 import { LoadingScene } from "./loading-scene";
 
@@ -46,6 +47,10 @@ const config: Phaser.Types.Core.GameConfig = {
       key: "rexTransitionImagePackPlugin",
       plugin: TransitionImagePackPlugin,
       start: true
+    }, {
+      key: "rexTextEdit",
+      plugin: TextEditPlugin,
+      start: true
     }],
     scene: [{
       key: "rexUI",
@@ -66,8 +71,8 @@ const config: Phaser.Types.Core.GameConfig = {
     createContainer: true
   },
   pixelArt: true,
-  pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,
-  scene: [ LoadingScene, BattleScene ],
+  pipeline: [InvertPostFX] as unknown as Phaser.Types.Core.PipelineConfig,
+  scene: [LoadingScene, BattleScene],
   version: version
 };
 
@@ -84,62 +89,62 @@ const setPositionRelative = function (guideObject: any, x: number, y: number) {
 };
 
 declare module "phaser" {
-	namespace GameObjects {
-		interface Container {
+  namespace GameObjects {
+    interface Container {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
        * @param x The relative x position
        * @param y The relative y position
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface Sprite {
+      setPositionRelative(guideObject: any, x: number, y: number): void;
+    }
+    interface Sprite {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
        * @param x The relative x position
        * @param y The relative y position
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface Image {
+      setPositionRelative(guideObject: any, x: number, y: number): void;
+    }
+    interface Image {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
        * @param x The relative x position
        * @param y The relative y position
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface NineSlice {
+      setPositionRelative(guideObject: any, x: number, y: number): void;
+    }
+    interface NineSlice {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
        * @param x The relative x position
        * @param y The relative y position
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface Text {
+      setPositionRelative(guideObject: any, x: number, y: number): void;
+    }
+    interface Text {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
        * @param x The relative x position
        * @param y The relative y position
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-		interface Rectangle {
+      setPositionRelative(guideObject: any, x: number, y: number): void;
+    }
+    interface Rectangle {
       /**
        * Sets this object's position relative to another object with a given offset
        * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
        * @param x The relative x position
        * @param y The relative y position
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
-		}
-	}
+      setPositionRelative(guideObject: any, x: number, y: number): void;
+    }
+  }
 }
 
 Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;

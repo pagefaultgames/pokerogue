@@ -338,8 +338,6 @@ export class LoadingScene extends SceneBase {
     this.loadBgm("evolution", "bw/evolution.mp3");
     this.loadBgm("evolution_fanfare", "bw/evolution_fanfare.mp3");
 
-    this.load.plugin("rextexteditplugin", "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js", true);
-
     this.loadLoadingScreen();
 
     initVouchers();
