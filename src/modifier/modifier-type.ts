@@ -21,7 +21,7 @@ import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature
 import i18next from "i18next";
 import { getModifierTierTextTint } from "#app/ui/text";
 import Overrides from "#app/overrides";
-import { MoneyMultiplierModifier } from "./modifier";
+import { MoneyMultiplierModifier, TurnHeldItemTransferModifier } from "./modifier";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
