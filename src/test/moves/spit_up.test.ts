@@ -36,7 +36,7 @@ describe("Moves - Spit Up", () => {
     game.override.enemyAbility(Abilities.NONE);
     game.override.enemyLevel(2000);
 
-    game.override.moveset([ spitUp.id, spitUp.id, spitUp.id, spitUp.id ]);
+    game.override.moveset(new Array(4).fill(spitUp.id));
     game.override.ability(Abilities.NONE);
 
     vi.spyOn(spitUp, "calculateBattlePower");

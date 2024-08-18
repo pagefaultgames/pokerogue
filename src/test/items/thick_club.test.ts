@@ -37,7 +37,7 @@ describe("Items - Thick Club", () => {
 
     const partyMember = game.scene.getParty()[0];
 
-    // Checking consoe log to make sure Thick Club is applied when getEffectiveStat (with the appropriate stat) is called
+    // Checking console log to make sure Thick Club is applied when getEffectiveStat (with the appropriate stat) is called
     partyMember.getEffectiveStat(Stat.DEF);
     expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:SpeciesBoosterItem.THICK_CLUB.name"), "");
 

@@ -26,7 +26,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { MoveUsedEvent } from "#app/events/battle-scene.js";
-import { Stat, BATTLE_STATS, BattleStat, EFFECTIVE_STATS, EffectiveStat, getStatKey } from "#app/enums/stat";
+import { Stat, type BattleStat, type EffectiveStat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#app/enums/stat";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -4969,8 +4969,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     }
     let ret = this.user ? Math.floor((1 - user.getHpRatio()) * 20) : super.getUserBenefitScore(user, target, move);
     if (this.user && this.batonPass) {
-      const battleStatTotal = user.getStatStages().reduce((bs: integer, total: integer) => total += bs, 0);
-      ret = ret / 2 + (Phaser.Tweens.Builders.GetEaseFunction("Sine.easeOut")(Math.min(Math.abs(battleStatTotal), 10) / 10) * (battleStatTotal >= 0 ? 10 : -10));
+      const statStageTotal = user.getStatStages().reduce((s: integer, total: integer) => total += s, 0);
+      ret = ret / 2 + (Phaser.Tweens.Builders.GetEaseFunction("Sine.easeOut")(Math.min(Math.abs(statStageTotal), 10) / 10) * (statStageTotal >= 0 ? 10 : -10));
     }
     return ret;
   }

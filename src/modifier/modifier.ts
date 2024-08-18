@@ -23,7 +23,7 @@ import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler.js";
 import { Species } from "#enums/species";
-import { BATTLE_STATS, PermanentStat, TEMP_BATTLE_STATS, TempBattleStat } from "#app/enums/stat"; // TODO: Add Type
+import { type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS  } from "#app/enums/stat";
 import i18next from "i18next";
 
 import { allMoves } from "#app/data/move.js";

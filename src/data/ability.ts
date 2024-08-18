@@ -24,7 +24,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Stat, BattleStat, getStatKey, BATTLE_STATS, EFFECTIVE_STATS, EffectiveStat } from "#app/enums/stat.js";
+import { Stat, type BattleStat, type EffectiveStat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#app/enums/stat";
 
 export class Ability implements Localizable {
   public id: Abilities;

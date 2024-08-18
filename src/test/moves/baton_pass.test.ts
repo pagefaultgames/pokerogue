@@ -65,7 +65,7 @@ describe("Moves - Baton Pass", () => {
     // arrange
     game.override
       .startingWave(5)
-      .enemyMoveset([ Moves.NASTY_PLOT, Moves.NASTY_PLOT, Moves.NASTY_PLOT, Moves.NASTY_PLOT ]);
+      .enemyMoveset(new Array(4).fill([Moves.NASTY_PLOT]);
     await game.startBattle([
       Species.RAICHU,
       Species.SHUCKLE
@@ -77,7 +77,7 @@ describe("Moves - Baton Pass", () => {
 
     // round 2 - baton pass
     game.scene.getEnemyPokemon()!.hp = 100;
-    game.override.enemyMoveset([ Moves.BATON_PASS, Moves.BATON_PASS, Moves.BATON_PASS, Moves.BATON_PASS ]);
+    game.override.enemyMoveset(new Array(4).fill(Moves.BATON_PASS));
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(PostSummonPhase, false);
 

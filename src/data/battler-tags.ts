@@ -16,7 +16,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import i18next from "#app/plugins/i18n.js";
-import { Stat, BattleStat, EFFECTIVE_STATS, EffectiveStat, getStatKey } from "#app/enums/stat";
+import { Stat, type BattleStat, type EffectiveStat, EFFECTIVE_STATS, getStatKey } from "#app/enums/stat";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -1302,7 +1302,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
       break;
     }
 
-    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsHighestStatBoostOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), statName: getStatKey(highestStat) }), null, false, null, true);
+    pokemon.scene.queueMessage(i18next.t("battle:battlerTagsHighestStatBoostOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), statName: i18next.t(getStatKey(highestStat)) }), null, false, null, true);
   }
 
   onRemove(pokemon: Pokemon): void {

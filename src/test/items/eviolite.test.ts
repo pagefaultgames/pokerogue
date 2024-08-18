@@ -37,7 +37,7 @@ describe("Items - Eviolite", () => {
 
     const partyMember = game.scene.getParty()[0];
 
-    // Checking consoe log to make sure Eviolite is applied when getEffectiveStat (with the appropriate stat) is called
+    // Checking console log to make sure Eviolite is applied when getEffectiveStat (with the appropriate stat) is called
     partyMember.getEffectiveStat(Stat.DEF);
     expect(consoleSpy).toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
 

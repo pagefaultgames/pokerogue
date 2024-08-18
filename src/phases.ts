@@ -64,7 +64,7 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { applyChallenges, ChallengeType } from "./data/challenge";
 import { pokemonEvolutions } from "./data/pokemon-evolutions";
-import { Stat, BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
+import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
 
 const { t } = i18next;
 

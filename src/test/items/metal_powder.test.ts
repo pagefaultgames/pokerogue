@@ -37,7 +37,7 @@ describe("Items - Metal Powder", () => {
 
     const partyMember = game.scene.getParty()[0];
 
-    // Checking consoe log to make sure Metal Powder is applied when getEffectiveStat (with the appropriate stat) is called
+    // Checking console log to make sure Metal Powder is applied when getEffectiveStat (with the appropriate stat) is called
     partyMember.getEffectiveStat(Stat.DEF);
     expect(consoleSpy).toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:SpeciesBoosterItem.METAL_POWDER.name"), "");
 

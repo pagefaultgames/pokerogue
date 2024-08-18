@@ -22,7 +22,7 @@ import { Ability } from "../data/ability.js";
 import i18next from "i18next";
 import {modifierSortFunc} from "../modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
-import { Stat, getStatKey, PERMANENT_STATS } from "#app/enums/stat.js";
+import { Stat, PERMANENT_STATS, getStatKey } from "#app/enums/stat.js";
 
 enum Page {
   PROFILE,

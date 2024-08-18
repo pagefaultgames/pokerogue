@@ -53,7 +53,7 @@ describe("Abilities - Moxie", () => {
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
   }, 20000);
 
-  // TODO: Activate this test when MOXIE is corrected to work faint and not battle victory
+  // TODO: Activate this test when MOXIE is corrected to work on faint and not on battle victory
   it.todo("should raise ATK stat stage by 1 when defeating an ally Pokemon", async() => {
     game.override.battleType("double");
     const moveToUse = Moves.AERIAL_ACE;
