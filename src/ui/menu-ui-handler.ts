@@ -51,6 +51,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   public bgmBar: BgmBar;
 
+
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
@@ -519,7 +520,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     const messageText = this.message;
     const messageBox = this.messageBoxBg;
     this.adjustText(text,messageText,messageBox.getBounds().width,{
-      padding: messageText.x / 2,
+      padding: messageText.x,
       ignoreTextBalance: "all"
     });
 

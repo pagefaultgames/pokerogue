@@ -211,42 +211,44 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     @argument ignoreBalanceText ignore Text Balance for some languages or for all.
     @argument padding default 0.
  */
+
   adjustText(text:string,textObject:Phaser.GameObjects.Text,maxWidth:number,opts:argsAjustText={}): void {
     const currentLanguage = i18next.resolvedLanguage!;
     if (opts.ignoreLanguages && opts.ignoreLanguages[0] && !opts.ignoreLanguages.some(localKey=>localKey === currentLanguage)) {
       return;
     }
 
-    const fontSizeToNumber = (FS:number|string):number=>{
+    const fontSizeToNumber = (FS: number|string):number => {
       return parseInt(FS.toString().replace("px",""));
     };
-    const fontSize = fontSizeToNumber(textObject.getData("originalFontSize") ?? fontSizeToNumber(textObject.style.fontSize));
+
+    // If fontSize was modified before, revert to original
+    const fontSize = textObject.getData("originalFontSize") ?? fontSizeToNumber(textObject.style.fontSize);
     textObject.setData("originalFontSize", textObject.getData("originalFontSize") ?? fontSize);
     textObject.setFontSize(fontSize);
-    const textWrapped = textObject.getWrappedText(text);
+
+    const textWrapped = ()=>textObject.getWrappedText(text);
+    const textSize = ()=>Phaser.GameObjects.GetTextSize(textObject,textObject.style.getTextMetrics(),textWrapped());
     const balanceText = typeof opts.ignoreTextBalance === "string" ? opts.ignoreTextBalance === "all" : (opts.ignoreTextBalance && opts.ignoreTextBalance[0] && opts.ignoreTextBalance.some(localKey=> localKey === currentLanguage));
 
     // Text Balance
-    if (!balanceText && textWrapped[1] && textWrapped.length <= textObject.style.maxLines && textWrapped[0].replace(" ","").length * 0.25 > textWrapped[1].replace(" ","").length) {
+    if (!balanceText && textWrapped()[1] && textWrapped().length <= textObject.style.maxLines && textWrapped()[0].length * 0.25 > textWrapped()[1].length) {
       textObject.setWordWrapWidth(maxWidth * 0.65);
     }
 
-    const padding = opts.padding ?? 0;
-    const textSize = Phaser.GameObjects.GetTextSize(textObject,textObject.style.getTextMetrics(),textObject.getWrappedText(text));
-
     // If is very near to border add "padding", not need if border container appareance is nice
-    const textWidth = (textSize.width + padding * 17);
+    const padding = opts.padding ?? 0;
 
     // Text ajust
-    if (textWrapped.length > textObject.style.maxLines || textWidth > maxWidth) {
-      let fontDecrement = fontSizeToNumber(textObject.style.fontSize);
-      while (textObject.getWrappedText(text).length > textObject.style.maxLines || (Phaser.GameObjects.GetTextSize(textObject,textObject.style.getTextMetrics(),textObject.getWrappedText(text)).width + padding * 17) > maxWidth) {
+    if (textWrapped().length > textObject.style.maxLines || (textSize().width + padding) > maxWidth) {
+
+      let fontDecrement = fontSize;
+      while (textWrapped().length > textObject.style.maxLines || (textSize().width + padding) > maxWidth) {
         fontDecrement -= 1;
         textObject.setFontSize(fontDecrement);
       }
-      textObject.setFontSize(fontDecrement - padding);
-    } else {
-      textObject.setFontSize(fontSize);
+      textObject.setFontSize(fontDecrement - padding / 2);
+
     }
   }
 }
