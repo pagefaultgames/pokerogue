@@ -3451,20 +3451,41 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   */
   getCurrentDexProps(speciesId: number): bigint {
     let props = 0n;
-
-    if (this.starterPreferences[speciesId]?.female) { // this checks the gender of the pokemon
+    const caughtAttr = this.scene.gameData.dexData[speciesId].caughtAttr;
+    /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
+     *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
+     *  If neither of these pass, we add DexAttr.MALE to our temp props
+     */
+    if (this.starterPreferences[speciesId]?.female || ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)) {
       props += DexAttr.FEMALE;
     } else {
       props += DexAttr.MALE;
     }
-    if (this.starterPreferences[speciesId]?.shiny) {
+    /* This part is very similar to above, but instead of for gender, it checks for shiny within starter preferences. If they're not there, it checks the caughtAttr for shiny only
+     * (i.e. SHINY === true && NON_SHINY === false)
+     */
+    if (this.starterPreferences[speciesId]?.shiny || ((caughtAttr & DexAttr.SHINY) > 0n && (caughtAttr & DexAttr.NON_SHINY) === 0n)) {
       props += DexAttr.SHINY;
       if (this.starterPreferences[speciesId]?.variant) {
         props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.variant)) * DexAttr.DEFAULT_VARIANT;
       } else {
-        props += DexAttr.DEFAULT_VARIANT;
+        /*  This calculates the correct variant if there's no starter preferences for it.
+         *  This gets the lowest tier variant that you've caught (in line with other mechanics) and adds it to the temp props
+         */
+        if ((caughtAttr & DexAttr.DEFAULT_VARIANT) > 0) {
+          props += DexAttr.DEFAULT_VARIANT;
+        }
+        if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
+          props += DexAttr.VARIANT_2;
+        } else if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
+          props += DexAttr.VARIANT_3;
+        }
       }
     } else {
+      /* If the pokemon does not have a shiny attribute at all, we firstly add DexAttr.NON_SHINY to our props
+       * And secondly remove the variant from the starter preference if there is one. This is to avoid weird cases
+       * where a disabled shiny has a variant attached to it. We then add the default variant to props
+       */
       props += DexAttr.NON_SHINY;
       if (this.starterPreferences[speciesId]?.variant) {
         delete this.starterPreferences[speciesId].variant;
@@ -3474,7 +3495,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (this.starterPreferences[speciesId]?.form) { // this checks for the form of the pokemon
       props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.form)) * DexAttr.DEFAULT_FORM;
     } else {
-      props += DexAttr.DEFAULT_FORM;
+      // this below bit bitshifts the caught attribute by the number of items of DexAttr.DEFAULT_FORM - this removes anything *not* related to forms here
+      const forms = caughtAttr >> Math.log2(Number(DexAttr.DEFAULT_FORM));
+      let formIndex = 0;
+      let foundForm = false;
+
+      // this goes through each bit of forms and checks if it matches with the form index. If so, it breaks the loop, if not, it adds one to the formIndex and tries again
+      do {
+        if (forms & (1 << formIndex)) {
+          foundForm = true;
+        }
+        // I feel like I want to have something like if (BigInt(Math.pow(2, formIndex)) * DexAttr.DEFAULT_FORM) > forms { formFound = true } to be safe against infinite loops. A challenge for the reader, perhaps?
+        formIndex++;
+      } while (!foundForm);
+      props += BigInt(Math.pow(2, formIndex)) * DexAttr.DEFAULT_FORM;
+      //props += DexAttr.DEFAULT_FORM;
     }
 
     return props;
