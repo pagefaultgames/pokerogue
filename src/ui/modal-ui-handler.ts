@@ -84,11 +84,16 @@ export abstract class ModalUiHandler extends UiHandler {
     if (args.length >= 1 && "buttonActions" in args[0]) {
       super.show(args);
       if (args[0].hasOwnProperty("fadeOut") && typeof args[0].fadeOut === "function") {
-        const overlay = this.scene.add.rectangle((( (this.getWidth() + (this.getMargin()[0] - this.getMargin()[3]))) / 2), ((this.getHeight() + (this.getMargin()[1] - this.getMargin()[2])) / 2),this.scene.game.canvas.width ,this.scene.game.canvas.height , 0);
+        const [ marginTop, marginRight, marginBottom, marginLeft ] = this.getMargin();
+
+        const overlay = this.scene.add.rectangle(( this.getWidth() + marginLeft + marginRight) / 2, (this.getHeight() + marginTop + marginBottom) / 2,this.scene.game.canvas.width / 6,this.scene.game.canvas.height /6, 0);
+        overlay.setOrigin(0.5,0.5);
         overlay.setName("rect-ui-overlay-modal");
         overlay.setAlpha(0);
+
         this.modalContainer.add(overlay);
         this.modalContainer.moveTo(overlay,0);
+
         this.scene.tweens.add({
           targets: overlay,
           alpha: 1,
