@@ -5,11 +5,12 @@ import { Moves } from "#enums/moves";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { MovePhase, TurnEndPhase } from "#app/phases";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { BattlerIndex } from "#app/battle.js";
+import { MovePhase } from "#app/phases/move-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Abilities - Flash Fire", () => {
   let phaserGame: Phaser.Game;

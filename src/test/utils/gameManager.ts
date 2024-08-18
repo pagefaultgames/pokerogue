@@ -1,7 +1,6 @@
 import GameWrapper from "#test/utils/gameWrapper";
 import { Mode } from "#app/ui/ui";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
-import { CommandPhase, EncounterPhase, FaintPhase, LoginPhase, MovePhase, NewBattlePhase, SelectStarterPhase, SelectTargetPhase, TitlePhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#test/utils/phaseInterceptor";
 import TextInterceptor from "#test/utils/TextInterceptor";
@@ -31,6 +30,18 @@ import { vi } from "vitest";
 import { ClassicModeHelper } from "./helpers/classicModeHelper";
 import { DailyModeHelper } from "./helpers/dailyModeHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { EncounterPhase } from "#app/phases/encounter-phase.js";
+import { FaintPhase } from "#app/phases/faint-phase.js";
+import { LoginPhase } from "#app/phases/login-phase.js";
+import { MovePhase } from "#app/phases/move-phase.js";
+import { NewBattlePhase } from "#app/phases/new-battle-phase.js";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
+import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
+import { TitlePhase } from "#app/phases/title-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 
 /**
  * Class to manage the game state and transitions between phases.

@@ -1,5 +1,4 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { MoveEndPhase, TurnInitPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -8,6 +7,8 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 describe("Moves - Haze", () => {
   describe("integration tests", () => {
