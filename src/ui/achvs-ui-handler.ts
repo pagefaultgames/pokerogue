@@ -9,6 +9,17 @@ import { addWindow } from "./ui-theme";
 import { ParseKeys } from "i18next";
 import { PlayerGender } from "#enums/player-gender";
 
+
+interface LanguageSetting {
+  TextSize: string,
+}
+
+const languageSettings: { [key: string]: LanguageSetting } = {
+  "de":{
+    TextSize: "80px"
+  }
+};
+
 export default class AchvsUiHandler extends MessageUiHandler {
   private readonly ACHV_ROWS = 4;
   private readonly ACHV_COLS = 17;
@@ -78,6 +89,8 @@ export default class AchvsUiHandler extends MessageUiHandler {
     titleBg.setOrigin(0, 0);
 
     this.titleText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
+    const textSize = languageSettings[i18next.language]?.TextSize ?? this.titleText.style.fontSize;
+    this.titleText.setFontSize(textSize);
     this.titleText.setOrigin(0, 0);
     this.titleText.setPositionRelative(titleBg, 8, 4);
 
