@@ -22,12 +22,12 @@ import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-fo
 import { Nature } from "#app/data/nature";
 import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
-import { Command } from "#app/ui/command-ui-handler.js";
+import { Command } from "#app/ui/command-ui-handler";
 import { Species } from "#enums/species";
 import i18next from "i18next";
 
-import { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
+import { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -506,6 +506,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
       if (pokemon) {
         const pokemonIcon = scene.addPokemonIcon(pokemon, -2, 10, 0, 0.5);
         container.add(pokemonIcon);
+        container.setName(pokemon.id.toString());
       }
 
       const item = scene.add.sprite(16, this.virtualStackCount ? 8 : 16, "items");
@@ -2337,7 +2338,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
  * @see {@linkcode modifierTypes[MINI_BLACK_HOLE]}
  */
 export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
-  readonly isTransferrable: boolean = true;
+  isTransferrable: boolean = true;
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }
@@ -2360,6 +2361,10 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 1;
+  }
+
+  setTransferrableFalse(): void {
+    this.isTransferrable = false;
   }
 }
 
