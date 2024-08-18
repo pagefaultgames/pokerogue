@@ -13,7 +13,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonHeldItemModifierType": {
       extra: {
         "inoperable": "{{pokemonName}} ne peut pas\nporter cet objet !",
-        "tooMany": "{{pokemonName}} possède trop\nd’exemplaires de cet objet !",
+        "tooMany": "{{pokemonName}} porte trop\nd’exemplaires de cet objet !",
       }
     },
     "PokemonHpRestoreModifierType": {
@@ -110,7 +110,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Permet à certains Pokémon de changer de forme.",
     },
     "FusePokemonModifierType": {
-      description: "Fusionne deux Pokémon (transfère le talent, sépare les stats de base et les types, partage le movepool).",
+      description: "Fusionne deux Pokémon (transfère le talent, sépare les stats de base et les types, partage les capacités).",
     },
     "TerastallizeModifierType": {
       name: "Téra-Éclat {{teraType}}",
@@ -196,7 +196,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "RELIC_GOLD": { name: "Vieux Ducat" },
 
     "AMULET_COIN": { name: "Pièce Rune", description: "Augmente de 20% les gains d’argent." },
-    "GOLDEN_PUNCH": { name: "Poing Doré", description: "50% des dégâts infligés sont convertis en argent." },
+    "GOLDEN_PUNCH": { name: "Poing Doré", description: "La moitié des dégâts infligés sont convertis en argent." },
     "COIN_CASE": { name: "Boite Jetons", description: "Tous les 10 combats, recevez 10% de votre argent en intérêts." },
 
     "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de conserver la rareté des objets si vous relancez les objets proposés." },
@@ -213,7 +213,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "FOCUS_BAND": { name: "Bandeau", description: "Ajoute 10% de chances de survivre avec 1 PV si les dégâts reçus pouvaient mettre K.O. ." },
 
-    "QUICK_CLAW": { name: "Vive Griffe", description: "Ajoute 10% de chances d’agir en premier, indépendamment de la vitesse (après la priorité)." },
+    "QUICK_CLAW": { name: "Vive Griffe", description: "Ajoute 10% de chances d’agir en premier, indépendamment de la Vitesse (après la priorité)." },
 
     "KINGS_ROCK": { name: "Roche Royale", description: "Ajoute 10% de chances qu’une capacité offensive apeure l’adversaire." },
 
@@ -263,14 +263,14 @@ export const modifierType: ModifierTypeTranslationEntries = {
   },
 
   TempBattleStatBoosterStatName: {
-    "ATK": "Attaque",
-    "DEF": "Défense",
-    "SPATK": "Atq. Spé.",
-    "SPDEF": "Déf. Spé.",
-    "SPD": "Vitesse",
-    "ACC": "Précision",
-    "CRIT": "Taux de critique",
-    "EVA": "Esquive",
+    "ATK": "l’Attaque",
+    "DEF": "la Défense",
+    "SPATK": "l’Atq. Spé.",
+    "SPDEF": "la Déf. Spé.",
+    "SPD": "la Vitesse",
+    "ACC": "la précision",
+    "CRIT": "le taux de critique",
+    "EVA": "l’esquive",
     "DEFAULT": "???",
   },
 
