@@ -40,7 +40,7 @@ describe("Moves - FILLET AWAY", () => {
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/fillet_away_(move)
 
-  test("Fillet Away raises the user's Attack, Special Attack, and Speed by two stages each, at the cost of 1/2 of its maximum HP",
+  test("raises the user's ATK, SPATK, and SPD stat stages by 2 each, at the cost of 1/2 of its maximum HP",
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
@@ -57,7 +57,7 @@ describe("Moves - FILLET AWAY", () => {
     }, TIMEOUT
   );
 
-  test("Fillet Away will still take effect if one or more of the involved stats are not at max",
+  test("still takes effect if one or more of the involved stat stages are not at max",
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
@@ -78,7 +78,7 @@ describe("Moves - FILLET AWAY", () => {
     }, TIMEOUT
   );
 
-  test("Fillet Away fails if all stats involved are at max",
+  test("fails if all stat stages involved are at max",
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 
@@ -98,7 +98,7 @@ describe("Moves - FILLET AWAY", () => {
     }, TIMEOUT
   );
 
-  test("Fillet Away fails if the user's health is less than 1/2",
+  test("fails if the user's health is less than 1/2",
     async() => {
       await game.startBattle([Species.MAGIKARP]);
 

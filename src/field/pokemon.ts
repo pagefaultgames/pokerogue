@@ -2062,22 +2062,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (critOnly.value || critAlways) {
           isCritical = true;
         } else {
-          const critLevel = new Utils.IntegerHolder(0);
-          applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
-          this.scene.applyModifiers(CritBoosterModifier, source.isPlayer(), source, critLevel);
-          this.scene.applyModifiers(TempCritBoosterModifier, source.isPlayer(), critLevel);
+          const critStage = new Utils.IntegerHolder(0);
+          applyMoveAttrs(HighCritAttr, source, this, move, critStage);
+          this.scene.applyModifiers(CritBoosterModifier, source.isPlayer(), source, critStage);
+          this.scene.applyModifiers(TempCritBoosterModifier, source.isPlayer(), critStage);
           const bonusCrit = new Utils.BooleanHolder(false);
           //@ts-ignore
           if (applyAbAttrs(BonusCritAbAttr, source, null, bonusCrit)) { // TODO: resolve ts-ignore. This is a promise. Checking a promise is bogus.
             if (bonusCrit.value) {
-              critLevel.value += 1;
+              critStage.value += 1;
             }
           }
           if (source.getTag(BattlerTagType.CRIT_BOOST)) {
-            critLevel.value += 2;
+            critStage.value += 2;
           }
-          console.log(`crit stage: +${critLevel.value}`);
-          const critChance = [24, 8, 2, 1][Math.max(0, Math.min(critLevel.value, 3))];
+          console.log(`crit stage: +${critStage.value}`);
+          const critChance = [24, 8, 2, 1][Math.max(0, Math.min(critStage.value, 3))];
           isCritical = critChance === 1 || !this.scene.randBattleSeedInt(critChance);
           if (Overrides.NEVER_CRIT_OVERRIDE) {
             isCritical = false;

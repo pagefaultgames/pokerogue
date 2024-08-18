@@ -58,15 +58,15 @@ describe("Items - Scope Lens", () => {
     const partyMember = game.scene.getPlayerPokemon()!;
 
     // Making sure modifier is not applied without holding item
-    const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
+    const critStage = new Utils.IntegerHolder(0);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critStage);
 
-    expect(critLevel.value).toBe(0);
+    expect(critStage.value).toBe(0);
 
     // Giving Scope Lens to party member and testing if it applies
     partyMember.scene.addModifier(modifierTypes.SCOPE_LENS().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
+    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critStage);
 
-    expect(critLevel.value).toBe(1);
+    expect(critStage.value).toBe(1);
   }, 20000);
 });
