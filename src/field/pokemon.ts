@@ -922,7 +922,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getLearnableLevelMoves(): Moves[] {
     let levelMoves = this.getLevelMoves(1, true).map(lm => lm[1]);
-    if (this.metBiome === -1 && !this.scene.gameMode.isFreshStartChallenge()) {
+    if (this.metBiome === -1 && !this.scene.gameMode.isFreshStartChallenge() && !this.scene.gameMode.isDaily) {
       levelMoves = this.getUnlockedEggMoves().concat(levelMoves);
     }
     return levelMoves.filter(lm => !this.moveset.some(m => m?.moveId === lm));
