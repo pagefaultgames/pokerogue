@@ -87,7 +87,6 @@ describe("UI - Transfer Items", () => {
       handler.processInput(Button.ACTION); // select Pokemon
 
       expect(handler.optionsContainer.list.some((option) => (option as BBCodeText).text?.includes("Transfer"))).toBe(true);
-
       game.phaseInterceptor.unlock();
     });
 

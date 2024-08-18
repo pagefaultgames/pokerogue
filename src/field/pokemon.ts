@@ -1210,11 +1210,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * @param source - The Pokémon using the move.
    * @param move - The move being used.
-   * @returns The type damage multiplier or undefined if it's a status move
+   * @returns The type damage multiplier or 1 if it's a status move
    */
-  getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier | undefined {
+  getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
     if (move.getMove().category === MoveCategory.STATUS) {
-      return undefined;
+      return 1;
     }
 
     return this.getAttackMoveEffectiveness(source, move, !this.battleData?.abilityRevealed);

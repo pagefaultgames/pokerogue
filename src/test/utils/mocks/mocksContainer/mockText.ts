@@ -12,6 +12,7 @@ export default class MockText implements MockGameObject {
   public style;
   public text = "";
   private name?: string;
+  public color?: string;
 
   constructor(textureManager, x, y, content, styleOptions) {
     this.scene = textureManager.scene;
@@ -192,10 +193,9 @@ export default class MockText implements MockGameObject {
     };
   }
 
-  setColor(color) {
-    // Sets the tint of this Game Object.
-    // return this.phaserText.setColor(color);
-  }
+  setColor = vi.fn((color: string) => {
+    this.color = color;
+  });
 
   setShadowColor(color) {
     // Sets the shadow color.
