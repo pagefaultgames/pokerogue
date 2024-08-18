@@ -2680,8 +2680,8 @@ export class MovePhase extends BattlePhase {
     this.pokemon = pokemon;
     this.targets = targets;
     this.move = move;
-    this.followUp = !!followUp;
-    this.ignorePp = !!ignorePp;
+    this.followUp = followUp ?? false;
+    this.ignorePp = ignorePp ?? false;
     this.failed = false;
     this.cancelled = false;
   }
@@ -2836,7 +2836,7 @@ export class MovePhase extends BattlePhase {
         return this.end();
       }
 
-      if (!moveQueue.length || !moveQueue.shift()?.ignorePP) { // using .shift here clears out two turn moves once they've been used
+      if ((!moveQueue.length || !moveQueue.shift()?.ignorePP) && !this.ignorePp) { // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
         this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed));
       }
