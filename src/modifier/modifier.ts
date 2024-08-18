@@ -2338,7 +2338,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
  * @see {@linkcode modifierTypes[MINI_BLACK_HOLE]}
  */
 export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
-  private isTransferrable: boolean = true;
+  isTransferrable: boolean = true;
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }
