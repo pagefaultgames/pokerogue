@@ -84,6 +84,21 @@ describe("Abilities - Gulp Missile", () => {
     expect(cramorant.formIndex).toBe(GORGING_FORM);
   });
 
+  it("changes to base form when switched out after Surf or Dive is used", async () => {
+    await game.startBattle([Species.CRAMORANT, Species.MAGIKARP]);
+    const cramorant = game.scene.getPlayerPokemon()!;
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn(); // form change is delayed until after end of turn
+
+    expect(cramorant.formIndex).toBe(NORMAL_FORM);
+    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeUndefined();
+    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_PIKACHU)).toBeUndefined();
+  });
+
   it("changes form during Dive's charge turn", async () => {
     await game.startBattle([Species.CRAMORANT]);
     const cramorant = game.scene.getPlayerPokemon()!;

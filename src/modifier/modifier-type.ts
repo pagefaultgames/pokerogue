@@ -2489,7 +2489,7 @@ export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType 
 }
 
 export class ModifierTypeOption {
-  public type: ModifierType | null;
+  public type: ModifierType;
   public upgradeCount: integer;
   public cost: integer;
   public alternates?: integer[];
