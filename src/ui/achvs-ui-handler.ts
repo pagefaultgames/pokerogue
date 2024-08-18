@@ -92,7 +92,10 @@ export default class AchvsUiHandler extends MessageUiHandler {
     const textSize = languageSettings[i18next.language]?.TextSize ?? this.titleText.style.fontSize;
     this.titleText.setFontSize(textSize);
     this.titleText.setOrigin(0, 0);
-    this.titleText.setPositionRelative(titleBg, 8, 4);
+    const titleBgCenterX = titleBg.x + titleBg.width / 2;
+    const titleBgCenterY = titleBg.y + titleBg.height / 2;
+    this.titleText.setOrigin(0.5, 0.5);
+    this.titleText.setPosition(titleBgCenterX, titleBgCenterY);
 
     const scoreBg = addWindow(this.scene, titleBg.x + titleBg.width, titleBg.y, 46, 24);
     scoreBg.setOrigin(0, 0);
