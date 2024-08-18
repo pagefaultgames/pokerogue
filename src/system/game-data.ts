@@ -25,7 +25,7 @@ import { Nature } from "../data/nature";
 import { GameStats } from "./game-stats";
 import { Tutorial } from "../tutorial";
 import { speciesEggMoves } from "../data/egg-moves";
-import { allMoves } from "../data/move";
+import Move, { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
@@ -1430,12 +1430,12 @@ export class GameData {
     }
   }
 
-  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
+  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false): Promise<boolean> {
     return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg);
   }
 
-  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
-    return new Promise<void>(resolve => {
+  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
       const formIndex = pokemon.formIndex;
@@ -1495,13 +1495,17 @@ export class GameData {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
           return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg).then(() => resolve());
         } else {
-          resolve();
+          resolve(false);
         }
       };
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
-        this.scene.playSound("level_up_fanfare");
-        this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
+        if (!fromEgg) {
+          this.scene.playSound("level_up_fanfare");
+          this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
+        }
+
+        resolve(fromEgg);
       } else {
         checkPrevolution();
       }
@@ -1546,8 +1550,9 @@ export class GameData {
   }
 
   setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
+    return new Promise<boolean|Move>(resolve => {
       const speciesId = species.speciesId;
+
       if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
         resolve(false);
         return;
@@ -1568,8 +1573,7 @@ export class GameData {
 
       this.scene.playSound("level_up_fanfare");
 
-      const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
-      this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, () => resolve(true), null, true);
+      resolve(allMoves[speciesEggMoves[speciesId][eggMoveIndex]]);
     });
   }
 

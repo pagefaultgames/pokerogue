@@ -20,6 +20,7 @@ export const egg: SimpleTranslationEntries = {
   "pulls": "回引く",
   "sameSpeciesEgg": "{{species}}は　このタマゴから　うまれる！",
   "hatchFromTheEgg": "{{pokemonName}}は　タマゴから　うまれた！",
+  "hatchFromTheEggNew": "(New!) {{pokemonName}}は　タマゴから　うまれた！",
   "eggMoveUnlock": "タマゴわざ　{{moveName}}を　おぼえた！",
   "rareEggMoveUnlock": "レアなタマゴわざ　{{moveName}}を　おぼえた！！",
   "moveUPGacha": "わざ UP!",

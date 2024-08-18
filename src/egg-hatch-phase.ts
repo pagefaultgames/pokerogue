@@ -339,20 +339,19 @@ export class EggHatchPhase extends Phase {
         });
       }
       this.scene.time.delayedCall(Utils.fixedInt(!this.skipped ? !isShiny ? 1250 : 1750 : !isShiny ? 250 : 750), () => {
-        this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
-
         this.scene.playSoundWithoutBgm("evolution_fanfare");
 
-        this.scene.ui.showText(i18next.t("egg:hatchFromTheEgg", { pokemonName: getPokemonNameWithAffix(this.pokemon) }), null, () => {
-          this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
-          this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
-            this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(() => {
+        this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
+        this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then((newCatch) => {
+          this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then((eggMove) => {
+            this.infoContainer.show(this.pokemon, true, eggMove,this.skipped ? 2 : 1);
+            this.scene.ui.showText(i18next.t(newCatch ? "egg:hatchFromTheEggNew" : "egg:hatchFromTheEgg", { pokemonName: getPokemonNameWithAffix(this.pokemon) }), null, () => {
               this.scene.ui.showText("", 0);
               this.end();
-            });
+            }, null, true, 3000);
+
           });
-        }, null, true, 3000);
-        //this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
+        });
       });
     });
     this.scene.tweens.add({

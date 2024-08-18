@@ -20,6 +20,7 @@ export const egg: SimpleTranslationEntries = {
   "pulls": "Tirages",
   "sameSpeciesEgg": "{{species}} sortira de cet Œuf !",
   "hatchFromTheEgg": "{{pokemonName}} sort de l’Œuf !",
+  "hatchFromTheEggNew": "(New!) {{pokemonName}} sort de l’Œuf !",
   "eggMoveUnlock": "Capacité Œuf débloquée :\n{{moveName}}",
   "rareEggMoveUnlock": "Capacité Œuf Rare débloquée :\n{{moveName}}",
   "moveUPGacha": "Bonus Capacité\nŒuf Rare !",

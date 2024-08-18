@@ -3,6 +3,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import BattleScene from "../battle-scene";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { getNatureName } from "../data/nature";
+import Move from "../data/move";
 import { Type } from "../data/type";
 import Pokemon from "../field/pokemon";
 import i18next from "i18next";
@@ -59,6 +60,10 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private pokemonShinyIcon: Phaser.GameObjects.Image;
   private pokemonShinyNewIcon: Phaser.GameObjects.Text;
   private pokemonFusionShinyIcon: Phaser.GameObjects.Image;
+  private pokemonEggMoveContainer: Phaser.GameObjects.Container;
+  private pokemonEggMoveContainers: Phaser.GameObjects.Container[];
+  private pokemonEggMoveBgs: Phaser.GameObjects.NineSlice[];
+  private pokemonEggMoveLabels: Phaser.GameObjects.Text[];
   private pokemonMovesContainer: Phaser.GameObjects.Container;
   private pokemonMovesContainers: Phaser.GameObjects.Container[];
   private pokemonMoveBgs: Phaser.GameObjects.NineSlice[];
@@ -67,6 +72,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private numCharsBeforeCutoff = 16;
 
   private initialX: number;
+  private eggMoveContainerInitialX: number;
   private movesContainerInitialX: number;
 
   public statsContainer: StatsContainer;
@@ -87,6 +93,48 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     infoBg.setOrigin(0.5, 0.5);
     infoBg.setName("window-info-bg");
 
+    // Move container on egg hatch
+    this.pokemonEggMoveContainer = this.scene.add.container(6, 20);
+    this.pokemonEggMoveContainer.setName("pkmn-egg-move-container");
+
+    this.eggMoveContainerInitialX = this.pokemonEggMoveContainer.x;
+
+    this.pokemonEggMoveContainers = [];
+    this.pokemonEggMoveBgs = [];
+    this.pokemonEggMoveLabels = [];
+
+    const eggMoveContainerBg = addWindow(this.scene, 0, 15, 58, 31);
+    eggMoveContainerBg.setOrigin(1, 0);
+    eggMoveContainerBg.setName("window-egg-move-bg");
+    this.pokemonEggMoveContainer.add(eggMoveContainerBg);
+
+    const eggMoveContainerLabel = addTextObject(this.scene, -eggMoveContainerBg.width / 2, 21, i18next.t("pokemonInfoContainer:newEggMove"), TextStyle.WINDOW, { fontSize: "64px" });
+    eggMoveContainerLabel.setOrigin(0.5, 0);
+    eggMoveContainerLabel.setName("text-egg-move");
+    this.pokemonEggMoveContainer.add(eggMoveContainerLabel);
+
+    const newEggMoveContainer = this.scene.add.container(-6, 33);
+    newEggMoveContainer.setScale(0.5);
+    newEggMoveContainer.setName("new-egg-move");
+
+    const newEggMoveBg = this.scene.add.nineslice(0, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
+    newEggMoveBg.setOrigin(1, 0);
+    newEggMoveBg.setName("nineslice-new-egg-move-bg");
+
+    const newEggMoveLabel = addTextObject(this.scene, -newEggMoveBg.width / 2, 0, "-", TextStyle.PARTY);
+    newEggMoveLabel.setOrigin(0.5, 0);
+    newEggMoveLabel.setName("text-new-egg-move-label");
+
+    this.pokemonEggMoveBgs.push(newEggMoveBg);
+    this.pokemonEggMoveLabels.push(newEggMoveLabel);
+
+    newEggMoveContainer.add(newEggMoveBg);
+    newEggMoveContainer.add(newEggMoveLabel);
+
+    this.pokemonEggMoveContainers.push(newEggMoveContainer);
+    this.pokemonEggMoveContainer.add(newEggMoveContainer);
+
+    // Move container on catch
     this.pokemonMovesContainer = this.scene.add.container(6, 14);
     this.pokemonMovesContainer.setName("pkmn-moves");
 
@@ -129,6 +177,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonMovesContainer.add(moveContainer);
     }
 
+    this.add(this.pokemonEggMoveContainer);
     this.add(this.pokemonMovesContainer);
 
     this.statsContainer = new StatsContainer(this.scene, -48, -64, true);
@@ -207,7 +256,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.setVisible(false);
   }
 
-  show(pokemon: Pokemon, showMoves: boolean = false, speedMultiplier: number = 1): Promise<void> {
+  show(pokemon: Pokemon, showMoves: boolean = false, eggMove?: Move, speedMultiplier: number = 1): Promise<void> {
     return new Promise<void>(resolve => {
       const caughtAttr = BigInt(pokemon.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr);
       if (pokemon.gender > Gender.GENDERLESS) {
@@ -340,10 +389,25 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         }
       });
 
-      if (showMoves) {
+      if (showMoves && !eggMove) {
         this.scene.tweens.add({
           delay: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
           targets: this.pokemonMovesContainer,
+          duration: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
+          ease: "Cubic.easeInOut",
+          x: this.movesContainerInitialX - 57,
+          onComplete: () => resolve()
+        });
+      }
+
+      if (eggMove) {
+        this.pokemonEggMoveBgs[0].setFrame(Type[eggMove ? eggMove.type : Type.UNKNOWN].toString().toLowerCase());
+        this.pokemonEggMoveLabels[0].setText(eggMove ? eggMove.name : "-");
+        this.pokemonEggMoveContainers[0].setVisible(!!eggMove);
+
+        this.scene.tweens.add({
+          delay: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
+          targets: this.pokemonEggMoveContainer,
           duration: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
           ease: "Cubic.easeInOut",
           x: this.movesContainerInitialX - 57,
