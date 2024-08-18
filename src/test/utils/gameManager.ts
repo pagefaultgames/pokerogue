@@ -181,7 +181,7 @@ export default class GameManager {
    * Emulate a player attack
    * @param movePosition the index of the move in the pokemon's moveset array
    */
-  doAttack(movePosition: integer) {
+  selectMove(movePosition: integer) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       this.scene.ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
@@ -201,7 +201,7 @@ export default class GameManager {
 
   /**
    * Emulate a player's target selection after an attack is chosen,
-   * usually called after {@linkcode doAttack} in a double battle.
+   * usually called after {@linkcode selectMove} in a double battle.
    * @param {BattlerIndex} targetIndex the index of the attack target
    */
   doSelectTarget(targetIndex: BattlerIndex) {

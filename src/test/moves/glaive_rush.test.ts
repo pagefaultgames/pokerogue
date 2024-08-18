@@ -42,11 +42,11 @@ describe("Moves - Glaive Rush", () => {
     enemy.hp = 1000;
 
     vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(0);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
     await game.phaseInterceptor.to(DamagePhase);
     const damageDealt = 1000 - enemy.hp;
     await game.phaseInterceptor.to(TurnEndPhase);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
     await game.phaseInterceptor.to(DamagePhase);
     expect(enemy.hp).toBeLessThanOrEqual(1001 - (damageDealt * 3));
 
@@ -58,7 +58,7 @@ describe("Moves - Glaive Rush", () => {
     enemy.hp = 1000;
 
     allMoves[Moves.AVALANCHE].accuracy = 0;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.AVALANCHE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.AVALANCHE));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeLessThan(1000);
 
@@ -74,11 +74,11 @@ describe("Moves - Glaive Rush", () => {
     player.hp = 1000;
 
     allMoves[Moves.AVALANCHE].accuracy = 0;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GLAIVE_RUSH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.GLAIVE_RUSH));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(player.hp).toBeLessThan(1000);
     player.hp = 1000;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(player.hp).toBe(1000);
 
@@ -93,16 +93,16 @@ describe("Moves - Glaive Rush", () => {
     player.hp = 1000;
     allMoves[Moves.SHADOW_SNEAK].accuracy = 0;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GLAIVE_RUSH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.GLAIVE_RUSH));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(player.hp).toBe(1000);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
     const damagedHp = player.hp;
     expect(player.hp).toBeLessThan(1000);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(player.hp).toBe(damagedHp);
 
@@ -117,7 +117,7 @@ describe("Moves - Glaive Rush", () => {
     enemy.hp = 1000;
     allMoves[Moves.SHADOW_SNEAK].accuracy = 0;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GLAIVE_RUSH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.GLAIVE_RUSH));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(player.hp).toBe(player.getMaxHp());
 
@@ -137,16 +137,16 @@ describe("Moves - Glaive Rush", () => {
     enemy.hp = 1000;
     player.hp = 1000;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.PROTECT));
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
     await game.phaseInterceptor.to(TurnEndPhase);
     game.override.enemyMoveset(Array(4).fill(Moves.SPLASH));
     const damagedHP1 = 1000 - enemy.hp;
     enemy.hp = 1000;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
     await game.phaseInterceptor.to(TurnEndPhase);
     const damagedHP2 = 1000 - enemy.hp;
 

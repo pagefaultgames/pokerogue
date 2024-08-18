@@ -35,7 +35,7 @@ describe("Abilities - Screen Cleaner", () => {
 
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.HAIL));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.HAIL));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.AURORA_VEIL)).toBeDefined();
@@ -52,7 +52,7 @@ describe("Abilities - Screen Cleaner", () => {
 
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.LIGHT_SCREEN)).toBeDefined();
@@ -69,7 +69,7 @@ describe("Abilities - Screen Cleaner", () => {
 
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.REFLECT)).toBeDefined();

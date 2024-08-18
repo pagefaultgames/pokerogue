@@ -51,10 +51,10 @@ describe("Moves - Follow Me", () => {
 
       const playerStartingHp = playerPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
 
       game.doSelectTarget(BattlerIndex.ENEMY);
@@ -80,10 +80,10 @@ describe("Moves - Follow Me", () => {
 
       const playerStartingHp = playerPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.FOLLOW_ME));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.FOLLOW_ME));
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       playerPokemon.sort((a, b) => a.getBattleStat(Stat.SPD) - b.getBattleStat(Stat.SPD));
@@ -112,12 +112,12 @@ describe("Moves - Follow Me", () => {
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY);
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);
@@ -146,12 +146,12 @@ describe("Moves - Follow Me", () => {
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SNIPE_SHOT));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SNIPE_SHOT));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY);
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SNIPE_SHOT));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SNIPE_SHOT));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);

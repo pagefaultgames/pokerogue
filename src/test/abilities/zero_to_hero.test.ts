@@ -52,7 +52,7 @@ describe("Abilities - ZERO TO HERO", () => {
     palafin2.status = new Status(StatusEffect.FAINT);
     expect(palafin2.isFainted()).toBe(true);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.doKillOpponents();
     await game.phaseInterceptor.to(TurnEndPhase);
     game.doSelectModifier();
@@ -80,7 +80,7 @@ describe("Abilities - ZERO TO HERO", () => {
     const palafin = game.scene.getPlayerPokemon()!;
     expect(palafin.formIndex).toBe(baseForm);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.killPokemon(palafin);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
@@ -97,7 +97,7 @@ describe("Abilities - ZERO TO HERO", () => {
     const palafin = game.scene.getPlayerPokemon()!;
     expect(palafin.formIndex).toBe(heroForm);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.killPokemon(palafin);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();

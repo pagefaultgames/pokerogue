@@ -47,7 +47,7 @@ describe("Moves - Hyper Beam", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.HYPER_BEAM));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.HYPER_BEAM));
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -62,7 +62,7 @@ describe("Moves - Hyper Beam", () => {
       expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
       expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

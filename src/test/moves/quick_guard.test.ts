@@ -46,11 +46,11 @@ describe("Moves - Quick Guard", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -68,11 +68,11 @@ describe("Moves - Quick Guard", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -90,11 +90,11 @@ describe("Moves - Quick Guard", () => {
       const leadPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.FOLLOW_ME));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.FOLLOW_ME));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

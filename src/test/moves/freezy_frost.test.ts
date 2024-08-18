@@ -46,17 +46,17 @@ describe("Moves - Freezy Frost", () => {
       expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
       expect(enemy.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.CHARM));
       await game.phaseInterceptor.to(TurnInitPhase);
       const userAtkBefore = user.summonData.battleStats[BattleStat.ATK];
       const enemyAtkBefore = enemy.summonData.battleStats[BattleStat.ATK];
       expect(userAtkBefore).toBe(2);
       expect(enemyAtkBefore).toBe(-2);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FREEZY_FROST));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.FREEZY_FROST));
       await game.phaseInterceptor.to(TurnInitPhase);
       expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
       expect(enemy.summonData.battleStats[BattleStat.ATK]).toBe(0);
@@ -68,13 +68,13 @@ describe("Moves - Freezy Frost", () => {
       const user = game.scene.getPlayerPokemon()!;
       expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
       await game.phaseInterceptor.to(TurnInitPhase);
 
       const userAtkBefore = user.summonData.battleStats[BattleStat.ATK];
       expect(userAtkBefore).toBe(2);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(MoveEndPhase);
       expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
     });

@@ -47,7 +47,7 @@ describe("Moves - Focus Punch", () => {
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
 
       await game.phaseInterceptor.to(MessagePhase);
 
@@ -74,7 +74,7 @@ describe("Moves - Focus Punch", () => {
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
 
       await game.phaseInterceptor.to(MessagePhase);
 
@@ -99,7 +99,7 @@ describe("Moves - Focus Punch", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
 
       await game.phaseInterceptor.to(MessagePhase); // Header message
 
@@ -121,7 +121,7 @@ describe("Moves - Focus Punch", () => {
       await game.startBattle([Species.CHARIZARD]);
 
       game.forceOpponentToSwitch();
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
 
       await game.phaseInterceptor.to(TurnStartPhase);
 

@@ -44,7 +44,7 @@ describe("Abilities - Stall", () => {
     const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
 
     await game.phaseInterceptor.to(MovePhase, false);
     // The player Pokemon (without Stall) goes first despite having lower speed than the opponent.
@@ -62,7 +62,7 @@ describe("Abilities - Stall", () => {
     const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
 
     await game.phaseInterceptor.to(MovePhase, false);
     // The opponent Pokemon (with Stall) goes first because its move is still within a higher priority bracket than its opponent.
@@ -81,7 +81,7 @@ describe("Abilities - Stall", () => {
     const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
 
     await game.phaseInterceptor.to(MovePhase, false);
     // The opponent Pokemon (with Stall) goes first because it has a higher speed.

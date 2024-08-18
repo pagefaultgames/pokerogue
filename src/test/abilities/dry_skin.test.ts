@@ -43,13 +43,13 @@ describe("Abilities - Dry Skin", () => {
 
     // first turn
     let previousEnemyHp = enemy.hp;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SUNNY_DAY));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SUNNY_DAY));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeLessThan(previousEnemyHp);
 
     // second turn
     previousEnemyHp = enemy.hp;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeLessThan(previousEnemyHp);
   });
@@ -66,13 +66,13 @@ describe("Abilities - Dry Skin", () => {
 
     // first turn
     let previousEnemyHp = enemy.hp;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.RAIN_DANCE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.RAIN_DANCE));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeGreaterThan(previousEnemyHp);
 
     // second turn
     previousEnemyHp = enemy.hp;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeGreaterThan(previousEnemyHp);
   });
@@ -87,7 +87,7 @@ describe("Abilities - Dry Skin", () => {
     enemy.hp = initialHP;
 
     // first turn
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
     await game.phaseInterceptor.to(TurnEndPhase);
     const fireDamageTakenWithDrySkin = initialHP - enemy.hp;
 
@@ -96,7 +96,7 @@ describe("Abilities - Dry Skin", () => {
     game.override.enemyAbility(Abilities.NONE);
 
     // second turn
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
     await game.phaseInterceptor.to(TurnEndPhase);
     const fireDamageTakenWithoutDrySkin = initialHP - enemy.hp;
 
@@ -113,7 +113,7 @@ describe("Abilities - Dry Skin", () => {
 
     enemy.hp = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.WATER_GUN));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeGreaterThan(1);
   });
@@ -129,7 +129,7 @@ describe("Abilities - Dry Skin", () => {
     enemy.hp = 1;
     game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.WATER_GUN));
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBe(1);
   });
@@ -145,14 +145,14 @@ describe("Abilities - Dry Skin", () => {
     enemy.hp = 1;
 
     // first turn
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_SHURIKEN));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.WATER_SHURIKEN));
     await game.phaseInterceptor.to(TurnEndPhase);
     const healthGainedFromWaterShuriken = enemy.hp - 1;
 
     enemy.hp = 1;
 
     // second turn
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.WATER_GUN));
     await game.phaseInterceptor.to(TurnEndPhase);
     const healthGainedFromWaterGun = enemy.hp - 1;
 

@@ -36,8 +36,8 @@ describe("Abilities - Sweet Veil", () => {
   it("prevents the user and its allies from falling asleep", async () => {
     await game.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -48,8 +48,8 @@ describe("Abilities - Sweet Veil", () => {
     game.override.enemyMoveset(SPLASH_ONLY);
     await game.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.REST));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.REST));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -60,8 +60,8 @@ describe("Abilities - Sweet Veil", () => {
     game.override.enemyMoveset([Moves.YAWN, Moves.YAWN, Moves.YAWN, Moves.YAWN]);
     await game.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -76,8 +76,8 @@ describe("Abilities - Sweet Veil", () => {
 
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE, Species.SWIRLIX]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     // First pokemon move
     await game.move.forceHit();
@@ -93,7 +93,7 @@ describe("Abilities - Sweet Veil", () => {
     const drowsyMon = game.scene.getPlayerField().find(p => !!p.getTag(BattlerTagType.DROWSY))!;
 
     await game.phaseInterceptor.to(CommandPhase);
-    game.doAttack(getMovePosition(game.scene, (drowsyMon.getBattlerIndex() as BattlerIndex.PLAYER | BattlerIndex.PLAYER_2), Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, (drowsyMon.getBattlerIndex() as BattlerIndex.PLAYER | BattlerIndex.PLAYER_2), Moves.SPLASH));
     game.doSwitchPokemon(2);
 
     expect(game.scene.getPlayerField().every(p => p.status?.effect)).toBe(false);

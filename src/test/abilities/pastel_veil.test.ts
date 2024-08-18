@@ -41,8 +41,8 @@ describe("Abilities - Pastel Veil", () => {
 
     expect(ponyta.hasAbility(Abilities.PASTEL_VEIL)).toBe(true);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -57,8 +57,8 @@ describe("Abilities - Pastel Veil", () => {
 
     expect(ponyta.hasAbility(Abilities.PASTEL_VEIL)).toBe(true);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(game.scene.getPlayerField().some(p => p.status?.effect === StatusEffect.POISON)).toBe(true);
@@ -66,7 +66,7 @@ describe("Abilities - Pastel Veil", () => {
     const poisonedMon = game.scene.getPlayerField().find(p => p.status?.effect === StatusEffect.POISON);
 
     await game.phaseInterceptor.to(CommandPhase);
-    game.doAttack(getMovePosition(game.scene, (poisonedMon!.getBattlerIndex() as BattlerIndex.PLAYER | BattlerIndex.PLAYER_2), Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, (poisonedMon!.getBattlerIndex() as BattlerIndex.PLAYER | BattlerIndex.PLAYER_2), Moves.SPLASH));
     game.doSwitchPokemon(2);
     await game.phaseInterceptor.to(TurnEndPhase);
 

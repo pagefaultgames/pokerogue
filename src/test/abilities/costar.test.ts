@@ -43,15 +43,15 @@ describe("Abilities - COSTAR", () => {
 
       let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.NASTY_PLOT));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.NASTY_PLOT));
       await game.phaseInterceptor.to(CommandPhase);
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
       await game.toNextTurn();
 
       expect(leftPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(+2);
       expect(rightPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(0);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(CommandPhase);
       game.doSwitchPokemon(2);
       await game.phaseInterceptor.to(MessagePhase);
@@ -75,7 +75,7 @@ describe("Abilities - COSTAR", () => {
       expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
       expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(CommandPhase);
       game.doSwitchPokemon(2);
       await game.phaseInterceptor.to(MessagePhase);

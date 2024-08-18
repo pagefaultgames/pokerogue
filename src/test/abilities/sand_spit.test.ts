@@ -39,7 +39,7 @@ describe("Abilities - Sand Spit", () => {
     game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
@@ -49,7 +49,7 @@ describe("Abilities - Sand Spit", () => {
     game.override.enemyMoveset(Array(4).fill(Moves.GROWL));
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.COIL));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.COIL));
     await game.toNextTurn();
 
     expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SANDSTORM);

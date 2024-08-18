@@ -38,7 +38,7 @@ describe("Abilities - Wind Rider", () => {
 
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.PETAL_BLIZZARD));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.PETAL_BLIZZARD));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -55,7 +55,7 @@ describe("Abilities - Wind Rider", () => {
 
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TAILWIND));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -73,7 +73,7 @@ describe("Abilities - Wind Rider", () => {
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
     expect(magikarp.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TAILWIND));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -91,7 +91,7 @@ describe("Abilities - Wind Rider", () => {
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
     expect(magikarp.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TAILWIND));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -108,7 +108,7 @@ describe("Abilities - Wind Rider", () => {
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
     expect(shiftry.isFullHp()).toBe(true);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SANDSTORM));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SANDSTORM));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

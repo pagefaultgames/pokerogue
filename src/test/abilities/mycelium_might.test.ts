@@ -48,7 +48,7 @@ describe("Abilities - Mycelium Might", () => {
     const enemyPokemon = game.scene.getEnemyPokemon();
     const enemyIndex = enemyPokemon?.getBattlerIndex();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
 
     await game.phaseInterceptor.to(MovePhase, false);
     // The opponent Pokemon (without Mycelium Might) goes first despite having lower speed than the player Pokemon.
@@ -71,7 +71,7 @@ describe("Abilities - Mycelium Might", () => {
     const enemyPokemon = game.scene.getEnemyPokemon();
     const enemyIndex = enemyPokemon?.getBattlerIndex();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
 
     await game.phaseInterceptor.to(MovePhase, false);
     // The player Pokemon (with M.M.) goes first because its move is still within a higher priority bracket than its opponent.
@@ -91,7 +91,7 @@ describe("Abilities - Mycelium Might", () => {
     const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
 
     await game.phaseInterceptor.to(MovePhase, false);
     // The player Pokemon (with M.M.) goes first because it has a higher speed and did not use a status move.

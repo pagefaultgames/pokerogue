@@ -45,7 +45,7 @@ describe("Items - Leftovers", () => {
     // We should have full hp
     expect(leadPokemon.isFullHp()).toBe(true);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
 
     // We should have less hp after the attack
     await game.phaseInterceptor.to(DamagePhase, false);

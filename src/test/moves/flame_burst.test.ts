@@ -50,10 +50,10 @@ describe("Moves - Flame Burst", () => {
     await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
     const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(leftEnemy.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
@@ -66,10 +66,10 @@ describe("Moves - Flame Burst", () => {
     await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
     const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(leftEnemy.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBe(leftEnemy.getMaxHp());
@@ -82,10 +82,10 @@ describe("Moves - Flame Burst", () => {
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[Abilities.FLASH_FIRE]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(leftEnemy.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
@@ -98,10 +98,10 @@ describe("Moves - Flame Burst", () => {
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[Abilities.MAGIC_GUARD]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FLAME_BURST));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(leftEnemy.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());

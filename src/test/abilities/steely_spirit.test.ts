@@ -46,10 +46,10 @@ describe("Abilities - Steely Spirit", () => {
 
     expect(boostSource.hasAbility(Abilities.STEELY_SPIRIT)).toBe(true);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
+    game.selectMove(getMovePosition(game.scene, 0, moveToCheck));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(allMoves[moveToCheck].calculateBattlePower).toHaveReturnedWith(ironHeadPower * steelySpiritMultiplier);
@@ -65,10 +65,10 @@ describe("Abilities - Steely Spirit", () => {
 
     expect(game.scene.getPlayerField().every(p => p.hasAbility(Abilities.STEELY_SPIRIT))).toBe(true);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
+    game.selectMove(getMovePosition(game.scene, 0, moveToCheck));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, moveToCheck));
+    game.selectMove(getMovePosition(game.scene, 1, moveToCheck));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
     await game.phaseInterceptor.to(MoveEffectPhase);
@@ -89,10 +89,10 @@ describe("Abilities - Steely Spirit", () => {
     expect(boostSource.hasAbility(Abilities.STEELY_SPIRIT)).toBe(false);
     expect(boostSource.summonData.abilitySuppressed).toBe(true);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToCheck));
+    game.selectMove(getMovePosition(game.scene, 0, moveToCheck));
     await game.phaseInterceptor.to(SelectTargetPhase, false);
     game.doSelectTarget(enemyToCheck.getBattlerIndex());
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(allMoves[moveToCheck].calculateBattlePower).toHaveReturnedWith(ironHeadPower);

@@ -45,7 +45,7 @@ describe("Moves - Flower Shield", () => {
     expect(magikarp.summonData.battleStats[BattleStat.DEF]).toBe(0);
     expect(cherrim.summonData.battleStats[BattleStat.DEF]).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLOWER_SHIELD));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FLOWER_SHIELD));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(magikarp.summonData.battleStats[BattleStat.DEF]).toBe(0);
@@ -64,8 +64,8 @@ describe("Moves - Flower Shield", () => {
     grassPokemons.forEach(p => expect(p.summonData.battleStats[BattleStat.DEF]).toBe(0));
     nonGrassPokemons.forEach(p => expect(p.summonData.battleStats[BattleStat.DEF]).toBe(0));
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLOWER_SHIELD));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FLOWER_SHIELD));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     grassPokemons.forEach(p => expect(p.summonData.battleStats[BattleStat.DEF]).toBe(1));
@@ -88,7 +88,7 @@ describe("Moves - Flower Shield", () => {
     expect(cherrim.summonData.battleStats[BattleStat.DEF]).toBe(0);
     expect(paras.getTag(SemiInvulnerableTag)).toBeUndefined;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLOWER_SHIELD));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FLOWER_SHIELD));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(paras.getTag(SemiInvulnerableTag)).toBeDefined();
@@ -106,7 +106,7 @@ describe("Moves - Flower Shield", () => {
     expect(enemy.summonData.battleStats[BattleStat.DEF]).toBe(0);
     expect(ally.summonData.battleStats[BattleStat.DEF]).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLOWER_SHIELD));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FLOWER_SHIELD));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemy.summonData.battleStats[BattleStat.DEF]).toBe(0);

@@ -54,7 +54,7 @@ describe("Moves - Spit Up", () => {
 
       vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
-      game.doAttack(0);
+      game.selectMove(0);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
@@ -79,7 +79,7 @@ describe("Moves - Spit Up", () => {
 
       vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
-      game.doAttack(0);
+      game.selectMove(0);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
@@ -105,7 +105,7 @@ describe("Moves - Spit Up", () => {
 
       vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
-      game.doAttack(0);
+      game.selectMove(0);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
@@ -125,7 +125,7 @@ describe("Moves - Spit Up", () => {
 
     vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
-    game.doAttack(0);
+    game.selectMove(0);
     await game.phaseInterceptor.to(TurnInitPhase);
 
     expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.FAIL });
@@ -145,7 +145,7 @@ describe("Moves - Spit Up", () => {
 
       vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
-      game.doAttack(0);
+      game.selectMove(0);
       await game.phaseInterceptor.to(MovePhase);
 
       expect(pokemon.summonData.battleStats[BattleStat.DEF]).toBe(1);
@@ -185,7 +185,7 @@ describe("Moves - Spit Up", () => {
 
       vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
-      game.doAttack(0);
+      game.selectMove(0);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS });

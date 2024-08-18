@@ -47,7 +47,7 @@ describe("Moves - Dynamax Cannon", () => {
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.selectMove(getMovePosition(game.scene, 0, dynamaxCannon.id));
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(dynamaxCannon.id);
@@ -61,7 +61,7 @@ describe("Moves - Dynamax Cannon", () => {
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.selectMove(getMovePosition(game.scene, 0, dynamaxCannon.id));
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(dynamaxCannon.id);
@@ -75,7 +75,7 @@ describe("Moves - Dynamax Cannon", () => {
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.selectMove(getMovePosition(game.scene, 0, dynamaxCannon.id));
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -92,7 +92,7 @@ describe("Moves - Dynamax Cannon", () => {
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.selectMove(getMovePosition(game.scene, 0, dynamaxCannon.id));
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -109,7 +109,7 @@ describe("Moves - Dynamax Cannon", () => {
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.selectMove(getMovePosition(game.scene, 0, dynamaxCannon.id));
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -126,7 +126,7 @@ describe("Moves - Dynamax Cannon", () => {
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.selectMove(getMovePosition(game.scene, 0, dynamaxCannon.id));
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -143,7 +143,7 @@ describe("Moves - Dynamax Cannon", () => {
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.selectMove(getMovePosition(game.scene, 0, dynamaxCannon.id));
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -160,7 +160,7 @@ describe("Moves - Dynamax Cannon", () => {
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.selectMove(getMovePosition(game.scene, 0, dynamaxCannon.id));
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
     // Force user to act before enemy

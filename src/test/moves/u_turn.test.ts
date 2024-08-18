@@ -46,7 +46,7 @@ describe("Moves - U-turn", () => {
     game.scene.getPlayerPokemon()!.hp = playerHp;
 
     // act
-    game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.U_TURN));
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -65,7 +65,7 @@ describe("Moves - U-turn", () => {
     ]);
 
     // act
-    game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.U_TURN));
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to(SwitchPhase, false);
 
@@ -87,7 +87,7 @@ describe("Moves - U-turn", () => {
     vi.spyOn(game.scene.getEnemyPokemon()!, "randSeedInt").mockReturnValue(0);
 
     // act
-    game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.U_TURN));
     await game.phaseInterceptor.to(SwitchPhase, false);
 
     // assert

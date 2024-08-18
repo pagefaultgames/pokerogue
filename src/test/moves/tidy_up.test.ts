@@ -42,9 +42,9 @@ describe("Moves - Tidy Up", () => {
     game.override.enemyMoveset([Moves.SPIKES, Moves.SPIKES, Moves.SPIKES, Moves.SPIKES]);
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPIKES));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPIKES));
     await game.phaseInterceptor.to(TurnEndPhase);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TIDY_UP));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TIDY_UP));
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.SPIKES)).toBeUndefined();
 
@@ -55,9 +55,9 @@ describe("Moves - Tidy Up", () => {
     game.override.enemyMoveset([Moves.STEALTH_ROCK, Moves.STEALTH_ROCK, Moves.STEALTH_ROCK, Moves.STEALTH_ROCK]);
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.STEALTH_ROCK));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.STEALTH_ROCK));
     await game.phaseInterceptor.to(TurnEndPhase);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TIDY_UP));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TIDY_UP));
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.STEALTH_ROCK)).toBeUndefined();
 
@@ -68,9 +68,9 @@ describe("Moves - Tidy Up", () => {
     game.override.enemyMoveset([Moves.TOXIC_SPIKES, Moves.TOXIC_SPIKES, Moves.TOXIC_SPIKES, Moves.TOXIC_SPIKES]);
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TOXIC_SPIKES));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TOXIC_SPIKES));
     await game.phaseInterceptor.to(TurnEndPhase);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TIDY_UP));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TIDY_UP));
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.TOXIC_SPIKES)).toBeUndefined();
 
@@ -82,9 +82,9 @@ describe("Moves - Tidy Up", () => {
 
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.STICKY_WEB));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.STICKY_WEB));
     await game.phaseInterceptor.to(TurnEndPhase);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TIDY_UP));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TIDY_UP));
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.STICKY_WEB)).toBeUndefined();
 
@@ -96,9 +96,9 @@ describe("Moves - Tidy Up", () => {
 
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SUBSTITUTE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SUBSTITUTE));
     await game.phaseInterceptor.to(TurnEndPhase);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TIDY_UP));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TIDY_UP));
     await game.phaseInterceptor.to(MoveEndPhase);
     // TODO: check for subs here once the move is implemented
 
@@ -111,7 +111,7 @@ describe("Moves - Tidy Up", () => {
     expect(player[BattleStat.ATK]).toBe(0);
     expect(player[BattleStat.SPD]).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TIDY_UP));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TIDY_UP));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player[BattleStat.ATK]).toBe(+1);

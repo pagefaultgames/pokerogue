@@ -42,8 +42,8 @@ describe("Abilities - Battery", () => {
 
     await game.startBattle([Species.PIKACHU, Species.CHARJABUG]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DAZZLING_GLEAM));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.DAZZLING_GLEAM));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower * batteryMultiplier);
@@ -57,8 +57,8 @@ describe("Abilities - Battery", () => {
 
     await game.startBattle([Species.PIKACHU, Species.CHARJABUG]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BREAKING_SWIPE));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.BREAKING_SWIPE));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower);
@@ -72,8 +72,8 @@ describe("Abilities - Battery", () => {
 
     await game.startBattle([Species.CHARJABUG, Species.PIKACHU]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DAZZLING_GLEAM));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.DAZZLING_GLEAM));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower);

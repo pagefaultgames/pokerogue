@@ -46,7 +46,7 @@ describe("Moves - Beak Blast", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
 
       await game.phaseInterceptor.to(MovePhase, false);
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
@@ -66,7 +66,7 @@ describe("Moves - Beak Blast", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
 
       await game.phaseInterceptor.to(MovePhase, false);
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
@@ -86,7 +86,7 @@ describe("Moves - Beak Blast", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
 
       await game.phaseInterceptor.to(MovePhase, false);
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
@@ -105,7 +105,7 @@ describe("Moves - Beak Blast", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(leadPokemon.turnData.hitCount).toBe(2);
@@ -122,7 +122,7 @@ describe("Moves - Beak Blast", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.BEAK_BLAST));
 
       await game.phaseInterceptor.to(MovePhase, false);
       expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();

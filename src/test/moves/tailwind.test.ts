@@ -42,8 +42,8 @@ describe("Moves - Tailwind", () => {
     expect(magikarp.getBattleStat(Stat.SPD)).equal(magikarpSpd);
     expect(meowth.getBattleStat(Stat.SPD)).equal(meowthSpd);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TAILWIND));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -57,19 +57,19 @@ describe("Moves - Tailwind", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TAILWIND));
     await game.toNextTurn();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
@@ -92,7 +92,7 @@ describe("Moves - Tailwind", () => {
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TAILWIND));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

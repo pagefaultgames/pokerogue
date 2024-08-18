@@ -44,7 +44,7 @@ describe("Moves - Light Screen", () => {
     const moveToUse = Moves.ABSORB;
     await game.startBattle([Species.SHUCKLE]);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -59,8 +59,8 @@ describe("Moves - Light Screen", () => {
     const moveToUse = Moves.DAZZLING_GLEAM;
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
-    game.doAttack(getMovePosition(game.scene, 1, moveToUse));
+    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
+    game.selectMove(getMovePosition(game.scene, 1, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
@@ -72,7 +72,7 @@ describe("Moves - Light Screen", () => {
     const moveToUse = Moves.TACKLE;
     await game.startBattle([Species.SHUCKLE]);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);

@@ -43,13 +43,13 @@ describe("Moves - Lucky Chant", () => {
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const firstTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.LUCKY_CHANT));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.LUCKY_CHANT));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -67,15 +67,15 @@ describe("Moves - Lucky Chant", () => {
 
       const playerPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const firstTurnDamage = playerPokemon[0].getMaxHp() - playerPokemon[0].hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
-      game.doAttack(getMovePosition(game.scene, 1, Moves.LUCKY_CHANT));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.FOLLOW_ME));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.LUCKY_CHANT));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -96,13 +96,13 @@ describe("Moves - Lucky Chant", () => {
 
       enemyPokemon.addTag(BattlerTagType.ALWAYS_CRIT, 2, Moves.NONE, 0);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const firstTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.LUCKY_CHANT));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.LUCKY_CHANT));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

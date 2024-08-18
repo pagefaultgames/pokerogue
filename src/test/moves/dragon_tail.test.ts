@@ -46,7 +46,7 @@ describe("Moves - Dragon Tail", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
 
       await game.phaseInterceptor.to(BerryPhase);
 
@@ -71,7 +71,7 @@ describe("Moves - Dragon Tail", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
 
       await game.phaseInterceptor.to(BerryPhase);
 
@@ -100,10 +100,10 @@ describe("Moves - Dragon Tail", () => {
       expect(enemyLeadPokemon).toBeDefined();
       expect(enemySecPokemon).toBeDefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
       game.doSelectTarget(BattlerIndex.ENEMY);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -116,9 +116,9 @@ describe("Moves - Dragon Tail", () => {
 
       // second turn
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
       game.doSelectTarget(BattlerIndex.ENEMY_2);
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase);
       expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
@@ -143,11 +143,11 @@ describe("Moves - Dragon Tail", () => {
       expect(enemyLeadPokemon).toBeDefined();
       expect(enemySecPokemon).toBeDefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
       game.doSelectTarget(BattlerIndex.ENEMY);
 
       // target the same pokemon, second move should be redirected after first flees
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_TAIL));
       game.doSelectTarget(BattlerIndex.ENEMY);
 
       await game.phaseInterceptor.to(BerryPhase);

@@ -53,7 +53,7 @@ describe("Abilities - SCHOOLING", () => {
       wishiwashi.status = new Status(StatusEffect.FAINT);
       expect(wishiwashi.isFainted()).toBe(true);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.doKillOpponents();
       await game.phaseInterceptor.to(TurnEndPhase);
       game.doSelectModifier();

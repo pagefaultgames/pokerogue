@@ -160,7 +160,7 @@ describe("Abilities - ZEN MODE", () => {
       darmanitan.status = new Status(StatusEffect.FAINT);
       expect(darmanitan.isFainted()).toBe(true);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.doKillOpponents();
       await game.phaseInterceptor.to(TurnEndPhase);
       game.doSelectModifier();

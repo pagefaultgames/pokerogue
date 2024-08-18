@@ -44,7 +44,7 @@ describe("Moves - Fusion Bolt", () => {
     const partyMember = game.scene.getPlayerPokemon()!;
     const initialHp = partyMember.hp;
 
-    game.doAttack(getMovePosition(game.scene, 0, fusionBolt));
+    game.selectMove(getMovePosition(game.scene, 0, fusionBolt));
 
     await game.toNextTurn();
 

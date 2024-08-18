@@ -43,7 +43,7 @@ describe("Moves - Fusion Flare", () => {
 
     const partyMember = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, fusionFlare));
+    game.selectMove(getMovePosition(game.scene, 0, fusionFlare));
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
 

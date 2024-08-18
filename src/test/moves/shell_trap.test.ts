@@ -47,8 +47,8 @@ describe("Moves - Shell Trap", () => {
       const playerPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SHELL_TRAP));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SHELL_TRAP));
 
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
 
@@ -73,8 +73,8 @@ describe("Moves - Shell Trap", () => {
       const playerPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SHELL_TRAP));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SHELL_TRAP));
 
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
 
@@ -99,8 +99,8 @@ describe("Moves - Shell Trap", () => {
       const playerPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SHELL_TRAP));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SHELL_TRAP));
 
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
 
@@ -125,8 +125,8 @@ describe("Moves - Shell Trap", () => {
       const playerPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SHELL_TRAP));
-      game.doAttack(getMovePosition(game.scene, 1, Moves.BULLDOZE));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SHELL_TRAP));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.BULLDOZE));
 
       await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -152,7 +152,7 @@ describe("Moves - Shell Trap", () => {
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SHELL_TRAP));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SHELL_TRAP));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

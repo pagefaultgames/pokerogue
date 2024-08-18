@@ -41,8 +41,8 @@ describe("Moves - Make It Rain", () => {
 
     const playerPokemon = game.scene.getPlayerField();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -58,7 +58,7 @@ describe("Moves - Make It Rain", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
 
     await game.phaseInterceptor.to(StatChangePhase);
 
@@ -74,8 +74,8 @@ describe("Moves - Make It Rain", () => {
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     await game.phaseInterceptor.to(StatChangePhase);
 
@@ -88,8 +88,8 @@ describe("Moves - Make It Rain", () => {
 
     const playerPokemon = game.scene.getPlayerField();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     // Make Make It Rain miss the first target
     await game.move.forceMiss(true);

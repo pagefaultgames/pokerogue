@@ -95,8 +95,8 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
     game.scene.getEnemyField()[1].abilityIndex = ability;
   }
 
-  game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-  game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+  game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+  game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
 
   await game.phaseInterceptor.to(TurnEndPhase);
@@ -105,9 +105,9 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
   await game.toNextTurn();
 
   const initialHp = game.scene.getEnemyField()[0].hp;
-  game.doAttack(getMovePosition(game.scene, 0, attackMove));
+  game.selectMove(getMovePosition(game.scene, 0, attackMove));
   if (!killAlly) {
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
   }
 
   await game.phaseInterceptor.to(TurnEndPhase);
@@ -119,7 +119,7 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
   game.scene.getEnemyField()[0].hp = initialHp;
 
   const initialHp1v1 = game.scene.getEnemyField()[0].hp;
-  game.doAttack(getMovePosition(game.scene, 0, attackMove));
+  game.selectMove(getMovePosition(game.scene, 0, attackMove));
 
   await game.phaseInterceptor.to(TurnEndPhase);
   const afterHp1v1 = game.scene.getEnemyField()[0].hp;

@@ -58,7 +58,7 @@ describe("Abilities - Magic Guard", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -82,7 +82,7 @@ describe("Abilities - Magic Guard", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -106,7 +106,7 @@ describe("Abilities - Magic Guard", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -126,7 +126,7 @@ describe("Abilities - Magic Guard", () => {
 
       await game.startBattle([Species.MAGIKARP]);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -150,7 +150,7 @@ describe("Abilities - Magic Guard", () => {
 
       await game.startBattle([Species.MAGIKARP]);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -180,7 +180,7 @@ describe("Abilities - Magic Guard", () => {
     await game.startBattle([Species.MAGIKARP]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -206,7 +206,7 @@ describe("Abilities - Magic Guard", () => {
     await game.startBattle([Species.MAGIKARP]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -233,7 +233,7 @@ describe("Abilities - Magic Guard", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CURSE));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.CURSE));
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -257,7 +257,7 @@ describe("Abilities - Magic Guard", () => {
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.HIGH_JUMP_KICK));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.HIGH_JUMP_KICK));
     await game.move.forceMiss();
 
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -276,7 +276,7 @@ describe("Abilities - Magic Guard", () => {
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TAKE_DOWN));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TAKE_DOWN));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -294,7 +294,7 @@ describe("Abilities - Magic Guard", () => {
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.STRUGGLE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.STRUGGLE));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -313,7 +313,7 @@ describe("Abilities - Magic Guard", () => {
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.STEEL_BEAM));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.STEEL_BEAM));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -329,7 +329,7 @@ describe("Abilities - Magic Guard", () => {
   it("Magic Guard does not prevent self-damage from confusion", async () => {
     await game.startBattle([Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.CHARM));
 
     await game.phaseInterceptor.to(TurnEndPhase);
   });
@@ -341,7 +341,7 @@ describe("Abilities - Magic Guard", () => {
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -364,7 +364,7 @@ describe("Abilities - Magic Guard", () => {
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -390,7 +390,7 @@ describe("Abilities - Magic Guard", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     enemyPokemon.hp = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     /**
@@ -414,7 +414,7 @@ describe("Abilities - Magic Guard", () => {
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     /**
@@ -438,7 +438,7 @@ describe("Abilities - Magic Guard", () => {
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.ABSORB));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.ABSORB));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     /**
@@ -458,7 +458,7 @@ describe("Abilities - Magic Guard", () => {
 
     await game.startBattle([Species.MAGIKARP]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     /**

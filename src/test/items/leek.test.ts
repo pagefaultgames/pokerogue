@@ -41,7 +41,7 @@ describe("Items - Leek", () => {
       Species.FARFETCHD
     ]);
 
-    game.doAttack(0);
+    game.selectMove(0);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 

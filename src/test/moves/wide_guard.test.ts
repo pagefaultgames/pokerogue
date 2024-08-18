@@ -46,11 +46,11 @@ describe("Moves - Wide Guard", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -67,11 +67,11 @@ describe("Moves - Wide Guard", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -88,11 +88,11 @@ describe("Moves - Wide Guard", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -110,11 +110,11 @@ describe("Moves - Wide Guard", () => {
       const leadPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.WIDE_GUARD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SURF));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SURF));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

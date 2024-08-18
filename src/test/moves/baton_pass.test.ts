@@ -43,12 +43,12 @@ describe("Moves - Baton Pass", () => {
     ]);
 
     // round 1 - buff
-    game.doAttack(getMovePosition(game.scene, 0, Moves.NASTY_PLOT));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.NASTY_PLOT));
     await game.toNextTurn();
     expect(game.scene.getPlayerPokemon()!.summonData.battleStats[BattleStat.SPATK]).toEqual(2);
 
     // round 2 - baton pass
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BATON_PASS));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.BATON_PASS));
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -69,13 +69,13 @@ describe("Moves - Baton Pass", () => {
     ]);
 
     // round 1 - ai buffs
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
 
     // round 2 - baton pass
     game.scene.getEnemyPokemon()!.hp = 100;
     game.override.enemyMoveset(new Array(4).fill(Moves.BATON_PASS));
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.phaseInterceptor.to(PostSummonPhase, false);
 
     // assert

@@ -46,7 +46,7 @@ describe("Moves - BELLY DRUM", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
@@ -65,7 +65,7 @@ describe("Moves - BELLY DRUM", () => {
       leadPokemon.summonData.battleStats[BattleStat.ATK] = -3;
       leadPokemon.summonData.battleStats[BattleStat.SPATK] = 6;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
@@ -82,7 +82,7 @@ describe("Moves - BELLY DRUM", () => {
 
       leadPokemon.summonData.battleStats[BattleStat.ATK] = 6;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
@@ -98,7 +98,7 @@ describe("Moves - BELLY DRUM", () => {
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
       leadPokemon.hp = hpLost - PREDAMAGE;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);

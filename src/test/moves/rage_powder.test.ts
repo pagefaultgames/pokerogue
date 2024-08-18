@@ -52,12 +52,12 @@ describe("Moves - Rage Powder", () => {
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY);
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);
@@ -87,12 +87,12 @@ describe("Moves - Rage Powder", () => {
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY);
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK));
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);

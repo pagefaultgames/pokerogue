@@ -44,7 +44,7 @@ describe("Abilities - Sap Sipper", () => {
 
     const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -63,7 +63,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -82,7 +82,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -104,7 +104,7 @@ describe("Abilities - Sap Sipper", () => {
 
     const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -124,7 +124,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -151,7 +151,7 @@ describe("Abilities - Sap Sipper", () => {
 
     const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

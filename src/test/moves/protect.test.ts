@@ -48,7 +48,7 @@ describe("Moves - Protect", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.PROTECT));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -66,7 +66,7 @@ describe("Moves - Protect", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.PROTECT));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -84,7 +84,7 @@ describe("Moves - Protect", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.PROTECT));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -103,7 +103,7 @@ describe("Moves - Protect", () => {
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.PROTECT));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

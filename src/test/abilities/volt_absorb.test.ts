@@ -42,7 +42,7 @@ describe("Abilities - Volt Absorb", () => {
 
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

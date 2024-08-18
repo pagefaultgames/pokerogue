@@ -35,7 +35,7 @@ describe("Items - Lock Capsule", () => {
   it("doesn't set the cost of common tier items to 0", async() => {
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SURF));
     await game.phaseInterceptor.to(SelectModifierPhase, false);
 
     const rewards = game.scene.getCurrentPhase() as SelectModifierPhase;

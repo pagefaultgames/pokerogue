@@ -36,7 +36,7 @@ describe("Abilities - Ice Face", () => {
   it("takes no damage from physical move and transforms to Noice", async () => {
     await game.startBattle([Species.HITMONLEE]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -52,7 +52,7 @@ describe("Abilities - Ice Face", () => {
     game.override.enemyLevel(1);
     await game.startBattle([Species.HITMONLEE]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SURGING_STRIKES));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SURGING_STRIKES));
 
     const eiscue = game.scene.getEnemyPokemon()!;
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeDefined();
@@ -78,7 +78,7 @@ describe("Abilities - Ice Face", () => {
   it("takes damage from special moves", async () => {
     await game.startBattle([Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.ICE_BEAM));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.ICE_BEAM));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -92,7 +92,7 @@ describe("Abilities - Ice Face", () => {
   it("takes effects from status moves", async () => {
     await game.startBattle([Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TOXIC_THREAD));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TOXIC_THREAD));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -108,7 +108,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -130,7 +130,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.startBattle([Species.EISCUE, Species.NINJASK]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SNOWSCAPE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SNOWSCAPE));
 
     await game.phaseInterceptor.to(TurnEndPhase);
     let eiscue = game.scene.getPlayerPokemon()!;
@@ -157,7 +157,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.startBattle([Species.EISCUE]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.HAIL));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.HAIL));
     const eiscue = game.scene.getPlayerPokemon()!;
 
     await game.phaseInterceptor.to(QuietFormChangePhase);
@@ -176,7 +176,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.startBattle([Species.EISCUE, Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.ICE_BEAM));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.ICE_BEAM));
 
     await game.phaseInterceptor.to(TurnEndPhase);
     let eiscue = game.scene.getPlayerPokemon()!;
@@ -210,7 +210,7 @@ describe("Abilities - Ice Face", () => {
     expect(eiscue.formIndex).toBe(noiceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.ICE_BEAM));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.ICE_BEAM));
     await game.doKillOpponents();
     await game.phaseInterceptor.to(TurnEndPhase);
     game.doSelectModifier();
@@ -225,7 +225,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GASTRO_ACID));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.GASTRO_ACID));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -241,7 +241,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SKILL_SWAP));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SKILL_SWAP));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -257,7 +257,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SIMPLE_BEAM));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SIMPLE_BEAM));
 
     await game.phaseInterceptor.to(TurnInitPhase);
 

@@ -62,7 +62,7 @@ describe("Moves - Dragon Rage", () => {
     game.override.disableCrits();
     vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([Type.DRAGON]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
@@ -73,7 +73,7 @@ describe("Moves - Dragon Rage", () => {
     game.override.disableCrits();
     vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([Type.STEEL]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
@@ -84,7 +84,7 @@ describe("Moves - Dragon Rage", () => {
     game.override.disableCrits();
     partyPokemon.summonData.battleStats[BattleStat.SPATK] = 2;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
@@ -95,7 +95,7 @@ describe("Moves - Dragon Rage", () => {
     game.override.disableCrits();
     vi.spyOn(partyPokemon, "getTypes").mockReturnValue([Type.DRAGON]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
@@ -105,7 +105,7 @@ describe("Moves - Dragon Rage", () => {
   it("ignores criticals", async () => {
     partyPokemon.addTag(BattlerTagType.ALWAYS_CRIT, 99);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
@@ -116,7 +116,7 @@ describe("Moves - Dragon Rage", () => {
     game.override.disableCrits();
     game.override.enemyAbility(Abilities.ICE_SCALES);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 
@@ -127,7 +127,7 @@ describe("Moves - Dragon Rage", () => {
     game.override.disableCrits();
     game.scene.addModifier(modifierTypes.MULTI_LENS().newModifier(partyPokemon), false);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
     const damageDealt = enemyPokemon.getMaxHp() - enemyPokemon.hp;
 

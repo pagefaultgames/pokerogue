@@ -37,19 +37,19 @@ describe("Moves - Foresight", () => {
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
     await game.toNextTurn();
     expect(enemy.hp).toBe(enemy.getMaxHp());
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FORESIGHT));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FORESIGHT));
     await game.toNextTurn();
-    game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
     await game.toNextTurn();
 
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
     enemy.hp = enemy.getMaxHp();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.MACH_PUNCH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.MACH_PUNCH));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
@@ -62,9 +62,9 @@ describe("Moves - Foresight", () => {
     const pokemon = game.scene.getPlayerPokemon()!;
     vi.spyOn(pokemon, "getAccuracyMultiplier");
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FORESIGHT));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FORESIGHT));
     await game.toNextTurn();
-    game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(pokemon.getAccuracyMultiplier).toHaveReturnedWith(1);

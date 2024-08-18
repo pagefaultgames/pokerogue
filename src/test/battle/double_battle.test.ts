@@ -36,8 +36,8 @@ describe("Double Battles", () => {
       Species.SQUIRTLE,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     for (const pokemon of game.scene.getPlayerField()) {
       pokemon.hp = 0;

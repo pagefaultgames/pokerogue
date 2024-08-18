@@ -47,11 +47,11 @@ describe("Moves - Crafty Shield", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -68,11 +68,11 @@ describe("Moves - Crafty Shield", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -90,11 +90,11 @@ describe("Moves - Crafty Shield", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -109,11 +109,11 @@ describe("Moves - Crafty Shield", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SWORDS_DANCE));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SWORDS_DANCE));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

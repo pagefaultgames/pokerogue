@@ -46,15 +46,15 @@ describe("Moves - Spikes", () => {
     await game.phaseInterceptor.to(CommandPhase, true);
     const initialHp = game.scene.getParty()[0].hp;
     expect(game.scene.getParty()[0].hp).toBe(initialHp);
-    game.doAttack(0);
+    game.selectMove(0);
     await game.toNextTurn();
-    game.doAttack(1);
+    game.selectMove(1);
     await game.toNextTurn();
-    game.doAttack(1);
+    game.selectMove(1);
     await game.toNextTurn();
-    game.doAttack(1);
+    game.selectMove(1);
     await game.toNextTurn();
-    game.doAttack(1);
+    game.selectMove(1);
     await game.toNextTurn();
     expect(game.scene.getParty()[0].hp).toBe(initialHp);
     console.log(game.textInterceptor.logs);
@@ -93,9 +93,9 @@ describe("Moves - Spikes", () => {
     ]);
     await game.phaseInterceptor.to(CommandPhase, true);
     const initialHpOpponent = game.scene.currentBattle.enemyParty[1].hp;
-    game.doAttack(0);
+    game.selectMove(0);
     await game.toNextTurn();
-    game.doAttack(2);
+    game.selectMove(2);
     await game.toNextTurn();
     expect(game.scene.currentBattle.enemyParty[0].hp).toBeLessThan(initialHpOpponent);
   }, 20000);
@@ -113,11 +113,11 @@ describe("Moves - Spikes", () => {
     ]);
     await game.phaseInterceptor.to(CommandPhase, true);
     const initialHpOpponent = game.scene.currentBattle.enemyParty[1].hp;
-    game.doAttack(0);
+    game.selectMove(0);
     await game.toNextTurn();
 
     game.forceOpponentToSwitch();
-    game.doAttack(1);
+    game.selectMove(1);
     await game.toNextTurn();
     expect(game.scene.currentBattle.enemyParty[0].hp).toBeLessThan(initialHpOpponent);
   }, 20000);

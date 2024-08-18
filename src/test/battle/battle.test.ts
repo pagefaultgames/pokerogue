@@ -305,7 +305,7 @@ describe("Test Battle Phase", () => {
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle();
     const turn = game.scene.currentBattle.turn;
-    game.doAttack(0);
+    game.selectMove(0);
     await game.toNextTurn();
     expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
   }, 20000);
@@ -323,7 +323,7 @@ describe("Test Battle Phase", () => {
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
     await game.startBattle();
     const waveIndex = game.scene.currentBattle.waveIndex;
-    game.doAttack(0);
+    game.selectMove(0);
     await game.doKillOpponents();
     await game.toNextWave();
     expect(game.scene.currentBattle.waveIndex).toBeGreaterThan(waveIndex);
@@ -343,7 +343,7 @@ describe("Test Battle Phase", () => {
 
     await game.startBattle();
     game.scene.getPlayerPokemon()!.hp = 1;
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(BattleEndPhase);
     game.doRevivePokemon(0); // pretend max revive was picked

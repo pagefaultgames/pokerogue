@@ -44,7 +44,7 @@ describe("Moves - Roost", () => {
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.STOMPING_TANTRUM));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.STOMPING_TANTRUM));
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 

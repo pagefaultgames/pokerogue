@@ -58,13 +58,13 @@ describe("Items - Grip Claw", () => {
 
       const enemyHeldItemCt = enemyPokemon.map(p => p.getHeldItems.length);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.POPULATION_BOMB));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.POPULATION_BOMB));
 
       await game.phaseInterceptor.to(SelectTargetPhase, false);
       game.doSelectTarget(BattlerIndex.ENEMY);
 
       await game.phaseInterceptor.to(CommandPhase, false);
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(MoveEndPhase, false);
 

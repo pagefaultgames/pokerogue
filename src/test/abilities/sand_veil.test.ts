@@ -62,11 +62,11 @@ describe("Abilities - Sand Veil", () => {
       expect(leadPokemon[0].hasAbility(Abilities.SAND_VEIL)).toBe(true);
       expect(leadPokemon[1].hasAbility(Abilities.SAND_VEIL)).toBe(false);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
 

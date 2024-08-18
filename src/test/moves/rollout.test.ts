@@ -57,7 +57,7 @@ describe("Moves - Rollout", () => {
     let previousHp = enemyPkm.hp;
 
     for (let i = 0; i < turns; i++) {
-      game.doAttack(getMovePosition(game.scene, 0, Moves.ROLLOUT));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.ROLLOUT));
       await game.phaseInterceptor.to(CommandPhase);
 
       dmgHistory.push(previousHp - enemyPkm.hp);

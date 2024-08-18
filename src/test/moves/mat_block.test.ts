@@ -46,11 +46,11 @@ describe("Moves - Mat Block", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.MAT_BLOCK));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.MAT_BLOCK));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -67,11 +67,11 @@ describe("Moves - Mat Block", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.MAT_BLOCK));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.MAT_BLOCK));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -86,18 +86,18 @@ describe("Moves - Mat Block", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(CommandPhase);
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const leadStartingHp = leadPokemon.map(p => p.hp);
 
       await game.phaseInterceptor.to(CommandPhase, false);
-      game.doAttack(getMovePosition(game.scene, 0, Moves.MAT_BLOCK));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.MAT_BLOCK));
       await game.phaseInterceptor.to(CommandPhase);
-      game.doAttack(getMovePosition(game.scene, 1, Moves.MAT_BLOCK));
+      game.selectMove(getMovePosition(game.scene, 1, Moves.MAT_BLOCK));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

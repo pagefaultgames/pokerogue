@@ -40,14 +40,14 @@ describe("Arena - Gravity", () => {
 
     // Setup Gravity on first turn
     await game.startBattle([Species.PIKACHU]);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.GRAVITY));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
 
     // Use non-OHKO move on second turn
     await game.toNextTurn();
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100 * 1.67);
@@ -64,14 +64,14 @@ describe("Arena - Gravity", () => {
 
     // Setup Gravity on first turn
     await game.startBattle([Species.PIKACHU]);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.GRAVITY));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
 
     // Use OHKO move on second turn
     await game.toNextTurn();
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+    game.selectMove(getMovePosition(game.scene, 0, Moves.FISSURE));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(30);

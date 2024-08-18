@@ -37,7 +37,7 @@ describe("Error Handling", () => {
   it.skip("to next turn", async() => {
     await game.startBattle();
     const turn = game.scene.currentBattle.turn;
-    game.doAttack(0);
+    game.selectMove(0);
     await game.toNextTurn();
     expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
   }, 20000);

@@ -80,7 +80,7 @@ async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, pro
 
   const enemyStartingHp = enemyPokemon.hp;
 
-  game.doAttack(getMovePosition(game.scene, 0, attackMove));
+  game.selectMove(getMovePosition(game.scene, 0, attackMove));
   await game.phaseInterceptor.to(TurnEndPhase, false);
 
   if (shouldSucceed) {

@@ -49,7 +49,7 @@ describe("Abilities - Libero", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
@@ -67,12 +67,12 @@ describe("Abilities - Libero", () => {
       let leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.AGILITY));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.AGILITY));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied.filter((a) => a === Abilities.LIBERO)).toHaveLength(1);
@@ -89,7 +89,7 @@ describe("Abilities - Libero", () => {
       leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
@@ -108,7 +108,7 @@ describe("Abilities - Libero", () => {
       expect(leadPokemon).not.toBe(undefined);
 
       game.scene.arena.weather = new Weather(WeatherType.SUNNY);
-      game.doAttack(getMovePosition(game.scene, 0, Moves.WEATHER_BALL));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.WEATHER_BALL));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).toContain(Abilities.LIBERO);
@@ -131,7 +131,7 @@ describe("Abilities - Libero", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).toContain(Abilities.LIBERO);
@@ -154,7 +154,7 @@ describe("Abilities - Libero", () => {
       expect(leadPokemon).not.toBe(undefined);
 
       game.scene.arena.biomeType = Biome.MOUNTAIN;
-      game.doAttack(getMovePosition(game.scene, 0, Moves.NATURE_POWER));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.NATURE_POWER));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.AIR_SLASH);
@@ -172,7 +172,7 @@ describe("Abilities - Libero", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DIG));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.DIG));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.DIG);
@@ -191,7 +191,7 @@ describe("Abilities - Libero", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
       await game.move.forceMiss();
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -213,7 +213,7 @@ describe("Abilities - Libero", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
@@ -232,7 +232,7 @@ describe("Abilities - Libero", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.TACKLE));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
@@ -251,7 +251,7 @@ describe("Abilities - Libero", () => {
       expect(leadPokemon).not.toBe(undefined);
 
       leadPokemon.summonData.types = [allMoves[Moves.SPLASH].defaultType];
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.LIBERO);
@@ -271,7 +271,7 @@ describe("Abilities - Libero", () => {
 
       vi.spyOn(leadPokemon, "isTerastallized").mockReturnValue(true);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.LIBERO);
@@ -289,7 +289,7 @@ describe("Abilities - Libero", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.STRUGGLE));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.STRUGGLE));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.LIBERO);
@@ -307,7 +307,7 @@ describe("Abilities - Libero", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BURN_UP));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.BURN_UP));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.LIBERO);
@@ -326,7 +326,7 @@ describe("Abilities - Libero", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TRICK_OR_TREAT));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.TRICK_OR_TREAT));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TRICK_OR_TREAT);
@@ -344,7 +344,7 @@ describe("Abilities - Libero", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CURSE));
+      game.selectMove(getMovePosition(game.scene, 0, Moves.CURSE));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.CURSE);

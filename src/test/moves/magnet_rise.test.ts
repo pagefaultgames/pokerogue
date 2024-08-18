@@ -35,7 +35,7 @@ describe("Moves - Magnet Rise", () => {
     await game.startBattle();
 
     const startingHp = game.scene.getParty()[0].hp;
-    game.doAttack(0);
+    game.selectMove(0);
     await game.phaseInterceptor.to(TurnEndPhase);
     const finalHp = game.scene.getParty()[0].hp;
     const hpLost = finalHp - startingHp;
@@ -46,12 +46,12 @@ describe("Moves - Magnet Rise", () => {
     await game.startBattle();
 
     const startingHp = game.scene.getParty()[0].hp;
-    game.doAttack(0);
+    game.selectMove(0);
     await game.phaseInterceptor.to(CommandPhase);
     let finalHp = game.scene.getParty()[0].hp;
     let hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
-    game.doAttack(2);
+    game.selectMove(2);
     await game.phaseInterceptor.to(TurnEndPhase);
     finalHp = game.scene.getParty()[0].hp;
     hpLost = finalHp - startingHp;
