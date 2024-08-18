@@ -321,6 +321,7 @@ export class TitlePhase extends Phase {
   loadSaveSlot(slotId: integer): void {
     this.scene.sessionSlotId = slotId > -1 || !loggedInUser ? slotId : loggedInUser.lastSessionSlot;
     this.scene.ui.setMode(Mode.MESSAGE);
+    this.scene.ui.resetModeChain();
     this.scene.gameData.loadSession(this.scene, slotId, slotId === -1 ? this.lastSessionData : undefined).then((success: boolean) => {
       if (success) {
         this.loaded = true;
@@ -1634,7 +1635,7 @@ export class SwitchSummonPhase extends SummonPhase {
       })
     );
     this.scene.playSound("pb_rel");
-    pokemon.hideInfo(); // this is also done by pokemon.leaveField(), but needs to go earlier for animation purposes
+    pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     this.scene.tweens.add({
       targets: pokemon,
@@ -1642,9 +1643,7 @@ export class SwitchSummonPhase extends SummonPhase {
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        // 250ms delay on leaveField is necessary to avoid calling hideInfo() twice
-        // and double-animating the stats panel slideout
-        this.scene.time.delayedCall(250, () => pokemon.leaveField(!this.batonPass));
+        pokemon.leaveField(!this.batonPass, false);
         this.scene.time.delayedCall(750, () => this.switchAndSummon());
       }
     });
@@ -2035,7 +2034,8 @@ export class CommandPhase extends FieldPhase {
       }
       break;
     case Command.BALL:
-      if (!this.scene.gameMode.isFreshStartChallenge() && this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || (this.scene.getEnemyField().filter(p => p.isActive(true)).some(p => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) && this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1))) {
+      const notInDex = (this.scene.getEnemyField().filter(p => p.isActive(true)).some(p => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) && this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1);
+      if (this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || this.scene.gameMode.isFreshStartChallenge() || notInDex )) {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(i18next.t("battle:noPokeballForce"), null, () => {
@@ -2131,7 +2131,7 @@ export class CommandPhase extends FieldPhase {
             }),
             null,
             () => {
-              this.scene.ui.showText(null, 0);
+              this.scene.ui.showText("", 0);
               if (!isSwitch) {
                 this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
               }
@@ -2141,7 +2141,7 @@ export class CommandPhase extends FieldPhase {
             this.scene.ui.setMode(Mode.MESSAGE);
           }
           this.scene.ui.showText(trappedAbMessages[0], null, () => {
-            this.scene.ui.showText(null, 0);
+            this.scene.ui.showText("", 0);
             if (!isSwitch) {
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
             }
@@ -5586,7 +5586,7 @@ export class SelectModifierPhase extends BattlePhase {
     } else if (lockRarities) {
       const tierValues = [50, 125, 300, 750, 2000];
       for (const opt of typeOptions) {
-        baseValue += opt.type?.tier ? tierValues[opt.type.tier] : 0;
+        baseValue += tierValues[opt.type.tier ?? 0];
       }
     } else {
       baseValue = 250;

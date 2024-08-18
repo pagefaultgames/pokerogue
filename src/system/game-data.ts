@@ -1816,7 +1816,7 @@ export class GameData {
   }
 
   getFormAttr(formIndex: integer): bigint {
-    return BigInt(1 << (7 + formIndex));
+    return BigInt(1) << BigInt(7 + formIndex);
   }
 
   consolidateDexData(dexData: DexData): void {

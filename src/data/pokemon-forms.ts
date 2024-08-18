@@ -630,6 +630,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.MELOETTA]: [
     new SpeciesFormChange(Species.MELOETTA, "aria", "pirouette", new SpeciesFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
     new SpeciesFormChange(Species.MELOETTA, "pirouette", "aria", new SpeciesFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
+    new SpeciesFormChange(Species.MELOETTA, "pirouette", "aria", new SpeciesFormChangeActiveTrigger(false), true)
   ],
   [Species.GENESECT]: [
     new SpeciesFormChange(Species.GENESECT, "", "shock", new SpeciesFormChangeItemTrigger(FormChangeItem.SHOCK_DRIVE)),
@@ -836,6 +837,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.CRAMORANT, "", "gorging", new SpeciesFormChangeManualTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() < .5)),
     new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeManualTrigger, true),
     new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeManualTrigger, true),
+    new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeActiveTrigger(false), true),
+    new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeActiveTrigger(false), true),
   ]
 };
 
