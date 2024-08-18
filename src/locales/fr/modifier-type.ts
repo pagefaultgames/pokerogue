@@ -49,10 +49,10 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Donne la nature {{natureName}} à un Pokémon et la débloque pour le starter lui étant lié.",
     },
     "DoubleBattleChanceBoosterModifierType": {
-      description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats.",
+      description: "Double les chances de tomber sur un combat double pendant {{battleCount}} combats.",
     },
     "TempBattleStatBoosterModifierType": {
-      description: "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats.",
+      description: "Augmente d’un cran {{tempBattleStatName}} pour toute l’équipe pendant 5 combats.",
     },
     "AttackTypeBoosterModifierType": {
       description: "Augmente de 20% la puissance des capacités de type {{moveType}} d’un Pokémon.",
@@ -207,7 +207,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "MULTI_LENS": { name: "Lentille Multi" },
 
     "HEALING_CHARM": { name: "Charme Soin", description: "Augmente de 10% l’efficacité des capacités et objets de soin de PV (hors Rappels)." },
-    "CANDY_JAR": { name: "Bonbonnière", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon." },
+    "CANDY_JAR": { name: "Bonbonnière", description: "Augmente de 1 le nombre de niveaux gagnés à l’utilisation d’un Super Bonbon ou d’un Hyper Bonbon." },
 
     "BERRY_POUCH": { name: "Sac à Baies", description: "Ajoute 30% de chances qu’une Baie utilisée ne soit pas consommée." },
 
