@@ -233,6 +233,10 @@ export class StarterPrefs {
       localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
     }
   }
+
+  static delete(): void {
+    localStorage.removeItem(`starterPrefs_${loggedInUser?.username}`);
+  }
 }
 
 export interface StarterDataEntry {
@@ -1315,6 +1319,11 @@ export class GameData {
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
                 localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
+
+                // If we imported main game data, delete the existing starter preferences
+                if (dataType === GameDataType.SYSTEM && (Utils.isLocal || Utils.isBeta)) {
+                  StarterPrefs.delete();
+                }
 
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {
