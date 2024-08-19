@@ -1,5 +1,4 @@
 import { allAbilities, BypassSpeedChanceAbAttr } from "#app/data/ability";
-import { FaintPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -7,6 +6,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { FaintPhase } from "#app/phases/faint-phase.js";
 
 describe("Abilities - Quick Draw", () => {
   let phaserGame: Phaser.Game;

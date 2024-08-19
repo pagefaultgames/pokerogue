@@ -4,7 +4,6 @@ import * as Utils from "../utils";
 import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "./move";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
@@ -15,6 +14,10 @@ import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
+import { StatChangePhase } from "#app/phases/stat-change-phase.js";
 
 export enum ArenaTagSide {
   BOTH,

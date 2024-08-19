@@ -3,11 +3,12 @@ import { Abilities } from "#app/enums/abilities.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
-import { BerryPhase, TurnEndPhase } from "#app/phases.js";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout for all tests
 

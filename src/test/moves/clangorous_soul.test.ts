@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
-import { TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

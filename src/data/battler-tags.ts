@@ -1,5 +1,4 @@
 import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "./battle-anims";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangeCallback, StatChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
@@ -18,6 +17,12 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import i18next from "#app/plugins/i18n.js";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { MovePhase } from "#app/phases/move-phase.js";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
+import { StatChangePhase, StatChangeCallback } from "#app/phases/stat-change-phase.js";
 
 export enum BattlerTagLapseType {
   FAINT,

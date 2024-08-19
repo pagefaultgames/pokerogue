@@ -4,11 +4,15 @@ import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#app/data/status-effect.js";
-import { CommandPhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase, TurnInitPhase } from "#app/phases.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { toDmgValue } from "#app/utils";
 import { Mode } from "#app/ui/ui.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
