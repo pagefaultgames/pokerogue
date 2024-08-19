@@ -1,12 +1,13 @@
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { DamagePhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 
 describe("Moves - Glaive Rush", () => {
@@ -127,5 +128,29 @@ describe("Moves - Glaive Rush", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(player.hp).toBe(player.getMaxHp());
 
+  }, 20000);
+
+  it("secondary effects don't activate if move fails", async() => {
+    game.override.moveset([Moves.SHADOW_SNEAK, Moves.PROTECT, Moves.SPLASH, Moves.GLAIVE_RUSH]);
+    await game.startBattle();
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+    enemy.hp = 1000;
+    player.hp = 1000;
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
+    await game.phaseInterceptor.to(TurnEndPhase);
+    game.override.enemyMoveset(Array(4).fill(Moves.SPLASH));
+    const damagedHP1 = 1000 - enemy.hp;
+    enemy.hp = 1000;
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
+    await game.phaseInterceptor.to(TurnEndPhase);
+    const damagedHP2 = 1000 - enemy.hp;
+
+    expect(damagedHP2).toBeGreaterThanOrEqual((damagedHP1 * 2) - 1);
   }, 20000);
 });

@@ -33,6 +33,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "isChargingPower": "{{pokemonName}}は\nパワーを　ためこんでいる！",
   "burnedItselfOut": "{{pokemonName}}の　ほのうは\nもえつきた！",
   "startedHeatingUpBeak": "{{pokemonName}}は\nクチバシを　かねつしはじめた！",
+  "setUpShellTrap": "{{pokemonName}}は\nトラップシェルを　仕掛けた！",
   "isOverflowingWithSpacePower": "{{pokemonName}}に\nうちゅうの　ちからが　あふれだす！",
   "usedUpAllElectricity": "{{pokemonName}}は\nでんきを　つかいきった！",
   "stoleItem": "{{pokemonName}}は\n{{targetName}}の {{itemName}}を　ぬすんだ！",

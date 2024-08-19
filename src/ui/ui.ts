@@ -287,6 +287,7 @@ export default class UI extends Phaser.GameObjects.Container {
       } else {
         this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
       }
+
     }
   }
 
@@ -495,6 +496,10 @@ export default class UI extends Phaser.GameObjects.Container {
 
   setOverlayMode(mode: Mode, ...args: any[]): Promise<void> {
     return this.setModeInternal(mode, false, false, true, args);
+  }
+
+  resetModeChain(): void {
+    this.modeChain = [];
   }
 
   revertMode(): Promise<boolean> {
