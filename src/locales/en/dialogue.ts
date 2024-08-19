@@ -627,6 +627,51 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "You put up quite the display.\nBetter luck next time."
     }
   },
+  "winstrates_victor": {
+    "encounter": {
+      1: "That's the spirit! I like you!",
+    },
+    "victory": {
+      1: "A-ha! You're stronger than I thought!"
+    }
+  },
+  "winstrates_victoria": {
+    "encounter": {
+      1: `My goodness! Aren't you young?
+        $You must be quite the trainer to beat my husband, though.
+        $Now I suppose it's my turn to battle!`,
+    },
+    "victory": {
+      1: "Uwah! Just how strong are you?!"
+    }
+  },
+  "winstrates_vivi": {
+    "encounter": {
+      1: `You're stronger than Mom? Wow!
+        $But I'm strong, too!\nReally! Honestly!`,
+    },
+    "victory": {
+      1: "Huh? Did I really lose?\nSnivel... Grandmaaa!"
+    }
+  },
+  "winstrates_vicky": {
+    "encounter": {
+      1: `How dare you make my precious\ngranddaughter cry!
+        $I see I need to teach you a lesson.\nPrepare to feel the sting of defeat!`,
+    },
+    "victory": {
+      1: "Whoa! So strong!\nMy granddaughter wasn't lying."
+    }
+  },
+  "winstrates_vito": {
+    "encounter": {
+      1: `I trained together with my whole family,\nevery one of us!
+        $I'm not losing to anyone!`,
+    },
+    "victory": {
+      1: "I was better than everyone in my family.\nI've never lost before..."
+    }
+  },
   "brock": {
     "encounter": {
       1: "My expertise on Rock-type Pokémon will take you down! Come on!",

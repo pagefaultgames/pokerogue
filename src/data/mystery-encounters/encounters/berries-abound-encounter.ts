@@ -1,7 +1,7 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import {
-  EnemyPartyConfig, generateModifierTypeOption,
+  EnemyPartyConfig, generateModifierType, generateModifierTypeOption,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle, setEncounterExp,
   setEncounterRewards
@@ -19,7 +19,7 @@ import { randSeedInt } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -40,7 +40,7 @@ const namespace = "mysteryEncounter:berriesAbound";
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/24 | GitHub Issue #24}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const BerriesAboundEncounter: IMysteryEncounter =
+export const BerriesAboundEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.BERRIES_ABOUND)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
@@ -315,7 +315,7 @@ export const BerriesAboundEncounter: IMysteryEncounter =
 
 async function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokemon) {
   const berryType = randSeedInt(Object.keys(BerryType).filter(s => !isNaN(Number(s))).length) as BerryType;
-  const berry = generateModifierTypeOption(scene, modifierTypes.BERRY, [berryType]).type as BerryModifierType;
+  const berry = generateModifierType(scene, modifierTypes.BERRY, [berryType]) as BerryModifierType;
 
   const party = scene.getParty();
 

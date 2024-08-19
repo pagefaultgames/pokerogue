@@ -14,7 +14,7 @@ import { Arena, ArenaBase } from "./field/arena";
 import { GameData } from "./system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "./ui/text";
 import { allMoves } from "./data/move";
-import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue, ModifierPoolType, PokemonHeldItemModifierType } from "./modifier/modifier-type";
+import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue, ModifierPoolType } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
 import { allAbilities, applyAbAttrs, applyPostBattleInitAbAttrs, BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig } from "./battle";
@@ -67,12 +67,13 @@ import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
 import { TrainerType } from "#enums/trainer-type";
-import IMysteryEncounter from "./data/mystery-encounters/mystery-encounter";
+import MysteryEncounter from "./data/mystery-encounters/mystery-encounter";
 import { allMysteryEncounters, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, mysteryEncountersByBiome, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "./data/mystery-encounters/mystery-encounters";
 import { MysteryEncounterData } from "#app/data/mystery-encounters/mystery-encounter-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -223,7 +224,7 @@ export default class BattleScene extends SceneBase {
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
   public mysteryEncounterData: MysteryEncounterData = new MysteryEncounterData(null);
-  public lastMysteryEncounter: IMysteryEncounter;
+  public lastMysteryEncounter: MysteryEncounter;
   /** Combined Biome and Wave count text */
   private biomeWaveText: Phaser.GameObjects.Text;
   private moneyText: Phaser.GameObjects.Text;
@@ -1036,7 +1037,7 @@ export default class BattleScene extends SceneBase {
     }
   }
 
-  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounter?: IMysteryEncounter): Battle {
+  newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounter?: MysteryEncounter): Battle {
     const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
     const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (_startingWave - 1)) + 1);
     let newDouble: boolean;
@@ -1064,6 +1065,10 @@ export default class BattleScene extends SceneBase {
         newBattleType = this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD;
       } else {
         newBattleType = battleType;
+      }
+
+      if (waveIndex === 64) {
+        newBattleType = BattleType.TRAINER;
       }
 
       if (newBattleType === BattleType.TRAINER) {
@@ -2423,7 +2428,7 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  generateEnemyModifiers(customHeldModifiers?: PokemonHeldItemModifierType[][]): Promise<void> {
+  generateEnemyModifiers(heldModifiersConfigs?: HeldModifierConfig[][]): Promise<void> {
     return new Promise(resolve => {
       if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
         return resolve();
@@ -2445,8 +2450,16 @@ export default class BattleScene extends SceneBase {
       }
 
       party.every((enemyPokemon: EnemyPokemon, i: integer) => {
-        if (customHeldModifiers && i < customHeldModifiers.length && customHeldModifiers[i] && customHeldModifiers[i].length > 0) {
-          customHeldModifiers[i].forEach(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
+        if (heldModifiersConfigs && i < heldModifiersConfigs.length && heldModifiersConfigs[i] && heldModifiersConfigs[i].length > 0) {
+          heldModifiersConfigs[i].forEach(mt => {
+            const stackCount = mt.stackCount ?? 1;
+            // const isTransferable = mt.isTransferable ?? true;
+            const modifier = mt.modifierType.newModifier(enemyPokemon);
+            modifier.stackCount = stackCount;
+            // TODO: set isTransferable
+            // modifier.setIsTransferable(isTransferable);
+            this.addEnemyModifier(modifier, false, true);
+          });
           return true;
         }
 
@@ -2702,9 +2715,9 @@ export default class BattleScene extends SceneBase {
    * @param override - used to load session encounter when restarting game, etc.
    * @returns
    */
-  getMysteryEncounter(override: IMysteryEncounter): IMysteryEncounter {
+  getMysteryEncounter(override: MysteryEncounter): MysteryEncounter {
     // Loading override or session encounter
-    let encounter: IMysteryEncounter;
+    let encounter: MysteryEncounter;
     if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE) && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)) {
       encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
     } else {
@@ -2726,7 +2739,7 @@ export default class BattleScene extends SceneBase {
     }
 
     if (encounter) {
-      encounter = new IMysteryEncounter(encounter);
+      encounter = new MysteryEncounter(encounter);
       encounter.populateDialogueTokensFromRequirements(this);
       return encounter;
     }
@@ -2755,7 +2768,7 @@ export default class BattleScene extends SceneBase {
       tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE;
     }
 
-    let availableEncounters: IMysteryEncounter[] = [];
+    let availableEncounters: MysteryEncounter[] = [];
     // New encounter will never be the same as the most recent encounter
     const previousEncounter = this.mysteryEncounterData.encounteredEvents?.length > 0 ? this.mysteryEncounterData.encounteredEvents[this.mysteryEncounterData.encounteredEvents.length - 1][0] : null;
     const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType) ?? [];
@@ -2802,7 +2815,7 @@ export default class BattleScene extends SceneBase {
     }
     encounter = availableEncounters[Utils.randSeedInt(availableEncounters.length)];
     // New encounter object to not dirty flags
-    encounter = new IMysteryEncounter(encounter);
+    encounter = new MysteryEncounter(encounter);
     encounter.populateDialogueTokensFromRequirements(this);
     return encounter;
   }

@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "vivi.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 48,
+				"h": 69
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 11,
+						"w": 48,
+						"h": 69
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 69
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:0a51b4df0b2ed0fed7e3bdb5dffd9e28:af1f3b1480023b3e3761c49e49faf5f1:4fc6bf2bec74c4bb8809df38231deb01$"
+	}
+}

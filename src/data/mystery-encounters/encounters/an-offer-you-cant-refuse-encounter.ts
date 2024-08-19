@@ -3,7 +3,7 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { AbilityRequirement, CombinationPokemonRequirement, MoveRequirement } from "../mystery-encounter-requirements";
 import { getHighestStatTotalPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
@@ -21,7 +21,7 @@ const namespace = "mysteryEncounter:offerYouCantRefuse";
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/72 | GitHub Issue #72}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const AnOfferYouCantRefuseEncounter: IMysteryEncounter =
+export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180)

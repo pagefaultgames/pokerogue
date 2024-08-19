@@ -127,7 +127,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
  * @param scene Battle scene
  * @param guidePokemon pokemon choosen as a guide
  */
-function handlePokemonGuidingYouPhase(scene: BattleScene) {
+async function handlePokemonGuidingYouPhase(scene: BattleScene) {
   const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
   const { mysteryEncounter } = scene.currentBattle;
 

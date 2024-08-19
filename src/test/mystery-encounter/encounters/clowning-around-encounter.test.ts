@@ -7,7 +7,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import * as BattleAnims from "#app/data/battle-anims";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { generateModifierTypeOption } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
 import { CommandPhase, MovePhase, NewBattlePhase, SelectModifierPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
@@ -123,7 +123,6 @@ describe("Clowning Around - Mystery Encounter", () => {
     });
     expect(config.pokemonConfigs[1]).toEqual({
       species: getPokemonSpecies(Species.BLACEPHALON),
-      ability: expect.any(Number),
       mysteryEncounterData: expect.anything(),
       isBoss: true,
       moveSet: [Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN]
@@ -145,8 +144,8 @@ describe("Clowning Around - Mystery Encounter", () => {
       Abilities.MAGICIAN,
       Abilities.SHEER_FORCE,
       Abilities.PRANKSTER
-    ]).toContain(config.pokemonConfigs[1].ability);
-    expect(ClowningAroundEncounter.misc.ability).toBe(config.pokemonConfigs[1].ability);
+    ]).toContain(config.pokemonConfigs[1].mysteryEncounterData.ability);
+    expect(ClowningAroundEncounter.misc.ability).toBe(config.pokemonConfigs[1].mysteryEncounterData.ability);
     await vi.waitFor(() => expect(moveInitSpy).toHaveBeenCalled());
     await vi.waitFor(() => expect(moveLoadSpy).toHaveBeenCalled());
     expect(onInitResult).toBe(true);
@@ -258,26 +257,26 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       // 2 Sitrus Berries on lead
       scene.modifiers = [];
-      let itemType = generateModifierTypeOption(scene, modifierTypes.BERRY, [BerryType.SITRUS]).type as PokemonHeldItemModifierType;
+      let itemType = generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getParty()[0], 2, itemType);
       // 2 Ganlon Berries on lead
-      itemType = generateModifierTypeOption(scene, modifierTypes.BERRY, [BerryType.GANLON]).type as PokemonHeldItemModifierType;
+      itemType = generateModifierType(scene, modifierTypes.BERRY, [BerryType.GANLON]) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getParty()[0], 2, itemType);
       // 5 Golden Punch on lead (ultra)
-      itemType = generateModifierTypeOption(scene, modifierTypes.GOLDEN_PUNCH).type as PokemonHeldItemModifierType;
+      itemType = generateModifierType(scene, modifierTypes.GOLDEN_PUNCH) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getParty()[0], 5, itemType);
       // 5 Lucky Egg on lead (ultra)
-      itemType = generateModifierTypeOption(scene, modifierTypes.LUCKY_EGG).type as PokemonHeldItemModifierType;
+      itemType = generateModifierType(scene, modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getParty()[0], 5, itemType);
       // 5 Soul Dew on lead (rogue)
-      itemType = generateModifierTypeOption(scene, modifierTypes.SOUL_DEW).type as PokemonHeldItemModifierType;
+      itemType = generateModifierType(scene, modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getParty()[0], 5, itemType);
       // 2 Golden Egg on lead (rogue)
-      itemType = generateModifierTypeOption(scene, modifierTypes.GOLDEN_EGG).type as PokemonHeldItemModifierType;
+      itemType = generateModifierType(scene, modifierTypes.GOLDEN_EGG) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getParty()[0], 2, itemType);
 
       // 5 Soul Dew on second party pokemon (these should not change)
-      itemType = generateModifierTypeOption(scene, modifierTypes.SOUL_DEW).type as PokemonHeldItemModifierType;
+      itemType = generateModifierType(scene, modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getParty()[1], 5, itemType);
 
       await runMysteryEncounterToEnd(game, 2);

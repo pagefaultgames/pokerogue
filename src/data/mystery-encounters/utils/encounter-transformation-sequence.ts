@@ -11,13 +11,13 @@ export enum TransformationScreenPosition {
 }
 
 /**
- * Initiates an "evolution-like" animation to transform a pokemon (presumably from the player's party) into a new one, not necessarily an evolution species.
+ * Initiates an "evolution-like" animation to transform a previousPokemon (presumably from the player's party) into a new one, not necessarily an evolution species.
  * @param scene
- * @param pokemon
- * @param transformedPokemon
+ * @param previousPokemon
+ * @param transformPokemon
  * @param screenPosition
  */
-export function doPokemonTransformationSequence(scene: BattleScene, pokemon: PlayerPokemon, transformedPokemon: PlayerPokemon, screenPosition: TransformationScreenPosition) {
+export function doPokemonTransformationSequence(scene: BattleScene, previousPokemon: PlayerPokemon, transformPokemon: PlayerPokemon, screenPosition: TransformationScreenPosition) {
   return new Promise<void>(resolve => {
     const transformationContainer = scene.fieldUI.getByName("Dream Background") as Phaser.GameObjects.Container;
     const transformationBaseBg = scene.add.image(0, 0, "default_bg");
@@ -36,7 +36,7 @@ export function doPokemonTransformationSequence(scene: BattleScene, pokemon: Pla
     const yOffset = screenPosition !== TransformationScreenPosition.CENTER ? -15 : 0;
 
     const getPokemonSprite = () => {
-      const ret = scene.addPokemonSprite(pokemon, transformationBaseBg.displayWidth / 2 + xOffset, transformationBaseBg.displayHeight / 2 + yOffset, "pkmn__sub");
+      const ret = scene.addPokemonSprite(previousPokemon, transformationBaseBg.displayWidth / 2 + xOffset, transformationBaseBg.displayHeight / 2 + yOffset, "pkmn__sub");
       ret.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
       return ret;
     };
@@ -54,31 +54,31 @@ export function doPokemonTransformationSequence(scene: BattleScene, pokemon: Pla
     pokemonEvoTintSprite.setTintFill(0xFFFFFF);
 
     [ pokemonSprite, pokemonTintSprite, pokemonEvoSprite, pokemonEvoTintSprite ].map(sprite => {
-      sprite.play(pokemon.getSpriteKey(true));
-      sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(pokemon.getTeraType()) });
+      sprite.play(previousPokemon.getSpriteKey(true));
+      sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(previousPokemon.getTeraType()) });
       sprite.setPipelineData("ignoreTimeTint", true);
-      sprite.setPipelineData("spriteKey", pokemon.getSpriteKey());
-      sprite.setPipelineData("shiny", pokemon.shiny);
-      sprite.setPipelineData("variant", pokemon.variant);
+      sprite.setPipelineData("spriteKey", previousPokemon.getSpriteKey());
+      sprite.setPipelineData("shiny", previousPokemon.shiny);
+      sprite.setPipelineData("variant", previousPokemon.variant);
       [ "spriteColors", "fusionSpriteColors" ].map(k => {
-        if (pokemon.summonData?.speciesForm) {
+        if (previousPokemon.summonData?.speciesForm) {
           k += "Base";
         }
-        sprite.pipelineData[k] = pokemon.getSprite().pipelineData[k];
+        sprite.pipelineData[k] = previousPokemon.getSprite().pipelineData[k];
       });
     });
 
     [ pokemonEvoSprite, pokemonEvoTintSprite ].map(sprite => {
-      sprite.play(transformedPokemon.getSpriteKey(true));
+      sprite.play(transformPokemon.getSpriteKey(true));
       sprite.setPipelineData("ignoreTimeTint", true);
-      sprite.setPipelineData("spriteKey", transformedPokemon.getSpriteKey());
-      sprite.setPipelineData("shiny", transformedPokemon.shiny);
-      sprite.setPipelineData("variant", transformedPokemon.variant);
+      sprite.setPipelineData("spriteKey", transformPokemon.getSpriteKey());
+      sprite.setPipelineData("shiny", transformPokemon.shiny);
+      sprite.setPipelineData("variant", transformPokemon.variant);
       [ "spriteColors", "fusionSpriteColors" ].map(k => {
-        if (transformedPokemon.summonData?.speciesForm) {
+        if (transformPokemon.summonData?.speciesForm) {
           k += "Base";
         }
-        sprite.pipelineData[k] = transformedPokemon.getSprite().pipelineData[k];
+        sprite.pipelineData[k] = transformPokemon.getSprite().pipelineData[k];
       });
     });
 
@@ -123,9 +123,11 @@ export function doPokemonTransformationSequence(scene: BattleScene, pokemon: Pla
                             duration: 2000,
                             delay: 150,
                             easing: "Sine.easeIn",
-                            // onComplete: () => {
-                            // transformedPokemon.destroy();
-                            // }
+                            onComplete: () => {
+                              previousPokemon.destroy();
+                              transformPokemon.setVisible(false);
+                              transformPokemon.setAlpha(1);
+                            }
                           });
                         });
                       }

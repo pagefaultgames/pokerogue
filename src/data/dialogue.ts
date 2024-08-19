@@ -735,6 +735,56 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.VICTOR]: [
+    {
+      encounter: [
+        "dialogue:winstrates_victor.encounter.1",
+      ],
+      victory: [
+        "dialogue:winstrates_victor.victory.1"
+      ],
+    }
+  ],
+  [TrainerType.VICTORIA]: [
+    {
+      encounter: [
+        "dialogue:winstrates_victoria.encounter.1",
+      ],
+      victory: [
+        "dialogue:winstrates_victoria.victory.1"
+      ],
+    }
+  ],
+  [TrainerType.VIVI]: [
+    {
+      encounter: [
+        "dialogue:winstrates_vivi.encounter.1",
+      ],
+      victory: [
+        "dialogue:winstrates_vivi.victory.1"
+      ],
+    }
+  ],
+  [TrainerType.VICKY]: [
+    {
+      encounter: [
+        "dialogue:winstrates_vicky.encounter.1",
+      ],
+      victory: [
+        "dialogue:winstrates_vicky.victory.1"
+      ],
+    }
+  ],
+  [TrainerType.VITO]: [
+    {
+      encounter: [
+        "dialogue:winstrates_vito.encounter.1",
+      ],
+      victory: [
+        "dialogue:winstrates_vito.victory.1"
+      ],
+    }
+  ],
   [TrainerType.BROCK]: {
     encounter: [
       "dialogue:brock.encounter.1",

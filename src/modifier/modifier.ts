@@ -793,6 +793,54 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
+  readonly isTransferrable: boolean = false;
+
+  constructor (type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonIncrementingStatModifier;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonIncrementingStatModifier(this.type, this.pokemonId);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs();
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  }
+
+  apply(args: any[]): boolean {
+    // Modifies the passed in stats[] array by +1 per stack for HP, +2 per stack for other stats
+    // If the Macho Brace is at max stacks (50), adds additional 5% to total HP and 10% to other stats
+    args[1].forEach((v, i) => {
+      const isHp = i === 0;
+      let mult = 1;
+      if (this.stackCount === this.getMaxHeldItemCount(null)) {
+        mult = isHp ? 1.05 : 1.1;
+      }
+      const newVal = Math.floor((v + this.stackCount * (isHp ? 1 : 2)) * mult);
+      args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+    });
+
+    return true;
+  }
+
+  getScoreMultiplier(): number {
+    return 1.2;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 50;
+  }
+}
+
 /**
  * Modifier used for held items that apply {@linkcode Stat} boost(s)
  * using a multiplier.

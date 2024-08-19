@@ -1,6 +1,6 @@
 import { GameObjects } from "phaser";
 import BattleScene from "../battle-scene";
-import IMysteryEncounter from "../data/mystery-encounters/mystery-encounter";
+import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 import { Species } from "#enums/species";
 import { isNullOrUndefined } from "#app/utils";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
@@ -70,11 +70,11 @@ export class MysteryEncounterSpriteConfig {
  * Note: intro visuals are not "Trainers" or any other specific game object, though they may contain trainer sprites
  */
 export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
-  public encounter: IMysteryEncounter;
+  public encounter: MysteryEncounter;
   public spriteConfigs: MysteryEncounterSpriteConfig[];
   public enterFromRight: boolean;
 
-  constructor(scene: BattleScene, encounter: IMysteryEncounter) {
+  constructor(scene: BattleScene, encounter: MysteryEncounter) {
     super(scene, -72, 76);
     this.encounter = encounter;
     this.enterFromRight = encounter.enterIntroVisualsFromRight ?? false;

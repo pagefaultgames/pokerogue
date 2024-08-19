@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "vicky.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 52,
+				"h": 53
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 27,
+						"w": 52,
+						"h": 53
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 52,
+						"h": 53
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:bf9d2d417a1982282dd711456ac71206:101e07828e3d6e2a2a7a80aebfa802ad:cabe44a4410c334298b1984a219f8160$"
+	}
+}

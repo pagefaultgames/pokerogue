@@ -262,6 +262,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "MYSTERY_ENCOUNTER_SHUCKLE_JUICE": { name: "Shuckle Juice" },
     "MYSTERY_ENCOUNTER_BLACK_SLUDGE": { name: "Black Sludge", description: "The stench is so powerful that healing items are no longer available to purchase in shops." },
+    "MYSTERY_ENCOUNTER_MACHO_BRACE": { name: "Macho Brace", description: "Defeating a Pokémon grants the holder a Macho Brace stack. Each stack slightly boosts stats, with an extra bonus at max stacks." },
     "MYSTERY_ENCOUNTER_OLD_GATEAU": { name: "Old Gateau", description: "Increases the holder's {{stats}} stats by {{statValue}}." },
   },
   SpeciesBoosterItem: {

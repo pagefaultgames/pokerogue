@@ -2,7 +2,7 @@ import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattl
 import { trainerConfigs, } from "#app/data/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
 import { Species } from "#enums/species";
@@ -22,10 +22,10 @@ const namespace = "mysteryEncounter:aTrainersTest";
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/115 | GitHub Issue #115}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const ATrainersTestEncounter: IMysteryEncounter =
+export const ATrainersTestEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.A_TRAINERS_TEST)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
-    .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
+    .withSceneWaveRangeRequirement(100, 180)
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withIntroDialogue([
       {
@@ -139,13 +139,6 @@ export const ATrainersTestEncounter: IMysteryEncounter =
         // Spawn standard trainer battle with memory mushroom reward
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
-        let eggTier;
-        if (randSeedInt(64) >= 54) {
-          eggTier = EggTier.MASTER;
-        } else {
-          eggTier = EggTier.ULTRA;
-        }
-
         await transitionMysteryEncounterIntroVisuals(scene);
 
         const eggOptions: IEggOptions = {
@@ -153,9 +146,9 @@ export const ATrainersTestEncounter: IMysteryEncounter =
           pulled: false,
           sourceType: EggSourceType.EVENT,
           eventEggTypeDescriptor: encounter.misc.trainerEggDescription,
-          tier: eggTier
+          tier: EggTier.ULTRA
         };
-        encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.${eggTier === EggTier.ULTRA ? "epic" : "legendary"}`));
+        encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.epic`));
         setEncounterRewards(scene, { fillRemaining: true }, [eggOptions]);
 
         return initBattleWithEnemyConfig(scene, config);

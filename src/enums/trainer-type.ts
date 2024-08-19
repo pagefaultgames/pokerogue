@@ -75,6 +75,11 @@ export enum TrainerType {
   MARLEY,
   MIRA,
   RILEY,
+  VICTOR,
+  VICTORIA,
+  VIVI,
+  VICKY,
+  VITO,
 
   BROCK = 200,
   MISTY,

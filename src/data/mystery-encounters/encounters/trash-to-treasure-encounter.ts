@@ -1,8 +1,8 @@
-import { EnemyPartyConfig, EnemyPokemonConfig, generateModifierTypeOption, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, EnemyPokemonConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { ModifierRewardPhase } from "#app/phases";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -28,7 +28,7 @@ const SOUND_EFFECT_WAIT_TIME = 700;
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/74 | GitHub Issue #74}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const TrashToTreasureEncounter: IMysteryEncounter =
+export const TrashToTreasureEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.TRASH_TO_TREASURE)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
     .withSceneWaveRangeRequirement(10, 180)
@@ -147,8 +147,8 @@ export const TrashToTreasureEncounter: IMysteryEncounter =
     .build();
 
 async function tryApplyDigRewardItems(scene: BattleScene) {
-  const shellBell = generateModifierTypeOption(scene, modifierTypes.SHELL_BELL).type as PokemonHeldItemModifierType;
-  const leftovers = generateModifierTypeOption(scene, modifierTypes.LEFTOVERS).type as PokemonHeldItemModifierType;
+  const shellBell = generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
+  const leftovers = generateModifierType(scene, modifierTypes.LEFTOVERS) as PokemonHeldItemModifierType;
 
   const party = scene.getParty();
 

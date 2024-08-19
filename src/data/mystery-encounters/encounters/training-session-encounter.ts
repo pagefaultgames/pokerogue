@@ -14,7 +14,7 @@ import { randSeedShuffle } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -28,7 +28,7 @@ const namespace = "mysteryEncounter:trainingSession";
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/43 | GitHub Issue #43}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const TrainingSessionEncounter: IMysteryEncounter =
+export const TrainingSessionEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.TRAINING_SESSION)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
@@ -444,7 +444,7 @@ function getEnemyConfig(scene: BattleScene, playerPokemon: PlayerPokemon,segment
         formIndex: playerPokemon.formIndex,
         level: playerPokemon.level,
         dataSource: data,
-        modifierTypes: modifierTypes,
+        modifierConfigs: modifierTypes,
       },
     ],
   };

@@ -7,7 +7,7 @@ import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, {
+import MysteryEncounter, {
   MysteryEncounterBuilder,
 } from "../mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -20,7 +20,7 @@ const namespace = "mysteryEncounter:departmentStoreSale";
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/33 | GitHub Issue #33}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const DepartmentStoreSaleEncounter: IMysteryEncounter =
+export const DepartmentStoreSaleEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DEPARTMENT_STORE_SALE)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 100)
