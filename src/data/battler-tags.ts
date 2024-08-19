@@ -246,15 +246,6 @@ export class TrappedTag extends BattlerTag {
 }
 
 /**
- * Tag applied to the {@linkcode Moves.JAW_LOCK} user and target to prevent switching.
- */
-export class JawLockTag extends TrappedTag {
-  constructor(sourceId: integer) {
-    super(BattlerTagType.JAW_LOCK, BattlerTagLapseType.CUSTOM, 1, Moves.JAW_LOCK, sourceId);
-  }
-}
-
-/**
  * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Flinch Flinch} status condition
  */
 export class FlinchedTag extends BattlerTag {
@@ -1873,8 +1864,6 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new DrowsyTag();
   case BattlerTagType.TRAPPED:
     return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
-  case BattlerTagType.JAW_LOCK:
-    return new JawLockTag(sourceId);
   case BattlerTagType.BIND:
     return new BindTag(turnCount, sourceId);
   case BattlerTagType.WRAP:

@@ -1,18 +1,17 @@
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import {
-  FaintPhase,
-  MoveEffectPhase,
-  TurnEndPhase
-} from "#app/phases";
+import { Abilities } from "#app/enums/abilities";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
-import { BattlerIndex } from "#app/battle.js";
+import { SPLASH_ONLY } from "#app/test/utils/testUtils";
+import { BattlerIndex } from "#app/battle";
+import { FaintPhase } from "#app/phases/faint-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { BerryPhase } from "#app/phases/berry-phase";
 
 const TIMEOUT = 20 * 1000;
 
@@ -56,13 +55,13 @@ describe("Moves - Jaw Lock", () => {
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
 
-      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
-      expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
+      expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
-      expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
+      expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
     }, TIMEOUT
   );
 
@@ -79,18 +78,18 @@ describe("Moves - Jaw Lock", () => {
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
 
-      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
-      expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
+      expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 
-      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
-      expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
+      expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
 
       await game.phaseInterceptor.to(FaintPhase);
 
-      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
-      expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
+      expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     }, TIMEOUT
   );
 
@@ -106,14 +105,14 @@ describe("Moves - Jaw Lock", () => {
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 
-      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
-      expect(enemyPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
+      expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
       await game.doKillOpponents();
 
-      expect(leadPokemon.getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
+      expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     }, TIMEOUT
   );
 
@@ -134,8 +133,8 @@ describe("Moves - Jaw Lock", () => {
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 
-      expect(playerPokemon[0].getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
-      expect(enemyPokemon[0].getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
+      expect(playerPokemon[0].getTag(BattlerTagType.TRAPPED)).toBeDefined();
+      expect(enemyPokemon[0].getTag(BattlerTagType.TRAPPED)).toBeDefined();
 
       await game.toNextTurn();
 
@@ -146,9 +145,28 @@ describe("Moves - Jaw Lock", () => {
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 
-      expect(enemyPokemon[1].getTag(BattlerTagType.JAW_LOCK)).toBeUndefined();
-      expect(playerPokemon[0].getTag(BattlerTagType.JAW_LOCK)).toBeDefined();
-      expect(playerPokemon[0].getTag(BattlerTagType.JAW_LOCK)?.sourceId).toBe(enemyPokemon[0].id);
+      expect(enemyPokemon[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+      expect(playerPokemon[0].getTag(BattlerTagType.TRAPPED)).toBeDefined();
+      expect(playerPokemon[0].getTag(BattlerTagType.TRAPPED)?.sourceId).toBe(enemyPokemon[0].id);
+    }, TIMEOUT
+  );
+
+  it(
+    "should not trap either pokemon if the target is protected",
+    async () => {
+      game.override.enemyMoveset(Array(4).fill(Moves.PROTECT));
+
+      await game.startBattle([ Species.BULBASAUR ]);
+
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.JAW_LOCK));
+
+      await game.phaseInterceptor.to(BerryPhase, false);
+
+      expect(playerPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+      expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     }, TIMEOUT
   );
 });
