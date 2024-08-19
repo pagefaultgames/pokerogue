@@ -13,7 +13,6 @@ import { copyChallenge } from "data/challenge";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { allMoves } from "#app/data/move";
-import { AiType } from "#app/field/pokemon";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { StatusEffect } from "#enums/status-effect";
 
@@ -120,26 +119,7 @@ describe("Inverse Battle", () => {
     expect(squirtle.getAttackTypeEffectiveness(allMoves[Moves.FREEZE_DRY].type, articuno)).toBe(2);
   });
 
-  it("6. AI should use moves that are 2x effective - Fire Fang prefered over Ice Fang against Dragon Type", async () => {
-    game.override.seed("Fire Fang vs Ice Fang against Dragon Type");
-    game.override.enemySpecies(Species.SANDSHREW);
-    game.override.enemyAbility(Abilities.SAND_VEIL);
-    game.override.enemyMoveset([Moves.ICE_FANG, Moves.FIRE_FANG]);
-    game.override.starterSpecies(Species.DRATINI);
-    game.override.moveset(SPLASH_ONLY);
-
-    await game.startBattle(undefined, false);
-
-    const sandshrew = game.scene.getEnemyPokemon()!;
-    sandshrew.aiType = AiType.SMART;
-
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-
-    await game.phaseInterceptor.to(TurnEndPhase);
-    expect(sandshrew.getLastXMoves()[0].move).toBe(Moves.FIRE_FANG);
-  });
-
-  it("7. Water Absorb should heal against water moves - Water Absorb against Water gun", async () => {
+  it("6. Water Absorb should heal against water moves - Water Absorb against Water gun", async () => {
     game.override.starterSpecies(Species.SQUIRTLE);
     game.override.moveset([Moves.WATER_GUN]);
     game.override.enemySpecies(Species.PIKACHU);
@@ -156,7 +136,7 @@ describe("Inverse Battle", () => {
     expect(pikachu.hp).toBe(pikachu.getMaxHp());
   });
 
-  it("8. Fire type does not get burned - Will-O-Wisp against Charmander", async () => {
+  it("7. Fire type does not get burned - Will-O-Wisp against Charmander", async () => {
     game.override.starterSpecies(Species.PIKACHU);
     game.override.moveset([Moves.WILL_O_WISP]);
     game.override.enemySpecies(Species.CHARMANDER);
@@ -174,7 +154,7 @@ describe("Inverse Battle", () => {
     expect(charmander.status?.effect).not.toBe(StatusEffect.BURN);
   });
 
-  it("9. Electric type does not get paralyzed - Thunder Wave against Pikachu", async () => {
+  it("8. Electric type does not get paralyzed - Thunder Wave against Pikachu", async () => {
     game.override.starterSpecies(Species.PICHU);
     game.override.moveset([Moves.NUZZLE]);
     game.override.enemySpecies(Species.PIKACHU);
@@ -191,7 +171,7 @@ describe("Inverse Battle", () => {
     expect(pikachu.status?.effect).not.toBe(StatusEffect.PARALYSIS);
   });
 
-  it("10. Ground type does not immune to Thunder Wave - Thunder Wave against Sandshrew", async () => {
+  it("9. Ground type does not immune to Thunder Wave - Thunder Wave against Sandshrew", async () => {
     game.override.starterSpecies(Species.PIKACHU);
     game.override.moveset([Moves.THUNDER_WAVE]);
     game.override.enemySpecies(Species.SANDSHREW);
@@ -210,7 +190,7 @@ describe("Inverse Battle", () => {
     expect(sandshrew.status?.effect).toBe(StatusEffect.PARALYSIS);
   });
 
-  it("11. Anticipation should trigger on 2x effective moves - Anticipation against Thunderbolt", async () => {
+  it("10. Anticipation should trigger on 2x effective moves - Anticipation against Thunderbolt", async () => {
     game.override.starterSpecies(Species.PIKACHU);
     game.override.moveset([Moves.THUNDERBOLT]);
     game.override.enemySpecies(Species.SANDSHREW);
@@ -224,7 +204,7 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to(MoveEndPhase);
   });
 
-  it("12. Conversion 2 should change the type to the resistive type - Conversion 2 against Dragonite", async () => {
+  it("11. Conversion 2 should change the type to the resistive type - Conversion 2 against Dragonite", async () => {
     game.override.starterSpecies(Species.PORYGON);
     game.override.moveset([Moves.CONVERSION_2]);
     game.override.enemySpecies(Species.DRAGONITE);

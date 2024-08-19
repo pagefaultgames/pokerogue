@@ -26,7 +26,7 @@ export type TypeDamageMultiplier = 0 | 0.125 | 0.25 | 0.5 | 1 | 2 | 4 | 8;
 export function getTypeDamageMultiplier(attackType: number, defType: number, isInverseBattle: boolean = false): TypeDamageMultiplier {
   let multiplier: number = 1;
   if (attackType === Type.UNKNOWN || defType === Type.UNKNOWN) {
-    return multiplier = 1 as TypeDamageMultiplier;
+    return multiplier as TypeDamageMultiplier;
   }
 
   switch (defType) {

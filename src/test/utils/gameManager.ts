@@ -42,6 +42,7 @@ import { TitlePhase } from "#app/phases/title-phase.js";
 import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
+import overrides from "#app/overrides.js";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -151,6 +152,10 @@ export default class GameManager {
       this.scene.pushPhase(new EncounterPhase(this.scene, false));
       selectStarterPhase.initBattle(starters);
     });
+
+    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
+      this.removeEnemyHeldItems();
+    }
 
     await this.phaseInterceptor.run(EncounterPhase);
   }
