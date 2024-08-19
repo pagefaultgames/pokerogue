@@ -1,7 +1,8 @@
 import { allAbilities } from "#app/data/ability.js";
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { MoveEffectPhase, SelectTargetPhase } from "#app/phases.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

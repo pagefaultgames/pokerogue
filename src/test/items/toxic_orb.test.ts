@@ -1,13 +1,16 @@
 import { StatusEffect } from "#app/data/status-effect";
-import { CommandPhase, EnemyCommandPhase, MessagePhase, TurnEndPhase } from "#app/phases";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { MessagePhase } from "#app/phases/message-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import i18next, { initI18n } from "#app/plugins/i18n";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

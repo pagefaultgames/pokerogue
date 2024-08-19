@@ -1,7 +1,8 @@
 import { allAbilities } from "#app/data/ability.js";
 import { Abilities } from "#app/enums/abilities.js";
 import Pokemon from "#app/field/pokemon.js";
-import { SelectTargetPhase, TurnEndPhase } from "#app/phases";
+import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

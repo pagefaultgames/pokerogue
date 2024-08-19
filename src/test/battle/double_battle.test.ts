@@ -1,5 +1,6 @@
 import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { BattleEndPhase, TurnInitPhase } from "#app/phases";
+import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

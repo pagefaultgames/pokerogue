@@ -1,13 +1,15 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { Stat } from "#app/data/pokemon-stat";
-import { CommandPhase, EnemyCommandPhase, VictoryPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { VictoryPhase } from "#app/phases/victory-phase.js";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

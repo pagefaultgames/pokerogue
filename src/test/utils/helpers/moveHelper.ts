@@ -1,8 +1,8 @@
-import { vi } from "vitest";
-import { MoveEffectPhase } from "#app/phases.js";
-import { GameManagerHelper } from "./gameManagerHelper";
 import { Moves } from "#app/enums/moves.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { vi } from "vitest";
 import { getMovePosition } from "../gameManagerUtils";
+import { GameManagerHelper } from "./gameManagerHelper";
 
 /**
  * Helper to handle a Pokemon's move

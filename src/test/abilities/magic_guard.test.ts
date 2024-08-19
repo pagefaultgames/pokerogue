@@ -1,7 +1,7 @@
 import { ArenaTagSide, getArenaTag } from "#app/data/arena-tag";
 import { StatusEffect, getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { WeatherType } from "#app/data/weather.js";
-import { TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";

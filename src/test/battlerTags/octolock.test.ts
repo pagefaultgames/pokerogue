@@ -1,10 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
-import Pokemon from "#app/field/pokemon.js";
 import BattleScene from "#app/battle-scene.js";
-import { BattlerTag, BattlerTagLapseType, OctolockTag, TrappedTag } from "#app/data/battler-tags.js";
-import { StatChangePhase } from "#app/phases.js";
 import { BattleStat } from "#app/data/battle-stat.js";
+import { BattlerTag, BattlerTagLapseType, OctolockTag, TrappedTag } from "#app/data/battler-tags.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import Pokemon from "#app/field/pokemon.js";
+import { StatChangePhase } from "#app/phases/stat-change-phase.js";
+import { describe, expect, it, vi } from "vitest";
 
 vi.mock("#app/battle-scene.js");
 

@@ -1,5 +1,8 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { BerryPhase, FaintPhase, MessagePhase, TurnInitPhase } from "#app/phases";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { FaintPhase } from "#app/phases/faint-phase.js";
+import { MessagePhase } from "#app/phases/message-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

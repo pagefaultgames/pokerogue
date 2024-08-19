@@ -1,6 +1,6 @@
 import { BattleStat } from "#app/data/battle-stat.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

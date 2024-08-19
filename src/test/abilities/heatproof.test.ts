@@ -1,6 +1,6 @@
 import { Species } from "#app/enums/species.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
-import { TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";

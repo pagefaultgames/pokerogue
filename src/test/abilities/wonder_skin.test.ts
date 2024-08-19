@@ -1,6 +1,6 @@
 import { allAbilities } from "#app/data/ability.js";
 import { allMoves } from "#app/data/move.js";
-import { MoveEffectPhase } from "#app/phases";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

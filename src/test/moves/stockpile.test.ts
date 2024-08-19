@@ -1,7 +1,8 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { StockpilingTag } from "#app/data/battler-tags.js";
 import { MoveResult, TurnMove } from "#app/field/pokemon.js";
-import { CommandPhase, TurnInitPhase } from "#app/phases";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

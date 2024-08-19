@@ -1,10 +1,12 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
-import { DamagePhase, MoveEffectPhase, TurnStartPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

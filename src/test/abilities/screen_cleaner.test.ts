@@ -1,5 +1,6 @@
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import { PostSummonPhase, TurnEndPhase, } from "#app/phases";
+import { PostSummonPhase } from "#app/phases/post-summon-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

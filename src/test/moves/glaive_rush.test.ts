@@ -1,6 +1,7 @@
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { DamagePhase, TurnEndPhase } from "#app/phases";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

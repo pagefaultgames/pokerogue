@@ -1,7 +1,7 @@
 import { getMoveTargets } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Species } from "#app/enums/species.js";
-import { TurnEndPhase } from "#app/phases.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";

@@ -1,11 +1,11 @@
 import { BattlerIndex } from "#app/battle";
 import { CritBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { MoveEffectPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 import * as Utils from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

@@ -1,5 +1,8 @@
-import { QuietFormChangePhase } from "#app/form-change-phase";
-import { MoveEffectPhase, MoveEndPhase, TurnEndPhase, TurnInitPhase } from "#app/phases";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";

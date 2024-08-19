@@ -1,5 +1,5 @@
 import { allMoves } from "#app/data/move.js";
-import { CommandPhase } from "#app/phases";
+import { CommandPhase } from "#app/phases/command-phase.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

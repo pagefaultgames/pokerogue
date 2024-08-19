@@ -2,7 +2,7 @@ import { Abilities } from "#app/enums/abilities.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
-import { MoveEffectPhase } from "#app/phases.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

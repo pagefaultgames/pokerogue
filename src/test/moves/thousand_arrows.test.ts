@@ -1,6 +1,7 @@
 import { Abilities } from "#app/enums/abilities.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BerryPhase, MoveEffectPhase } from "#app/phases";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

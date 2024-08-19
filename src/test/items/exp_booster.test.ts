@@ -1,7 +1,7 @@
 import { Abilities } from "#app/enums/abilities.js";
 import { PokemonExpBoosterModifier } from "#app/modifier/modifier.js";
-import GameManager from "#test/utils/gameManager";
 import * as Utils from "#app/utils";
+import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

@@ -1,5 +1,5 @@
 import { allMoves } from "#app/data/move.js";
-import { TurnStartPhase } from "#app/phases";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

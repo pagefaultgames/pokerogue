@@ -1,35 +1,47 @@
-import GameWrapper from "#test/utils/gameWrapper";
-import { Mode } from "#app/ui/ui";
-import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
-import { CommandPhase, EncounterPhase, FaintPhase, LoginPhase, MovePhase, NewBattlePhase, SelectStarterPhase, SelectTargetPhase, TitlePhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
-import BattleScene from "#app/battle-scene.js";
-import PhaseInterceptor from "#test/utils/phaseInterceptor";
-import TextInterceptor from "#test/utils/TextInterceptor";
-import { GameModes, getGameMode } from "#app/game-mode";
-import fs from "fs";
-import { AES, enc } from "crypto-js";
 import { updateUserInfo } from "#app/account";
-import InputsHandler from "#app/test/utils/inputsHandler";
-import ErrorInterceptor from "#app/test/utils/errorInterceptor";
+import BattleScene from "#app/battle-scene.js";
+import { BattlerIndex } from "#app/battle.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { MockClock } from "#app/test/utils/mocks/mockClock";
-import PartyUiHandler from "#app/ui/party-ui-handler";
-import CommandUiHandler, { Command } from "#app/ui/command-ui-handler";
 import Trainer from "#app/field/trainer";
+import { GameModes, getGameMode } from "#app/game-mode";
+import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { EncounterPhase } from "#app/phases/encounter-phase.js";
+import { FaintPhase } from "#app/phases/faint-phase.js";
+import { LoginPhase } from "#app/phases/login-phase.js";
+import { MovePhase } from "#app/phases/move-phase.js";
+import { NewBattlePhase } from "#app/phases/new-battle-phase.js";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
+import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
+import { TitlePhase } from "#app/phases/title-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
+import ErrorInterceptor from "#app/test/utils/errorInterceptor";
+import InputsHandler from "#app/test/utils/inputsHandler";
+import { MockClock } from "#app/test/utils/mocks/mockClock";
+import CommandUiHandler, { Command } from "#app/ui/command-ui-handler";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
+import PartyUiHandler from "#app/ui/party-ui-handler";
+import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
+import { Mode } from "#app/ui/ui";
+import { Button } from "#enums/buttons";
 import { ExpNotification } from "#enums/exp-notification";
 import { GameDataType } from "#enums/game-data-type";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
-import { Button } from "#enums/buttons";
-import { BattlerIndex } from "#app/battle.js";
-import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
-import { OverridesHelper } from "./helpers/overridesHelper";
-import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
-import { MoveHelper } from "./helpers/moveHelper";
+import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
+import GameWrapper from "#test/utils/gameWrapper";
+import PhaseInterceptor from "#test/utils/phaseInterceptor";
+import TextInterceptor from "#test/utils/TextInterceptor";
+import { AES, enc } from "crypto-js";
+import fs from "fs";
 import { vi } from "vitest";
 import { ClassicModeHelper } from "./helpers/classicModeHelper";
 import { DailyModeHelper } from "./helpers/dailyModeHelper";
+import { MoveHelper } from "./helpers/moveHelper";
+import { OverridesHelper } from "./helpers/overridesHelper";
+import { SettingsHelper } from "./helpers/settingsHelper";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -44,6 +56,7 @@ export default class GameManager {
   public readonly move: MoveHelper;
   public readonly classicMode: ClassicModeHelper;
   public readonly dailyMode: DailyModeHelper;
+  public readonly settings: SettingsHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -63,6 +76,7 @@ export default class GameManager {
     this.move = new MoveHelper(this);
     this.classicMode = new ClassicModeHelper(this);
     this.dailyMode = new DailyModeHelper(this);
+    this.settings = new SettingsHelper(this);
   }
 
   /**

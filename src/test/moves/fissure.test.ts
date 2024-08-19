@@ -1,7 +1,8 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { Species } from "#app/enums/species.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { DamagePhase, TurnEndPhase } from "#app/phases";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";

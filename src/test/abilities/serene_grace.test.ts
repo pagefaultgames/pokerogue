@@ -1,17 +1,18 @@
+import { BattlerIndex } from "#app/battle.js";
 import { applyAbAttrs, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
 import { Stat } from "#app/data/pokemon-stat";
-import { CommandPhase, MoveEffectPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattlerIndex } from "#app/battle.js";
 
 
 describe("Abilities - Serene Grace", () => {

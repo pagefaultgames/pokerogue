@@ -1,7 +1,8 @@
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import { MoveEffectPhase, TurnEndPhase } from "#app/phases";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

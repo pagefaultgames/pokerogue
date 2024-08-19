@@ -1,17 +1,22 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
-import { Mode } from "#app/ui/ui";
 import { BattleStat } from "#app/data/battle-stat";
-import { generateStarter, getMovePosition } from "#test/utils/gameManagerUtils";
-import { Command } from "#app/ui/command-ui-handler";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { CommandPhase, DamagePhase, EncounterPhase, EnemyCommandPhase, SelectStarterPhase, TurnInitPhase } from "#app/phases";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { EncounterPhase } from "#app/phases/encounter-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { generateStarter, getMovePosition } from "#test/utils/gameManagerUtils";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;

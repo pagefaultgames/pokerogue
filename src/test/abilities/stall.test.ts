@@ -1,4 +1,4 @@
-import { MovePhase } from "#app/phases";
+import { MovePhase } from "#app/phases/move-phase.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
