@@ -5811,6 +5811,43 @@ export class TransformAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for status moves, namely Power Split and Guard Split,
+ * that take the average of a user's and target's corresponding
+ * stats and assign that average back to that stat.
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ */
+export class AverageStatAttr extends MoveEffectAttr {
+  /** The stat to be averaged between the user and the target */
+  private stat: EffectiveStat;
+
+  constructor(stat: EffectiveStat) {
+    super();
+
+    this.stat = stat;
+  }
+
+  /**
+   * Takes the average of the user's and target's corresponding current
+   * {@linkcode stat} values and sets that stat to the average for both
+   * temporarily.
+   * @param user the {@linkcode Pokemon} that used the move
+   * @param target the {@linkcode Pokemon} that the move was used on
+   * @param _move N/A
+   * @param _args N/A
+   * @returns true if attribute application succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    const avg = Math.floor((user.getStat(this.stat, false) + target.getStat(this.stat, false)) / 2);
+
+    user.setStat(this.stat, avg, false);
+    target.setStat(this.stat, avg, false);
+
+    return true;
+  }
+}
+
 export class DiscourageFrequentUseAttr extends MoveAttr {
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     const lastMoves = user.getLastXMoves(4);
@@ -7465,9 +7502,11 @@ export function initMoves() {
       .target(MoveTarget.USER_SIDE)
       .attr(AddArenaTagAttr, ArenaTagType.WIDE_GUARD, 1, true, true),
     new StatusMove(Moves.GUARD_SPLIT, Type.PSYCHIC, -1, 10, -1, 0, 5)
-      .unimplemented(),
+      .attr(AverageStatAttr, Stat.DEF)
+      .attr(AverageStatAttr, Stat.SPDEF),
     new StatusMove(Moves.POWER_SPLIT, Type.PSYCHIC, -1, 10, -1, 0, 5)
-      .unimplemented(),
+      .attr(AverageStatAttr, Stat.ATK)
+      .attr(AverageStatAttr, Stat.SPATK),
     new StatusMove(Moves.WONDER_ROOM, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES)
