@@ -2259,10 +2259,8 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     let target: Pokemon = targets[0];
     if (targets.length > 1) {
       pokemon.scene.executeWithSeedOffset(() => target = Utils.randSeedItem(targets), pokemon.scene.currentBattle.waveIndex);
-    } else if (targets.length === 1) {
-      target = targets[0];
     } else {
-      return false;
+      target = targets[0];
     }
 
     if (target.battleData.illusion.active) {
