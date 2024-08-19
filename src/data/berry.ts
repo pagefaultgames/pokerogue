@@ -1,4 +1,3 @@
-import { PokemonHealPhase, StatChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { HitResult } from "../field/pokemon";
 import { BattleStat } from "./battle-stat";
@@ -8,6 +7,8 @@ import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } 
 import i18next from "i18next";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
+import { StatChangePhase } from "#app/phases/stat-change-phase.js";
 
 export function getBerryName(berryType: BerryType): string {
   return i18next.t(`berry:${BerryType[berryType]}.name`);

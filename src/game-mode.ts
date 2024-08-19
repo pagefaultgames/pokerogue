@@ -62,7 +62,7 @@ export class GameMode implements GameModeConfig {
    * @returns true if the game mode has that challenge
    */
   hasChallenge(challenge: Challenges): boolean {
-    return this.challenges.some(c => c.id === challenge);
+    return this.challenges.some(c => c.id === challenge && c.value !== 0);
   }
 
   /**
