@@ -1,28 +1,33 @@
-import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "./battle-anims";
-import { getPokemonNameWithAffix } from "../messages";
-import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
-import { Stat, getStatName } from "./pokemon-stat";
-import { StatusEffect } from "./status-effect";
+import {ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim} from "./battle-anims";
+import {getPokemonNameWithAffix} from "../messages";
+import Pokemon, {HitResult, MoveResult} from "../field/pokemon";
+import {getStatName, Stat} from "./pokemon-stat";
+import {StatusEffect} from "./status-effect";
 import * as Utils from "../utils";
-import { ChargeAttr, MoveFlags, allMoves } from "./move";
-import { Type } from "./type";
-import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
-import { TerrainType } from "./terrain";
-import { WeatherType } from "./weather";
-import { BattleStat } from "./battle-stat";
-import { allAbilities } from "./ability";
-import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
-import { Abilities } from "#enums/abilities";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import Move, {allMoves, ChargeAttr, MoveCategory, MoveFlags} from "./move";
+import {Type} from "./type";
+import {
+  allAbilities,
+  applyAbAttrs,
+  BlockNonDirectDamageAbAttr,
+  FlinchEffectAbAttr,
+  ReverseDrainAbAttr
+} from "./ability";
+import {TerrainType} from "./terrain";
+import {WeatherType} from "./weather";
+import {BattleStat} from "./battle-stat";
+import {SpeciesFormChangeManualTrigger} from "./pokemon-forms";
+import {Abilities} from "#enums/abilities";
+import {BattlerTagType} from "#enums/battler-tag-type";
+import {Moves} from "#enums/moves";
+import {Species} from "#enums/species";
 import i18next from "#app/plugins/i18n.js";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { MovePhase } from "#app/phases/move-phase.js";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
-import { StatChangePhase, StatChangeCallback } from "#app/phases/stat-change-phase.js";
+import {CommonAnimPhase} from "#app/phases/common-anim-phase.js";
+import {MoveEffectPhase} from "#app/phases/move-effect-phase.js";
+import {MovePhase} from "#app/phases/move-phase.js";
+import {PokemonHealPhase} from "#app/phases/pokemon-heal-phase.js";
+import {ShowAbilityPhase} from "#app/phases/show-ability-phase.js";
+import {StatChangeCallback, StatChangePhase} from "#app/phases/stat-change-phase.js";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -31,6 +36,7 @@ export enum BattlerTagLapseType {
   AFTER_MOVE,
   MOVE_EFFECT,
   TURN_END,
+  ON_GET_HIT,
   CUSTOM
 }
 
@@ -123,6 +129,7 @@ export class RechargingTag extends BattlerTag {
   }
 }
 
+
 /**
  * BattlerTag representing the "charge phase" of Beak Blast.
  * Pokemon with this tag will inflict BURN status on any attacker that makes contact.
@@ -130,7 +137,7 @@ export class RechargingTag extends BattlerTag {
  */
 export class BeakBlastChargingTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.BEAK_BLAST_CHARGING, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 1, Moves.BEAK_BLAST);
+    super(BattlerTagType.BEAK_BLAST_CHARGING, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END, BattlerTagLapseType.ON_GET_HIT], 1, Moves.BEAK_BLAST);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -146,14 +153,13 @@ export class BeakBlastChargingTag extends BattlerTag {
    * to be removed after the source makes a move (or the turn ends, whichever comes first)
    * @param pokemon {@linkcode Pokemon} the owner of this tag
    * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
-   * @returns `true` if invoked with the CUSTOM lapse type; `false` otherwise
+   * @returns `true` if invoked with the ON_GET_HIT lapse type; `false` otherwise
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (lapseType === BattlerTagLapseType.CUSTOM) {
-      const effectPhase = pokemon.scene.getCurrentPhase();
-      if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
-        const attacker = effectPhase.getPokemon();
-        attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
+    if (lapseType === BattlerTagLapseType.ON_GET_HIT) {
+      const phaseData = getMoveEffectPhaseData(pokemon);
+      if (phaseData?.move.hasFlag(MoveFlags.MAKES_CONTACT)) {
+        phaseData.attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
       }
       return true;
     }
@@ -170,7 +176,7 @@ export class ShellTrapTag extends BattlerTag {
   public activated: boolean;
 
   constructor() {
-    super(BattlerTagType.SHELL_TRAP, BattlerTagLapseType.TURN_END, 1);
+    super(BattlerTagType.SHELL_TRAP, [BattlerTagLapseType.TURN_END, BattlerTagLapseType.ON_GET_HIT], 1);
     this.activated = false;
   }
 
@@ -185,23 +191,33 @@ export class ShellTrapTag extends BattlerTag {
    * @returns `true` if invoked with the `CUSTOM` lapse type; `false` otherwise
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (lapseType === BattlerTagLapseType.CUSTOM) {
-      const shellTrapPhaseIndex = pokemon.scene.phaseQueue.findIndex(
-        phase => phase instanceof MovePhase && phase.pokemon === pokemon
-      );
-      const firstMovePhaseIndex = pokemon.scene.phaseQueue.findIndex(
-        phase => phase instanceof MovePhase
-      );
+    if (lapseType === BattlerTagLapseType.ON_GET_HIT) {
+      const phaseData = getMoveEffectPhaseData(pokemon);
 
-      if (shellTrapPhaseIndex !== -1 && shellTrapPhaseIndex !== firstMovePhaseIndex) {
-        const shellTrapMovePhase = pokemon.scene.phaseQueue.splice(shellTrapPhaseIndex, 1)[0];
-        pokemon.scene.prependToPhase(shellTrapMovePhase, MovePhase);
+      /* Trap should only be triggered by opponent's Physical moves */
+      if (phaseData?.move.category === MoveCategory.PHYSICAL && pokemon.isOpponentTo(phaseData.attacker)) {
+        this.triggerTrap(pokemon);
       }
 
-      this.activated = true;
       return true;
     }
     return super.lapse(pokemon, lapseType);
+  }
+
+  private triggerTrap(pokemon: Pokemon) {
+    const shellTrapPhaseIndex = pokemon.scene.phaseQueue.findIndex(
+      phase => phase instanceof MovePhase && phase.pokemon === pokemon
+    );
+    const firstMovePhaseIndex = pokemon.scene.phaseQueue.findIndex(
+      phase => phase instanceof MovePhase
+    );
+
+    if (shellTrapPhaseIndex !== -1 && shellTrapPhaseIndex !== firstMovePhaseIndex) {
+      const shellTrapMovePhase = pokemon.scene.phaseQueue.splice(shellTrapPhaseIndex, 1)[0];
+      pokemon.scene.prependToPhase(shellTrapMovePhase, MovePhase);
+    }
+
+    this.activated = true;
   }
 }
 
@@ -1827,7 +1843,6 @@ export class ExposedTag extends BattlerTag {
   }
 }
 
-
 export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:
@@ -1977,4 +1992,23 @@ export function loadBattlerTag(source: BattlerTag | any): BattlerTag {
   const tag = getBattlerTag(source.tagType, source.turnCount, source.sourceMove, source.sourceId);
   tag.loadTag(source);
   return tag;
+}
+
+/**
+ * Helper function to verify that the current phase is a MoveEffectPhase and provide quick access to commonly used fields
+ *
+ * @param pokemon {@linkcode Pokemon} The Pokémon used to access the current phase
+ * @returns null if current phase is not MoveEffectPhase, otherwise Object containing the {@linkcode MoveEffectPhase}, and its
+ * corresponding {@linkcode Move} and user {@linkcode Pokemon}
+ */
+function getMoveEffectPhaseData(pokemon : Pokemon) : {phase : MoveEffectPhase, attacker: Pokemon, move: Move } | null {
+  const phase = pokemon.scene.getCurrentPhase();
+  if (phase instanceof MoveEffectPhase) {
+    return {
+      phase     : phase,
+      attacker  : phase.getPokemon(),
+      move      : phase.move.getMove()
+    };
+  }
+  return null;
 }

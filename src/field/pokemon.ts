@@ -1866,6 +1866,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
   }
 
+  /**
+   * Compares if 'this' and {@linkcode target} are on the same team.
+   * @param target the {@linkcode Pokemon} to compare against.
+   * @returns true if the two pokemon are both player owned or both not, false otherwise
+   */
+  isOpponentTo(target: Pokemon) : boolean {
+    return this.isPlayer() !== target.isPlayer();
+  }
+
   getOpponent(targetIndex: integer): Pokemon | null {
     const ret = this.getOpponents()[targetIndex];
     if (ret.summonData) {
