@@ -1,11 +1,11 @@
 import { BattlerIndex } from "#app/battle.js";
 import { Stat } from "#app/data/pokemon-stat";
 import { Abilities } from "#app/enums/abilities.js";
-import { TurnEndPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 

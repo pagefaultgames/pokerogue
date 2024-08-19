@@ -1,5 +1,4 @@
 import { BattleStat } from "#app/data/battle-stat.js";
-import { PostSummonPhase, TurnEndPhase } from "#app/phases.js";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -7,6 +6,8 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { PostSummonPhase } from "#app/phases/post-summon-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 
 describe("Moves - Baton Pass", () => {

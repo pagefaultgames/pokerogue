@@ -6,9 +6,11 @@ import { Species } from "#app/enums/species.js";
 import { allMoves } from "#app/data/move.js";
 import { BattlerIndex } from "#app/battle.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, MoveEndPhase, MovePhase } from "#app/phases.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { MoveResult } from "#app/field/pokemon.js";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { MovePhase } from "#app/phases/move-phase.js";
 
 const TIMEOUT = 20 * 1000;
 

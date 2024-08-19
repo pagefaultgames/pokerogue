@@ -3,10 +3,10 @@ import { Abilities } from "#app/enums/abilities.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
 import { MoveResult } from "#app/field/pokemon.js";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 

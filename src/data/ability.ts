@@ -3,7 +3,6 @@ import { Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag, GroundedTag, GulpMissileTag, SemiInvulnerableTag } from "./battler-tags";
@@ -26,6 +25,10 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { MovePhase } from "#app/phases/move-phase.js";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
+import { StatChangePhase } from "#app/phases/stat-change-phase.js";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -2395,16 +2398,16 @@ export class PreStatChangeAbAttr extends AbAttr {
 }
 
 export class ProtectStatAbAttr extends PreStatChangeAbAttr {
-  private protectedStat: BattleStat | null;
+  private protectedStat?: BattleStat;
 
   constructor(protectedStat?: BattleStat) {
     super();
 
-    this.protectedStat = protectedStat ?? null;
+    this.protectedStat = protectedStat;
   }
 
   applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (!this.protectedStat || stat === this.protectedStat) {
+    if (Utils.isNullOrUndefined(this.protectedStat) || stat === this.protectedStat) {
       cancelled.value = true;
       return true;
     }
@@ -5039,6 +5042,7 @@ export function initAbilities() {
         (pokemon, abilityName) => i18next.t("abilityTriggers:disguiseAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }),
         (pokemon) => Math.floor(pokemon.getMaxHp() / 8))
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
+      .bypassFaint()
       .ignorable(),
     new Ability(Abilities.BATTLE_BOND, 7)
       .attr(PostVictoryFormChangeAbAttr, () => 2)
@@ -5191,6 +5195,7 @@ export function initAbilities() {
       .attr(FormBlockDamageAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE), 0, BattlerTagType.ICE_FACE,
         (pokemon, abilityName) => i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }))
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
+      .bypassFaint()
       .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [MoveCategory.SPECIAL, MoveCategory.PHYSICAL], 1.3),

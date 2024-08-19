@@ -1,14 +1,14 @@
 import { allAbilities } from "#app/data/ability.js";
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { MoveEffectPhase } from "#app/phases.js";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Steely Spirit", () => {
   let phaserGame: Phaser.Game;

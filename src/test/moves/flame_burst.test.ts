@@ -1,13 +1,13 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
-import { Species } from "#enums/species";
-import { TurnEndPhase } from "#app/phases";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { Abilities } from "#app/enums/abilities.js";
 import { allAbilities } from "#app/data/ability.js";
+import { Abilities } from "#app/enums/abilities.js";
 import Pokemon from "#app/field/pokemon.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Flame Burst", () => {
   let phaserGame: Phaser.Game;
