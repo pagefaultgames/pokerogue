@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene.js";
 import { TurnCommand, BattleType } from "#app/battle.js";
 import { applyCheckTrappedAbAttrs, CheckTrappedAbAttr } from "#app/data/ability.js";
 import { TrappedTag, EncoreTag } from "#app/data/battler-tags.js";
-import { MoveTargetSet, getMoveTargets } from "#app/data/move.js";
+import { MoveTargetSet, UnselectableMoveAttr, getMoveTargets } from "#app/data/move.js";
 import { speciesStarters } from "#app/data/pokemon-species.js";
 import { Type } from "#app/data/type.js";
 import { Abilities } from "#app/enums/abilities.js";
@@ -110,12 +110,27 @@ export class CommandPhase extends FieldPhase {
         this.scene.ui.setMode(Mode.MESSAGE);
 
         // Decides between a Disabled, Not Implemented, or No PP translation message
-        const errorMessage =
-              playerPokemon.summonData.disabledMove === move.moveId ? "battle:moveDisabled" :
-                move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
+        let errorMessage: string;
+        let pokemonName: string | null;
+        if (move.moveId === playerPokemon.summonData.disabledMove) {
+          errorMessage = "battle:moveDisabled";
+          pokemonName = null;
+        } else if (move.moveId === Moves.STUFF_CHEEKS) {
+          errorMessage = "battle:moveDisabledStuffCheeks";
+          pokemonName = getPokemonNameWithAffix(playerPokemon);
+        } else if (move.getMove().hasAttr(UnselectableMoveAttr)) {
+          errorMessage = "battle:moveDisabledGravity";
+          pokemonName = getPokemonNameWithAffix(playerPokemon);
+        } else if (move.getName().endsWith(" (N)")) {
+          errorMessage = "battle:moveNotImplemented";
+          pokemonName = null;
+        } else {
+          errorMessage = "battle:moveNoPP";
+          pokemonName = null;
+        }
         const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
-        this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
+        this.scene.ui.showText(i18next.t(errorMessage, pokemonName !== null ? { pokemonName: pokemonName, moveName: moveName } : { moveName: moveName }), null, () => {
           this.scene.ui.clearText();
           this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
         }, null, true);

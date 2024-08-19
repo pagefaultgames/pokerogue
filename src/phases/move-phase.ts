@@ -3,7 +3,7 @@ import { BattlerIndex } from "#app/battle.js";
 import { applyAbAttrs, RedirectMoveAbAttr, BlockRedirectAbAttr, IncreasePpAbAttr, applyPreAttackAbAttrs, PokemonTypeChangeAbAttr, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr } from "#app/data/ability.js";
 import { CommonAnim } from "#app/data/battle-anims.js";
 import { CenterOfAttentionTag, BattlerTagLapseType } from "#app/data/battler-tags.js";
-import { MoveFlags, BypassRedirectAttr, allMoves, CopyMoveAttr, applyMoveAttrs, BypassSleepAttr, HealStatusEffectAttr, ChargeAttr, PreMoveMessageAttr } from "#app/data/move.js";
+import { MoveFlags, BypassRedirectAttr, allMoves, CopyMoveAttr, applyMoveAttrs, BypassSleepAttr, HealStatusEffectAttr, ChargeAttr, PreMoveMessageAttr, UnselectableMoveAttr } from "#app/data/move.js";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms.js";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect.js";
 import { Type } from "#app/data/type.js";
@@ -71,6 +71,14 @@ export class MovePhase extends BattlePhase {
         this.fail();
         this.showMoveText();
         this.showFailedText();
+      }
+      if (!this.move.isUsable(this.pokemon)) {
+        this.fail();
+        this.showMoveText();
+        const failedText = this.move.moveId === Moves.STUFF_CHEEKS ? "battle:moveDisabledStuffCheeks" :
+          this.move.getMove().hasAttr(UnselectableMoveAttr) ? "battle:moveDisabledGravity" :
+            null;
+        this.showFailedText(failedText !== null ? i18next.t(failedText, { pokemonName: getPokemonNameWithAffix(this.pokemon), moveName: this.move.getName() }) : null);
       }
       return this.end();
     }
