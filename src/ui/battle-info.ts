@@ -166,7 +166,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.statusIndicator.setPositionRelative(this.nameText, 0, 11.5);
     this.add(this.statusIndicator);
 
-    this.levelContainer = this.scene.add.container(layer ? -41 : -50, player ? -10 : -5);
+    this.levelContainer = this.scene.add.container(player ? -41 : -50, player ? -10 : -5);
     this.levelContainer.setName("container_level");
     this.add(this.levelContainer);
 
