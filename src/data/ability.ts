@@ -2395,16 +2395,16 @@ export class PreStatChangeAbAttr extends AbAttr {
 }
 
 export class ProtectStatAbAttr extends PreStatChangeAbAttr {
-  private protectedStat: BattleStat | null;
+  private protectedStat?: BattleStat;
 
   constructor(protectedStat?: BattleStat) {
     super();
 
-    this.protectedStat = protectedStat ?? null;
+    this.protectedStat = protectedStat;
   }
 
   applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (!this.protectedStat || stat === this.protectedStat) {
+    if (Utils.isNullOrUndefined(this.protectedStat) || stat === this.protectedStat) {
       cancelled.value = true;
       return true;
     }
@@ -5039,6 +5039,7 @@ export function initAbilities() {
         (pokemon, abilityName) => i18next.t("abilityTriggers:disguiseAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }),
         (pokemon) => Math.floor(pokemon.getMaxHp() / 8))
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
+      .bypassFaint()
       .ignorable(),
     new Ability(Abilities.BATTLE_BOND, 7)
       .attr(PostVictoryFormChangeAbAttr, () => 2)
@@ -5191,6 +5192,7 @@ export function initAbilities() {
       .attr(FormBlockDamageAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE), 0, BattlerTagType.ICE_FACE,
         (pokemon, abilityName) => i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }))
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
+      .bypassFaint()
       .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [MoveCategory.SPECIAL, MoveCategory.PHYSICAL], 1.3),

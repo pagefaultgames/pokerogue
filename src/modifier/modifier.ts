@@ -2338,7 +2338,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
  * @see {@linkcode modifierTypes[MINI_BLACK_HOLE]}
  */
 export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
-  readonly isTransferrable: boolean = true;
+  isTransferrable: boolean = true;
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }
@@ -2361,6 +2361,10 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 1;
+  }
+
+  setTransferrableFalse(): void {
+    this.isTransferrable = false;
   }
 }
 
@@ -2410,7 +2414,7 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
   }
 
   getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string {
-    return i18next.t("modifier:contactHeldItemTransferApply", { pokemonNameWithAffix: getPokemonNameWithAffix(targetPokemon), itemName: item.name, pokemonName: pokemon.name, typeName: this.type.name });
+    return i18next.t("modifier:contactHeldItemTransferApply", { pokemonNameWithAffix: getPokemonNameWithAffix(targetPokemon), itemName: item.name, pokemonName: getPokemonNameWithAffix(pokemon), typeName: this.type.name });
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {

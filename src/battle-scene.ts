@@ -5,7 +5,7 @@ import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import { Constructor } from "#app/utils";
 import * as Utils from "./utils";
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, TurnHeldItemTransferModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "./data/battle-anims";
 import { Phase } from "./phase";
@@ -37,7 +37,7 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import { addUiThemeOverrides } from "./ui/ui-theme";
 import PokemonData from "./system/pokemon-data";
 import { Nature } from "./data/nature";
-import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges, FormChangeItem } from "./data/pokemon-forms";
+import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges, FormChangeItem, SpeciesFormChange } from "./data/pokemon-forms";
 import { FormChangePhase, QuietFormChangePhase } from "./form-change-phase";
 import { getTypeRgb } from "./data/type";
 import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler";
@@ -2421,7 +2421,6 @@ export default class BattleScene extends SceneBase {
         getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance)
           .map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
       });
-
       this.updateModifiers(false).then(() => resolve());
     });
   }
@@ -2579,7 +2578,7 @@ export default class BattleScene extends SceneBase {
 
       // in case this is NECROZMA, determine which forms this
       const matchingFormChangeOpts = pokemonFormChanges[pokemon.species.speciesId].filter(fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon));
-      let matchingFormChange;
+      let matchingFormChange: SpeciesFormChange | null;
       if (pokemon.species.speciesId === Species.NECROZMA && matchingFormChangeOpts.length > 1) {
         // Ultra Necrozma is changing its form back, so we need to figure out into which form it devolves.
         const formChangeItemModifiers = (this.findModifiers(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id) as PokemonFormChangeItemModifier[]).filter(m => m.active).map(m => m.formChangeItem);
@@ -2666,7 +2665,9 @@ export default class BattleScene extends SceneBase {
     if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
       this.fadeOutBgm(Utils.fixedInt(2000), false);
       this.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.species.name, undefined, () => {
-        this.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
+        const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as TurnHeldItemTransferModifier;
+        finalBossMBH.setTransferrableFalse();
+        this.addEnemyModifier(finalBossMBH, false, true);
         pokemon.generateAndPopulateMoveset(1);
         this.setFieldScale(0.75);
         this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
