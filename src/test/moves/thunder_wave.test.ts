@@ -1,4 +1,4 @@
-import { Status, StatusEffect } from "#app/data/status-effect";
+import { StatusEffect } from "#app/data/status-effect";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { allMoves } from "#app/data/move";
 import GameManager from "#test/utils/gameManager";
@@ -73,10 +73,10 @@ describe("Moves - Thunder Wave", () => {
     "Thunder Wave does not paralyze if the Pokemon is already status-ed",
     async () => {
       game.override.enemySpecies(Species.MAGIKARP);
+      game.override.enemyStatusEffect(StatusEffect.Burn);
       await game.startBattle();
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
-      enemyPokemon.status = new Status(StatusEffect.BURN);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
       await game.phaseInterceptor.to(TurnEndPhase);

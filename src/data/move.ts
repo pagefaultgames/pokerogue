@@ -726,7 +726,7 @@ export default class Move implements Localizable {
    */
   calculateBattlePower(source: Pokemon, target: Pokemon): number {
     if (this.category === MoveCategory.STATUS) {
-      // The type of a status move is usually irrelevant but Thunder Wave is an exception and found in many movesets.
+      // The type of a status move is usually irrelevant but Thunder Wave is a common exception.
       applyPreAttackAbAttrs(MoveTypeChangeAttr, source, target, this, new Utils.NumberHolder(1));
       return -1;
     }
