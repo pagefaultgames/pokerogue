@@ -517,10 +517,8 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
     this.menuMessageBoxContainer.setVisible(!!text);
-    const messageText = this.message;
-    const messageBox = this.messageBoxBg;
-    this.adjustText(text,messageText,messageBox.getBounds().width,{
-      padding: messageText.x,
+    this.adjustText(text, this.message, this.messageBoxBg.getBounds().width, {
+      padding: this.message.x,
       ignoreTextBalance: "all"
     });
 

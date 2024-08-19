@@ -70,7 +70,7 @@ export default class CommandUiHandler extends UiHandler {
     const messageMaxWidth = this.scene.game.canvas.width - messageHandler.commandWindow.getBounds().width - messageHandler.message.getBounds().x;
     messageHandler.message.setWordWrapWidth(messageMaxWidth);
     const commandMessage = i18next.t("commandUiHandler:actionMessage", {pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon())});
-    messageHandler.adjustText(commandMessage,messageHandler.message,messageMaxWidth);
+    messageHandler.adjustText(commandMessage,messageHandler.message,messageMaxWidth,{ ignoreTextBalance:"all" });
 
     messageHandler.showText(commandMessage, 0);
     this.setCursor(this.getCursor());

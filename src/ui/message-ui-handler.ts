@@ -7,7 +7,7 @@ import i18next from "i18next";
 type argsAjustText = {
   padding?:number;
   ignoreTextBalance?:Array<string>|"all";
-  ignoreLanguages?: Array<string>;
+  ignoreLanguages?:Array<string>;
 };
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
@@ -227,8 +227,8 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     textObject.setData("originalFontSize", textObject.getData("originalFontSize") ?? fontSize);
     textObject.setFontSize(fontSize);
 
-    const textWrapped = ()=>textObject.getWrappedText(text);
-    const textSize = ()=>Phaser.GameObjects.GetTextSize(textObject,textObject.style.getTextMetrics(),textWrapped());
+    const textWrapped = () => textObject.getWrappedText(text);
+    const textSize = () => Phaser.GameObjects.GetTextSize(textObject,textObject.style.getTextMetrics(),textWrapped());
     const balanceText = typeof opts.ignoreTextBalance === "string" ? opts.ignoreTextBalance === "all" : (opts.ignoreTextBalance && opts.ignoreTextBalance[0] && opts.ignoreTextBalance.some(localKey=> localKey === currentLanguage));
 
     // Text Balance

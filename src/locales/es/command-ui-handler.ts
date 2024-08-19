@@ -5,5 +5,5 @@ export const commandUiHandler: SimpleTranslationEntries = {
   "ball": "Balls",
   "pokemon": "Pokémon",
   "run": "Huir",
-  "actionMessage": "¿Qué debería hacer {{pokemonName}}?",
+  "actionMessage": "¿Qué debería\nhacer {{pokemonName}}?",
 } as const;
