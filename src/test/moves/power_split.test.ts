@@ -1,0 +1,83 @@
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import Phaser from "phaser";
+import GameManager from "#app/test/utils/gameManager";
+import Overrides from "#app/overrides";
+import { Species } from "#enums/species";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { Moves } from "#enums/moves";
+import { Stat } from "#enums/stat";
+import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { SPLASH_ONLY } from "../utils/testUtils";
+
+describe("Moves - Power Split", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
+
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+    game.override.battleType("single");
+    game.override.enemyAbility(Abilities.NONE);
+    game.override.enemySpecies(Species.MEW);
+    game.override.enemyLevel(200);
+    game.override.moveset([ Moves.POWER_SPLIT ]);
+    game.override.ability(Abilities.NONE);
+  });
+
+  it("should average the user's Attack and Special Attack stats with those of the target", async () => {
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(SPLASH_ONLY);
+    await game.startBattle([
+      Species.INDEEDEE
+    ]);
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
+    const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.POWER_SPLIT));
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
+    expect(enemy.getStat(Stat.ATK, false)).toBe(avgAtk);
+
+    expect(player.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
+    expect(enemy.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
+  }, 20000);
+
+  it("should be idempotent", async () => {
+    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.POWER_SPLIT, Moves.POWER_SPLIT, Moves.POWER_SPLIT, Moves.POWER_SPLIT ]);
+    await game.startBattle([
+      Species.INDEEDEE
+    ]);
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
+    const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.POWER_SPLIT));
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.POWER_SPLIT));
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
+    expect(enemy.getStat(Stat.ATK, false)).toBe(avgAtk);
+
+    expect(player.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
+    expect(enemy.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
+  }, 20000);
+});

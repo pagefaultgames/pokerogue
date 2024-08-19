@@ -38,7 +38,7 @@ describe("Abilities - Moxie", () => {
     game.override.enemyMoveset(SPLASH_ONLY);
   });
 
-  it("should raise ATK stat stage by 1 when defeating an enemy Pokemon", async() => {
+  it("should raise ATK stat stage by 1 when winning a battle", async() => {
     const moveToUse = Moves.AERIAL_ACE;
     await game.startBattle([
       Species.MIGHTYENA,

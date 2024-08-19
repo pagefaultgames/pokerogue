@@ -2891,13 +2891,22 @@ export function overrideModifiers(scene: BattleScene, isPlayer: boolean = true):
 
   modifiersOverride.forEach(item => {
     const modifierFunc = modifierTypes[item.name];
-    const modifier = modifierFunc().withIdFromFunc(modifierFunc).newModifier() as PersistentModifier;
-    modifier.stackCount = item.count || 1;
+    let modifierType: ModifierType | null = modifierFunc();
 
-    if (isPlayer) {
-      scene.addModifier(modifier, true, false, false, true);
-    } else {
-      scene.addEnemyModifier(modifier, true, true);
+    if (modifierType instanceof ModifierTypes.ModifierTypeGenerator) {
+      const pregenArgs = ("type" in item) && (item.type !== null) ? [item.type] : undefined;
+      modifierType = modifierType.generateType([], pregenArgs);
+    }
+
+    const modifier = modifierType && modifierType.withIdFromFunc(modifierFunc).newModifier() as PersistentModifier;
+    if (modifier) {
+      modifier.stackCount = item.count || 1;
+
+      if (isPlayer) {
+        scene.addModifier(modifier, true, false, false, true);
+      } else {
+        scene.addEnemyModifier(modifier, true, true);
+      }
     }
   });
 }
