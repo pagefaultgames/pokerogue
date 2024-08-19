@@ -38,7 +38,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("increases the user's Attack stat by 50%", async () => {
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const atk = pikachu.stats[Stat.ATK];
 
@@ -52,7 +52,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("lowers the accuracy of the user's physical moves by 20%", async () => {
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon()!;
 
     vi.spyOn(pikachu, "getAccuracyMultiplier");
@@ -64,7 +64,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("does not affect non-physical moves", async () => {
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const spatk = pikachu.stats[Stat.SPATK];
 
@@ -82,7 +82,7 @@ describe("Abilities - Hustle", () => {
     game.override.startingLevel(100);
     game.override.enemyLevel(30);
 
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 

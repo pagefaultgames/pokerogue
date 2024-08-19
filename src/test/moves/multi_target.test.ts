@@ -70,7 +70,7 @@ describe("Moves - Multi target", () => {
 async function checkTargetMultiplier(game: GameManager, attackMove: Moves, killAlly: boolean, killSecondEnemy: boolean, shouldMultiplied: boolean, oppAbility?: Abilities) {
   // play an attack and check target count
   game.override.enemyAbility(oppAbility ? oppAbility : Abilities.BALL_FETCH);
-  await game.startBattle();
+  await game.classicMode.startBattle();
 
   const playerPokemonRepr = game.scene.getPlayerField();
 

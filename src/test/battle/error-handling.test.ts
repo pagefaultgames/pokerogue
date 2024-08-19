@@ -35,7 +35,7 @@ describe("Error Handling", () => {
   });
 
   it.skip("to next turn", async() => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const turn = game.scene.currentBattle.turn;
     game.doAttack(0);
     await game.toNextTurn();

@@ -47,7 +47,7 @@ describe("terrain", () => {
     });
 
     it("should return the block text", async () => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
       const pokemon = game.scene.getPlayerPokemon()!;
       mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
@@ -79,7 +79,7 @@ describe("terrain", () => {
     });
 
     it("should return the block text", async () => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
       const pokemon = game.scene.getPlayerPokemon()!;
       mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
@@ -111,7 +111,7 @@ describe("terrain", () => {
     });
 
     it("should return the block text", async () => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
       const pokemon = game.scene.getPlayerPokemon()!;
       mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
@@ -143,7 +143,7 @@ describe("terrain", () => {
     });
 
     it("should return the block text", async () => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
       const pokemon = game.scene.getPlayerPokemon()!;
       mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);
@@ -175,7 +175,7 @@ describe("terrain", () => {
     });
 
     it("should return the block text", async () => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
       const pokemon = game.scene.getPlayerPokemon()!;
       mockI18next();
       const text = getTerrainBlockMessage(pokemon, terrainType);

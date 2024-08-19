@@ -43,7 +43,7 @@ describe("Abilities - SHIELDS DOWN", () => {
         [Species.MINIOR]: coreForm,
       });
 
-      await game.startBattle([Species.MAGIKARP, Species.MINIOR]);
+      await game.classicMode.startBattle([Species.MAGIKARP, Species.MINIOR]);
 
       const minior = game.scene.getParty().find((p) => p.species.speciesId === Species.MINIOR)!;
       expect(minior).not.toBe(undefined);

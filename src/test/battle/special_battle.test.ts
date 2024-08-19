@@ -35,7 +35,7 @@ describe("Test Battle Phase", () => {
     game.override
       .battleType("single")
       .startingWave(10);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
     ]);
@@ -47,7 +47,7 @@ describe("Test Battle Phase", () => {
     game.override
       .battleType("double")
       .startingWave(10);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
     ]);
@@ -59,7 +59,7 @@ describe("Test Battle Phase", () => {
     game.override
       .battleType("double")
       .startingWave(5);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
     ]);
@@ -71,7 +71,7 @@ describe("Test Battle Phase", () => {
     game.override
       .battleType("single")
       .startingWave(5);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
     ]);
@@ -83,7 +83,7 @@ describe("Test Battle Phase", () => {
     game.override
       .battleType("single")
       .startingWave(8);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
     ]);
@@ -95,7 +95,7 @@ describe("Test Battle Phase", () => {
     game.override
       .battleType("double")
       .startingWave(8);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
     ]);
@@ -107,7 +107,7 @@ describe("Test Battle Phase", () => {
     game.override
       .battleType("single")
       .startingWave(5);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
@@ -118,7 +118,7 @@ describe("Test Battle Phase", () => {
     game.override
       .battleType("double")
       .startingWave(5);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
     ]);
@@ -130,7 +130,7 @@ describe("Test Battle Phase", () => {
     game.override
       .battleType("double")
       .startingWave(5);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
       Species.DARKRAI,

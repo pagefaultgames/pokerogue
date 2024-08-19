@@ -49,7 +49,7 @@ describe("Items - Toxic orb", () => {
     initI18n();
     i18next.changeLanguage("en");
     const moveToUse = Moves.GROWTH;
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MIGHTYENA,
       Species.MIGHTYENA,
     ]);

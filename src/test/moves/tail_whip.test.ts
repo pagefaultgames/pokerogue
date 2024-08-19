@@ -41,7 +41,7 @@ describe("Moves - Tail whip", () => {
 
   it("TAIL_WHIP", async() => {
     const moveToUse = Moves.TAIL_WHIP;
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MIGHTYENA,
       Species.MIGHTYENA,
     ]);

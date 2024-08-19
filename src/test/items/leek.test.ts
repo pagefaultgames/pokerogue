@@ -37,7 +37,7 @@ describe("Items - Leek", () => {
     game.override.startingHeldItems([{ name: "LEEK" }]);
     game.override.moveset([ Moves.POUND ]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.FARFETCHD
     ]);
 
@@ -51,7 +51,7 @@ describe("Items - Leek", () => {
   }, 20000);
 
   it("LEEK held by FARFETCHD", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.FARFETCHD
     ]);
 
@@ -71,7 +71,7 @@ describe("Items - Leek", () => {
   }, 20000);
 
   it("LEEK held by GALAR_FARFETCHD", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.GALAR_FARFETCHD
     ]);
 
@@ -91,7 +91,7 @@ describe("Items - Leek", () => {
   }, 20000);
 
   it("LEEK held by SIRFETCHD", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.SIRFETCHD
     ]);
 
@@ -114,7 +114,7 @@ describe("Items - Leek", () => {
     // Randomly choose from the Farfetch'd line
     const species = [ Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD ];
 
-    await game.startBattle([
+    await game.classicMode.startBattle([
       species[Utils.randInt(species.length)],
       Species.PIKACHU,
     ]);
@@ -149,7 +149,7 @@ describe("Items - Leek", () => {
     // Randomly choose from the Farfetch'd line
     const species = [ Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD ];
 
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU,
       species[Utils.randInt(species.length)]
     ]);
@@ -181,7 +181,7 @@ describe("Items - Leek", () => {
   }, 20000);
 
   it("LEEK not held by FARFETCHD line", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 

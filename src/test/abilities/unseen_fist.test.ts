@@ -70,7 +70,7 @@ async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, pro
   game.override.moveset([attackMove]);
   game.override.enemyMoveset([protectMove, protectMove, protectMove, protectMove]);
 
-  await game.startBattle();
+  await game.classicMode.startBattle();
 
   const leadPokemon = game.scene.getPlayerPokemon()!;
   expect(leadPokemon).not.toBe(undefined);

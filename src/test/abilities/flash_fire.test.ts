@@ -40,7 +40,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("immune to Fire-type moves", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.EMBER)).moveset(SPLASH_ONLY);
-    await game.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -51,7 +51,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("not activate if the Pokémon is protected from the Fire-type move", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.EMBER)).moveset([Moves.PROTECT]);
-    await game.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -62,7 +62,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("activated by Will-O-Wisp", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.WILL_O_WISP)).moveset(SPLASH_ONLY);
-    await game.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -78,7 +78,7 @@ describe("Abilities - Flash Fire", () => {
   it("activated after being frozen", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.EMBER)).moveset(SPLASH_ONLY);
     game.override.statusEffect(StatusEffect.FREEZE);
-    await game.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -90,7 +90,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("not passing with baton pass", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.EMBER)).moveset([Moves.BATON_PASS]);
-    await game.startBattle([Species.BLISSEY, Species.CHANSEY]);
+    await game.classicMode.startBattle([Species.BLISSEY, Species.CHANSEY]);
 
     // ensure use baton pass after enemy moved
     game.doAttack(getMovePosition(game.scene, 0, Moves.BATON_PASS));
@@ -107,7 +107,7 @@ describe("Abilities - Flash Fire", () => {
   it("boosts Fire-type move when the ability is activated", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.FIRE_PLEDGE)).moveset([Moves.EMBER, Moves.SPLASH]);
     game.override.enemyAbility(Abilities.FLASH_FIRE).ability(Abilities.NONE);
-    await game.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([Species.BLISSEY]);
     const blissey = game.scene.getPlayerPokemon()!;
     const initialHP = 1000;
     blissey.hp = initialHP;

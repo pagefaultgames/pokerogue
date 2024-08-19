@@ -31,7 +31,7 @@ describe("Items - Quick Powder", () => {
   it("QUICK_POWDER activates in battle correctly", async() => {
     game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "QUICK_POWDER" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.DITTO
     ]);
 
@@ -64,7 +64,7 @@ describe("Items - Quick Powder", () => {
   });
 
   it("QUICK_POWDER held by DITTO", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.DITTO
     ]);
 
@@ -86,7 +86,7 @@ describe("Items - Quick Powder", () => {
   }, 20000);
 
   it("QUICK_POWDER held by fused DITTO (base)", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.DITTO,
       Species.MAROWAK
     ]);
@@ -119,7 +119,7 @@ describe("Items - Quick Powder", () => {
   }, 20000);
 
   it("QUICK_POWDER held by fused DITTO (part)", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MAROWAK,
       Species.DITTO
     ]);
@@ -152,7 +152,7 @@ describe("Items - Quick Powder", () => {
   }, 20000);
 
   it("QUICK_POWDER not held by DITTO", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MAROWAK
     ]);
 

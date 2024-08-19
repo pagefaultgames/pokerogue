@@ -171,28 +171,6 @@ export default class GameManager {
   }
 
   /**
-   * Transitions to the start of a battle.
-   * @param species - Optional array of species to start the battle with.
-   * @returns A promise that resolves when the battle is started.
-   */
-  async startBattle(species?: Species[]) {
-    await this.classicMode.runToSummon(species);
-
-    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.setMode(Mode.MESSAGE);
-      this.endPhase();
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
-
-    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.setMode(Mode.MESSAGE);
-      this.endPhase();
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
-
-    await this.phaseInterceptor.to(CommandPhase);
-    console.log("==================[New Turn]==================");
-  }
-
-  /**
    * Emulate a player attack
    * @param movePosition the index of the move in the pokemon's moveset array
    */

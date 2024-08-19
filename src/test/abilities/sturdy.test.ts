@@ -41,7 +41,7 @@ describe("Abilities - Sturdy", () => {
   test(
     "Sturdy activates when user is at full HP",
     async () => {
-      await game.startBattle();
+      await game.classicMode.startBattle();
       game.doAttack(getMovePosition(game.scene, 0, Moves.CLOSE_COMBAT));
       await game.phaseInterceptor.to(MoveEndPhase);
       expect(game.scene.getEnemyParty()[0].hp).toBe(1);
@@ -52,7 +52,7 @@ describe("Abilities - Sturdy", () => {
   test(
     "Sturdy doesn't activate when user is not at full HP",
     async () => {
-      await game.startBattle();
+      await game.classicMode.startBattle();
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
       enemyPokemon.hp = enemyPokemon.getMaxHp() - 1;
@@ -69,7 +69,7 @@ describe("Abilities - Sturdy", () => {
   test(
     "Sturdy pokemon should be immune to OHKO moves",
     async () => {
-      await game.startBattle();
+      await game.classicMode.startBattle();
       game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
       await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -84,7 +84,7 @@ describe("Abilities - Sturdy", () => {
     async () => {
       game.override.ability(Abilities.MOLD_BREAKER);
 
-      await game.startBattle();
+      await game.classicMode.startBattle();
       game.doAttack(getMovePosition(game.scene, 0, Moves.CLOSE_COMBAT));
       await game.phaseInterceptor.to(DamagePhase);
 

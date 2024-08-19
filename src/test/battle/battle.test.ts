@@ -88,7 +88,7 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("newGame one-liner", async() => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
     expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
@@ -103,7 +103,7 @@ describe("Test Battle Phase", () => {
     game.override.moveset([Moves.TACKLE]);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    await game.startBattle();
+    await game.classicMode.startBattle();
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
@@ -123,7 +123,7 @@ describe("Test Battle Phase", () => {
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.enemyMoveset([Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP]);
     game.override.battleType("single");
-    await game.startBattle();
+    await game.classicMode.startBattle();
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
@@ -144,7 +144,7 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("start battle with selected team", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.CHARIZARD,
       Species.CHANSEY,
       Species.MEW
@@ -213,7 +213,7 @@ describe("Test Battle Phase", () => {
     game.override.enemySpecies(Species.MIGHTYENA);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.HYDRATION);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
     ]);
@@ -226,7 +226,7 @@ describe("Test Battle Phase", () => {
     game.override.enemySpecies(Species.MIGHTYENA);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.HYDRATION);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
     ]);
     expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
@@ -239,7 +239,7 @@ describe("Test Battle Phase", () => {
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.HYDRATION);
     game.override.startingWave(3);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
     ]);
@@ -253,7 +253,7 @@ describe("Test Battle Phase", () => {
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.HYDRATION);
     game.override.startingWave(3);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BLASTOISE,
       Species.CHARIZARD,
       Species.DARKRAI,
@@ -274,7 +274,7 @@ describe("Test Battle Phase", () => {
     game.override.startingWave(3);
     game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.DARMANITAN,
       Species.CHARIZARD,
     ]);
@@ -303,7 +303,7 @@ describe("Test Battle Phase", () => {
     game.override.startingWave(3);
     game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const turn = game.scene.currentBattle.turn;
     game.doAttack(0);
     await game.toNextTurn();
@@ -321,7 +321,7 @@ describe("Test Battle Phase", () => {
     game.override.startingWave(3);
     game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const waveIndex = game.scene.currentBattle.waveIndex;
     game.doAttack(0);
     await game.doKillOpponents();
@@ -341,7 +341,7 @@ describe("Test Battle Phase", () => {
       .enemyMoveset(SPLASH_ONLY)
       .startingHeldItems([{ name: "TEMP_STAT_BOOSTER", type: TempBattleStat.ACC }]);
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
     game.scene.getPlayerPokemon()!.hp = 1;
     game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 

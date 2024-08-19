@@ -42,7 +42,7 @@ describe("UI - Transfer Items", () => {
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyMoveset([Moves.SPLASH]);
 
-    await game.startBattle([Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA]);
+    await game.classicMode.startBattle([Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_CLAW));
 

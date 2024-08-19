@@ -31,7 +31,7 @@ describe("Items - Thick Club", () => {
   it("THICK_CLUB activates in battle correctly", async() => {
     game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "THICK_CLUB" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.CUBONE
     ]);
 
@@ -64,7 +64,7 @@ describe("Items - Thick Club", () => {
   });
 
   it("THICK_CLUB held by CUBONE", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.CUBONE
     ]);
 
@@ -86,7 +86,7 @@ describe("Items - Thick Club", () => {
   }, 20000);
 
   it("THICK_CLUB held by MAROWAK", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MAROWAK
     ]);
 
@@ -108,7 +108,7 @@ describe("Items - Thick Club", () => {
   }, 20000);
 
   it("THICK_CLUB held by ALOLA_MAROWAK", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.ALOLA_MAROWAK
     ]);
 
@@ -134,7 +134,7 @@ describe("Items - Thick Club", () => {
     const species = [ Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK ];
     const randSpecies = Utils.randInt(species.length);
 
-    await game.startBattle([
+    await game.classicMode.startBattle([
       species[randSpecies],
       Species.PIKACHU
     ]);
@@ -171,7 +171,7 @@ describe("Items - Thick Club", () => {
     const species = [ Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK ];
     const randSpecies = Utils.randInt(species.length);
 
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU,
       species[randSpecies]
     ]);
@@ -204,7 +204,7 @@ describe("Items - Thick Club", () => {
   }, 20000);
 
   it("THICK_CLUB not held by CUBONE", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 

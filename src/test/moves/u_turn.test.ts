@@ -40,7 +40,7 @@ describe("Moves - U-turn", () => {
     // arrange
     const playerHp = 1;
     game.override.ability(Abilities.REGENERATOR);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.RAICHU,
       Species.SHUCKLE
     ]);
@@ -60,7 +60,7 @@ describe("Moves - U-turn", () => {
   it("triggers rough skin on the u-turn user before a new pokemon is switched in", async() => {
     // arrange
     game.override.enemyAbility(Abilities.ROUGH_SKIN);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.RAICHU,
       Species.SHUCKLE
     ]);
@@ -81,7 +81,7 @@ describe("Moves - U-turn", () => {
   it("triggers contact abilities on the u-turn user (eg poison point) before a new pokemon is switched in", async() => {
     // arrange
     game.override.enemyAbility(Abilities.POISON_POINT);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.RAICHU,
       Species.SHUCKLE
     ]);

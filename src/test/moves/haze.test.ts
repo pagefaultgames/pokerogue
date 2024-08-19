@@ -39,7 +39,7 @@ describe("Moves - Haze", () => {
     });
 
     it("Uses Swords Dance to raise own ATK by 2, Charm to lower enemy ATK by 2, player uses Haze to clear all stat changes", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.RATTATA]);
+      await game.classicMode.startBattle([Species.RATTATA]);
       const user = game.scene.getPlayerPokemon()!;
       const enemy = game.scene.getEnemyPokemon()!;
       expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
@@ -63,7 +63,7 @@ describe("Moves - Haze", () => {
 
     it("Uses Swords Dance to raise own ATK by 2, Charm to lower enemy ATK by 2, enemy uses Haze to clear all stat changes", { timeout: 10000 }, async () => {
       game.override.enemyMoveset([Moves.HAZE, Moves.HAZE, Moves.HAZE, Moves.HAZE]);
-      await game.startBattle([Species.SHUCKLE]); // Shuckle for slower Swords Dance on first turn so Haze doesn't affect it.
+      await game.classicMode.startBattle([Species.SHUCKLE]); // Shuckle for slower Swords Dance on first turn so Haze doesn't affect it.
       const user = game.scene.getPlayerPokemon()!;
       expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
 

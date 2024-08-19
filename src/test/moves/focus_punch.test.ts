@@ -44,7 +44,7 @@ describe("Moves - Focus Punch", () => {
   it(
     "should deal damage at the end of turn if uninterrupted",
     async () => {
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -71,7 +71,7 @@ describe("Moves - Focus Punch", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -98,7 +98,7 @@ describe("Moves - Focus Punch", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.SPORE));
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -122,7 +122,7 @@ describe("Moves - Focus Punch", () => {
       /** Guarantee a Trainer battle with multiple enemy Pokemon */
       game.override.startingWave(25);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       game.forceOpponentToSwitch();
       game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));

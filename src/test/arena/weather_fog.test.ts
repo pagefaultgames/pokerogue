@@ -40,7 +40,7 @@ describe("Weather - Fog", () => {
 
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
     await game.phaseInterceptor.to(MoveEffectPhase);
 

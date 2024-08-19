@@ -50,7 +50,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.TACKLE]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -83,7 +83,7 @@ describe("Abilities - Parental Bond", () => {
       game.override.moveset([Moves.POWER_UP_PUNCH]);
       game.override.enemySpecies(Species.AMOONGUSS);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -105,7 +105,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.BABY_DOLL_EYES]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -125,7 +125,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.DOUBLE_HIT]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -147,7 +147,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.SELF_DESTRUCT]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -168,7 +168,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.ROLLOUT]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -190,7 +190,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.DRAGON_RAGE]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -213,7 +213,7 @@ describe("Abilities - Parental Bond", () => {
       game.override.moveset([Moves.COUNTER]);
       game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -241,7 +241,7 @@ describe("Abilities - Parental Bond", () => {
       game.override.battleType("double");
       game.override.moveset([Moves.EARTHQUAKE]);
 
-      await game.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
+      await game.classicMode.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
 
       const playerPokemon = game.scene.getPlayerField();
       expect(playerPokemon.length).toBe(2);
@@ -266,7 +266,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.EARTHQUAKE]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -286,7 +286,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.MIND_BLOWN]);
 
-      await game.startBattle([Species.PIDGEOT]);
+      await game.classicMode.startBattle([Species.PIDGEOT]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -312,7 +312,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.BURN_UP]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -340,7 +340,7 @@ describe("Abilities - Parental Bond", () => {
       game.override.moveset([Moves.TACKLE]);
       game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -362,7 +362,7 @@ describe("Abilities - Parental Bond", () => {
       game.override.moveset([Moves.SUPER_FANG]);
       game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -391,7 +391,7 @@ describe("Abilities - Parental Bond", () => {
       game.override.moveset([Moves.SEISMIC_TOSS]);
       game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -419,7 +419,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.HYPER_BEAM]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -447,7 +447,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.ANCHOR_SHOT]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -477,7 +477,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.SMACK_DOWN]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -504,7 +504,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.U_TURN]);
 
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -528,7 +528,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.moveset([Moves.WAKE_UP_SLAP]).enemyStatusEffect(StatusEffect.SLEEP);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -556,7 +556,7 @@ describe("Abilities - Parental Bond", () => {
       game.override.moveset([Moves.TACKLE]);
       game.override.enemyMoveset([Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD]);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -578,7 +578,7 @@ describe("Abilities - Parental Bond", () => {
       game.override.moveset([Moves.WATER_GUN]);
       game.override.enemyAbility(Abilities.STORM_DRAIN);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -601,7 +601,7 @@ describe("Abilities - Parental Bond", () => {
       game.override.moveset([Moves.EARTHQUAKE, Moves.SPLASH]);
       game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
 
-      await game.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
+      await game.classicMode.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
 
       const playerPokemon = game.scene.getPlayerField();
       expect(playerPokemon.length).toBe(2);

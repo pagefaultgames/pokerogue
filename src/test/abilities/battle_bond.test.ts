@@ -43,7 +43,7 @@ describe("Abilities - BATTLE BOND", () => {
         [Species.GRENINJA]: ashForm,
       });
 
-      await game.startBattle([Species.MAGIKARP, Species.GRENINJA]);
+      await game.classicMode.startBattle([Species.MAGIKARP, Species.GRENINJA]);
 
       const greninja = game.scene.getParty().find((p) => p.species.speciesId === Species.GRENINJA);
       expect(greninja).toBeDefined();

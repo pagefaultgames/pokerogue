@@ -42,7 +42,7 @@ describe("Moves - Light Screen", () => {
 
   it("reduces damage of special attacks by half in a single battle", async() => {
     const moveToUse = Moves.ABSORB;
-    await game.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
@@ -57,7 +57,7 @@ describe("Moves - Light Screen", () => {
     game.override.battleType("double");
 
     const moveToUse = Moves.DAZZLING_GLEAM;
-    await game.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
+    await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
 
     game.doAttack(getMovePosition(game.scene, 0, moveToUse));
     game.doAttack(getMovePosition(game.scene, 1, moveToUse));
@@ -70,7 +70,7 @@ describe("Moves - Light Screen", () => {
 
   it("does not affect physical attacks", async() => {
     const moveToUse = Moves.TACKLE;
-    await game.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 

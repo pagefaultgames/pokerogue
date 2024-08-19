@@ -44,7 +44,7 @@ describe("Abilities - Libero", () => {
     async () => {
       game.override.moveset([Moves.SPLASH]);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -62,7 +62,7 @@ describe("Abilities - Libero", () => {
     async () => {
       game.override.moveset([Moves.SPLASH, Moves.AGILITY]);
 
-      await game.startBattle([Species.MAGIKARP, Species.BULBASAUR]);
+      await game.classicMode.startBattle([Species.MAGIKARP, Species.BULBASAUR]);
 
       let leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -102,7 +102,7 @@ describe("Abilities - Libero", () => {
     async () => {
       game.override.moveset([Moves.WEATHER_BALL]);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -126,7 +126,7 @@ describe("Abilities - Libero", () => {
       game.override.moveset([Moves.TACKLE]);
       game.override.passiveAbility(Abilities.REFRIGERATE);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -148,7 +148,7 @@ describe("Abilities - Libero", () => {
     async () => {
       game.override.moveset([Moves.NATURE_POWER]);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -167,7 +167,7 @@ describe("Abilities - Libero", () => {
     async () => {
       game.override.moveset([Moves.DIG]);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -186,7 +186,7 @@ describe("Abilities - Libero", () => {
       game.override.moveset([Moves.TACKLE]);
       game.override.enemyMoveset(SPLASH_ONLY);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -208,7 +208,7 @@ describe("Abilities - Libero", () => {
       game.override.moveset([Moves.TACKLE]);
       game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -227,7 +227,7 @@ describe("Abilities - Libero", () => {
       game.override.moveset([Moves.TACKLE]);
       game.override.enemySpecies(Species.GASTLY);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -245,7 +245,7 @@ describe("Abilities - Libero", () => {
     async () => {
       game.override.moveset([Moves.SPLASH]);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -264,7 +264,7 @@ describe("Abilities - Libero", () => {
     async () => {
       game.override.moveset([Moves.SPLASH]);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -284,7 +284,7 @@ describe("Abilities - Libero", () => {
     async () => {
       game.override.moveset([Moves.STRUGGLE]);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -302,7 +302,7 @@ describe("Abilities - Libero", () => {
     async () => {
       game.override.moveset([Moves.BURN_UP]);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -321,7 +321,7 @@ describe("Abilities - Libero", () => {
       game.override.moveset([Moves.TRICK_OR_TREAT]);
       game.override.enemySpecies(Species.GASTLY);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
@@ -339,7 +339,7 @@ describe("Abilities - Libero", () => {
     async () => {
       game.override.moveset([Moves.CURSE]);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);

@@ -31,7 +31,7 @@ describe("Items - Eviolite", () => {
   it("EVIOLITE activates in battle correctly", async() => {
     game.override.startingHeldItems([{ name: "EVIOLITE" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PICHU
     ]);
 
@@ -64,7 +64,7 @@ describe("Items - Eviolite", () => {
   });
 
   it("EVIOLITE held by unevolved, unfused pokemon", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PICHU
     ]);
 
@@ -92,7 +92,7 @@ describe("Items - Eviolite", () => {
   }, 20000);
 
   it("EVIOLITE held by fully evolved, unfused pokemon", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.RAICHU,
     ]);
 
@@ -120,7 +120,7 @@ describe("Items - Eviolite", () => {
   }, 20000);
 
   it("EVIOLITE held by completely unevolved, fused pokemon", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PICHU,
       Species.CLEFFA
     ]);
@@ -159,7 +159,7 @@ describe("Items - Eviolite", () => {
   }, 20000);
 
   it("EVIOLITE held by partially unevolved (base), fused pokemon", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PICHU,
       Species.CLEFABLE
     ]);
@@ -198,7 +198,7 @@ describe("Items - Eviolite", () => {
   }, 20000);
 
   it("EVIOLITE held by partially unevolved (fusion), fused pokemon", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.RAICHU,
       Species.CLEFFA
     ]);
@@ -237,7 +237,7 @@ describe("Items - Eviolite", () => {
   }, 20000);
 
   it("EVIOLITE held by completely evolved, fused pokemon", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.RAICHU,
       Species.CLEFABLE
     ]);

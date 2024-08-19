@@ -40,7 +40,7 @@ describe("Moves - Spotlight", () => {
   test(
     "move should redirect attacks to the target",
     async () => {
-      await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
+      await game.classicMode.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
       const playerPokemon = game.scene.getPlayerField();
       expect(playerPokemon.length).toBe(2);
@@ -72,7 +72,7 @@ describe("Moves - Spotlight", () => {
     async () => {
       game.override.enemyMoveset([ Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME ]);
 
-      await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
+      await game.classicMode.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
       const playerPokemon = game.scene.getPlayerField();
       expect(playerPokemon.length).toBe(2);
