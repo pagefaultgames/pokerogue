@@ -726,6 +726,8 @@ export default class Move implements Localizable {
    */
   calculateBattlePower(source: Pokemon, target: Pokemon): number {
     if (this.category === MoveCategory.STATUS) {
+      // The type of a status move is usually irrelevant but Thunder Wave is an exception and found in many movesets.
+      applyPreAttackAbAttrs(MoveTypeChangeAttr, source, target, this, new Utils.NumberHolder(1));
       return -1;
     }
 
@@ -1082,13 +1084,15 @@ export class PreMoveMessageAttr extends MoveAttr {
   }
 }
 
-export class StatusMoveTypeImmunityAttr extends MoveAttr {
-  public immuneType: Type;
-
-  constructor(immuneType: Type) {
-    super(false);
-
-    this.immuneType = immuneType;
+/**
+ * This allows type-sensitive moves like Thunder Wave to be affected by abilities like Normalize, etc.
+ * In addition, this avoids the use of conditionals and can allow for the different type matchups found in Inverse Mode.
+ */
+export class RespectTypeImmunityAttr extends MoveAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const typeEffectiveness = target.getAttackTypeEffectiveness(move.type, user);
+    args[0].value = typeEffectiveness;
+    return true;
   }
 }
 
@@ -6416,7 +6420,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new StatusMove(Moves.THUNDER_WAVE, Type.ELECTRIC, 90, 20, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .attr(StatusMoveTypeImmunityAttr, Type.GROUND),
+      .attr(RespectTypeImmunityAttr),
     new AttackMove(Moves.THUNDER, Type.ELECTRIC, MoveCategory.SPECIAL, 110, 70, 10, 30, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .attr(ThunderAccuracyAttr)
