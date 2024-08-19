@@ -5,9 +5,11 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { BerryPhase, MovePhase, TurnEndPhase } from "#app/phases";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { MovePhase } from "#app/phases/move-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 const TIMEOUT = 20 * 1000;
 

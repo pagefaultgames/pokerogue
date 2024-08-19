@@ -1,5 +1,4 @@
 import { allMoves } from "#app/data/move.js";
-import { MoveEffectPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -8,6 +7,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 
 describe("Abilities - Aura Break", () => {
   let phaserGame: Phaser.Game;
