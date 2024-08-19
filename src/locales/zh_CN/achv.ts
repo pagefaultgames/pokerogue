@@ -273,8 +273,8 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "完成初次尝试挑战"
   },
   "INVERSE_BATTLE": {
-    name: "Mirror rorriM",
-    description: "Complete the Inverse Battle challenge.\n.egnellahc elttaB esrevnI eht etelpmoC"
+    name: "镜子子镜",
+    description: "完成逆转之战挑战\n战挑战之转逆成完"
   }
 } as const;
 
