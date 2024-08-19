@@ -2569,7 +2569,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `@c{shock}와… 정말 깔끔하게 당했네.\n초보자 맞아?
                    $@c{smile}운이 따른 건지도 모르겠지만…\n그래도 정말 꿈을 이룰 지도.
                    $그나저나, 박사님께서 이걸 전해달라고 하시더라.\n좋아 보이던데.
-                   $@c{serious_smile_fists}아무튼, 힘 내는거야!`
+                   $@c{serious_smile_fists}아무튼, 힘 내는거야!
+                   $@c{smile}아- 그리고 이벤트 즐겁게 보내!`
     },
   },
   "rival_female": {
@@ -2583,7 +2584,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `@c{shock}왜 벌써 이렇게 센 건데?!@d{96}\n@c{angry}아니면 뭔가 속임수, 그런 거?
                     $@c{smile_wave_wink}농담, 농담!@d{64} @c{smile_eclosed}내가 진 거 맞아…\n너 정말 앞으로도 잘 하겠는데.
                     $@c{smile}아 그래, 박사님께서 전해달라던 물건.\n도움이 되면 좋겠어!
-                    $@c{smile_wave}항상 최선을 다 하라구! 믿고 있을게!`
+                    $@c{smile_wave}항상 최선을 다 하라구! 믿고 있을게!
+                    $@c{smile}아- 그리고 이벤트 즐겁게 보내!`
     },
   },
   "rival_2": {
@@ -2599,7 +2601,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $@c{smile}그래, 또 지고 말았네.\n@c{serious_mopen_fists}좀 더 열심히 훈련을 해야겠어!\n
                 $@c{smile}너한테 도움이 필요할 것 같지는 않지만, 이거.\n남는 게 있어서 말이야.
                 $@c{serious_smile_fists}물론 이번이 마지막이야, 알겠지?\n공평하게 하지 않으면 그게 내 핑계거리가 되고 말거야.
-                $@c{smile}이제 갈게. 앞으로도 조심하고!`
+                $@c{smile}이제 갈게. 앞으로도 조심하고, 이벤트도 즐겁게 보내!`
     },
   },
   "rival_2_female": {
@@ -2615,7 +2617,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $@c{smile}으, 그래. 더 열심히 훈련하면 되겠지!
                 $@c{smile_wave}이것도 하나 더 챙겨왔으니 받아!\n@c{smile_wave_wink}감사 인사는 됐다구~.
                 $@c{angry_mopen}하지만, 마지막이야!\n또 이렇게 공짜로 나눠주진 않을 테니까!
-                $@c{smile_wave}그럼!`
+                $@c{smile_wave}그럼! 이벤트 잘 즐기고!`
     },
     "defeat": {
       1: "가끔은 지는 것도 괜찮아…"

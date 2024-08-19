@@ -2,13 +2,14 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
-import { CommandPhase, TurnEndPhase } from "#app/phases";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { allAbilities } from "#app/data/ability.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { BattlerIndex } from "#app/battle.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Abilities - Pastel Veil", () => {
   let phaserGame: Phaser.Game;
