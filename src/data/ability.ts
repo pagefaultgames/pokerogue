@@ -4112,10 +4112,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
   applyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     let suppressed = false;
     pokemon.scene.getField(true).filter(p => p !== pokemon).map(p => {
-      if (p.getAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility()) {
-        suppressed = true;
-      }
-      if (p.getPassiveAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility(true)) {
+      if ((p.getAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility()) || (p.getPassiveAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility(true))) {
         suppressed = true;
       }
     });
