@@ -42,6 +42,7 @@ import { TitlePhase } from "#app/phases/title-phase.js";
 import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed.js";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -129,7 +130,7 @@ export default class GameManager {
     this.scene.gameSpeed = 5;
     this.scene.moveAnimations = false;
     this.scene.showLevelUpStats = false;
-    this.scene.expGainsSpeed = 3;
+    this.scene.expGainsSpeed = ExpGainsSpeed.SKIP;
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
     this.scene.enableTutorials = false;
