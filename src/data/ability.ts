@@ -14,7 +14,7 @@ import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { Stat, getStatName } from "./pokemon-stat";
 import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
-import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
+import { SpeciesFormChangeManualTrigger, SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "./pokemon-forms";
 import i18next from "i18next";
 import { Localizable } from "#app/interfaces/locales.js";
 import { Command } from "../ui/command-ui-handler";
@@ -2316,18 +2316,19 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
   }
 
   /**
-   * Calls the {@linkcode Arena.triggerWeatherBasedFormChanges | triggerWeatherBasedFormChanges} and
-   * {@linkcode Arena.triggerWeatherBasedFormChangesToNormal | triggerWeatherBasedFormChangesToNormal} if it is
-   * the specific Pokemon and ability
-   * @param pokemon the Pokemon with this ability
+   * Calls the {@linkcode BattleScene.triggerPokemonFormChange | triggerPokemonFormChange} for both
+   * {@linkcode SpeciesFormChange.SpeciesFormChangeWeatherTrigger | SpeciesFormChangeWeatherTrigger} and
+   * {@linkcode SpeciesFormChange.SpeciesFormChangeWeatherTrigger | SpeciesFormChangeRevertWeatherFormTrigger} if it
+   * is the specific Pokemon and ability
+   * @param {Pokemon} pokemon the Pokemon with this ability
    * @param passive n/a
    * @param args n/a
    * @returns whether the form change was triggered
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     if (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
-      pokemon.scene.arena.triggerWeatherBasedFormChanges();
-      pokemon.scene.arena.triggerWeatherBasedFormChangesToNormal();
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeRevertWeatherFormTrigger);
       return true;
     }
     return false;

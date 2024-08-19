@@ -28,6 +28,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { MoveUsedEvent } from "#app/events/battle-scene.js";
+import { SpeciesFormChangeRevertWeatherFormTrigger } from "./pokemon-forms";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -5624,8 +5625,10 @@ export class AbilityChangeAttr extends MoveEffectAttr {
       return false;
     }
 
-    (this.selfTarget ? user : target).summonData.ability = this.ability;
-    user.scene.arena.triggerWeatherBasedFormChangesToNormal();
+    const moveTarget = this.selfTarget ? user : target;
+
+    moveTarget.summonData.ability = this.ability;
+    user.scene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
 
     user.scene.queueMessage(i18next.t("moveTriggers:acquiredAbility", {pokemonName: getPokemonNameWithAffix((this.selfTarget ? user : target)), abilityName: allAbilities[this.ability].name}));
 

@@ -22,7 +22,7 @@ import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { Abilities } from "#app/enums/abilities.js";
-import { SpeciesFormChangeWeatherSuppressedFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms.js";
+import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms.js";
 
 export class Arena {
   public scene: BattleScene;
@@ -352,7 +352,7 @@ export class Arena {
     this.scene.getField(true).forEach( p => {
       if (p.hasAbility(Abilities.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM) {
         new ShowAbilityPhase(this.scene, p.getBattlerIndex());
-        return this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherSuppressedFormTrigger);
+        return this.scene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
       }
     });
   }

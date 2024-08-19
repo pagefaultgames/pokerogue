@@ -110,9 +110,9 @@ describe("Abilities - Forecast", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([ Moves.SPLASH, Moves.RAIN_DANCE, Moves.SUNNY_DAY, Moves.TACKLE ]);
-    game.override.enemyMoveset(SPLASH_ONLY);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.moveset([ Moves.SPLASH, Moves.RAIN_DANCE, Moves.SUNNY_DAY, Moves.TACKLE ])
+      .enemyMoveset(SPLASH_ONLY)
+      .enemyAbility(Abilities.BALL_FETCH);
   });
 
   it("changes to Sunny Form during Harsh Sunlight", async () => {
@@ -326,5 +326,19 @@ describe("Abilities - Forecast", () => {
 
   it("transforms to weather-based form when Pokemon with Cloud Nine is switched out", async () => {
     await testTransformAfterAbilitySwitchOut(game, Abilities.CLOUD_NINE);
+  });
+
+  it("should be in Normal Form after the user is switched out", async () => {
+    game.override.weather(WeatherType.RAIN);
+
+    await game.startBattle([Species.CASTFORM, Species.MAGIKARP]);
+    const castform = game.scene.getPlayerPokemon()!;
+
+    expect(castform.formIndex).toBe(RAINY_FORM);
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    expect(castform.formIndex).toBe(NORMAL_FORM);
   });
 });

@@ -388,11 +388,11 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
 }
 
 /**
- * Class used for reverting to the original form based on weather.
- * Used in cases where the weather runs out or is suppressed.
+ * Class used for reverting to the original form when the weather runs out
+ * or when the user loses the ability/is suppressed.
  * Used by Castform.
  */
-export class SpeciesFormChangeWeatherSuppressedFormTrigger extends SpeciesFormChangeTrigger {
+export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChangeTrigger {
   /** The ability that triggers the form change*/
   public ability: Abilities;
   /** The list of weathers that will also trigger a form change to original form */
@@ -919,9 +919,12 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.CASTFORM, "", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
     new SpeciesFormChange(Species.CASTFORM, "sunny", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
     new SpeciesFormChange(Species.CASTFORM, "rainy", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
-    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeWeatherSuppressedFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
-    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeWeatherSuppressedFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
-    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeWeatherSuppressedFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeActiveTrigger(), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeActiveTrigger(), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeActiveTrigger(), true),
   ],
 };
 
