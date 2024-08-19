@@ -1,4 +1,4 @@
-import { StatStageMultiplierAbAttr, allAbilities } from "#app/data/ability.js";
+import { StatMultiplierAbAttr, allAbilities } from "#app/data/ability.js";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#app/data/weather.js";
 import { CommandPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases.js";
@@ -48,7 +48,7 @@ describe("Abilities - Sand Veil", () => {
 
       vi.spyOn(leadPokemon[0], "getAbility").mockReturnValue(allAbilities[Abilities.SAND_VEIL]);
 
-      const sandVeilAttr = allAbilities[Abilities.SAND_VEIL].getAttrs(StatStageMultiplierAbAttr)[0];
+      const sandVeilAttr = allAbilities[Abilities.SAND_VEIL].getAttrs(StatMultiplierAbAttr)[0];
       vi.spyOn(sandVeilAttr, "applyStatStage").mockImplementation(
         (_pokemon, _passive, stat, statValue, _args) => {
           if (stat === Stat.EVA && game.scene.arena.weather?.weatherType === WeatherType.SANDSTORM) {

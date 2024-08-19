@@ -1551,7 +1551,7 @@ export class AllyMoveCategoryPowerBoostAbAttr extends FieldMovePowerBoostAbAttr 
   }
 }
 
-export class StatStageMultiplierAbAttr extends AbAttr {
+export class StatMultiplierAbAttr extends AbAttr {
   private stat: BattleStat;
   private multiplier: number;
   private condition: PokemonAttackCondition | null;
@@ -1822,36 +1822,20 @@ export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
 }
 
 export class IgnoreOpponentStatStagesAbAttr extends AbAttr {
-  constructor() {
+  private stats: readonly BattleStat[];
+
+  constructor(stats?: BattleStat[]) {
     super(false);
+
+    this.stats = stats ?? BATTLE_STATS;
   }
 
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]) {
-    (args[0] as Utils.IntegerHolder).value = 0;
-
-    return true;
-  }
-}
-/**
- * Ignores opponent's evasion stat changes when determining if a move hits or not
- * @extends AbAttr
- * @see {@linkcode apply}
- */
-export class IgnoreOpponentEvasionAbAttr extends AbAttr {
-  constructor() {
-    super(false);
-  }
-  /**
-   * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
-   * @param pokemon N/A
-   * @param passive N/A
-   * @param cancelled N/A
-   * @param args [0] {@linkcode Utils.IntegerHolder} of Stat.EVA
-   * @returns if evasion level was successfully considered as 0
-   */
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]) {
-    (args[0] as Utils.IntegerHolder).value = 0;
-    return true;
+  apply(_pokemon: Pokemon, _passive: boolean, _cancelled: Utils.BooleanHolder, args: any[]) {
+    if (this.stats.includes(args[0])) {
+      (args[1] as Utils.BooleanHolder).value = true;
+      return true;
+    }
+    return false;
   }
 }
 
@@ -4225,9 +4209,9 @@ export function applyPostMoveUsedAbAttrs(attrType: Constructor<PostMoveUsedAbAtt
   return applyAbAttrsInternal<PostMoveUsedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostMoveUsed(pokemon, move, source, targets, args), args);
 }
 
-export function applyStatStageMultiplierAbAttrs(attrType: Constructor<StatStageMultiplierAbAttr>,
+export function applyStatMultiplierAbAttrs(attrType: Constructor<StatMultiplierAbAttr>,
   pokemon: Pokemon, stat: BattleStat, statValue: Utils.NumberHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<StatStageMultiplierAbAttr>(attrType, pokemon, (attr, passive) => attr.applyStatStage(pokemon, passive, stat, statValue, args), args);
+  return applyAbAttrsInternal<StatMultiplierAbAttr>(attrType, pokemon, (attr, passive) => attr.applyStatStage(pokemon, passive, stat, statValue, args), args);
 }
 
 /**
@@ -4377,7 +4361,7 @@ export function initAbilities() {
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
       .ignorable(),
     new Ability(Abilities.SAND_VEIL, 3)
-      .attr(StatStageMultiplierAbAttr, Stat.EVA, 1.2)
+      .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM))
       .ignorable(),
@@ -4400,7 +4384,7 @@ export function initAbilities() {
       .attr(SuppressWeatherEffectAbAttr, true)
       .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared."),
     new Ability(Abilities.COMPOUND_EYES, 3)
-      .attr(StatStageMultiplierAbAttr, Stat.ACC, 1.3),
+      .attr(StatMultiplierAbAttr, Stat.ACC, 1.3),
     new Ability(Abilities.INSOMNIA, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
@@ -4462,10 +4446,10 @@ export function initAbilities() {
       .attr(MoveEffectChanceMultiplierAbAttr, 2)
       .partial(),
     new Ability(Abilities.SWIFT_SWIM, 3)
-      .attr(StatStageMultiplierAbAttr, Stat.SPD, 2)
+      .attr(StatMultiplierAbAttr, Stat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.RAIN, WeatherType.HEAVY_RAIN)),
     new Ability(Abilities.CHLOROPHYLL, 3)
-      .attr(StatStageMultiplierAbAttr, Stat.SPD, 2)
+      .attr(StatMultiplierAbAttr, Stat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(Abilities.ILLUMINATE, 3)
       .attr(ProtectStatAbAttr, Stat.ACC)
@@ -4475,7 +4459,7 @@ export function initAbilities() {
       .attr(PostSummonCopyAbilityAbAttr)
       .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.HUGE_POWER, 3)
-      .attr(StatStageMultiplierAbAttr, Stat.ATK, 2),
+      .attr(StatMultiplierAbAttr, Stat.ATK, 2),
     new Ability(Abilities.POISON_POINT, 3)
       .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON)
       .bypassFaint(),
@@ -4530,15 +4514,15 @@ export function initAbilities() {
     new Ability(Abilities.TRUANT, 3)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.TRUANT, 1, false),
     new Ability(Abilities.HUSTLE, 3)
-      .attr(StatStageMultiplierAbAttr, Stat.ATK, 1.5)
-      .attr(StatStageMultiplierAbAttr, Stat.ACC, 0.8, (_user, _target, move) => move.category === MoveCategory.PHYSICAL),
+      .attr(StatMultiplierAbAttr, Stat.ATK, 1.5)
+      .attr(StatMultiplierAbAttr, Stat.ACC, 0.8, (_user, _target, move) => move.category === MoveCategory.PHYSICAL),
     new Ability(Abilities.CUTE_CHARM, 3)
       .attr(PostDefendContactApplyTagChanceAbAttr, 30, BattlerTagType.INFATUATED),
     new Ability(Abilities.PLUS, 3)
-      .conditionalAttr(p => p.scene.currentBattle.double && [Abilities.PLUS, Abilities.MINUS].some(a => p.getAlly().hasAbility(a)), StatStageMultiplierAbAttr, Stat.SPATK, 1.5)
+      .conditionalAttr(p => p.scene.currentBattle.double && [Abilities.PLUS, Abilities.MINUS].some(a => p.getAlly().hasAbility(a)), StatMultiplierAbAttr, Stat.SPATK, 1.5)
       .ignorable(),
     new Ability(Abilities.MINUS, 3)
-      .conditionalAttr(p => p.scene.currentBattle.double && [Abilities.PLUS, Abilities.MINUS].some(a => p.getAlly().hasAbility(a)), StatStageMultiplierAbAttr, Stat.SPATK, 1.5)
+      .conditionalAttr(p => p.scene.currentBattle.double && [Abilities.PLUS, Abilities.MINUS].some(a => p.getAlly().hasAbility(a)), StatMultiplierAbAttr, Stat.SPATK, 1.5)
       .ignorable(),
     new Ability(Abilities.FORECAST, 3)
       .attr(UncopiableAbilityAbAttr)
@@ -4552,9 +4536,9 @@ export function initAbilities() {
       .conditionalAttr(pokemon => !Utils.randSeedInt(3), PostTurnResetStatusAbAttr),
     new Ability(Abilities.GUTS, 3)
       .attr(BypassBurnDamageReductionAbAttr)
-      .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(Abilities.COMATOSE), StatStageMultiplierAbAttr, Stat.ATK, 1.5),
+      .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(Abilities.COMATOSE), StatMultiplierAbAttr, Stat.ATK, 1.5),
     new Ability(Abilities.MARVEL_SCALE, 3)
-      .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(Abilities.COMATOSE), StatStageMultiplierAbAttr, Stat.DEF, 1.5)
+      .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(Abilities.COMATOSE), StatMultiplierAbAttr, Stat.DEF, 1.5)
       .ignorable(),
     new Ability(Abilities.LIQUID_OOZE, 3)
       .attr(ReverseDrainAbAttr),
@@ -4587,7 +4571,7 @@ export function initAbilities() {
       .attr(ProtectStatAbAttr)
       .ignorable(),
     new Ability(Abilities.PURE_POWER, 3)
-      .attr(StatStageMultiplierAbAttr, Stat.ATK, 2),
+      .attr(StatMultiplierAbAttr, Stat.ATK, 2),
     new Ability(Abilities.SHELL_ARMOR, 3)
       .attr(BlockCritAbAttr)
       .ignorable(),
@@ -4595,7 +4579,7 @@ export function initAbilities() {
       .attr(SuppressWeatherEffectAbAttr, true)
       .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared."),
     new Ability(Abilities.TANGLED_FEET, 4)
-      .conditionalAttr(pokemon => !!pokemon.getTag(BattlerTagType.CONFUSED), StatStageMultiplierAbAttr, Stat.EVA, 2)
+      .conditionalAttr(pokemon => !!pokemon.getTag(BattlerTagType.CONFUSED), StatMultiplierAbAttr, Stat.EVA, 2)
       .ignorable(),
     new Ability(Abilities.MOTOR_DRIVE, 4)
       .attr(TypeImmunityStatStageChangeAbAttr, Type.ELECTRIC, Stat.SPD, 1)
@@ -4606,7 +4590,7 @@ export function initAbilities() {
     new Ability(Abilities.STEADFAST, 4)
       .attr(FlinchStatStageChangeAbAttr, [ Stat.SPD ], 1),
     new Ability(Abilities.SNOW_CLOAK, 4)
-      .attr(StatStageMultiplierAbAttr, Stat.EVA, 1.2)
+      .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
       .attr(BlockWeatherDamageAttr, WeatherType.HAIL)
       .condition(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW))
       .ignorable(),
@@ -4645,11 +4629,11 @@ export function initAbilities() {
       .condition(getWeatherCondition(WeatherType.RAIN, WeatherType.HEAVY_RAIN)),
     new Ability(Abilities.SOLAR_POWER, 4)
       .attr(PostWeatherLapseDamageAbAttr, 2, WeatherType.SUNNY, WeatherType.HARSH_SUN)
-      .attr(StatStageMultiplierAbAttr, Stat.SPATK, 1.5)
+      .attr(StatMultiplierAbAttr, Stat.SPATK, 1.5)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(Abilities.QUICK_FEET, 4)
-      .conditionalAttr(pokemon => pokemon.status ? pokemon.status.effect === StatusEffect.PARALYSIS : false, StatStageMultiplierAbAttr, Stat.SPD, 2)
-      .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(Abilities.COMATOSE), StatStageMultiplierAbAttr, Stat.SPD, 1.5),
+      .conditionalAttr(pokemon => pokemon.status ? pokemon.status.effect === StatusEffect.PARALYSIS : false, StatMultiplierAbAttr, Stat.SPD, 2)
+      .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(Abilities.COMATOSE), StatMultiplierAbAttr, Stat.SPD, 1.5),
     new Ability(Abilities.NORMALIZE, 4)
       .attr(MoveTypeChangeAttr, Type.NORMAL, 1.2, (user, target, move) => {
         return ![Moves.HIDDEN_POWER, Moves.WEATHER_BALL, Moves.NATURAL_GIFT, Moves.JUDGMENT, Moves.TECHNO_BLAST].includes(move.id);
@@ -4728,8 +4712,8 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.FLOWER_GIFT, 4)
-      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), StatStageMultiplierAbAttr, Stat.ATK, 1.5)
-      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), StatStageMultiplierAbAttr, Stat.SPDEF, 1.5)
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.ATK, 1.5)
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.SPDEF, 1.5)
       .attr(UncopiableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .ignorable()
@@ -4751,8 +4735,8 @@ export function initAbilities() {
     new Ability(Abilities.DEFIANT, 5)
       .attr(PostStatStageChangeStatStageChangeAbAttr, (target, statsChanged, stages) => stages < 0, [Stat.ATK], 2),
     new Ability(Abilities.DEFEATIST, 5)
-      .attr(StatStageMultiplierAbAttr, Stat.ATK, 0.5)
-      .attr(StatStageMultiplierAbAttr, Stat.SPATK, 0.5)
+      .attr(StatMultiplierAbAttr, Stat.ATK, 0.5)
+      .attr(StatMultiplierAbAttr, Stat.SPATK, 0.5)
       .condition((pokemon) => pokemon.getHpRatio() <= 0.5),
     new Ability(Abilities.CURSED_BODY, 5)
       .attr(PostDefendMoveDisableAbAttr, 30)
@@ -4803,7 +4787,7 @@ export function initAbilities() {
       .attr(ProtectStatAbAttr, Stat.DEF)
       .ignorable(),
     new Ability(Abilities.SAND_RUSH, 5)
-      .attr(StatStageMultiplierAbAttr, Stat.SPD, 2)
+      .attr(StatMultiplierAbAttr, Stat.SPD, 2)
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM)),
     new Ability(Abilities.WONDER_SKIN, 5)
@@ -4859,7 +4843,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .bypassFaint(),
     new Ability(Abilities.VICTORY_STAR, 5)
-      .attr(StatStageMultiplierAbAttr, Stat.ACC, 1.1)
+      .attr(StatMultiplierAbAttr, Stat.ACC, 1.1)
       .partial(),
     new Ability(Abilities.TURBOBLAZE, 5)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonTurboblaze", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
@@ -4908,7 +4892,7 @@ export function initAbilities() {
     new Ability(Abilities.MEGA_LAUNCHER, 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5),
     new Ability(Abilities.GRASS_PELT, 6)
-      .conditionalAttr(getTerrainCondition(TerrainType.GRASSY), StatStageMultiplierAbAttr, Stat.DEF, 1.5)
+      .conditionalAttr(getTerrainCondition(TerrainType.GRASSY), StatMultiplierAbAttr, Stat.DEF, 1.5)
       .ignorable(),
     new Ability(Abilities.SYMBIOSIS, 6)
       .unimplemented(),
@@ -4986,7 +4970,7 @@ export function initAbilities() {
       .attr(PostDefendHpGatedStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [Stat.SPATK], 1)
       .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.SLUSH_RUSH, 7)
-      .attr(StatStageMultiplierAbAttr, Stat.SPD, 2)
+      .attr(StatMultiplierAbAttr, Stat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW)),
     new Ability(Abilities.LONG_REACH, 7)
       .attr(IgnoreContactAbAttr),
@@ -4997,7 +4981,7 @@ export function initAbilities() {
     new Ability(Abilities.GALVANIZE, 7)
       .attr(MoveTypeChangeAttr, Type.ELECTRIC, 1.2, (user, target, move) => move.type === Type.NORMAL),
     new Ability(Abilities.SURGE_SURFER, 7)
-      .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), StatStageMultiplierAbAttr, Stat.SPD, 2),
+      .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), StatMultiplierAbAttr, Stat.SPD, 2),
     new Ability(Abilities.SCHOOLING, 7)
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PostSummonFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
@@ -5320,11 +5304,11 @@ export function initAbilities() {
     new Ability(Abilities.ORICHALCUM_PULSE, 9)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY)
-      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), StatStageMultiplierAbAttr, Stat.ATK, 4 / 3),
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.ATK, 4 / 3),
     new Ability(Abilities.HADRON_ENGINE, 9)
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC)
-      .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), StatStageMultiplierAbAttr, Stat.SPATK, 4 / 3),
+      .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), StatMultiplierAbAttr, Stat.SPATK, 4 / 3),
     new Ability(Abilities.OPPORTUNIST, 9)
       .attr(StatStageChangeCopyAbAttr),
     new Ability(Abilities.CUD_CHEW, 9)
@@ -5352,7 +5336,7 @@ export function initAbilities() {
     new Ability(Abilities.MINDS_EYE, 9)
       .attr(IgnoreTypeImmunityAbAttr, Type.GHOST, [Type.NORMAL, Type.FIGHTING])
       .attr(ProtectStatAbAttr, Stat.ACC)
-      .attr(IgnoreOpponentEvasionAbAttr)
+      .attr(IgnoreOpponentStatStagesAbAttr, [ Stat.EVA ])
       .ignorable(),
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.EVA ], -1)

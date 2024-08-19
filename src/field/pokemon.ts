@@ -21,7 +21,7 @@ import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusE
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
-import { Ability, AbAttr, StatStageMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatStageMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, IgnoreOpponentEvasionAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr } from "../data/ability";
+import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -739,28 +739,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getEffectiveStat(stat: EffectiveStat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
-    const statLevel = new Utils.IntegerHolder(this.getStatStage(stat));
-    if (opponent) {
-      if (isCritical) {
-        switch (stat) {
-        case Stat.ATK:
-        case Stat.SPATK:
-          statLevel.value = Math.max(statLevel.value, 0);
-          break;
-        case Stat.DEF:
-        case Stat.SPDEF:
-          statLevel.value = Math.min(statLevel.value, 0);
-          break;
-        }
-      }
-      applyAbAttrs(IgnoreOpponentStatStagesAbAttr, opponent, null, statLevel);
-      if (move) {
-        applyMoveAttrs(IgnoreOpponentStatStagesAttr, this, opponent, move, statLevel);
-      }
-    }
-    if (this.isPlayer()) {
-      this.scene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), stat, statLevel);
-    }
     const statValue = new Utils.NumberHolder(this.getStat(stat, false));
     this.scene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
 
@@ -771,8 +749,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         break;
       }
     }
-    applyStatStageMultiplierAbAttrs(StatStageMultiplierAbAttr, this, stat, statValue);
-    let ret = statValue.value * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
+    applyStatMultiplierAbAttrs(StatMultiplierAbAttr, this, stat, statValue);
+    let ret = statValue.value * this.getStatStageMultiplier(stat, opponent, move, isCritical);
+
     switch (stat) {
     case Stat.ATK:
       if (this.getTag(BattlerTagType.SLOW_START)) {
@@ -1935,6 +1914,45 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Calculates the stat stage multiplier of the user against an opponent.
+   *
+   * Note that this does not apply to evasion or accuracy
+   * @see {@linkcode getAccuracyMultiplier}
+   * @param
+   * @return the stat stage multiplier to be used for effective stat calculation
+   */
+  getStatStageMultiplier(stat: EffectiveStat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): number {
+    const statStage = new Utils.IntegerHolder(this.getStatStage(stat));
+    const ignoreStatStage = new Utils.BooleanHolder(false);
+
+    if (opponent) {
+      if (isCritical) {
+        switch (stat) {
+        case Stat.ATK:
+        case Stat.SPATK:
+          statStage.value = Math.max(statStage.value, 0);
+          break;
+        case Stat.DEF:
+        case Stat.SPDEF:
+          statStage.value = Math.min(statStage.value, 0);
+          break;
+        }
+      }
+      applyAbAttrs(IgnoreOpponentStatStagesAbAttr, opponent, null, stat, ignoreStatStage);
+      if (move) {
+        applyMoveAttrs(IgnoreOpponentStatStagesAttr, this, opponent, move, ignoreStatStage);
+      }
+    }
+
+    if (!ignoreStatStage.value) {
+      const statStageMultiplier = new Utils.NumberHolder(Math.max(2, 2 + statStage.value) / Math.max(2, 2 - statStage.value));
+      this.scene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), stat, statStageMultiplier);
+      return Math.min(statStageMultiplier.value, 4);
+    }
+    return 1;
+  }
+
+  /**
    * Calculates the accuracy multiplier of the user against a target.
    *
    * This method considers various factors such as the user's accuracy level, the target's evasion level,
@@ -1953,11 +1971,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const userAccStage = new Utils.IntegerHolder(this.getStatStage(Stat.ACC));
     const targetEvaStage = new Utils.IntegerHolder(target.getStatStage(Stat.EVA));
 
-    applyAbAttrs(IgnoreOpponentStatStagesAbAttr, target, null, userAccStage);
-    applyAbAttrs(IgnoreOpponentStatStagesAbAttr, this, null, targetEvaStage);
-    applyAbAttrs(IgnoreOpponentEvasionAbAttr, this, null, targetEvaStage);
-    applyMoveAttrs(IgnoreOpponentStatStagesAttr, this, target, sourceMove, targetEvaStage);
+    const ignoreAccStatStage = new Utils.BooleanHolder(false);
+    const ignoreEvaStatStage = new Utils.BooleanHolder(false);
+
+    applyAbAttrs(IgnoreOpponentStatStagesAbAttr, target, null, Stat.ACC, ignoreAccStatStage);
+    applyAbAttrs(IgnoreOpponentStatStagesAbAttr, this, null, Stat.EVA, ignoreEvaStatStage);
+    applyMoveAttrs(IgnoreOpponentStatStagesAttr, this, target, sourceMove, ignoreEvaStatStage);
+
     this.scene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), Stat.ACC, userAccStage);
+
+    userAccStage.value = ignoreAccStatStage.value ? 0 : userAccStage.value;
+    targetEvaStage.value = ignoreEvaStatStage.value ? 0 : targetEvaStage.value;
 
     if (target.findTag(t => t instanceof ExposedTag)) {
       targetEvaStage.value = Math.min(0, targetEvaStage.value);
@@ -1970,14 +1994,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         : 3 / (3 + Math.min(targetEvaStage.value - userAccStage.value, 6));
     }
 
-    applyStatStageMultiplierAbAttrs(StatStageMultiplierAbAttr, this, Stat.ACC, accuracyMultiplier, sourceMove);
+    applyStatMultiplierAbAttrs(StatMultiplierAbAttr, this, Stat.ACC, accuracyMultiplier, sourceMove);
 
     const evasionMultiplier = new Utils.NumberHolder(1);
-    applyStatStageMultiplierAbAttrs(StatStageMultiplierAbAttr, target, Stat.EVA, evasionMultiplier);
+    applyStatMultiplierAbAttrs(StatMultiplierAbAttr, target, Stat.EVA, evasionMultiplier);
 
-    accuracyMultiplier.value /= evasionMultiplier.value;
-
-    return accuracyMultiplier.value;
+    return accuracyMultiplier.value / evasionMultiplier.value;
   }
 
   apply(source: Pokemon, move: Move): HitResult {

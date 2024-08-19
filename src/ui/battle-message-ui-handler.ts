@@ -98,7 +98,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     let levelUpStatsLabelText = "";
 
     for (const s of PERMANENT_STATS) {
-      levelUpStatsLabelText += `${getStatKey(s)}\n`;
+      levelUpStatsLabelText += `${i18next.t(getStatKey(s))}\n`;
     }
     levelUpStatsLabelsContent.text = levelUpStatsLabelText;
     levelUpStatsLabelsContent.x -= levelUpStatsLabelsContent.displayWidth;

@@ -339,7 +339,7 @@ describe("Test Battle Phase", () => {
       .startingLevel(100)
       .moveset([moveToUse])
       .enemyMoveset(SPLASH_ONLY)
-      .startingHeldItems([{ name: "TEMP_STAT_BOOSTER", type: Stat.ACC }]);
+      .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
 
     await game.startBattle();
     game.scene.getPlayerPokemon()!.hp = 1;

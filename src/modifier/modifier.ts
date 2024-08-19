@@ -362,23 +362,28 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
 
 /**
  * Modifier used for party-wide items, specifically the X items, that
- * temporarily increments the stat stage of the corresponding {@linkcode TempBattleStat}.
+ * temporarily increases the stat stage multiplier of the corresponding
+ * {@linkcode TempBattleStat}.
  * @extends LapsingPersistentModifier
  * @see {@linkcode apply}
  */
 export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
   private stat: TempBattleStat;
+  private multiplierBoost: number;
 
-  constructor(type: ModifierType, stat: TempBattleStat, battlesLeft?: integer, stackCount?: number) {
-    super(type, battlesLeft || 5, stackCount);
+  constructor(type: ModifierType, stat: TempBattleStat, battlesLeft?: number, stackCount?: number) {
+    super(type, battlesLeft ?? 5, stackCount);
 
     this.stat = stat;
+    // Note that, because we want X Accuracy to maintain its original behavior,
+    // it will increment as it did previously, directly to the stat stage.
+    this.multiplierBoost = stat !== Stat.ACC ? 0.3 : 1;
   }
 
   match(modifier: Modifier): boolean {
     if (modifier instanceof TempStatStageBoosterModifier) {
       const modifierInstance = modifier as TempStatStageBoosterModifier;
-      return (modifierInstance.stat === this.stat) && (modifierInstance.battlesLeft === this.battlesLeft);
+      return (modifierInstance.stat === this.stat);
     }
     return false;
   }
@@ -395,20 +400,51 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
    * Checks if {@linkcode args} contains the necessary elements and if the
    * incoming stat is matches {@linkcode stat}.
    * @param args [0] {@linkcode TempBattleStat} being checked at the time
-   *             [1] {@linkcode Utils.IntegerHolder} N/A
+   *             [1] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the modifier can be applied, false otherwise
    */
   shouldApply(args: any[]): boolean {
-    return args && (args.length === 2) && TEMP_BATTLE_STATS.includes(args[0]) && (args[0] === this.stat) && (args[1] instanceof Utils.IntegerHolder);
+    return args && (args.length === 2) && TEMP_BATTLE_STATS.includes(args[0]) && (args[0] === this.stat) && (args[1] instanceof Utils.NumberHolder);
   }
 
   /**
-   * Increments the incoming stat stage matching {@linkcode stat}.
+   * Increases the incoming stat stage matching {@linkcode stat} by {@linkcode multiplierBoost}.
    * @param args [0] {@linkcode TempBattleStat} N/A
-   *             [1] {@linkcode Utils.IntegerHolder} that holds the resulting value of the stat stage
+   *             [1] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat stage multiplier
    */
   apply(args: any[]): boolean {
-    (args[1] as Utils.IntegerHolder).value++;
+    (args[1] as Utils.NumberHolder).value += this.multiplierBoost;
     return true;
+  }
+
+  /**
+   * Goes through existing modifiers for any that match the selected modifier,
+   * which will then either add it to the existing modifiers if none were found
+   * or, if one was found, it will refresh {@linkcode battlesLeft}.
+   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
+   * @param _virtual N/A
+   * @param _scene N/A
+   * @returns true if the modifier was successfully added or applied, false otherwise
+   */
+  add(modifiers: PersistentModifier[], _virtual: boolean, _scene: BattleScene): boolean {
+    for (const modifier of modifiers) {
+      if (this.match(modifier)) {
+        const modifierInstance = modifier as TempStatStageBoosterModifier;
+        if (modifierInstance.getBattlesLeft() < 5) {
+          modifierInstance.battlesLeft = 5;
+          return true;
+        }
+        // should never get here
+        return false;
+      }
+    }
+
+    modifiers.push(this);
+    return true;
+  }
+
+  getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
+    return 1;
   }
 }
 
@@ -427,10 +463,15 @@ export class TempCritBoosterModifier extends LapsingPersistentModifier {
     return new TempCritBoosterModifier(this.type, this.stackCount);
   }
 
-  matchType(modifier: Modifier): boolean {
+  match(modifier: Modifier): boolean {
     return (modifier instanceof TempCritBoosterModifier);
   }
 
+  /**
+   * Checks if {@linkcode args} contains the necessary elements.
+   * @param args [1] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the critical-hit stage boost applies successfully
+   */
   shouldApply(args: any[]): boolean {
     return args && (args.length === 1) && (args[0] instanceof Utils.NumberHolder);
   }
@@ -443,6 +484,36 @@ export class TempCritBoosterModifier extends LapsingPersistentModifier {
   apply(args: any[]): boolean {
     (args[0] as Utils.NumberHolder).value++;
     return true;
+  }
+
+  /**
+   * Goes through existing modifiers for any that match the selected modifier,
+   * which will then either add it to the existing modifiers if none were found
+   * or, if one was found, it will refresh {@linkcode battlesLeft}.
+   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
+   * @param _virtual N/A
+   * @param _scene N/A
+   * @returns true if the modifier was successfully added or applied, false otherwise
+   */
+  add(modifiers: PersistentModifier[], _virtual: boolean, _scene: BattleScene): boolean {
+    for (const modifier of modifiers) {
+      if (this.match(modifier)) {
+        const modifierInstance = modifier as TempCritBoosterModifier;
+        if (modifierInstance.getBattlesLeft() < 5) {
+          modifierInstance.battlesLeft = 5;
+          return true;
+        }
+        // should never get here
+        return false;
+      }
+    }
+
+    modifiers.push(this);
+    return true;
+  }
+
+  getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
+    return 1;
   }
 }
 
