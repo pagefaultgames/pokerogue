@@ -1,7 +1,6 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { StockpilingTag } from "#app/data/battler-tags.js";
 import { MoveResult, TurnMove } from "#app/field/pokemon.js";
-import { CommandPhase, TurnInitPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -10,6 +9,8 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 describe("Moves - Stockpile", () => {
   describe("integration tests", () => {

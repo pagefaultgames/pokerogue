@@ -554,6 +554,14 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
 }
 
 /**
+ * Returns if an object is null or undefined
+ * @param object
+ */
+export function isNullOrUndefined(object: any): boolean {
+  return null === object || undefined === object;
+}
+
+/**
  * Helper method to localize a sprite key (e.g. for types)
  * @param baseKey the base key of the sprite (e.g. `type`)
  * @returns the localized sprite key
