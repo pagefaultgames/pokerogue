@@ -11,6 +11,7 @@ import { BattleStat } from "#app/data/battle-stat";
 import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
 import i18next from "i18next";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed.js";
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private baseY: number;
@@ -630,12 +631,13 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       };
 
       if (this.player) {
-        const isLevelCapped = pokemon.level >= (this.scene as BattleScene).getMaxExpLevel();
+        const scene = this.scene as BattleScene;
+        const isLevelCapped = pokemon.level >= scene.getMaxExpLevel();
 
         if ((this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level)) {
           const originalResolve = resolve;
           const durationMultipler = Math.max(Phaser.Tweens.Builders.GetEaseFunction("Cubic.easeIn")(1 - (Math.min(pokemon.level - this.lastLevel, 10) / 10)), 0.1);
-          resolve = () => this.updatePokemonExp(pokemon, false, durationMultipler).then(() => originalResolve());
+          resolve = () => this.updatePokemonExp(pokemon, scene.expGainsSpeed === ExpGainsSpeed.SKIP, durationMultipler).then(() => originalResolve());
         } else if (isLevelCapped !== this.lastLevelCapped) {
           this.setLevel(pokemon.level);
         }
