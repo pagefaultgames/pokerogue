@@ -1,14 +1,14 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import { MoveEffectPhase } from "#app/phases";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import { Abilities } from "#enums/abilities";
-import { allMoves } from "#app/data/move.js";
 import { allAbilities } from "#app/data/ability.js";
+import { allMoves } from "#app/data/move.js";
+import { MoveEffectPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Wonder Skin", () => {
   let phaserGame: Phaser.Game;
@@ -26,12 +26,12 @@ describe("Abilities - Wonder Skin", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.CHARM]);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHUCKLE);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.WONDER_SKIN);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.battleType("single");
+    game.override.moveset([Moves.TACKLE, Moves.CHARM]);
+    game.override.ability(Abilities.BALL_FETCH);
+    game.override.enemySpecies(Species.SHUCKLE);
+    game.override.enemyAbility(Abilities.WONDER_SKIN);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
   it("lowers accuracy of status moves to 50%", async () => {
@@ -64,7 +64,7 @@ describe("Abilities - Wonder Skin", () => {
     it(`does not affect pokemon with ${allAbilities[ability].name}`, async () => {
       const moveToCheck = allMoves[Moves.CHARM];
 
-      vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
+      game.override.ability(ability);
       vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
       await game.startBattle([Species.PIKACHU]);

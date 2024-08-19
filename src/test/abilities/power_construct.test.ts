@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { Status, StatusEffect } from "#app/data/status-effect.js";
+import { QuietFormChangePhase } from "#app/form-change-phase.js";
+import { TurnEndPhase } from "#app/phases.js";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import Overrides from "#app/overrides";
-import { Moves } from "#enums/moves";
-import { Abilities } from "#enums/abilities";
-import { Species } from "#enums/species";
-import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { TurnEndPhase } from "#app/phases.js";
-import { QuietFormChangePhase } from "#app/form-change-phase.js";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -28,10 +27,10 @@ describe("Abilities - POWER CONSTRUCT", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.POWER_CONSTRUCT);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.battleType("single");
+    game.override.ability(Abilities.POWER_CONSTRUCT);
+    game.override.moveset([moveToUse]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
   test(
@@ -39,8 +38,8 @@ describe("Abilities - POWER CONSTRUCT", () => {
     async () => {
       const baseForm = 2,
         completeForm = 4;
-      vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(4);
-      vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
+      game.override.startingWave(4);
+      game.override.starterForms({
         [Species.ZYGARDE]: completeForm,
       });
 
@@ -48,11 +47,11 @@ describe("Abilities - POWER CONSTRUCT", () => {
 
       const zygarde = game.scene.getParty().find((p) => p.species.speciesId === Species.ZYGARDE);
       expect(zygarde).not.toBe(undefined);
-      expect(zygarde.formIndex).toBe(completeForm);
+      expect(zygarde!.formIndex).toBe(completeForm);
 
-      zygarde.hp = 0;
-      zygarde.status = new Status(StatusEffect.FAINT);
-      expect(zygarde.isFainted()).toBe(true);
+      zygarde!.hp = 0;
+      zygarde!.status = new Status(StatusEffect.FAINT);
+      expect(zygarde!.isFainted()).toBe(true);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.doKillOpponents();
@@ -60,7 +59,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
       game.doSelectModifier();
       await game.phaseInterceptor.to(QuietFormChangePhase);
 
-      expect(zygarde.formIndex).toBe(baseForm);
+      expect(zygarde!.formIndex).toBe(baseForm);
     },
     TIMEOUT
   );

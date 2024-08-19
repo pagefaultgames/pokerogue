@@ -4,7 +4,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "blockRecoilDamage" : "{{abilityName}}\nde {{pokemonName}} le protège du contrecoup !",
   "badDreams": "{{pokemonName}} a le sommeil agité !",
   "costar": "{{pokemonName}} copie les changements de stats\nde {{allyName}} !",
-  "iceFaceAvoidedDamage": "{{pokemonName}} évite les dégâts\navec {{abilityName}} !",
+  "iceFaceAvoidedDamage": "{{pokemonNameWithAffix}} évite les dégâts\navec {{abilityName}} !",
   "perishBody": "{{abilityName}} de {{pokemonName}}\nmettra les deux Pokémon K.O. dans trois tours !",
   "poisonHeal": "{{abilityName}} de {{pokemonName}}\nrestaure un peu ses PV !",
   "trace": "{{pokemonName}} copie le talent {{abilityName}}\nde {{targetName}} !",
@@ -13,7 +13,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "blockItemTheft": "{{abilityName}} de {{pokemonNameWithAffix}}\nempêche son objet d’être volé !",
   "typeImmunityHeal": "{{abilityName}} de {{pokemonNameWithAffix}}\nrestaure un peu ses PV !",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}} évite\nles dégâts avec {{abilityName}} !",
-  "postDefendDisguise": "Le déguisement de {{pokemonNameWithAffix}}\ntombe !",
+  "disguiseAvoidedDamage": "Le déguisement de {{pokemonNameWithAffix}}\ntombe !",
   "moveImmunity": "Ça n'affecte pas {{pokemonNameWithAffix}}…",
   "reverseDrain": "{{pokemonNameWithAffix}} aspire\nle suintement !",
   "postDefendTypeChange": "{{abilityName}} de {{pokemonNameWithAffix}}\nle transforme en type {{typeName}} !",
@@ -59,4 +59,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postSummonSwordOfRuin": "L’Épée du Fléau de {{pokemonNameWithAffix}}\naffaiblit la {{statName}} des Pokémon alentour !",
   "postSummonTabletsOfRuin": "Le Bois du Fléau de {{pokemonNameWithAffix}}\naffaiblit l’{{statName}} des Pokémon alentour !",
   "postSummonBeadsOfRuin": "Les Perles du Fléau de {{pokemonNameWithAffix}}\naffaiblissent la {{statName}} des Pokémon alentour !",
+  "preventBerryUse": "{{pokemonNameWithAffix}} est tendu\net ne peut plus manger de Baies !",
 } as const;

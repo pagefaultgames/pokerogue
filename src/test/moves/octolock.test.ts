@@ -1,14 +1,14 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import { BattleStat } from "#app/data/battle-stat";
+import { TrappedTag } from "#app/data/battler-tags.js";
 import { CommandPhase, MoveEndPhase, TurnInitPhase } from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
-import {BattleStat} from "#app/data/battle-stat";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { TrappedTag } from "#app/data/battler-tags.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Octolock", () => {
   describe("integration tests", () => {
@@ -28,15 +28,15 @@ describe("Moves - Octolock", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
 
-      vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+      game.override.battleType("single");
 
-      vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-      vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+      game.override.enemySpecies(Species.RATTATA);
+      game.override.enemyMoveset(SPLASH_ONLY);
+      game.override.enemyAbility(Abilities.BALL_FETCH);
 
-      vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.OCTOLOCK, Moves.SPLASH]);
-      vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
+      game.override.startingLevel(2000);
+      game.override.moveset([Moves.OCTOLOCK, Moves.SPLASH]);
+      game.override.ability(Abilities.BALL_FETCH);
     });
 
     it("Reduces DEf and SPDEF by 1 each turn", { timeout: 10000 }, async () => {

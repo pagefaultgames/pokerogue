@@ -2,7 +2,7 @@ import Pokemon from "../field/pokemon";
 import Move from "./move";
 import { Type } from "./type";
 import * as Utils from "../utils";
-import { IncrementMovePriorityAbAttr, applyAbAttrs } from "./ability";
+import { ChangeMovePriorityAbAttr, applyAbAttrs } from "./ability";
 import { ProtectAttr } from "./move";
 import { BattlerIndex } from "#app/battle.js";
 import i18next from "i18next";
@@ -59,9 +59,9 @@ export class Terrain {
     case TerrainType.PSYCHIC:
       if (!move.hasAttr(ProtectAttr)) {
         const priority = new Utils.IntegerHolder(move.priority);
-        applyAbAttrs(IncrementMovePriorityAbAttr, user, null, move, priority);
+        applyAbAttrs(ChangeMovePriorityAbAttr, user, null, move, priority);
         // Cancels move if the move has positive priority and targets a Pokemon grounded on the Psychic Terrain
-        return priority.value > 0 && user.getOpponents().filter(o => targets.includes(o.getBattlerIndex()) && o.isGrounded()).length > 0;
+        return priority.value > 0 && user.getOpponents().some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded());
       }
     }
 

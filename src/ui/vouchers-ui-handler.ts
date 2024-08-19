@@ -22,9 +22,9 @@ export default class VouchersUiHandler extends MessageUiHandler {
   private itemsTotal: integer;
   private scrollCursor: integer;
 
-  private cursorObj: Phaser.GameObjects.NineSlice;
+  private cursorObj: Phaser.GameObjects.NineSlice | null;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
     this.itemsTotal = Object.keys(vouchers).length;
@@ -192,7 +192,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
     let updateVoucher = ret;
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight", null, 16, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight", undefined, 16, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.voucherIconsContainer.add(this.cursorObj);
       updateVoucher = true;
