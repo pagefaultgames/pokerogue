@@ -1,5 +1,5 @@
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";

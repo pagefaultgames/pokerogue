@@ -5,10 +5,10 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase } from "#app/phases.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { allMoves } from "#app/data/move.js";
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag.js";
+import { BerryPhase } from "#app/phases/berry-phase.js";
 
 const TIMEOUT = 20 * 1000;
 

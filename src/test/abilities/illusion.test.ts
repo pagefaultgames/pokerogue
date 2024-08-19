@@ -7,7 +7,7 @@ import { Gender } from "../../data/gender";
 import { PokeballType } from "../../data/pokeball";
 import {
   TurnEndPhase,
-} from "#app/phases";
+} from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
