@@ -25,11 +25,11 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { MovePhase } from "#app/phases/move-phase.js";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
-import { StatChangePhase } from "#app/phases/stat-change-phase.js";
-import BattleScene from "#app/battle-scene.js";
+import { MovePhase } from "#app/phases/move-phase";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { StatChangePhase } from "#app/phases/stat-change-phase";
+import BattleScene from "#app/battle-scene";
 
 export class Ability implements Localizable {
   public id: Abilities;

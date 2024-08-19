@@ -1,5 +1,4 @@
 import { Abilities } from "#app/enums/abilities.js";
-import { DamagePhase, MovePhase, PostSummonPhase, TurnEndPhase, VictoryPhase } from "#app/phases.js";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -7,10 +6,15 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { WeatherType } from "#app/enums/weather-type.js";
-import { BattlerIndex } from "#app/battle.js";
-import { QuietFormChangePhase } from "#app/form-change-phase.js";
-import { allAbilities } from "#app/data/ability.js";
+import { WeatherType } from "#app/enums/weather-type";
+import { BattlerIndex } from "#app/battle";
+import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { MovePhase } from "#app/phases/move-phase";
+import { PostSummonPhase } from "#app/phases/post-summon-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { VictoryPhase } from "#app/phases/victory-phase";
+import { allAbilities } from "#app/data/ability";
 
 describe("Abilities - Forecast", () => {
   let phaserGame: Phaser.Game;
