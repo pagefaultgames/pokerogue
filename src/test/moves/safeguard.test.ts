@@ -1,14 +1,16 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
+import { BattlerIndex } from "#app/battle.js";
+import { allAbilities, PostDefendContactApplyStatusEffectAbAttr } from "#app/data/ability.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { StatusEffect } from "#app/enums/status-effect.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import GameManager from "#app/test/utils/gameManager";
-import { CommandPhase, SelectTargetPhase, TurnEndPhase } from "#app/phases";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { BattlerIndex } from "#app/battle.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { allAbilities, PostDefendContactApplyStatusEffectAbAttr } from "#app/data/ability.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
