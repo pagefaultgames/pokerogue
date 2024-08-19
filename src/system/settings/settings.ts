@@ -79,6 +79,67 @@ export interface Setting {
   isHidden?: () => boolean
 }
 
+type LanguageType = {
+  key:string|`${string}-${string}`;
+  label:string;
+  handler?:()=>{};
+  value?:string;
+};
+
+const languages: Array<LanguageType> = [
+  {
+    key:"en",
+    label: "English",
+  },
+  {
+    key:"es",
+    label: "Español",
+  },
+  {
+    key:"it",
+    label: "Italiano",
+  },
+  {
+    key:"fr",
+    label: "Français",
+  },
+  {
+    key:"de",
+    label: "Deutsch",
+  },
+  {
+    key:"pt-BR",
+    label: "Português (BR)",
+  },
+  {
+    key:"zh-CN",
+    label: "简体中文",
+  },
+  {
+    key:"zh-TW",
+    label: "繁體中文",
+  },
+  {
+    key:"ko",
+    label: "한국어",
+  },
+  {
+    key:"ko-KR",
+    label: "한국어",
+  },
+  {
+    key:"ja",
+    label: "日本語",
+  },
+  // {
+  //   key:"ca-ES",
+  //   label: "Català",
+  // },
+];
+
+// default is English
+const currentLanguage = languages.find((locale) => i18next.resolvedLanguage! === locale.key)?.label ?? "English";
+
 /**
  * Setting Keys for existing settings
  * to be used when trying to find or update Settings
@@ -296,9 +357,12 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Language,
     label: i18next.t("settings:language"),
     options: [
+      /**
+     * Update to current language or return default value.
+     */
       {
-        value: "English",
-        label: "English"
+        value: currentLanguage,
+        label: currentLanguage
       },
       {
         value: "Change",
@@ -764,56 +828,17 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
           }
         };
         scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
-          options: [
-            {
-              label: "English",
-              handler: () => changeLocaleHandler("en")
-            },
-            {
-              label: "Español",
-              handler: () => changeLocaleHandler("es")
-            },
-            {
-              label: "Italiano",
-              handler: () => changeLocaleHandler("it")
-            },
-            {
-              label: "Français",
-              handler: () => changeLocaleHandler("fr")
-            },
-            {
-              label: "Deutsch",
-              handler: () => changeLocaleHandler("de")
-            },
-            {
-              label: "Português (BR)",
-              handler: () => changeLocaleHandler("pt-BR")
-            },
-            {
-              label: "简体中文",
-              handler: () => changeLocaleHandler("zh-CN")
-            },
-            {
-              label: "繁體中文",
-              handler: () => changeLocaleHandler("zh-TW")
-            },
-            {
-              label: "한국어",
-              handler: () => changeLocaleHandler("ko")
-            },
-            {
-              label: "日本語",
-              handler: () => changeLocaleHandler("ja")
-            },
-            // {
-            //   label: "Català",
-            //   handler: () => changeLocaleHandler("ca-ES")
-            // },
-            {
-              label: i18next.t("settings:back"),
-              handler: () => cancelHandler()
+          options: [...languages.filter((locale,i,a) => {
+            // Remove language active and sames labels
+            if (currentLanguage !== locale.label && a.findIndex((t) => t.label === locale.label) === i) {
+              locale.handler = () => changeLocaleHandler(locale.key);
+              return locale;
             }
-          ],
+          }),
+          {
+            label: i18next.t("settings:back"),
+            handler: () => cancelHandler(),
+          }],
           maxOptions: 7
         });
         return false;
