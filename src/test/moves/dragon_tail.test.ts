@@ -1,6 +1,5 @@
 import { allMoves } from "#app/data/move.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { BattleEndPhase, BerryPhase, TurnEndPhase} from "#app/phases.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -9,6 +8,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 import GameManager from "../utils/gameManager";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { BattlerIndex } from "#app/battle.js";
+import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
