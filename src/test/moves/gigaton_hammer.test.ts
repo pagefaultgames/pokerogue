@@ -1,3 +1,4 @@
+import { BattlerIndex } from "#app/battle.js";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -5,8 +6,6 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { BattlerIndex } from "#app/battle.js";
-
 
 describe("Moves - Gigaton Hammer", () => {
   let phaserGame: Phaser.Game;

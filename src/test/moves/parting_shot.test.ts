@@ -1,5 +1,4 @@
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { BerryPhase,  MessagePhase, TurnInitPhase, FaintPhase } from "#app/phases";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -8,6 +7,10 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, it } from "vi
 import GameManager from "../utils/gameManager";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { BattleStat } from "#app/data/battle-stat";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { FaintPhase } from "#app/phases/faint-phase.js";
+import { MessagePhase } from "#app/phases/message-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 const TIMEOUT = 20 * 1000;
 

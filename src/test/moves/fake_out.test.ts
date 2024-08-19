@@ -6,7 +6,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
-
 describe("Moves - Fake Out", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
