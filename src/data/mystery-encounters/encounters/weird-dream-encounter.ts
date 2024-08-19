@@ -61,17 +61,20 @@ const excludedPokemon = [
   Species.IRON_BOULDER,
   Species.IRON_CROWN,
   /** These are banned so they don't appear in the < 570 BST pool */
+  Species.COSMOG,
+  Species.MELTAN,
+  Species.KUBFU,
+  Species.COSMOEM,
+  Species.POIPOLE,
+  Species.TERAPAGOS,
+  Species.TYPE_NULL,
+  Species.CALYREX,
+  Species.NAGANADEL,
   Species.URSHIFU,
-  Species.CUBCHOO,
+  Species.OGERPON,
   Species.OKIDOGI,
   Species.MUNKIDORI,
   Species.FEZANDIPITI,
-  Species.OGERPON,
-  Species.CALYREX,
-  Species.TYPE_NULL,
-  Species.TERAPAGOS,
-  Species.COSMOG,
-  Species.COSMOEM,
 ];
 
 /**
@@ -370,7 +373,7 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
     }
 
     // Any pokemon that is at or below 450 BST gets +20 permanent BST to 3 stats:  HP, lowest of Atk/SpAtk, and lowest of Def/SpDef
-    if (newPokemon.getSpeciesForm().getBaseStatTotal() <= 600) {
+    if (newPokemon.getSpeciesForm().getBaseStatTotal() <= 450) {
       const stats: Stat[] = [Stat.HP];
       const baseStats = newPokemon.getSpeciesForm().baseStats.slice(0);
       // Attack or SpAtk
