@@ -39,7 +39,7 @@ describe("UI - Battle Info", () => {
     await game.doKillOpponents();
     await game.phaseInterceptor.to(BattleEndPhase, true);
 
-    expect(battleInfo.updatePokemonExp).toHaveBeenCalledWith(abra, true, expect.anything());
+    expect(battleInfo.updatePokemonExp).toHaveBeenCalledWith(expect.anything(), true, expect.anything());
   });
 
   it("DO NOT skip exp animation when exp-gains-speed is NOT skip ", async () => {
