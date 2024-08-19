@@ -5847,6 +5847,41 @@ export class TransformAttr extends MoveEffectAttr {
 }
 
 /**
+ * Attribute used for status moves, namely Speed Swap,
+ * that swaps the user's and target's corresponding stats.
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ */
+export class SwapStatAttr extends MoveEffectAttr {
+  /** The stat to be swapped between the user and the target */
+  private stat: EffectiveStat;
+
+  constructor(stat: EffectiveStat) {
+    super();
+
+    this.stat = stat;
+  }
+
+  /**
+   * Takes the average of the user's and target's corresponding current
+   * {@linkcode stat} values and sets that stat to the average for both
+   * temporarily.
+   * @param user the {@linkcode Pokemon} that used the move
+   * @param target the {@linkcode Pokemon} that the move was used on
+   * @param _move N/A
+   * @param _args N/A
+   * @returns true if attribute application succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    const temp = user.getStat(this.stat, false);
+    user.setStat(this.stat, target.getStat(this.stat, false), false);
+    target.setStat(this.stat, temp, false);
+
+    return true;
+  }
+}
+
+/**
  * Attribute used for status moves, namely Power Split and Guard Split,
  * that take the average of a user's and target's corresponding
  * stats and assign that average back to that stat.
@@ -8163,7 +8198,7 @@ export function initMoves() {
         user.scene.queueMessage(i18next.t("moveTriggers:burnedItselfOut", {pokemonName: getPokemonNameWithAffix(user)}));
       }),
     new StatusMove(Moves.SPEED_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 7)
-      .unimplemented(),
+      .attr(SwapStatAttr, Stat.SPD),
     new AttackMove(Moves.SMART_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 70, -1, 10, -1, 0, 7),
     new StatusMove(Moves.PURIFY, Type.POISON, -1, 20, -1, 0, 7)
       .condition(

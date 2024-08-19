@@ -1,7 +1,6 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
@@ -34,8 +33,8 @@ describe("Moves - Power Split", () => {
     game.override.ability(Abilities.NONE);
   });
 
-  it("should average the user's Attack and Special Attack stats with those of the target", async () => {
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(SPLASH_ONLY);
+  it("should average the user's ATK and SPATK stats with those of the target", async () => {
+    game.override.enemyMoveset(SPLASH_ONLY);
     await game.startBattle([
       Species.INDEEDEE
     ]);
@@ -57,7 +56,7 @@ describe("Moves - Power Split", () => {
   }, 20000);
 
   it("should be idempotent", async () => {
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.POWER_SPLIT, Moves.POWER_SPLIT, Moves.POWER_SPLIT, Moves.POWER_SPLIT ]);
+    game.override.enemyMoveset(new Array(4).fill(Moves.POWER_SPLIT));
     await game.startBattle([
       Species.INDEEDEE
     ]);
