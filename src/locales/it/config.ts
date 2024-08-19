@@ -60,6 +60,7 @@ export const itConfig = {
   arenaFlyout: arenaFlyout,
   arenaTag: arenaTag,
   battle: battle,
+  battleScene: battleScene,
   battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
   battlePokemonForm: battlePokemonForm,
