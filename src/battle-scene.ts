@@ -1067,10 +1067,6 @@ export default class BattleScene extends SceneBase {
         newBattleType = battleType;
       }
 
-      if (waveIndex === 64) {
-        newBattleType = BattleType.TRAINER;
-      }
-
       if (newBattleType === BattleType.TRAINER) {
         const trainerType = this.arena.randomTrainerType(newWaveIndex);
         let doubleTrainer = false;
