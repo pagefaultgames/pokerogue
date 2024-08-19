@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import UI from "./ui/ui";
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase, SummonPhase, ToggleDoublePositionPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import { Constructor } from "#app/utils";
@@ -38,7 +37,7 @@ import { addUiThemeOverrides } from "./ui/ui-theme";
 import PokemonData from "./system/pokemon-data";
 import { Nature } from "./data/nature";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges, FormChangeItem, SpeciesFormChange } from "./data/pokemon-forms";
-import { FormChangePhase, QuietFormChangePhase } from "./form-change-phase";
+import { FormChangePhase } from "./phases/form-change-phase";
 import { getTypeRgb } from "./data/type";
 import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler";
 import CharSprite from "./ui/char-sprite";
@@ -69,6 +68,21 @@ import i18next from "i18next";
 import {TrainerType} from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
 import { LoadingScene } from "./loading-scene";
+import { LevelCapPhase } from "./phases/level-cap-phase";
+import { LoginPhase } from "./phases/login-phase";
+import { MessagePhase } from "./phases/message-phase";
+import { MovePhase } from "./phases/move-phase";
+import { NewBiomeEncounterPhase } from "./phases/new-biome-encounter-phase";
+import { NextEncounterPhase } from "./phases/next-encounter-phase";
+import { QuietFormChangePhase } from "./phases/quiet-form-change-phase";
+import { ReturnPhase } from "./phases/return-phase";
+import { SelectBiomePhase } from "./phases/select-biome-phase";
+import { ShowTrainerPhase } from "./phases/show-trainer-phase";
+import { SummonPhase } from "./phases/summon-phase";
+import { SwitchPhase } from "./phases/switch-phase";
+import { TitlePhase } from "./phases/title-phase";
+import { ToggleDoublePositionPhase } from "./phases/toggle-double-position-phase";
+import { TurnInitPhase } from "./phases/turn-init-phase";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -2421,7 +2435,6 @@ export default class BattleScene extends SceneBase {
         getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance)
           .map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
       });
-
       this.updateModifiers(false).then(() => resolve());
     });
   }
