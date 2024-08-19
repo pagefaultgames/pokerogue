@@ -1,7 +1,5 @@
 import { Stat } from "#app/data/pokemon-stat";
 import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { QuietFormChangePhase } from "#app/form-change-phase";
-import { CommandPhase, DamagePhase, EnemyCommandPhase, MessagePhase, PostSummonPhase, SwitchPhase, SwitchSummonPhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
@@ -12,6 +10,17 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { BattlerIndex } from "#app/battle.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { MessagePhase } from "#app/phases/message-phase.js";
+import { PostSummonPhase } from "#app/phases/post-summon-phase.js";
+import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase.js";
+import { SwitchPhase } from "#app/phases/switch-phase.js";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 
 const TIMEOUT = 20 * 1000;
 

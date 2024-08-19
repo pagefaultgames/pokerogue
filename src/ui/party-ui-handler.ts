@@ -1,4 +1,3 @@
-import { CommandPhase, SelectModifierPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import Pokemon, { MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
@@ -23,6 +22,8 @@ import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase.js";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
@@ -382,7 +383,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             this.clearOptions();
           } else {
             this.clearOptions();
-            this.showText(filterResult as string, undefined, () => this.showText(null, 0), undefined, true);
+            this.showText(filterResult as string, undefined, () => this.showText("", 0), undefined, true);
           }
           ui.playSelect();
           return true;
@@ -449,7 +450,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             return true;
           } else {
             this.clearOptions();
-            this.showText(filterResult as string, undefined, () => this.showText(null, 0), undefined, true);
+            this.showText(filterResult as string, undefined, () => this.showText("", 0), undefined, true);
           }
         } else if (option === PartyOption.SUMMARY) {
           ui.playSelect();
@@ -459,7 +460,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.clearOptions();
           ui.playSelect();
           pokemon.pauseEvolutions = false;
-          this.showText(i18next.t("partyUiHandler:unpausedEvolutions", { pokemonName: getPokemonNameWithAffix(pokemon) }), undefined, () => this.showText(null, 0), null, true);
+          this.showText(i18next.t("partyUiHandler:unpausedEvolutions", { pokemonName: getPokemonNameWithAffix(pokemon) }), undefined, () => this.showText("", 0), null, true);
         } else if (option === PartyOption.UNSPLICE) {
           this.clearOptions();
           ui.playSelect();
@@ -472,12 +473,12 @@ export default class PartyUiHandler extends MessageUiHandler {
                 ui.setMode(Mode.PARTY);
                 this.showText(i18next.t("partyUiHandler:wasReverted", { fusionName: fusionName, pokemonName: pokemon.name }), undefined, () => {
                   ui.setMode(Mode.PARTY);
-                  this.showText(null, 0);
+                  this.showText("", 0);
                 }, null, true);
               });
             }, () => {
               ui.setMode(Mode.PARTY);
-              this.showText(null, 0);
+              this.showText("", 0);
             });
           });
         } else if (option === PartyOption.RELEASE) {
@@ -490,11 +491,11 @@ export default class PartyUiHandler extends MessageUiHandler {
                 this.doRelease(this.cursor);
               }, () => {
                 ui.setMode(Mode.PARTY);
-                this.showText(null, 0);
+                this.showText("", 0);
               });
             });
           } else {
-            this.showText(i18next.t("partyUiHandler:releaseInBattle"), null, () => this.showText(null, 0), null, true);
+            this.showText(i18next.t("partyUiHandler:releaseInBattle"), null, () => this.showText("", 0), null, true);
           }
           return true;
         } else if (option === PartyOption.RENAME) {
@@ -730,8 +731,8 @@ export default class PartyUiHandler extends MessageUiHandler {
     return changed;
   }
 
-  showText(text: string | null, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
-    if (text === null) {
+  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
+    if (text.length === 0) {
       text = defaultMessage;
     }
 
@@ -1057,7 +1058,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         this.selectCallback = null;
         selectCallback && selectCallback(this.cursor, PartyOption.RELEASE);
       }
-      this.showText(null, 0);
+      this.showText("", 0);
     }, null, true);
   }
 
@@ -1119,7 +1120,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.eraseOptionsCursor();
 
     this.partyMessageBox.setSize(262, 30);
-    this.showText(null, 0);
+    this.showText("", 0);
   }
 
   eraseOptionsCursor() {
