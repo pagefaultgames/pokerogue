@@ -1,4 +1,3 @@
-import { BattleEndPhase, TurnInitPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition, } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -7,8 +6,10 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { Status, StatusEffect } from "#app/data/status-effect.js";
+import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
-describe("Test Battle Phase", () => {
+describe("Double Battles", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
