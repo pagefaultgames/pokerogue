@@ -1,10 +1,4 @@
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import {
-  BerryPhase,
-  MoveEndPhase,
-  TurnEndPhase,
-  TurnStartPhase,
-} from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -16,6 +10,10 @@ import { SPLASH_ONLY } from "../utils/testUtils";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
 import Pokemon from "#app/field/pokemon.js";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 
 describe("Abilities - Gulp Missile", () => {
   let phaserGame: Phaser.Game;

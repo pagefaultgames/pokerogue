@@ -1,5 +1,4 @@
 import { allMoves } from "#app/data/move.js";
-import { TurnStartPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -7,6 +6,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 
 describe("Weather - Strong Winds", () => {
   let phaserGame: Phaser.Game;

@@ -1,7 +1,6 @@
 import { BattleStatMultiplierAbAttr, allAbilities } from "#app/data/ability.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { WeatherType } from "#app/data/weather.js";
-import { CommandPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -9,6 +8,9 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
 
 const TIMEOUT = 20 * 1000;
 

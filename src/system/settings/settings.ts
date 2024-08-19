@@ -8,13 +8,21 @@ import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
+import { getIsInitialized, initI18n } from "#app/plugins/i18n.js";
+
+function getTranslation(key: string): string {
+  if (!getIsInitialized()) {
+    initI18n();
+  }
+  return i18next.t(key);
+}
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i ? {
   value: (i * 10).toString(),
   label: (i * 10).toString(),
 } : {
   value: "Mute",
-  label: i18next.t("settings:mute")
+  label: getTranslation("settings:mute")
 });
 const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {
   const value = ((i + 1) * 10).toString();
