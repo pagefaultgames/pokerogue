@@ -414,6 +414,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "Module Pyro",
     "CHILL_DRIVE": "Module Cryo",
     "DOUSE_DRIVE": "Module Aqua",
+    "ULTRANECROZIUM_Z": "Ultranécrozélite",
 
     "FIST_PLATE": "Plaque Poing",
     "SKY_PLATE": "Plaque Ciel",

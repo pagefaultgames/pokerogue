@@ -5,11 +5,12 @@ import { Moves } from "#enums/moves";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { MovePhase, TurnEndPhase } from "#app/phases";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { Status, StatusEffect } from "#app/data/status-effect.js";
+import { StatusEffect } from "#app/data/status-effect.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { BattlerIndex } from "#app/battle.js";
+import { MovePhase } from "#app/phases/move-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Abilities - Flash Fire", () => {
   let phaserGame: Phaser.Game;
@@ -30,6 +31,7 @@ describe("Abilities - Flash Fire", () => {
     game.override
       .battleType("single")
       .ability(Abilities.FLASH_FIRE)
+      .enemyAbility(Abilities.BALL_FETCH)
       .startingLevel(20)
       .enemyLevel(20)
       .disableCrits();
@@ -75,12 +77,10 @@ describe("Abilities - Flash Fire", () => {
 
   it("activated after being frozen", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.EMBER)).moveset(SPLASH_ONLY);
+    game.override.statusEffect(StatusEffect.FREEZE);
     await game.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
-
-    blissey!.status = new Status(StatusEffect.FREEZE);
-    expect(blissey.status?.effect).toBe(StatusEffect.FREEZE);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 

@@ -1,7 +1,7 @@
 import { getMoveTargets } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Species } from "#app/enums/species.js";
-import { TurnEndPhase } from "#app/phases.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import GameManager from "#test/utils/gameManager";
 import { Moves } from "#enums/moves";
 import Phaser from "phaser";
@@ -88,7 +88,7 @@ async function checkTargetMultiplier(game: GameManager, attackMove: Moves, killA
 
 async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAlly: boolean, killSecondEnemy: boolean, shouldDecreased: boolean, ability?: Abilities) {
   // Tested combination on first turn, 1v1 on second turn
-  await game.runToSummon([Species.EEVEE, Species.EEVEE]);
+  await game.classicMode.runToSummon([Species.EEVEE, Species.EEVEE]);
 
   if (ability !== undefined) {
     game.scene.getPlayerField()[1].abilityIndex = ability;

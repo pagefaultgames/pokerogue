@@ -74,14 +74,14 @@ export default class Battle {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
-    this.trainer = trainer!; //TODO: is this bang correct?
+    this.trainer = trainer ?? null;
     this.initBattleSpec();
     this.enemyLevels = battleType !== BattleType.TRAINER
       ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
       : trainer?.getPartyLevels(this.waveIndex);
     this.enemyParty = [];
     this.seenEnemyPartyMemberIds = new Set<integer>();
-    this.double = double!; //TODO: is this bang correct?
+    this.double = !!double;
     this.enemySwitchCounter = 0;
     this.turn = 0;
     this.playerParticipantIds = new Set<integer>();
@@ -208,9 +208,9 @@ export default class Battle {
         return `encounter_${this.trainer?.getEncounterBgm()}`;
       }
       if (scene.musicPreference === 0) {
-        return this.trainer?.getBattleBgm()!; // TODO: is this bang correct?
+        return this.trainer?.getBattleBgm() ?? null;
       } else {
-        return this.trainer?.getMixedBattleBgm()!; // TODO: is this bang correct?
+        return this.trainer?.getMixedBattleBgm() ?? null;
       }
     } else if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS) {
       return "end_summit";

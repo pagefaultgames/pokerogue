@@ -5,8 +5,12 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { BerryPhase, MessagePhase, MoveHeaderPhase, SwitchSummonPhase, TurnStartPhase } from "#app/phases";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { MessagePhase } from "#app/phases/message-phase.js";
+import { MoveHeaderPhase } from "#app/phases/move-header-phase.js";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
