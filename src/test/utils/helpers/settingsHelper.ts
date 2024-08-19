@@ -12,6 +12,7 @@ export class SettingsHelper extends GameManagerHelper {
    */
   typeHints(enable: boolean) {
     this.game.scene.typeHints = enable;
+    this.log(`type-hints ${enable? "enabled" : "disabled"}!`);
   }
 
   /**
@@ -20,5 +21,10 @@ export class SettingsHelper extends GameManagerHelper {
    */
   expGainsSpeed(speed: ExpGainsSpeed) {
     this.game.scene.expGainsSpeed = speed;
+    this.log(`exp-gains-speed set to ${ExpGainsSpeed[speed]} (=${speed})!`);
+  }
+
+  private log(...params: any[]) {
+    console.log("Settings:", ...params);
   }
 }
