@@ -17,6 +17,7 @@ import { PartyHealPhase, ReturnPhase, ShowTrainerPhase } from "#app/phases";
 import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
 import { applyPostBattleInitAbAttrs, PostBattleInitAbAttr } from "#app/data/ability";
 import { showEncounterDialogue } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:theWinstrateChallenge";
@@ -140,7 +141,7 @@ async function spawnNextTrainerOrEndEncounter(scene: BattleScene) {
     await showEncounterDialogue(scene, `${namespace}.victory`, `${namespace}.speaker`);
     setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE], fillRemaining: false });
     encounter.doContinueEncounter = null;
-    leaveEncounterWithoutBattle(scene);
+    leaveEncounterWithoutBattle(scene, false, MysteryEncounterMode.TRAINER_BATTLE);
   } else {
     await initBattleWithEnemyConfig(scene, nextConfig);
   }

@@ -634,9 +634,10 @@ export function initSubsequentOptionSelect(scene: BattleScene, optionSelectSetti
  * Will skip any shops and rewards, and queue the next encounter phase as normal
  * @param scene
  * @param addHealPhase - when true, will add a shop phase to end of encounter with 0 rewards but healing items are available
+ * @param encounterMode - Can set custom encounter mode if necessary (may be required for forcing Pokemon to return before next phase)
  */
-export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: boolean = false) {
-  scene.currentBattle.mysteryEncounter.encounterMode = MysteryEncounterMode.NO_BATTLE;
+export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: boolean = false, encounterMode: MysteryEncounterMode = MysteryEncounterMode.NO_BATTLE) {
+  scene.currentBattle.mysteryEncounter.encounterMode = encounterMode;
   scene.clearPhaseQueue();
   scene.clearPhaseQueueSplice();
   handleMysteryEncounterVictory(scene, addHealPhase);
