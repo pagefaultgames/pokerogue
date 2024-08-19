@@ -377,7 +377,7 @@ export function getTypeDamageMultiplier(attackType: number, defType: number, isI
 }
 
 /**
- * Retrieve the types resisting a given type
+ * Retrieve the types resisting a given type. Used by Conversion 2
  * @returns An array populated with Types, or an empty array if no resistances exist (Unknown or Stellar type)
  */
 export function getTypeResistances(type: number, isInverseBattle: boolean = false): Type[] {
