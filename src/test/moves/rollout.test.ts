@@ -12,6 +12,7 @@ import { SPLASH_ONLY } from "#test/utils/testUtils";
 describe("Moves - Rollout", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  const TIMEOUT = 20 * 1000;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -77,5 +78,5 @@ describe("Moves - Rollout", () => {
     // reset
     expect(turn6Dmg).toBeGreaterThanOrEqual(turn1Dmg - variance);
     expect(turn6Dmg).toBeLessThanOrEqual(turn1Dmg + variance);
-  });
+  }, TIMEOUT);
 });

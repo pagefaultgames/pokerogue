@@ -2916,14 +2916,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const isCaught = this.scene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0);
       const isVariant3Caught = !!(isCaught & DexAttr.VARIANT_3);
       const isVariant2Caught = !!(isCaught & DexAttr.VARIANT_2);
+      const isDefaultVariantCaught = !!(isCaught & DexAttr.DEFAULT_VARIANT);
       const isVariantCaught = !!(isCaught & DexAttr.SHINY);
       const isMaleCaught = !!(isCaught & DexAttr.MALE);
       const isFemaleCaught = !!(isCaught & DexAttr.FEMALE);
 
+      const starterAttributes = this.starterPreferences[species.speciesId];
+
+      const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
+      const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+      const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
+
       if (!dexEntry.caughtAttr) {
-        const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
-        const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-        const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
         if (shiny === undefined || shiny !== props.shiny) {
           shiny = props.shiny;
         }
@@ -2941,6 +2945,83 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
         if (natureIndex === undefined || natureIndex !== defaultNature) {
           natureIndex = defaultNature;
+        }
+      } else {
+        // compare current shiny, formIndex, female, variant, abilityIndex, natureIndex with the caught ones
+        // if the current ones are not caught, we need to find the next caught ones
+        if (shiny) {
+          if (!(isVariantCaught || isVariant2Caught || isVariant3Caught)) {
+            shiny = false;
+            starterAttributes.shiny = false;
+            variant = 0;
+            starterAttributes.variant = 0;
+          } else {
+            shiny = true;
+            starterAttributes.shiny = true;
+            if (variant === 0 && !isDefaultVariantCaught) {
+              if (isVariant2Caught) {
+                variant = 1;
+                starterAttributes.variant = 1;
+              } else if (isVariant3Caught) {
+                variant = 2;
+                starterAttributes.variant = 2;
+              } else {
+                variant = 0;
+                starterAttributes.variant = 0;
+              }
+            } else if (variant === 1 && !isVariant2Caught) {
+              if (isVariantCaught) {
+                variant = 0;
+                starterAttributes.variant = 0;
+              } else if (isVariant3Caught) {
+                variant = 2;
+                starterAttributes.variant = 2;
+              } else {
+                variant = 0;
+                starterAttributes.variant = 0;
+              }
+            } else if (variant === 2 && !isVariant3Caught) {
+              if (isVariantCaught) {
+                variant = 0;
+                starterAttributes.variant = 0;
+              } else if (isVariant2Caught) {
+                variant = 1;
+                starterAttributes.variant = 1;
+              } else {
+                variant = 0;
+                starterAttributes.variant = 0;
+              }
+            }
+          }
+        }
+        if (female) {
+          if (!isFemaleCaught) {
+            female = false;
+            starterAttributes.female = false;
+          }
+        } else {
+          if (!isMaleCaught) {
+            female = true;
+            starterAttributes.female = true;
+          }
+        }
+
+        if (species.forms) {
+          const formCount = species.forms.length;
+          let newFormIndex = formIndex??0;
+          if (species.forms[newFormIndex]) {
+            const isValidForm = species.forms[newFormIndex].isStarterSelectable && dexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex);
+            if (!isValidForm) {
+              do {
+                newFormIndex = (newFormIndex + 1) % formCount;
+                if (species.forms[newFormIndex].isStarterSelectable && dexEntry.caughtAttr & this.scene.gameData.getFormAttr(newFormIndex)) {
+                  break;
+                }
+              } while (newFormIndex !== props.formIndex);
+              formIndex = newFormIndex;
+              starterAttributes.form = formIndex;
+            }
+          }
         }
       }
 
@@ -2993,12 +3074,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
-        let gender: Gender;
-        if ((female && isFemaleCaught) || (!female && !isMaleCaught)) {
-          gender = Gender.FEMALE;
-        } else {
-          gender = Gender.MALE;
-        }
+        const gender = !female ? Gender.MALE : Gender.FEMALE;
         this.pokemonGenderText.setText(getGenderSymbol(gender));
         this.pokemonGenderText.setColor(getGenderColor(gender));
         this.pokemonGenderText.setShadowColor(getGenderColor(gender, true));
@@ -3479,7 +3555,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   checkIconId(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, female: boolean, formIndex: number, shiny: boolean, variant: number) {
     if (icon.frame.name !== species.getIconId(female, formIndex, shiny, variant)) {
-      console.log(`${species.name}'s variant icon does not exist. Replacing with default.`);
+      console.log(`${species.name}'s icon ${icon.frame.name} does not match getIconId with female: ${female}, formIndex: ${formIndex}, shiny: ${shiny}, variant: ${variant}`);
       icon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
       icon.setFrame(species.getIconId(female, formIndex, false, variant));
     }

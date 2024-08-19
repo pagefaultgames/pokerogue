@@ -30,6 +30,7 @@ import { MoveHelper } from "./helpers/moveHelper";
 import { vi } from "vitest";
 import { ClassicModeHelper } from "./helpers/classicModeHelper";
 import { DailyModeHelper } from "./helpers/dailyModeHelper";
+import { SettingsHelper } from "./helpers/settingsHelper";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -44,6 +45,7 @@ export default class GameManager {
   public readonly move: MoveHelper;
   public readonly classicMode: ClassicModeHelper;
   public readonly dailyMode: DailyModeHelper;
+  public readonly settings: SettingsHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -63,6 +65,7 @@ export default class GameManager {
     this.move = new MoveHelper(this);
     this.classicMode = new ClassicModeHelper(this);
     this.dailyMode = new DailyModeHelper(this);
+    this.settings = new SettingsHelper(this);
   }
 
   /**
