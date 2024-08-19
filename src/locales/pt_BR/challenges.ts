@@ -29,9 +29,9 @@ export const challenges: TranslationEntries = {
     "value.1": "Ligado",
   },
   "inverseBattle": {
-    "name": "Inverse Battle",
-    "desc": "Type matchups are reversed and no type is immune to any other type.\nDisables other challenges' achievements.",
-    "value.0": "Off",
-    "value.1": "On",
+    "name": "Batalha Inversa",
+    "desc": "Fraquezas e resistências de tipos são invertidas e nenhum tipo é imune a outro tipo.\nDesativa as conquistas de outros desafios.",
+    "value.0": "Desligado",
+    "value.1": "Ligado",
   }
 } as const;
