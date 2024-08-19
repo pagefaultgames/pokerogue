@@ -39,7 +39,7 @@ describe("Moves - Roost", () => {
   test(
     "move should ground the user until the end of turn",
     async () => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 

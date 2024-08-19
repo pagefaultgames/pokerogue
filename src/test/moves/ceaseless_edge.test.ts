@@ -44,7 +44,7 @@ describe("Moves - Ceaseless Edge", () => {
   test(
     "move should hit and apply spikes",
     async () => {
-      await game.startBattle([ Species.ILLUMISE ]);
+      await game.classicMode.startBattle([ Species.ILLUMISE ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -69,7 +69,7 @@ describe("Moves - Ceaseless Edge", () => {
     "move should hit twice with multi lens and apply two layers of spikes",
     async () => {
       game.override.startingHeldItems([{name: "MULTI_LENS"}]);
-      await game.startBattle([ Species.ILLUMISE ]);
+      await game.classicMode.startBattle([ Species.ILLUMISE ]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -96,7 +96,7 @@ describe("Moves - Ceaseless Edge", () => {
       game.override.startingHeldItems([{name: "MULTI_LENS"}]);
       game.override.startingWave(5);
 
-      await game.startBattle([ Species.ILLUMISE ]);
+      await game.classicMode.startBattle([ Species.ILLUMISE ]);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.CEASELESS_EDGE));
       await game.phaseInterceptor.to(MoveEffectPhase, false);

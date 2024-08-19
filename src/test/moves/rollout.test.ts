@@ -45,7 +45,7 @@ describe("Moves - Rollout", () => {
     const turns = 6;
     const dmgHistory: number[] = [];
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const playerPkm = game.scene.getParty()[0];
     vi.spyOn(playerPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD

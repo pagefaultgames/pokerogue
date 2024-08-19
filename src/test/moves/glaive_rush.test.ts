@@ -38,7 +38,7 @@ describe("Moves - Glaive Rush", () => {
   });
 
   it("takes double damage from attacks", async() => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
 
@@ -54,7 +54,7 @@ describe("Moves - Glaive Rush", () => {
   }, 5000); // TODO: revert back to 20s
 
   it("always gets hit by attacks", async() => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
 
@@ -68,7 +68,7 @@ describe("Moves - Glaive Rush", () => {
   it("interacts properly with multi-lens", async() => {
     game.override.startingHeldItems([{name: "MULTI_LENS", count: 2}]);
     game.override.enemyMoveset(Array(4).fill(Moves.AVALANCHE));
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
@@ -87,7 +87,7 @@ describe("Moves - Glaive Rush", () => {
 
   it("secondary effects only last until next move", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
@@ -112,7 +112,7 @@ describe("Moves - Glaive Rush", () => {
   it("secondary effects are removed upon switching", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
     game.override.starterSpecies(0);
-    await game.startBattle([Species.KLINK, Species.FEEBAS]);
+    await game.classicMode.startBattle([Species.KLINK, Species.FEEBAS]);
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
@@ -132,7 +132,7 @@ describe("Moves - Glaive Rush", () => {
 
   it("secondary effects don't activate if move fails", async() => {
     game.override.moveset([Moves.SHADOW_SNEAK, Moves.PROTECT, Moves.SPLASH, Moves.GLAIVE_RUSH]);
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;

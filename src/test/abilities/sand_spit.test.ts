@@ -37,7 +37,7 @@ describe("Abilities - Sand Spit", () => {
 
   it("should trigger when hit with damaging move", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
@@ -47,7 +47,7 @@ describe("Abilities - Sand Spit", () => {
 
   it("should not trigger when targetted with status moves", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.GROWL));
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.COIL));
     await game.toNextTurn();

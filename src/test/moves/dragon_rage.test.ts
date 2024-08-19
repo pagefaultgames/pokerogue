@@ -48,7 +48,7 @@ describe("Moves - Dragon Rage", () => {
     game.override.enemyPassiveAbility(Abilities.BALL_FETCH);
     game.override.enemyLevel(100);
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     partyPokemon = game.scene.getParty()[0];
     enemyPokemon = game.scene.getEnemyPokemon()!;

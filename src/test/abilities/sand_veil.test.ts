@@ -44,7 +44,7 @@ describe("Abilities - Sand Veil", () => {
   test(
     "ability should increase the evasiveness of the source",
     async () => {
-      await game.startBattle([Species.SNORLAX, Species.BLISSEY]);
+      await game.classicMode.startBattle([Species.SNORLAX, Species.BLISSEY]);
 
       const leadPokemon = game.scene.getPlayerField();
 

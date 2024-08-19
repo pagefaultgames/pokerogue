@@ -22,7 +22,7 @@ describe("Lokalization - french", () => {
 
   it("test bulbasaur name english", async () => {
     game = new GameManager(phaserGame);
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BULBASAUR,
     ]);
     expect(game.scene.getParty()[0].name).toBe("Bulbasaur");
@@ -34,7 +34,7 @@ describe("Lokalization - french", () => {
     localStorage.setItem("prLang", locale);
     game = new GameManager(phaserGame);
 
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.BULBASAUR,
     ]);
     expect(game.scene.getParty()[0].name).toBe("Bulbizarre");

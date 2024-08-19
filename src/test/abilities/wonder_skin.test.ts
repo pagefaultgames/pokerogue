@@ -39,7 +39,7 @@ describe("Abilities - Wonder Skin", () => {
 
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -51,7 +51,7 @@ describe("Abilities - Wonder Skin", () => {
 
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -67,7 +67,7 @@ describe("Abilities - Wonder Skin", () => {
       game.override.ability(ability);
       vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-      await game.startBattle([Species.PIKACHU]);
+      await game.classicMode.startBattle([Species.PIKACHU]);
       game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
       await game.phaseInterceptor.to(MoveEffectPhase);
 

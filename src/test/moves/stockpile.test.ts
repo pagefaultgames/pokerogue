@@ -40,7 +40,7 @@ describe("Moves - Stockpile", () => {
     });
 
     it("Gains a stockpile stack and increases DEF and SPDEF by 1 on each use, fails at max stacks (3)", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const user = game.scene.getPlayerPokemon()!;
 
@@ -81,7 +81,7 @@ describe("Moves - Stockpile", () => {
     });
 
     it("Gains a stockpile stack even if DEF and SPDEF are at +6", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const user = game.scene.getPlayerPokemon()!;
 

@@ -40,7 +40,7 @@ describe("UI - Type Hints", () => {
       .moveset([Moves.DRAGON_CLAW]);
     game.settings.typeHints(true); //activate type hints
 
-    await game.startBattle([Species.RAYQUAZA]);
+    await game.classicMode.startBattle([Species.RAYQUAZA]);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       const { ui } = game.scene;
@@ -65,7 +65,7 @@ describe("UI - Type Hints", () => {
   it("check status move color", async () => {
     game.override.enemySpecies(Species.FLORGES).moveset([Moves.GROWL]);
 
-    await game.startBattle([Species.RAYQUAZA]);
+    await game.classicMode.startBattle([Species.RAYQUAZA]);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       const { ui } = game.scene;

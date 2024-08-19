@@ -42,7 +42,7 @@ describe("Moves - CLANGOROUS_SOUL", () => {
 
   test("Clangorous Soul raises the user's Attack, Defense, Special Attack, Special Defense and Speed by one stage each, at the cost of 1/3 of its maximum HP",
   	async() => {
-  	 	await game.startBattle([Species.MAGIKARP]);
+  	 	await game.classicMode.startBattle([Species.MAGIKARP]);
 
      	const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
@@ -61,7 +61,7 @@ describe("Moves - CLANGOROUS_SOUL", () => {
 
   test("Clangorous Soul will still take effect if one or more of the involved stats are not at max",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
@@ -86,7 +86,7 @@ describe("Moves - CLANGOROUS_SOUL", () => {
 
   test("Clangorous Soul fails if all stats involved are at max",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -110,7 +110,7 @@ describe("Moves - CLANGOROUS_SOUL", () => {
 
   test("Clangorous Soul fails if the user's health is less than 1/3",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);

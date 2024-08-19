@@ -1,3 +1,4 @@
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed.js";
 import { GameManagerHelper } from "./gameManagerHelper";
 
 /**
@@ -11,5 +12,13 @@ export class SettingsHelper extends GameManagerHelper {
    */
   typeHints(enable: boolean) {
     this.game.scene.typeHints = enable;
+  }
+
+  /**
+   * Set the EXP gains speed settings
+   * @param speed exp gains speed to set
+   */
+  expGainsSpeed(speed: ExpGainsSpeed) {
+    this.game.scene.expGainsSpeed = speed;
   }
 }

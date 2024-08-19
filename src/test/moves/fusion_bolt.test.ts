@@ -37,7 +37,7 @@ describe("Moves - Fusion Bolt", () => {
   });
 
   it("should not make contact", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.ZEKROM,
     ]);
 

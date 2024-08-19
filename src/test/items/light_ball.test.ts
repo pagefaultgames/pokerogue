@@ -31,7 +31,7 @@ describe("Items - Light Ball", () => {
   it("LIGHT_BALL activates in battle correctly", async() => {
     game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "LIGHT_BALL" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 
@@ -64,7 +64,7 @@ describe("Items - Light Ball", () => {
   });
 
   it("LIGHT_BALL held by PIKACHU", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 
@@ -92,7 +92,7 @@ describe("Items - Light Ball", () => {
   }, 20000);
 
   it("LIGHT_BALL held by fused PIKACHU (base)", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU,
       Species.MAROWAK
     ]);
@@ -131,7 +131,7 @@ describe("Items - Light Ball", () => {
   }, 20000);
 
   it("LIGHT_BALL held by fused PIKACHU (part)", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MAROWAK,
       Species.PIKACHU
     ]);
@@ -170,7 +170,7 @@ describe("Items - Light Ball", () => {
   }, 20000);
 
   it("LIGHT_BALL not held by PIKACHU", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MAROWAK
     ]);
 

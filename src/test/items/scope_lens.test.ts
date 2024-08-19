@@ -37,7 +37,7 @@ describe("Items - Scope Lens", () => {
     game.override.startingHeldItems([{ name: "SCOPE_LENS" }]);
     game.override.moveset([ Moves.POUND ]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.GASTLY
     ]);
 
@@ -51,7 +51,7 @@ describe("Items - Scope Lens", () => {
   }, 20000);
 
   it("SCOPE_LENS held by random pokemon", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.GASTLY
     ]);
 

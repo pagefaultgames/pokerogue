@@ -42,7 +42,7 @@ describe("Abilities - Moxie", () => {
 
   it("MOXIE", async() => {
     const moveToUse = Moves.AERIAL_ACE;
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MIGHTYENA,
       Species.MIGHTYENA,
     ]);

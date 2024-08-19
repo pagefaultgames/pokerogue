@@ -43,7 +43,7 @@ describe("Moves - Quick Guard", () => {
   test(
     "should protect the user and allies from priority moves",
     async () => {
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerField();
 
@@ -65,7 +65,7 @@ describe("Moves - Quick Guard", () => {
       game.override.enemyAbility(Abilities.PRANKSTER);
       game.override.enemyMoveset(Array(4).fill(Moves.GROWL));
 
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerField();
 
@@ -86,7 +86,7 @@ describe("Moves - Quick Guard", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.WATER_SHURIKEN));
 
-      await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();

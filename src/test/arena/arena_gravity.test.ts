@@ -40,7 +40,7 @@ describe("Arena - Gravity", () => {
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
     // Setup Gravity on first turn
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -64,7 +64,7 @@ describe("Arena - Gravity", () => {
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
     // Setup Gravity on first turn
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
     await game.phaseInterceptor.to(TurnEndPhase);
 

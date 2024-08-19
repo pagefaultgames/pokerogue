@@ -42,7 +42,7 @@ describe("Moves - FILLET AWAY", () => {
 
   test("Fillet Away raises the user's Attack, Special Attack, and Speed by two stages each, at the cost of 1/2 of its maximum HP",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
@@ -59,7 +59,7 @@ describe("Moves - FILLET AWAY", () => {
 
   test("Fillet Away will still take effect if one or more of the involved stats are not at max",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
@@ -80,7 +80,7 @@ describe("Moves - FILLET AWAY", () => {
 
   test("Fillet Away fails if all stats involved are at max",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -100,7 +100,7 @@ describe("Moves - FILLET AWAY", () => {
 
   test("Fillet Away fails if the user's health is less than 1/2",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);

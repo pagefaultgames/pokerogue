@@ -40,7 +40,7 @@ describe("Abilities - Volt Absorb", () => {
     game.override.enemySpecies(Species.DUSKULL);
     game.override.enemyAbility(Abilities.BALL_FETCH);
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 

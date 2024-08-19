@@ -42,7 +42,7 @@ describe("Moves - Octolock", () => {
     });
 
     it("Reduces DEf and SPDEF by 1 each turn", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.GRAPPLOCT]);
+      await game.classicMode.startBattle([Species.GRAPPLOCT]);
 
       const enemyPokemon = game.scene.getEnemyField();
 
@@ -63,7 +63,7 @@ describe("Moves - Octolock", () => {
     });
 
     it("Traps the target pokemon", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.GRAPPLOCT]);
+      await game.classicMode.startBattle([Species.GRAPPLOCT]);
 
       const enemyPokemon = game.scene.getEnemyField();
 

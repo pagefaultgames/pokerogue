@@ -43,7 +43,7 @@ describe("Abilities - Mycelium Might", () => {
    **/
 
   it("If a Pokemon with Mycelium Might uses a status move, it will always move last but the status move will ignore protective abilities", async() => {
-    await game.startBattle([ Species.REGIELEKI ]);
+    await game.classicMode.startBattle([ Species.REGIELEKI ]);
 
     const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyPokemon = game.scene.getEnemyPokemon();
@@ -66,7 +66,7 @@ describe("Abilities - Mycelium Might", () => {
 
   it("Pokemon with Mycelium Might will go first if a status move that is in a higher priority bracket than the opponent's move is used", async() => {
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    await game.startBattle([ Species.REGIELEKI ]);
+    await game.classicMode.startBattle([ Species.REGIELEKI ]);
 
     const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyPokemon = game.scene.getEnemyPokemon();
@@ -87,7 +87,7 @@ describe("Abilities - Mycelium Might", () => {
   }, 20000);
 
   it("Order is established normally if the Pokemon uses a non-status move", async() => {
-    await game.startBattle([ Species.REGIELEKI ]);
+    await game.classicMode.startBattle([ Species.REGIELEKI ]);
 
     const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();

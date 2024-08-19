@@ -37,7 +37,7 @@ describe("Moves - Fusion Flare", () => {
   });
 
   it("should thaw freeze status condition", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.RESHIRAM,
     ]);
 

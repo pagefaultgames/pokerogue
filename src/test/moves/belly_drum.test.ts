@@ -41,7 +41,7 @@ describe("Moves - BELLY DRUM", () => {
 
   test("Belly Drum raises the user's Attack to its max, at the cost of 1/2 of its maximum HP",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
@@ -56,7 +56,7 @@ describe("Moves - BELLY DRUM", () => {
 
   test("Belly Drum will still take effect if an uninvolved stat is at max",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
@@ -76,7 +76,7 @@ describe("Moves - BELLY DRUM", () => {
 
   test("Belly Drum fails if the pokemon's attack stat is at its maximum",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -92,7 +92,7 @@ describe("Moves - BELLY DRUM", () => {
 
   test("Belly Drum fails if the user's health is less than 1/2",
     async() => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);

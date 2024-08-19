@@ -33,7 +33,7 @@ describe("Evolution tests", () => {
      * If the value is 0, it's a 3 family maushold, whereas if the value is
      * 1, 2 or 3, it's a 4 family maushold
      */
-    await game.startBattle([Species.TANDEMAUS]); // starts us off with a tandemaus
+    await game.classicMode.startBattle([Species.TANDEMAUS]); // starts us off with a tandemaus
     const playerPokemon = game.scene.getPlayerPokemon()!;
     playerPokemon.level = 25; // tandemaus evolves at level 25
     vi.spyOn(Utils, "randSeedInt").mockReturnValue(0); // setting the random generator to be 0 to force a three family maushold

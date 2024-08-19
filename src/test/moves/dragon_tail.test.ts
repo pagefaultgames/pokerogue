@@ -43,7 +43,7 @@ describe("Moves - Dragon Tail", () => {
   test(
     "Single battle should cause opponent to flee, and not crash",
     async () => {
-      await game.startBattle([Species.DRATINI]);
+      await game.classicMode.startBattle([Species.DRATINI]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
@@ -65,7 +65,7 @@ describe("Moves - Dragon Tail", () => {
     "Single battle should cause opponent to flee, display ability, and not crash",
     async () => {
       game.override.enemyAbility(Abilities.ROUGH_SKIN);
-      await game.startBattle([Species.DRATINI]);
+      await game.classicMode.startBattle([Species.DRATINI]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).toBeDefined();
@@ -90,7 +90,7 @@ describe("Moves - Dragon Tail", () => {
       game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
       game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER])
         .enemyAbility(Abilities.ROUGH_SKIN);
-      await game.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
+      await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
 
       const leadPokemon = game.scene.getParty()[0]!;
       const secPokemon = game.scene.getParty()[1]!;
@@ -133,7 +133,7 @@ describe("Moves - Dragon Tail", () => {
       game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
       game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER]);
       game.override.enemyAbility(Abilities.ROUGH_SKIN);
-      await game.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
+      await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
 
       const leadPokemon = game.scene.getParty()[0]!;
       const secPokemon = game.scene.getParty()[1]!;

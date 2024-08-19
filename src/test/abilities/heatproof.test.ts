@@ -39,7 +39,7 @@ describe("Abilities - Heatproof", () => {
   });
 
   it("reduces Fire type damage by half", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
     const initialHP = 1000;
@@ -64,7 +64,7 @@ describe("Abilities - Heatproof", () => {
     game.override
       .enemyStatusEffect(StatusEffect.BURN)
       .enemySpecies(Species.ABRA);
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
 
