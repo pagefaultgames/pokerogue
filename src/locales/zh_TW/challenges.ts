@@ -29,9 +29,9 @@ export const challenges: TranslationEntries = {
     "value.1": "On",
   },
   "inverseBattle": {
-    "name": "Inverse Battle",
-    "desc": "Type matchups are reversed and no type is immune to any other type.\nDisables other challenges' achievements.",
-    "value.0": "Off",
-    "value.1": "On",
+    "name": "逆轉之戰",
+    "desc": "屬性相克關系被反轉，且沒有任何屬性對其他屬性免疫。\n禁用其他挑戰的成就。",
+    "value.0": "關閉",
+    "value.1": "開啓",
   }
 } as const;
