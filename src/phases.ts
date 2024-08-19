@@ -7382,6 +7382,7 @@ export class SelectModifierPhase extends BattlePhase {
         mp.forEach((m, i) => {
           console.log("  " + m.type!.name)
           if (m.alternates) {
+            //console.log(m.alternates)
             let showedLuckFlag = false
             for (var j = 0, currentTier = m.type!.tier; j < m.alternates.length; j++) {
               if (m.alternates[j] > currentTier) {
@@ -7402,7 +7403,7 @@ export class SelectModifierPhase extends BattlePhase {
               }
             }
           } else {
-            console.log("    No alt-luck data")
+            //console.log("    No alt-luck data")
           }
         })
       })

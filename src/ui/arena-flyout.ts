@@ -200,6 +200,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.shinyCharmIcon = this.scene.add.sprite(this.flyoutWidth - 8, 8, "items", "shiny_charm")
     this.shinyCharmIcon.setScale(0.4)
     this.shinyCharmIcon.setInteractive(new Phaser.Geom.Rectangle(2, 2, 26, 27), Phaser.Geom.Rectangle.Contains);
+    this.shinyCharmIcon.setVisible(false)
     this.flyoutContainer.add(this.shinyCharmIcon)
 
     this.shinyCharmLuckCount = addTextObject(this.scene, this.flyoutWidth - 9, 5, "?", TextStyle.BATTLE_INFO);
@@ -211,7 +212,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   }
 
   doShinyCharmTooltip() {
-    if ((this.scene as BattleScene).currentBattle.waveIndex % 10 == 0) {
+    if (true || (this.scene as BattleScene).currentBattle.waveIndex % 10 == 0) {
       this.shinyCharmIcon.setVisible(false)
       this.shinyCharmLuckCount.setVisible(false)
       return;
@@ -227,11 +228,11 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
         //this.shinyCharmIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `???`));
       } else if ((this.scene as BattleScene).waveShinyFlag) {
         this.shinyCharmIcon.clearTint()
-        this.shinyCharmIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shinies are OK`));
+        this.shinyCharmIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", `Shinies are OK`));
         this.shinyCharmLuckCount.setVisible(false)
       } else {
         this.shinyCharmIcon.setTintFill(0x000000)
-        this.shinyCharmIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip(null, `Shinies change shop with luck ${(this.scene as BattleScene).waveShinyMinToBreak} or higher`));
+        this.shinyCharmIcon.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", `Shinies change shop with luck ${(this.scene as BattleScene).waveShinyMinToBreak} or higher`));
         this.shinyCharmLuckCount.text = getLuckString((this.scene as BattleScene).waveShinyMinToBreak)
       }
       this.shinyCharmIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
@@ -270,7 +271,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextHeader.text = "Game Logs"
     this.flyoutTextPlayer.setPosition(6, 4)
     this.flyoutTextPlayer.setFontSize(30);
-    var instructions = []
+    var instructions: string[] = []
     var drpd = LoggerTools.getDRPD(this.scene as BattleScene);
     var doWaveInstructions = true;
     for (var i = 0; i < drpd.waves.length && drpd.waves[i] != undefined && doWaveInstructions; i++) {
