@@ -228,7 +228,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     textObject.setFontSize(fontSize);
 
     const textWrapped = () => textObject.getWrappedText(text);
-    const textSize = () => Phaser.GameObjects.GetTextSize(textObject,textObject.style.getTextMetrics(),textWrapped());
+    const textSize = () => Phaser.GameObjects.GetTextSize(textObject, textObject.style.getTextMetrics(), textWrapped());
     const balanceText = typeof opts.ignoreTextBalance === "string" ? opts.ignoreTextBalance === "all" : (opts.ignoreTextBalance && opts.ignoreTextBalance[0] && opts.ignoreTextBalance.some(localKey=> localKey === currentLanguage));
 
     // Text Balance
