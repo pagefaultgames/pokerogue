@@ -273,8 +273,9 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Complete the Fresh Start challenge."
   },
   "INVERSE_BATTLE": {
-    name: "Mirror rorriM",
-    description: "Complete the Inverse Battle challenge.\n.egnellahc elttaB esrevnI eht etelpmoC"
+  "INVERSE_BATTLE": {
+    name: "鏡子子鏡",
+    description: "完成逆轉之戰挑戰\n戰挑戰之轉逆成完"
   }
 } as const;
 
