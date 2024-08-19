@@ -33,7 +33,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
 
-  private reloadSettings: Array<integer | null>;
+  private reloadSettings: Array<number | null>;
   private reloadRequired: boolean;
 
   protected rowsToDisplay: number;
@@ -146,7 +146,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     const settingsMessageBox = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width/6) - 2, 48);
     this.settingsMessageBoxContainer.add(settingsMessageBox);
 
-    const messageText = addTextObject(this.scene,8,8,"",TextStyle.WINDOW,{ maxLines: 2 });
+    const messageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
     messageText.setWordWrapWidth(this.scene.game.canvas.width - 2);
     messageText.setName("settings-message");
     messageText.setOrigin(0, 0);
@@ -231,37 +231,44 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     let success = false;
 
-    const progressLosing = () => {
+    /**
+      * Checks if the game is in a state where progress may be lost due to changes options with reloadRequired while at battle.
+      * @returns `false` if the warning process is triggered, `true` otherwise.
+    */
+    const progressLosing = (): boolean => {
       if (this.reloadRequired && this.scene.currentBattle && this.scene.currentBattle.turn > 1) {
 
         this.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
           ui.setOverlayMode(Mode.CONFIRM, () => {
             NavigationManager.getInstance().reset();
+            // revert confirm mode.
             this.scene.ui.revertMode();
+            // revert settings mode.
             this.scene.ui.revertMode();
           }, () => {
+            // if user don't want accept losing progress for reload, revert options with reloadRequired for no reload.
             this.reloadSettings.forEach((s,i) => {
               if (s !== null && s !== this.optionCursors[i]) {
                 this.setOptionCursor(i,s,true);
               }
             });
             this.scene.ui.revertMode();
-            ui.showText("", 0);
+            this.showText("", 0);
           }, false, 0,0);
         });
         return false;
-
       }
       return true;
+
     };
 
     if (button === Button.CANCEL) {
+      success = true;
       if (progressLosing()) {
         NavigationManager.getInstance().reset();
+        // Reverts UI to its previous state on cancel.
         this.scene.ui.revertMode();
       }
-      success = true;
-
     } else {
       const cursor = this.cursor + this.scrollCursor;
       switch (button) {
@@ -395,7 +402,6 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     if (save) {
       this.scene.gameData.saveSetting(setting.key, cursor);
-
       this.reloadRequired = this.reloadSettings.some((s,i)=>
         s !== null && s !== this.optionCursors[i]
       );
