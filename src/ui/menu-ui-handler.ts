@@ -96,6 +96,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   render() {
     const ui = this.getUi();
+    console.log(ui.getModeChain());
     this.excludedMenus = () => [
       { condition: ![Mode.COMMAND, Mode.TITLE].includes(ui.getModeChain()[0]), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
       { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
@@ -223,10 +224,11 @@ export default class MenuUiHandler extends MessageUiHandler {
       handler: () => {
         this.scene.gameData.tryExportData(GameDataType.SYSTEM);
         return true;
-      }
+      },
+      keepOpen: true
     },
     {
-      label: "Consent Preferences",
+      label: i18next.t("menuUiHandler:consentPreferences"),
       handler: () => {
         const consentLink = document.querySelector(".termly-display-preferences") as HTMLInputElement;
         const clickEvent = new MouseEvent("click", {
