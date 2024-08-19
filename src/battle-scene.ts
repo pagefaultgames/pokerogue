@@ -2577,7 +2577,6 @@ export default class BattleScene extends SceneBase {
         getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance, this)
           .map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
       });
-
       this.updateModifiers(false).then(() => resolve());
     });
   }
