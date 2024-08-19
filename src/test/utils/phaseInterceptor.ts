@@ -1,44 +1,42 @@
-import {
-  BattleEndPhase,
-  BerryPhase,
-  CheckSwitchPhase,
-  CommandPhase,
-  DamagePhase,
-  EggLapsePhase,
-  EncounterPhase,
-  EnemyCommandPhase,
-  FaintPhase,
-  LoginPhase,
-  MessagePhase,
-  MoveEffectPhase,
-  MoveEndPhase,
-  MovePhase,
-  NewBattlePhase,
-  NextEncounterPhase,
-  PartyHealPhase,
-  PostSummonPhase,
-  SelectGenderPhase,
-  SelectModifierPhase,
-  SelectStarterPhase,
-  SelectTargetPhase,
-  ShinySparklePhase,
-  ShowAbilityPhase,
-  StatChangePhase,
-  SummonPhase,
-  SwitchPhase,
-  SwitchSummonPhase,
-  TitlePhase,
-  ToggleDoublePositionPhase,
-  TurnEndPhase,
-  TurnInitPhase,
-  TurnStartPhase,
-  UnavailablePhase,
-  VictoryPhase
-} from "#app/phases";
 import UI, { Mode } from "#app/ui/ui";
 import { Phase } from "#app/phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
-import { QuietFormChangePhase } from "#app/form-change-phase";
+import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { CheckSwitchPhase } from "#app/phases/check-switch-phase.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { EggLapsePhase } from "#app/phases/egg-lapse-phase.js";
+import { EncounterPhase } from "#app/phases/encounter-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { FaintPhase } from "#app/phases/faint-phase.js";
+import { LoginPhase } from "#app/phases/login-phase.js";
+import { MessagePhase } from "#app/phases/message-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { MovePhase } from "#app/phases/move-phase.js";
+import { NewBattlePhase } from "#app/phases/new-battle-phase.js";
+import { NextEncounterPhase } from "#app/phases/next-encounter-phase.js";
+import { PostSummonPhase } from "#app/phases/post-summon-phase.js";
+import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase.js";
+import { SelectGenderPhase } from "#app/phases/select-gender-phase.js";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase.js";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
+import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
+import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase.js";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
+import { StatChangePhase } from "#app/phases/stat-change-phase.js";
+import { SummonPhase } from "#app/phases/summon-phase.js";
+import { SwitchPhase } from "#app/phases/switch-phase.js";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
+import { TitlePhase } from "#app/phases/title-phase.js";
+import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
+import { UnavailablePhase } from "#app/phases/unavailable-phase.js";
+import { VictoryPhase } from "#app/phases/victory-phase.js";
+import { PartyHealPhase } from "#app/phases/party-heal-phase.js";
 
 export default class PhaseInterceptor {
   public scene;

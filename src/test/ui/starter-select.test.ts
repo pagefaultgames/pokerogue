@@ -1,7 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
-import { EncounterPhase, SelectStarterPhase, TitlePhase } from "#app/phases";
 import { Mode } from "#app/ui/ui";
 import { GameModes } from "#app/game-mode";
 import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
@@ -14,6 +13,9 @@ import { Nature} from "#app/data/nature";
 import { Button } from "#enums/buttons";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
+import { EncounterPhase } from "#app/phases/encounter-phase.js";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
+import { TitlePhase } from "#app/phases/title-phase.js";
 
 
 describe("UI - Starter select", () => {

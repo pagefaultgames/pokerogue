@@ -1,4 +1,4 @@
-import { CommandPhase } from "#app/phases";
+import { CommandPhase } from "#app/phases/command-phase.js";
 import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
