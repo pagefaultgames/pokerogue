@@ -290,6 +290,9 @@ export class InterruptedTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
+    if (this.sourceMove === Moves.GRAVITY) {
+      pokemon.scene.queueMessage(i18next.t("battle:cancelSemiInvulnerableAirborne", { pokemonName: getPokemonNameWithAffix(pokemon)}));
+    }
     pokemon.getMoveQueue().shift();
     pokemon.pushMoveHistory({move: Moves.NONE, result: MoveResult.OTHER});
   }

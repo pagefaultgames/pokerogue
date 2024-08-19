@@ -7184,7 +7184,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ROOSTED, true, false)
       .triageMove(),
     new StatusMove(Moves.GRAVITY, Type.PSYCHIC, -1, 5, -1, 0, 4)
-      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING)
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, true, 5, 5)
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.MAGNET_RISEN])
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)

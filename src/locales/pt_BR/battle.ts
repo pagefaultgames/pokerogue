@@ -47,6 +47,7 @@ export const battle: SimpleTranslationEntries = {
   "moveDisabled": "Não se pode usar {{moveName}} porque foi desabilitado!",
   "moveDisabledGravity": "{{pokemonName}} can't use {{moveName}} because of gravity!",
   "moveDisabledStuffCheeks": "{{pokemonName}} can't use {{moveName}} because it doesn't have a Berry!",
+  "cancelSemiInvulnerableAirborne": "{{pokemonName}} couldn't stay airborne because of gravity!",
   "noPokeballForce": "Uma força misteriosa\nte impede de usar Poké Bolas.",
   "noPokeballTrainer": "Não se pode capturar\nPokémon dos outros!",
   "noPokeballMulti": "Não se pode lançar Poké Bolas\nquando há mais de um Pokémon!",

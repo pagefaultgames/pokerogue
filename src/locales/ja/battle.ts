@@ -47,6 +47,7 @@ export const battle: SimpleTranslationEntries = {
   "moveDisabled": "かなしばりで\n{{moveName}}が　出せない！",
   "moveDisabledGravity": "{{pokemonName}} can't use {{moveName}} because of gravity!",
   "moveDisabledStuffCheeks": "{{pokemonName}} can't use {{moveName}} because it doesn't have a Berry!",
+  "cancelSemiInvulnerableAirborne": "{{pokemonName}} couldn't stay airborne because of gravity!",
   "noPokeballForce": "見えない　力の　せいで\nボールが　投げられない！",
   "noPokeballTrainer": "人の　ものを　取ったら　泥棒！",
   "noPokeballMulti": "相手の　ポケモンが　一つしか\nいない　前に　ボールが　使えない!",
