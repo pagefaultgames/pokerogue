@@ -1,4 +1,3 @@
-import { BattlerIndex } from "#app/battle.js";
 import { BattlePhase } from "./battle-phase";
 
 type PokemonFunc = (pokemon: Pokemon) => void;
