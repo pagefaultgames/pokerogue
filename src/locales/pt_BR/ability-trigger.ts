@@ -46,7 +46,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postFaintContactDamage": "{{abilityName}} de {{pokemonNameWithAffix}}\nferiu seu adversário!",
   "postFaintHpDamage": "{{abilityName}} de {{pokemonNameWithAffix}}\nferiu seu adversário!",
   "postSummonPressure": "{{pokemonNameWithAffix}} está exercendo sua pressão!",
-  "weatherEffectDisappeared": "The effects of the weather disappeared.",
+  "weatherEffectDisappeared": "Os efeitos do clima desapareceram.",
   "postSummonMoldBreaker": "{{pokemonNameWithAffix}} quebra o molde!",
   "postSummonAnticipation": "{{pokemonNameWithAffix}} se arrepiou!",
   "postSummonTurboblaze": "{{pokemonNameWithAffix}} está irradiando uma aura ardente!",
