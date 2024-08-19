@@ -5,7 +5,7 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import { randSeedInt } from "#app/utils.js";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -18,7 +18,7 @@ const namespace = "mysteryEncounter:mysteriousChest";
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/32 | GitHub Issue #32}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const MysteriousChestEncounter: IMysteryEncounter =
+export const MysteriousChestEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.MYSTERIOUS_CHEST)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180) // waves 2 to 180
@@ -116,9 +116,8 @@ export const MysteriousChestEncounter: IMysteryEncounter =
             scene.currentBattle.mysteryEncounter.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
             // Show which Pokemon was KOed, then leave encounter with no rewards
             // Does this synchronously so that game over doesn't happen over result message
-            await showEncounterText(scene, `${namespace}.option.1.bad`).then(() => {
-              leaveEncounterWithoutBattle(scene);
-            });
+            await showEncounterText(scene, `${namespace}.option.1.bad`);
+            leaveEncounterWithoutBattle(scene);
           }
         })
         .build()

@@ -6,7 +6,7 @@ import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, } from "../utils/encounter-phase-utils";
 import { getRandomPlayerPokemon, getRandomSpeciesByStarterTier } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
@@ -74,7 +74,7 @@ const excludedBosses = [
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/61 | GitHub Issue #61}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const DarkDealEncounter: IMysteryEncounter =
+export const DarkDealEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DARK_DEAL)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
     .withIntroSpriteConfigs([

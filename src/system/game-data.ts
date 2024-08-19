@@ -43,7 +43,7 @@ import { Species } from "#enums/species";
 import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { MysteryEncounterData } from "../data/mystery-encounters/mystery-encounter-data";
-import IMysteryEncounter from "../data/mystery-encounters/mystery-encounter";
+import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -126,7 +126,7 @@ export interface SessionSaveData {
   gameVersion: string;
   timestamp: integer;
   challenges: ChallengeData[];
-  mysteryEncounter: IMysteryEncounter;
+  mysteryEncounter: MysteryEncounter;
   mysteryEncounterData: MysteryEncounterData;
 }
 
@@ -1167,7 +1167,7 @@ export class GameData {
       }
 
       if (k === "mysteryEncounter") {
-        return new IMysteryEncounter(v);
+        return new MysteryEncounter(v);
       }
 
       if (k === "mysteryEncounterData") {

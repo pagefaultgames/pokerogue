@@ -1,11 +1,11 @@
-import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs, TrainerPartyCompoundTemplate, TrainerPartyTemplate, } from "#app/data/trainer-config";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
@@ -56,7 +56,7 @@ const RANDOM_ABILITY_POOL = [
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/69 | GitHub Issue #69}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const ClowningAroundEncounter: IMysteryEncounter =
+export const ClowningAroundEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.CLOWNING_AROUND)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
     .withSceneWaveRangeRequirement(80, 180)
@@ -128,8 +128,7 @@ export const ClowningAroundEncounter: IMysteryEncounter =
           },
           { // Blacephalon has the random ability from pool, and 2 entirely random types to fit with the theme of the encounter
             species: getPokemonSpecies(Species.BLACEPHALON),
-            ability: ability,
-            mysteryEncounterData: new MysteryEncounterPokemonData(null, null, null, [randSeedInt(18), randSeedInt(18)]),
+            mysteryEncounterData: new MysteryEncounterPokemonData(null, ability, null, [randSeedInt(18), randSeedInt(18)]),
             isBoss: true,
             moveSet: [Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN]
           },
@@ -483,9 +482,9 @@ function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItem
     const newItemType = pool[randIndex];
     let newMod;
     if (tier === "Berries") {
-      newMod = generateModifierTypeOption(scene, modifierTypes.BERRY, [newItemType[0]]).type as PokemonHeldItemModifierType;
+      newMod = generateModifierType(scene, modifierTypes.BERRY, [newItemType[0]]) as PokemonHeldItemModifierType;
     } else {
-      newMod = generateModifierTypeOption(scene, newItemType[0]).type as PokemonHeldItemModifierType;
+      newMod = generateModifierType(scene, newItemType[0]) as PokemonHeldItemModifierType;
     }
     applyModifierTypeToPlayerPokemon(scene, pokemon, newMod);
     // Decrement max stacks and remove from pool if at max

@@ -1958,4 +1958,19 @@ export const trainerConfigs: TrainerConfigs = {
       }
       p.pokeball = PokeballType.MASTER_BALL;
     })),
+  [TrainerType.VICTOR]: new TrainerConfig(++t).setName("Victor").setTitle("The Winstrates")
+    .setMoneyMultiplier(1) // The Winstrate trainers have total money multiplier of 6
+    .setPartyTemplates(trainerPartyTemplates.ONE_AVG_ONE_STRONG),
+  [TrainerType.VICTORIA]: new TrainerConfig(++t).setName("Victoria").setTitle("The Winstrates")
+    .setMoneyMultiplier(1)
+    .setPartyTemplates(trainerPartyTemplates.ONE_AVG_ONE_STRONG),
+  [TrainerType.VIVI]: new TrainerConfig(++t).setName("Vivi").setTitle("The Winstrates")
+    .setMoneyMultiplier(1)
+    .setPartyTemplates(trainerPartyTemplates.TWO_AVG_ONE_STRONG),
+  [TrainerType.VICKY]: new TrainerConfig(++t).setName("Vicky").setTitle("The Winstrates")
+    .setMoneyMultiplier(1)
+    .setPartyTemplates(trainerPartyTemplates.ONE_AVG),
+  [TrainerType.VITO]: new TrainerConfig(++t).setName("Vito").setTitle("The Winstrates")
+    .setMoneyMultiplier(2)
+    .setPartyTemplates(new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(2, PartyMemberStrength.STRONG)))
 };

@@ -381,6 +381,10 @@ export class MysteryEncounterBattlePhase extends Phase {
 
 /**
  * Will handle (in order):
+ * - doContinueEncounter() callback for continuous encounters with back-to-back battles (this should push/shift its own phases as needed)
+ *
+ * OR
+ *
  * - Any encounter reward logic that is set within MysteryEncounter doEncounterExp
  * - Any encounter reward logic that is set within MysteryEncounter doEncounterRewards
  * - Otherwise, can add a no-reward-item shop with only Potions, etc. if addHealPhase is true
@@ -396,23 +400,30 @@ export class MysteryEncounterRewardsPhase extends Phase {
 
   start() {
     super.start();
+    const encounter = this.scene.currentBattle.mysteryEncounter;
 
-    this.scene.executeWithSeedOffset(() => {
-      if (this.scene.currentBattle.mysteryEncounter.doEncounterExp) {
-        this.scene.currentBattle.mysteryEncounter.doEncounterExp(this.scene);
-      }
+    if (encounter.doContinueEncounter) {
+      encounter.doContinueEncounter(this.scene).then(() => {
+        this.end();
+      });
+    } else {
+      this.scene.executeWithSeedOffset(() => {
+        if (this.scene.currentBattle.mysteryEncounter.doEncounterExp) {
+          this.scene.currentBattle.mysteryEncounter.doEncounterExp(this.scene);
+        }
 
-      if (this.scene.currentBattle.mysteryEncounter.doEncounterRewards) {
-        this.scene.currentBattle.mysteryEncounter.doEncounterRewards(this.scene);
-      } else if (this.addHealPhase) {
-        this.scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
-        this.scene.unshiftPhase(new SelectModifierPhase(this.scene, 0, null, { fillRemaining: false, rerollMultiplier: 0 }));
-      }
-      // Do not use ME's seedOffset for rewards, these should always be consistent with waveIndex (once per wave)
-    }, this.scene.currentBattle.waveIndex * 1000);
+        if (this.scene.currentBattle.mysteryEncounter.doEncounterRewards) {
+          this.scene.currentBattle.mysteryEncounter.doEncounterRewards(this.scene);
+        } else if (this.addHealPhase) {
+          this.scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
+          this.scene.unshiftPhase(new SelectModifierPhase(this.scene, 0, null, { fillRemaining: false, rerollMultiplier: 0 }));
+        }
+        // Do not use ME's seedOffset for rewards, these should always be consistent with waveIndex (once per wave)
+      }, this.scene.currentBattle.waveIndex * 1000);
 
-    this.scene.pushPhase(new PostMysteryEncounterPhase(this.scene));
-    this.end();
+      this.scene.pushPhase(new PostMysteryEncounterPhase(this.scene));
+      this.end();
+    }
   }
 }
 

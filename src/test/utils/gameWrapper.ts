@@ -127,6 +127,7 @@ export default class GameWrapper {
       manager: {
         game: this.game,
       },
+      destroy: () => null,
       setVolume: () => null,
       stopByKey: () => null,
       on: (evt, callback) => callback(),

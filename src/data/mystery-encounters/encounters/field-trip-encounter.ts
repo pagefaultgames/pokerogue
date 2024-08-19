@@ -7,7 +7,7 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
@@ -19,7 +19,7 @@ const namespace = "mysteryEncounter:fieldTrip";
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/17 | GitHub Issue #17}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const FieldTripEncounter: IMysteryEncounter =
+export const FieldTripEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIELD_TRIP)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180)

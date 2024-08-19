@@ -3,7 +3,7 @@ import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig
 import { AttackTypeBoosterModifierType, modifierTypes, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { TypeRequirement } from "../mystery-encounter-requirements";
 import { Species } from "#enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
@@ -36,7 +36,7 @@ const DAMAGE_PERCENTAGE: number = 20;
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/88 | GitHub Issue #88}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const FieryFalloutEncounter: IMysteryEncounter =
+export const FieryFalloutEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIERY_FALLOUT)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(40, 180)

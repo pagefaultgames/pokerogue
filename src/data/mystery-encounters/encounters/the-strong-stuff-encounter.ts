@@ -1,8 +1,8 @@
-import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, loadCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, loadCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals, generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes, PokemonHeldItemModifierType, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Species } from "#enums/species";
 import { Nature } from "#app/data/nature";
@@ -26,7 +26,7 @@ const namespace = "mysteryEncounter:theStrongStuff";
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/54 | GitHub Issue #54}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const TheStrongStuffEncounter: IMysteryEncounter =
+export const TheStrongStuffEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_STRONG_STUFF)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
@@ -74,12 +74,20 @@ export const TheStrongStuffEncounter: IMysteryEncounter =
             mysteryEncounterData: new MysteryEncounterPokemonData(1.5),
             nature: Nature.BOLD,
             moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
-            modifierTypes: [
-              generateModifierTypeOption(scene, modifierTypes.BERRY, [BerryType.SITRUS]).type as PokemonHeldItemModifierType,
-              generateModifierTypeOption(scene, modifierTypes.BERRY, [BerryType.APICOT]).type as PokemonHeldItemModifierType,
-              generateModifierTypeOption(scene, modifierTypes.BERRY, [BerryType.GANLON]).type as PokemonHeldItemModifierType,
-              generateModifierTypeOption(scene, modifierTypes.BERRY, [BerryType.LUM]).type as PokemonHeldItemModifierType,
-              generateModifierTypeOption(scene, modifierTypes.BERRY, [BerryType.LUM]).type as PokemonHeldItemModifierType
+            modifierConfigs: [
+              {
+                modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType
+              },
+              {
+                modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.APICOT]) as PokemonHeldItemModifierType
+              },
+              {
+                modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.GANLON]) as PokemonHeldItemModifierType
+              },
+              {
+                modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LUM]) as PokemonHeldItemModifierType,
+                stackCount: 2
+              }
             ],
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {

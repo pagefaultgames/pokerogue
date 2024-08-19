@@ -3,7 +3,7 @@ import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -77,7 +77,7 @@ const SENSU_STYLE_BIOMES = [
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/130 | GitHub Issue #130}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const DancingLessonsEncounter: IMysteryEncounter =
+export const DancingLessonsEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DANCING_LESSONS)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180)

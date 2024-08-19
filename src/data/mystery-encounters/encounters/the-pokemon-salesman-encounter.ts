@@ -2,7 +2,7 @@ import { leaveEncounterWithoutBattle, transitionMysteryEncounterIntroVisuals, up
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MoneyRequirement } from "../mystery-encounter-requirements";
 import { catchPokemon, getRandomSpeciesByStarterTier, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getPokemonSpecies, speciesStarters } from "#app/data/pokemon-species";
@@ -25,7 +25,7 @@ const MAX_POKEMON_PRICE_MULTIPLIER = 6;
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/36 | GitHub Issue #36}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const ThePokemonSalesmanEncounter: IMysteryEncounter =
+export const ThePokemonSalesmanEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_POKEMON_SALESMAN)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
     .withSceneWaveRangeRequirement(10, 180)

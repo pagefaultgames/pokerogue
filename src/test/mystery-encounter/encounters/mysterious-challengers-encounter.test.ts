@@ -18,7 +18,7 @@ import { TrainerConfig, TrainerPartyCompoundTemplate, TrainerPartyTemplate } fro
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import IMysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 
 const namespace = "mysteryEncounter:mysteriousChallengers";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -96,7 +96,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
 
   it("should initialize fully", async () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
-    scene.currentBattle.mysteryEncounter = new IMysteryEncounter(MysteriousChallengersEncounter);
+    scene.currentBattle.mysteryEncounter = new MysteryEncounter(MysteriousChallengersEncounter);
     const encounter = scene.currentBattle.mysteryEncounter;
     scene.currentBattle.waveIndex = defaultWave;
 

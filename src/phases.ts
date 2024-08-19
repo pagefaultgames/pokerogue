@@ -6,7 +6,7 @@ import { allMoves, applyFilteredMoveAttrs, applyMoveAttrs, AttackMove, BypassRed
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, BypassSpeedChanceModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, IvScannerModifier, LapsingPersistentModifier, LapsingPokemonHeldItemModifier, MapModifier, Modifier, MoneyInterestModifier, MoneyMultiplierModifier, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, PokemonMultiHitModifier, PokemonResetNegativeStatStageModifier, SwitchEffectTransferModifier, TurnHealModifier, TurnHeldItemTransferModifier, TurnStatusEffectModifier } from "./modifier/modifier";
+import { BerryModifier, BypassSpeedChanceModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, IvScannerModifier, LapsingPersistentModifier, LapsingPokemonHeldItemModifier, MapModifier, Modifier, MoneyInterestModifier, MoneyMultiplierModifier, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonIncrementingStatModifier, PokemonInstantReviveModifier, PokemonMultiHitModifier, PokemonResetNegativeStatStageModifier, SwitchEffectTransferModifier, TurnHealModifier, TurnHeldItemTransferModifier, TurnStatusEffectModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, initEncounterAnims, initMoveAnim, loadEncounterAnimAssets, loadMoveAnimAssets, MoveAnim } from "./data/battle-anims";
@@ -1302,8 +1302,7 @@ export class NextEncounterPhase extends EncounterPhase {
           this.scene.lastEnemyTrainer.destroy();
         }
         if (lastEncounterVisuals) {
-          this.scene.field.remove(lastEncounterVisuals);
-          lastEncounterVisuals.destroy();
+          this.scene.field.remove(lastEncounterVisuals, true);
           this.scene.lastMysteryEncounter.introVisuals = null;
         }
 
@@ -1583,7 +1582,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
         onComplete: () => this.scene.trainer.setVisible(false)
       });
       this.scene.time.delayedCall(750, () => this.summon());
-    } else if (this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene?.currentBattle?.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
+    } else if (this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       const trainerName = this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
       const pokemonName = getPokemonNameWithAffix(this.getPokemon());
       const message = i18next.t("battle:trainerSendOut", { trainerName, pokemonName });
@@ -2287,7 +2286,7 @@ export class CommandPhase extends FieldPhase {
           this.scene.ui.showText(null, 0);
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }, null, true);
-      } else if (!isSwitch && this.scene.currentBattle.battleType === BattleType.TRAINER) {
+      } else if (!isSwitch && (this.scene.currentBattle.battleType === BattleType.TRAINER || this.scene.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE)) {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(i18next.t("battle:noEscapeTrainer"), null, () => {
@@ -4138,6 +4137,12 @@ export class VictoryPhase extends PokemonPhase {
         const participated = participantIds.has(pId);
         if (participated) {
           partyMember.addFriendship(2);
+          const machoBraceModifier = partyMember.getHeldItems().find(m => m instanceof PokemonIncrementingStatModifier);
+          if (!isNullOrUndefined(machoBraceModifier) && machoBraceModifier.stackCount < machoBraceModifier.getMaxStackCount(this.scene)) {
+            machoBraceModifier.stackCount++;
+            this.scene.updateModifiers(true, true);
+            partyMember.updateInfo();
+          }
         }
         if (!expPartyMembers.includes(partyMember)) {
           continue;

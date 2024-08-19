@@ -2,7 +2,7 @@ import { Type } from "#app/data/type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { leaveEncounterWithoutBattle, setEncounterRewards, } from "../utils/encounter-phase-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -82,7 +82,7 @@ const excludedPokemon = [
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/137 | GitHub Issue #137}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const WeirdDreamEncounter: IMysteryEncounter =
+export const WeirdDreamEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.WEIRD_DREAM)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
     .withIntroSpriteConfigs([
@@ -205,11 +205,6 @@ export const WeirdDreamEncounter: IMysteryEncounter =
         return true;
       }
     )
-    .withOutroDialogue([
-      {
-        text: `${namespace}.outro`
-      }
-    ])
     .build();
 
 interface PokemonTransformation {

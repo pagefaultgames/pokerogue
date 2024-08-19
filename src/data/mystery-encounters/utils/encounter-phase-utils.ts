@@ -3,9 +3,9 @@ import { biomeLinks, BiomePoolTier } from "#app/data/biomes";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import Pokemon, { FieldPosition, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import Pokemon, { FieldPosition, PlayerPokemon, PokemonMove, PokemonSummonData } from "#app/field/pokemon";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
-import { CustomModifierSettings, ModifierPoolType, ModifierType, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, PokemonHeldItemModifierType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import { CustomModifierSettings, ModifierPoolType, ModifierType, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { BattleEndPhase, EggLapsePhase, ExpPhase, GameOverPhase, MovePhase, SelectModifierPhase, ShowPartyExpBarPhase, TrainerVictoryPhase } from "#app/phases";
 import { MysteryEncounterBattlePhase, MysteryEncounterBattleStartCleanupPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import PokemonData from "#app/system/pokemon-data";
@@ -30,8 +30,8 @@ import { TrainerConfig, trainerConfigs, TrainerSlot } from "#app/data/trainer-co
 import PokemonSpecies from "#app/data/pokemon-species";
 import Overrides from "#app/overrides";
 import { Egg, IEggOptions } from "#app/data/egg";
-import { Abilities } from "#enums/abilities";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -67,18 +67,18 @@ export interface EnemyPokemonConfig {
   bossSegmentModifier?: number; // Additive to the determined segment number
   mysteryEncounterData?: MysteryEncounterPokemonData;
   formIndex?: number;
+  abilityIndex?: number;
   level?: number;
   gender?: Gender;
   passive?: boolean;
   moveSet?: Moves[];
   nature?: Nature;
   ivs?: [integer, integer, integer, integer, integer, integer];
-  ability?: Abilities;
   shiny?: boolean;
   /** Can set just the status, or pass a timer on the status turns */
   status?: StatusEffect | [StatusEffect, number];
   mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
-  modifierTypes?: PokemonHeldItemModifierType[];
+  modifierConfigs?: HeldModifierConfig[];
   tags?: BattlerTagType[];
   dataSource?: PokemonData;
 }
@@ -258,10 +258,13 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       }
 
       // Set summon data fields
+      if (!enemyPokemon.summonData) {
+        enemyPokemon.summonData = new PokemonSummonData();
+      }
 
       // Set ability
-      if (!isNullOrUndefined(config.ability)) {
-        enemyPokemon.summonData.ability = config.ability;
+      if (!isNullOrUndefined(config.abilityIndex)) {
+        enemyPokemon.abilityIndex = config.abilityIndex;
       }
 
       // Set gender
@@ -293,6 +296,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
       enemyPokemon.initBattleInfo();
       enemyPokemon.getBattleInfo().initInfo(enemyPokemon);
+      enemyPokemon.generateName();
     }
 
     loadEnemyAssets.push(enemyPokemon.loadAssets());
@@ -315,8 +319,8 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
   });
   if (!loaded) {
     regenerateModifierPoolThresholds(scene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
-    const customModifiers = partyConfig?.pokemonConfigs?.map(config => config?.modifierTypes);
-    scene.generateEnemyModifiers(customModifiers);
+    const customModifierTypes = partyConfig?.pokemonConfigs?.map(config => config?.modifierConfigs);
+    scene.generateEnemyModifiers(customModifierTypes);
   }
 }
 
@@ -363,7 +367,7 @@ export function updatePlayerMoney(scene: BattleScene, changeValue: number, playS
  * @param modifier
  * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
-export function generateModifierTypeOption(scene: BattleScene, modifier: () => ModifierType, pregenArgs?: any[]): ModifierTypeOption {
+export function generateModifierType(scene: BattleScene, modifier: () => ModifierType, pregenArgs?: any[]): ModifierType {
   const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifier);
   let result: ModifierType = modifierTypes[modifierId]?.();
 
@@ -373,6 +377,17 @@ export function generateModifierTypeOption(scene: BattleScene, modifier: () => M
     .withTierFromPool();
 
   result = result instanceof ModifierTypeGenerator ? result.generateType(scene.getParty(), pregenArgs) : result;
+  return result;
+}
+
+/**
+ * Converts modifier bullshit to an actual item
+ * @param scene - Battle Scene
+ * @param modifier
+ * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
+ */
+export function generateModifierTypeOption(scene: BattleScene, modifier: () => ModifierType, pregenArgs?: any[]): ModifierTypeOption {
+  const result = generateModifierType(scene, modifier, pregenArgs);
   return new ModifierTypeOption(result, 0);
 }
 
@@ -619,9 +634,10 @@ export function initSubsequentOptionSelect(scene: BattleScene, optionSelectSetti
  * Will skip any shops and rewards, and queue the next encounter phase as normal
  * @param scene
  * @param addHealPhase - when true, will add a shop phase to end of encounter with 0 rewards but healing items are available
+ * @param encounterMode - Can set custom encounter mode if necessary (may be required for forcing Pokemon to return before next phase)
  */
-export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: boolean = false) {
-  scene.currentBattle.mysteryEncounter.encounterMode = MysteryEncounterMode.NO_BATTLE;
+export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: boolean = false, encounterMode: MysteryEncounterMode = MysteryEncounterMode.NO_BATTLE) {
+  scene.currentBattle.mysteryEncounter.encounterMode = encounterMode;
   scene.clearPhaseQueue();
   scene.clearPhaseQueueSplice();
   handleMysteryEncounterVictory(scene, addHealPhase);
@@ -644,18 +660,22 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
 
   // If in repeated encounter variant, do nothing
   // Variant must eventually be swapped in order to handle "true" end of the encounter
-  if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.CONTINUOUS_ENCOUNTER || doNotContinue) {
+  const encounter = scene.currentBattle.mysteryEncounter;
+  if (encounter.continuousEncounter || doNotContinue) {
     return;
-  } else if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.NO_BATTLE) {
+  } else if (encounter.encounterMode === MysteryEncounterMode.NO_BATTLE) {
     scene.pushPhase(new EggLapsePhase(scene));
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
-  } else if (!scene.getEnemyParty().find(p => scene.currentBattle.mysteryEncounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
+  } else if (!scene.getEnemyParty().find(p => encounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
     scene.pushPhase(new BattleEndPhase(scene));
-    if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
+    if (encounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       scene.pushPhase(new TrainerVictoryPhase(scene));
     }
     if (scene.gameMode.isEndless || !scene.gameMode.isWaveFinal(scene.currentBattle.waveIndex)) {
-      scene.pushPhase(new EggLapsePhase(scene));
+      if (!encounter.doContinueEncounter) {
+        // Only lapse eggs once for multi-battle encounters
+        scene.pushPhase(new EggLapsePhase(scene));
+      }
       scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
     }
   }

@@ -123,7 +123,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
             mysteryEncounterData: new MysteryEncounterPokemonData(1.5),
             nature: Nature.BOLD,
             moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
-            modifierTypes: expect.any(Array),
+            modifierConfigs: expect.any(Array),
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
             mysteryEncounterBattleEffects: expect.any(Function)
           }

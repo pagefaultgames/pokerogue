@@ -1,10 +1,10 @@
-import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import Pokemon, { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import { BerryModifierType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { PersistentModifierRequirement } from "../mystery-encounter-requirements";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -21,6 +21,7 @@ import { BattlerIndex } from "#app/battle";
 import { applyModifierTypeToPlayerPokemon, catchPokemon, getHighestLevelPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { PokeballType } from "#app/data/pokeball";
+import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:absoluteAvarice";
@@ -30,7 +31,7 @@ const namespace = "mysteryEncounter:absoluteAvarice";
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/58 | GitHub Issue #58}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const AbsoluteAvariceEncounter: IMysteryEncounter =
+export const AbsoluteAvariceEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.ABSOLUTE_AVARICE)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180)
@@ -191,13 +192,13 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
       encounter.misc = { berryItemsMap };
 
       // Generates copies of the stolen berries to put on the Greedent
-      const bossModifierTypes: PokemonHeldItemModifierType[] = [];
+      const bossModifierConfigs: HeldModifierConfig[] = [];
       berryItems.forEach(berryMod => {
         // Can't define stack count on a ModifierType, have to just create separate instances for each stack
         // Overflow berries will be "lost" on the boss, but it's un-catchable anyway
         for (let i = 0; i < berryMod.stackCount; i++) {
-          const modifierType = generateModifierTypeOption(scene, modifierTypes.BERRY, [berryMod.berryType]).type as PokemonHeldItemModifierType;
-          bossModifierTypes.push(modifierType);
+          const modifierType = generateModifierType(scene, modifierTypes.BERRY, [berryMod.berryType]) as PokemonHeldItemModifierType;
+          bossModifierConfigs.push({ modifierType });
         }
 
         scene.removeModifier(berryMod);
@@ -212,7 +213,7 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
             isBoss: true,
             bossSegments: 3,
             moveSet: [Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.SLACK_OFF],
-            modifierTypes: bossModifierTypes,
+            modifierConfigs: bossModifierConfigs,
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
               queueEncounterMessage(pokemon.scene, `${namespace}.option.1.boss_enraged`);
@@ -243,7 +244,7 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter;
 
           // Provides 1x Reviver Seed to each party member at end of battle
-          const revSeed = generateModifierTypeOption(scene, modifierTypes.REVIVER_SEED).type;
+          const revSeed = generateModifierType(scene, modifierTypes.REVIVER_SEED);
           const givePartyPokemonReviverSeeds = () => {
             const party = scene.getParty();
             party.forEach(p => {
@@ -296,7 +297,7 @@ export const AbsoluteAvariceEncounter: IMysteryEncounter =
                 Phaser.Math.RND.shuffle(berryTypesAsArray);
                 const randBerryType = berryTypesAsArray.pop();
 
-                const berryModType = generateModifierTypeOption(scene, modifierTypes.BERRY, [randBerryType]).type as BerryModifierType;
+                const berryModType = generateModifierType(scene, modifierTypes.BERRY, [randBerryType]) as BerryModifierType;
                 applyModifierTypeToPlayerPokemon(scene, pokemon, berryModType);
               }
             }

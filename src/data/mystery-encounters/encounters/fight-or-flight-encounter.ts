@@ -17,7 +17,7 @@ import {
 } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
-import IMysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
+import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MoveRequirement } from "../mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -33,7 +33,7 @@ const namespace = "mysteryEncounter:fightOrFlight";
  * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/24 | GitHub Issue #24}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const FightOrFlightEncounter: IMysteryEncounter =
+export const FightOrFlightEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.FIGHT_OR_FLIGHT)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
