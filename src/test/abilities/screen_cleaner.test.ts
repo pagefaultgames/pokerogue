@@ -1,5 +1,4 @@
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import { PostSummonPhase, TurnEndPhase, } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -7,6 +6,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { PostSummonPhase } from "#app/phases/post-summon-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Abilities - Screen Cleaner", () => {
   let phaserGame: Phaser.Game;

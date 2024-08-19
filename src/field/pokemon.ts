@@ -17,7 +17,6 @@ import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
 import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
-import { DamagePhase, FaintPhase, LearnMovePhase, MoveEffectPhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase, ToggleDoublePositionPhase, MoveEndPhase } from "../phases";
 import { BattleStat } from "../data/battle-stat";
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
@@ -51,6 +50,15 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { FaintPhase } from "#app/phases/faint-phase.js";
+import { LearnMovePhase } from "#app/phases/learn-move-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase.js";
+import { StatChangePhase } from "#app/phases/stat-change-phase.js";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
+import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase.js";
 
 export enum FieldPosition {
   CENTER,
