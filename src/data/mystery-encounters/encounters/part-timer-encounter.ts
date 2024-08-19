@@ -115,7 +115,7 @@ export const PartTimerEncounter: MysteryEncounter =
         // Only Pokemon non-KOd pokemon can be selected
         const selectableFilter = (pokemon: Pokemon) => {
           if (!pokemon.isAllowedInBattle()) {
-            return getEncounterText(scene, `${namespace}:invalid_selection`);
+            return getEncounterText(scene, `${namespace}.invalid_selection`);
           }
 
           return null;
@@ -194,7 +194,7 @@ export const PartTimerEncounter: MysteryEncounter =
         // Only Pokemon non-KOd pokemon can be selected
         const selectableFilter = (pokemon: Pokemon) => {
           if (!pokemon.isAllowedInBattle()) {
-            return getEncounterText(scene, `${namespace}:invalid_selection`);
+            return getEncounterText(scene, `${namespace}.invalid_selection`);
           }
 
           return null;

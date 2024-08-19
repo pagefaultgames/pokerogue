@@ -95,7 +95,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
             // If pokemon meets primary pokemon reqs, it can be selected
             const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}:invalid_selection`);
+              return getEncounterText(scene, `${namespace}.invalid_selection`);
             }
 
             return null;

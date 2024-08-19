@@ -169,7 +169,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             // If pokemon meets primary pokemon reqs, it can be selected
             const meetsReqs = encounter.options[1].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}:invalid_selection`);
+              return getEncounterText(scene, `${namespace}.invalid_selection`);
             }
 
             return null;

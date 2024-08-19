@@ -118,7 +118,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
         buttonTooltip: `${namespace}.option.2.tooltip`,
         selected: [
           {
-            speaker: `${namespace}:speaker`,
+            speaker: `${namespace}.speaker`,
             text: `${namespace}.option.2.selected`,
           },
         ],
@@ -137,7 +137,7 @@ async function spawnNextTrainerOrEndEncounter(scene: BattleScene) {
   const nextConfig = encounter.enemyPartyConfigs.pop();
   if (!nextConfig) {
     await transitionMysteryEncounterIntroVisuals(scene, false, false);
-    await showEncounterDialogue(scene, `${namespace}:victory`, `${namespace}:speaker`);
+    await showEncounterDialogue(scene, `${namespace}.victory`, `${namespace}.speaker`);
     setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE], fillRemaining: false });
     encounter.doContinueEncounter = null;
     leaveEncounterWithoutBattle(scene);

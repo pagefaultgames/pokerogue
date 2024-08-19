@@ -178,7 +178,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
     )
     .withOutroDialogue([
       {
-        text: `${namespace}:outro`,
+        text: `${namespace}.outro`,
       },
     ])
     .build();
