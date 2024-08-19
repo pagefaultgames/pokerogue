@@ -1,4 +1,4 @@
-import { DamagePhase } from "#app/phases";
+import { DamagePhase } from "#app/phases/damage-phase.js";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
