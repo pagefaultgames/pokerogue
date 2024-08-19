@@ -359,6 +359,7 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
 /**
  * Class used for triggering form changes based on weather.
  * Used by Castform.
+ * @extends SpeciesFormChangeTrigger
  */
 export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
   /** The ability that  triggers the form change */
@@ -391,6 +392,7 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
  * Class used for reverting to the original form when the weather runs out
  * or when the user loses the ability/is suppressed.
  * Used by Castform.
+ * @extends SpeciesFormChangeTrigger
  */
 export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChangeTrigger {
   /** The ability that triggers the form change*/
