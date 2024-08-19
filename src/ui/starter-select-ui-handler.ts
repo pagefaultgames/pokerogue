@@ -3414,27 +3414,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (this.starterPreferences[speciesId]?.form) { // this checks for the form of the pokemon
       props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.form)) * DexAttr.DEFAULT_FORM;
     } else {
-      // this below bit bitshifts the caught attribute by the number of items of DexAttr.DEFAULT_FORM - this removes anything *not* related to forms here
-      const forms = caughtAttr >> BigInt(Math.log2(Number(DexAttr.DEFAULT_FORM)));
-      let formIndex = 0;
-      let foundForm = false;
-
-      // this goes through each bit of forms and checks if it matches with the form index. If so, it breaks the loop, if not, it adds one to the formIndex and tries again
-      do {
-        if (forms & BigInt((1 << formIndex))) {
-          foundForm = true;
-          break;
-        }
-        // this if statement to break out of the while loop is necessary, but I'm not sure if there's a better way to do it? A challenge for the reader, perhaps?
-        if ((BigInt(Math.pow(2, formIndex))) > forms) {
-          foundForm = true;
-          formIndex = 0;
-          break;
-        }
-        formIndex++;
-      } while (!foundForm);
-      props += BigInt(Math.pow(2, formIndex)) * DexAttr.DEFAULT_FORM;
-      //props += DexAttr.DEFAULT_FORM;
+      // Get the first unlocked form
+      props += this.scene.gameData.getFormAttr(this.scene.gameData.getFormIndex(caughtAttr));
     }
 
     return props;
