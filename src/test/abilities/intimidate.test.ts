@@ -7,11 +7,16 @@ import { generateStarter, getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { CommandPhase, DamagePhase, EncounterPhase, EnemyCommandPhase, SelectStarterPhase, TurnInitPhase } from "#app/phases";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { EncounterPhase } from "#app/phases/encounter-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;

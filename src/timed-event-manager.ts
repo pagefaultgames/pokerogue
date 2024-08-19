@@ -28,7 +28,7 @@ const timedEvents: TimedEvent[] = [
     eventType: EventType.SHINY,
     shinyMultiplier: 2,
     startDate: new Date(Date.UTC(2024, 7, 16, 0)),
-    endDate: new Date(Date.UTC(2024, 7, 21, 0)),
+    endDate: new Date(Date.UTC(2024, 7, 22, 0)),
     bannerFilename: "august-variant-update"
   }
 ];

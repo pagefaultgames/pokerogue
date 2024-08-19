@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { CritBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { MoveEffectPhase } from "#app/phases";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 import GameManager from "#test/utils/gameManager";
 import * as Utils from "#app/utils";
 import { Moves } from "#enums/moves";

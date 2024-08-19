@@ -5,8 +5,8 @@ import { Species } from "#app/enums/species.js";
 import { Moves } from "#app/enums/moves.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { MoveEffectPhase } from "#app/phases.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
 

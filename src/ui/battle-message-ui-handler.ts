@@ -226,7 +226,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
             highestIv = ivs[s];
           }
         });
-        if (shownStat) {
+        if (shownStat !== null && shownStat !== undefined) {
           shownStats.push(shownStat);
           statsPool.splice(statsPool.indexOf(shownStat), 1);
         }
