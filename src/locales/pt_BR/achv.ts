@@ -553,7 +553,7 @@ export const PGFachv: AchievementTranslationEntries = {
     description: "Complete o desafio de novo começo."
   },
   "INVERSE_BATTLE": {
-    name: "Mirror rorriM",
-    description: "Complete the Inverse Battle challenge.\n.egnellahc elttaB esrevnI eht etelpmoC"
+    name: "A torre da derrotA",
+    description: "Complete o desafio da Batalha Inversa.\n.asrevnI ahlataB ad oifased o etelpmoC"
   }
 } as const;
