@@ -4,8 +4,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { Abilities } from "#app/enums/abilities.js";
 import { Moves } from "#app/enums/moves.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { SelectModifierPhase } from "#app/phases.js";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase.js";
 
 describe("Items - Lock Capsule", () => {
   let phaserGame: Phaser.Game;

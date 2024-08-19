@@ -1,13 +1,14 @@
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import { MoveEffectPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Arena - Gravity", () => {
   let phaserGame: Phaser.Game;
