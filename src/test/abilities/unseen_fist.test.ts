@@ -1,4 +1,3 @@
-import { TurnEndPhase } from "#app/phases.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -6,6 +5,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 const TIMEOUT = 20 * 1000;
 

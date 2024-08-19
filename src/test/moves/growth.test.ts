@@ -1,6 +1,5 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { Stat } from "#app/data/pokemon-stat";
-import { CommandPhase, EnemyCommandPhase, TurnInitPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
@@ -10,6 +9,9 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 
 describe("Moves - Growth", () => {

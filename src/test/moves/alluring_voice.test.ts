@@ -1,13 +1,13 @@
+import { BattlerIndex } from "#app/battle.js";
 import { Abilities } from "#app/enums/abilities";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { BerryPhase } from "#app/phases/berry-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattlerIndex } from "#app/battle.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BerryPhase } from "#app/phases.js";
 
 const TIMEOUT = 20 * 1000;
 

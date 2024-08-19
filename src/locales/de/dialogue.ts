@@ -2641,7 +2641,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
                    $@c{smile}Vielleicht war es einfach etwas Glück, aber…\nWer weiß, vielleicht schaffst du es irgendwann
                    $ja wirklich ganz groß raus zu kommen.
                    $Übrigens, der Professor hat mich gebeten dir diese Items zu geben. Die sehen wirklich cool aus.
-                   $@c{serious_smile_fists}Viel Glück da draußen!`
+                   $@c{serious_smile_fists}Viel Glück da draußen!
+                    $@c{smile}Oh-und genieße das Event!`
     },
   },
   "rival_female": {
@@ -2656,7 +2657,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `@c{shock}Du hast gerade erst angefangen und bist schon so stark?!@d{96} @c{angry}Du hast sowas von betrogen, oder?
                     $@c{smile_wave_wink}Ich mach nur Spaß!@d{64} @c{smile_eclosed}Ich habe ehrlich verloren… Ich habe das Gefühl, dass du es dort draußen weit bringen wirst.
                     $@c{smile}Übrigens, der Professor hat mich gebeten dir diese Items zu geben. Ich hoffe sie sind hilfreich!
-                    $@c{smile_wave}Gib wie immer dein Bestes! Ich glaube an dich!`
+                    $@c{smile_wave}Gib wie immer dein Bestes! Ich glaube an dich!
+                    $@c{smile}Oh-und genieße das Event!`
     },
   },
   "rival_2": {
@@ -2674,7 +2676,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $@c{smile}Nicht, dass du wirklich Hilfe benötigen würdest, aber ich habe hier noch eins von diesen Dingern herumliegen.
                 $Du kannst es haben.\n
                 $@c{serious_smile_fists}Erwarte aber nicht, dass ich dir noch mehr gebe!\nIch kann meinen Rivalen doch keine Vorteile verschaffen.
-                $@c{smile}Egal, pass auf dich auf!`
+                $@c{smile}Egal, pass auf dich auf und genieße das Event!`
     },
   },
   "rival_2_female": {
@@ -2690,7 +2692,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $@c{smile}Na gut. Das bedeutet ich muss noch härter tranieren!
                 $@c{smile_wave}Ich habe noch eins von diesen Dingern!\n@c{smile_wave_wink}Kein Grund mir zu danken~.
                 $@c{angry_mopen}Das ist aber das Letzte! Du bekommst ab jett keine Geschenke mehr von mir!
-                $@c{smile_wave}Bleib stark!`
+                $@c{smile_wave}Bleib stark und genieße das Event!`
     },
     "defeat": {
       1: "Es ist Ok manchmal zu verlieren…"

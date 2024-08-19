@@ -18,6 +18,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "Select a slot to export from.",
   "importData": "データのインポート",
   "exportData": "データのエクスポート",
+  "consentPreferences": "Consent Preferences",
   "linkDiscord": "Link Discord",
   "unlinkDiscord": "Unlink Discord",
   "linkGoogle": "Link Google",
