@@ -2,7 +2,7 @@ import BattleScene from "../../battle-scene";
 import { hasTouchscreen, isMobile } from "../../touch-controls";
 import { TextStyle, addTextObject } from "../text";
 import { Mode } from "../ui";
-import UiHandler from "../ui-handler";
+import MessageUiHandler from "../message-ui-handler";
 import { addWindow } from "../ui-theme";
 import {Button} from "#enums/buttons";
 import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler.js";
@@ -14,10 +14,11 @@ import i18next from "i18next";
 /**
  * Abstract class for handling UI elements related to settings.
  */
-export default class AbstractSettingsUiHandler extends UiHandler {
+export default class AbstractSettingsUiHandler extends MessageUiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
   private optionsContainer: Phaser.GameObjects.Container;
   private navigationContainer: NavigationMenu;
+  private settingsMessageBoxContainer: Phaser.GameObjects.Container;
 
   private scrollCursor: integer;
 
@@ -138,6 +139,22 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.settingsContainer.add(actionText);
     this.settingsContainer.add(cancelText);
 
+    this.settingsMessageBoxContainer = this.scene.add.container(0, 130);
+    this.settingsMessageBoxContainer.setName("settings-message-box");
+    this.settingsMessageBoxContainer.setVisible(false);
+
+    const settingsMessageBox = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width/6) - 2, 48);
+    this.settingsMessageBoxContainer.add(settingsMessageBox);
+
+    const messageText = addTextObject(this.scene,8,8,"",TextStyle.WINDOW,{ maxLines: 2 });
+    messageText.setWordWrapWidth(this.scene.game.canvas.width - 2);
+    messageText.setName("settings-message");
+    messageText.setOrigin(0, 0);
+
+    this.settingsMessageBoxContainer.add(messageText);
+    this.message = messageText;
+    this.settingsContainer.add(this.settingsMessageBoxContainer);
+
     ui.add(this.settingsContainer);
 
     this.setCursor(0);
@@ -215,10 +232,31 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     let success = false;
 
     if (button === Button.CANCEL) {
+      if (this.reloadRequired && this.scene.currentBattle && this.scene.currentBattle.turn > 1) {
+        const ui = this.getUi();
+
+        this.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+          ui.setOverlayMode(Mode.CONFIRM, () => {
+            NavigationManager.getInstance().reset();
+            this.scene.ui.revertMode();
+            this.scene.ui.revertMode();
+          }, () => {
+            this.reloadSettings.forEach((s,i) => {
+              if (s !== null && s !== this.optionCursors[i]) {
+                this.setOptionCursor(i,s,true);
+              }
+            });
+            this.scene.ui.revertMode();
+            ui.showText("", 0);
+          }, false, 0,0);
+        });
+
+      } else {
+        NavigationManager.getInstance().reset();
+        this.scene.ui.revertMode();
+      }
       success = true;
-      NavigationManager.getInstance().reset();
-      // Reverts UI to its previous state on cancel.
-      this.scene.ui.revertMode();
+
     } else {
       const cursor = this.cursor + this.scrollCursor;
       switch (button) {
@@ -267,7 +305,28 @@ export default class AbstractSettingsUiHandler extends UiHandler {
         break;
       case Button.CYCLE_FORM:
       case Button.CYCLE_SHINY:
-        success = this.navigationContainer.navigate(button);
+        if (this.reloadRequired && this.scene.currentBattle && this.scene.currentBattle.turn > 1) {
+          const ui = this.getUi();
+
+          this.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+            ui.setOverlayMode(Mode.CONFIRM, () => {
+              NavigationManager.getInstance().reset();
+              this.scene.ui.revertMode();
+              this.scene.ui.revertMode();
+            }, () => {
+              this.reloadSettings.forEach((s,i) => {
+                if (s !== null && s !== this.optionCursors[i]) {
+                  this.setOptionCursor(this.cursor + this.scrollCursor,s,true);
+                }
+              });
+              this.scene.ui.revertMode();
+              ui.showText("", 0);
+            }, false, 0,0);
+          });
+
+        } else {
+          success = this.navigationContainer.navigate(button);
+        }
         break;
       case Button.ACTION:
         const setting: Setting = this.settings[cursor];
@@ -416,5 +475,11 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
+  }
+
+  showText(text: string, delay?: number|null, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
+    this.settingsMessageBoxContainer.setVisible(!!text);
+
+    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 }
