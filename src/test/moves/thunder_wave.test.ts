@@ -73,7 +73,7 @@ describe("Moves - Thunder Wave", () => {
     "Thunder Wave does not paralyze if the Pokemon is already status-ed",
     async () => {
       game.override.enemySpecies(Species.MAGIKARP);
-      game.override.enemyStatusEffect(StatusEffect.Burn);
+      game.override.enemyStatusEffect(StatusEffect.BURN);
       await game.startBattle();
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
