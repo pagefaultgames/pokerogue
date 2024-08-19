@@ -2332,6 +2332,7 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
     if (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeRevertWeatherFormTrigger);
+      queueShowAbility(pokemon, passive);
       return true;
     }
     return false;
