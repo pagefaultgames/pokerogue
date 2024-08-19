@@ -4,7 +4,7 @@ import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, 
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag.js";
 import { MoveAnim } from "#app/data/battle-anims.js";
 import { BattlerTagLapseType, ProtectedTag, SemiInvulnerableTag } from "#app/data/battler-tags.js";
-import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, ChargeAttr, MoveCategory, NoEffectAttr, HitsTagAttr } from "#app/data/move.js";
+import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, ChargeAttr, NoEffectAttr, HitsTagAttr } from "#app/data/move.js";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { Moves } from "#app/enums/moves.js";
@@ -258,10 +258,8 @@ export class MoveEffectPhase extends PokemonPhase {
                         // Apply the target's post-defend ability effects (as long as the target is active or can otherwise apply them)
                         return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move.getMove(), hitResult).then(() => {
                           // If the invoked move is an enemy attack, apply the enemy's status effect-inflicting tags and tokens
-                          target.lapseTag(BattlerTagType.BEAK_BLAST_CHARGING);
-                          if (move.category === MoveCategory.PHYSICAL && user.isPlayer() !== target.isPlayer()) {
-                            target.lapseTag(BattlerTagType.SHELL_TRAP);
-                          }
+                          target.lapseTags(BattlerTagLapseType.ON_GET_HIT);
+
                           if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
                             user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
                           }
