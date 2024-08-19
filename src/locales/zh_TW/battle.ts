@@ -21,6 +21,7 @@ export const battle: SimpleTranslationEntries = {
   "hitResultSuperEffective": "效果拔群！",
   "hitResultNotVeryEffective": "收效甚微…",
   "hitResultNoEffect": "對 {{pokemonName}} 沒有效果！",
+  "hitResultImmune": "{{pokemonName}} is unaffected!",
   "hitResultOneHitKO": "一擊切殺！",
   "attackFailed": "但是失敗了！",
   "attackMissed": "沒有命中{{pokemonNameWithAffix}}！",

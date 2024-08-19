@@ -61,6 +61,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "faintCountdown": "{{pokemonName}}は\n{{turnCount}}ターンごに　ほろびてしまう！",
   "copyType": "{{pokemonName}}は　{{targetPokemonName}}と\n同じタイプに　なった！",
   "suppressAbilities": "{{pokemonName}}の　とくせいが　きかなくなった！",
+  "revivalBlessing": "{{pokemonName}} was revived!",
   "swapArenaTags": "{{pokemonName}}は\nおたがいの　ばのこうかを　いれかえた！",
   "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
 } as const;

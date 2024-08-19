@@ -4825,7 +4825,7 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
     }
 
 
-    user.scene.queueMessage( i18next.t("moveTriggers:swapArenaTags", {pokemonName: getPokemonNameWithAffix(user)}));
+    user.scene.queueMessage(i18next.t("moveTriggers:swapArenaTags", {pokemonName: getPokemonNameWithAffix(user)}));
     return true;
   }
 }
@@ -4866,7 +4866,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         const slotIndex = user.scene.getEnemyParty().findIndex(p => pokemon.id === p.id);
         pokemon.resetStatus();
         pokemon.heal(Math.min(Math.max(Math.ceil(Math.floor(0.5 * pokemon.getMaxHp())), 1), pokemon.getMaxHp()));
-        user.scene.queueMessage(`${getPokemonNameWithAffix(pokemon)} was revived!`,0,true);
+        user.scene.queueMessage(i18next.t("moveTriggers:revivalBlessing", {pokemonName: getPokemonNameWithAffix(pokemon)}),0,true);
 
         if (user.scene.currentBattle.double && user.scene.getEnemyParty().length > 1) {
           const allyPokemon = user.getAlly();
