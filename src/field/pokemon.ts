@@ -921,7 +921,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * by how many learnable moves there are for the {@linkcode Pokemon}.
    */
   getLearnableLevelMoves(): Moves[] {
-    let levelMoves = this.getLevelMoves(1, true).map(lm => lm[1]);
+    let levelMoves = this.getLevelMoves(1, true, false, true).map(lm => lm[1]);
     if (this.metBiome === -1 && !this.scene.gameMode.isFreshStartChallenge() && !this.scene.gameMode.isDaily) {
       levelMoves = this.getUnlockedEggMoves().concat(levelMoves);
     }
@@ -1210,11 +1210,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * @param source - The Pokémon using the move.
    * @param move - The move being used.
-   * @returns The type damage multiplier or undefined if it's a status move
+   * @returns The type damage multiplier or 1 if it's a status move
    */
-  getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier | undefined {
+  getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
     if (move.getMove().category === MoveCategory.STATUS) {
-      return undefined;
+      return 1;
     }
 
     return this.getAttackMoveEffectiveness(source, move, !this.battleData?.abilityRevealed);
