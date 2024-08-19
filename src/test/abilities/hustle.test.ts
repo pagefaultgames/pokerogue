@@ -1,7 +1,6 @@
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { Stat } from "#app/enums/stat.js";
-import { DamagePhase, MoveEffectPhase } from "#app/phases.js";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -9,6 +8,8 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 
 describe("Abilities - Hustle", () => {
   let phaserGame: Phaser.Game;
