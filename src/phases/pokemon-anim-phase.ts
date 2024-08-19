@@ -1,8 +1,8 @@
-import BattleScene from "./battle-scene";
-import { SubstituteTag } from "./data/battler-tags";
-import { PokemonAnimType } from "./enums/pokemon-anim-type";
-import Pokemon from "./field/pokemon";
-import { BattlePhase } from "./phases";
+import BattleScene from "#app/battle-scene";
+import { SubstituteTag } from "#app/data/battler-tags";
+import { PokemonAnimType } from "#enums/pokemon-anim-type";
+import Pokemon from "#app/field/pokemon";
+import { BattlePhase } from "#app/phases/battle-phase";
 
 
 

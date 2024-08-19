@@ -3,7 +3,7 @@ import { BattlerIndex } from "#app/battle.js";
 import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, applyPostDefendAbAttrs, PostDefendAbAttr, applyPostAttackAbAttrs, PostAttackAbAttr, MaxMultiHitAbAttr, AlwaysHitAbAttr } from "#app/data/ability.js";
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag.js";
 import { MoveAnim } from "#app/data/battle-anims.js";
-import { BattlerTagLapseType, ProtectedTag, SemiInvulnerableTag } from "#app/data/battler-tags.js";
+import { BattlerTagLapseType, ProtectedTag, SemiInvulnerableTag, SubstituteTag } from "#app/data/battler-tags.js";
 import { MoveTarget, applyMoveAttrs, OverrideMoveEffectAttr, MultiHitAttr, AttackMove, FixedDamageAttr, VariableTargetAttr, MissEffectAttr, MoveFlags, applyFilteredMoveAttrs, MoveAttr, MoveEffectAttr, MoveEffectTrigger, ChargeAttr, MoveCategory, NoEffectAttr, HitsTagAttr } from "#app/data/move.js";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
@@ -120,7 +120,7 @@ export class MoveEffectPhase extends PokemonPhase {
       const applyAttrs: Promise<void>[] = [];
 
       // Move animation only needs one target
-      new MoveAnim(move.id as Moves, user, this.getTarget()?.getBattlerIndex()!).play(this.scene, () => { // TODO: is the bang correct here?
+      new MoveAnim(move.id as Moves, user, this.getTarget()?.getBattlerIndex()!).play(this.scene, !move.canIgnoreSubstitute(user), () => { // TODO: is the bang correct here?
         /** Has the move successfully hit a target (for damage) yet? */
         let hasHit: boolean = false;
         for (const target of targets) {
@@ -245,7 +245,7 @@ export class MoveEffectPhase extends PokemonPhase {
                          * If the move hit, and the target doesn't have Shield Dust,
                          * apply the chance to flinch the target gained from King's Rock
                          */
-                      if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr)) {
+                      if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && (!target.getTag(BattlerTagType.SUBSTITUTE) || move.canIgnoreSubstitute(user))) {
                         const flinched = new Utils.BooleanHolder(false);
                         user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
                         if (flinched.value) {
@@ -305,7 +305,20 @@ export class MoveEffectPhase extends PokemonPhase {
         }
 
         // Wait for all move effects to finish applying, then end this phase
-        Promise.allSettled(applyAttrs).then(() => this.end());
+        Promise.allSettled(applyAttrs).then(() => {
+          /**
+           * Remove the target's substitute (if it exists and has expired)
+           * after all targeted effects have applied.
+           * This prevents blocked effects from applying until after this hit resolves.
+           */
+          targets.forEach(target => {
+            const substitute = target.getTag(SubstituteTag);
+            if (!!substitute && substitute.hp <= 0) {
+              target.lapseTag(BattlerTagType.SUBSTITUTE);
+            }
+          });
+          this.end();
+        });
       });
     });
   }

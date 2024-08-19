@@ -7,6 +7,7 @@ import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { BerryPhase } from "#app/phases/berry-phase.js";
 
 const TIMEOUT = 20 * 1000;
 

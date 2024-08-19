@@ -42,7 +42,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
           this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage.value, false, true));
           pokemon.updateInfo();
         }
-        new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());
+        new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, false, () => this.end());
       } else {
         this.end();
       }
