@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import Pokemon, { PokemonSummonData } from "#app/field/pokemon.js";
 import BattleScene from "#app/battle-scene.js";
 import { StockpilingTag } from "#app/data/battler-tags.js";
-import { StatStageChangePhase } from "#app/phases.js";
 import { Stat } from "#enums/stat";
 import * as messages from "#app/messages.js";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 
 beforeEach(() => {
   vi.spyOn(messages, "getPokemonNameWithAffix").mockImplementation(() => "");

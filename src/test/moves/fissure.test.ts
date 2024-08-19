@@ -1,7 +1,6 @@
 import { Stat } from "#enums/stat";
 import { Species } from "#app/enums/species.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { DamagePhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -9,6 +8,8 @@ import { Moves } from "#enums/moves";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Moves - Fissure", () => {
   let phaserGame: Phaser.Game;

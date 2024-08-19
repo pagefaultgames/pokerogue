@@ -1,7 +1,7 @@
 import { ArenaTagSide } from "#app/data/arena-tag.js";
 import { Stat } from "#enums/stat";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import { TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -10,7 +10,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 
-describe("Abilities - Wind Rider", () => {
+describe("Moves - Tailwind", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 

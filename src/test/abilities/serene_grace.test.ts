@@ -1,6 +1,5 @@
 import { applyAbAttrs, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
 import { Stat } from "#enums/stat";
-import { CommandPhase, MoveEffectPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
@@ -12,6 +11,8 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { BattlerIndex } from "#app/battle.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 
 
 describe("Abilities - Serene Grace", () => {

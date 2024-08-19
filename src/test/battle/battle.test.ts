@@ -2,21 +2,6 @@ import { allSpecies } from "#app/data/pokemon-species";
 import { Stat } from "#enums/stat";
 import { GameModes } from "#app/game-mode";
 import { getGameMode } from "#app/game-mode.js";
-import {
-  BattleEndPhase,
-  CommandPhase, DamagePhase,
-  EncounterPhase,
-  EnemyCommandPhase,
-  LoginPhase,
-  NextEncounterPhase,
-  SelectGenderPhase,
-  SelectModifierPhase,
-  SelectStarterPhase,
-  SummonPhase,
-  SwitchPhase,
-  TitlePhase,
-  TurnInitPhase, VictoryPhase,
-} from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { generateStarter, getMovePosition, } from "#app/test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
@@ -28,6 +13,21 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { EncounterPhase } from "#app/phases/encounter-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { LoginPhase } from "#app/phases/login-phase.js";
+import { NextEncounterPhase } from "#app/phases/next-encounter-phase.js";
+import { SelectGenderPhase } from "#app/phases/select-gender-phase.js";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase.js";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
+import { SummonPhase } from "#app/phases/summon-phase.js";
+import { SwitchPhase } from "#app/phases/switch-phase.js";
+import { TitlePhase } from "#app/phases/title-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { VictoryPhase } from "#app/phases/victory-phase.js";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;

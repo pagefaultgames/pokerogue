@@ -1,13 +1,16 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
-import { MoveEffectPhase, MovePhase, MoveEndPhase, DamagePhase } from "#app/phases";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/move";
 import { BattlerIndex } from "#app/battle";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { MovePhase } from "#app/phases/move-phase.js";
 
 describe("Moves - Fusion Flare and Fusion Bolt", () => {
   let phaserGame: Phaser.Game;

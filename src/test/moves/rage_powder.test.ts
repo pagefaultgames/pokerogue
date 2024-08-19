@@ -1,5 +1,4 @@
 import { BattlerIndex } from "#app/battle.js";
-import { CommandPhase, SelectTargetPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -7,6 +6,9 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 const TIMEOUT = 20 * 1000;
 

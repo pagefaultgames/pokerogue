@@ -4,11 +4,12 @@ import GameManager from "#test/utils/gameManager";
 import { Mode } from "#app/ui/ui";
 import { Stat } from "#enums/stat";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { CommandPhase, TurnInitPhase } from "#app/phases";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;
@@ -36,7 +37,7 @@ describe("Abilities - Intimidate", () => {
   });
 
   it("should lower ATK stat stage by 1 of enemy Pokemon on entry and player switch", async () => {
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -68,7 +69,7 @@ describe("Abilities - Intimidate", () => {
   it("should lower ATK stat stage by 1 for every enemy Pokemon in a double battle on entry", async () => {
     game.override.battleType("double");
     game.override.startingWave(3);
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,

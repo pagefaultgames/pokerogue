@@ -1,5 +1,4 @@
 import { Stat } from "#enums/stat";
-import { TurnInitPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -9,6 +8,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { allMoves } from "#app/data/move.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 describe("Moves - Freezy Frost", () => {
   let phaserGame: Phaser.Game;

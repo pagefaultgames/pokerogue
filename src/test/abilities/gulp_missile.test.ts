@@ -1,10 +1,4 @@
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import {
-  BerryPhase,
-  MoveEndPhase,
-  TurnEndPhase,
-  TurnStartPhase,
-} from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -16,6 +10,10 @@ import { SPLASH_ONLY } from "../utils/testUtils";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#app/enums/status-effect.js";
 import Pokemon from "#app/field/pokemon.js";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 
 describe("Abilities - Gulp Missile", () => {
   let phaserGame: Phaser.Game;
@@ -82,6 +80,21 @@ describe("Abilities - Gulp Missile", () => {
 
     expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_PIKACHU)).toBeDefined();
     expect(cramorant.formIndex).toBe(GORGING_FORM);
+  });
+
+  it("changes to base form when switched out after Surf or Dive is used", async () => {
+    await game.startBattle([Species.CRAMORANT, Species.MAGIKARP]);
+    const cramorant = game.scene.getPlayerPokemon()!;
+
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn(); // form change is delayed until after end of turn
+
+    expect(cramorant.formIndex).toBe(NORMAL_FORM);
+    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeUndefined();
+    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_PIKACHU)).toBeUndefined();
   });
 
   it("changes form during Dive's charge turn", async () => {

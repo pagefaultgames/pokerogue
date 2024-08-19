@@ -1,7 +1,6 @@
 import GameWrapper from "#test/utils/gameWrapper";
 import { Mode } from "#app/ui/ui";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
-import { CommandPhase, EncounterPhase, FaintPhase, LoginPhase, MovePhase, NewBattlePhase, SelectStarterPhase, SelectTargetPhase, TitlePhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
 import PhaseInterceptor from "#test/utils/phaseInterceptor";
 import TextInterceptor from "#test/utils/TextInterceptor";
@@ -23,13 +22,26 @@ import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { BattlerIndex } from "#app/battle.js";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
-import { OverridesHelper } from "./overridesHelper";
+import { OverridesHelper } from "./helpers/overridesHelper";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
-import overrides from "#app/overrides.js";
-import { removeEnemyHeldItems } from "./testUtils";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
-import { MoveHelper } from "./moveHelper";
+import { MoveHelper } from "./helpers/moveHelper";
 import { vi } from "vitest";
+import { ClassicModeHelper } from "./helpers/classicModeHelper";
+import { DailyModeHelper } from "./helpers/dailyModeHelper";
+import { SettingsHelper } from "./helpers/settingsHelper";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { EncounterPhase } from "#app/phases/encounter-phase.js";
+import { FaintPhase } from "#app/phases/faint-phase.js";
+import { LoginPhase } from "#app/phases/login-phase.js";
+import { MovePhase } from "#app/phases/move-phase.js";
+import { NewBattlePhase } from "#app/phases/new-battle-phase.js";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
+import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
+import { TitlePhase } from "#app/phases/title-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -42,6 +54,9 @@ export default class GameManager {
   public inputsHandler: InputsHandler;
   public readonly override: OverridesHelper;
   public readonly move: MoveHelper;
+  public readonly classicMode: ClassicModeHelper;
+  public readonly dailyMode: DailyModeHelper;
+  public readonly settings: SettingsHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -59,6 +74,9 @@ export default class GameManager {
     this.gameWrapper.setScene(this.scene);
     this.override = new OverridesHelper(this);
     this.move = new MoveHelper(this);
+    this.classicMode = new ClassicModeHelper(this);
+    this.dailyMode = new DailyModeHelper(this);
+    this.settings = new SettingsHelper(this);
   }
 
   /**
@@ -120,25 +138,35 @@ export default class GameManager {
   }
 
   /**
-   * Runs the game to the summon phase.
-   * @param species - Optional array of species to summon.
-   * @returns A promise that resolves when the summon phase is reached.
+   * Helper function to run to the final boss encounter as it's a bit tricky due to extra dialogue
+   * Also handles Major/Minor bosses from endless modes
+   * @param game - The game manager
+   * @param species
+   * @param mode
    */
-  async runToSummon(species?: Species[]) {
-    await this.runToTitle();
+  async runToFinalBossEncounter(game: GameManager, species: Species[], mode: GameModes) {
+    console.log("===to final boss encounter===");
+    await game.runToTitle();
 
-    this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      this.scene.gameMode = getGameMode(GameModes.CLASSIC);
-      const starters = generateStarter(this.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(this.scene);
-      this.scene.pushPhase(new EncounterPhase(this.scene, false));
+    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+      game.scene.gameMode = getGameMode(mode);
+      const starters = generateStarter(game.scene, species);
+      const selectStarterPhase = new SelectStarterPhase(game.scene);
+      game.scene.pushPhase(new EncounterPhase(game.scene, false));
       selectStarterPhase.initBattle(starters);
     });
 
-    await this.phaseInterceptor.run(EncounterPhase);
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
-      removeEnemyHeldItems(this);
-    }
+    game.onNextPrompt("EncounterPhase", Mode.MESSAGE, async () => {
+      // This will skip all entry dialogue (I can't figure out a way to sequentially handle the 8 chained messages via 1 prompt handler)
+      game.setMode(Mode.MESSAGE);
+      const encounterPhase = game.scene.getCurrentPhase() as EncounterPhase;
+
+      // No need to end phase, this will do it for you
+      encounterPhase.doEncounterCommon(false);
+    });
+
+    await game.phaseInterceptor.to(EncounterPhase, true);
+    console.log("===finished run to final boss encounter===");
   }
 
   /**
@@ -147,7 +175,7 @@ export default class GameManager {
    * @returns A promise that resolves when the battle is started.
    */
   async startBattle(species?: Species[]) {
-    await this.runToSummon(species);
+    await this.classicMode.runToSummon(species);
 
     this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
       this.setMode(Mode.MESSAGE);
@@ -372,5 +400,14 @@ export default class GameManager {
     await this.phaseInterceptor.to(TurnStartPhase, false);
 
     vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue(order);
+  }
+
+  /**
+   * Removes all held items from enemy pokemon
+   */
+  removeEnemyHeldItems(): void {
+    this.scene.clearEnemyHeldItemModifiers();
+    this.scene.clearEnemyModifiers();
+    console.log("Enemy held items removed");
   }
 }

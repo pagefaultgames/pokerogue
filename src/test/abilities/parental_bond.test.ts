@@ -2,7 +2,6 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { Type } from "#app/data/type.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BerryPhase, CommandPhase, DamagePhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -11,6 +10,12 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 const TIMEOUT = 20 * 1000;
 

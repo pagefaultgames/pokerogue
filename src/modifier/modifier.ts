@@ -1,5 +1,4 @@
 import * as ModifierTypes from "./modifier-type";
-import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { MAX_PER_TYPE_POKEBALLS, PokeballType } from "../data/pokeball";
@@ -7,7 +6,7 @@ import Pokemon, { PlayerPokemon } from "../field/pokemon";
 import { Stat } from "#enums/stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from "../data/type";
-import { EvolutionPhase } from "../evolution-phase";
+import { EvolutionPhase } from "../phases/evolution-phase";
 import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import { getPokemonNameWithAffix } from "../messages";
 import * as Utils from "../utils";
@@ -21,13 +20,16 @@ import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-fo
 import { Nature } from "#app/data/nature";
 import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
-import { Command } from "#app/ui/command-ui-handler.js";
+import { Command } from "#app/ui/command-ui-handler";
 import { Species } from "#enums/species";
 import { type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS  } from "#app/enums/stat";
 import i18next from "i18next";
 
-import { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
+import { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { LearnMovePhase } from "#app/phases/learn-move-phase.js";
+import { LevelUpPhase } from "#app/phases/level-up-phase.js";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -625,6 +627,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
       if (pokemon) {
         const pokemonIcon = scene.addPokemonIcon(pokemon, -2, 10, 0, 0.5);
         container.add(pokemonIcon);
+        container.setName(pokemon.id.toString());
       }
 
       const item = scene.add.sprite(16, this.virtualStackCount ? 8 : 16, "items");
@@ -2468,7 +2471,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
  * @see {@linkcode modifierTypes[MINI_BLACK_HOLE]}
  */
 export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
-  readonly isTransferrable: boolean = true;
+  isTransferrable: boolean = true;
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }
@@ -2491,6 +2494,10 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 1;
+  }
+
+  setTransferrableFalse(): void {
+    this.isTransferrable = false;
   }
 }
 
@@ -2540,7 +2547,7 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
   }
 
   getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string {
-    return i18next.t("modifier:contactHeldItemTransferApply", { pokemonNameWithAffix: getPokemonNameWithAffix(targetPokemon), itemName: item.name, pokemonName: pokemon.name, typeName: this.type.name });
+    return i18next.t("modifier:contactHeldItemTransferApply", { pokemonNameWithAffix: getPokemonNameWithAffix(targetPokemon), itemName: item.name, pokemonName: getPokemonNameWithAffix(pokemon), typeName: this.type.name });
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
@@ -2865,30 +2872,29 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
 }
 
 /**
- * Uses override from overrides.ts to set PersistentModifiers for starting a new game
- * @param scene current BattleScene
- * @param player is this for player for enemy
+ * Uses either `MODIFIER_OVERRIDE` in overrides.ts to set {@linkcode PersistentModifier}s for either:
+ *  - The player
+ *  - The enemy
+ * @param scene current {@linkcode BattleScene}
+ * @param isPlayer {@linkcode boolean} for whether the the player (`true`) or enemy (`false`) is being overridden
  */
-export function overrideModifiers(scene: BattleScene, player: boolean = true): void {
-  const modifierOverride = player ? Overrides.STARTING_MODIFIER_OVERRIDE : Overrides.OPP_MODIFIER_OVERRIDE;
-  if (!modifierOverride || modifierOverride.length === 0 || !scene) {
+export function overrideModifiers(scene: BattleScene, isPlayer: boolean = true): void {
+  const modifiersOverride: ModifierTypes.ModifierOverride[] = isPlayer ? Overrides.STARTING_MODIFIER_OVERRIDE : Overrides.OPP_MODIFIER_OVERRIDE;
+  if (!modifiersOverride || modifiersOverride.length === 0 || !scene) {
     return;
-  } // if no override, do nothing
-  // if it's the opponent, we clear all his current modifiers to avoid stacking
-  if (!player) {
+  }
+
+  // If it's the opponent, clear all of their current modifiers to avoid stacking
+  if (!isPlayer) {
     scene.clearEnemyModifiers();
   }
-  // we loop through all the modifier name given in the override file
-  modifierOverride.forEach(item => {
-    const modifierName = item.name;
-    const qty = item.count || 1;
-    if (!modifierTypes.hasOwnProperty(modifierName)) {
-      return;
-    } // if the modifier does not exist, we skip it
-    const modifierType: ModifierType = modifierTypes[modifierName]();
-    const modifier: PersistentModifier = modifierType.withIdFromFunc(modifierTypes[modifierName]).newModifier() as PersistentModifier;
-    modifier.stackCount = qty;
-    if (player) {
+
+  modifiersOverride.forEach(item => {
+    const modifierFunc = modifierTypes[item.name];
+    const modifier = modifierFunc().withIdFromFunc(modifierFunc).newModifier() as PersistentModifier;
+    modifier.stackCount = item.count || 1;
+
+    if (isPlayer) {
       scene.addModifier(modifier, true, false, false, true);
     } else {
       scene.addEnemyModifier(modifier, true, true);
@@ -2897,37 +2903,38 @@ export function overrideModifiers(scene: BattleScene, player: boolean = true): v
 }
 
 /**
- * Uses override from overrides.ts to set PokemonHeldItemModifiers for starting a new game
- * @param scene current BattleScene
- * @param player is this for player for enemy
+ * Uses either `HELD_ITEMS_OVERRIDE` in overrides.ts to set {@linkcode PokemonHeldItemModifier}s for either:
+ *  - The first member of the player's team when starting a new game
+ *  - An enemy {@linkcode Pokemon} being spawned in
+ * @param scene current {@linkcode BattleScene}
+ * @param pokemon {@linkcode Pokemon} whose held items are being overridden
+ * @param isPlayer {@linkcode boolean} for whether the {@linkcode pokemon} is the player's (`true`) or an enemy (`false`)
  */
-export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, player: boolean = true): void {
-  const heldItemsOverride = player ? Overrides.STARTING_HELD_ITEMS_OVERRIDE : Overrides.OPP_HELD_ITEMS_OVERRIDE;
+export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, isPlayer: boolean = true): void {
+  const heldItemsOverride: ModifierTypes.ModifierOverride[] = isPlayer ? Overrides.STARTING_HELD_ITEMS_OVERRIDE : Overrides.OPP_HELD_ITEMS_OVERRIDE;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) {
     return;
-  } // if no override, do nothing
-  // we loop through all the itemName given in the override file
+  }
+
   heldItemsOverride.forEach(item => {
-    const itemName = item.name;
+    const modifierFunc = modifierTypes[item.name];
+    let modifierType: ModifierType | null = modifierFunc();
     const qty = item.count || 1;
-    if (!modifierTypes.hasOwnProperty(itemName)) {
-      return;
-    } // if the item does not exist, we skip it
-    const modifierType: ModifierType = modifierTypes[itemName](); // we retrieve the item in the list
-    let itemModifier: PokemonHeldItemModifier;
+
     if (modifierType instanceof ModifierTypes.ModifierTypeGenerator) {
-      const pregenArgs = "type" in item ? [item.type] : undefined;
-      itemModifier = modifierType.generateType([], pregenArgs)?.withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
-    } else {
-      itemModifier = modifierType.withIdFromFunc(modifierTypes[itemName]).newModifier(pokemon) as PokemonHeldItemModifier;
+      const pregenArgs = ("type" in item) && (item.type !== null) ? [item.type] : undefined;
+      modifierType = modifierType.generateType([], pregenArgs);
     }
-    // we create the item
-    itemModifier.pokemonId = pokemon.id; // we assign the created item to the pokemon
-    itemModifier.stackCount = qty; // we say how many items we want
-    if (player) {
-      scene.addModifier(itemModifier, true, false, false, true);
-    } else {
-      scene.addEnemyModifier(itemModifier, true, true);
+
+    const heldItemModifier = modifierType && modifierType.withIdFromFunc(modifierFunc).newModifier(pokemon) as PokemonHeldItemModifier;
+    if (heldItemModifier) {
+      heldItemModifier.pokemonId = pokemon.id;
+      heldItemModifier.stackCount = qty;
+      if (isPlayer) {
+        scene.addModifier(heldItemModifier, true, false, false, true);
+      } else {
+        scene.addEnemyModifier(heldItemModifier, true, true);
+      }
     }
   });
 }

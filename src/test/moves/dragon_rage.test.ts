@@ -3,7 +3,7 @@ import { Type } from "#app/data/type";
 import { Species } from "#app/enums/species.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";

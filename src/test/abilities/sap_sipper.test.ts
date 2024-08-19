@@ -1,6 +1,5 @@
 import { Stat } from "#enums/stat";
 import { TerrainType } from "#app/data/terrain.js";
-import { MoveEndPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -10,6 +9,8 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Sap Sipper", () => {

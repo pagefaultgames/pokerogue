@@ -1,10 +1,10 @@
 import { Stat } from "#enums/stat";
-import { CommandPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { CommandPhase } from "#app/phases/command-phase.js";
 
 
 describe("Abilities - Intrepid Sword", () => {
@@ -30,7 +30,7 @@ describe("Abilities - Intrepid Sword", () => {
   });
 
   it("should raise ATK stat stage by 1 on entry", async() => {
-    await game.runToSummon([
+    await game.classicMode.runToSummon([
       Species.ZACIAN,
     ]);
 
