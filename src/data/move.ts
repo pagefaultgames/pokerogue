@@ -726,8 +726,6 @@ export default class Move implements Localizable {
    */
   calculateBattlePower(source: Pokemon, target: Pokemon): number {
     if (this.category === MoveCategory.STATUS) {
-      // The type of a status move is usually irrelevant but Thunder Wave is a common exception.
-      applyPreAttackAbAttrs(MoveTypeChangeAttr, source, target, this, new Utils.NumberHolder(1));
       return -1;
     }
 
@@ -1090,6 +1088,8 @@ export class PreMoveMessageAttr extends MoveAttr {
  */
 export class RespectTypeImmunityAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    //Apply type change to move
+    applyPreAttackAbAttrs(MoveTypeChangeAttr, user, target, move);
     const typeEffectiveness = target.getAttackTypeEffectiveness(move.type, user);
     args[0].value = typeEffectiveness;
     return true;
