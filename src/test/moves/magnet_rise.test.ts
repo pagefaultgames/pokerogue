@@ -1,9 +1,10 @@
-import { CommandPhase, TurnEndPhase } from "#app/phases.js";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Moves - Magnet Rise", () => {
   let phaserGame: Phaser.Game;

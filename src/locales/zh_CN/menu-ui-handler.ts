@@ -18,6 +18,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "选择要导出的存档位。",
   "importData": "导入数据",
   "exportData": "导出数据",
+  "consentPreferences": "同意偏好",
   "linkDiscord": "关联Discord",
   "unlinkDiscord": "解除关联Discord",
   "linkGoogle": "关联Google",

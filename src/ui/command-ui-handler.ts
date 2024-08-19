@@ -1,4 +1,3 @@
-import { CommandPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
@@ -7,6 +6,7 @@ import UiHandler from "./ui-handler";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { getPokemonNameWithAffix } from "#app/messages.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
 
 export enum Command {
   FIGHT = 0,
@@ -17,7 +17,7 @@ export enum Command {
 
 export default class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;

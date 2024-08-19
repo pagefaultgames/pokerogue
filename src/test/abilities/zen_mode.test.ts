@@ -1,20 +1,7 @@
 import { Stat } from "#app/data/pokemon-stat";
 import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { QuietFormChangePhase } from "#app/form-change-phase";
-import {
-  CommandPhase,
-  DamagePhase,
-  EnemyCommandPhase,
-  MessagePhase,
-  PostSummonPhase,
-  SwitchPhase,
-  SwitchSummonPhase,
-  TurnEndPhase,
-  TurnInitPhase,
-  TurnStartPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
@@ -22,6 +9,18 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { BattlerIndex } from "#app/battle.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { MessagePhase } from "#app/phases/message-phase.js";
+import { PostSummonPhase } from "#app/phases/post-summon-phase.js";
+import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase.js";
+import { SwitchPhase } from "#app/phases/switch-phase.js";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -56,7 +55,6 @@ describe("Abilities - ZEN MODE", () => {
     async () => {
       const moveToUse = Moves.SPLASH;
       await game.startBattle([Species.DARMANITAN]);
-      game.scene.getParty()[0].stats[Stat.SPD] = 1;
       game.scene.getParty()[0].stats[Stat.HP] = 100;
       game.scene.getParty()[0].hp = 100;
       expect(game.scene.getParty()[0].formIndex).toBe(0);
@@ -68,7 +66,9 @@ describe("Abilities - ZEN MODE", () => {
         const movePosition = getMovePosition(game.scene, 0, moveToUse);
         (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
       });
-      await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(DamagePhase, false);
+
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.phaseInterceptor.to(DamagePhase, false);
       // await game.phaseInterceptor.runFrom(DamagePhase).to(DamagePhase, false);
       const damagePhase = game.scene.getCurrentPhase() as DamagePhase;
       damagePhase.updateAmount(40);
@@ -84,7 +84,6 @@ describe("Abilities - ZEN MODE", () => {
     async () => {
       const moveToUse = Moves.SPLASH;
       await game.startBattle([Species.DARMANITAN]);
-      game.scene.getParty()[0].stats[Stat.SPD] = 1;
       game.scene.getParty()[0].stats[Stat.HP] = 1000;
       game.scene.getParty()[0].hp = 100;
       expect(game.scene.getParty()[0].formIndex).toBe(0);
@@ -96,7 +95,9 @@ describe("Abilities - ZEN MODE", () => {
         const movePosition = getMovePosition(game.scene, 0, moveToUse);
         (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
       });
-      await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(QuietFormChangePhase);
+
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.phaseInterceptor.to(QuietFormChangePhase);
       await game.phaseInterceptor.to(TurnInitPhase, false);
       expect(game.scene.getParty()[0].hp).not.toBe(100);
       expect(game.scene.getParty()[0].formIndex).not.toBe(0);
@@ -109,7 +110,6 @@ describe("Abilities - ZEN MODE", () => {
     async () => {
       const moveToUse = Moves.SPLASH;
       await game.startBattle([Species.DARMANITAN, Species.CHARIZARD]);
-      game.scene.getParty()[0].stats[Stat.SPD] = 1;
       game.scene.getParty()[0].stats[Stat.HP] = 1000;
       game.scene.getParty()[0].hp = 100;
       expect(game.scene.getParty()[0].formIndex).toBe(0);
@@ -121,7 +121,9 @@ describe("Abilities - ZEN MODE", () => {
         const movePosition = getMovePosition(game.scene, 0, moveToUse);
         (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
       });
-      await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(DamagePhase, false);
+
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.phaseInterceptor.to(DamagePhase, false);
       // await game.phaseInterceptor.runFrom(DamagePhase).to(DamagePhase, false);
       const damagePhase = game.scene.getCurrentPhase() as DamagePhase;
       damagePhase.updateAmount(80);
@@ -159,7 +161,7 @@ describe("Abilities - ZEN MODE", () => {
 
       await game.startBattle([Species.MAGIKARP, Species.DARMANITAN]);
 
-      const darmanitan = game.scene.getParty().find((p) => p.species.speciesId === Species.DARMANITAN);
+      const darmanitan = game.scene.getParty().find((p) => p.species.speciesId === Species.DARMANITAN)!;
       expect(darmanitan).not.toBe(undefined);
       expect(darmanitan.formIndex).toBe(zenForm);
 

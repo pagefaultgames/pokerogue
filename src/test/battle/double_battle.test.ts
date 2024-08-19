@@ -1,17 +1,15 @@
-import {
-  BattleEndPhase,
-  TurnInitPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition, } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition, } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { Status, StatusEffect } from "#app/data/status-effect.js";
+import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
-describe("Test Battle Phase", () => {
+describe("Double Battles", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -43,8 +41,6 @@ describe("Test Battle Phase", () => {
     game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     for (const pokemon of game.scene.getPlayerField()) {
-      expect(pokemon).toBeDefined();
-
       pokemon.hp = 0;
       pokemon.status = new Status(StatusEffect.FAINT);
       expect(pokemon.isFainted()).toBe(true);

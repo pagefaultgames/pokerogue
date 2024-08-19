@@ -1,13 +1,16 @@
 import { allMoves } from "#app/data/move.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BerryPhase, CommandPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "../utils/gameManager";
-import { getMovePosition } from "../utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -43,11 +46,9 @@ describe("Moves - Astonish", () => {
     async () => {
       await game.startBattle([Species.MEOWSCARADA]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.ASTONISH));
 

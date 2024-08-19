@@ -33,8 +33,8 @@ export default class PokemonData {
   public ivs: integer[];
   public nature: Nature;
   public natureOverride: Nature | -1;
-  public moveset: PokemonMove[];
-  public status: Status;
+  public moveset: (PokemonMove | null)[];
+  public status: Status | null;
   public friendship: integer;
   public metLevel: integer;
   public metBiome: Biome | -1;
@@ -120,7 +120,7 @@ export default class PokemonData {
       if (!forHistory) {
         this.status = source.status
           ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn)
-          : undefined;
+          : null;
       }
 
       this.summonData = new PokemonSummonData();

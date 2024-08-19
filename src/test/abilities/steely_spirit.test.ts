@@ -1,14 +1,15 @@
 import { allAbilities } from "#app/data/ability.js";
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { MoveEffectPhase, SelectTargetPhase } from "#app/phases.js";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
 
 describe("Abilities - Steely Spirit", () => {
   let phaserGame: Phaser.Game;
@@ -40,7 +41,7 @@ describe("Abilities - Steely Spirit", () => {
   it("increases Steel-type moves' power used by the user and its allies by 50%", async () => {
     await game.startBattle([Species.PIKACHU, Species.SHUCKLE]);
     const boostSource = game.scene.getPlayerField()[1];
-    const enemyToCheck = game.scene.getEnemyPokemon();
+    const enemyToCheck = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(boostSource, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
 
@@ -57,7 +58,7 @@ describe("Abilities - Steely Spirit", () => {
 
   it("stacks if multiple users with this ability are on the field.", async () => {
     await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
-    const enemyToCheck = game.scene.getEnemyPokemon();
+    const enemyToCheck = game.scene.getEnemyPokemon()!;
 
     game.scene.getPlayerField().forEach(p => {
       vi.spyOn(p, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
@@ -79,7 +80,7 @@ describe("Abilities - Steely Spirit", () => {
   it("does not take effect when suppressed", async () => {
     await game.startBattle([Species.PIKACHU, Species.SHUCKLE]);
     const boostSource = game.scene.getPlayerField()[1];
-    const enemyToCheck = game.scene.getEnemyPokemon();
+    const enemyToCheck = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(boostSource, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
     expect(boostSource.hasAbility(Abilities.STEELY_SPIRIT)).toBe(true);

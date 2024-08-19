@@ -1,6 +1,6 @@
 import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { QuietFormChangePhase } from "#app/form-change-phase.js";
-import { TurnEndPhase } from "#app/phases.js";
+import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -46,12 +46,12 @@ describe("Abilities - BATTLE BOND", () => {
       await game.startBattle([Species.MAGIKARP, Species.GRENINJA]);
 
       const greninja = game.scene.getParty().find((p) => p.species.speciesId === Species.GRENINJA);
-      expect(greninja).not.toBe(undefined);
-      expect(greninja.formIndex).toBe(ashForm);
+      expect(greninja).toBeDefined();
+      expect(greninja!.formIndex).toBe(ashForm);
 
-      greninja.hp = 0;
-      greninja.status = new Status(StatusEffect.FAINT);
-      expect(greninja.isFainted()).toBe(true);
+      greninja!.hp = 0;
+      greninja!.status = new Status(StatusEffect.FAINT);
+      expect(greninja!.isFainted()).toBe(true);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.doKillOpponents();
@@ -59,7 +59,7 @@ describe("Abilities - BATTLE BOND", () => {
       game.doSelectModifier();
       await game.phaseInterceptor.to(QuietFormChangePhase);
 
-      expect(greninja.formIndex).toBe(baseForm);
+      expect(greninja!.formIndex).toBe(baseForm);
     },
     TIMEOUT
   );

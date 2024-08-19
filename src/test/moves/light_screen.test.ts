@@ -3,11 +3,9 @@ import Move, { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import Pokemon from "#app/field/pokemon.js";
-import {
-  TurnEndPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { NumberHolder } from "#app/utils.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -50,7 +48,7 @@ describe("Moves - Light Screen", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
 
     expect(mockedDmg).toBe(allMoves[moveToUse].power * singleBattleMultiplier);
   });
@@ -65,7 +63,7 @@ describe("Moves - Light Screen", () => {
     game.doAttack(getMovePosition(game.scene, 1, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
 
     expect(mockedDmg).toBe(allMoves[moveToUse].power * doubleBattleMultiplier);
   });
@@ -77,7 +75,7 @@ describe("Moves - Light Screen", () => {
     game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
 
     expect(mockedDmg).toBe(allMoves[moveToUse].power);
   });

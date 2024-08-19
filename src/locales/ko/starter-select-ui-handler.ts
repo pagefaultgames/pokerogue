@@ -7,7 +7,7 @@ import { SimpleTranslationEntries } from "#app/interfaces/locales";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
   "confirmStartTeam": "이 포켓몬들로 시작하시겠습니까?",
-  "confirmExit": "Do you want to exit?",
+  "confirmExit": "나가시겠습니까?",
   "invalidParty": "스타팅 포켓몬 파티에 적합하지 않습니다!",
   "gen1": "1세대",
   "gen2": "2세대",
@@ -28,6 +28,8 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "toggleIVs": "개체값 토글",
   "manageMoves": "기술 관리",
   "manageNature": "성격 관리",
+  "addToFavorites": "즐겨찾기에 추가",
+  "removeFromFavorites": "즐겨찾기에서 제외",
   "useCandies": "사탕 사용",
   "selectNature": "교체할 성격을 선택해주세요.",
   "selectMoveSwapOut": "교체할 기술을 선택해주세요.",
@@ -41,6 +43,7 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "cycleAbility": ": 특성",
   "cycleNature": ": 성격",
   "cycleVariant": ": 색상",
+  "goFilter": ": 필터로 이동",
   "enablePassive": "패시브 활성화",
   "disablePassive": "패시브 비활성화",
   "locked": "잠김",

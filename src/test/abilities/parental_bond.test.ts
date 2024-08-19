@@ -2,15 +2,20 @@ import { BattleStat } from "#app/data/battle-stat.js";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { Type } from "#app/data/type.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BerryPhase, CommandPhase, DamagePhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "../utils/gameManager";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -47,10 +52,10 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       let enemyStartingHp = enemyPokemon.hp;
@@ -80,10 +85,10 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.POWER_UP_PUNCH));
@@ -102,10 +107,10 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
@@ -122,17 +127,14 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.DOUBLE_HIT));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await game.move.forceHit();
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -147,10 +149,10 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SELF_DESTRUCT));
@@ -168,16 +170,14 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.ROLLOUT));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase, false);
 
@@ -192,10 +192,10 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       const enemyStartingHp = enemyPokemon.hp;
@@ -215,10 +215,10 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       const playerStartingHp = leadPokemon.hp;
@@ -268,10 +268,10 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
@@ -288,10 +288,10 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.PIDGEOT]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.MIND_BLOWN));
@@ -314,10 +314,10 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.BURN_UP));
@@ -342,10 +342,10 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
@@ -364,18 +364,16 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       const enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SUPER_FANG));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -395,18 +393,16 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       const enemyStartingHp = enemyPokemon.hp;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SEISMIC_TOSS));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -425,16 +421,14 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.HYPER_BEAM));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -455,16 +449,14 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.ANCHOR_SHOT));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -487,16 +479,14 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.SMACK_DOWN));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -516,16 +506,14 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await game.move.forceHit();
 
       await game.phaseInterceptor.to(MoveEffectPhase);
       expect(leadPokemon.turnData.hitCount).toBe(2);
@@ -542,16 +530,14 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.WAKE_UP_SLAP));
-
-      await game.phaseInterceptor.to(MoveEffectPhase, false);
-      vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+      await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -572,10 +558,10 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
@@ -594,10 +580,10 @@ describe("Abilities - Parental Bond", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));

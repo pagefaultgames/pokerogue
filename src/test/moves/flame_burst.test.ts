@@ -1,17 +1,14 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
-import {
-  SelectTargetPhase,
-  TurnEndPhase,
-} from "#app/phases";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#app/enums/abilities.js";
 import { allAbilities } from "#app/data/ability.js";
 import Pokemon from "#app/field/pokemon.js";
+import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Moves - Flame Burst", () => {
   let phaserGame: Phaser.Game;
@@ -40,14 +37,14 @@ describe("Moves - Flame Burst", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.FLAME_BURST, Moves.SPLASH]);
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.UNNERVE);
-    vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(4);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHUCKLE);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(new Array(4).fill(Moves.SPLASH));
+    game.override.battleType("double");
+    game.override.moveset([Moves.FLAME_BURST, Moves.SPLASH]);
+    game.override.disableCrits();
+    game.override.ability(Abilities.UNNERVE);
+    game.override.startingWave(4);
+    game.override.enemySpecies(Species.SHUCKLE);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyMoveset(new Array(4).fill(Moves.SPLASH));
   });
 
   it("inflicts damage to the target's ally equal to 1/16 of its max HP", async () => {
@@ -65,7 +62,7 @@ describe("Moves - Flame Burst", () => {
   });
 
   it("does not inflict damage to the target's ally if the target was not affected by Flame Burst", async () => {
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.FLASH_FIRE);
+    game.override.enemyAbility(Abilities.FLASH_FIRE);
 
     await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
     const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();

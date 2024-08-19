@@ -1,11 +1,9 @@
 import { allMoves } from "#app/data/move.js";
 import { WeatherType } from "#app/data/weather.js";
 import { Abilities } from "#app/enums/abilities.js";
-import {
-  MoveEffectPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";

@@ -1,22 +1,22 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
+import GameManager from "#test/utils/gameManager";
 import { Mode } from "#app/ui/ui";
 import { BattleStat } from "#app/data/battle-stat";
-import { generateStarter, getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { generateStarter, getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { GameModes, getGameMode } from "#app/game-mode";
-import {
-  CommandPhase, DamagePhase, EncounterPhase,
-  EnemyCommandPhase, SelectStarterPhase,
-  TurnInitPhase,
-} from "#app/phases";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { removeEnemyHeldItems } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { EncounterPhase } from "#app/phases/encounter-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;
@@ -40,12 +40,11 @@ describe("Abilities - Intimidate", () => {
     game.override.enemyPassiveAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.INTIMIDATE);
     game.override.startingWave(3);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
   });
 
   it("single - wild with switch", async () => {
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
-    removeEnemyHeldItems(game.scene);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -75,8 +74,7 @@ describe("Abilities - Intimidate", () => {
 
   it("single - boss should only trigger once then switch", async () => {
     game.override.startingWave(10);
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
-    removeEnemyHeldItems(game.scene);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -105,8 +103,7 @@ describe("Abilities - Intimidate", () => {
 
   it("single - trainer should only trigger once with switch", async () => {
     game.override.startingWave(5);
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
-    removeEnemyHeldItems(game.scene);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -136,8 +133,7 @@ describe("Abilities - Intimidate", () => {
   it("double - trainer should only trigger once per pokemon", async () => {
     game.override.battleType("double");
     game.override.startingWave(5);
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
-    removeEnemyHeldItems(game.scene);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -163,8 +159,7 @@ describe("Abilities - Intimidate", () => {
   it("double - wild: should only trigger once per pokemon", async () => {
     game.override.battleType("double");
     game.override.startingWave(3);
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
-    removeEnemyHeldItems(game.scene);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -190,8 +185,7 @@ describe("Abilities - Intimidate", () => {
   it("double - boss: should only trigger once per pokemon", async () => {
     game.override.battleType("double");
     game.override.startingWave(10);
-    await game.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
-    removeEnemyHeldItems(game.scene);
+    await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
       Mode.CONFIRM,
@@ -218,7 +212,6 @@ describe("Abilities - Intimidate", () => {
     game.override.startingWave(2);
     game.override.moveset([Moves.AERIAL_ACE]);
     await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
-    removeEnemyHeldItems(game.scene);
     let battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -245,7 +238,6 @@ describe("Abilities - Intimidate", () => {
     game.override.startingWave(2);
     game.override.moveset([Moves.SPLASH]);
     await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
-    removeEnemyHeldItems(game.scene);
     let battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -271,7 +263,6 @@ describe("Abilities - Intimidate", () => {
     game.override.enemyMoveset([Moves.VOLT_SWITCH, Moves.VOLT_SWITCH, Moves.VOLT_SWITCH, Moves.VOLT_SWITCH]);
     game.override.startingWave(5);
     await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
-    removeEnemyHeldItems(game.scene);
     let battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -308,10 +299,9 @@ describe("Abilities - Intimidate", () => {
 
   it("single - trainer should only trigger once whatever turn we are", async () => {
     game.override.moveset([Moves.SPLASH]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     game.override.startingWave(5);
     await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
-    removeEnemyHeldItems(game.scene);
     let battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -349,9 +339,7 @@ describe("Abilities - Intimidate", () => {
   it("double - wild vs only 1 on player side", async () => {
     game.override.battleType("double");
     game.override.startingWave(3);
-    vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{ name: "COIN_CASE" }]);
-    await game.runToSummon([Species.MIGHTYENA]);
-    removeEnemyHeldItems(game.scene);
+    await game.classicMode.runToSummon([Species.MIGHTYENA]);
     await game.phaseInterceptor.to(CommandPhase, false);
     const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
@@ -378,7 +366,6 @@ describe("Abilities - Intimidate", () => {
     });
 
     await game.phaseInterceptor.run(EncounterPhase);
-    removeEnemyHeldItems(game.scene);
 
     await game.phaseInterceptor.to(CommandPhase, false);
     const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;

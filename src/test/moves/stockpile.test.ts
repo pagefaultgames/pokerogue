@@ -1,15 +1,16 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { StockpilingTag } from "#app/data/battler-tags.js";
 import { MoveResult, TurnMove } from "#app/field/pokemon.js";
-import { CommandPhase, TurnInitPhase } from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 describe("Moves - Stockpile", () => {
   describe("integration tests", () => {
@@ -41,7 +42,7 @@ describe("Moves - Stockpile", () => {
     it("Gains a stockpile stack and increases DEF and SPDEF by 1 on each use, fails at max stacks (3)", { timeout: 10000 }, async () => {
       await game.startBattle([Species.ABOMASNOW]);
 
-      const user = game.scene.getPlayerPokemon();
+      const user = game.scene.getPlayerPokemon()!;
 
       // Unfortunately, Stockpile stacks are not directly queryable (i.e. there is no pokemon.getStockpileStacks()),
       // we just have to know that they're implemented as a BattlerTag.
@@ -59,7 +60,7 @@ describe("Moves - Stockpile", () => {
         game.doAttack(getMovePosition(game.scene, 0, Moves.STOCKPILE));
         await game.phaseInterceptor.to(TurnInitPhase);
 
-        const stockpilingTag = user.getTag(StockpilingTag);
+        const stockpilingTag = user.getTag(StockpilingTag)!;
         const def = user.summonData.battleStats[BattleStat.DEF];
         const spdef = user.summonData.battleStats[BattleStat.SPDEF];
 
@@ -82,7 +83,7 @@ describe("Moves - Stockpile", () => {
     it("Gains a stockpile stack even if DEF and SPDEF are at +6", { timeout: 10000 }, async () => {
       await game.startBattle([Species.ABOMASNOW]);
 
-      const user = game.scene.getPlayerPokemon();
+      const user = game.scene.getPlayerPokemon()!;
 
       user.summonData.battleStats[BattleStat.DEF] = 6;
       user.summonData.battleStats[BattleStat.SPDEF] = 6;
@@ -94,7 +95,7 @@ describe("Moves - Stockpile", () => {
       game.doAttack(getMovePosition(game.scene, 0, Moves.STOCKPILE));
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      const stockpilingTag = user.getTag(StockpilingTag);
+      const stockpilingTag = user.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(1);
       expect(user.summonData.battleStats[BattleStat.DEF]).toBe(6);
@@ -106,7 +107,7 @@ describe("Moves - Stockpile", () => {
       game.doAttack(getMovePosition(game.scene, 0, Moves.STOCKPILE));
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      const stockpilingTagAgain = user.getTag(StockpilingTag);
+      const stockpilingTagAgain = user.getTag(StockpilingTag)!;
       expect(stockpilingTagAgain).toBeDefined();
       expect(stockpilingTagAgain.stockpiledCount).toBe(2);
       expect(user.summonData.battleStats[BattleStat.DEF]).toBe(6);

@@ -1,13 +1,7 @@
 import { StatusEffect } from "#app/data/status-effect";
-import {
-  CommandPhase,
-  EnemyCommandPhase,
-  MessagePhase,
-  TurnEndPhase,
-} from "#app/phases";
 import i18next, { initI18n } from "#app/plugins/i18n";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
@@ -15,6 +9,10 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { MessagePhase } from "#app/phases/message-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 
 describe("Items - Toxic orb", () => {
@@ -77,6 +75,6 @@ describe("Items - Toxic orb", () => {
     const message2 = game.textInterceptor.getLatestMessage();
     expect(message2).toContain("is hurt");
     expect(message2).toContain("by poison");
-    expect(game.scene.getParty()[0].status.effect).toBe(StatusEffect.TOXIC);
+    expect(game.scene.getParty()[0].status!.effect).toBe(StatusEffect.TOXIC);
   }, 20000);
 });

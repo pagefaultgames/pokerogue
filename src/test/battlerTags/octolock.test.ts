@@ -2,11 +2,11 @@ import { describe, expect, it, vi } from "vitest";
 import Pokemon from "#app/field/pokemon.js";
 import BattleScene from "#app/battle-scene.js";
 import { BattlerTag, BattlerTagLapseType, OctolockTag, TrappedTag } from "#app/data/battler-tags.js";
-import { StatChangePhase } from "#app/phases.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { StatChangePhase } from "#app/phases/stat-change-phase.js";
 
-jest.mock("#app/battle-scene.js");
+vi.mock("#app/battle-scene.js");
 
 describe("BattlerTag - OctolockTag", () => {
   describe("lapse behavior", () => {
@@ -49,7 +49,7 @@ describe("BattlerTag - OctolockTag", () => {
 
   it("cannot be added to pokemon who are octolocked", { timeout: 2000 }, async => {
     const mockPokemon = {
-      getTag: vi.fn().mockReturnValue(new BattlerTag(null, null, null, null)) as Pokemon["getTag"],
+      getTag: vi.fn().mockReturnValue(new BattlerTag(null!, null!, null!, null!)) as Pokemon["getTag"],
     } as Pokemon;
 
     const subject = new OctolockTag(1);

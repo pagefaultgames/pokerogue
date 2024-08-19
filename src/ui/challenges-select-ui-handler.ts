@@ -5,12 +5,13 @@ import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import {Button} from "#enums/buttons";
 import i18next from "i18next";
-import { SelectStarterPhase, TitlePhase } from "#app/phases.js";
 import { Challenge } from "#app/data/challenge.js";
 import * as Utils from "../utils";
 import { Challenges } from "#app/enums/challenges.js";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Color, ShadowColor } from "#app/enums/color.js";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
+import { TitlePhase } from "#app/phases/title-phase.js";
 
 /**
  * Handles all the UI for choosing optional challenges.
@@ -30,11 +31,11 @@ export default class GameChallengesUiHandler extends UiHandler {
   private challengeLabels: Array<{ label: Phaser.GameObjects.Text, value: Phaser.GameObjects.Text }>;
   private monoTypeValue: Phaser.GameObjects.Sprite;
 
-  private cursorObj: Phaser.GameObjects.NineSlice;
+  private cursorObj: Phaser.GameObjects.NineSlice | null;
 
   private startCursor: Phaser.GameObjects.NineSlice;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
   }
 
@@ -110,7 +111,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     startText.setOrigin(0, 0);
     startText.setPositionRelative(startBg, 8, 4);
 
-    this.startCursor = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 18) - 10, 16, 1, 1, 1, 1);
+    this.startCursor = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, (this.scene.game.canvas.width / 18) - 10, 16, 1, 1, 1, 1);
     this.startCursor.setName("9s-start-cursor");
     this.startCursor.setOrigin(0, 0);
     this.startCursor.setPositionRelative(startBg, 4, 4);
@@ -258,7 +259,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       } else {
         this.scene.clearPhaseQueue();
         this.scene.pushPhase(new TitlePhase(this.scene));
-        this.scene.getCurrentPhase().end();
+        this.scene.getCurrentPhase()?.end();
       }
       success = true;
     } else if (button === Button.SUBMIT || button === Button.ACTION) {
@@ -267,7 +268,7 @@ export default class GameChallengesUiHandler extends UiHandler {
         const totalMinDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getMinDifficulty(), 0);
         if (totalDifficulty >= totalMinDifficulty) {
           this.scene.unshiftPhase(new SelectStarterPhase(this.scene));
-          this.scene.getCurrentPhase().end();
+          this.scene.getCurrentPhase()?.end();
           success = true;
         } else {
           success = false;
@@ -354,7 +355,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     let ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 9) - 10, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, (this.scene.game.canvas.width / 9) - 10, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.valuesContainer.add(this.cursorObj);
     }

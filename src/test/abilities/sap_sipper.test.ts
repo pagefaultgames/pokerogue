@@ -1,16 +1,15 @@
 import { BattleStat } from "#app/data/battle-stat.js";
 import { TerrainType } from "#app/data/terrain.js";
-import {
-  MoveEndPhase, TurnEndPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Sap Sipper", () => {
@@ -89,7 +88,7 @@ describe("Abilities - Sap Sipper", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.terrain).toBeDefined();
-    expect(game.scene.arena.terrain.terrainType).toBe(TerrainType.GRASSY);
+    expect(game.scene.arena.terrain!.terrainType).toBe(TerrainType.GRASSY);
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
   });
 

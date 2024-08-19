@@ -1,11 +1,12 @@
-import { DamagePhase, TurnEndPhase } from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 
 describe("Items - Leftovers", () => {
@@ -40,11 +41,7 @@ describe("Items - Leftovers", () => {
     // Make sure leftovers are there
     expect(game.scene.modifiers[0].type.id).toBe("LEFTOVERS");
 
-    const leadPokemon = game.scene.getPlayerPokemon();
-    expect(leadPokemon).toBeDefined();
-
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    expect(enemyPokemon).toBeDefined();
+    const leadPokemon = game.scene.getPlayerPokemon()!;
 
     // We should have full hp
     expect(leadPokemon.isFullHp()).toBe(true);
