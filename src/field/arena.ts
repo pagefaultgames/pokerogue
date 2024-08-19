@@ -23,6 +23,7 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { Abilities } from "#app/enums/abilities.js";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms.js";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase.js";
 
 export class Arena {
   public scene: BattleScene;

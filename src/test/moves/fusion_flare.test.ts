@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
-import { TurnStartPhase } from "#app/phases";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { StatusEffect } from "#app/data/status-effect";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 
 describe("Moves - Fusion Flare", () => {
   let phaserGame: Phaser.Game;

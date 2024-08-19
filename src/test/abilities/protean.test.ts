@@ -2,7 +2,6 @@ import { allMoves } from "#app/data/move.js";
 import { Type } from "#app/data/type.js";
 import { Weather, WeatherType } from "#app/data/weather.js";
 import { PlayerPokemon } from "#app/field/pokemon.js";
-import { TurnEndPhase } from "#app/phases.js";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
@@ -13,6 +12,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
