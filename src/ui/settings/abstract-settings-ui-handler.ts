@@ -231,9 +231,8 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     let success = false;
 
-    if (button === Button.CANCEL) {
+    const progressLosing = () => {
       if (this.reloadRequired && this.scene.currentBattle && this.scene.currentBattle.turn > 1) {
-        const ui = this.getUi();
 
         this.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
           ui.setOverlayMode(Mode.CONFIRM, () => {
@@ -250,8 +249,14 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
             ui.showText("", 0);
           }, false, 0,0);
         });
+        return false;
 
-      } else {
+      }
+      return true;
+    };
+
+    if (button === Button.CANCEL) {
+      if (progressLosing()) {
         NavigationManager.getInstance().reset();
         this.scene.ui.revertMode();
       }
@@ -305,26 +310,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
         break;
       case Button.CYCLE_FORM:
       case Button.CYCLE_SHINY:
-        if (this.reloadRequired && this.scene.currentBattle && this.scene.currentBattle.turn > 1) {
-          const ui = this.getUi();
-
-          this.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
-            ui.setOverlayMode(Mode.CONFIRM, () => {
-              NavigationManager.getInstance().reset();
-              this.scene.ui.revertMode();
-              this.scene.ui.revertMode();
-            }, () => {
-              this.reloadSettings.forEach((s,i) => {
-                if (s !== null && s !== this.optionCursors[i]) {
-                  this.setOptionCursor(this.cursor + this.scrollCursor,s,true);
-                }
-              });
-              this.scene.ui.revertMode();
-              ui.showText("", 0);
-            }, false, 0,0);
-          });
-
-        } else {
+        if (progressLosing()) {
           success = this.navigationContainer.navigate(button);
         }
         break;
