@@ -212,14 +212,14 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     @argument padding default 0.
  */
 
-  adjustText(text:string,textObject:Phaser.GameObjects.Text,maxWidth:number,opts:argsAjustText={}): void {
+  adjustText(text:string, textObject:Phaser.GameObjects.Text, maxWidth:number, opts:argsAjustText={}): void {
     const currentLanguage = i18next.resolvedLanguage!;
-    if (opts.ignoreLanguages && opts.ignoreLanguages[0] && !opts.ignoreLanguages.some(localKey=>localKey === currentLanguage)) {
+    if (opts.ignoreLanguages && opts.ignoreLanguages[0] && !opts.ignoreLanguages.some(localKey => localKey === currentLanguage)) {
       return;
     }
 
     const fontSizeToNumber = (FS: number|string):number => {
-      return parseInt(FS.toString().replace("px",""));
+      return parseInt(FS.toString().replace("px", ""));
     };
 
     // If fontSize was modified before, revert to original
