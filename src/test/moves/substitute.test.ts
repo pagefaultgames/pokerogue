@@ -5,7 +5,6 @@ import { Species } from "#app/enums/species";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, CommandPhase, MoveEndPhase, MovePhase } from "#app/phases";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BattleStat } from "#app/data/battle-stat";
 import { allMoves, StealHeldItemChanceAttr } from "#app/data/move";
@@ -13,8 +12,12 @@ import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
 import { StatusEffect } from "#app/data/status-effect";
 import { BerryType } from "#app/enums/berry-type";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { Mode } from "#app/ui/ui.js";
-import { Command } from "#app/ui/command-ui-handler.js";
+import { Mode } from "#app/ui/ui";
+import { Command } from "#app/ui/command-ui-handler";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MovePhase } from "#app/phases/move-phase";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
 
