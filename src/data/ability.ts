@@ -2265,7 +2265,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
       return false;
     }
 
-    if (target.illusion.active) {
+    if (target.battleData.illusion.active) {
       return false;
     }
     pokemon.summonData.speciesForm = target.getSpeciesForm();
@@ -4122,7 +4122,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
       }
     });
 
-    if (pokemon.illusion.available && !suppressed) {
+    if (pokemon.battleData.illusion.available && !suppressed) {
       return pokemon.generateIllusion();
     } else {
       return false;
@@ -4164,7 +4164,7 @@ export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
    */
   applyPostBattle(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     pokemon.breakIllusion();
-    pokemon.illusion.available = true;
+    pokemon.battleData.illusion.available = true;
     return true;
   }
 }
@@ -4180,7 +4180,7 @@ export class IllusionDisableAbAttr extends PostSummonAbAttr {
    * @returns {boolean}
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    pokemon.illusion.available = false;
+    pokemon.battleData.illusion.available = false;
     return true;
   }
 }
@@ -4950,9 +4950,9 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       //The pokemon generate an illusion if it's available
-      .conditionalAttr((pokemon) => pokemon.illusion.available, IllusionPreSummonAbAttr, false)
+      .conditionalAttr((pokemon) => pokemon.battleData.illusion.available, IllusionPreSummonAbAttr, false)
       //The pokemon loses his illusion when he is damaged by a move
-      .conditionalAttr((pokemon) => pokemon.illusion.active, IllusionBreakAbAttr, true)
+      .conditionalAttr((pokemon) => pokemon.battleData.illusion.active, IllusionBreakAbAttr, true)
       //Illusion is available again after a battle
       .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionPostBattleAbAttr, false)
       //Illusion is not available after summon
