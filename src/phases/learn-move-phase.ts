@@ -43,7 +43,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }
   }
 
-  replaceMoveCheck(move: Move, pokemon: Pokemon) {
+  replaceMoveCheck(move, pokemon) {
     const learnMovePrompt = i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
     const moveLimitReached = i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) });
     const shouldReplaceQ = i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name });
@@ -53,7 +53,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }, null, true);
   }
 
-  forgetMoveProcess(move: Move, pokemon: Pokemon) {
+  forgetMoveProcess(move, pokemon) {
     this.scene.ui.setMode(this.messageMode);
     this.scene.ui.showText(i18next.t("battle:learnMoveForgetQuestion"), null, () => {
       this.scene.ui.setModeWithoutClear(Mode.SUMMARY, pokemon, SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
@@ -69,7 +69,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }, null, true);
   }
 
-  rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
+  rejectMoveAndEnd(move, pokemon) {
     this.scene.ui.setMode(this.messageMode);
     this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
       this.scene.ui.setModeWithoutClear(Mode.CONFIRM,
@@ -84,7 +84,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }, null, true);
   }
 
-  learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
+  learnMove(index: number, move, pokemon, textMessage?: string) {
     pokemon.setMove(index, this.moveId);
     initMoveAnim(this.scene, this.moveId).then(() => {
       loadMoveAnimAssets(this.scene, [this.moveId], true);
