@@ -99,8 +99,9 @@ export const settings: SimpleTranslationEntries = {
   "showBgmBar": "Show Music Names",
   "moveTouchControls": "Move Touch Controls",
   "shopOverlayOpacity": "Opacidad de la fase de compra",
-  "shopRerollTarget": "Shop Post-Reroll Target",
+  "shopCursorTarget": "Shop Cursor Target",
   "items": "Items",
   "reroll": "Reroll",
-  "shop": "Shop"
+  "shop": "Shop",
+  "checkTeam": "Check Team"
 } as const;

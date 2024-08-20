@@ -9,6 +9,7 @@ import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n.js";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target.js";
 
 function getTranslation(key: string): string {
   if (!getIsInitialized()) {
@@ -580,7 +581,7 @@ export const Setting: Array<Setting> = [
   },
   {
     key: SettingKeys.Reroll_Target,
-    label: i18next.t("settings:shopRerollTarget"),
+    label: i18next.t("settings:shopCursorTarget"),
     options: [
       {
         value:"Reroll",
@@ -593,9 +594,13 @@ export const Setting: Array<Setting> = [
       {
         value:"Shop",
         label: i18next.t("settings:shop")
+      },
+      {
+        value:"Check Team",
+        label: i18next.t("settings:checkTeam")
       }
     ],
-    default: 1,
+    default: ShopCursorTarget.CHECK_TEAM,
     type: SettingType.DISPLAY
   },
   {
@@ -731,7 +736,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.showLevelUpStats = Setting[index].options[value].value === "On";
     break;
   case SettingKeys.Reroll_Target:
-    scene.rerollTarget = value;
+    scene.shopCursorTarget = value;
   case SettingKeys.EXP_Gains_Speed:
     scene.expGainsSpeed = value;
     break;

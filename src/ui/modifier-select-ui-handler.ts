@@ -12,7 +12,7 @@ import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target.js";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -250,12 +250,22 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         duration: 250
       });
 
-      this.setCursor(0);
-      const phase = this.scene.getCurrentPhase() as SelectModifierPhase;
-      phase.getRerollCount() > 0 ? this.setRowCursor(this.scene.rerollTarget) : this.setRowCursor(1);
+      const setCursorTarget = () => {
+        if (this.scene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
+          this.setRowCursor(0);
+          this.setCursor(2);
+        } else {
+          this.setRowCursor(this.scene.shopCursorTarget);
+          this.setCursor(0);
+        }
+      };
 
-      handleTutorial(this.scene, Tutorial.Select_Item).then(() => {
-        this.setCursor(0);
+      setCursorTarget();
+
+      handleTutorial(this.scene, Tutorial.Select_Item).then((res) => {
+        if (res) {
+          setCursorTarget();
+        }
         this.awaitingActionInput = true;
         this.onActionInput = args[2];
       });
