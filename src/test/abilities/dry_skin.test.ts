@@ -1,5 +1,4 @@
 import { Species } from "#app/enums/species.js";
-import { TurnEndPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -7,6 +6,7 @@ import { Moves } from "#enums/moves";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Abilities - Dry Skin", () => {
   let phaserGame: Phaser.Game;

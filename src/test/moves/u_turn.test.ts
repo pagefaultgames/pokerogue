@@ -1,5 +1,4 @@
 import { Abilities } from "#app/enums/abilities.js";
-import { BerryPhase, SwitchPhase, TurnEndPhase } from "#app/phases";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
@@ -9,6 +8,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { StatusEffect } from "#app/enums/status-effect.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { Mode } from "#app/ui/ui.js";
+import { SwitchPhase } from "#app/phases/switch-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { BerryPhase } from "#app/phases/berry-phase.js";
 
 describe("Moves - U-turn", () => {
   let phaserGame: Phaser.Game;

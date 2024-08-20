@@ -1,5 +1,4 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MoveEndPhase, MovePhase, NewBattlePhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, TrappedTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
@@ -28,6 +27,15 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { MoveUsedEvent } from "#app/events/battle-scene.js";
+import { PartyStatusCurePhase } from "#app/phases/party-status-cure-phase.js";
+import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { MovePhase } from "#app/phases/move-phase.js";
+import { NewBattlePhase } from "#app/phases/new-battle-phase.js";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
+import { StatChangePhase } from "#app/phases/stat-change-phase.js";
+import { SwitchPhase } from "#app/phases/switch-phase.js";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -4457,6 +4465,39 @@ export class GulpMissileTagAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute to implement Jaw Lock's linked trapping effect between the user and target
+ * @extends AddBattlerTagAttr
+ */
+export class JawLockAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.TRAPPED);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.canApply(user, target, move, args)) {
+      return false;
+    }
+
+    // If either the user or the target already has the tag, do not apply
+    if (user.getTag(TrappedTag) || target.getTag(TrappedTag)) {
+      return false;
+    }
+
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
+    if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
+      /**
+       * Add the tag to both the user and the target.
+       * The target's tag source is considered to be the user and vice versa
+       */
+      return target.addTag(BattlerTagType.TRAPPED, 1, move.id, user.id)
+          && user.addTag(BattlerTagType.TRAPPED, 1, move.id, target.id);
+    }
+
+    return false;
+  }
+}
+
 export class CurseAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move:Move, args: any[]): boolean {
@@ -4468,7 +4509,7 @@ export class CurseAttr extends MoveEffectAttr {
       const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
       user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
       user.scene.queueMessage(
-        i18next.t("battle:cursedOnAdd", {
+        i18next.t("battlerTags:cursedOnAdd", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),
           pokemonName: getPokemonNameWithAffix(target)
         })
@@ -7552,7 +7593,7 @@ export function initMoves() {
       .attr(OpponentHighHpPowerAttr, 120),
     new AttackMove(Moves.MAGMA_STORM, Type.FIRE, MoveCategory.SPECIAL, 100, 75, 5, -1, 0, 4)
       .attr(TrapAttr, BattlerTagType.MAGMA_STORM),
-    new StatusMove(Moves.DARK_VOID, Type.DARK, 50, 10, -1, 0, 4)
+    new StatusMove(Moves.DARK_VOID, Type.DARK, 80, 10, -1, 0, 4)  //Accuracy from Generations 4-6
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.SEED_FLARE, Type.GRASS, MoveCategory.SPECIAL, 120, 85, 5, 40, 0, 4)
@@ -8391,8 +8432,7 @@ export function initMoves() {
       .attr(HighCritAttr)
       .attr(BypassRedirectAttr),
     new AttackMove(Moves.JAW_LOCK, Type.DARK, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 8)
-      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, false, true)
-      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1, 1, false, true)
+      .attr(JawLockAttr)
       .bitingMove(),
     new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, -1, 0, 8) // TODO: Stuff Cheeks should not be selectable when the user does not have a berry, see wiki
       .attr(EatBerryAttr)
