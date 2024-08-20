@@ -80,55 +80,55 @@ export interface Setting {
 }
 
 type LanguageType = {
-  key:string|`${string}-${string}`;
-  label:string;
-  handler?:()=>{};
-  value?:string;
+  key: string;
+  label: string;
+  handler?: () => {};
+  value?: string;
 };
 
 const languages: Array<LanguageType> = [
   {
-    key:"en",
+    key: "en",
     label: "English",
   },
   {
-    key:"es",
+    key: "es",
     label: "Español",
   },
   {
-    key:"it",
+    key: "it",
     label: "Italiano",
   },
   {
-    key:"fr",
+    key: "fr",
     label: "Français",
   },
   {
-    key:"de",
+    key: "de",
     label: "Deutsch",
   },
   {
-    key:"pt-BR",
+    key: "pt-BR",
     label: "Português (BR)",
   },
   {
-    key:"zh-CN",
+    key: "zh-CN",
     label: "简体中文",
   },
   {
-    key:"zh-TW",
+    key: "zh-TW",
     label: "繁體中文",
   },
   {
-    key:"ko",
+    key: "ko",
     label: "한국어",
   },
   {
-    key:"ko-KR",
+    key: "ko-KR",
     label: "한국어",
   },
   {
-    key:"ja",
+    key: "ja",
     label: "日本語",
   },
   // {
