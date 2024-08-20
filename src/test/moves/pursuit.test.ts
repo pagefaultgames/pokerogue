@@ -5,12 +5,15 @@ import { Species } from "#app/enums/species.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { allMoves } from "#app/data/move.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, EncounterPhase, EnemyCommandPhase, SwitchSummonPhase } from "#app/phases.js";
 import Pokemon, { MoveResult } from "#app/field/pokemon.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { BattlerIndex } from "#app/battle.js";
 import { TerrainType } from "#app/data/terrain.js";
 import { Abilities } from "#app/enums/abilities.js";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
+import { EncounterPhase } from "#app/phases/encounter-phase.js";
 
 interface PokemonAssertionChainer {
   and(expectation: (p?: Pokemon) => PokemonAssertionChainer): PokemonAssertionChainer;
