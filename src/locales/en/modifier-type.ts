@@ -89,6 +89,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonFriendshipBoosterModifierType": {
       description: "Increases friendship gain per victory by 50%.",
     },
+    "PokemonRegionalEvolutionModifierType": {
+      description: "When the holder evolves, its evolution will be its Alolan, Galarian, or Hisuian form.",
+    },
     "PokemonMoveAccuracyBoosterModifierType": {
       description: "Increases move accuracy by {{accuracyAmount}} (maximum 100).",
     },
@@ -183,6 +186,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Golden Egg" },
 
     "SOOTHE_BELL": { name: "Soothe Bell" },
+    "STRANGE_SOUVENIR": { name: "Strange Souvenir" },
 
     "SCOPE_LENS": { name: "Scope Lens", description: "It's a lens for scoping out weak points. It boosts the holder's critical-hit ratio."},
     "LEEK": { name: "Leek", description: "This very long and stiff stalk of leek boosts the critical-hit ratio of Farfetch'd's moves."},

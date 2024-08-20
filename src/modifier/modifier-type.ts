@@ -733,6 +733,16 @@ export class PokemonFriendshipBoosterModifierType extends PokemonHeldItemModifie
   }
 }
 
+export class PokemonRegionalEvolutionModifierType extends PokemonHeldItemModifierType {
+  constructor(localeKey: string, iconImage: string) {
+    super(localeKey, iconImage, (_type, args) => new Modifiers.PokemonRegionalEvolutionModifier(this, (args[0] as Pokemon).id));
+  }
+
+  getDescription(scene: BattleScene): string {
+    return i18next.t("modifierType:ModifierType.PokemonRegionalEvolutionModifierType.description");
+  }
+}
+
 export class PokemonMoveAccuracyBoosterModifierType extends PokemonHeldItemModifierType {
   private amount: integer;
 
@@ -1406,6 +1416,7 @@ export const modifierTypes = {
   GOLDEN_EGG: () => new PokemonExpBoosterModifierType("modifierType:ModifierType.GOLDEN_EGG", "golden_egg", 100),
 
   SOOTHE_BELL: () => new PokemonFriendshipBoosterModifierType("modifierType:ModifierType.SOOTHE_BELL", "soothe_bell"),
+  STRANGE_SOUVENIR: () => new PokemonRegionalEvolutionModifierType("modifierType:ModifierType.STRANGE_SOUVENIR", "strange_souvenir"),
 
   SCOPE_LENS: () => new PokemonHeldItemModifierType("modifierType:ModifierType.SCOPE_LENS", "scope_lens", (type, args) => new Modifiers.CritBoosterModifier(type, (args[0] as Pokemon).id, 1)),
   LEEK: () => new PokemonHeldItemModifierType("modifierType:ModifierType.LEEK", "leek", (type, args) => new Modifiers.SpeciesCritBoosterModifier(type, (args[0] as Pokemon).id, 2, [Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD])),
@@ -1989,10 +2000,20 @@ export function overridePlayerModifierTypeOptions(options: ModifierTypeOption[],
   }
 }
 
-export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer): ModifierTypeOption[] {
+export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer, party?: Pokemon[]): ModifierTypeOption[] {
   if (!(waveIndex % 10)) {
     return [];
   }
+  //Check if the player has any mons with a split evolution with a regional form, for example Quilava, Mime Jr., Petilil
+  const hasRegionalSplitEvos = party?.length && party.some(p =>
+    p.species.speciesId < Species.ALOLA_RATTATA && //All regional forms are at species Id 2000 or above (2k for Alola, 4k for Galar, 6k for Hisui)
+    pokemonEvolutions.hasOwnProperty(p.species.speciesId) && pokemonEvolutions[p.species.speciesId].some(e=>
+      e.speciesId > Species.ALOLA_RATTATA //If this mon has a regional form it can evolve into
+    ) || (p.isFusion() && p.fusionSpecies && p.fusionSpecies.speciesId < Species.ALOLA_RATTATA &&
+    pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId) && pokemonEvolutions[p.fusionSpecies.speciesId].some(e=>
+      e.speciesId > Species.ALOLA_RATTATA //If this mon is fused to a species with a regional form it can evolve into
+    ))
+  ) || false;
 
   const options = [
     [
@@ -2023,6 +2044,11 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
       new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10)
     ]
   ];
+
+  if (hasRegionalSplitEvos) {
+    options[0].push(new ModifierTypeOption(modifierTypes.STRANGE_SOUVENIR(), 0, baseCost));
+  }
+
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
 }
 

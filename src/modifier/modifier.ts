@@ -1900,6 +1900,29 @@ export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class PokemonRegionalEvolutionModifier extends PokemonHeldItemModifier {
+  public species: Species[];
+  constructor(type: ModifierTypes.PokemonRegionalEvolutionModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonRegionalEvolutionModifier;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonRegionalEvolutionModifier(this.type as ModifierTypes.PokemonRegionalEvolutionModifierType, this.pokemonId, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 1;
+  }
+}
+
 export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierTypes.ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
