@@ -1,17 +1,18 @@
-import BattleScene from "#app/battle-scene.js";
-import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims.js";
-import { allMoves } from "#app/data/move.js";
-import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms.js";
-import { Moves } from "#app/enums/moves.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import EvolutionSceneHandler from "#app/ui/evolution-scene-handler.js";
-import { SummaryUiMode } from "#app/ui/summary-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
+import { allMoves } from "#app/data/move";
+import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
+import { Moves } from "#app/enums/moves";
+import { getPokemonNameWithAffix } from "#app/messages";
+import EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
+import { SummaryUiMode } from "#app/ui/summary-ui-handler";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
+  private messageMode: Mode;
 
   constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves) {
     super(scene, partyMemberIndex);
@@ -24,80 +25,76 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
 
     const pokemon = this.getPokemon();
     const move = allMoves[this.moveId];
+    const currentMoveset = pokemon.getMoveset();
 
-    const existingMoveIndex = pokemon.getMoveset().findIndex(m => m?.moveId === move.id);
+    this.messageMode = this.scene.ui.getHandler() instanceof EvolutionSceneHandler ? Mode.EVOLUTION_SCENE : Mode.MESSAGE;
 
-    if (existingMoveIndex > -1) {
+    const hasMoveAlready = currentMoveset.some(m => m?.moveId === move.id);
+
+    if (hasMoveAlready) {
       return this.end();
     }
 
-    const emptyMoveIndex = pokemon.getMoveset().length < 4
-      ? pokemon.getMoveset().length
-      : pokemon.getMoveset().findIndex(m => m === null);
-
-    const messageMode = this.scene.ui.getHandler() instanceof EvolutionSceneHandler
-      ? Mode.EVOLUTION_SCENE
-      : Mode.MESSAGE;
-
-    if (emptyMoveIndex > -1) {
-      pokemon.setMove(emptyMoveIndex, this.moveId);
-      initMoveAnim(this.scene, this.moveId).then(() => {
-        loadMoveAnimAssets(this.scene, [this.moveId], true)
-          .then(() => {
-            this.scene.ui.setMode(messageMode).then(() => {
-              this.scene.playSound("level_up_fanfare");
-              this.scene.ui.showText(i18next.t("battle:learnMove", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
-                this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
-                this.end();
-              }, messageMode === Mode.EVOLUTION_SCENE ? 1000 : null, true);
-            });
-          });
-      });
+    if (currentMoveset.length < 4) {
+      this.scene.playSound("level_up_fanfare");
+      this.learnMove(currentMoveset.length, move, pokemon);
     } else {
-      this.scene.ui.setMode(messageMode).then(() => {
-        this.scene.ui.showText(i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
-          this.scene.ui.showText(i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
-            this.scene.ui.showText(i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name }), null, () => {
-              const noHandler = () => {
-                this.scene.ui.setMode(messageMode).then(() => {
-                  this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
-                    this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
-                      this.scene.ui.setMode(messageMode);
-                      this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => this.end(), null, true);
-                    }, () => {
-                      this.scene.ui.setMode(messageMode);
-                      this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
-                      this.end();
-                    });
-                  });
-                });
-              };
-              this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
-                this.scene.ui.setMode(messageMode);
-                this.scene.ui.showText(i18next.t("battle:learnMoveForgetQuestion"), null, () => {
-                  this.scene.ui.setModeWithoutClear(Mode.SUMMARY, this.getPokemon(), SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
-                    if (moveIndex === 4) {
-                      noHandler();
-                      return;
-                    }
-                    this.scene.ui.setMode(messageMode).then(() => {
-                      this.scene.ui.showText(i18next.t("battle:countdownPoof"), null, () => {
-                        this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex]!.getName() }), null, () => { // TODO: is the bang correct?
-                          this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
-                            pokemon.setMove(moveIndex, Moves.NONE);
-                            this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
-                            this.end();
-                          }, null, true);
-                        }, null, true);
-                      }, null, true);
-                    });
-                  });
-                }, null, true);
-              }, noHandler);
-            });
-          }, null, true);
-        }, null, true);
-      });
+      this.replaceMoveCheck(move, pokemon);
     }
+  }
+
+  replaceMoveCheck(move: Move, pokemon: Pokemon) {
+    const learnMovePrompt = i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
+    const moveLimitReached = i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) });
+    const shouldReplaceQ = i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name });
+    const prompt = [learnMovePrompt, moveLimitReached, shouldReplaceQ].join("$");
+    this.scene.ui.showText(prompt, null, () => {
+      this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => this.forgetMoveProcess(move, pokemon), () => this.rejectMoveAndEnd(move, pokemon));
+    }, null, true);
+  }
+
+  forgetMoveProcess(move: Move, pokemon: Pokemon) {
+    this.scene.ui.setMode(this.messageMode);
+    this.scene.ui.showText(i18next.t("battle:learnMoveForgetQuestion"), null, () => {
+      this.scene.ui.setModeWithoutClear(Mode.SUMMARY, pokemon, SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
+        if (moveIndex === 4) {
+          this.rejectMoveAndEnd(move, pokemon);
+          return;
+        }
+        this.scene.ui.setMode(this.messageMode);
+        const forgetSuccessText = i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex]!.getName() });
+        const fullText = [i18next.t("battle:countdownPoof"), forgetSuccessText, i18next.t("battle:learnMoveAnd")].join("$");
+        this.learnMove(moveIndex, move, pokemon, fullText);
+      });
+    }, null, true);
+  }
+
+  rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
+    this.scene.ui.setMode(this.messageMode);
+    this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
+      this.scene.ui.setModeWithoutClear(Mode.CONFIRM,
+        () => {
+          this.scene.ui.setMode(this.messageMode);
+          this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => this.end(), null, true);
+        },
+        () => {
+          this.scene.ui.setMode(this.messageMode);
+          this.replaceMoveCheck(move, pokemon);
+        });
+    }, null, true);
+  }
+
+  learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
+    pokemon.setMove(index, this.moveId);
+    initMoveAnim(this.scene, this.moveId).then(() => {
+      loadMoveAnimAssets(this.scene, [this.moveId], true);
+    });
+    this.scene.ui.setMode(this.messageMode);
+    const learnMoveText = i18next.t("battle:learnMove", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
+    textMessage = textMessage ? textMessage+"$"+learnMoveText : learnMoveText;
+    this.scene.ui.showText(textMessage, null, () => {
+      this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
+      this.end();
+    }, this.messageMode === Mode.EVOLUTION_SCENE ? 1000 : null, true);
   }
 }
