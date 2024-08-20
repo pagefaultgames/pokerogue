@@ -36,7 +36,7 @@ describe("Arena - Gravity", () => {
       .enemyMoveset(SPLASH_ONLY);
   });
 
-// Reference: https://bulbapedia.bulbagarden.net/wiki/Gravity_(move)
+  // Reference: https://bulbapedia.bulbagarden.net/wiki/Gravity_(move)
 
   it("non-OHKO move accuracy is multiplied by 1.67", async () => {
     const moveToCheck = allMoves[Moves.TACKLE];
