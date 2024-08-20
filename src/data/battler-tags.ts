@@ -209,6 +209,12 @@ export class RageTag extends BattlerTag {
   constructor() {
     super(BattlerTagType.RAGE,[BattlerTagLapseType.MOVE_EFFECT],1,Moves.RAGE);
   }
+  onAdd(pokemon: Pokemon) {
+    super.onAdd(pokemon);
+    /* This message might not exist on cartridge */
+    pokemon.scene.queueMessage(i18next.t("battlerTags:rageOnAdd", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)}));
+  }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.MOVE_EFFECT) {
