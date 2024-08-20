@@ -839,7 +839,7 @@ export default class SummaryUiHandler extends UiHandler {
       pageContainer.add(statsContainer);
 
       PERMANENT_STATS.forEach((stat, s) => {
-        const statName = getStatKey(stat);
+        const statName = i18next.t(getStatKey(stat));
         const rowIndex = s % 3;
         const colIndex = Math.floor(s / 3);
 
