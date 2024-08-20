@@ -54,8 +54,8 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withOption(
     // Option 1: Use a (non fainted) pokemon that can learn Surf to guide you back/
     MysteryEncounterOptionBuilder
-      .withPokemonCanLearnMoveRequirement(OPTION_1_REQUIRED_MOVE)
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      .withPokemonCanLearnMoveRequirement(OPTION_1_REQUIRED_MOVE)
       .withDialogue({
         buttonLabel: `${namespace}.option.1.label`,
         disabledButtonLabel: `${namespace}.option.1.label_disabled`,
@@ -73,8 +73,8 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withOption(
     //Option 2: Use a (non fainted) pokemon that can learn fly to guide you back.
     MysteryEncounterOptionBuilder
-      .withPokemonCanLearnMoveRequirement(OPTION_2_REQUIRED_MOVE)
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      .withPokemonCanLearnMoveRequirement(OPTION_2_REQUIRED_MOVE)
       .withDialogue({
         buttonLabel: `${namespace}.option.2.label`,
         disabledButtonLabel: `${namespace}.option.2.label_disabled`,
@@ -131,7 +131,7 @@ async function handlePokemonGuidingYouPhase(scene: BattleScene) {
   const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
   const { mysteryEncounter } = scene.currentBattle;
 
-  if (mysteryEncounter.selectedOption) {
+  if (mysteryEncounter.selectedOption?.primaryPokemon?.id) {
     setEncounterExp(scene, mysteryEncounter.selectedOption.primaryPokemon.id, laprasSpecies.baseExp, true);
   } else {
     console.warn("Lost at sea: No guide pokemon found but pokemon guides player. huh!?");

@@ -8,6 +8,7 @@ import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequiremen
 import { CanLearnMoveRequirement, CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
 import { isNullOrUndefined } from "#app/utils";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 
 
 export type OptionPhaseCallback = (scene: BattleScene) => Promise<void | boolean>;
@@ -39,7 +40,7 @@ export default class MysteryEncounterOption {
   /** Executes after the encounter is over. Usually this will be for calculating dialogueTokens or performing data updates */
   onPostOptionPhase?: OptionPhaseCallback;
 
-  constructor(option: MysteryEncounterOption) {
+  constructor(option: MysteryEncounterOption | null) {
     Object.assign(this, option);
     this.hasDexProgress = !isNullOrUndefined(this.hasDexProgress) ? this.hasDexProgress : false;
     this.requirements = this.requirements ? this.requirements : [];
@@ -137,41 +138,27 @@ export default class MysteryEncounterOption {
   }
 }
 
-const baseOption = {
-  optionMode: MysteryEncounterOptionMode.DEFAULT,
-  hasDexProgress: false,
-  requirements: [],
-  primaryPokemonRequirements: [],
-  secondaryPokemonRequirements: [],
-  excludePrimaryFromSecondaryRequirements: true,
-};
-
-/* Picks non-optional fields from an "object" type alias and returns a union of literal types (keys) */
-type PickNonOptionalFieldsKeys<T> = Exclude<{ [K in Keys<T>]: T extends Record<K, T[K]> ? K : never; }[Keys<T>], undefined>;
-// type NonFunctionFieldsKeys<T> = { [K in Keys<T>]: T[K] extends Function ? never : K; }[Keys<T>];
-// type FunctionPropertyKeys<T> = { [K in Keys<T>]: T[K] extends Function ? K : never; }[Keys<T>];
-/* Extracts keys from T */
-type Keys<T> = keyof T;
-/* Filters out all optional fields from an "object" type alias, and all function fields */
-type PickNonOptionalFields<T> = Pick<T, PickNonOptionalFieldsKeys<T>>;
-/* Omits keys that exist in the base object and optional keys on MysteryEncounter, as well as functions on MysteryEncounter */
-type OmitBaseAndOptionalKeys<T, B> = Omit<PickNonOptionalFields<T>, Keys<B>>;
-
 export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOption> {
-  optionMode: MysteryEncounterOptionMode;
+  optionMode: MysteryEncounterOptionMode = MysteryEncounterOptionMode.DEFAULT;
   requirements: EncounterSceneRequirement[] = [];
   primaryPokemonRequirements: EncounterPokemonRequirement[] = [];
   secondaryPokemonRequirements: EncounterPokemonRequirement[] = [];
-  excludePrimaryFromSecondaryRequirements: boolean;
-  isDisabledOnRequirementsNotMet: boolean;
-  hasDexProgress: boolean;
+  excludePrimaryFromSecondaryRequirements: boolean = false;
+  isDisabledOnRequirementsNotMet: boolean = true;
+  hasDexProgress: boolean = false;
   onPreOptionPhase?: OptionPhaseCallback;
   onOptionPhase: OptionPhaseCallback;
   onPostOptionPhase?: OptionPhaseCallback;
   dialogue: OptionTextDisplay;
 
-  static newOptionWithMode(optionMode: MysteryEncounterOptionMode): MysteryEncounterOptionBuilder & OmitBaseAndOptionalKeys<MysteryEncounterOption, typeof baseOption> & Pick<MysteryEncounterOption, "optionMode"> {
-    return Object.assign(new MysteryEncounterOptionBuilder(), { ...baseOption, optionMode });
+  hasRequirements = MysteryEncounter.prototype["hasRequirements"];
+  meetsRequirements = MysteryEncounter.prototype["meetsRequirements"];
+  pokemonMeetsPrimaryRequirements = MysteryEncounter.prototype["pokemonMeetsPrimaryRequirements"];
+  meetsPrimaryRequirementAndPrimaryPokemonSelected = MysteryEncounter.prototype["meetsPrimaryRequirementAndPrimaryPokemonSelected"];
+  meetsSupportingRequirementAndSupportingPokemonSelected = MysteryEncounter.prototype["meetsSupportingRequirementAndSupportingPokemonSelected"];
+
+  static newOptionWithMode(optionMode: MysteryEncounterOptionMode): MysteryEncounterOptionBuilder & Pick<MysteryEncounterOption, "optionMode"> {
+    return Object.assign(new MysteryEncounterOptionBuilder(), { optionMode });
   }
 
   withHasDexProgress(hasDexProgress: boolean): this & Required<Pick<MysteryEncounterOption, "hasDexProgress">> {

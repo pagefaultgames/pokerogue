@@ -560,3 +560,7 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
 export function isNullOrUndefined(object: any): boolean {
   return null === object || undefined === object;
 }
+
+export function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

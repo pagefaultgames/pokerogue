@@ -111,6 +111,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
         new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER));
       clownConfig.setPartyTemplates(clownPartyTemplate);
       clownConfig.setDoubleOnly();
+      // @ts-ignore
       clownConfig.partyTemplateFunc = null; // Overrides party template func if it exists
 
       // Generate random ability for Blacephalon from pool
@@ -415,7 +416,7 @@ function onYesAbilitySwap(scene: BattleScene, resolve) {
   const onPokemonSelected = (pokemon: PlayerPokemon) => {
     // Do ability swap
     if (!pokemon.mysteryEncounterData) {
-      pokemon.mysteryEncounterData = new MysteryEncounterPokemonData(null, Abilities.AERILATE);
+      pokemon.mysteryEncounterData = new MysteryEncounterPokemonData(undefined, Abilities.AERILATE);
     }
     pokemon.mysteryEncounterData.ability = scene.currentBattle.mysteryEncounter.misc.ability;
     scene.currentBattle.mysteryEncounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
