@@ -1,10 +1,10 @@
-import { BattlerIndex } from "#app/battle.js";
-import { allAbilities, PostDefendContactApplyStatusEffectAbAttr } from "#app/data/ability.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { BattlerIndex } from "#app/battle";
+import { allAbilities, PostDefendContactApplyStatusEffectAbAttr } from "#app/data/ability";
+import { Abilities } from "#app/enums/abilities";
+import { StatusEffect } from "#app/enums/status-effect";
+import { CommandPhase } from "#app/phases/command-phase";
+import { SelectTargetPhase } from "#app/phases/select-target-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import GameManager from "#app/test/utils/gameManager";
 import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
