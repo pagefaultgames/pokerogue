@@ -197,7 +197,7 @@ describe("Moves - Rage", () => {
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(1);
       expect(leadPokemon.getTag(RageTag)).toBeTruthy;
-    },90000
+    },TIMEOUT
   );
 
   /**
