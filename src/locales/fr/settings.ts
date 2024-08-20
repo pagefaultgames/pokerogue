@@ -98,5 +98,9 @@ export const settings: SimpleTranslationEntries = {
   "gamepadSupport": "Gamepad Support",
   "showBgmBar": "Titre de la musique",
   "moveTouchControls": "Déplacer les contrôles tactiles",
-  "shopOverlayOpacity": "Opacité boutique"
+  "shopOverlayOpacity": "Opacité boutique",
+  "shopRerollTarget": "Shop Post-Reroll Target",
+  "items": "Items",
+  "reroll": "Reroll",
+  "shop": "Shop"
 } as const;

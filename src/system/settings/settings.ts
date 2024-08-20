@@ -392,19 +392,19 @@ export const Setting: Array<Setting> = [
   },
   {
     key: SettingKeys.Reroll_Target,
-    label: i18next.t("settings:Reroll Target"),
+    label: i18next.t("settings:shopRerollTarget"),
     options: [
       {
         value:"Reroll",
-        label: i18next.t("settings:Reroll")
+        label: i18next.t("settings:reroll")
       },
       {
         value:"Items",
-        label: i18next.t("settings:Items")
+        label: i18next.t("settings:items")
       },
       {
         value:"Shop",
-        label: i18next.t("settings:Shop")
+        label: i18next.t("settings:shop")
       }
     ],
     default: 1,
