@@ -391,26 +391,6 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY
   },
   {
-    key: SettingKeys.Reroll_Target,
-    label: i18next.t("settings:shopRerollTarget"),
-    options: [
-      {
-        value:"Reroll",
-        label: i18next.t("settings:reroll")
-      },
-      {
-        value:"Items",
-        label: i18next.t("settings:items")
-      },
-      {
-        value:"Shop",
-        label: i18next.t("settings:shop")
-      }
-    ],
-    default: 1,
-    type: SettingType.DISPLAY
-  },
-  {
     key: SettingKeys.Candy_Upgrade_Notification,
     label: i18next.t("settings:candyUpgradeNotification"),
     options: [
@@ -597,6 +577,26 @@ export const Setting: Array<Setting> = [
     type: SettingType.GENERAL,
     activatable: true,
     isHidden: () => !hasTouchscreen()
+  },
+  {
+    key: SettingKeys.Reroll_Target,
+    label: i18next.t("settings:shopRerollTarget"),
+    options: [
+      {
+        value:"Reroll",
+        label: i18next.t("settings:reroll")
+      },
+      {
+        value:"Items",
+        label: i18next.t("settings:items")
+      },
+      {
+        value:"Shop",
+        label: i18next.t("settings:shop")
+      }
+    ],
+    default: 1,
+    type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Shop_Overlay_Opacity,
