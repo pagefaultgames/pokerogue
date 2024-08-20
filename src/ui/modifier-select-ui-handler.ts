@@ -12,7 +12,7 @@ import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target.js";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
