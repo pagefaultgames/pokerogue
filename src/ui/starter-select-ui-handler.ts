@@ -3067,7 +3067,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         this.canCycleShiny = isVariantCaught || isVariant2Caught || isVariant3Caught;
         this.canCycleGender = isMaleCaught && isFemaleCaught;
-        this.canCycleAbility = [ abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
+        const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
+        const hasAbility2 = (abilityAttr & AbilityAttr.ABILITY_2) && (species.ability2 !== species.ability1);
+        const hasHiddenAbility = abilityAttr & AbilityAttr.ABILITY_HIDDEN;
+        this.canCycleAbility = [ hasAbility1, hasAbility2, hasHiddenAbility ].filter(a => a).length > 1;
         this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
           .map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(f => f).length > 1;
         this.canCycleNature = this.scene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
