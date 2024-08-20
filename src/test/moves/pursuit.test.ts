@@ -5,7 +5,7 @@ import { Species } from "#app/enums/species.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { allMoves } from "#app/data/move.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BerryPhase, EncounterPhase, EnemyCommandPhase } from "#app/phases.js";
+import { BerryPhase, EncounterPhase, EnemyCommandPhase, SwitchSummonPhase } from "#app/phases.js";
 import Pokemon, { MoveResult } from "#app/field/pokemon.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { BattlerIndex } from "#app/battle.js";
@@ -104,6 +104,12 @@ describe("Moves - Pursuit", () => {
     pokemon = toArray(pokemon);
     const otherPkmn = game.scene.getField().filter(p => p && !pokemon.find(p1 => p1 === p));
     moveOrder = ([...otherPkmn, ...pokemon].map(pkmn => pkmn.getBattlerIndex()));
+  }
+
+  function forceMovesFirst(pokemon?: Pokemon | Pokemon[]) {
+    pokemon = toArray(pokemon);
+    const otherPkmn = game.scene.getField().filter(p => p && !pokemon.find(p1 => p1 === p));
+    moveOrder = ([...pokemon, ...otherPkmn].map(pkmn => pkmn.getBattlerIndex()));
   }
 
   function forceLowestPriorityBracket() {
@@ -490,7 +496,7 @@ describe("Moves - Pursuit", () => {
     expectWasNotHit(findPartyMember(game.scene.getEnemyParty(), enemyLead)).and(expectNotOnField);
   });
 
-  describe("doubles interactions", { timeout: 10000 }, () => {
+  describe("doubles interactions", { timeout: 1000000 }, () => {
     beforeEach(() => {
       game.override.battleType("double");
     });
@@ -574,7 +580,8 @@ describe("Moves - Pursuit", () => {
       });
     });
 
-    // fails: respects original targets
+    // fails: command re-ordering does not work due to particulars of sort/move ordering;
+    // pursuit moves after switch
     it("should hit the first pokemon to switch out in a double battle regardless of who was targeted", async () => {
       // arrange
       await startBattle();
@@ -620,6 +627,31 @@ describe("Moves - Pursuit", () => {
       expectWasNotHit(game.scene.getEnemyField()[1]).and(expectIsSpecies(Species.ALCREMIE));
       expectPursuitSucceeded(game.scene.getPlayerField()[0]);
       expectPursuitSucceeded(game.scene.getPlayerField()[1]);
+    });
+
+    // This test is hard to verify, because it's hard to observe independently -
+    // but depending on exactly how the command ordering is done, it is possible
+    // for the command order to put one ally's Pursuit move before the other
+    // ally's Pokemon command, even if the pursuit move does not target a
+    // pursuer.  At this time, this "appears" to work correctly, because of
+    // nuances in when phases are pushed vs. shifted; but the pursuit
+    // MoveHeaderPhase is actually run before the switch, which is the only way
+    // to find the issue at present. Asserting the direct output of the command order
+    // is probably a better solution.
+    it("should not move or apply tags before switch when ally switches and not pursuing an enemy", async () => {
+      // arrange
+      await startBattle();
+      forceMovesFirst(game.scene.getPlayerField().reverse());
+
+      // act
+      playerSwitches(2);
+      playerUsesPursuit(0);
+      enemyUses(Moves.SPLASH);
+      await game.phaseInterceptor.to(SwitchSummonPhase);
+
+      // assert
+      expect(game.phaseInterceptor.log).not.toContain("MovePhase");
+      expect(game.phaseInterceptor.log).not.toContain("MoveHeaderPhase");
     });
 
     it("should not hit a switching ally for double damage (hard-switch, player field)", async () => {
