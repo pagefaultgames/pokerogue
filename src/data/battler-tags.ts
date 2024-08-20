@@ -558,6 +558,13 @@ export class PowderTag extends BattlerTag {
     pokemon.scene.queueMessage(i18next.t("battlerTags:powderOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
+  /**
+   * Applies Powder's effects before the tag owner uses a Fire-type move.
+   * Also causes the tag to expire at the end of turn.
+   * @param pokemon {@linkcode Pokemon} the owner of this tag
+   * @param lapseType {@linkcode BattlerTagLapseType} the type of lapse functionality to carry out
+   * @returns `true` if the tag should not expire after this lapse; `false` otherwise.
+   */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
       const movePhase = pokemon.scene.getCurrentPhase();
@@ -565,7 +572,12 @@ export class PowderTag extends BattlerTag {
         const move = movePhase.move.getMove();
         if (move.type === Type.FIRE) {
           movePhase.cancel();
-          pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4), HitResult.OTHER);
+
+          const cancelDamage = new Utils.BooleanHolder(false);
+          applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelDamage);
+          if (!cancelDamage.value) {
+            pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4), HitResult.OTHER);
+          }
 
           pokemon.scene.queueMessage(i18next.t("battlerTags:powderLapse"));
         }
