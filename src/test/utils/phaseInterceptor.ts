@@ -15,6 +15,7 @@ import {
   MovePhase,
   NewBattlePhase,
   NextEncounterPhase,
+  PartyHealPhase,
   PostSummonPhase,
   SelectGenderPhase,
   SelectModifierPhase,
@@ -92,6 +93,7 @@ export default class PhaseInterceptor {
     [QuietFormChangePhase, this.startPhase],
     [SwitchPhase, this.startPhase],
     [SwitchSummonPhase, this.startPhase],
+    [PartyHealPhase, this.startPhase],
   ];
 
   private endBySetMode = [

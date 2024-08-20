@@ -2569,7 +2569,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `@c{shock}Wow… You cleaned me out.\nAre you actually a beginner?
                    $@c{smile}Maybe it was a bit of luck but…\nWho knows you might just be able to go all the way.
                    $By the way, the professor asked me to give you these items. They look pretty cool.
-                   $@c{serious_smile_fists}Good luck out there!`
+                   $@c{serious_smile_fists}Good luck out there!
+                   $@c{smile}Oh- and I hope you enjoy the event!`
     },
   },
   "rival_female": {
@@ -2583,7 +2584,8 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: `@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?
                     $@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.
                     $@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!
-                    $@c{smile_wave}Do your best like always! I believe in you!`
+                    $@c{smile_wave}Do your best like always! I believe in you!
+                    $@c{smile}Oh- and I hope you enjoy the event!`
     },
   },
   "rival_2": {
@@ -2599,7 +2601,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n
                 $@c{smile}Oh, not that you really need the help, but I had an extra one of these lying around and figured you might want it.\n
                 $@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all.
-                $@c{smile}Anyway, take care!`
+                $@c{smile}Anyway, take care, and enjoy the event!`
     },
   },
   "rival_2_female": {
@@ -2615,7 +2617,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
                 $@c{smile}Aw well. That just means I'll have to train even harder for next time!
                 $@c{smile_wave}I also got you another one of these!\n@c{smile_wave_wink}No need to thank me~.
                 $@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!
-                $@c{smile_wave}Keep at it!`
+                $@c{smile_wave}Keep at it, and enjoy the event!`
     },
     "defeat": {
       1: "It's OK to lose sometimes…"

@@ -119,7 +119,7 @@ export class RechargingTag extends BattlerTag {
 }
 
 /**
- * BattlerTag representing the "charge phase" of Beak Blast
+ * BattlerTag representing the "charge phase" of Beak Blast.
  * Pokemon with this tag will inflict BURN status on any attacker that makes contact.
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Beak_Blast_(move) | Beak Blast}
  */
@@ -150,6 +150,50 @@ export class BeakBlastChargingTag extends BattlerTag {
         const attacker = effectPhase.getPokemon();
         attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
       }
+      return true;
+    }
+    return super.lapse(pokemon, lapseType);
+  }
+}
+
+/**
+ * BattlerTag implementing Shell Trap's pre-move behavior.
+ * Pokemon with this tag will act immediately after being hit by a physical move.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Shell_Trap_(move) | Shell Trap}
+ */
+export class ShellTrapTag extends BattlerTag {
+  public activated: boolean;
+
+  constructor() {
+    super(BattlerTagType.SHELL_TRAP, BattlerTagLapseType.TURN_END, 1);
+    this.activated = false;
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    pokemon.scene.queueMessage(i18next.t("moveTriggers:setUpShellTrap", { pokemonName: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  /**
+   * "Activates" the shell trap, causing the tag owner to move next.
+   * @param pokemon {@linkcode Pokemon} the owner of this tag
+   * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
+   * @returns `true` if invoked with the `CUSTOM` lapse type; `false` otherwise
+   */
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      const shellTrapPhaseIndex = pokemon.scene.phaseQueue.findIndex(
+        phase => phase instanceof MovePhase && phase.pokemon === pokemon
+      );
+      const firstMovePhaseIndex = pokemon.scene.phaseQueue.findIndex(
+        phase => phase instanceof MovePhase
+      );
+
+      if (shellTrapPhaseIndex !== -1 && shellTrapPhaseIndex !== firstMovePhaseIndex) {
+        const shellTrapMovePhase = pokemon.scene.phaseQueue.splice(shellTrapPhaseIndex, 1)[0];
+        pokemon.scene.prependToPhase(shellTrapMovePhase, MovePhase);
+      }
+
+      this.activated = true;
       return true;
     }
     return super.lapse(pokemon, lapseType);
@@ -1785,6 +1829,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new RechargingTag(sourceMove);
   case BattlerTagType.BEAK_BLAST_CHARGING:
     return new BeakBlastChargingTag();
+  case BattlerTagType.SHELL_TRAP:
+    return new ShellTrapTag();
   case BattlerTagType.FLINCHED:
     return new FlinchedTag(sourceMove);
   case BattlerTagType.INTERRUPTED:
