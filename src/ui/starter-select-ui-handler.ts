@@ -608,7 +608,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     starterBoxContainer.add(this.starterSelectScrollBar);
 
-    this.pokerusCursorObjs = new Array(3).fill(null).map(() => {
+    this.pokerusCursorObjs = new Array(9).fill(null).map(() => {
       const cursorObj = this.scene.add.image(0, 0, "select_cursor_pokerus");
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
@@ -875,29 +875,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     date.setUTCHours(0, 0, 0, 0);
 
     this.scene.executeWithSeedOffset(() => {
-      for (let c = 0; c < 3; c++) {
+      for (let gen = 0; gen < 9; gen++) {
         let randomSpeciesId: Species;
+        let currentGenSpecies: PokemonSpecies[];
         let species: PokemonSpecies | undefined;
 
         const generateSpecies = () => {
-          randomSpeciesId = Utils.randSeedItem(starterSpecies);
+          currentGenSpecies = this.allSpecies.filter(species => species.generation === gen + 1)
+          randomSpeciesId = Utils.randSeedItem(currentGenSpecies).speciesId;
           species = getPokemonSpecies(randomSpeciesId);
         };
 
-        let dupe = false;
-
-        do {
-          dupe = false;
-
-          generateSpecies();
-
-          for (let ps = 0; ps < c; ps++) {
-            if (this.pokerusSpecies[ps] === species) {
-              dupe = true;
-              break;
-            }
-          }
-        } while (dupe);
+        generateSpecies();
 
         this.pokerusSpecies.push(species!); // TODO: is the bang correct?
       }
