@@ -3107,7 +3107,7 @@ export const move: MoveTranslationEntries = {
   },
   "decorate": {
     name: "Nappage",
-    effect: "Augmente fortement l’Attaque et l’Attaque Spéciale du lanceur."
+    effect: "Augmente fortement l’Attaque et l’Attaque Spéciale de la cible."
   },
   "drumBeating": {
     name: "Tambour Battant",
