@@ -542,6 +542,41 @@ export class SeedTag extends BattlerTag {
   }
 }
 
+/**
+ * BattlerTag representing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Powder_(move) | Powder}.
+ * When the afflicted Pokemon uses a Fire-type move, the move is cancelled, and the
+ * Pokemon takes damage equal to 1/4 of it's maximum HP (rounded down).
+ */
+export class PowderTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.POWDER, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 1);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.queueMessage(i18next.t("battlerTags:powderOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
+      const movePhase = pokemon.scene.getCurrentPhase();
+      if (movePhase instanceof MovePhase) {
+        const move = movePhase.move.getMove();
+        if (move.type === Type.FIRE) {
+          movePhase.cancel();
+          pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4), HitResult.OTHER);
+
+          pokemon.scene.queueMessage(i18next.t("battlerTags:powderLapse"));
+        }
+      }
+      return true;
+    } else {
+      return super.lapse(pokemon, lapseType);
+    }
+  }
+}
+
 export class NightmareTag extends BattlerTag {
   constructor() {
     super(BattlerTagType.NIGHTMARE, BattlerTagLapseType.AFTER_MOVE, 1, Moves.NIGHTMARE);
@@ -1846,6 +1881,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new InfatuatedTag(sourceMove, sourceId);
   case BattlerTagType.SEEDED:
     return new SeedTag(sourceId);
+  case BattlerTagType.POWDER:
+    return new PowderTag();
   case BattlerTagType.NIGHTMARE:
     return new NightmareTag();
   case BattlerTagType.FRENZY:
