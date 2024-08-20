@@ -1,13 +1,13 @@
-import { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { DamagePhase } from "#app/phases/damage-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Moves - Glaive Rush", () => {
@@ -32,8 +32,7 @@ describe("Moves - Glaive Rush", () => {
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemyMoveset(Array(4).fill(Moves.GLAIVE_RUSH));
     game.override.starterSpecies(Species.KLINK);
-    game.override.ability(Abilities.UNNERVE);
-    game.override.passiveAbility(Abilities.FUR_COAT);
+    game.override.ability(Abilities.BALL_FETCH);
     game.override.moveset([Moves.SHADOW_SNEAK, Moves.AVALANCHE, Moves.SPLASH, Moves.GLAIVE_RUSH]);
   });
 
@@ -42,7 +41,6 @@ describe("Moves - Glaive Rush", () => {
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
 
-    vi.spyOn(game.scene, "randBattleSeedInt").mockReturnValue(0);
     game.doAttack(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
     await game.phaseInterceptor.to(DamagePhase);
     const damageDealt = 1000 - enemy.hp;
@@ -51,7 +49,7 @@ describe("Moves - Glaive Rush", () => {
     await game.phaseInterceptor.to(DamagePhase);
     expect(enemy.hp).toBeLessThanOrEqual(1001 - (damageDealt * 3));
 
-  }, 5000); // TODO: revert back to 20s
+  }, 20000);
 
   it("always gets hit by attacks", async() => {
     await game.startBattle();

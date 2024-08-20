@@ -66,7 +66,7 @@ export default class GameManager {
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean = true) {
     localStorage.clear();
     ErrorInterceptor.getInstance().clear();
-    BattleScene.prototype.randBattleSeedInt = (arg) => arg-1;
+    BattleScene.prototype.randBattleSeedInt = (range, min: number = 0) => min + range - 1; // This simulates a max roll
     this.gameWrapper = new GameWrapper(phaserGame, bypassLogin);
     this.scene = new BattleScene();
     this.phaseInterceptor = new PhaseInterceptor(this.scene);
