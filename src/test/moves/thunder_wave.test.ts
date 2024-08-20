@@ -31,7 +31,6 @@ describe("Moves - Thunder Wave", () => {
       .starterSpecies(Species.PIKACHU)
       .moveset([Moves.THUNDER_WAVE])
       .enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
-    game.move.forceHit();
   });
 
   // References: https://bulbapedia.bulbagarden.net/wiki/Thunder_Wave_(move)
@@ -45,6 +44,7 @@ describe("Moves - Thunder Wave", () => {
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
+      await game.move.forceHit();
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.PARALYSIS);
@@ -61,6 +61,7 @@ describe("Moves - Thunder Wave", () => {
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
+      await game.move.forceHit();
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(enemyPokemon.status).toBeUndefined();
@@ -77,6 +78,7 @@ describe("Moves - Thunder Wave", () => {
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
+      await game.move.forceHit();
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.PARALYSIS);
@@ -93,6 +95,7 @@ describe("Moves - Thunder Wave", () => {
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
+      await game.move.forceHit();
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.PARALYSIS);
@@ -109,6 +112,7 @@ describe("Moves - Thunder Wave", () => {
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
+      await game.move.forceHit();
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(enemyPokemon.status).toBeUndefined();
