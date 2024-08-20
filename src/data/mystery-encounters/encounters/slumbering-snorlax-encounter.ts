@@ -122,8 +122,8 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
       }
     )
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES))
         .withDialogue({
           buttonLabel: `${namespace}.option.3.label`,

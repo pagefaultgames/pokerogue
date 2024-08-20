@@ -19,6 +19,19 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "银河队老大",
   "plasma_boss": "等离子队老大",
   "flare_boss": "闪焰队老大",
+
+  "rocket_admin": "火箭队干部",
+  "rocket_admin_female": "火箭队干部",
+  "magma_admin": "熔岩队干部",
+  "magma_admin_female": "熔岩队干部",
+  "aqua_admin": "海洋队干部",
+  "aqua_admin_female": "海洋队干部",
+  "galactic_commander": "银河队干部",
+  "galactic_commander_female": "银河队干部",
+  "plasma_sage": "等离子队贤人",
+  "plasma_admin": "等离子队干部",
+  "flare_admin": "闪焰队干部",
+  "flare_admin_female": "闪焰队干部",
   // Maybe if we add the evil teams we can add "Team Rocket" and "Team Aqua" etc. here as well as "Team Rocket Boss" and "Team Aqua Admin" etc.
 } as const;
 
@@ -127,16 +140,22 @@ export const trainerClasses: SimpleTranslationEntries = {
   "youngster": "短裤小子",
   "rocket_grunt": "火箭队手下",
   "rocket_grunt_female": "火箭队手下",
+  "rocket_grunts": "火箭队手下们",
   "magma_grunt": "熔岩队手下",
   "magma_grunt_female": "熔岩队手下",
+  "magma_grunts": "熔岩队手下们",
   "aqua_grunt": "海洋队手下",
   "aqua_grunt_female": "海洋队手下",
+  "aqua_grunts": "海洋队手下们",
   "galactic_grunt": "银河队手下",
   "galactic_grunt_female": "银河队手下",
+  "galactic_grunts": "银河队手下们",
   "plasma_grunt": "等离子队手下",
   "plasma_grunt_female": "等离子队手下",
+  "plasma_grunts": "等离子队手下们",
   "flare_grunt": "闪焰队手下",
   "flare_grunt_female": "闪焰队手下",
+  "flare_grunts": "闪焰队手下们",
 } as const;
 
 // Names of special trainers like gym leaders, elite four, and the champion
@@ -321,6 +340,23 @@ export const trainerNames: SimpleTranslationEntries = {
   // 劲敌 rival
   "rival": "芬恩",
   "rival_female": "艾薇",
+
+  // Evil Team Admins
+  "archer": "阿波罗",
+  "ariana": "雅典娜",
+  "proton": "兰斯",
+  "petrel": "拉姆达",
+  "tabitha": "火村",
+  "courtney": "火雁",
+  "shelly": "阿泉",
+  "matt": "阿潮",
+  "mars": "伙星",
+  "jupiter": "碎星",
+  "saturn": "镇星",
+  "zinzolin": "维奥",
+  "rood": "罗德",
+  "xerosic": "库瑟洛斯奇",
+  "bryony": "芭菈",
 
   // ---- 组织老大 Bosses ----
   "maxie": "赤焰松",

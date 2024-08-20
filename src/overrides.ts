@@ -11,7 +11,7 @@ import { WeatherType } from "#enums/weather-type";
 import { type PokeballCounts } from "./battle-scene";
 import { Gender } from "./data/gender";
 import { Variant } from "./data/variant";
-import { type ModifierOverride, type ModifierTypeKeys } from "./modifier/modifier-type";
+import { type ModifierOverride } from "./modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
@@ -49,11 +49,16 @@ class DefaultOverrides {
   readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = null;
   readonly STARTING_WAVE_OVERRIDE: integer = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
-  readonly ARENA_TINT_OVERRIDE: TimeOfDay = null;
+  readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override */
-  readonly XP_MULTIPLIER_OVERRIDE: number = null;
+  readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
+  readonly NEVER_CRIT_OVERRIDE: boolean = false;
   /** default 1000 */
   readonly STARTING_MONEY_OVERRIDE: integer = 0;
+  /** Sets all shop item prices to 0 */
+  readonly WAIVE_SHOP_FEES_OVERRIDE: boolean = false;
+  /** Sets reroll price to 0 */
+  readonly WAIVE_ROLL_FEE_OVERRIDE: boolean = false;
   readonly FREE_CANDY_UPGRADE_OVERRIDE: boolean = false;
   readonly POKEBALL_OVERRIDE: { active: boolean; pokeballs: PokeballCounts } = {
     active: false,
@@ -93,7 +98,7 @@ class DefaultOverrides {
   readonly ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
-  readonly GENDER_OVERRIDE: Gender = null;
+  readonly GENDER_OVERRIDE: Gender | null = null;
   readonly MOVESET_OVERRIDE: Array<Moves> = [];
   readonly SHINY_OVERRIDE: boolean = false;
   readonly VARIANT_OVERRIDE: Variant = 0;
@@ -106,7 +111,7 @@ class DefaultOverrides {
   readonly OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
-  readonly OPP_GENDER_OVERRIDE: Gender = null;
+  readonly OPP_GENDER_OVERRIDE: Gender | null = null;
   readonly OPP_MOVESET_OVERRIDE: Array<Moves> = [];
   readonly OPP_SHINY_OVERRIDE: boolean = false;
   readonly OPP_VARIANT_OVERRIDE: Variant = 0;
@@ -116,20 +121,19 @@ class DefaultOverrides {
   // EGG OVERRIDES
   // -------------
   readonly EGG_IMMEDIATE_HATCH_OVERRIDE: boolean = false;
-  readonly EGG_TIER_OVERRIDE: EggTier = null;
+  readonly EGG_TIER_OVERRIDE: EggTier | null = null;
   readonly EGG_SHINY_OVERRIDE: boolean = false;
-  readonly EGG_VARIANT_OVERRIDE: VariantTier = null;
+  readonly EGG_VARIANT_OVERRIDE: VariantTier | null = null;
   readonly EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
   readonly EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
 
   // -------------------------
   // MYSTERY ENCOUNTER OVERRIDES
   // -------------------------
-
   // 1 to 256, set to null to ignore
-  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number = null;
-  readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier = null;
-  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType = null;
+  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
+  readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
+  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
 
   // -------------------------
   // MODIFIER / ITEM OVERRIDES
@@ -161,20 +165,28 @@ class DefaultOverrides {
    * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY"}]
    * ```
    */
-  readonly STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
-  readonly OPP_MODIFIER_OVERRIDE: Array<ModifierOverride> = [];
+  readonly STARTING_MODIFIER_OVERRIDE: ModifierOverride[] = [];
+  /**
+   * Override array of {@linkcode ModifierOverride}s used to provide modifiers to enemies.
+   *
+   * Note that any previous modifiers are cleared.
+   */
+  readonly OPP_MODIFIER_OVERRIDE: ModifierOverride[] = [];
 
-  readonly STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
-  readonly OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride> = [];
-  readonly NEVER_CRIT_OVERRIDE: boolean = false;
+  /** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game. */
+  readonly STARTING_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
+  /** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn. */
+  readonly OPP_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
 
   /**
-   * An array of items by keys as defined in the "modifierTypes" object in the "modifier/modifier-type.ts" file.
-   * Items listed will replace the normal rolls.
-   * If less items are listed than rolled, only some items will be replaced
-   * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
+   * Override array of {@linkcode ModifierOverride}s used to replace the generated item rolls after a wave.
+   *
+   * If less entries are listed than rolled, only those entries will be used to replace the corresponding items while the rest randomly generated.
+   * If more entries are listed than rolled, only the first X entries will be used, where X is the number of items rolled.
+   *
+   * Note that, for all items in the array, `count` is not used.
    */
-  readonly ITEM_REWARD_OVERRIDE: Array<ModifierTypeKeys> = [];
+  readonly ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];
 }
 
 export const defaultOverrides = new DefaultOverrides();

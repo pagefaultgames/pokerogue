@@ -104,8 +104,8 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
       return true;
     })
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withHasDexProgress(true)
         .withSceneMoneyRequirement(null, MAX_POKEMON_PRICE_MULTIPLIER) // Wave scaling money multiplier of 2
         .withDialogue({

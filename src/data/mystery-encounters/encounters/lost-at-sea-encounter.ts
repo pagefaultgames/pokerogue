@@ -53,9 +53,9 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withQuery(`${namespace}.query`)
   .withOption(
     // Option 1: Use a (non fainted) pokemon that can learn Surf to guide you back/
-    new MysteryEncounterOptionBuilder()
+    MysteryEncounterOptionBuilder
       .withPokemonCanLearnMoveRequirement(OPTION_1_REQUIRED_MOVE)
-      .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withDialogue({
         buttonLabel: `${namespace}.option.1.label`,
         disabledButtonLabel: `${namespace}.option.1.label_disabled`,
@@ -72,9 +72,9 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   )
   .withOption(
     //Option 2: Use a (non fainted) pokemon that can learn fly to guide you back.
-    new MysteryEncounterOptionBuilder()
+    MysteryEncounterOptionBuilder
       .withPokemonCanLearnMoveRequirement(OPTION_2_REQUIRED_MOVE)
-      .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withDialogue({
         buttonLabel: `${namespace}.option.2.label`,
         disabledButtonLabel: `${namespace}.option.2.label_disabled`,

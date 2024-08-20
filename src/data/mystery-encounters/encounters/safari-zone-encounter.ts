@@ -50,8 +50,8 @@ export const SafariZoneEncounter: MysteryEncounter =
     .withTitle(`${namespace}.title`)
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
-    .withOption(new MysteryEncounterOptionBuilder()
-      .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+    .withOption(MysteryEncounterOptionBuilder
+      .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withSceneRequirement(new MoneyRequirement(0, 2.75)) // Cost equal to 1 Max Revive
       .withDialogue({
         buttonLabel: `${namespace}.option.1.label`,
@@ -116,8 +116,8 @@ export const SafariZoneEncounter: MysteryEncounter =
  * Flee chance = fleeRate / 255
  */
 const safariZoneGameOptions: MysteryEncounterOption[] = [
-  new MysteryEncounterOptionBuilder()
-    .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+  MysteryEncounterOptionBuilder
+    .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
     .withDialogue({
       buttonLabel: `${namespace}.safari.1.label`,
       buttonTooltip: `${namespace}.safari.1.tooltip`,
@@ -151,8 +151,8 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
       return true;
     })
     .build(),
-  new MysteryEncounterOptionBuilder()
-    .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+  MysteryEncounterOptionBuilder
+    .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
     .withDialogue({
       buttonLabel: `${namespace}.safari.2.label`,
       buttonTooltip: `${namespace}.safari.2.tooltip`,
@@ -181,8 +181,8 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
       return true;
     })
     .build(),
-  new MysteryEncounterOptionBuilder()
-    .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+  MysteryEncounterOptionBuilder
+    .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
     .withDialogue({
       buttonLabel: `${namespace}.safari.3.label`,
       buttonTooltip: `${namespace}.safari.3.tooltip`,
@@ -210,8 +210,8 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
       return true;
     })
     .build(),
-  new MysteryEncounterOptionBuilder()
-    .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+  MysteryEncounterOptionBuilder
+    .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
     .withDialogue({
       buttonLabel: `${namespace}.safari.4.label`,
       buttonTooltip: `${namespace}.safari.4.tooltip`,

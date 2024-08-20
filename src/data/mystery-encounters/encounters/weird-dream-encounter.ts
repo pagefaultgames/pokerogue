@@ -120,8 +120,8 @@ export const WeirdDreamEncounter: MysteryEncounter =
       return true;
     })
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withHasDexProgress(true)
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,

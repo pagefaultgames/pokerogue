@@ -15,6 +15,7 @@ export const settings: SimpleTranslationEntries = {
   "skipSeenDialogues": "Gesehenen Dialog überspringen",
   "battleStyle": "Kampfstil",
   "enableRetries": "Erneut versuchen aktivieren",
+  "hideIvs": "IS-Scanner verstecken",
   "tutorials": "Tutorials",
   "touchControls": "Touch Steuerung",
   "vibrations": "Vibration",
@@ -96,5 +97,6 @@ export const settings: SimpleTranslationEntries = {
   "controller": "Controller",
   "gamepadSupport": "Controllerunterstützung",
   "showBgmBar": "Musiknamen anzeigen",
+  "moveTouchControls": "Bewegung Touch Steuerung",
   "shopOverlayOpacity": "Shop Overlay Deckkraft",
 } as const;

@@ -24,7 +24,22 @@ export interface EncounterStartOfBattleEffect {
   followUp?: boolean;
 }
 
-export default interface MysteryEncounter {
+interface IMysteryEncounter {
+  meetsRequirements(scene: BattleScene): boolean;
+  pokemonMeetsPrimaryRequirements(scene: BattleScene, pokemon: Pokemon): boolean;
+  initIntroVisuals(scene: BattleScene): void;
+  populateDialogueTokensFromRequirements(scene: BattleScene): void;
+  setDialogueToken(key: string, value: string): void;
+  getSeedOffset(): number;
+  updateSeedOffset(scene: BattleScene): void;
+}
+
+/**
+ * MysteryEncounter class that defines the logic for a single encounter
+ * These objects will be saved as part of session data any time the player is on a floor with an encounter
+ * Unless you know what you're doing, you should use MysteryEncounterBuilder to create an instance for this class
+ */
+export default class MysteryEncounter implements IMysteryEncounter {
   /**
    * Required params
    */
@@ -34,7 +49,7 @@ export default interface MysteryEncounter {
   /**
    * Optional params
    */
-  encounterTier?: MysteryEncounterTier;
+  encounterTier: MysteryEncounterTier;
   /**
    * Custom battle animations that are configured for encounter effects and visuals
    * Specify here so that assets are loaded on initialization of encounter
@@ -44,33 +59,33 @@ export default interface MysteryEncounter {
    * If true, hides "A Wild X Appeared" etc. messages
    * Default true
    */
-  hideBattleIntroMessage?: boolean;
+  hideBattleIntroMessage: boolean;
   /**
    * If true, when an option is selected the field visuals will fade out automatically
    * Default false
    */
-  autoHideIntroVisuals?: boolean;
+  autoHideIntroVisuals: boolean;
   /**
    * Intro visuals on the field will slide in from the right instead of the left
    * Default false
    */
-  enterIntroVisualsFromRight?: boolean;
+  enterIntroVisualsFromRight: boolean;
   /**
    * If true, allows catching a wild pokemon during the encounter
    * Default false
    */
-  catchAllowed?: boolean;
+  catchAllowed: boolean;
   /**
    * If true, encounter will continuously run through multiple battles/puzzles/etc. instead of going to next wave
    * MUST EVENTUALLY BE DISABLED TO CONTINUE TO NEXT WAVE
    * Default false
    */
-  continuousEncounter?: boolean;
+  continuousEncounter: boolean;
   /**
    * Maximum number of times the encounter can be seen per run
    * Rogue tier encounters default to 1, others default to 3
    */
-  maxAllowedEncounters?: number;
+  maxAllowedEncounters: number;
 
 
   /**
@@ -90,16 +105,16 @@ export default interface MysteryEncounter {
   /**
    * Requirements
    */
-  requirements?: EncounterSceneRequirement[];
+  requirements: EncounterSceneRequirement[];
   /** Primary Pokemon is a single pokemon randomly selected from the party that meet ALL primary pokemon requirements */
-  primaryPokemonRequirements?: EncounterPokemonRequirement[];
+  primaryPokemonRequirements: EncounterPokemonRequirement[];
   /**
    * Secondary Pokemon are pokemon that meet ALL secondary pokemon requirements
    * Note that an individual requirement may require multiple pokemon, but the resulting pokemon after all secondary requirements are met may be lower than expected
    * If the primary pokemon and secondary pokemon are the same and ExcludePrimaryFromSupportRequirements flag is true, primary pokemon may be promoted from secondary pool
    */
-  secondaryPokemonRequirements?: EncounterPokemonRequirement[];
-  excludePrimaryFromSupportRequirements?: boolean;
+  secondaryPokemonRequirements: EncounterPokemonRequirement[];
+  excludePrimaryFromSupportRequirements: boolean;
   primaryPokemon?: PlayerPokemon;
   secondaryPokemon?: PlayerPokemon[];
 
@@ -132,23 +147,23 @@ export default interface MysteryEncounter {
    * Can be set for uses programatic dialogue during an encounter (storing the name of one of the party's pokemon, etc.)
    * Example use: see MYSTERIOUS_CHEST
    */
-  dialogueTokens?: Record<string, string>;
+  dialogueTokens: Map<string, string>;
   /**
    * Should be set depending upon option selected as part of an encounter
    * For example, if there is no battle as part of the encounter/selected option, should be set to NO_BATTLE
    * Defaults to DEFAULT
    */
-  encounterMode?: MysteryEncounterMode;
+  encounterMode: MysteryEncounterMode;
   /**
    * Flag for checking if it's the first time a shop is being shown for an encounter.
    * Defaults to true so that the first shop does not override the specified rewards.
    * Will be set to false after a shop is shown (so can't reroll same rarity items for free)
    */
-  lockEncounterRewardTiers?: boolean;
+  lockEncounterRewardTiers: boolean;
   /**
    * Will be set automatically, indicates special moves in startOfBattleEffects are complete (so will not repeat)
    */
-  startOfBattleEffectsComplete?: boolean;
+  startOfBattleEffectsComplete: boolean;
   /**
    * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
    */
@@ -161,27 +176,19 @@ export default interface MysteryEncounter {
    * Can be set higher or lower based on the type of battle or exp gained for an option/encounter
    * Defaults to 1
    */
-  expMultiplier?: number;
+  expMultiplier: number;
   /**
    * Generic property to set any custom data required for the encounter
    * Extremely useful for carrying state/data between onPreOptionPhase/onOptionPhase/onPostOptionPhase
    */
   misc?: any;
-}
-
-/**
- * MysteryEncounter class that defines the logic for a single encounter
- * These objects will be saved as part of session data any time the player is on a floor with an encounter
- * Unless you know what you're doing, you should use MysteryEncounterBuilder to create an instance for this class
- */
-export default class MysteryEncounter implements MysteryEncounter {
   /**
    * Used for keeping RNG consistent on session resets, but increments when cycling through multiple "Encounters" on the same wave
    * You should only need to interact via getter/update methods
    */
   private seedOffset?: any;
 
-  constructor(encounter: MysteryEncounter) {
+  constructor(encounter: MysteryEncounter | null) {
     if (!isNullOrUndefined(encounter)) {
       Object.assign(this, encounter);
     }
@@ -200,10 +207,10 @@ export default class MysteryEncounter implements MysteryEncounter {
     // Reset any dirty flags or encounter data
     this.startOfBattleEffectsComplete = false;
     this.lockEncounterRewardTiers = true;
-    this.dialogueTokens = {};
+    this.dialogueTokens = new Map<string, string>();
     this.enemyPartyConfigs = [];
     this.startOfBattleEffects = [];
-    this.introVisuals = null;
+    this.introVisuals = undefined;
     this.misc = null;
     this.expMultiplier = 1;
   }
@@ -214,7 +221,7 @@ export default class MysteryEncounter implements MysteryEncounter {
    * @param scene
    * @returns
    */
-  meetsRequirements?(scene: BattleScene) {
+  meetsRequirements(scene: BattleScene) {
     const sceneReq = !this.requirements.some(requirement => !requirement.meetsRequirement(scene));
     const secReqs = this.meetsSecondaryRequirementAndSecondaryPokemonSelected(scene); // secondary is checked first to handle cases of primary overlapping with secondary
     const priReqs = this.meetsPrimaryRequirementAndPrimaryPokemonSelected(scene);
@@ -222,11 +229,11 @@ export default class MysteryEncounter implements MysteryEncounter {
     return sceneReq && secReqs && priReqs;
   }
 
-  pokemonMeetsPrimaryRequirements?(scene: BattleScene, pokemon: Pokemon) {
+  pokemonMeetsPrimaryRequirements(scene: BattleScene, pokemon: Pokemon) {
     return !this.primaryPokemonRequirements.some(req => !req.queryParty(scene.getParty()).map(p => p.id).includes(pokemon.id));
   }
 
-  private meetsPrimaryRequirementAndPrimaryPokemonSelected?(scene: BattleScene) {
+  private meetsPrimaryRequirementAndPrimaryPokemonSelected(scene: BattleScene): boolean {
     if (this.primaryPokemonRequirements.length === 0) {
       const activeMon = scene.getParty().filter(p => p.isActive(true));
       if (activeMon.length > 0) {
@@ -239,11 +246,9 @@ export default class MysteryEncounter implements MysteryEncounter {
     let qualified: PlayerPokemon[] = scene.getParty();
     for (const req of this.primaryPokemonRequirements) {
       if (req.meetsRequirement(scene)) {
-        if (req instanceof EncounterPokemonRequirement) {
-          qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
-        }
+        qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
       } else {
-        this.primaryPokemon = null;
+        this.primaryPokemon = undefined;
         return false;
       }
     }
@@ -253,8 +258,8 @@ export default class MysteryEncounter implements MysteryEncounter {
     }
 
     if (this.excludePrimaryFromSupportRequirements && this.secondaryPokemon) {
-      const truePrimaryPool = [];
-      const overlap = [];
+      const truePrimaryPool: PlayerPokemon[] = [];
+      const overlap: PlayerPokemon[] = [];
       for (const qp of qualified) {
         if (!this.secondaryPokemon.includes(qp)) {
           truePrimaryPool.push(qp);
@@ -285,7 +290,7 @@ export default class MysteryEncounter implements MysteryEncounter {
     }
   }
 
-  private meetsSecondaryRequirementAndSecondaryPokemonSelected?(scene: BattleScene) {
+  private meetsSecondaryRequirementAndSecondaryPokemonSelected(scene: BattleScene): boolean {
     if (!this.secondaryPokemonRequirements) {
       this.secondaryPokemon = [];
       return true;
@@ -294,10 +299,7 @@ export default class MysteryEncounter implements MysteryEncounter {
     let qualified: PlayerPokemon[] = scene.getParty();
     for (const req of this.secondaryPokemonRequirements) {
       if (req.meetsRequirement(scene)) {
-        if (req instanceof EncounterPokemonRequirement) {
-          qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
-
-        }
+        qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
       } else {
         this.secondaryPokemon = [];
         return false;
@@ -311,7 +313,7 @@ export default class MysteryEncounter implements MysteryEncounter {
    * Initializes encounter intro sprites based on the sprite configs defined in spriteConfigs
    * @param scene
    */
-  initIntroVisuals?(scene: BattleScene) {
+  initIntroVisuals(scene: BattleScene) {
     this.introVisuals = new MysteryEncounterIntroVisuals(scene, this);
   }
 
@@ -320,7 +322,7 @@ export default class MysteryEncounter implements MysteryEncounter {
    * Will use the first support pokemon in list
    * For multiple support pokemon in the dialogue token, it will have to be overridden.
    */
-  populateDialogueTokensFromRequirements?(scene: BattleScene) {
+  populateDialogueTokensFromRequirements(scene: BattleScene) {
     this.meetsRequirements(scene);
     if (this.requirements?.length > 0) {
       for (const req of this.requirements) {
@@ -330,7 +332,7 @@ export default class MysteryEncounter implements MysteryEncounter {
         }
       }
     }
-    if (this.primaryPokemon?.length > 0) {
+    if (this.primaryPokemon && this.primaryPokemon.length > 0) {
       this.setDialogueToken("primaryName", this.primaryPokemon.getNameToRender());
       for (const req of this.primaryPokemonRequirements) {
         if (!req.invertQuery) {
@@ -341,7 +343,7 @@ export default class MysteryEncounter implements MysteryEncounter {
         }
       }
     }
-    if (this.secondaryPokemonRequirements?.length > 0 && this.secondaryPokemon?.length > 0) {
+    if (this.secondaryPokemonRequirements?.length > 0 && this.secondaryPokemon && this.secondaryPokemon.length > 0) {
       this.setDialogueToken("secondaryName", this.secondaryPokemon[0].getNameToRender());
       for (const req of this.secondaryPokemonRequirements) {
         if (!req.invertQuery) {
@@ -367,7 +369,7 @@ export default class MysteryEncounter implements MysteryEncounter {
           }
         }
       }
-      if (opt.primaryPokemonRequirements?.length > 0 && opt.primaryPokemon?.length > 0) {
+      if (opt.primaryPokemonRequirements?.length > 0 && opt.primaryPokemon && opt.primaryPokemon.length > 0) {
         this.setDialogueToken("option" + j + "PrimaryName", opt.primaryPokemon.getNameToRender());
         for (const req of opt.primaryPokemonRequirements) {
           if (!req.invertQuery) {
@@ -378,7 +380,7 @@ export default class MysteryEncounter implements MysteryEncounter {
           }
         }
       }
-      if (opt.secondaryPokemonRequirements?.length > 0 && opt.secondaryPokemon?.length > 0) {
+      if (opt.secondaryPokemonRequirements?.length > 0 && opt.secondaryPokemon && opt.secondaryPokemon.length > 0) {
         this.setDialogueToken("option" + j + "SecondaryName", opt.secondaryPokemon[0].getNameToRender());
         for (const req of opt.secondaryPokemonRequirements) {
           if (!req.invertQuery) {
@@ -392,7 +394,7 @@ export default class MysteryEncounter implements MysteryEncounter {
     }
   }
 
-  setDialogueToken?(key: string, value: string) {
+  setDialogueToken(key: string, value: string): void {
     this.dialogueTokens[key] = value;
   }
 
@@ -403,7 +405,7 @@ export default class MysteryEncounter implements MysteryEncounter {
    * This offset is incremented for each new {@link MysteryEncounterPhase} that occurs,
    * so multi-encounter RNG will be consistent on resets and not be affected by number of turns, move RNG, etc.
    */
-  getSeedOffset?() {
+  getSeedOffset() {
     return this.seedOffset;
   }
 
@@ -412,43 +414,95 @@ export default class MysteryEncounter implements MysteryEncounter {
    * Increments if the same MysteryEncounter has multiple option select cycles
    * @param scene
    */
-  updateSeedOffset?(scene: BattleScene) {
+  updateSeedOffset(scene: BattleScene) {
     const currentOffset = this.seedOffset ?? scene.currentBattle.waveIndex * 1000;
     this.seedOffset = currentOffset + 512;
   }
 
-  private capitalizeFirstLetter?(str: string) {
+  private capitalizeFirstLetter(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 }
+
+const baseMysteryEncounter = {
+  hideBattleIntroMessage: false,
+  autoHideIntroVisuals: true,
+  enterIntroVisualsFromRight: false,
+  catchAllowed: false,
+  continuousEncounter: false,
+  maxAllowedEncounters: 3,
+  requirements: [],
+  primaryPokemonRequirements: [],
+  secondaryPokemonRequirements: [],
+  excludePrimaryFromSupportRequirements: true,
+  dialogueTokens: new Map<string, string>(),
+  encounterMode: MysteryEncounterMode.DEFAULT,
+  lockEncounterRewardTiers: false,
+  startOfBattleEffectsComplete: false,
+  expMultiplier: 1,
+};
+
+/* Picks non-optional fields from an "object" type alias and returns a union of literal types (keys) */
+type PickNonOptionalFieldsKeys<T> = Exclude<{ [K in Keys<T>]: T extends Record<K, T[K]> ? K : never; }[Keys<T>], undefined>;
+// type NonFunctionFieldsKeys<T> = { [K in Keys<T>]: T[K] extends Function ? never : K; }[Keys<T>];
+// type FunctionPropertyKeys<T> = { [K in Keys<T>]: T[K] extends Function ? K : never; }[Keys<T>];
+/* Extracts keys from T */
+type Keys<T> = keyof T;
+/* Filters out all optional fields from an "object" type alias, and all function fields */
+type PickNonOptionalFields<T> = Pick<T, PickNonOptionalFieldsKeys<T>>;
+/* Omits keys that exist in the base object and optional keys on MysteryEncounter, as well as functions on MysteryEncounter */
+type OmitBaseAndOptionalKeys<T, B> = Omit<PickNonOptionalFields<T>, Keys<B>>;
+// type OmitBaseSuppliedAndOptionalKeys<T, B, S> = Omit<OmitBaseAndOptionalKeys<T, B>, Keys<S>>;
 
 /**
  * Builder class for creating a MysteryEncounter
  * must call `build()` at the end after specifying all params for the MysteryEncounter
  */
 export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
-  encounterType?: MysteryEncounterType;
-  options?: [MysteryEncounterOption, MysteryEncounterOption, ...MysteryEncounterOption[]] = [null, null];
-  spriteConfigs?: MysteryEncounterSpriteConfig[];
+  encounterType: MysteryEncounterType;
+  encounterMode: MysteryEncounterMode;
+  options: [MysteryEncounterOption, MysteryEncounterOption, ...MysteryEncounterOption[]];
+  spriteConfigs: MysteryEncounterSpriteConfig[];
 
-  dialogue?: MysteryEncounterDialogue = {};
-  encounterTier?: MysteryEncounterTier;
-  encounterAnimations?: EncounterAnim[];
-  requirements?: EncounterSceneRequirement[] = [];
-  primaryPokemonRequirements?: EncounterPokemonRequirement[] = [];
-  secondaryPokemonRequirements ?: EncounterPokemonRequirement[] = [];
-  excludePrimaryFromSupportRequirements?: boolean;
-  dialogueTokens?: Record<string, string>;
+  dialogue: MysteryEncounterDialogue = {};
+  encounterTier: MysteryEncounterTier;
+  encounterAnimations: EncounterAnim[];
+  requirements: EncounterSceneRequirement[] = [];
+  primaryPokemonRequirements: EncounterPokemonRequirement[] = [];
+  secondaryPokemonRequirements: EncounterPokemonRequirement[] = [];
+  excludePrimaryFromSupportRequirements: boolean;
+  dialogueTokens: Map<string, string> = new Map<string, string>();
 
   doEncounterExp?: (scene: BattleScene) => boolean;
   doEncounterRewards?: (scene: BattleScene) => boolean;
   onInit?: (scene: BattleScene) => boolean;
   onVisualsStart?: (scene: BattleScene) => boolean;
 
-  hideBattleIntroMessage?: boolean;
-  hideIntroVisuals?: boolean;
-  enterIntroVisualsFromRight?: boolean;
-  continuousEncounter?: boolean;
+  hideBattleIntroMessage: boolean;
+  hideIntroVisuals: boolean;
+  enterIntroVisualsFromRight: boolean;
+  continuousEncounter: boolean;
+  catchAllowed: boolean;
+  lockEncounterRewardTiers: boolean;
+  startOfBattleEffectsComplete: boolean;
+  maxAllowedEncounters: number;
+  expMultiplier: number;
+
+  /**
+   * Builder class has to re-declare the {@link MysteryEncounter} class functions so
+   * the compiler does not yell about user not defining a non-optional property
+   */
+
+  meetsRequirements = MysteryEncounter.prototype["meetsRequirements"];
+  pokemonMeetsPrimaryRequirements = MysteryEncounter.prototype["pokemonMeetsPrimaryRequirements"];
+  initIntroVisuals = MysteryEncounter.prototype["initIntroVisuals"];
+  populateDialogueTokensFromRequirements = MysteryEncounter.prototype["populateDialogueTokensFromRequirements"];
+  setDialogueToken = MysteryEncounter.prototype["setDialogueToken"];
+  getSeedOffset = MysteryEncounter.prototype["getSeedOffset"];
+  updateSeedOffset = MysteryEncounter.prototype["updateSeedOffset"];
+  meetsPrimaryRequirementAndPrimaryPokemonSelected = MysteryEncounter.prototype["meetsPrimaryRequirementAndPrimaryPokemonSelected"];
+  meetsSecondaryRequirementAndSecondaryPokemonSelected = MysteryEncounter.prototype["meetsSecondaryRequirementAndSecondaryPokemonSelected"];
+  capitalizeFirstLetter = MysteryEncounter.prototype["capitalizeFirstLetter"];
 
   /**
    * REQUIRED
@@ -456,11 +510,12 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
 
   /**
    * @statif Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
+   * NOTE: if new functions are added to MysteryEncounter class
    * @param encounterType
    * @returns this
    */
-  static withEncounterType(encounterType: MysteryEncounterType): MysteryEncounterBuilder & Pick<MysteryEncounter, "encounterType"> {
-    return Object.assign(new MysteryEncounterBuilder(), { encounterType: encounterType });
+  static withEncounterType(encounterType: MysteryEncounterType): MysteryEncounterBuilder & OmitBaseAndOptionalKeys<MysteryEncounter, typeof baseMysteryEncounter> & Pick<MysteryEncounter, "encounterType"> {
+    return Object.assign(new MysteryEncounterBuilder(), { ...baseMysteryEncounter, encounterType  });
   }
 
   /**
@@ -495,7 +550,7 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    * @returns
    */
   withSimpleOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback): this & Pick<MysteryEncounter, "options"> {
-    return this.withOption(new MysteryEncounterOptionBuilder().withOptionMode(MysteryEncounterOptionMode.DEFAULT).withDialogue(dialogue).withOptionPhase(callback).build());
+    return this.withOption(MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DEFAULT).withDialogue(dialogue).withOptionPhase(callback).build());
   }
 
   /**
@@ -509,8 +564,8 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    * @returns
    */
   withSimpleDexProgressOption(dialogue: OptionTextDisplay, callback: OptionPhaseCallback): this & Pick<MysteryEncounter, "options"> {
-    return this.withOption(new MysteryEncounterOptionBuilder()
-      .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+    return this.withOption(MysteryEncounterOptionBuilder
+      .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
       .withHasDexProgress(true)
       .withDialogue(dialogue)
       .withOptionPhase(callback).build());
@@ -551,7 +606,7 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    * @param encounterTier
    * @returns
    */
-  withEncounterTier(encounterTier: MysteryEncounterTier): this & Required<Pick<MysteryEncounter, "encounterTier">> {
+  withEncounterTier(encounterTier: MysteryEncounterTier): this & Pick<MysteryEncounter, "encounterTier"> {
     return Object.assign(this, { encounterTier: encounterTier });
   }
 
@@ -620,7 +675,7 @@ export class MysteryEncounterBuilder implements Partial<MysteryEncounter> {
    * @param excludeFainted - if true, only counts unfainted mons
    * @returns
    */
-  withScenePartySizeRequirement(min: number, max?: number, excludeFainted?: boolean): this & Required<Pick<MysteryEncounter, "requirements">> {
+  withScenePartySizeRequirement(min: number, max?: number, excludeFainted: boolean = false): this & Required<Pick<MysteryEncounter, "requirements">> {
     return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min], excludeFainted));
   }
 

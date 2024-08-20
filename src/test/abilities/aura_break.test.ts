@@ -1,13 +1,13 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import { MoveEffectPhase } from "#app/phases";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import { Abilities } from "#enums/abilities";
 import { allMoves } from "#app/data/move.js";
+import { MoveEffectPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Aura Break", () => {
   let phaserGame: Phaser.Game;
@@ -27,18 +27,18 @@ describe("Abilities - Aura Break", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.MOONBLAST, Moves.DARK_PULSE, Moves.MOONBLAST, Moves.DARK_PULSE]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.AURA_BREAK);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHUCKLE);
+    game.override.battleType("single");
+    game.override.moveset([Moves.MOONBLAST, Moves.DARK_PULSE, Moves.MOONBLAST, Moves.DARK_PULSE]);
+    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyAbility(Abilities.AURA_BREAK);
+    game.override.enemySpecies(Species.SHUCKLE);
   });
 
   it("reverses the effect of fairy aura", async () => {
     const moveToCheck = allMoves[Moves.MOONBLAST];
     const basePower = moveToCheck.power;
 
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.FAIRY_AURA);
+    game.override.ability(Abilities.FAIRY_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
     await game.startBattle([Species.PIKACHU]);
@@ -52,7 +52,7 @@ describe("Abilities - Aura Break", () => {
     const moveToCheck = allMoves[Moves.DARK_PULSE];
     const basePower = moveToCheck.power;
 
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DARK_AURA);
+    game.override.ability(Abilities.DARK_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
     await game.startBattle([Species.PIKACHU]);

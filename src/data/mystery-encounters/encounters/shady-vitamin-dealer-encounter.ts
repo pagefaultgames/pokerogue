@@ -60,8 +60,8 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, 2) // Wave scaling money multiplier of 2
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
@@ -143,8 +143,8 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         .build()
     )
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, 5) // Wave scaling money multiplier of 5
         .withDialogue({
           buttonLabel: `${namespace}.option.2.label`,

@@ -1,4 +1,4 @@
-import "#app/test/fontFace.setup";
+import "#test/fontFace.setup";
 import "vitest-canvas-mock";
 
 import { initLoggedInUser } from "#app/account";

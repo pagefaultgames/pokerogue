@@ -34,9 +34,9 @@ export const tutorial: SimpleTranslationEntries = {
   "selectItem": `Après chaque combat, vous avez le choix entre 3 objets\ntirés au sort. Vous ne pouvez en prendre qu’un.
     $Cela peut être des objets consommables, des objets à\nfaire tenir, ou des objets passifs aux effets permanents.
     $La plupart des effets des objets non-consommables se cumuleront de diverses manières.
-    $Certains objets apparaîtront s’ils peuvent être utilisés, comme les objets d’évolution.
+    $Certains objets apparaitront s’ils peuvent être utilisés, comme les objets d’évolution.
     $Vous pouvez aussi transférer des objets tenus entre Pokémon en utilisant l’option de transfert.
-    $L’option de transfert apparaît en bas à droite dès que vous avez obtenu un objet à faire tenir.
+    $L’option de transfert apparait en bas à droite dès que vous avez obtenu un objet à faire tenir.
     $Vous pouvez acheter des consommables avec de l’argent.\nPlus vous progressez, plus le choix sera varié.
     $Choisir un des objets gratuits déclenchera le prochain combat, donc faites bien tous vos achats avant.`,
 

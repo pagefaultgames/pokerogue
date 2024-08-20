@@ -201,8 +201,8 @@ export const FieryFalloutEncounter: MysteryEncounter =
       }
     )
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new TypeRequirement(Type.FIRE, true, 1)) // Will set option3PrimaryName dialogue token automatically
         .withSecondaryPokemonRequirement(new TypeRequirement(Type.FIRE, true, 1)) // Will set option3SecondaryName dialogue token automatically
         .withDialogue({

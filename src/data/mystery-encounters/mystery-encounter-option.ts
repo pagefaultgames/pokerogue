@@ -12,17 +12,19 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 
 export type OptionPhaseCallback = (scene: BattleScene) => Promise<void | boolean>;
 
-export default interface MysteryEncounterOption {
+// export default interface MysteryEncounterOption {
+//
+// }
+
+export default class MysteryEncounterOption {
   optionMode: MysteryEncounterOptionMode;
-
-  hasDexProgress?: boolean;
-
-  requirements?: EncounterSceneRequirement[];
-  primaryPokemonRequirements?: EncounterPokemonRequirement[];
-  secondaryPokemonRequirements?: EncounterPokemonRequirement[];
+  hasDexProgress: boolean;
+  requirements: EncounterSceneRequirement[];
+  primaryPokemonRequirements: EncounterPokemonRequirement[];
+  secondaryPokemonRequirements: EncounterPokemonRequirement[];
   primaryPokemon?: PlayerPokemon;
   secondaryPokemon?: PlayerPokemon[];
-  excludePrimaryFromSecondaryRequirements?: boolean;
+  excludePrimaryFromSecondaryRequirements: boolean;
 
   /**
    * Dialogue object containing all the dialogue, messages, tooltips, etc. for this option
@@ -30,15 +32,13 @@ export default interface MysteryEncounterOption {
    */
   dialogue?: OptionTextDisplay;
 
-  // Executes before any following dialogue or business logic from option. Usually this will be for calculating dialogueTokens or performing scene/data updates
+  /** Executes before any following dialogue or business logic from option. Usually this will be for calculating dialogueTokens or performing scene/data updates */
   onPreOptionPhase?: OptionPhaseCallback;
-  // Business logic for option
-  onOptionPhase?: OptionPhaseCallback;
-  // Executes after the encounter is over. Usually this will be for calculating dialogueTokens or performing data updates
+  /** Business logic function for option */
+  onOptionPhase: OptionPhaseCallback;
+  /** Executes after the encounter is over. Usually this will be for calculating dialogueTokens or performing data updates */
   onPostOptionPhase?: OptionPhaseCallback;
-}
 
-export default class MysteryEncounterOption implements MysteryEncounterOption {
   constructor(option: MysteryEncounterOption) {
     Object.assign(this, option);
     this.hasDexProgress = !isNullOrUndefined(this.hasDexProgress) ? this.hasDexProgress : false;
@@ -47,21 +47,21 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
     this.secondaryPokemonRequirements = this.secondaryPokemonRequirements ? this.secondaryPokemonRequirements : [];
   }
 
-  hasRequirements?() {
+  hasRequirements() {
     return this.requirements.length > 0 || this.primaryPokemonRequirements.length > 0 || this.secondaryPokemonRequirements.length > 0;
   }
 
-  meetsRequirements?(scene: BattleScene) {
+  meetsRequirements(scene: BattleScene) {
     return !this.requirements.some(requirement => !requirement.meetsRequirement(scene)) &&
       this.meetsSupportingRequirementAndSupportingPokemonSelected(scene) &&
       this.meetsPrimaryRequirementAndPrimaryPokemonSelected(scene);
   }
 
-  pokemonMeetsPrimaryRequirements?(scene: BattleScene, pokemon: Pokemon) {
+  pokemonMeetsPrimaryRequirements(scene: BattleScene, pokemon: Pokemon) {
     return !this.primaryPokemonRequirements.some(req => !req.queryParty(scene.getParty()).map(p => p.id).includes(pokemon.id));
   }
 
-  meetsPrimaryRequirementAndPrimaryPokemonSelected?(scene: BattleScene) {
+  meetsPrimaryRequirementAndPrimaryPokemonSelected(scene: BattleScene) {
     if (!this.primaryPokemonRequirements) {
       return true;
     }
@@ -72,7 +72,7 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
           qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
         }
       } else {
-        this.primaryPokemon = null;
+        this.primaryPokemon = undefined;
         return false;
       }
     }
@@ -82,8 +82,8 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
     }
 
     if (this.excludePrimaryFromSecondaryRequirements && this.secondaryPokemon) {
-      const truePrimaryPool = [];
-      const overlap = [];
+      const truePrimaryPool: PlayerPokemon[] = [];
+      const overlap: PlayerPokemon[] = [];
       for (const qp of qualified) {
         if (!this.secondaryPokemon.includes(qp)) {
           truePrimaryPool.push(qp);
@@ -114,7 +114,7 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
     }
   }
 
-  meetsSupportingRequirementAndSupportingPokemonSelected?(scene: BattleScene) {
+  meetsSupportingRequirementAndSupportingPokemonSelected(scene: BattleScene) {
     if (!this.secondaryPokemonRequirements) {
       this.secondaryPokemon = [];
       return true;
@@ -137,21 +137,41 @@ export default class MysteryEncounterOption implements MysteryEncounterOption {
   }
 }
 
+const baseOption = {
+  optionMode: MysteryEncounterOptionMode.DEFAULT,
+  hasDexProgress: false,
+  requirements: [],
+  primaryPokemonRequirements: [],
+  secondaryPokemonRequirements: [],
+  excludePrimaryFromSecondaryRequirements: true,
+};
+
+/* Picks non-optional fields from an "object" type alias and returns a union of literal types (keys) */
+type PickNonOptionalFieldsKeys<T> = Exclude<{ [K in Keys<T>]: T extends Record<K, T[K]> ? K : never; }[Keys<T>], undefined>;
+// type NonFunctionFieldsKeys<T> = { [K in Keys<T>]: T[K] extends Function ? never : K; }[Keys<T>];
+// type FunctionPropertyKeys<T> = { [K in Keys<T>]: T[K] extends Function ? K : never; }[Keys<T>];
+/* Extracts keys from T */
+type Keys<T> = keyof T;
+/* Filters out all optional fields from an "object" type alias, and all function fields */
+type PickNonOptionalFields<T> = Pick<T, PickNonOptionalFieldsKeys<T>>;
+/* Omits keys that exist in the base object and optional keys on MysteryEncounter, as well as functions on MysteryEncounter */
+type OmitBaseAndOptionalKeys<T, B> = Omit<PickNonOptionalFields<T>, Keys<B>>;
 
 export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOption> {
-  optionMode?: MysteryEncounterOptionMode;
-  requirements?: EncounterSceneRequirement[] = [];
-  primaryPokemonRequirements?: EncounterPokemonRequirement[] = [];
-  secondaryPokemonRequirements ?: EncounterPokemonRequirement[] = [];
-  excludePrimaryFromSecondaryRequirements?: boolean;
-  isDisabledOnRequirementsNotMet?: boolean;
+  optionMode: MysteryEncounterOptionMode;
+  requirements: EncounterSceneRequirement[] = [];
+  primaryPokemonRequirements: EncounterPokemonRequirement[] = [];
+  secondaryPokemonRequirements: EncounterPokemonRequirement[] = [];
+  excludePrimaryFromSecondaryRequirements: boolean;
+  isDisabledOnRequirementsNotMet: boolean;
+  hasDexProgress: boolean;
   onPreOptionPhase?: OptionPhaseCallback;
-  onOptionPhase?: OptionPhaseCallback;
+  onOptionPhase: OptionPhaseCallback;
   onPostOptionPhase?: OptionPhaseCallback;
-  dialogue?: OptionTextDisplay;
+  dialogue: OptionTextDisplay;
 
-  withOptionMode(optionMode: MysteryEncounterOptionMode): this & Pick<MysteryEncounterOption, "optionMode"> {
-    return Object.assign(this, { optionMode });
+  static newOptionWithMode(optionMode: MysteryEncounterOptionMode): MysteryEncounterOptionBuilder & OmitBaseAndOptionalKeys<MysteryEncounterOption, typeof baseOption> & Pick<MysteryEncounterOption, "optionMode"> {
+    return Object.assign(new MysteryEncounterOptionBuilder(), { ...baseOption, optionMode });
   }
 
   withHasDexProgress(hasDexProgress: boolean): this & Required<Pick<MysteryEncounterOption, "hasDexProgress">> {
@@ -181,10 +201,6 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
 
   withPostOptionPhase(onPostOptionPhase: OptionPhaseCallback): this & Required<Pick<MysteryEncounterOption, "onPostOptionPhase">> {
     return Object.assign(this, { onPostOptionPhase: onPostOptionPhase });
-  }
-
-  build(this: MysteryEncounterOption) {
-    return new MysteryEncounterOption(this);
   }
 
   withPrimaryPokemonRequirement(requirement: EncounterPokemonRequirement): this & Required<Pick<MysteryEncounterOption, "primaryPokemonRequirements">> {
@@ -239,5 +255,9 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
   withDialogue(dialogue: OptionTextDisplay) {
     this.dialogue = dialogue;
     return this;
+  }
+
+  build(this: MysteryEncounterOption) {
+    return new MysteryEncounterOption(this);
   }
 }

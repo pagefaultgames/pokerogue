@@ -1,17 +1,17 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { TurnEndPhase } from "#app/phases";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import { Abilities } from "#enums/abilities";
-import { Species } from "#app/enums/species.js";
-import { Type } from "#app/data/type";
 import { BattleStat } from "#app/data/battle-stat";
-import { BattlerTagType } from "#enums/battler-tag-type";
+import { Type } from "#app/data/type";
+import { Species } from "#app/enums/species.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
+import { TurnEndPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Moves } from "#enums/moves";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Dragon Rage", () => {
   let phaserGame: Phaser.Game;
@@ -34,25 +34,24 @@ describe("Moves - Dragon Rage", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
 
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("single");
 
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.DRAGON_RAGE]);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.starterSpecies(Species.SNORLAX);
+    game.override.moveset([Moves.DRAGON_RAGE]);
+    game.override.ability(Abilities.BALL_FETCH);
+    game.override.passiveAbility(Abilities.BALL_FETCH);
+    game.override.startingLevel(100);
 
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
+    game.override.enemySpecies(Species.SNORLAX);
+    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyPassiveAbility(Abilities.BALL_FETCH);
+    game.override.enemyLevel(100);
 
     await game.startBattle();
 
     partyPokemon = game.scene.getParty()[0];
-    enemyPokemon = game.scene.getEnemyPokemon();
+    enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // remove berries
     game.scene.removePartyMemberModifiers(0);
@@ -60,6 +59,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores weaknesses", async () => {
+    game.override.disableCrits();
     vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([Type.DRAGON]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
@@ -70,6 +70,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores resistances", async () => {
+    game.override.disableCrits();
     vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([Type.STEEL]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
@@ -80,6 +81,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores stat changes", async () => {
+    game.override.disableCrits();
     partyPokemon.summonData.battleStats[BattleStat.SPATK] = 2;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
@@ -90,6 +92,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores stab", async () => {
+    game.override.disableCrits();
     vi.spyOn(partyPokemon, "getTypes").mockReturnValue([Type.DRAGON]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
@@ -100,7 +103,6 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores criticals", async () => {
-    partyPokemon.removeTag(BattlerTagType.NO_CRIT);
     partyPokemon.addTag(BattlerTagType.ALWAYS_CRIT, 99);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
@@ -111,7 +113,8 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores damage modification from abilities such as ice scales", async () => {
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ICE_SCALES);
+    game.override.disableCrits();
+    game.override.enemyAbility(Abilities.ICE_SCALES);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -121,6 +124,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores multi hit", async () => {
+    game.override.disableCrits();
     game.scene.addModifier(modifierTypes.MULTI_LENS().newModifier(partyPokemon), false);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));

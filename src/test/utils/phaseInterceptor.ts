@@ -17,6 +17,7 @@ import {
   MovePhase,
   NewBattlePhase,
   NextEncounterPhase,
+  PartyHealPhase,
   PostSummonPhase,
   SelectGenderPhase,
   SelectModifierPhase,
@@ -59,7 +60,7 @@ export interface PromptHandler {
 export default class PhaseInterceptor {
   public scene;
   public phases = {};
-  public log;
+  public log: string[];
   private onHold;
   private interval;
   private promptInterval;
@@ -109,14 +110,14 @@ export default class PhaseInterceptor {
     [QuietFormChangePhase, this.startPhase],
     [SwitchPhase, this.startPhase],
     [SwitchSummonPhase, this.startPhase],
+    [PartyHealPhase, this.startPhase],
     [MysteryEncounterPhase, this.startPhase],
     [MysteryEncounterOptionSelectedPhase, this.startPhase],
     [MysteryEncounterBattlePhase, this.startPhase],
     [MysteryEncounterRewardsPhase, this.startPhase],
     [PostMysteryEncounterPhase, this.startPhase],
     [LearnMovePhase, this.startPhase],
-    [ModifierRewardPhase, this.startPhase],
-    // [CommonAnimPhase, this.startPhase]
+    [ModifierRewardPhase, this.startPhase]
   ];
 
   private endBySetMode = [
@@ -129,11 +130,18 @@ export default class PhaseInterceptor {
    */
   constructor(scene) {
     this.scene = scene;
-    this.log = [];
     this.onHold = [];
     this.prompts = [];
+    this.clearLogs();
     this.startPromptHandler();
     this.initPhases();
+  }
+
+  /**
+   * Clears phase logs
+   */
+  clearLogs() {
+    this.log = [];
   }
 
   rejectAll(error) {
@@ -307,7 +315,7 @@ export default class PhaseInterceptor {
   setMode(mode: Mode, ...args: any[]): Promise<void> {
     const currentPhase = this.scene.getCurrentPhase();
     const instance = this.scene.ui;
-    console.log("setMode", mode, args);
+    console.log("setMode", `${Mode[mode]} (=${mode})`, args);
     const ret = this.originalSetMode.apply(instance, [mode, ...args]);
     if (!this.phases[currentPhase.constructor.name]) {
       throw new Error(`missing ${currentPhase.constructor.name} in phaseInterceptor PHASES list`);
@@ -333,7 +341,7 @@ export default class PhaseInterceptor {
         if (expireFn) {
           this.prompts.shift();
         } else if (currentMode === actionForNextPrompt.mode && currentPhase === actionForNextPrompt.phaseTarget && currentHandler.active && (!actionForNextPrompt.awaitingActionInput || (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))) {
-          this.prompts.shift().callback();
+          this.prompts.shift()?.callback();
         }
       }
     });
@@ -347,7 +355,7 @@ export default class PhaseInterceptor {
    * @param expireFn - The function to determine if the prompt has expired.
    * @param awaitingActionInput
    */
-  addToNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn: () => void, awaitingActionInput: boolean = false) {
+  addToNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void, awaitingActionInput: boolean = false) {
     this.prompts.push({
       phaseTarget,
       mode,

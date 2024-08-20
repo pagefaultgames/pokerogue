@@ -169,6 +169,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Invencível",
     description: "Vença o jogo no modo clássico",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Tire as Crianças da Sala",
+    description: "Vença o jogo no Modo Clássico com pelo menos um membro da equipe não evoluído."
+  },
 
   "MONO_GEN_ONE": {
 
@@ -227,7 +231,7 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Comendo Poeira",
   },
   "MONO_ROCK": {
-    name: "Duro Como Pedra",
+    name: "...Tanto Bate Até Que Fura",
   },
   "MONO_BUG": {
     name: "Vida de Inseto",
@@ -264,6 +268,10 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "MONO_FAIRY": {
     name: "Clube das Winx",
+  },
+  "FRESH_START": {
+    name: "De Primeira!",
+    description: "Complete o desafio de novo começo."
   },
 } as const;
 
@@ -436,6 +444,10 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Invencível",
     description: "Vença o jogo no modo clássico",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Tire as Crianças da Sala",
+    description: "Vença o jogo no Modo Clássico com pelo menos um membro da equipe não evoluído."
+  },
 
   "MONO_GEN_ONE": {
 
@@ -494,7 +506,7 @@ export const PGFachv: AchievementTranslationEntries = {
     name: "Comendo Poeira",
   },
   "MONO_ROCK": {
-    name: "Duro Como Pedra",
+    name: "...Tanto Bate Até Que Fura",
   },
   "MONO_BUG": {
     name: "Vida de Inseto",
@@ -531,5 +543,9 @@ export const PGFachv: AchievementTranslationEntries = {
   },
   "MONO_FAIRY": {
     name: "Clube das Winx",
+  },
+  "FRESH_START": {
+    name: "De Primeira!",
+    description: "Complete o desafio de novo começo."
   },
 } as const;
