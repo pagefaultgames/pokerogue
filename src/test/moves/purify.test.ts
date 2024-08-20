@@ -1,7 +1,7 @@
-import { BattlerIndex } from "#app/battle.js";
-import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { BattlerIndex } from "#app/battle";
+import { Status, StatusEffect } from "#app/data/status-effect";
+import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

@@ -1,8 +1,8 @@
-import { allMoves } from "#app/data/move.js";
-import { Type } from "#app/data/type.js";
-import { Weather, WeatherType } from "#app/data/weather.js";
-import { PlayerPokemon } from "#app/field/pokemon.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { allMoves } from "#app/data/move";
+import { Type } from "#app/data/type";
+import { Weather, WeatherType } from "#app/data/weather";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";

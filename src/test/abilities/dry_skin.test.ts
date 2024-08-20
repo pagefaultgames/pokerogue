@@ -1,5 +1,5 @@
-import { Species } from "#app/enums/species.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { Species } from "#app/enums/species";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";

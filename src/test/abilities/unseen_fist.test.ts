@@ -1,4 +1,4 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

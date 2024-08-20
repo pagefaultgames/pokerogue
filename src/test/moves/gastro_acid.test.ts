@@ -1,8 +1,8 @@
-import { BattlerIndex } from "#app/battle.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { MoveResult } from "#app/field/pokemon.js";
+import { BattlerIndex } from "#app/battle";
+import { Abilities } from "#app/enums/abilities";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

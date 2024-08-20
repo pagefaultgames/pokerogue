@@ -1,6 +1,6 @@
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

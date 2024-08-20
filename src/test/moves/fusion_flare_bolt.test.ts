@@ -1,10 +1,10 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
 import { Stat } from "#app/data/pokemon-stat";
-import { DamagePhase } from "#app/phases/damage-phase.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { MovePhase } from "#app/phases/move-phase.js";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { MovePhase } from "#app/phases/move-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

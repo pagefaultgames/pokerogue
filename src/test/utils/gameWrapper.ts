@@ -1,7 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
-import * as battleScene from "#app/battle-scene";
-import BattleScene from "#app/battle-scene.js";
+import BattleScene, * as battleScene from "#app/battle-scene";
 import { MoveAnim } from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
 import * as Utils from "#app/utils";
@@ -11,7 +10,7 @@ import mockConsoleLog from "#test/utils/mocks/mockConsoleLog";
 import { MockFetch } from "#test/utils/mocks/mockFetch";
 import MockLoader from "#test/utils/mocks/mockLoader";
 import mockLocalStorage from "#test/utils/mocks/mockLocalStorage";
-import MockImage from "#test/utils/mocks/mocksContainer/mockImage.js";
+import MockImage from "#test/utils/mocks/mocksContainer/mockImage";
 import MockTextureManager from "#test/utils/mocks/mockTextureManager";
 import fs from "fs";
 import Phaser from "phaser";

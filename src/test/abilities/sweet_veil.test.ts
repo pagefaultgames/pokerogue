@@ -1,9 +1,9 @@
-import { BattlerIndex } from "#app/battle.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { MovePhase } from "#app/phases/move-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { BattlerIndex } from "#app/battle";
+import { Abilities } from "#app/enums/abilities";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MovePhase } from "#app/phases/move-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

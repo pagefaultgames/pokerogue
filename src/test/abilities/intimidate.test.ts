@@ -1,12 +1,12 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { DamagePhase } from "#app/phases/damage-phase.js";
-import { EncounterPhase } from "#app/phases/encounter-phase.js";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { CommandPhase } from "#app/phases/command-phase";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { EncounterPhase } from "#app/phases/encounter-phase";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";

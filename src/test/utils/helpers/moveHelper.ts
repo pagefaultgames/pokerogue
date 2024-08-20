@@ -1,5 +1,5 @@
-import { Moves } from "#app/enums/moves.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { Moves } from "#app/enums/moves";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { vi } from "vitest";
 import { getMovePosition } from "../gameManagerUtils";
 import { GameManagerHelper } from "./gameManagerHelper";

@@ -1,9 +1,9 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { MessagePhase } from "#app/phases/message-phase.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { Abilities } from "#app/enums/abilities";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MessagePhase } from "#app/phases/message-phase";
 import GameManager from "#test/utils/gameManager";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";

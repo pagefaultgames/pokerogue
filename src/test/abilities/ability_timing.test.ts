@@ -1,6 +1,6 @@
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { MessagePhase } from "#app/phases/message-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MessagePhase } from "#app/phases/message-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import i18next, { initI18n } from "#app/plugins/i18n";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";

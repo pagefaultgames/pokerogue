@@ -1,9 +1,9 @@
-import { BattleStatMultiplierAbAttr, allAbilities } from "#app/data/ability.js";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { WeatherType } from "#app/data/weather.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { BattleStatMultiplierAbAttr, allAbilities } from "#app/data/ability";
+import { BattleStat } from "#app/data/battle-stat";
+import { WeatherType } from "#app/data/weather";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

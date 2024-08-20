@@ -1,7 +1,7 @@
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag.js";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { allMoves } from "#app/data/move.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { BattleStat } from "#app/data/battle-stat";
+import { allMoves } from "#app/data/move";
+import { BerryPhase } from "#app/phases/berry-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

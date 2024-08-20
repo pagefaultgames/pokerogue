@@ -1,8 +1,8 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { Stat } from "#app/data/pokemon-stat";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { CommandPhase } from "#app/phases/command-phase";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";

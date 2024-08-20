@@ -1,8 +1,8 @@
-import { BattlerIndex } from "#app/battle.js";
+import { BattlerIndex } from "#app/battle";
 import { applyAbAttrs, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
 import { Stat } from "#app/data/pokemon-stat";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";

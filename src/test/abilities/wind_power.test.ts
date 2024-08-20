@@ -1,5 +1,5 @@
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

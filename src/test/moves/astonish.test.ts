@@ -1,9 +1,9 @@
-import { allMoves } from "#app/data/move.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { allMoves } from "#app/data/move";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

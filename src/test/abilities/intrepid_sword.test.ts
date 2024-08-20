@@ -1,5 +1,5 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { CommandPhase } from "#app/phases/command-phase.js";
+import { CommandPhase } from "#app/phases/command-phase";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";

@@ -1,6 +1,6 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import { PostSummonPhase } from "#app/phases/post-summon-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { PostSummonPhase } from "#app/phases/post-summon-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import GameManager from "#app/test/utils/gameManager";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

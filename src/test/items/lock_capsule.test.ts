@@ -1,7 +1,7 @@
-import { Abilities } from "#app/enums/abilities.js";
-import { Moves } from "#app/enums/moves.js";
-import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase.js";
+import { Abilities } from "#app/enums/abilities";
+import { Moves } from "#app/enums/moves";
+import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

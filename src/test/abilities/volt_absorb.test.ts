@@ -1,5 +1,5 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";

@@ -1,8 +1,8 @@
-import { Abilities } from "#app/enums/abilities.js";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { Abilities } from "#app/enums/abilities";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { StatusEffect } from "#app/enums/status-effect";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

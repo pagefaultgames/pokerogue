@@ -1,5 +1,5 @@
 import { allAbilities, BypassSpeedChanceAbAttr } from "#app/data/ability";
-import { FaintPhase } from "#app/phases/faint-phase.js";
+import { FaintPhase } from "#app/phases/faint-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

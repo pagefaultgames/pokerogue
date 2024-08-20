@@ -1,9 +1,9 @@
-import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg.js";
-import { EggSourceType } from "#app/enums/egg-source-types.js";
-import { EggTier } from "#app/enums/egg-type.js";
-import { VariantTier } from "#app/enums/variant-tiers.js";
-import EggData from "#app/system/egg-data.js";
-import * as Utils from "#app/utils.js";
+import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg";
+import { EggSourceType } from "#app/enums/egg-source-types";
+import { EggTier } from "#app/enums/egg-type";
+import { VariantTier } from "#app/enums/variant-tiers";
+import EggData from "#app/system/egg-data";
+import * as Utils from "#app/utils";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";

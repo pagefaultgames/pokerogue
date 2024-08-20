@@ -1,7 +1,7 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { CommandPhase } from "#app/phases/command-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

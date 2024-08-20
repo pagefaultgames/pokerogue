@@ -1,8 +1,8 @@
-import { BerryPhase } from "#app/phases/berry-phase.js";
-import { MessagePhase } from "#app/phases/message-phase.js";
-import { MoveHeaderPhase } from "#app/phases/move-header-phase.js";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
-import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { MessagePhase } from "#app/phases/message-phase";
+import { MoveHeaderPhase } from "#app/phases/move-header-phase";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
+import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

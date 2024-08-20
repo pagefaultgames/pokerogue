@@ -1,7 +1,7 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import { ArenaTagType } from "#app/enums/arena-tag-type.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

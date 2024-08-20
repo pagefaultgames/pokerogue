@@ -1,8 +1,8 @@
-import BattleScene from "#app/battle-scene.js";
-import { LoginPhase } from "#app/phases/login-phase.js";
-import { TitlePhase } from "#app/phases/title-phase.js";
-import { UnavailablePhase } from "#app/phases/unavailable-phase.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { LoginPhase } from "#app/phases/login-phase";
+import { TitlePhase } from "#app/phases/title-phase";
+import { UnavailablePhase } from "#app/phases/unavailable-phase";
+import { Mode } from "#app/ui/ui";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

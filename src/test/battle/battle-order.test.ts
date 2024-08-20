@@ -1,8 +1,8 @@
 import { Stat } from "#app/data/pokemon-stat";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
-import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
-import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
+import { CommandPhase } from "#app/phases/command-phase";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { SelectTargetPhase } from "#app/phases/select-target-phase";
+import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { Mode } from "#app/ui/ui";

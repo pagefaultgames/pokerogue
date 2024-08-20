@@ -1,8 +1,8 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { TrappedTag } from "#app/data/battler-tags.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { TrappedTag } from "#app/data/battler-tags";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

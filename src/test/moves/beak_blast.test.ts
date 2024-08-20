@@ -1,8 +1,8 @@
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
-import { MovePhase } from "#app/phases/move-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { StatusEffect } from "#app/enums/status-effect";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { MovePhase } from "#app/phases/move-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

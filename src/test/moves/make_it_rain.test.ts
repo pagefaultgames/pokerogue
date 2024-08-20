@@ -1,6 +1,6 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { StatChangePhase } from "#app/phases/stat-change-phase.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { StatChangePhase } from "#app/phases/stat-change-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

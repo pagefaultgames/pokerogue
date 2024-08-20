@@ -1,8 +1,8 @@
 import { StatusEffect } from "#app/data/status-effect";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
-import { MessagePhase } from "#app/phases/message-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { CommandPhase } from "#app/phases/command-phase";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { MessagePhase } from "#app/phases/message-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import i18next, { initI18n } from "#app/plugins/i18n";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";

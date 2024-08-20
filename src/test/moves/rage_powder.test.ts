@@ -1,7 +1,7 @@
-import { BattlerIndex } from "#app/battle.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { BattlerIndex } from "#app/battle";
+import { CommandPhase } from "#app/phases/command-phase";
+import { SelectTargetPhase } from "#app/phases/select-target-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

@@ -1,9 +1,9 @@
-import { BattlerIndex } from "#app/battle.js";
+import { BattlerIndex } from "#app/battle";
 import { Stat } from "#app/data/pokemon-stat";
-import { Abilities } from "#app/enums/abilities.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { SelectTargetPhase } from "#app/phases/select-target-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { Abilities } from "#app/enums/abilities";
+import { CommandPhase } from "#app/phases/command-phase";
+import { SelectTargetPhase } from "#app/phases/select-target-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
