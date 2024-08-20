@@ -1,36 +1,11 @@
 import { Stat, getStatName } from "./pokemon-stat";
 import * as Utils from "../utils";
 import { TextStyle, getBBCodeFrag } from "../ui/text";
+import { Nature } from "#enums/nature";
 import { UiTheme } from "#enums/ui-theme";
 import i18next from "i18next";
 
-export enum Nature {
-  HARDY,
-  LONELY,
-  BRAVE,
-  ADAMANT,
-  NAUGHTY,
-  BOLD,
-  DOCILE,
-  RELAXED,
-  IMPISH,
-  LAX,
-  TIMID,
-  HASTY,
-  SERIOUS,
-  JOLLY,
-  NAIVE,
-  MODEST,
-  MILD,
-  QUIET,
-  BASHFUL,
-  RASH,
-  CALM,
-  GENTLE,
-  SASSY,
-  CAREFUL,
-  QUIRKY
-}
+export { Nature };
 
 export function getNatureName(nature: Nature, includeStatEffects: boolean = false, forStarterSelect: boolean = false, ignoreBBCode: boolean = false, uiTheme: UiTheme = UiTheme.DEFAULT): string {
   let ret = Utils.toReadableString(Nature[nature]);
@@ -40,8 +15,8 @@ export function getNatureName(nature: Nature, includeStatEffects: boolean = fals
   }
   if (includeStatEffects) {
     const stats = Utils.getEnumValues(Stat).slice(1);
-    let increasedStat: Stat = null;
-    let decreasedStat: Stat = null;
+    let increasedStat: Stat | null = null;
+    let decreasedStat: Stat | null = null;
     for (const stat of stats) {
       const multiplier = getNatureStatMultiplier(nature, stat);
       if (multiplier > 1) {

@@ -40,7 +40,7 @@ export const weather: SimpleTranslationEntries = {
 
   "strongWindsStartMessage": "Ventos fortes apareceram!",
   "strongWindsLapseMessage": "Os ventos fortes continuam.",
-  "strongWindsEffectMessage": "The mysterious air current weakened the attack!",
+  "strongWindsEffectMessage": "A corrente de ar misteriosa enfraqueceu o ataque!",
   "strongWindsClearMessage": "Os ventos fortes diminuíram.",
 };
 
@@ -60,7 +60,7 @@ export const terrain: SimpleTranslationEntries = {
 
   "psychic": "Psíquico",
   "psychicStartMessage": "O campo de batalha ficou esquisito!",
-  "psychicClearMessage": "A esquisitice sumiu do campo de batalha",
+  "psychicClearMessage": "A esquisitice sumiu do campo de batalha!",
 
   "defaultBlockMessage": "{{pokemonNameWithAffix}} está protegido pelo Terreno {{terrainName}}!"
 };

@@ -23,4 +23,10 @@ export const challenges: TranslationEntries = {
     "desc_default": "선택한 타입의 포켓몬만 사용할 수 있습니다."
     //type in pokemon-info
   },
+  "freshStart": {
+    "name": "새 출발",
+    "desc": "포켓로그를 처음 시작했던 때처럼 강화가 전혀 되지 않은 오리지널 스타팅 포켓몬만 고를 수 있습니다.",
+    "value.0": "해제",
+    "value.1": "설정",
+  }
 } as const;

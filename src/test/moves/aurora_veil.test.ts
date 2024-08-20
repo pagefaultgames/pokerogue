@@ -1,20 +1,17 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import {
-  TurnEndPhase,
-} from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import { ArenaTagSide } from "#app/data/arena-tag.js";
+import Move, { allMoves } from "#app/data/move.js";
+import { WeatherType } from "#app/data/weather.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { ArenaTagType } from "#app/enums/arena-tag-type.js";
+import Pokemon from "#app/field/pokemon.js";
+import { TurnEndPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { NumberHolder } from "#app/utils.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Abilities } from "#app/enums/abilities.js";
-import Pokemon from "#app/field/pokemon.js";
-import Move, { allMoves } from "#app/data/move.js";
-import { NumberHolder } from "#app/utils.js";
-import { ArenaTagSide } from "#app/data/arena-tag.js";
-import { WeatherType } from "#app/data/weather.js";
-import { ArenaTagType } from "#app/enums/arena-tag-type.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Moves - Aurora Veil", () => {
@@ -35,14 +32,14 @@ describe("Moves - Aurora Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.NONE);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE]);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MAGIKARP);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL]);
-    vi.spyOn(overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(WeatherType.HAIL);
+    game.override.battleType("single");
+    game.override.ability(Abilities.NONE);
+    game.override.moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE]);
+    game.override.enemyLevel(100);
+    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemyMoveset([Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL]);
+    game.override.disableCrits();
+    game.override.weather(WeatherType.HAIL);
   });
 
   it("reduces damage of physical attacks by half in a single battle", async() => {
@@ -52,14 +49,13 @@ describe("Moves - Aurora Veil", () => {
     game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
 
     expect(mockedDmg).toBe(allMoves[moveToUse].power * singleBattleMultiplier);
   });
 
   it("reduces damage of physical attacks by a third in a double battle", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("double");
 
     const moveToUse = Moves.ROCK_SLIDE;
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
@@ -68,7 +64,7 @@ describe("Moves - Aurora Veil", () => {
     game.doAttack(getMovePosition(game.scene, 1, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
 
     expect(mockedDmg).toBe(allMoves[moveToUse].power * doubleBattleMultiplier);
   });
@@ -81,14 +77,13 @@ describe("Moves - Aurora Veil", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
 
     expect(mockedDmg).toBe(allMoves[moveToUse].power * singleBattleMultiplier);
   });
 
   it("reduces damage of special attacks by a third in a double battle", async() => {
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(false);
-    vi.spyOn(overrides, "DOUBLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("double");
 
     const moveToUse = Moves.DAZZLING_GLEAM;
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
@@ -97,7 +92,7 @@ describe("Moves - Aurora Veil", () => {
     game.doAttack(getMovePosition(game.scene, 1, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon(), game.scene.getPlayerPokemon(), allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
 
     expect(mockedDmg).toBe(allMoves[moveToUse].power * doubleBattleMultiplier);
   });

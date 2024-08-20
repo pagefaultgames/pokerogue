@@ -12,6 +12,8 @@ import {Button} from "#enums/buttons";
 import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
 
 export default class FightUiHandler extends UiHandler {
+  public static readonly MOVES_CONTAINER_NAME = "moves";
+
   private movesContainer: Phaser.GameObjects.Container;
   private moveInfoContainer: Phaser.GameObjects.Container;
   private typeIcon: Phaser.GameObjects.Sprite;
@@ -21,7 +23,7 @@ export default class FightUiHandler extends UiHandler {
   private powerText: Phaser.GameObjects.Text;
   private accuracyLabel: Phaser.GameObjects.Text;
   private accuracyText: Phaser.GameObjects.Text;
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
   private moveCategoryIcon: Phaser.GameObjects.Sprite;
 
   protected fieldIndex: integer = 0;
@@ -35,7 +37,7 @@ export default class FightUiHandler extends UiHandler {
     const ui = this.getUi();
 
     this.movesContainer = this.scene.add.container(18, -38.7);
-    this.movesContainer.setName("moves");
+    this.movesContainer.setName(FightUiHandler.MOVES_CONTAINER_NAME);
     ui.add(this.movesContainer);
 
     this.moveInfoContainer = this.scene.add.container(1, 0);
@@ -176,7 +178,7 @@ export default class FightUiHandler extends UiHandler {
     const hasMove = cursor < moveset.length;
 
     if (hasMove) {
-      const pokemonMove = moveset[cursor];
+      const pokemonMove = moveset[cursor]!; // TODO: is the bang correct?
       this.typeIcon.setTexture(`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
       this.moveCategoryIcon.setTexture("categories", MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
 
@@ -246,7 +248,7 @@ export default class FightUiHandler extends UiHandler {
       moveText.setName("text-empty-move");
 
       if (moveIndex < moveset.length) {
-        const pokemonMove = moveset[moveIndex];
+        const pokemonMove = moveset[moveIndex]!; // TODO is the bang correct?
         moveText.setText(pokemonMove.getName());
         moveText.setName(pokemonMove.getName());
         moveText.setColor(this.getMoveColor(pokemon, pokemonMove) ?? moveText.style.color);
@@ -271,11 +273,10 @@ export default class FightUiHandler extends UiHandler {
       return undefined;
     }
 
-    const moveColors = opponents.map((opponent) => {
-      return opponent.getMoveEffectiveness(pokemon, pokemonMove);
-    }).sort((a, b) => b - a).map((effectiveness) => {
-      return getTypeDamageMultiplierColor(effectiveness, "offense");
-    });
+    const moveColors = opponents
+      .map((opponent) => opponent.getMoveEffectiveness(pokemon, pokemonMove))
+      .sort((a, b) => b - a)
+      .map((effectiveness) => getTypeDamageMultiplierColor(effectiveness ?? 0, "offense"));
 
     return moveColors[0];
   }

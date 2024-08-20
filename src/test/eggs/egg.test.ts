@@ -1,4 +1,4 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import BattleScene from "../../battle-scene";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg.js";
 import { Species } from "#enums/species";
@@ -6,7 +6,7 @@ import Phaser from "phaser";
 import { EggSourceType } from "#app/enums/egg-source-types.js";
 import { EggTier } from "#app/enums/egg-type.js";
 import { VariantTier } from "#app/enums/variant-tiers.js";
-import GameManager from "../utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import EggData from "#app/system/egg-data.js";
 import * as Utils from "#app/utils.js";
 
@@ -302,5 +302,12 @@ describe("Egg Generation Tests", () => {
 
     expect(result1).toBe(expectedTier1);
     expect(result2).toBe(expectedTier2);
+  });
+
+  it("should generate an epic shiny from pokemon with a different form", () => {
+    const scene = game.scene;
+    const egg = new Egg({scene, isShiny: true, variantTier: VariantTier.EPIC, species: Species.MIRAIDON});
+
+    expect(egg.variantTier).toBe(VariantTier.EPIC);
   });
 });

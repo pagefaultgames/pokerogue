@@ -10,7 +10,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "MoneyAchv": {
-    description: "Accumula ₽{{moneyAmount}} PokéDollari",
+    description: "Accumula {{moneyAmount}} PokéDollari",
   },
   "10K_MONEY": {
     name: "Benestante",
@@ -99,7 +99,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "MEGA_EVOLVE": {
     name: "Megamorfosi",
-    description: "Megaevolvi un pokémon",
+    description: "Megaevolvi un Pokémon",
   },
   "GIGANTAMAX": {
     name: "Grosso e Cattivo",
@@ -169,6 +169,10 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Imbattuto",
     description: "Vinci in modalità classica",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "Bring Your Child To Work Day",
+    description: "Beat the game in Classic Mode with at least one unevolved party member."
+  },
 
   "MONO_GEN_ONE": {
     name: "Rivale Originale",
@@ -191,19 +195,19 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Completa la modalità sfida di quinta generazione.",
   },
   "MONO_GEN_SIX": {
-    name: "Quasi Reali",
+    name: "Vita e Morte",
     description: "Completa la modalità sfida di sesta generazione.",
   },
   "MONO_GEN_SEVEN": {
-    name: "Solo In Teoria",
+    name: "Troppo amichevoli?",
     description:  "Completa la modalità sfida di settima generazione.",
   },
   "MONO_GEN_EIGHT": {
-    name: "È Champion-time!",
+    name: "It's champion time!",
     description:  "Completa la modalità sfida di ottava generazione.",
   },
   "MONO_GEN_NINE": {
-    name: "Non si Stava Impegnando...",
+    name: "Paradossalmente sbalorditivi",
     description:  "Completa la modalità sfida di nona generazione.",
   },
 
@@ -264,6 +268,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Follettini e follettine",
   },
+  "FRESH_START": {
+    name: "First Try!",
+    description: "Complete the Fresh Start challenge."
+  }
 } as const;
 
 // Achievement translations for the when the player character is female (it for now uses the same translations as the male version)
