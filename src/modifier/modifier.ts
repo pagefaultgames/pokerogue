@@ -2434,11 +2434,7 @@ export class PreventStatLowerChanceModifier extends PokemonHeldItemModifier {
   }
 
   matchType(modifier: Modifier): boolean {
-    if (modifier instanceof PreventStatLowerChanceModifier) {
-      const pokemonExpModifier = modifier as PreventStatLowerChanceModifier;
-      return pokemonExpModifier.chance === this.chance;
-    }
-    return false;
+    return modifier instanceof PreventStatLowerChanceModifier;
   }
 
   clone(): PreventStatLowerChanceModifier {
