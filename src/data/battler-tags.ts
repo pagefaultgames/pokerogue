@@ -205,6 +205,24 @@ export class ShellTrapTag extends BattlerTag {
   }
 }
 
+export class RageTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.RAGE,[BattlerTagLapseType.MOVE_EFFECT],1,Moves.RAGE);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.MOVE_EFFECT) {
+      return (pokemon.scene.getCurrentPhase() as MovePhase).move.getMove().id === Moves.RAGE;
+    } else if (lapseType === BattlerTagLapseType.CUSTOM) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene,pokemon.getBattlerIndex(),true,[BattleStat.ATK],1,false));
+      pokemon.scene.queueMessage(i18next.t("battlerTags:rageOnHit", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)}));
+      return true;
+    }
+    return false;
+  }
+}
+
 export class TrappedTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: number, sourceMove: Moves, sourceId: number) {
     super(tagType, lapseType, turnCount, sourceMove, sourceId);
@@ -1962,6 +1980,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.GULP_MISSILE_ARROKUDA:
   case BattlerTagType.GULP_MISSILE_PIKACHU:
     return new GulpMissileTag(tagType, sourceMove);
+  case BattlerTagType.RAGE:
+    return new RageTag();
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
