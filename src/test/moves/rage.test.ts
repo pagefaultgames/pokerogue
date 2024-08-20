@@ -5,9 +5,22 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import {BattleStat} from "#app/data/battle-stat";
+import {StatusEffect} from "#enums/status-effect";
+import {RageTag} from "#app/data/battler-tags";
+import {PlayerPokemon} from "#app/field/pokemon";
+import {Nature} from "#enums/nature";
+import {getMovePosition} from "#test/utils/gameManagerUtils";
+import {CommandPhase} from "#app/phases/command-phase";
+import {SelectTargetPhase} from "#app/phases/select-target-phase";
+import {BattlerIndex} from "#app/battle";
+import {TurnEndPhase} from "#app/phases/turn-end-phase";
+
 
 const TIMEOUT = 20 * 1000;
 
+function fullOf(move: Moves) : Moves[] {
+  return [move,move,move,move];
+}
 describe("Moves - Rage", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -27,84 +40,230 @@ describe("Moves - Rage", () => {
     game.override
       .battleType("single")
       .ability(Abilities.UNNERVE)
-      .moveset([Moves.RAGE,Moves.SPLASH,Moves.SPORE])
-      .enemyAbility(Abilities.INSOMNIA)
+      .starterSpecies(Species.BOLTUND)
+      .moveset([Moves.RAGE,Moves.SPLASH,Moves.SPORE,Moves.VITAL_THROW])
+      .enemyAbility(Abilities.NO_GUARD)
       .startingLevel(100)
-      .enemyLevel(100);
+      .enemyLevel(100)
+      .disableCrits();
   });
 
+  /**
+   * Ally Attack-Boost Test.
+   *
+   * Checks that Rage provides an attack boost if the user it hit after use.
+   *
+   * Checks that Rage provides an attack boost if the user is hit before moving
+   * on the following turn, regardless of what move they selected.
+   *
+   * Checks that a pokemon stops raging if they use a different move.
+   */
   it(
     "should raise attack if hit after use",
     async () => {
       game.override
         .enemySpecies(Species.SHUCKLE)
-        .enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
-      await game.startBattle([Species.NINJASK]);
+        .enemyMoveset(fullOf(Moves.TACKLE));
+      await game.startBattle();
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      // Ninjask uses rage, then gets hit, gets atk boost
+      // Player Boltund uses Rage. Opponent Shuckle uses Tackle.
+      // Boltund's attack is raised.
       game.doAttack(0);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(1);
 
+      // Opponent Shuckle uses Tackle. Player Boltund uses Vital Throw (Negative Priority).
+      // Boltund's attack is raised.
+      game.doAttack(3);
+      await game.toNextTurn();
+      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
+
+      // Opponent Shuckle uses Tackle. Player Boltund uses Vital Throw (Negative Priority).
+      // Boltund's attack not raised.
+      game.doAttack(3);
+      await game.toNextTurn();
+      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
+
     }, TIMEOUT
   );
 
-  it(
-    "should raise ATK if hit before using non-rage option",
-    async () => {
-      game.override
-        .enemySpecies(Species.NINJASK)
-        .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-      await game.startBattle([Species.SHUCKLE]);
-
-      const leadPokemon = game.scene.getPlayerPokemon()!;
-
-      // Ninjask moves first, THEN shuckle uses rage, no ATK boost
-      game.doAttack(0);
-      await game.toNextTurn();
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
-
-      // Shuckle Raged last turn, so when Ninjask hits it, ATK boost despite not using rage this turn
-      game.doAttack(1);
-      await game.toNextTurn();
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(1);
-    }, TIMEOUT
-  );
-
+  /**
+   * Checks that Opponent Pokemon correctly receive the Attack boost from Rage
+   * Checks that using a Status Move on a Pokemon that used Rage does NOT provide an Attack Boost
+   * Checks that Pokemon do not lose the {@linkcode RageTag} BattlerTag when sleeping.
+   */
   it(
     "should not raise ATK if hit by status move",
     async () => {
       game.override
-        .enemySpecies(Species.NINJASK)
-        .enemyMoveset([Moves.RAGE, Moves.RAGE, Moves.RAGE, Moves.RAGE]);
-      await game.startBattle([Species.NINJASK]);
+        .enemySpecies(Species.SHUCKLE)
+        .enemyMoveset(fullOf(Moves.RAGE));
+      await game.startBattle();
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
+      const oppPokemon = game.scene.getEnemyPokemon()!;
 
-      // Ninjask Rages, then slept. No boost.
+      // Opponent Shuckle uses Rage. Ally Boltund uses Vital Throw.
+      // Shuckle gets an Attack boost
+      game.doAttack(3);
+      await game.toNextTurn();
+      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
+      expect(oppPokemon.summonData.battleStats[BattleStat.ATK]).toBe(1);
+
+      // Ally Boltund uses Spore. Shuckle is asleep.
+      // Shuckle does not get an attack boost. Shuckle still has the RageTag tag.
       game.doAttack(2);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
+      expect(oppPokemon.summonData.battleStats[BattleStat.ATK]).toBe(1);
+      expect(oppPokemon.getTag(RageTag)).toBeTruthy;
+    }, TIMEOUT
+  );
+
+  /**
+   * Checks that the {@linkcode RageTag} tag is not given if the target is immune
+   */
+  it(
+    "should not raise ATK if target is immune",
+    async () => {
+      game.override
+        .enemySpecies(Species.GASTLY)
+        .enemyMoveset(fullOf(Moves.TACKLE)); // Has semi-invulnerable turn
+      await game.startBattle();
+
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+
+      // Boltund uses rage, but it has no effect, Gastly uses Tackle
+      // Boltund does not have RageTag or Attack boost.
+      game.doAttack(0);
+      await game.toNextTurn();
+      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
+      expect(leadPokemon.getTag(RageTag)).toBeNull;
+    }, TIMEOUT
+  );
+
+  /**
+   * Checks that the {@linkcode RageTag} tag is not given if the target is semi-invulnerable
+   * Checks that Pokémon does not get Attack boost if it uses Rage after getting hit on a turn
+   */
+  it(
+    "should not raise ATK if target is semi-invulnerable",
+    async () => {
+      game.override
+        .enemySpecies(Species.REGIELEKI)
+        .enemyMoveset(fullOf(Moves.DIVE)); // Has semi-invulnerable turn
+      await game.startBattle();
+
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+
+      // Regieliki uses Dive. Boltund uses Rage, but Regieleki is underwater
+      // Boltund does not gain RageTag or Attack boost
+      game.doAttack(0);
+      await game.toNextTurn();
+      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
+      expect(leadPokemon.getTag(RageTag)).toBeNull;
+
+      // Regieleki finishes Dive, Boltund uses Rage
+      // Boltund gains RageTag, but no boost
+      game.doAttack(0);
+      await game.toNextTurn();
+      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
+      expect(leadPokemon.getTag(RageTag)).toBeTruthy;
     }, TIMEOUT
   );
 
   it(
-    "should not raise ATK if rage has no effect",
+    "should not stop raging if rage fails",
     async () => {
       game.override
-        .enemySpecies(Species.GASTLY)
-        .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE])
-        .moveset([Moves.RAGE]);
-      await game.startBattle([Species.NINJASK]);
+        .enemySpecies(Species.SHUCKLE)
+        .enemyMoveset(fullOf(Moves.FLY)); // Has semi-invulnerable turn
+      await game.startBattle();
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      // Ninjask uses rage, but it has no effect, no ATK boost
+      // Boltund uses Rage, Shuckle uses Dive
+      // Boltund gains RageTag
       game.doAttack(0);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
+      expect(leadPokemon.getTag(RageTag)).toBeTruthy;
+
+      // Boltund uses Rage, Shuckle is underwater, Shuckle finishes Dive
+      // Boltund gains gains boost, does not lose RageTag
+      game.doAttack(0);
+      await game.toNextTurn();
+      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(1);
+      expect(leadPokemon.getTag(RageTag)).toBeTruthy;
+    },90000
+  );
+
+  /**
+   * Basic doubles test
+   * Checks that if a raging Pokemon is hit multiple times in one turn, they get multiple boosts
+   * Should also cover multi-hit moves
+   */
+  it(
+    "should provide boost per hit in doubles",
+    async () => {
+      game.override
+        .moveset([Moves.RAGE,Moves.MEMENTO,Moves.SPORE,Moves.VITAL_THROW])
+        .battleType("double")
+        .enemySpecies(Species.SHUCKLE)
+        .enemyMoveset(fullOf(Moves.TACKLE));
+      await game.startBattle([Species.BOLTUND,Species.BOLTUND]);
+
+      const leadPokemon = game.scene.getParty()[0];
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.RAGE));
+      await game.phaseInterceptor.to(SelectTargetPhase, false);
+      game.doSelectTarget(BattlerIndex.ENEMY);
+      await game.phaseInterceptor.to(CommandPhase);
+
+      game.doAttack(getMovePosition(game.scene, 1, Moves.MEMENTO));
+      await game.phaseInterceptor.to(SelectTargetPhase, false);
+      game.doSelectTarget(BattlerIndex.ENEMY_2);
+
+      await game.phaseInterceptor.to(TurnEndPhase, false);
+      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
+      expect(leadPokemon.getTag(RageTag)).toBeTruthy;
+    }, TIMEOUT
+  );
+
+  /**
+   * Checks that a pokemon does not lose the RageTag if it is unable to act
+   * regardless of what it was otherwise going to do
+   */
+  it(
+    "should stay raging if unable to act",
+    async () => {
+      game.override
+        .moveset([Moves.RAGE,Moves.SPLASH,Moves.SPORE,Moves.VITAL_THROW])
+        .battleType("double")
+        .enemySpecies(Species.SHUCKLE)
+        .enemyMoveset(fullOf(Moves.SPLASH)); // Has semi-invulnerable turn
+      await game.startBattle();
+
+      const leadPokemon: PlayerPokemon = game.scene.getParty()[0];
+      // Ensure that second pokemon is faster.
+      leadPokemon.natureOverride = Nature.SASSY;
+      game.scene.getParty()[1].natureOverride = Nature.JOLLY;
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.RAGE));
+      await game.phaseInterceptor.to(SelectTargetPhase, false);
+      game.doSelectTarget(BattlerIndex.ENEMY);
+      await game.phaseInterceptor.to(CommandPhase);
+
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPORE));
+      await game.phaseInterceptor.to(SelectTargetPhase, false);
+      game.doSelectTarget(BattlerIndex.PLAYER);
+
+      await game.phaseInterceptor.to(TurnEndPhase, false);
+      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
+      expect(leadPokemon.getTag(RageTag)).toBeTruthy;
+      expect(leadPokemon.status?.effect).toBe(StatusEffect.SLEEP);
     }, TIMEOUT
   );
 });
