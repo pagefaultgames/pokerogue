@@ -2434,26 +2434,25 @@ export class PreventStatLowerChanceModifier extends PokemonHeldItemModifier {
   }
 
   matchType(modifier: Modifier): boolean {
-    return modifier instanceof PreventStatLowerChanceModifier;
+    if (modifier instanceof PreventStatLowerChanceModifier) {
+      const pokemonExpModifier = modifier as PreventStatLowerChanceModifier;
+      return pokemonExpModifier.chance === this.chance;
+    }
+    return false;
   }
 
   clone(): PreventStatLowerChanceModifier {
-    return new PreventStatLowerChanceModifier(this.type, this.pokemonId, this.chance, this.stackCount);
+    return new PreventStatLowerChanceModifier(this.type as ModifierTypes.PreventStatLowerChanceModifierType, this.pokemonId, this.chance * 100, this.stackCount);
   }
 
   getArgs(): any[] {
-    return super.getArgs().concat(this.chance);
+    return super.getArgs().concat(this.chance * 100);
   }
 
   apply(args: any[]): boolean {
-    const result = Phaser.Math.RND.realInRange(0, 1) < (1 * this.getStackCount()) ? true : false;
-    const pokemon = args[0] as Pokemon;
-    if (result) {
-      const cancelled = args[1] as Utils.BooleanHolder;
-      cancelled.value = true;
-      pokemon.scene.queueMessage(i18next.t("modifier:PreventStatLowerChanceApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: i18next.t("modifierType:ModifierType.CLEAR_AMULET.name") }));
-    }
-    return result;
+    const cancelled = args[1] as Utils.BooleanHolder;
+    cancelled.value =  Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount()) ? true : false;
+    return true;
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {

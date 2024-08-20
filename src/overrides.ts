@@ -45,7 +45,7 @@ class DefaultOverrides {
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
-  readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = null;
+  readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = "double";
   readonly STARTING_WAVE_OVERRIDE: integer = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
@@ -98,7 +98,7 @@ class DefaultOverrides {
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
-  readonly MOVESET_OVERRIDE: Array<Moves> = [Moves.GROWL, Moves.CURSE, Moves.TOXIC, Moves.SAPPY_SEED];
+  readonly MOVESET_OVERRIDE: Array<Moves> = [Moves.SHIFT_GEAR, Moves.COACHING, Moves.SCARY_FACE, Moves.SWAGGER];
   readonly SHINY_OVERRIDE: boolean = false;
   readonly VARIANT_OVERRIDE: Variant = 0;
 

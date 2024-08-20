@@ -119,6 +119,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ContactHeldItemTransferChanceModifierType": {
       description:"Beim Angriff besteht eine {{chancePercent}}%ige Chance, dass das getragene Item des Gegners gestohlen wird."
     },
+    "PreventStatLowerChanceModifierType": {
+      description: "Has a {{chancePercent}}% chance to prevent the holder's stats from being lowered by other Pokémon's moves or abilities.",
+    },
     "TurnHeldItemTransferModifierType": {
       description: "Jede Runde erhält der Träger ein getragenes Item des Gegners.",
     },
@@ -202,6 +205,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LOCK_CAPSULE": { name: "Tresorkapsel", description: "Erlaubt es die Seltenheitsstufe der Items festzusetzen wenn diese neu gerollt werden." },
 
     "GRIP_CLAW": { name: "Griffklaue" },
+    "CLEAR_AMULET": { name: "Clear Amulet" },
     "WIDE_LENS": { name: "Großlinse" },
 
     "MULTI_LENS": { name: "Mehrfachlinse" },

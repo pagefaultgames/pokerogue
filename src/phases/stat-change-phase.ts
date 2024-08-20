@@ -51,13 +51,6 @@ export class StatChangePhase extends PokemonPhase {
       return this.end();
     }
 
-    // clear amulet
-    const cancelled = new Utils.BooleanHolder(false);
-    pokemon.scene.applyModifiers(PreventStatLowerChanceModifier, pokemon.isPlayer(), pokemon, cancelled);
-    if (!this.selfTarget && cancelled.value) {
-      return this.end();
-    }
-
     const filteredStats = this.stats.map(s => s !== BattleStat.RAND ? s : this.getRandomStat()).filter(stat => {
       const cancelled = new Utils.BooleanHolder(false);
 
@@ -75,7 +68,18 @@ export class StatChangePhase extends PokemonPhase {
     const levels = new Utils.IntegerHolder(this.levels);
 
     if (!this.ignoreAbilities) {
+      // e.g. Simple, Contrary
       applyAbAttrs(StatChangeMultiplierAbAttr, pokemon, null, levels);
+    }
+
+    // clear amulet
+    if (levels.value < 0) {
+      const cancelled = new Utils.BooleanHolder(false);
+      pokemon.scene.applyModifiers(PreventStatLowerChanceModifier, pokemon.isPlayer(), pokemon, cancelled);
+      if (!this.selfTarget && cancelled.value) {
+        this.scene.queueMessage(i18next.t("modifier:PreventStatLowerChanceApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: i18next.t("modifierType:ModifierType.CLEAR_AMULET.name") }));
+        return this.end();
+      }
     }
 
     const battleStats = this.getPokemon().summonData.battleStats;

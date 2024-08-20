@@ -119,6 +119,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ContactHeldItemTransferChanceModifierType": {
       description: "Upon attacking, there is a {{chancePercent}}% chance the foe's held item will be stolen.",
     },
+    "PreventStatLowerChanceModifierType": {
+      description: "Has a {{chancePercent}}% chance to prevent the holder's stats from being lowered by other Pokémon's moves or abilities.",
+    },
     "TurnHeldItemTransferModifierType": {
       description: "Every turn, the holder acquires one held item from the foe.",
     },
@@ -202,6 +205,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LOCK_CAPSULE": { name: "Lock Capsule", description: "Allows you to lock item rarities when rerolling items." },
 
     "GRIP_CLAW": { name: "Grip Claw" },
+    "CLEAR_AMULET": { name: "Clear Amulet" },
     "WIDE_LENS": { name: "Wide Lens" },
 
     "MULTI_LENS": { name: "Multi Lens" },
