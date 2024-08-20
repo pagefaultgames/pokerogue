@@ -81,7 +81,7 @@ describe("Arena - Gravity", () => {
   });
 
   describe("Against flying types", () => {
-    it("can be hit by gorund-type moves now", async () => {
+    it("can be hit by ground-type moves now", async () => {
       game.override
         .startingLevel(5)
         .enemyLevel(5)
