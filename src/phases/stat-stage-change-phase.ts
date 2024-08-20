@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene.js";
 import { BattlerIndex } from "#app/battle.js";
-import { applyPreStatStageChangeAbAttrs, ProtectStatAbAttr, applyAbAttrs, StatMultiplierAbAttr, StatStageChangeCopyAbAttr, applyPostStatStageChangeAbAttrs, PostStatStageChangeAbAttr } from "#app/data/ability.js";
+import { applyPreStatStageChangeAbAttrs, ProtectStatAbAttr, applyAbAttrs, StatStageChangeMultiplierAbAttr, StatStageChangeCopyAbAttr, applyPostStatStageChangeAbAttrs, PostStatStageChangeAbAttr } from "#app/data/ability.js";
 import { MistTag, ArenaTagSide } from "#app/data/arena-tag.js";
 import Pokemon from "#app/field/pokemon.js";
 import { getPokemonNameWithAffix } from "#app/messages.js";
@@ -59,7 +59,7 @@ export class StatStageChangePhase extends PokemonPhase {
     const stages = new Utils.IntegerHolder(this.stages);
 
     if (!this.ignoreAbilities) {
-      applyAbAttrs(StatMultiplierAbAttr, pokemon, null, stages);
+      applyAbAttrs(StatStageChangeMultiplierAbAttr, pokemon, null, stages);
     }
 
     const relLevels = filteredStats.map(s => (stages.value >= 1 ? Math.min(pokemon.getStatStage(s) + stages.value, 6) : Math.max(pokemon.getStatStage(s) + stages.value, -6)) - pokemon.getStatStage(s));
