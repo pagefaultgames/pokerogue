@@ -295,16 +295,12 @@ export class InterruptedTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
+    pokemon.getMoveQueue().shift();
+    pokemon.pushMoveHistory({move: Moves.NONE, result: MoveResult.OTHER});
     if (this.sourceMove === Moves.GRAVITY) {
       pokemon.scene.queueMessage(i18next.t("battle:cancelSemiInvulnerableAirborne", { pokemonName: getPokemonNameWithAffix(pokemon)}));
     }
-    pokemon.getMoveQueue().shift();
-    pokemon.pushMoveHistory({move: Moves.NONE, result: MoveResult.OTHER});
-  }
-
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
-    return super.lapse(pokemon, lapseType);
+    pokemon.removeTag(BattlerTagType.INTERRUPTED);
   }
 }
 
