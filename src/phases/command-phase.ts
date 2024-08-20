@@ -1,21 +1,21 @@
-import BattleScene from "#app/battle-scene.js";
-import { TurnCommand, BattleType } from "#app/battle.js";
-import { applyCheckTrappedAbAttrs, CheckTrappedAbAttr } from "#app/data/ability.js";
-import { TrappedTag, EncoreTag } from "#app/data/battler-tags.js";
-import { MoveTargetSet, getMoveTargets } from "#app/data/move.js";
-import { speciesStarters } from "#app/data/pokemon-species.js";
-import { Type } from "#app/data/type.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { Biome } from "#app/enums/biome.js";
-import { Moves } from "#app/enums/moves.js";
-import { PokeballType } from "#app/enums/pokeball.js";
-import { FieldPosition, PlayerPokemon } from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { Command } from "#app/ui/command-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import { BattleType, TurnCommand } from "#app/battle";
+import BattleScene from "#app/battle-scene";
+import { applyCheckTrappedAbAttrs, CheckTrappedAbAttr } from "#app/data/ability";
+import { DamagingTrapTag, EncoreTag, TrappedTag } from "#app/data/battler-tags";
+import { getMoveTargets, MoveTargetSet } from "#app/data/move";
+import { speciesStarters } from "#app/data/pokemon-species";
+import { Type } from "#app/data/type";
+import { Abilities } from "#app/enums/abilities";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { Biome } from "#app/enums/biome";
+import { Moves } from "#app/enums/moves";
+import { PokeballType } from "#app/enums/pokeball";
+import { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
+import * as Utils from "#app/utils";
 import i18next from "i18next";
-import * as Utils from "#app/utils.js";
 import { FieldPhase } from "./field-phase";
 import { SelectTargetPhase } from "./select-target-phase";
 
@@ -184,7 +184,7 @@ export class CommandPhase extends FieldPhase {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }, null, true);
       } else {
-        const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
+        const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag);
         const trapped = new Utils.BooleanHolder(false);
         const batonPass = isSwitch && args[0] as boolean;
         const trappedAbMessages: string[] = [];
@@ -200,7 +200,9 @@ export class CommandPhase extends FieldPhase {
               this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
           }
         } else if (trapTag) {
-          if (trapTag.sourceMove === Moves.INGRAIN && trapTag.sourceId && this.scene.getPokemonById(trapTag.sourceId)?.isOfType(Type.GHOST)) {
+          const isGhostPokemon = this.scene.getPokemonById(trapTag.sourceId!)?.isOfType(Type.GHOST);
+          const canSwitch = (trapTag.sourceMove === Moves.INGRAIN && isGhostPokemon) || (trapTag instanceof DamagingTrapTag && isGhostPokemon);
+          if (canSwitch) {
             success = true;
             this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
               ? { command: Command.POKEMON, cursor: cursor, args: args }
