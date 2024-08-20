@@ -7,7 +7,7 @@ import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 
 const TIMEOUT = 20 * 1000;
@@ -37,7 +37,7 @@ describe("Moves - Thunder Wave", () => {
 
   // References: https://bulbapedia.bulbagarden.net/wiki/Thunder_Wave_(move)
 
-  test(
+  it(
     "Thunder Wave as-is paralyzes non-statused Pokemon that are not Ground types",
     async () => {
       game.override.enemySpecies(Species.MAGIKARP);
@@ -53,7 +53,7 @@ describe("Moves - Thunder Wave", () => {
     TIMEOUT
   );
 
-  test(
+  it(
     "Thunder Wave as-is does not paralyze if the Pokemon is a Ground-type",
     async () => {
       game.override.enemySpecies(Species.DIGLETT);
@@ -69,7 +69,7 @@ describe("Moves - Thunder Wave", () => {
     TIMEOUT
   );
 
-  test(
+  it(
     "Thunder Wave does not paralyze if the Pokemon is already status-ed",
     async () => {
       game.override.enemySpecies(Species.MAGIKARP);
@@ -86,7 +86,7 @@ describe("Moves - Thunder Wave", () => {
     TIMEOUT
   );
 
-  test(
+  it(
     "Thunder Wave's effectiveness is based on its type",
     async () => {
       game.override.ability(Abilities.NORMALIZE);
@@ -103,7 +103,7 @@ describe("Moves - Thunder Wave", () => {
     TIMEOUT
   );
 
-  test(
+  it(
     "Thunder Wave respects type immunities",
     async () => {
       game.override.ability(Abilities.NORMALIZE);
