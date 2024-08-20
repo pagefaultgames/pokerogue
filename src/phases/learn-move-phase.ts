@@ -47,9 +47,11 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const learnMovePrompt = i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
     const moveLimitReached = i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) });
     const shouldReplaceQ = i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name });
-    const prompt = [learnMovePrompt, moveLimitReached, shouldReplaceQ].join("$");
-    this.scene.ui.showText(prompt, null, () => {
-      this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => this.forgetMoveProcess(move, pokemon), () => this.rejectMoveAndEnd(move, pokemon));
+    const preQText = [learnMovePrompt, moveLimitReached].join("$");
+    this.scene.ui.showText(preQText, null, () => {
+      this.scene.ui.showText(shouldReplaceQ, null, () => {
+        this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => this.forgetMoveProcess(move, pokemon), () => this.rejectMoveAndEnd(move, pokemon));
+      }, null);
     }, null, true);
   }
 
@@ -81,7 +83,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
           this.scene.ui.setMode(this.messageMode);
           this.replaceMoveCheck(move, pokemon);
         });
-    }, null, true);
+    }, null);
   }
 
   learnMove(index: number, move, pokemon, textMessage?: string) {
