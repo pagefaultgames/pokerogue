@@ -2424,6 +2424,43 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
   }
 }
 
+export class PreventStatLowerChanceModifier extends PokemonHeldItemModifier {
+  private chance: number;
+
+  constructor(type: ModifierType, pokemonId: integer, chancePercent: number, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.chance = chancePercent / 100;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PreventStatLowerChanceModifier;
+  }
+
+  clone(): PreventStatLowerChanceModifier {
+    return new PreventStatLowerChanceModifier(this.type, this.pokemonId, this.chance, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.chance);
+  }
+
+  apply(args: any[]): boolean {
+    const result = Phaser.Math.RND.realInRange(0, 1) < (1 * this.getStackCount()) ? true : false;
+    const pokemon = args[0] as Pokemon;
+    if (result) {
+      const cancelled = args[1] as Utils.BooleanHolder;
+      cancelled.value = true;
+      pokemon.scene.queueMessage(i18next.t("modifier:PreventStatLowerChanceApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: i18next.t("modifierType:ModifierType.CLEAR_AMULET.name") }));
+    }
+    return result;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 5;
+  }
+}
+
 export class IvScannerModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);

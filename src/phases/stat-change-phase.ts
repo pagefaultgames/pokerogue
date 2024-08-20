@@ -5,7 +5,7 @@ import { MistTag, ArenaTagSide } from "#app/data/arena-tag.js";
 import { BattleStat, getBattleStatName, getBattleStatLevelChangeDescription } from "#app/data/battle-stat.js";
 import Pokemon from "#app/field/pokemon.js";
 import { getPokemonNameWithAffix } from "#app/messages.js";
-import { PokemonResetNegativeStatStageModifier } from "#app/modifier/modifier.js";
+import { PokemonResetNegativeStatStageModifier, PreventStatLowerChanceModifier } from "#app/modifier/modifier.js";
 import { handleTutorial, Tutorial } from "#app/tutorial.js";
 import i18next from "i18next";
 import * as Utils from "#app/utils.js";
@@ -48,6 +48,13 @@ export class StatChangePhase extends PokemonPhase {
     this.aggregateStatChanges(random);
 
     if (!pokemon.isActive(true)) {
+      return this.end();
+    }
+
+    // clear amulet
+    const cancelled = new Utils.BooleanHolder(false);
+    pokemon.scene.applyModifiers(PreventStatLowerChanceModifier, pokemon.isPlayer(), pokemon, cancelled);
+    if (!this.selfTarget && cancelled.value) {
       return this.end();
     }
 

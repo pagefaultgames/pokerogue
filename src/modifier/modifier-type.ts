@@ -1130,6 +1130,20 @@ export class ContactHeldItemTransferChanceModifierType extends PokemonHeldItemMo
   }
 }
 
+export class PreventStatLowerChanceModifierType extends PokemonHeldItemModifierType {
+  private chancePercent: integer;
+
+  constructor(localeKey: string, iconImage: string, chancePercent: integer, group?: string, soundName?: string) {
+    super(localeKey, iconImage, (type, args) => new Modifiers.PreventStatLowerChanceModifier(type, (args[0] as Pokemon).id, chancePercent), group, soundName);
+
+    this.chancePercent = chancePercent;
+  }
+
+  getDescription(scene: BattleScene): string {
+    return i18next.t("modifierType:ModifierType.PreventStatLowerChanceModifierType.description", { chancePercent: this.chancePercent });
+  }
+}
+
 export class TurnHeldItemTransferModifierType extends PokemonHeldItemModifierType {
   constructor(localeKey: string, iconImage: string, group?: string, soundName?: string) {
     super(localeKey, iconImage, (type, args) => new Modifiers.TurnHeldItemTransferModifier(type, (args[0] as Pokemon).id), group, soundName);
@@ -1425,6 +1439,7 @@ export const modifierTypes = {
   LOCK_CAPSULE: () => new ModifierType("modifierType:ModifierType.LOCK_CAPSULE", "lock_capsule", (type, _args) => new Modifiers.LockModifierTiersModifier(type)),
 
   GRIP_CLAW: () => new ContactHeldItemTransferChanceModifierType("modifierType:ModifierType.GRIP_CLAW", "grip_claw", 10),
+  CLEAR_AMULET: () => new PreventStatLowerChanceModifierType("modifierType:ModifierType.CLEAR_AMULET", "clear_amulet", 10),
   WIDE_LENS: () => new PokemonMoveAccuracyBoosterModifierType("modifierType:ModifierType.WIDE_LENS", "wide_lens", 5),
 
   MULTI_LENS: () => new PokemonMultiHitModifierType("modifierType:ModifierType.MULTI_LENS", "zoom_lens"),
@@ -1650,6 +1665,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.SHELL_BELL, 3),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 4),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
+    new WeightedModifierType(modifierTypes.CLEAR_AMULET, 5),
     new WeightedModifierType(modifierTypes.SCOPE_LENS, 4),
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 7),
@@ -1732,6 +1748,7 @@ const trainerModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.LUCKY_EGG, 4),
     new WeightedModifierType(modifierTypes.QUICK_CLAW, 1),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 1),
+    new WeightedModifierType(modifierTypes.CLEAR_AMULET, 1),
     new WeightedModifierType(modifierTypes.WIDE_LENS, 1),
   ].map(m => {
     m.setTier(ModifierTier.ROGUE); return m;

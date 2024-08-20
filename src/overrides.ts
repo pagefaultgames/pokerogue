@@ -98,7 +98,7 @@ class DefaultOverrides {
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
-  readonly MOVESET_OVERRIDE: Array<Moves> = [];
+  readonly MOVESET_OVERRIDE: Array<Moves> = [Moves.GROWL, Moves.CURSE, Moves.TOXIC, Moves.SAPPY_SEED];
   readonly SHINY_OVERRIDE: boolean = false;
   readonly VARIANT_OVERRIDE: Variant = 0;
 
@@ -111,7 +111,7 @@ class DefaultOverrides {
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;
-  readonly OPP_MOVESET_OVERRIDE: Array<Moves> = [];
+  readonly OPP_MOVESET_OVERRIDE: Array<Moves> = [Moves.GROWL, Moves.GROWL, Moves.GROWL, Moves.GROWL];
   readonly OPP_SHINY_OVERRIDE: boolean = false;
   readonly OPP_VARIANT_OVERRIDE: Variant = 0;
   readonly OPP_IVS_OVERRIDE: integer | integer[] = [];
@@ -165,7 +165,7 @@ class DefaultOverrides {
   readonly OPP_MODIFIER_OVERRIDE: ModifierOverride[] = [];
 
   /** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game. */
-  readonly STARTING_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
+  readonly STARTING_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [{ name: "CLEAR_AMULET", count: 10 }, { name: "GRIP_CLAW", count: 10 }];
   /** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn. */
   readonly OPP_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
 
@@ -177,7 +177,7 @@ class DefaultOverrides {
    *
    * Note that, for all items in the array, `count` is not used.
    */
-  readonly ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];
+  readonly ITEM_REWARD_OVERRIDE: ModifierOverride[] = [{ name: "CLEAR_AMULET" }];
 }
 
 export const defaultOverrides = new DefaultOverrides();
