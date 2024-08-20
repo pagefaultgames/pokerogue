@@ -28,11 +28,11 @@ describe("Moves - Thunder Wave", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.starterSpecies(Species.PIKACHU);
-    game.override.moveset([Moves.THUNDER_WAVE]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
-    vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
+    game.override.battleType("single")
+      .starterSpecies(Species.PIKACHU)
+      .moveset([Moves.THUNDER_WAVE])
+      .enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+    game.move.forceHit()
   });
 
   // References: https://bulbapedia.bulbagarden.net/wiki/Thunder_Wave_(move)
@@ -72,8 +72,7 @@ describe("Moves - Thunder Wave", () => {
   it(
     "Thunder Wave does not paralyze if the Pokemon is already status-ed",
     async () => {
-      game.override.enemySpecies(Species.MAGIKARP);
-      game.override.enemyStatusEffect(StatusEffect.BURN);
+      game.override.enemySpecies(Species.MAGIKARP).enemyStatusEffect(StatusEffect.BURN);
       await game.startBattle();
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
@@ -89,8 +88,7 @@ describe("Moves - Thunder Wave", () => {
   it(
     "Thunder Wave's effectiveness is based on its type",
     async () => {
-      game.override.ability(Abilities.NORMALIZE);
-      game.override.enemySpecies(Species.DIGLETT);
+      game.override.ability(Abilities.NORMALIZE).enemySpecies(Species.DIGLETT);
       await game.startBattle();
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
@@ -106,8 +104,7 @@ describe("Moves - Thunder Wave", () => {
   it(
     "Thunder Wave respects type immunities",
     async () => {
-      game.override.ability(Abilities.NORMALIZE);
-      game.override.enemySpecies(Species.HAUNTER);
+      game.override.ability(Abilities.NORMALIZE).enemySpecies(Species.HAUNTER);
       await game.startBattle();
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
