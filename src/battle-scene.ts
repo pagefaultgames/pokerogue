@@ -49,8 +49,8 @@ import CandyBar from "./ui/candy-bar";
 import { Variant, variantData } from "./data/variant";
 import { Localizable } from "#app/interfaces/locales";
 import Overrides from "#app/overrides";
-import {InputsController} from "./inputs-controller";
-import {UiInputs} from "./ui-inputs";
+import { InputsController } from "./inputs-controller";
+import { UiInputs } from "./ui-inputs";
 import { NewArenaEvent } from "./events/battle-scene";
 import { ArenaFlyout } from "./ui/arena-flyout";
 import { EaseType } from "#enums/ease-type";
@@ -65,7 +65,7 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
-import {TrainerType} from "#enums/trainer-type";
+import { TrainerType } from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
 import { LoadingScene } from "./loading-scene";
 import { LevelCapPhase } from "./phases/level-cap-phase";
@@ -851,7 +851,7 @@ export default class BattleScene extends SceneBase {
     overrideModifiers(this, false);
     overrideHeldItems(this, pokemon, false);
     if (boss && !dataSource) {
-      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
+      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967296));
 
       for (let s = 0; s < pokemon.ivs.length; s++) {
         pokemon.ivs[s] = Math.round(Phaser.Math.Linear(Math.min(pokemon.ivs[s], secondaryIvs[s]), Math.max(pokemon.ivs[s], secondaryIvs[s]), 0.75));
@@ -957,6 +957,7 @@ export default class BattleScene extends SceneBase {
     this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
   }
 
+  // What is the purpose of this function? Why not just use Battle.randSeedInt() directly?
   randBattleSeedInt(range: integer, min: integer = 0): integer {
     return this.currentBattle?.randSeedInt(this, range, min);
   }
@@ -1107,7 +1108,8 @@ export default class BattleScene extends SceneBase {
             doubleTrainer = false;
           }
         }
-        newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, doubleTrainer ? TrainerVariant.DOUBLE : Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+        const variant = doubleTrainer ? TrainerVariant.DOUBLE : (Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+        newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, variant);
         this.field.add(newTrainer);
       }
     }
@@ -2550,7 +2552,7 @@ export default class BattleScene extends SceneBase {
         if (mods.length < 1) {
           return mods;
         }
-        const rand = Math.floor(Utils.randSeedInt(mods.length));
+        const rand = Math.floor(Utils.randSeedInt(mods.length)); // Why is there a floor() call around a number that can only be an integer?
         return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
       };
       modifiers = shuffleModifiers(modifiers);

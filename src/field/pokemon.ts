@@ -1573,7 +1573,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       };
 
     this.fusionSpecies = this.scene.randomSpecies(this.scene.currentBattle?.waveIndex || 0, this.level, false, filter, true);
-    this.fusionAbilityIndex = (this.fusionSpecies.abilityHidden && hasHiddenAbility ? this.fusionSpecies.ability2 ? 2 : 1 : this.fusionSpecies.ability2 ? randAbilityIndex : 0);
+    this.fusionAbilityIndex = (this.fusionSpecies.abilityHidden && hasHiddenAbility ? 2 : this.fusionSpecies.ability2 !== this.fusionSpecies.ability1 ? randAbilityIndex : 0);
     this.fusionShiny = this.shiny;
     this.fusionVariant = this.variant;
 
@@ -2081,7 +2081,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (!isTypeImmune) {
           const levelMultiplier = (2 * source.level / 5 + 2);
-          const randomMultiplier = ((this.scene.randBattleSeedInt(16) + 85) / 100);
+          const randomMultiplier = (this.randSeedIntRange(85, 100) / 100);
           damage.value = Math.ceil((((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2)
                                    * stabMultiplier.value
                                    * typeMultiplier.value

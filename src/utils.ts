@@ -82,6 +82,7 @@ export function randInt(range: integer, min: integer = 0): integer {
   return Math.floor(Math.random() * range) + min;
 }
 
+// Is this only seeded if called via `Battle:randSeedInt()`?
 export function randSeedInt(range: integer, min: integer = 0): integer {
   if (range <= 1) {
     return min;
