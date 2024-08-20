@@ -978,12 +978,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // this.scene potentially can be undefined for a fainted pokemon in doubles
     // use optional chaining to avoid runtime errors
-    if (forDefend && (this.getTag(GroundedTag) || this.scene?.arena.getTag(ArenaTagType.GRAVITY))) {
-      const flyingIndex = types.indexOf(Type.FLYING);
-      if (flyingIndex > -1) {
-        types.splice(flyingIndex, 1);
-      }
-    }
 
     if (!types.length) { // become UNKNOWN if no types are present
       types.push(Type.UNKNOWN);
@@ -1272,6 +1266,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return this.isTerastallized() ? 2 : 1;
     }
     const types = this.getTypes(true, true);
+    const { arena } = this.scene;
+
+    // Handle flying v ground type immunity without removing flying type so effective types are still effective
+    // Related to https://github.com/pagefaultgames/pokerogue/issues/524
+    if (moveType === Type.GROUND && (this.isGrounded() || arena.hasTag(ArenaTagType.GRAVITY))) {
+      const flyingIndex = types.indexOf(Type.FLYING);
+      if (flyingIndex > -1) {
+        types.splice(flyingIndex, 1);
+      }
+    }
 
     let multiplier = types.map(defType => {
       if (source) {
