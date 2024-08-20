@@ -70,6 +70,6 @@ export const battlerTags: SimpleTranslationEntries = {
   "cursedOnAdd": "{{pokemonNameWithAffix}} sacrifie des PV\net lance une malédiction sur {{pokemonName}} !",
   "cursedLapse": "{{pokemonNameWithAffix}} est touché par la malédiction !",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}} utilise\nla capacité Stockage {{stockpiledCount}} fois !",
-  "rageOnAdd":"{{pokemonNameWithAffix}}'s rage is starting to build.",
-  "rageOnHit": "{{pokemonNameWithAffix}}'s rage is building."
+  "rageOnAdd": "La Frénésie s’empare\nde {{pokemonNameWithAffix}} !",
+  "rageOnHit": "La Frénésie de {{pokemonNameWithAffix}}\naugmente !"
 } as const;
