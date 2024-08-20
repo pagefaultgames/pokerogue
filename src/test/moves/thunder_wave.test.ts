@@ -1,13 +1,12 @@
 import { StatusEffect } from "#app/data/status-effect";
 import { EnemyPokemon } from "#app/field/pokemon";
-import { allMoves } from "#app/data/move";
 import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 
 const TIMEOUT = 20 * 1000;
@@ -32,7 +31,7 @@ describe("Moves - Thunder Wave", () => {
       .starterSpecies(Species.PIKACHU)
       .moveset([Moves.THUNDER_WAVE])
       .enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
-    game.move.forceHit()
+    game.move.forceHit();
   });
 
   // References: https://bulbapedia.bulbagarden.net/wiki/Thunder_Wave_(move)
