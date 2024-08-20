@@ -250,7 +250,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         duration: 250
       });
 
-      const setCursorTarget = () => {
+      const updateCursorTarget = () => {
         if (this.scene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
           this.setRowCursor(0);
           this.setCursor(2);
@@ -260,11 +260,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         }
       };
 
-      setCursorTarget();
+      updateCursorTarget();
 
       handleTutorial(this.scene, Tutorial.Select_Item).then((res) => {
         if (res) {
-          setCursorTarget();
+          updateCursorTarget();
         }
         this.awaitingActionInput = true;
         this.onActionInput = args[2];
