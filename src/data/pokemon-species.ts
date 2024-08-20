@@ -1,24 +1,22 @@
 
-import BattleScene, { AnySound } from "../battle-scene";
-import { Variant, variantColorCache } from "./variant";
-import { variantData } from "./variant";
-import { GrowthRate } from "./exp";
-import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
-import { Type } from "./type";
-import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
-import { uncatchableSpecies } from "./biomes";
-import * as Utils from "../utils";
-import { StarterMoveset } from "../system/game-data";
-import { speciesEggMoves } from "./egg-moves";
-import { GameMode } from "../game-mode";
-import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
-import { VariantSet } from "./variant";
-import i18next from "i18next";
 import { Localizable } from "#app/interfaces/locales";
-import { Stat } from "./pokemon-stat";
 import { Abilities } from "#enums/abilities";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
+import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
+import i18next from "i18next";
+import BattleScene, { AnySound } from "../battle-scene";
+import { GameMode } from "../game-mode";
+import { StarterMoveset } from "../system/game-data";
+import * as Utils from "../utils";
+import { uncatchableSpecies } from "./biomes";
+import { speciesEggMoves } from "./egg-moves";
+import { GrowthRate } from "./exp";
+import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
+import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
+import { Stat } from "./pokemon-stat";
+import { Type } from "./type";
+import { Variant, VariantSet, variantColorCache, variantData } from "./variant";
 
 export enum Region {
   NORMAL,
@@ -648,7 +646,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.getSpeciesForLevel(level, allowEvolving, false, (isBoss ? PartyMemberStrength.WEAKER : PartyMemberStrength.AVERAGE) + (gameMode?.isEndless ? 1 : 0));
   }
 
-  getTrainerSpeciesForLevel(level: integer, allowEvolving: boolean = false, strength: PartyMemberStrength, currentWave: number): Species {
+  getTrainerSpeciesForLevel(level: integer, allowEvolving: boolean = false, strength: PartyMemberStrength, currentWave: number = 0): Species {
     return this.getSpeciesForLevel(level, allowEvolving, true, strength, currentWave);
   }
 
