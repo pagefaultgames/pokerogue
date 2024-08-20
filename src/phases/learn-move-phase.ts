@@ -27,14 +27,16 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const move = allMoves[this.moveId];
     const currentMoveset = pokemon.getMoveset();
 
-    this.messageMode = this.scene.ui.getHandler() instanceof EvolutionSceneHandler ? Mode.EVOLUTION_SCENE : Mode.MESSAGE;
-
+    // The game first checks if the Pokemon already has the move and ends the phase if it does.
     const hasMoveAlready = currentMoveset.some(m => m?.moveId === move.id);
-
     if (hasMoveAlready) {
       return this.end();
     }
 
+    this.messageMode = this.scene.ui.getHandler() instanceof EvolutionSceneHandler ? Mode.EVOLUTION_SCENE : Mode.MESSAGE;
+
+    // If the Pokemon has less than 4 moves, the new move is added to the largest empty moveset index
+    // If it has 4 moves, the phase then checks if the player wants to replace the move itself.
     if (currentMoveset.length < 4) {
       this.scene.playSound("level_up_fanfare");
       this.learnMove(currentMoveset.length, move, pokemon);
@@ -43,6 +45,12 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }
   }
 
+  /**
+   * This displays a chain of messages (listed below) and asks if the user wishes to forget a move.
+   * > [Pokemon] wants to learn the move [MoveName]
+   * > However, [Pokemon] alreadyknows four moves.
+   * > Should a move be forgotten and replaced with [MoveName]? --> Mode.CONFIRM -> Yes: Go to this.forgetMoveProcess(), No: Go to this.rejectMoveAndEnd()
+   */
   replaceMoveCheck(move, pokemon) {
     const learnMovePrompt = i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
     const moveLimitReached = i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) });
@@ -55,6 +63,13 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }, null, true);
   }
 
+  /**
+   * This facilitates the process in which an old move is chosen to be forgotten.
+   * > Which move should be forgotten?
+   * The game then goes Mode.SUMMARY to select a move to be forgotten.
+   * If a player does not select a move or chooses the new move (moveIndex === 4), the game goes to this.rejectMoveAndEnd()
+   * If an old move is selected, the function then passes the moveIndex to this.learnMove()
+   */
   forgetMoveProcess(move, pokemon) {
     this.scene.ui.setMode(this.messageMode);
     this.scene.ui.showText(i18next.t("battle:learnMoveForgetQuestion"), null, () => {
@@ -71,6 +86,12 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }, null, true);
   }
 
+  /**
+   * This asks the player if they wish to end the current move learning process.
+   * > Stop trying to teach [MoveName]? --> Mode.CONFIRM --> Yes: > [Pokemon] did not learn the move [MoveName], No: this.replaceMoveCheck()
+   * If the player wishes to not teach the Pokemon the move, it displays a message and ends the phase.
+   * If the player reconsiders, it repeats the process for a Pokemon with a full moveset once again.
+   */
   rejectMoveAndEnd(move, pokemon) {
     this.scene.ui.setMode(this.messageMode);
     this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
@@ -86,6 +107,19 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }, null);
   }
 
+  /**
+   * This teaches the Pokemon the new move and ends the phase.
+   * When a Pokemon forgets a move and learns a new one, its 'Learn Move' message is significantly longer.
+   *
+   * Pokemon with a moveset.length < 4
+   * > [Pokemon] learned [MoveName]
+   *
+   * Pokemon with a moveset.length > 4
+   * > 1... 2... and 3... and Poof!
+   * > [Pokemon] forgot how to use [MoveName]
+   * > And...
+   * > [Pokemon] learned [MoveName]!
+   */
   learnMove(index: number, move, pokemon, textMessage?: string) {
     pokemon.setMove(index, this.moveId);
     initMoveAnim(this.scene, this.moveId).then(() => {
