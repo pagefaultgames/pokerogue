@@ -1,13 +1,22 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
-export const pokemonForm: SimpleTranslationEntries = {
-  // Battle forms
+export const battlePokemonForm: SimpleTranslationEntries = {
   "mega": "Mega {{pokemonName}}",
   "mega-x": "Mega {{pokemonName}} X",
   "mega-y": "Mega {{pokemonName}} Y",
   "primal": "{{pokemonName}} Primordial",
   "gigantamax": "G-Max {{pokemonName}}",
   "eternamax": "E-Max {{pokemonName}}",
+
+  "megaChange": "{{preName}} Mega Evoluiu\npara {{pokemonName}}!",
+  "gigantamaxChange": "{{preName}} Gigantamaxou\npara {{pokemonName}}!",
+  "eternamaxChange": "{{preName}} Eternamaxou\npara {{pokemonName}}!",
+  "revertChange": "{{pokemonName}} voltou\npara sua forma original!",
+  "formChange": "{{preName}} mudou de forma!",
+  "disguiseChange": "O seu disfarce serviu-lhe de isca!",
+} as const;
+
+export const pokemonForm: SimpleTranslationEntries = {
 
   // Starters forms
   // 1G
@@ -20,7 +29,7 @@ export const pokemonForm: SimpleTranslationEntries = {
   "pikachuPartner": "Parceiro",
   "eeveePartner": "Parceiro",
   // 2G
-  "pichuSpiky": "Spiky",
+  "pichuSpiky": "Orelha Espetada",
   "unownA": "A",
   "unownB": "B",
   "unownC": "C",
@@ -65,8 +74,8 @@ export const pokemonForm: SimpleTranslationEntries = {
   "rotomFrost": "Congelante",
   "rotomFan": "Ventilador",
   "rotomMow": "Corte",
-  "giratinaAltered": "Altered",
-  "shayminLand": "Land",
+  "giratinaAltered": "Alterado",
+  "shayminLand": "Terrestre",
   // 5G
   "basculinRedStriped": "Listras Vermelhas",
   "basculinBlueStriped": "Listras Azuis",
@@ -75,11 +84,11 @@ export const pokemonForm: SimpleTranslationEntries = {
   "deerlingSummer": "Verão",
   "deerlingAutumn": "Outono",
   "deerlingWinter": "Inverno",
-  "tornadusIncarnate": "Incarnate",
-  "thundurusIncarnate": "Incarnate",
-  "landorusIncarnate": "Incarnate",
-  "keldeoOrdinary": "Ordinary",
-  "meloettaAria": "Aria",
+  "tornadusIncarnate": "Materializado",
+  "thundurusIncarnate": "Materializado",
+  "landorusIncarnate": "Materializado",
+  "keldeoOrdinary": "Comum",
+  "meloettaAria": "Ária",
   // 6G
   "froakieBattleBond": "Vínculo de Batalha",
   "scatterbugMeadow": "Prado",
@@ -156,11 +165,11 @@ export const pokemonForm: SimpleTranslationEntries = {
   "eiscueNoIce": "Descongelado",
   "indeedeeMale": "Macho",
   "indeedeeFemale": "Fêmea",
-  "morpekoFullBelly": "Full Belly",
-  "zacianHeroOfManyBattles": "Hero Of Many Battles",
-  "zamazentaHeroOfManyBattles": "Hero Of Many Battles",
+  "morpekoFullBelly": "Saciado",
+  "zacianHeroOfManyBattles": "Herói Veterano",
+  "zamazentaHeroOfManyBattles": "Herói Veterano",
   "zarudeDada": "Papa",
-  "enamorusIncarnate": "Incarnate",
+  "enamorusIncarnate": "Materializado",
   // 9G
   "squawkabillyGreenPlumage": "Plumas Verdes",
   "squawkabillyBluePlumage": "Plumas Azuis",
@@ -172,15 +181,15 @@ export const pokemonForm: SimpleTranslationEntries = {
   "gimmighoulChest": "Baú",
   "gimmighoulRoaming": "Perambulante",
   "koraidonApexBuild": "Apex Build",
-  "koraidonLimitedBuild":"Limited Build",
-  "koraidonSprintingBuild":"Sprinting Build",
-  "koraidonSwimmingBuild":"Swimming Build",
-  "koraidonGlidingBuild":"Gliding Build",
-  "miraidonUltimateMode":"Ultimate Mode",
-  "miraidonLowPowerMode":"Low Power Mode",
-  "miraidonDriveMode":"Drive Mode",
-  "miraidonAquaticMode":"Aquatic Mode",
-  "miraidonGlideMode":"Glide Mode",
+  "koraidonLimitedBuild": "Limited Build",
+  "koraidonSprintingBuild": "Sprinting Build",
+  "koraidonSwimmingBuild": "Swimming Build",
+  "koraidonGlidingBuild": "Gliding Build",
+  "miraidonUltimateMode": "Ultimate Mode",
+  "miraidonLowPowerMode": "Low Power Mode",
+  "miraidonDriveMode": "Drive Mode",
+  "miraidonAquaticMode": "Aquatic Mode",
+  "miraidonGlideMode": "Glide Mode",
   "poltchageistCounterfeit": "Imitação",
   "poltchageistArtisan": "Artesão",
   "paldeaTaurosCombat": "Combate",

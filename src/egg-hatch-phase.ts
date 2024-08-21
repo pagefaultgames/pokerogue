@@ -4,7 +4,7 @@ import { Phase } from "./phase";
 import BattleScene, { AnySound } from "./battle-scene";
 import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
-import { EGG_SEED, Egg } from "./data/egg";
+import { Egg } from "./data/egg";
 import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
 import { PlayerPokemon } from "./field/pokemon";
 import { achvs } from "./system/achv";
@@ -13,6 +13,7 @@ import EggCounterContainer from "./ui/egg-counter-container";
 import { EggCountChangedEvent } from "./events/egg";
 import { getPokemonNameWithAffix } from "./messages";
 import { DexEntry, StarterDataEntry } from "./system/game-data";
+import { EggLapsePhase } from "./phases";
 
 // export class EggSkipPhase extends Phase {
 //   private eggs: Egg[];
@@ -47,7 +48,6 @@ export class EggHatchPhase extends Phase {
   /** The egg that is hatching */
   private egg: Egg;
   private eggHatchData: EggHatchData;
-  private eggHatchDataContainer: EggHatchData[];
 
   /** The number of eggs that are hatching */
   private eggsToHatchCount: integer;
@@ -88,13 +88,13 @@ export class EggHatchPhase extends Phase {
   private skipped: boolean;
   /** The sound effect being played when the egg is hatched */
   private evolutionBgm: AnySound;
+  private hatchScene: EggLapsePhase;
 
-  constructor(scene: BattleScene, egg: Egg, eggHatchDataContainer: EggHatchData[], eggsToHatchCount: integer) {
+  constructor(scene: BattleScene, hatchScene: EggLapsePhase, egg: Egg, eggsToHatchCount: integer) {
     super(scene);
-
+    this.hatchScene = hatchScene;
     this.egg = egg;
     this.eggsToHatchCount = eggsToHatchCount;
-    this.eggHatchDataContainer = eggHatchDataContainer;
   }
 
   start() {
@@ -114,7 +114,7 @@ export class EggHatchPhase extends Phase {
 
       this.scene.gameData.eggs.splice(eggIndex, 1);
 
-      this.scene.fadeOutBgm(null, false);
+      this.scene.fadeOutBgm(undefined, false);
 
       this.eggHatchHandler = this.scene.ui.getHandler() as EggHatchSceneHandler;
 
@@ -228,7 +228,6 @@ export class EggHatchPhase extends Phase {
   }
 
   end() {
-    this.eggHatchDataContainer.push(this.eggHatchData);
     if (this.scene.findPhase((p) => p instanceof EggHatchPhase)) {
       this.eggHatchHandler.clear();
     } else {
@@ -265,8 +264,8 @@ export class EggHatchPhase extends Phase {
             ease: "Sine.easeInOut",
             duration: 250,
             onComplete: () => {
-              count++;
-              if (count < repeatCount) {
+              count!++;
+              if (count! < repeatCount!) { // we know they are defined
                 return this.doEggShake(intensity, repeatCount, count).then(() => resolve());
               }
               this.scene.tweens.add({
@@ -381,7 +380,7 @@ export class EggHatchPhase extends Phase {
           this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
             this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then((value) => {
               this.eggHatchData.setEggMoveUnlocked(value);
-              this.scene.ui.showText(null, 0);
+              this.scene.ui.showText("", 0);
               this.end();
             });
           });
@@ -473,14 +472,16 @@ export class EggHatchPhase extends Phase {
    * @returns the hatched PlayerPokemon
    */
   generatePokemon(): PlayerPokemon {
-    let ret: PlayerPokemon;
+    // let ret: PlayerPokemon;
 
-    this.scene.executeWithSeedOffset(() => {
-      ret = this.egg.generatePlayerPokemon(this.scene);
-    }, this.egg.id, EGG_SEED.toString());
+    // this.scene.executeWithSeedOffset(() => {
+    //   ret = this.egg.generatePlayerPokemon(this.scene);
+    // }, this.egg.id, EGG_SEED.toString());
+    // this.eggHatchContainer.add(new EggHatchData(this.scene, ))
 
-    this.eggHatchData = new EggHatchData(this.scene, ret, this.egg.eggMoveIndex);
-    return ret;
+    // return ret;
+    this.eggHatchData = this.hatchScene.generatePokemon(this.egg);
+    return this.eggHatchData.pokemon;
   }
 
   //   getNewProperties(pokemon: PlayerPokemon) {

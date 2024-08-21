@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, variantColorCache } from "./variant";
 import { variantData } from "./variant";
 import { GrowthRate } from "./exp";
-import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
+import { EvolutionLevel,SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
 import { Type } from "./type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
 import { uncatchableSpecies } from "./biomes";
@@ -28,21 +28,21 @@ export enum Region {
   PALDEA
 }
 
-export function getPokemonSpecies(species: Species): PokemonSpecies {
+export function getPokemonSpecies(species: Species | Species[]): PokemonSpecies {
   // If a special pool (named trainers) is used here it CAN happen that they have a array as species (which means choose one of those two). So we catch that with this code block
   if (Array.isArray(species)) {
     // Pick a random species from the list
     species = species[Math.floor(Math.random() * species.length)];
   }
   if (species >= 2000) {
-    return allSpecies.find(s => s.speciesId === species);
+    return allSpecies.find(s => s.speciesId === species)!; // TODO: is this bang correct?
   }
   return allSpecies[species - 1];
 }
 
 export function getPokemonSpeciesForm(species: Species, formIndex: integer): PokemonSpeciesForm {
   const retSpecies: PokemonSpecies = species >= 2000
-    ? allSpecies.find(s => s.speciesId === species)
+    ? allSpecies.find(s => s.speciesId === species)! // TODO: is the bang correct?
     : allSpecies[species - 1];
   if (formIndex < retSpecies.forms?.length) {
     return retSpecies.forms[formIndex];
@@ -97,7 +97,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
           fragB = fragB.slice(1);
         } else {
           const newCharMatch = new RegExp(`[^${lastCharA}]`).exec(fragB);
-          if (newCharMatch?.index > 0) {
+          if (newCharMatch?.index !== undefined && newCharMatch.index > 0) {
             fragB = fragB.slice(newCharMatch.index);
           }
         }
@@ -125,7 +125,7 @@ export abstract class PokemonSpeciesForm {
   public formIndex: integer;
   public generation: integer;
   public type1: Type;
-  public type2: Type;
+  public type2: Type | null;
   public height: number;
   public weight: number;
   public ability1: Abilities;
@@ -139,7 +139,7 @@ export abstract class PokemonSpeciesForm {
   public genderDiffs: boolean;
   public isStarterSelectable: boolean;
 
-  constructor(type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
+  constructor(type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
     catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs: boolean, isStarterSelectable: boolean) {
     this.type1 = type1;
@@ -267,7 +267,7 @@ export abstract class PokemonSpeciesForm {
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
-  getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer, back?: boolean): string {
+  getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean, variant: integer = 0, back?: boolean): string {
     if (formIndex === undefined || this instanceof PokemonForm) {
       formIndex = this.formIndex;
     }
@@ -281,7 +281,7 @@ export abstract class PokemonSpeciesForm {
     `${back ? "back__" : ""}${baseSpriteKey}`.split("__").map(p => config ? config = config[p] : null);
     const variantSet = config as VariantSet;
 
-    return `${back ? "back__" : ""}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? "shiny__" : ""}${baseSpriteKey}${shiny && variantSet && variantSet[variant || 0] === 2 ? `_${variant + 1}` : ""}`;
+    return `${back ? "back__" : ""}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? "shiny__" : ""}${baseSpriteKey}${shiny && variantSet && variantSet[variant] === 2 ? `_${variant + 1}` : ""}`;
   }
 
   getSpriteKey(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
@@ -297,11 +297,11 @@ export abstract class PokemonSpeciesForm {
    * @returns species id if no additional forms, index with formkey if a pokemon with a form
    */
   getVariantDataIndex(formIndex?: integer) {
-    let formkey = null;
-    let variantDataIndex: integer|string = this.speciesId;
+    let formkey: string | null = null;
+    let variantDataIndex: integer | string = this.speciesId;
     const species = getPokemonSpecies(this.speciesId);
-    if (species.forms.length > 0) {
-      formkey = species.forms[formIndex]?.formKey;
+    if (species.forms.length > 0 && formIndex !== undefined) {
+      formkey = species.forms[formIndex]?.formSpriteKey;
       if (formkey) {
         variantDataIndex = `${this.speciesId}-${formkey}`;
       }
@@ -311,7 +311,7 @@ export abstract class PokemonSpeciesForm {
 
   getIconAtlasKey(formIndex?: integer, shiny?: boolean, variant?: integer): string {
     const variantDataIndex = this.getVariantDataIndex(formIndex);
-    const isVariant = shiny && variantData[variantDataIndex] && variantData[variantDataIndex][variant];
+    const isVariant = shiny && variantData[variantDataIndex] && (variant !== undefined && variantData[variantDataIndex][variant]);
     return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
   }
 
@@ -324,7 +324,7 @@ export abstract class PokemonSpeciesForm {
 
     let ret = this.speciesId.toString();
 
-    const isVariant = shiny && variantData[variantDataIndex] && variantData[variantDataIndex][variant];
+    const isVariant = shiny && variantData[variantDataIndex] && (variant !== undefined && variantData[variantDataIndex][variant]);
 
     if (shiny && !isVariant) {
       ret += "s";
@@ -382,7 +382,7 @@ export abstract class PokemonSpeciesForm {
     let ret = speciesId.toString();
     const forms = getPokemonSpecies(speciesId).forms;
     if (forms.length) {
-      if (formIndex >= forms.length) {
+      if (formIndex !== undefined && formIndex >= forms.length) {
         console.warn(`Attempted accessing form with index ${formIndex} of species ${getPokemonSpecies(speciesId).getName()} with only ${forms.length || 0} forms`);
         formIndex = Math.min(formIndex, forms.length - 1);
       }
@@ -435,7 +435,7 @@ export abstract class PokemonSpeciesForm {
     for (const moveId of moveset) {
       if (speciesEggMoves.hasOwnProperty(rootSpeciesId)) {
         const eggMoveIndex = speciesEggMoves[rootSpeciesId].findIndex(m => m === moveId);
-        if (eggMoveIndex > -1 && eggMoves & Math.pow(2, eggMoveIndex)) {
+        if (eggMoveIndex > -1 && (eggMoves & (1 << eggMoveIndex))) {
           continue;
         }
       }
@@ -478,7 +478,7 @@ export abstract class PokemonSpeciesForm {
         let config = variantData;
         spritePath.split("/").map(p => config ? config = config[p] : null);
         const variantSet = config as VariantSet;
-        if (variantSet && variantSet[variant] === 1) {
+        if (variantSet && (variant !== undefined && variantSet[variant] === 1)) {
           const populateVariantColors = (key: string): Promise<void> => {
             return new Promise(resolve => {
               if (variantColorCache.hasOwnProperty(key)) {
@@ -507,7 +507,7 @@ export abstract class PokemonSpeciesForm {
 
   cry(scene: BattleScene, soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound {
     const cryKey = this.getCryKey(this.formIndex);
-    let cry = scene.sound.get(cryKey) as AnySound;
+    let cry: AnySound | null = scene.sound.get(cryKey) as AnySound;
     if (cry?.pendingRemove) {
       cry = null;
     }
@@ -532,30 +532,32 @@ export abstract class PokemonSpeciesForm {
     const frame = sourceFrame;
     canvas.width = frame.width;
     canvas.height = frame.height;
-    context.drawImage(sourceImage, frame.cutX, frame.cutY, frame.width, frame.height, 0, 0, frame.width, frame.height);
-    const imageData = context.getImageData(frame.cutX, frame.cutY, frame.width, frame.height);
-    const pixelData = imageData.data;
+    context?.drawImage(sourceImage, frame.cutX, frame.cutY, frame.width, frame.height, 0, 0, frame.width, frame.height);
+    const imageData = context?.getImageData(frame.cutX, frame.cutY, frame.width, frame.height);
+    const pixelData = imageData?.data;
+    const pixelColors: number[] = [];
 
-    for (let i = 0; i < pixelData.length; i += 4) {
-      if (pixelData[i + 3]) {
-        const pixel = pixelData.slice(i, i + 4);
-        const [ r, g, b, a ] = pixel;
-        if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b)) {
-          spriteColors.push([ r, g, b, a ]);
+    if (pixelData?.length !== undefined) {
+      for (let i = 0; i < pixelData.length; i += 4) {
+        if (pixelData[i + 3]) {
+          const pixel = pixelData.slice(i, i + 4);
+          const [ r, g, b, a ] = pixel;
+          if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b)) {
+            spriteColors.push([ r, g, b, a ]);
+          }
         }
       }
-    }
 
-    const pixelColors = [];
-    for (let i = 0; i < pixelData.length; i += 4) {
-      const total = pixelData.slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
-      if (!total) {
-        continue;
+      for (let i = 0; i < pixelData.length; i += 4) {
+        const total = pixelData.slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
+        if (!total) {
+          continue;
+        }
+        pixelColors.push(argbFromRgba({ r: pixelData[i], g: pixelData[i + 1], b: pixelData[i + 2], a: pixelData[i + 3] }));
       }
-      pixelColors.push(argbFromRgba({ r: pixelData[i], g: pixelData[i + 1], b: pixelData[i + 2], a: pixelData[i + 3] }));
     }
 
-    let paletteColors: Map<number, number>;
+    let paletteColors: Map<number, number> = new Map();
 
     const originalRandom = Math.random;
     Math.random = () => Phaser.Math.RND.realInRange(0, 1);
@@ -577,15 +579,15 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   public mythical: boolean;
   public species: string;
   public growthRate: GrowthRate;
-  public malePercent: number;
+  public malePercent: number | null;
   public genderDiffs: boolean;
   public canChangeForm: boolean;
   public forms: PokemonForm[];
 
   constructor(id: Species, generation: integer, subLegendary: boolean, legendary: boolean, mythical: boolean, species: string,
-    type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
+    type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
-    catchRate: integer, baseFriendship: integer, baseExp: integer, growthRate: GrowthRate, malePercent: number,
+    catchRate: integer, baseFriendship: integer, baseExp: integer, growthRate: GrowthRate, malePercent: number | null,
     genderDiffs: boolean, canChangeForm?: boolean, ...forms: PokemonForm[]) {
     super(type1, type2, height, weight, ability1, ability2, abilityHidden, baseTotal, baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd,
       catchRate, baseFriendship, baseExp, genderDiffs, false);
@@ -614,7 +616,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   getName(formIndex?: integer): string {
     if (formIndex !== undefined && this.forms.length) {
       const form = this.forms[formIndex];
-      let key: string;
+      let key: string | null;
       switch (form.formKey) {
       case SpeciesFormKey.MEGA:
       case SpeciesFormKey.PRIMAL:
@@ -626,11 +628,13 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       default:
         if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
           key = "gigantamax";
+        } else {
+          key = null;
         }
       }
 
       if (key) {
-        return i18next.t(`pokemonForm:${key}`, {pokemonName: this.name});
+        return i18next.t(`battlePokemonForm:${key}`, {pokemonName: this.name});
       }
     }
     return this.name;
@@ -713,11 +717,11 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
             evolutionChance = Math.min(minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance), 1);
           }
         } else {
-          const preferredMinLevel = Math.max((ev.level - 1) + ev.wildDelay * this.getStrengthLevelDiff(strength), 1);
+          const preferredMinLevel = Math.max((ev.level - 1) + (ev.wildDelay!) * this.getStrengthLevelDiff(strength), 1); // TODO: is the bang correct?
           let evolutionLevel = Math.max(ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2), 1);
 
           if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
-            const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId).level;
+            const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId)!.level; // TODO: is the bang correct?
             if (prevolutionLevel > 1) {
               evolutionLevel = prevolutionLevel;
             }
@@ -750,15 +754,15 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
     for (const weight of evolutionPool.keys()) {
       if (randValue < weight) {
-        return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true, forTrainer, strength);
+        return getPokemonSpecies(evolutionPool.get(weight)!).getSpeciesForLevel(level, true, forTrainer, strength); // TODO: is the bang correct?
       }
     }
 
     return this.speciesId;
   }
 
-  getEvolutionLevels() {
-    const evolutionLevels = [];
+  getEvolutionLevels(): EvolutionLevel[] {
+    const evolutionLevels: EvolutionLevel[] = [];
 
     //console.log(Species[this.speciesId], pokemonEvolutions[this.speciesId])
 
@@ -778,8 +782,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return evolutionLevels;
   }
 
-  getPrevolutionLevels() {
-    const prevolutionLevels = [];
+  getPrevolutionLevels(): EvolutionLevel[] {
+    const prevolutionLevels: EvolutionLevel[] = [];
 
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
     for (const p of allEvolvingPokemon) {
@@ -800,19 +804,19 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
-  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): [Species, integer][] {
-    const ret = [];
+  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): EvolutionLevel[] {
+    const ret: EvolutionLevel[] = [];
     if (pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
       const prevolutionLevels = this.getPrevolutionLevels().reverse();
       const levelDiff = player ? 0 : forTrainer || isBoss ? forTrainer && isBoss ? 2.5 : 5 : 10;
       ret.push([ prevolutionLevels[0][0], 1 ]);
       for (let l = 1; l < prevolutionLevels.length; l++) {
         const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0]].find(e => e.speciesId === prevolutionLevels[l][0]);
-        ret.push([ prevolutionLevels[l][0], Math.min(Math.max(evolution.level + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution.wildDelay, 0.5) * 5) - 1, 2, evolution.level), currentLevel - 1) ]);
+        ret.push([ prevolutionLevels[l][0], Math.min(Math.max((evolution?.level!) + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay!), 0.5) * 5) - 1, 2, (evolution?.level!)), currentLevel - 1) ]); // TODO: are those bangs correct?
       }
       const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
       const evolution = pokemonEvolutions[prevolutionLevels[prevolutionLevels.length - 1][0]].find(e => e.speciesId === this.speciesId);
-      ret.push([ this.speciesId, Math.min(Math.max(lastPrevolutionLevel + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution.wildDelay, 0.5) * 5), lastPrevolutionLevel + 1, evolution.level), currentLevel) ]);
+      ret.push([ this.speciesId, Math.min(Math.max(lastPrevolutionLevel + Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max((evolution?.wildDelay!), 0.5) * 5), lastPrevolutionLevel + 1, (evolution?.level!)), currentLevel) ]); // TODO: are those bangs correct?
     } else {
       ret.push([ this.speciesId, 1 ]);
     }
@@ -853,7 +857,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   getFormSpriteKey(formIndex?: integer) {
-    if (this.forms.length && formIndex >= this.forms.length) {
+    if (this.forms.length && (formIndex !== undefined && formIndex >= this.forms.length)) {
       console.warn(`Attempted accessing form with index ${formIndex} of species ${this.getName()} with only ${this.forms.length || 0} forms`);
       formIndex = Math.min(formIndex, this.forms.length - 1);
     }
@@ -866,14 +870,14 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 export class PokemonForm extends PokemonSpeciesForm {
   public formName: string;
   public formKey: string;
-  public formSpriteKey: string;
+  public formSpriteKey: string | null;
 
   // This is a collection of form keys that have in-run form changes, but should still be separately selectable from the start screen
   private starterSelectableKeys: string[] = ["10", "50", "10-pc", "50-pc", "red", "orange", "yellow", "green", "blue", "indigo", "violet"];
 
-  constructor(formName: string, formKey: string, type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
+  constructor(formName: string, formKey: string, type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
-    catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs?: boolean, formSpriteKey?: string, isStarterSelectable?: boolean, ) {
+    catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs?: boolean, formSpriteKey?: string | null, isStarterSelectable?: boolean, ) {
     super(type1, type2, height, weight, ability1, ability2, abilityHidden, baseTotal, baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd,
       catchRate, baseFriendship, baseExp, !!genderDiffs, (!!isStarterSelectable || !formKey));
     this.formName = formName;
@@ -1671,7 +1675,7 @@ export function initSpecies() {
       new PokemonForm("Fairy", "fairy", Type.FAIRY, null, 3.2, 320, Abilities.MULTITYPE, Abilities.NONE, Abilities.NONE, 720, 120, 120, 120, 120, 120, 120, 3, 0, 324),
       new PokemonForm("???", "unknown", Type.UNKNOWN, null, 3.2, 320, Abilities.MULTITYPE, Abilities.NONE, Abilities.NONE, 720, 120, 120, 120, 120, 120, 120, 3, 0, 324),
     ),
-    new PokemonSpecies(Species.VICTINI, 4, false, false, true, "Victory Pokémon", Type.PSYCHIC, Type.FIRE, 0.4, 4, Abilities.VICTORY_STAR, Abilities.NONE, Abilities.NONE, 600, 100, 100, 100, 100, 100, 100, 3, 100, 300, GrowthRate.SLOW, null, false),
+    new PokemonSpecies(Species.VICTINI, 5, false, false, true, "Victory Pokémon", Type.PSYCHIC, Type.FIRE, 0.4, 4, Abilities.VICTORY_STAR, Abilities.NONE, Abilities.NONE, 600, 100, 100, 100, 100, 100, 100, 3, 100, 300, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.SNIVY, 5, false, false, false, "Grass Snake Pokémon", Type.GRASS, null, 0.6, 8.1, Abilities.OVERGROW, Abilities.NONE, Abilities.CONTRARY, 308, 45, 45, 55, 45, 55, 63, 45, 70, 62, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.SERVINE, 5, false, false, false, "Grass Snake Pokémon", Type.GRASS, null, 0.8, 16, Abilities.OVERGROW, Abilities.NONE, Abilities.CONTRARY, 413, 60, 60, 75, 60, 75, 83, 45, 70, 145, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.SERPERIOR, 5, false, false, false, "Regal Pokémon", Type.GRASS, null, 3.3, 63, Abilities.OVERGROW, Abilities.NONE, Abilities.CONTRARY, 528, 75, 75, 95, 75, 95, 113, 45, 70, 238, GrowthRate.MEDIUM_SLOW, 87.5, false),
@@ -2459,8 +2463,8 @@ export function initSpecies() {
     new PokemonSpecies(Species.PAWMOT, 9, false, false, false, "Hands-On Pokémon", Type.ELECTRIC, Type.FIGHTING, 0.9, 41, Abilities.VOLT_ABSORB, Abilities.NATURAL_CURE, Abilities.IRON_FIST, 490, 70, 115, 70, 70, 60, 105, 45, 50, 245, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.TANDEMAUS, 9, false, false, false, "Couple Pokémon", Type.NORMAL, null, 0.3, 1.8, Abilities.RUN_AWAY, Abilities.PICKUP, Abilities.OWN_TEMPO, 305, 50, 50, 45, 40, 45, 75, 150, 50, 61, GrowthRate.FAST, null, false),
     new PokemonSpecies(Species.MAUSHOLD, 9, false, false, false, "Family Pokémon", Type.NORMAL, null, 0.3, 2.3, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, 165, GrowthRate.FAST, null, false, false,
-      new PokemonForm("Family of Four", "four", Type.NORMAL, null, 0.3, 2.3, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, 165),
-      new PokemonForm("Family of Three", "three", Type.NORMAL, null, 0.3, 2.8, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, 165),
+      new PokemonForm("Family of Four", "four", Type.NORMAL, null, 0.3, 2.8, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, 165),
+      new PokemonForm("Family of Three", "three", Type.NORMAL, null, 0.3, 2.3, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, 165),
     ),
     new PokemonSpecies(Species.FIDOUGH, 9, false, false, false, "Puppy Pokémon", Type.FAIRY, null, 0.3, 10.9, Abilities.OWN_TEMPO, Abilities.NONE, Abilities.KLUTZ, 312, 37, 55, 70, 30, 55, 65, 190, 50, 62, GrowthRate.MEDIUM_SLOW, 50, false),
     new PokemonSpecies(Species.DACHSBUN, 9, false, false, false, "Dog Pokémon", Type.FAIRY, null, 0.5, 14.9, Abilities.WELL_BAKED_BODY, Abilities.NONE, Abilities.AROMA_VEIL, 477, 57, 80, 115, 50, 80, 95, 90, 50, 167, GrowthRate.MEDIUM_SLOW, 50, false),
@@ -2682,71 +2686,71 @@ export const speciesStarters = {
   [Species.BULBASAUR]: 3,
   [Species.CHARMANDER]: 3,
   [Species.SQUIRTLE]: 3,
-  [Species.CATERPIE]: 1,
+  [Species.CATERPIE]: 2,
   [Species.WEEDLE]: 1,
-  [Species.PIDGEY]: 2,
+  [Species.PIDGEY]: 1,
   [Species.RATTATA]: 1,
-  [Species.SPEAROW]: 2,
+  [Species.SPEAROW]: 1,
   [Species.EKANS]: 2,
-  [Species.PIKACHU]: 4,
+  [Species.PIKACHU]: 3,
   [Species.SANDSHREW]: 2,
   [Species.NIDORAN_F]: 3,
   [Species.NIDORAN_M]: 3,
-  [Species.CLEFAIRY]: 4,
+  [Species.CLEFAIRY]: 3,
   [Species.VULPIX]: 3,
-  [Species.JIGGLYPUFF]: 4,
-  [Species.ZUBAT]: 2,
-  [Species.ODDISH]: 2,
-  [Species.PARAS]: 1,
+  [Species.JIGGLYPUFF]: 2,
+  [Species.ZUBAT]: 3,
+  [Species.ODDISH]: 3,
+  [Species.PARAS]: 2,
   [Species.VENONAT]: 2,
-  [Species.DIGLETT]: 3,
-  [Species.MEOWTH]: 4,
+  [Species.DIGLETT]: 2,
+  [Species.MEOWTH]: 3,
   [Species.PSYDUCK]: 2,
   [Species.MANKEY]: 4,
   [Species.GROWLITHE]: 4,
-  [Species.POLIWAG]: 3,
-  [Species.ABRA]: 3,
+  [Species.POLIWAG]: 2,
+  [Species.ABRA]: 4,
   [Species.MACHOP]: 3,
-  [Species.BELLSPROUT]: 3,
+  [Species.BELLSPROUT]: 2,
   [Species.TENTACOOL]: 3,
   [Species.GEODUDE]: 3,
-  [Species.PONYTA]: 3,
+  [Species.PONYTA]: 2,
   [Species.SLOWPOKE]: 3,
-  [Species.MAGNEMITE]: 3,
-  [Species.FARFETCHD]: 4,
-  [Species.DODUO]: 4,
-  [Species.SEEL]: 3,
-  [Species.GRIMER]: 3,
-  [Species.SHELLDER]: 4,
-  [Species.GASTLY]: 3,
-  [Species.ONIX]: 4,
-  [Species.DROWZEE]: 3,
-  [Species.KRABBY]: 2,
+  [Species.MAGNEMITE]: 4,
+  [Species.FARFETCHD]: 2,
+  [Species.DODUO]: 3,
+  [Species.SEEL]: 1,
+  [Species.GRIMER]: 2,
+  [Species.SHELLDER]: 5,
+  [Species.GASTLY]: 4,
+  [Species.ONIX]: 3,
+  [Species.DROWZEE]: 2,
+  [Species.KRABBY]: 3,
   [Species.VOLTORB]: 2,
-  [Species.EXEGGCUTE]: 4,
+  [Species.EXEGGCUTE]: 3,
   [Species.CUBONE]: 3,
-  [Species.HITMONLEE]: 5,
-  [Species.HITMONCHAN]: 5,
-  [Species.LICKITUNG]: 5,
-  [Species.KOFFING]: 3,
+  [Species.HITMONLEE]: 4,
+  [Species.HITMONCHAN]: 4,
+  [Species.LICKITUNG]: 3,
+  [Species.KOFFING]: 2,
   [Species.RHYHORN]: 3,
-  [Species.CHANSEY]: 5,
+  [Species.CHANSEY]: 3,
   [Species.TANGELA]: 3,
-  [Species.KANGASKHAN]: 5,
-  [Species.HORSEA]: 4,
-  [Species.GOLDEEN]: 3,
-  [Species.STARYU]: 4,
-  [Species.MR_MIME]: 4,
+  [Species.KANGASKHAN]: 4,
+  [Species.HORSEA]: 3,
+  [Species.GOLDEEN]: 2,
+  [Species.STARYU]: 3,
+  [Species.MR_MIME]: 3,
   [Species.SCYTHER]: 5,
   [Species.JYNX]: 4,
-  [Species.ELECTABUZZ]: 5,
-  [Species.MAGMAR]: 5,
+  [Species.ELECTABUZZ]: 4,
+  [Species.MAGMAR]: 4,
   [Species.PINSIR]: 4,
-  [Species.TAUROS]: 5,
-  [Species.MAGIKARP]: 3,
-  [Species.LAPRAS]: 5,
+  [Species.TAUROS]: 4,
+  [Species.MAGIKARP]: 4,
+  [Species.LAPRAS]: 4,
   [Species.DITTO]: 2,
-  [Species.EEVEE]: 4,
+  [Species.EEVEE]: 3,
   [Species.PORYGON]: 4,
   [Species.OMANYTE]: 3,
   [Species.KABUTO]: 3,
@@ -2759,57 +2763,57 @@ export const speciesStarters = {
   [Species.MEWTWO]: 8,
   [Species.MEW]: 6,
 
-  [Species.CHIKORITA]: 3,
+  [Species.CHIKORITA]: 2,
   [Species.CYNDAQUIL]: 3,
   [Species.TOTODILE]: 3,
   [Species.SENTRET]: 1,
-  [Species.HOOTHOOT]: 1,
+  [Species.HOOTHOOT]: 2,
   [Species.LEDYBA]: 1,
   [Species.SPINARAK]: 1,
-  [Species.CHINCHOU]: 3,
-  [Species.PICHU]: 3,
-  [Species.CLEFFA]: 3,
-  [Species.IGGLYBUFF]: 3,
+  [Species.CHINCHOU]: 2,
+  [Species.PICHU]: 2,
+  [Species.CLEFFA]: 2,
+  [Species.IGGLYBUFF]: 1,
   [Species.TOGEPI]: 3,
   [Species.NATU]: 2,
-  [Species.MAREEP]: 3,
+  [Species.MAREEP]: 2,
   [Species.MARILL]: 4,
-  [Species.SUDOWOODO]: 5,
-  [Species.HOPPIP]: 1,
-  [Species.AIPOM]: 3,
+  [Species.SUDOWOODO]: 3,
+  [Species.HOPPIP]: 2,
+  [Species.AIPOM]: 2,
   [Species.SUNKERN]: 1,
   [Species.YANMA]: 3,
   [Species.WOOPER]: 2,
-  [Species.MURKROW]: 4,
-  [Species.MISDREAVUS]: 3,
+  [Species.MURKROW]: 3,
+  [Species.MISDREAVUS]: 2,
   [Species.UNOWN]: 1,
-  [Species.WOBBUFFET]: 4,
-  [Species.GIRAFARIG]: 4,
+  [Species.WOBBUFFET]: 2,
+  [Species.GIRAFARIG]: 3,
   [Species.PINECO]: 2,
-  [Species.DUNSPARCE]: 4,
-  [Species.GLIGAR]: 4,
-  [Species.SNUBBULL]: 3,
+  [Species.DUNSPARCE]: 3,
+  [Species.GLIGAR]: 3,
+  [Species.SNUBBULL]: 2,
   [Species.QWILFISH]: 3,
-  [Species.SHUCKLE]: 4,
+  [Species.SHUCKLE]: 3,
   [Species.HERACROSS]: 5,
   [Species.SNEASEL]: 4,
   [Species.TEDDIURSA]: 4,
   [Species.SLUGMA]: 2,
   [Species.SWINUB]: 3,
-  [Species.CORSOLA]: 3,
-  [Species.REMORAID]: 3,
-  [Species.DELIBIRD]: 3,
-  [Species.MANTINE]: 4,
-  [Species.SKARMORY]: 5,
-  [Species.HOUNDOUR]: 4,
+  [Species.CORSOLA]: 2,
+  [Species.REMORAID]: 2,
+  [Species.DELIBIRD]: 2,
+  [Species.MANTINE]: 3,
+  [Species.SKARMORY]: 4,
+  [Species.HOUNDOUR]: 3,
   [Species.PHANPY]: 3,
-  [Species.STANTLER]: 4,
-  [Species.SMEARGLE]: 3,
-  [Species.TYROGUE]: 4,
+  [Species.STANTLER]: 3,
+  [Species.SMEARGLE]: 1,
+  [Species.TYROGUE]: 3,
   [Species.SMOOCHUM]: 3,
-  [Species.ELEKID]: 4,
-  [Species.MAGBY]: 4,
-  [Species.MILTANK]: 5,
+  [Species.ELEKID]: 3,
+  [Species.MAGBY]: 3,
+  [Species.MILTANK]: 4,
   [Species.RAIKOU]: 6,
   [Species.ENTEI]: 6,
   [Species.SUICUNE]: 6,
@@ -2819,68 +2823,68 @@ export const speciesStarters = {
   [Species.CELEBI]: 6,
 
   [Species.TREECKO]: 3,
-  [Species.TORCHIC]: 3,
+  [Species.TORCHIC]: 4,
   [Species.MUDKIP]: 3,
   [Species.POOCHYENA]: 2,
   [Species.ZIGZAGOON]: 2,
   [Species.WURMPLE]: 1,
   [Species.LOTAD]: 3,
-  [Species.SEEDOT]: 3,
+  [Species.SEEDOT]: 2,
   [Species.TAILLOW]: 3,
-  [Species.WINGULL]: 3,
+  [Species.WINGULL]: 2,
   [Species.RALTS]: 3,
   [Species.SURSKIT]: 2,
   [Species.SHROOMISH]: 3,
   [Species.SLAKOTH]: 4,
   [Species.NINCADA]: 4,
-  [Species.WHISMUR]: 3,
+  [Species.WHISMUR]: 2,
   [Species.MAKUHITA]: 3,
-  [Species.AZURILL]: 3,
-  [Species.NOSEPASS]: 3,
-  [Species.SKITTY]: 3,
-  [Species.SABLEYE]: 3,
-  [Species.MAWILE]: 5,
+  [Species.AZURILL]: 4,
+  [Species.NOSEPASS]: 2,
+  [Species.SKITTY]: 1,
+  [Species.SABLEYE]: 2,
+  [Species.MAWILE]: 3,
   [Species.ARON]: 3,
-  [Species.MEDITITE]: 4,
-  [Species.ELECTRIKE]: 3,
+  [Species.MEDITITE]: 3,
+  [Species.ELECTRIKE]: 2,
   [Species.PLUSLE]: 2,
   [Species.MINUN]: 2,
   [Species.VOLBEAT]: 2,
   [Species.ILLUMISE]: 2,
-  [Species.ROSELIA]: 4,
-  [Species.GULPIN]: 3,
+  [Species.ROSELIA]: 3,
+  [Species.GULPIN]: 1,
   [Species.CARVANHA]: 3,
-  [Species.WAILMER]: 3,
-  [Species.NUMEL]: 3,
-  [Species.TORKOAL]: 4,
-  [Species.SPOINK]: 3,
-  [Species.SPINDA]: 2,
-  [Species.TRAPINCH]: 4,
-  [Species.CACNEA]: 3,
-  [Species.SWABLU]: 3,
-  [Species.ZANGOOSE]: 5,
-  [Species.SEVIPER]: 4,
-  [Species.LUNATONE]: 4,
-  [Species.SOLROCK]: 4,
-  [Species.BARBOACH]: 3,
+  [Species.WAILMER]: 2,
+  [Species.NUMEL]: 2,
+  [Species.TORKOAL]: 3,
+  [Species.SPOINK]: 2,
+  [Species.SPINDA]: 1,
+  [Species.TRAPINCH]: 3,
+  [Species.CACNEA]: 2,
+  [Species.SWABLU]: 2,
+  [Species.ZANGOOSE]: 4,
+  [Species.SEVIPER]: 3,
+  [Species.LUNATONE]: 3,
+  [Species.SOLROCK]: 3,
+  [Species.BARBOACH]: 2,
   [Species.CORPHISH]: 3,
-  [Species.BALTOY]: 3,
+  [Species.BALTOY]: 2,
   [Species.LILEEP]: 3,
   [Species.ANORITH]: 3,
   [Species.FEEBAS]: 4,
-  [Species.CASTFORM]: 2,
-  [Species.KECLEON]: 4,
-  [Species.SHUPPET]: 3,
+  [Species.CASTFORM]: 1,
+  [Species.KECLEON]: 2,
+  [Species.SHUPPET]: 2,
   [Species.DUSKULL]: 3,
-  [Species.TROPIUS]: 5,
-  [Species.CHIMECHO]: 4,
-  [Species.ABSOL]: 5,
-  [Species.WYNAUT]: 3,
-  [Species.SNORUNT]: 3,
-  [Species.SPHEAL]: 3,
+  [Species.TROPIUS]: 3,
+  [Species.CHIMECHO]: 3,
+  [Species.ABSOL]: 4,
+  [Species.WYNAUT]: 2,
+  [Species.SNORUNT]: 2,
+  [Species.SPHEAL]: 2,
   [Species.CLAMPERL]: 3,
-  [Species.RELICANTH]: 4,
-  [Species.LUVDISC]: 2,
+  [Species.RELICANTH]: 3,
+  [Species.LUVDISC]: 1,
   [Species.BAGON]: 4,
   [Species.BELDUM]: 4,
   [Species.REGIROCK]: 6,
@@ -2900,37 +2904,37 @@ export const speciesStarters = {
   [Species.STARLY]: 3,
   [Species.BIDOOF]: 2,
   [Species.KRICKETOT]: 1,
-  [Species.SHINX]: 3,
+  [Species.SHINX]: 2,
   [Species.BUDEW]: 3,
   [Species.CRANIDOS]: 3,
   [Species.SHIELDON]: 3,
-  [Species.BURMY]: 1,
+  [Species.BURMY]: 2,
   [Species.COMBEE]: 2,
-  [Species.PACHIRISU]: 3,
-  [Species.BUIZEL]: 3,
-  [Species.CHERUBI]: 3,
+  [Species.PACHIRISU]: 2,
+  [Species.BUIZEL]: 2,
+  [Species.CHERUBI]: 1,
   [Species.SHELLOS]: 3,
-  [Species.DRIFLOON]: 3,
-  [Species.BUNEARY]: 3,
-  [Species.GLAMEOW]: 3,
-  [Species.CHINGLING]: 3,
-  [Species.STUNKY]: 3,
+  [Species.DRIFLOON]: 2,
+  [Species.BUNEARY]: 2,
+  [Species.GLAMEOW]: 2,
+  [Species.CHINGLING]: 2,
+  [Species.STUNKY]: 2,
   [Species.BRONZOR]: 3,
-  [Species.BONSLY]: 4,
-  [Species.MIME_JR]: 3,
-  [Species.HAPPINY]: 4,
-  [Species.CHATOT]: 4,
-  [Species.SPIRITOMB]: 5,
+  [Species.BONSLY]: 2,
+  [Species.MIME_JR]: 2,
+  [Species.HAPPINY]: 2,
+  [Species.CHATOT]: 2,
+  [Species.SPIRITOMB]: 4,
   [Species.GIBLE]: 4,
   [Species.MUNCHLAX]: 4,
-  [Species.RIOLU]: 4,
+  [Species.RIOLU]: 3,
   [Species.HIPPOPOTAS]: 3,
   [Species.SKORUPI]: 3,
-  [Species.CROAGUNK]: 3,
-  [Species.CARNIVINE]: 4,
-  [Species.FINNEON]: 3,
-  [Species.MANTYKE]: 3,
-  [Species.SNOVER]: 3,
+  [Species.CROAGUNK]: 2,
+  [Species.CARNIVINE]: 2,
+  [Species.FINNEON]: 1,
+  [Species.MANTYKE]: 2,
+  [Species.SNOVER]: 2,
   [Species.ROTOM]: 5,
   [Species.UXIE]: 6,
   [Species.MESPRIT]: 6,
@@ -2946,75 +2950,75 @@ export const speciesStarters = {
   [Species.DARKRAI]: 6,
   [Species.SHAYMIN]: 6,
   [Species.ARCEUS]: 9,
-  [Species.VICTINI]: 7,
 
+  [Species.VICTINI]: 7,
   [Species.SNIVY]: 3,
   [Species.TEPIG]: 3,
   [Species.OSHAWOTT]: 3,
-  [Species.PATRAT]: 2,
+  [Species.PATRAT]: 1,
   [Species.LILLIPUP]: 3,
-  [Species.PURRLOIN]: 3,
-  [Species.PANSAGE]: 3,
-  [Species.PANSEAR]: 3,
-  [Species.PANPOUR]: 3,
-  [Species.MUNNA]: 3,
-  [Species.PIDOVE]: 2,
-  [Species.BLITZLE]: 3,
+  [Species.PURRLOIN]: 2,
+  [Species.PANSAGE]: 2,
+  [Species.PANSEAR]: 2,
+  [Species.PANPOUR]: 2,
+  [Species.MUNNA]: 2,
+  [Species.PIDOVE]: 1,
+  [Species.BLITZLE]: 2,
   [Species.ROGGENROLA]: 3,
   [Species.WOOBAT]: 3,
   [Species.DRILBUR]: 4,
-  [Species.AUDINO]: 4,
-  [Species.TIMBURR]: 3,
+  [Species.AUDINO]: 3,
+  [Species.TIMBURR]: 4,
   [Species.TYMPOLE]: 3,
-  [Species.THROH]: 5,
-  [Species.SAWK]: 5,
-  [Species.SEWADDLE]: 3,
+  [Species.THROH]: 4,
+  [Species.SAWK]: 4,
+  [Species.SEWADDLE]: 2,
   [Species.VENIPEDE]: 3,
   [Species.COTTONEE]: 3,
   [Species.PETILIL]: 3,
   [Species.BASCULIN]: 4,
-  [Species.SANDILE]: 3,
+  [Species.SANDILE]: 4,
   [Species.DARUMAKA]: 4,
-  [Species.MARACTUS]: 4,
-  [Species.DWEBBLE]: 3,
+  [Species.MARACTUS]: 2,
+  [Species.DWEBBLE]: 2,
   [Species.SCRAGGY]: 3,
-  [Species.SIGILYPH]: 5,
+  [Species.SIGILYPH]: 4,
   [Species.YAMASK]: 3,
-  [Species.TIRTOUGA]: 4,
-  [Species.ARCHEN]: 4,
-  [Species.TRUBBISH]: 3,
+  [Species.TIRTOUGA]: 3,
+  [Species.ARCHEN]: 3,
+  [Species.TRUBBISH]: 2,
   [Species.ZORUA]: 3,
   [Species.MINCCINO]: 3,
   [Species.GOTHITA]: 3,
   [Species.SOLOSIS]: 3,
-  [Species.DUCKLETT]: 3,
+  [Species.DUCKLETT]: 2,
   [Species.VANILLITE]: 3,
-  [Species.DEERLING]: 3,
-  [Species.EMOLGA]: 3,
+  [Species.DEERLING]: 2,
+  [Species.EMOLGA]: 2,
   [Species.KARRABLAST]: 3,
-  [Species.FOONGUS]: 3,
+  [Species.FOONGUS]: 2,
   [Species.FRILLISH]: 3,
   [Species.ALOMOMOLA]: 4,
   [Species.JOLTIK]: 3,
   [Species.FERROSEED]: 3,
   [Species.KLINK]: 3,
-  [Species.TYNAMO]: 3,
-  [Species.ELGYEM]: 3,
+  [Species.TYNAMO]: 2,
+  [Species.ELGYEM]: 2,
   [Species.LITWICK]: 3,
   [Species.AXEW]: 4,
-  [Species.CUBCHOO]: 3,
-  [Species.CRYOGONAL]: 5,
-  [Species.SHELMET]: 3,
-  [Species.STUNFISK]: 4,
+  [Species.CUBCHOO]: 2,
+  [Species.CRYOGONAL]: 4,
+  [Species.SHELMET]: 2,
+  [Species.STUNFISK]: 3,
   [Species.MIENFOO]: 3,
-  [Species.DRUDDIGON]: 5,
+  [Species.DRUDDIGON]: 4,
   [Species.GOLETT]: 3,
   [Species.PAWNIARD]: 4,
-  [Species.BOUFFALANT]: 5,
+  [Species.BOUFFALANT]: 4,
   [Species.RUFFLET]: 3,
   [Species.VULLABY]: 3,
-  [Species.HEATMOR]: 5,
-  [Species.DURANT]: 5,
+  [Species.HEATMOR]: 3,
+  [Species.DURANT]: 4,
   [Species.DEINO]: 4,
   [Species.LARVESTA]: 4,
   [Species.COBALION]: 6,
@@ -3032,77 +3036,77 @@ export const speciesStarters = {
 
   [Species.CHESPIN]: 3,
   [Species.FENNEKIN]: 3,
-  [Species.FROAKIE]: 3,
-  [Species.BUNNELBY]: 2,
+  [Species.FROAKIE]: 4,
+  [Species.BUNNELBY]: 3,
   [Species.FLETCHLING]: 3,
-  [Species.SCATTERBUG]: 1,
-  [Species.LITLEO]: 3,
+  [Species.SCATTERBUG]: 2,
+  [Species.LITLEO]: 2,
   [Species.FLABEBE]: 3,
-  [Species.SKIDDO]: 3,
+  [Species.SKIDDO]: 2,
   [Species.PANCHAM]: 3,
-  [Species.FURFROU]: 4,
-  [Species.ESPURR]: 3,
+  [Species.FURFROU]: 3,
+  [Species.ESPURR]: 2,
   [Species.HONEDGE]: 4,
-  [Species.SPRITZEE]: 3,
+  [Species.SPRITZEE]: 2,
   [Species.SWIRLIX]: 3,
   [Species.INKAY]: 3,
   [Species.BINACLE]: 3,
-  [Species.SKRELP]: 3,
+  [Species.SKRELP]: 2,
   [Species.CLAUNCHER]: 3,
   [Species.HELIOPTILE]: 3,
   [Species.TYRUNT]: 3,
   [Species.AMAURA]: 3,
   [Species.HAWLUCHA]: 4,
-  [Species.DEDENNE]: 4,
-  [Species.CARBINK]: 4,
+  [Species.DEDENNE]: 2,
+  [Species.CARBINK]: 2,
   [Species.GOOMY]: 4,
-  [Species.KLEFKI]: 4,
-  [Species.PHANTUMP]: 3,
-  [Species.PUMPKABOO]: 3,
+  [Species.KLEFKI]: 3,
+  [Species.PHANTUMP]: 2,
+  [Species.PUMPKABOO]: 2,
   [Species.BERGMITE]: 3,
-  [Species.NOIBAT]: 4,
+  [Species.NOIBAT]: 3,
   [Species.XERNEAS]: 8,
   [Species.YVELTAL]: 8,
   [Species.ZYGARDE]: 8,
   [Species.DIANCIE]: 7,
   [Species.HOOPA]: 7,
   [Species.VOLCANION]: 6,
-  [Species.ETERNAL_FLOETTE]: 5,
+  [Species.ETERNAL_FLOETTE]: 4,
 
   [Species.ROWLET]: 3,
   [Species.LITTEN]: 3,
-  [Species.POPPLIO]: 3,
-  [Species.PIKIPEK]: 3,
+  [Species.POPPLIO]: 4,
+  [Species.PIKIPEK]: 2,
   [Species.YUNGOOS]: 2,
-  [Species.GRUBBIN]: 2,
-  [Species.CRABRAWLER]: 4,
+  [Species.GRUBBIN]: 3,
+  [Species.CRABRAWLER]: 3,
   [Species.ORICORIO]: 3,
   [Species.CUTIEFLY]: 3,
   [Species.ROCKRUFF]: 3,
-  [Species.WISHIWASHI]: 3,
-  [Species.MAREANIE]: 3,
+  [Species.WISHIWASHI]: 2,
+  [Species.MAREANIE]: 2,
   [Species.MUDBRAY]: 3,
   [Species.DEWPIDER]: 3,
-  [Species.FOMANTIS]: 3,
-  [Species.MORELULL]: 3,
+  [Species.FOMANTIS]: 2,
+  [Species.MORELULL]: 2,
   [Species.SALANDIT]: 3,
   [Species.STUFFUL]: 3,
   [Species.BOUNSWEET]: 3,
   [Species.COMFEY]: 4,
-  [Species.ORANGURU]: 5,
-  [Species.PASSIMIAN]: 5,
+  [Species.ORANGURU]: 4,
+  [Species.PASSIMIAN]: 4,
   [Species.WIMPOD]: 3,
   [Species.SANDYGAST]: 3,
-  [Species.PYUKUMUKU]: 3,
+  [Species.PYUKUMUKU]: 2,
   [Species.TYPE_NULL]: 5,
-  [Species.MINIOR]: 5,
-  [Species.KOMALA]: 5,
-  [Species.TURTONATOR]: 5,
-  [Species.TOGEDEMARU]: 4,
-  [Species.MIMIKYU]: 5,
-  [Species.BRUXISH]: 5,
-  [Species.DRAMPA]: 5,
-  [Species.DHELMISE]: 5,
+  [Species.MINIOR]: 4,
+  [Species.KOMALA]: 3,
+  [Species.TURTONATOR]: 4,
+  [Species.TOGEDEMARU]: 3,
+  [Species.MIMIKYU]: 4,
+  [Species.BRUXISH]: 4,
+  [Species.DRAMPA]: 4,
+  [Species.DHELMISE]: 4,
   [Species.JANGMO_O]: 4,
   [Species.TAPU_KOKO]: 6,
   [Species.TAPU_LELE]: 6,
@@ -3124,49 +3128,49 @@ export const speciesStarters = {
   [Species.BLACEPHALON]: 7,
   [Species.ZERAORA]: 6,
   [Species.MELTAN]: 6,
-  [Species.ALOLA_RATTATA]: 2,
-  [Species.ALOLA_SANDSHREW]: 4,
-  [Species.ALOLA_VULPIX]: 4,
-  [Species.ALOLA_DIGLETT]: 3,
-  [Species.ALOLA_MEOWTH]: 4,
+  [Species.ALOLA_RATTATA]: 1,
+  [Species.ALOLA_SANDSHREW]: 2,
+  [Species.ALOLA_VULPIX]: 3,
+  [Species.ALOLA_DIGLETT]: 2,
+  [Species.ALOLA_MEOWTH]: 3,
   [Species.ALOLA_GEODUDE]: 3,
   [Species.ALOLA_GRIMER]: 3,
 
   [Species.GROOKEY]: 3,
-  [Species.SCORBUNNY]: 3,
+  [Species.SCORBUNNY]: 4,
   [Species.SOBBLE]: 3,
   [Species.SKWOVET]: 2,
-  [Species.ROOKIDEE]: 4,
+  [Species.ROOKIDEE]: 3,
   [Species.BLIPBUG]: 2,
-  [Species.NICKIT]: 3,
-  [Species.GOSSIFLEUR]: 3,
-  [Species.WOOLOO]: 3,
+  [Species.NICKIT]: 1,
+  [Species.GOSSIFLEUR]: 2,
+  [Species.WOOLOO]: 2,
   [Species.CHEWTLE]: 3,
-  [Species.YAMPER]: 3,
+  [Species.YAMPER]: 2,
   [Species.ROLYCOLY]: 3,
-  [Species.APPLIN]: 4,
+  [Species.APPLIN]: 3,
   [Species.SILICOBRA]: 3,
   [Species.CRAMORANT]: 3,
   [Species.ARROKUDA]: 3,
   [Species.TOXEL]: 3,
   [Species.SIZZLIPEDE]: 3,
-  [Species.CLOBBOPUS]: 3,
+  [Species.CLOBBOPUS]: 2,
   [Species.SINISTEA]: 3,
-  [Species.HATENNA]: 4,
+  [Species.HATENNA]: 3,
   [Species.IMPIDIMP]: 3,
   [Species.MILCERY]: 3,
   [Species.FALINKS]: 4,
   [Species.PINCURCHIN]: 3,
   [Species.SNOM]: 3,
-  [Species.STONJOURNER]: 4,
-  [Species.EISCUE]: 4,
-  [Species.INDEEDEE]: 3,
+  [Species.STONJOURNER]: 3,
+  [Species.EISCUE]: 3,
+  [Species.INDEEDEE]: 4,
   [Species.MORPEKO]: 3,
-  [Species.CUFANT]: 4,
+  [Species.CUFANT]: 3,
   [Species.DRACOZOLT]: 5,
-  [Species.ARCTOZOLT]: 5,
+  [Species.ARCTOZOLT]: 4,
   [Species.DRACOVISH]: 5,
-  [Species.ARCTOVISH]: 5,
+  [Species.ARCTOVISH]: 4,
   [Species.DURALUDON]: 5,
   [Species.DREEPY]: 4,
   [Species.ZACIAN]: 9,
@@ -3179,67 +3183,67 @@ export const speciesStarters = {
   [Species.GLASTRIER]: 6,
   [Species.SPECTRIER]: 7,
   [Species.CALYREX]: 8,
-  [Species.GALAR_MEOWTH]: 4,
-  [Species.GALAR_PONYTA]: 4,
+  [Species.GALAR_MEOWTH]: 3,
+  [Species.GALAR_PONYTA]: 2,
   [Species.GALAR_SLOWPOKE]: 3,
-  [Species.GALAR_FARFETCHD]: 5,
-  [Species.GALAR_CORSOLA]: 4,
+  [Species.GALAR_FARFETCHD]: 3,
+  [Species.GALAR_CORSOLA]: 3,
   [Species.GALAR_ZIGZAGOON]: 3,
   [Species.GALAR_DARUMAKA]: 4,
   [Species.GALAR_YAMASK]: 3,
-  [Species.GALAR_STUNFISK]: 4,
-  [Species.GALAR_MR_MIME]: 5,
+  [Species.GALAR_STUNFISK]: 2,
+  [Species.GALAR_MR_MIME]: 3,
   [Species.GALAR_ARTICUNO]: 6,
   [Species.GALAR_ZAPDOS]: 6,
   [Species.GALAR_MOLTRES]: 6,
   [Species.HISUI_GROWLITHE]: 4,
   [Species.HISUI_VOLTORB]: 3,
   [Species.HISUI_QWILFISH]: 4,
-  [Species.HISUI_SNEASEL]: 4,
-  [Species.HISUI_ZORUA]: 4,
+  [Species.HISUI_SNEASEL]: 5,
+  [Species.HISUI_ZORUA]: 3,
   [Species.ENAMORUS]: 7,
 
-  [Species.SPRIGATITO]: 3,
-  [Species.FUECOCO]: 3,
-  [Species.QUAXLY]: 3,
+  [Species.SPRIGATITO]: 4,
+  [Species.FUECOCO]: 4,
+  [Species.QUAXLY]: 4,
   [Species.LECHONK]: 2,
   [Species.TAROUNTULA]: 1,
   [Species.NYMBLE]: 3,
   [Species.PAWMI]: 3,
   [Species.TANDEMAUS]: 4,
-  [Species.FIDOUGH]: 3,
+  [Species.FIDOUGH]: 2,
   [Species.SMOLIV]: 3,
-  [Species.SQUAWKABILLY]: 3,
+  [Species.SQUAWKABILLY]: 2,
   [Species.NACLI]: 4,
   [Species.CHARCADET]: 4,
   [Species.TADBULB]: 3,
   [Species.WATTREL]: 3,
   [Species.MASCHIFF]: 3,
-  [Species.SHROODLE]: 3,
+  [Species.SHROODLE]: 2,
   [Species.BRAMBLIN]: 3,
   [Species.TOEDSCOOL]: 3,
-  [Species.KLAWF]: 4,
+  [Species.KLAWF]: 3,
   [Species.CAPSAKID]: 3,
-  [Species.RELLOR]: 3,
+  [Species.RELLOR]: 2,
   [Species.FLITTLE]: 3,
   [Species.TINKATINK]: 4,
-  [Species.WIGLETT]: 3,
+  [Species.WIGLETT]: 2,
   [Species.BOMBIRDIER]: 3,
-  [Species.FINIZEN]: 4,
+  [Species.FINIZEN]: 3,
   [Species.VAROOM]: 4,
-  [Species.CYCLIZAR]: 5,
+  [Species.CYCLIZAR]: 4,
   [Species.ORTHWORM]: 4,
   [Species.GLIMMET]: 4,
-  [Species.GREAVARD]: 4,
+  [Species.GREAVARD]: 3,
   [Species.FLAMIGO]: 4,
-  [Species.CETODDLE]: 4,
+  [Species.CETODDLE]: 3,
   [Species.VELUZA]: 4,
-  [Species.DONDOZO]: 5,
-  [Species.TATSUGIRI]: 5,
+  [Species.DONDOZO]: 4,
+  [Species.TATSUGIRI]: 4,
   [Species.GREAT_TUSK]: 6,
   [Species.SCREAM_TAIL]: 6,
   [Species.BRUTE_BONNET]: 6,
-  [Species.FLUTTER_MANE]: 6,
+  [Species.FLUTTER_MANE]: 7,
   [Species.SLITHER_WING]: 6,
   [Species.SANDY_SHOCKS]: 6,
   [Species.IRON_TREADS]: 6,
@@ -3249,7 +3253,7 @@ export const speciesStarters = {
   [Species.IRON_MOTH]: 6,
   [Species.IRON_THORNS]: 6,
   [Species.FRIGIBAX]: 4,
-  [Species.GIMMIGHOUL]: 5,
+  [Species.GIMMIGHOUL]: 4,
   [Species.WO_CHIEN]: 6,
   [Species.CHIEN_PAO]: 7,
   [Species.TING_LU]: 6,
@@ -3273,7 +3277,7 @@ export const speciesStarters = {
   [Species.PECHARUNT]: 6,
   [Species.PALDEA_TAUROS]: 5,
   [Species.PALDEA_WOOPER]: 3,
-  [Species.BLOODMOON_URSALUNA]: 7,
+  [Species.BLOODMOON_URSALUNA]: 6,
 };
 
 export const noStarterFormKeys: string[] = [
@@ -3319,14 +3323,14 @@ export const starterPassiveAbilities = {
   [Species.SQUIRTLE]: Abilities.STURDY,
   [Species.CATERPIE]: Abilities.MAGICIAN,
   [Species.WEEDLE]: Abilities.TINTED_LENS,
-  [Species.PIDGEY]: Abilities.GALE_WINGS,
+  [Species.PIDGEY]: Abilities.FLARE_BOOST,
   [Species.RATTATA]: Abilities.STRONG_JAW,
   [Species.SPEAROW]: Abilities.MOXIE,
   [Species.EKANS]: Abilities.REGENERATOR,
   [Species.SANDSHREW]: Abilities.TOUGH_CLAWS,
   [Species.NIDORAN_F]: Abilities.FLARE_BOOST,
   [Species.NIDORAN_M]: Abilities.GUTS,
-  [Species.VULPIX]: Abilities.SOLAR_POWER,
+  [Species.VULPIX]: Abilities.FUR_COAT,
   [Species.ZUBAT]: Abilities.INTIMIDATE,
   [Species.ODDISH]: Abilities.TRIAGE,
   [Species.PARAS]: Abilities.TRIAGE,
@@ -3345,16 +3349,16 @@ export const starterPassiveAbilities = {
   [Species.PONYTA]: Abilities.MAGIC_GUARD,
   [Species.SLOWPOKE]: Abilities.UNAWARE,
   [Species.MAGNEMITE]: Abilities.LEVITATE,
-  [Species.FARFETCHD]: Abilities.HUGE_POWER,
+  [Species.FARFETCHD]: Abilities.SNIPER,
   [Species.DODUO]: Abilities.PARENTAL_BOND,
   [Species.SEEL]: Abilities.WATER_BUBBLE,
   [Species.GRIMER]: Abilities.WATER_ABSORB,
   [Species.SHELLDER]: Abilities.ICE_SCALES,
   [Species.GASTLY]: Abilities.SHADOW_SHIELD,
   [Species.ONIX]: Abilities.ROCKY_PAYLOAD,
-  [Species.DROWZEE]: Abilities.BAD_DREAMS,
+  [Species.DROWZEE]: Abilities.MAGICIAN,
   [Species.KRABBY]: Abilities.UNBURDEN,
-  [Species.VOLTORB]: Abilities.ELECTRIC_SURGE,
+  [Species.VOLTORB]: Abilities.TRANSISTOR,
   [Species.EXEGGCUTE]: Abilities.RIPEN,
   [Species.CUBONE]: Abilities.PARENTAL_BOND,
   [Species.LICKITUNG]: Abilities.THICK_FAT,
@@ -3362,7 +3366,7 @@ export const starterPassiveAbilities = {
   [Species.RHYHORN]: Abilities.FILTER,
   [Species.TANGELA]: Abilities.SEED_SOWER,
   [Species.KANGASKHAN]: Abilities.GUTS,
-  [Species.HORSEA]: Abilities.DRIZZLE,
+  [Species.HORSEA]: Abilities.DRAGONS_MAW,
   [Species.GOLDEEN]: Abilities.MULTISCALE,
   [Species.STARYU]: Abilities.REGENERATOR,
   [Species.SCYTHER]: Abilities.TINTED_LENS,
@@ -3371,10 +3375,10 @@ export const starterPassiveAbilities = {
   [Species.MAGIKARP]: Abilities.MULTISCALE,
   [Species.LAPRAS]: Abilities.LIGHTNING_ROD,
   [Species.DITTO]: Abilities.ADAPTABILITY,
-  [Species.EEVEE]: Abilities.SIMPLE,
+  [Species.EEVEE]: Abilities.PICKUP,
   [Species.PORYGON]: Abilities.PROTEAN,
   [Species.OMANYTE]: Abilities.STURDY,
-  [Species.KABUTO]: Abilities.SHARPNESS,
+  [Species.KABUTO]: Abilities.TOUGH_CLAWS,
   [Species.AERODACTYL]: Abilities.ORICHALCUM_PULSE,
   [Species.ARTICUNO]: Abilities.SNOW_WARNING,
   [Species.ZAPDOS]: Abilities.DRIZZLE,
@@ -3434,7 +3438,7 @@ export const starterPassiveAbilities = {
   [Species.SUICUNE]: Abilities.UNAWARE,
   [Species.LARVITAR]: Abilities.SAND_RUSH,
   [Species.LUGIA]: Abilities.DELTA_STREAM,
-  [Species.HO_OH]: Abilities.MAGIC_GUARD,
+  [Species.HO_OH]: Abilities.DROUGHT,
   [Species.CELEBI]: Abilities.GRASSY_SURGE,
   [Species.TREECKO]: Abilities.TINTED_LENS,
   [Species.TORCHIC]: Abilities.RECKLESS,
@@ -3468,7 +3472,7 @@ export const starterPassiveAbilities = {
   [Species.GULPIN]: Abilities.EARTH_EATER,
   [Species.CARVANHA]: Abilities.SHEER_FORCE,
   [Species.WAILMER]: Abilities.LEVITATE,
-  [Species.NUMEL]: Abilities.STAMINA,
+  [Species.NUMEL]: Abilities.FUR_COAT,
   [Species.TORKOAL]: Abilities.ANALYTIC,
   [Species.SPOINK]: Abilities.PSYCHIC_SURGE,
   [Species.SPINDA]: Abilities.SIMPLE,
@@ -3476,7 +3480,7 @@ export const starterPassiveAbilities = {
   [Species.CACNEA]: Abilities.SAND_RUSH,
   [Species.SWABLU]: Abilities.ADAPTABILITY,
   [Species.ZANGOOSE]: Abilities.POISON_HEAL,
-  [Species.SEVIPER]: Abilities.INTIMIDATE,
+  [Species.SEVIPER]: Abilities.MULTISCALE,
   [Species.LUNATONE]: Abilities.SHADOW_SHIELD,
   [Species.SOLROCK]: Abilities.DROUGHT,
   [Species.BARBOACH]: Abilities.SIMPLE,
@@ -3495,23 +3499,23 @@ export const starterPassiveAbilities = {
   [Species.SNORUNT]: Abilities.SNOW_WARNING,
   [Species.SPHEAL]: Abilities.UNAWARE,
   [Species.CLAMPERL]: Abilities.DRIZZLE,
-  [Species.RELICANTH]: Abilities.SOLID_ROCK,
+  [Species.RELICANTH]: Abilities.PRIMORDIAL_SEA,
   [Species.LUVDISC]: Abilities.MULTISCALE,
-  [Species.BAGON]: Abilities.ADAPTABILITY,
+  [Species.BAGON]: Abilities.DRAGONS_MAW,
   [Species.BELDUM]: Abilities.LEVITATE,
   [Species.REGIROCK]: Abilities.SAND_STREAM,
   [Species.REGICE]: Abilities.SNOW_WARNING,
   [Species.REGISTEEL]: Abilities.FILTER,
-  [Species.LATIAS]: Abilities.SOUL_HEART,
+  [Species.LATIAS]: Abilities.PRISM_ARMOR,
   [Species.LATIOS]: Abilities.TINTED_LENS,
-  [Species.KYOGRE]: Abilities.RAIN_DISH,
+  [Species.KYOGRE]: Abilities.MOLD_BREAKER,
   [Species.GROUDON]: Abilities.TURBOBLAZE,
   [Species.RAYQUAZA]: Abilities.UNNERVE,
   [Species.JIRACHI]: Abilities.COMATOSE,
   [Species.DEOXYS]: Abilities.PROTEAN,
   [Species.TURTWIG]: Abilities.THICK_FAT,
   [Species.CHIMCHAR]: Abilities.BEAST_BOOST,
-  [Species.PIPLUP]: Abilities.LIGHTNING_ROD,
+  [Species.PIPLUP]: Abilities.DRIZZLE,
   [Species.STARLY]: Abilities.ROCK_HEAD,
   [Species.BIDOOF]: Abilities.SAP_SIPPER,
   [Species.KRICKETOT]: Abilities.SHARPNESS,
@@ -3523,7 +3527,7 @@ export const starterPassiveAbilities = {
   [Species.COMBEE]: Abilities.INTIMIDATE,
   [Species.PACHIRISU]: Abilities.HONEY_GATHER,
   [Species.BUIZEL]: Abilities.MOXIE,
-  [Species.CHERUBI]: Abilities.DROUGHT,
+  [Species.CHERUBI]: Abilities.ORICHALCUM_PULSE,
   [Species.SHELLOS]: Abilities.REGENERATOR,
   [Species.DRIFLOON]: Abilities.MAGIC_GUARD,
   [Species.BUNEARY]: Abilities.ADAPTABILITY,
@@ -3537,13 +3541,13 @@ export const starterPassiveAbilities = {
   [Species.CHATOT]: Abilities.PUNK_ROCK,
   [Species.SPIRITOMB]: Abilities.VESSEL_OF_RUIN,
   [Species.GIBLE]: Abilities.SAND_STREAM,
-  [Species.MUNCHLAX]: Abilities.RIPEN,
+  [Species.MUNCHLAX]: Abilities.HARVEST,
   [Species.RIOLU]: Abilities.MINDS_EYE,
   [Species.HIPPOPOTAS]: Abilities.UNAWARE,
   [Species.SKORUPI]: Abilities.SUPER_LUCK,
   [Species.CROAGUNK]: Abilities.MOXIE,
   [Species.CARNIVINE]: Abilities.ARENA_TRAP,
-  [Species.FINNEON]: Abilities.DRIZZLE,
+  [Species.FINNEON]: Abilities.WATER_BUBBLE,
   [Species.MANTYKE]: Abilities.UNAWARE,
   [Species.SNOVER]: Abilities.THICK_FAT,
   [Species.ROTOM]: Abilities.HADRON_ENGINE,
@@ -3555,9 +3559,9 @@ export const starterPassiveAbilities = {
   [Species.HEATRAN]: Abilities.EARTH_EATER,
   [Species.REGIGIGAS]: Abilities.MINDS_EYE,
   [Species.GIRATINA]: Abilities.SHADOW_SHIELD,
-  [Species.CRESSELIA]: Abilities.MAGIC_BOUNCE,
+  [Species.CRESSELIA]: Abilities.UNAWARE,
   [Species.PHIONE]: Abilities.SIMPLE,
-  [Species.MANAPHY]: Abilities.SIMPLE,
+  [Species.MANAPHY]: Abilities.PRIMORDIAL_SEA,
   [Species.DARKRAI]: Abilities.UNNERVE,
   [Species.SHAYMIN]: Abilities.WIND_RIDER,
   [Species.ARCEUS]: Abilities.ADAPTABILITY,
@@ -3590,11 +3594,11 @@ export const starterPassiveAbilities = {
   [Species.SANDILE]: Abilities.TOUGH_CLAWS,
   [Species.DARUMAKA]: Abilities.GORILLA_TACTICS,
   [Species.MARACTUS]: Abilities.WELL_BAKED_BODY,
-  [Species.DWEBBLE]: Abilities.ANGER_SHELL,
+  [Species.DWEBBLE]: Abilities.ROCKY_PAYLOAD,
   [Species.SCRAGGY]: Abilities.PROTEAN,
-  [Species.SIGILYPH]: Abilities.MAGICIAN,
+  [Species.SIGILYPH]: Abilities.FLARE_BOOST,
   [Species.YAMASK]: Abilities.PURIFYING_SALT,
-  [Species.TIRTOUGA]: Abilities.ANGER_SHELL,
+  [Species.TIRTOUGA]: Abilities.WATER_ABSORB,
   [Species.ARCHEN]: Abilities.MULTISCALE,
   [Species.TRUBBISH]: Abilities.TOXIC_DEBRIS,
   [Species.ZORUA]: Abilities.DARK_AURA,
@@ -3611,7 +3615,7 @@ export const starterPassiveAbilities = {
   [Species.ALOMOMOLA]: Abilities.MULTISCALE,
   [Species.JOLTIK]: Abilities.TRANSISTOR,
   [Species.FERROSEED]: Abilities.ROUGH_SKIN,
-  [Species.KLINK]: Abilities.STEELWORKER,
+  [Species.KLINK]: Abilities.STEELY_SPIRIT,
   [Species.TYNAMO]: Abilities.POISON_HEAL,
   [Species.ELGYEM]: Abilities.PRISM_ARMOR,
   [Species.LITWICK]: Abilities.SOUL_HEART,
@@ -3625,7 +3629,7 @@ export const starterPassiveAbilities = {
   [Species.GOLETT]: Abilities.SHADOW_SHIELD,
   [Species.PAWNIARD]: Abilities.SWORD_OF_RUIN,
   [Species.BOUFFALANT]: Abilities.ROCK_HEAD,
-  [Species.RUFFLET]: Abilities.GALE_WINGS,
+  [Species.RUFFLET]: Abilities.SPEED_BOOST,
   [Species.VULLABY]: Abilities.THICK_FAT,
   [Species.HEATMOR]: Abilities.CONTRARY,
   [Species.DURANT]: Abilities.COMPOUND_EYES,
@@ -3651,12 +3655,12 @@ export const starterPassiveAbilities = {
   [Species.SCATTERBUG]: Abilities.PRANKSTER,
   [Species.LITLEO]: Abilities.BEAST_BOOST,
   [Species.FLABEBE]: Abilities.GRASSY_SURGE,
-  [Species.SKIDDO]: Abilities.GRASSY_SURGE,
+  [Species.SKIDDO]: Abilities.SEED_SOWER,
   [Species.PANCHAM]: Abilities.FUR_COAT,
   [Species.FURFROU]: Abilities.FLUFFY,
   [Species.ESPURR]: Abilities.FUR_COAT,
   [Species.HONEDGE]: Abilities.SHARPNESS,
-  [Species.SPRITZEE]: Abilities.MISTY_SURGE,
+  [Species.SPRITZEE]: Abilities.FUR_COAT,
   [Species.SWIRLIX]: Abilities.WELL_BAKED_BODY,
   [Species.INKAY]: Abilities.UNNERVE,
   [Species.BINACLE]: Abilities.SAP_SIPPER,
@@ -3670,17 +3674,17 @@ export const starterPassiveAbilities = {
   [Species.CARBINK]: Abilities.SOLID_ROCK,
   [Species.GOOMY]: Abilities.REGENERATOR,
   [Species.KLEFKI]: Abilities.LEVITATE,
-  [Species.PHANTUMP]: Abilities.RIPEN,
+  [Species.PHANTUMP]: Abilities.SHADOW_TAG,
   [Species.PUMPKABOO]: Abilities.WELL_BAKED_BODY,
   [Species.BERGMITE]: Abilities.ICE_SCALES,
   [Species.NOIBAT]: Abilities.PUNK_ROCK,
-  [Species.XERNEAS]: Abilities.MISTY_SURGE,
+  [Species.XERNEAS]: Abilities.HARVEST,
   [Species.YVELTAL]: Abilities.SOUL_HEART,
   [Species.ZYGARDE]: Abilities.HUGE_POWER,
   [Species.DIANCIE]: Abilities.LEVITATE,
   [Species.HOOPA]: Abilities.OPPORTUNIST,
   [Species.VOLCANION]: Abilities.FILTER,
-  [Species.ROWLET]: Abilities.UNBURDEN,
+  [Species.ROWLET]: Abilities.SNIPER,
   [Species.LITTEN]: Abilities.FUR_COAT,
   [Species.POPPLIO]: Abilities.PUNK_ROCK,
   [Species.PIKIPEK]: Abilities.TECHNICIAN,
@@ -3714,7 +3718,7 @@ export const starterPassiveAbilities = {
   [Species.BRUXISH]: Abilities.MULTISCALE,
   [Species.DRAMPA]: Abilities.THICK_FAT,
   [Species.DHELMISE]: Abilities.WATER_BUBBLE,
-  [Species.JANGMO_O]: Abilities.PUNK_ROCK,
+  [Species.JANGMO_O]: Abilities.DAUNTLESS_SHIELD,
   [Species.TAPU_KOKO]: Abilities.TRANSISTOR,
   [Species.TAPU_LELE]: Abilities.SHEER_FORCE,
   [Species.TAPU_BULU]: Abilities.TRIAGE,
@@ -3726,7 +3730,7 @@ export const starterPassiveAbilities = {
   [Species.XURKITREE]: Abilities.TRANSISTOR,
   [Species.CELESTEELA]: Abilities.HEATPROOF,
   [Species.KARTANA]: Abilities.SHARPNESS,
-  [Species.GUZZLORD]: Abilities.INNARDS_OUT,
+  [Species.GUZZLORD]: Abilities.POISON_HEAL,
   [Species.NECROZMA]: Abilities.BEAST_BOOST,
   [Species.MAGEARNA]: Abilities.STEELY_SPIRIT,
   [Species.MARSHADOW]: Abilities.IRON_FIST,
@@ -3738,13 +3742,13 @@ export const starterPassiveAbilities = {
   [Species.GROOKEY]: Abilities.GRASS_PELT,
   [Species.SCORBUNNY]: Abilities.NO_GUARD,
   [Species.SOBBLE]: Abilities.SUPER_LUCK,
-  [Species.SKWOVET]: Abilities.RIPEN,
+  [Species.SKWOVET]: Abilities.HARVEST,
   [Species.ROOKIDEE]: Abilities.IRON_BARBS,
   [Species.BLIPBUG]: Abilities.PSYCHIC_SURGE,
   [Species.NICKIT]: Abilities.MAGICIAN,
   [Species.GOSSIFLEUR]: Abilities.GRASSY_SURGE,
   [Species.WOOLOO]: Abilities.SIMPLE,
-  [Species.CHEWTLE]: Abilities.ROCK_HEAD,
+  [Species.CHEWTLE]: Abilities.ROCKY_PAYLOAD,
   [Species.YAMPER]: Abilities.SHEER_FORCE,
   [Species.ROLYCOLY]: Abilities.SOLID_ROCK,
   [Species.APPLIN]: Abilities.DRAGONS_MAW,
@@ -3767,16 +3771,16 @@ export const starterPassiveAbilities = {
   [Species.MORPEKO]: Abilities.MOODY,
   [Species.CUFANT]: Abilities.EARTH_EATER,
   [Species.DRACOZOLT]: Abilities.NO_GUARD,
-  [Species.ARCTOZOLT]: Abilities.SNOW_WARNING,
+  [Species.ARCTOZOLT]: Abilities.TRANSISTOR,
   [Species.DRACOVISH]: Abilities.SWIFT_SWIM,
-  [Species.ARCTOVISH]: Abilities.SNOW_WARNING,
+  [Species.ARCTOVISH]: Abilities.STRONG_JAW,
   [Species.DURALUDON]: Abilities.STEELWORKER,
   [Species.DREEPY]: Abilities.PARENTAL_BOND,
   [Species.ZACIAN]: Abilities.UNNERVE,
   [Species.ZAMAZENTA]: Abilities.STAMINA,
-  [Species.ETERNATUS]: Abilities.SUPREME_OVERLORD,
+  [Species.ETERNATUS]: Abilities.NEUTRALIZING_GAS,
   [Species.KUBFU]: Abilities.IRON_FIST,
-  [Species.ZARUDE]: Abilities.GRASSY_SURGE,
+  [Species.ZARUDE]: Abilities.TOUGH_CLAWS,
   [Species.REGIELEKI]: Abilities.ELECTRIC_SURGE,
   [Species.REGIDRAGO]: Abilities.MULTISCALE,
   [Species.GLASTRIER]: Abilities.FILTER,
@@ -3785,7 +3789,7 @@ export const starterPassiveAbilities = {
   [Species.ENAMORUS]: Abilities.FAIRY_AURA,
   [Species.SPRIGATITO]: Abilities.MAGICIAN,
   [Species.FUECOCO]: Abilities.PUNK_ROCK,
-  [Species.QUAXLY]: Abilities.DEFIANT,
+  [Species.QUAXLY]: Abilities.OPPORTUNIST,
   [Species.LECHONK]: Abilities.SIMPLE,
   [Species.TAROUNTULA]: Abilities.HONEY_GATHER,
   [Species.NYMBLE]: Abilities.GUTS,
@@ -3833,11 +3837,11 @@ export const starterPassiveAbilities = {
   [Species.IRON_MOTH]: Abilities.LEVITATE,
   [Species.IRON_THORNS]: Abilities.SAND_STREAM,
   [Species.FRIGIBAX]: Abilities.SNOW_WARNING,
-  [Species.GIMMIGHOUL]: Abilities.CONTRARY,
+  [Species.GIMMIGHOUL]: Abilities.HONEY_GATHER,
   [Species.WO_CHIEN]: Abilities.VESSEL_OF_RUIN,
-  [Species.CHIEN_PAO]: Abilities.INTREPID_SWORD,
+  [Species.CHIEN_PAO]: Abilities.SNOW_WARNING,
   [Species.TING_LU]: Abilities.STAMINA,
-  [Species.CHI_YU]: Abilities.DROUGHT,
+  [Species.CHI_YU]: Abilities.BERSERK,
   [Species.ROARING_MOON]: Abilities.TOUGH_CLAWS,
   [Species.IRON_VALIANT]: Abilities.ADAPTABILITY,
   [Species.KORAIDON]: Abilities.OPPORTUNIST,
@@ -3855,7 +3859,7 @@ export const starterPassiveAbilities = {
   [Species.IRON_CROWN]: Abilities.SHARPNESS,
   [Species.TERAPAGOS]: Abilities.SOUL_HEART,
   [Species.PECHARUNT]: Abilities.TOXIC_CHAIN,
-  [Species.ALOLA_RATTATA]: Abilities.STRONG_JAW,
+  [Species.ALOLA_RATTATA]: Abilities.ADAPTABILITY,
   [Species.ALOLA_SANDSHREW]: Abilities.TOUGH_CLAWS,
   [Species.ALOLA_VULPIX]: Abilities.SHEER_FORCE,
   [Species.ALOLA_DIGLETT]: Abilities.STURDY,
@@ -3864,7 +3868,7 @@ export const starterPassiveAbilities = {
   [Species.ALOLA_GRIMER]: Abilities.TOXIC_DEBRIS,
   [Species.ETERNAL_FLOETTE]: Abilities.MAGIC_GUARD,
   [Species.GALAR_MEOWTH]: Abilities.STEELWORKER,
-  [Species.GALAR_PONYTA]: Abilities.PIXILATE,
+  [Species.GALAR_PONYTA]: Abilities.MOXIE,
   [Species.GALAR_SLOWPOKE]: Abilities.UNAWARE,
   [Species.GALAR_FARFETCHD]: Abilities.INTREPID_SWORD,
   [Species.GALAR_ARTICUNO]: Abilities.SERENE_GRACE,
@@ -3876,7 +3880,7 @@ export const starterPassiveAbilities = {
   [Species.GALAR_YAMASK]: Abilities.TABLETS_OF_RUIN,
   [Species.GALAR_STUNFISK]: Abilities.ARENA_TRAP,
   [Species.HISUI_GROWLITHE]: Abilities.RECKLESS,
-  [Species.HISUI_VOLTORB]: Abilities.ELECTRIC_SURGE,
+  [Species.HISUI_VOLTORB]: Abilities.TRANSISTOR,
   [Species.HISUI_QWILFISH]: Abilities.MERCILESS,
   [Species.HISUI_SNEASEL]: Abilities.SCRAPPY,
   [Species.HISUI_ZORUA]: Abilities.ADAPTABILITY,

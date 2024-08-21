@@ -1,21 +1,14 @@
 import BattleScene from "../battle-scene";
 import { Mode } from "./ui";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import { TextStyle, addTextObject } from "./text";
 import MessageUiHandler from "./message-ui-handler";
-import { Egg, getEggTierForSpecies } from "../data/egg";
+import { getEggTierForSpecies } from "../data/egg";
 import {Button} from "#enums/buttons";
 import { Gender } from "#app/data/gender.js";
 import { EggHatchData, EggSummaryPhase } from "#app/egg-hatch-phase.js";
-import PokemonInfoContainer from "./pokemon-info-container";
 import { getVariantTint } from "#app/data/variant.js";
-import * as Utils from "../utils";
-import i18next from "#app/plugins/i18n.js";
-import { speciesEggMoves } from "#app/data/egg-moves.js";
-import { allMoves } from "#app/data/move.js";
-import { Type } from "#app/data/type.js";
 import { EggTier } from "#app/enums/egg-type.js";
-import { Species } from "#app/enums/species.js";
+import PokemonHatchInfoContainer from "./pokemon-hatch-info-container";
 
 export default class EggSummaryUiHandler extends MessageUiHandler {
   private pokemonListContainer: Phaser.GameObjects.Container;
@@ -25,16 +18,9 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
   private eggHatchContainer: Phaser.GameObjects.Container;
   private eggHatchBg: Phaser.GameObjects.Image;
 
-  private currentPokemonSprite: Phaser.GameObjects.Sprite;
 
-  private infoContainer: PokemonInfoContainer;
-  private pokemonHatchedIcon : Phaser.GameObjects.Sprite;
-  private pokemonNumberText: Phaser.GameObjects.Text;
-  private pokemonNameText: Phaser.GameObjects.Text;
-  private pokemonEggMovesContainer: Phaser.GameObjects.Container;
-  private pokemonEggMoveContainers: Phaser.GameObjects.Container[];
-  private pokemonEggMoveBgs: Phaser.GameObjects.NineSlice[];
-  private pokemonEggMoveLabels: Phaser.GameObjects.Text[];
+  private infoContainer: PokemonHatchInfoContainer;
+
 
   private cursorObj: Phaser.GameObjects.Image;
 
@@ -87,23 +73,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
     // this.eggSprite = this.scene.add.sprite(54, 37, "egg");
     // this.eggListContainer.add(this.eggSprite);
-    this.currentPokemonSprite = this.scene.add.sprite(54, 80, "pkmn__sub");
-    this.currentPokemonSprite.setScale(0.8);
-    this.currentPokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
-    this.pokemonListContainer.add(this.currentPokemonSprite);
 
-    this.pokemonNumberText = addTextObject(this.scene, 80, 107.5, "0000", TextStyle.SUMMARY, {fontSize: 74});
-    this.pokemonNumberText.setOrigin(0, 0);
-    this.pokemonListContainer.add(this.pokemonNumberText);
-
-    this.pokemonNameText = addTextObject(this.scene, 7, 107.5, "", TextStyle.SUMMARY, {fontSize: 74});
-    this.pokemonNameText.setOrigin(0, 0);
-    this.pokemonListContainer.add(this.pokemonNameText);
-
-    this.pokemonHatchedIcon = this.scene.add.sprite(0, 90, "egg_icons");
-    this.pokemonHatchedIcon.setOrigin(0.15, 0.2);
-    this.pokemonHatchedIcon.setScale(0.8);
-    this.pokemonListContainer.add(this.pokemonHatchedIcon);
 
     // TODO remove?
     this.eggListMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
@@ -111,48 +81,11 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.pokemonListContainer.add(this.eggListMessageBoxContainer);
 
     // TODO clean up info container showing
-    this.infoContainer = new PokemonInfoContainer(this.scene, 115, 9);
+    this.infoContainer = new PokemonHatchInfoContainer(this.scene, this.pokemonListContainer);
     this.infoContainer.setup();
     this.infoContainer.changeToEggSummaryLayout();
     this.infoContainer.setVisible(true);
     this.pokemonListContainer.add(this.infoContainer);
-
-    this.pokemonEggMoveContainers = [];
-    this.pokemonEggMoveBgs = [];
-    this.pokemonEggMoveLabels = [];
-    this.pokemonEggMovesContainer = this.scene.add.container(0, 200);
-    this.pokemonEggMovesContainer.setVisible(false);
-    this.pokemonEggMovesContainer.setScale(0.5);
-
-    const eggMovesLabel = addTextObject(this.scene, 70, 0, i18next.t("starterSelectUiHandler:eggMoves"), TextStyle.WINDOW_ALT);
-    eggMovesLabel.setOrigin(0.5, 0);
-
-    this.pokemonEggMovesContainer.add(eggMovesLabel);
-
-    for (let m = 0; m < 4; m++) {
-      const eggMoveContainer = this.scene.add.container(0, 16 + 5.25 * m);
-
-      const eggMoveBg = this.scene.add.nineslice(70, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
-      eggMoveBg.setOrigin(1, 0);
-      eggMoveBg.setZ(3);
-
-      const eggMoveLabel = addTextObject(this.scene, 70 -eggMoveBg.width / 2, 0, "???", TextStyle.PARTY);
-      eggMoveLabel.setOrigin(0.5, 0);
-      eggMoveLabel.setZ(3);
-
-      this.pokemonEggMoveBgs.push(eggMoveBg);
-      this.pokemonEggMoveLabels.push(eggMoveLabel);
-
-      eggMoveContainer.add(eggMoveBg);
-      eggMoveContainer.add(eggMoveLabel);
-      eggMoveContainer.setScale(0.375);
-
-      this.pokemonEggMoveContainers.push(eggMoveContainer);
-
-      this.pokemonEggMovesContainer.add(eggMoveContainer);
-    }
-
-    this.infoContainer.add(this.pokemonEggMoveContainers);
 
     this.cursor = -1;
   }
@@ -164,8 +97,8 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.pokemonIconSpritesContainer.removeAll(true);
     this.pokemonIconsContainer.removeAll(true);
     this.eggHatchBg.setVisible(false);
-    this.currentPokemonSprite.setVisible(false);
-    this.pokemonEggMovesContainer.setVisible(false);
+    // this.currentPokemonSprite.setVisible(false);
+    // this.pokemonEggMovesContainer.setVisible(false);
     this.getUi().hideTooltip();
     console.log("Egg Summary Handler cleared");
 
@@ -209,7 +142,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchContainer.setVisible(true);
     this.pokemonIconsContainer.setVisible(true);
     this.eggHatchBg.setVisible(true);
-    this.pokemonEggMovesContainer.setVisible(true);
 
     this.eggHatchData.forEach( (value: EggHatchData, i: number) => {
       const x = (i % 11) * 18;
@@ -447,21 +379,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     return success || error;
   }
 
-  setEggDetails(egg: Egg): void {
-    // this.eggSprite.setFrame(`egg_${egg.getKey()}`);
-    // this.eggNameText.setText(`${i18next.t("egg:egg")} (${egg.getEggDescriptor()})`);
-    // this.eggDateText.setText(
-    //   new Date(egg.timestamp).toLocaleString(undefined, {
-    //     weekday: "short",
-    //     year: "numeric",
-    //     month: "2-digit",
-    //     day: "numeric"
-    //   })
-    // );
-    // this.eggHatchWavesText.setText(egg.getEggHatchWavesMessage());
-    // this.eggGachaInfoText.setText(egg.getEggTypeDescriptor(this.scene));
-  }
-
   setCursor(cursor: integer): boolean {
     let changed = false;
 
@@ -474,63 +391,11 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
       if (lastCursor > -1) {
         this.iconAnimHandler.addOrUpdate(this.pokemonIconSpritesContainer.getAt(lastCursor) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.NONE);
-        // this.infoContainers[lastCursor].setVisible(false);
       }
       this.iconAnimHandler.addOrUpdate(this.pokemonIconSpritesContainer.getAt(cursor) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.ACTIVE);
-      // this.infoContainers[cursor].setVisible(true);
-      this.setEggDetails(this.scene.gameData.eggs[cursor]);
 
+      this.infoContainer.showHatchInfo(this.eggHatchData[cursor]);
 
-      // TODO pokemon egg moves + new egg move indicator
-      // TODO show egg pokemon hatched from
-      // load sprite
-      // icon.setFrame(displayPokemon.species.getIconId(, displayPokemon.formIndex, displayPokemon.shiny, displayPokemon.variant));
-      const displayPokemon = this.eggHatchData[cursor].pokemon;
-      const species = displayPokemon.species;
-      const female = displayPokemon.gender === Gender.FEMALE;
-      const formIndex = displayPokemon.formIndex;
-      const shiny = displayPokemon.shiny;
-      const variant = displayPokemon.variant;
-      this.infoContainer.show(displayPokemon, false, 1, this.eggHatchData[cursor].getDex(), this.eggHatchData[cursor].prevStarterEntry, true);
-
-      species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
-        // if (assetLoadCancelled.value) {
-        //   return;
-        // }
-        // this.assetLoadCancelled = null;
-        // this.speciesLoaded.set(species.speciesId, true);
-        // redundant setVisible(true) but makes sure sprite is only visible after being rendered (no substitute visible)
-        this.currentPokemonSprite.setVisible(true);
-        this.currentPokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
-        this.currentPokemonSprite.setPipelineData("shiny", shiny);
-        this.currentPokemonSprite.setPipelineData("variant", variant);
-        this.currentPokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
-        // this.pokemonSprite.setVisible(!this.statsMode);
-      });
-      // TODO pokemon name and number
-
-      this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 4));
-      this.pokemonNameText.setText(species.name);
-
-      // TODO show egg moves
-      const hasEggMoves = species && speciesEggMoves.hasOwnProperty(species.speciesId);
-
-      for (let em = 0; em < 4; em++) {
-        const eggMove = hasEggMoves ? allMoves[speciesEggMoves[species.speciesId][em]] : null;
-        const eggMoveUnlocked = eggMove && this.scene.gameData.starterData[species.speciesId].eggMoves & Math.pow(2, em);
-        this.pokemonEggMoveBgs[em].setFrame(Type[eggMove ? eggMove.type : Type.UNKNOWN].toString().toLowerCase());
-        this.pokemonEggMoveLabels[em].setText(eggMove && eggMoveUnlocked ? eggMove.name : "???");
-      }
-
-      // will always have at least one egg move
-      this.pokemonEggMovesContainer.setVisible(true);
-
-      // TODO show egg tier / icon
-      if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
-        this.pokemonHatchedIcon.setFrame("manaphy");
-      } else {
-        this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
-      }
     }
 
     return changed;

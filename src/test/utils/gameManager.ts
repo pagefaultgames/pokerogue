@@ -1,31 +1,20 @@
-import GameWrapper from "#app/test/utils/gameWrapper";
-import {Mode} from "#app/ui/ui";
-import {generateStarter, waitUntil} from "#app/test/utils/gameManagerUtils";
-import {
-  CommandPhase,
-  EncounterPhase,
-  FaintPhase,
-  LoginPhase,
-  NewBattlePhase,
-  SelectStarterPhase,
-  SelectTargetPhase,
-  TitlePhase, TurnEndPhase, TurnInitPhase,
-  TurnStartPhase,
-} from "#app/phases";
+import GameWrapper from "#test/utils/gameWrapper";
+import { Mode } from "#app/ui/ui";
+import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
+import { CommandPhase, EncounterPhase, FaintPhase, LoginPhase, MovePhase, NewBattlePhase, SelectStarterPhase, SelectTargetPhase, TitlePhase, TurnEndPhase, TurnInitPhase, TurnStartPhase } from "#app/phases";
 import BattleScene from "#app/battle-scene.js";
-import PhaseInterceptor from "#app/test/utils/phaseInterceptor";
-import TextInterceptor from "#app/test/utils/TextInterceptor";
-import {GameModes, getGameMode} from "#app/game-mode";
+import PhaseInterceptor from "#test/utils/phaseInterceptor";
+import TextInterceptor from "#test/utils/TextInterceptor";
+import { GameModes, getGameMode } from "#app/game-mode";
 import fs from "fs";
-import {AES, enc} from "crypto-js";
-import {updateUserInfo} from "#app/account";
+import { AES, enc } from "crypto-js";
+import { updateUserInfo } from "#app/account";
 import InputsHandler from "#app/test/utils/inputsHandler";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
-import {EnemyPokemon, PlayerPokemon} from "#app/field/pokemon";
-import {MockClock} from "#app/test/utils/mocks/mockClock";
-import {Command} from "#app/ui/command-ui-handler";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import PartyUiHandler, {PartyUiMode} from "#app/ui/party-ui-handler";
+import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import { MockClock } from "#app/test/utils/mocks/mockClock";
+import PartyUiHandler from "#app/ui/party-ui-handler";
+import CommandUiHandler, { Command } from "#app/ui/command-ui-handler";
 import Trainer from "#app/field/trainer";
 import { ExpNotification } from "#enums/exp-notification";
 import { GameDataType } from "#enums/game-data-type";
@@ -34,6 +23,14 @@ import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { BattlerIndex } from "#app/battle.js";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler.js";
+import { OverridesHelper } from "./helpers/overridesHelper";
+import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type.js";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
+import { MoveHelper } from "./helpers/moveHelper";
+import { vi } from "vitest";
+import { ClassicModeHelper } from "./helpers/classicModeHelper";
+import { DailyModeHelper } from "./helpers/dailyModeHelper";
+import { SettingsHelper } from "./helpers/settingsHelper";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -44,6 +41,11 @@ export default class GameManager {
   public phaseInterceptor: PhaseInterceptor;
   public textInterceptor: TextInterceptor;
   public inputsHandler: InputsHandler;
+  public readonly override: OverridesHelper;
+  public readonly move: MoveHelper;
+  public readonly classicMode: ClassicModeHelper;
+  public readonly dailyMode: DailyModeHelper;
+  public readonly settings: SettingsHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -59,6 +61,11 @@ export default class GameManager {
     this.phaseInterceptor = new PhaseInterceptor(this.scene);
     this.textInterceptor = new TextInterceptor(this.scene);
     this.gameWrapper.setScene(this.scene);
+    this.override = new OverridesHelper(this);
+    this.move = new MoveHelper(this);
+    this.classicMode = new ClassicModeHelper(this);
+    this.dailyMode = new DailyModeHelper(this);
+    this.settings = new SettingsHelper(this);
   }
 
   /**
@@ -85,7 +92,7 @@ export default class GameManager {
    * Ends the current phase.
    */
   endPhase() {
-    this.scene.getCurrentPhase().end();
+    this.scene.getCurrentPhase()?.end();
   }
 
   /**
@@ -120,22 +127,35 @@ export default class GameManager {
   }
 
   /**
-   * Runs the game to the summon phase.
-   * @param species - Optional array of species to summon.
-   * @returns A promise that resolves when the summon phase is reached.
+   * Helper function to run to the final boss encounter as it's a bit tricky due to extra dialogue
+   * Also handles Major/Minor bosses from endless modes
+   * @param game - The game manager
+   * @param species
+   * @param mode
    */
-  async runToSummon(species?: Species[]) {
-    await this.runToTitle();
+  async runToFinalBossEncounter(game: GameManager, species: Species[], mode: GameModes) {
+    console.log("===to final boss encounter===");
+    await game.runToTitle();
 
-    this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      this.scene.gameMode = getGameMode(GameModes.CLASSIC);
-      const starters = generateStarter(this.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(this.scene);
-      this.scene.pushPhase(new EncounterPhase(this.scene, false));
+    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+      game.scene.gameMode = getGameMode(mode);
+      const starters = generateStarter(game.scene, species);
+      const selectStarterPhase = new SelectStarterPhase(game.scene);
+      game.scene.pushPhase(new EncounterPhase(game.scene, false));
       selectStarterPhase.initBattle(starters);
     });
 
-    await this.phaseInterceptor.run(EncounterPhase);
+    game.onNextPrompt("EncounterPhase", Mode.MESSAGE, async () => {
+      // This will skip all entry dialogue (I can't figure out a way to sequentially handle the 8 chained messages via 1 prompt handler)
+      game.setMode(Mode.MESSAGE);
+      const encounterPhase = game.scene.getCurrentPhase() as EncounterPhase;
+
+      // No need to end phase, this will do it for you
+      encounterPhase.doEncounterCommon(false);
+    });
+
+    await game.phaseInterceptor.to(EncounterPhase, true);
+    console.log("===finished run to final boss encounter===");
   }
 
   /**
@@ -144,7 +164,7 @@ export default class GameManager {
    * @returns A promise that resolves when the battle is started.
    */
   async startBattle(species?: Species[]) {
-    await this.runToSummon(species);
+    await this.classicMode.runToSummon(species);
 
     this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
       this.setMode(Mode.MESSAGE);
@@ -175,11 +195,11 @@ export default class GameManager {
     // Confirm target selection if move is multi-target
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition].getMove();
+      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
       if (move.isMultiTarget()) {
         handler.processInput(Button.ACTION);
       }
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnEndPhase));
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MovePhase) || this.isCurrentPhase(TurnEndPhase));
   }
 
   /**
@@ -256,7 +276,7 @@ export default class GameManager {
    */
   isCurrentPhase(phaseTarget) {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
-    return this.scene.getCurrentPhase().constructor.name === targetName;
+    return this.scene.getCurrentPhase()?.constructor.name === targetName;
   }
 
   /**
@@ -279,7 +299,7 @@ export default class GameManager {
       await waitUntil(() => this.scene.ui?.getMode() === Mode.TITLE);
       await this.scene.gameData.tryExportData(GameDataType.SESSION, 0);
       await waitUntil(() => localStorage.hasOwnProperty("toExport"));
-      return resolve(localStorage.getItem("toExport"));
+      return resolve(localStorage.getItem("toExport")!); // TODO: is this bang correct?;
     });
   }
 
@@ -314,15 +334,69 @@ export default class GameManager {
   }
 
   /**
-   * Switch pokemon and transition to the enemy command phase
+   * Command an in-battle switch to another Pokemon via the main battle menu.
    * @param pokemonIndex the index of the pokemon in your party to switch to
    */
   doSwitchPokemon(pokemonIndex: number) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      this.scene.ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
+      (this.scene.ui.getHandler() as CommandUiHandler).setCursor(2);
+      (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
     });
-    this.onNextPrompt("CommandPhase", Mode.PARTY, () => {
-      (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, pokemonIndex, false);
+
+    this.doSelectPartyPokemon(pokemonIndex, "CommandPhase");
+  }
+
+  /**
+   * Revive pokemon, currently players only.
+   * @param pokemonIndex the index of the pokemon in your party to revive
+   */
+  doRevivePokemon(pokemonIndex: number) {
+    const party = this.scene.getParty();
+    const candidate = new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0);
+    const modifier = candidate.type!.newModifier(party[pokemonIndex]);
+    this.scene.addModifier(modifier, false);
+  }
+
+  /**
+   * Select a pokemon from the party menu. Only really handles the basic cases
+   * of the party UI, where you just need to navigate to a party slot and press
+   * Action twice - navigating any menus that come up after you select a party member
+   * is not supported.
+   * @param slot the index of the pokemon in your party to switch to
+   * @param inPhase Which phase to expect the selection to occur in. Typically
+   * non-command switch actions happen in SwitchPhase.
+   */
+  doSelectPartyPokemon(slot: number, inPhase = "SwitchPhase") {
+    this.onNextPrompt(inPhase, Mode.PARTY, () => {
+      const partyHandler = this.scene.ui.getHandler() as PartyUiHandler;
+
+      partyHandler.setCursor(slot);
+      partyHandler.processInput(Button.ACTION); // select party slot
+      partyHandler.processInput(Button.ACTION); // send out (or whatever option is at the top)
     });
+  }
+
+  /**
+   * Intercepts `TurnStartPhase` and mocks the getOrder's return value {@linkcode TurnStartPhase.getOrder}
+   * Used to modify the turn order.
+   * @param {BattlerIndex[]} order The turn order to set
+   * @example
+   * ```ts
+   * await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+   * ```
+   */
+  async setTurnOrder(order: BattlerIndex[]): Promise<void> {
+    await this.phaseInterceptor.to(TurnStartPhase, false);
+
+    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue(order);
+  }
+
+  /**
+   * Removes all held items from enemy pokemon
+   */
+  removeEnemyHeldItems(): void {
+    this.scene.clearEnemyHeldItemModifiers();
+    this.scene.clearEnemyModifiers();
+    console.log("Enemy held items removed");
   }
 }

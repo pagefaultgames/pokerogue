@@ -116,7 +116,7 @@ export function randSeedWeightedItem<T>(items: T[]): T {
     : Phaser.Math.RND.weightedPick(items);
 }
 
-export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T {
+export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T | null {
   if (!items.length) {
     return null;
   }
@@ -165,40 +165,20 @@ export function getPlayTimeString(totalSeconds: integer): string {
   return `${days.padStart(2, "0")}:${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:${seconds.padStart(2, "0")}`;
 }
 
-export function binToDec(input: string): integer {
-  const place: integer[] = [];
-  const binary: string[] = [];
-
-  let decimalNum = 0;
-
-  for (let i = 0; i < input.length; i++) {
-    binary.push(input[i]);
-    place.push(Math.pow(2, i));
-    decimalNum += place[i] * parseInt(binary[i]);
-  }
-
-  return decimalNum;
-}
-
-export function decToBin(input: integer): string {
-  let bin = "";
-  let intNum = input;
-  while (intNum > 0) {
-    bin = intNum % 2 ? `1${bin}` : `0${bin}`;
-    intNum = Math.floor(intNum * 0.5);
-  }
-
-  return bin;
-}
-
-export function getIvsFromId(id: integer): integer[] {
+/**
+ * Generates IVs from a given {@linkcode id} by extracting 5 bits at a time
+ * starting from the least significant bit up to the 30th most significant bit.
+ * @param id 32-bit number
+ * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
+ */
+export function getIvsFromId(id: number): number[] {
   return [
-    binToDec(decToBin(id).substring(0, 5)),
-    binToDec(decToBin(id).substring(5, 10)),
-    binToDec(decToBin(id).substring(10, 15)),
-    binToDec(decToBin(id).substring(15, 20)),
-    binToDec(decToBin(id).substring(20, 25)),
-    binToDec(decToBin(id).substring(25, 30))
+    (id & 0x3E000000) >>> 25,
+    (id & 0x01F00000) >>> 20,
+    (id & 0x000F8000) >>> 15,
+    (id & 0x00007C00) >>> 10,
+    (id & 0x000003E0) >>> 5,
+    (id & 0x0000001F)
   ];
 }
 
@@ -266,16 +246,16 @@ export function formatStat(stat: integer, forHp: boolean = false): string {
   return formatLargeNumber(stat, forHp ? 100000 : 1000000);
 }
 
-export function getEnumKeys(enumType): string[] {
-  return Object.values(enumType).filter(v => isNaN(parseInt(v.toString()))).map(v => v.toString());
+export function getEnumKeys(enumType: any): string[] {
+  return Object.values(enumType).filter(v => isNaN(parseInt(v!.toString()))).map(v => v!.toString());
 }
 
-export function getEnumValues(enumType): integer[] {
-  return Object.values(enumType).filter(v => !isNaN(parseInt(v.toString()))).map(v => parseInt(v.toString()));
+export function getEnumValues(enumType: any): integer[] {
+  return Object.values(enumType).filter(v => !isNaN(parseInt(v!.toString()))).map(v => parseInt(v!.toString()));
 }
 
-export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T> {
-  return condition ? promiseFunc() : new Promise<T>(resolve => resolve(null));
+export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
+  return condition ? promiseFunc() : new Promise<T | null>(resolve => resolve(null));
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
@@ -301,6 +281,10 @@ export function setCookie(cName: string, cValue: string): void {
 }
 
 export function removeCookie(cName: string): void {
+  if (isBeta) {
+    document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=pokerogue.net;Path=/;Max-Age=-1`; // we need to remove the cookie from the main domain as well
+  }
+
   document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Max-Age=-1`;
   document.cookie = `${cName}=;Secure;SameSite=Strict;Path=/;Max-Age=-1`; // legacy cookie without domain, for older cookies to prevent a login loop
 }
@@ -452,7 +436,7 @@ export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
 }
 
 export function rgbHexToRgba(hex: string) {
-  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
+  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i)!; // TODO: is this bang correct?
   return {
     r: parseInt(color[1], 16),
     g: parseInt(color[2], 16),
@@ -486,6 +470,7 @@ export function verifyLang(lang?: string): boolean {
   case "zh-TW":
   case "pt-BR":
   case "ko":
+  case "ja":
     return true;
   default:
     return false;
@@ -566,4 +551,12 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
     return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
   }
   return null;
+}
+
+/**
+ * Returns if an object is null or undefined
+ * @param object
+ */
+export function isNullOrUndefined(object: any): boolean {
+  return null === object || undefined === object;
 }
