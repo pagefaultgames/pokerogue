@@ -1,11 +1,10 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#app/battle.js";
 import { Stat } from "#app/data/pokemon-stat";
-import { CommandPhase } from "#app/phases/command-phase";
-import { SelectTargetPhase } from "#app/phases/select-target-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -32,33 +31,21 @@ describe("Moves - Spotlight", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.moveset([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
+    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
 
   test(
     "move should redirect attacks to the target",
     async () => {
-      await game.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
-
-      const playerPokemon = game.scene.getPlayerField();
-      expect(playerPokemon.length).toBe(2);
-      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
+      await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyField();
-      expect(enemyPokemon.length).toBe(2);
-      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.move.select(Moves.SPOTLIGHT);
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY);
-      await game.phaseInterceptor.to(CommandPhase);
-
-      game.move.select(Moves.QUICK_ATTACK, 1);
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY_2);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPOTLIGHT), BattlerIndex.ENEMY);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK), BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       expect(enemyPokemon[0].hp).toBeLessThan(enemyStartingHp[0]);
@@ -69,17 +56,11 @@ describe("Moves - Spotlight", () => {
   test(
     "move should cause other redirection moves to fail",
     async () => {
-      game.override.enemyMoveset([Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME]);
+      game.override.enemyMoveset([ Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME ]);
 
-      await game.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
-
-      const playerPokemon = game.scene.getPlayerField();
-      expect(playerPokemon.length).toBe(2);
-      playerPokemon.forEach(p => expect(p).not.toBe(undefined));
+      await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
 
       const enemyPokemon = game.scene.getEnemyField();
-      expect(enemyPokemon.length).toBe(2);
-      enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
       /**
        * Spotlight will target the slower enemy. In this situation without Spotlight being used,
@@ -91,14 +72,8 @@ describe("Moves - Spotlight", () => {
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.move.select(Moves.SPOTLIGHT);
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(spotTarget);
-      await game.phaseInterceptor.to(CommandPhase);
-
-      game.move.select(Moves.QUICK_ATTACK, 1);
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(attackTarget);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPOTLIGHT), spotTarget);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK), attackTarget);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       expect(enemyPokemon[1].hp).toBeLessThan(enemyStartingHp[1]);

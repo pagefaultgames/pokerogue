@@ -1,11 +1,11 @@
-import { allAbilities } from "#app/data/ability";
-import { Abilities } from "#app/enums/abilities";
-import Pokemon from "#app/field/pokemon";
-import { SelectTargetPhase } from "#app/phases/select-target-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { allAbilities } from "#app/data/ability.js";
+import { Abilities } from "#app/enums/abilities.js";
+import Pokemon from "#app/field/pokemon.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -21,7 +21,7 @@ describe("Moves - Flame Burst", () => {
    * @returns Effect damage of Flame Burst
    */
   const getEffectDamage = (pokemon: Pokemon): number => {
-    return Math.max(1, Math.floor(pokemon.getMaxHp() * 1 / 16));
+    return Math.max(1, Math.floor(pokemon.getMaxHp() * 1/16));
   };
 
   beforeAll(() => {
@@ -48,12 +48,10 @@ describe("Moves - Flame Burst", () => {
 
   it("inflicts damage to the target's ally equal to 1/16 of its max HP", async () => {
     await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
-    const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
+    const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
 
-    game.move.select(Moves.FLAME_BURST);
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(leftEnemy.getBattlerIndex());
-    game.move.select(Moves.SPLASH, 1);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST), leftEnemy.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
@@ -64,12 +62,10 @@ describe("Moves - Flame Burst", () => {
     game.override.enemyAbility(Abilities.FLASH_FIRE);
 
     await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
-    const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
+    const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
 
-    game.move.select(Moves.FLAME_BURST);
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(leftEnemy.getBattlerIndex());
-    game.move.select(Moves.SPLASH, 1);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST), leftEnemy.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBe(leftEnemy.getMaxHp());
@@ -78,14 +74,12 @@ describe("Moves - Flame Burst", () => {
 
   it("does not interact with the target ally's abilities", async () => {
     await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
-    const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
+    const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[Abilities.FLASH_FIRE]);
 
-    game.move.select(Moves.FLAME_BURST);
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(leftEnemy.getBattlerIndex());
-    game.move.select(Moves.SPLASH, 1);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST), leftEnemy.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
@@ -94,14 +88,12 @@ describe("Moves - Flame Burst", () => {
 
   it("effect damage is prevented by Magic Guard", async () => {
     await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
-    const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
+    const [ leftEnemy, rightEnemy ] = game.scene.getEnemyField();
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[Abilities.MAGIC_GUARD]);
 
-    game.move.select(Moves.FLAME_BURST);
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(leftEnemy.getBattlerIndex());
-    game.move.select(Moves.SPLASH, 1);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAME_BURST), leftEnemy.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());

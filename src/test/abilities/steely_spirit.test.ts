@@ -1,8 +1,7 @@
-import { allAbilities } from "#app/data/ability";
-import { allMoves } from "#app/data/move";
-import { Abilities } from "#app/enums/abilities";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { SelectTargetPhase } from "#app/phases/select-target-phase";
+import { allAbilities } from "#app/data/ability.js";
+import { allMoves } from "#app/data/move.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
@@ -47,10 +46,8 @@ describe("Abilities - Steely Spirit", () => {
 
     expect(boostSource.hasAbility(Abilities.STEELY_SPIRIT)).toBe(true);
 
-    game.selectMove(getMovePosition(game.scene, 0, moveToCheck));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(enemyToCheck.getBattlerIndex());
-    game.move.select(Moves.SPLASH, 1);
+    game.doAttack(getMovePosition(game.scene, 0, moveToCheck), enemyToCheck.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(allMoves[moveToCheck].calculateBattlePower).toHaveReturnedWith(ironHeadPower * steelySpiritMultiplier);
@@ -66,12 +63,8 @@ describe("Abilities - Steely Spirit", () => {
 
     expect(game.scene.getPlayerField().every(p => p.hasAbility(Abilities.STEELY_SPIRIT))).toBe(true);
 
-    game.selectMove(getMovePosition(game.scene, 0, moveToCheck));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(enemyToCheck.getBattlerIndex());
-    game.selectMove(getMovePosition(game.scene, 1, moveToCheck));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(enemyToCheck.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 0, moveToCheck), enemyToCheck.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 1, moveToCheck), enemyToCheck.getBattlerIndex());
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(allMoves[moveToCheck].calculateBattlePower).toHaveReturnedWith(ironHeadPower * Math.pow(steelySpiritMultiplier, 2));
@@ -90,10 +83,8 @@ describe("Abilities - Steely Spirit", () => {
     expect(boostSource.hasAbility(Abilities.STEELY_SPIRIT)).toBe(false);
     expect(boostSource.summonData.abilitySuppressed).toBe(true);
 
-    game.selectMove(getMovePosition(game.scene, 0, moveToCheck));
-    await game.phaseInterceptor.to(SelectTargetPhase, false);
-    game.doSelectTarget(enemyToCheck.getBattlerIndex());
-    game.move.select(Moves.SPLASH, 1);
+    game.doAttack(getMovePosition(game.scene, 0, moveToCheck), enemyToCheck.getBattlerIndex());
+    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(allMoves[moveToCheck].calculateBattlePower).toHaveReturnedWith(ironHeadPower);

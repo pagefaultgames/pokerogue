@@ -193,9 +193,10 @@ export default class GameManager {
 
   /**
    * Emulate a player attack
-   * @param movePosition the index of the move in the pokemon's moveset array
+   * @param movePosition The index of the move in the pokemon's moveset array
+   * @param targetIndex The {@linkcode BattlerIndex} of the Pokemon to target, or `null` if a manual call to `doSelectTarget()` is required
    */
-  selectMove(movePosition: integer) {
+  selectMove(movePosition: integer, targetIndex?: BattlerIndex | null) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       this.scene.ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
@@ -203,27 +204,29 @@ export default class GameManager {
       (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
     });
 
-    // Confirm target selection if move is multi-target
-    this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
-      if (move.isMultiTarget()) {
-        handler.processInput(Button.ACTION);
-      }
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MovePhase) || this.isCurrentPhase(TurnEndPhase));
+    if (targetIndex !== null) {
+      this.doSelectTarget(targetIndex, movePosition);
+    }
   }
 
   /**
    * Emulate a player's target selection after an attack is chosen,
-   * usually called after {@linkcode selectMove} in a double battle.
-   * @param {BattlerIndex} targetIndex the index of the attack target
+   * usually called automatically by {@linkcode selectMove}.
+   * @param {BattlerIndex} targetIndex The index of the attack target, or `undefined` for multi-target attacks
+   * @param movePosition The index of the move in the pokemon's moveset array
    */
-  doSelectTarget(targetIndex: BattlerIndex) {
+  doSelectTarget(targetIndex: BattlerIndex | undefined, movePosition: integer) {
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.setCursor(targetIndex);
+      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
+      if (!move.isMultiTarget()) {
+        handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
+      }
+      if (move.isMultiTarget() && targetIndex !== undefined) {
+        throw new Error(`targetIndex was passed to selectMove() but move ("${move.name}") is not targetted`);
+      }
       handler.processInput(Button.ACTION);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnStartPhase));
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MovePhase) || this.isCurrentPhase(TurnStartPhase) || this.isCurrentPhase(TurnEndPhase));
   }
 
   /** Faint all opponents currently on the field */
