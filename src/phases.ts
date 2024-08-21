@@ -18,7 +18,7 @@ import { Phase } from "./phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { biomeLinks, getBiomeName } from "./data/biomes";
 import { ModifierTier } from "./modifier/modifier-tier";
-import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getLuckString, getModifierType, getPartyLuckValue, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds, setEvioliteOverride } from "./modifier/modifier-type";
+import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, calculateItemConditions, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getLuckString, getModifierType, getPartyLuckValue, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds, setEvioliteOverride } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
 import { getPokemonNameWithAffix } from "./messages";
@@ -1806,7 +1806,7 @@ export class EncounterPhase extends BattlePhase {
     }
     LoggerTools.resetWaveActions(this.scene, undefined, true)
 
-    this.scene.doShinyCheck()
+    //this.scene.doShinyCheck()
 
     if (LoggerTools.autoCheckpoints.includes(this.scene.currentBattle.waveIndex)) {
       //this.scene.gameData.saveGameToAuto(this.scene)
@@ -7126,6 +7126,11 @@ export class SelectModifierPhase extends BattlePhase {
     //console.log("====================")
     //console.log("  Reroll Prediction: " + rerollOverride)
     const party = this.scene.getParty();
+    if (eviolite) {
+      setEvioliteOverride("on")
+    } else {
+      setEvioliteOverride("off")
+    }
     regenerateModifierPoolThresholds(party, this.getPoolType(), rerollOverride);
     const modifierCount = new Utils.IntegerHolder(3);
     if (this.isPlayer()) {
@@ -7133,11 +7138,6 @@ export class SelectModifierPhase extends BattlePhase {
     }
     if (modifierOverride) {
       //modifierCount.value = modifierOverride
-    }
-    if (eviolite) {
-      setEvioliteOverride("on")
-    } else {
-      setEvioliteOverride("off")
     }
     const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, true, true);
     setEvioliteOverride("")
@@ -7174,6 +7174,7 @@ export class SelectModifierPhase extends BattlePhase {
 
     if (!this.rerollCount) {
       this.updateSeed();
+      console.log(calculateItemConditions(this.scene.getParty(), false, true))
       console.log("\n\nPerforming reroll prediction (Eviolite OFF)\n\n\n")
       this.predictionCost = 0
       this.costTiers = []

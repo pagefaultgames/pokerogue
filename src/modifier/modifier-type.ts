@@ -1026,6 +1026,8 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         return new AttackTypeBoosterModifierType(pregenArgs[0] as Type, 20);
       }
 
+      console.log("Generating item: Attack Type Booster")
+
       const attackMoveTypes = party.map(p => p.getMoveset().map(m => m?.getMove()).filter(m => m instanceof AttackMove).map(m => m.type)).flat();
       if (!attackMoveTypes.length) {
         return null;
@@ -1055,6 +1057,13 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       const randInt = Utils.randSeedInt(totalWeight);
       let weight = 0;
 
+      var fullweights: integer[] = []
+      attackMoveTypeWeights.forEach((v, idx) => {
+        for (var i = 0; i < v; i++) {
+          fullweights.push(idx)
+        }
+      })
+
       for (const t of attackMoveTypeWeights.keys()) {
         const typeWeight = attackMoveTypeWeights.get(t)!; // guranteed to be defined
         if (randInt <= weight + typeWeight) {
@@ -1063,6 +1072,8 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         }
         weight += typeWeight;
       }
+
+      //console.log(fullweights.map((v, i) => i == randInt ? `> ${Utils.getEnumKeys(Type)[v]} <` : `${Utils.getEnumKeys(Type)[v]}`))
 
       return new AttackTypeBoosterModifierType(type!, 20);
     });
@@ -1090,6 +1101,8 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in items)) {
         return new SpeciesStatBoosterModifierType(pregenArgs[0] as SpeciesStatBoosterItem);
       }
+
+      console.log("Generating item: Species Booster")
 
       const values = Object.values(items);
       const keys = Object.keys(items);
@@ -1129,6 +1142,15 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         const randInt = Utils.randSeedInt(totalWeight, 1);
         let weight = 0;
 
+        var fullweights: integer[] = []
+        weights.forEach((v, idx) => {
+          for (var i = 0; i < v; i++) {
+            fullweights.push(idx)
+          }
+        })
+
+        //console.log(fullweights.map((v, i) => i == randInt ? `> ${keys[v]} <` : `${keys[v]}`))
+
         for (const i in weights) {
           if (weights[i] !== 0) {
             const curWeight = weight + weights[i];
@@ -1151,12 +1173,16 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Moves)) {
         return new TmModifierType(pregenArgs[0] as Moves, tier);
       }
+
+      console.log("Generating item: TM (Tier: " + Utils.getEnumKeys(ModifierTier)[tier].toLowerCase() + ")")
+
       const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m?.moveId === tm)));
       const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter(tm => !allMoves[tm].name.endsWith(" (N)")).filter((tm, i, array) => array.indexOf(tm) === i);
       if (!tierUniqueCompatibleTms.length) {
         return null;
       }
       const randTmIndex = Utils.randSeedInt(tierUniqueCompatibleTms.length);
+      //console.log(tierUniqueCompatibleTms.map((v, i) => i == randTmIndex ? `> ${Utils.getEnumKeys(Moves)[v].toUpperCase() + Utils.getEnumKeys(Moves)[v].substring(1).toLowerCase()} <` : `${Utils.getEnumKeys(Moves)[v].toUpperCase() + Utils.getEnumKeys(Moves)[v].substring(1).toLowerCase()}`))
       return new TmModifierType(tierUniqueCompatibleTms[randTmIndex], tier);
     });
   }
@@ -1168,6 +1194,8 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in EvolutionItem)) {
         return new EvolutionItemModifierType(pregenArgs[0] as EvolutionItem);
       }
+
+      console.log("Generating item: Evolution Item")
 
       const evolutionItemPool = [
         party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
@@ -1195,6 +1223,8 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in FormChangeItem)) {
         return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
       }
+
+      console.log("Generating item: Form Change Item")
 
       const formChangeItemPool = [...new Set(party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
         const formChanges = pokemonFormChanges[p.species.speciesId];
@@ -1648,6 +1678,362 @@ export function setEvioliteOverride(v: string) {
   evioliteOverride = v;
 }
 
+export function calculateItemConditions(party: Pokemon[], log?: boolean, showAll?: boolean) {
+  let total_common = 0
+  let total_great = 0
+  let total_ultra = 0
+  let total_rogue = 0
+  let total_master = 0
+  let items: string[][] = [[], [], [], [], []]
+  if (!hasMaximumBalls(party, PokeballType.POKEBALL)) {
+    items[0].push(`Poké Ball (6)`)
+    total_common += 6
+  }
+  items[0].push(`Rare Candy (2)`)
+  total_common += 2
+  var potion = Math.min(party.filter(p => (p.getInverseHp() >= 10 || p.getHpRatio() <= 0.875) && !p.isFainted()).length, 3)
+  if (potion > 0) {
+    items[0].push(`Potion (${potion * 3})`)
+    total_common += potion * 3
+  }
+  var superpotion = Math.min(party.filter(p => (p.getInverseHp() >= 25 || p.getHpRatio() <= 0.75) && !p.isFainted()).length, 3)
+  if (superpotion > 0) {
+    items[0].push(`Super Potion (${superpotion})`)
+    total_common += superpotion
+  }
+  var ether = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => m?.ppUsed && (m.getMovePp() - m.ppUsed) <= 5 && m.ppUsed >= Math.floor(m.getMovePp() / 2)).length).length, 3)
+  if (ether > 0) {
+    items[0].push(`Ether (${ether * 3})`)
+    items[0].push(`Max Ether (${ether})`)
+    total_common += ether * 4
+  }
+  let lure = skipInLastClassicWaveOrDefault(2)(party)
+  if (lure > 0) {
+    items[0].push(`Lure (${lure})`)
+    total_common += lure;
+  }
+  if (showAll) {
+    items[0].push(`X Attack (0.66)`)
+    items[0].push(`X Defense (0.66)`)
+    items[0].push(`X Sp. Atk (0.66)`)
+    items[0].push(`X Sp. Def (0.66)`)
+    items[0].push(`X Speed (0.66)`)
+    items[0].push(`X Accuracy (0.66)`)
+  } else {
+    items[0].push(`Any X Item (4, 6 kinds)`)
+  }
+  items[0].push(`Berry (2)`)
+  items[0].push(`Common TM (2)`)
+  total_common += 8 // X item = 4, berry = 2, common TM = 2
+
+
+
+  if (!hasMaximumBalls(party, PokeballType.GREAT_BALL)) {
+    items[1].push(`Great Ball (6)`)
+    total_great += 6
+  }
+  items[1].push(`PP Up (2)`)
+  total_great += 2
+  let statusPartyCount = Math.min(party.filter(p => p.hp && !!p.status && !p.getHeldItems().some(i => {
+    if (i instanceof Modifiers.TurnStatusEffectModifier) {
+      return (i as Modifiers.TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
+    }
+    return false;
+  })).length, 3)
+  if (statusPartyCount > 0) {
+    items[1].push(`Full Heal (${statusPartyCount * 3})`)
+    total_great += statusPartyCount * 3
+  }
+  let reviveCount = Math.min(party.filter(p => p.isFainted()).length, 3);
+  if (reviveCount > 0) {
+    items[1].push(`Revive (${reviveCount * 9})`)
+    items[1].push(`Max Revive (${reviveCount * 3})`)
+    total_great += reviveCount * 12
+  }
+  if (party.filter(p => p.isFainted()).length >= Math.ceil(party.length / 2)) {
+    items[1].push(`Sacred Ash (1)`)
+    total_great++
+  }
+  let hyperpotion = Math.min(party.filter(p => (p.getInverseHp() >= 100 || p.getHpRatio() <= 0.625) && !p.isFainted()).length, 3)
+  if (hyperpotion > 0) {
+    items[1].push(`Hyper Potion (${hyperpotion * 3})`)
+    total_great += hyperpotion * 3
+  }
+  let maxpotion = Math.min(party.filter(p => (p.getInverseHp() >= 150 || p.getHpRatio() <= 0.5) && !p.isFainted()).length, 3)
+  if (maxpotion > 0) {
+    items[1].push(`Max Potion (${maxpotion})`)
+    total_great += maxpotion
+  }
+  let fullrestore = Math.floor((Math.min(party.filter(p => (p.getInverseHp() >= 150 || p.getHpRatio() <= 0.5) && !p.isFainted()).length, 3) + statusPartyCount) / 2)
+  if (fullrestore > 0) {
+    items[1].push(`Full Restore (${fullrestore})`)
+    total_great += fullrestore
+  }
+  let elexir = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => m?.ppUsed && (m.getMovePp() - m.ppUsed) <= 5 && m.ppUsed >= Math.floor(m.getMovePp() / 2)).length).length, 3)
+  if (elexir) {
+    items[1].push(`Elexir (${elexir * 3})`)
+    items[1].push(`Max Elexir (${elexir})`)
+    total_great += elexir * 4
+  }
+  items[1].push("Dire Hit (4)")
+  total_great += 4
+  let superlure = skipInLastClassicWaveOrDefault(4)(party)
+  if (superlure > 0) {
+    items[1].push(`Super Lure (4)`)
+    items[1].push(`Nugget (5)`)
+    total_great += 9
+  }
+  let evo = Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15), 8)
+  if (evo > 0) {
+    items[1].push(`Evolution Item (${evo})`)
+    total_great += evo
+  }
+  if (party[0].scene.gameMode.isClassic && party[0].scene.currentBattle.waveIndex < 180) {
+    if (!party[0].scene.getModifiers(Modifiers.MapModifier).length) {
+      console.log(`Map (1)`)
+    } else {
+      console.log(`Map (1, results in a retry as it's already owned)`)
+    }
+    total_great++
+  }
+  items[1].push(`Rare TM (2)`)
+  total_great += 3
+  if (party.find(p => p.getLearnableLevelMoves().length)) {
+    // Memory Mushroom
+    let highestLev = party.map(p => p.level).reduce((highestLevel: integer, level: integer) => Math.max(highestLevel, level), 1)
+    let memoryshroom = Math.min(Math.ceil(highestLev / 20), 4)
+    if (memoryshroom > 0) {
+      items[1].push(`Memory Mushroom (${memoryshroom})`)
+      total_great += memoryshroom
+    }
+  }
+  if (showAll) {
+    items[1].push(`${getBaseStatBoosterItemName(Stat.HP)} (0.5)`)
+    items[1].push(`${getBaseStatBoosterItemName(Stat.ATK)} (0.5)`)
+    items[1].push(`${getBaseStatBoosterItemName(Stat.DEF)} (0.5)`)
+    items[1].push(`${getBaseStatBoosterItemName(Stat.SPATK)} (0.5)`)
+    items[1].push(`${getBaseStatBoosterItemName(Stat.SPDEF)} (0.5)`)
+    items[1].push(`${getBaseStatBoosterItemName(Stat.SPD)} (0.5)`)
+  } else {
+    items[1].push(`Any Vitamin (3, 6 kinds)`)
+  }
+  total_great += 3
+  if (party[0].scene.getModifiers(Modifiers.TerastallizeAccessModifier).length) {
+    if (showAll) {
+      const teratypes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      const randomchance1 = 1/3 * 1/64
+      const randomchance2 = 1/3 * 63/64 * 1/18
+      const teamTypes = party.map(p => p.getTypes(false, false, true)).flat()
+      teratypes.forEach((v, i) => {
+        if (i == Type.STELLAR) {
+          teratypes[i] += randomchance1
+        } else {
+          teratypes[i] += randomchance2
+        }
+      })
+      teamTypes.forEach(v => {
+        teratypes[v] += 2/3 * 1/teamTypes.length
+      })
+      items[1].push(`Any Tera Shard (1, 19 kinds)`)
+      teratypes.forEach((v, i) => {
+        items[1].push(`  ${i18next.t(`pokemonInfo:Type.${Type[i]}`)}: ${Math.round(v*1000)/10}%`)
+      })
+    } else {
+      items[1].push(`Any Tera Shard (1, 19 kinds)`)
+    }
+    total_great++;
+  }
+  if (party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1) {
+    items[1].push(`DNA Splicer (4)`)
+    total_great += 4
+  }
+  if (!party[0].scene.gameMode.isDaily ) {
+    items[1].push("Voucher (1, or 0 if reroll)")
+    total_great += 1
+  }
+
+
+
+  if (!hasMaximumBalls(party, PokeballType.ULTRA_BALL)) {
+    items[2].push(`Ultra Ball (15)`)
+    total_ultra += 15
+  }
+  if (superlure) {
+    items[2].push(`Max Lure (4)`)
+    items[2].push(`Big Nugget (12)`)
+    total_ultra += 16
+  }
+  items[2].push(`PP Max (3)`)
+  items[2].push(`Mint (4)`)
+  total_ultra += 7
+  let evoRare = Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32)
+  if (evoRare) {
+    items[2].push(`Rare Evolution Item (${evoRare})`)
+    total_ultra += evoRare
+  }
+  if (superlure) {
+    items[2].push(`Amulet Coin (3)`)
+    total_ultra += 3
+  }
+  if (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.unlocks[Unlockables.EVIOLITE]) {
+    if (party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier))) {
+      items[2].push(`Eviolite (10)`)
+      total_ultra += 10
+    }
+  }
+  items[2].push(`Species Stat Booster (12, retries if incompatible)`)
+  total_ultra += 12
+  const checkedSpecies = [ Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD ]
+  const checkedAbilitiesT = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD];
+  const checkedAbilitiesF = [Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD];
+  const checkedAbilitiesW = [Abilities.WEAK_ARMOR, Abilities.CONTRARY, Abilities.MOODY, Abilities.ANGER_SHELL, Abilities.COMPETITIVE, Abilities.DEFIANT];
+  const checkedMoves = [Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT];
+  const weightMultiplier = party.filter(
+    p => !p.getHeldItems().some(i => i instanceof Modifiers.PokemonResetNegativeStatStageModifier && i.stackCount >= i.getMaxHeldItemCount(p)) &&
+      (checkedAbilitiesW.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && selfStatLowerMoves.includes(m.moveId)))).length;
+  if (party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.SpeciesCritBoosterModifier) && (checkedSpecies.includes(p.getSpeciesForm(true).speciesId) || (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId))))) {
+    items[2].push(`Leek (12)`)
+    total_ultra += 12
+  }
+  if (party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && (checkedAbilitiesT.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId))))) {
+    items[2].push(`Toxic Orb (10)`)
+    total_ultra += 10
+  }
+  if (party.some(p => !p.getHeldItems().some(i => i instanceof Modifiers.TurnStatusEffectModifier) && (checkedAbilitiesF.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId))))) {
+    items[2].push(`Flame Orb (10)`)
+    total_ultra += 10
+  }
+  let whiteherb = 0 * (weightMultiplier ? 2 : 1) + (weightMultiplier ? weightMultiplier * 0 : 0)
+  if (whiteherb) {
+    items[2].push(`White Herb (${whiteherb})`)
+    total_ultra += whiteherb
+  }
+  if (superlure) {
+    items[2].push(`Wide Lens (5)`)
+    total_ultra += 5
+  }
+  items[2].push(`Reviver Seed (4)`)
+  items[2].push(`Attack Type Booster (9)`)
+  items[2].push(`Epic TM (11)`)
+  items[2].push(`Rarer Candy (4)`)
+  if (superlure) {
+    items[2].push(`Golden Punch (2)`)
+    items[2].push(`IV Scanner (4)`)
+    items[2].push(`EXP Charm (8)`)
+    items[2].push(`EXP Share (10)`)
+    items[2].push(`EXP Balance (3)`)
+    total_ultra += 27
+  }
+  let teraorb = Math.min(Math.max(Math.floor(party[0].scene.currentBattle.waveIndex / 50) * 2, 1), 4)
+  if (teraorb) {
+    items[2].push(`Tera Orb (${teraorb})`)
+    total_ultra += teraorb
+  }
+  items[2].push(`Quick Claw (3)`)
+  items[2].push(`Wide Lens (4)`)
+  total_ultra += 35
+
+
+
+  if (!hasMaximumBalls(party, PokeballType.ROGUE_BALL)) {
+    items[3].push(`Rogue Ball (16)`)
+    total_rogue += 16
+  }
+  if (superlure) {
+    items[3].push(`Relic Gold (2)`)
+    total_rogue += 2
+  }
+  items[3].push(`Leftovers (3)`)
+  items[3].push(`Shell Bell (3)`)
+  items[3].push(`Berry Pouch (4)`)
+  items[3].push(`Grip Claw (5)`)
+  items[3].push(`Scope Lens (4)`)
+  items[3].push(`Baton (2)`)
+  items[3].push(`Soul Dew (7)`)
+  items[3].push(`Soothe Bell (4)`)
+  let abilitycharm = skipInClassicAfterWave(189, 6)(party);
+  if (abilitycharm) {
+    items[3].push(`Ability Charm (${abilitycharm})`)
+    total_rogue += abilitycharm
+  }
+  items[3].push(`Focus Band (5)`)
+  items[3].push(`King's Rock (3)`)
+  total_rogue += 40
+  if (superlure) {
+    items[3].push(`Lock Capsule (3)`)
+    items[3].push(`Super EXP Charm (8)`)
+    total_rogue += 11
+  }
+  let formchanger = Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 6
+  let megabraclet = Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 9
+  let dynamaxband = Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 9
+  if (formchanger) {
+    items[3].push(`Form Change Item (${formchanger}, retries if incompatible)`)
+    total_rogue += formchanger
+  }
+  if (megabraclet) {
+    items[3].push(`Mega Bracelet (${megabraclet}, retries if already owned)`)
+    total_rogue += megabraclet
+  }
+  if (dynamaxband) {
+    items[3].push(`Dynamax Band (${dynamaxband}, retries if already owned)`)
+    total_rogue += dynamaxband
+  }
+  if (!party[0].scene.gameMode.isDaily) {
+    items[3].push(`Voucher Plus (3 - number of rerolls)`)
+    total_rogue += 3
+  }
+
+
+
+  if (!hasMaximumBalls(party, PokeballType.MASTER_BALL)) {
+    items[4].push(`Master Ball (24)`)
+    total_master += 24
+  }
+  items[4].push(`Shiny Charm (14)`)
+  total_master += 14
+  items[4].push(`Healing Charm (18)`)
+  total_master += 18
+  items[4].push(`Multi Lens (18)`)
+  total_master += 18
+  if (!party[0].scene.gameMode.isDaily && !party[0].scene.gameMode.isEndless && !party[0].scene.gameMode.isSplicedOnly) {
+    items[4].push(`Voucher Premium (5, -2 per reroll)`)
+    total_master += 3
+  }
+  if (!party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1) {
+    items[4].push(`DNA Splicer (24)`)
+    total_master += 24
+  }
+  if ((!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE])) {
+    items[4].push(`Mini Black Hole (1)`)
+    total_master += 1
+  }
+
+
+
+  items[0].sort()
+  items[1].sort()
+  items[2].sort()
+  items[3].sort()
+  items[4].sort()
+  if (!log)
+    return items;
+  let itemlabels = [
+    `Poké (${items[0].length}, weight ${total_common})`,
+    `Great (${items[1].length}, weight ${total_great})`,
+    `Ultra (${items[2].length}, weight ${total_ultra})`,
+    `Rogue (${items[3].length}, weight ${total_rogue})`,
+    `Master (${items[4].length}, weight ${total_master})`
+  ]
+  items.forEach((mi, idx) => {
+    console.log(itemlabels[idx])
+    mi.forEach(m => {
+      console.log("  " + mi)
+    })
+  })
+  return items;
+}
+
 const modifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(modifierTypes.POKEBALL, (party: Pokemon[]) => (hasMaximumBalls(party, PokeballType.POKEBALL)) ? 0 : 6, 6),
@@ -1992,6 +2378,7 @@ export function getModifierType(modifierTypeFunc: ModifierTypeFunc): ModifierTyp
 
 let modifierPoolThresholds = {};
 let ignoredPoolIndexes = {};
+let ignoredPoolNames: string[][] = [];
 
 let dailyStarterModifierPoolThresholds = {};
 let ignoredDailyStarterPoolIndexes = {}; // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -2027,22 +2414,44 @@ export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool
 const tierWeights = [ 768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
 
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount: integer = 0) {
+  console.log("Regenerating item pool")
   const pool = getModifierPoolForType(poolType);
 
   const ignoredIndexes = {};
+  const ignoredNames: string[][] = [];
   const modifierTableData = {};
   const thresholds = Object.fromEntries(new Map(Object.keys(pool).map(t => {
     ignoredIndexes[t] = [];
+    ignoredNames[t] = []
     const thresholds = new Map();
     const tierModifierIds: string[] = [];
     let tierMaxWeight = 0;
     let i = 0;
+    console.log("Summing pool weights")
     pool[t].reduce((total: integer, modifierType: WeightedModifierType) => {
+      //console.warn(`  ${modifierType.modifierType.name} (Running total: ${total})`)
       const weightedModifierType = modifierType as WeightedModifierType;
       const existingModifiers = party[0].scene.findModifiers(m => m.type.id === weightedModifierType.modifierType.id, poolType === ModifierPoolType.PLAYER);
+      if (weightedModifierType.modifierType instanceof ModifierTypeGenerator) {
+        //console.warn("    Generating modifier type based on party contents")
+      }
       const itemModifierType = weightedModifierType.modifierType instanceof ModifierTypeGenerator
         ? weightedModifierType.modifierType.generateType(party)
         : weightedModifierType.modifierType;
+      if (weightedModifierType.modifierType instanceof ModifierTypeGenerator) {
+        //console.warn("      --> " + itemModifierType?.name)
+      }
+      if (!existingModifiers.length) {
+        //console.warn ("    No existing modifiers that match type '" + weightedModifierType.modifierType.id + "'")
+      } else if (itemModifierType instanceof PokemonHeldItemModifierType) {
+        //console.warn("    Modifier is a Held Item")
+      } else if (itemModifierType instanceof FormChangeItemModifierType) {
+        //console.warn("    Modifier is a Form Change item")
+      } else if (existingModifiers.find(m => m.stackCount < m.getMaxStackCount(party[0].scene, true))) {
+        //console.warn("    Modifier exists, but the player can hold more")
+      } else {
+        //console.warn("    All conditions failed - ignoring this modifier")
+      }
       const weight = !existingModifiers.length
         || itemModifierType instanceof PokemonHeldItemModifierType
         || itemModifierType instanceof FormChangeItemModifierType
@@ -2056,12 +2465,20 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
         tierModifierIds.push(modifierId);
         const outputWeight = useMaxWeightForOutput ? weightedModifierType.maxWeight : weight;
         modifierTableData[modifierId] = { weight: outputWeight, tier: parseInt(t), tierPercent: 0, totalPercent: 0 };
+        //console.warn("    Added '" + modifierId + "' to modifier IDs list")
+        //console.warn("    Incremented tierMaxWeight: " + tierMaxWeight + " --> " + (tierMaxWeight + outputWeight))
+        if (weight) {
+          //console.warn("    Incremented total: " + total + " --> " + (total + weight))
+        }
         tierMaxWeight += outputWeight;
       }
       if (weight) {
         total += weight;
+        //console.warn("Added " + weightedModifierType.modifierType.id)
       } else {
         ignoredIndexes[t].push(i++);
+        ignoredNames[t].push(weightedModifierType.modifierType.name)
+        //console.warn("Ignored " + weightedModifierType.modifierType.id)
         return total;
       }
       thresholds.set(total, i++);
@@ -2098,6 +2515,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     ignoredDailyStarterPoolIndexes = ignoredIndexes;
     break;
   }
+  ignoredPoolNames = ignoredNames;
 }
 
 export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
@@ -2108,12 +2526,22 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
   new Array(count).fill(0).map((_, i) => {
-    let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined);
+    let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined, undefined, undefined, scene, shutUpBro, generateAltTiers, advanced);
     let r = 0;
     const aT = candidate?.alternates
     const aT2 = candidate?.advancedAlternates
     while (options.length && ++r < retryCount && options.filter(o => o.type?.name === candidate?.type?.name || o.type?.group === candidate?.type?.group).length) {
+      //if (options.filter(o => o.type?.name === candidate?.type?.name))
+        //console.error(options.filter(o => o.type?.name === candidate?.type?.name).map((v, q) => v.type.name + " (" + v.type.group + ") - conflicting name").join("\n"))
+      //if (options.filter(o => o.type?.group === candidate?.type?.group))
+        //console.error(options.filter(o => o.type?.group === candidate?.type?.group).map((v, q) => v.type.name + " (" + v.type.group + ") - conflicting group").join("\n"))
       candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate?.type?.tier, candidate?.upgradeCount, undefined, scene, shutUpBro, generateAltTiers, advanced);
+      //console.log("    Retrying - attempt " + r, candidate?.type.name)
+    }
+    if (options.length && options.filter(o => o.type?.name === candidate?.type?.name || o.type?.group === candidate?.type?.group).length) {
+      //console.log("  Item " + (i+1) + "/" + count + " (+" + r + ")", candidate?.type.name, "(Out of retries)")
+    } else {
+      //console.log("  Item " + (i+1) + "/" + count + " (+" + r + ")", candidate?.type.name)
     }
     if (candidate && candidate.alternates == undefined) {
       candidate.alternates = aT
@@ -2417,7 +2845,12 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
   }
 
   if (player) {
-    if (!shutUpBro) console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
+    if (!shutUpBro) {
+      console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier].filter(i => i <= index).length)
+      //console.log("Index ", index);
+      //console.log("# of ignored items for this tier", ignoredPoolIndexes[tier].filter(i => i <= index).length)
+      //console.log("Ignored items for this tier", ignoredPoolIndexes[tier].map((v, i) => [ignoredPoolNames[i], v]).flat())
+    }
   }
   let modifierType: ModifierType = (pool[tier][index]).modifierType;
   if (modifierType instanceof ModifierTypeGenerator) {
@@ -2426,7 +2859,10 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
       if (player) {
         if (!shutUpBro) console.log(ModifierTier[tier], upgradeCount);
       }
+      console.error("Null Modifier - regenerating")
       return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount, scene, shutUpBro, generateAltTiers);
+    } else {
+      console.log("Generated type", modifierType)
     }
   }
 
