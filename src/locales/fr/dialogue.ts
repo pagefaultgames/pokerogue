@@ -72,7 +72,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "Tu ne devrais pas t’énerver sur tes Pokémon, même après une défaite.",
       2: "Alors ? Pas mal mes Pokémon, hein ? Je suis fait pour ça.",
-      3: "Peut importe à quel point t’aimes tes Pokémon, il faut toujours de la discipline s’ils se comportent mal."
+      3: "Peu importe à quel point t’aimes tes Pokémon, il faut toujours de la discipline s’ils se comportent mal."
     }
   },
   "breeder_female": {
@@ -2629,7 +2629,7 @@ export const PGFdialogue: DialogueTranslationEntries = {
     "defeat": {
       1: "Tu ne devrais pas t’énerver sur tes Pokémon, même après une défaite.",
       2: "Alors ? Pas mal mes Pokémon, hein ? Je suis fait pour ça.",
-      3: "Peut importe à quel point t’aimes tes Pokémon, il faut toujours de la discipline s’ils se comportent mal."
+      3: "Peu importe à quel point t’aimes tes Pokémon, il faut toujours de la discipline s’ils se comportent mal."
     }
   },
   "breeder_female": {
