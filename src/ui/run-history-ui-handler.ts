@@ -154,6 +154,9 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       this.runsContainer.add(entry);
       this.runs.push(entry);
     }
+    if (this.cursorObj) {
+      this.runsContainer.bringToTop(this.cursorObj);
+    }
   }
 
   override setCursor(cursor: number): boolean {
