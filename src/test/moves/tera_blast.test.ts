@@ -4,13 +4,12 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { Abilities } from "#app/enums/abilities.js";
+import { Abilities } from "#app/enums/abilities";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { Type } from "#app/data/type.js";
-import { getModeForFileReference } from "typescript";
+import { Type } from "#app/data/type";
 import { getMovePosition } from "../utils/gameManagerUtils";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { Stat } from "#app/enums/stat.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#app/enums/stat";
 
 describe("Moves - Tera Blast", () => {
   let phaserGame: Phaser.Game;
@@ -50,7 +49,7 @@ describe("Moves - Tera Blast", () => {
     await game.startBattle([Species.CHIKORITA]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
-    
+
     expect(moveToCheck.type).toBe(Type.FIRE);
   }, 20000);
 
@@ -59,7 +58,7 @@ describe("Moves - Tera Blast", () => {
     const stellarTypeMultiplier = 2;
     const stellarTypeDmgBonus = 20;
     const basePower = moveToCheck.power;
-    
+
     await game.startBattle([Species.CHIKORITA]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
@@ -69,7 +68,7 @@ describe("Moves - Tera Blast", () => {
 
   it("uses the higher stat of the user's Atk and SpAtk for damage calculation", async() => {
     await game.startBattle([Species.CHIKORITA]);
-    
+
     const playerPokemon = game.scene.getPlayerPokemon()!;
     playerPokemon.stats[Stat.ATK] = 100;
     playerPokemon.stats[Stat.SPATK] = 0;
@@ -85,7 +84,7 @@ describe("Moves - Tera Blast", () => {
     await game.startBattle([Species.CHIKORITA]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    
+
     game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
 
     expect(playerPokemon[0].summonData.battleStats[BattleStat.SPATK, BattleStat.ATK]).toBe(-1);
