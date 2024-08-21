@@ -1,7 +1,7 @@
-import { ExpGainsSpeed } from "#app/enums/exp-gains-speed.js";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

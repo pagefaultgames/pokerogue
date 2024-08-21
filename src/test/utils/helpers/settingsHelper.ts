@@ -1,4 +1,4 @@
-import { ExpGainsSpeed } from "#app/enums/exp-gains-speed.js";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 import { GameManagerHelper } from "./gameManagerHelper";
 
 /**

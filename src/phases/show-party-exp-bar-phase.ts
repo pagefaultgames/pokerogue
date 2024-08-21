@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene.js";
-import { ExpGainsSpeed } from "#app/enums/exp-gains-speed.js";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 import { ExpNotification } from "#app/enums/exp-notification.js";
 import { ExpBoosterModifier } from "#app/modifier/modifier.js";
 import * as Utils from "#app/utils.js";

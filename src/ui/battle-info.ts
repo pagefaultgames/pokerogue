@@ -11,7 +11,7 @@ import { BattleStat } from "#app/data/battle-stat";
 import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
 import i18next from "i18next";
-import { ExpGainsSpeed } from "#app/enums/exp-gains-speed.js";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private baseY: number;

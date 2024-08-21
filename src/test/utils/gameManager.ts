@@ -42,7 +42,7 @@ import { TitlePhase } from "#app/phases/title-phase.js";
 import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
-import { ExpGainsSpeed } from "#app/enums/exp-gains-speed.js";
+import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
 /**
  * Class to manage the game state and transitions between phases.

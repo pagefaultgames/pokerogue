@@ -1,11 +1,11 @@
-import { Species } from "#app/enums/species.js";
-import { GameModes, getGameMode } from "#app/game-mode.js";
+import { Species } from "#app/enums/species";
+import { GameModes, getGameMode } from "#app/game-mode";
 import overrides from "#app/overrides.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { EncounterPhase } from "#app/phases/encounter-phase.js";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
-import { Mode } from "#app/ui/ui.js";
+import { CommandPhase } from "#app/phases/command-phase";
+import { EncounterPhase } from "#app/phases/encounter-phase";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { Mode } from "#app/ui/ui";
 import { generateStarter } from "../gameManagerUtils";
 import { GameManagerHelper } from "./gameManagerHelper";
 

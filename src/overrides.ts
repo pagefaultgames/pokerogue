@@ -29,7 +29,9 @@ import { type ModifierOverride } from "./modifier/modifier-type";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {
+  OPP_MOVESET_OVERRIDE: [Moves.ROAR, Moves.ROAR, Moves.ROAR, Moves.ROAR],
+} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
@@ -184,5 +186,5 @@ export const defaultOverrides = new DefaultOverrides();
 
 export default {
   ...defaultOverrides,
-  ...overrides
+  ...overrides,
 } satisfies InstanceType<typeof DefaultOverrides>;
