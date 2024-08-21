@@ -25,7 +25,15 @@ export enum Region {
   PALDEA
 }
 
-export function getPokemonSpecies(species: Species | Species[]): PokemonSpecies {
+/**
+ * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode Species} enum given
+ * @param species The species to fetch
+ * @returns The associated {@linkcode PokemonSpecies} object
+ */
+export function getPokemonSpecies(species: Species | Species[] | undefined): PokemonSpecies {
+  if (!species) {
+    throw new Error("`species` must not be undefined in `getPokemonSpecies()`");
+  }
   // If a special pool (named trainers) is used here it CAN happen that they have a array as species (which means choose one of those two). So we catch that with this code block
   if (Array.isArray(species)) {
     // Pick a random species from the list
@@ -756,7 +764,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
     for (const weight of evolutionPool.keys()) {
       if (randValue < weight) {
-        return getPokemonSpecies(evolutionPool.get(weight)!).getSpeciesForLevel(level, true, forTrainer, strength, currentWave); // TODO: is the bang correct?
+        return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true, forTrainer, strength, currentWave);
       }
     }
 
