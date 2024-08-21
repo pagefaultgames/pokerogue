@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, applyPostDefendAbAttrs, PostDefendAbAttr, applyPostAttackAbAttrs, PostAttackAbAttr, MaxMultiHitAbAttr, AlwaysHitAbAttr, MoveTypeChangeAttr } from "#app/data/ability";
+import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, applyPostDefendAbAttrs, PostDefendAbAttr, applyPostAttackAbAttrs, PostAttackAbAttr, MaxMultiHitAbAttr, AlwaysHitAbAttr, MoveTypeChangeAbAttr } from "#app/data/ability";
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
 import { MoveAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, ProtectedTag, SemiInvulnerableTag } from "#app/data/battler-tags";
@@ -63,7 +63,7 @@ export class MoveEffectPhase extends PokemonPhase {
       }
 
       user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
-      applyPreAttackAbAttrs(MoveTypeChangeAttr, user, this.getTarget() ?? null, move);
+      applyPreAttackAbAttrs(MoveTypeChangeAbAttr, user, this.getTarget() ?? null, move);
 
       /**
          * If this phase is for the first hit of the invoked move,
