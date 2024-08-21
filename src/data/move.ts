@@ -1854,8 +1854,8 @@ export class MultiHitAttr extends MoveAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let hitTimes: integer;
-
-    if (target.getAttackMoveEffectiveness(user, new PokemonMove(move.id)) === 0) {
+    console.log(move.type);
+    if (target.getAttackTypeEffectiveness(move.type, user) === 0) {
       // If there is a type immunity, the attack will stop no matter what
       hitTimes = 1;
     } else {
