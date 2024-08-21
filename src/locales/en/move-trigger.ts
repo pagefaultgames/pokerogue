@@ -7,6 +7,8 @@ export const moveTriggers: SimpleTranslationEntries = {
   "switchedStatChanges": "{{pokemonName}} switched stat changes with the target!",
   "switchedTwoStatChanges": "{{pokemonName}} switched all changes to its {{firstStat}}\nand {{secondStat}} with its target!",
   "swappedStat": "{{pokemonName}} switched {{stat}} with its target!",
+  "guardSplit": "{{pokemonName}} shared its guard with the target!",
+  "powerSplit": "{{pokemonName}} shared its power with the target!",
   "goingAllOutForAttack": "{{pokemonName}} is going all out for this attack!",
   "regainedHealth": "{{pokemonName}} regained\nhealth!",
   "keptGoingAndCrashed": "{{pokemonName}} kept going\nand crashed!",
