@@ -27,9 +27,9 @@ describe("Moves - Rollout", () => {
     game.override.disableCrits();
     game.override.battleType("single");
     game.override.starterSpecies(Species.RATTATA);
-    game.override.ability(Abilities.NONE);
+    game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.BIDOOF);
-    game.override.enemyAbility(Abilities.NONE);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
     game.override.enemyMoveset(SPLASH_ONLY);
