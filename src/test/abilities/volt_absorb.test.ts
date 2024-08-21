@@ -5,7 +5,6 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -42,7 +41,7 @@ describe("Abilities - Volt Absorb", () => {
 
     await game.startBattle();
 
-    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
+    game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

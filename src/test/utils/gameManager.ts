@@ -20,7 +20,7 @@ import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import InputsHandler from "#app/test/utils/inputsHandler";
 import { MockClock } from "#app/test/utils/mocks/mockClock";
-import CommandUiHandler, { Command } from "#app/ui/command-ui-handler";
+import CommandUiHandler from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler from "#app/ui/party-ui-handler";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
@@ -192,30 +192,11 @@ export default class GameManager {
   }
 
   /**
-   * Emulate a player attack
-   * @param movePosition The index of the move in the pokemon's moveset array
-   * @param targetIndex The {@linkcode BattlerIndex} of the Pokemon to target, or `null` if a manual call to `doSelectTarget()` is required
-   */
-  selectMove(movePosition: integer, targetIndex?: BattlerIndex | null) {
-    this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      this.scene.ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    this.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-
-    if (targetIndex !== null) {
-      this.doSelectTarget(targetIndex, movePosition);
-    }
-  }
-
-  /**
-   * Emulate a player's target selection after an attack is chosen,
-   * usually called automatically by {@linkcode selectMove}.
+   * Emulate a player's target selection after a move is chosen, usually called automatically by {@linkcode MoveHelper.select}.
    * @param {BattlerIndex} targetIndex The index of the attack target, or `undefined` for multi-target attacks
    * @param movePosition The index of the move in the pokemon's moveset array
    */
-  doSelectTarget(targetIndex: BattlerIndex | undefined, movePosition: integer) {
+  selectTarget(movePosition: integer, targetIndex?: BattlerIndex) {
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
       const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
@@ -324,7 +305,7 @@ export default class GameManager {
    */
   async importData(path): Promise<[boolean, integer]> {
     const saveKey = "x0i2O7WRiANTqPmZ";
-    const dataRaw = fs.readFileSync(path, {encoding: "utf8", flag: "r"});
+    const dataRaw = fs.readFileSync(path, { encoding: "utf8", flag: "r" });
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
     dataStr = this.scene.gameData.convertSystemDataStr(dataStr);
     const systemData = this.scene.gameData.parseSystemData(dataStr);
@@ -338,7 +319,7 @@ export default class GameManager {
 
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
     (this.scene.time as MockClock).overrideDelay = 0.01;
-    return new Promise<void>(async(resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
       this.scene.pushPhase(new FaintPhase(this.scene, pokemon.getBattlerIndex(), true));
       await this.phaseInterceptor.to(FaintPhase).catch((e) => reject(e));

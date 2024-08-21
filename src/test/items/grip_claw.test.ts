@@ -1,12 +1,11 @@
-import { BattlerIndex } from "#app/battle.js";
-import { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BerryType } from "#app/enums/berry-type.js";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { BattlerIndex } from "#app/battle";
+import { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { BerryType } from "#app/enums/berry-type";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
@@ -59,8 +58,8 @@ describe("Items - Grip Claw", () => {
 
       const enemyHeldItemCt = enemyPokemon.map(p => p.getHeldItems.length);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.POPULATION_BOMB), BattlerIndex.ENEMY);
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.POPULATION_BOMB, 0, BattlerIndex.ENEMY);
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(MoveEndPhase, false);
 

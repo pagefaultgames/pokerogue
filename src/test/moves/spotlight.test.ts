@@ -1,10 +1,9 @@
-import { BattlerIndex } from "#app/battle.js";
+import { BattlerIndex } from "#app/battle";
 import { Stat } from "#app/data/pokemon-stat";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -31,21 +30,21 @@ describe("Moves - Spotlight", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
-    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
   test(
     "move should redirect attacks to the target",
     async () => {
-      await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
+      await game.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
 
       const enemyPokemon = game.scene.getEnemyField();
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPOTLIGHT), BattlerIndex.ENEMY);
-      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK), BattlerIndex.ENEMY_2);
+      game.move.select(Moves.SPOTLIGHT, 0, BattlerIndex.ENEMY);
+      game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       expect(enemyPokemon[0].hp).toBeLessThan(enemyStartingHp[0]);
@@ -56,9 +55,9 @@ describe("Moves - Spotlight", () => {
   test(
     "move should cause other redirection moves to fail",
     async () => {
-      game.override.enemyMoveset([ Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME ]);
+      game.override.enemyMoveset([Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME, Moves.FOLLOW_ME]);
 
-      await game.startBattle([ Species.AMOONGUSS, Species.CHARIZARD ]);
+      await game.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
 
       const enemyPokemon = game.scene.getEnemyField();
 
@@ -72,8 +71,8 @@ describe("Moves - Spotlight", () => {
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPOTLIGHT), spotTarget);
-      game.doAttack(getMovePosition(game.scene, 1, Moves.QUICK_ATTACK), attackTarget);
+      game.move.select(Moves.SPOTLIGHT, 0, spotTarget);
+      game.move.select(Moves.QUICK_ATTACK, 1, attackTarget);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
       expect(enemyPokemon[1].hp).toBeLessThan(enemyStartingHp[1]);

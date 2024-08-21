@@ -9,7 +9,6 @@ import { NumberHolder } from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -18,7 +17,7 @@ describe("Moves - Aurora Veil", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   const singleBattleMultiplier = 0.5;
-  const doubleBattleMultiplier = 2732/4096;
+  const doubleBattleMultiplier = 2732 / 4096;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -42,11 +41,11 @@ describe("Moves - Aurora Veil", () => {
     game.override.weather(WeatherType.HAIL);
   });
 
-  it("reduces damage of physical attacks by half in a single battle", async() => {
+  it("reduces damage of physical attacks by half in a single battle", async () => {
     const moveToUse = Moves.TACKLE;
     await game.startBattle([Species.SHUCKLE]);
 
-    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
+    game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
@@ -54,14 +53,14 @@ describe("Moves - Aurora Veil", () => {
     expect(mockedDmg).toBe(allMoves[moveToUse].power * singleBattleMultiplier);
   });
 
-  it("reduces damage of physical attacks by a third in a double battle", async() => {
+  it("reduces damage of physical attacks by a third in a double battle", async () => {
     game.override.battleType("double");
 
     const moveToUse = Moves.ROCK_SLIDE;
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
 
-    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
-    game.selectMove(getMovePosition(game.scene, 1, moveToUse));
+    game.move.select(moveToUse);
+    game.move.select(moveToUse, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
@@ -69,11 +68,11 @@ describe("Moves - Aurora Veil", () => {
     expect(mockedDmg).toBe(allMoves[moveToUse].power * doubleBattleMultiplier);
   });
 
-  it("reduces damage of special attacks by half in a single battle", async() => {
+  it("reduces damage of special attacks by half in a single battle", async () => {
     const moveToUse = Moves.ABSORB;
     await game.startBattle([Species.SHUCKLE]);
 
-    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
+    game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -82,14 +81,14 @@ describe("Moves - Aurora Veil", () => {
     expect(mockedDmg).toBe(allMoves[moveToUse].power * singleBattleMultiplier);
   });
 
-  it("reduces damage of special attacks by a third in a double battle", async() => {
+  it("reduces damage of special attacks by a third in a double battle", async () => {
     game.override.battleType("double");
 
     const moveToUse = Moves.DAZZLING_GLEAM;
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
 
-    game.selectMove(getMovePosition(game.scene, 0, moveToUse));
-    game.selectMove(getMovePosition(game.scene, 1, moveToUse));
+    game.move.select(moveToUse);
+    game.move.select(moveToUse, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);

@@ -2,12 +2,10 @@ import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { CommandPhase } from "#app/phases/command-phase";
-import { MovePhase } from "#app/phases/move-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -29,7 +27,7 @@ describe("Abilities - Sweet Veil", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
-    game.override.moveset([Moves.SPLASH, Moves.REST]);
+    game.override.moveset([Moves.SPLASH, Moves.REST, Moves.YAWN]);
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemyMoveset([Moves.POWDER, Moves.POWDER, Moves.POWDER, Moves.POWDER]);
@@ -74,28 +72,19 @@ describe("Abilities - Sweet Veil", () => {
     game.override.enemySpecies(Species.PIKACHU);
     game.override.enemyLevel(5);
     game.override.startingLevel(5);
-    game.override.enemyMoveset([Moves.YAWN, Moves.YAWN, Moves.YAWN, Moves.YAWN]);
+    game.override.enemyMoveset(SPLASH_ONLY);
 
     await game.startBattle([Species.SHUCKLE, Species.SHUCKLE, Species.SWIRLIX]);
 
     game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(Moves.YAWN, 1, BattlerIndex.PLAYER);
 
-    // First pokemon move
-    await game.move.forceHit();
-
-    // Second pokemon move
-    await game.phaseInterceptor.to(MovePhase, false);
-    await game.move.forceHit();
+    await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getPlayerField().some(p => !!p.getTag(BattlerTagType.DROWSY))).toBe(true);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    const drowsyMon = game.scene.getPlayerField().find(p => !!p.getTag(BattlerTagType.DROWSY))!;
-
     await game.phaseInterceptor.to(CommandPhase);
-    game.selectMove(getMovePosition(game.scene, (drowsyMon.getBattlerIndex() as BattlerIndex.PLAYER | BattlerIndex.PLAYER_2), Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     game.doSwitchPokemon(2);
 
     expect(game.scene.getPlayerField().every(p => p.status?.effect)).toBe(false);

@@ -3,7 +3,6 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -80,7 +79,7 @@ async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, pro
 
   const enemyStartingHp = enemyPokemon.hp;
 
-  game.selectMove(getMovePosition(game.scene, 0, attackMove));
+  game.move.select(attackMove);
   await game.phaseInterceptor.to(TurnEndPhase, false);
 
   if (shouldSucceed) {

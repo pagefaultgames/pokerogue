@@ -1,5 +1,9 @@
+import { BattlerIndex } from "#app/battle";
 import { Moves } from "#app/enums/moves";
+import { CommandPhase } from "#app/phases/command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { Command } from "#app/ui/command-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { vi } from "vitest";
 import { getMovePosition } from "../gameManagerUtils";
 import { GameManagerHelper } from "./gameManagerHelper";
@@ -39,8 +43,20 @@ export class MoveHelper extends GameManagerHelper {
      * Select the move to be used by the given Pokemon(-index)
      * @param move the move to use
      * @param pkmIndex the pokemon index. Relevant for double-battles only (defaults to 0)
+     * @param targetIndex The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `doSelectTarget()` is required
      */
-  select(move: Moves, pkmIndex: 0 | 1 = 0) {
-    this.game.selectMove(getMovePosition(this.game.scene, pkmIndex, move));
+  select(move: Moves, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
+    const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
+
+    this.game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      this.game.scene.ui.setMode(Mode.FIGHT, (this.game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    });
+    this.game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+
+    if (targetIndex !== null) {
+      this.game.selectTarget(movePosition, targetIndex);
+    }
   }
 }

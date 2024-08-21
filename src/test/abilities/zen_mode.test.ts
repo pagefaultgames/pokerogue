@@ -1,7 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#app/data/pokemon-stat";
 import { Status, StatusEffect } from "#app/data/status-effect";
-import { CommandPhase } from "#app/phases/command-phase";
 import { DamagePhase } from "#app/phases/damage-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { MessagePhase } from "#app/phases/message-phase";
@@ -12,13 +11,11 @@ import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
-import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -59,13 +56,7 @@ describe("Abilities - ZEN MODE", () => {
       game.scene.getParty()[0].hp = 100;
       expect(game.scene.getParty()[0].formIndex).toBe(0);
 
-      game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-        game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-      });
-      game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-        const movePosition = getMovePosition(game.scene, 0, moveToUse);
-        (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-      });
+      game.move.select(moveToUse);
 
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.phaseInterceptor.to(DamagePhase, false);
@@ -88,13 +79,7 @@ describe("Abilities - ZEN MODE", () => {
       game.scene.getParty()[0].hp = 100;
       expect(game.scene.getParty()[0].formIndex).toBe(0);
 
-      game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-        game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-      });
-      game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-        const movePosition = getMovePosition(game.scene, 0, moveToUse);
-        (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-      });
+      game.move.select(moveToUse);
 
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.phaseInterceptor.to(QuietFormChangePhase);
@@ -114,13 +99,7 @@ describe("Abilities - ZEN MODE", () => {
       game.scene.getParty()[0].hp = 100;
       expect(game.scene.getParty()[0].formIndex).toBe(0);
 
-      game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-        game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-      });
-      game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-        const movePosition = getMovePosition(game.scene, 0, moveToUse);
-        (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-      });
+      game.move.select(moveToUse);
 
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.phaseInterceptor.to(DamagePhase, false);

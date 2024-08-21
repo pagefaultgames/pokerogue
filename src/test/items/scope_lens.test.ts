@@ -27,30 +27,30 @@ describe("Items - Scope Lens", () => {
     game = new GameManager(phaserGame);
 
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     game.override.disableCrits();
 
     game.override.battleType("single");
   }, 20000);
 
-  it("SCOPE_LENS activates in battle correctly", async() => {
+  it("SCOPE_LENS activates in battle correctly", async () => {
     game.override.startingHeldItems([{ name: "SCOPE_LENS" }]);
-    game.override.moveset([ Moves.POUND ]);
+    game.override.moveset([Moves.POUND]);
     const consoleSpy = vi.spyOn(console, "log");
     await game.startBattle([
       Species.GASTLY
     ]);
 
-    game.selectMove(0);
+    game.move.select(Moves.POUND);
 
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(consoleSpy).toHaveBeenCalledWith("Applied", "Scope Lens", "");
   }, 20000);
 
-  it("SCOPE_LENS held by random pokemon", async() => {
+  it("SCOPE_LENS held by random pokemon", async () => {
     await game.startBattle([
       Species.GASTLY
     ]);

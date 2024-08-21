@@ -4,7 +4,6 @@ import { Species } from "#app/enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -105,7 +104,7 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
   await game.toNextTurn();
 
   const initialHp = game.scene.getEnemyField()[0].hp;
-  game.selectMove(getMovePosition(game.scene, 0, attackMove));
+  game.move.select(attackMove);
   if (!killAlly) {
     game.move.select(Moves.SPLASH, 1);
   }
@@ -119,7 +118,7 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
   game.scene.getEnemyField()[0].hp = initialHp;
 
   const initialHp1v1 = game.scene.getEnemyField()[0].hp;
-  game.selectMove(getMovePosition(game.scene, 0, attackMove));
+  game.move.select(attackMove);
 
   await game.phaseInterceptor.to(TurnEndPhase);
   const afterHp1v1 = game.scene.getEnemyField()[0].hp;
