@@ -3,7 +3,7 @@ import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, TrappedTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
-import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
+import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects } from "./status-effect";
 import { getTypeResistances, Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
@@ -5891,7 +5891,6 @@ export class DestinyBondAttr extends MoveEffectAttr {
 
 /**
  * Attribute to apply a battler tag to the target if they have had their stats boosted this turn.
- *
  * @extends AddBattlerTagAttr
  */
 export class AddBattlerTagIfBoostedAttr extends AddBattlerTagAttr {
@@ -5907,7 +5906,7 @@ export class AddBattlerTagIfBoostedAttr extends AddBattlerTagAttr {
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (target.turnData.battleStatsChange.find(v => v > 0)) {
+    if (target.turnData.battleStatsIncrease) {
       super.apply(user, target, move, args);
     }
     return true;
@@ -5916,7 +5915,6 @@ export class AddBattlerTagIfBoostedAttr extends AddBattlerTagAttr {
 
 /**
  * Attribute to apply a status effect to the target if they have had their stats boosted this turn.
- *
  * @extends MoveEffectAttr
  */
 export class StatusIfBoostedAttr extends MoveEffectAttr {
@@ -5935,7 +5933,7 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (target.turnData.battleStatsChange.find(v => v > 0)) {
+    if (target.turnData.battleStatsIncrease) {
       target.trySetStatus(this.effect, true, user);
     }
     return true;
@@ -8573,7 +8571,7 @@ export function initMoves() {
       .attr(StatusIfBoostedAttr, StatusEffect.BURN)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.LASH_OUT, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.turnData.battleStatsDecrease ? 2 : 1),
     new AttackMove(Moves.POLTERGEIST, Type.GHOST, MoveCategory.PHYSICAL, 110, 90, 5, -1, 0, 8)
       .attr(AttackedByItemAttr)
       .makesContact(false),

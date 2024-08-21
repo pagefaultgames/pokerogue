@@ -72,7 +72,7 @@ export class StatChangePhase extends PokemonPhase {
     }
 
     const battleStats = this.getPokemon().summonData.battleStats;
-    const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats![stat] + levels.value, 6) : Math.max(battleStats![stat] + levels.value, -6)) - battleStats![stat]);
+    const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats[stat] + levels.value, 6) : Math.max(battleStats[stat] + levels.value, -6)) - battleStats[stat]);
 
     this.onChange && this.onChange(this.getPokemon(), filteredStats, relLevels);
 
@@ -85,12 +85,18 @@ export class StatChangePhase extends PokemonPhase {
       }
 
       for (const stat of filteredStats) {
-        if (levels.value > 0 && pokemon.summonData.battleStats[stat] + levels.value <= 6) {
+        if (levels.value > 0 && pokemon.summonData.battleStats[stat] < 6) {
           if (!pokemon.turnData) {
             // Temporary fix for missing turn data struct on turn 1
             pokemon.resetTurnData();
           }
-          pokemon.turnData.battleStatsChange[stat] += levels.value;
+          pokemon.turnData.battleStatsIncrease = true;
+        } else if (levels.value < 0 && pokemon.summonData.battleStats[stat] > -6) {
+          if (!pokemon.turnData) {
+            // Temporary fix for missing turn data struct on turn 1
+            pokemon.resetTurnData();
+          }
+          pokemon.turnData.battleStatsDecrease = true;
         }
 
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
