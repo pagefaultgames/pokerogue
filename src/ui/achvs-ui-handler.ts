@@ -24,6 +24,8 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
   private headerText: Phaser.GameObjects.Text;
   private headerActionText: Phaser.GameObjects.Text;
+  private headerActionButton: Phaser.GameObjects.Sprite;
+  private headerBgX: Number;
   private iconsBg: Phaser.GameObjects.NineSlice;
   private icons: Phaser.GameObjects.Sprite[];
 
@@ -57,14 +59,15 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.mainContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
+    this.headerBgX = headerBg.getTopRight().x;
     headerBg.setOrigin(0, 0);
 
     this.headerText = addTextObject(this.scene, 0, 0, "", TextStyle.SETTINGS_LABEL);
     this.headerText.setOrigin(0, 0);
     this.headerText.setPositionRelative(headerBg, 8, 4);
-    const headerActionElement = new Phaser.GameObjects.Sprite(this.scene, 0, 0, "keyboard", "SPACE.png");
-    headerActionElement.setOrigin(0,0);
-    headerActionElement.setPositionRelative(headerBg, 236, 6);
+    this.headerActionButton = new Phaser.GameObjects.Sprite(this.scene, 0, 0, "keyboard", "SPACE.png");
+    this.headerActionButton.setOrigin(0,0);
+    this.headerActionButton.setPositionRelative(headerBg, 236, 6);
     this.headerActionText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, {fontSize:"60px"});
     this.headerActionText.setOrigin(0, 0);
     this.headerActionText.setPositionRelative(headerBg, 264, 8);
@@ -130,7 +133,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.message = descriptionText;
 
     this.mainContainer.add(headerBg);
-    this.mainContainer.add(headerActionElement);
+    this.mainContainer.add(this.headerActionButton);
     this.mainContainer.add(this.headerText);
     this.mainContainer.add(this.headerActionText);
     this.mainContainer.add(this.iconsBg);
@@ -327,6 +330,9 @@ export default class AchvsUiHandler extends MessageUiHandler {
   updateAchvIcons(): void {
     this.headerText.text = this.achvsName;
     this.headerActionText.text = this.vouchersName;
+    const textPosition = this.headerBgX - this.headerActionText.displayWidth - 8;
+    this.headerActionText.setX(textPosition);
+    this.headerActionButton.setX(textPosition - this.headerActionButton.displayWidth - 5);
 
     const achvUnlocks = this.scene.gameData.achvUnlocks;
 
@@ -364,6 +370,9 @@ export default class AchvsUiHandler extends MessageUiHandler {
   updateVoucherIcons(): void {
     this.headerText.text = this.vouchersName;
     this.headerActionText.text = this.achvsName;
+    const textPosition = this.headerBgX - this.headerActionText.displayWidth - 8;
+    this.headerActionText.setX(textPosition);
+    this.headerActionButton.setX(textPosition - this.headerActionButton.displayWidth - 5);
 
     const voucherUnlocks = this.scene.gameData.voucherUnlocks;
 
