@@ -13,6 +13,7 @@ export const settings: SimpleTranslationEntries = {
   "expGainsSpeed": "Vit. barre d’Exp",
   "expPartyDisplay": "Afficher Exp équipe",
   "skipSeenDialogues": "Passer dialogues connus",
+  "highlightUsablePokemon": "Highlight Usable Pokemon",
   "battleStyle": "Style de combat",
   "enableRetries": "Activer les réessais",
   "hideIvs": "Masquer Scanner d’IV",

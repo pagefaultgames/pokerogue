@@ -162,7 +162,11 @@ export default class BattleScene extends SceneBase {
   public enableTouchControls: boolean = false;
   public enableVibration: boolean = false;
   public showBgmBar: boolean = true;
-
+  /**
+   * Determinates if the pokemon's name must be highlighted
+   * if it fits the challenge requirements
+   */
+  public highlightUsablePokemon = false;
   /**
    * Determines the selected battle style.
    * - 0 = 'Switch'

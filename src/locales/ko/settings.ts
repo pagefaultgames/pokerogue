@@ -13,6 +13,7 @@ export const settings: SimpleTranslationEntries = {
   "expGainsSpeed": "경험치 획득 속도",
   "expPartyDisplay": "파티 경험치 표시",
   "skipSeenDialogues": "본 대화 생략",
+  "highlightUsablePokemon": "Highlight Usable Pokemon",
   "battleStyle": "시합 룰",
   "enableRetries": "재도전 허용",
   "hideIvs": "개체값탐지기 효과 끄기",

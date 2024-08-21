@@ -13,6 +13,7 @@ export const settings: SimpleTranslationEntries = {
   "expGainsSpeed": "EP-Balken Geschw.",
   "expPartyDisplay": "Team-EP anzeigen",
   "skipSeenDialogues": "Gesehenen Dialog überspringen",
+  "highlightUsablePokemon": "Highlight Usable Pokemon",
   "battleStyle": "Kampfstil",
   "enableRetries": "Erneut versuchen aktivieren",
   "hideIvs": "IS-Scanner verstecken",

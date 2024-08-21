@@ -13,6 +13,7 @@ export const settings: SimpleTranslationEntries = {
   "expGainsSpeed": "EXPバーの増加スピード",
   "expPartyDisplay": "パーティの経験値取得表示",
   "skipSeenDialogues": "Skip Seen Dialogues",
+  "highlightUsablePokemon": "Highlight Usable Pokemon",
   "battleStyle": "試合のルール",
   "enableRetries": "リトライを有効にする",
   "hideIvs": "Hide IV scanner",
