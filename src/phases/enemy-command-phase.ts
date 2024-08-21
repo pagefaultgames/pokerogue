@@ -83,4 +83,8 @@ export class EnemyCommandPhase extends FieldPhase {
 
     this.end();
   }
+
+  getFieldIndex(): integer {
+    return this.fieldIndex;
+  }
 }

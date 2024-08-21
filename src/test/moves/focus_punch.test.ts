@@ -124,7 +124,7 @@ describe("Moves - Focus Punch", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      game.forceOpponentToSwitch();
+      game.forceEnemyToSwitch();
       game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
 
       await game.phaseInterceptor.to(TurnStartPhase);

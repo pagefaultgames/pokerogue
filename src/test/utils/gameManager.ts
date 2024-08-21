@@ -42,6 +42,9 @@ import { TitlePhase } from "#app/phases/title-phase.js";
 import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
+import { Moves } from "#app/enums/moves.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { getMoveTargets } from "#app/data/move.js";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -247,7 +250,27 @@ export default class GameManager {
     }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase));
   }
 
-  forceOpponentToSwitch() {
+  /**
+   * Forces the next enemy selecting a move to use the given move in its moveset against the
+   * given target (if applicable).
+   * @param moveId {@linkcode Moves} the move the enemy will use
+   * @param target {@linkcode BattlerIndex} the target on which the enemy will use the given move
+   */
+  async forceEnemyMove(moveId: Moves, target?: BattlerIndex) {
+    // Wait for the next EnemyCommandPhase to start
+    await this.phaseInterceptor.to(EnemyCommandPhase, false);
+    const enemy = this.scene.getEnemyField()[(this.scene.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()];
+    const legalTargets = getMoveTargets(enemy, moveId);
+
+    vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
+      move: moveId,
+      targets: (target && !legalTargets.multiple && legalTargets.targets.includes(target))
+        ? [target]
+        : enemy.getNextTargets(moveId)
+    });
+  }
+
+  forceEnemyToSwitch() {
     const originalMatchupScore = Trainer.prototype.getPartyMemberMatchupScores;
     Trainer.prototype.getPartyMemberMatchupScores = () => {
       Trainer.prototype.getPartyMemberMatchupScores = originalMatchupScore;
