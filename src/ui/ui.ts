@@ -1,4 +1,4 @@
-import {default as BattleScene} from "../battle-scene";
+import { default as BattleScene } from "../battle-scene";
 import UiHandler from "./ui-handler";
 import BattleMessageUiHandler from "./battle-message-ui-handler";
 import CommandUiHandler from "./command-ui-handler";
@@ -24,7 +24,7 @@ import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
 import EggGachaUiHandler from "./egg-gacha-ui-handler";
 import VouchersUiHandler from "./vouchers-ui-handler";
-import {addWindow} from "./ui-theme";
+import { addWindow } from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
 import LoadingModalUiHandler from "./loading-modal-ui-handler";
@@ -37,8 +37,8 @@ import SavingIconHandler from "./saving-icon-handler";
 import UnavailableModalUiHandler from "./unavailable-modal-ui-handler";
 import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
 import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
-import {Button} from "#enums/buttons";
-import i18next, {ParseKeys} from "i18next";
+import { Button } from "#enums/buttons";
+import i18next, { ParseKeys } from "i18next";
 import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
@@ -47,6 +47,7 @@ import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
 import RenameFormUiHandler from "./rename-form-ui-handler";
+import AdminUiHandler from "./admin-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -85,7 +86,8 @@ export enum Mode {
   UNAVAILABLE,
   OUTDATED,
   CHALLENGE_SELECT,
-  RENAME_POKEMON
+  RENAME_POKEMON,
+  ADMIN,
 }
 
 const transitionModes = [
@@ -122,7 +124,8 @@ const noTransitionModes = [
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
   Mode.OUTDATED,
-  Mode.RENAME_POKEMON
+  Mode.RENAME_POKEMON,
+  Mode.ADMIN,
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -185,6 +188,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new OutdatedModalUiHandler(scene),
       new GameChallengesUiHandler(scene),
       new RenameFormUiHandler(scene),
+      new AdminUiHandler(scene),
     ];
   }
 

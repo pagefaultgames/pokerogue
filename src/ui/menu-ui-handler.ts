@@ -8,7 +8,7 @@ import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui
 import { Tutorial, handleTutorial } from "../tutorial";
 import { loggedInUser, updateUserInfo } from "../account";
 import i18next from "i18next";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 
@@ -291,6 +291,14 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       },
       {
+        label: "Admin",
+        handler: () => {
+          ui.setOverlayMode(Mode.SETTINGS);
+          return true;
+        },
+        keepOpen: true
+      },
+      {
         label: i18next.t("menuUiHandler:cancel"),
         handler: () => {
           this.scene.ui.revertMode();
@@ -429,6 +437,16 @@ export default class MenuUiHandler extends MessageUiHandler {
                 }
               }
             });
+          if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === "admin") && loggedInUser?.hasAdminRole) {
+            this.manageDataConfig.options.splice(this.manageDataConfig.options.length-1,0, {
+              label: "Admin",
+              handler: () => {
+                ui.setOverlayMode(Mode.ADMIN);
+                return true;
+              },
+              keepOpen: true
+            });
+          }
         }
         ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.manageDataConfig);
         success = true;
