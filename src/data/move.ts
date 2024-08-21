@@ -2831,9 +2831,9 @@ export class SwapStatStagesAttr extends MoveEffectAttr {
       user.updateInfo();
 
       if (this.stats.length === 7) {
-        target.scene.queueMessage(i18next.t("moveTriggers:switchedStatChanges", { pokemonName: getPokemonNameWithAffix(user) }));
+        user.scene.queueMessage(i18next.t("moveTriggers:switchedStatChanges", { pokemonName: getPokemonNameWithAffix(user) }));
       } else if (this.stats.length === 2) {
-        target.scene.queueMessage(i18next.t("moveTriggers:switchedTwoStatChanges", {
+        user.scene.queueMessage(i18next.t("moveTriggers:switchedTwoStatChanges", {
           pokemonName: getPokemonNameWithAffix(user),
           firstStat: i18next.t(getStatKey(this.stats[0])),
           secondStat: i18next.t(getStatKey(this.stats[1]))
@@ -5888,16 +5888,24 @@ export class SwapStatAttr extends MoveEffectAttr {
    * temporarily.
    * @param user the {@linkcode Pokemon} that used the move
    * @param target the {@linkcode Pokemon} that the move was used on
-   * @param _move N/A
-   * @param _args N/A
+   * @param move N/A
+   * @param args N/A
    * @returns true if attribute application succeeds
    */
-  apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
-    const temp = user.getStat(this.stat, false);
-    user.setStat(this.stat, target.getStat(this.stat, false), false);
-    target.setStat(this.stat, temp, false);
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (super.apply(user, target, move, args)) {
+      const temp = user.getStat(this.stat, false);
+      user.setStat(this.stat, target.getStat(this.stat, false), false);
+      target.setStat(this.stat, temp, false);
 
-    return true;
+      user.scene.queueMessage(i18next.t("moveTriggers:swappedStat", {
+        pokemonName: getPokemonNameWithAffix(user),
+        stat: i18next.t(getStatKey(this.stat)),
+      }));
+
+      return true;
+    }
+    return false;
   }
 }
 
