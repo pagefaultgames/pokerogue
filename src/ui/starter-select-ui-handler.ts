@@ -876,19 +876,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.scene.executeWithSeedOffset(() => {
       for (let gen = 0; gen < 9; gen++) {
-        let randomSpeciesId: Species;
-        let currentGenSpecies: PokemonSpecies[];
-        let species: PokemonSpecies | undefined;
+        const currentGenSpecies = this.allSpecies.filter(species => species.generation === gen + 1);
+        const randomSpeciesId = Utils.randSeedItem(currentGenSpecies).speciesId;
+        const species = getPokemonSpecies(randomSpeciesId);
 
-        const generateSpecies = () => {
-          currentGenSpecies = this.allSpecies.filter(species => species.generation === gen + 1);
-          randomSpeciesId = Utils.randSeedItem(currentGenSpecies).speciesId;
-          species = getPokemonSpecies(randomSpeciesId);
-        };
-
-        generateSpecies();
-
-        this.pokerusSpecies.push(species!); // TODO: is the bang correct?
+        this.pokerusSpecies.push(species);
       }
     }, 0, date.getTime().toString());
 
