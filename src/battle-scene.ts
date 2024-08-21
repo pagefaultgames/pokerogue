@@ -992,12 +992,10 @@ export default class BattleScene extends SceneBase {
     this.enemyModifierBar.removeAll(true);
 
     for (const p of this.getParty()) {
-      p.destroySubstitute();
       p.destroy();
     }
     this.party = [];
     for (const p of this.getEnemyParty()) {
-      p.destroySubstitute();
       p.destroy();
     }
 

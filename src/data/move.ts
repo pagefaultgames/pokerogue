@@ -100,6 +100,9 @@ export enum MoveFlags {
    * Enables all hits of a multi-hit move to be accuracy checked individually
    */
   CHECK_ALL_HITS    = 1 << 17,
+  /**
+   * Indicates a move is able to bypass its target's Substitute (if the target has one)
+   */
   IGNORE_SUBSTITUTE = 1 << 18,
   /**
    * Indicates a move is able to be redirected to allies in a double battle if the attacker faints
@@ -320,15 +323,19 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Checks if the move can bypass Substitute to directly hit its target
+   * Checks if the move would hit its target's Substitute instead of the target itself.
    * @param user The {@linkcode Pokemon} using this move
+   * @param target The {@linkcode Pokemon} targeted by this move
    * @returns `true` if the move can bypass the target's Substitute; `false` otherwise.
    */
-  canIgnoreSubstitute(user: Pokemon): boolean {
-    return this.moveTarget === MoveTarget.USER
-        || user?.hasAbility(Abilities.INFILTRATOR)
-        || this.hasFlag(MoveFlags.SOUND_BASED)
-        || this.hasFlag(MoveFlags.IGNORE_SUBSTITUTE);
+  hitsSubstitute(user: Pokemon, target: Pokemon | null): boolean {
+    if (this.moveTarget === MoveTarget.USER || !target?.getTag(BattlerTagType.SUBSTITUTE)) {
+      return false;
+    }
+
+    return !user.hasAbility(Abilities.INFILTRATOR)
+        && !this.hasFlag(MoveFlags.SOUND_BASED)
+        && !this.hasFlag(MoveFlags.IGNORE_SUBSTITUTE);
   }
 
   /**
@@ -607,8 +614,7 @@ export default class Move implements Localizable {
     // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
     switch (flag) {
     case MoveFlags.MAKES_CONTACT:
-      if (user.hasAbilityWithAttr(IgnoreContactAbAttr) ||
-          (target?.getTag(BattlerTagType.SUBSTITUTE) && !this.canIgnoreSubstitute(user))) {
+      if (user.hasAbilityWithAttr(IgnoreContactAbAttr) || this.hitsSubstitute(user, target)) {
         return false;
       }
       break;
@@ -2004,7 +2010,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!this.selfTarget && !!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
+    if (!this.selfTarget && move.hitsSubstitute(user, target)) {
       return false;
     }
 
@@ -2100,7 +2106,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (!!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
+      if (move.hitsSubstitute(user, target)) {
         return resolve(false);
       }
       const rand = Phaser.Math.RND.realInRange(0, 1);
@@ -2172,7 +2178,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (!!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
+    if (move.hitsSubstitute(user, target)) {
       return false;
     }
 
@@ -2295,7 +2301,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
    * @returns {boolean} true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
+    if (move.hitsSubstitute(user, target)) {
       return false;
     }
     const cancelled = new Utils.BooleanHolder(false);
@@ -2348,7 +2354,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (!this.selfTarget && !!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
+    if (!this.selfTarget && move.hitsSubstitute(user, target)) {
       return false;
     }
 
@@ -2665,7 +2671,7 @@ export class StatChangeAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (!this.selfTarget && !!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
+    if (!this.selfTarget && move.hitsSubstitute(user, target)) {
       return false;
     }
 
@@ -2862,7 +2868,7 @@ export class ResetStatsAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (!!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
+    if (move.hitsSubstitute(user, target)) {
       return false;
     }
 
@@ -4604,7 +4610,7 @@ export class FlinchAttr extends AddBattlerTagAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!target.getTag(SubstituteTag) || move.canIgnoreSubstitute(user)) {
+    if (!move.hitsSubstitute(user, target)) {
       return super.apply(user, target, move, args);
     }
     return false;
@@ -4617,7 +4623,7 @@ export class ConfuseAttr extends AddBattlerTagAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!target.getTag(SubstituteTag) || move.canIgnoreSubstitute(user)) {
+    if (!move.hitsSubstitute(user, target)) {
       return super.apply(user, target, move, args);
     }
     return false;
@@ -5113,7 +5119,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
 
-      if (!this.user && !!target.getTag(SubstituteTag) && !move.canIgnoreSubstitute(user)) {
+      if (!this.user && move.hitsSubstitute(user, target)) {
         return false;
       }
 

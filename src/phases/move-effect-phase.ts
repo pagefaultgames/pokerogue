@@ -120,7 +120,7 @@ export class MoveEffectPhase extends PokemonPhase {
       const applyAttrs: Promise<void>[] = [];
 
       // Move animation only needs one target
-      new MoveAnim(move.id as Moves, user, this.getTarget()?.getBattlerIndex()!).play(this.scene, !move.canIgnoreSubstitute(user), () => { // TODO: is the bang correct here?
+      new MoveAnim(move.id as Moves, user, this.getTarget()!.getBattlerIndex()).play(this.scene, move.hitsSubstitute(user, this.getTarget()!), () => {
         /** Has the move successfully hit a target (for damage) yet? */
         let hasHit: boolean = false;
         for (const target of targets) {
@@ -245,7 +245,7 @@ export class MoveEffectPhase extends PokemonPhase {
                          * If the move hit, and the target doesn't have Shield Dust,
                          * apply the chance to flinch the target gained from King's Rock
                          */
-                      if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && (!target.getTag(BattlerTagType.SUBSTITUTE) || move.canIgnoreSubstitute(user))) {
+                      if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && !move.hitsSubstitute(user, target)) {
                         const flinched = new Utils.BooleanHolder(false);
                         user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
                         if (flinched.value) {
@@ -257,13 +257,18 @@ export class MoveEffectPhase extends PokemonPhase {
                             && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit) && (!attr.firstTargetOnly || firstTarget), user, target, this.move.getMove()).then(() => {
                         // Apply the target's post-defend ability effects (as long as the target is active or can otherwise apply them)
                         return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move.getMove(), hitResult).then(() => {
-                          // If the invoked move is an enemy attack, apply the enemy's status effect-inflicting tags and tokens
+                          // Only apply the following effects if the move was not deflected by a substitute
+                          if (move.hitsSubstitute(user, target)) {
+                            return resolve();
+                          }
+
+                          // If the invoked move is an enemy attack, apply the enemy's status effect-inflicting tokens
+                          if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
+                            user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
+                          }
                           target.lapseTag(BattlerTagType.BEAK_BLAST_CHARGING);
                           if (move.category === MoveCategory.PHYSICAL && user.isPlayer() !== target.isPlayer()) {
                             target.lapseTag(BattlerTagType.SHELL_TRAP);
-                          }
-                          if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
-                            user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
                           }
                         })).then(() => {
                           // Apply the user's post-attack ability effects

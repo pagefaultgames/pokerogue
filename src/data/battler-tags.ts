@@ -153,9 +153,11 @@ export class BeakBlastChargingTag extends BattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
       const effectPhase = pokemon.scene.getCurrentPhase();
-      if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
+      if (effectPhase instanceof MoveEffectPhase) {
         const attacker = effectPhase.getPokemon();
-        attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
+        if (effectPhase.move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+          attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
+        }
       }
       return true;
     }
@@ -1900,7 +1902,7 @@ export class SubstituteTag extends BattlerTag {
       const move = moveEffectPhase.move.getMove();
       const firstHit = (attacker.turnData.hitCount === attacker.turnData.hitsLeft);
 
-      if (firstHit && !move.canIgnoreSubstitute(attacker)) {
+      if (firstHit && move.hitsSubstitute(attacker, pokemon)) {
         pokemon.scene.queueMessage(i18next.t("battlerTags:substituteOnHit", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       }
     }
@@ -1913,7 +1915,6 @@ export class SubstituteTag extends BattlerTag {
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.hp = source.hp;
-    // TODO: load this tag's sprite (or generate a new one upon loading a game)
   }
 }
 

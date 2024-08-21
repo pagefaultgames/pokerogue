@@ -2235,7 +2235,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.lapseTags(BattlerTagLapseType.HIT);
 
           const substitute = this.getTag(SubstituteTag);
-          if (!!substitute && !move.canIgnoreSubstitute(source)) {
+          if (substitute && move.hitsSubstitute(source, this)) {
             substitute.hp -= damage.value;
             damage.value = 0;
           }
@@ -2310,7 +2310,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (!typeless) {
         applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, typeMultiplier);
       }
-      if (!!this.getTag(SubstituteTag) && !move.canIgnoreSubstitute(source)) {
+      if (move.hitsSubstitute(source, this)) {
         cancelled.value = true;
       }
       if (!cancelled.value) {
@@ -3326,6 +3326,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   destroy(): void {
     this.battleInfo?.destroy();
+    this.destroySubstitute();
     super.destroy();
   }
 
