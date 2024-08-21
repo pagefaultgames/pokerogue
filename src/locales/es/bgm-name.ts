@@ -1,11 +1,12 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "Música",
+  "music": "Música: ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "B2W2 - ¡Vs Campeón de Kanto!",
   "battle_johto_champion": "B2W2 - ¡Vs Campeón de Johto!",
-  "battle_hoenn_champion": "B2W2 - ¡Vs Campeón de Hoenn!",
+  "battle_hoenn_champion_g5": "B2W2 - ¡Vs Campeón de Hoenn!",
+  "battle_hoenn_champion_g6": "ORAS - ¡Vs Campeón de Hoenn!",
   "battle_sinnoh_champion": "B2W2 - ¡Vs Campeón de Sinnoh!",
   "battle_champion_alder": "BW - ¡Vs Campeón de Teselia!",
   "battle_champion_iris": "B2W2 - ¡Vs Campeón de Teselia!",
@@ -110,9 +111,9 @@ export const bgmName: SimpleTranslationEntries = {
   "plains": "PMD EoS - Pradera de la Cumbre del Cielo",
   "power_plant": "PMD EoS - Pradera Destello",
   "ruins": "PMD EoS - Sima Hermética",
-  "sea": "PMD EoS - Cueva Aguamar",
+  "sea": "Andr06 - Marine Mystique", // Name defined by the composer
   "seabed": "Firel - Seabed", // The composer thinks about a more creative name
-  "slum": "PMD EoS - Costa de la Cumbre del Cielo",
+  "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
   "snowy_forest": "PMD EoS - Campo nevado de la Cumbre del Cielo",
   "space": "Firel - Aether",
   "swamp": "PMD EoS - Mar Circundante",

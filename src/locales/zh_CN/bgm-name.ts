@@ -1,11 +1,12 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const bgmName: SimpleTranslationEntries = {
-  "music": "BGM",
+  "music": "BGM: ",
   "missing_entries" : "{{name}}",
   "battle_kanto_champion": "黑2白2「决战！关都冠军」",
   "battle_johto_champion": "黑2白2「决战！城都冠军」",
-  "battle_hoenn_champion": "黑2白2「决战！丰缘冠军」",
+  "battle_hoenn_champion_g5": "黑2白2「决战！丰缘冠军」",
+  "battle_hoenn_champion_g6": "Ω红宝石α蓝宝石「决战！丰缘冠军」",
   "battle_sinnoh_champion": "黑2白2「决战！神奥冠军」",
   "battle_champion_alder": "黑白「决战！合众冠军」",
   "battle_champion_iris": "黑2白2「决战！合众冠军」",
@@ -110,9 +111,9 @@ export const bgmName: SimpleTranslationEntries = {
   "plains": "空之探险队「天空顶端（草原）」",
   "power_plant": "空之探险队「电气平原 深处」",
   "ruins": "空之探险队「封印岩地 深处」",
-  "sea": "空之探险队「石滩洞窟」",
+  "sea": "Andr06 - Marine Mystique", // Name defined by the composer
   "seabed": "Firel - 海底", // The composer thinks about a more creative name
-  "slum": "空之探险队「天空顶端（岩场）」",
+  "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
   "snowy_forest": "空之探险队「天空顶端（雪山）」",
   "space": "Firel - 太空",
   "swamp": "空之探险队「封闭之海」",

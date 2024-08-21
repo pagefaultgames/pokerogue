@@ -16,6 +16,7 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "PASS_BATON": "배턴터치한다",
   "UNPAUSE_EVOLUTION": "진화 재개",
   "REVIVE": "되살린다",
+  "RENAME": "닉네임 바꾸기",
 
   "choosePokemon": "포켓몬을 선택하세요.",
   "doWhatWithThisPokemon": "포켓몬을 어떻게 하겠습니까?",
@@ -35,8 +36,8 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "cancel": "그만둔다",
 
   // Slot TM text
-  "able": "배울 수 있다",
-  "notAble": "배울 수 없다",
+  "able": "배운다!",
+  "notAble": "배우지 못함",
   "learned": "알고 있다",
 
   // Releasing messages

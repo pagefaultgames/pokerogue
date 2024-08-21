@@ -10,12 +10,13 @@ import { cos, sin } from "./field/anims";
 import { PlayerPokemon } from "./field/pokemon";
 import { getTypeRgb } from "./data/type";
 import i18next from "i18next";
+import { getPokemonNameWithAffix } from "./messages";
 
 export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
   protected lastLevel: integer;
 
-  private evolution: SpeciesFormEvolution;
+  private evolution: SpeciesFormEvolution | null;
 
   protected evolutionContainer: Phaser.GameObjects.Container;
   protected evolutionBaseBg: Phaser.GameObjects.Image;
@@ -27,7 +28,7 @@ export class EvolutionPhase extends Phase {
   protected pokemonEvoSprite: Phaser.GameObjects.Sprite;
   protected pokemonEvoTintSprite: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, pokemon: PlayerPokemon, evolution: SpeciesFormEvolution, lastLevel: integer) {
+  constructor(scene: BattleScene, pokemon: PlayerPokemon, evolution: SpeciesFormEvolution | null, lastLevel: integer) {
     super(scene);
 
     this.pokemon = pokemon;
@@ -52,7 +53,7 @@ export class EvolutionPhase extends Phase {
         return this.end();
       }
 
-      this.scene.fadeOutBgm(null, false);
+      this.scene.fadeOutBgm(undefined, false);
 
       const evolutionHandler = this.scene.ui.getHandler() as EvolutionSceneHandler;
 
@@ -116,7 +117,7 @@ export class EvolutionPhase extends Phase {
 
   doEvolution(): void {
     const evolutionHandler = this.scene.ui.getHandler() as EvolutionSceneHandler;
-    const preName = this.pokemon.name;
+    const preName = getPokemonNameWithAffix(this.pokemon);
 
     this.scene.ui.showText(i18next.t("menu:evolving", { pokemonName: preName }), null, () => {
       this.pokemon.cry();
@@ -194,7 +195,7 @@ export class EvolutionPhase extends Phase {
                           this.scene.ui.showText(i18next.t("menu:stoppedEvolving", { pokemonName: preName }), null, () => {
                             this.scene.ui.showText(i18next.t("menu:pauseEvolutionsQuestion", { pokemonName: preName }), null, () => {
                               const end = () => {
-                                this.scene.ui.showText(null, 0);
+                                this.scene.ui.showText("", 0);
                                 this.scene.playBgm();
                                 evolvedPokemon.destroy();
                                 this.end();
@@ -218,7 +219,7 @@ export class EvolutionPhase extends Phase {
                         this.scene.time.delayedCall(900, () => {
                           evolutionHandler.canCancel = false;
 
-                          this.pokemon.evolve(this.evolution).then(() => {
+                          this.pokemon.evolve(this.evolution, this.pokemon.species).then(() => {
                             const levelMoves = this.pokemon.getLevelMoves(this.lastLevel + 1, true);
                             for (const lm of levelMoves) {
                               this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.scene.getParty().indexOf(this.pokemon), lm[1]));
