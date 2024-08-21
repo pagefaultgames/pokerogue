@@ -240,7 +240,7 @@ export default class PhaseInterceptor {
       const currentPhase = this.onHold[0];
       if (currentPhase?.name === targetName) {
         clearInterval(interval);
-        cb(currentPhase);
+        cb(this.scene.getCurrentPhase());
       }
     });
   }
