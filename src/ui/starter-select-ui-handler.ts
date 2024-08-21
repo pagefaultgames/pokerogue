@@ -881,7 +881,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         let species: PokemonSpecies | undefined;
 
         const generateSpecies = () => {
-          currentGenSpecies = this.allSpecies.filter(species => species.generation === gen + 1)
+          currentGenSpecies = this.allSpecies.filter(species => species.generation === gen + 1);
           randomSpeciesId = Utils.randSeedItem(currentGenSpecies).speciesId;
           species = getPokemonSpecies(randomSpeciesId);
         };
