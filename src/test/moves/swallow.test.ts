@@ -2,7 +2,6 @@ import { BattleStat } from "#app/data/battle-stat";
 import { StockpilingTag } from "#app/data/battler-tags.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { MoveResult, TurnMove } from "#app/field/pokemon.js";
-import { MovePhase, TurnInitPhase } from "#app/phases";
 import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -10,6 +9,8 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { MovePhase } from "#app/phases/move-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 describe("Moves - Swallow", () => {
   let phaserGame: Phaser.Game;
