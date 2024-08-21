@@ -2,6 +2,10 @@ import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import i18next from "i18next";
 import { PlayerPokemon } from "#app/field/pokemon.js";
+import { Mode } from "./ui";
+import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
+
+const emojiAvailable = ["♪", "★", "♥", "♣"];
 
 export default class RenameFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
@@ -34,6 +38,36 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
   }
 
   show(args: any[]): boolean {
+    const ui = this.getUi();
+    const input = this.inputs[0];
+    input.node.addEventListener("keydown",(e:KeyboardEvent)=>{
+      if (e.key === "/") {
+        const emojiOptions = emojiAvailable.map((emoji): OptionSelectItem => {
+          return {
+            label: emoji,
+            handler: ()=> {
+              ui.revertMode();
+              return true;
+            },
+            keepOpen: true
+          };
+        });
+        const modalOptions: OptionSelectConfig = {
+          xOffset: 98,
+          yOffset: 48 / 2,
+          options: emojiOptions
+        };
+        this.scene.ui.setOverlayMode(Mode.MENU_OPTION_SELECT, modalOptions);
+        // input.setText(input.text + emojiAvailable[0]);
+      } else if (input.cursorPosition === (input.text.split("").findIndex((value) => value === "/"))) {
+        // input.setData("filter", )
+        console.log(input.text[input.text.split("").findIndex((value) => value === "/")]);
+      } else if (e.code === "Escape" && ui.getMode() === Mode.MENU_OPTION_SELECT) {
+        e.preventDefault();
+        ui.revertMode();
+        console.log(e, input);
+      }
+    });
     if (super.show(args)) {
       const config = args[0] as ModalConfig;
       if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
