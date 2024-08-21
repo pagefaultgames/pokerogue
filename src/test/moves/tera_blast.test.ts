@@ -66,7 +66,8 @@ describe("Moves - Tera Blast", () => {
     const stellarTypeMultiplier = 2;
     const stellarTypeDmgBonus = 20;
     const basePower = moveToCheck.power;
-    
+
+
     await game.startBattle();
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
