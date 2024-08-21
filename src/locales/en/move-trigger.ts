@@ -5,6 +5,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "cutHpPowerUpMove": "{{pokemonName}} cut its own HP to power up its move!",
   "absorbedElectricity": "{{pokemonName}} absorbed electricity!",
   "switchedStatChanges": "{{pokemonName}} switched stat changes with the target!",
+  "switchedTwoStatChanges": "{{pokemonName}} switched all changes to its {{firstStat}}\nand {{secondStat}} with its target!",
   "goingAllOutForAttack": "{{pokemonName}} is going all out for this attack!",
   "regainedHealth": "{{pokemonName}} regained\nhealth!",
   "keptGoingAndCrashed": "{{pokemonName}} kept going\nand crashed!",
