@@ -42,9 +42,9 @@ import { TitlePhase } from "#app/phases/title-phase.js";
 import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
-import { Moves } from "#app/enums/moves.js";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
-import { getMoveTargets } from "#app/data/move.js";
+import { Moves } from "#app/enums/moves";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { getMoveTargets } from "#app/data/move";
 
 /**
  * Class to manage the game state and transitions between phases.
