@@ -1,4 +1,4 @@
-import { allMoves, MoveCategory } from "#app/data/move";
+import { allMoves } from "#app/data/move";
 import GameManager from "#test/utils/gameManager";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -10,6 +10,8 @@ import { Type } from "#app/data/type";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { BattleStat } from "#app/data/battle-stat";
 import { Stat } from "#app/enums/stat";
+import { BattlerIndex } from "#app/battle.js";
+import { HitResult } from "#app/field/pokemon.js";
 
 describe("Moves - Tera Blast", () => {
   let phaserGame: Phaser.Game;
@@ -45,12 +47,18 @@ describe("Moves - Tera Blast", () => {
   });
 
   it("changes type to match user's tera type", async() => {
-
-    await game.startBattle([Species.CHIKORITA]);
+    game.override
+      .enemySpecies(Species.FURRET)
+      .startingHeldItems([{name: "TERA_SHARD", type: Type.FIGHTING}]);
+    await game.startBattle();
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemyPokemon, "apply");
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(moveToCheck.type).toBe(Type.FIRE);
+    expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.SUPER_EFFECTIVE);
   }, 20000);
 
   it("increases power if user is Stellar tera type", async() => {
@@ -62,8 +70,10 @@ describe("Moves - Tera Blast", () => {
     await game.startBattle([Species.CHIKORITA]);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(moveToCheck.calculateBattlePower).toBe((basePower + stellarTypeDmgBonus) * stellarTypeMultiplier);
+    expect(moveToCheck.calculateBattlePower).toHaveReturnedWith((basePower + stellarTypeDmgBonus) * stellarTypeMultiplier);
   }, 20000);
 
   it("uses the higher stat of the user's Atk and SpAtk for damage calculation", async() => {
@@ -71,23 +81,24 @@ describe("Moves - Tera Blast", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     playerPokemon.stats[Stat.ATK] = 100;
-    playerPokemon.stats[Stat.SPATK] = 0;
+    playerPokemon.stats[Stat.SPATK] = 1;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
-
-    expect(moveToCheck.category).toBe(MoveCategory.PHYSICAL);
-
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(game.scene.getEnemyPokemon()!.battleData.abilityRevealed).toBe(true);
   }, 20000);
 
   it("causes stat drops if user is Stellar tera type", async() => {
     game.override.startingHeldItems([{name: "TERA_SHARD", type: Type.STELLAR}]);
-    await game.startBattle([Species.CHIKORITA]);
+    await game.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(playerPokemon[0].summonData.battleStats[BattleStat.SPATK, BattleStat.ATK]).toBe(-1);
-
+    expect(playerPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(-1);
+    expect(playerPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
   }, 20000);
 });
