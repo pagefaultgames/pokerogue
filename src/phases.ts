@@ -18,7 +18,7 @@ import { Phase } from "./phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { biomeLinks, getBiomeName } from "./data/biomes";
 import { ModifierTier } from "./modifier/modifier-tier";
-import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getLuckString, getModifierType, getPartyLuckValue, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getLuckString, getModifierType, getPartyLuckValue, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds, setEvioliteOverride } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
 import { getPokemonNameWithAffix } from "./messages";
@@ -7104,9 +7104,10 @@ export function runShinyCheck(scene: BattleScene, mode: integer, wv?: integer) {
 }
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
-  private modifierTiers: ModifierTier[];
+  private modifierTiers: ModifierTier[] = [];
   private modifierPredictions: ModifierTypeOption[][] = []
-  private predictionCost: integer;
+  private predictionCost: integer = 0;
+  private costTiers: integer[] = [];
 
   constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[], predictionCost?: integer, modifierPredictions?: ModifierTypeOption[][]) {
     super(scene);
@@ -7118,9 +7119,10 @@ export class SelectModifierPhase extends BattlePhase {
       this.modifierPredictions = modifierPredictions;
     }
     this.predictionCost = 0
+    this.costTiers = []
   }
 
-  generateSelection(rerollOverride: integer, modifierOverride?: integer) {
+  generateSelection(rerollOverride: integer, modifierOverride?: integer, eviolite?: boolean) {
     //const STATE = Phaser.Math.RND.state() // Store RNG state
     //console.log("====================")
     //console.log("  Reroll Prediction: " + rerollOverride)
@@ -7133,12 +7135,37 @@ export class SelectModifierPhase extends BattlePhase {
     if (modifierOverride) {
       //modifierCount.value = modifierOverride
     }
+    if (eviolite) {
+      setEvioliteOverride("on")
+    } else {
+      setEvioliteOverride("off")
+    }
     const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, true, true);
+    setEvioliteOverride("")
     typeOptions.forEach((option, idx) => {
+      option.netprice = this.predictionCost
+      if (option.type.name == "Nugget") {
+        option.netprice -= this.scene.getWaveMoneyAmount(1)
+      }
+      if (option.type.name == "Big Nugget") {
+        option.netprice -= this.scene.getWaveMoneyAmount(2.5)
+      }
+      if (option.type.name == "Relic Gold") {
+        option.netprice -= this.scene.getWaveMoneyAmount(10)
+      }
       //console.log(option.type.name)
     })
     //console.log("====================")
-    this.modifierPredictions.push(typeOptions)
+    if (eviolite) {
+      this.modifierPredictions[rerollOverride].forEach((m, i) => {
+        if (m.type.name != typeOptions[i].type.name) {
+          m.eviolite = typeOptions[i].type
+        }
+      })
+    } else {
+      this.modifierPredictions[rerollOverride] = typeOptions
+    }
+    this.costTiers.push(this.predictionCost)
     this.predictionCost += this.getRerollCost(typeOptions, false, rerollOverride)
     //Phaser.Math.RND.state(STATE) // Restore RNG state like nothing happened
   }
@@ -7148,10 +7175,18 @@ export class SelectModifierPhase extends BattlePhase {
 
     if (!this.rerollCount) {
       this.updateSeed();
-      console.log("\n\nPerforming reroll prediction\n\n\n")
+      console.log("\n\nPerforming reroll prediction (Eviolite OFF)\n\n\n")
       this.predictionCost = 0
+      this.costTiers = []
       for (var idx = 0; idx < 10 && this.predictionCost < this.scene.money; idx++) {
-        this.generateSelection(idx)
+        this.generateSelection(idx, undefined, false)
+      }
+      this.updateSeed();
+      console.log("\n\nPerforming reroll prediction (Eviolite ON)\n\n\n")
+      this.predictionCost = 0
+      this.costTiers = []
+      for (var idx = 0; idx < 10 && this.predictionCost < this.scene.money; idx++) {
+        this.generateSelection(idx, undefined, true)
       }
       this.updateSeed();
     } else {
@@ -7377,36 +7412,83 @@ export class SelectModifierPhase extends BattlePhase {
       return !cost!;// TODO: is the bang correct?
     };
     if (this.rerollCount == 0) {
-      this.modifierPredictions.forEach((mp, r) => {
-        console.log("Rerolls: " + r)
-        mp.forEach((m, i) => {
-          console.log("  " + m.type!.name)
-          if (m.alternates) {
-            //console.log(m.alternates)
-            let showedLuckFlag = false
-            for (var j = 0, currentTier = m.type!.tier; j < m.alternates.length; j++) {
-              if (m.alternates[j] > currentTier) {
-                currentTier = m.alternates[j]
-                if (m.advancedAlternates) {
-                  if (!showedLuckFlag) {
-                    showedLuckFlag = true
-                    console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
+      if (true) {
+        this.modifierPredictions.forEach((mp, r) => {
+          // costTiers
+          console.log("Rerolls: " + r + (this.costTiers[r] != 0 ? " - ₽" + this.costTiers[r] : ""))
+          mp.forEach((m, i) => {
+            console.log("  " + m.type!.name + (m.netprice != this.costTiers[r] ? " - ₽" + m.netprice : ""))
+            if (m.eviolite) {
+              console.log("    With Eviolite unlocked: " + m.eviolite.name)
+            }
+            if (m.alternates) {
+              //console.log(m.alternates)
+              let showedLuckFlag = false
+              for (var j = 0, currentTier = m.type!.tier; j < m.alternates.length; j++) {
+                if (m.alternates[j] > currentTier) {
+                  currentTier = m.alternates[j]
+                  if (m.advancedAlternates) {
+                    if (!showedLuckFlag) {
+                      showedLuckFlag = true
+                      console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
+                    }
+                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + m.advancedAlternates[j])
+                  } else {
+                    if (!showedLuckFlag) {
+                      showedLuckFlag = true
+                      console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
+                    }
+                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + tierNames[currentTier] + "-tier item (failed to generate item)")
                   }
-                  console.log("    At " + j + " luck (" + getLuckString(j) + "): " + m.advancedAlternates[j])
-                } else {
-                  if (!showedLuckFlag) {
-                    showedLuckFlag = true
-                    console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
-                  }
-                  console.log("    At " + j + " luck (" + getLuckString(j) + "): " + tierNames[currentTier] + "-tier item (failed to generate item)")
                 }
               }
+            } else {
+              //console.log("    No alt-luck data")
             }
-          } else {
-            //console.log("    No alt-luck data")
-          }
+          })
         })
-      })
+      } else {
+        let modifierList: string[] = []
+        this.modifierPredictions.forEach((mp, r) => {
+          //console.log("Rerolls: " + r)
+          mp.forEach((m, i) => {
+            modifierList.push(m.type!.name + (r > 0 ? " (x" + r + ")" : ""))
+            //console.log("  " + m.type!.name)
+            if (m.eviolite) {
+              modifierList.push(m.type!.name + (r > 0 ? " (x" + r + " with eviolite unlocked)" : " (With eviolite unlocked)"))
+              //console.log("    With Eviolite unlocked: " + m.eviolite.name)
+            }
+            if (m.alternates) {
+              //console.log(m.alternates)
+              let showedLuckFlag = false
+              for (var j = 0, currentTier = m.type!.tier; j < m.alternates.length; j++) {
+                if (m.alternates[j] > currentTier) {
+                  currentTier = m.alternates[j]
+                  if (m.advancedAlternates) {
+                    if (!showedLuckFlag) {
+                      showedLuckFlag = true
+                      console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
+                    }
+                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + m.advancedAlternates[j])
+                  } else {
+                    if (!showedLuckFlag) {
+                      showedLuckFlag = true
+                      console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
+                    }
+                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + tierNames[currentTier] + "-tier item (failed to generate item)")
+                  }
+                }
+              }
+            } else {
+              //console.log("    No alt-luck data")
+            }
+          })
+        })
+        modifierList.sort()
+        modifierList.forEach(v => {
+          console.log(v)
+        })
+      }
     }
     this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
   }
