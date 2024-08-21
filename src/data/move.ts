@@ -5906,7 +5906,7 @@ export class AddBattlerTagIfBoostedAttr extends AddBattlerTagAttr {
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (target.turnData.battleStatsIncrease) {
+    if (target.turnData.battleStatsIncreased) {
       super.apply(user, target, move, args);
     }
     return true;
@@ -5933,7 +5933,7 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (target.turnData.battleStatsIncrease) {
+    if (target.turnData.battleStatsIncreased) {
       target.trySetStatus(this.effect, true, user);
     }
     return true;
@@ -8571,7 +8571,7 @@ export function initMoves() {
       .attr(StatusIfBoostedAttr, StatusEffect.BURN)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.LASH_OUT, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.turnData.battleStatsDecrease ? 2 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.turnData.battleStatsDecreased ? 2 : 1),
     new AttackMove(Moves.POLTERGEIST, Type.GHOST, MoveCategory.PHYSICAL, 110, 90, 5, -1, 0, 8)
       .attr(AttackedByItemAttr)
       .makesContact(false),

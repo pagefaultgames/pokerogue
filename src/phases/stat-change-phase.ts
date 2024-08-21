@@ -90,13 +90,13 @@ export class StatChangePhase extends PokemonPhase {
             // Temporary fix for missing turn data struct on turn 1
             pokemon.resetTurnData();
           }
-          pokemon.turnData.battleStatsIncrease = true;
+          pokemon.turnData.battleStatsIncreased = true;
         } else if (levels.value < 0 && pokemon.summonData.battleStats[stat] > -6) {
           if (!pokemon.turnData) {
             // Temporary fix for missing turn data struct on turn 1
             pokemon.resetTurnData();
           }
-          pokemon.turnData.battleStatsDecrease = true;
+          pokemon.turnData.battleStatsDecreased = true;
         }
 
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
