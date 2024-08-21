@@ -55,7 +55,7 @@ describe("Abilities - Mycelium Might", () => {
     // The opponent Pokemon (without Mycelium Might) goes first despite having lower speed than the player Pokemon.
     // The player Pokemon (with Mycelium Might) goes last despite having higher speed than the opponent.
     // This means that the commandOrder is equivalent to the speed Order reversed
-    expect(speedOrder.reverse().every((val, index) => val === commandOrder[index])).toBe(true);
+    expect(speedOrder.reverse()).toEqual(commandOrder);
     await game.phaseInterceptor.to(TurnEndPhase);
     // Despite the opponent's ability (Clear Body), its attack stat is still reduced.
     expect(enemyPokemon?.summonData.battleStats[BattleStat.ATK]).toBe(-1);
@@ -75,7 +75,7 @@ describe("Abilities - Mycelium Might", () => {
     // The player Pokemon (with M.M.) goes first because its move is still within a higher priority bracket than its opponent.
     // The enemy Pokemon goes second because its move is in a lower priority bracket.
     // This means that the commandOrder should be identical to the speedOrder
-    expect(speedOrder.every((val, index) => val === commandOrder[index])).toBe(true);
+    expect(speedOrder).toEqual(commandOrder);
     await game.phaseInterceptor.to(TurnEndPhase);
     // Despite the opponent's ability (Clear Body), its attack stat is still reduced.
     expect(enemyPokemon?.summonData.battleStats[BattleStat.ATK]).toBe(-1);
@@ -93,6 +93,6 @@ describe("Abilities - Mycelium Might", () => {
     // The player Pokemon (with M.M.) goes first because it has a higher speed and did not use a status move.
     // The enemy Pokemon (without M.M.) goes second because its speed is lower.
     // This means that the commandOrder should be identical to the speedOrder
-    expect(speedOrder.every((val, index) => val === commandOrder[index])).toBe(true);
+    expect(speedOrder).toEqual(commandOrder);
   }, 20000);
 });
