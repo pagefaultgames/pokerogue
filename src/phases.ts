@@ -1879,7 +1879,6 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     enemyField.forEach((enemyPokemon, e) => {
-      enemyPokemon.flyout.revealMoves()
       if (enemyPokemon.isShiny()) {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
       }

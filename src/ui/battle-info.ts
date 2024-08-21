@@ -555,6 +555,27 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       }
     }
   }
+  updateBossSegmentDividers_override(pokemon: Pokemon, bars: integer, index: integer): void {
+    while (this.hpBarSegmentDividers.length) {
+      this.hpBarSegmentDividers.pop()?.destroy();
+    }
+
+    if (bars > 1) {
+      const uiTheme = (this.scene as BattleScene).uiTheme;
+      const maxHp = pokemon.getMaxHp();
+      for (let s = 1; s < bars; s++) {
+        const dividerX = (Math.round((maxHp / bars) * s) /  maxHp) * this.hpBar.width;
+        const divider = this.scene.add.rectangle(0, 0, 1, this.hpBar.height - (uiTheme ? 0 : 1), index >= s ? 0xFFFFFF : 0x404040);
+        divider.setOrigin(0.5, 0);
+        divider.setName("hpBar_divider_" + s.toString());
+        this.add(divider);
+        this.moveBelow(divider as Phaser.GameObjects.GameObject, this.statsContainer);
+
+        divider.setPositionRelative(this.hpBar, dividerX, uiTheme ? 0 : 1);
+        this.hpBarSegmentDividers.push(divider);
+      }
+    }
+  }
 
   displayParty(overwriteparty?: Pokemon[], useparty?: EnemyPokemon[]): void {
     // Floor 8: 2 pokemon
