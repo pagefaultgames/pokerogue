@@ -1605,7 +1605,7 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
   }
 
   applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (pokemon !== attacker && !!pokemon.getTag(BattlerTagType.SUBSTITUTE) && !move.canIgnoreSubstitute(attacker)) {
+    if (pokemon !== attacker && move.hitsSubstitute(attacker, pokemon)) {
       return false;
     }
 
@@ -4386,7 +4386,7 @@ export const allAbilities = [ new Ability(Abilities.NONE, 3) ];
 export function initAbilities() {
   allAbilities.push(
     new Ability(Abilities.STENCH, 3)
-      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.hasAttr(FlinchAttr) && (!target.getTag(BattlerTagType.SUBSTITUTE) || move.canIgnoreSubstitute(user)) ? 10 : 0, BattlerTagType.FLINCHED),
+      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.hasAttr(FlinchAttr) && !move.hitsSubstitute(user, target) ? 10 : 0, BattlerTagType.FLINCHED),
     new Ability(Abilities.DRIZZLE, 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN),
