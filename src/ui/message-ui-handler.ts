@@ -5,9 +5,9 @@ import * as Utils from "../utils";
 import i18next from "i18next";
 
 type argsAjustText = {
-  padding?:number;
-  ignoreTextBalance?:Array<string>|"all";
-  ignoreLanguages?:Array<string>;
+  padding?: number;
+  ignoreTextBalance?: Array<string> | "all";
+  ignoreLanguages?: Array<string>;
 };
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
@@ -203,22 +203,22 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   }
 
   /**
- * @param text
- * @param textObject
- * @param maxWidth
- * @param opts options additional
-    @argument ignoreLanguages ignore adjust for some language.
-    @argument ignoreBalanceText ignore Text Balance for some languages or for all.
-    @argument padding default 0.
- */
+   * @param text
+   * @param textObject
+   * @param maxWidth
+   * @param opts options additional
+   * @argument ignoreLanguages ignore adjust for some language.
+   * @argument ignoreBalanceText ignore Text Balance for some languages or for all.
+   * @argument padding default 0.
+   */
 
-  adjustText(text:string, textObject:Phaser.GameObjects.Text, maxWidth:number, opts:argsAjustText={}): void {
+  adjustText(text: string, textObject: Phaser.GameObjects.Text, maxWidth: number, opts: argsAjustText = {}): void {
     const currentLanguage = i18next.resolvedLanguage!;
     if (opts.ignoreLanguages && opts.ignoreLanguages[0] && !opts.ignoreLanguages.some(localKey => localKey === currentLanguage)) {
       return;
     }
 
-    const fontSizeToNumber = (FS: number|string):number => {
+    const fontSizeToNumber = (FS: number | string): number => {
       return parseInt(FS.toString().replace("px", ""));
     };
 
@@ -229,7 +229,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
 
     const textWrapped = () => textObject.getWrappedText(text);
     const textSize = () => Phaser.GameObjects.GetTextSize(textObject, textObject.style.getTextMetrics(), textWrapped());
-    const balanceText = typeof opts.ignoreTextBalance === "string" ? opts.ignoreTextBalance === "all" : (opts.ignoreTextBalance && opts.ignoreTextBalance[0] && opts.ignoreTextBalance.some(localKey=> localKey === currentLanguage));
+    const balanceText = typeof opts.ignoreTextBalance === "string" ? opts.ignoreTextBalance === "all" : (opts.ignoreTextBalance && opts.ignoreTextBalance[0] && opts.ignoreTextBalance.some(localKey => localKey === currentLanguage));
 
     // Text Balance
     if (!balanceText && textWrapped()[1] && textWrapped().length <= textObject.style.maxLines && textWrapped()[0].length * 0.25 > textWrapped()[1].length) {
