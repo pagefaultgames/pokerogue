@@ -10,10 +10,10 @@ import { BattleStat } from "#app/data/battle-stat.js";
 import { BattlerIndex } from "#app/battle.js";
 import { TerrainType } from "#app/data/terrain.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
 import { EncounterPhase } from "#app/phases/encounter-phase.js";
+import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 
 interface PokemonAssertionChainer {
   and(expectation: (p?: Pokemon) => PokemonAssertionChainer): PokemonAssertionChainer;
@@ -32,11 +32,9 @@ function toArray<T>(a?: T | T[]) {
   return Array.isArray(a) ? a : [a!];
 }
 
-describe("Moves - Pursuit", () => {
+describe("Moves - Pursuit", { timeout: 10000 }, () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-
-  let moveOrder: BattlerIndex[] | undefined;
 
   const pursuitMoveDef = allMoves[Moves.PURSUIT];
 
@@ -47,19 +45,12 @@ describe("Moves - Pursuit", () => {
     return game.startBattle([playerLead, Species.RAICHU, Species.ABSOL]);
   }
 
-  async function runCombatTurn(kill?: Pokemon | Pokemon[]) {
-    if (moveOrder?.length) {
-      // game.phaseInterceptor.tapNextPhase(TurnStartPhase, p => {
-      //   vi.spyOn(p, "getOrder").mockReturnValue(moveOrder!);
-      // });
-      await game.setTurnOrder(moveOrder);
-    }
-    if (kill) {
-      for (const pkmn of toArray(kill)) {
-        await game.killPokemon(pkmn);
-      }
-    }
-    return await game.phaseInterceptor.to(BerryPhase, false);
+  async function runCombatTurn(to: string = "TurnInitPhase") {
+    // many of these tests can't run only to BerryPhase because of interactions with fainting
+    // during switches. we need to run tests all the way through to the start of the next turn
+    // to ensure that, for example, the game doesn't attempt to switch two pokemon into the same
+    // slot (once in the originally queued summon phase, and the next as a result of FaintPhase)
+    return await game.phaseInterceptor.to(to, false);
   }
 
   function afterFirstSwitch(action: () => void) {
@@ -106,13 +97,29 @@ describe("Moves - Pursuit", () => {
   function forceMovesLast(pokemon?: Pokemon | Pokemon[]) {
     pokemon = toArray(pokemon);
     const otherPkmn = game.scene.getField().filter(p => p && !pokemon.find(p1 => p1 === p));
-    moveOrder = ([...otherPkmn, ...pokemon].map(pkmn => pkmn.getBattlerIndex()));
+    const moveOrder = ([...otherPkmn, ...pokemon].map(pkmn => pkmn.getBattlerIndex()));
+
+    game.phaseInterceptor.onNextPhase(TurnStartPhase, p => {
+      vi.spyOn(p, "getOrder").mockReturnValue(
+          // TurnStartPhase crashes if a BI returned by getOrder() is fainted.
+          // not an issue normally but some of the test setups can cause this
+          moveOrder!.filter(i => game.scene.getField(false)[i]?.isActive(true))
+      );
+    });
   }
 
   function forceMovesFirst(pokemon?: Pokemon | Pokemon[]) {
     pokemon = toArray(pokemon);
     const otherPkmn = game.scene.getField().filter(p => p && !pokemon.find(p1 => p1 === p));
-    moveOrder = ([...pokemon, ...otherPkmn].map(pkmn => pkmn.getBattlerIndex()));
+    const moveOrder = ([...pokemon, ...otherPkmn].map(pkmn => pkmn.getBattlerIndex()));
+
+    game.phaseInterceptor.onNextPhase(TurnStartPhase, p => {
+      vi.spyOn(p, "getOrder").mockReturnValue(
+          // TurnStartPhase crashes if a BI returned by getOrder() is fainted.
+          // not an issue normally but some of the test setups can cause this
+          moveOrder!.filter(i => game.scene.getField(false)[i]?.isActive(true))
+      );
+    });
   }
 
   function forceLowestPriorityBracket() {
@@ -187,7 +194,6 @@ describe("Moves - Pursuit", () => {
   });
 
   beforeEach(() => {
-    moveOrder = undefined;
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
@@ -328,7 +334,11 @@ describe("Moves - Pursuit", () => {
     expectWasHit(findPartyMember(game.scene.getEnemyParty(), enemyLead));
   });
 
-  it.todo("should bypass substitute when hitting an escaping target");
+  it.todo("should bypass substitute when hitting an escaping target (hard switch)");
+
+  it.todo("should bypass substitute when hitting an escaping target (switch move)");
+
+  it.todo("should not bypass substitute when hitting a non-escaping target");
 
   it("should hit a grounded, switching target under Psychic Terrain (switch move)", async () => {
     // arrange
@@ -410,7 +420,7 @@ describe("Moves - Pursuit", () => {
     // act
     playerUsesPursuit();
     enemyUses(Moves.U_TURN);
-    await runCombatTurn();
+    await runCombatTurn("BerryPhase");
 
     // assert
     expectPursuitFailed(game.scene.getPlayerPokemon());
@@ -496,10 +506,79 @@ describe("Moves - Pursuit", () => {
 
     // assert
     expect(game.scene.getParty()[0]!.isFainted()).toBe(true);
-    expectWasNotHit(findPartyMember(game.scene.getEnemyParty(), enemyLead)).and(expectNotOnField);
+    expectWasNotHit(findPartyMember(game.scene.getEnemyParty(), enemyLead))
+      .and(expectNotOnField);
   });
 
-  describe("doubles interactions", { timeout: 1000000 }, () => {
+  it("should not cause two pokemon to enter the field if a switching-out pokemon is fainted by pursuit (hard-switch, enemy faints)", async () => {
+    // arrange
+    await startBattle();
+    forceMovesLast(game.scene.getPlayerPokemon());
+    game.scene.getEnemyPokemon()!.hp = 1;
+
+    // act
+    playerUsesPursuit();
+    enemySwitches();
+    await runCombatTurn();
+
+    // assert
+    expect(game.scene.getEnemyParty().filter(p => p.isOnField())).toHaveLength(1);
+  });
+
+  it("should not cause two pokemon to enter the field if a switching-out pokemon is fainted by pursuit (u-turn, enemy faints)", async () => {
+    // arrange
+    await startBattle();
+    forceMovesLast(game.scene.getPlayerPokemon());
+    game.scene.getEnemyPokemon()!.hp = 1;
+
+    // act
+    playerUsesPursuit();
+    enemyUses(Moves.U_TURN);
+    await runCombatTurn();
+
+    // assert
+    expect(game.scene.getEnemyParty().filter(p => p.isOnField())).toHaveLength(1);
+  });
+
+  it("should not cause two pokemon to enter the field or a premature switch if a switching-out pokemon is fainted by pursuit (hard-switch, player faints)", async () => {
+    // arrange
+    await startBattle();
+    forceMovesLast(game.scene.getEnemyPokemon());
+    game.scene.getPlayerPokemon()!.hp = 1;
+
+    // act
+    playerSwitches();
+    enemyUses(Moves.PURSUIT);
+    await runCombatTurn("TurnEndPhase");
+
+    // assert
+    expect(game.scene.getParty().filter(p => p.isOnField())).toHaveLength(1);
+    // SwitchPhase for fainted pokemon happens after TurnEndPhase - if we
+    // skipped the uturn switch, we shouldn't have executed a switchout by this point
+    expect(game.scene.getPlayerField()[0]?.isFainted()).toBeTruthy();
+    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+  });
+
+  it("should not cause two pokemon to enter the field or a premature switch if a switching-out pokemon is fainted by pursuit (u-turn, player faints)", async () => {
+    // arrange
+    await startBattle();
+    forceMovesLast(game.scene.getEnemyPokemon());
+    game.scene.getPlayerPokemon()!.hp = 1;
+
+    // act
+    playerUsesSwitchMove();
+    enemyUses(Moves.PURSUIT);
+    await runCombatTurn("TurnEndPhase");
+
+    // assert
+    expect(game.scene.getParty().filter(p => p.isOnField())).toHaveLength(1);
+    // SwitchPhase for fainted pokemon happens after TurnEndPhase - if we
+    // skipped the uturn switch, we shouldn't have executed a switchout by this point
+    expect(game.scene.getPlayerField()[0]?.isFainted()).toBeTruthy();
+    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+  });
+
+  describe("doubles interactions", () => {
     beforeEach(() => {
       game.override.battleType("double");
     });
@@ -514,7 +593,8 @@ describe("Moves - Pursuit", () => {
       playerUsesSwitchMove(1);
       enemyUses(Moves.PURSUIT);
       game.move.forceAiTargets(game.scene.getEnemyPokemon(), BattlerIndex.PLAYER_2);
-      await runCombatTurn(game.scene.getEnemyField()[1]);
+      await game.killPokemon(game.scene.getEnemyField()[1]);
+      await runCombatTurn();
 
       // assert
       expectPursuitPowerDoubled();
@@ -534,7 +614,8 @@ describe("Moves - Pursuit", () => {
       game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
       enemyUses(Moves.PURSUIT);
       game.move.forceAiTargets(game.scene.getEnemyPokemon(), BattlerIndex.PLAYER_2);
-      await runCombatTurn(game.scene.getEnemyField()[1]);
+      await game.killPokemon(game.scene.getEnemyField()[1]);
+      await runCombatTurn();
 
       // assert
       expectPursuitPowerUnchanged();
@@ -542,8 +623,7 @@ describe("Moves - Pursuit", () => {
       expectWasNotHit(findPartyMember(game.scene.getParty(), Species.RAICHU));
     });
 
-    // fails: fainting an escapee still runs the enemy SwitchSummonPhase
-    it("should fail if both pokemon use pursuit on a target that is switching out and it faints after the first one", async () => {
+    it("should not cause the enemy AI to send out a fainted pokemon if they command 2 switches and one of the outgoing pokemon faints to pursuit", async () => {
       // arrange
       await startBattle();
       forceMovesLast(game.scene.getPlayerField());
@@ -553,13 +633,63 @@ describe("Moves - Pursuit", () => {
       playerUsesPursuit(0);
       playerUsesPursuit(1);
       enemySwitches();
-      await runCombatTurn(game.scene.getEnemyField()[1]);
+      await runCombatTurn();
 
       // assert
-      expect(game.scene.getEnemyParty()[0]!.isFainted()).toBe(true);
+      expect(game.scene.getEnemyParty().filter(p => p.isOnField())).toHaveLength(2);
+      expect(game.scene.getEnemyParty().filter(p => p.isOnField() && p.isFainted())).toHaveLength(0);
+    });
+
+    // TODO: is this correct behavior?
+    it("should fail if both pokemon use pursuit on a target that is switching out and it faints after the first one with no other targets on field", async () => {
+      // arrange
+      await startBattle();
+      forceMovesLast(game.scene.getPlayerField());
+      game.scene.getEnemyField()[0]!.hp = 1;
+
+      // act
+      playerUsesPursuit(0);
+      playerUsesPursuit(1);
+      enemySwitches();
+      await game.killPokemon(game.scene.getEnemyField()[1]);
+      await runCombatTurn();
+
+      // assert
+      expectPursuitPowerDoubled();
       expectPursuitSucceeded(game.scene.getPlayerField()[0]);
       expectPursuitFailed(game.scene.getPlayerField()[1]);
     });
+
+    // TODO: is this correct behavior?
+    it("should attack the second switching pokemon if both pokemon switch and the first is KOd", async () => {
+      // arrange
+      game.phaseInterceptor.onNextPhase(EncounterPhase, () => {
+        game.scene.currentBattle.enemyLevels = [...game.scene.currentBattle.enemyLevels!, game.scene.currentBattle.enemyLevels![0]];
+      });
+      await startBattle();
+      forceMovesLast(game.scene.getPlayerField());
+      game.scene.getEnemyField()[0]!.hp = 1;
+
+      // act
+      playerUsesPursuit(0);
+      playerUsesPursuit(1);
+      enemySwitches();
+      afterFirstSwitch(() => {
+        vi.spyOn(game.scene.currentBattle.trainer!, "getPartyMemberMatchupScores").mockReturnValue([[3, 100]]);
+        vi.spyOn(game.scene.getPlayerPokemon()!, "getMatchupScore").mockReturnValue(0);
+      });
+      await runCombatTurn();
+
+      // assert
+      expectPursuitPowerDoubled();
+      expectPursuitSucceeded(game.scene.getPlayerField()[0]);
+      expectPursuitSucceeded(game.scene.getPlayerField()[1]);
+      expectWasHit(findPartyMember(game.scene.getEnemyParty(), Species.SNORLAX));
+      expectNotOnField(findPartyMember(game.scene.getEnemyParty(), enemyLead))
+        .and(p => expect(p?.isFainted()));
+    });
+
+    // TODO: confirm correct behavior and add tests for other pursuit/switch combos in doubles
 
     it("should not hit a pokemon being forced out with dragon tail", async () => {
       // arrange
