@@ -1597,7 +1597,14 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
     new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => {
       if (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.unlocks[Unlockables.EVIOLITE]) {
-        return party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) && !p.getHeldItems().some(i => i.type.id === "EVIOLITE")) ? 10 : 0;
+        return party.some(p => {
+          // Check if Pokemon's species (or fusion species, if applicable) can evolve
+          if ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) {
+            // Check if Pokemon is already holding an Eviolite
+            return !p.getHeldItems().some(i => i.type.id === "EVIOLITE");
+          }
+          return false;
+        }) ? 10 : 0;
       }
       return 0;
     }),
