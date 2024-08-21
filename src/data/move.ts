@@ -3785,6 +3785,30 @@ export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
 }
 
 /**
+ * Increases the power of Tera Blast if the user is Terastallized into Stellar type
+ * @extends VariablePowerAttr
+ */
+export class TeraBlastPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  /**
+   * @param user {@linkcode Pokemon} Pokemon using the move
+   * @param target {@linkcode Pokemon} N/A
+   * @param move {@linkcode Move} {@linkcode Move.TERA_BLAST}
+   * @param {any[]} args N/A
+   * @returns true or false
+   */
+    const power = args[0] as Utils.NumberHolder;
+    if (user.isTerastallized() && move.type === Type.STELLAR) {
+      //200 instead of 100 to reflect lack of stellar being 2x dmg on any type
+      power.value = 200;
+      return true;
+    }
+
+    return false;
+  }
+}
+
+/**
  * Change the move category to status when used on the ally
  * @extends VariableMoveCategoryAttr
  * @see {@linkcode apply}
@@ -4034,6 +4058,28 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
       Type.PSYCHIC, Type.ICE, Type.DRAGON, Type.DARK][iv_val];
 
     return true;
+  }
+}
+
+/**
+ * Changes the type of Tera Blast to match the user's tera type
+ * @extends VariableMoveTypeAttr
+ */
+export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  /**
+   * @param user {@linkcode Pokemon} the user's type is checked
+   * @param target {@linkcode Pokemon} N/A
+   * @param move {@linkcode Move} {@linkcode Move.TeraBlastTypeAttr}
+   * @param {any[]} args N/A
+   * @returns true or false
+   */
+    if (user.isTerastallized()) {
+      move.type = user.getTeraType(); //changes move type to tera type
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -4435,6 +4481,39 @@ export class GulpMissileTagAttr extends MoveEffectAttr {
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     const isCramorant = user.hasAbility(Abilities.GULP_MISSILE) && user.species.speciesId === Species.CRAMORANT;
     return isCramorant && !user.getTag(GulpMissileTag) ? 10 : 0;
+  }
+}
+
+/**
+ * Attribute to implement Jaw Lock's linked trapping effect between the user and target
+ * @extends AddBattlerTagAttr
+ */
+export class JawLockAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.TRAPPED);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.canApply(user, target, move, args)) {
+      return false;
+    }
+
+    // If either the user or the target already has the tag, do not apply
+    if (user.getTag(TrappedTag) || target.getTag(TrappedTag)) {
+      return false;
+    }
+
+    const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
+    if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
+      /**
+       * Add the tag to both the user and the target.
+       * The target's tag source is considered to be the user and vice versa
+       */
+      return target.addTag(BattlerTagType.TRAPPED, 1, move.id, user.id)
+          && user.addTag(BattlerTagType.TRAPPED, 1, move.id, target.id);
+    }
+
+    return false;
   }
 }
 
@@ -7474,7 +7553,7 @@ export function initMoves() {
       .attr(OpponentHighHpPowerAttr, 120),
     new AttackMove(Moves.MAGMA_STORM, Type.FIRE, MoveCategory.SPECIAL, 100, 75, 5, -1, 0, 4)
       .attr(TrapAttr, BattlerTagType.MAGMA_STORM),
-    new StatusMove(Moves.DARK_VOID, Type.DARK, 50, 10, -1, 0, 4)
+    new StatusMove(Moves.DARK_VOID, Type.DARK, 80, 10, -1, 0, 4)  //Accuracy from Generations 4-6
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.SEED_FLARE, Type.GRASS, MoveCategory.SPECIAL, 120, 85, 5, 40, 0, 4)
@@ -8313,8 +8392,7 @@ export function initMoves() {
       .attr(HighCritAttr)
       .attr(BypassRedirectAttr),
     new AttackMove(Moves.JAW_LOCK, Type.DARK, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 8)
-      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, false, true)
-      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1, 1, false, true)
+      .attr(JawLockAttr)
       .bitingMove(),
     new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, -1, 0, 8) // TODO: Stuff Cheeks should not be selectable when the user does not have a berry, see wiki
       .attr(EatBerryAttr)
@@ -8759,7 +8837,10 @@ export function initMoves() {
     End Unused */
     new AttackMove(Moves.TERA_BLAST, Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 9)
       .attr(TeraBlastCategoryAttr)
-      .unimplemented(),
+      .attr(TeraBlastTypeAttr)
+      .attr(TeraBlastPowerAttr)
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -1, true, (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR))
+      .partial(),
     new SelfStatusMove(Moves.SILK_TRAP, Type.BUG, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP),
     new AttackMove(Moves.AXE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 120, 90, 10, 30, 0, 9)

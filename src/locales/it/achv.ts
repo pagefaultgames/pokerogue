@@ -170,8 +170,8 @@ export const PGMachv: AchievementTranslationEntries = {
     description: "Vinci in modalità classica",
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
-    name: "Bring Your Child To Work Day",
-    description: "Beat the game in Classic Mode with at least one unevolved party member."
+    name: "Alternanza scuola-lavoro",
+    description: "Completa la modalità classica con almeno un membro della squadra non evoluto completamente."
   },
 
   "MONO_GEN_ONE": {
@@ -269,8 +269,8 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Follettini e follettine",
   },
   "FRESH_START": {
-    name: "First Try!",
-    description: "Complete the Fresh Start challenge."
+    name: "Buona la prima!",
+    description: "Completa la modalità sfida 'Un nuovo inizio'."
   }
 } as const;
 
