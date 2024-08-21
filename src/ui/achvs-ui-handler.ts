@@ -25,7 +25,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
   private headerText: Phaser.GameObjects.Text;
   private headerActionText: Phaser.GameObjects.Text;
   private headerActionButton: Phaser.GameObjects.Sprite;
-  private headerBgX: Number;
+  private headerBgX: number;
   private iconsBg: Phaser.GameObjects.NineSlice;
   private icons: Phaser.GameObjects.Sprite[];
 
@@ -332,7 +332,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.headerActionText.text = this.vouchersName;
     const textPosition = this.headerBgX - this.headerActionText.displayWidth - 8;
     this.headerActionText.setX(textPosition);
-    this.headerActionButton.setX(textPosition - this.headerActionButton.displayWidth - 5);
+    this.headerActionButton.setX(textPosition - this.headerActionButton.displayWidth - 4);
 
     const achvUnlocks = this.scene.gameData.achvUnlocks;
 
@@ -372,7 +372,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.headerActionText.text = this.achvsName;
     const textPosition = this.headerBgX - this.headerActionText.displayWidth - 8;
     this.headerActionText.setX(textPosition);
-    this.headerActionButton.setX(textPosition - this.headerActionButton.displayWidth - 5);
+    this.headerActionButton.setX(textPosition - this.headerActionButton.displayWidth - 4);
 
     const voucherUnlocks = this.scene.gameData.voucherUnlocks;
 
