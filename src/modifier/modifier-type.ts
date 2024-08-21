@@ -1212,7 +1212,9 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
-      return new EvolutionItemModifierType(evolutionItemPool[Utils.randSeedInt(evolutionItemPool.length)]!); // TODO: is the bang correct?
+      const idx = Utils.randSeedInt(evolutionItemPool.length)
+      // console.log(evolutionItemPool.map((v, i) => i == idx ? `> ${Utils.getEnumKeys(EvolutionItem)[v!]} <` : Utils.getEnumKeys(EvolutionItem)[v!]))
+      return new EvolutionItemModifierType(evolutionItemPool[idx]!); // TODO: is the bang correct?
     });
   }
 }
@@ -1266,7 +1268,9 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
-      return new FormChangeItemModifierType(formChangeItemPool[Utils.randSeedInt(formChangeItemPool.length)]);
+      const idx = Utils.randSeedInt(formChangeItemPool.length)
+      // console.log(formChangeItemPool.map((v, i) => i == idx ? `> ${Utils.getEnumKeys(FormChangeItem)[v!]} <` : Utils.getEnumKeys(FormChangeItem)[v!]))
+      return new FormChangeItemModifierType(formChangeItemPool[idx]!);
     });
   }
 }
