@@ -115,4 +115,21 @@ describe("Arena - Gravity", () => {
       await game.toNextTurn();
       expect(playerPokemon.getTag(BattlerTagType.FLYING)).toBeFalsy();
     });
+
+  it(
+    "should interrupt a pokemon that attempts to use a jumping/airborne move",
+    async () => {
+      // Enemy is fastest mon so they go first, player is slowest mon
+      game.override.enemyMoveset(Array(4).fill(Moves.GRAVITY))
+        .enemySpecies(Species.REGIELEKI)
+        .moveset([Moves.HIGH_JUMP_KICK]);
+      vi.spyOn(allMoves[Moves.HIGH_JUMP_KICK], "accuracy", "get").mockReturnValue(100);
+      await game.startBattle([Species.SHUCKLE]);
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+      // Regieleki uses Gravity, Player uses High Jump Kick. High Jump Kick fails -> enemy pokemon maintains Max HP
+      game.doAttack(getMovePosition(game.scene, 0, Moves.HIGH_JUMP_KICK));
+      await game.toNextTurn();
+      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    });
 });
