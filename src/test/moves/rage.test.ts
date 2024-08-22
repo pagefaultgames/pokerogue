@@ -9,9 +9,7 @@ import {StatusEffect} from "#enums/status-effect";
 import {RageTag} from "#app/data/battler-tags";
 import {PlayerPokemon} from "#app/field/pokemon";
 import {Nature} from "#enums/nature";
-import {getMovePosition} from "#test/utils/gameManagerUtils";
 import {CommandPhase} from "#app/phases/command-phase";
-import {SelectTargetPhase} from "#app/phases/select-target-phase";
 import {BattlerIndex} from "#app/battle";
 import {TurnEndPhase} from "#app/phases/turn-end-phase";
 
@@ -42,7 +40,6 @@ describe("Moves - Rage", () => {
       .ability(Abilities.UNNERVE)
       .starterSpecies(Species.BOLTUND)
       .moveset([Moves.RAGE, Moves.SPLASH, Moves.SPORE, Moves.VITAL_THROW])
-      .enemyAbility(Abilities.NO_GUARD)
       .startingLevel(100)
       .enemyLevel(100)
       .disableCrits();
@@ -70,19 +67,19 @@ describe("Moves - Rage", () => {
 
       // Player Boltund uses Rage. Opponent Shuckle uses Tackle.
       // Boltund's attack is raised.
-      game.doAttack(0);
+      game.move.select(Moves.RAGE);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(1);
 
       // Opponent Shuckle uses Tackle. Player Boltund uses Vital Throw (Negative Priority).
       // Boltund's attack is raised.
-      game.doAttack(3);
+      game.move.select(Moves.VITAL_THROW);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
 
       // Opponent Shuckle uses Tackle. Player Boltund uses Vital Throw (Negative Priority).
       // Boltund's attack not raised.
-      game.doAttack(3);
+      game.move.select(Moves.VITAL_THROW);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
 
@@ -107,14 +104,14 @@ describe("Moves - Rage", () => {
 
       // Opponent Shuckle uses Rage. Ally Boltund uses Vital Throw.
       // Shuckle gets an Attack boost
-      game.doAttack(3);
+      game.move.select(Moves.VITAL_THROW);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
       expect(oppPokemon.summonData.battleStats[BattleStat.ATK]).toBe(1);
 
       // Ally Boltund uses Spore. Shuckle is asleep.
       // Shuckle does not get an attack boost. Shuckle still has the RageTag tag.
-      game.doAttack(2);
+      game.move.select(Moves.SPORE);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
       expect(oppPokemon.summonData.battleStats[BattleStat.ATK]).toBe(1);
@@ -137,7 +134,7 @@ describe("Moves - Rage", () => {
 
       // Boltund uses rage, but it has no effect, Gastly uses Tackle
       // Boltund does not have RageTag or Attack boost.
-      game.doAttack(0);
+      game.move.select(Moves.RAGE);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
       expect(leadPokemon.getTag(RageTag)).toBeNull;
@@ -153,21 +150,21 @@ describe("Moves - Rage", () => {
     async () => {
       game.override
         .enemySpecies(Species.REGIELEKI)
-        .enemyMoveset(fullOf(Moves.DIVE)); // Has semi-invulnerable turn
+        .enemyMoveset(fullOf(Moves.PHANTOM_FORCE)); // Has semi-invulnerable turn
       await game.startBattle();
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      // Regieliki uses Dive. Boltund uses Rage, but Regieleki is underwater
+      // Regieliki uses Fly. Boltund uses Rage, but Regieleki is invulnerable
       // Boltund does not gain RageTag or Attack boost
-      game.doAttack(0);
+      game.move.select(Moves.RAGE);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
       expect(leadPokemon.getTag(RageTag)).toBeNull;
 
-      // Regieleki finishes Dive, Boltund uses Rage
+      // Regieleki finishes Fly, Boltund uses Rage
       // Boltund gains RageTag, but no boost
-      game.doAttack(0);
+      game.move.select(Moves.RAGE);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
       expect(leadPokemon.getTag(RageTag)).toBeTruthy;
@@ -179,21 +176,21 @@ describe("Moves - Rage", () => {
     async () => {
       game.override
         .enemySpecies(Species.SHUCKLE)
-        .enemyMoveset(fullOf(Moves.FLY)); // Has semi-invulnerable turn
+        .enemyMoveset(fullOf(Moves.PHANTOM_FORCE)); // Has semi-invulnerable turn
       await game.startBattle();
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      // Boltund uses Rage, Shuckle uses Dive
+      // Boltund uses Rage, Shuckle uses Fly
       // Boltund gains RageTag
-      game.doAttack(0);
+      game.move.select(Moves.RAGE);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
       expect(leadPokemon.getTag(RageTag)).toBeTruthy;
 
       // Boltund uses Rage, Shuckle is underwater, Shuckle finishes Dive
       // Boltund gains gains boost, does not lose RageTag
-      game.doAttack(0);
+      game.move.select(Moves.RAGE);
       await game.toNextTurn();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(1);
       expect(leadPokemon.getTag(RageTag)).toBeTruthy;
@@ -217,14 +214,11 @@ describe("Moves - Rage", () => {
 
       const leadPokemon = game.scene.getParty()[0];
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.RAGE));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY);
+      game.move.select(Moves.RAGE,1,BattlerIndex.ENEMY);
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.MEMENTO));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY_2);
+      game.move.select(Moves.MEMENTO,1,BattlerIndex.ENEMY_2);
+
 
       await game.phaseInterceptor.to(TurnEndPhase, false);
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
@@ -251,14 +245,10 @@ describe("Moves - Rage", () => {
       leadPokemon.natureOverride = Nature.SASSY;
       game.scene.getParty()[1].natureOverride = Nature.JOLLY;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.RAGE));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.ENEMY);
+      game.move.select(Moves.RAGE,1,BattlerIndex.ENEMY);
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPORE));
-      await game.phaseInterceptor.to(SelectTargetPhase, false);
-      game.doSelectTarget(BattlerIndex.PLAYER);
+      game.move.select(Moves.SPORE,1,BattlerIndex.PLAYER);
 
       await game.phaseInterceptor.to(TurnEndPhase, false);
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);

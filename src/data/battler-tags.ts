@@ -205,10 +205,22 @@ export class ShellTrapTag extends BattlerTag {
   }
 }
 
+/**
+ * BattlerTag implementing Rage
+ * Pokémon with this tag will recieve an attack boost when successfully damaged by an attacking move
+ * This tag will be lost if a target reaches the MOVE_EFFECT lapse condition with a move other than Rage
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Rage_(move) | Rage}
+ */
 export class RageTag extends BattlerTag {
   constructor() {
     super(BattlerTagType.RAGE,[BattlerTagLapseType.MOVE_EFFECT],1,Moves.RAGE);
   }
+
+  /**
+   * Displays a message to show that the user has started Raging.
+   * This is message isn't displayed on cartridge, and was included for clarity during gameplay and while testing.
+   * @param pokemon {@linkcode Pokemon} the Pokémon this tag is being added to.
+   */
   onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
     /* This message might not exist on cartridge */
@@ -216,6 +228,13 @@ export class RageTag extends BattlerTag {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)}));
   }
 
+  /**
+   * Checks to maintain a Pokémon should maintain their rage, and provides an attack boost when hit.
+   * @param pokemon {@linkcode Pokemon} The owner of this tag
+   * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
+   * @returns `true` if invoked with the MOVE_EFFECT lapse type and {@linkcode pokemon} most recently used Rage,
+   * or if invoked with the CUSTOM lapse type. false otherwise.
+   */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.MOVE_EFFECT) {
       return (pokemon.scene.getCurrentPhase() as MovePhase).move.getMove().id === Moves.RAGE;
