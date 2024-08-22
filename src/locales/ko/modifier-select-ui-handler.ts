@@ -9,6 +9,6 @@ export const modifierSelectUiHandler: SimpleTranslationEntries = {
   "rerollDesc": "돈을 소모하여 아이템 목록을 새로 고칩니다.",
   "lockRaritiesDesc": "갱신되는 아이템의 희귀도가 고정됩니다(갱신 비용 증가).",
   "checkTeamDesc": "파티를 확인하거나 폼 변경 아이템을 사용합니다.",
-  "rerollCost": "{{formattedMoney}}원",
-  "itemCost": "{{formattedMoney}}원"
+  "rerollCost": "₽{{formattedMoney}}",
+  "itemCost": "₽{{formattedMoney}}"
 } as const;
