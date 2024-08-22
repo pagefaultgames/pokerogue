@@ -97,10 +97,6 @@
       "name": "MT{{moveId}} - {{moveName}}",
       "description": "Enseña {{moveName}} a un Pokémon."
     },
-    "TmModifierTypeWithInfo": {
-      "name": "MT{{moveId}} - {{moveName}}",
-      "description": "Enseña {{moveName}} a un Pokémon\n(Hold C or Shift for more info)."
-    },
     "EvolutionItemModifierType": {
       "description": "Hace que ciertos Pokémon evolucionen."
     },
@@ -297,10 +293,6 @@
     "HEALING_CHARM": {
       "name": "Amuleto curación",
       "description": "Aumenta la efectividad de los movimientos y objetos de curacion de PS en un 10% (excepto revivir)."
-    },
-    "CANDY_JAR": {
-      "name": "Candy Jar",
-      "description": "Aumenta en 1 el número de niveles añadidos por los carameloraros."
     },
     "BERRY_POUCH": {
       "name": "Saco Bayas",

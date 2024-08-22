@@ -1,7 +1,6 @@
 {
   "bossAppeared": "¡{{bossName}} te corta el paso!",
   "trainerAppeared": "¡{{trainerName}}\nte desafía!",
-  "trainerAppearedDouble": "¡{{trainerName}}\nwould te desafían!",
   "trainerSendOut": "¡{{trainerName}} saca a\n{{pokemonName}}!",
   "singleWildAppeared": "¡Un {{pokemonName}} salvaje te corta el paso!",
   "multiWildAppeared": "¡Un {{pokemonName1}} y un {{pokemonName2}} salvajes\nte cortan el paso!",
@@ -12,7 +11,6 @@
   "switchQuestion": "¿Quieres cambiar a\n{{pokemonName}}?",
   "trainerDefeated": "¡Has derrotado a\n{{trainerName}}!",
   "moneyWon": "¡Has ganado\n₽{{moneyAmount}} por vencer!",
-  "moneyPickedUp": "You picked up ₽{{moneyAmount}}!",
   "pokemonCaught": "¡{{pokemonName}} atrapado!",
   "addedAsAStarter": "{{pokemonName}} ha sido añadido\na tus iniciales!",
   "partyFull": "Tu equipo esta completo.\n¿Quieres liberar un Pokémon para meter a {{pokemonName}}?",
@@ -67,8 +65,6 @@
   "drainMessage": "¡{{pokemonName}} tuvo su\nenergía absorbida!",
   "regainHealth": "¡{{pokemonName}} recuperó\nPS!",
   "stealEatBerry": "¡{{pokemonName}} robó la {{berryName}}\nde {{targetName}} y se la comió!",
-  "ppHealBerry": "{{pokemonNameWithAffix}} restored PP to its move {{moveName}}\nusing its {{berryName}}!",
-  "hpHealBerry": "{{pokemonNameWithAffix}} restored its health using\nits {{berryName}}!",
   "fainted": "¡{{pokemonNameWithAffix}} se debilitó!",
   "statsAnd": "y",
   "stats": "Las estadísticas",
@@ -87,11 +83,5 @@
   "statSeverelyFell_one": "¡El {{stats}} de {{pokemonNameWithAffix}} ha bajado muchísimo!",
   "statSeverelyFell_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} han bajado muchísimo!",
   "statWontGoAnyLower_one": "¡El {{stats}} de {{pokemonNameWithAffix}} no puede bajar más!",
-  "statWontGoAnyLower_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} no pueden bajar más!",
-  "transformedIntoType": "{{pokemonName}} transformed\ninto the {{type}} type!",
-  "retryBattle": "Would you like to retry from the start of the battle?",
-  "unlockedSomething": "{{unlockedThing}}\nhas been unlocked.",
-  "congratulations": "Congratulations!",
-  "beatModeFirstTime": "{{speciesName}} beat {{gameMode}} Mode for the first time!\nYou received {{newModifier}}!",
-  "ppReduced": "It reduced the PP of {{targetName}}'s\n{{moveName}} by {{reduction}}!"
+  "statWontGoAnyLower_other": "¡{{stats}} de\n{{pokemonNameWithAffix}} no pueden bajar más!"
 }
