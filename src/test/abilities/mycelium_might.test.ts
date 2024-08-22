@@ -46,8 +46,8 @@ describe("Abilities - Mycelium Might", () => {
     await game.startBattle([ Species.REGIELEKI ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
-    const playerPokemonIndex = game.scene.getPlayerPokemon().getBattlerIndex();
-    const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
+    const playerPokemonIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
+    const enemyPokemonIndex = enemyPokemon?.getBattlerIndex();
     game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
 
     await game.phaseInterceptor.run(EnemyCommandPhase);
@@ -68,8 +68,8 @@ describe("Abilities - Mycelium Might", () => {
     await game.startBattle([ Species.REGIELEKI ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
-    const playerPokemonIndex = game.scene.getPlayerPokemon().getBattlerIndex();
-    const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
+    const playerPokemonIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
+    const enemyPokemonIndex = enemyPokemon?.getBattlerIndex();
     game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
 
     await game.phaseInterceptor.run(EnemyCommandPhase);
@@ -88,8 +88,8 @@ describe("Abilities - Mycelium Might", () => {
   it("Order is established normally if the Pokemon uses a non-status move", async() => {
     await game.startBattle([ Species.REGIELEKI ]);
 
-    const playerPokemonIndex = game.scene.getPlayerPokemon().getBattlerIndex();
-    const enemyPokemonIndex = game.scene.getEnemyPokemon().getBattlerIndex();
+    const playerPokemonIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
+    const enemyPokemonIndex = game.scene.getEnemyPokemon()?.getBattlerIndex();
     game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
 
     await game.phaseInterceptor.run(EnemyCommandPhase);
