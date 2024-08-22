@@ -60,8 +60,9 @@ describe("Arena - Gravity", () => {
   });
 
   it("OHKO move accuracy is not affected", async () => {
-    game.override.startingLevel(5);
-    game.override.enemyLevel(5);
+    game.override
+      .startingLevel(5)
+      .enemyLevel(5);
 
     /** See Fissure {@link https://bulbapedia.bulbagarden.net/wiki/Fissure_(move)} */
     const moveToCheck = allMoves[Moves.FISSURE];
@@ -123,7 +124,8 @@ describe("Arena - Gravity", () => {
     "should interrupt a pokemon that attempts to use a jumping/airborne move",
     async () => {
       // Enemy is fastest mon so they go first, player is slowest mon
-      game.override.enemyMoveset(Array(4).fill(Moves.GRAVITY))
+      game.override
+        .enemyMoveset(Array(4).fill(Moves.GRAVITY))
         .enemySpecies(Species.REGIELEKI)
         .moveset([Moves.HIGH_JUMP_KICK]);
       vi.spyOn(allMoves[Moves.HIGH_JUMP_KICK], "accuracy", "get").mockReturnValue(100);
@@ -135,6 +137,66 @@ describe("Arena - Gravity", () => {
       await game.toNextTurn();
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     });
+
+  it(
+    "should allow Levitate pokemon to be hit by Ground type moves",
+    async () => {
+      game.override
+        .enemyAbility(Abilities.LEVITATE)
+        .moveset([Moves.GRAVITY, Moves.EARTHQUAKE]);
+
+      // Set up Gravity first turn
+      await game.startBattle([Species.RATTATA]);
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+      // Attack with Earthquake against Levitate mon, doesn't affect them
+      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      await game.toNextTurn();
+      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+      await game.toNextTurn();
+      expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
+
+      // Attack with Earthquake against Levitate mon, should affect them with Gravity on.
+      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      await game.toNextTurn();
+      expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    });
+
+  it(
+    "should remove Magnet Rise and allow Pokemon to be hit by Ground type moves",
+    async () => {
+      game.override
+        .enemyMoveset(Array(4).fill(Moves.EARTHQUAKE))
+        .moveset([Moves.GRAVITY, Moves.MAGNET_RISE, Moves.GROWL])
+        .startingLevel(100)
+        .enemyLevel(50);
+
+      await game.startBattle([Species.REGIELEKI]);
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.GROWL));
+      await game.toNextTurn();
+      // playerPokemon should be affected by Earthquake
+      expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+      // Reset to full health.
+      playerPokemon.hp = playerPokemon.getMaxHp();
+
+      // Set up Magnet Rise, playerPokemon should not be affected by Earthquake
+      game.doAttack(getMovePosition(game.scene, 0, Moves.MAGNET_RISE));
+      await game.toNextTurn();
+      expect(playerPokemon.getTag(BattlerTagType.MAGNET_RISEN)).toBeTruthy();
+      expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
+
+      game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+      await game.toNextTurn();
+      // Gravity should be active, Magnet Rise tag should be undefined, playerPokemon is affected by Earthquake
+      expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
+      expect(playerPokemon.getTag(BattlerTagType.MAGNET_RISEN)).toBeFalsy();
+      expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+    }
+  );
 
   describe("Against flying types", () => {
     it("can be hit by ground-type moves now", async () => {
