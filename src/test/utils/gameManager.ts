@@ -268,6 +268,13 @@ export default class GameManager {
         ? [target]
         : enemy.getNextTargets(moveId)
     });
+
+    /**
+     * Run the EnemyCommandPhase to completion.
+     * This allows this function to be called consecutively to
+     * force a move for each enemy in a double battle.
+     */
+    await this.phaseInterceptor.to(EnemyCommandPhase);
   }
 
   forceEnemyToSwitch() {
