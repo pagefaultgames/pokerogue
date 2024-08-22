@@ -12,7 +12,7 @@ import battleMessageUiHandler from "./battle-message-ui-handler.json";
 import battlerTags from "./battler-tags.json";
 import berry from "./berry.json";
 import bgmName from "./bgm-name.json";
-import { biome } from "./biome";
+import biome from "./biome.json";
 import { challenges } from "./challenges";
 import { commandUiHandler } from "./command-ui-handler";
 import {

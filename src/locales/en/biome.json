@@ -1,7 +1,5 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-export const biome: SimpleTranslationEntries = {
-  "unknownLocation": "Somewhere you can\'t remember",
+{
+  "unknownLocation": "Somewhere you can't remember",
   "TOWN": "Town",
   "PLAINS": "Plains",
   "GRASS": "Grassy Field",
@@ -36,5 +34,5 @@ export const biome: SimpleTranslationEntries = {
   "SNOWY_FOREST": "Snowy Forest",
   "ISLAND": "Island",
   "LABORATORY": "Laboratory",
-  "END": "???",
-} as const;
+  "END": "???"
+}
