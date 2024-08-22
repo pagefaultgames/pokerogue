@@ -844,10 +844,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
               label: "日本語",
               handler: () => changeLocaleHandler("ja")
             },
-            {
-              label: "Català",
-              handler: () => changeLocaleHandler("ca-ES")
-            },
+            // {
+            //   label: "Català",
+            //   handler: () => changeLocaleHandler("ca-ES")
+            // },
             {
               label: i18next.t("settings:back"),
               handler: () => cancelHandler()

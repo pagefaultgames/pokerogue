@@ -878,6 +878,10 @@ export class EncounterPhase extends BattlePhase {
         } else if (!(battle.waveIndex % 1000)) {
           enemyPokemon.formIndex = 1;
           enemyPokemon.updateScale();
+          const bossMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;
+          this.scene.removeModifier(bossMBH!);
+          bossMBH?.setTransferrableFalse();
+          this.scene.addEnemyModifier(bossMBH!);
         }
       }
 
@@ -1635,7 +1639,7 @@ export class SwitchSummonPhase extends SummonPhase {
       })
     );
     this.scene.playSound("pb_rel");
-    pokemon.hideInfo(); // this is also done by pokemon.leaveField(), but needs to go earlier for animation purposes
+    pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     this.scene.tweens.add({
       targets: pokemon,
@@ -1643,9 +1647,7 @@ export class SwitchSummonPhase extends SummonPhase {
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        // 250ms delay on leaveField is necessary to avoid calling hideInfo() twice
-        // and double-animating the stats panel slideout
-        this.scene.time.delayedCall(250, () => pokemon.leaveField(!this.batonPass));
+        pokemon.leaveField(!this.batonPass, false);
         this.scene.time.delayedCall(750, () => this.switchAndSummon());
       }
     });
@@ -2036,7 +2038,8 @@ export class CommandPhase extends FieldPhase {
       }
       break;
     case Command.BALL:
-      if (!this.scene.gameMode.isFreshStartChallenge() && this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || (this.scene.getEnemyField().filter(p => p.isActive(true)).some(p => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) && this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1))) {
+      const notInDex = (this.scene.getEnemyField().filter(p => p.isActive(true)).some(p => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) && this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1);
+      if (this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || this.scene.gameMode.isFreshStartChallenge() || notInDex )) {
         this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.showText(i18next.t("battle:noPokeballForce"), null, () => {
@@ -4034,13 +4037,24 @@ export class FaintPhase extends PokemonPhase {
     }
 
     if (this.player) {
-      const nonFaintedLegalPartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
-      const nonFaintedPartyMemberCount = nonFaintedLegalPartyMembers.length;
-      if (!nonFaintedPartyMemberCount) {
+      /** The total number of Pokemon in the player's party that can legally fight */
+      const legalPlayerPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
+      /** The total number of legal player Pokemon that aren't currently on the field */
+      const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
+      if (!legalPlayerPokemon.length) {
+        /** If the player doesn't have any legal Pokemon, end the game */
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
-      } else if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double) {
+      } else if (this.scene.currentBattle.double && legalPlayerPokemon.length === 1 && legalPlayerPartyPokemon.length === 0) {
+        /**
+         * If the player has exactly one Pokemon in total at this point in a double battle, and that Pokemon
+         * is already on the field, unshift a phase that moves that Pokemon to center position.
+         */
         this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
-      } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount()) {
+      } else if (legalPlayerPartyPokemon.length > 0) {
+        /**
+         * If previous conditions weren't met, and the player has at least 1 legal Pokemon off the field,
+         * push a phase that prompts the player to summon a Pokemon from their party.
+         */
         this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
       }
     } else {
@@ -5580,7 +5594,7 @@ export class SelectModifierPhase extends BattlePhase {
     } else if (lockRarities) {
       const tierValues = [50, 125, 300, 750, 2000];
       for (const opt of typeOptions) {
-        baseValue += opt.type?.tier ? tierValues[opt.type.tier] : 0;
+        baseValue += tierValues[opt.type.tier ?? 0];
       }
     } else {
       baseValue = 250;
