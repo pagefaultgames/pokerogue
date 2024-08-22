@@ -6,7 +6,7 @@ export const arenaTag: SimpleTranslationEntries = {
   "arenaOnRemove": "L’effet de la capacité {{moveName}}\ns’est dissipé !",
   "arenaOnRemovePlayer": "L’effet de la capacité {{moveName}}\ns’est dissipé sur votre équipe !",
   "arenaOnRemoveEnemy": "L’effet de la capacité {{moveName}}\ns’est dissipé sur l’équipe ennemie !",
-  "mistOnAdd": "La brume enveloppe l’équipe\de {{pokemonNameWithAffix}} !",
+  "mistOnAdd": "La brume enveloppe l’équipe\nde {{pokemonNameWithAffix}} !",
   "mistApply": "La brume empêche les stats de baisser !",
   "reflectOnAdd": "Protection augmente la résistance\naux capacités physiques !",
   "reflectOnAddPlayer": "Protection augmente la résistance\nde l’équipe aux capacités physiques !",
