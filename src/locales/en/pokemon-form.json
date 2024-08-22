@@ -1,24 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-export const battlePokemonForm: SimpleTranslationEntries = {
-  "mega": "Mega {{pokemonName}}",
-  "mega-x": "Mega {{pokemonName}} X",
-  "mega-y": "Mega {{pokemonName}} Y",
-  "primal": "Primal {{pokemonName}}",
-  "gigantamax": "G-Max {{pokemonName}}",
-  "eternamax": "E-Max {{pokemonName}}",
-
-  "megaChange": "{{preName}} Mega Evolved\ninto {{pokemonName}}!",
-  "gigantamaxChange": "{{preName}} Gigantamaxed\ninto {{pokemonName}}!",
-  "eternamaxChange": "{{preName}} Eternamaxed\ninto {{pokemonName}}!",
-  "revertChange": "{{pokemonName}} reverted\nto its original form!",
-  "formChange": "{{preName}} changed form!",
-  "disguiseChange": "Its disguise served it as a decoy!",
-} as const;
-
-export const pokemonForm: SimpleTranslationEntries = {
-  // Starters forms
-  // 1G
+{
   "pikachuCosplay": "Cosplay",
   "pikachuCoolCosplay": "Cool Cosplay",
   "pikachuBeautyCosplay": "Beauty Cosplay",
@@ -27,7 +7,6 @@ export const pokemonForm: SimpleTranslationEntries = {
   "pikachuToughCosplay": "Tough Cosplay",
   "pikachuPartner": "Partner",
   "eeveePartner": "Partner",
-  // 2G
   "pichuSpiky": "Spiky",
   "unownA": "A",
   "unownB": "B",
@@ -57,12 +36,10 @@ export const pokemonForm: SimpleTranslationEntries = {
   "unownZ": "Z",
   "unownExclamation": "!",
   "unownQuestion": "?",
-  // 3G
   "castformSunny": "Sunny",
   "castformRainy": "Rainy",
   "castformSnowy": "Snowy",
   "deoxysNormal": "Normal",
-  // 4G
   "burmyPlant": "Plant",
   "burmySandy": "Sandy",
   "burmyTrash": "Trash",
@@ -75,7 +52,6 @@ export const pokemonForm: SimpleTranslationEntries = {
   "rotomMow": "Mow",
   "giratinaAltered": "Altered",
   "shayminLand": "Land",
-  // 5G
   "basculinRedStriped": "Red Striped",
   "basculinBlueStriped": "Blue Striped",
   "basculinWhiteStriped": "White Striped",
@@ -88,7 +64,6 @@ export const pokemonForm: SimpleTranslationEntries = {
   "landorusIncarnate": "Incarnate",
   "keldeoOrdinary": "Ordinary",
   "meloettaAria": "Aria",
-  // 6G
   "froakieBattleBond": "Battle Bond",
   "scatterbugMeadow": "Meadow",
   "scatterbugIcySnow": "Icy Snow",
@@ -134,7 +109,6 @@ export const pokemonForm: SimpleTranslationEntries = {
   "zygarde50Pc": "50% Forme Power Construct",
   "zygarde10Pc": "10% Forme Power Construct",
   "zygardeComplete": "Complete Forme",
-  // 7G
   "oricorioBaile": "Baile",
   "oricorioPompom": "Pom-Pom",
   "oricorioPau": "Pau",
@@ -158,7 +132,6 @@ export const pokemonForm: SimpleTranslationEntries = {
   "mimikyuBusted": "Busted",
   "magearnaOriginal": "Original",
   "marshadowZenith": "Zenith",
-  // 8G
   "sinisteaPhony": "Phony",
   "sinisteaAntique": "Antique",
   "eiscueNoIce": "No Ice",
@@ -169,7 +142,6 @@ export const pokemonForm: SimpleTranslationEntries = {
   "zamazentaHeroOfManyBattles": "Hero Of Many Battles",
   "zarudeDada": "Dada",
   "enamorusIncarnate": "Incarnate",
-  // 9G
   "squawkabillyGreenPlumage": "Green Plumage",
   "squawkabillyBluePlumage": "Blue Plumage",
   "squawkabillyYellowPlumage": "Yellow Plumage",
@@ -180,19 +152,18 @@ export const pokemonForm: SimpleTranslationEntries = {
   "gimmighoulChest": "Chest",
   "gimmighoulRoaming": "Roaming",
   "koraidonApexBuild": "Apex Build",
-  "koraidonLimitedBuild":"Limited Build",
-  "koraidonSprintingBuild":"Sprinting Build",
-  "koraidonSwimmingBuild":"Swimming Build",
-  "koraidonGlidingBuild":"Gliding Build",
-  "miraidonUltimateMode":"Ultimate Mode",
-  "miraidonLowPowerMode":"Low Power Mode",
-  "miraidonDriveMode":"Drive Mode",
-  "miraidonAquaticMode":"Aquatic Mode",
-  "miraidonGlideMode":"Glide Mode",
+  "koraidonLimitedBuild": "Limited Build",
+  "koraidonSprintingBuild": "Sprinting Build",
+  "koraidonSwimmingBuild": "Swimming Build",
+  "koraidonGlidingBuild": "Gliding Build",
+  "miraidonUltimateMode": "Ultimate Mode",
+  "miraidonLowPowerMode": "Low Power Mode",
+  "miraidonDriveMode": "Drive Mode",
+  "miraidonAquaticMode": "Aquatic Mode",
+  "miraidonGlideMode": "Glide Mode",
   "poltchageistCounterfeit": "Counterfeit",
   "poltchageistArtisan": "Artisan",
   "paldeaTaurosCombat": "Combat",
   "paldeaTaurosBlaze": "Blaze",
-  "paldeaTaurosAqua": "Aqua",
-
-} as const;
+  "paldeaTaurosAqua": "Aqua"
+}
