@@ -1,4 +1,4 @@
-import { common } from "./common.js";
+import common from "./common.json";
 import { settings } from "./settings.js";
 import ability from "./ability.json";
 import abilityTriggers from "./ability-trigger.json";
