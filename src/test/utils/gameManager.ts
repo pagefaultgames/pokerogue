@@ -7,6 +7,7 @@ import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
 import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MovePhase } from "#app/phases/move-phase";
@@ -43,7 +44,6 @@ import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
 import { Moves } from "#app/enums/moves";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { getMoveTargets } from "#app/data/move";
 
 /**
