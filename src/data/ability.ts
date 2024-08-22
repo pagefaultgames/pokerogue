@@ -3309,10 +3309,10 @@ export class MoodyAbAttr extends PostTurnAbAttr {
   /**
    * Randomly increases one BattleStat by 2 stages and decreases a different BattleStat by 1 stage
    * @param {Pokemon} pokemon Pokemon that has this ability
-   * @param {boolean} passive N/A
-   * @param {boolean} simulated true if applying in a simulated call.
-   * @param {any[]} args N/A
-   * @returns {boolean} true
+   * @param passive N/A
+   * @param simulated true if applying in a simulated call.
+   * @param args N/A
+   * @returns true
    *
    * Any BattleStats at +6 or -6 are excluded from being increased or decreased, respectively
    * If the pokemon already has all BattleStats raised to stage 6, it will only decrease one BattleStat by 1 stage
