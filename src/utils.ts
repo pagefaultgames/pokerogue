@@ -217,6 +217,61 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
 
 // Abbreviations from 10^0 to 10^33
 const AbbreviationsLargeNumber: string[] = ["", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d"];
+const numberUnitsKorean: string[] = ["", "십", "백", "천"]
+const AbbreviationsLargeNumberKorean: string[] = ["", "만", "억", "조", "경", "해", "자", "양", "구"];
+const AbbreviationsLargeNumberJapanese: string[] = ["", "", ""];
+const AbbreviationsLargeNumberCnSimp: string[] = [];
+const AbbreviationsLargeNumberCnTrad: string[] = [];
+
+console.log(formatLargeNumberAsian(420000, 10000)); //4십2만
+
+export function formatLargeNumberAsian(count: number, threshold: number): string {
+  if (count < threshold) {
+    return count.toString();
+  }
+  const ret = count.toString();
+  let suffix = "";
+  let largeNumberUnitPos = Math.ceil(ret.length / 4) - 1;
+  switch (largeNumberUnitPos) {
+  case 1:
+    suffix = AbbreviationsLargeNumberKorean[1];
+    break;
+  case 2:
+    suffix = AbbreviationsLargeNumberKorean[2];
+    break;
+  case 3:
+    suffix = AbbreviationsLargeNumberKorean[3];
+    break;
+  case 4:
+    suffix = AbbreviationsLargeNumberKorean[4];
+    break;
+  case 5:
+    suffix = AbbreviationsLargeNumberKorean[5];
+    break;
+  default:
+    return "?";
+  }
+  const numberUnits: string[] = [];
+  const digits = ((ret.length + 3) % 4) + 1;
+  let trimmedNumber = ret.slice(digits, digits + 3);
+  while (trimmedNumber.endsWith("0")) {
+    trimmedNumber = trimmedNumber.slice(0, -1);
+  }
+  let decimalNumber = parseInt(ret.slice(0, digits)+trimmedNumber);
+  let numberUnitPos = 0;
+  while (decimalNumber > 0) {
+    let remainder = decimalNumber%10;
+    decimalNumber = Math.floor(decimalNumber/10);
+    numberUnits.push(remainder+numberUnitsKorean[numberUnitPos]);
+    numberUnitPos += 1;
+    if (numberUnitPos > 3) {
+      numberUnitPos = 0;
+      largeNumberUnitPos += 1;
+      numberUnits.push(AbbreviationsLargeNumberKorean[largeNumberUnitPos]+" ");
+    }
+  }
+  return `${numberUnits.reverse().join('')}${suffix}`;
+}
 
 export function formatFancyLargeNumber(number: number, rounded: number = 3): string {
   let exponent: number;
