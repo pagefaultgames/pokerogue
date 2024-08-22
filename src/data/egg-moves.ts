@@ -125,7 +125,7 @@ export const speciesEggMoves = {
   [Species.SUICUNE]: [ Moves.RECOVER, Moves.NASTY_PLOT, Moves.FREEZE_DRY, Moves.STEAM_ERUPTION ],
   [Species.LARVITAR]: [ Moves.DRAGON_DANCE, Moves.MOUNTAIN_GALE, Moves.SHORE_UP, Moves.DIAMOND_STORM ],
   [Species.LUGIA]: [ Moves.NASTY_PLOT, Moves.LUMINA_CRASH, Moves.AURA_SPHERE, Moves.OBLIVION_WING ],
-  [Species.HO_OH]: [ Moves.FLOATY_FALL, Moves.SOLAR_BLADE, Moves.REVIVAL_BLESSING, Moves.BOLT_BEAK ],
+  [Species.HO_OH]: [ Moves.FLOATY_FALL, Moves.PRECIPICE_BLADES, Moves.REVIVAL_BLESSING, Moves.BOLT_BEAK ],
   [Species.CELEBI]: [ Moves.PHOTON_GEYSER, Moves.MATCHA_GOTCHA, Moves.REVIVAL_BLESSING, Moves.QUIVER_DANCE ],
   [Species.TREECKO]: [ Moves.NASTY_PLOT, Moves.APPLE_ACID, Moves.SECRET_SWORD, Moves.DRAGON_ENERGY ],
   [Species.TORCHIC]: [ Moves.HIGH_JUMP_KICK, Moves.SUPERCELL_SLAM, Moves.KNOCK_OFF, Moves.V_CREATE ],
