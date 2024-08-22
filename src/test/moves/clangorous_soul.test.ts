@@ -1,12 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { BattleStat } from "#app/data/battle-stat";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { toDmgValue } from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { BattleStat } from "#app/data/battle-stat";
+import GameManager from "#test/utils/gameManager";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 /** HP Cost of Move */
@@ -41,13 +41,13 @@ describe("Moves - CLANGOROUS_SOUL", () => {
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Clangorous_Soul_(move)
 
   test("Clangorous Soul raises the user's Attack, Defense, Special Attack, Special Defense and Speed by one stage each, at the cost of 1/3 of its maximum HP",
-  	async() => {
-  	 	await game.startBattle([Species.MAGIKARP]);
+    async () => {
+      await game.startBattle([Species.MAGIKARP]);
 
-     	const leadPokemon = game.scene.getPlayerPokemon()!;
-      const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLANGOROUS_SOUL));
+      game.move.select(Moves.CLANGOROUS_SOUL);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
@@ -56,15 +56,15 @@ describe("Moves - CLANGOROUS_SOUL", () => {
       expect(leadPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(1);
       expect(leadPokemon.summonData.battleStats[BattleStat.SPDEF]).toBe(1);
       expect(leadPokemon.summonData.battleStats[BattleStat.SPD]).toBe(1);
-  	}, TIMEOUT
+    }, TIMEOUT
   );
 
   test("Clangorous Soul will still take effect if one or more of the involved stats are not at max",
-    async() => {
+    async () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
-      const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
 
       //Here - BattleStat.SPD -> 0 and BattleStat.SPDEF -> 4
       leadPokemon.summonData.battleStats[BattleStat.ATK] = 6;
@@ -72,7 +72,7 @@ describe("Moves - CLANGOROUS_SOUL", () => {
       leadPokemon.summonData.battleStats[BattleStat.SPATK] = 6;
       leadPokemon.summonData.battleStats[BattleStat.SPDEF] = 4;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLANGOROUS_SOUL));
+      game.move.select(Moves.CLANGOROUS_SOUL);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
@@ -85,7 +85,7 @@ describe("Moves - CLANGOROUS_SOUL", () => {
   );
 
   test("Clangorous Soul fails if all stats involved are at max",
-    async() => {
+    async () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
@@ -96,7 +96,7 @@ describe("Moves - CLANGOROUS_SOUL", () => {
       leadPokemon.summonData.battleStats[BattleStat.SPDEF] = 6;
       leadPokemon.summonData.battleStats[BattleStat.SPD] = 6;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLANGOROUS_SOUL));
+      game.move.select(Moves.CLANGOROUS_SOUL);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
@@ -109,14 +109,14 @@ describe("Moves - CLANGOROUS_SOUL", () => {
   );
 
   test("Clangorous Soul fails if the user's health is less than 1/3",
-    async() => {
+    async () => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
-      const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
       leadPokemon.hp = hpLost - PREDAMAGE;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLANGOROUS_SOUL));
+      game.move.select(Moves.CLANGOROUS_SOUL);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);

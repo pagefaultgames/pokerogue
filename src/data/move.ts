@@ -1165,7 +1165,7 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = Math.max(Math.floor(target.hp / 2), 1);
+    (args[0] as Utils.IntegerHolder).value = Utils.toDmgValue(target.hp / 2);
 
     return true;
   }
@@ -1211,7 +1211,7 @@ export class CounterDamageAttr extends FixedDamageAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const damage = user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).reduce((total: integer, ar: AttackMoveResult) => total + ar.damage, 0);
-    (args[0] as Utils.IntegerHolder).value = Math.floor(Math.max(damage * this.multiplier, 1));
+    (args[0] as Utils.IntegerHolder).value = Utils.toDmgValue(damage * this.multiplier);
 
     return true;
   }
@@ -1237,7 +1237,7 @@ export class RandomLevelDamageAttr extends FixedDamageAttr {
   }
 
   getDamage(user: Pokemon, target: Pokemon, move: Move): number {
-    return Math.max(Math.floor(user.level * (user.randSeedIntRange(50, 150) * 0.01)), 1);
+    return Utils.toDmgValue(user.level * (user.randSeedIntRange(50, 150) * 0.01));
   }
 }
 
@@ -1296,8 +1296,9 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    const recoilDamage = Math.max(Math.floor((!this.useHp ? user.turnData.damageDealt : user.getMaxHp()) * this.damageRatio),
-      user.turnData.damageDealt ? 1 : 0);
+    const damageValue = (!this.useHp ? user.turnData.damageDealt : user.getMaxHp()) * this.damageRatio;
+    const minValue = user.turnData.damageDealt ? 1 : 0;
+    const recoilDamage = Utils.toDmgValue(damageValue, minValue);
     if (!recoilDamage) {
       return false;
     }
@@ -1418,7 +1419,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
     // Check to see if the Pokemon has an ability that blocks non-direct damage
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
     if (!cancelled.value) {
-      user.damageAndUpdate(Math.ceil(user.getMaxHp()/2), HitResult.OTHER, false, true, true);
+      user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp()/2), HitResult.OTHER, false, true, true);
       user.scene.queueMessage(i18next.t("moveTriggers:cutHpPowerUpMove", {pokemonName: getPokemonNameWithAffix(user)})); // Queue recoil message
     }
     return true;
@@ -1469,7 +1470,7 @@ export class HealAttr extends MoveEffectAttr {
    */
   addHealPhase(target: Pokemon, healRatio: number) {
     target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
-      Math.max(Math.floor(target.getMaxHp() * healRatio), 1), i18next.t("moveTriggers:healHp", {pokemonName: getPokemonNameWithAffix(target)}), true, !this.showAnim));
+      Utils.toDmgValue(target.getMaxHp() * healRatio), i18next.t("moveTriggers:healHp", {pokemonName: getPokemonNameWithAffix(target)}), true, !this.showAnim));
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
@@ -1753,7 +1754,7 @@ export class HitHealAttr extends MoveEffectAttr {
       message = i18next.t("battle:drainMessage", {pokemonName: getPokemonNameWithAffix(target)});
     } else {
       // Default healing formula used by draining moves like Absorb, Draining Kiss, Bitter Blade, etc.
-      healAmount = Math.max(Math.floor(user.turnData.currDamageDealt * this.healRatio), 1);
+      healAmount = Utils.toDmgValue(user.turnData.currDamageDealt * this.healRatio);
       message = i18next.t("battle:regainHealth", {pokemonName: getPokemonNameWithAffix(user)});
     }
     if (reverseDrain) {
@@ -2713,7 +2714,7 @@ export class CutHpStatBoostAttr extends StatChangeAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      user.damageAndUpdate(Math.floor(user.getMaxHp() / this.cutRatio), HitResult.OTHER, false, true);
+      user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / this.cutRatio), HitResult.OTHER, false, true);
       user.updateInfo().then(() => {
         const ret = super.apply(user, target, move, args);
         if (this.messageCallback) {
@@ -3193,7 +3194,7 @@ export class CompareWeightPowerAttr extends VariablePowerAttr {
 
 export class HpPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.max(Math.floor(150 * user.getHpRatio()), 1);
+    (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(150 * user.getHpRatio());
 
     return true;
   }
@@ -3221,7 +3222,7 @@ export class OpponentHighHpPowerAttr extends VariablePowerAttr {
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.max(Math.floor(this.maxBasePower * target.getHpRatio()), 1);
+    (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(this.maxBasePower * target.getHpRatio());
 
     return true;
   }
@@ -3415,7 +3416,7 @@ export class PresentPowerAttr extends VariablePowerAttr {
       // If this move is multi-hit, disable all other hits
       user.stopMultiHit();
       target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
-        Math.max(Math.floor(target.getMaxHp() / 4), 1), i18next.t("moveTriggers:regainedHealth", {pokemonName: getPokemonNameWithAffix(target)}), true));
+        Utils.toDmgValue(target.getMaxHp() / 4), i18next.t("moveTriggers:regainedHealth", {pokemonName: getPokemonNameWithAffix(target)}), true));
     }
 
     return true;
@@ -4235,9 +4236,9 @@ const crashDamageFunc = (user: Pokemon, move: Move) => {
     return false;
   }
 
-  user.damageAndUpdate(Math.floor(user.getMaxHp() / 2), HitResult.OTHER, false, true);
+  user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / 2), HitResult.OTHER, false, true);
   user.scene.queueMessage(i18next.t("moveTriggers:keptGoingAndCrashed", {pokemonName: getPokemonNameWithAffix(user)}));
-  user.turnData.damageTaken += Math.floor(user.getMaxHp() / 2);
+  user.turnData.damageTaken += Utils.toDmgValue(user.getMaxHp() / 2);
 
   return true;
 };
@@ -4947,7 +4948,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         const pokemon = faintedPokemon[user.randSeedInt(faintedPokemon.length)];
         const slotIndex = user.scene.getEnemyParty().findIndex(p => pokemon.id === p.id);
         pokemon.resetStatus();
-        pokemon.heal(Math.min(Math.max(Math.ceil(Math.floor(0.5 * pokemon.getMaxHp())), 1), pokemon.getMaxHp()));
+        pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
         user.scene.queueMessage(`${getPokemonNameWithAffix(pokemon)} was revived!`,0,true);
 
         if (user.scene.currentBattle.double && user.scene.getEnemyParty().length > 1) {

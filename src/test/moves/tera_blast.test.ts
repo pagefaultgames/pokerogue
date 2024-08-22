@@ -1,17 +1,16 @@
+import { BattlerIndex } from "#app/battle";
+import { BattleStat } from "#app/data/battle-stat";
 import { allMoves } from "#app/data/move";
-import GameManager from "#test/utils/gameManager";
+import { Type } from "#app/data/type";
+import { Abilities } from "#app/enums/abilities";
+import { Stat } from "#app/enums/stat";
+import { HitResult } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { Abilities } from "#app/enums/abilities";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { Type } from "#app/data/type";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { BattleStat } from "#app/data/battle-stat";
-import { Stat } from "#app/enums/stat";
-import { BattlerIndex } from "#app/battle";
-import { HitResult } from "#app/field/pokemon";
 
 describe("Moves - Tera Blast", () => {
   let phaserGame: Phaser.Game;
@@ -37,7 +36,7 @@ describe("Moves - Tera Blast", () => {
       .starterSpecies(Species.FEEBAS)
       .moveset([Moves.TERA_BLAST])
       .ability(Abilities.BALL_FETCH)
-      .startingHeldItems([{name: "TERA_SHARD", type: Type.FIRE}])
+      .startingHeldItems([{ name: "TERA_SHARD", type: Type.FIRE }])
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(SPLASH_ONLY)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -46,30 +45,30 @@ describe("Moves - Tera Blast", () => {
     vi.spyOn(moveToCheck, "calculateBattlePower");
   });
 
-  it("changes type to match user's tera type", async() => {
+  it("changes type to match user's tera type", async () => {
     game.override
       .enemySpecies(Species.FURRET)
-      .startingHeldItems([{name: "TERA_SHARD", type: Type.FIGHTING}]);
+      .startingHeldItems([{ name: "TERA_SHARD", type: Type.FIGHTING }]);
     await game.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemyPokemon, "apply");
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
+    game.move.select(Moves.TERA_BLAST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.SUPER_EFFECTIVE);
   }, 20000);
 
-  it("increases power if user is Stellar tera type", async() => {
-    game.override.startingHeldItems([{name: "TERA_SHARD", type: Type.STELLAR}]);
+  it("increases power if user is Stellar tera type", async () => {
+    game.override.startingHeldItems([{ name: "TERA_SHARD", type: Type.STELLAR }]);
     const stellarTypeMultiplier = 2;
     const stellarTypeDmgBonus = 20;
     const basePower = moveToCheck.power;
 
     await game.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
+    game.move.select(Moves.TERA_BLAST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -77,7 +76,7 @@ describe("Moves - Tera Blast", () => {
   }, 20000);
 
   // Currently abilities are bugged and can't see when a move's category is changed
-  it.skip("uses the higher stat of the user's Atk and SpAtk for damage calculation", async() => {
+  it.skip("uses the higher stat of the user's Atk and SpAtk for damage calculation", async () => {
     game.override.enemyAbility(Abilities.TOXIC_DEBRIS);
     await game.startBattle();
 
@@ -85,18 +84,18 @@ describe("Moves - Tera Blast", () => {
     playerPokemon.stats[Stat.ATK] = 100;
     playerPokemon.stats[Stat.SPATK] = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
+    game.move.select(Moves.TERA_BLAST);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(game.scene.getEnemyPokemon()!.battleData.abilityRevealed).toBe(true);
   }, 20000);
 
-  it("causes stat drops if user is Stellar tera type", async() => {
-    game.override.startingHeldItems([{name: "TERA_SHARD", type: Type.STELLAR}]);
+  it("causes stat drops if user is Stellar tera type", async () => {
+    game.override.startingHeldItems([{ name: "TERA_SHARD", type: Type.STELLAR }]);
     await game.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TERA_BLAST));
+    game.move.select(Moves.TERA_BLAST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
