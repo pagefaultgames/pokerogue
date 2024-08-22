@@ -16,7 +16,8 @@ import bgmName from "./bgm-name.json";
 import biome from "./biome.json";
 import challenges from "./challenges.json";
 import commandUiHandler from "./command-ui-handler.json";
-import dialogue from "./dialogue.json";
+import dialogueMale from "./dialogue-male.json";
+import dialogueFemale from "./dialogue-female.json";
 import dialogueEndbossMale from "./dialogue-final-boss-male.json";
 import dialogueEndbossFemale from "./dialogue-final-boss-female.json";
 import dialogueMiscMale from "./dialogue-misc-male.json";
@@ -76,8 +77,8 @@ export const enConfig = {
   common,
   PGMachv: achvMale,
   PGFachv: achvFemale,
-  PGMdialogue: dialogue,
-  PGFdialogue: dialogue,
+  PGMdialogue: dialogueMale,
+  PGFdialogue: dialogueFemale,
   PGMbattleSpecDialogue: dialogueEndbossMale,
   PGFbattleSpecDialogue: dialogueEndbossFemale,
   PGMmiscDialogue: dialogueMiscMale,
