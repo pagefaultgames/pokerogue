@@ -1,6 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-export const pokemon: SimpleTranslationEntries = {
+{
   "bulbasaur": "Bulbasaur",
   "ivysaur": "Ivysaur",
   "venusaur": "Venusaur",
@@ -1082,5 +1080,5 @@ export const pokemon: SimpleTranslationEntries = {
   "hisui_decidueye": "Decidueye",
   "paldea_tauros": "Tauros",
   "paldea_wooper": "Wooper",
-  "bloodmoon_ursaluna": "Ursaluna",
-} as const;
+  "bloodmoon_ursaluna": "Ursaluna"
+}

@@ -33,7 +33,7 @@ import move from "./move.json";
 import nature from "./nature.json";
 import partyUiHandler from "./party-ui-handler.json";
 import pokeball from "./pokeball.json";
-import { pokemon } from "./pokemon";
+import pokemon from "./pokemon.json";
 import pokemonForm from "./pokemon-form.json";
 import battlePokemonForm from "./pokemon-form-battle.json";
 import pokemonInfo from "./pokemon-info.json";
