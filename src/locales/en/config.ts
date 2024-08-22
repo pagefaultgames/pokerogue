@@ -47,7 +47,7 @@ import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
 import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
-import { moveTriggers } from "./move-trigger";
+import moveTriggers from "./move-trigger.json";
 
 export const enConfig = {
   ability,
