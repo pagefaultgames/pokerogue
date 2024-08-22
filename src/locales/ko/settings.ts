@@ -98,5 +98,10 @@ export const settings: SimpleTranslationEntries = {
   "gamepadSupport": "게임패드 지원",
   "showBgmBar": "BGM 제목 보여주기",
   "moveTouchControls": "터치 컨트롤 이동",
-  "shopOverlayOpacity": "상점 오버레이 투명도"
+  "shopOverlayOpacity": "상점 오버레이 투명도",
+  "shopCursorTarget": "상점 커서 위치",
+  "items": "아이템",
+  "reroll": "갱신",
+  "shop": "상점",
+  "checkTeam": "파티 확인"
 } as const;

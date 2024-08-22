@@ -1,10 +1,10 @@
+import BattleScene from "#app/battle-scene";
+import { BattleStat } from "#app/data/battle-stat";
+import { StockpilingTag } from "#app/data/battler-tags";
+import Pokemon, { PokemonSummonData } from "#app/field/pokemon";
+import * as messages from "#app/messages";
+import { StatChangePhase } from "#app/phases/stat-change-phase";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import Pokemon, { PokemonSummonData } from "#app/field/pokemon.js";
-import BattleScene from "#app/battle-scene.js";
-import { StockpilingTag } from "#app/data/battler-tags.js";
-import { BattleStat } from "#app/data/battle-stat.js";
-import * as messages from "#app/messages.js";
-import { StatChangePhase } from "#app/phases/stat-change-phase.js";
 
 beforeEach(() => {
   vi.spyOn(messages, "getPokemonNameWithAffix").mockImplementation(() => "");
