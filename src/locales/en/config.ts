@@ -32,7 +32,7 @@ import modifierType from "./modifier-type.json";
 import move from "./move.json";
 import nature from "./nature.json";
 import partyUiHandler from "./party-ui-handler.json";
-import { pokeball } from "./pokeball";
+import pokeball from "./pokeball.json";
 import { pokemon } from "./pokemon";
 import { pokemonForm, battlePokemonForm } from "./pokemon-form";
 import { pokemonInfo } from "./pokemon-info";
