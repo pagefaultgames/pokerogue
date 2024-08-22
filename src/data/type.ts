@@ -24,99 +24,76 @@ export enum Type {
 export type TypeDamageMultiplier = 0 | 0.125 | 0.25 | 0.5 | 1 | 2 | 4 | 8;
 
 export function getTypeDamageMultiplier(attackType: number, defType: number): TypeDamageMultiplier {
-  let multiplier: number = 1;
   if (attackType === Type.UNKNOWN || defType === Type.UNKNOWN) {
-    return multiplier as TypeDamageMultiplier;
+    return 1;
   }
 
   switch (defType) {
   case Type.NORMAL:
     switch (attackType) {
     case Type.FIGHTING:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.GHOST:
-      multiplier = 0;
-      break;
+      return 0;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.FIGHTING:
     switch (attackType) {
     case Type.FLYING:
     case Type.PSYCHIC:
     case Type.FAIRY:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.ROCK:
     case Type.BUG:
     case Type.DARK:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.FLYING:
     switch (attackType) {
     case Type.ROCK:
     case Type.ELECTRIC:
     case Type.ICE:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.FIGHTING:
     case Type.BUG:
     case Type.GRASS:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     case Type.GROUND:
-      multiplier = 0;
-      break;
+      return 0;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.POISON:
     switch (attackType) {
     case Type.GROUND:
     case Type.PSYCHIC:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.FIGHTING:
     case Type.POISON:
     case Type.BUG:
     case Type.GRASS:
     case Type.FAIRY:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.GROUND:
     switch (attackType) {
     case Type.WATER:
     case Type.GRASS:
     case Type.ICE:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.POISON:
     case Type.ROCK:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     case Type.ELECTRIC:
-      multiplier = 0;
-      break;
+      return 0;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.ROCK:
     switch (attackType) {
     case Type.FIGHTING:
@@ -124,62 +101,48 @@ export function getTypeDamageMultiplier(attackType: number, defType: number): Ty
     case Type.STEEL:
     case Type.WATER:
     case Type.GRASS:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.NORMAL:
     case Type.FLYING:
     case Type.POISON:
     case Type.FIRE:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.BUG:
     switch (attackType) {
     case Type.FLYING:
     case Type.ROCK:
     case Type.FIRE:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.FIGHTING:
     case Type.GROUND:
     case Type.GRASS:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.GHOST:
     switch (attackType) {
     case Type.GHOST:
     case Type.DARK:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.POISON:
     case Type.BUG:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     case Type.NORMAL:
     case Type.FIGHTING:
-      multiplier = 0;
-      break;
+      return 0;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.STEEL:
     switch (attackType) {
     case Type.FIGHTING:
     case Type.GROUND:
     case Type.FIRE:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.NORMAL:
     case Type.FLYING:
     case Type.ROCK:
@@ -190,53 +153,41 @@ export function getTypeDamageMultiplier(attackType: number, defType: number): Ty
     case Type.ICE:
     case Type.DRAGON:
     case Type.FAIRY:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     case Type.POISON:
-      multiplier = 0;
-      break;
+      return 0;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.FIRE:
     switch (attackType) {
     case Type.GROUND:
     case Type.ROCK:
     case Type.WATER:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.BUG:
     case Type.STEEL:
     case Type.FIRE:
     case Type.GRASS:
     case Type.ICE:
     case Type.FAIRY:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.WATER:
     switch (attackType) {
     case Type.GRASS:
     case Type.ELECTRIC:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.STEEL:
     case Type.FIRE:
     case Type.WATER:
     case Type.ICE:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.GRASS:
     switch (attackType) {
     case Type.FLYING:
@@ -244,128 +195,97 @@ export function getTypeDamageMultiplier(attackType: number, defType: number): Ty
     case Type.BUG:
     case Type.FIRE:
     case Type.ICE:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.GROUND:
     case Type.WATER:
     case Type.GRASS:
     case Type.ELECTRIC:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.ELECTRIC:
     switch (attackType) {
     case Type.GROUND:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.FLYING:
     case Type.STEEL:
     case Type.ELECTRIC:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.PSYCHIC:
     switch (attackType) {
     case Type.BUG:
     case Type.GHOST:
     case Type.DARK:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.FIGHTING:
     case Type.PSYCHIC:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.ICE:
     switch (attackType) {
     case Type.FIGHTING:
     case Type.ROCK:
     case Type.STEEL:
     case Type.FIRE:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.ICE:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.DRAGON:
     switch (attackType) {
     case Type.ICE:
     case Type.DRAGON:
     case Type.FAIRY:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.FIRE:
     case Type.WATER:
     case Type.GRASS:
     case Type.ELECTRIC:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.DARK:
     switch (attackType) {
     case Type.FIGHTING:
     case Type.BUG:
     case Type.FAIRY:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.GHOST:
     case Type.DARK:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     case Type.PSYCHIC:
-      multiplier = 0;
-      break;
+      return 0;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.FAIRY:
     switch (attackType) {
     case Type.POISON:
     case Type.STEEL:
-      multiplier = 2;
-      break;
+      return 2;
     case Type.FIGHTING:
     case Type.BUG:
     case Type.DARK:
-      multiplier = 0.5;
-      break;
+      return 0.5;
     case Type.DRAGON:
-      multiplier = 0;
-      break;
+      return 0;
     default:
-      multiplier = 1;
-      break;
+      return 1;
     }
-    break;
   case Type.STELLAR:
-    multiplier = 1;
-    break;
+    return 1;
   }
 
-  return multiplier as TypeDamageMultiplier;
+  return 1;
 }
 
 /**
