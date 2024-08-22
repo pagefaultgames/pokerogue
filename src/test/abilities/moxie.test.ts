@@ -1,6 +1,5 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -49,7 +48,7 @@ describe("Abilities - Moxie", () => {
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.move.select(moveToUse);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(VictoryPhase);
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
@@ -70,8 +69,8 @@ describe("Abilities - Moxie", () => {
 
     secondPokemon.hp = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
-    game.doSelectTarget(BattlerIndex.PLAYER_2);
+    game.move.select(moveToUse);
+    game.selectTarget(BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

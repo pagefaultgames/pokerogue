@@ -2,7 +2,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -47,7 +46,7 @@ describe("Moves - Clangorous Soul", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLANGOROUS_SOUL));
+      game.move.select(Moves.CLANGOROUS_SOUL);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
@@ -72,7 +71,7 @@ describe("Moves - Clangorous Soul", () => {
       leadPokemon.setStatStage(Stat.SPATK, 6);
       leadPokemon.setStatStage(Stat.SPDEF, 4);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLANGOROUS_SOUL));
+      game.move.select(Moves.CLANGOROUS_SOUL);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
@@ -96,7 +95,7 @@ describe("Moves - Clangorous Soul", () => {
       leadPokemon.setStatStage(Stat.SPDEF, 6);
       leadPokemon.setStatStage(Stat.SPD, 6);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLANGOROUS_SOUL));
+      game.move.select(Moves.CLANGOROUS_SOUL);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
@@ -116,7 +115,7 @@ describe("Moves - Clangorous Soul", () => {
       const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
       leadPokemon.hp = hpLost - PREDAMAGE;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLANGOROUS_SOUL));
+      game.move.select(Moves.CLANGOROUS_SOUL);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);

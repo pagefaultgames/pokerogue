@@ -5,7 +5,6 @@ import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
@@ -45,7 +44,7 @@ describe("Moves - Speed Swap", () => {
     const playerSpd = player.getStat(Stat.SPD, false);
     const enemySpd = enemy.getStat(Stat.SPD, false);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPEED_SWAP));
+    game.move.select(Moves.SPEED_SWAP);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.SPD, false)).toBe(enemySpd);

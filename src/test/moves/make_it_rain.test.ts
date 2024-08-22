@@ -1,9 +1,8 @@
 import { Stat } from "#enums/stat";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
@@ -42,8 +41,8 @@ describe("Moves - Make It Rain", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.MAKE_IT_RAIN);
+    game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -59,7 +58,7 @@ describe("Moves - Make It Rain", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
+    game.move.select(Moves.MAKE_IT_RAIN);
 
     await game.phaseInterceptor.to(StatStageChangePhase);
 
@@ -75,8 +74,8 @@ describe("Moves - Make It Rain", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.MAKE_IT_RAIN);
+    game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to(StatStageChangePhase);
 
@@ -89,8 +88,8 @@ describe("Moves - Make It Rain", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.MAKE_IT_RAIN);
+    game.move.select(Moves.SPLASH, 1);
 
     // Make Make It Rain miss the first target
     await game.move.forceMiss(true);

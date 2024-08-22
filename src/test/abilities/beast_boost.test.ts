@@ -1,6 +1,5 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -48,7 +47,7 @@ describe("Abilities - Beast Boost", () => {
 
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
+    game.move.select(Moves.FLAMETHROWER);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(VictoryPhase);
 
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(1);
@@ -66,7 +65,7 @@ describe("Abilities - Beast Boost", () => {
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
+    game.move.select(Moves.FLAMETHROWER);
 
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
 
@@ -88,7 +87,7 @@ describe("Abilities - Beast Boost", () => {
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
+    game.move.select(Moves.FLAMETHROWER);
 
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(VictoryPhase);
 

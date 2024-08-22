@@ -1,7 +1,6 @@
 import { MovePhase } from "#app/phases/move-phase.js";
 import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Stat } from "#enums/stat";
 import { Moves } from "#enums/moves";
@@ -42,14 +41,14 @@ describe("Abilities - Mycelium Might", () => {
    * https://www.smogon.com/forums/threads/scarlet-violet-battle-mechanics-research.3709545/page-24
    **/
 
-  it("If a Pokemon with Mycelium Might uses a status move, it will always move last but the status move will ignore protective abilities", async() => {
-    await game.startBattle([ Species.REGIELEKI ]);
+  it("will move last in its priority bracket and ignore protective abilities", async () => {
+    await game.startBattle([Species.REGIELEKI]);
 
     const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyPokemon = game.scene.getEnemyPokemon();
     const enemyIndex = enemyPokemon?.getBattlerIndex();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
+    game.move.select(Moves.BABY_DOLL_EYES);
 
     await game.phaseInterceptor.to(MovePhase, false);
     // The opponent Pokemon (without Mycelium Might) goes first despite having lower speed than the player Pokemon.
@@ -64,15 +63,15 @@ describe("Abilities - Mycelium Might", () => {
     expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
   }, 20000);
 
-  it("Pokemon with Mycelium Might will go first if a status move that is in a higher priority bracket than the opponent's move is used", async() => {
+  it("will still go first if a status move that is in a higher priority bracket than the opponent's move is used", async () => {
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    await game.startBattle([ Species.REGIELEKI ]);
+    await game.startBattle([Species.REGIELEKI]);
 
     const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyPokemon = game.scene.getEnemyPokemon();
     const enemyIndex = enemyPokemon?.getBattlerIndex();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
+    game.move.select(Moves.BABY_DOLL_EYES);
 
     await game.phaseInterceptor.to(MovePhase, false);
     // The player Pokemon (with M.M.) goes first because its move is still within a higher priority bracket than its opponent.
@@ -86,13 +85,13 @@ describe("Abilities - Mycelium Might", () => {
     expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
   }, 20000);
 
-  it("Order is established normally if the Pokemon uses a non-status move", async() => {
-    await game.startBattle([ Species.REGIELEKI ]);
+  it("will not affect non-status moves", async () => {
+    await game.startBattle([Species.REGIELEKI]);
 
     const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
+    game.move.select(Moves.QUICK_ATTACK);
 
     await game.phaseInterceptor.to(MovePhase, false);
     // The player Pokemon (with M.M.) goes first because it has a higher speed and did not use a status move.

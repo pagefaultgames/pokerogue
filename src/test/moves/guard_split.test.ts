@@ -5,7 +5,6 @@ import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
@@ -45,7 +44,7 @@ describe("Moves - Guard Split", () => {
     const avgDef = Math.floor((player.getStat(Stat.DEF, false) + enemy.getStat(Stat.DEF, false)) / 2);
     const avgSpDef = Math.floor((player.getStat(Stat.SPDEF, false) + enemy.getStat(Stat.SPDEF, false)) / 2);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GUARD_SPLIT));
+    game.move.select(Moves.GUARD_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.DEF, false)).toBe(avgDef);
@@ -67,10 +66,10 @@ describe("Moves - Guard Split", () => {
     const avgDef = Math.floor((player.getStat(Stat.DEF, false) + enemy.getStat(Stat.DEF, false)) / 2);
     const avgSpDef = Math.floor((player.getStat(Stat.SPDEF, false) + enemy.getStat(Stat.SPDEF, false)) / 2);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GUARD_SPLIT));
+    game.move.select(Moves.GUARD_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GUARD_SPLIT));
+    game.move.select(Moves.GUARD_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.DEF, false)).toBe(avgDef);

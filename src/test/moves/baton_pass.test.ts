@@ -1,13 +1,12 @@
 import { Stat } from "#enums/stat";
+import { PostSummonPhase } from "#app/phases/post-summon-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { PostSummonPhase } from "#app/phases/post-summon-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 
 describe("Moves - Baton Pass", () => {
@@ -44,7 +43,7 @@ describe("Moves - Baton Pass", () => {
     ]);
 
     // round 1 - buff
-    game.doAttack(getMovePosition(game.scene, 0, Moves.NASTY_PLOT));
+    game.move.select(Moves.NASTY_PLOT);
     await game.toNextTurn();
 
     let playerPokemon = game.scene.getPlayerPokemon()!;
@@ -52,7 +51,7 @@ describe("Moves - Baton Pass", () => {
     expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
 
     // round 2 - baton pass
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BATON_PASS));
+    game.move.select(Moves.BATON_PASS);
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -62,7 +61,7 @@ describe("Moves - Baton Pass", () => {
     expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
   }, 20000);
 
-  it("passes stat stage buffs when AI uses it", async() => {
+  it("passes stat stage buffs when AI uses it", async () => {
     // arrange
     game.override
       .startingWave(5)
@@ -73,13 +72,13 @@ describe("Moves - Baton Pass", () => {
     ]);
 
     // round 1 - ai buffs
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.toNextTurn();
 
     // round 2 - baton pass
     game.scene.getEnemyPokemon()!.hp = 100;
     game.override.enemyMoveset(new Array(4).fill(Moves.BATON_PASS));
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(PostSummonPhase, false);
 
     // assert

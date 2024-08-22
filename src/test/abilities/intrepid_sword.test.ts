@@ -1,10 +1,10 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
+import { CommandPhase } from "#app/phases/command-phase";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { CommandPhase } from "#app/phases/command-phase.js";
 
 
 describe("Abilities - Intrepid Sword", () => {

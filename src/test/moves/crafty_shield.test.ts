@@ -4,7 +4,6 @@ import GameManager from "../utils/gameManager";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
 import { Stat } from "#enums/stat";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { BerryPhase } from "#app/phases/berry-phase.js";
@@ -48,11 +47,11 @@ describe("Moves - Crafty Shield", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
+      game.move.select(Moves.CRAFTY_SHIELD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -69,11 +68,11 @@ describe("Moves - Crafty Shield", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
+      game.move.select(Moves.CRAFTY_SHIELD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -91,11 +90,11 @@ describe("Moves - Crafty Shield", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
+      game.move.select(Moves.CRAFTY_SHIELD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -110,11 +109,11 @@ describe("Moves - Crafty Shield", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
+      game.move.select(Moves.CRAFTY_SHIELD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SWORDS_DANCE));
+      game.move.select(Moves.SWORDS_DANCE, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

@@ -4,7 +4,6 @@ import GameManager from "../utils/gameManager";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
 import { Stat } from "#enums/stat";
 import { BerryPhase } from "#app/phases/berry-phase.js";
 import { CommandPhase } from "#app/phases/command-phase.js";
@@ -47,11 +46,11 @@ describe("Moves - Quick Guard", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.move.select(Moves.QUICK_GUARD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -69,11 +68,11 @@ describe("Moves - Quick Guard", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.move.select(Moves.QUICK_GUARD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -91,11 +90,11 @@ describe("Moves - Quick Guard", () => {
       const leadPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_GUARD));
+      game.move.select(Moves.QUICK_GUARD);
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.FOLLOW_ME));
+      game.move.select(Moves.FOLLOW_ME, 1);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

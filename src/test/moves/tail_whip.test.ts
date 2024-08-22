@@ -1,6 +1,5 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -47,7 +46,7 @@ describe("Moves - Tail whip", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
+    game.move.select(moveToUse);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);

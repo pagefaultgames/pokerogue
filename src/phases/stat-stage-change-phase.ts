@@ -59,7 +59,7 @@ export class StatStageChangePhase extends PokemonPhase {
     const stages = new Utils.IntegerHolder(this.stages);
 
     if (!this.ignoreAbilities) {
-      applyAbAttrs(StatStageChangeMultiplierAbAttr, pokemon, null, stages);
+      applyAbAttrs(StatStageChangeMultiplierAbAttr, pokemon, null, false, stages);
     }
 
     const relLevels = filteredStats.map(s => (stages.value >= 1 ? Math.min(pokemon.getStatStage(s) + stages.value, 6) : Math.max(pokemon.getStatStage(s) + stages.value, -6)) - pokemon.getStatStage(s));
@@ -80,7 +80,7 @@ export class StatStageChangePhase extends PokemonPhase {
 
       if (stages.value > 0 && this.canBeCopied) {
         for (const opponent of pokemon.getOpponents()) {
-          applyAbAttrs(StatStageChangeCopyAbAttr, opponent, null, this.stats, stages.value);
+          applyAbAttrs(StatStageChangeCopyAbAttr, opponent, null, false, this.stats, stages.value);
         }
       }
 

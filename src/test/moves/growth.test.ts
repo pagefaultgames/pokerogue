@@ -1,6 +1,5 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -42,7 +41,7 @@ describe("Moves - Growth", () => {
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GROWTH));
+    game.move.select(Moves.GROWTH);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);

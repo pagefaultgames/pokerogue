@@ -1,4 +1,3 @@
-import UI, { Mode } from "#app/ui/ui";
 import { Phase } from "#app/phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
@@ -37,6 +36,7 @@ import { TurnStartPhase } from "#app/phases/turn-start-phase.js";
 import { UnavailablePhase } from "#app/phases/unavailable-phase.js";
 import { VictoryPhase } from "#app/phases/victory-phase.js";
 import { PartyHealPhase } from "#app/phases/party-heal-phase.js";
+import UI, { Mode } from "#app/ui/ui";
 
 export default class PhaseInterceptor {
   public scene;

@@ -1,6 +1,5 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -45,16 +44,16 @@ describe("Moves - Haze", () => {
       expect(user.getStatStage(Stat.ATK)).toBe(0);
       expect(enemy.getStatStage(Stat.ATK)).toBe(0);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
+      game.move.select(Moves.SWORDS_DANCE);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+      game.move.select(Moves.CHARM);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(user.getStatStage(Stat.ATK)).toBe(2);
       expect(enemy.getStatStage(Stat.ATK)).toBe(-2);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.HAZE));
+      game.move.select(Moves.HAZE);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(user.getStatStage(Stat.ATK)).toBe(0);

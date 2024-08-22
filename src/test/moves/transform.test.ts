@@ -5,7 +5,6 @@ import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
@@ -39,7 +38,7 @@ describe("Moves - Transform", () => {
       Species.DITTO
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TRANSFORM));
+    game.move.select(Moves.TRANSFORM);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -87,7 +86,7 @@ describe("Moves - Transform", () => {
     const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TRANSFORM));
+    game.move.select(Moves.TRANSFORM);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);

@@ -4,7 +4,6 @@ import { Species } from "#enums/species";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Moves } from "#app/enums/moves.js";
-import { getMovePosition } from "../utils/gameManagerUtils";
 import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { Abilities } from "#app/enums/abilities.js";
@@ -54,7 +53,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     vi.spyOn(partyMember, "getStatStageMultiplier");
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
 
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
 
@@ -70,11 +69,11 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     vi.spyOn(partyMember, "getStatStageMultiplier");
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.HONE_CLAWS));
+    game.move.select(Moves.HONE_CLAWS);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -90,11 +89,11 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     vi.spyOn(partyMember, "getStatStageMultiplier");
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
+    game.move.select(Moves.BELLY_DRUM);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -108,7 +107,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
       Species.PIKACHU
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
 
     await game.phaseInterceptor.to(BattleEndPhase);
 

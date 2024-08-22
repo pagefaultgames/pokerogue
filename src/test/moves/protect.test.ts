@@ -4,7 +4,6 @@ import GameManager from "../utils/gameManager";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/move.js";
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag.js";
@@ -48,7 +47,7 @@ describe("Moves - Protect", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+      game.move.select(Moves.PROTECT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -66,7 +65,7 @@ describe("Moves - Protect", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+      game.move.select(Moves.PROTECT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -84,7 +83,7 @@ describe("Moves - Protect", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+      game.move.select(Moves.PROTECT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -103,7 +102,7 @@ describe("Moves - Protect", () => {
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+      game.move.select(Moves.PROTECT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

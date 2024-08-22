@@ -5,7 +5,6 @@ import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { MoveEndPhase } from "#app/phases/move-end-phase.js";
 
@@ -44,7 +43,7 @@ describe("Moves - Guard Swap", () => {
     // After Shell Smash, should have +2 in ATK and SPATK, -1 in DEF and SPDEF
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GUARD_SWAP));
+    game.move.select(Moves.GUARD_SWAP);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 

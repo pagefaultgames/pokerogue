@@ -5,7 +5,6 @@ import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
@@ -45,7 +44,7 @@ describe("Moves - Power Split", () => {
     const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.POWER_SPLIT));
+    game.move.select(Moves.POWER_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
@@ -67,10 +66,10 @@ describe("Moves - Power Split", () => {
     const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.POWER_SPLIT));
+    game.move.select(Moves.POWER_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.POWER_SPLIT));
+    game.move.select(Moves.POWER_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
