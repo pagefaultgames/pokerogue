@@ -6,7 +6,8 @@ import * as Utils from "#app/utils";
 import { Moves } from "#enums/moves";
 import { allMoves } from "#app/data/move";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { LearnMovePhase } from "#app/phases/learn-move-phase"
+import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 
 describe("Learn Move Phase", () => {
   let phaserGame: Phaser.Game;
@@ -30,11 +31,16 @@ describe("Learn Move Phase", () => {
 
   describe("If Pokemon has less than 4 moves, its newest move will be added to the lowest empty index", () => {
     it("new move should be found at index 1", async () => {
-      game.override.moveset(SPLASH_ONLY);
+      game.override.moveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
 	  await game.startBattle([Species.BULBASAUR]);
 	  const pokemon = game.scene.getPlayerPokemon()!;
 	  const prevLength = pokemon?.getMoveset().length;
-      pokemon?.addExp(1000);
+	  game.move.select(Moves.SPLASH);
+	  await game.doKillOpponents();
+	  await game.phaseInterceptor.to(ExpPhase, false);
+	  const expPhase = game.scene.getCurrentPhase() as ExpPhase;
+	  expPhase.expValue = 1500;
+	  console.log(pokemon?.level);
       await game.phaseInterceptor.to(LearnMovePhase, false);
       const phase = game.scene.getCurrentPhase() as MoveLearnPhase;
       const newMove = phase.moveId; 
