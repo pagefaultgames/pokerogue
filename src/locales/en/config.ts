@@ -3,7 +3,7 @@ import { settings } from "./settings.js";
 import ability from "./ability.json";
 import abilityTriggers from "./ability-trigger.json";
 import arenaFlyout from "./arena-flyout.json";
-import { arenaTag } from "./arena-tag";
+import arenaTag from "./arena-tag.json";
 import achv from "./achv.json";
 import { battle } from "./battle";
 import { battleScene } from "./battle-scene";
