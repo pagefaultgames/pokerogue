@@ -43,7 +43,9 @@ import saveSlotSelectUiHandler from "./save-slot-select-ui-handler.json";
 import splashMessages from "./splash-messages.json";
 import starterSelectUiHandler from "./starter-select-ui-handler.json";
 import statusEffect from "./status-effect.json";
-import { titles, trainerClasses, trainerNames } from "./trainers";
+import trainerTitles from "./trainer-titles.json";
+import trainerClasses from "./trainer-classes.json";
+import trainerNames from "./trainer-names.json";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
@@ -101,7 +103,7 @@ export const enConfig = {
   starterSelectUiHandler,
   statusEffect,
   terrain,
-  titles,
+  titles: trainerTitles,
   trainerClasses,
   trainerNames,
   tutorial,
