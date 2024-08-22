@@ -902,7 +902,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterPreferences = StarterPrefs.load();
     }
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
-    this.pokerusSpecies = getPokerusStarters(this.scene as BattleScene);
+    this.pokerusSpecies = getPokerusStarters(this.scene);
 
     if (args.length >= 1 && args[0] instanceof Function) {
       super.show(args);
