@@ -1,14 +1,14 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
-import { allMoves } from "#app/data/move.js";
 import { allAbilities } from "#app/data/ability.js";
+import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { MoveEffectPhase, SelectTargetPhase } from "#app/phases.js";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Steely Spirit", () => {
   let phaserGame: Phaser.Game;
@@ -29,18 +29,18 @@ describe("Abilities - Steely Spirit", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SHUCKLE);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.BALL_FETCH);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.IRON_HEAD, Moves.SPLASH]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.battleType("double");
+    game.override.enemySpecies(Species.SHUCKLE);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.moveset([Moves.IRON_HEAD, Moves.SPLASH]);
+    game.override.enemyMoveset(SPLASH_ONLY);
     vi.spyOn(allMoves[moveToCheck], "calculateBattlePower");
   });
 
   it("increases Steel-type moves' power used by the user and its allies by 50%", async () => {
     await game.startBattle([Species.PIKACHU, Species.SHUCKLE]);
     const boostSource = game.scene.getPlayerField()[1];
-    const enemyToCheck = game.scene.getEnemyPokemon();
+    const enemyToCheck = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(boostSource, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
 
@@ -57,7 +57,7 @@ describe("Abilities - Steely Spirit", () => {
 
   it("stacks if multiple users with this ability are on the field.", async () => {
     await game.startBattle([Species.PIKACHU, Species.PIKACHU]);
-    const enemyToCheck = game.scene.getEnemyPokemon();
+    const enemyToCheck = game.scene.getEnemyPokemon()!;
 
     game.scene.getPlayerField().forEach(p => {
       vi.spyOn(p, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
@@ -79,7 +79,7 @@ describe("Abilities - Steely Spirit", () => {
   it("does not take effect when suppressed", async () => {
     await game.startBattle([Species.PIKACHU, Species.SHUCKLE]);
     const boostSource = game.scene.getPlayerField()[1];
-    const enemyToCheck = game.scene.getEnemyPokemon();
+    const enemyToCheck = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(boostSource, "getAbility").mockReturnValue(allAbilities[Abilities.STEELY_SPIRIT]);
     expect(boostSource.hasAbility(Abilities.STEELY_SPIRIT)).toBe(true);

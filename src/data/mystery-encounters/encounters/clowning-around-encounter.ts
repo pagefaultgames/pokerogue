@@ -1,4 +1,4 @@
-import { EnemyPartyConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs, TrainerPartyCompoundTemplate, TrainerPartyTemplate, } from "#app/data/trainer-config";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
@@ -111,6 +111,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
         new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER));
       clownConfig.setPartyTemplates(clownPartyTemplate);
       clownConfig.setDoubleOnly();
+      // @ts-ignore
       clownConfig.partyTemplateFunc = null; // Overrides party template func if it exists
 
       // Generate random ability for Blacephalon from pool
@@ -128,7 +129,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           },
           { // Blacephalon has the random ability from pool, and 2 entirely random types to fit with the theme of the encounter
             species: getPokemonSpecies(Species.BLACEPHALON),
-            mysteryEncounterData: new MysteryEncounterPokemonData(null, ability, null, [randSeedInt(18), randSeedInt(18)]),
+            mysteryEncounterData: new MysteryEncounterPokemonData(undefined, ability, undefined, [randSeedInt(18), randSeedInt(18)]),
             isBoss: true,
             moveSet: [Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN]
           },
@@ -145,8 +146,8 @@ export const ClowningAroundEncounter: MysteryEncounter =
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,
@@ -205,15 +206,15 @@ export const ClowningAroundEncounter: MysteryEncounter =
             ease: "Sine.easeInOut",
             duration: 250
           });
-          const background = new EncounterBattleAnim(EncounterAnim.SMOKESCREEN, scene.getPlayerPokemon(), scene.getPlayerPokemon());
+          const background = new EncounterBattleAnim(EncounterAnim.SMOKESCREEN, scene.getPlayerPokemon()!, scene.getPlayerPokemon());
           background.playWithoutTargets(scene, 230, 40, 2);
           return true;
         })
         .build()
     )
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}.option.2.label`,
           buttonTooltip: `${namespace}.option.2.tooltip`,
@@ -291,15 +292,15 @@ export const ClowningAroundEncounter: MysteryEncounter =
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
           // Play animations
-          const background = new EncounterBattleAnim(EncounterAnim.SMOKESCREEN, scene.getPlayerPokemon(), scene.getPlayerPokemon());
+          const background = new EncounterBattleAnim(EncounterAnim.SMOKESCREEN, scene.getPlayerPokemon()!, scene.getPlayerPokemon());
           background.playWithoutTargets(scene, 230, 40, 2);
           await transitionMysteryEncounterIntroVisuals(scene);
         })
         .build()
     )
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}.option.3.label`,
           buttonTooltip: `${namespace}.option.3.tooltip`,
@@ -326,8 +327,8 @@ export const ClowningAroundEncounter: MysteryEncounter =
             // If the Pokemon has non-status moves that don't match the Pokemon's type, prioritizes those as the new type
             // Makes the "randomness" of the shuffle slightly less punishing
             let priorityTypes = pokemon.moveset
-              .filter(move => !originalTypes.includes(move.getMove().type) && move.getMove().category !== MoveCategory.STATUS)
-              .map(move => move.getMove().type);
+              .filter(move => move && !originalTypes.includes(move.getMove().type) && move.getMove().category !== MoveCategory.STATUS)
+              .map(move => move!.getMove().type);
             if (priorityTypes?.length > 0) {
               priorityTypes = [...new Set(priorityTypes)];
               randSeedShuffle(priorityTypes);
@@ -349,7 +350,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
             }
 
             if (!pokemon.mysteryEncounterData) {
-              pokemon.mysteryEncounterData = new MysteryEncounterPokemonData(null, null, null, newTypes);
+              pokemon.mysteryEncounterData = new MysteryEncounterPokemonData(undefined, undefined, undefined, newTypes);
             } else {
               pokemon.mysteryEncounterData.types = newTypes;
             }
@@ -360,7 +361,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
           // Play animations
-          const background = new EncounterBattleAnim(EncounterAnim.SMOKESCREEN, scene.getPlayerPokemon(), scene.getPlayerPokemon());
+          const background = new EncounterBattleAnim(EncounterAnim.SMOKESCREEN, scene.getPlayerPokemon()!, scene.getPlayerPokemon());
           background.playWithoutTargets(scene, 230, 40, 2);
           await transitionMysteryEncounterIntroVisuals(scene);
         })
@@ -415,7 +416,7 @@ function onYesAbilitySwap(scene: BattleScene, resolve) {
   const onPokemonSelected = (pokemon: PlayerPokemon) => {
     // Do ability swap
     if (!pokemon.mysteryEncounterData) {
-      pokemon.mysteryEncounterData = new MysteryEncounterPokemonData(null, Abilities.AERILATE);
+      pokemon.mysteryEncounterData = new MysteryEncounterPokemonData(undefined, Abilities.AERILATE);
     }
     pokemon.mysteryEncounterData.ability = scene.currentBattle.mysteryEncounter.misc.ability;
     scene.currentBattle.mysteryEncounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
@@ -440,8 +441,7 @@ function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItem
     [modifierTypes.GOLDEN_PUNCH, 5],
     [modifierTypes.ATTACK_TYPE_BOOSTER, 99],
     [modifierTypes.QUICK_CLAW, 3],
-    [modifierTypes.WIDE_LENS, 3],
-    [modifierTypes.WHITE_HERB, 2]
+    [modifierTypes.WIDE_LENS, 3]
   ];
 
   const roguePool = [
@@ -449,7 +449,7 @@ function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItem
     [modifierTypes.SHELL_BELL, 4],
     [modifierTypes.SOUL_DEW, 10],
     [modifierTypes.SOOTHE_BELL, 3],
-    [modifierTypes.SCOPE_LENS, 5],
+    [modifierTypes.SCOPE_LENS, 1],
     [modifierTypes.BATON, 1],
     [modifierTypes.FOCUS_BAND, 5],
     [modifierTypes.KINGS_ROCK, 3],

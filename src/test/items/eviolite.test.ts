@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phase from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
 import { Stat } from "#app/data/pokemon-stat";
 import { EvolutionStatBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import * as Utils from "#app/utils";
 import i18next from "#app/plugins/i18n";
+import GameManager from "#test/utils/gameManager";
+import * as Utils from "#app/utils";
 import { Species } from "#enums/species";
+import Phase from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Eviolite", () => {
   let phaserGame: Phaser.Game;
@@ -26,11 +25,11 @@ describe("Items - Eviolite", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("single");
+    game.override.battleType("single");
   });
 
   it("EVIOLITE activates in battle correctly", async() => {
-    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{ name: "EVIOLITE" }]);
+    game.override.startingHeldItems([{ name: "EVIOLITE" }]);
     const consoleSpy = vi.spyOn(console, "log");
     await game.startBattle([
       Species.PICHU

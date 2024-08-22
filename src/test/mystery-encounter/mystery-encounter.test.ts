@@ -29,14 +29,14 @@ describe("Mystery Encounters", () => {
     await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);
   });
 
   it("", async () => {
     await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-    expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);
   });
 
   it("spawns mysterious challengers encounter", async () => {

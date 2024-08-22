@@ -41,7 +41,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -63,9 +63,9 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     expect(TrashToTreasureEncounter.encounterTier).toBe(MysteryEncounterTier.ULTRA);
     expect(TrashToTreasureEncounter.dialogue).toBeDefined();
     expect(TrashToTreasureEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(TrashToTreasureEncounter.options.length).toBe(2);
   });
 
@@ -96,7 +96,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     expect(TrashToTreasureEncounter.onInit).toBeDefined();
 
     TrashToTreasureEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit(scene);
+    const onInitResult = onInit!(scene);
 
     expect(TrashToTreasureEncounter.enemyPartyConfigs).toEqual([
       {
@@ -138,19 +138,19 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const leftovers = scene.findModifier(m => m instanceof TurnHealModifier) as TurnHealModifier;
       expect(leftovers).toBeDefined();
-      expect(leftovers.stackCount).toBe(2);
+      expect(leftovers?.stackCount).toBe(2);
 
       const shellBell = scene.findModifier(m => m instanceof HitHealModifier) as HitHealModifier;
       expect(shellBell).toBeDefined();
-      expect(shellBell.stackCount).toBe(2);
+      expect(shellBell?.stackCount).toBe(2);
 
       const blackSludge = scene.findModifier(m => m instanceof RemoveHealShopModifier) as RemoveHealShopModifier;
       expect(blackSludge).toBeDefined();
-      expect(blackSludge.stackCount).toBe(1);
+      expect(blackSludge?.stackCount).toBe(1);
     });
 
     it("should leave encounter without battle", async () => {
@@ -183,10 +183,10 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
-      await runMysteryEncounterToEnd(game, 2, null, true);
+      await runMysteryEncounterToEnd(game, 2, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.GARBODOR);
       expect(enemyField[0].moveset).toEqual([new PokemonMove(Moves.PAYBACK), new PokemonMove(Moves.GUNK_SHOT), new PokemonMove(Moves.STOMPING_TANTRUM), new PokemonMove(Moves.DRAIN_PUNCH)]);
@@ -200,10 +200,10 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
     it("should have 2 Rogue, 1 Ultra, 1 Great in rewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
-      await runMysteryEncounterToEnd(game, 2, null, true);
+      await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);

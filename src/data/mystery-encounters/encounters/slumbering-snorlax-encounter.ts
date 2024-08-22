@@ -122,8 +122,8 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
       }
     )
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES))
         .withDialogue({
           buttonLabel: `${namespace}.option.3.label`,
@@ -140,7 +140,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
           const instance = scene.currentBattle.mysteryEncounter;
           setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: false });
           // Snorlax exp to Pokemon that did the stealing
-          setEncounterExp(scene, instance.primaryPokemon.id, getPokemonSpecies(Species.SNORLAX).baseExp);
+          setEncounterExp(scene, instance.primaryPokemon!.id, getPokemonSpecies(Species.SNORLAX).baseExp);
           leaveEncounterWithoutBattle(scene);
         })
         .build()

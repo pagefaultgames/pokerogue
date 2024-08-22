@@ -43,8 +43,8 @@ export const MysteriousChestEncounter: MysteryEncounter =
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,
@@ -57,7 +57,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
         .withPreOptionPhase(async (scene: BattleScene) => {
           // Play animation
           const introVisuals =
-            scene.currentBattle.mysteryEncounter.introVisuals;
+            scene.currentBattle.mysteryEncounter.introVisuals!;
           introVisuals.spriteConfigs[0].disableAnimation = false;
           introVisuals.playAnim();
         })

@@ -86,8 +86,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
       return true;
     })
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,
@@ -113,8 +113,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
         .build()
     )
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
           new MoveRequirement(EXTORTION_MOVES),
           new AbilityRequirement(EXTORTION_ABILITIES))
@@ -136,7 +136,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
           // Update money and remove pokemon from party
           updatePlayerMoney(scene, encounter.misc.price);
 
-          setEncounterExp(scene, encounter.options[1].primaryPokemon.id, getPokemonSpecies(Species.LIEPARD).baseExp, true);
+          setEncounterExp(scene, encounter.options[1].primaryPokemon!.id, getPokemonSpecies(Species.LIEPARD).baseExp, true);
 
           leaveEncounterWithoutBattle(scene, true);
         })

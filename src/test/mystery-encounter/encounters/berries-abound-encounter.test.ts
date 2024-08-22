@@ -37,7 +37,7 @@ describe("Berries Abound - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -59,9 +59,9 @@ describe("Berries Abound - Mystery Encounter", () => {
     expect(BerriesAboundEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(BerriesAboundEncounter.dialogue).toBeDefined();
     expect(BerriesAboundEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(BerriesAboundEncounter.options.length).toBe(3);
   });
 
@@ -90,12 +90,12 @@ describe("Berries Abound - Mystery Encounter", () => {
     expect(BerriesAboundEncounter.onInit).toBeDefined();
 
     BerriesAboundEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit(scene);
+    const onInitResult = onInit!(scene);
 
     const config = BerriesAboundEncounter.enemyPartyConfigs[0];
     expect(config).toBeDefined();
     expect(config.levelAdditiveMultiplier).toBe(1);
-    expect(config.pokemonConfigs[0].isBoss).toBe(true);
+    expect(config.pokemonConfigs?.[0].isBoss).toBe(true);
     expect(onInitResult).toBe(true);
   });
 
@@ -119,12 +119,12 @@ describe("Berries Abound - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
       const config = game.scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
-      const speciesToSpawn = config.pokemonConfigs[0].species.speciesId;
+      const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId;
 
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
     });
@@ -133,11 +133,12 @@ describe("Berries Abound - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
       const numBerries = game.scene.currentBattle.mysteryEncounter.misc.numBerries;
+      scene.modifiers = [];
 
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const berriesAfter = scene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
       const berriesAfterCount = berriesAfter.reduce((a, b) => a + b.stackCount, 0);
@@ -147,10 +148,10 @@ describe("Berries Abound - Mystery Encounter", () => {
 
     it("should spawn a shop with 5 berries", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
@@ -178,14 +179,14 @@ describe("Berries Abound - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
       const config = game.scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
-      const speciesToSpawn = config.pokemonConfigs[0].species.speciesId;
+      const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId;
       // Setting enemy's level arbitrarily high to outspeed
-      config.pokemonConfigs[0].dataSource.level = 1000;
+      config.pokemonConfigs![0].dataSource!.level = 1000;
 
-      await runMysteryEncounterToEnd(game, 2, null, true);
+      await runMysteryEncounterToEnd(game, 2, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
@@ -207,7 +208,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);

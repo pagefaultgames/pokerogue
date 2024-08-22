@@ -80,8 +80,8 @@ export const TrashToTreasureEncounter: MysteryEncounter =
       return true;
     })
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,
@@ -107,8 +107,8 @@ export const TrashToTreasureEncounter: MysteryEncounter =
         .build()
     )
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
           buttonLabel: `${namespace}.option.2.label`,
           buttonTooltip: `${namespace}.option.2.tooltip`,
@@ -178,7 +178,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
   }
 
   scene.playSound("item_fanfare");
-  await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2 " + leftovers.name }), null, true);
+  await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2 " + leftovers.name }), undefined, true);
 
   // First Shell bell
   for (const pokemon of party) {
@@ -205,7 +205,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
   }
 
   scene.playSound("item_fanfare");
-  await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2 " + shellBell.name }), null, true);
+  await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2 " + shellBell.name }), undefined, true);
 }
 
 async function doGarbageDig(scene: BattleScene) {

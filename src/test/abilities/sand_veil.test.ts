@@ -1,15 +1,14 @@
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "../utils/gameManager";
-import Overrides from "#app/overrides";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { CommandPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases.js";
+import { BattleStatMultiplierAbAttr, allAbilities } from "#app/data/ability.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { WeatherType } from "#app/data/weather.js";
-import { BattleStatMultiplierAbAttr, allAbilities } from "#app/data/ability.js";
+import { CommandPhase, MoveEffectPhase, MoveEndPhase } from "#app/phases.js";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -29,14 +28,15 @@ describe("Abilities - Sand Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.SPLASH]);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEOWSCARADA);
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.INSOMNIA);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(WeatherType.SANDSTORM);
+    game.override.moveset([Moves.SPLASH]);
+    game.override.enemySpecies(Species.MEOWSCARADA);
+    game.override.enemyAbility(Abilities.INSOMNIA);
+    game.override.enemyMoveset([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);
+    game.override.startingLevel(100);
+    game.override.enemyLevel(100);
+    game.override
+      .weather(WeatherType.SANDSTORM)
+      .battleType("double");
   });
 
   test(
@@ -45,10 +45,6 @@ describe("Abilities - Sand Veil", () => {
       await game.startBattle([Species.SNORLAX, Species.BLISSEY]);
 
       const leadPokemon = game.scene.getPlayerField();
-      leadPokemon.forEach(p => expect(p).toBeDefined());
-
-      const enemyPokemon = game.scene.getEnemyField();
-      enemyPokemon.forEach(p => expect(p).toBeDefined());
 
       vi.spyOn(leadPokemon[0], "getAbility").mockReturnValue(allAbilities[Abilities.SAND_VEIL]);
 

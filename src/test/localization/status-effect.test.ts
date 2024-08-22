@@ -1,14 +1,7 @@
 import { beforeAll, describe, afterEach, expect, it, vi } from "vitest";
-import {
-  StatusEffect,
-  getStatusEffectActivationText,
-  getStatusEffectDescriptor,
-  getStatusEffectHealText,
-  getStatusEffectObtainText,
-  getStatusEffectOverlapText,
-} from "#app/data/status-effect";
+import { StatusEffect, getStatusEffectActivationText, getStatusEffectDescriptor, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "#app/data/status-effect";
 import i18next from "i18next";
-import { mockI18next } from "../utils/testUtils";
+import { mockI18next } from "#test/utils/testUtils";
 
 const pokemonName = "PKM";
 const sourceText = "SOURCE";

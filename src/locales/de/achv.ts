@@ -170,6 +170,11 @@ export const PGMachv: AchievementTranslationEntries = {
     name: "Ungeschlagen",
     description: "Beende den klassischen Modus erfolgreich.",
   },
+  "UNEVOLVED_CLASSIC_VICTORY": {
+    name: "'Bringe dein Kind mit zur Arbeit'-Tag" ,
+    description: "Beende den klassischen Modus erfolgreich mit mindestens einem nicht entwickeltem Pokémon in deinem Team"
+  },
+
   "MONO_GEN_ONE": {
     name: "Der originale Rivale",
     description: "Schließe die 'Nur 1. Generation' Herausforderung ab.",
@@ -264,6 +269,10 @@ export const PGMachv: AchievementTranslationEntries = {
   "MONO_FAIRY": {
     name: "Ein ewiges Abenteuer!",
   },
+  "FRESH_START": {
+    name: "Hussa, noch einmal von vorn!",
+    description: "Schließe die 'Neuanfang' Herausforderung ab"
+  }
 } as const;
 
 // Achievement translations for the when the player character is female
@@ -344,6 +353,7 @@ export const PGFachv: AchievementTranslationEntries = {
   "HIDDEN_ABILITY": PGMachv.HIDDEN_ABILITY,
   "PERFECT_IVS": PGMachv.PERFECT_IVS,
   "CLASSIC_VICTORY": PGMachv.CLASSIC_VICTORY,
+  "UNEVOLVED_CLASSIC_VICTORY": PGMachv.UNEVOLVED_CLASSIC_VICTORY,
   "MONO_GEN_ONE": PGMachv.MONO_GEN_ONE,
   "MONO_GEN_TWO": PGMachv.MONO_GEN_TWO,
   "MONO_GEN_THREE": PGMachv.MONO_GEN_THREE,
@@ -373,5 +383,6 @@ export const PGFachv: AchievementTranslationEntries = {
   "MONO_DRAGON": PGMachv.MONO_DRAGON,
   "MONO_DARK": PGMachv.MONO_DARK,
   "MONO_FAIRY": PGMachv.MONO_FAIRY,
+  "FRESH_START": PGMachv.FRESH_START
 } as const;
 

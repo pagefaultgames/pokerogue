@@ -1,17 +1,12 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import Overrides from "#app/overrides";
-import {
-  CommandPhase,
-  SelectTargetPhase,
-  TurnEndPhase,
-} from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import { BattlerIndex } from "#app/battle.js";
+import { CommandPhase, SelectTargetPhase, TurnEndPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { BattlerIndex } from "#app/battle.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -31,19 +26,19 @@ describe("Moves - Rage Powder", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue("double");
-    vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.AMOONGUSS);
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.SNORLAX);
-    vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.battleType("double");
+    game.override.starterSpecies(Species.AMOONGUSS);
+    game.override.enemySpecies(Species.SNORLAX);
+    game.override.startingLevel(100);
+    game.override.enemyLevel(100);
+    game.override.moveset([ Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK ]);
+    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
   });
 
   test(
     "move effect should be bypassed by Grass type",
     async () => {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
+      game.override.enemyMoveset([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
 
       await game.startBattle([ Species.AMOONGUSS, Species.VENUSAUR ]);
 
@@ -76,8 +71,8 @@ describe("Moves - Rage Powder", () => {
   test(
     "move effect should be bypassed by Overcoat",
     async () => {
-      vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.OVERCOAT);
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
+      game.override.ability(Abilities.OVERCOAT);
+      game.override.enemyMoveset([ Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER, Moves.RAGE_POWDER ]);
 
       // Test with two non-Grass type player Pokemon
       await game.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);

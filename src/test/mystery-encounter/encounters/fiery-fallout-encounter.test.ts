@@ -42,7 +42,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -65,9 +65,9 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     expect(FieryFalloutEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(FieryFalloutEncounter.dialogue).toBeDefined();
     expect(FieryFalloutEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(FieryFalloutEncounter.options.length).toBe(3);
   });
 
@@ -106,7 +106,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     expect(FieryFalloutEncounter.onInit).toBeDefined();
 
     FieryFalloutEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit(scene);
+    const onInitResult = onInit!(scene);
 
     expect(FieryFalloutEncounter.enemyPartyConfigs).toEqual([
       {
@@ -152,10 +152,10 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(2);
       expect(enemyField[0].species.speciesId).toBe(Species.VOLCARONA);
       expect(enemyField[1].species.speciesId).toBe(Species.VOLCARONA);
@@ -169,10 +169,10 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     it("should give charcoal to lead pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const leadPokemonId = scene.getParty()?.[0].id;
       const leadPokemonItems = scene.findModifiers(m => m instanceof PokemonHeldItemModifier
@@ -202,9 +202,9 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
 
       const party = scene.getParty();
-      const lapras = party.find((pkm) => pkm.species.speciesId === Species.LAPRAS);
+      const lapras = party.find((pkm) => pkm.species.speciesId === Species.LAPRAS)!;
       lapras.status = new Status(StatusEffect.POISON);
-      const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA);
+      const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA)!;
       vi.spyOn(abra, "isAllowedInBattle").mockReturnValue(false);
 
       await runMysteryEncounterToEnd(game, 2);
@@ -251,7 +251,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 3);
       // await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const leadPokemonId = scene.getParty()?.[0].id;
       const leadPokemonItems = scene.findModifiers(m => m instanceof PokemonHeldItemModifier
@@ -274,12 +274,12 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
-      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const continueEncounterSpy = vi.spyOn((encounterPhase as MysteryEncounterPhase), "continueEncounter");
 
       await runSelectMysteryEncounterOption(game, 3);
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(continueEncounterSpy).not.toHaveBeenCalled();
     });
   });

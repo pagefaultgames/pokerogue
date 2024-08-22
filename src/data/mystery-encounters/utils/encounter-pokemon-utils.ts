@@ -52,13 +52,13 @@ export function getRandomPlayerPokemon(scene: BattleScene, isAllowedInBattle: bo
 
   if (doNotReturnLastAbleMon && unfaintedMons.length === 1) {
     chosenIndex = randSeedInt(faintedMons.length);
-    chosenPokemon = faintedMons.at(chosenIndex);
+    chosenPokemon = faintedMons[chosenIndex];
   } else if (isAllowedInBattle) {
     chosenIndex = randSeedInt(unfaintedMons.length);
-    chosenPokemon = unfaintedMons.at(chosenIndex);
+    chosenPokemon = unfaintedMons[chosenIndex];
   } else {
     chosenIndex = randSeedInt(party.length);
-    chosenPokemon = party.at(chosenIndex);
+    chosenPokemon = party[chosenIndex];
   }
 
   return chosenPokemon;
@@ -72,17 +72,17 @@ export function getRandomPlayerPokemon(scene: BattleScene, isAllowedInBattle: bo
  */
 export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
-  let pokemon: PlayerPokemon;
-  party.every(p => {
+  let pokemon: PlayerPokemon | null = null;
+
+  for (const p of party) {
     if (unfainted && p.isFainted()) {
-      return true;
+      continue;
     }
 
     pokemon = pokemon ? pokemon?.level < p?.level ? p : pokemon : p;
-    return true;
-  });
+  }
 
-  return pokemon;
+  return pokemon!;
 }
 
 /**
@@ -94,17 +94,17 @@ export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: bool
  */
 export function getHighestStatPlayerPokemon(scene: BattleScene, stat: Stat, unfainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
-  let pokemon: PlayerPokemon;
-  party.every(p => {
+  let pokemon: PlayerPokemon | null = null;
+
+  for (const p of party) {
     if (unfainted && p.isFainted()) {
-      return true;
+      continue;
     }
 
     pokemon = pokemon ? pokemon.getStat(stat) < p?.getStat(stat) ? p : pokemon : p;
-    return true;
-  });
+  }
 
-  return pokemon;
+  return pokemon!;
 }
 
 /**
@@ -115,17 +115,17 @@ export function getHighestStatPlayerPokemon(scene: BattleScene, stat: Stat, unfa
  */
 export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
-  let pokemon: PlayerPokemon;
-  party.every(p => {
+  let pokemon: PlayerPokemon | null = null;
+
+  for (const p of party) {
     if (unfainted && p.isFainted()) {
-      return true;
+      continue;
     }
 
     pokemon = pokemon ? pokemon?.level > p?.level ? p : pokemon : p;
-    return true;
-  });
+  }
 
-  return pokemon;
+  return pokemon!;
 }
 
 /**
@@ -136,17 +136,17 @@ export function getLowestLevelPlayerPokemon(scene: BattleScene, unfainted: boole
  */
 export function getHighestStatTotalPlayerPokemon(scene: BattleScene, unfainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
-  let pokemon: PlayerPokemon;
-  party.every(p => {
+  let pokemon: PlayerPokemon | null = null;
+
+  for (const p of party) {
     if (unfainted && p.isFainted()) {
-      return true;
+      continue;
     }
 
     pokemon = pokemon ? pokemon?.stats.reduce((a, b) => a + b) < p?.stats.reduce((a, b) => a + b) ? p : pokemon : p;
-    return true;
-  });
+  }
 
-  return pokemon;
+  return pokemon!;
 }
 
 /**
@@ -166,8 +166,8 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
     .filter(s => getPokemonSpecies(s[0]) && (!excludedSpecies || !excludedSpecies.includes(s[0])))
     .map(s => [getPokemonSpecies(s[0]), s[1]]);
 
-  if (!isNullOrUndefined(types) && types.length > 0) {
-    filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || types.includes(s[0].type2));
+  if (types && types.length > 0) {
+    filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || (!isNullOrUndefined(s[0].type2) && types.includes(s[0].type2!)));
   }
 
   // If no filtered mons exist at specified starter tiers, will expand starter search range until there are
@@ -260,10 +260,12 @@ export function applyHealToPokemon(scene: BattleScene, pokemon: PlayerPokemon, h
  * @param value
  */
 export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
-  const modType = modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE().generateType(null, [value]);
-  const modifier = modType.newModifier(pokemon);
-  await pokemon.scene.addModifier(modifier, false, false, false, true);
-  pokemon.calculateStats();
+  const modType = modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE().generateType(pokemon.scene.getParty(), [value]);
+  const modifier = modType?.newModifier(pokemon);
+  if (modifier) {
+    await pokemon.scene.addModifier(modifier, false, false, false, true);
+    pokemon.calculateStats();
+  }
 }
 
 /**
@@ -479,7 +481,7 @@ function failCatch(scene: BattleScene, pokemon: EnemyPokemon, originalY: number,
  * @param showCatchObtainMessage
  * @param isObtain
  */
-export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, pokeball: Phaser.GameObjects.Sprite, pokeballType: PokeballType, showCatchObtainMessage: boolean = true, isObtain: boolean = false): Promise<void> {
+export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, pokeball: Phaser.GameObjects.Sprite | null, pokeballType: PokeballType, showCatchObtainMessage: boolean = true, isObtain: boolean = false): Promise<void> {
   scene.unshiftPhase(new VictoryPhase(scene, BattlerIndex.ENEMY, true));
 
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
@@ -508,7 +510,9 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
     const doPokemonCatchMenu = () => {
       const end = () => {
         scene.pokemonInfoContainer.hide();
-        removePb(scene, pokeball);
+        if (pokeball) {
+          removePb(scene, pokeball);
+        }
         resolve();
       };
       const removePokemon = () => {

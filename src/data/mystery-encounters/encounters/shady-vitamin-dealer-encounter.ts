@@ -60,8 +60,8 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, 2) // Wave scaling money multiplier of 2
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
@@ -95,13 +95,13 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
             // If pokemon meets primary pokemon reqs, it can be selected
             const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`);
+              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
             }
 
             return null;
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
+          return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Choose Cheap Option
@@ -143,8 +143,8 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         .build()
     )
     .withOption(
-      new MysteryEncounterOptionBuilder()
-        .withOptionMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withSceneMoneyRequirement(0, 5) // Wave scaling money multiplier of 5
         .withDialogue({
           buttonLabel: `${namespace}.option.2.label`,
@@ -178,13 +178,13 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
             // If pokemon meets primary pokemon reqs, it can be selected
             const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`);
+              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
             }
 
             return null;
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
+          return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Choose Expensive Option

@@ -35,7 +35,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -58,9 +58,9 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     expect(AbsoluteAvariceEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
     expect(AbsoluteAvariceEncounter.dialogue).toBeDefined();
     expect(AbsoluteAvariceEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(AbsoluteAvariceEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(AbsoluteAvariceEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(AbsoluteAvariceEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(AbsoluteAvariceEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(AbsoluteAvariceEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(AbsoluteAvariceEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(AbsoluteAvariceEncounter.options.length).toBe(3);
   });
 
@@ -98,7 +98,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
   it("should spawn if player has enough berries", async () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.starterHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}]);
+    game.override.startingHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}]);
 
     await game.runToMysteryEncounter();
 
@@ -106,7 +106,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
   });
 
   it("should remove all player's berries at the start of the encounter", async () => {
-    game.override.starterHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}]);
+    game.override.startingHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}]);
 
     await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
 
@@ -134,13 +134,13 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.GREEDENT);
-      const moveset = enemyField[0].moveset.map(m => m.moveId);
+      const moveset = enemyField[0].moveset.map(m => m?.moveId);
       expect(moveset?.length).toBe(4);
       expect(moveset).toEqual([Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.SLACK_OFF]);
 
@@ -151,10 +151,10 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
     it("should give reviver seed to each pokemon after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       for (const partyPokemon of scene.getParty()) {
         const pokemonId = partyPokemon.id;
@@ -162,7 +162,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
           && (m as PokemonHeldItemModifier).pokemonId === pokemonId, true) as PokemonHeldItemModifier[];
         const revSeed = pokemonItems.find(i => i.type.name === "Reviver Seed");
         expect(revSeed).toBeDefined;
-        expect(revSeed.stackCount).toBe(1);
+        expect(revSeed?.stackCount).toBe(1);
       }
     });
   });
@@ -184,7 +184,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     });
 
     it("Should return 3 (2/5ths floored) berries if 8 were stolen", async () => {
-      game.override.starterHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}, {name: "BERRY", count: 3, type: BerryType.APICOT}]);
+      game.override.startingHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}, {name: "BERRY", count: 3, type: BerryType.APICOT}]);
 
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
 
@@ -200,7 +200,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     });
 
     it("Should return 2 (2/5ths floored) berries if 7 were stolen", async () => {
-      game.override.starterHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}, {name: "BERRY", count: 2, type: BerryType.APICOT}]);
+      game.override.startingHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}, {name: "BERRY", count: 3, type: BerryType.GANLON}, {name: "BERRY", count: 2, type: BerryType.APICOT}]);
 
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
 
@@ -251,7 +251,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       expect(partyCountBefore + 1).toBe(partyCountAfter);
       const greedent = scene.getParty()[scene.getParty().length - 1];
       expect(greedent.species.speciesId).toBe(Species.GREEDENT);
-      const moveset = greedent.moveset.map(m => m.moveId);
+      const moveset = greedent.moveset.map(m => m?.moveId);
       expect(moveset?.length).toBe(4);
       expect(moveset).toEqual([Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.SLACK_OFF]);
     });

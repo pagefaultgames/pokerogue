@@ -4,34 +4,37 @@ import { UiTheme } from "#enums/ui-theme";
 import { isNullOrUndefined } from "#app/utils";
 import i18next from "i18next";
 
-export function getEncounterText(scene: BattleScene, keyOrString: string, primaryStyle?: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
+export function getEncounterText(scene: BattleScene, keyOrString?: string, primaryStyle?: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string | null {
   if (isNullOrUndefined(keyOrString)) {
     return null;
   }
 
-  let textString: string = getTextWithDialogueTokens(scene, keyOrString);
+  let textString: string | null = getTextWithDialogueTokens(scene, keyOrString);
 
   // Can only color the text if a Primary Style is defined
   // primaryStyle is applied to all text that does not have its own specified style
-  if (primaryStyle) {
+  if (primaryStyle && textString) {
     textString = getTextWithColors(textString, primaryStyle, uiTheme);
   }
 
   return textString;
 }
 
-function getTextWithDialogueTokens(scene: BattleScene, keyOrString: string): string {
+function getTextWithDialogueTokens(scene: BattleScene, keyOrString?: string): string | null {
   if (isNullOrUndefined(keyOrString)) {
     return null;
   }
 
-  if (i18next.exists(keyOrString, scene.currentBattle?.mysteryEncounter?.dialogueTokens)) {
+  const tokens = scene.currentBattle?.mysteryEncounter?.dialogueTokens;
+  // @ts-ignore
+  if (i18next.exists(keyOrString, tokens)) {
     const stringArray = [`${keyOrString}`] as any;
     stringArray.raw = [`${keyOrString}`];
-    return i18next.t(stringArray, scene.currentBattle?.mysteryEncounter?.dialogueTokens);
+    // @ts-ignore
+    return i18next.t(stringArray, tokens) as string;
   }
 
-  return keyOrString;
+  return keyOrString ?? null;
 }
 
 /**
@@ -40,8 +43,8 @@ function getTextWithDialogueTokens(scene: BattleScene, keyOrString: string): str
  * @param contentKey
  */
 export function queueEncounterMessage(scene: BattleScene, contentKey: string): void {
-  const text: string = getEncounterText(scene, contentKey);
-  scene.queueMessage(text, null, true);
+  const text: string | null = getEncounterText(scene, contentKey);
+  scene.queueMessage(text ?? "", null, true);
 }
 
 /**
@@ -53,8 +56,8 @@ export function queueEncounterMessage(scene: BattleScene, contentKey: string): v
  */
 export function showEncounterText(scene: BattleScene, contentKey: string, callbackDelay: number = 0, prompt: boolean = true): Promise<void> {
   return new Promise<void>(resolve => {
-    const text: string = getEncounterText(scene, contentKey);
-    scene.ui.showText(text, null, () => resolve(), callbackDelay, prompt);
+    const text: string | null = getEncounterText(scene, contentKey);
+    scene.ui.showText(text ?? "", null, () => resolve(), callbackDelay, prompt);
   });
 }
 
@@ -67,8 +70,8 @@ export function showEncounterText(scene: BattleScene, contentKey: string, callba
  */
 export function showEncounterDialogue(scene: BattleScene, textContentKey: string, speakerContentKey: string, callbackDelay: number = 0): Promise<void> {
   return new Promise<void>(resolve => {
-    const text: string = getEncounterText(scene, textContentKey);
-    const speaker: string = getEncounterText(scene, speakerContentKey);
-    scene.ui.showDialogue(text, speaker, null, () => resolve(), callbackDelay);
+    const text: string | null = getEncounterText(scene, textContentKey);
+    const speaker: string | null = getEncounterText(scene, speakerContentKey);
+    scene.ui.showDialogue(text ?? "", speaker ?? "", null, () => resolve(), callbackDelay);
   });
 }

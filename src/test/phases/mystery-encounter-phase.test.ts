@@ -37,7 +37,7 @@ describe("Mystery Encounter Phases", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
 
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-      expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(game.scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
     });
 
     it("Runs MysteryEncounterPhase", async() => {
@@ -73,7 +73,7 @@ describe("Mystery Encounter Phases", () => {
       handler.processInput(Button.ACTION);
 
       // Waitfor required so that option select messages and preOptionPhase logic are handled
-      await vi.waitFor(() => expect(game.scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterOptionSelectedPhase.name));
+      await vi.waitFor(() => expect(game.scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterOptionSelectedPhase.name));
       expect(game.scene.ui.getMode()).toBe(Mode.MESSAGE);
       expect(dialogueSpy).toHaveBeenCalledTimes(1);
       expect(messageSpy).toHaveBeenCalledTimes(2);

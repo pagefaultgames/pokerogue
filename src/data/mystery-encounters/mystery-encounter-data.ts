@@ -8,7 +8,7 @@ export class MysteryEncounterData {
   encounterSpawnChance: number = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
   nextEncounterQueue: [MysteryEncounterType, integer][] = [];
 
-  constructor(flags: MysteryEncounterData) {
+  constructor(flags: MysteryEncounterData | null) {
     if (!isNullOrUndefined(flags)) {
       Object.assign(this, flags);
     }

@@ -17,8 +17,6 @@ export function getBiomeName(biome: Biome | -1) {
     return i18next.t("biome:GRASS");
   case Biome.RUINS:
     return i18next.t("biome:RUINS");
-  case Biome.ABYSS:
-    return i18next.t("biome:ABYSS");
   case Biome.END:
     return i18next.t("biome:END");
   default:
@@ -7707,7 +7705,7 @@ export function initBiomes() {
       ? pokemonEvolutions[speciesId]
       : [];
 
-    if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId))[3] as any[]).filter(b => b[0] !== Biome.END).length).length) {
+    if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId)!)[3] as any[]).filter(b => b[0] !== Biome.END).length).length) { // TODO: is the bang on the `find()` correct?
       uncatchableSpecies.push(speciesId);
     }
 
