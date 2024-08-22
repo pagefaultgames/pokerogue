@@ -26,7 +26,7 @@ import gameMode from "./game-mode.json";
 import gameStatsUiHandler from "./game-stats-ui-handler.json";
 import growth from "./growth.json";
 import { menu } from "./menu";
-import { menuUiHandler } from "./menu-ui-handler";
+import menuUiHandler from "./menu-ui-handler.json";
 import { modifier } from "./modifier";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";

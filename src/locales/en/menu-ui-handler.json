@@ -1,6 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-export const menuUiHandler: SimpleTranslationEntries = {
+{
   "GAME_SETTINGS": "Game Settings",
   "ACHIEVEMENTS": "Achievements",
   "STATS": "Stats",
@@ -26,4 +24,4 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "cancel": "Cancel",
   "losingProgressionWarning": "You will lose any progress since the beginning of the battle. Proceed?",
   "noEggs": "You are not hatching\nany eggs at the moment!"
-} as const;
+}
