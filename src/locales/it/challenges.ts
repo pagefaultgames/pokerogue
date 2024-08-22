@@ -2,7 +2,7 @@ import { TranslationEntries } from "#app/interfaces/locales";
 
 export const challenges: TranslationEntries = {
   "title": "Modificatori delle sfide",
-  "illegalEvolution": "{{pokemon}} changed into an ineligble pokémon\nfor this challenge!",
+  "illegalEvolution": "{{pokemon}} non è più utilizzabile\nsecondo le regole della sfida!",
   "singleGeneration": {
     "name": "Mono gen",
     "desc": "Puoi usare solo Pokémon di {{gen}} generazione.",
@@ -23,8 +23,8 @@ export const challenges: TranslationEntries = {
     "desc_default": "Puoi usare solo Pokémon del tipo selezionato."
   },
   "freshStart": {
-    "name": "Fresh Start",
-    "desc": "You can only use the original starters, and only as if you had just started PokéRogue.",
+    "name": "Un nuovo inizio",
+    "desc": "Puoi usare solo gli starter originali, e come se avessi appena cominciato Pokérogue.",
     "value.0": "Off",
     "value.1": "On",
   }

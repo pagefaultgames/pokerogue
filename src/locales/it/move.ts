@@ -2915,7 +2915,7 @@ export const move: MoveTranslationEntries = {
   },
   zippyZap: {
     name: "Sprintaboom",
-    effect: "The user attacks the target with bursts of electricity at high speed. This move always goes first and raises the user's evasiveness.",
+    effect: "Un attacco elettrico ad altissima velocità. Questa mossa ha priorità alta e aumenta l'elusione dell'utilizzatore.",
   },
   splishySplash: {
     name: "Surfasplash",

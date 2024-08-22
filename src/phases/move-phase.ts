@@ -90,7 +90,7 @@ export class MovePhase extends BattlePhase {
       : null;
     if (moveTarget) {
       const oldTarget = moveTarget.value;
-      this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, this.move.moveId, moveTarget));
+      this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, false, this.move.moveId, moveTarget));
       this.pokemon.getOpponents().forEach(p => {
         const redirectTag = p.getTag(CenterOfAttentionTag) as CenterOfAttentionTag;
         if (redirectTag && (!redirectTag.powder || (!this.pokemon.isOfType(Type.GRASS) && !this.pokemon.hasAbility(Abilities.OVERCOAT)))) {

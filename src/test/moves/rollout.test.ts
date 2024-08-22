@@ -1,13 +1,13 @@
 import { allMoves } from "#app/data/move.js";
 import { CommandPhase } from "#app/phases/command-phase.js";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Rollout", () => {
   let phaserGame: Phaser.Game;
@@ -29,9 +29,9 @@ describe("Moves - Rollout", () => {
     game.override.disableCrits();
     game.override.battleType("single");
     game.override.starterSpecies(Species.RATTATA);
-    game.override.ability(Abilities.NONE);
+    game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.BIDOOF);
-    game.override.enemyAbility(Abilities.NONE);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
     game.override.enemyMoveset(SPLASH_ONLY);
