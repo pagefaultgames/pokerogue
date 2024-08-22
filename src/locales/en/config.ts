@@ -39,7 +39,7 @@ import battlePokemonForm from "./pokemon-form-battle.json";
 import pokemonInfo from "./pokemon-info.json";
 import pokemonInfoContainer from "./pokemon-info-container.json";
 import pokemonSummary from "./pokemon-summary.json";
-import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
+import saveSlotSelectUiHandler from "./save-slot-select-ui-handler.json";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { statusEffect } from "./status-effect";
