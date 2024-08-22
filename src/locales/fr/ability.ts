@@ -471,7 +471,7 @@ export const ability: AbilityTranslationEntries = {
   },
   honeyGather: {
     name: "Cherche Miel",
-    description: "Le Pokémon trouve du Miel après un combat directement revendu contre de l’argent.",
+    description: "Le Pokémon trouve du Miel après un combat et est directement revendu contre de l’argent.",
   },
   frisk: {
     name: "Fouille",
