@@ -269,9 +269,11 @@ export default class MenuUiHandler extends MessageUiHandler {
       keepOpen: true
     });
 
+    //Thank you Vassiat
     this.manageDataConfig = {
       xOffset: 98,
-      options: manageDataOptions
+      options: manageDataOptions,
+      maxOptions: 7
     };
 
     const communityOptions: OptionSelectItem[] = [
