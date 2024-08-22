@@ -30,5 +30,5 @@ export const clowningAroundDialogue = {
       selected_3: "Flustered fool, fall for my flawless deception!",
     },
   },
-  outro: "The clown and his cohorts\ndisappear in a puff of smoke."
+  outro: "The clown and his cohorts\n in a puff of smoke."
 };
