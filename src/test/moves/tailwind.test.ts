@@ -1,13 +1,14 @@
-import { ArenaTagSide } from "#app/data/arena-tag";
-import { Stat } from "#app/data/pokemon-stat";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { ArenaTagSide } from "#app/data/arena-tag.js";
+import { Stat } from "#app/data/pokemon-stat.js";
+import { ArenaTagType } from "#app/enums/arena-tag-type.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Tailwind", () => {
   let phaserGame: Phaser.Game;
@@ -41,8 +42,8 @@ describe("Moves - Tailwind", () => {
     expect(magikarp.getBattleStat(Stat.SPD)).equal(magikarpSpd);
     expect(meowth.getBattleStat(Stat.SPD)).equal(meowthSpd);
 
-    game.move.select(Moves.TAILWIND);
-    game.move.select(Moves.SPLASH, 1);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
+    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -56,19 +57,19 @@ describe("Moves - Tailwind", () => {
 
     await game.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.TAILWIND);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
     await game.toNextTurn();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
 
-    game.move.select(Moves.SPLASH);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
 
-    game.move.select(Moves.SPLASH);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
 
-    game.move.select(Moves.SPLASH);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
@@ -91,7 +92,7 @@ describe("Moves - Tailwind", () => {
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
 
-    game.move.select(Moves.TAILWIND);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

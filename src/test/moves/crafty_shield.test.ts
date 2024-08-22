@@ -1,13 +1,14 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "../utils/gameManager";
+import { Species } from "#enums/species";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { getMovePosition } from "../utils/gameManagerUtils";
+import { BattleStat } from "#app/data/battle-stat.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { BerryPhase } from "#app/phases/berry-phase.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -47,11 +48,11 @@ describe("Moves - Crafty Shield", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.move.select(Moves.CRAFTY_SHIELD);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.move.select(Moves.SPLASH, 1);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -68,11 +69,11 @@ describe("Moves - Crafty Shield", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.move.select(Moves.CRAFTY_SHIELD);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.move.select(Moves.SPLASH, 1);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -90,11 +91,11 @@ describe("Moves - Crafty Shield", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.move.select(Moves.CRAFTY_SHIELD);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.move.select(Moves.SPLASH, 1);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -109,11 +110,11 @@ describe("Moves - Crafty Shield", () => {
 
       const leadPokemon = game.scene.getPlayerField();
 
-      game.move.select(Moves.CRAFTY_SHIELD);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.CRAFTY_SHIELD));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.move.select(Moves.SWORDS_DANCE, 1);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SWORDS_DANCE));
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

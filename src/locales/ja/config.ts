@@ -4,7 +4,6 @@ import { arenaFlyout } from "./arena-flyout";
 import { arenaTag } from "./arena-tag";
 import { PGFachv, PGMachv } from "./achv";
 import { battle } from "./battle";
-import { battleScene } from "./battle-scene";
 import { battleInfo } from "./battle-info";
 import { battleMessageUiHandler } from "./battle-message-ui-handler";
 import { battlerTags } from "./battler-tags";
@@ -62,7 +61,6 @@ export const jaConfig = {
   arenaFlyout: arenaFlyout,
   arenaTag: arenaTag,
   battle: battle,
-  battleScene: battleScene,
   battleInfo: battleInfo,
   battleMessageUiHandler: battleMessageUiHandler,
   battlePokemonForm: battlePokemonForm,

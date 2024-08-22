@@ -68,7 +68,7 @@ export class StatChangePhase extends PokemonPhase {
     const levels = new Utils.IntegerHolder(this.levels);
 
     if (!this.ignoreAbilities) {
-      applyAbAttrs(StatChangeMultiplierAbAttr, pokemon, null, false, levels);
+      applyAbAttrs(StatChangeMultiplierAbAttr, pokemon, null, levels);
     }
 
     const battleStats = this.getPokemon().summonData.battleStats;
@@ -90,7 +90,7 @@ export class StatChangePhase extends PokemonPhase {
 
       if (levels.value > 0 && this.canBeCopied) {
         for (const opponent of pokemon.getOpponents()) {
-          applyAbAttrs(StatChangeCopyAbAttr, opponent, null, false, this.stats, levels.value);
+          applyAbAttrs(StatChangeCopyAbAttr, opponent, null, this.stats, levels.value);
         }
       }
 

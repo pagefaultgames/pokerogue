@@ -1,13 +1,14 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 describe("Moves - Haze", () => {
   describe("integration tests", () => {
@@ -44,17 +45,17 @@ describe("Moves - Haze", () => {
       expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
       expect(enemy.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-      game.move.select(Moves.SWORDS_DANCE);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      game.move.select(Moves.CHARM);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
       await game.phaseInterceptor.to(TurnInitPhase);
       const userAtkBefore = user.summonData.battleStats[BattleStat.ATK];
       const enemyAtkBefore = enemy.summonData.battleStats[BattleStat.ATK];
       expect(userAtkBefore).toBe(2);
       expect(enemyAtkBefore).toBe(-2);
 
-      game.move.select(Moves.HAZE);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.HAZE));
       await game.phaseInterceptor.to(TurnInitPhase);
       expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
       expect(enemy.summonData.battleStats[BattleStat.ATK]).toBe(0);
@@ -66,13 +67,13 @@ describe("Moves - Haze", () => {
       const user = game.scene.getPlayerPokemon()!;
       expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
 
-      game.move.select(Moves.SWORDS_DANCE);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SWORDS_DANCE));
       await game.phaseInterceptor.to(TurnInitPhase);
 
       const userAtkBefore = user.summonData.battleStats[BattleStat.ATK];
       expect(userAtkBefore).toBe(2);
 
-      game.move.select(Moves.SPLASH);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(MoveEndPhase);
       expect(user.summonData.battleStats[BattleStat.ATK]).toBe(0);
     });

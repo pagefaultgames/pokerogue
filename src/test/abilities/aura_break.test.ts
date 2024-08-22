@@ -1,18 +1,19 @@
-import { allMoves } from "#app/data/move";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { allMoves } from "#app/data/move.js";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 
 describe("Abilities - Aura Break", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const auraBreakMultiplier = 9 / 16 * 4 / 3;
+  const auraBreakMultiplier = 9/16 * 4/3;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -41,7 +42,7 @@ describe("Abilities - Aura Break", () => {
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
     await game.startBattle([Species.PIKACHU]);
-    game.move.select(Moves.MOONBLAST);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.MOONBLAST));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(expect.closeTo(basePower * auraBreakMultiplier));
@@ -55,7 +56,7 @@ describe("Abilities - Aura Break", () => {
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
     await game.startBattle([Species.PIKACHU]);
-    game.move.select(Moves.DARK_PULSE);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.DARK_PULSE));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(expect.closeTo(basePower * auraBreakMultiplier));

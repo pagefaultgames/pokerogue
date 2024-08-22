@@ -1,10 +1,11 @@
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import GameManager from "#test/utils/gameManager";
-import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import Phaser from "phaser";
+import GameManager from "#test/utils/gameManager";
+import { Species } from "#app/enums/species.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { Moves } from "#app/enums/moves.js";
+import { getMovePosition } from "../utils/gameManagerUtils";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 
 describe("Moves - Foresight", () => {
   let phaserGame: Phaser.Game;
@@ -36,19 +37,19 @@ describe("Moves - Foresight", () => {
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.QUICK_ATTACK);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
     await game.toNextTurn();
     expect(enemy.hp).toBe(enemy.getMaxHp());
 
-    game.move.select(Moves.FORESIGHT);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FORESIGHT));
     await game.toNextTurn();
-    game.move.select(Moves.QUICK_ATTACK);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
     await game.toNextTurn();
 
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
     enemy.hp = enemy.getMaxHp();
 
-    game.move.select(Moves.MACH_PUNCH);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.MACH_PUNCH));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
@@ -61,9 +62,9 @@ describe("Moves - Foresight", () => {
     const pokemon = game.scene.getPlayerPokemon()!;
     vi.spyOn(pokemon, "getAccuracyMultiplier");
 
-    game.move.select(Moves.FORESIGHT);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FORESIGHT));
     await game.toNextTurn();
-    game.move.select(Moves.QUICK_ATTACK);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(pokemon.getAccuracyMultiplier).toHaveReturnedWith(1);

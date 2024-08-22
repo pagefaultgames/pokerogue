@@ -1,10 +1,11 @@
-import { WeatherType } from "#app/enums/weather-type";
+import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { WeatherType } from "#app/enums/weather-type.js";
 
 
 describe("Abilities - Sand Spit", () => {
@@ -34,21 +35,21 @@ describe("Abilities - Sand Spit", () => {
     game.override.moveset([Moves.SPLASH, Moves.COIL]);
   });
 
-  it("should trigger when hit with damaging move", async () => {
+  it("should trigger when hit with damaging move", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
     await game.startBattle();
 
-    game.move.select(Moves.SPLASH);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
     await game.toNextTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
   }, 20000);
 
-  it("should not trigger when targetted with status moves", async () => {
+  it("should not trigger when targetted with status moves", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.GROWL));
     await game.startBattle();
 
-    game.move.select(Moves.COIL);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.COIL));
     await game.toNextTurn();
 
     expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SANDSTORM);

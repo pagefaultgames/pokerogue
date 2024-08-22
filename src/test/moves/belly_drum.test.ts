@@ -1,11 +1,11 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { toDmgValue } from "#app/utils";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import Phaser from "phaser";
+import GameManager from "#test/utils/gameManager";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { BattleStat } from "#app/data/battle-stat";
 
 const TIMEOUT = 20 * 1000;
 // RATIO : HP Cost of Move
@@ -40,13 +40,13 @@ describe("Moves - BELLY DRUM", () => {
   // Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Belly_Drum_(move)
 
   test("Belly Drum raises the user's Attack to its max, at the cost of 1/2 of its maximum HP",
-    async () => {
+    async() => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
-      const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
-      game.move.select(Moves.BELLY_DRUM);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
@@ -55,17 +55,17 @@ describe("Moves - BELLY DRUM", () => {
   );
 
   test("Belly Drum will still take effect if an uninvolved stat is at max",
-    async () => {
+    async() => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
-      const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
       // Here - BattleStat.ATK -> -3 and BattleStat.SPATK -> 6
       leadPokemon.summonData.battleStats[BattleStat.ATK] = -3;
       leadPokemon.summonData.battleStats[BattleStat.SPATK] = 6;
 
-      game.move.select(Moves.BELLY_DRUM);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
@@ -75,14 +75,14 @@ describe("Moves - BELLY DRUM", () => {
   );
 
   test("Belly Drum fails if the pokemon's attack stat is at its maximum",
-    async () => {
+    async() => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
       leadPokemon.summonData.battleStats[BattleStat.ATK] = 6;
 
-      game.move.select(Moves.BELLY_DRUM);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
@@ -91,14 +91,14 @@ describe("Moves - BELLY DRUM", () => {
   );
 
   test("Belly Drum fails if the user's health is less than 1/2",
-    async () => {
+    async() => {
       await game.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
-      const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
+      const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
       leadPokemon.hp = hpLost - PREDAMAGE;
 
-      game.move.select(Moves.BELLY_DRUM);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.BELLY_DRUM));
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);

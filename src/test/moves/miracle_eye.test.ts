@@ -1,11 +1,12 @@
-import { BattlerIndex } from "#app/battle";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import GameManager from "#test/utils/gameManager";
-import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import Phaser from "phaser";
+import GameManager from "#test/utils/gameManager";
+import { Species } from "#app/enums/species.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { Moves } from "#app/enums/moves.js";
+import { getMovePosition } from "../utils/gameManagerUtils";
+import { BattlerIndex } from "#app/battle.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 
 describe("Moves - Miracle Eye", () => {
   let phaserGame: Phaser.Game;
@@ -37,14 +38,14 @@ describe("Moves - Miracle Eye", () => {
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.CONFUSION);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.CONFUSION));
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
     expect(enemy.hp).toBe(enemy.getMaxHp());
 
-    game.move.select(Moves.MIRACLE_EYE);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.MIRACLE_EYE));
     await game.toNextTurn();
-    game.move.select(Moves.CONFUSION);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.CONFUSION));
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());

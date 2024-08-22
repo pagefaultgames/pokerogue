@@ -25,5 +25,5 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "unlinkGoogle": "Scollega Google",
   "cancel": "Annulla",
   "losingProgressionWarning": "Perderai tutti i progressi dall'inizio della battaglia. Confermi?",
-  "noEggs": "Non stai schiudendo\nuova al momento!"
+  "noEggs": "You are not hatching\nany eggs at the moment!"
 } as const;

@@ -67,7 +67,7 @@ export class EncounterPhase extends BattlePhase {
             battle.enemyParty[e].ivs = new Array(6).fill(31);
           }
           this.scene.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
-            applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, false, battle.enemyParty[e]);
+            applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, battle.enemyParty[e]);
           });
         }
       }

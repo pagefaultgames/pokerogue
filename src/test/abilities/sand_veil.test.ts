@@ -1,15 +1,16 @@
-import { BattleStatMultiplierAbAttr, allAbilities } from "#app/data/ability";
-import { BattleStat } from "#app/data/battle-stat";
-import { WeatherType } from "#app/data/weather";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { BattleStatMultiplierAbAttr, allAbilities } from "#app/data/ability.js";
+import { BattleStat } from "#app/data/battle-stat.js";
+import { WeatherType } from "#app/data/weather.js";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -51,7 +52,7 @@ describe("Abilities - Sand Veil", () => {
 
       const sandVeilAttr = allAbilities[Abilities.SAND_VEIL].getAttrs(BattleStatMultiplierAbAttr)[0];
       vi.spyOn(sandVeilAttr, "applyBattleStat").mockImplementation(
-        (pokemon, passive, simulated, battleStat, statValue, args) => {
+        (pokemon, passive, battleStat, statValue, args) => {
           if (battleStat === BattleStat.EVA && game.scene.arena.weather?.weatherType === WeatherType.SANDSTORM) {
             statValue.value *= -1; // will make all attacks miss
             return true;
@@ -63,11 +64,11 @@ describe("Abilities - Sand Veil", () => {
       expect(leadPokemon[0].hasAbility(Abilities.SAND_VEIL)).toBe(true);
       expect(leadPokemon[1].hasAbility(Abilities.SAND_VEIL)).toBe(false);
 
-      game.move.select(Moves.SPLASH);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.move.select(Moves.SPLASH, 1);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
 

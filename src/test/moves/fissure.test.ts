@@ -1,14 +1,15 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { Species } from "#app/enums/species";
+import { Species } from "#app/enums/species.js";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { DamagePhase } from "#app/phases/damage-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { DamagePhase } from "#app/phases/damage-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Moves - Fissure", () => {
   let phaserGame: Phaser.Game;
@@ -56,7 +57,7 @@ describe("Moves - Fissure", () => {
     game.override.ability(Abilities.NO_GUARD);
     game.override.enemyAbility(Abilities.FUR_COAT);
 
-    game.move.select(Moves.FISSURE);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
     await game.phaseInterceptor.to(DamagePhase, true);
 
     expect(enemyPokemon.isFainted()).toBe(true);
@@ -67,7 +68,7 @@ describe("Moves - Fissure", () => {
 
     enemyPokemon.summonData.battleStats[BattleStat.ACC] = -6;
 
-    game.move.select(Moves.FISSURE);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
 
     // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -80,7 +81,7 @@ describe("Moves - Fissure", () => {
 
     enemyPokemon.summonData.battleStats[BattleStat.EVA] = 6;
 
-    game.move.select(Moves.FISSURE);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
 
     // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
     await game.phaseInterceptor.to(TurnEndPhase);

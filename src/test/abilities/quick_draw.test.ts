@@ -1,11 +1,12 @@
 import { allAbilities, BypassSpeedChanceAbAttr } from "#app/data/ability";
-import { FaintPhase } from "#app/phases/faint-phase";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { FaintPhase } from "#app/phases/faint-phase.js";
 
 describe("Abilities - Quick Draw", () => {
   let phaserGame: Phaser.Game;
@@ -46,7 +47,7 @@ describe("Abilities - Quick Draw", () => {
     pokemon.hp = 1;
     enemy.hp = 1;
 
-    game.move.select(Moves.TACKLE);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
     await game.phaseInterceptor.to(FaintPhase, false);
 
     expect(pokemon.isFainted()).toBe(false);
@@ -66,7 +67,7 @@ describe("Abilities - Quick Draw", () => {
     pokemon.hp = 1;
     enemy.hp = 1;
 
-    game.move.select(Moves.TAIL_WHIP);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TAIL_WHIP));
     await game.phaseInterceptor.to(FaintPhase, false);
 
     expect(pokemon.isFainted()).toBe(true);
@@ -86,7 +87,7 @@ describe("Abilities - Quick Draw", () => {
     pokemon.hp = 1;
     enemy.hp = 1;
 
-    game.move.select(Moves.TACKLE);
+    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
     await game.phaseInterceptor.to(FaintPhase, false);
 
     expect(pokemon.isFainted()).toBe(true);

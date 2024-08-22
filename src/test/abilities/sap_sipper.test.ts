@@ -1,14 +1,15 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { TerrainType } from "#app/data/terrain";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { BattleStat } from "#app/data/battle-stat.js";
+import { TerrainType } from "#app/data/terrain.js";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Sap Sipper", () => {
@@ -31,7 +32,7 @@ describe("Abilities - Sap Sipper", () => {
     game.override.disableCrits();
   });
 
-  it("raise attack 1 level and block effects when activated against a grass attack", async () => {
+  it("raise attack 1 level and block effects when activated against a grass attack", async() => {
     const moveToUse = Moves.LEAFAGE;
     const enemyAbility = Abilities.SAP_SIPPER;
 
@@ -44,7 +45,7 @@ describe("Abilities - Sap Sipper", () => {
 
     const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
 
-    game.move.select(moveToUse);
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -52,7 +53,7 @@ describe("Abilities - Sap Sipper", () => {
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
   });
 
-  it("raise attack 1 level and block effects when activated against a grass status move", async () => {
+  it("raise attack 1 level and block effects when activated against a grass status move", async() => {
     const moveToUse = Moves.SPORE;
     const enemyAbility = Abilities.SAP_SIPPER;
 
@@ -63,7 +64,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.startBattle();
 
-    game.move.select(moveToUse);
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -71,7 +72,7 @@ describe("Abilities - Sap Sipper", () => {
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
   });
 
-  it("do not activate against status moves that target the field", async () => {
+  it("do not activate against status moves that target the field", async() => {
     const moveToUse = Moves.GRASSY_TERRAIN;
     const enemyAbility = Abilities.SAP_SIPPER;
 
@@ -82,7 +83,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.startBattle();
 
-    game.move.select(moveToUse);
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -91,7 +92,7 @@ describe("Abilities - Sap Sipper", () => {
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
   });
 
-  it("activate once against multi-hit grass attacks", async () => {
+  it("activate once against multi-hit grass attacks", async() => {
     const moveToUse = Moves.BULLET_SEED;
     const enemyAbility = Abilities.SAP_SIPPER;
 
@@ -104,7 +105,7 @@ describe("Abilities - Sap Sipper", () => {
 
     const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
 
-    game.move.select(moveToUse);
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -112,7 +113,7 @@ describe("Abilities - Sap Sipper", () => {
     expect(game.scene.getEnemyParty()[0].summonData.battleStats[BattleStat.ATK]).toBe(1);
   });
 
-  it("do not activate against status moves that target the user", async () => {
+  it("do not activate against status moves that target the user", async() => {
     const moveToUse = Moves.SPIKY_SHIELD;
     const ability = Abilities.SAP_SIPPER;
 
@@ -124,7 +125,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.startBattle();
 
-    game.move.select(moveToUse);
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -138,7 +139,7 @@ describe("Abilities - Sap Sipper", () => {
 
   // TODO Add METRONOME outcome override
   // To run this testcase, manually modify the METRONOME move to always give SAP_SIPPER, then uncomment
-  it.todo("activate once against multi-hit grass attacks (metronome)", async () => {
+  it.todo("activate once against multi-hit grass attacks (metronome)", async() => {
     const moveToUse = Moves.METRONOME;
     const enemyAbility = Abilities.SAP_SIPPER;
 
@@ -151,7 +152,7 @@ describe("Abilities - Sap Sipper", () => {
 
     const startingOppHp = game.scene.currentBattle.enemyParty[0].hp;
 
-    game.move.select(moveToUse);
+    game.doAttack(getMovePosition(game.scene, 0, moveToUse));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

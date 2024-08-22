@@ -1,15 +1,14 @@
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import GameManager from "#test/utils/gameManager";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Moves - Magnet Rise", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const moveToUse = Moves.MAGNET_RISE;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -23,6 +22,7 @@ describe("Moves - Magnet Rise", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    const moveToUse = Moves.MAGNET_RISE;
     game.override.battleType("single");
     game.override.starterSpecies(Species.MAGNEZONE);
     game.override.enemySpecies(Species.RATTATA);
@@ -36,7 +36,7 @@ describe("Moves - Magnet Rise", () => {
     await game.startBattle();
 
     const startingHp = game.scene.getParty()[0].hp;
-    game.move.select(moveToUse);
+    game.doAttack(0);
     await game.phaseInterceptor.to(TurnEndPhase);
     const finalHp = game.scene.getParty()[0].hp;
     const hpLost = finalHp - startingHp;
@@ -47,12 +47,12 @@ describe("Moves - Magnet Rise", () => {
     await game.startBattle();
 
     const startingHp = game.scene.getParty()[0].hp;
-    game.move.select(moveToUse);
+    game.doAttack(0);
     await game.phaseInterceptor.to(CommandPhase);
     let finalHp = game.scene.getParty()[0].hp;
     let hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
-    game.move.select(Moves.GRAVITY);
+    game.doAttack(2);
     await game.phaseInterceptor.to(TurnEndPhase);
     finalHp = game.scene.getParty()[0].hp;
     hpLost = finalHp - startingHp;

@@ -1,25 +1,26 @@
-import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "#app/data/battle-stat";
-import { battle as deBattleStat } from "#app/locales/de/battle";
-import { pokemonInfo as dePokemonInfo } from "#app/locales/de/pokemon-info";
-import { battle as enBattleStat } from "#app/locales/en/battle";
-import { pokemonInfo as enPokemonInfo } from "#app/locales/en/pokemon-info";
-import { battle as esBattleStat } from "#app/locales/es/battle";
-import { pokemonInfo as esPokemonInfo } from "#app/locales/es/pokemon-info";
-import { battle as frBattleStat } from "#app/locales/fr/battle";
-import { pokemonInfo as frPokemonInfo } from "#app/locales/fr/pokemon-info";
-import { battle as itBattleStat } from "#app/locales/it/battle";
-import { pokemonInfo as itPokemonInfo } from "#app/locales/it/pokemon-info";
-import { battle as koBattleStat } from "#app/locales/ko/battle";
-import { pokemonInfo as koPokemonInfo } from "#app/locales/ko/pokemon-info";
-import { battle as ptBrBattleStat } from "#app/locales/pt_BR/battle";
-import { pokemonInfo as ptBrPokemonInfo } from "#app/locales/pt_BR/pokemon-info";
-import { battle as zhCnBattleStat } from "#app/locales/zh_CN/battle";
-import { pokemonInfo as zhCnPokemonInfo } from "#app/locales/zh_CN/pokemon-info";
-import { battle as zhTwBattleStat } from "#app/locales/zh_TW/battle";
-import { pokemonInfo as zhTwPokemonInfo } from "#app/locales/zh_TW/pokemon-info";
+import { beforeAll, describe, expect, it } from "vitest";
+import { getBattleStatName, getBattleStatLevelChangeDescription } from "#app/data/battle-stat.js";
+import { BattleStat} from "#app/data/battle-stat.js";
+import { pokemonInfo as enPokemonInfo } from "#app/locales/en/pokemon-info.js";
+import { battle as enBattleStat } from "#app/locales/en/battle.js";
+import { pokemonInfo as dePokemonInfo } from "#app/locales/de/pokemon-info.js";
+import { battle as deBattleStat } from "#app/locales/de/battle.js";
+import { pokemonInfo as esPokemonInfo } from "#app/locales/es/pokemon-info.js";
+import { battle as esBattleStat } from "#app/locales/es/battle.js";
+import { pokemonInfo as frPokemonInfo } from "#app/locales/fr/pokemon-info.js";
+import { battle as frBattleStat } from "#app/locales/fr/battle.js";
+import { pokemonInfo as itPokemonInfo } from "#app/locales/it/pokemon-info.js";
+import { battle as itBattleStat } from "#app/locales/it/battle.js";
+import { pokemonInfo as koPokemonInfo } from "#app/locales/ko/pokemon-info.js";
+import { battle as koBattleStat } from "#app/locales/ko/battle.js";
+import { pokemonInfo as ptBrPokemonInfo } from "#app/locales/pt_BR/pokemon-info.js";
+import { battle as ptBrBattleStat } from "#app/locales/pt_BR/battle.js";
+import { pokemonInfo as zhCnPokemonInfo } from "#app/locales/zh_CN/pokemon-info.js";
+import { battle as zhCnBattleStat } from "#app/locales/zh_CN/battle.js";
+import { pokemonInfo as zhTwPokemonInfo } from "#app/locales/zh_TW/pokemon-info.js";
+import { battle as zhTwBattleStat } from "#app/locales/zh_TW/battle.js";
 import i18next, { initI18n } from "#app/plugins/i18n";
 import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
-import { beforeAll, describe, expect, it } from "vitest";
 
 interface BattleStatTestUnit {
     stat: BattleStat,

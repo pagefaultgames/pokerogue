@@ -1,8 +1,8 @@
-import { apiFetch } from "#app/utils";
-import GameManager from "#test/utils/gameManager";
-import { waitUntil } from "#test/utils/gameManagerUtils";
-import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import Phaser from "phaser";
+import GameManager from "#test/utils/gameManager";
+import { apiFetch } from "#app/utils";
+import { waitUntil } from "#test/utils/gameManagerUtils";
 
 describe("Test misc", () => {
   let phaserGame: Phaser.Game;

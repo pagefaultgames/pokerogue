@@ -1,12 +1,13 @@
-import { getMoveTargets } from "#app/data/move";
-import { Abilities } from "#app/enums/abilities";
-import { Species } from "#app/enums/species";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { getMoveTargets } from "#app/data/move.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { Species } from "#app/enums/species.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { Moves } from "#enums/moves";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -94,8 +95,8 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
     game.scene.getEnemyField()[1].abilityIndex = ability;
   }
 
-  game.move.select(Moves.SPLASH);
-  game.move.select(Moves.SPLASH, 1);
+  game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+  game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
 
 
   await game.phaseInterceptor.to(TurnEndPhase);
@@ -104,9 +105,9 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
   await game.toNextTurn();
 
   const initialHp = game.scene.getEnemyField()[0].hp;
-  game.move.select(attackMove);
+  game.doAttack(getMovePosition(game.scene, 0, attackMove));
   if (!killAlly) {
-    game.move.select(Moves.SPLASH, 1);
+    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
   }
 
   await game.phaseInterceptor.to(TurnEndPhase);
@@ -118,7 +119,7 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
   game.scene.getEnemyField()[0].hp = initialHp;
 
   const initialHp1v1 = game.scene.getEnemyField()[0].hp;
-  game.move.select(attackMove);
+  game.doAttack(getMovePosition(game.scene, 0, attackMove));
 
   await game.phaseInterceptor.to(TurnEndPhase);
   const afterHp1v1 = game.scene.getEnemyField()[0].hp;

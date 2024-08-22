@@ -1,13 +1,14 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MessagePhase } from "#app/phases/message-phase";
-import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { BattleStat } from "#app/data/battle-stat.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { Moves } from "#app/enums/moves.js";
+import { Species } from "#app/enums/species.js";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { MessagePhase } from "#app/phases/message-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -43,15 +44,15 @@ describe("Abilities - COSTAR", () => {
 
       let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
 
-      game.move.select(Moves.NASTY_PLOT);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.NASTY_PLOT));
       await game.phaseInterceptor.to(CommandPhase);
-      game.move.select(Moves.SPLASH, 1);
+      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
       await game.toNextTurn();
 
       expect(leftPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(+2);
       expect(rightPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(0);
 
-      game.move.select(Moves.SPLASH);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(CommandPhase);
       game.doSwitchPokemon(2);
       await game.phaseInterceptor.to(MessagePhase);
@@ -75,7 +76,7 @@ describe("Abilities - COSTAR", () => {
       expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
       expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
 
-      game.move.select(Moves.SPLASH);
+      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
       await game.phaseInterceptor.to(CommandPhase);
       game.doSwitchPokemon(2);
       await game.phaseInterceptor.to(MessagePhase);
