@@ -22,6 +22,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
   private mainContainer: Phaser.GameObjects.Container;
   private iconsContainer: Phaser.GameObjects.Container;
 
+  private headerBg: Phaser.GameObjects.NineSlice;
   private headerText: Phaser.GameObjects.Text;
   private headerActionText: Phaser.GameObjects.Text;
   private headerActionButton: Phaser.GameObjects.Sprite;
@@ -58,19 +59,18 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     this.mainContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
-    this.headerBgX = headerBg.getTopRight().x;
-    headerBg.setOrigin(0, 0);
+    this.headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
+    this.headerBg.setOrigin(0, 0);
 
     this.headerText = addTextObject(this.scene, 0, 0, "", TextStyle.SETTINGS_LABEL);
     this.headerText.setOrigin(0, 0);
-    this.headerText.setPositionRelative(headerBg, 8, 4);
+    this.headerText.setPositionRelative(this.headerBg, 8, 4);
     this.headerActionButton = new Phaser.GameObjects.Sprite(this.scene, 0, 0, "keyboard", "SPACE.png");
     this.headerActionButton.setOrigin(0,0);
-    this.headerActionButton.setPositionRelative(headerBg, 236, 6);
+    this.headerActionButton.setPositionRelative(this.headerBg, 236, 6);
     this.headerActionText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, {fontSize:"60px"});
     this.headerActionText.setOrigin(0, 0);
-    this.headerActionText.setPositionRelative(headerBg, 264, 8);
+    this.headerActionText.setPositionRelative(this.headerBg, 264, 8);
 
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
     const playerGender = this.scene.gameData.gender;
@@ -82,10 +82,10 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.achvsName = i18next.t(`${genderPrefix}achv:Achievements.name` as ParseKeys);
     this.vouchersName = i18next.t("voucher:vouchers");
 
-    this.iconsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 68);
+    this.iconsBg = addWindow(this.scene, 0, this.headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - this.headerBg.height - 68);
     this.iconsBg.setOrigin(0, 0);
 
-    this.iconsContainer = this.scene.add.container(6, headerBg.height + 6);
+    this.iconsContainer = this.scene.add.container(6, this.headerBg.height + 6);
 
     this.icons = [];
 
@@ -101,7 +101,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
       this.iconsContainer.add(icon);
     }
 
-    const titleBg = addWindow(this.scene, 0, headerBg.height + this.iconsBg.height, 174, 24);
+    const titleBg = addWindow(this.scene, 0, this.headerBg.height + this.iconsBg.height, 174, 24);
     titleBg.setOrigin(0, 0);
 
     this.titleText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
@@ -132,7 +132,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     this.message = descriptionText;
 
-    this.mainContainer.add(headerBg);
+    this.mainContainer.add(this.headerBg);
     this.mainContainer.add(this.headerActionButton);
     this.mainContainer.add(this.headerText);
     this.mainContainer.add(this.headerActionText);
@@ -158,6 +158,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
+    this.headerBgX = this.headerBg.getTopRight().x;
     this.updateAchvIcons();
 
     this.mainContainer.setVisible(true);
@@ -330,7 +331,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
   updateAchvIcons(): void {
     this.headerText.text = this.achvsName;
     this.headerActionText.text = this.vouchersName;
-    const textPosition = this.headerBgX - this.headerActionText.displayWidth - 8;
+    const textPosition = this.this.headerBgX - this.headerActionText.displayWidth - 8;
     this.headerActionText.setX(textPosition);
     this.headerActionButton.setX(textPosition - this.headerActionButton.displayWidth - 4);
 
@@ -370,7 +371,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
   updateVoucherIcons(): void {
     this.headerText.text = this.vouchersName;
     this.headerActionText.text = this.achvsName;
-    const textPosition = this.headerBgX - this.headerActionText.displayWidth - 8;
+    const textPosition = this.this.headerBgX - this.headerActionText.displayWidth - 8;
     this.headerActionText.setX(textPosition);
     this.headerActionButton.setX(textPosition - this.headerActionButton.displayWidth - 4);
 
