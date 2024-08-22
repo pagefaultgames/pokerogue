@@ -9,8 +9,6 @@ import GameManager from "#test/utils/gameManager";
 import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { ArenaTagSide } from "#app/data/arena-tag.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 
@@ -32,7 +30,7 @@ describe("Arena - Gravity", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
-      .moveset([Moves.TACKLE, Moves.GRAVITY, Moves.FISSURE])
+      .moveset([Moves.TACKLE, Moves.GRAVITY, Moves.FISSURE, Moves.FLY])
       .ability(Abilities.UNNERVE)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemySpecies(Species.SHUCKLE)
