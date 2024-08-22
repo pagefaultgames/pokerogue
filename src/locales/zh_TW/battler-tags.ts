@@ -70,6 +70,6 @@ export const battlerTags: SimpleTranslationEntries = {
   "cursedOnAdd": "{{pokemonNameWithAffix}}削減了自己的體力，並詛咒了{{pokemonName}}！",
   "cursedLapse": "{{pokemonNameWithAffix}}正受到詛咒！",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
-  "rageOnAdd": "{{pokemonNameWithAffix}}'s rage is starting to build.",
-  "rageOnHit": "{{pokemonNameWithAffix}}'s rage is building."
+  "rageOnAdd": "{{pokemonNameWithAffix}}的\n怒氣開始上升了。",
+  "rageOnHit": "{{pokemonNameWithAffix}}的\n怒氣正在上升！"
 } as const;

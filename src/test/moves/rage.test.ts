@@ -209,7 +209,7 @@ describe("Moves - Rage", () => {
     "should provide boost per hit in doubles",
     async () => {
       game.override
-        .moveset([Moves.RAGE,Moves.MEMENTO,Moves.SPORE,Moves.VITAL_THROW])
+        .moveset([Moves.RAGE, Moves.MEMENTO, Moves.SPORE, Moves.VITAL_THROW])
         .battleType("double")
         .enemySpecies(Species.SHUCKLE)
         .enemyMoveset(fullOf(Moves.TACKLE));
