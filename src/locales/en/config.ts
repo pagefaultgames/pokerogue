@@ -5,7 +5,7 @@ import abilityTriggers from "./ability-trigger.json";
 import arenaFlyout from "./arena-flyout.json";
 import arenaTag from "./arena-tag.json";
 import achv from "./achv.json";
-import { battle } from "./battle";
+import battle from "./battle.json";
 import battleScene from "./battle-scene.json";
 import battleInfo from "./battle-info.json";
 import battleMessageUiHandler from "./battle-message-ui-handler.json";
