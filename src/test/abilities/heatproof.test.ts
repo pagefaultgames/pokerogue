@@ -8,6 +8,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { StatusEffect } from "#app/enums/status-effect.js";
+import { toDmgValue } from "#app/utils";
 
 describe("Abilities - Heatproof", () => {
   let phaserGame: Phaser.Game;
@@ -72,6 +73,6 @@ describe("Abilities - Heatproof", () => {
     await game.toNextTurn();
 
     // Normal burn damage is /16
-    expect(enemy.hp).toBe(enemy.getMaxHp() - Math.floor(enemy.getMaxHp() / 32));
+    expect(enemy.hp).toBe(enemy.getMaxHp() - toDmgValue(enemy.getMaxHp() / 32));
   });
 });
