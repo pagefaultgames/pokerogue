@@ -808,7 +808,7 @@ export default class Move implements Localizable {
     const moveType = new Utils.IntegerHolder(this.type);
 
     applyMoveAttrs(VariableMoveTypeAttr, pokemon, null, this, moveType);
-    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, pokemon, null, this, moveType, new Utils.NumberHolder(1));
+    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, pokemon, null, this, false, moveType, new Utils.NumberHolder(1));
 
     this.finalType = moveType.value;
 
