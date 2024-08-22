@@ -1518,7 +1518,7 @@ export default class BattleScene extends SceneBase {
       return;
     }
     const formattedMoney = Utils.formatMoney(this.moneyFormat, this.money);
-    this.moneyText.setText(`₽${formattedMoney}`);
+    this.moneyText.setText(i18next.t("battleScene:moneyOwned", { formattedMoney }));
     this.fieldUI.moveAbove(this.moneyText, this.luckText);
     if (forceVisible) {
       this.moneyText.setVisible(true);
