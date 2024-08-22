@@ -1,7 +1,6 @@
 import { StatusEffect } from "#app/data/status-effect";
 import { EnemyPokemon } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -111,7 +110,7 @@ describe("Moves - Thunder Wave", () => {
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
+      game.move.select(Moves.THUNDER_WAVE);
       await game.move.forceHit();
       await game.phaseInterceptor.to(TurnEndPhase);
 
