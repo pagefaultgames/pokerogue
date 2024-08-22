@@ -43,7 +43,7 @@ describe("Moves - Thunder Wave", () => {
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
+      game.move.select(Moves.THUNDER_WAVE);
       await game.move.forceHit();
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -60,7 +60,7 @@ describe("Moves - Thunder Wave", () => {
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
+      game.move.select(Moves.THUNDER_WAVE);
       await game.move.forceHit();
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -77,7 +77,7 @@ describe("Moves - Thunder Wave", () => {
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
+      game.move.select(Moves.THUNDER_WAVE);
       await game.move.forceHit();
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -94,7 +94,7 @@ describe("Moves - Thunder Wave", () => {
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
+      game.move.select(Moves.THUNDER_WAVE);
       await game.move.forceHit();
       await game.phaseInterceptor.to(TurnEndPhase);
 
