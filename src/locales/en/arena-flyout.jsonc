@@ -1,6 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-export const arenaFlyout: SimpleTranslationEntries = {
+{
   // Title
   "activeBattleEffects": "Active Battle Effects",
   "player": "Player",
@@ -45,5 +43,5 @@ export const arenaFlyout: SimpleTranslationEntries = {
   "matBlock": "Mat Block",
   "craftyShield": "Crafty Shield",
   "tailwind": "Tailwind",
-  "happyHour": "Happy Hour",
-};
+  "happyHour": "Happy Hour"
+}

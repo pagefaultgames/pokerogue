@@ -1,10 +1,10 @@
 import { common } from "./common.js";
 import { settings } from "./settings.js";
-import { ability } from "./ability";
-import { abilityTriggers } from "./ability-trigger";
-import { arenaFlyout } from "./arena-flyout";
+import ability from "./ability.json";
+import abilityTriggers from "./ability-trigger.json";
+import arenaFlyout from "./arena-flyout.jsonc";
 import { arenaTag } from "./arena-tag";
-import { PGFachv, PGMachv } from "./achv";
+import achv from "./achv.json";
 import { battle } from "./battle";
 import { battleScene } from "./battle-scene";
 import { battleInfo } from "./battle-info";
@@ -72,8 +72,8 @@ export const enConfig = {
   challenges: challenges,
   commandUiHandler: commandUiHandler,
   common: common,
-  PGMachv: PGMachv,
-  PGFachv: PGFachv,
+  PGMachv: achv,
+  PGFachv: achv,
   PGMdialogue: PGMdialogue,
   PGFdialogue: PGFdialogue,
   PGMbattleSpecDialogue: PGMbattleSpecDialogue,

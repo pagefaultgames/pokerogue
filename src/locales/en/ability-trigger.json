@@ -1,6 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-export const abilityTriggers: SimpleTranslationEntries = {
+{
   "blockRecoilDamage": "{{pokemonName}}'s {{abilityName}}\nprotected it from recoil!",
   "badDreams": "{{pokemonName}} is tormented!",
   "costar": "{{pokemonName}} copied {{allyName}}'s stat changes!",
@@ -10,7 +8,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "trace": "{{pokemonName}} copied {{targetName}}'s\n{{abilityName}}!",
   "windPowerCharged": "Being hit by {{moveName}} charged {{pokemonName}} with power!",
   "quickDraw": "{{pokemonName}} can act faster than normal, thanks to its Quick Draw!",
-  "disguiseAvoidedDamage" : "{{pokemonNameWithAffix}}'s disguise was busted!",
+  "disguiseAvoidedDamage": "{{pokemonNameWithAffix}}'s disguise was busted!",
   "blockItemTheft": "{{pokemonNameWithAffix}}'s {{abilityName}}\nprevents item theft!",
   "typeImmunityHeal": "{{pokemonNameWithAffix}}'s {{abilityName}}\nrestored its HP a little!",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}} avoided damage\nwith {{abilityName}}!",
@@ -59,5 +57,5 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postSummonSwordOfRuin": "{{pokemonNameWithAffix}}'s Sword of Ruin lowered the {{statName}}\nof all surrounding Pokémon!",
   "postSummonTabletsOfRuin": "{{pokemonNameWithAffix}}'s Tablets of Ruin lowered the {{statName}}\nof all surrounding Pokémon!",
   "postSummonBeadsOfRuin": "{{pokemonNameWithAffix}}'s Beads of Ruin lowered the {{statName}}\nof all surrounding Pokémon!",
-  "preventBerryUse": "{{pokemonNameWithAffix}} is too\nnervous to eat berries!",
-} as const;
+  "preventBerryUse": "{{pokemonNameWithAffix}} is too\nnervous to eat berries!"
+}
