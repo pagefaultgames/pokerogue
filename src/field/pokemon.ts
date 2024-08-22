@@ -1261,19 +1261,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Currently only used by {@linkcode Pokemon.apply} to determine whether a "No effect" message should be shown.
    * @returns The type damage multiplier, indicating the effectiveness of the move
    */
-  getMoveEffectiveness(source: Pokemon, move: Move, ignoreAbility: boolean = false, simulated: boolean = true, cancelled?: Utils.BooleanHolder): TypeDamageMultiplier {
-    if (move.hasAttr(TypelessAttr)) {
-      return 1;
-    }
-    const moveType = source.getMoveType(move);
-
-    const typeMultiplier = new Utils.NumberHolder((move.category !== MoveCategory.STATUS || move.hasAttr(RespectAttackTypeImmunityAttr))
-      ? this.getAttackTypeEffectiveness(moveType, source, false, simulated)
-      : 1);
-
+  getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove, ignoreAbility: boolean = false): TypeDamageMultiplier {
+    const move = pokemonMove.getMove();
+    const typeless = move.hasAttr(TypelessAttr);
+    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move, source));
+    const cancelled = new Utils.BooleanHolder(false);
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
-    if (this.getTypes().find(t => move.isTypeImmune(source, this, t))) {
-      typeMultiplier.value = 0;
+    if (!typeless && !ignoreAbility) {
+      applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, true, typeMultiplier);
+    }
+    if (!cancelled.value && !ignoreAbility) {
+      applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, true, typeMultiplier);
     }
 
     const cancelledHolder = cancelled ?? new Utils.BooleanHolder(false);
@@ -1334,7 +1332,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (source) {
         const ignoreImmunity = new Utils.BooleanHolder(false);
         if (source.isActive(true) && source.hasAbilityWithAttr(IgnoreTypeImmunityAbAttr)) {
-          applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, simulated, moveType, defType);
+          applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, false, moveType, defType);
         }
         if (ignoreImmunity.value) {
           return 1;
@@ -2030,7 +2028,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const isPhysical = moveCategory === MoveCategory.PHYSICAL;
       const sourceTeraType = source.getTeraType();
 
-      const power = move.calculateBattlePower(source, this);
+      if (!typeless) {
+        applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
+        applyMoveAttrs(NeutralDamageAgainstFlyingTypeMultiplierAttr, source, this, move, typeMultiplier);
+      }
+      if (!cancelled.value) {
+        applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
+        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, false, typeMultiplier));
+      }
 
       if (cancelled.value) {
         // Cancelled moves fail silently
@@ -2308,7 +2313,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       break;
     case MoveCategory.STATUS:
-      if (!cancelled.value && typeMultiplier === 0) {
+      if (!typeless) {
+        applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
+      }
+      if (!cancelled.value) {
+        applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
+        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, false, typeMultiplier));
+      }
+      if (!typeMultiplier.value) {
         this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
       }
       result = (typeMultiplier === 0) ? HitResult.NO_EFFECT : HitResult.STATUS;

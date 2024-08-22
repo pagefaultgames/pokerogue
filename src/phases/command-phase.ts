@@ -182,7 +182,10 @@ export class CommandPhase extends FieldPhase {
       } else {
         const batonPass = isSwitch && args[0] as boolean;
         const trappedAbMessages: string[] = [];
-        if (batonPass || !playerPokemon.isTrapped(trappedAbMessages)) {
+        if (!batonPass) {
+          enemyField.forEach(enemyPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trapped, playerPokemon, trappedAbMessages, true));
+        }
+        if (batonPass || (!trapTag && !trapped.value)) {
           this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
             ? { command: Command.POKEMON, cursor: cursor, args: args }
             : { command: Command.RUN };

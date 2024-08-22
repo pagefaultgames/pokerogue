@@ -743,7 +743,7 @@ export default class Move implements Localizable {
     const power = new Utils.NumberHolder(this.power);
     const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
 
-    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, null, typeChangeMovePowerMultiplier);
+    applyPreAttackAbAttrs(MoveTypeChangeAttr, source, target, this, simulated, typeChangeMovePowerMultiplier);
 
     const sourceTeraType = source.getTeraType();
     if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !source.scene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
@@ -1955,7 +1955,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
       }
 
       if ((!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0))
-        && pokemon.checkIfCanSetStatus(this.effect, false, false, user) && pokemon.trySetStatus(this.effect, true, user, this.cureTurn)) {
+        && pokemon.trySetStatus(this.effect, true, user, this.cureTurn)) {
         applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
         return true;
       }
