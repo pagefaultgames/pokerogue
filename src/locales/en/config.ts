@@ -8,7 +8,7 @@ import achv from "./achv.json";
 import { battle } from "./battle";
 import { battleScene } from "./battle-scene";
 import battleInfo from "./battle-info.json";
-import { battleMessageUiHandler } from "./battle-message-ui-handler";
+import battleMessageUiHandler from "./battle-message-ui-handler.json";
 import { battlerTags } from "./battler-tags";
 import { berry } from "./berry";
 import { bgmName } from "./bgm-name";
