@@ -386,7 +386,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
 
   "archer": {
     "encounter": {
-      1: "Before you go any further, let's see how you far against us, Team Rocket!",
+      1: "Before you go any further, let's see how you fair against us, Team Rocket!",
       2: "I have received reports that your skills are not insignificant. Let's see if they are true.",
       3: "I am Archer, an Admin of Team Rocket. And I do not go easy on enemies of our organization."
     },
@@ -448,7 +448,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "I'm going to give you a little taste of pain! Resign yourself to it!"
     },
     "victory": {
-      1: `Hehehe! You might have beaten me, but you don't stand a chance against the Boss!
+      1: `Hehehe! You might have beaten me, but you don't stand a chance against the boss!
           $If you get lost now, you won't have to face a sound whipping!`,
       2: "Hehehe... So, I lost, too...",
       3: "Ahya! How could this be? For an Admin like me to lose to some random trainer..."
@@ -456,12 +456,12 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "courtney": {
     "encounter": {
-      1: "The thing...The thing that you hold...That is what... That's what we of Team Magma seek...",
+      1: "...There's still more...work for me to do. ...I must...stop you. ...",
       2: "... Well then...Deleting...",
       3: "...Ha. ...Analyzing... ...Hah♪"
     },
     "victory": {
-      1: "... ...Change...the world.",
+      1: "Hah hah... Uhn...hah hah...",
       2: `As anticipated. Unanticipated. You. Target lock...completed.
          $Commencing...experiment. You. Forever. Aha... ♪`,
       3: "...Again? That's unanticipated. ...I knew it. You...are interesting! ...Haha. ♪"
@@ -487,15 +487,15 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "matt": {
     "encounter": {
-      1: "Hoohahaha! What, you got a screw loose or something? Look at you, little Makuhita person!",
-      2: "Oho! You! You're that funny kid!",
-      3: "What are you doing here? Did you follow us?"
+      1: "All right then, until the boss has time for you, I'll be your opponent!",
+      2: "Hooah! Full on! I'm burning up! Well! Welll! Wellllll! Let's battle it out until we've got nothing left!",
+      3: "Hoo hah! I'm gonna smash you up!"
     },
     "victory": {
-      1: "All right then, until the Boss has time for you, I'll be your opponent!",
+      1: "Muwuhahaha! That battle was fun even though I lost!",
       2: `I can feel it! I can feel it, all right! The strength coming offa you!
           $More! I still want more! But looks like we're outta time...`,
-      3: "That was fun! I knew you'd show me a good time! I look forward to facing you again someday!"
+      3: "Oho! That's a loss I can be proud of!"
     },
   },
   "mars": {
@@ -536,24 +536,24 @@ export const PGMdialogue: DialogueTranslationEntries = {
   "zinzolin": {
     "encounter": {
       1: "You could become a threat to Team Plasma, so we will eliminate you here and now!",
-      2: "Oh, for crying out loud... I didn't expect to have to battle in this freezing cold!",
+      2: "You don't have the sense to know when to quit, it seems. It's an act of mercy on my part to bring an end to this now!",
       3: "You're an impressive Trainer to have made it this far. But it ends here."
     },
     "victory": {
       1: "Ghetsis... I have failed you...",
-      2: "It's bitter cold. I'm shivering. I'm suffering. Yet, I still stand victorious.",
+      2: "It's bitter cold. I'm shivering. I'm suffering. Yet, we will stand victorious.",
       3: "Hmph. You're a smarter Trainer than I expected, but not smart enough."
     }
   },
   "rood": {
     "encounter": {
-      1: "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
-      2: "Oh, this icy wind... I never thought I'd have to fight here!",
+      1: "You are a threat to Team Plasma. We cannot let you walk away from here!",
+      2: "It seems you don't know when to give up. I'll make sure no one interferes with our plans!",
       3: "You are a remarkable Trainer to have made it this far. But this is where it ends."
     },
     "victory": {
       1: "Ghetsis... I have failed my mission...",
-      2: "The cold is piercing. I'm shivering. I'm suffering. Yet, I have triumphed.",
+      2: "The cold is piercing. I'm shivering. I'm suffering. Yet, we will stand triumphant.",
       3: "Hm. You are a talented Trainer, but unfortunately not talented enough."
     }
   },
