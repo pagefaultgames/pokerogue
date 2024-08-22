@@ -1,6 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-export const battlerTags: SimpleTranslationEntries = {
+{
   "trappedDesc": "trapping",
   "flinchedDesc": "flinching",
   "confusedDesc": "confusion",
@@ -69,5 +67,5 @@ export const battlerTags: SimpleTranslationEntries = {
   "saltCuredLapse": "{{pokemonNameWithAffix}} is hurt by {{moveName}}!",
   "cursedOnAdd": "{{pokemonNameWithAffix}} cut its own HP and put a curse on the {{pokemonName}}!",
   "cursedLapse": "{{pokemonNameWithAffix}} is afflicted by the Curse!",
-  "stockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
-} as const;
+  "stockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!"
+}
