@@ -1,6 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-export const splashMessages: SimpleTranslationEntries = {
+{
   "battlesWon": "Battles Won!",
   "joinTheDiscord": "Join the Discord!",
   "infiniteLevels": "Infinite Levels!",
@@ -34,5 +32,5 @@ export const splashMessages: SimpleTranslationEntries = {
   "alsoTryRadicalRed": "Also Try Radical Red!",
   "eeveeExpo": "Eevee Expo!",
   "ynoproject": "YNOproject!",
-  "breedersInSpace": "Breeders in space!",
-} as const;
+  "breedersInSpace": "Breeders in space!"
+}
