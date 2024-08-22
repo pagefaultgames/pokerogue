@@ -4,10 +4,10 @@ import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species.js";
 import { BerryPhase, TurnEndPhase } from "#app/phases.js";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { getMovePosition } from "../utils/gameManagerUtils";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout for all tests
 
@@ -33,6 +33,7 @@ describe("Moves - Hyper Beam", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.enemyMoveset(Array(4).fill(Moves.SPLASH));
+    game.override.enemyLevel(100);
 
     game.override.moveset([Moves.HYPER_BEAM, Moves.TACKLE]);
     vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
@@ -43,8 +44,8 @@ describe("Moves - Hyper Beam", () => {
     async () => {
       await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const leadPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.HYPER_BEAM));
 

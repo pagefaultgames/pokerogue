@@ -18,6 +18,7 @@ export const menuUiHandler: SimpleTranslationEntries = {
   "exportSlotSelect": "Selecione um slot para exportar.",
   "importData": "Importar dados",
   "exportData": "Exportar dados",
+  "consentPreferences": "Opções de Privacidade",
   "linkDiscord": "Conectar Discord",
   "unlinkDiscord": "Desconectar Discord",
   "linkGoogle": "Conectar Google",

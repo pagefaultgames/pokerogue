@@ -2,12 +2,9 @@ import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
 import { allMoves } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import {
-  MoveEffectPhase,
-  TurnEndPhase
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { MoveEffectPhase, TurnEndPhase } from "#app/phases";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
@@ -48,11 +45,7 @@ describe("Moves - Ceaseless Edge", () => {
     async () => {
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
-
-      const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       const enemyStartingHp = enemyPokemon.hp;
 
@@ -77,11 +70,7 @@ describe("Moves - Ceaseless Edge", () => {
       game.override.startingHeldItems([{name: "MULTI_LENS"}]);
       await game.startBattle([ Species.ILLUMISE ]);
 
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
-
-      const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       const enemyStartingHp = enemyPokemon.hp;
 
@@ -107,12 +96,6 @@ describe("Moves - Ceaseless Edge", () => {
       game.override.startingWave(5);
 
       await game.startBattle([ Species.ILLUMISE ]);
-
-      const leadPokemon = game.scene.getPlayerPokemon();
-      expect(leadPokemon).toBeDefined();
-
-      const enemyPokemon = game.scene.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
 
       game.doAttack(getMovePosition(game.scene, 0, Moves.CEASELESS_EDGE));
       await game.phaseInterceptor.to(MoveEffectPhase, false);

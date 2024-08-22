@@ -2,7 +2,7 @@ import { Stat } from "#app/data/pokemon-stat";
 import { EvolutionStatBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import * as Utils from "#app/utils";
 import { Species } from "#enums/species";
 import Phase from "phaser";

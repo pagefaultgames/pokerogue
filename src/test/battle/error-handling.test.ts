@@ -1,11 +1,11 @@
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Test Battle Phase", () => {
+describe("Error Handling", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 

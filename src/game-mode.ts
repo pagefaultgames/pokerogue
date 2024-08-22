@@ -8,6 +8,7 @@ import Overrides from "#app/overrides";
 import * as Utils from "./utils";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
+import { Challenges } from "./enums/challenges";
 
 export enum GameModes {
   CLASSIC,
@@ -53,6 +54,23 @@ export class GameMode implements GameModeConfig {
       this.challenges = allChallenges.map(c => copyChallenge(c));
     }
     this.battleConfig = battleConfig || {};
+  }
+
+  /**
+   * Helper function to see if a GameMode has a specific challenge type
+   * @param challenge the Challenges it looks for
+   * @returns true if the game mode has that challenge
+   */
+  hasChallenge(challenge: Challenges): boolean {
+    return this.challenges.some(c => c.id === challenge && c.value !== 0);
+  }
+
+  /**
+   * Helper function to see if the game mode is using fresh start
+   * @returns true if a fresh start challenge is being applied
+   */
+  isFreshStartChallenge(): boolean {
+    return this.hasChallenge(Challenges.FRESH_START);
   }
 
   /**
@@ -167,7 +185,7 @@ export class GameMode implements GameModeConfig {
     }
   }
 
-  getOverrideSpecies(waveIndex: integer): PokemonSpecies {
+  getOverrideSpecies(waveIndex: integer): PokemonSpecies | null {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
       const allFinalBossSpecies = allSpecies.filter(s => (s.subLegendary || s.legendary || s.mythical)
         && s.baseTotal >= 600 && s.speciesId !== Species.ETERNATUS && s.speciesId !== Species.ARCEUS);
@@ -210,7 +228,7 @@ export class GameMode implements GameModeConfig {
      * @returns true if waveIndex is a multiple of 50 in Endless
      */
   isEndlessBoss(waveIndex: integer): boolean {
-    return waveIndex % 50 &&
+    return !!(waveIndex % 50) &&
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
@@ -267,6 +285,8 @@ export class GameMode implements GameModeConfig {
       return 5000;
     case GameModes.DAILY:
       return 2500;
+    default:
+      return 0;
     }
   }
 

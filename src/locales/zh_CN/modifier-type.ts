@@ -414,6 +414,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "BURN_DRIVE": "火焰卡带",
     "CHILL_DRIVE": "冰冻卡带",
     "DOUSE_DRIVE": "水流卡带",
+    "ULTRANECROZIUM_Z": "究极奈克洛Z",
 
     "FIST_PLATE": "拳头石板",
     "SKY_PLATE": "蓝天石板",

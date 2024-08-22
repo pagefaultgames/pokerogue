@@ -1,13 +1,13 @@
 import { allMoves } from "#app/data/move.js";
 import { Abilities } from "#app/enums/abilities.js";
 import { MoveEffectPhase, TurnEndPhase } from "#app/phases.js";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import GameManager from "#test/utils/gameManager";
+import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Battery", () => {
   let phaserGame: Phaser.Game;

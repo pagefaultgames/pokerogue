@@ -1,13 +1,13 @@
 import { CommandPhase, MessagePhase, TurnInitPhase } from "#app/phases";
 import i18next, { initI18n } from "#app/plugins/i18n";
-import GameManager from "#app/test/utils/gameManager";
+import GameManager from "#test/utils/gameManager";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 
 describe("Ability Timing", () => {
@@ -39,7 +39,7 @@ describe("Ability Timing", () => {
   it("should trigger after switch check", async() => {
     initI18n();
     i18next.changeLanguage("en");
-    await game.runToSummon([Species.EEVEE, Species.FEEBAS]);
+    await game.classicMode.runToSummon([Species.EEVEE, Species.FEEBAS]);
 
     game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
       game.setMode(Mode.MESSAGE);
