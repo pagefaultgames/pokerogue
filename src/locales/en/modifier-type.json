@@ -260,7 +260,7 @@
     "dire_hit": "Dire Hit"
   },
 
-  "TempBattleStatBoosterStatname": {
+  "TempBattleStatBoosterStatName": {
     "ATK": "Attack",
     "DEF": "Defense",
     "SPATK": "Sp. Atk",
