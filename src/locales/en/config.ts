@@ -14,7 +14,7 @@ import berry from "./berry.json";
 import bgmName from "./bgm-name.json";
 import biome from "./biome.json";
 import challenges from "./challenges.json";
-import { commandUiHandler } from "./command-ui-handler";
+import commandUiHandler from "./command-ui-handler.json";
 import {
   PGFbattleSpecDialogue,
   PGFdialogue,
