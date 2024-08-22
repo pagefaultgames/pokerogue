@@ -63,7 +63,7 @@ export const settings: SimpleTranslationEntries = {
   "typeHints": "상성 힌트",
   "masterVolume": "마스터 볼륨",
   "bgmVolume": "BGM 볼륨",
-  "fieldVolume": "Field Volume",
+  "fieldVolume": "필드 볼륨",
   "seVolume": "SE 볼륨",
   "musicPreference": "음악 설정",
   "mixed": "믹스",
