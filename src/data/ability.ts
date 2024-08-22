@@ -3315,7 +3315,7 @@ export class MoodyAbAttr extends PostTurnAbAttr {
       pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [increaseStat], 2));
     }
     if (!simulated && decreaseStatArray.length > 0) {
-      const decreaseStat = selectableStats[Utils.randInt(selectableStats.length)];
+      const decreaseStat = decreaseStatArray[Utils.randInt(decreaseStatArray.length)];
       pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [decreaseStat], -1));
     }
     return true;
