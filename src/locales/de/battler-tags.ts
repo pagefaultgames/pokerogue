@@ -68,8 +68,7 @@ export const battlerTags: SimpleTranslationEntries = {
   "saltCuredOnAdd": "{{pokemonNameWithAffix}} wurde eingepökelt!",
   "saltCuredLapse": "{{pokemonNameWithAffix}} wurde durch {{moveName}} verletzt!",
   "cursedOnAdd": "{{pokemonNameWithAffix}} nimmt einen Teil seiner KP und legt einen Fluch auf {{pokemonName}}!",
-  "cursedLapse": "{{pokemonNameWithAffix}} wurde durch den Fluch verletzt!",
-  "stockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
+  "stockpilingOnAdd": "{{pokemonNameWithAffix}} hortet {{stockpiledCount}}!"",
   "rageOnAdd": "{{pokemonNameWithAffix}}'s rage is starting to build.",
-  "rageOnHit": "{{pokemonNameWithAffix}}'s rage is building."
+  "rageOnHit": "{{pokemonNameWithAffix}}'s rage is building.",
 } as const;
