@@ -44,8 +44,10 @@ describe("Abilities - Mycelium Might", () => {
 
   it("If a Pokemon with Mycelium Might uses a status move, it will always move last but the status move will ignore protective abilities", async() => {
     await game.startBattle([ Species.REGIELEKI ]);
-    const enemyPokemon = game.scene.getEnemyPokemon();
 
+    const enemyPokemon = game.scene.getEnemyPokemon();
+    const playerPokemonIndex = game.scene.getPlayerPokemon().getBattlerIndex();
+    const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
     game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
 
     await game.phaseInterceptor.run(EnemyCommandPhase);
@@ -54,8 +56,8 @@ describe("Abilities - Mycelium Might", () => {
     const commandOrder = phase.getCommandOrder();
     // The opponent Pokemon (without Mycelium Might) goes first despite having lower speed than the player Pokemon.
     // The player Pokemon (with Mycelium Might) goes last despite having higher speed than the opponent.
-    // This means that the commandOrder is equivalent to the speed Order reversed
-    expect(speedOrder.reverse()).toEqual(commandOrder);
+    expect(speedOrder).toEqual([playerPokemonIndex, enemyPokemonIndex]);
+    expect(commandOrder).toEqual([enemyPokemonIndex, playerPokemonIndex]);
     await game.phaseInterceptor.to(TurnEndPhase);
     // Despite the opponent's ability (Clear Body), its attack stat is still reduced.
     expect(enemyPokemon?.summonData.battleStats[BattleStat.ATK]).toBe(-1);
@@ -64,8 +66,10 @@ describe("Abilities - Mycelium Might", () => {
   it("Pokemon with Mycelium Might will go first if a status move that is in a higher priority bracket than the opponent's move is used", async() => {
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
     await game.startBattle([ Species.REGIELEKI ]);
-    const enemyPokemon = game.scene.getEnemyPokemon();
 
+    const enemyPokemon = game.scene.getEnemyPokemon();
+    const playerPokemonIndex = game.scene.getPlayerPokemon().getBattlerIndex();
+    const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
     game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
 
     await game.phaseInterceptor.run(EnemyCommandPhase);
@@ -74,8 +78,8 @@ describe("Abilities - Mycelium Might", () => {
     const commandOrder = phase.getCommandOrder();
     // The player Pokemon (with M.M.) goes first because its move is still within a higher priority bracket than its opponent.
     // The enemy Pokemon goes second because its move is in a lower priority bracket.
-    // This means that the commandOrder should be identical to the speedOrder
-    expect(speedOrder).toEqual(commandOrder);
+    expect(speedOrder).toEqual([playerPokemonIndex, enemyPokemonIndex]);
+    expect(commandOrder).toEqual([playerPokemonIndex, enemyPokemonIndex]);
     await game.phaseInterceptor.to(TurnEndPhase);
     // Despite the opponent's ability (Clear Body), its attack stat is still reduced.
     expect(enemyPokemon?.summonData.battleStats[BattleStat.ATK]).toBe(-1);
@@ -84,6 +88,8 @@ describe("Abilities - Mycelium Might", () => {
   it("Order is established normally if the Pokemon uses a non-status move", async() => {
     await game.startBattle([ Species.REGIELEKI ]);
 
+    const playerPokemonIndex = game.scene.getPlayerPokemon().getBattlerIndex();
+    const enemyPokemonIndex = game.scene.getEnemyPokemon().getBattlerIndex();
     game.doAttack(getMovePosition(game.scene, 0, Moves.QUICK_ATTACK));
 
     await game.phaseInterceptor.run(EnemyCommandPhase);
@@ -93,6 +99,7 @@ describe("Abilities - Mycelium Might", () => {
     // The player Pokemon (with M.M.) goes first because it has a higher speed and did not use a status move.
     // The enemy Pokemon (without M.M.) goes second because its speed is lower.
     // This means that the commandOrder should be identical to the speedOrder
-    expect(speedOrder).toEqual(commandOrder);
+    expect(speedOrder).toEqual([playerPokemonIndex, enemyPokemonIndex]);
+    expect(commandOrder).toEqual([playerPokemonIndex, enemyPokemonIndex]);
   }, 20000);
 });
