@@ -6102,7 +6102,7 @@ export class SwapHeldItemsAttr extends MoveEffectAttr {
     }));
 
     if (targetHeldItems.length) {
-      const swapItemIdx = 0;
+      let swapItemIdx = 0;
       const targetPool = target.isPlayer() ? ModifierPoolType.PLAYER : ModifierPoolType.TRAINER;
 
       for (let idx = 1; idx < targetHeldItems.length; idx++) {
@@ -6114,7 +6114,7 @@ export class SwapHeldItemsAttr extends MoveEffectAttr {
         currentItemTier = currentItemTier !== null ? currentItemTier : ModifierTier.COMMON;
 
         if (nextItemNotFlameOrToxic && (nextItemTier > currentItemTier || currentItemFlameOrToxic)) {
-          targetHeldItems[swapItemIdx] = targetHeldItems[idx];
+          swapItemIdx = idx;
         }
 
         if (targetHeldItems[swapItemIdx].type.tier === ModifierTier.LUXURY) {
