@@ -1,6 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-export const partyUiHandler: SimpleTranslationEntries = {
+{
   "SEND_OUT": "Send Out",
   "SUMMARY": "Summary",
   "CANCEL": "Cancel",
@@ -17,7 +15,6 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "UNPAUSE_EVOLUTION": "Unpause Evolution",
   "REVIVE": "Revive",
   "RENAME": "Rename",
-
   "choosePokemon": "Choose a Pokémon.",
   "doWhatWithThisPokemon": "Do what with this Pokémon?",
   "noEnergy": "{{pokemonName}} has no energy\nleft to battle!",
@@ -34,13 +31,9 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "changeQuantity": "Select a held item to transfer.\nUse < and > to change the quantity.",
   "selectAnotherPokemonToSplice": "Select another Pokémon to splice.",
   "cancel": "Cancel",
-
-  // Slot TM text
   "able": "Able",
   "notAble": "Not able",
   "learned": "Learned",
-
-  // Releasing messages
   "goodbye": "Goodbye, {{pokemonName}}!",
   "byebye": "Byebye, {{pokemonName}}!",
   "farewell": "Farewell, {{pokemonName}}!",
@@ -50,5 +43,5 @@ export const partyUiHandler: SimpleTranslationEntries = {
   "illNeverForgetYou": "I'll never forget you, {{pokemonName}}!",
   "untilWeMeetAgain": "Until we meet again, {{pokemonName}}!",
   "sayonara": "Sayonara, {{pokemonName}}!",
-  "smellYaLater": "Smell ya later, {{pokemonName}}!",
-} as const;
+  "smellYaLater": "Smell ya later, {{pokemonName}}!"
+}
