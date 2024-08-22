@@ -159,6 +159,14 @@
       "4": "Évidemment que je suis fort et encore moins un perdant. C’est important de gagner avec grâce."
     }
   },
+  "parasol_lady": {
+    "encounter": {
+      "1": "Honorons ce terrain de combat avec élégance et équilibre !"
+    },
+    "victory": {
+      "2": "Mon élégance demeure inébranlable !"
+    }
+  },
   "rocket_grunt": {
     "encounter": {
       "1": "Nous sommes de retour !",
