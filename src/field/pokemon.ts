@@ -1292,12 +1292,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           return 1;
         }
       }
-
-      return getTypeDamageMultiplier(this.scene.gameMode, moveType, defType);
+      const multiplier = new Utils.NumberHolder(1);
+      multiplier.value = getTypeDamageMultiplier(moveType, defType);
+      applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
+      return multiplier.value;
     }).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
 
+    const typeMultiplierAgainstFlying = new Utils.NumberHolder(1);
+    typeMultiplierAgainstFlying.value = getTypeDamageMultiplier(moveType, Type.FLYING);
+    applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, typeMultiplierAgainstFlying);
     // Handle strong winds lowering effectiveness of types super effective against pure flying
-    if (!ignoreStrongWinds && arena.weather?.weatherType === WeatherType.STRONG_WINDS && !arena.weather.isEffectSuppressed(this.scene) && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(this.scene.gameMode, moveType, Type.FLYING) === 2) {
+    if (!ignoreStrongWinds && arena.weather?.weatherType === WeatherType.STRONG_WINDS && !arena.weather.isEffectSuppressed(this.scene) && this.isOfType(Type.FLYING) && typeMultiplierAgainstFlying.value === 2) {
       multiplier /= 2;
       if (!simulated) {
         this.scene.queueMessage(i18next.t("weather:strongWindsEffectMessage"));

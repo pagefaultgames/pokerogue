@@ -1,7 +1,3 @@
-import { applyChallenges, ChallengeType } from "./challenge";
-import { NumberHolder } from "#app/utils";
-import { GameMode } from "#app/game-mode";
-
 export enum Type {
   UNKNOWN = -1,
   NORMAL = 0,
@@ -27,23 +23,23 @@ export enum Type {
 
 export type TypeDamageMultiplier = 0 | 0.125 | 0.25 | 0.5 | 1 | 2 | 4 | 8;
 
-export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, defType: number): TypeDamageMultiplier {
-  const multiplier = new NumberHolder(1);
+export function getTypeDamageMultiplier(attackType: number, defType: number): TypeDamageMultiplier {
+  let multiplier: number = 1;
   if (attackType === Type.UNKNOWN || defType === Type.UNKNOWN) {
-    return multiplier.value as TypeDamageMultiplier;
+    return multiplier as TypeDamageMultiplier;
   }
 
   switch (defType) {
   case Type.NORMAL:
     switch (attackType) {
     case Type.FIGHTING:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.GHOST:
-      multiplier.value = 0;
+      multiplier = 0;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -52,15 +48,15 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.FLYING:
     case Type.PSYCHIC:
     case Type.FAIRY:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.ROCK:
     case Type.BUG:
     case Type.DARK:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -69,18 +65,18 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.ROCK:
     case Type.ELECTRIC:
     case Type.ICE:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.FIGHTING:
     case Type.BUG:
     case Type.GRASS:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     case Type.GROUND:
-      multiplier.value = 0;
+      multiplier = 0;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -88,17 +84,17 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     switch (attackType) {
     case Type.GROUND:
     case Type.PSYCHIC:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.FIGHTING:
     case Type.POISON:
     case Type.BUG:
     case Type.GRASS:
     case Type.FAIRY:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -107,17 +103,17 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.WATER:
     case Type.GRASS:
     case Type.ICE:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.POISON:
     case Type.ROCK:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     case Type.ELECTRIC:
-      multiplier.value = 0;
+      multiplier = 0;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -128,16 +124,16 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.STEEL:
     case Type.WATER:
     case Type.GRASS:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.NORMAL:
     case Type.FLYING:
     case Type.POISON:
     case Type.FIRE:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -146,15 +142,15 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.FLYING:
     case Type.ROCK:
     case Type.FIRE:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.FIGHTING:
     case Type.GROUND:
     case Type.GRASS:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -162,18 +158,18 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     switch (attackType) {
     case Type.GHOST:
     case Type.DARK:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.POISON:
     case Type.BUG:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     case Type.NORMAL:
     case Type.FIGHTING:
-      multiplier.value = 0;
+      multiplier = 0;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -182,7 +178,7 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.FIGHTING:
     case Type.GROUND:
     case Type.FIRE:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.NORMAL:
     case Type.FLYING:
@@ -194,13 +190,13 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.ICE:
     case Type.DRAGON:
     case Type.FAIRY:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     case Type.POISON:
-      multiplier.value = 0;
+      multiplier = 0;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -209,7 +205,7 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.GROUND:
     case Type.ROCK:
     case Type.WATER:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.BUG:
     case Type.STEEL:
@@ -217,10 +213,10 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.GRASS:
     case Type.ICE:
     case Type.FAIRY:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -228,16 +224,16 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     switch (attackType) {
     case Type.GRASS:
     case Type.ELECTRIC:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.STEEL:
     case Type.FIRE:
     case Type.WATER:
     case Type.ICE:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -248,31 +244,31 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.BUG:
     case Type.FIRE:
     case Type.ICE:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.GROUND:
     case Type.WATER:
     case Type.GRASS:
     case Type.ELECTRIC:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
   case Type.ELECTRIC:
     switch (attackType) {
     case Type.GROUND:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.FLYING:
     case Type.STEEL:
     case Type.ELECTRIC:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -281,14 +277,14 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.BUG:
     case Type.GHOST:
     case Type.DARK:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.FIGHTING:
     case Type.PSYCHIC:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -298,13 +294,13 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.ROCK:
     case Type.STEEL:
     case Type.FIRE:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.ICE:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -313,16 +309,16 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.ICE:
     case Type.DRAGON:
     case Type.FAIRY:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.FIRE:
     case Type.WATER:
     case Type.GRASS:
     case Type.ELECTRIC:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -331,17 +327,17 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     case Type.FIGHTING:
     case Type.BUG:
     case Type.FAIRY:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.GHOST:
     case Type.DARK:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     case Type.PSYCHIC:
-      multiplier.value = 0;
+      multiplier = 0;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
@@ -349,44 +345,27 @@ export function getTypeDamageMultiplier(gameMode: GameMode, attackType: number, 
     switch (attackType) {
     case Type.POISON:
     case Type.STEEL:
-      multiplier.value = 2;
+      multiplier = 2;
       break;
     case Type.FIGHTING:
     case Type.BUG:
     case Type.DARK:
-      multiplier.value = 0.5;
+      multiplier = 0.5;
       break;
     case Type.DRAGON:
-      multiplier.value = 0;
+      multiplier = 0;
       break;
     default:
-      multiplier.value = 1;
+      multiplier = 1;
       break;
     }
     break;
   case Type.STELLAR:
-    multiplier.value = 1;
+    multiplier = 1;
     break;
   }
 
-  applyChallenges(gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
-  return multiplier.value as TypeDamageMultiplier;
-}
-
-/**
- * Retrieve the types resisting a given type. Used by Conversion 2
- * @returns An array populated with Types, or an empty array if no resistances exist (Unknown or Stellar type)
- */
-export function getTypeResistances(gameMode: GameMode, type: number): Type[] {
-  const typeResistances: Type[] = [];
-
-  for (let i = 0; i < Type.STELLAR; i++) {
-    if (getTypeDamageMultiplier(gameMode, type, i) < 1) {
-      typeResistances.push(i);
-    }
-  }
-
-  return typeResistances;
+  return multiplier as TypeDamageMultiplier;
 }
 
 /**

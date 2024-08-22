@@ -4,7 +4,7 @@ import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTr
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
-import { getTypeResistances, Type } from "./type";
+import { getTypeDamageMultiplier, Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
@@ -36,6 +36,9 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
 import { StatChangePhase } from "#app/phases/stat-change-phase.js";
 import { SwitchPhase } from "#app/phases/switch-phase.js";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
+import { NumberHolder } from "#app/utils";
+import { GameMode } from "#app/game-mode";
+import { applyChallenges, ChallengeType } from "./challenge";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -6141,7 +6144,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
     const userTypes = user.getTypes();
-    const validTypes = getTypeResistances(user.scene.gameMode, moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
+    const validTypes = this.getTypeResistances(user.scene.gameMode, moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
     if (!validTypes.length) {
       return false;
     }
@@ -6151,6 +6154,25 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
     user.updateInfo();
 
     return true;
+  }
+
+  /**
+   * Retrieve the types resisting a given type. Used by Conversion 2
+   * @returns An array populated with Types, or an empty array if no resistances exist (Unknown or Stellar type)
+   */
+  getTypeResistances(gameMode: GameMode, type: number): Type[] {
+    const typeResistances: Type[] = [];
+
+    for (let i = 0; i < Type.STELLAR; i++) {
+      const multiplier = new NumberHolder(1);
+      multiplier.value = getTypeDamageMultiplier(type, i);
+      applyChallenges(gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
+      if (multiplier.value < 1) {
+        typeResistances.push(i);
+      }
+    }
+
+    return typeResistances;
   }
 
   getCondition(): MoveConditionFunc {
