@@ -1,13 +1,12 @@
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
+import { Abilities } from "#app/enums/abilities";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -32,8 +31,8 @@ describe("Moves - Roost", () => {
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([ Moves.STOMPING_TANTRUM ]);
-    game.override.enemyMoveset([Moves.ROOST,Moves.ROOST,Moves.ROOST,Moves.ROOST]);
+    game.override.moveset([Moves.STOMPING_TANTRUM]);
+    game.override.enemyMoveset([Moves.ROOST, Moves.ROOST, Moves.ROOST, Moves.ROOST]);
   });
 
   test(
@@ -45,7 +44,7 @@ describe("Moves - Roost", () => {
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.STOMPING_TANTRUM));
+      game.move.select(Moves.STOMPING_TANTRUM);
 
       await game.phaseInterceptor.to(MoveEffectPhase);
 

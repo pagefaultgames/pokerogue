@@ -1,16 +1,15 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { StockpilingTag } from "#app/data/battler-tags.js";
-import { MoveResult, TurnMove } from "#app/field/pokemon.js";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { StockpilingTag } from "#app/data/battler-tags";
+import { MoveResult, TurnMove } from "#app/field/pokemon";
+import { CommandPhase } from "#app/phases/command-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 describe("Moves - Stockpile", () => {
   describe("integration tests", () => {
@@ -57,7 +56,7 @@ describe("Moves - Stockpile", () => {
           await game.phaseInterceptor.to(CommandPhase);
         }
 
-        game.doAttack(getMovePosition(game.scene, 0, Moves.STOCKPILE));
+        game.move.select(Moves.STOCKPILE);
         await game.phaseInterceptor.to(TurnInitPhase);
 
         const stockpilingTag = user.getTag(StockpilingTag)!;
@@ -92,7 +91,7 @@ describe("Moves - Stockpile", () => {
       expect(user.summonData.battleStats[BattleStat.DEF]).toBe(6);
       expect(user.summonData.battleStats[BattleStat.SPDEF]).toBe(6);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.STOCKPILE));
+      game.move.select(Moves.STOCKPILE);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       const stockpilingTag = user.getTag(StockpilingTag)!;
@@ -104,7 +103,7 @@ describe("Moves - Stockpile", () => {
       // do it again, just for good measure
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.STOCKPILE));
+      game.move.select(Moves.STOCKPILE);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       const stockpilingTagAgain = user.getTag(StockpilingTag)!;

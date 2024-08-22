@@ -1,10 +1,9 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { BattleStat } from "#app/data/battle-stat";
+import { Abilities } from "#app/enums/abilities";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -42,7 +41,7 @@ describe("Moves - Double Team", () => {
     vi.spyOn(enemy, "getAccuracyMultiplier");
     expect(ally.summonData.battleStats[BattleStat.EVA]).toBe(0);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DOUBLE_TEAM));
+    game.move.select(Moves.DOUBLE_TEAM);
     await game.phaseInterceptor.to(TurnEndPhase);
     await game.toNextTurn();
 

@@ -5,7 +5,6 @@ import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { getMovePosition } from "../utils/gameManagerUtils";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("UI - Battle Info", () => {
@@ -35,7 +34,7 @@ describe("UI - Battle Info", () => {
     const battleInfo = abra.getBattleInfo();
     vi.spyOn(battleInfo, "updatePokemonExp");
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_CLAW));
+    game.move.select(Moves.DRAGON_CLAW);
     await game.doKillOpponents();
     await game.phaseInterceptor.to(BattleEndPhase, true);
 
@@ -50,7 +49,7 @@ describe("UI - Battle Info", () => {
     const battleInfo = abra.getBattleInfo();
     vi.spyOn(battleInfo, "updatePokemonExp");
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_CLAW));
+    game.move.select(Moves.DRAGON_CLAW);
     await game.doKillOpponents();
     await game.phaseInterceptor.to(BattleEndPhase, true);
 

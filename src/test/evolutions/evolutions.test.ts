@@ -1,8 +1,8 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
-import { Species } from "#enums/species";
 import * as Utils from "#app/utils";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Evolution tests", () => {
   let phaserGame: Phaser.Game;

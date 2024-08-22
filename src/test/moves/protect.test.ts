@@ -1,14 +1,13 @@
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { BattleStat } from "#app/data/battle-stat";
+import { allMoves } from "#app/data/move";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { BattleStat } from "#app/data/battle-stat.js";
-import { allMoves } from "#app/data/move.js";
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
 
 const TIMEOUT = 20 * 1000;
 
@@ -48,7 +47,7 @@ describe("Moves - Protect", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+      game.move.select(Moves.PROTECT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -66,7 +65,7 @@ describe("Moves - Protect", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+      game.move.select(Moves.PROTECT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -84,7 +83,7 @@ describe("Moves - Protect", () => {
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+      game.move.select(Moves.PROTECT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -103,7 +102,7 @@ describe("Moves - Protect", () => {
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PROTECT));
+      game.move.select(Moves.PROTECT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

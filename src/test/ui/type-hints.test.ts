@@ -1,14 +1,14 @@
-import { Button } from "#app/enums/buttons.js";
+import { Button } from "#app/enums/buttons";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import FightUiHandler from "#app/ui/fight-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import { CommandPhase } from "#app/phases/command-phase";
+import FightUiHandler from "#app/ui/fight-ui-handler";
+import { Mode } from "#app/ui/ui";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import MockText from "../utils/mocks/mocksContainer/mockText";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { CommandPhase } from "#app/phases/command-phase.js";
 
 describe("UI - Type Hints", () => {
   let phaserGame: Phaser.Game;
