@@ -26,7 +26,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "soothingAromaWaftedThroughArea": "Um aroma suave se espalhou pelo ambiente!",
   "sprangUp": "{{pokemonName}} se levantou!",
   "choseDoomDesireAsDestiny": "{{pokemonName}} escolheu\no Desejo da Perdição como seu destino!",
-  "vanishedInstantly": "{{pokemonName}} desapareceu/nde repente!",
+  "vanishedInstantly": "{{pokemonName}} desapareceu\nde repente!",
   "tookTargetIntoSky": "{{pokemonName}} levou {{targetName}}\npara o céu!",
   "becameCloakedInFreezingLight": "{{pokemonName}} ficou envolto/nem uma luz congelante!",
   "becameCloakedInFreezingAir": "{{pokemonName}} ficou envolto/nem ar congelante!",

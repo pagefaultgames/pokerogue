@@ -46,6 +46,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postFaintContactDamage": "{{pokemonNameWithAffix}}的{{abilityName}}\n使对方受到了伤害！",
   "postFaintHpDamage": "{{pokemonNameWithAffix}}的{{abilityName}}\n使对方受到了伤害！",
   "postSummonPressure": "从{{pokemonNameWithAffix}}的身上\n感到了一种压迫感！",
+  "weatherEffectDisappeared": "天气的影响消失了！",
   "postSummonMoldBreaker": "{{pokemonNameWithAffix}}\n打破了常规！",
   "postSummonAnticipation": "{{pokemonNameWithAffix}}\n发抖了！",
   "postSummonTurboblaze": "{{pokemonNameWithAffix}}\n正在释放炽焰气场！",

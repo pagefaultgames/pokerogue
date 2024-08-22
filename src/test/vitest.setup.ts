@@ -9,8 +9,8 @@ import { initMoves } from "#app/data/move";
 import { initPokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { initPokemonForms } from "#app/data/pokemon-forms";
 import { initSpecies } from "#app/data/pokemon-species";
-import { initAchievements } from "#app/system/achv.js";
-import { initVouchers } from "#app/system/voucher.js";
+import { initAchievements } from "#app/system/achv";
+import { initVouchers } from "#app/system/voucher";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 
 import { beforeAll, vi } from "vitest";
