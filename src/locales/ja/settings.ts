@@ -63,7 +63,7 @@ export const settings: SimpleTranslationEntries = {
   "typeHints": "相性のヒント",
   "masterVolume": "マスターボリューム",
   "bgmVolume": "BGMのボリューム",
-  "fieldVolume":"Field Volume",
+  "fieldVolume": "Field Volume",
   "seVolume": "SEのボリューム",
   "musicPreference": "Music Preference",
   "mixed": "Mixed",
