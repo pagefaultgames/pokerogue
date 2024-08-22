@@ -193,6 +193,7 @@ export default class GameManager {
 
   /**
    * Emulate a player's target selection after a move is chosen, usually called automatically by {@linkcode MoveHelper.select}.
+   * Will trigger during the next {@linkcode SelectTargetPhase}
    * @param {BattlerIndex} targetIndex The index of the attack target, or `undefined` for multi-target attacks
    * @param movePosition The index of the move in the pokemon's moveset array
    */
