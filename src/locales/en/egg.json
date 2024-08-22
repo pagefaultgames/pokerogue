@@ -1,6 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-export const egg: SimpleTranslationEntries = {
+{
   "egg": "Egg",
   "greatTier": "Rare",
   "ultraTier": "Epic",
@@ -24,5 +22,5 @@ export const egg: SimpleTranslationEntries = {
   "rareEggMoveUnlock": "Rare Egg Move unlocked: {{moveName}}",
   "moveUPGacha": "Move UP!",
   "shinyUPGacha": "Shiny UP!",
-  "legendaryUPGacha": "UP!",
-} as const;
+  "legendaryUPGacha": "UP!"
+}

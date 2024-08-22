@@ -19,7 +19,7 @@ import dialogue from "./dialogue.json";
 import dialogueEndboss from "./dialogue-endboss.json";
 import dialogueMisc from "./dialogue-misc.json";
 import dialogueDoubleBattle from "./dialogues-double-battle.json";
-import { egg } from "./egg";
+import egg from "./egg.json";
 import { fightUiHandler } from "./fight-ui-handler";
 import { filterBar } from "./filter-bar";
 import { gameMode } from "./game-mode";
