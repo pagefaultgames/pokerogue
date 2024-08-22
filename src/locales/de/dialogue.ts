@@ -482,7 +482,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       3: "Was machst du hier? Bist du uns gefolgt?"
     },
     "victory": {
-      1: "Na gut, bis der Boss Zeit für dich hat, werde ich dein Gegner sein!",
+      1: "Muwuhahaha! That battle was fun even though I lost!",
       2: `Ich kann es fühlen! Ich kann es spüren, das ist klar! Die Stärke, die von dir ausgeht!
           $Mehr! Ich will noch mehr! Aber es sieht so aus, als hätten wir keine Zeit mehr...`,
       3: `Das war Spaß! Ich wusste, dass du mir eine gute Zeit bieten würdest!
