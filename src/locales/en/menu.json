@@ -1,11 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-/**
- * The menu namespace holds most miscellaneous text that isn't directly part of the game's
- * contents or directly related to Pokemon data. This includes menu navigation, settings,
- * account interactions, descriptive text, etc.
- */
-export const menu: SimpleTranslationEntries = {
+{
   "cancel": "Cancel",
   "continue": "Continue",
   "dailyRun": "Daily Run (Beta)",
@@ -50,13 +43,13 @@ export const menu: SimpleTranslationEntries = {
   "loading": "Loading…",
   "loadingAsset": "Loading asset: {{assetName}}",
   "playersOnline": "Players Online",
-  "yes":"Yes",
-  "no":"No",
+  "yes": "Yes",
+  "no": "No",
   "disclaimer": "DISCLAIMER",
   "disclaimerDescription": "This game is an unfinished product; it might have playability issues (including the potential loss of save data),\n change without notice, and may or may not be updated further or completed.",
   "choosePokemon": "Choose a Pokémon.",
   "renamePokemon": "Rename Pokémon",
   "rename": "Rename",
   "nickname": "Nickname",
-  "errorServerDown": "Oops! There was an issue contacting the server.\n\nYou may leave this window open,\nthe game will automatically reconnect.",
-} as const;
+  "errorServerDown": "Oops! There was an issue contacting the server.\n\nYou may leave this window open,\nthe game will automatically reconnect."
+}

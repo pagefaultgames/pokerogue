@@ -25,7 +25,7 @@ import filterBar from "./filter-bar.json";
 import gameMode from "./game-mode.json";
 import gameStatsUiHandler from "./game-stats-ui-handler.json";
 import growth from "./growth.json";
-import { menu } from "./menu";
+import menu from "./menu.json";
 import menuUiHandler from "./menu-ui-handler.json";
 import { modifier } from "./modifier";
 import { modifierType } from "./modifier-type";
