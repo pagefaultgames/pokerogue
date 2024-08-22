@@ -129,7 +129,7 @@ describe("Inverse Battle", () => {
 
     const pikachu = game.scene.getEnemyPokemon()!;
     pikachu.hp = pikachu.getMaxHp() - 1;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+    game.move.select(getMovePosition(game.scene, 0, Moves.WATER_GUN));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -147,7 +147,7 @@ describe("Inverse Battle", () => {
     const charmander = game.scene.getEnemyPokemon()!;
     charmander.addTag(BattlerTagType.ALWAYS_GET_HIT, 99);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WILL_O_WISP));
+    game.move.select(getMovePosition(game.scene, 0, Moves.WILL_O_WISP));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -164,7 +164,7 @@ describe("Inverse Battle", () => {
 
     const pikachu = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.NUZZLE));
+    game.move.select(getMovePosition(game.scene, 0, Moves.NUZZLE));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -183,7 +183,7 @@ describe("Inverse Battle", () => {
 
     sandshrew.addTag(BattlerTagType.ALWAYS_GET_HIT, 99);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
+    game.move.select(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -199,7 +199,7 @@ describe("Inverse Battle", () => {
 
     await game.startBattle(undefined, false);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.THUNDERBOLT));
+    game.move.select(getMovePosition(game.scene, 0, Moves.THUNDERBOLT));
 
     await game.phaseInterceptor.to(MoveEndPhase);
   });
@@ -216,7 +216,7 @@ describe("Inverse Battle", () => {
 
     const porygon = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CONVERSION_2));
+    game.move.select(getMovePosition(game.scene, 0, Moves.CONVERSION_2));
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
