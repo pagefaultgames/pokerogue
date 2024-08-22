@@ -5,7 +5,6 @@
   "Locked": {
     "name": "Locked"
   },
-
   "MoneyAchv": {
     "description": "Accumulate a total of ₽{{moneyAmount}}"
   },
@@ -21,7 +20,6 @@
   "10M_MONEY": {
     "name": "One Percenter"
   },
-
   "DamageAchv": {
     "description": "Inflict {{damageAmount}} damage in one hit"
   },
@@ -37,7 +35,6 @@
   "10000_DMG": {
     "name": "One Punch Man"
   },
-
   "HealAchv": {
     "description": "Heal {{healAmount}} {{HP}} at once with a move, ability, or held item"
   },
@@ -53,7 +50,6 @@
   "10000_HEAL": {
     "name": "Recovery Master"
   },
-
   "LevelAchv": {
     "description": "Level up a Pokémon to Lv{{level}}"
   },
@@ -66,7 +62,6 @@
   "LV_1000": {
     "name": "To Go Even Further Beyond"
   },
-
   "RibbonAchv": {
     "description": "Accumulate a total of {{ribbonAmount}} Ribbons"
   },
@@ -85,7 +80,6 @@
   "100_RIBBONS": {
     "name": "Master League Champion"
   },
-
   "TRANSFER_MAX_BATTLE_STAT": {
     "name": "Teamwork",
     "description": "Baton pass to another party member with at least one stat maxed out"
@@ -170,7 +164,6 @@
     "name": "Bring Your Child To Work Day",
     "description": "Beat the game in Classic Mode with at least one unevolved party member."
   },
-
   "MONO_GEN_ONE": {
     "name": "The Original Rival",
     "description": "Complete the generation one only challenge."
@@ -207,7 +200,6 @@
     "name": "She was going easy on you",
     "description": "Complete the generation nine only challenge."
   },
-
   "MonoType": {
     "description": "Complete the {{type}} monotype challenge."
   },

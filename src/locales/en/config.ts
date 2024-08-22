@@ -4,7 +4,8 @@ import ability from "./ability.json";
 import abilityTriggers from "./ability-trigger.json";
 import arenaFlyout from "./arena-flyout.json";
 import arenaTag from "./arena-tag.json";
-import achv from "./achv.json";
+import achvM from "./achv-m.json";
+import achvF from "./achv-f.json";
 import battle from "./battle.json";
 import battleScene from "./battle-scene.json";
 import battleInfo from "./battle-info.json";
@@ -70,8 +71,8 @@ export const enConfig = {
   challenges,
   commandUiHandler,
   common,
-  PGMachv: achv,
-  PGFachv: achv,
+  PGMachv: achvM,
+  PGFachv: achvF,
   PGMdialogue: dialogue,
   PGFdialogue: dialogue,
   PGMbattleSpecDialogue: dialogueEndboss,
