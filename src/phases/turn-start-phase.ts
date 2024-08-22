@@ -28,7 +28,7 @@ export class TurnStartPhase extends FieldPhase {
   /**
    * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
    * It also checks for Trick Room and reverses the array if it is present.
-   * @returns {@linkcode BattlerIndex[]}
+   * @returns {@linkcode BattlerIndex[]} the battle indices of all pokemon on the field ordered by speed
    */
   getSpeedOrder(): BattlerIndex[] {
     const playerField = this.scene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
@@ -97,18 +97,18 @@ export class TurnStartPhase extends FieldPhase {
           return -1;
         }
       } else if (aCommand?.command === Command.FIGHT) {
-        const aMove = allMoves[aCommand.move!.move];//TODO: is the bang correct here?
-        const bMove = allMoves[bCommand!.move!.move];//TODO: is the bang correct here?
+        const aMove = allMoves[aCommand.move!.move];
+        const bMove = allMoves[bCommand!.move!.move];
 
         // The game now considers priority and applies the relevant move and ability attributes
         const aPriority = new Utils.IntegerHolder(aMove.priority);
         const bPriority = new Utils.IntegerHolder(bMove.priority);
 
-        applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority); //TODO: is the bang correct here?
-        applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority); //TODO: is the bang correct here?
+        applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority);
+        applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority);
 
-        applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, false, aMove, aPriority); //TODO: is the bang correct here?
-        applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, false, bMove, bPriority); //TODO: is the bang correct here?
+        applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, false, aMove, aPriority);
+        applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, false, bMove, bPriority);
 
         // The game now checks for differences in priority levels.
         // If the moves share the same original priority bracket, it can check for differences in battlerBypassSpeed and return the result.

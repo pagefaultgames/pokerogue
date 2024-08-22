@@ -76,30 +76,24 @@ describe("Battle order", () => {
       Species.BLASTOISE,
     ]);
 
-    const playerParty = game.scene.getParty();
-    const playerPokemon1 = playerParty[0];
-    const playerPokemon2 = playerParty[1];
-    const enemyPokemon1 = game.scene.currentBattle.enemyParty[0];
-    const enemyPokemon2 = game.scene.currentBattle.enemyParty[1];
-    playerPokemon1.stats[Stat.SPD] = 50;
-    playerPokemon2.stats[Stat.SPD] = 50;
-    enemyPokemon1.stats[Stat.SPD] = 150;
-    enemyPokemon2.stats[Stat.SPD] = 150;
+    const playerPokemon = game.scene.getPlayerField();
+    const enemyPokemon = game.scene.getEnemyField();
+
+    playerPokemon.forEach(p => p.stats[Stat.SPD] = 50);
+    enemyPokemon.forEach(p => p.stats[Stat.SPD] = 150);
+    const playerIndices = playerPokemon.map(p => p?.getBattlerIndex());
+    const enemyIndices = enemyPokemon.map(p => p?.getBattlerIndex());
 
     game.move.select(Moves.TACKLE);
     game.move.select(Moves.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
 
-    const pp1Index = playerPokemon1?.getBattlerIndex();
-    const pp2Index = playerPokemon2?.getBattlerIndex();
-    const ep1Index = enemyPokemon1?.getBattlerIndex();
-    const ep2Index = enemyPokemon2?.getBattlerIndex();
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
-    expect(order.slice(0,2).includes(ep1Index)).toBe(true);
-    expect(order.slice(0,2).includes(ep2Index)).toBe(true);
-    expect(order.slice(2,4).includes(pp1Index)).toBe(true);
-    expect(order.slice(2,4).includes(pp2Index)).toBe(true);
+    expect(order.slice(0,2).includes(enemyIndices[0])).toBe(true);
+    expect(order.slice(0,2).includes(enemyIndices[1])).toBe(true);
+    expect(order.slice(2,4).includes(playerIndices[0])).toBe(true);
+    expect(order.slice(2,4).includes(playerIndices[1])).toBe(true);
   }, 20000);
 
   it("double - speed tie except 1 - 100/100 vs 100/150", async () => {
@@ -108,30 +102,25 @@ describe("Battle order", () => {
       Species.BULBASAUR,
       Species.BLASTOISE,
     ]);
-    const playerParty = game.scene.getParty();
-    const playerPokemon1 = playerParty[0];
-    const playerPokemon2 = playerParty[1];
-    const enemyPokemon1 = game.scene.currentBattle.enemyParty[0];
-    const enemyPokemon2 = game.scene.currentBattle.enemyParty[1];
-    playerPokemon1.stats[Stat.SPD] = 100;
-    playerPokemon2.stats[Stat.SPD] = 100;
-    enemyPokemon1.stats[Stat.SPD] = 100;
-    enemyPokemon2.stats[Stat.SPD] = 150;
+
+    const playerPokemon = game.scene.getPlayerField();
+    const enemyPokemon = game.scene.getEnemyField();
+    playerPokemon.forEach(p => p.stats[Stat.SPD] = 100);
+    enemyPokemon[0].stats[Stat.SPD] = 100;
+    enemyPokemon[1].stats[Stat.SPD] = 150;
+    const playerIndices = playerPokemon.map(p => p?.getBattlerIndex());
+    const enemyIndices = enemyPokemon.map(p => p?.getBattlerIndex());
 
     game.move.select(Moves.TACKLE);
     game.move.select(Moves.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
 
-    const pp1Index = playerPokemon1?.getBattlerIndex();
-    const pp2Index = playerPokemon2?.getBattlerIndex();
-    const ep1Index = enemyPokemon1?.getBattlerIndex();
-    const ep2Index = enemyPokemon2?.getBattlerIndex();
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
-    expect(order[0]).toBe(ep2Index);
-    expect(order.slice(1,4).includes(ep1Index)).toBe(true);
-    expect(order.slice(1,4).includes(pp2Index)).toBe(true);
-    expect(order.slice(1,4).includes(pp1Index)).toBe(true);
+    expect(order[0]).toBe(enemyIndices[1]);
+    expect(order.slice(1,4).includes(enemyIndices[0])).toBe(true);
+    expect(order.slice(1,4).includes(playerIndices[0])).toBe(true);
+    expect(order.slice(1,4).includes(playerIndices[1])).toBe(true);
   }, 20000);
 
   it("double - speed tie 100/150 vs 100/150", async () => {
@@ -140,29 +129,25 @@ describe("Battle order", () => {
       Species.BULBASAUR,
       Species.BLASTOISE,
     ]);
-    const playerParty = game.scene.getParty();
-    const playerPokemon1 = playerParty[0];
-    const playerPokemon2 = playerParty[1];
-    const enemyPokemon1 = game.scene.currentBattle.enemyParty[0];
-    const enemyPokemon2 = game.scene.currentBattle.enemyParty[1];
-    playerPokemon1.stats[Stat.SPD] = 100;
-    playerPokemon2.stats[Stat.SPD] = 150;
-    enemyPokemon1.stats[Stat.SPD] = 100;
-    enemyPokemon2.stats[Stat.SPD] = 150;
+
+    const playerPokemon = game.scene.getPlayerField();
+    const enemyPokemon = game.scene.getEnemyField();
+    playerPokemon[0].stats[Stat.SPD] = 100;
+    playerPokemon[1].stats[Stat.SPD] = 150;
+    enemyPokemon[0].stats[Stat.SPD] = 100;
+    enemyPokemon[1].stats[Stat.SPD] = 150;
+    const playerIndices = playerPokemon.map(p => p?.getBattlerIndex());
+    const enemyIndices = enemyPokemon.map(p => p?.getBattlerIndex());
 
     game.move.select(Moves.TACKLE);
     game.move.select(Moves.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
 
-    const pp1Index = playerPokemon1?.getBattlerIndex();
-    const pp2Index = playerPokemon2?.getBattlerIndex();
-    const ep1Index = enemyPokemon1?.getBattlerIndex();
-    const ep2Index = enemyPokemon2?.getBattlerIndex();
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
-    expect(order.slice(0,2).includes(pp2Index)).toBe(true);
-    expect(order.slice(0,2).includes(ep2Index)).toBe(true);
-    expect(order.slice(2,4).includes(ep1Index)).toBe(true);
-    expect(order.slice(2,4).includes(pp1Index)).toBe(true);
+    expect(order.slice(0,2).includes(playerIndices[1])).toBe(true);
+    expect(order.slice(0,2).includes(enemyIndices[1])).toBe(true);
+    expect(order.slice(2,4).includes(playerIndices[0])).toBe(true);
+    expect(order.slice(2,4).includes(enemyIndices[0])).toBe(true);
   }, 20000);
 });
