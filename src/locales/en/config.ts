@@ -37,7 +37,7 @@ import { pokemon } from "./pokemon";
 import pokemonForm from "./pokemon-form.json";
 import battlePokemonForm from "./pokemon-form-battle.json";
 import { pokemonInfo } from "./pokemon-info";
-import { pokemonInfoContainer } from "./pokemon-info-container";
+import pokemonInfoContainer from "./pokemon-info-container.json";
 import { pokemonSummary } from "./pokemon-summary";
 import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
