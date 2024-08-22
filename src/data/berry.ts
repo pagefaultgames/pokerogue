@@ -70,7 +70,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       if (pokemon.battleData) {
         pokemon.battleData.berriesEaten.push(berryType);
       }
-      const hpHealed = new Utils.NumberHolder(Math.floor(pokemon.getMaxHp() / 4));
+      const hpHealed = new Utils.NumberHolder(Utils.toDmgValue(pokemon.getMaxHp() / 4));
       applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, hpHealed);
       pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
         hpHealed.value, i18next.t("battle:hpHealBerry", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), berryName: getBerryName(berryType) }), true));
