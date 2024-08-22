@@ -46,7 +46,7 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
-import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
+import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
 import { moveTriggers } from "./move-trigger";
 
 export const enConfig = {
