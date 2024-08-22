@@ -25,6 +25,11 @@ export class TurnStartPhase extends FieldPhase {
     super(scene);
   }
 
+  /**
+   * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
+   * It also checks for Trick Room and reverses the array if it is present.
+   * @return {@linkcode BattlerIndex[]}
+   */
   getSpeedOrder(): BattlerIndex[] {
     const playerField = this.scene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
     const enemyField = this.scene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
@@ -55,6 +60,11 @@ export class TurnStartPhase extends FieldPhase {
     return orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : BattlerIndex.PLAYER));
   }
 
+  /**
+   * This takes the result of getSpeedOrder and applies priority / bypass speed attributes to it.
+   * This also considers the priority levels of various commands and changes the result of getSpeedOrder based on such.
+   * @return {@linkcode BattlerIndex[]} this determines the timeline of the current turn
+   */
   getCommandOrder(): BattlerIndex[] {
     let moveOrder = this.getSpeedOrder();
     // The creation of the battlerBypassSpeed object contains checks for the ability Quick Draw and the held item Quick Claw
