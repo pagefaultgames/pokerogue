@@ -154,7 +154,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       this.runsContainer.add(entry);
       this.runs.push(entry);
     }
-    if (this.cursorObj) {
+    if (this.cursorObj && timestamps.length > 0) {
       this.runsContainer.bringToTop(this.cursorObj);
     }
   }
@@ -163,11 +163,11 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 308, 56, 6, 6, 6, 6);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 46, 6, 6, 6, 6);
       this.cursorObj.setOrigin(0, 0);
       this.runsContainer.add(this.cursorObj);
     }
-    this.cursorObj.setPosition(-2, -2 + (cursor + this.scrollCursor) * 56);
+    this.cursorObj.setPosition(4, 4 + (cursor + this.scrollCursor) * 56);
     return changed;
   }
 
