@@ -28,7 +28,7 @@ import growth from "./growth.json";
 import menu from "./menu.json";
 import menuUiHandler from "./menu-ui-handler.json";
 import { modifier } from "./modifier";
-import { modifierType } from "./modifier-type";
+import modifierType from "./modifier-type.json";
 import { move } from "./move";
 import { nature } from "./nature";
 import { partyUiHandler } from "./party-ui-handler";
