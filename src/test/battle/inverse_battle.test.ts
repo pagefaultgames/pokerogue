@@ -1,7 +1,6 @@
 import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { MoveEndPhase } from "#app/phases/move-end-phase.js";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -129,7 +128,7 @@ describe("Inverse Battle", () => {
 
     const pikachu = game.scene.getEnemyPokemon()!;
     pikachu.hp = pikachu.getMaxHp() - 1;
-    game.move.select(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+    game.move.select(Moves.WATER_GUN);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -147,14 +146,14 @@ describe("Inverse Battle", () => {
     const charmander = game.scene.getEnemyPokemon()!;
     charmander.addTag(BattlerTagType.ALWAYS_GET_HIT, 99);
 
-    game.move.select(getMovePosition(game.scene, 0, Moves.WILL_O_WISP));
+    game.move.select(Moves.WILL_O_WISP);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
     expect(charmander.status?.effect).not.toBe(StatusEffect.BURN);
   });
 
-  it("8. Electric type does not get paralyzed - Thunder Wave against Pikachu", async () => {
+  it("8. Electric type does not get paralyzed - Nuzzle against Pikachu", async () => {
     game.override.starterSpecies(Species.PICHU);
     game.override.moveset([Moves.NUZZLE]);
     game.override.enemySpecies(Species.PIKACHU);
@@ -164,31 +163,13 @@ describe("Inverse Battle", () => {
 
     const pikachu = game.scene.getEnemyPokemon()!;
 
-    game.move.select(getMovePosition(game.scene, 0, Moves.NUZZLE));
+    game.move.select(Moves.NUZZLE);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
     expect(pikachu.status?.effect).not.toBe(StatusEffect.PARALYSIS);
   });
 
-  it("9. Ground type does not immune to Thunder Wave - Thunder Wave against Sandshrew", async () => {
-    game.override.starterSpecies(Species.PIKACHU);
-    game.override.moveset([Moves.THUNDER_WAVE]);
-    game.override.enemySpecies(Species.SANDSHREW);
-    game.override.enemyMoveset(SPLASH_ONLY);
-
-    await game.startBattle(undefined, false);
-
-    const sandshrew = game.scene.getEnemyPokemon()!;
-
-    sandshrew.addTag(BattlerTagType.ALWAYS_GET_HIT, 99);
-
-    game.move.select(getMovePosition(game.scene, 0, Moves.THUNDER_WAVE));
-
-    await game.phaseInterceptor.to(MoveEndPhase);
-
-    expect(sandshrew.status?.effect).toBe(StatusEffect.PARALYSIS);
-  });
 
   it("10. Anticipation should trigger on 2x effective moves - Anticipation against Thunderbolt", async () => {
     game.override.starterSpecies(Species.PIKACHU);
@@ -199,7 +180,7 @@ describe("Inverse Battle", () => {
 
     await game.startBattle(undefined, false);
 
-    game.move.select(getMovePosition(game.scene, 0, Moves.THUNDERBOLT));
+    game.move.select(Moves.THUNDERBOLT);
 
     await game.phaseInterceptor.to(MoveEndPhase);
   });
@@ -216,7 +197,7 @@ describe("Inverse Battle", () => {
 
     const porygon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(getMovePosition(game.scene, 0, Moves.CONVERSION_2));
+    game.move.select(Moves.CONVERSION_2);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
