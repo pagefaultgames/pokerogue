@@ -1,5 +1,5 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { MovePhase } from "#app/phases/move-phase";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { Abilities } from "#enums/abilities";
