@@ -15,16 +15,10 @@ import bgmName from "./bgm-name.json";
 import biome from "./biome.json";
 import challenges from "./challenges.json";
 import commandUiHandler from "./command-ui-handler.json";
-import {
-  PGFbattleSpecDialogue,
-  PGFdialogue,
-  PGFdoubleBattleDialogue,
-  PGFmiscDialogue,
-  PGMbattleSpecDialogue,
-  PGMdialogue,
-  PGMdoubleBattleDialogue,
-  PGMmiscDialogue,
-} from "./dialogue";
+import dialogue from "./dialogue.json";
+import dialogueEndboss from "./dialogue-endboss.json";
+import dialogueMisc from "./dialogue-misc.json";
+import dialogueDoubleBattle from "./dialogues-double-battle.json";
 import { egg } from "./egg";
 import { fightUiHandler } from "./fight-ui-handler";
 import { filterBar } from "./filter-bar";
@@ -74,14 +68,14 @@ export const enConfig = {
   common,
   PGMachv: achv,
   PGFachv: achv,
-  PGMdialogue,
-  PGFdialogue,
-  PGMbattleSpecDialogue,
-  PGFbattleSpecDialogue,
-  PGMmiscDialogue,
-  PGFmiscDialogue,
-  PGMdoubleBattleDialogue,
-  PGFdoubleBattleDialogue,
+  PGMdialogue: dialogue,
+  PGFdialogue: dialogue,
+  PGMbattleSpecDialogue: dialogueEndboss,
+  PGFbattleSpecDialogue: dialogueEndboss,
+  PGMmiscDialogue: dialogueMisc,
+  PGFmiscDialogue: dialogueMisc,
+  PGMdoubleBattleDialogue: dialogueDoubleBattle,
+  PGFdoubleBattleDialogue: dialogueDoubleBattle,
   egg,
   fightUiHandler,
   filterBar,
