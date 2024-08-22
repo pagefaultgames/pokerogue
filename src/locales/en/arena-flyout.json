@@ -1,11 +1,9 @@
 {
-  // Title
   "activeBattleEffects": "Active Battle Effects",
   "player": "Player",
   "neutral": "Neutral",
   "enemy": "Enemy",
 
-  // WeatherType
   "sunny": "Sunny",
   "rain": "Rain",
   "sandstorm": "Sandstorm",
@@ -16,13 +14,11 @@
   "harshSun": "Harsh Sun",
   "strongWinds": "Strong Winds",
 
-  // TerrainType
   "misty": "Misty Terrain",
   "electric": "Electric Terrain",
   "grassy": "Grassy Terrain",
   "psychic": "Psychic Terrain",
 
-  // ArenaTagType
   "mudSport": "Mud Sport",
   "waterSport": "Water Sport",
   "spikes": "Spikes",
