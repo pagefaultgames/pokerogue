@@ -1293,11 +1293,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
 
-      return getTypeDamageMultiplier(moveType, defType, this.scene.gameMode.isInverseBattleChallenge());
+      return getTypeDamageMultiplier(this.scene.gameMode, moveType, defType);
     }).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
 
     // Handle strong winds lowering effectiveness of types super effective against pure flying
-    if (!ignoreStrongWinds && arena.weather?.weatherType === WeatherType.STRONG_WINDS && !arena.weather.isEffectSuppressed(this.scene) && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(moveType, Type.FLYING, this.scene.gameMode.isInverseBattleChallenge()) === 2) {
+    if (!ignoreStrongWinds && arena.weather?.weatherType === WeatherType.STRONG_WINDS && !arena.weather.isEffectSuppressed(this.scene) && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(this.scene.gameMode, moveType, Type.FLYING) === 2) {
       multiplier /= 2;
       if (!simulated) {
         this.scene.queueMessage(i18next.t("weather:strongWindsEffectMessage"));

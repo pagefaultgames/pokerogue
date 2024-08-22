@@ -56,6 +56,11 @@ export enum ChallengeType {
   */
   FIXED_BATTLES,
   /**
+   * Modifies the effectiveness of Type matchups in battle
+   * @see {@link Challenge.applyTypeEffectiveness}
+  */
+  TYPE_EFFECTIVENESS,
+  /**
    * Modifies what level the AI pokemon are. UNIMPLEMENTED.
    */
   AI_LEVEL,
@@ -324,6 +329,15 @@ export abstract class Challenge {
    * @returns {@link boolean} Whether this function did anything.
    */
   applyFixedBattle(waveIndex: Number, battleConfig: FixedBattleConfig): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for TYPE_EFFECTIVENESS challenges. Derived classes should alter this.
+   * @param effectiveness {@link Utils.NumberHolder} The current effectiveness of the move.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyTypeEffectiveness(effectiveness: Utils.NumberHolder): boolean {
     return false;
   }
 
@@ -680,6 +694,18 @@ export class InverseBattleChallenge extends Challenge {
     return 0;
   }
 
+  applyTypeEffectiveness(effectiveness: Utils.NumberHolder): boolean {
+    if (effectiveness.value < 1) {
+      effectiveness.value = 2;
+      return true;
+    } else if (effectiveness.value > 1) {
+      effectiveness.value = 0.5;
+      return true;
+    }
+
+    return false;
+  }
+
   static loadChallenge(source: InverseBattleChallenge | any): InverseBattleChallenge {
     const newChallenge = new InverseBattleChallenge();
     newChallenge.value = source.value;
@@ -809,6 +835,14 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.FIXED_BATTLES, waveIndex: Number, battleConfig: FixedBattleConfig): boolean;
 /**
+ * Apply all challenges that modify type effectiveness.
+ * @param gameMode {@link GameMode} The current gameMode
+ * @param challengeType {@link ChallengeType} ChallengeType.TYPE_EFFECTIVENESS
+ * @param effectiveness {@link Utils.NumberHolder} The current effectiveness of the move.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.TYPE_EFFECTIVENESS, effectiveness: Utils.NumberHolder): boolean;
+/**
  * Apply all challenges that modify what level AI are.
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.AI_LEVEL
@@ -888,6 +922,9 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
         break;
       case ChallengeType.FIXED_BATTLES:
         ret ||= c.applyFixedBattle(args[0], args[1]);
+        break;
+      case ChallengeType.TYPE_EFFECTIVENESS:
+        ret ||= c.applyTypeEffectiveness(args[0]);
         break;
       case ChallengeType.AI_LEVEL:
         ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
