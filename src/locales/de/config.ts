@@ -45,7 +45,9 @@ import { saveSlotSelectUiHandler } from "./save-slot-select-ui-handler";
 import { splashMessages } from "./splash-messages";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { statusEffect } from "./status-effect";
-import { titles, trainerClasses, trainerNames } from "./trainers";
+import trainerTitles from "./trainer-titles.json";
+import trainerClasses from "./trainer-classes.json";
+import trainerNames from "./trainer-names.json";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
@@ -106,7 +108,7 @@ export const deConfig = {
   starterSelectUiHandler: starterSelectUiHandler,
   statusEffect: statusEffect,
   terrain: terrain,
-  titles: titles,
+  titles: trainerTitles,
   trainerClasses: trainerClasses,
   trainerNames: trainerNames,
   tutorial: tutorial,
