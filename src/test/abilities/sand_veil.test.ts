@@ -51,7 +51,7 @@ describe("Abilities - Sand Veil", () => {
 
       const sandVeilAttr = allAbilities[Abilities.SAND_VEIL].getAttrs(BattleStatMultiplierAbAttr)[0];
       vi.spyOn(sandVeilAttr, "applyBattleStat").mockImplementation(
-        (pokemon, passive, battleStat, statValue, args) => {
+        (pokemon, passive, simulated, battleStat, statValue, args) => {
           if (battleStat === BattleStat.EVA && game.scene.arena.weather?.weatherType === WeatherType.SANDSTORM) {
             statValue.value *= -1; // will make all attacks miss
             return true;

@@ -1,6 +1,7 @@
 import { Species } from "#app/enums/species";
 import { StatusEffect } from "#app/enums/status-effect";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";
@@ -71,6 +72,6 @@ describe("Abilities - Heatproof", () => {
     await game.toNextTurn();
 
     // Normal burn damage is /16
-    expect(enemy.hp).toBe(enemy.getMaxHp() - Math.floor(enemy.getMaxHp() / 32));
+    expect(enemy.hp).toBe(enemy.getMaxHp() - toDmgValue(enemy.getMaxHp() / 32));
   });
 });

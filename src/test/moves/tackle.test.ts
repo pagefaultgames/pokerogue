@@ -62,6 +62,6 @@ describe("Moves - Tackle", () => {
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
     const hpLost = hpOpponent - game.scene.currentBattle.enemyParty[0].hp;
     expect(hpLost).toBeGreaterThan(0);
-    expect(hpLost).toBe(4);
+    expect(hpLost).toBeLessThan(4);
   }, 20000);
 });

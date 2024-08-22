@@ -6,6 +6,7 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Mode } from "#app/ui/ui";
+import { toDmgValue } from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
@@ -46,7 +47,7 @@ describe("Abilities - Disguise", () => {
 
     const mimikyu = game.scene.getEnemyPokemon()!;
     const maxHp = mimikyu.getMaxHp();
-    const disguiseDamage = Math.floor(maxHp / 8);
+    const disguiseDamage = toDmgValue(maxHp / 8);
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
@@ -79,7 +80,7 @@ describe("Abilities - Disguise", () => {
 
     const mimikyu = game.scene.getEnemyPokemon()!;
     const maxHp = mimikyu.getMaxHp();
-    const disguiseDamage = Math.floor(maxHp / 8);
+    const disguiseDamage = toDmgValue(maxHp / 8);
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
@@ -120,7 +121,7 @@ describe("Abilities - Disguise", () => {
 
     const mimikyu = game.scene.getPlayerPokemon()!;
     const maxHp = mimikyu.getMaxHp();
-    const disguiseDamage = Math.floor(maxHp / 8);
+    const disguiseDamage = toDmgValue(maxHp / 8);
 
     game.move.select(Moves.SPLASH);
 

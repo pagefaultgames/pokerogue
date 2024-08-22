@@ -8,6 +8,7 @@ import { DamagePhase } from "#app/phases/damage-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -72,7 +73,7 @@ describe("Abilities - Parental Bond", () => {
       const secondStrikeDamage = enemyStartingHp - enemyPokemon.hp;
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
-      expect(secondStrikeDamage).toBe(Math.ceil(0.25 * firstStrikeDamage));
+      expect(secondStrikeDamage).toBe(toDmgValue(0.25 * firstStrikeDamage));
     }, TIMEOUT
   );
 
@@ -302,7 +303,7 @@ describe("Abilities - Parental Bond", () => {
       // This test will time out if the user faints
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(leadPokemon.hp).toBe(Math.floor(leadPokemon.getMaxHp() / 2));
+      expect(leadPokemon.hp).toBe(toDmgValue(leadPokemon.getMaxHp() / 2));
     }, TIMEOUT
   );
 
