@@ -63,7 +63,7 @@ export class TurnStartPhase extends FieldPhase {
   /**
    * This takes the result of getSpeedOrder and applies priority / bypass speed attributes to it.
    * This also considers the priority levels of various commands and changes the result of getSpeedOrder based on such.
-   * @return {@linkcode BattlerIndex[]} this determines the timeline of the current turn
+   * @returns {@linkcode BattlerIndex[]} the final sequence of commands for this turn
    */
   getCommandOrder(): BattlerIndex[] {
     let moveOrder = this.getSpeedOrder();
