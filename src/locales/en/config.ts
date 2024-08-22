@@ -10,7 +10,7 @@ import battleScene from "./battle-scene.json";
 import battleInfo from "./battle-info.json";
 import battleMessageUiHandler from "./battle-message-ui-handler.json";
 import battlerTags from "./battler-tags.json";
-import { berry } from "./berry";
+import berry from "./berry.json";
 import { bgmName } from "./bgm-name";
 import { biome } from "./biome";
 import { challenges } from "./challenges";
