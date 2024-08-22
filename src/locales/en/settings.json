@@ -1,6 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales.js";
-
-export const settings: SimpleTranslationEntries = {
+{
   "boy": "Boy",
   "girl": "Girl",
   "general": "General",
@@ -99,4 +97,4 @@ export const settings: SimpleTranslationEntries = {
   "showBgmBar": "Show Music Names",
   "moveTouchControls": "Move Touch Controls",
   "shopOverlayOpacity": "Shop Overlay Opacity"
-} as const;
+}
