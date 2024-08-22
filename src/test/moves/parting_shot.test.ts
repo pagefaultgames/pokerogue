@@ -1,16 +1,15 @@
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { BattleStat } from "#app/data/battle-stat";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { FaintPhase } from "#app/phases/faint-phase";
+import { MessagePhase } from "#app/phases/message-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, test } from "vitest";
 import GameManager from "../utils/gameManager";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { BattleStat } from "#app/data/battle-stat";
-import { BerryPhase } from "#app/phases/berry-phase.js";
-import { FaintPhase } from "#app/phases/faint-phase.js";
-import { MessagePhase } from "#app/phases/message-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -49,7 +48,7 @@ describe("Moves - Parting Shot", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
+      game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       const battleStatsOpponent = enemyPokemon.summonData.battleStats;
@@ -70,7 +69,7 @@ describe("Moves - Parting Shot", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
+      game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       const battleStatsOpponent = enemyPokemon.summonData.battleStats;
@@ -87,19 +86,19 @@ describe("Moves - Parting Shot", () => {
       await game.startBattle([Species.MEOWTH, Species.MEOWTH, Species.MEOWTH, Species.MURKROW, Species.ABRA]);
 
       // use Memento 3 times to debuff enemy
-      game.doAttack(getMovePosition(game.scene, 0, Moves.MEMENTO));
+      game.move.select(Moves.MEMENTO);
       await game.phaseInterceptor.to(FaintPhase);
       expect(game.scene.getParty()[0].isFainted()).toBe(true);
       game.doSelectPartyPokemon(1);
 
       await game.phaseInterceptor.to(TurnInitPhase, false);
-      game.doAttack(getMovePosition(game.scene, 0, Moves.MEMENTO));
+      game.move.select(Moves.MEMENTO);
       await game.phaseInterceptor.to(FaintPhase);
       expect(game.scene.getParty()[0].isFainted()).toBe(true);
       game.doSelectPartyPokemon(2);
 
       await game.phaseInterceptor.to(TurnInitPhase, false);
-      game.doAttack(getMovePosition(game.scene, 0, Moves.MEMENTO));
+      game.move.select(Moves.MEMENTO);
       await game.phaseInterceptor.to(FaintPhase);
       expect(game.scene.getParty()[0].isFainted()).toBe(true);
       game.doSelectPartyPokemon(3);
@@ -114,7 +113,7 @@ describe("Moves - Parting Shot", () => {
       expect(battleStatsOpponent[BattleStat.SPATK]).toBe(-6);
 
       // now parting shot should fail
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
+      game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(battleStatsOpponent[BattleStat.ATK]).toBe(-6);
@@ -135,7 +134,7 @@ describe("Moves - Parting Shot", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
+      game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       const battleStatsOpponent = enemyPokemon.summonData.battleStats;
@@ -156,7 +155,7 @@ describe("Moves - Parting Shot", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
+      game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       const battleStatsOpponent = enemyPokemon.summonData.battleStats;
@@ -174,7 +173,7 @@ describe("Moves - Parting Shot", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
+      game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       const battleStatsOpponent = enemyPokemon.summonData.battleStats;
@@ -188,7 +187,7 @@ describe("Moves - Parting Shot", () => {
     "Parting shot regularly not fail if no party available to switch - party fainted",
     async () => {
       await game.startBattle([Species.MURKROW, Species.MEOWTH]);
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
 
       // intentionally kill party pokemon, switch to second slot (now 1 party mon is fainted)
       await game.killPokemon(game.scene.getParty()[0]);
@@ -197,7 +196,7 @@ describe("Moves - Parting Shot", () => {
       game.doSelectPartyPokemon(1);
 
       await game.phaseInterceptor.to(TurnInitPhase, false);
-      game.doAttack(getMovePosition(game.scene, 0, Moves.PARTING_SHOT));
+      game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;

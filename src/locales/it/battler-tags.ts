@@ -1,14 +1,14 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const battlerTags: SimpleTranslationEntries = {
-  "trappedDesc": "trapping",
-  "flinchedDesc": "flinching",
-  "confusedDesc": "confusion",
-  "infatuatedDesc": "infatuation",
-  "seedDesc": "seeding",
-  "nightmareDesc": "nightmares",
-  "ingrainDesc": "roots",
-  "drowsyDesc": "drowsiness",
+  "trappedDesc": "intrappolando",
+  "flinchedDesc": "tentennando",
+  "confusedDesc": "confuso",
+  "infatuatedDesc": "infatuato",
+  "seedDesc": "pieno di semi",
+  "nightmareDesc": "incubi",
+  "ingrainDesc": "radici",
+  "drowsyDesc": "assonnato",
   "rechargingLapse": "{{pokemonNameWithAffix}} deve\nricaricarsi!",
   "trappedOnAdd": "{{pokemonNameWithAffix}} non può\npiù fuggire!",
   "trappedOnRemove": "{{pokemonNameWithAffix}} è stato liberato\nda {{moveName}}",
