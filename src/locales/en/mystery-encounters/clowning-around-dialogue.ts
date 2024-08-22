@@ -1,7 +1,7 @@
 export const clowningAroundDialogue = {
   intro: "It's...@d{64} a clown?",
   speaker: "Clown",
-  intro_dialogue: "Bumbling buffoon, brace for a brilliant battle!\nYou’ll be beaten by this brawling busker!",
+  intro_dialogue: "Bumbling buffoon, brace for a brilliant battle!\nYou'll be beaten by this brawling busker!",
   title: "Clowning Around",
   description: "Something is off about this encounter. The clown seems eager to goad you into a battle, but to what end?\n\nThe Blacephalon is especially strange, like it has @[TOOLTIP_TITLE]{weird types and ability.}",
   query: "What will you do?",
