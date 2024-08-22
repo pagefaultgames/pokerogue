@@ -88,13 +88,13 @@ describe("Arena - Gravity", () => {
     async () => {
       await game.startBattle([Species.RATTATA]);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+      game.move.select(Moves.GRAVITY);
 
       for (let i = 0; i < 4; i++) { // Gravity tag should be defined for 5 turns (1 turn before this loop, 4 turns from this loop)
         await game.toNextTurn();
         expect(game.scene.arena.getTagOnSide(ArenaTagType.GRAVITY, ArenaTagSide.PLAYER)).toBeDefined();
         expect(game.scene.arena.getTagOnSide(ArenaTagType.GRAVITY, ArenaTagSide.ENEMY)).toBeDefined();
-        game.doAttack(getMovePosition(game.scene, 0, Moves.GROWL));
+        game.move.select(Moves.GROWL);
       }
 
       await game.toNextTurn();
@@ -109,7 +109,7 @@ describe("Arena - Gravity", () => {
       await game.startBattle([Species.REGIELEKI]);
       const playerPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FLY));
+      game.move.select(Moves.FLY);
       // Finish Fly's MoveEffectPhase and check for BattlerTagType.FLYING
       await game.phaseInterceptor.to(MoveEffectPhase, true);
       expect(playerPokemon.getTag(BattlerTagType.FLYING)).toBeTruthy();
@@ -132,7 +132,7 @@ describe("Arena - Gravity", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       // Regieleki uses Gravity, Player uses High Jump Kick. High Jump Kick fails -> enemy pokemon maintains Max HP
-      game.doAttack(getMovePosition(game.scene, 0, Moves.HIGH_JUMP_KICK));
+      game.move.select(Moves.HIGH_JUMP_KICK);
       await game.toNextTurn();
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     });
@@ -149,16 +149,16 @@ describe("Arena - Gravity", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       // Attack with Earthquake against Levitate mon, doesn't affect them
-      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      game.move.select(Moves.EARTHQUAKE);
       await game.toNextTurn();
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+      game.move.select(Moves.GRAVITY);
       await game.toNextTurn();
       expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
 
       // Attack with Earthquake against Levitate mon, should affect them with Gravity on.
-      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      game.move.select(Moves.EARTHQUAKE);
       await game.toNextTurn();
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     });
@@ -175,7 +175,7 @@ describe("Arena - Gravity", () => {
       await game.startBattle([Species.REGIELEKI]);
       const playerPokemon = game.scene.getPlayerPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.GROWL));
+      game.move.select(Moves.GROWL);
       await game.toNextTurn();
       // playerPokemon should be affected by Earthquake
       expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
@@ -183,12 +183,12 @@ describe("Arena - Gravity", () => {
       playerPokemon.hp = playerPokemon.getMaxHp();
 
       // Set up Magnet Rise, playerPokemon should not be affected by Earthquake
-      game.doAttack(getMovePosition(game.scene, 0, Moves.MAGNET_RISE));
+      game.move.select(Moves.MAGNET_RISE);
       await game.toNextTurn();
       expect(playerPokemon.getTag(BattlerTagType.MAGNET_RISEN)).toBeTruthy();
       expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.GRAVITY));
+      game.move.select(Moves.GRAVITY);
       await game.toNextTurn();
       // Gravity should be active, Magnet Rise tag should be undefined, playerPokemon is affected by Earthquake
       expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
