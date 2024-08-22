@@ -26,6 +26,7 @@ import { PartTimerEncounter } from "#app/data/mystery-encounters/encounters/part
 import { DancingLessonsEncounter } from "#app/data/mystery-encounters/encounters/dancing-lessons-encounter";
 import { WeirdDreamEncounter } from "#app/data/mystery-encounters/encounters/weird-dream-encounter";
 import { TheWinstrateChallengeEncounter } from "#app/data/mystery-encounters/encounters/the-winstrate-challenge-encounter";
+import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encounters/teleporting-hijinks-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -169,7 +170,8 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.TRASH_TO_TREASURE,
   MysteryEncounterType.BERRIES_ABOUND,
   MysteryEncounterType.CLOWNING_AROUND,
-  MysteryEncounterType.WEIRD_DREAM
+  MysteryEncounterType.WEIRD_DREAM,
+  MysteryEncounterType.TELEPORTING_HIJINKS
 ];
 
 /**
@@ -273,6 +275,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.DANCING_LESSONS] = DancingLessonsEncounter;
   allMysteryEncounters[MysteryEncounterType.WEIRD_DREAM] = WeirdDreamEncounter;
   allMysteryEncounters[MysteryEncounterType.THE_WINSTRATE_CHALLENGE] = TheWinstrateChallengeEncounter;
+  allMysteryEncounters[MysteryEncounterType.TELEPORTING_HIJINKS] = TeleportingHijinksEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {

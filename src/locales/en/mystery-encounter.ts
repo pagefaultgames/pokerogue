@@ -23,6 +23,7 @@ import { partTimerDialogue } from "#app/locales/en/mystery-encounters/part-timer
 import { dancingLessonsDialogue } from "#app/locales/en/mystery-encounters/dancing-lessons-dialogue";
 import { weirdDreamDialogue } from "#app/locales/en/mystery-encounters/weird-dream-dialogue";
 import { theWinstrateChallengeDialogue } from "#app/locales/en/mystery-encounters/the-winstrate-challenge-dialogue";
+import { teleportingHijinksDialogue } from "#app/locales/en/mystery-encounters/teleporting-hijinks-dialogue";
 
 /**
  * Injection patterns that can be used:
@@ -73,5 +74,6 @@ export const mysteryEncounter = {
   partTimer: partTimerDialogue,
   dancingLessons: dancingLessonsDialogue,
   weirdDream: weirdDreamDialogue,
-  theWinstrateChallenge: theWinstrateChallengeDialogue
+  theWinstrateChallenge: theWinstrateChallengeDialogue,
+  teleportingHijinks: teleportingHijinksDialogue
 } as const;

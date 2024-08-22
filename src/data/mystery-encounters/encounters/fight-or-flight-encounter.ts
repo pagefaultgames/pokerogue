@@ -49,11 +49,13 @@ export const FightOrFlightEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter;
 
       // Calculate boss mon
-      const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, scene.currentBattle.waveIndex, 0, getPartyLuckValue(scene.getParty()), true);
-      const bossPokemon = new EnemyPokemon(scene, bossSpecies, scene.currentBattle.waveIndex, TrainerSlot.NONE, true);
+      const level = (scene.currentBattle.enemyLevels?.[0] ?? scene.currentBattle.waveIndex) + Math.max(Math.round((scene.currentBattle.waveIndex / 10)), 0);
+      const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
+      const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
       const config: EnemyPartyConfig = {
         levelAdditiveMultiplier: 1,
         pokemonConfigs: [{
+          level: level,
           species: bossSpecies,
           dataSource: new PokemonData(bossPokemon),
           isBoss: true
