@@ -21,7 +21,7 @@ import dialogueMisc from "./dialogue-misc.json";
 import dialogueDoubleBattle from "./dialogues-double-battle.json";
 import egg from "./egg.json";
 import fightUiHandler from "./fight-ui-handler.json";
-import { filterBar } from "./filter-bar";
+import filterBar from "./filter-bar.json";
 import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
 import { growth } from "./growth";

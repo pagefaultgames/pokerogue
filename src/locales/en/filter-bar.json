@@ -1,6 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-export const filterBar: SimpleTranslationEntries = {
+{
   "genFilter": "Gen",
   "typeFilter": "Type",
   "caughtFilter": "Caught",
@@ -36,5 +34,5 @@ export const filterBar: SimpleTranslationEntries = {
   "sortByCost": "Cost",
   "sortByCandies": "Candy Count",
   "sortByIVs": "IVs",
-  "sortByName": "Name",
-};
+  "sortByName": "Name"
+}
