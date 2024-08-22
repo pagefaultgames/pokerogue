@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "victoria.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 52,
+				"h": 54
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 26,
+						"w": 52,
+						"h": 54
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 52,
+						"h": 54
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:4dafeae3674d63b12cc4d8044f67b5a3:7834687d784c31169256927f419c7958:cf0eb39e0a3f2e42f23ca29747d73c40$"
+	}
+}

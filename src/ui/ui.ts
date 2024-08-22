@@ -47,6 +47,7 @@ import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
 import RenameFormUiHandler from "./rename-form-ui-handler";
+import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -85,7 +86,8 @@ export enum Mode {
   UNAVAILABLE,
   OUTDATED,
   CHALLENGE_SELECT,
-  RENAME_POKEMON
+  RENAME_POKEMON,
+  MYSTERY_ENCOUNTER
 }
 
 const transitionModes = [
@@ -185,6 +187,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new OutdatedModalUiHandler(scene),
       new GameChallengesUiHandler(scene),
       new RenameFormUiHandler(scene),
+      new MysteryEncounterUiHandler(scene)
     ];
   }
 

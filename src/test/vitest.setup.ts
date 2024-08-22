@@ -12,8 +12,9 @@ import { initSpecies } from "#app/data/pokemon-species";
 import { initAchievements } from "#app/system/achv";
 import { initVouchers } from "#app/system/voucher";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
-
-import { beforeAll, vi } from "vitest";
+import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
+import { beforeAll, beforeEach, vi } from "vitest";
+import Overrides from "#app/overrides";
 
 /** Mock the override import to always return default values, ignoring any custom overrides. */
 vi.mock("#app/overrides", async (importOriginal) => {
@@ -36,6 +37,7 @@ initSpecies();
 initMoves();
 initAbilities();
 initLoggedInUser();
+initMysteryEncounters();
 
 global.testFailed = false;
 
@@ -46,4 +48,9 @@ beforeAll(() => {
       add: () => {},
     }
   });
+});
+
+// Disables Mystery Encounters on all tests (can be overridden at test level)
+beforeEach( () => {
+  vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(0);
 });

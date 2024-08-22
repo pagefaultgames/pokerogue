@@ -11,7 +11,7 @@ export default class MockText implements MockGameObject {
   public list: MockGameObject[] = [];
   public style;
   public text = "";
-  private name?: string;
+  name: string;
   public color?: string;
 
   constructor(textureManager, x, y, content, styleOptions) {
@@ -22,6 +22,7 @@ export default class MockText implements MockGameObject {
     // Phaser.GameObjects.Text.prototype.updateText = () => null;
     // Phaser.Textures.TextureManager.prototype.addCanvas = () => {};
     UI.prototype.showText = this.showText;
+    UI.prototype.showDialogue = this.showDialogue;
     this.text = "";
     this.phaserText = "";
     // super(scene, x, y);
@@ -81,6 +82,13 @@ export default class MockText implements MockGameObject {
 
   showText(text, delay, callback, callbackDelay, prompt, promptDelay) {
     this.scene.messageWrapper.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    if (callback) {
+      callback();
+    }
+  }
+
+  showDialogue(text, name, delay, callback, callbackDelay, promptDelay) {
+    this.scene.messageWrapper.showDialogue(text, name, delay, callback, callbackDelay, promptDelay);
     if (callback) {
       callback();
     }
@@ -245,6 +253,14 @@ export default class MockText implements MockGameObject {
       x: 0,
       y: 0,
     };
+  }
+
+  disableInteractive() {
+    // Disables interaction with this Game Object.
+  }
+
+  clearTint() {
+    // Clears tint on this Game Object.
   }
 
   add(obj) {

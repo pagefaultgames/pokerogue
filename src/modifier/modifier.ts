@@ -20,7 +20,7 @@ import { VoucherType } from "../system/voucher";
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { Nature } from "#app/data/nature";
 import Overrides from "#app/overrides";
-import { ModifierType, modifierTypes } from "./modifier-type";
+import { GeneratorModifierOverride, ModifierType, ModifierTypeGenerator, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler";
 import { Species } from "#enums/species";
 import i18next from "i18next";
@@ -703,6 +703,147 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return pokemon.ivs[this.stat];
+  }
+}
+
+export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
+  private statModifier: integer;
+  readonly isTransferrable: boolean = false;
+
+  constructor(type: ModifierTypes.PokemonBaseStatTotalModifierType, pokemonId: integer, statModifier: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+    this.statModifier = statModifier;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonBaseStatTotalModifier;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonBaseStatTotalModifier(this.type as ModifierTypes.PokemonBaseStatTotalModifierType, this.pokemonId, this.statModifier, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.statModifier);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  }
+
+  apply(args: any[]): boolean {
+    // Modifies the passed in baseStats[] array
+    args[1].forEach((v, i) => {
+      const newVal = Math.floor(v + this.statModifier);
+      args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+    });
+
+    return true;
+  }
+
+  getScoreMultiplier(): number {
+    return 1.2;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 2;
+  }
+}
+
+export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
+  private statModifier: integer;
+  private stats: Stat[];
+  readonly isTransferrable: boolean = false;
+
+  constructor (type: ModifierType, pokemonId: integer, statModifier: integer, stats: Stat[], stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.statModifier = statModifier;
+    this.stats = stats;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonBaseStatFlatModifier;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonBaseStatFlatModifier(this.type, this.pokemonId, this.statModifier, this.stats, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.statModifier, this.stats);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  }
+
+  apply(args: any[]): boolean {
+    // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats
+    args[1].forEach((v, i) => {
+      if (this.stats.includes(i)) {
+        const newVal = Math.floor(v + this.statModifier);
+        args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+      }
+    });
+
+    return true;
+  }
+
+  getScoreMultiplier(): number {
+    return 1.1;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 1;
+  }
+}
+
+export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
+  readonly isTransferrable: boolean = false;
+
+  constructor (type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonIncrementingStatModifier;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonIncrementingStatModifier(this.type, this.pokemonId);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs();
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+  }
+
+  apply(args: any[]): boolean {
+    // Modifies the passed in stats[] array by +1 per stack for HP, +2 per stack for other stats
+    // If the Macho Brace is at max stacks (50), adds additional 5% to total HP and 10% to other stats
+    args[1].forEach((v, i) => {
+      const isHp = i === 0;
+      let mult = 1;
+      if (this.stackCount === this.getMaxHeldItemCount()) {
+        mult = isHp ? 1.05 : 1.1;
+      }
+      const newVal = Math.floor((v + this.stackCount * (isHp ? 1 : 2)) * mult);
+      args[1][i] = Math.min(Math.max(newVal, 1), 999999);
+    });
+
+    return true;
+  }
+
+  getScoreMultiplier(): number {
+    return 1.2;
+  }
+
+  getMaxHeldItemCount(pokemon?: Pokemon): integer {
+    return 50;
   }
 }
 
@@ -2225,6 +2366,28 @@ export class LockModifierTiersModifier extends PersistentModifier {
   }
 }
 
+export class RemoveHealShopModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof RemoveHealShopModifier;
+  }
+
+  clone(): RemoveHealShopModifier {
+    return new RemoveHealShopModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 1;
+  }
+}
+
 export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -2759,9 +2922,19 @@ export function overrideModifiers(scene: BattleScene, isPlayer: boolean = true):
   }
 
   modifiersOverride.forEach(item => {
-    const modifierFunc = modifierTypes[item.name];
-    const modifier = modifierFunc().withIdFromFunc(modifierFunc).newModifier() as PersistentModifier;
-    modifier.stackCount = item.count || 1;
+    const modifierName = item.name;
+    const qty = item.count || 1;
+    if (!modifierTypes.hasOwnProperty(modifierName)) {
+      return;
+    } // if the modifier does not exist, we skip it
+    let modifierType: ModifierType = modifierTypes[modifierName]();
+    if (modifierType instanceof ModifierTypeGenerator) {
+      const itemType = [(item as GeneratorModifierOverride)?.type] ?? null;
+      modifierType = (modifierType as ModifierTypeGenerator).generateType(scene.getParty(), itemType)!;
+    }
+    modifierType = modifierType.withIdFromFunc(modifierTypes[modifierName]);
+    const modifier: PersistentModifier = modifierType.newModifier(scene.getParty()[0]) as PersistentModifier;
+    modifier.stackCount = qty;
 
     if (isPlayer) {
       scene.addModifier(modifier, true, false, false, true);

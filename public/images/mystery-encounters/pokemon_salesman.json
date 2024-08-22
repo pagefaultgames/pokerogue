@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "pokemon_salesman.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 40,
+				"h": 80
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 21,
+						"y": 2,
+						"w": 38,
+						"h": 78
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 38,
+						"h": 78
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:dd57e3db21f3933c15be65bec261f4c1:05c7ef32252a5c2d3ad007b7e26fabd7:ae82f52e471ed81e2558206f05476cd7$"
+	}
+}

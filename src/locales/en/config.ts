@@ -36,6 +36,7 @@ import { menuUiHandler } from "./menu-ui-handler";
 import { modifier } from "./modifier";
 import { modifierType } from "./modifier-type";
 import { move } from "./move";
+import { mysteryEncounter } from "./mystery-encounter";
 import { nature } from "./nature";
 import { partyUiHandler } from "./party-ui-handler";
 import { pokeball } from "./pokeball";
@@ -93,6 +94,7 @@ export const enConfig = {
   modifier: modifier,
   modifierType: modifierType,
   move: move,
+  mysteryEncounter: mysteryEncounter,
   nature: nature,
   pokeball: pokeball,
   pokemon: pokemon,

@@ -19,6 +19,7 @@ export const titles: SimpleTranslationEntries = {
   "galactic_boss": "Team Galactic Boss",
   "plasma_boss": "Team Plasma Boss",
   "flare_boss": "Team Flare Boss",
+  "the_winstrates": "The Winstrates'",
 
   "rocket_admin": "Team Rocket Admin",
   "rocket_admin_female": "Team Rocket Admin",
@@ -307,6 +308,16 @@ export const trainerNames: SimpleTranslationEntries = {
   "cyrus": "Cyrus",
   "ghetsis": "Ghetsis",
   "lysandre": "Lysandre",
+  "buck": "Buck",
+  "cheryl": "Cheryl",
+  "marley": "Marley",
+  "mira": "Mira",
+  "riley": "Riley",
+  "victor": "Victor",
+  "victoria": "Victoria",
+  "vivi": "Vivi",
+  "vicky": "Vicky",
+  "vito": "Vito",
 
   // Double Names
   "blue_red_double": "Blue & Red",

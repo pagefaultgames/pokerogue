@@ -90,7 +90,12 @@ export enum PartyUiMode {
    * Indicates that the party UI is open to check the team.  This
    * type of selection can be cancelled.
    */
-  CHECK
+  CHECK,
+  /**
+   * Indicates that the party UI is open to select a party member for an arbitrary effect.
+   * This is generally used in for Mystery Encounter or special effects that require the player to select a Pokemon
+   */
+  SELECT
 }
 
 export enum PartyOption {
@@ -107,6 +112,7 @@ export enum PartyOption {
   UNSPLICE,
   RELEASE,
   RENAME,
+  SELECT,
   SCROLL_UP = 1000,
   SCROLL_DOWN = 1001,
   FORM_CHANGE_ITEM = 2000,
@@ -208,7 +214,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static NoEffectMessage = i18next.t("partyUiHandler:anyEffect");
 
-  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SPLICE, PartyOption.UNSPLICE, PartyOption.REVIVE, PartyOption.TRANSFER, PartyOption.UNPAUSE_EVOLUTION, PartyOption.PASS_BATON, PartyOption.RENAME];
+  private localizedOptions = [PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SPLICE, PartyOption.UNSPLICE, PartyOption.REVIVE, PartyOption.TRANSFER, PartyOption.UNPAUSE_EVOLUTION, PartyOption.PASS_BATON, PartyOption.RENAME, PartyOption.SELECT];
 
   constructor(scene: BattleScene) {
     super(scene, Mode.PARTY);
@@ -519,6 +525,10 @@ export default class PartyUiHandler extends MessageUiHandler {
           return true;
         } else if (option === PartyOption.CANCEL) {
           return this.processInput(Button.CANCEL);
+        } else if (option === PartyOption.SELECT) {
+          ui.playSelect();
+          // ui.setModeWithoutClear(Mode.SUMMARY, pokemon).then(() =>  this.clearOptions());
+          return true;
         }
       } else if (button === Button.CANCEL) {
         this.clearOptions();
@@ -867,6 +877,9 @@ export default class PartyUiHandler extends MessageUiHandler {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
           }
         }
+        break;
+      case PartyUiMode.SELECT:
+        this.options.push(PartyOption.SELECT);
         break;
       }
 
