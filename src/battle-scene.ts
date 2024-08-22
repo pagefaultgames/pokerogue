@@ -1799,6 +1799,7 @@ export default class BattleScene extends SceneBase {
         break;
       case "se":
       case "ui":
+      default:
         config["volume"] = this.masterVolume * this.seVolume;
         break;
       }
