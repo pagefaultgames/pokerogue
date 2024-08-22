@@ -456,15 +456,15 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "courtney": {
     "encounter": {
-      1: "...There's still more...work for me to do. ...I must...stop you. ...",
-      2: "... Well then...Deleting...",
-      3: "...Ha. ...Analyzing... ...Hah♪"
+      1: "Don't. Get. In. My. Way.",
+      2: "You... ...I want to...analyze. Ahahaha",
+      3: "... Well then...Deleting..."
     },
     "victory": {
       1: "Hah hah... Uhn...hah hah...",
       2: `As anticipated. Unanticipated. You. Target lock...completed.
          $Commencing...experiment. You. Forever. Aha... ♪`,
-      3: "...Again? That's unanticipated. ...I knew it. You...are interesting! ...Haha. ♪"
+      3: "That's unanticipated. ...I knew it. You...are interesting! ...Haha. ♪"
     },
   },
   "shelly": {
