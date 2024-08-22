@@ -1,5 +1,4 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { Abilities } from "#enums/abilities";
@@ -50,7 +49,7 @@ describe("Abilities - Mycelium Might", () => {
 
     game.move.select(Moves.BABY_DOLL_EYES);
 
-    await game.phaseInterceptor.run(EnemyCommandPhase);
+    await game.phaseInterceptor.to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
@@ -94,7 +93,7 @@ describe("Abilities - Mycelium Might", () => {
 
     game.move.select(Moves.QUICK_ATTACK);
 
-    await game.phaseInterceptor.run(EnemyCommandPhase);
+    await game.phaseInterceptor.run(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();

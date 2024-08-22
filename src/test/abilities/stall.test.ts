@@ -5,7 +5,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 
 describe("Abilities - Stall", () => {
   let phaserGame: Phaser.Game;
@@ -45,7 +44,7 @@ describe("Abilities - Stall", () => {
 
     game.move.select(Moves.QUICK_ATTACK);
 
-    await game.phaseInterceptor.run(EnemyCommandPhase);
+    await game.phaseInterceptor.run(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
@@ -63,7 +62,7 @@ describe("Abilities - Stall", () => {
 
     game.move.select(Moves.TACKLE);
 
-    await game.phaseInterceptor.run(EnemyCommandPhase);
+    await game.phaseInterceptor.run(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
@@ -82,7 +81,7 @@ describe("Abilities - Stall", () => {
 
     game.move.select(Moves.TACKLE);
 
-    await game.phaseInterceptor.run(EnemyCommandPhase);
+    await game.phaseInterceptor.run(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
