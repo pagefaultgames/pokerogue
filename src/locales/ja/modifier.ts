@@ -11,5 +11,4 @@ export const modifier: SimpleTranslationEntries = {
   "contactHeldItemTransferApply": "{{pokemonName}}の {{typeName}}が\n{{pokemonNameWithAffix}}の {{itemName}}を うばい取った！",
   "enemyTurnHealApply": "{{pokemonNameWithAffix}}は\n体力を　回復！",
   "bypassSpeedChanceApply": "{{pokemonName}}は　{{itemName}}で\n行動が　はやくなった！",
-  "PreventStatLowerChanceApply": "{{pokemonNameWithAffix}}'s {{itemName}} prevent its stats from being lowered!",
 } as const;

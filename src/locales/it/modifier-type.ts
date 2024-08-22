@@ -119,9 +119,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ContactHeldItemTransferChanceModifierType": {
       description: "Quando il possessore attacca, c'è una probabilità del {{chancePercent}}% che l'oggetto in possesso del nemico gli venga rubato.",
     },
-    "PreventStatLowerChanceModifierType": {
-      description: "Has a {{chancePercent}}% chance to prevent the holder's stats from being lowered by other Pokémon's moves or abilities.",
-    },
     "TurnHeldItemTransferModifierType": {
       description: "Ogni turno, il possessore acquisisce un oggetto posseduto dal nemico.",
     },
@@ -205,7 +202,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LOCK_CAPSULE": { name: "Capsula scrigno", description: "Permette di bloccare le rarità degli oggetti quando si fa un reroll (i costi variano in base alle rarità)." },
 
     "GRIP_CLAW": { name: "Presartigli" },
-    "CLEAR_AMULET": { name: "Clear Amulet" },
     "WIDE_LENS": { name: "Grandelente" },
 
     "MULTI_LENS": { name: "Multilente" },

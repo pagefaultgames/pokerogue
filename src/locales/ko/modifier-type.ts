@@ -119,9 +119,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ContactHeldItemTransferChanceModifierType": {
       description: "공격했을 때, {{chancePercent}}%의 확률로 상대의 도구를 도둑질한다.",
     },
-    "PreventStatLowerChanceModifierType": {
-      description: "Has a {{chancePercent}}% chance to prevent the holder's stats from being lowered by other Pokémon's moves or abilities.",
-    },
     "TurnHeldItemTransferModifierType": {
       description: "매 턴, 지닌 포켓몬은 상대로부터 도구를 하나 획득한다.",
     },
@@ -205,7 +202,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LOCK_CAPSULE": { name: "록캡슐", description: "받을 아이템을 갱신할 때 희귀도를 고정시킬 수 있게 된다." },
 
     "GRIP_CLAW": { name: "끈기갈고리손톱" },
-    "CLEAR_AMULET": { name: "Clear Amulet" },
     "WIDE_LENS": { name: "광각렌즈" },
 
     "MULTI_LENS": { name: "멀티렌즈" },

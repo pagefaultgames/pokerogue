@@ -119,9 +119,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ContactHeldItemTransferChanceModifierType": {
       description: "{{chancePercent}}% de chances de voler un objet de l’adversaire en l’attaquant.",
     },
-    "PreventStatLowerChanceModifierType": {
-      description: "Has a {{chancePercent}}% chance to prevent the holder's stats from being lowered by other Pokémon's moves or abilities.",
-    },
     "TurnHeldItemTransferModifierType": {
       description: "À chaque tour, son porteur obtient un objet de son adversaire.",
     },
@@ -205,7 +202,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LOCK_CAPSULE": { name: "Poké Écrin", description: "Permet de conserver la rareté des objets si vous relancez les objets proposés." },
 
     "GRIP_CLAW": { name: "Accro Griffe" },
-    "CLEAR_AMULET": { name: "Clear Amulet" },
     "WIDE_LENS": { name: "Loupe" },
 
     "MULTI_LENS": { name: "Lentille Multi" },

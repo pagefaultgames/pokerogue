@@ -119,9 +119,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ContactHeldItemTransferChanceModifierType": {
       description: "Quando atacar, tem {{chancePercent}}% de chance de roubar um item do oponente.",
     },
-    "PreventStatLowerChanceModifierType": {
-      description: "Has a {{chancePercent}}% chance to prevent the holder's stats from being lowered by other Pokémon's moves or abilities.",
-    },
     "TurnHeldItemTransferModifierType": {
       description: "Todo turno, o Pokémon ganha um item aleatório do oponente.",
     },
@@ -205,7 +202,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LOCK_CAPSULE": { name: "Cápsula de Travamento", description: "Permite que você trave raridades de itens ao rolar novamente." },
 
     "GRIP_CLAW": { name: "Garra-Aperto" },
-    "CLEAR_AMULET": { name: "Clear Amulet" },
     "WIDE_LENS": { name: "Lente Ampla" },
 
     "MULTI_LENS": { name: "Multi Lentes" },

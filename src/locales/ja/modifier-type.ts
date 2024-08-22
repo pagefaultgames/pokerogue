@@ -119,9 +119,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ContactHeldItemTransferChanceModifierType": {
       description: "こうげきするとき あいてがもっているアイテムを {{chancePercent}}パーセントのかくりつでぬすむ",
     },
-    "PreventStatLowerChanceModifierType": {
-      description: "Has a {{chancePercent}}% chance to prevent the holder's stats from being lowered by other Pokémon's moves or abilities.",
-    },
     "TurnHeldItemTransferModifierType": {
       description: "まいターン あいてからひとつのもちものをてにいれる",
     },
@@ -205,7 +202,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LOCK_CAPSULE": { name: "ロックカプセル", description: "リロールするときにアイテムのレアリティをロックできる" },
 
     "GRIP_CLAW": { name: "ねばりのかぎづめ" },
-    "CLEAR_AMULET": { name: "Clear Amulet" },
     "WIDE_LENS": { name: "こうかくレンズ" },
 
     "MULTI_LENS": { name: "マルチレンズ" },

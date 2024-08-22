@@ -68,7 +68,6 @@ export class StatChangePhase extends PokemonPhase {
     const levels = new Utils.IntegerHolder(this.levels);
 
     if (!this.ignoreAbilities) {
-      // e.g. Simple, Contrary
       applyAbAttrs(StatChangeMultiplierAbAttr, pokemon, null, levels);
     }
 

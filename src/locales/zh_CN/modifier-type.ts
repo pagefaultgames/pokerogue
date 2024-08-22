@@ -119,9 +119,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ContactHeldItemTransferChanceModifierType": {
       description: "攻击时{{chancePercent}}%概率\n偷取对手物品。",
     },
-    "PreventStatLowerChanceModifierType": {
-      description: "Has a {{chancePercent}}% chance to prevent the holder's stats from being lowered by other Pokémon's moves or abilities.",
-    },
     "TurnHeldItemTransferModifierType": {
       description: "持有者每回合从对手那里\n获得一个持有的物品。",
     },
@@ -205,7 +202,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LOCK_CAPSULE": { name: "上锁的容器", description: "允许在商店中刷新物品时，\n锁定物品的稀有度。" },
 
     "GRIP_CLAW": { name: "紧缠钩爪" },
-    "CLEAR_AMULET": { name: "Clear Amulet" },
     "WIDE_LENS": { name: "广角镜" },
 
     "MULTI_LENS": { name: "多重镜" },

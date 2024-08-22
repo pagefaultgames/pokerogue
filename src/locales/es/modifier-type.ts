@@ -119,9 +119,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "ContactHeldItemTransferChanceModifierType": {
       description: "Al atacar, hay un {{chancePercent}}% de posibilidades de que robes el objeto que tiene el enemigo.",
     },
-    "PreventStatLowerChanceModifierType": {
-      description: "Has a {{chancePercent}}% chance to prevent the holder's stats from being lowered by other Pokémon's moves or abilities.",
-    },
     "TurnHeldItemTransferModifierType": {
       description: "Cada turno, el portador roba un objeto del enemigo.",
     },
@@ -205,7 +202,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "LOCK_CAPSULE": { name: "Cápsula candado", description: "Le permite bloquear las rarezas de los objetos al cambiar de objetos." },
 
     "GRIP_CLAW": { name: "Garra Garfio" },
-    "CLEAR_AMULET": { name: "Clear Amulet" },
     "WIDE_LENS": { name: "Lupa" },
 
     "MULTI_LENS": { name: "Multilupa" },
