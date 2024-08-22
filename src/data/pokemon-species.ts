@@ -3323,7 +3323,7 @@ export function getStarterValueFriendshipCap(value: integer): integer {
 * @returns A list of starters with Pokerus
 */
 export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
-  const pokerusStarters : PokemonSpecies[] = [];
+  const pokerusStarters: PokemonSpecies[] = [];
   const date = new Date();
   const starterCount = 3; //for easy future adjustment!
   date.setUTCHours(0, 0, 0, 0);
