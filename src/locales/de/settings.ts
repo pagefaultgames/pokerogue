@@ -63,7 +63,7 @@ export const settings: SimpleTranslationEntries = {
   "typeHints": "Typhinweise",
   "masterVolume": "Gesamtlautstärke",
   "bgmVolume": "Hintergrundmusik",
-  "fieldVolume": "Field Volume",
+  "fieldVolume": "Rufe & Attacken",
   "seVolume": "Spezialeffekte",
   "musicPreference": "Musik Präferenz",
   "mixed": "Gemischt",
