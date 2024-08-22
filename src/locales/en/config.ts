@@ -13,7 +13,7 @@ import battlerTags from "./battler-tags.json";
 import berry from "./berry.json";
 import bgmName from "./bgm-name.json";
 import biome from "./biome.json";
-import { challenges } from "./challenges";
+import challenges from "./challenges.json";
 import { commandUiHandler } from "./command-ui-handler";
 import {
   PGFbattleSpecDialogue,
