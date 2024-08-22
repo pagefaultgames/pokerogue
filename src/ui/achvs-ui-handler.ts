@@ -331,7 +331,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
   updateAchvIcons(): void {
     this.headerText.text = this.achvsName;
     this.headerActionText.text = this.vouchersName;
-    const textPosition = this.this.headerBgX - this.headerActionText.displayWidth - 8;
+    const textPosition = this.headerBgX - this.headerActionText.displayWidth - 8;
     this.headerActionText.setX(textPosition);
     this.headerActionButton.setX(textPosition - this.headerActionButton.displayWidth - 4);
 
@@ -371,7 +371,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
   updateVoucherIcons(): void {
     this.headerText.text = this.vouchersName;
     this.headerActionText.text = this.achvsName;
-    const textPosition = this.this.headerBgX - this.headerActionText.displayWidth - 8;
+    const textPosition = this.headerBgX - this.headerActionText.displayWidth - 8;
     this.headerActionText.setX(textPosition);
     this.headerActionButton.setX(textPosition - this.headerActionButton.displayWidth - 4);
 
