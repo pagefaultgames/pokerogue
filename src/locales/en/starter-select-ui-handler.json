@@ -1,11 +1,4 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-/**
- * The menu namespace holds most miscellaneous text that isn't directly part of the game's
- * contents or directly related to Pokemon data. This includes menu navigation, settings,
- * account interactions, descriptive text, etc.
- */
-export const starterSelectUiHandler: SimpleTranslationEntries = {
+{
   "confirmStartTeam": "Begin with these Pokémon?",
   "confirmExit": "Do you want to exit?",
   "invalidParty": "This is not a valid starting party!",
@@ -49,4 +42,4 @@ export const starterSelectUiHandler: SimpleTranslationEntries = {
   "locked": "Locked",
   "disabled": "Disabled",
   "uncaught": "Uncaught"
-};
+}
