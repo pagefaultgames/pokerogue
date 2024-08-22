@@ -27,7 +27,7 @@ import gameStatsUiHandler from "./game-stats-ui-handler.json";
 import growth from "./growth.json";
 import menu from "./menu.json";
 import menuUiHandler from "./menu-ui-handler.json";
-import { modifier } from "./modifier";
+import modifier from "./modifier.json";
 import modifierType from "./modifier-type.json";
 import { move } from "./move";
 import { nature } from "./nature";
