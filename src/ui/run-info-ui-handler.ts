@@ -412,7 +412,7 @@ export default class RunInfoUiHandler extends UiHandler {
     const runInfoText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize : "50px", lineSpacing:3});
     const runTime = Utils.getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
-    const runMoney = Utils.formatMoney(this.runInfo.money);
+    const runMoney = Utils.formatMoney(this.runInfo.money, 1000);
     runInfoText.appendText(`[color=${getTextColor(TextStyle.MONEY)}]${i18next.t("battleScene:moneyOwned", {formattedMoney : runMoney})}[/color]`);
     runInfoText.setPosition(7, 70);
     runInfoTextContainer.add(runInfoText);
