@@ -42,7 +42,7 @@ import pokemonSummary from "./pokemon-summary.json";
 import saveSlotSelectUiHandler from "./save-slot-select-ui-handler.json";
 import splashMessages from "./splash-messages.json";
 import starterSelectUiHandler from "./starter-select-ui-handler.json";
-import { statusEffect } from "./status-effect";
+import statusEffect from "./status-effect.json";
 import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
