@@ -18,7 +18,7 @@ import commandUiHandler from "./command-ui-handler.json";
 import dialogue from "./dialogue.json";
 import dialogueEndboss from "./dialogue-endboss.json";
 import dialogueMisc from "./dialogue-misc.json";
-import dialogueDoubleBattle from "./dialogues-double-battle.json";
+import dialogueDoubleBattle from "./dialogue-double-battle.json";
 import egg from "./egg.json";
 import fightUiHandler from "./fight-ui-handler.json";
 import filterBar from "./filter-bar.json";
