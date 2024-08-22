@@ -41,7 +41,7 @@ describe("Moves - Rage", () => {
       .battleType("single")
       .ability(Abilities.UNNERVE)
       .starterSpecies(Species.BOLTUND)
-      .moveset([Moves.RAGE,Moves.SPLASH,Moves.SPORE,Moves.VITAL_THROW])
+      .moveset([Moves.RAGE, Moves.SPLASH, Moves.SPORE, Moves.VITAL_THROW])
       .enemyAbility(Abilities.NO_GUARD)
       .startingLevel(100)
       .enemyLevel(100)
