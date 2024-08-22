@@ -3299,11 +3299,25 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
   }
 }
 
+/**
+ * Attribute used for {@linkcode Abilities.MOODY}
+ */
 export class MoodyAbAttr extends PostTurnAbAttr {
   constructor() {
     super(true);
   }
-
+  /**
+   * Randomly increases one BattleStat by 2 stages and decreases a different BattleStat by 1 stage
+   * @param {Pokemon} pokemon Pokemon that has this ability
+   * @param {boolean} passive N/A
+   * @param {boolean} simulated true if applying in a simulated call.
+   * @param {any[]} args N/A
+   * @returns {boolean} true
+   *
+   * Any BattleStats at +6 or -6 are excluded from being increased or decreased, respectively
+   * If the pokemon already has all BattleStats raised to stage 6, it will only decrease one BattleStat by 1 stage
+   * If the pokemon already has all BattleStats lowered to stage -6, it will only increase one BattleStat by 2 stages
+   */
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const selectableStats = [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD];
     const increaseStatArray = selectableStats.filter(s => pokemon.summonData.battleStats[s] < 6);
