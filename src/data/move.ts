@@ -3785,6 +3785,30 @@ export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
 }
 
 /**
+ * Increases the power of Tera Blast if the user is Terastallized into Stellar type
+ * @extends VariablePowerAttr
+ */
+export class TeraBlastPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  /**
+   * @param user {@linkcode Pokemon} Pokemon using the move
+   * @param target {@linkcode Pokemon} N/A
+   * @param move {@linkcode Move} {@linkcode Move.TERA_BLAST}
+   * @param {any[]} args N/A
+   * @returns true or false
+   */
+    const power = args[0] as Utils.NumberHolder;
+    if (user.isTerastallized() && move.type === Type.STELLAR) {
+      //200 instead of 100 to reflect lack of stellar being 2x dmg on any type
+      power.value = 200;
+      return true;
+    }
+
+    return false;
+  }
+}
+
+/**
  * Change the move category to status when used on the ally
  * @extends VariableMoveCategoryAttr
  * @see {@linkcode apply}
@@ -4034,6 +4058,28 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
       Type.PSYCHIC, Type.ICE, Type.DRAGON, Type.DARK][iv_val];
 
     return true;
+  }
+}
+
+/**
+ * Changes the type of Tera Blast to match the user's tera type
+ * @extends VariableMoveTypeAttr
+ */
+export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  /**
+   * @param user {@linkcode Pokemon} the user's type is checked
+   * @param target {@linkcode Pokemon} N/A
+   * @param move {@linkcode Move} {@linkcode Move.TeraBlastTypeAttr}
+   * @param {any[]} args N/A
+   * @returns true or false
+   */
+    if (user.isTerastallized()) {
+      move.type = user.getTeraType(); //changes move type to tera type
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -8791,7 +8837,10 @@ export function initMoves() {
     End Unused */
     new AttackMove(Moves.TERA_BLAST, Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 9)
       .attr(TeraBlastCategoryAttr)
-      .unimplemented(),
+      .attr(TeraBlastTypeAttr)
+      .attr(TeraBlastPowerAttr)
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -1, true, (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR))
+      .partial(),
     new SelfStatusMove(Moves.SILK_TRAP, Type.BUG, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP),
     new AttackMove(Moves.AXE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 120, 90, 10, 30, 0, 9)
