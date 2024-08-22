@@ -213,7 +213,7 @@ describe("Moves - Rage", () => {
         .battleType("double")
         .enemySpecies(Species.SHUCKLE)
         .enemyMoveset(fullOf(Moves.TACKLE));
-      await game.startBattle([Species.BOLTUND,Species.BOLTUND]);
+      await game.startBattle([Species.BOLTUND, Species.BOLTUND]);
 
       const leadPokemon = game.scene.getParty()[0];
 
