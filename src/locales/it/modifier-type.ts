@@ -101,7 +101,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     "TmModifierTypeWithInfo": {
       name: "MT{{moveId}} - {{moveName}}",
-      description: "Insegna {{moveName}} a un Pokémon\n(Hold C or Shift for more info).",
+      description: "Insegna {{moveName}} a un Pokémon\n(Tieni premuto C o Shift per maggiori informazioni).",
     },
     "EvolutionItemModifierType": {
       description: "Fa evolvere determinate specie di Pokémon.",
@@ -153,7 +153,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
 
     "REVIVER_SEED": { name: "Revitalseme", description: "Il possessore recupera 1/2 di PS in caso di KO causato da un colpo diretto." },
 
-    "WHITE_HERB": { name: "Erbachiara", description: "An item to be held by a Pokémon. It will restore any lowered stat in battle." },
+    "WHITE_HERB": { name: "Erbachiara", description: "Strumento da dare a un Pokémon. Ripristina le statistiche ridotte in lotta." },
 
     "ETHER": { name: "Etere" },
     "MAX_ETHER": { name: "Etere max" },

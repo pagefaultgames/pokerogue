@@ -6,6 +6,7 @@ import { Species } from "#enums/species";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { toDmgValue } from "#app/utils";
 import { Mode } from "#app/ui/ui.js";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 import { MoveEndPhase } from "#app/phases/move-end-phase.js";
@@ -47,7 +48,7 @@ describe("Abilities - Disguise", () => {
 
     const mimikyu = game.scene.getEnemyPokemon()!;
     const maxHp = mimikyu.getMaxHp();
-    const disguiseDamage = Math.floor(maxHp / 8);
+    const disguiseDamage = toDmgValue(maxHp / 8);
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
@@ -80,7 +81,7 @@ describe("Abilities - Disguise", () => {
 
     const mimikyu = game.scene.getEnemyPokemon()!;
     const maxHp = mimikyu.getMaxHp();
-    const disguiseDamage = Math.floor(maxHp / 8);
+    const disguiseDamage = toDmgValue(maxHp / 8);
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
@@ -121,7 +122,7 @@ describe("Abilities - Disguise", () => {
 
     const mimikyu = game.scene.getPlayerPokemon()!;
     const maxHp = mimikyu.getMaxHp();
-    const disguiseDamage = Math.floor(maxHp / 8);
+    const disguiseDamage = toDmgValue(maxHp / 8);
 
     game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
 
