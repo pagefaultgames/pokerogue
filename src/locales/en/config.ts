@@ -17,7 +17,7 @@ import biome from "./biome.json";
 import challenges from "./challenges.json";
 import commandUiHandler from "./command-ui-handler.json";
 import dialogue from "./dialogue.json";
-import dialogueEndboss from "./dialogue-endboss.json";
+import dialogueEndboss from "./dialogue-final-boss.json";
 import dialogueMisc from "./dialogue-misc.json";
 import dialogueDoubleBattle from "./dialogue-double-battle.json";
 import egg from "./egg.json";
