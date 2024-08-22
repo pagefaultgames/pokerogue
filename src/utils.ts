@@ -217,7 +217,7 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
 
 // Abbreviations from 10^0 to 10^33
 const AbbreviationsLargeNumber: string[] = ["", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d"];
-const numberUnitsKorean: string[] = ["", "십", "백", "천"]
+const numberUnitsKorean: string[] = ["", "십", "백", "천"];
 const AbbreviationsLargeNumberKorean: string[] = ["", "만", "억", "조", "경", "해", "자", "양", "구"];
 const AbbreviationsLargeNumberJapanese: string[] = ["", "", ""];
 const AbbreviationsLargeNumberCnSimp: string[] = [];
@@ -260,7 +260,7 @@ export function formatLargeNumberAsian(count: number, threshold: number): string
   let decimalNumber = parseInt(ret.slice(0, digits)+trimmedNumber);
   let numberUnitPos = 0;
   while (decimalNumber > 0) {
-    let remainder = decimalNumber%10;
+    const remainder = decimalNumber%10;
     decimalNumber = Math.floor(decimalNumber/10);
     numberUnits.push(remainder+numberUnitsKorean[numberUnitPos]);
     numberUnitPos += 1;
@@ -270,7 +270,7 @@ export function formatLargeNumberAsian(count: number, threshold: number): string
       numberUnits.push(AbbreviationsLargeNumberKorean[largeNumberUnitPos]+" ");
     }
   }
-  return `${numberUnits.reverse().join('')}${suffix}`;
+  return `${numberUnits.reverse().join("")}${suffix}`;
 }
 
 export function formatFancyLargeNumber(number: number, rounded: number = 3): string {
