@@ -93,7 +93,7 @@ describe("Abilities - Mycelium Might", () => {
 
     game.move.select(Moves.QUICK_ATTACK);
 
-    await game.phaseInterceptor.run(TurnStartPhase, false);
+    await game.phaseInterceptor.to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
