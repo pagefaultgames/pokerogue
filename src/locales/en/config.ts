@@ -47,7 +47,7 @@ import trainerTitles from "./trainer-titles.json";
 import trainerClasses from "./trainer-classes.json";
 import trainerNames from "./trainer-names.json";
 import tutorial from "./tutorial.json";
-import { voucher } from "./voucher";
+import voucher from "./voucher.json";
 import { terrain, weather } from "./weather";
 import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
 import moveTriggers from "./move-trigger.json";
