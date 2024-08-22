@@ -20,7 +20,7 @@ import dialogueEndboss from "./dialogue-endboss.json";
 import dialogueMisc from "./dialogue-misc.json";
 import dialogueDoubleBattle from "./dialogues-double-battle.json";
 import egg from "./egg.json";
-import { fightUiHandler } from "./fight-ui-handler";
+import fightUiHandler from "./fight-ui-handler.json";
 import { filterBar } from "./filter-bar";
 import { gameMode } from "./game-mode";
 import { gameStatsUiHandler } from "./game-stats-ui-handler";
