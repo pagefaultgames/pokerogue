@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { Moves } from "#app/enums/moves";
-import { PlayerPokemon } from "#app/field/pokemon";
+import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { isNullOrUndefined } from "#app/utils";
 import { EncounterPokemonRequirement } from "../mystery-encounter-requirements";
 
@@ -37,7 +37,7 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
     this.excludeEggMoves = excludeEggMoves ?? false;
     this.includeFainted = includeFainted ?? false;
     this.minNumberOfPokemon = minNumberOfPokemon ?? 1;
-    this.invertQuery = invertQuery;
+    this.invertQuery = invertQuery ?? false;
   }
 
   override meetsRequirement(scene: BattleScene): boolean {
@@ -66,7 +66,7 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
   }
 
   override getDialogueToken(_scene: BattleScene, _pokemon?: PlayerPokemon): [string, string] {
-    return ["requiredMoves", this.requiredMoves.join(", ")];
+    return ["requiredMoves", this.requiredMoves.map(m => new PokemonMove(m).getName()).join(", ")];
   }
 
   private getPokemonLevelMoves(pkm: PlayerPokemon): Moves[] {

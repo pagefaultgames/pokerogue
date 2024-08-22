@@ -127,7 +127,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
         // -20 to all base stats of highest BST, +10 to all base stats of rest of party
         // Get highest BST mon
         const party = scene.getParty();
-        let highestBst: PlayerPokemon = null;
+        let highestBst: PlayerPokemon | null = null;
         let statTotal = 0;
         for (const pokemon of party) {
           if (!highestBst) {
@@ -157,7 +157,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
         }
 
         encounter.setDialogueToken("highBstPokemon", highestBst.getNameToRender());
-        await showEncounterText(scene, `${namespace}.option.1.selected_2`, null, true);
+        await showEncounterText(scene, `${namespace}.option.1.selected_2`, undefined, true);
 
         setEncounterRewards(scene, { fillRemaining: true });
         leaveEncounterWithoutBattle(scene, true);

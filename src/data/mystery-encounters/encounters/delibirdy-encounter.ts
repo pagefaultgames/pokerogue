@@ -47,8 +47,8 @@ export const DelibirdyEncounter: MysteryEncounter =
     ))
     .withIntroSpriteConfigs([
       {
-        spriteKey: null,
-        fileRoot: null,
+        spriteKey: "",
+        fileRoot: "",
         species: Species.DELIBIRD,
         hasShadow: true,
         repeat: true,
@@ -56,16 +56,16 @@ export const DelibirdyEncounter: MysteryEncounter =
         scale: 0.94
       },
       {
-        spriteKey: null,
-        fileRoot: null,
+        spriteKey: "",
+        fileRoot: "",
         species: Species.DELIBIRD,
         hasShadow: true,
         repeat: true,
         scale: 1.06
       },
       {
-        spriteKey: null,
-        fileRoot: null,
+        spriteKey: "",
+        fileRoot: "",
         species: Species.DELIBIRD,
         hasShadow: true,
         repeat: true,
@@ -116,7 +116,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             const shellBell = generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
             await applyModifierTypeToPlayerPokemon(scene, scene.getParty()[0], shellBell);
             scene.playSound("item_fanfare");
-            await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, true);
+            await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), undefined, true);
           } else {
             scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.ABILITY_CHARM));
           }
@@ -169,13 +169,13 @@ export const DelibirdyEncounter: MysteryEncounter =
             // If pokemon meets primary pokemon reqs, it can be selected
             const meetsReqs = encounter.options[1].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`);
+              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
             }
 
             return null;
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
+          return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter;
@@ -191,7 +191,7 @@ export const DelibirdyEncounter: MysteryEncounter =
               const shellBell = generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
               await applyModifierTypeToPlayerPokemon(scene, scene.getParty()[0], shellBell);
               scene.playSound("item_fanfare");
-              await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, true);
+              await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), undefined, true);
             } else {
               scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.CANDY_JAR));
             }
@@ -204,7 +204,7 @@ export const DelibirdyEncounter: MysteryEncounter =
               const shellBell = generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
               await applyModifierTypeToPlayerPokemon(scene, scene.getParty()[0], shellBell);
               scene.playSound("item_fanfare");
-              await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, true);
+              await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), undefined, true);
             } else {
               scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.HEALING_CHARM));
             }
@@ -264,13 +264,13 @@ export const DelibirdyEncounter: MysteryEncounter =
             // If pokemon meets primary pokemon reqs, it can be selected
             const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`);
+              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
             }
 
             return null;
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
+          return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter;
@@ -284,7 +284,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             const shellBell = generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
             await applyModifierTypeToPlayerPokemon(scene, scene.getParty()[0], shellBell);
             scene.playSound("item_fanfare");
-            await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, true);
+            await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: shellBell.name }), undefined, true);
           } else {
             scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.BERRY_POUCH));
           }

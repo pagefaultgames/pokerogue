@@ -14,7 +14,7 @@ export default class MockContainer implements MockGameObject {
   public frame;
   protected textureManager;
   public list: MockGameObject[] = [];
-  private name?: string;
+  name: string;
 
   constructor(textureManager: MockTextureManager, x, y) {
     this.x = x;

@@ -29,7 +29,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_POKEMON_SALESMAN)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
     .withSceneWaveRangeRequirement(10, 180)
-    .withSceneRequirement(new MoneyRequirement(null, MAX_POKEMON_PRICE_MULTIPLIER)) // Some costs may not be as significant, this is the max you'd pay
+    .withSceneRequirement(new MoneyRequirement(undefined, MAX_POKEMON_PRICE_MULTIPLIER)) // Some costs may not be as significant, this is the max you'd pay
     .withAutoHideIntroVisuals(false)
     .withIntroSpriteConfigs([
       {
@@ -66,10 +66,10 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         // If no HA mon found or you roll 1%, give shiny Magikarp
         species = getPokemonSpecies(Species.MAGIKARP);
         const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, null, true, null, null, null, null);
+        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, undefined, true);
       } else {
         const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, null, null, null, null, null, null);
+        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex);
       }
 
       const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(pokemon);
@@ -88,8 +88,8 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         // Always max price for shiny (flip HA back to normal), and add special messaging
         priceMultiplier = MAX_POKEMON_PRICE_MULTIPLIER;
         pokemon.abilityIndex = 0;
-        encounter.dialogue.encounterOptionsDialogue.description = `${namespace}.description_shiny`;
-        encounter.options[0].dialogue.buttonTooltip = `${namespace}.option.1.tooltip_shiny`;
+        encounter.dialogue.encounterOptionsDialogue!.description = `${namespace}.description_shiny`;
+        encounter.options[0].dialogue!.buttonTooltip = `${namespace}.option.1.tooltip_shiny`;
       }
       const price = scene.getWaveMoneyAmount(priceMultiplier);
       encounter.setDialogueToken("purchasePokemon", pokemon.getNameToRender());
@@ -107,7 +107,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
         .withHasDexProgress(true)
-        .withSceneMoneyRequirement(null, MAX_POKEMON_PRICE_MULTIPLIER) // Wave scaling money multiplier of 2
+        .withSceneMoneyRequirement(undefined, MAX_POKEMON_PRICE_MULTIPLIER) // Wave scaling money multiplier of 2
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,

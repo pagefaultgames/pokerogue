@@ -86,7 +86,7 @@ export class Egg {
 
   private _overrideHiddenAbility: boolean;
 
-  private _eventEggTypeDescriptor: string;
+  private _eventEggTypeDescriptor?: string;
 
   ////
   // #endregion
@@ -186,7 +186,7 @@ export class Egg {
       this.addEggToGameData(eggOptions.scene!); // TODO: is this bang correct?
     }
 
-    this._eventEggTypeDescriptor = eggOptions.eventEggTypeDescriptor ?? null;
+    this._eventEggTypeDescriptor = eggOptions?.eventEggTypeDescriptor;
   }
 
   ////

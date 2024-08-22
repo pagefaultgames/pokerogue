@@ -278,7 +278,7 @@ export function initMysteryEncounters() {
   extremeBiomeEncounters.forEach(encounter => {
     EXTREME_ENCOUNTER_BIOMES.forEach(biome => {
       const encountersForBiome = mysteryEncountersByBiome.get(biome);
-      if (!encountersForBiome.includes(encounter)) {
+      if (encountersForBiome && !encountersForBiome.includes(encounter)) {
         encountersForBiome.push(encounter);
       }
     });
@@ -287,7 +287,7 @@ export function initMysteryEncounters() {
   nonExtremeBiomeEncounters.forEach(encounter => {
     NON_EXTREME_ENCOUNTER_BIOMES.forEach(biome => {
       const encountersForBiome = mysteryEncountersByBiome.get(biome);
-      if (!encountersForBiome.includes(encounter)) {
+      if (encountersForBiome && !encountersForBiome.includes(encounter)) {
         encountersForBiome.push(encounter);
       }
     });
@@ -296,7 +296,7 @@ export function initMysteryEncounters() {
   humanTransitableBiomeEncounters.forEach(encounter => {
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
       const encountersForBiome = mysteryEncountersByBiome.get(biome);
-      if (!encountersForBiome.includes(encounter)) {
+      if (encountersForBiome && !encountersForBiome.includes(encounter)) {
         encountersForBiome.push(encounter);
       }
     });
@@ -305,7 +305,7 @@ export function initMysteryEncounters() {
   civilizationBiomeEncounters.forEach(encounter => {
     CIVILIZATION_ENCOUNTER_BIOMES.forEach(biome => {
       const encountersForBiome = mysteryEncountersByBiome.get(biome);
-      if (!encountersForBiome.includes(encounter)) {
+      if (encountersForBiome && !encountersForBiome.includes(encounter)) {
         encountersForBiome.push(encounter);
       }
     });

@@ -1,4 +1,4 @@
-import { BattlerIndex, BattleType } from "#app/battle";
+import Battle, { BattlerIndex, BattleType } from "#app/battle";
 import { biomeLinks, BiomePoolTier } from "#app/data/biomes";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
@@ -10,7 +10,7 @@ import { BattleEndPhase, EggLapsePhase, ExpPhase, GameOverPhase, MovePhase, Sele
 import { MysteryEncounterBattlePhase, MysteryEncounterBattleStartCleanupPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import PokemonData from "#app/system/pokemon-data";
 import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
+import { PartyOption, PartyUiMode, PokemonSelectFilter } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
 import { isNullOrUndefined } from "#app/utils";
@@ -101,29 +101,30 @@ export interface EnemyPartyConfig {
  * @param partyConfig - Can pass various customizable attributes for the enemy party, see EnemyPartyConfig
  */
 export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig: EnemyPartyConfig): Promise<void> {
-  const loaded = false;
-  const loadEnemyAssets = [];
+  const loaded: boolean = false;
+  const loadEnemyAssets: Promise<void>[] = [];
 
-  const battle = scene.currentBattle;
+  const battle: Battle = scene.currentBattle;
 
-  let doubleBattle = partyConfig?.doubleBattle;
+  let doubleBattle: boolean = partyConfig?.doubleBattle ?? false;
 
   // Trainer
   const trainerType = partyConfig?.trainerType;
-  let trainerConfig = partyConfig?.trainerConfig;
-  if (trainerType || trainerConfig) {
+  const partyTrainerConfig = partyConfig?.trainerConfig;
+  let trainerConfig: TrainerConfig;
+  if (!isNullOrUndefined(trainerType) || partyTrainerConfig) {
     scene.currentBattle.mysteryEncounter.encounterMode = MysteryEncounterMode.TRAINER_BATTLE;
     if (scene.currentBattle.trainer) {
       scene.currentBattle.trainer.setVisible(false);
       scene.currentBattle.trainer.destroy();
     }
 
-    trainerConfig = partyConfig?.trainerConfig ? partyConfig?.trainerConfig : trainerConfigs[trainerType];
+    trainerConfig = partyConfig?.trainerConfig ? partyConfig?.trainerConfig : trainerConfigs[trainerType!];
 
-    const doubleTrainer = trainerConfig.doubleOnly || (trainerConfig.hasDouble && partyConfig.doubleBattle);
+    const doubleTrainer = trainerConfig.doubleOnly || (trainerConfig.hasDouble && !!partyConfig.doubleBattle);
     doubleBattle = doubleTrainer;
     const trainerFemale = isNullOrUndefined(partyConfig.female) ? !!(Utils.randSeedInt(2)) : partyConfig.female;
-    const newTrainer = new Trainer(scene, trainerConfig.trainerType, doubleTrainer ? TrainerVariant.DOUBLE : trainerFemale ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT, null, null, null, trainerConfig);
+    const newTrainer = new Trainer(scene, trainerConfig.trainerType, doubleTrainer ? TrainerVariant.DOUBLE : trainerFemale ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT, undefined, undefined, undefined, trainerConfig);
     newTrainer.x += 300;
     newTrainer.setVisible(false);
     scene.field.add(newTrainer);
@@ -134,7 +135,8 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
   } else {
     // Wild
     scene.currentBattle.mysteryEncounter.encounterMode = MysteryEncounterMode.WILD_BATTLE;
-    battle.enemyLevels = new Array(partyConfig?.pokemonConfigs?.length > 0 ? partyConfig?.pokemonConfigs?.length : doubleBattle ? 2 : 1).fill(null).map(() => scene.currentBattle.getLevelForWave());
+    const numEnemies = partyConfig?.pokemonConfigs && partyConfig.pokemonConfigs.length > 0 ? partyConfig?.pokemonConfigs?.length : doubleBattle ? 2 : 1;
+    battle.enemyLevels = new Array(numEnemies).fill(null).map(() => scene.currentBattle.getLevelForWave());
   }
 
   scene.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
@@ -146,7 +148,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
   // This can be amplified or counteracted by setting levelAdditiveMultiplier in config
   // levelAdditiveMultiplier value of 0.5 will halve the modifier scaling, 2 will double it, etc.
   // Leaving null/undefined will disable level scaling
-  const mult = !isNullOrUndefined(partyConfig.levelAdditiveMultiplier) ? partyConfig.levelAdditiveMultiplier : 0;
+  const mult: number = !isNullOrUndefined(partyConfig.levelAdditiveMultiplier) ? partyConfig.levelAdditiveMultiplier! : 0;
   const additive = Math.max(Math.round((scene.currentBattle.waveIndex / 10) * mult), 0);
   battle.enemyLevels = battle.enemyLevels.map(level => level + additive);
 
@@ -155,10 +157,10 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     let dataSource;
     let isBoss = false;
     if (!loaded) {
-      if (trainerType || trainerConfig) {
+      if ((!isNullOrUndefined(trainerType) || trainerConfig) && battle.trainer) {
         // Allows overriding a trainer's pokemon to use specific species/data
-        if (e < partyConfig?.pokemonConfigs?.length) {
-          const config = partyConfig?.pokemonConfigs?.[e];
+        if (partyConfig?.pokemonConfigs && e < partyConfig.pokemonConfigs.length) {
+          const config = partyConfig.pokemonConfigs[e];
           level = config.level ? config.level : level;
           dataSource = config.dataSource;
           enemySpecies = config.species;
@@ -168,8 +170,8 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
           battle.enemyParty[e] = battle.trainer.genPartyMember(e);
         }
       } else {
-        if (e < partyConfig?.pokemonConfigs?.length) {
-          const config = partyConfig?.pokemonConfigs?.[e];
+        if (partyConfig?.pokemonConfigs && e < partyConfig.pokemonConfigs.length) {
+          const config = partyConfig.pokemonConfigs[e];
           level = config.level ? config.level : level;
           dataSource = config.dataSource;
           enemySpecies = config.species;
@@ -201,8 +203,8 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       scene.gameData.setPokemonSeen(enemyPokemon, true, !!(trainerType || trainerConfig));
     }
 
-    if (e < partyConfig?.pokemonConfigs?.length) {
-      const config = partyConfig?.pokemonConfigs?.[e];
+    if (partyConfig?.pokemonConfigs && e < partyConfig.pokemonConfigs.length) {
+      const config = partyConfig.pokemonConfigs[e];
 
       // Generate new id, reset status and HP in case using data source
       if (config.dataSource) {
@@ -211,24 +213,24 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
       // Set form
       if (!isNullOrUndefined(config.formIndex)) {
-        enemyPokemon.formIndex = config.formIndex;
+        enemyPokemon.formIndex = config.formIndex!;
       }
 
       // Set shiny
       if (!isNullOrUndefined(config.shiny)) {
-        enemyPokemon.shiny = config.shiny;
+        enemyPokemon.shiny = config.shiny!;
       }
 
       // Set custom mystery encounter data fields (such as sprite scale, custom abilities, types, etc.)
       if (!isNullOrUndefined(config.mysteryEncounterData)) {
-        enemyPokemon.mysteryEncounterData = config.mysteryEncounterData;
+        enemyPokemon.mysteryEncounterData = config.mysteryEncounterData!;
       }
 
       // Set Boss
       if (config.isBoss) {
-        let segments = !isNullOrUndefined(config.bossSegments) ? config.bossSegments : scene.getEncounterBossSegments(scene.currentBattle.waveIndex, level, enemySpecies, true);
+        let segments = !isNullOrUndefined(config.bossSegments) ? config.bossSegments! : scene.getEncounterBossSegments(scene.currentBattle.waveIndex, level, enemySpecies, true);
         if (!isNullOrUndefined(config.bossSegmentModifier)) {
-          segments += config.bossSegmentModifier;
+          segments += config.bossSegmentModifier!;
         }
         enemyPokemon.setBoss(true, segments);
       }
@@ -253,7 +255,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       if (statusEffects) {
         // Default to cureturn 3 for sleep
         const status = Array.isArray(statusEffects) ? statusEffects[0] : statusEffects;
-        const cureTurn = Array.isArray(statusEffects) ? statusEffects[1] : statusEffects === StatusEffect.SLEEP ? 3 : null;
+        const cureTurn = Array.isArray(statusEffects) ? statusEffects[1] : statusEffects === StatusEffect.SLEEP ? 3 : undefined;
         enemyPokemon.status = new Status(status, 0, cureTurn);
       }
 
@@ -264,24 +266,24 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
 
       // Set ability
       if (!isNullOrUndefined(config.abilityIndex)) {
-        enemyPokemon.abilityIndex = config.abilityIndex;
+        enemyPokemon.abilityIndex = config.abilityIndex!;
       }
 
       // Set gender
       if (!isNullOrUndefined(config.gender)) {
-        enemyPokemon.gender = config.gender;
-        enemyPokemon.summonData.gender = config.gender;
+        enemyPokemon.gender = config.gender!;
+        enemyPokemon.summonData.gender = config.gender!;
       }
 
       // Set moves
-      if (config?.moveSet?.length > 0) {
+      if (config?.moveSet && config.moveSet.length > 0) {
         const moves = config.moveSet.map(m => new PokemonMove(m));
         enemyPokemon.moveset = moves;
         enemyPokemon.summonData.moveset = moves;
       }
 
       // Set tags
-      if (config.tags?.length > 0) {
+      if (config.tags && config.tags.length > 0) {
         const tags = config.tags;
         tags.forEach(tag => enemyPokemon.addTag(tag));
       }
@@ -319,8 +321,12 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
   });
   if (!loaded) {
     regenerateModifierPoolThresholds(scene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
-    const customModifierTypes = partyConfig?.pokemonConfigs?.map(config => config?.modifierConfigs);
-    scene.generateEnemyModifiers(customModifierTypes);
+    const customModifierTypes = partyConfig?.pokemonConfigs
+      ?.filter(config => config?.modifierConfigs)
+      .map(config => config.modifierConfigs!);
+    if (customModifierTypes) {
+      scene.generateEnemyModifiers(customModifierTypes);
+    }
   }
 }
 
@@ -368,7 +374,7 @@ export function updatePlayerMoney(scene: BattleScene, changeValue: number, playS
  * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
 export function generateModifierType(scene: BattleScene, modifier: () => ModifierType, pregenArgs?: any[]): ModifierType {
-  const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifier);
+  const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifier)!;
   let result: ModifierType = modifierTypes[modifierId]?.();
 
   // Populates item id and tier (order matters)
@@ -376,8 +382,8 @@ export function generateModifierType(scene: BattleScene, modifier: () => Modifie
     .withIdFromFunc(modifierTypes[modifierId])
     .withTierFromPool();
 
-  result = result instanceof ModifierTypeGenerator ? result.generateType(scene.getParty(), pregenArgs) : result;
-  return result;
+  const generatedResult = result instanceof ModifierTypeGenerator ? result.generateType(scene.getParty(), pregenArgs) : result;
+  return generatedResult ?? result;
 }
 
 /**
@@ -399,7 +405,7 @@ export function generateModifierTypeOption(scene: BattleScene, modifier: () => M
  * @param onPokemonNotSelected - Any logic that needs to be performed if no Pokemon is chosen
  * @param selectablePokemonFilter
  */
-export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (pokemon: PlayerPokemon) => void | OptionSelectItem[], onPokemonNotSelected?: () => void, selectablePokemonFilter?: (pokemon: PlayerPokemon) => string): Promise<boolean> {
+export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (pokemon: PlayerPokemon) => void | OptionSelectItem[], onPokemonNotSelected?: () => void, selectablePokemonFilter?: PokemonSelectFilter): Promise<boolean> {
   return new Promise(resolve => {
     const modeToSetOnExit = scene.ui.getMode();
 
@@ -451,7 +457,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
               scene.ui.setModeWithoutClear(Mode.OPTION_SELECT, config, null, true);
             };
 
-            const textPromptKey = scene.currentBattle.mysteryEncounter.selectedOption.dialogue.secondOptionPrompt;
+            const textPromptKey = scene.currentBattle.mysteryEncounter?.selectedOption?.dialogue?.secondOptionPrompt;
             if (!textPromptKey) {
               displayOptions();
             } else {
@@ -486,7 +492,7 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
     }
 
     if (customShopRewards) {
-      scene.unshiftPhase(new SelectModifierPhase(scene, 0, null, customShopRewards));
+      scene.unshiftPhase(new SelectModifierPhase(scene, 0, undefined, customShopRewards));
     } else {
       scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
     }
@@ -530,7 +536,7 @@ export function setEncounterExp(scene: BattleScene, participantId: integer | int
     const multipleParticipantExpBonusModifier = scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
     const nonFaintedPartyMembers = party.filter(p => p.hp);
     const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < scene.getMaxExpLevel());
-    const partyMemberExp = [];
+    const partyMemberExp: number[] = [];
     // EXP value calculation is based off Pokemon.getExpValue
     let expValue = Math.floor(baseExpValue * (useWaveIndex ? scene.currentBattle.waveIndex : 1) / 5 + 1);
 
@@ -581,7 +587,7 @@ export function setEncounterExp(scene: BattleScene, participantId: integer | int
 
         const medianLevel = Math.floor(totalLevel / expPartyMembers.length);
 
-        const recipientExpPartyMemberIndexes = [];
+        const recipientExpPartyMemberIndexes: number[] = [];
         expPartyMembers.forEach((expPartyMember, epm) => {
           if (expPartyMember.level <= medianLevel) {
             recipientExpPartyMemberIndexes.push(epm);
@@ -720,7 +726,7 @@ export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide:
               scene.field.remove(pokemon, true);
             });
 
-            scene.currentBattle.mysteryEncounter.introVisuals = null;
+            scene.currentBattle.mysteryEncounter.introVisuals = undefined;
           }
           resolve(true);
         }
@@ -808,11 +814,13 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
               })
               .map(b => !Array.isArray(b) ? b : b[0]);
           }, i * 100);
-          const specialBiomes = biomes.filter(b => alwaysPickTheseBiomes.includes(b));
-          if (specialBiomes.length > 0) {
-            currentBiome = specialBiomes[Utils.randSeedInt(specialBiomes.length)];
-          } else {
-            currentBiome = biomes[Utils.randSeedInt(biomes.length)];
+          if (biomes! && biomes.length > 0) {
+            const specialBiomes = biomes.filter(b => alwaysPickTheseBiomes.includes(b));
+            if (specialBiomes.length > 0) {
+              currentBiome = specialBiomes[Utils.randSeedInt(specialBiomes.length)];
+            } else {
+              currentBiome = biomes[Utils.randSeedInt(biomes.length)];
+            }
           }
         } else if (biomeLinks.hasOwnProperty(currentBiome)) {
           currentBiome = (biomeLinks[currentBiome] as Biome);
@@ -840,7 +848,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
       // Otherwise, roll encounter
 
       const roll = Utils.randSeedInt(256);
-      validMEfloorsByBiome.set(Biome[currentBiome], validMEfloorsByBiome.get(Biome[currentBiome]) + 1);
+      validMEfloorsByBiome.set(Biome[currentBiome], (validMEfloorsByBiome.get(Biome[currentBiome]) ?? 0) + 1);
 
       // If total number of encounters is lower than expected for the run, slightly favor a new encounter
       // Do the reverse as well
@@ -866,7 +874,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
         const rareThreshold = totalWeight - tierWeights[0] - tierWeights[1] - tierWeights[2]; // 64 - 32 - 16 - 10 = 6
 
         tierValue > commonThreshold ? ++numEncounters[0] : tierValue > uncommonThreshold ? ++numEncounters[1] : tierValue > rareThreshold ? ++numEncounters[2] : ++numEncounters[3];
-        encountersByBiome.set(Biome[currentBiome], encountersByBiome.get(Biome[currentBiome]) + 1);
+        encountersByBiome.set(Biome[currentBiome], (encountersByBiome.get(Biome[currentBiome]) ?? 0) + 1);
       } else {
         encounterRate += WEIGHT_INCREMENT_ON_SPAWN_MISS;
       }
@@ -899,7 +907,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
 
   const encountersPerRunPerBiome = encountersByBiomeRuns.reduce((a, b) => {
     for (const biome of a.keys()) {
-      a.set(biome, a.get(biome) + b.get(biome));
+      a.set(biome, a.get(biome)! + b.get(biome)!);
     }
     return a;
   });
@@ -910,7 +918,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
 
   const validMEFloorsPerRunPerBiome = validFloorsByBiome.reduce((a, b) => {
     for (const biome of a.keys()) {
-      a.set(biome, a.get(biome) + b.get(biome));
+      a.set(biome, a.get(biome)! + b.get(biome)!);
     }
     return a;
   });

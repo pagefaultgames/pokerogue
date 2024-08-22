@@ -6,11 +6,10 @@ import { Stat } from "#app/data/pokemon-stat";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { pokemonInfo } from "#app/locales/en/pokemon-info";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { AbilityAttr } from "#app/system/game-data";
 import PokemonData from "#app/system/pokemon-data";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { randSeedShuffle } from "#app/utils";
+import { isNullOrUndefined, randSeedShuffle } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
@@ -19,6 +18,7 @@ import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounter:trainingSession";
@@ -77,13 +77,13 @@ export const TrainingSessionEncounter: MysteryEncounter =
           const selectableFilter = (pokemon: Pokemon) => {
             const meetsReqs = pokemon.isAllowedInBattle();
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`);
+              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
             }
 
             return null;
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
+          return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter;
@@ -125,7 +125,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
             encounter.setDialogueToken("stat1", "-");
             encounter.setDialogueToken("stat2", "-");
             // Add the pokemon back to party with IV boost
-            const ivIndexes = [];
+            const ivIndexes: any[] = [];
             playerPokemon.ivs.forEach((iv, index) => {
               if (iv < 31) {
                 ivIndexes.push({ iv: iv, index: index });
@@ -147,12 +147,12 @@ export const TrainingSessionEncounter: MysteryEncounter =
               if (improvedCount === 0) {
                 encounter.setDialogueToken(
                   "stat1",
-                  getIvName(ivToChange.index)
+                  getIvName(ivToChange.index) ?? ""
                 );
               } else {
                 encounter.setDialogueToken(
                   "stat2",
-                  getIvName(ivToChange.index)
+                  getIvName(ivToChange.index) ?? ""
                 );
               }
 
@@ -185,12 +185,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
             queueEncounterMessage(scene, `${namespace}.option.1.finished`);
           };
 
-          setEncounterRewards(
-            scene,
-            { fillRemaining: true },
-            null,
-            onBeforeRewardsPhase
-          );
+          setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
 
           return initBattleWithEnemyConfig(scene, config);
         })
@@ -237,13 +232,13 @@ export const TrainingSessionEncounter: MysteryEncounter =
           const selectableFilter = (pokemon: Pokemon) => {
             const meetsReqs = pokemon.isAllowedInBattle();
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`);
+              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
             }
 
             return null;
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
+          return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter;
@@ -278,12 +273,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
             scene.updateModifiers(true);
           };
 
-          setEncounterRewards(
-            scene,
-            { fillRemaining: true },
-            null,
-            onBeforeRewardsPhase
-          );
+          setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
 
           return initBattleWithEnemyConfig(scene, config);
         })
@@ -339,13 +329,13 @@ export const TrainingSessionEncounter: MysteryEncounter =
           const selectableFilter = (pokemon: Pokemon) => {
             const meetsReqs = pokemon.isAllowedInBattle();
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`);
+              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
             }
 
             return null;
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
+          return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter;
@@ -354,18 +344,10 @@ export const TrainingSessionEncounter: MysteryEncounter =
           // Spawn hard training session with chosen pokemon
           // Every 30 waves, add +1 boss segment, capping at 6
           // Also starts with +1 to all stats
-          const segments = Math.min(
-            2 + Math.floor(scene.currentBattle.waveIndex / 30),
-            6
-          );
+          const segments = Math.min(2 + Math.floor(scene.currentBattle.waveIndex / 30), 6);
           const modifiers = new ModifiersHolder();
-          const config = getEnemyConfig(
-            scene,
-            playerPokemon,
-            segments,
-            modifiers
-          );
-          config.pokemonConfigs[0].tags = [
+          const config = getEnemyConfig(scene, playerPokemon, segments, modifiers);
+          config.pokemonConfigs![0].tags = [
             BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON,
           ];
           scene.removePokemonFromPlayerParty(playerPokemon, false);
@@ -376,15 +358,10 @@ export const TrainingSessionEncounter: MysteryEncounter =
             const abilityIndex = encounter.misc.abilityIndex;
             if (!!playerPokemon.getFusionSpeciesForm()) {
               playerPokemon.fusionAbilityIndex = abilityIndex;
-              if (
-                speciesStarters.hasOwnProperty(
-                  playerPokemon.fusionSpecies.speciesId
-                )
-              ) {
-                scene.gameData.starterData[
-                  playerPokemon.fusionSpecies.speciesId
-                ].abilityAttr |=
-                  abilityIndex !== 1 || playerPokemon.fusionSpecies.ability2
+              if (!isNullOrUndefined(playerPokemon.fusionSpecies?.speciesId) && speciesStarters.hasOwnProperty(playerPokemon.fusionSpecies!.speciesId)) {
+                scene.gameData.starterData[playerPokemon.fusionSpecies!.speciesId]
+                  .abilityAttr |=
+                  abilityIndex !== 1 || playerPokemon.fusionSpecies!.ability2
                     ? Math.pow(2, playerPokemon.fusionAbilityIndex)
                     : AbilityAttr.ABILITY_HIDDEN;
               }
@@ -414,12 +391,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
             scene.updateModifiers(true);
           };
 
-          setEncounterRewards(
-            scene,
-            { fillRemaining: true },
-            null,
-            onBeforeRewardsPhase
-          );
+          setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
 
           return initBattleWithEnemyConfig(scene, config);
         })
@@ -432,7 +404,11 @@ function getEnemyConfig(scene: BattleScene, playerPokemon: PlayerPokemon,segment
 
   // Passes modifiers by reference
   modifiers.value = scene.findModifiers((m) => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === playerPokemon.id) as PokemonHeldItemModifier[];
-  const modifierTypes = modifiers.value.map((mod) => mod.type) as PokemonHeldItemModifierType[];
+  const modifierConfigs = modifiers.value.map((mod) => {
+    return {
+      modifierType: mod.type
+    };
+  }) as HeldModifierConfig[];
 
   const data = new PokemonData(playerPokemon);
   return {
@@ -444,7 +420,7 @@ function getEnemyConfig(scene: BattleScene, playerPokemon: PlayerPokemon,segment
         formIndex: playerPokemon.formIndex,
         level: playerPokemon.level,
         dataSource: data,
-        modifierConfigs: modifierTypes,
+        modifierConfigs: modifierConfigs,
       },
     ],
   };

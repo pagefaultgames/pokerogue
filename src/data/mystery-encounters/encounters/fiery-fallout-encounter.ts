@@ -75,8 +75,8 @@ export const FieryFalloutEncounter: MysteryEncounter =
       // Load hidden Volcarona sprites
       encounter.spriteConfigs = [
         {
-          spriteKey: null,
-          fileRoot: null,
+          spriteKey: "",
+          fileRoot: "",
           species: Species.VOLCARONA,
           repeat: true,
           hidden: true,
@@ -85,8 +85,8 @@ export const FieryFalloutEncounter: MysteryEncounter =
           startFrame: 20
         },
         {
-          spriteKey: null,
-          fileRoot: null,
+          spriteKey: "",
+          fileRoot: "",
           species: Species.VOLCARONA,
           repeat: true,
           hidden: true,
@@ -104,9 +104,9 @@ export const FieryFalloutEncounter: MysteryEncounter =
     })
     .withOnVisualsStart((scene: BattleScene) => {
       // Play animations
-      const background = new EncounterBattleAnim(EncounterAnim.MAGMA_BG, scene.getPlayerPokemon(), scene.getPlayerPokemon());
+      const background = new EncounterBattleAnim(EncounterAnim.MAGMA_BG, scene.getPlayerPokemon()!, scene.getPlayerPokemon());
       background.playWithoutTargets(scene, 200, 70, 2, 3);
-      const animation = new EncounterBattleAnim(EncounterAnim.MAGMA_SPOUT, scene.getPlayerPokemon(), scene.getPlayerPokemon());
+      const animation = new EncounterBattleAnim(EncounterAnim.MAGMA_SPOUT, scene.getPlayerPokemon()!, scene.getPlayerPokemon());
       animation.playWithoutTargets(scene, 80, 100, 2);
       scene.time.delayedCall(600, () => {
         animation.playWithoutTargets(scene, -20, 100, 2);
@@ -133,7 +133,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
       async (scene: BattleScene) => {
         // Pick battle
         const encounter = scene.currentBattle.mysteryEncounter;
-        setEncounterRewards(scene, { fillRemaining: true }, null, () => giveLeadPokemonCharcoal(scene));
+        setEncounterRewards(scene, { fillRemaining: true }, undefined, () => giveLeadPokemonCharcoal(scene));
 
         encounter.startOfBattleEffects.push(
           {
@@ -185,7 +185,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
         }
 
         // Burn random member
-        const burnable = nonFireTypes.filter(p => isNullOrUndefined(p.status) || isNullOrUndefined(p.status.effect) || p.status?.effect === StatusEffect.BURN);
+        const burnable = nonFireTypes.filter(p => isNullOrUndefined(p.status) || isNullOrUndefined(p.status!.effect) || p.status?.effect === StatusEffect.BURN);
         if (burnable?.length > 0) {
           const roll = randSeedInt(burnable.length);
           const chosenPokemon = burnable[roll];
@@ -224,13 +224,13 @@ export const FieryFalloutEncounter: MysteryEncounter =
           transitionMysteryEncounterIntroVisuals(scene);
           setEncounterRewards(scene,
             { fillRemaining: true },
-            null,
+            undefined,
             () => {
               giveLeadPokemonCharcoal(scene);
             });
 
-          const primary = encounter.options[2].primaryPokemon;
-          const secondary = encounter.options[2].secondaryPokemon[0];
+          const primary = encounter.options[2].primaryPokemon!;
+          const secondary = encounter.options[2].secondaryPokemon![0];
 
           setEncounterExp(scene, [primary.id, secondary.id], getPokemonSpecies(Species.VOLCARONA).baseExp * 2);
           leaveEncounterWithoutBattle(scene);

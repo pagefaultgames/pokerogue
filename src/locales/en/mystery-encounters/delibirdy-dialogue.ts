@@ -1,6 +1,6 @@
 export const delibirdyDialogue = {
   intro: "A pack of Delibird have appeared!",
-  title: "Delibird-y",
+  title: "Delibir-dy",
   description: "The Delibirds are looking at you expectantly, as if they want something. Perhaps giving them an item or some money would satisfy them?",
   query: "What will you give them?",
   invalid_selection: "Pokémon doesn't have that kind of item.",

@@ -100,8 +100,10 @@ export const PartTimerEncounter: MysteryEncounter =
 
           // Reduce all PP to 2 (if they started at greater than 2)
           pokemon.moveset.forEach(move => {
-            const newPpUsed = move.getMovePp() - 2;
-            move.ppUsed = move.ppUsed < newPpUsed ? newPpUsed : move.ppUsed;
+            if (move) {
+              const newPpUsed = move.getMovePp() - 2;
+              move.ppUsed = move.ppUsed < newPpUsed ? newPpUsed : move.ppUsed;
+            }
           });
 
           setEncounterExp(scene, pokemon.id, 100);
@@ -115,13 +117,13 @@ export const PartTimerEncounter: MysteryEncounter =
         // Only Pokemon non-KOd pokemon can be selected
         const selectableFilter = (pokemon: Pokemon) => {
           if (!pokemon.isAllowedInBattle()) {
-            return getEncounterText(scene, `${namespace}.invalid_selection`);
+            return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
           }
 
           return null;
         };
 
-        return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
+        return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
       })
       .withOptionPhase(async (scene: BattleScene) => {
         // Pick Deliveries
@@ -179,8 +181,10 @@ export const PartTimerEncounter: MysteryEncounter =
 
           // Reduce all PP to 2 (if they started at greater than 2)
           pokemon.moveset.forEach(move => {
-            const newPpUsed = move.getMovePp() - 2;
-            move.ppUsed = move.ppUsed < newPpUsed ? newPpUsed : move.ppUsed;
+            if (move) {
+              const newPpUsed = move.getMovePp() - 2;
+              move.ppUsed = move.ppUsed < newPpUsed ? newPpUsed : move.ppUsed;
+            }
           });
 
           setEncounterExp(scene, pokemon.id, 100);
@@ -194,13 +198,13 @@ export const PartTimerEncounter: MysteryEncounter =
         // Only Pokemon non-KOd pokemon can be selected
         const selectableFilter = (pokemon: Pokemon) => {
           if (!pokemon.isAllowedInBattle()) {
-            return getEncounterText(scene, `${namespace}.invalid_selection`);
+            return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
           }
 
           return null;
         };
 
-        return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
+        return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
       })
       .withOptionPhase(async (scene: BattleScene) => {
         // Pick Move Warehouse items
@@ -241,13 +245,15 @@ export const PartTimerEncounter: MysteryEncounter =
         })
         .withPreOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter;
-          const selectedPokemon = encounter.selectedOption.primaryPokemon;
+          const selectedPokemon = encounter.selectedOption?.primaryPokemon!;
           encounter.setDialogueToken("selectedPokemon", selectedPokemon.getNameToRender());
 
           // Reduce all PP to 2 (if they started at greater than 2)
           selectedPokemon.moveset.forEach(move => {
-            const newPpUsed = move.getMovePp() - 2;
-            move.ppUsed = move.ppUsed < newPpUsed ? newPpUsed : move.ppUsed;
+            if (move) {
+              const newPpUsed = move.getMovePp() - 2;
+              move.ppUsed = move.ppUsed < newPpUsed ? newPpUsed : move.ppUsed;
+            }
           });
 
           setEncounterExp(scene, selectedPokemon.id, 100);

@@ -27,7 +27,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
  */
 export class MysteryEncounterPhase extends Phase {
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 300;
-  optionSelectSettings: OptionSelectSettings;
+  optionSelectSettings?: OptionSelectSettings;
 
   /**
    *
@@ -72,7 +72,7 @@ export class MysteryEncounterPhase extends Phase {
 
     if (option.onPreOptionPhase) {
       this.scene.executeWithSeedOffset(async () => {
-        return await option.onPreOptionPhase(this.scene)
+        return await option.onPreOptionPhase!(this.scene)
           .then((result) => {
             if (isNullOrUndefined(result) || result) {
               this.continueEncounter();
@@ -93,7 +93,7 @@ export class MysteryEncounterPhase extends Phase {
     };
 
     const optionSelectDialogue = this.scene.currentBattle?.mysteryEncounter?.selectedOption?.dialogue;
-    if (optionSelectDialogue?.selected?.length > 0) {
+    if (optionSelectDialogue?.selected && optionSelectDialogue.selected.length > 0) {
       // Handle intermediate dialogue (between player selection event and the onOptionSelect logic)
       this.scene.ui.setMode(Mode.MESSAGE);
       const selectedDialogue = optionSelectDialogue.selected;
@@ -101,17 +101,17 @@ export class MysteryEncounterPhase extends Phase {
       const showNextDialogue = () => {
         const nextAction = i === selectedDialogue.length - 1 ? endDialogueAndContinueEncounter : showNextDialogue;
         const dialogue = selectedDialogue[i];
-        let title: string = null;
-        const text: string = getEncounterText(this.scene, dialogue.text);
+        let title: string | null = null;
+        const text: string | null = getEncounterText(this.scene, dialogue.text);
         if (dialogue.speaker) {
           title = getEncounterText(this.scene, dialogue.speaker);
         }
 
         i++;
         if (title) {
-          this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0);
+          this.scene.ui.showDialogue(text ?? "", title, null, nextAction, 0, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0);
         } else {
-          this.scene.ui.showText(text, null, nextAction, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
+          this.scene.ui.showText(text ?? "", null, nextAction, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
         }
       };
 
@@ -142,7 +142,7 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
 
   constructor(scene: BattleScene) {
     super(scene);
-    this.onOptionSelect = this.scene.currentBattle.mysteryEncounter.selectedOption.onOptionPhase;
+    this.onOptionSelect = this.scene.currentBattle.mysteryEncounter.selectedOption!.onOptionPhase;
   }
 
   start() {
@@ -223,10 +223,10 @@ export class MysteryEncounterBattlePhase extends Phase {
 
     if (encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       if (scene.currentBattle.double) {
-        return i18next.t("battle:trainerAppearedDouble", { trainerName: scene.currentBattle.trainer.getName(TrainerSlot.NONE, true) });
+        return i18next.t("battle:trainerAppearedDouble", { trainerName: scene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) });
 
       } else {
-        return i18next.t("battle:trainerAppeared", { trainerName: scene.currentBattle.trainer.getName(TrainerSlot.NONE, true) });
+        return i18next.t("battle:trainerAppeared", { trainerName: scene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) });
       }
     }
 
@@ -276,22 +276,22 @@ export class MysteryEncounterBattlePhase extends Phase {
         }
       };
 
-      const encounterMessages = scene.currentBattle.trainer.getEncounterMessages();
+      const encounterMessages = scene.currentBattle.trainer?.getEncounterMessages();
 
-      if (!encounterMessages?.length) {
+      if (!encounterMessages || !encounterMessages.length) {
         doSummon();
       } else {
         const trainer = this.scene.currentBattle.trainer;
         let message: string;
         scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.mysteryEncounter.getSeedOffset());
-
+        message = message!; // tell TS compiler it's defined now
         const showDialogueAndSummon = () => {
-          scene.ui.showDialogue(message, trainer.getName(TrainerSlot.NONE, true), null, () => {
+          scene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {
             scene.charSprite.hide().then(() => scene.hideFieldOverlay(250).then(() => doSummon()));
           });
         };
-        if (scene.currentBattle.trainer.config.hasCharSprite && !scene.ui.shouldSkipDialogue(message)) {
-          scene.showFieldOverlay(500).then(() => scene.charSprite.showCharacter(trainer.getKey(), getCharVariantFromDialogue(encounterMessages[0])).then(() => showDialogueAndSummon()));
+        if (this.scene.currentBattle.trainer?.config.hasCharSprite && !this.scene.ui.shouldSkipDialogue(message)) {
+          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(trainer?.getKey()!, getCharVariantFromDialogue(encounterMessages[0])).then(() => showDialogueAndSummon())); // TODO: is this bang correct?
         } else {
           showDialogueAndSummon();
         }
@@ -349,6 +349,9 @@ export class MysteryEncounterBattlePhase extends Phase {
   showEnemyTrainer(): void {
     // Show enemy trainer
     const trainer = this.scene.currentBattle.trainer;
+    if (!trainer) {
+      return;
+    }
     trainer.alpha = 0;
     trainer.x += 16;
     trainer.y -= 16;
@@ -416,7 +419,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
           this.scene.currentBattle.mysteryEncounter.doEncounterRewards(this.scene);
         } else if (this.addHealPhase) {
           this.scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
-          this.scene.unshiftPhase(new SelectModifierPhase(this.scene, 0, null, { fillRemaining: false, rerollMultiplier: 0 }));
+          this.scene.unshiftPhase(new SelectModifierPhase(this.scene, 0, undefined, { fillRemaining: false, rerollMultiplier: 0 }));
         }
         // Do not use ME's seedOffset for rewards, these should always be consistent with waveIndex (once per wave)
       }, this.scene.currentBattle.waveIndex * 1000);
@@ -436,11 +439,11 @@ export class MysteryEncounterRewardsPhase extends Phase {
  */
 export class PostMysteryEncounterPhase extends Phase {
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 750;
-  onPostOptionSelect: OptionPhaseCallback;
+  onPostOptionSelect?: OptionPhaseCallback;
 
   constructor(scene: BattleScene) {
     super(scene);
-    this.onPostOptionSelect = this.scene.currentBattle.mysteryEncounter.selectedOption.onPostOptionPhase;
+    this.onPostOptionSelect = this.scene.currentBattle.mysteryEncounter.selectedOption?.onPostOptionPhase;
   }
 
   start() {
@@ -448,7 +451,7 @@ export class PostMysteryEncounterPhase extends Phase {
 
     if (this.onPostOptionSelect) {
       this.scene.executeWithSeedOffset(async () => {
-        return await this.onPostOptionSelect(this.scene)
+        return await this.onPostOptionSelect!(this.scene)
           .then((result) => {
             if (isNullOrUndefined(result) || result) {
               this.continueEncounter();
@@ -467,13 +470,13 @@ export class PostMysteryEncounterPhase extends Phase {
     };
 
     const outroDialogue = this.scene.currentBattle?.mysteryEncounter?.dialogue?.outro;
-    if (outroDialogue?.length > 0) {
+    if (outroDialogue && outroDialogue.length > 0) {
       let i = 0;
       const showNextDialogue = () => {
         const nextAction = i === outroDialogue.length - 1 ? endPhase : showNextDialogue;
         const dialogue = outroDialogue[i];
-        let title: string = null;
-        const text: string = getEncounterText(this.scene, dialogue.text);
+        let title: string | null = null;
+        const text: string | null = getEncounterText(this.scene, dialogue.text);
         if (dialogue.speaker) {
           title = getEncounterText(this.scene, dialogue.speaker);
         }
@@ -481,9 +484,9 @@ export class PostMysteryEncounterPhase extends Phase {
         i++;
         this.scene.ui.setMode(Mode.MESSAGE);
         if (title) {
-          this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0);
+          this.scene.ui.showDialogue(text ?? "", title, null, nextAction, 0, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0);
         } else {
-          this.scene.ui.showText(text, null, nextAction, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
+          this.scene.ui.showText(text ?? "", null, nextAction, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
         }
       };
 

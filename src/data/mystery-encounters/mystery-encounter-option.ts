@@ -8,16 +8,32 @@ import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequiremen
 import { CanLearnMoveRequirement, CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
 import { isNullOrUndefined } from "#app/utils";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 
 
 export type OptionPhaseCallback = (scene: BattleScene) => Promise<void | boolean>;
 
-// export default interface MysteryEncounterOption {
-//
-// }
+/**
+ * Used by {@link MysteryEncounterOptionBuilder} class to define required/optional properties on the {@link MysteryEncounterOption} class when building.
+ *
+ * Should ONLY contain properties that are necessary for {@link MysteryEncounterOption} construction.
+ * Post-construct and flag data properties are defined in the {@link MysteryEncounterOption} class itself.
+ */
+export interface IMysteryEncounterOption {
+  optionMode: MysteryEncounterOptionMode;
+  hasDexProgress: boolean;
+  requirements: EncounterSceneRequirement[];
+  primaryPokemonRequirements: EncounterPokemonRequirement[];
+  secondaryPokemonRequirements: EncounterPokemonRequirement[];
+  excludePrimaryFromSecondaryRequirements: boolean;
 
-export default class MysteryEncounterOption {
+  dialogue?: OptionTextDisplay;
+
+  onPreOptionPhase?: OptionPhaseCallback;
+  onOptionPhase: OptionPhaseCallback;
+  onPostOptionPhase?: OptionPhaseCallback;
+}
+
+export default class MysteryEncounterOption implements IMysteryEncounterOption {
   optionMode: MysteryEncounterOptionMode;
   hasDexProgress: boolean;
   requirements: EncounterSceneRequirement[];
@@ -40,12 +56,14 @@ export default class MysteryEncounterOption {
   /** Executes after the encounter is over. Usually this will be for calculating dialogueTokens or performing data updates */
   onPostOptionPhase?: OptionPhaseCallback;
 
-  constructor(option: MysteryEncounterOption | null) {
-    Object.assign(this, option);
-    this.hasDexProgress = !isNullOrUndefined(this.hasDexProgress) ? this.hasDexProgress : false;
-    this.requirements = this.requirements ? this.requirements : [];
-    this.primaryPokemonRequirements = this.primaryPokemonRequirements ? this.primaryPokemonRequirements : [];
-    this.secondaryPokemonRequirements = this.secondaryPokemonRequirements ? this.secondaryPokemonRequirements : [];
+  constructor(option: IMysteryEncounterOption | null) {
+    if (!isNullOrUndefined(option)) {
+      Object.assign(this, option);
+    }
+    this.hasDexProgress = this.hasDexProgress ?? false;
+    this.requirements = this.requirements ?? [];
+    this.primaryPokemonRequirements = this.primaryPokemonRequirements ?? [];
+    this.secondaryPokemonRequirements = this.secondaryPokemonRequirements ?? [];
   }
 
   hasRequirements() {
@@ -70,7 +88,8 @@ export default class MysteryEncounterOption {
     for (const req of this.primaryPokemonRequirements) {
       if (req.meetsRequirement(scene)) {
         if (req instanceof EncounterPokemonRequirement) {
-          qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
+          const queryParty = req.queryParty(scene.getParty());
+          qualified = qualified.filter(pkmn => queryParty.includes(pkmn));
         }
       } else {
         this.primaryPokemon = undefined;
@@ -125,8 +144,8 @@ export default class MysteryEncounterOption {
     for (const req of this.secondaryPokemonRequirements) {
       if (req.meetsRequirement(scene)) {
         if (req instanceof EncounterPokemonRequirement) {
-          qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
-
+          const queryParty = req.queryParty(scene.getParty());
+          qualified = qualified.filter(pkmn => queryParty.includes(pkmn));
         }
       } else {
         this.secondaryPokemon = [];
@@ -138,7 +157,7 @@ export default class MysteryEncounterOption {
   }
 }
 
-export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOption> {
+export class MysteryEncounterOptionBuilder implements Partial<IMysteryEncounterOption> {
   optionMode: MysteryEncounterOptionMode = MysteryEncounterOptionMode.DEFAULT;
   requirements: EncounterSceneRequirement[] = [];
   primaryPokemonRequirements: EncounterPokemonRequirement[] = [];
@@ -146,26 +165,17 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
   excludePrimaryFromSecondaryRequirements: boolean = false;
   isDisabledOnRequirementsNotMet: boolean = true;
   hasDexProgress: boolean = false;
-  onPreOptionPhase?: OptionPhaseCallback;
-  onOptionPhase: OptionPhaseCallback;
-  onPostOptionPhase?: OptionPhaseCallback;
-  dialogue: OptionTextDisplay;
+  dialogue?: OptionTextDisplay;
 
-  hasRequirements = MysteryEncounter.prototype["hasRequirements"];
-  meetsRequirements = MysteryEncounter.prototype["meetsRequirements"];
-  pokemonMeetsPrimaryRequirements = MysteryEncounter.prototype["pokemonMeetsPrimaryRequirements"];
-  meetsPrimaryRequirementAndPrimaryPokemonSelected = MysteryEncounter.prototype["meetsPrimaryRequirementAndPrimaryPokemonSelected"];
-  meetsSupportingRequirementAndSupportingPokemonSelected = MysteryEncounter.prototype["meetsSupportingRequirementAndSupportingPokemonSelected"];
-
-  static newOptionWithMode(optionMode: MysteryEncounterOptionMode): MysteryEncounterOptionBuilder & Pick<MysteryEncounterOption, "optionMode"> {
+  static newOptionWithMode(optionMode: MysteryEncounterOptionMode): MysteryEncounterOptionBuilder & Pick<IMysteryEncounterOption, "optionMode"> {
     return Object.assign(new MysteryEncounterOptionBuilder(), { optionMode });
   }
 
-  withHasDexProgress(hasDexProgress: boolean): this & Required<Pick<MysteryEncounterOption, "hasDexProgress">> {
+  withHasDexProgress(hasDexProgress: boolean): this & Required<Pick<IMysteryEncounterOption, "hasDexProgress">> {
     return Object.assign(this, { hasDexProgress: hasDexProgress });
   }
 
-  withSceneRequirement(requirement: EncounterSceneRequirement): this & Required<Pick<MysteryEncounterOption, "requirements">> {
+  withSceneRequirement(requirement: EncounterSceneRequirement): this & Required<Pick<IMysteryEncounterOption, "requirements">> {
     if (requirement instanceof EncounterPokemonRequirement) {
       Error("Incorrectly added pokemon requirement as scene requirement.");
     }
@@ -174,23 +184,23 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
     return Object.assign(this, { requirements: this.requirements });
   }
 
-  withSceneMoneyRequirement(requiredMoney: number, scalingMultiplier?: number) {
+  withSceneMoneyRequirement(requiredMoney?: number, scalingMultiplier?: number) {
     return this.withSceneRequirement(new MoneyRequirement(requiredMoney, scalingMultiplier));
   }
 
-  withPreOptionPhase(onPreOptionPhase: OptionPhaseCallback): this & Required<Pick<MysteryEncounterOption, "onPreOptionPhase">> {
+  withPreOptionPhase(onPreOptionPhase: OptionPhaseCallback): this & Required<Pick<IMysteryEncounterOption, "onPreOptionPhase">> {
     return Object.assign(this, { onPreOptionPhase: onPreOptionPhase });
   }
 
-  withOptionPhase(onOptionPhase: OptionPhaseCallback): this & Required<Pick<MysteryEncounterOption, "onOptionPhase">> {
+  withOptionPhase(onOptionPhase: OptionPhaseCallback): this & Required<Pick<IMysteryEncounterOption, "onOptionPhase">> {
     return Object.assign(this, { onOptionPhase: onOptionPhase });
   }
 
-  withPostOptionPhase(onPostOptionPhase: OptionPhaseCallback): this & Required<Pick<MysteryEncounterOption, "onPostOptionPhase">> {
+  withPostOptionPhase(onPostOptionPhase: OptionPhaseCallback): this & Required<Pick<IMysteryEncounterOption, "onPostOptionPhase">> {
     return Object.assign(this, { onPostOptionPhase: onPostOptionPhase });
   }
 
-  withPrimaryPokemonRequirement(requirement: EncounterPokemonRequirement): this & Required<Pick<MysteryEncounterOption, "primaryPokemonRequirements">> {
+  withPrimaryPokemonRequirement(requirement: EncounterPokemonRequirement): this & Required<Pick<IMysteryEncounterOption, "primaryPokemonRequirements">> {
     if (requirement instanceof EncounterSceneRequirement) {
       Error("Incorrectly added scene requirement as pokemon requirement.");
     }
@@ -223,7 +233,7 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
     return this.withPrimaryPokemonRequirement(new CanLearnMoveRequirement(move, options));
   }
 
-  withSecondaryPokemonRequirement(requirement: EncounterPokemonRequirement, excludePrimaryFromSecondaryRequirements: boolean = true): this & Required<Pick<MysteryEncounterOption, "secondaryPokemonRequirements">> {
+  withSecondaryPokemonRequirement(requirement: EncounterPokemonRequirement, excludePrimaryFromSecondaryRequirements: boolean = true): this & Required<Pick<IMysteryEncounterOption, "secondaryPokemonRequirements">> {
     if (requirement instanceof EncounterSceneRequirement) {
       Error("Incorrectly added scene requirement as pokemon requirement.");
     }
@@ -244,7 +254,7 @@ export class MysteryEncounterOptionBuilder implements Partial<MysteryEncounterOp
     return this;
   }
 
-  build(this: MysteryEncounterOption) {
+  build(this: IMysteryEncounterOption) {
     return new MysteryEncounterOption(this);
   }
 }

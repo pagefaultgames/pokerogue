@@ -37,7 +37,7 @@ describe("Delibird-y - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -60,9 +60,9 @@ describe("Delibird-y - Mystery Encounter", () => {
     expect(DelibirdyEncounter.dialogue).toBeDefined();
     expect(DelibirdyEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
     expect(DelibirdyEncounter.dialogue.outro).toStrictEqual([{ text: `${namespace}.outro` }]);
-    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(DelibirdyEncounter.options.length).toBe(3);
   });
 
@@ -128,7 +128,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       const itemModifier = scene.findModifier(m => m instanceof HiddenAbilityRateBoosterModifier) as HiddenAbilityRateBoosterModifier;
 
       expect(itemModifier).toBeDefined();
-      expect(itemModifier.stackCount).toBe(1);
+      expect(itemModifier?.stackCount).toBe(1);
     });
 
     it("Should give the player a Shell Bell if they have max stacks of Berry Pouches", async () => {
@@ -148,9 +148,9 @@ describe("Delibird-y - Mystery Encounter", () => {
       const shellBellAfter = scene.findModifier(m => m instanceof HitHealModifier);
 
       expect(abilityCharmAfter).toBeDefined();
-      expect(abilityCharmAfter.stackCount).toBe(4);
+      expect(abilityCharmAfter?.stackCount).toBe(4);
       expect(shellBellAfter).toBeDefined();
-      expect(shellBellAfter.stackCount).toBe(1);
+      expect(shellBellAfter?.stackCount).toBe(1);
     });
 
     it("should be disabled if player does not have enough money", async () => {
@@ -159,7 +159,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
-      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
       vi.spyOn(mysteryEncounterPhase, "handleOptionSelect");
@@ -167,7 +167,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 1);
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -217,9 +217,9 @@ describe("Delibird-y - Mystery Encounter", () => {
       const sitrusAfter = scene.findModifier(m => m instanceof BerryModifier);
       const candyJarAfter = scene.findModifier(m => m instanceof LevelIncrementBoosterModifier);
 
-      expect(sitrusAfter.stackCount).toBe(1);
+      expect(sitrusAfter?.stackCount).toBe(1);
       expect(candyJarAfter).toBeDefined();
-      expect(candyJarAfter.stackCount).toBe(1);
+      expect(candyJarAfter?.stackCount).toBe(1);
     });
 
     it("Should remove Reviver Seed and give the player a Healing Charm", async () => {
@@ -240,7 +240,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       expect(reviverSeedAfter).toBeUndefined();
       expect(healingCharmAfter).toBeDefined();
-      expect(healingCharmAfter.stackCount).toBe(1);
+      expect(healingCharmAfter?.stackCount).toBe(1);
     });
 
     it("Should give the player a Shell Bell if they have max stacks of Candy Jars", async () => {
@@ -265,11 +265,11 @@ describe("Delibird-y - Mystery Encounter", () => {
       const candyJarAfter = scene.findModifier(m => m instanceof LevelIncrementBoosterModifier);
       const shellBellAfter = scene.findModifier(m => m instanceof HitHealModifier);
 
-      expect(sitrusAfter.stackCount).toBe(1);
+      expect(sitrusAfter?.stackCount).toBe(1);
       expect(candyJarAfter).toBeDefined();
-      expect(candyJarAfter.stackCount).toBe(99);
+      expect(candyJarAfter?.stackCount).toBe(99);
       expect(shellBellAfter).toBeDefined();
-      expect(shellBellAfter.stackCount).toBe(1);
+      expect(shellBellAfter?.stackCount).toBe(1);
     });
 
     it("Should give the player a Shell Bell if they have max stacks of Healing Charms", async () => {
@@ -296,9 +296,9 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       expect(reviverSeedAfter).toBeUndefined();
       expect(healingCharmAfter).toBeDefined();
-      expect(healingCharmAfter.stackCount).toBe(5);
+      expect(healingCharmAfter?.stackCount).toBe(5);
       expect(shellBellAfter).toBeDefined();
-      expect(shellBellAfter.stackCount).toBe(1);
+      expect(shellBellAfter?.stackCount).toBe(1);
     });
 
     it("should be disabled if player does not have any proper items", async () => {
@@ -314,7 +314,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
-      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
       vi.spyOn(mysteryEncounterPhase, "handleOptionSelect");
@@ -322,7 +322,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -379,9 +379,9 @@ describe("Delibird-y - Mystery Encounter", () => {
       const soulDewAfter = scene.findModifier(m => m instanceof PokemonNatureWeightModifier);
       const berryPouchAfter = scene.findModifier(m => m instanceof PreserveBerryModifier);
 
-      expect(soulDewAfter.stackCount).toBe(1);
+      expect(soulDewAfter?.stackCount).toBe(1);
       expect(berryPouchAfter).toBeDefined();
-      expect(berryPouchAfter.stackCount).toBe(1);
+      expect(berryPouchAfter?.stackCount).toBe(1);
     });
 
     it("Should remove held item and give the player a Berry Pouch", async () => {
@@ -402,7 +402,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       expect(soulDewAfter).toBeUndefined();
       expect(berryPouchAfter).toBeDefined();
-      expect(berryPouchAfter.stackCount).toBe(1);
+      expect(berryPouchAfter?.stackCount).toBe(1);
     });
 
     it("Should give the player a Shell Bell if they have max stacks of Berry Pouches", async () => {
@@ -429,9 +429,9 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       expect(soulDewAfter).toBeUndefined();
       expect(berryPouchAfter).toBeDefined();
-      expect(berryPouchAfter.stackCount).toBe(3);
+      expect(berryPouchAfter?.stackCount).toBe(3);
       expect(shellBellAfter).toBeDefined();
-      expect(shellBellAfter.stackCount).toBe(1);
+      expect(shellBellAfter?.stackCount).toBe(1);
     });
 
     it("should be disabled if player does not have any proper items", async () => {
@@ -447,7 +447,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
-      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
       vi.spyOn(mysteryEncounterPhase, "handleOptionSelect");
@@ -455,7 +455,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 3);
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();

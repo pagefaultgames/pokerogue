@@ -35,7 +35,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
@@ -59,11 +59,11 @@ describe("A Trainer's Test - Mystery Encounter", () => {
     expect(ATrainersTestEncounter.encounterTier).toBe(MysteryEncounterTier.ROGUE);
     expect(ATrainersTestEncounter.dialogue).toBeDefined();
     expect(ATrainersTestEncounter.dialogue.intro).toBeDefined();
-    expect(ATrainersTestEncounter.dialogue.intro[0].speaker).toBeDefined();
-    expect(ATrainersTestEncounter.dialogue.intro[0].text).toBeDefined();
-    expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(ATrainersTestEncounter.dialogue.intro?.[0].speaker).toBeDefined();
+    expect(ATrainersTestEncounter.dialogue.intro?.[0].text).toBeDefined();
+    expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(ATrainersTestEncounter.options.length).toBe(2);
   });
 
@@ -92,14 +92,14 @@ describe("A Trainer's Test - Mystery Encounter", () => {
     expect(ATrainersTestEncounter.onInit).toBeDefined();
 
     ATrainersTestEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit(scene);
+    const onInitResult = onInit!(scene);
 
     expect(ATrainersTestEncounter.dialogueTokens?.statTrainerName).toBeDefined();
     expect(ATrainersTestEncounter.misc.trainerType).toBeDefined();
     expect(ATrainersTestEncounter.misc.trainerNameKey).toBeDefined();
     expect(ATrainersTestEncounter.misc.trainerEggDescription).toBeDefined();
     expect(ATrainersTestEncounter.dialogue.intro).toBeDefined();
-    expect(ATrainersTestEncounter.options[1].dialogue.selected).toBeDefined();
+    expect(ATrainersTestEncounter.options[1].dialogue?.selected).toBeDefined();
     expect(onInitResult).toBe(true);
   });
 
@@ -108,19 +108,19 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       const option = ATrainersTestEncounter.options[0];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
-      expect(option.dialogue.buttonLabel).toStrictEqual(`${namespace}.option.1.label`);
-      expect(option.dialogue.buttonTooltip).toStrictEqual(`${namespace}.option.1.tooltip`);
+      expect(option.dialogue!.buttonLabel).toStrictEqual(`${namespace}.option.1.label`);
+      expect(option.dialogue!.buttonTooltip).toStrictEqual(`${namespace}.option.1.tooltip`);
     });
 
     it("Should start battle against the trainer", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.A_TRAINERS_TEST, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(scene.currentBattle.trainer).toBeDefined();
-      expect(["buck", "cheryl", "marley", "mira", "riley"].includes(scene.currentBattle.trainer.config.name.toLowerCase())).toBeTruthy();
+      expect(["buck", "cheryl", "marley", "mira", "riley"].includes(scene.currentBattle.trainer!.config.name.toLowerCase())).toBeTruthy();
       expect(enemyField[0]).toBeDefined();
     });
 
@@ -131,10 +131,10 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       expect(eggsBefore).toBeDefined();
       const eggsBeforeLength = eggsBefore.length;
 
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const eggsAfter = scene.gameData.eggs;
       expect(eggsAfter).toBeDefined();
@@ -151,7 +151,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
         return {
           totalDuration: 1,
           destroy: () => null
-        } as Phaser.Sound.NoAudioSound;
+        } as any;
       });
     });
 
@@ -159,8 +159,8 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       const option = ATrainersTestEncounter.options[1];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
-      expect(option.dialogue.buttonLabel).toStrictEqual(`${namespace}.option.2.label`);
-      expect(option.dialogue.buttonTooltip).toStrictEqual(`${namespace}.option.2.tooltip`);
+      expect(option.dialogue?.buttonLabel).toStrictEqual(`${namespace}.option.2.label`);
+      expect(option.dialogue?.buttonTooltip).toStrictEqual(`${namespace}.option.2.tooltip`);
     });
 
     it("Should fully heal the party", async () => {
@@ -182,7 +182,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const eggsAfter = scene.gameData.eggs;
       expect(eggsAfter).toBeDefined();

@@ -140,7 +140,7 @@ async function spawnNextTrainerOrEndEncounter(scene: BattleScene) {
     await transitionMysteryEncounterIntroVisuals(scene, false, false);
     await showEncounterDialogue(scene, `${namespace}.victory`, `${namespace}.speaker`);
     setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE], fillRemaining: false });
-    encounter.doContinueEncounter = null;
+    encounter.doContinueEncounter = undefined;
     leaveEncounterWithoutBattle(scene, false, MysteryEncounterMode.TRAINER_BATTLE);
   } else {
     await initBattleWithEnemyConfig(scene, nextConfig);
@@ -151,17 +151,21 @@ function endTrainerBattleAndShowDialogue(scene: BattleScene): Promise<void> {
   return new Promise(async resolve => {
     if (scene.currentBattle.mysteryEncounter.enemyPartyConfigs.length === 0) {
       // Battle is over
-      scene.tweens.add({
-        targets: scene.currentBattle.trainer,
-        x: "+=16",
-        y: "-=16",
-        alpha: 0,
-        ease: "Sine.easeInOut",
-        duration: 750,
-        onComplete: () => {
-          scene.field.remove(scene.currentBattle.trainer, true);
-        }
-      });
+      const trainer = scene.currentBattle.trainer;
+      if (trainer) {
+        scene.tweens.add({
+          targets: trainer,
+          x: "+=16",
+          y: "-=16",
+          alpha: 0,
+          ease: "Sine.easeInOut",
+          duration: 750,
+          onComplete: () => {
+            scene.field.remove(trainer, true);
+          }
+        });
+      }
+
       await spawnNextTrainerOrEndEncounter(scene);
       resolve(); // Wait for all dialogue/post battle stuff to complete before resolving
     } else {
@@ -186,18 +190,20 @@ function endTrainerBattleAndShowDialogue(scene: BattleScene): Promise<void> {
       // Unassign previous trainer from battle so it isn't destroyed before animation completes
       scene.currentBattle.trainer = null;
       await spawnNextTrainerOrEndEncounter(scene);
-      scene.tweens.add({
-        targets: trainer,
-        x: "+=16",
-        y: "-=16",
-        alpha: 0,
-        ease: "Sine.easeInOut",
-        duration: 750,
-        onComplete: () => {
-          scene.field.remove(trainer, true);
-          resolve();
-        }
-      });
+      if (trainer) {
+        scene.tweens.add({
+          targets: trainer,
+          x: "+=16",
+          y: "-=16",
+          alpha: 0,
+          ease: "Sine.easeInOut",
+          duration: 750,
+          onComplete: () => {
+            scene.field.remove(trainer, true);
+            resolve();
+          }
+        });
+      }
     }
   });
 }

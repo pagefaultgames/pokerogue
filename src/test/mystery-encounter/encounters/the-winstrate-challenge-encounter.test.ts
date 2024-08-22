@@ -43,7 +43,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
@@ -73,9 +73,9 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         text: `${namespace}.intro_dialogue`,
       }
     ]);
-    expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(TheWinstrateChallengeEncounter.options.length).toBe(2);
   });
 
@@ -114,7 +114,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
     expect(encounter.onInit).toBeDefined();
 
     encounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit(scene);
+    const onInitResult = onInit!(scene);
 
     expect(encounter.enemyPartyConfigs).toBeDefined();
     expect(encounter.enemyPartyConfigs.length).toBe(5);
@@ -273,42 +273,42 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 
     it("should battle all 5 trainers for a Macho Brace reward", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_WINSTRATE_CHALLENGE, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
-      expect(scene.currentBattle.trainer.config.trainerType).toBe(TrainerType.VICTOR);
+      expect(scene.currentBattle.trainer!.config.trainerType).toBe(TrainerType.VICTOR);
       expect(scene.currentBattle.mysteryEncounter.enemyPartyConfigs.length).toBe(4);
       expect(scene.currentBattle.mysteryEncounter.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
 
       await skipBattleToNextBattle(game);
       expect(scene.currentBattle.trainer).toBeDefined();
-      expect(scene.currentBattle.trainer.config.trainerType).toBe(TrainerType.VICTORIA);
+      expect(scene.currentBattle.trainer!.config.trainerType).toBe(TrainerType.VICTORIA);
       expect(scene.currentBattle.mysteryEncounter.enemyPartyConfigs.length).toBe(3);
       expect(scene.currentBattle.mysteryEncounter.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
 
       await skipBattleToNextBattle(game);
       expect(scene.currentBattle.trainer).toBeDefined();
-      expect(scene.currentBattle.trainer.config.trainerType).toBe(TrainerType.VIVI);
+      expect(scene.currentBattle.trainer!.config.trainerType).toBe(TrainerType.VIVI);
       expect(scene.currentBattle.mysteryEncounter.enemyPartyConfigs.length).toBe(2);
       expect(scene.currentBattle.mysteryEncounter.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
 
       await skipBattleToNextBattle(game);
       expect(scene.currentBattle.trainer).toBeDefined();
-      expect(scene.currentBattle.trainer.config.trainerType).toBe(TrainerType.VICKY);
+      expect(scene.currentBattle.trainer!.config.trainerType).toBe(TrainerType.VICKY);
       expect(scene.currentBattle.mysteryEncounter.enemyPartyConfigs.length).toBe(1);
       expect(scene.currentBattle.mysteryEncounter.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
 
       await skipBattleToNextBattle(game);
       expect(scene.currentBattle.trainer).toBeDefined();
-      expect(scene.currentBattle.trainer.config.trainerType).toBe(TrainerType.VITO);
+      expect(scene.currentBattle.trainer!.config.trainerType).toBe(TrainerType.VITO);
       expect(scene.currentBattle.mysteryEncounter.enemyPartyConfigs.length).toBe(0);
       expect(scene.currentBattle.mysteryEncounter.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
 
       // Should have Macho Brace in the rewards
       await skipBattleToNextBattle(game, true);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
@@ -348,7 +348,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
     it("should have a Rarer Candy in the rewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_WINSTRATE_CHALLENGE, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);

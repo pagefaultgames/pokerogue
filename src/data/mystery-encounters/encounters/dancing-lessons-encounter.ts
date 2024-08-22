@@ -87,7 +87,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
     .withOnVisualsStart((scene: BattleScene) => {
-      const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon(), scene.getPlayerPokemon());
+      const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getPlayerPokemon());
       danceAnim.play(scene);
 
       return true;
@@ -104,8 +104,8 @@ export const DancingLessonsEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter;
 
       const species = getPokemonSpecies(Species.ORICORIO);
-      const enemyPokemon = scene.addEnemyPokemon(species, scene.currentBattle.enemyLevels[0], TrainerSlot.NONE, false);
-      if (!enemyPokemon.moveset.some(m => m.getMove().id === Moves.REVELATION_DANCE)) {
+      const enemyPokemon = scene.addEnemyPokemon(species, scene.currentBattle.enemyLevels![0], TrainerSlot.NONE, false);
+      if (!enemyPokemon.moveset.some(m => m && m.getMove().id === Moves.REVELATION_DANCE)) {
         if (enemyPokemon.moveset.length < 4) {
           enemyPokemon.moveset.push(new PokemonMove(Moves.REVELATION_DANCE));
         } else {
@@ -206,7 +206,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
             scene.unshiftPhase(new LearnMovePhase(scene, scene.getParty().indexOf(pokemon), Moves.REVELATION_DANCE));
 
             // Play animation again to "learn" the dance
-            const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon(), scene.getPlayerPokemon());
+            const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getPlayerPokemon());
             danceAnim.play(scene);
           };
 
@@ -239,7 +239,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for nature selection
             return pokemon.moveset
-              .filter(move => DANCING_MOVES.includes(move.getMove().id))
+              .filter(move => move && DANCING_MOVES.includes(move.getMove().id))
               .map((move: PokemonMove) => {
                 const option: OptionSelectItem = {
                   label: move.getName(),
@@ -261,13 +261,13 @@ export const DancingLessonsEncounter: MysteryEncounter =
             // If pokemon meets primary pokemon reqs, it can be selected
             const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`);
+              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
             }
 
             return null;
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected, null, selectableFilter);
+          return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Show the Oricorio a dance, and recruit it

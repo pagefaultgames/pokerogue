@@ -87,6 +87,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
       const e4Template = trainerPartyTemplates.ELITE_FOUR;
       const brutalConfig = trainerConfigs[brutalTrainerType].copy();
       brutalConfig.setPartyTemplates(e4Template);
+      // @ts-ignore
       brutalConfig.partyTemplateFunc = null; // Overrides gym leader party template func
       female = false;
       if (brutalConfig.hasGenders) {

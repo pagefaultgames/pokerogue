@@ -76,13 +76,13 @@ export const ATrainersTestEncounter: MysteryEncounter =
           text: `${namespace}.${trainerNameKey}.intro_dialogue`
         }
       ];
-      encounter.options[0].dialogue.selected = [
+      encounter.options[0].dialogue!.selected = [
         {
           speaker: `trainerNames:${trainerNameKey}`,
           text: `${namespace}.${trainerNameKey}.accept`
         }
       ];
-      encounter.options[1].dialogue.selected = [
+      encounter.options[1].dialogue!.selected = [
         {
           speaker: `trainerNames:${trainerNameKey}`,
           text: `${namespace}.${trainerNameKey}.decline`

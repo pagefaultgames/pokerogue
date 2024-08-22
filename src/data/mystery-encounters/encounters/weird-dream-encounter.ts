@@ -8,7 +8,7 @@ import { leaveEncounterWithoutBattle, setEncounterRewards, } from "../utils/enco
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
-import { IntegerHolder, randSeedInt, randSeedShuffle } from "#app/utils";
+import { IntegerHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { HiddenAbilityRateBoosterModifier, PokemonBaseStatTotalModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
@@ -362,7 +362,7 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
     }
     newTypes.push(newType);
     if (!newPokemon.mysteryEncounterData) {
-      newPokemon.mysteryEncounterData = new MysteryEncounterPokemonData(null, null, null, newTypes);
+      newPokemon.mysteryEncounterData = new MysteryEncounterPokemonData(undefined, undefined, undefined, newTypes);
     } else {
       newPokemon.mysteryEncounterData.types = newTypes;
     }
@@ -381,9 +381,11 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
       // Def or SpDef
       stats.push(baseStats[Stat.DEF] < baseStats[Stat.SPDEF] ? Stat.DEF : Stat.SPDEF);
       // const mod = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU().newModifier(newPokemon, 20, stats);
-      const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU().generateType(null, [20, stats]);
-      const modifier = modType.newModifier(newPokemon);
-      scene.addModifier(modifier);
+      const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU().generateType(scene.getParty(), [20, stats]);
+      const modifier = modType?.newModifier(newPokemon);
+      if (modifier) {
+        scene.addModifier(modifier);
+      }
     }
 
     // Enable passive if previous had it
@@ -422,8 +424,8 @@ function getOriginalBst(scene: BattleScene, pokemon: Pokemon) {
 }
 
 function getTransformedSpecies(originalBst: number, bstSearchRange: [number, number], hasPokemonBstHigherThan600: boolean, hasPokemonBstBetween570And600: boolean, alreadyUsedSpecies: PokemonSpecies[]): PokemonSpecies {
-  let newSpecies: PokemonSpecies;
-  while (!newSpecies) {
+  let newSpecies: PokemonSpecies | undefined;
+  while (isNullOrUndefined(newSpecies)) {
     const bstCap = originalBst + bstSearchRange[1];
     const bstMin = Math.max(originalBst + bstSearchRange[0], 0);
 
@@ -442,7 +444,7 @@ function getTransformedSpecies(originalBst: number, bstSearchRange: [number, num
     if (validSpecies?.length > 20) {
       validSpecies = randSeedShuffle(validSpecies);
       newSpecies = validSpecies.pop();
-      while (alreadyUsedSpecies.includes(newSpecies)) {
+      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies!)) {
         newSpecies = validSpecies.pop();
       }
     } else {
@@ -452,7 +454,7 @@ function getTransformedSpecies(originalBst: number, bstSearchRange: [number, num
     }
   }
 
-  return newSpecies;
+  return newSpecies!;
 }
 
 function doShowDreamBackground(scene: BattleScene) {
@@ -503,7 +505,7 @@ function doHideDreamBackground(scene: BattleScene) {
 
 function doSideBySideTransformations(scene: BattleScene, transformations: PokemonTransformation[]) {
   return new Promise<void>(resolve => {
-    const allTransformationPromises = [];
+    const allTransformationPromises: Promise<void>[] = [];
     for (let i = 0; i < 3; i++) {
       const delay = i * 4000;
       scene.time.delayedCall(delay, () => {

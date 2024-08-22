@@ -140,7 +140,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
           const instance = scene.currentBattle.mysteryEncounter;
           setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: false });
           // Snorlax exp to Pokemon that did the stealing
-          setEncounterExp(scene, instance.primaryPokemon.id, getPokemonSpecies(Species.SNORLAX).baseExp);
+          setEncounterExp(scene, instance.primaryPokemon!.id, getPokemonSpecies(Species.SNORLAX).baseExp);
           leaveEncounterWithoutBattle(scene);
         })
         .build()

@@ -2474,34 +2474,33 @@ export default class BattleScene extends SceneBase {
             modifier.stackCount = stackCount;
             // TODO: set isTransferable
             // modifier.setIsTransferable(isTransferable);
-            this.addEnemyModifier(modifier, false, true);
+            this.addEnemyModifier(modifier, true);
           });
-        }
-
-        const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && !!this.currentBattle.trainer?.config.isBoss);
-        let upgradeChance = 32;
-        if (isBoss) {
-          upgradeChance /= 2;
-        }
-        if (isFinalBoss) {
-          upgradeChance /= 8;
-        }
-        const modifierChance = this.gameMode.getEnemyModifierChance(isBoss);
-        let pokemonModifierChance = modifierChance;
-        if (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer)
-          pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i)); // eslint-disable-line
-        let count = 0;
-        for (let c = 0; c < chances; c++) {
-          if (!Utils.randSeedInt(modifierChance)) {
-            count++;
+        } else {
+          const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && !!this.currentBattle.trainer?.config.isBoss);
+          let upgradeChance = 32;
+          if (isBoss) {
+            upgradeChance /= 2;
           }
+          if (isFinalBoss) {
+            upgradeChance /= 8;
+          }
+          const modifierChance = this.gameMode.getEnemyModifierChance(isBoss);
+          let pokemonModifierChance = modifierChance;
+          if (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer)
+            pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i)); // eslint-disable-line
+          let count = 0;
+          for (let c = 0; c < chances; c++) {
+            if (!Utils.randSeedInt(modifierChance)) {
+              count++;
+            }
+          }
+          if (isBoss) {
+            count = Math.max(count, Math.floor(chances / 2));
+          }
+          getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance)
+            .map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
         }
-        if (isBoss) {
-          count = Math.max(count, Math.floor(chances / 2));
-        }
-        getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance)
-          .map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
-
         return true;
       });
       this.updateModifiers(false).then(() => resolve());
@@ -2786,7 +2785,7 @@ export default class BattleScene extends SceneBase {
     }
 
     // Check for queued encounters first
-    if (!encounter && this.mysteryEncounterData?.nextEncounterQueue?.length > 0) {
+    if (!encounter && this.mysteryEncounterData?.nextEncounterQueue && this.mysteryEncounterData.nextEncounterQueue.length > 0) {
       let i = 0;
       while (i < this.mysteryEncounterData.nextEncounterQueue.length && !!encounter) {
         const candidate = this.mysteryEncounterData.nextEncounterQueue[i];
@@ -2801,7 +2800,7 @@ export default class BattleScene extends SceneBase {
 
     if (encounter) {
       encounter = new MysteryEncounter(encounter);
-      encounter.populateDialogueTokensFromRequirements!(this);
+      encounter.populateDialogueTokensFromRequirements(this);
       return encounter;
     }
 

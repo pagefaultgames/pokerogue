@@ -35,7 +35,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
@@ -62,9 +62,9 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       { text: `${namespace}.intro` },
       { speaker: `${namespace}.speaker`, text: `${namespace}.intro_dialogue` }
     ]);
-    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(ThePokemonSalesmanEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(ThePokemonSalesmanEncounter.options.length).toBe(2);
   });
 
@@ -101,7 +101,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     expect(ThePokemonSalesmanEncounter.onInit).toBeDefined();
 
     ThePokemonSalesmanEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit(scene);
+    const onInitResult = onInit!(scene);
 
     expect(ThePokemonSalesmanEncounter.dialogueTokens?.purchasePokemon).toBeDefined();
     expect(ThePokemonSalesmanEncounter.dialogueTokens?.price).toBeDefined();
@@ -167,7 +167,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
-      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
       vi.spyOn(mysteryEncounterPhase, "handleOptionSelect");
@@ -175,7 +175,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 1);
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();

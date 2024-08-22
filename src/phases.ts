@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from "./ui/ui";
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier, PokemonResetNegativeStatStageModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, overrideModifiers, overrideHeldItems, BypassSpeedChanceModifier, TurnStatusEffectModifier, PokemonResetNegativeStatStageModifier, PokemonIncrementingStatModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, initEncounterAnims, initMoveAnim, loadEncounterAnimAssets, loadMoveAnimAssets, MoveAnim } from "./data/battle-anims";
@@ -19,7 +19,7 @@ import { biomeLinks, getBiomeName } from "./data/biomes";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { CustomModifierSettings, FusePokemonModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, modifierTypes, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, regenerateModifierPoolThresholds, RememberMoveModifierType, TmModifierType } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
+import { BattlerTagLapseType, CenterOfAttentionTag, EncoreTag, MysteryEncounterPostSummonTag, ProtectedTag, SemiInvulnerableTag, TrappedTag } from "./data/battler-tags";
 import { getPokemonNameWithAffix } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
@@ -70,6 +70,7 @@ import { doTrainerExclamation, handleMysteryEncounterBattleStartEffects, handleM
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { isNullOrUndefined } from "./utils";
 
 const { t } = i18next;
 
@@ -865,7 +866,7 @@ export class EncounterPhase extends BattlePhase {
 
       // Add intro visuals for mystery encounter
       mysteryEncounter.initIntroVisuals(this.scene);
-      this.scene.field.add(mysteryEncounter.introVisuals);
+      this.scene.field.add(mysteryEncounter.introVisuals!);
     }
 
     let totalBst = 0;
@@ -930,7 +931,7 @@ export class EncounterPhase extends BattlePhase {
         const newEncounter = this.scene.getMysteryEncounter(mysteryEncounter);
         battle.mysteryEncounter = newEncounter;
       }
-      loadEnemyAssets.push(battle.mysteryEncounter.introVisuals.loadAssets().then(() => battle.mysteryEncounter.introVisuals.initSprite()));
+      loadEnemyAssets.push(battle.mysteryEncounter.introVisuals!.loadAssets().then(() => battle.mysteryEncounter.introVisuals!.initSprite()));
       // Load Mystery Encounter Exclamation bubble and sfx
       loadEnemyAssets.push(new Promise<void>(resolve => {
         this.scene.loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav");
@@ -1130,7 +1131,7 @@ export class EncounterPhase extends BattlePhase {
         }
       }
     } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
-      const introVisuals = this.scene.currentBattle.mysteryEncounter.introVisuals;
+      const introVisuals = this.scene.currentBattle.mysteryEncounter.introVisuals!;
       introVisuals.playAnim();
 
       if (this.scene.currentBattle.mysteryEncounter.onVisualsStart) {
@@ -1148,23 +1149,27 @@ export class EncounterPhase extends BattlePhase {
 
         if (showEncounterMessage) {
           const introDialogue = this.scene.currentBattle.mysteryEncounter.dialogue.intro;
-          const FIRST_DIALOGUE_PROMPT_DELAY = 750;
-          let i = 0;
-          const showNextDialogue = () => {
-            const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
-            const dialogue = introDialogue[i];
-            const title = getEncounterText(this.scene, dialogue.speaker);
-            const text = getEncounterText(this.scene, dialogue.text);
-            i++;
-            if (title) {
-              this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0);
-            } else {
-              this.scene.ui.showText(text, null, nextAction, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
-            }
-          };
+          if (!introDialogue) {
+            doShowEncounterOptions();
+          } else {
+            const FIRST_DIALOGUE_PROMPT_DELAY = 750;
+            let i = 0;
+            const showNextDialogue = () => {
+              const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
+              const dialogue = introDialogue[i];
+              const title = getEncounterText(this.scene, dialogue?.speaker);
+              const text = getEncounterText(this.scene, dialogue.text)!;
+              i++;
+              if (title) {
+                this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0);
+              } else {
+                this.scene.ui.showText(text, null, nextAction, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
+              }
+            };
 
-          if (introDialogue.length > 0) {
-            showNextDialogue();
+            if (introDialogue.length > 0) {
+              showNextDialogue();
+            }
           }
         } else {
           doShowEncounterOptions();
@@ -1330,7 +1335,7 @@ export class NextEncounterPhase extends EncounterPhase {
         }
         if (lastEncounterVisuals) {
           this.scene.field.remove(lastEncounterVisuals, true);
-          this.scene.lastMysteryEncounter.introVisuals = null;
+          this.scene.lastMysteryEncounter.introVisuals = undefined;
         }
 
         if (!this.tryOverrideForBattleSpec()) {
@@ -4378,7 +4383,7 @@ export class VictoryPhase extends PokemonPhase {
         if (participated) {
           partyMember.addFriendship(2);
           const machoBraceModifier = partyMember.getHeldItems().find(m => m instanceof PokemonIncrementingStatModifier);
-          if (!isNullOrUndefined(machoBraceModifier) && machoBraceModifier.stackCount < machoBraceModifier.getMaxStackCount(this.scene)) {
+          if (machoBraceModifier && machoBraceModifier.stackCount < machoBraceModifier.getMaxStackCount(this.scene)) {
             machoBraceModifier.stackCount++;
             this.scene.updateModifiers(true, true);
             partyMember.updateInfo();
@@ -5857,7 +5862,7 @@ export class SelectModifierPhase extends BattlePhase {
     } else {
       baseValue = 250;
     }
-    const multiplier = !isNullOrUndefined(this.customModifierSettings?.rerollMultiplier) ? this.customModifierSettings.rerollMultiplier : 1;
+    const multiplier = !isNullOrUndefined(this.customModifierSettings?.rerollMultiplier) ? this.customModifierSettings!.rerollMultiplier! : 1;
     return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount) * multiplier, Number.MAX_SAFE_INTEGER);
   }
 

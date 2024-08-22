@@ -136,7 +136,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
           // Update money and remove pokemon from party
           updatePlayerMoney(scene, encounter.misc.price);
 
-          setEncounterExp(scene, encounter.options[1].primaryPokemon.id, getPokemonSpecies(Species.LIEPARD).baseExp, true);
+          setEncounterExp(scene, encounter.options[1].primaryPokemon!.id, getPokemonSpecies(Species.LIEPARD).baseExp, true);
 
           leaveEncounterWithoutBattle(scene, true);
         })

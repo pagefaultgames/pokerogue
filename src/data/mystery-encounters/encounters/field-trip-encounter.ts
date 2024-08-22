@@ -78,7 +78,7 @@ export const FieldTripEncounter: MysteryEncounter =
                   const correctMove = move.getMove().category === MoveCategory.PHYSICAL;
                   encounter.setDialogueToken("moveCategory", "Physical");
                   if (!correctMove) {
-                    encounter.options[0].dialogue.selected = [
+                    encounter.options[0].dialogue!.selected = [
                       {
                         text: `${namespace}.option.incorrect`,
                         speaker: `${namespace}.speaker`,
@@ -97,7 +97,7 @@ export const FieldTripEncounter: MysteryEncounter =
                   } else {
                     encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
                     encounter.setDialogueToken("move", move.getName());
-                    encounter.options[0].dialogue.selected = [
+                    encounter.options[0].dialogue!.selected = [
                       {
                         text: `${namespace}.option.selected`,
                       },
@@ -164,7 +164,7 @@ export const FieldTripEncounter: MysteryEncounter =
                   const correctMove = move.getMove().category === MoveCategory.SPECIAL;
                   encounter.setDialogueToken("moveCategory", "Special");
                   if (!correctMove) {
-                    encounter.options[1].dialogue.selected = [
+                    encounter.options[1].dialogue!.selected = [
                       {
                         text: `${namespace}.option.incorrect`,
                         speaker: `${namespace}.speaker`,
@@ -189,7 +189,7 @@ export const FieldTripEncounter: MysteryEncounter =
                   } else {
                     encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
                     encounter.setDialogueToken("move", move.getName());
-                    encounter.options[1].dialogue.selected = [
+                    encounter.options[1].dialogue!.selected = [
                       {
                         text: `${namespace}.option.selected`,
                       },
@@ -256,7 +256,7 @@ export const FieldTripEncounter: MysteryEncounter =
                   const correctMove = move.getMove().category === MoveCategory.STATUS;
                   encounter.setDialogueToken("moveCategory", "Status");
                   if (!correctMove) {
-                    encounter.options[2].dialogue.selected = [
+                    encounter.options[2].dialogue!.selected = [
                       {
                         text: `${namespace}.option.incorrect`,
                         speaker: `${namespace}.speaker`,
@@ -275,7 +275,7 @@ export const FieldTripEncounter: MysteryEncounter =
                   } else {
                     encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
                     encounter.setDialogueToken("move", move.getName());
-                    encounter.options[2].dialogue.selected = [
+                    encounter.options[2].dialogue!.selected = [
                       {
                         text: `${namespace}.option.selected`,
                       },

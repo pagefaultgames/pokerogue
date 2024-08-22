@@ -50,7 +50,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, scene.currentBattle.waveIndex, 0, getPartyLuckValue(scene.getParty()), true);
-      const bossPokemon = new EnemyPokemon(scene, bossSpecies, scene.currentBattle.waveIndex, TrainerSlot.NONE, true, null);
+      const bossPokemon = new EnemyPokemon(scene, bossSpecies, scene.currentBattle.waveIndex, TrainerSlot.NONE, true);
       const config: EnemyPartyConfig = {
         levelAdditiveMultiplier: 1,
         pokemonConfigs: [{
@@ -72,7 +72,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
               ? ModifierTier.ULTRA
               : ModifierTier.GREAT;
       regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0);
-      let item: ModifierTypeOption;
+      let item: ModifierTypeOption | null = null;
       // TMs excluded from possible rewards as they're too swingy in value for a singular item reward
       while (!item || item.type.id.includes("TM_")) {
         item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier], allowLuckUpgrades: false })[0];
@@ -147,8 +147,8 @@ export const FightOrFlightEncounter: MysteryEncounter =
           setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
 
           // Use primaryPokemon to execute the thievery
-          const primaryPokemon = encounter.options[1].primaryPokemon;
-          setEncounterExp(scene, primaryPokemon.id, encounter.enemyPartyConfigs[0].pokemonConfigs[0].species.baseExp);
+          const primaryPokemon = encounter.options[1].primaryPokemon!;
+          setEncounterExp(scene, primaryPokemon.id, encounter.enemyPartyConfigs[0].pokemonConfigs![0].species.baseExp);
           leaveEncounterWithoutBattle(scene);
         })
         .build()

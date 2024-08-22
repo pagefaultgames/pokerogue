@@ -826,7 +826,7 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
     args[1].forEach((v, i) => {
       const isHp = i === 0;
       let mult = 1;
-      if (this.stackCount === this.getMaxHeldItemCount(null)) {
+      if (this.stackCount === this.getMaxHeldItemCount()) {
         mult = isHp ? 1.05 : 1.1;
       }
       const newVal = Math.floor((v + this.stackCount * (isHp ? 1 : 2)) * mult);
@@ -840,7 +840,7 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
     return 1.2;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(pokemon?: Pokemon): integer {
     return 50;
   }
 }

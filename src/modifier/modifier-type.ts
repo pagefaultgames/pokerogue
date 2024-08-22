@@ -28,7 +28,6 @@ import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
-import { isNullOrUndefined } from "../utils";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -117,26 +116,6 @@ export class ModifierType {
    */
   withIdFromFunc(func: ModifierTypeFunc): ModifierType {
     this.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === func)!; // TODO: is this bang correct?
-    return this;
-  }
-
-  /**
-   * Populates the tier field by performing a reverse lookup on the modifier pool specified by {@linkcode poolType} using the
-   * {@linkcode ModifierType}'s id.
-   * @param poolType the {@linkcode ModifierPoolType} to look into to derive the item's tier; defaults to {@linkcode ModifierPoolType.PLAYER}
-   */
-  withTierFromPool(poolType: ModifierPoolType = ModifierPoolType.PLAYER): ModifierType {
-    for (const tier of Object.values(getModifierPoolForType(poolType))) {
-      for (const modifier of tier) {
-        if (this.id === modifier.modifierType.id) {
-          this.tier = modifier.modifierType.tier;
-          break;
-        }
-      }
-      if (this.tier) {
-        break;
-      }
-    }
     return this;
   }
 
@@ -2113,10 +2092,10 @@ function getModifierTypeOptionWithRetry(existingOptions: ModifierTypeOption[], r
   allowLuckUpgrades = allowLuckUpgrades ?? true;
   let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
   let r = 0;
-  while (existingOptions.length && ++r < retryCount && existingOptions.filter(o => o.type.name === candidate.type.name || o.type.group === candidate.type.group).length) {
-    candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate.type.tier, candidate.upgradeCount, 0, allowLuckUpgrades);
+  while (existingOptions.length && ++r < retryCount && existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length) {
+    candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate?.type.tier ?? tier, candidate?.upgradeCount, 0, allowLuckUpgrades);
   }
-  return candidate;
+  return candidate!;
 }
 
 /**

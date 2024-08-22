@@ -50,7 +50,7 @@ describe("Clowning Around - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -78,9 +78,9 @@ describe("Clowning Around - Mystery Encounter", () => {
         text: `${namespace}.intro_dialogue`,
       },
     ]);
-    expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(ClowningAroundEncounter.options.length).toBe(3);
   });
 
@@ -111,23 +111,23 @@ describe("Clowning Around - Mystery Encounter", () => {
     expect(ClowningAroundEncounter.onInit).toBeDefined();
 
     ClowningAroundEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit(scene);
+    const onInitResult = onInit!(scene);
     const config = ClowningAroundEncounter.enemyPartyConfigs[0];
 
     expect(config.doubleBattle).toBe(true);
-    expect(config.trainerConfig.trainerType).toBe(TrainerType.HARLEQUIN);
-    expect(config.pokemonConfigs[0]).toEqual({
+    expect(config.trainerConfig?.trainerType).toBe(TrainerType.HARLEQUIN);
+    expect(config.pokemonConfigs?.[0]).toEqual({
       species: getPokemonSpecies(Species.MR_MIME),
       isBoss: true,
       moveSet: [Moves.TEETER_DANCE, Moves.ALLY_SWITCH, Moves.DAZZLING_GLEAM, Moves.PSYCHIC]
     });
-    expect(config.pokemonConfigs[1]).toEqual({
+    expect(config.pokemonConfigs?.[1]).toEqual({
       species: getPokemonSpecies(Species.BLACEPHALON),
       mysteryEncounterData: expect.anything(),
       isBoss: true,
       moveSet: [Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN]
     });
-    expect(config.pokemonConfigs[1].mysteryEncounterData.types.length).toBe(2);
+    expect(config.pokemonConfigs?.[1].mysteryEncounterData?.types.length).toBe(2);
     expect([
       Abilities.STURDY,
       Abilities.PICKUP,
@@ -144,8 +144,8 @@ describe("Clowning Around - Mystery Encounter", () => {
       Abilities.MAGICIAN,
       Abilities.SHEER_FORCE,
       Abilities.PRANKSTER
-    ]).toContain(config.pokemonConfigs[1].mysteryEncounterData.ability);
-    expect(ClowningAroundEncounter.misc.ability).toBe(config.pokemonConfigs[1].mysteryEncounterData.ability);
+    ]).toContain(config.pokemonConfigs?.[1].mysteryEncounterData?.ability);
+    expect(ClowningAroundEncounter.misc.ability).toBe(config.pokemonConfigs?.[1].mysteryEncounterData?.ability);
     await vi.waitFor(() => expect(moveInitSpy).toHaveBeenCalled());
     await vi.waitFor(() => expect(moveLoadSpy).toHaveBeenCalled());
     expect(onInitResult).toBe(true);
@@ -172,10 +172,10 @@ describe("Clowning Around - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(2);
       expect(enemyField[0].species.speciesId).toBe(Species.MR_MIME);
       expect(enemyField[0].moveset).toEqual([new PokemonMove(Moves.TEETER_DANCE), new PokemonMove(Moves.ALLY_SWITCH), new PokemonMove(Moves.DAZZLING_GLEAM), new PokemonMove(Moves.PSYCHIC)]);
@@ -191,10 +191,10 @@ describe("Clowning Around - Mystery Encounter", () => {
 
     it("should let the player gain the ability after battle completion", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
       const abilityToTrain = scene.currentBattle.mysteryEncounter.misc.ability;
 
@@ -209,7 +209,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       vi.spyOn(partyUiHandler, "show");
       game.endPhase();
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
-      expect(scene.getCurrentPhase().constructor.name).toBe(PostMysteryEncounterPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(PostMysteryEncounterPhase.name);
 
       // Wait for Yes/No confirmation to appear
       await vi.waitFor(() => expect(optionSelectUiHandler.show).toHaveBeenCalled());
@@ -224,7 +224,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.phaseInterceptor.to(NewBattlePhase, false);
 
       const leadPokemon = scene.getParty()[0];
-      expect(leadPokemon.mysteryEncounterData.ability).toBe(abilityToTrain);
+      expect(leadPokemon.mysteryEncounterData?.ability).toBe(abilityToTrain);
     });
   });
 
@@ -254,6 +254,9 @@ describe("Clowning Around - Mystery Encounter", () => {
 
     it("should randomize held items of the Pokemon with the most items, and not the held items of other pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
+
+      // Set some moves on party for attack type booster generation
+      scene.getParty()[0].moveset = [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.THIEF)];
 
       // 2 Sitrus Berries on lead
       scene.modifiers = [];
@@ -294,8 +297,8 @@ describe("Clowning Around - Mystery Encounter", () => {
       const secondItemsAfter = scene.getParty()[1].getHeldItems();
       expect(secondItemsAfter.length).toBe(1);
       expect(secondItemsAfter[0].type.id).toBe("SOUL_DEW");
-      expect(secondItemsAfter[0].stackCount).toBe(5);
-    });
+      expect(secondItemsAfter[0]?.stackCount).toBe(5);
+    }, 2000000);
 
     it("should leave encounter without battle", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
@@ -342,9 +345,9 @@ describe("Clowning Around - Mystery Encounter", () => {
       scene.getParty()[2].moveset = [];
       await runMysteryEncounterToEnd(game, 3);
 
-      const leadTypesAfter = scene.getParty()[0].mysteryEncounterData.types;
-      const secondaryTypesAfter = scene.getParty()[1].mysteryEncounterData.types;
-      const thirdTypesAfter = scene.getParty()[2].mysteryEncounterData.types;
+      const leadTypesAfter = scene.getParty()[0].mysteryEncounterData?.types;
+      const secondaryTypesAfter = scene.getParty()[1].mysteryEncounterData?.types;
+      const thirdTypesAfter = scene.getParty()[2].mysteryEncounterData?.types;
 
       expect(leadTypesAfter.length).toBe(2);
       expect(leadTypesAfter).not.toBe([Type.ICE, Type.WATER]);

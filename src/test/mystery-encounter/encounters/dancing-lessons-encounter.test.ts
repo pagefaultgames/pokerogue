@@ -37,7 +37,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -60,9 +60,9 @@ describe("Dancing Lessons - Mystery Encounter", () => {
     expect(DancingLessonsEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
     expect(DancingLessonsEncounter.dialogue).toBeDefined();
     expect(DancingLessonsEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(DancingLessonsEncounter.options.length).toBe(3);
   });
 
@@ -110,14 +110,14 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.ORICORIO);
       expect(enemyField[0].summonData.battleStats).toEqual([1, 1, 1, 1, 1, 0, 0]);
-      const moveset = enemyField[0].moveset.map(m => m.moveId);
+      const moveset = enemyField[0].moveset.map(m => m?.moveId);
       expect(moveset.some(m => m === Moves.REVELATION_DANCE)).toBeTruthy();
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
@@ -127,10 +127,10 @@ describe("Dancing Lessons - Mystery Encounter", () => {
 
     it("should have a Baton in the rewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
@@ -205,7 +205,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       expect(partyCountBefore + 1).toBe(partyCountAfter);
       const oricorio = scene.getParty()[scene.getParty().length - 1];
       expect(oricorio.species.speciesId).toBe(Species.ORICORIO);
-      const moveset = oricorio.moveset.map(m => m.moveId);
+      const moveset = oricorio.moveset.map(m => m?.moveId);
       expect(moveset?.some(m => m === Moves.REVELATION_DANCE)).toBeTruthy();
       expect(moveset?.some(m => m === Moves.DRAGON_DANCE)).toBeTruthy();
     });
@@ -217,7 +217,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
-      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
       vi.spyOn(mysteryEncounterPhase, "handleOptionSelect");
@@ -226,7 +226,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       await runSelectMysteryEncounterOption(game, 3);
       const partyCountAfter = scene.getParty().length;
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();

@@ -36,7 +36,7 @@ describe("Weird Dream - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
     vi.spyOn(EncounterTransformationSequence, "doPokemonTransformationSequence").mockImplementation(() => new Promise<void>(resolve => resolve()));
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
@@ -67,9 +67,9 @@ describe("Weird Dream - Mystery Encounter", () => {
         text: `${namespace}.intro_dialogue`,
       },
     ]);
-    expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(WeirdDreamEncounter.options.length).toBe(2);
   });
 
@@ -99,7 +99,7 @@ describe("Weird Dream - Mystery Encounter", () => {
     expect(WeirdDreamEncounter.onInit).toBeDefined();
 
     WeirdDreamEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit(scene);
+    const onInitResult = onInit!(scene);
 
     expect(loadBgmSpy).toHaveBeenCalled();
     expect(onInitResult).toBe(true);
@@ -129,7 +129,7 @@ describe("Weird Dream - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 1);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const pokemonAfter = scene.getParty();
       const bstsAfter = pokemonAfter.map(pokemon => pokemon.getSpeciesForm().getBaseStatTotal());
@@ -138,7 +138,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       for (let i = 0; i < pokemonAfter.length; i++) {
         const newPokemon = pokemonAfter[i];
         expect(newPokemon.getSpeciesForm().speciesId).not.toBe(pokemonPrior[i].getSpeciesForm().speciesId);
-        expect(newPokemon.mysteryEncounterData.types.length).toBe(2);
+        expect(newPokemon.mysteryEncounterData?.types.length).toBe(2);
       }
 
       const plus90To110 = bstDiff.filter(bst => bst > 80);
@@ -152,7 +152,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);

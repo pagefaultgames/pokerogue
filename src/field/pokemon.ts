@@ -108,7 +108,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public mysteryEncounterData: MysteryEncounterPokemonData;
 
   /** Used by Mystery Encounters to execute pokemon-specific logic (such as stat boosts) at start of battle */
-  public mysteryEncounterBattleEffects: (pokemon: Pokemon) => void = null;
+  public mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
 
   public fieldPosition: FieldPosition;
 

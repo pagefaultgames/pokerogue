@@ -11,7 +11,7 @@ export default class MockText implements MockGameObject {
   public list: MockGameObject[] = [];
   public style;
   public text = "";
-  private name?: string;
+  name: string;
   public color?: string;
 
   constructor(textureManager, x, y, content, styleOptions) {

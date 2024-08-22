@@ -40,7 +40,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
@@ -64,9 +64,9 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
     expect(MysteriousChallengersEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
     expect(MysteriousChallengersEncounter.dialogue).toBeDefined();
     expect(MysteriousChallengersEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(MysteriousChallengersEncounter.options.length).toBe(3);
   });
 
@@ -105,7 +105,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
     expect(encounter.onInit).toBeDefined();
 
     encounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit(scene);
+    const onInitResult = onInit!(scene);
 
     expect(encounter.enemyPartyConfigs).toBeDefined();
     expect(encounter.enemyPartyConfigs.length).toBe(3);
@@ -125,11 +125,11 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
         female: expect.any(Boolean),
       }
     ]);
-    expect(encounter.enemyPartyConfigs[1].trainerConfig.partyTemplates[0]).toEqual(new TrainerPartyCompoundTemplate(
+    expect(encounter.enemyPartyConfigs[1].trainerConfig?.partyTemplates[0]).toEqual(new TrainerPartyCompoundTemplate(
       new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, false, true),
       new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true)
     ));
-    expect(encounter.enemyPartyConfigs[2].trainerConfig.partyTemplates[0]).toEqual(new TrainerPartyCompoundTemplate(
+    expect(encounter.enemyPartyConfigs[2].trainerConfig?.partyTemplates[0]).toEqual(new TrainerPartyCompoundTemplate(
       new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE),
       new TrainerPartyTemplate(3, PartyMemberStrength.STRONG),
       new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER))
@@ -157,19 +157,19 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
 
     it("should start battle against the trainer", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
     });
 
     it("should have normal trainer rewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
-      await runMysteryEncounterToEnd(game, 1, null, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
@@ -199,19 +199,19 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
 
     it("should start battle against the trainer", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
-      await runMysteryEncounterToEnd(game, 2, null, true);
+      await runMysteryEncounterToEnd(game, 2, undefined, true);
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
     });
 
     it("should have hard trainer rewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
-      await runMysteryEncounterToEnd(game, 2, null, true);
+      await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
@@ -242,19 +242,19 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
 
     it("should start battle against the trainer", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
-      await runMysteryEncounterToEnd(game, 3, null, true);
+      await runMysteryEncounterToEnd(game, 3, undefined, true);
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(CommandPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
     });
 
     it("should have brutal trainer rewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
-      await runMysteryEncounterToEnd(game, 3, null, true);
+      await runMysteryEncounterToEnd(game, 3, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase().constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);

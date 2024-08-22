@@ -36,7 +36,7 @@ describe("Part-Timer - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
@@ -66,9 +66,9 @@ describe("Part-Timer - Mystery Encounter", () => {
         text: `${namespace}.intro_dialogue`,
       }
     ]);
-    expect(PartTimerEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(PartTimerEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(PartTimerEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(PartTimerEncounter.options.length).toBe(3);
   });
 
@@ -127,7 +127,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       // Expect PP of mon's moves to have been reduced to 2
       const moves = scene.getParty()[0].moveset;
       for (const move of moves) {
-        expect(move.getMovePp() - move.ppUsed).toBe(2);
+        expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
       }
     });
 
@@ -147,7 +147,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       // Expect PP of mon's moves to have been reduced to 2
       const moves = scene.getParty()[1].moveset;
       for (const move of moves) {
-        expect(move.getMovePp() - move.ppUsed).toBe(2);
+        expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
       }
     });
 
@@ -192,7 +192,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       // Expect PP of mon's moves to have been reduced to 2
       const moves = scene.getParty()[2].moveset;
       for (const move of moves) {
-        expect(move.getMovePp() - move.ppUsed).toBe(2);
+        expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
       }
     });
 
@@ -212,7 +212,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       // Expect PP of mon's moves to have been reduced to 2
       const moves = scene.getParty()[3].moveset;
       for (const move of moves) {
-        expect(move.getMovePp() - move.ppUsed).toBe(2);
+        expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
       }
     });
 
@@ -252,7 +252,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
-      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
       vi.spyOn(mysteryEncounterPhase, "handleOptionSelect");
@@ -260,7 +260,7 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 3);
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -279,7 +279,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       // Expect PP of mon's moves to have been reduced to 2
       const moves = scene.getParty()[0].moveset;
       for (const move of moves) {
-        expect(move.getMovePp() - move.ppUsed).toBe(2);
+        expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
       }
     });
 

@@ -22,6 +22,7 @@ import { applyModifierTypeToPlayerPokemon, catchPokemon, getHighestLevelPlayerPo
 import { TrainerSlot } from "#app/data/trainer-config";
 import { PokeballType } from "#app/data/pokeball";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
+import { BerryType } from "#enums/berry-type";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:absoluteAvarice";
@@ -39,8 +40,8 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
     .withIntroSpriteConfigs([
       {
         // This sprite has the shadow
-        spriteKey: null,
-        fileRoot: null,
+        spriteKey: "",
+        fileRoot: "",
         species: Species.GREEDENT,
         hasShadow: true,
         alpha: 0.001,
@@ -48,8 +49,8 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
         x: -5
       },
       {
-        spriteKey: null,
-        fileRoot: null,
+        spriteKey: "",
+        fileRoot: "",
         species: Species.GREEDENT,
         hasShadow: false,
         repeat: true,
@@ -254,7 +255,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
             queueEncounterMessage(scene, `${namespace}.option.1.food_stash`);
           };
 
-          setEncounterRewards(scene, { fillRemaining: true }, null, givePartyPokemonReviverSeeds);
+          setEncounterRewards(scene, { fillRemaining: true }, undefined, givePartyPokemonReviverSeeds);
           encounter.startOfBattleEffects.push({
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.ENEMY],
@@ -287,7 +288,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           const party = scene.getParty();
           party.forEach(pokemon => {
             const stolenBerries: BerryModifier[] = berryMap.get(pokemon.id);
-            const berryTypesAsArray = [];
+            const berryTypesAsArray: BerryType[] = [];
             stolenBerries?.forEach(bMod => berryTypesAsArray.push(...new Array(bMod.stackCount).fill(bMod.berryType)));
             const returnedBerryCount = Math.floor((berryTypesAsArray.length ?? 0) * 2 / 5);
 
@@ -330,7 +331,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           // Let it have the food
           // Greedent joins the team, level equal to 2 below highest party member
           const level = getHighestLevelPlayerPokemon(scene).level - 2;
-          const greedent = new EnemyPokemon(scene, getPokemonSpecies(Species.GREEDENT), level, TrainerSlot.NONE, false, null);
+          const greedent = new EnemyPokemon(scene, getPokemonSpecies(Species.GREEDENT), level, TrainerSlot.NONE, false);
           greedent.moveset = [new PokemonMove(Moves.THRASH), new PokemonMove(Moves.BODY_PRESS), new PokemonMove(Moves.STUFF_CHEEKS), new PokemonMove(Moves.SLACK_OFF)];
           greedent.passive = true;
 
@@ -346,7 +347,7 @@ function doGreedentSpriteSteal(scene: BattleScene) {
   const shakeDelay = 50;
   const slideDelay = 500;
 
-  const greedentSprites = scene.currentBattle.mysteryEncounter.introVisuals.getSpriteAtIndex(1);
+  const greedentSprites = scene.currentBattle.mysteryEncounter.introVisuals?.getSpriteAtIndex(1);
 
   scene.playSound("Follow Me");
   scene.tweens.chain({
@@ -420,7 +421,7 @@ function doGreedentSpriteSteal(scene: BattleScene) {
 }
 
 function doGreedentEatBerries(scene: BattleScene) {
-  const greedentSprites = scene.currentBattle.mysteryEncounter.introVisuals.getSpriteAtIndex(1);
+  const greedentSprites = scene.currentBattle.mysteryEncounter.introVisuals?.getSpriteAtIndex(1);
   let index = 1;
   scene.tweens.add({
     targets: greedentSprites,
@@ -455,7 +456,12 @@ function doBerrySpritePile(scene: BattleScene, isEat: boolean = false) {
   const encounter = scene.currentBattle.mysteryEncounter;
   animationOrder.forEach((berry, i) => {
     const introVisualsIndex = encounter.spriteConfigs.findIndex(config => config.spriteKey?.includes(berry));
-    const [ sprite, tintSprite ] = encounter.introVisuals.getSpriteAtIndex(introVisualsIndex);
+    let sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite;
+    const sprites = encounter.introVisuals?.getSpriteAtIndex(introVisualsIndex);
+    if (sprites) {
+      sprite = sprites[0];
+      tintSprite = sprites[1];
+    }
     scene.time.delayedCall(berryAddDelay * i + 400, () => {
       if (sprite) {
         sprite.setVisible(!isEat);

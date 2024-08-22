@@ -36,7 +36,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     game.override.mysteryEncounterChance(100);
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves(true);
+    game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -59,9 +59,9 @@ describe("Lost at Sea - Mystery Encounter", () => {
     expect(LostAtSeaEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(LostAtSeaEncounter.dialogue).toBeDefined();
     expect(LostAtSeaEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue.title).toBe(`${namespace}.title`);
-    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue.description).toBe(`${namespace}.description`);
-    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue.query).toBe(`${namespace}.query`);
+    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
+    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
+    expect(LostAtSeaEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
     expect(LostAtSeaEncounter.options.length).toBe(3);
   });
 
@@ -98,7 +98,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     expect(LostAtSeaEncounter.onInit).toBeDefined();
 
     LostAtSeaEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit(scene);
+    const onInitResult = onInit!(scene);
 
     expect(LostAtSeaEncounter.dialogueTokens?.damagePercentage).toBe("25");
     expect(LostAtSeaEncounter.dialogueTokens?.option1RequiredMove).toBe(Moves[Moves.SURF]);
@@ -129,12 +129,12 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
       const party = game.scene.getParty();
-      const blastoise = party.find((pkm) => pkm.species.speciesId === Species.PIDGEOT);
-      const expBefore = blastoise.exp;
+      const blastoise = party.find((pkm) => pkm.species.speciesId === Species.BLASTOISE);
+      const expBefore = blastoise!.exp;
 
-      await runMysteryEncounterToEnd(game, 2);
+      await runMysteryEncounterToEnd(game, 1);
 
-      expect(blastoise.exp).toBe(expBefore + Math.floor(laprasSpecies.baseExp * defaultWave / 5 + 1));
+      expect(blastoise?.exp).toBe(expBefore + Math.floor(laprasSpecies.baseExp * defaultWave / 5 + 1));
     });
 
     it("should leave encounter without battle", async () => {
@@ -152,7 +152,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
-      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
       vi.spyOn(mysteryEncounterPhase, "handleOptionSelect");
@@ -160,7 +160,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 1);
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -194,11 +194,11 @@ describe("Lost at Sea - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
       const party = game.scene.getParty();
       const pidgeot = party.find((pkm) => pkm.species.speciesId === Species.PIDGEOT);
-      const expBefore = pidgeot.exp;
+      const expBefore = pidgeot!.exp;
 
       await runMysteryEncounterToEnd(game, 2);
 
-      expect(pidgeot.exp).toBe(expBefore + Math.floor(laprasBaseExp * defaultWave / 5 + 1));
+      expect(pidgeot!.exp).toBe(expBefore + Math.floor(laprasBaseExp * defaultWave / 5 + 1));
     });
 
     it("should leave encounter without battle", async () => {
@@ -216,7 +216,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
-      expect(encounterPhase.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
       vi.spyOn(mysteryEncounterPhase, "handleOptionSelect");
@@ -224,7 +224,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(scene.getCurrentPhase().constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -254,7 +254,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
 
       const party = game.scene.getParty();
-      const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA);
+      const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA)!;
       vi.spyOn(abra, "isAllowedInBattle").mockReturnValue(false);
 
       await runMysteryEncounterToEnd(game, 3);

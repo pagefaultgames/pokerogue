@@ -230,7 +230,7 @@ describe("Mystery Encounter Utils", () => {
 
     it("gets species of specified types", () => {
       // Only 9 tiers are: Koraidon, Miraidon, Arceus, Rayquaza, Kyogre, Groudon, Zacian
-      const result = getRandomSpeciesByStarterTier(9, null, [Type.GROUND]);
+      const result = getRandomSpeciesByStarterTier(9, undefined, [Type.GROUND]);
       const pokeSpecies = getPokemonSpecies(result);
       expect(pokeSpecies.speciesId).toBe(Species.GROUDON);
     });

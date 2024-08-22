@@ -10,6 +10,7 @@ import { expect, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import PartyUiHandler from "#app/ui/party-ui-handler";
 import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
+import { isNullOrUndefined } from "#app/utils";
 
 /**
  * Runs a MysteryEncounter to either the start of a battle, or to the MysteryEncounterRewardsPhase, depending on the option selected
@@ -18,7 +19,7 @@ import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
  * @param secondaryOptionSelect -
  * @param isBattle - if selecting option should lead to battle, set to true
  */
-export async function runMysteryEncounterToEnd(game: GameManager, optionNo: number, secondaryOptionSelect: { pokemonNo: number, optionNo?: number } = null, isBattle: boolean = false) {
+export async function runMysteryEncounterToEnd(game: GameManager, optionNo: number, secondaryOptionSelect?: { pokemonNo: number, optionNo?: number }, isBattle: boolean = false) {
   vi.spyOn(EncounterPhaseUtils, "selectPokemonForOption");
   await runSelectMysteryEncounterOption(game, optionNo, secondaryOptionSelect);
 
@@ -65,7 +66,7 @@ export async function runMysteryEncounterToEnd(game: GameManager, optionNo: numb
   }
 }
 
-export async function runSelectMysteryEncounterOption(game: GameManager, optionNo: number, secondaryOptionSelect: { pokemonNo: number, optionNo?: number } = null) {
+export async function runSelectMysteryEncounterOption(game: GameManager, optionNo: number, secondaryOptionSelect?: { pokemonNo: number, optionNo?: number }) {
   // Handle any eventual queued messages (e.g. weather phase, etc.)
   game.onNextPrompt("MessagePhase", Mode.MESSAGE, () => {
     const uiHandler = game.scene.ui.getHandler<MessageUiHandler>();
@@ -107,8 +108,8 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
 
   uiHandler.processInput(Button.ACTION);
 
-  if (!isNaN(secondaryOptionSelect?.pokemonNo)) {
-    await handleSecondaryOptionSelect(game, secondaryOptionSelect.pokemonNo, secondaryOptionSelect.optionNo);
+  if (!isNullOrUndefined(secondaryOptionSelect?.pokemonNo)) {
+    await handleSecondaryOptionSelect(game, secondaryOptionSelect!.pokemonNo, secondaryOptionSelect!.optionNo);
   }
 }
 
@@ -128,14 +129,14 @@ async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number,
   partyUiHandler.processInput(Button.ACTION);
 
   // If there is a second choice to make after selecting a Pokemon
-  if (!isNaN(optionNo)) {
+  if (!isNullOrUndefined(optionNo)) {
     // Wait for Summary menu to close and second options to spawn
     const secondOptionUiHandler = game.scene.ui.handlers[Mode.OPTION_SELECT] as OptionSelectUiHandler;
     vi.spyOn(secondOptionUiHandler, "show");
     await vi.waitFor(() => expect(secondOptionUiHandler.show).toHaveBeenCalled());
 
     // Navigate down to the correct option
-    for (let i = 1; i < optionNo; i++) {
+    for (let i = 1; i < optionNo!; i++) {
       secondOptionUiHandler.processInput(Button.DOWN);
     }
 

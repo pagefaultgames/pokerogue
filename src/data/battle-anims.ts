@@ -440,7 +440,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     scene.field.add(moveAnim.bgSprite);
     const fieldPokemon = scene.getEnemyPokemon() || scene.getPlayerPokemon();
     if (!isNullOrUndefined(priority)) {
-      scene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority);
+      scene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority!);
     } else if (fieldPokemon?.isOnField()) {
       scene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, fieldPokemon);
     }
@@ -540,7 +540,7 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
 export async function initEncounterAnims(scene: BattleScene, encounterAnim: EncounterAnim | EncounterAnim[]): Promise<void> {
   const anims = Array.isArray(encounterAnim) ? encounterAnim : [encounterAnim];
   const encounterAnimNames = Utils.getEnumKeys(EncounterAnim);
-  const encounterAnimFetches = [];
+  const encounterAnimFetches: Promise<Map<EncounterAnim, AnimConfig>>[] = [];
   for (const anim of anims) {
     if (encounterAnims.has(anim) && !isNullOrUndefined(encounterAnims.get(anim))) {
       continue;
@@ -806,7 +806,7 @@ export abstract class BattleAnim {
     play(scene: BattleScene, callback?: Function) {
       const isOppAnim = this.isOppAnim();
       const user = !isOppAnim ? this.user! : this.target!; // TODO: are those bangs correct?
-      const target = !isOppAnim ? this.target : this.user;
+      const target = !isOppAnim ? this.target! : this.user!;
 
       if (!target?.isOnField() && !this.playOnEmptyField) {
         if (callback) {
@@ -1052,7 +1052,7 @@ export abstract class BattleAnim {
         y += targetInitialY;
         const angle = -frame.angle;
         const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
-        ret.get(frame.target).set(key, { x: x, y: y, scaleX: scaleX, scaleY: scaleY, angle: angle });
+        ret.get(frame.target)?.set(key, { x: x, y: y, scaleX: scaleX, scaleY: scaleY, angle: angle });
       }
 
       return ret;
@@ -1102,17 +1102,17 @@ export abstract class BattleAnim {
       this.srcLine = [ userFocusX, userFocusY, targetFocusX, targetFocusY ];
       this.dstLine = [ 150, 75, targetInitialX, targetInitialY ];
 
-      let r = anim.frames.length;
+      let r = anim!.frames.length;
       let f = 0;
 
       const existingFieldSprites = [...scene.field.getAll()];
 
       scene.tweens.addCounter({
         duration: Utils.getFrameMs(3) * frameTimeMult,
-        repeat: anim.frames.length,
+        repeat: anim!.frames.length,
         onRepeat: () => {
-          const spriteFrames = anim.frames[f];
-          const frameData = this.getGraphicFrameDataWithoutTarget(anim.frames[f], targetInitialX, targetInitialY);
+          const spriteFrames = anim!.frames[f];
+          const frameData = this.getGraphicFrameDataWithoutTarget(anim!.frames[f], targetInitialX, targetInitialY);
           const u = 0;
           const t = 0;
           let g = 0;
@@ -1124,7 +1124,7 @@ export abstract class BattleAnim {
 
             const sprites = spriteCache[AnimFrameTarget.GRAPHIC];
             if (g === sprites.length) {
-              const newSprite: Phaser.GameObjects.Sprite = scene.addFieldSprite(0, 0, anim.graphic, 1);
+              const newSprite: Phaser.GameObjects.Sprite = scene.addFieldSprite(0, 0, anim!.graphic, 1);
               sprites.push(newSprite);
               scene.field.add(newSprite);
               spritePriorities.push(1);
@@ -1147,17 +1147,19 @@ export abstract class BattleAnim {
             }
             moveSprite.setFrame(frame.graphicFrame);
 
-            const graphicFrameData = frameData.get(frame.target).get(graphicIndex);
-            moveSprite.setPosition(graphicFrameData.x, graphicFrameData.y);
-            moveSprite.setAngle(graphicFrameData.angle);
-            moveSprite.setScale(graphicFrameData.scaleX,  graphicFrameData.scaleY);
+            const graphicFrameData = frameData.get(frame.target)?.get(graphicIndex);
+            if (graphicFrameData) {
+              moveSprite.setPosition(graphicFrameData.x, graphicFrameData.y);
+              moveSprite.setAngle(graphicFrameData.angle);
+              moveSprite.setScale(graphicFrameData.scaleX,  graphicFrameData.scaleY);
 
-            moveSprite.setAlpha(frame.opacity / 255);
-            moveSprite.setVisible(frame.visible);
-            moveSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
+              moveSprite.setAlpha(frame.opacity / 255);
+              moveSprite.setVisible(frame.visible);
+              moveSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
+            }
           }
-          if (anim.frameTimedEvents.has(f)) {
-            for (const event of anim.frameTimedEvents.get(f)) {
+          if (anim?.frameTimedEvents.get(f)) {
+            for (const event of anim.frameTimedEvents.get(f)!) {
               r = Math.max((anim.frames.length - f) + event.execute(scene, this, frameTimedEventPriority), r);
             }
           }
@@ -1277,8 +1279,8 @@ export class EncounterBattleAnim extends BattleAnim {
     this.oppAnim = oppAnim ?? false;
   }
 
-  getAnim(): AnimConfig {
-    return encounterAnims.get(this.encounterAnim);
+  getAnim(): AnimConfig | null {
+    return encounterAnims.get(this.encounterAnim) ?? null;
   }
 
   isOppAnim(): boolean {

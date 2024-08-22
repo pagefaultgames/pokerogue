@@ -57,7 +57,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
         .withPreOptionPhase(async (scene: BattleScene) => {
           // Play animation
           const introVisuals =
-            scene.currentBattle.mysteryEncounter.introVisuals;
+            scene.currentBattle.mysteryEncounter.introVisuals!;
           introVisuals.spriteConfigs[0].disableAnimation = false;
           introVisuals.playAnim();
         })
