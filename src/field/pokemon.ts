@@ -1971,11 +1971,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const cancelled = new Utils.BooleanHolder(false);
     const power = move.calculateBattlePower(source, this);
     const typeless = move.hasAttr(TypelessAttr);
-    const typeEffectiveness = new Utils.IntegerHolder(1);
-    applyMoveAttrs(RespectTypeImmunityAttr, source, this, move, typeEffectiveness);
-    const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || typeEffectiveness.value === 0)
+    const typeMultiplier = new Utils.NumberHolder(1);
+    applyMoveAttrs(RespectTypeImmunityAttr, source, this, move, typeMultiplier);
+    typeMultiplier.value = !typeless && (moveCategory !== MoveCategory.STATUS || typeMultiplier.value === 0)
       ? this.getAttackTypeEffectiveness(move, source, false, false)
-      : 1);
+      : 1;
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
     if (typeless) {
       typeMultiplier.value = 1;

@@ -1083,12 +1083,16 @@ export class PreMoveMessageAttr extends MoveAttr {
 }
 
 /**
- * This allows type-sensitive moves like Thunder Wave to be affected by abilities like Normalize, etc.
+ * This allows type-immunity sensitive moves like Thunder Wave to be affected by abilities like Normalize, etc.
  * In addition, this avoids the use of conditionals and can allow for the different type matchups found in Inverse Mode.
+ * @param user {@linkcode Pokemon} the user of the move
+ * @param target {@linkcode Pokemon} the target of the move used
+ * @param move {@linkcode Move} the move used
+ * @param args[0] the destination of the calculated type multiplier of a match-up between the target's types and the move's type
+ * @returns true
  */
 export class RespectTypeImmunityAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    //Apply type change to move
     args[0].value = target.getAttackTypeEffectiveness(move.type, user);
     return true;
   }
