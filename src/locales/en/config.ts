@@ -24,7 +24,7 @@ import fightUiHandler from "./fight-ui-handler.json";
 import filterBar from "./filter-bar.json";
 import gameMode from "./game-mode.json";
 import gameStatsUiHandler from "./game-stats-ui-handler.json";
-import { growth } from "./growth";
+import growth from "./growth.json";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
 import { modifier } from "./modifier";
