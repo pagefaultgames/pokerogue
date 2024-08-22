@@ -10,7 +10,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 
 const TIMEOUT = 20 * 1000;
 
-describe("Moves - Burning Jealousy", () => {
+describe("Moves - Lash Out", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
