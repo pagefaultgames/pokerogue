@@ -1,35 +1,10 @@
-import GameWrapper from "#test/utils/gameWrapper";
-import { Mode } from "#app/ui/ui";
-import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
-import BattleScene from "#app/battle-scene.js";
-import PhaseInterceptor from "#test/utils/phaseInterceptor";
-import TextInterceptor from "#test/utils/TextInterceptor";
-import { GameModes, getGameMode } from "#app/game-mode";
-import fs from "fs";
-import { AES, enc } from "crypto-js";
 import { updateUserInfo } from "#app/account";
-import InputsHandler from "#app/test/utils/inputsHandler";
-import ErrorInterceptor from "#app/test/utils/errorInterceptor";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { MockClock } from "#app/test/utils/mocks/mockClock";
-import PartyUiHandler from "#app/ui/party-ui-handler";
-import CommandUiHandler, { Command } from "#app/ui/command-ui-handler";
-import Trainer from "#app/field/trainer";
-import { ExpNotification } from "#enums/exp-notification";
-import { GameDataType } from "#enums/game-data-type";
-import { PlayerGender } from "#enums/player-gender";
-import { Species } from "#enums/species";
-import { Button } from "#enums/buttons";
 import { BattlerIndex } from "#app/battle";
-import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
-import { OverridesHelper } from "./helpers/overridesHelper";
+import BattleScene from "#app/battle-scene";
+import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import Trainer from "#app/field/trainer";
+import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { MoveHelper } from "./helpers/moveHelper";
-import { vi } from "vitest";
-import { ClassicModeHelper } from "./helpers/classicModeHelper";
-import { DailyModeHelper } from "./helpers/dailyModeHelper";
-import { SettingsHelper } from "./helpers/settingsHelper";
 import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
@@ -42,6 +17,31 @@ import { TitlePhase } from "#app/phases/title-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
+import ErrorInterceptor from "#app/test/utils/errorInterceptor";
+import InputsHandler from "#app/test/utils/inputsHandler";
+import { MockClock } from "#app/test/utils/mocks/mockClock";
+import CommandUiHandler from "#app/ui/command-ui-handler";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import PartyUiHandler from "#app/ui/party-ui-handler";
+import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
+import { Mode } from "#app/ui/ui";
+import { Button } from "#enums/buttons";
+import { ExpNotification } from "#enums/exp-notification";
+import { GameDataType } from "#enums/game-data-type";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
+import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
+import GameWrapper from "#test/utils/gameWrapper";
+import PhaseInterceptor from "#test/utils/phaseInterceptor";
+import TextInterceptor from "#test/utils/TextInterceptor";
+import { AES, enc } from "crypto-js";
+import fs from "fs";
+import { vi } from "vitest";
+import { ClassicModeHelper } from "./helpers/classicModeHelper";
+import { DailyModeHelper } from "./helpers/dailyModeHelper";
+import { MoveHelper } from "./helpers/moveHelper";
+import { OverridesHelper } from "./helpers/overridesHelper";
+import { SettingsHelper } from "./helpers/settingsHelper";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -192,38 +192,23 @@ export default class GameManager {
   }
 
   /**
-   * Emulate a player attack
-   * @param movePosition the index of the move in the pokemon's moveset array
+   * Emulate a player's target selection after a move is chosen, usually called automatically by {@linkcode MoveHelper.select}.
+   * Will trigger during the next {@linkcode SelectTargetPhase}
+   * @param {BattlerIndex} targetIndex The index of the attack target, or `undefined` for multi-target attacks
+   * @param movePosition The index of the move in the pokemon's moveset array
    */
-  doAttack(movePosition: integer) {
-    this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      this.scene.ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    this.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-
-    // Confirm target selection if move is multi-target
+  selectTarget(movePosition: integer, targetIndex?: BattlerIndex) {
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
       const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
-      if (move.isMultiTarget()) {
-        handler.processInput(Button.ACTION);
+      if (!move.isMultiTarget()) {
+        handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
       }
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MovePhase) || this.isCurrentPhase(TurnEndPhase));
-  }
-
-  /**
-   * Emulate a player's target selection after an attack is chosen,
-   * usually called after {@linkcode doAttack} in a double battle.
-   * @param {BattlerIndex} targetIndex the index of the attack target
-   */
-  doSelectTarget(targetIndex: BattlerIndex) {
-    this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.setCursor(targetIndex);
+      if (move.isMultiTarget() && targetIndex !== undefined) {
+        throw new Error(`targetIndex was passed to selectMove() but move ("${move.name}") is not targetted`);
+      }
       handler.processInput(Button.ACTION);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnStartPhase));
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MovePhase) || this.isCurrentPhase(TurnStartPhase) || this.isCurrentPhase(TurnEndPhase));
   }
 
   /** Faint all opponents currently on the field */
@@ -321,7 +306,7 @@ export default class GameManager {
    */
   async importData(path): Promise<[boolean, integer]> {
     const saveKey = "x0i2O7WRiANTqPmZ";
-    const dataRaw = fs.readFileSync(path, {encoding: "utf8", flag: "r"});
+    const dataRaw = fs.readFileSync(path, { encoding: "utf8", flag: "r" });
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
     dataStr = this.scene.gameData.convertSystemDataStr(dataStr);
     const systemData = this.scene.gameData.parseSystemData(dataStr);
@@ -335,7 +320,7 @@ export default class GameManager {
 
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
     (this.scene.time as MockClock).overrideDelay = 0.01;
-    return new Promise<void>(async(resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
       this.scene.pushPhase(new FaintPhase(this.scene, pokemon.getBattlerIndex(), true));
       await this.phaseInterceptor.to(FaintPhase).catch((e) => reject(e));

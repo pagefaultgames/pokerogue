@@ -8,7 +8,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "goingAllOutForAttack": "{{pokemonName}}[[는]]\n전력을 다하기 시작했다!",
   "regainedHealth": "{{pokemonName}}[[는]]\n기력을 회복했다!",
   "keptGoingAndCrashed": "{{pokemonName}}[[는]]\n의욕이 넘쳐서 땅에 부딪쳤다!",
-  "fled": "{{pokemonName}}[[는]]\N도망쳤다!",
+  "fled": "{{pokemonName}}[[는]]\n도망쳤다!",
   "cannotBeSwitchedOut": "{{pokemonName}}[[를]]\n돌아오게 할 수 없습니다!",
   "swappedAbilitiesWithTarget": "{{pokemonName}}[[는]]\n서로의 특성을 교체했다!",
   "coinsScatteredEverywhere": "돈이 주위에 흩어졌다!",

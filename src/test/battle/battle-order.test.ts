@@ -1,20 +1,13 @@
 import { Stat } from "#app/data/pokemon-stat";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { Command } from "#app/ui/command-ui-handler";
-import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
-import { Mode } from "#app/ui/ui";
-import { Abilities } from "#enums/abilities";
-import { Button } from "#enums/buttons";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { CommandPhase } from "#app/phases/command-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { SelectTargetPhase } from "#app/phases/select-target-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
-
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Battle order", () => {
   let phaserGame: Phaser.Game;
@@ -39,7 +32,7 @@ describe("Battle order", () => {
     game.override.moveset([Moves.TACKLE]);
   });
 
-  it("opponent faster than player 50 vs 150", async() => {
+  it("opponent faster than player 50 vs 150", async () => {
     await game.startBattle([
       Species.BULBASAUR,
     ]);
@@ -47,13 +40,7 @@ describe("Battle order", () => {
     game.scene.getParty()[0].stats[Stat.SPD] = 50;
     game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 150;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.run(EnemyCommandPhase);
 
     const playerPokemonIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
@@ -64,20 +51,14 @@ describe("Battle order", () => {
     expect(order[1]).toBe(playerPokemonIndex);
   }, 20000);
 
-  it("Player faster than opponent 150 vs 50", async() => {
+  it("Player faster than opponent 150 vs 50", async () => {
     await game.startBattle([
       Species.BULBASAUR,
     ]);
     game.scene.getParty()[0].stats[Stat.SPD] = 150;
     game.scene.currentBattle.enemyParty[0].stats[Stat.SPD] = 50;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.run(EnemyCommandPhase);
 
     const playerPokemonIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
@@ -88,7 +69,7 @@ describe("Battle order", () => {
     expect(order[1]).toBe(enemyPokemonIndex);
   }, 20000);
 
-  it("double - both opponents faster than player 50/50 vs 150/150", async() => {
+  it("double - both opponents faster than player 50/50 vs 150/150", async () => {
     game.override.battleType("double");
     await game.startBattle([
       Species.BULBASAUR,
@@ -105,28 +86,8 @@ describe("Battle order", () => {
     enemyPokemon1.stats[Stat.SPD] = 150;
     enemyPokemon2.stats[Stat.SPD] = 150;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    });
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    });
+    game.move.select(Moves.TACKLE);
+    game.move.select(Moves.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
 
     const pp1Index = playerPokemon1?.getBattlerIndex();
@@ -141,7 +102,7 @@ describe("Battle order", () => {
     expect(order.slice(2,4).includes(pp2Index)).toBe(true);
   }, 20000);
 
-  it("double - speed tie except 1 - 100/100 vs 100/150", async() => {
+  it("double - speed tie except 1 - 100/100 vs 100/150", async () => {
     game.override.battleType("double");
     await game.startBattle([
       Species.BULBASAUR,
@@ -157,28 +118,8 @@ describe("Battle order", () => {
     enemyPokemon1.stats[Stat.SPD] = 100;
     enemyPokemon2.stats[Stat.SPD] = 150;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    });
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    });
+    game.move.select(Moves.TACKLE);
+    game.move.select(Moves.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
 
     const pp1Index = playerPokemon1?.getBattlerIndex();
@@ -193,7 +134,7 @@ describe("Battle order", () => {
     expect(order.slice(1,4).includes(pp1Index)).toBe(true);
   }, 20000);
 
-  it("double - speed tie 100/150 vs 100/150", async() => {
+  it("double - speed tie 100/150 vs 100/150", async () => {
     game.override.battleType("double");
     await game.startBattle([
       Species.BULBASAUR,
@@ -209,28 +150,8 @@ describe("Battle order", () => {
     enemyPokemon1.stats[Stat.SPD] = 100;
     enemyPokemon2.stats[Stat.SPD] = 150;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    });
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.TACKLE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-    game.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as TargetSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    });
+    game.move.select(Moves.TACKLE);
+    game.move.select(Moves.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
 
     const pp1Index = playerPokemon1?.getBattlerIndex();
