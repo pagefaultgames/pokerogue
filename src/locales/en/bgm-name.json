@@ -1,8 +1,6 @@
-import { SimpleTranslationEntries } from "#app/interfaces/locales";
-
-export const bgmName: SimpleTranslationEntries = {
+{
   "music": "Music: ",
-  "missing_entries" : "{{name}}",
+  "missing_entries": "{{name}}",
   "battle_kanto_champion": "B2W2 Kanto Champion Battle",
   "battle_johto_champion": "B2W2 Johto Champion Battle",
   "battle_hoenn_champion_g5": "B2W2 Hoenn Champion Battle",
@@ -85,8 +83,6 @@ export const bgmName: SimpleTranslationEntries = {
   "battle_galactic_boss": "BDSP Cyrus Battle",
   "battle_plasma_boss": "B2W2 Ghetsis Battle",
   "battle_flare_boss": "XY Lysandre Battle",
-
-  // Biome Music
   "abyss": "PMD EoS Dark Crater",
   "badlands": "PMD EoS Barren Valley",
   "beach": "PMD EoS Drenched Bluff",
@@ -102,18 +98,18 @@ export const bgmName: SimpleTranslationEntries = {
   "graveyard": "PMD EoS Mystifying Forest",
   "ice_cave": "PMD EoS Vast Ice Mountain",
   "island": "PMD EoS Craggy Coast",
-  "jungle": "Lmz - Jungle", // The composer thinks about a more creative name
-  "laboratory": "Firel - Laboratory", // The composer thinks about a more creative name
+  "jungle": "Lmz - Jungle",
+  "laboratory": "Firel - Laboratory",
   "lake": "PMD EoS Crystal Cave",
   "meadow": "PMD EoS Sky Peak Forest",
-  "metropolis": "Firel - Metropolis", // The composer thinks about a more creative name
+  "metropolis": "Firel - Metropolis",
   "mountain": "PMD EoS Mt. Horn",
   "plains": "PMD EoS Sky Peak Prairie",
   "power_plant": "PMD EoS Far Amp Plains",
   "ruins": "PMD EoS Deep Sealed Ruin",
-  "sea": "Andr06 - Marine Mystique", // Name defined by the composer
-  "seabed": "Firel - Seabed", // The composer thinks about a more creative name
-  "slum": "Andr06 - Sneaky Snom", // Name defined by the composer
+  "sea": "Andr06 - Marine Mystique",
+  "seabed": "Firel - Seabed",
+  "slum": "Andr06 - Sneaky Snom",
   "snowy_forest": "PMD EoS Sky Peak Snowfield",
   "space": "Firel - Aether",
   "swamp": "PMD EoS Surrounded Sea",
@@ -122,8 +118,6 @@ export const bgmName: SimpleTranslationEntries = {
   "town": "PMD EoS Random Dungeon Theme 3",
   "volcano": "PMD EoS Steam Cave",
   "wasteland": "PMD EoS Hidden Highland",
-
-  // Encounter
   "encounter_ace_trainer": "BW Trainers' Eyes Meet (Ace Trainer)",
   "encounter_backpacker": "BW Trainers' Eyes Meet (Backpacker)",
   "encounter_clerk": "BW Trainers' Eyes Meet (Clerk)",
@@ -138,9 +132,7 @@ export const bgmName: SimpleTranslationEntries = {
   "encounter_scientist": "BW Trainers' Eyes Meet (Scientist)",
   "encounter_twins": "BW Trainers' Eyes Meet (Twins)",
   "encounter_youngster": "BW Trainers' Eyes Meet (Youngster)",
-
-  // Other
   "heal": "BW Pokémon Heal",
   "menu": "PMD EoS Welcome to the World of Pokémon!",
-  "title": "PMD EoS Top Menu Theme",
-} as const;
+  "title": "PMD EoS Top Menu Theme"
+}

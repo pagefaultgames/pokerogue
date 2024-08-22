@@ -11,7 +11,7 @@ import battleInfo from "./battle-info.json";
 import battleMessageUiHandler from "./battle-message-ui-handler.json";
 import battlerTags from "./battler-tags.json";
 import berry from "./berry.json";
-import { bgmName } from "./bgm-name";
+import bgmName from "./bgm-name.json";
 import { biome } from "./biome";
 import { challenges } from "./challenges";
 import { commandUiHandler } from "./command-ui-handler";
