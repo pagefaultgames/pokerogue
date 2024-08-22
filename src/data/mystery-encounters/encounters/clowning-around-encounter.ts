@@ -28,6 +28,7 @@ import { BattlerIndex } from "#app/battle";
 import { Moves } from "#enums/moves";
 import { EncounterAnim, EncounterBattleAnim } from "#app/data/battle-anims";
 import { MoveCategory } from "#app/data/move";
+import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:clowningAround";
