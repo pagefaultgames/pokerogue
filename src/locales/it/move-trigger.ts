@@ -57,10 +57,10 @@ export const moveTriggers: SimpleTranslationEntries = {
   "sacrificialFullRestore": "{{pokemonName}} riceve i benefici\neffetti di Curardore!",
   "invertStats": "Le modifiche alle statistiche di {{pokemonName}}\nvengono invertite!",
   "resetStats": "Tutte le modifiche alle statistiche sono state annullate!",
-  "statEliminated": "All stat changes were eliminated!",
+  "statEliminated": "Tutte le modifiche alle statistiche sono state annullate!",
   "faintCountdown": "{{pokemonName}}\nandrà KO dopo {{turnCount}} turni.",
   "copyType": "{{pokemonName}} assume il tipo\ndi {{targetPokemonName}}!",
   "suppressAbilities": "L’abilità di {{pokemonName}}\nperde ogni efficacia!",
   "swapArenaTags": "{{pokemonName}} ha invertito gli effetti attivi\nnelle due metà del campo!",
-  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
+  "exposedMove": "{{pokemonName}} ha identificato\n{{targetPokemonName}}!",
 } as const;
