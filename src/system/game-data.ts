@@ -633,10 +633,8 @@ export class GameData {
    * Arbitrary limit of 25 runs per player - Will delete runs, starting with the oldest one, if needed
    */
   async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, isVictory: boolean): Promise<boolean> {
-    let runHistoryData = await this.getRunHistoryData(scene);
-    if (!runHistoryData) {
-      runHistoryData = {};
-    }
+    const runHistoryData = await this.getRunHistoryData(scene);
+    // runHistoryData should always return run history or {} empty object
     const timestamps = Object.keys(runHistoryData);
     const timestampsNo = timestamps.map(Number);
 

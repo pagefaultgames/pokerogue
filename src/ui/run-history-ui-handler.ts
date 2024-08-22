@@ -17,6 +17,12 @@ export type RunSelectCallback = (cursor: integer) => void;
 
 export const RUN_HISTORY_LIMIT: number = 25;
 
+/**
+ * RunHistoryUiHandler handles the UI of the Run History Menu
+ * Run History itself is broken into an array of RunEntryContainer objects that can show the user basic details about their run and allow them to access more details about their run through cursor action.
+ * It navigates similarly to the UI of the save slot select menu.
+ * The only valid input buttons are Button.ACTION and Button.CANCEL.
+ */
 export default class RunHistoryUiHandler extends MessageUiHandler {
 
   private runSelectContainer: Phaser.GameObjects.Container;
@@ -73,6 +79,11 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     this.setScrollCursor(0);
     this.setCursor(0);
 
+    //Destroys the cursor if there are no runs saved so far.
+    if (this.runs.length === 0) {
+      this.clearCursor();
+    }
+
     return true;
   }
 
@@ -104,7 +115,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
         success = true;
         this.scene.ui.revertMode();
       }
-    } else {
+    } else if (this.runs.length > 0) {
       switch (button) {
       case Button.UP:
         if (this.cursor) {
@@ -141,6 +152,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     const response = await this.scene.gameData.getRunHistoryData(this.scene);
     const timestamps = Object.keys(response);
     if (timestamps.length === 0) {
+      this.showEmpty();
       return;
     }
     const timestampsNo = timestamps.map(Number);
@@ -157,6 +169,18 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     if (this.cursorObj && timestamps.length > 0) {
       this.runsContainer.bringToTop(this.cursorObj);
     }
+  }
+
+  /**
+   * If the player has no runs saved so far, this creates a giant window labeled empty instead.
+   */
+  private async showEmpty() {
+    const emptyWindow = addWindow(this.scene, 0, 0, 304, 165);
+    this.runsContainer.add(emptyWindow);
+    const emptyWindowCoordinates = emptyWindow.getCenter();
+    const emptyText = addTextObject(this.scene, 0, 0, i18next.t("saveSlotSelectUiHandler:empty"), TextStyle.WINDOW, {fontSize: "128px"});
+    emptyText.setPosition(emptyWindowCoordinates.x-18, emptyWindowCoordinates.y-15);
+    this.runsContainer.add(emptyText);
   }
 
   override setCursor(cursor: number): boolean {
