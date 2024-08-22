@@ -1089,8 +1089,7 @@ export class PreMoveMessageAttr extends MoveAttr {
 export class RespectTypeImmunityAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     //Apply type change to move
-    const typeEffectiveness = target.getAttackTypeEffectiveness(move.type, user);
-    args[0].value = typeEffectiveness;
+    args[0].value = target.getAttackTypeEffectiveness(move.type, user);
     return true;
   }
 }
