@@ -25,6 +25,7 @@ const namespace = "mysteryEncounter:teleportingHijinks";
 
 const MONEY_COST_MULTIPLIER = 2.5;
 const BIOME_CANDIDATES = [Biome.SPACE, Biome.FAIRY_CAVE, Biome.LABORATORY, Biome.ISLAND];
+const MACHINE_INTERFACING_TYPES = [Type.ELECTRIC, Type.FLYING];
 
 /**
  * Teleporting Hijinks encounter.
@@ -92,7 +93,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPokemonTypeRequirement([Type.ELECTRIC, Type.STEEL], true, 1) // Must have Steel or Electric type
+        .withPokemonTypeRequirement(MACHINE_INTERFACING_TYPES, true, 1) // Must have Steel or Electric type
         .withDialogue({
           buttonLabel: `${namespace}.option.2.label`,
           buttonTooltip: `${namespace}.option.2.tooltip`,
