@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { TurnEndPhase } from "#app/phases";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier.js";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import { deepCopy } from "#app/utils";
