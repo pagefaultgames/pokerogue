@@ -2876,7 +2876,7 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
  *  - The player
  *  - The enemy
  * @param scene current {@linkcode BattleScene}
- * @param isPlayer {@linkcode boolean} for whether the the player (`true`) or enemy (`false`) is being overridden
+ * @param isPlayer {@linkcode boolean} for whether the player (`true`) or enemy (`false`) is being overridden
  */
 export function overrideModifiers(scene: BattleScene, isPlayer: boolean = true): void {
   const modifiersOverride: ModifierTypes.ModifierOverride[] = isPlayer ? Overrides.STARTING_MODIFIER_OVERRIDE : Overrides.OPP_MODIFIER_OVERRIDE;

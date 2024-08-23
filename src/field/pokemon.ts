@@ -746,6 +746,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  /**
+   * Calculates and retrieves the final value of a stat considering any held
+   * items, move effects, opponent abilities, and whether there was a critical
+   * hit.
+   * @param stat the desired {@linkcode EffectiveStat}
+   * @param opponent the target {@linkcode Pokemon}
+   * @param move the {@linkcode Move} being used
+   * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
+   * @returns the final in-battle value of a stat
+   */
   getEffectiveStat(stat: EffectiveStat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
     const statValue = new Utils.NumberHolder(this.getStat(stat, false));
     this.scene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
@@ -1958,7 +1968,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * Note that this does not apply to evasion or accuracy
    * @see {@linkcode getAccuracyMultiplier}
-   * @param
+   * @param stat the desired {@linkcode EffectiveStat}
+   * @param opponent the target {@linkcode Pokemon}
+   * @param move the {@linkcode Move} being used
+   * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
    * @return the stat stage multiplier to be used for effective stat calculation
    */
   getStatStageMultiplier(stat: EffectiveStat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): number {
