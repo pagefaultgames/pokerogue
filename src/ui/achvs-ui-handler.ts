@@ -207,6 +207,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     if (button === Button.ACTION) {
       success = true;
+      this.setScrollCursor(0);
       if (this.currentPage === Page.ACHIEVEMENTS) {
         this.currentPage = Page.VOUCHERS;
         this.updateVoucherIcons();
@@ -214,11 +215,9 @@ export default class AchvsUiHandler extends MessageUiHandler {
       } else if (this.currentPage === Page.VOUCHERS) {
         this.currentPage = Page.ACHIEVEMENTS;
         this.updateAchvIcons();
-
+        this.setCursor(0);
       }
       this.mainContainer.update();
-      this.setCursor(0, true);
-      this.setScrollCursor(0);
     }
     if (button === Button.CANCEL) {
       success = true;
