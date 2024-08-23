@@ -1,4 +1,4 @@
-import { Stat } from "#enums/stat";
+import { BATTLE_STATS, Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
 import Phase from "phaser";
@@ -36,14 +36,14 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     game = new GameManager(phaserGame);
 
     game.override.battleType("single");
-    game.override.enemySpecies(Species.MEW);
+    game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyMoveset(SPLASH_ONLY);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.moveset([ Moves.TACKLE, Moves.SPLASH, Moves.HONE_CLAWS, Moves.BELLY_DRUM ]);
     game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
   });
 
-  it("should provide a x1.3 stat stage multiplier alone", async() => {
+  it("should provide a x1.3 stat stage multiplier", async() => {
     await game.startBattle([
       Species.PIKACHU
     ]);
@@ -59,15 +59,19 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.3);
   }, 20000);
 
-  it("should only increase existing stat stage multiplier by 0.3", async() => {
+  it("should increase existing ACC stat stage by 1 for X_ACCURACY only", async() => {
+    game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
+    game.override.ability(Abilities.SIMPLE);
+
     await game.startBattle([
       Species.PIKACHU
     ]);
 
     const partyMember = game.scene.getPlayerPokemon()!;
 
-    vi.spyOn(partyMember, "getStatStageMultiplier");
+    vi.spyOn(partyMember, "getAccuracyMultiplier");
 
+    // Raise ACC by +2 stat stages
     game.move.select(Moves.HONE_CLAWS);
 
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -76,10 +80,12 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.8);
+    // ACC at +3 stat stages yields a x2 multiplier
+    expect(partyMember.getAccuracyMultiplier).toHaveReturnedWith(2);
   }, 20000);
 
-  it("should not increase past x4 maximum stat stage multiplier", async() => {
+
+  it("should increase existing stat stage multiplier by 3/10 for the rest of the boosters", async() => {
     await game.startBattle([
       Species.PIKACHU
     ]);
@@ -88,7 +94,8 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     vi.spyOn(partyMember, "getStatStageMultiplier");
 
-    game.move.select(Moves.BELLY_DRUM);
+    // Raise ATK by +1 stat stage
+    game.move.select(Moves.HONE_CLAWS);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -96,12 +103,37 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
+    // ATK at +1 stat stage yields a x1.5 multiplier, add 0.3 from X_ATTACK
+    expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.8);
+  }, 20000);
+
+  it("should not increase past maximum stat stage multiplier", async() => {
+    game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }, { name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
+
+    await game.startBattle([
+      Species.PIKACHU
+    ]);
+
+    const partyMember = game.scene.getPlayerPokemon()!;
+
+    vi.spyOn(partyMember, "getStatStageMultiplier");
+    vi.spyOn(partyMember, "getAccuracyMultiplier");
+
+    // Set all stat stages to 6
+    vi.spyOn(partyMember.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(6));
+
+    game.move.select(Moves.TACKLE);
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(partyMember.getAccuracyMultiplier).toHaveReturnedWith(3);
     expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(4);
   }, 20000);
 
   it("should renew how many battles are left of existing booster when picking up new booster of same type", async() => {
     game.override.startingLevel(200);
     game.override.itemRewards([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
+
     await game.startBattle([
       Species.PIKACHU
     ]);
@@ -115,9 +147,12 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     const modifier = game.scene.findModifier(m => m instanceof TempStatStageBoosterModifier) as TempStatStageBoosterModifier;
     expect(modifier.getBattlesLeft()).toBe(4);
 
-    // Forced X Attack to spawn in the first slot with override
+    // Forced X_ATTACK to spawn in the first slot with override
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+      // Traverse to first modifier slot
+      handler.processInput(Button.LEFT);
+      handler.processInput(Button.UP);
       handler.processInput(Button.ACTION);
     }, () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(NewBattlePhase), true);
 

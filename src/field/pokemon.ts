@@ -2020,7 +2020,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.scene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), Stat.ACC, userAccStage);
 
-    userAccStage.value = ignoreAccStatStage.value ? 0 : userAccStage.value;
+    userAccStage.value = ignoreAccStatStage.value ? 0 : Math.min(userAccStage.value, 6);
     targetEvaStage.value = ignoreEvaStatStage.value ? 0 : targetEvaStage.value;
 
     if (target.findTag(t => t instanceof ExposedTag)) {
