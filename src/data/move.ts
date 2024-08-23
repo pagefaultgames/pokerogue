@@ -4383,7 +4383,8 @@ export class DisableMoveAttr extends MoveEffectAttr {
 /**
  * Handles moves that are usd consecutively without user command
  * @extends MoveEffectAttr
- * @param tagTypes: The types of tags that can be removed
+ * @param tagTypes: The types of tags decided by moves
+ * @param rounds: The rounds move planned to keep use non-stop
  * example: @see {@linkcode Moves.THRASH} for frenzy moves
  * example: @see {@linkcode Moves.ICE_BALL} for non stop moves
  */
