@@ -1223,36 +1223,27 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return moveTypeHolder.value as Type;
   }
 
+
+
   /**
    * Calculates the effectiveness of a move against the Pokémon.
-   *
-   * @param source - The Pokémon using the move.
-   * @param move - The move being used.
-   * @returns The type damage multiplier or 1 if it's a status move
-   */
-  getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
-    if (move.getMove().category === MoveCategory.STATUS) {
-      return 1;
-    }
-
-    return this.getAttackMoveEffectiveness(source, move.getMove(), !this.battleData?.abilityRevealed);
-  }
-
-  /**
-   * Calculates the effectiveness of an attack move against the Pokémon.
    *
    * @param source {@linkcode Pokemon} - The attacking Pokémon.
    * @param move {@linkcode Move} - The move being used by the attacking Pokémon.
    * @param ignoreAbility - Whether to check for abilities that might affect type effectiveness or immunity.
    * @returns The type damage multiplier, indicating the effectiveness of the move
    */
-  getAttackMoveEffectiveness(source: Pokemon, move: Move, ignoreAbility: boolean = false, simulated: boolean = true): TypeDamageMultiplier {
+  getMoveEffectiveness(source: Pokemon, move: Move, ignoreAbility: boolean = false, simulated: boolean = true): TypeDamageMultiplier {
     if (move.hasAttr(TypelessAttr)) {
       return 1;
     }
     const moveType = source.getMoveType(move);
+    const types = this.getTypes(true, true);
 
-    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(moveType, source, false, simulated));
+    const typeMultiplier = new Utils.NumberHolder((move.category !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType)))
+      ? this.getAttackTypeEffectiveness(moveType, source, false, simulated)
+      : 1);
+
     const cancelled = new Utils.BooleanHolder(false);
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
     if (this.getTypes().find(t => move.isTypeImmune(source, this, t))) {
@@ -1280,7 +1271,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculates the type effectiveness multiplier for an attack type
    * @param moveType {@linkcode Type} the type of the move being used
-   * @param source the Pokemon using the move
+   * @param source {@linkcode Pokemon} the Pokemon using the move
    * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
    * @param simulated tag to only apply the strong winds effect message when the move is used
    * @returns a multiplier for the type effectiveness
@@ -1981,11 +1972,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const moveCategory = variableCategory.value as MoveCategory;
 
     const moveType = source.getMoveType(move);
-    const types = this.getTypes(true, true);
-    const typeMultiplier = (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType))
-      ? this.getAttackMoveEffectiveness(source, move, false, false)
-      : 1);
-
+    const typeMultiplier = this.getMoveEffectiveness(source, move, false, false);
     const cancelled = new Utils.BooleanHolder(typeMultiplier === 0);
 
     if (!cancelled.value) {
@@ -3913,7 +3900,7 @@ export class EnemyPokemon extends Pokemon {
                * Attack moves are given extra multipliers to their base benefit score based on
                * the move's type effectiveness against the target and whether the move is a STAB move.
                */
-              const effectiveness = target.getAttackMoveEffectiveness(this, move, !target.battleData?.abilityRevealed);
+              const effectiveness = target.getMoveEffectiveness(this, move, !target.battleData?.abilityRevealed);
               if (target.isPlayer() !== this.isPlayer()) {
                 targetScore *= effectiveness;
                 if (this.isOfType(move.type)) {
