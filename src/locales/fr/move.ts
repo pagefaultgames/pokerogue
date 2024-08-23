@@ -2939,7 +2939,7 @@ export const move: MoveTranslationEntries = {
   },
   "sizzlySlide": {
     name: "Évo-Flambo",
-    effect: "Évoli s’embrase et percure violemment l’adversaire. Brule aussi l’ennemi."
+    effect: "Évoli s’embrase et percute violemment l’adversaire. Brule aussi l’ennemi."
   },
   "glitzyGlow": {
     name: "Évo-Psycho",
