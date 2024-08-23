@@ -4380,9 +4380,17 @@ export class DisableMoveAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Handles moves that are usd consecutively without user command
+ * @extends MoveEffectAttr
+ * @param tagTypes: The types of tags that can be removed
+ * example: @see {@linkcode Moves.THRASH} for frenzy moves
+ * example: @see {@linkcode Moves.ICE_BALL} for non stop moves
+ */
 export class nonStopAttr extends MoveEffectAttr {
   public tagType: BattlerTagType;
   private rounds: number;
+  // no round specify means frenzy rand 2-3 turns
   constructor(tagType: BattlerTagType, rounds:number = 0) {
     super(true, MoveEffectTrigger.HIT, false, true);
     this.tagType = tagType;
