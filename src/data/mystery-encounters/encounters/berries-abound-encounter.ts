@@ -46,96 +46,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
     .withCatchAllowed(true)
     .withHideWildIntroMessage(true)
-    .withIntroSpriteConfigs([
-      {
-        spriteKey: "lum_berry",
-        fileRoot: "items",
-        isItem: true,
-        x: 7,
-        y: -14,
-        disableAnimation: true
-      },
-      {
-        spriteKey: "salac_berry",
-        fileRoot: "items",
-        isItem: true,
-        x: 2,
-        y: 4,
-        disableAnimation: true
-      },
-      {
-        spriteKey: "lansat_berry",
-        fileRoot: "items",
-        isItem: true,
-        x: 32,
-        y: 5,
-        disableAnimation: true
-      },
-      {
-        spriteKey: "liechi_berry",
-        fileRoot: "items",
-        isItem: true,
-        x: 6,
-        y: -5,
-        disableAnimation: true
-      },
-      {
-        spriteKey: "sitrus_berry",
-        fileRoot: "items",
-        isItem: true,
-        x: 7,
-        y: 8,
-        disableAnimation: true
-      },
-      {
-        spriteKey: "enigma_berry",
-        fileRoot: "items",
-        isItem: true,
-        x: 26,
-        y: -4,
-        disableAnimation: true
-      },
-      {
-        spriteKey: "leppa_berry",
-        fileRoot: "items",
-        isItem: true,
-        x: 16,
-        y: -27,
-        disableAnimation: true
-      },
-      {
-        spriteKey: "petaya_berry",
-        fileRoot: "items",
-        isItem: true,
-        x: 30,
-        y: -17,
-        disableAnimation: true
-      },
-      {
-        spriteKey: "ganlon_berry",
-        fileRoot: "items",
-        isItem: true,
-        x: 16,
-        y: -11,
-        disableAnimation: true
-      },
-      {
-        spriteKey: "apicot_berry",
-        fileRoot: "items",
-        isItem: true,
-        x: 14,
-        y: -2,
-        disableAnimation: true
-      },
-      {
-        spriteKey: "starf_berry",
-        fileRoot: "items",
-        isItem: true,
-        x: 18,
-        y: 9,
-        disableAnimation: true
-      },
-    ]) // Set in onInit()
+    .withIntroSpriteConfigs([]) // Set in onInit()
     .withIntroDialogue([
       {
         text: `${namespace}.intro`,
@@ -145,12 +56,14 @@ export const BerriesAboundEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter;
 
       // Calculate boss mon
-      const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, scene.currentBattle.waveIndex, 0, getPartyLuckValue(scene.getParty()), true);
-      const bossPokemon = new EnemyPokemon(scene, bossSpecies, scene.currentBattle.waveIndex, TrainerSlot.NONE, true);
+      const level = (scene.currentBattle.enemyLevels?.[0] ?? scene.currentBattle.waveIndex) + Math.max(Math.round((scene.currentBattle.waveIndex / 10)), 0);
+      const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
+      const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
       encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
       const config: EnemyPartyConfig = {
         levelAdditiveMultiplier: 1,
         pokemonConfigs: [{
+          level: level,
           species: bossSpecies,
           dataSource: new PokemonData(bossPokemon),
           isBoss: true
@@ -168,15 +81,26 @@ export const BerriesAboundEncounter: MysteryEncounter =
       encounter.misc = { numBerries };
 
       const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(bossPokemon);
-      encounter.spriteConfigs.push({
-        spriteKey: spriteKey,
-        fileRoot: fileRoot,
-        hasShadow: true,
-        tint: 0.25,
-        x: -5,
-        repeat: true,
-        isPokemon: true
-      });
+      encounter.spriteConfigs = [
+        {
+          spriteKey: "berry_bush",
+          fileRoot: "mystery-encounters",
+          x: 25,
+          y: -6,
+          yShadow: -7,
+          disableAnimation: true,
+          hasShadow: true
+        },
+        {
+          spriteKey: spriteKey,
+          fileRoot: fileRoot,
+          hasShadow: true,
+          tint: 0.25,
+          x: -5,
+          repeat: true,
+          isPokemon: true
+        }
+      ];
 
       // Get fastest party pokemon for option 2
       const fastestPokemon = getHighestStatPlayerPokemon(scene, Stat.SPD, true);
@@ -238,7 +162,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter;
           const fastestPokemon = encounter.misc.fastestPokemon;
           const enemySpeed = encounter.misc.enemySpeed;
-          const speedDiff = fastestPokemon.getStat(Stat.SPD) / enemySpeed;
+          const speedDiff = fastestPokemon.getStat(Stat.SPD) / (enemySpeed * 1.1);
           const numBerries = encounter.misc.numBerries;
 
           const shopOptions: ModifierTypeOption[] = [];
@@ -272,8 +196,8 @@ export const BerriesAboundEncounter: MysteryEncounter =
             await initBattleWithEnemyConfig(scene, config);
             return;
           } else {
-            // Gains 1 berry for every 10% faster the player's pokemon is than the enemy, up to a max of numBerries, minimum of 1
-            const numBerriesGrabbed = Math.max(Math.min(Math.round((speedDiff - 1)/0.1), numBerries), 1);
+            // Gains 1 berry for every 10% faster the player's pokemon is than the enemy, up to a max of numBerries, minimum of 2
+            const numBerriesGrabbed = Math.max(Math.min(Math.round((speedDiff - 1)/0.08), numBerries), 2);
             encounter.setDialogueToken("numBerries", String(numBerriesGrabbed));
             const doFasterBerryRewards = async () => {
               const berryText = numBerriesGrabbed + " " + i18next.t(`${namespace}.berries`);

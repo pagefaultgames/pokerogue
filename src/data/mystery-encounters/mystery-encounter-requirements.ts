@@ -153,7 +153,36 @@ export class WaveRangeRequirement extends EncounterSceneRequirement {
   }
 
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
-    return ["waveCount", scene.currentBattle.waveIndex.toString()];
+    return ["waveIndex", scene.currentBattle.waveIndex.toString()];
+  }
+}
+
+export class WaveModulusRequirement extends EncounterSceneRequirement {
+  waveModuli: number[];
+  modulusValue: number;
+
+  /**
+   * Used for specifying a modulus requirement on the wave index
+   * For example, can be used to require the wave index to end with 1, 2, or 3
+   * @param waveModuli - number[], the allowed modulus results
+   * @param modulusValue - number, the modulus calculation value
+   *
+   * Example:
+   * new WaveModulusRequirement([1, 2, 3], 10) will check for 1st/2nd/3rd waves that are immediately after a multiple of 10 wave
+   * So waves 21, 32, 53 all return true. 58, 14, 99 return false.
+   */
+  constructor(waveModuli: number[], modulusValue: number) {
+    super();
+    this.waveModuli = waveModuli;
+    this.modulusValue = modulusValue;
+  }
+
+  meetsRequirement(scene: BattleScene): boolean {
+    return this.waveModuli.includes(scene.currentBattle.waveIndex % this.modulusValue);
+  }
+
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    return ["waveIndex", scene.currentBattle.waveIndex.toString()];
   }
 }
 
