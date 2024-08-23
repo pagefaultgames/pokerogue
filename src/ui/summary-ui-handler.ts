@@ -343,7 +343,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.candyCountText.setText(`x${this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`);
 
-    this.candyShadow.setCrop(0,0,16, candyCropY);
+    this.candyShadow.setCrop(0, 0, 16, candyCropY);
 
     const doubleShiny = isFusion && this.pokemon.shiny && this.pokemon.fusionShiny;
     const baseVariant = !doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant;
