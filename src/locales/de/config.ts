@@ -58,7 +58,7 @@ import terrain from "./terrain.json";
 import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
 import moveTriggers from "./move-trigger.json";
 
-export const enConfig = {
+export const deConfig = {
   ability,
   abilityTriggers,
   arenaFlyout,
