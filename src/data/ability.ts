@@ -2415,7 +2415,11 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
    * @returns whether the form change was triggered
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (!simulated && pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
+    if (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
+      if (simulated) {
+        return simulated;
+      }
+
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeRevertWeatherFormTrigger);
       queueShowAbility(pokemon, passive);
@@ -3102,7 +3106,11 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
    * @returns whether the form change was triggered
    */
   applyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
-    if (!simulated && pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
+    if (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
+      if (simulated) {
+        return simulated;
+      }
+
       const formRevertingWeathers: WeatherType[] = [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG ];
       const weatherType = pokemon.scene.arena.weather?.weatherType;
 
