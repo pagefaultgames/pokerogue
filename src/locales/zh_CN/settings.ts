@@ -98,5 +98,10 @@ export const settings: SimpleTranslationEntries = {
   "gamepadSupport": "手柄支持",
   "showBgmBar": "显示音乐名称",
   "moveTouchControls": "移动触摸控制",
-  "shopOverlayOpacity": "商店显示不透明度"
+  "shopOverlayOpacity": "商店显示不透明度",
+  "shopCursorTarget": "商店指针位置",
+  "items": "道具",
+  "reroll": "刷新",
+  "shop": "购买",
+  "checkTeam": "检查队伍"
 } as const;
