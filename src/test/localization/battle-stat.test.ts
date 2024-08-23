@@ -34,12 +34,18 @@ interface BattleStatLevelTestUnit {
 }
 
 function testBattleStatName(stat: BattleStat, expectMessage: string) {
+  if (!expectMessage) {
+    return;
+  } // not translated yet!
   const message = getBattleStatName(stat);
   console.log(`message ${message}, expected ${expectMessage}`);
   expect(message).toBe(expectMessage);
 }
 
 function testBattleStatLevelChangeDescription(levels: integer, up: boolean, expectMessage: string, changedStats: integer) {
+  if (!expectMessage) {
+    return;
+  } // not translated yet!
   const message = getBattleStatLevelChangeDescription("{{pokemonNameWithAffix}}", "{{stats}}", levels, up, changedStats);
   console.log(`message ${message}, expected ${expectMessage}`);
   expect(message).toBe(expectMessage);
