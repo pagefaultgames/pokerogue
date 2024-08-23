@@ -1,12 +1,4 @@
 {
-  "trappedDesc": "trapping",
-  "flinchedDesc": "flinching",
-  "confusedDesc": "confusion",
-  "infatuatedDesc": "infatuation",
-  "seedDesc": "seeding",
-  "nightmareDesc": "nightmares",
-  "ingrainDesc": "roots",
-  "drowsyDesc": "drowsiness",
   "rechargingLapse": "{{pokemonNameWithAffix}}は　攻撃の　反動で　動けない！",
   "trappedOnAdd": "{{pokemonNameWithAffix}}は　もう　逃げられない！",
   "trappedOnRemove": "{{pokemonNameWithAffix}}は\n{{moveName}}の　効果が　解けた!",
