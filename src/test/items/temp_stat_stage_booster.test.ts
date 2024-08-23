@@ -35,12 +35,13 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
-    game.override.enemySpecies(Species.SHUCKLE);
-    game.override.enemyMoveset(SPLASH_ONLY);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.moveset([ Moves.TACKLE, Moves.SPLASH, Moves.HONE_CLAWS, Moves.BELLY_DRUM ]);
-    game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
+    game.override
+      .battleType("single")
+      .enemySpecies(Species.SHUCKLE)
+      .enemyMoveset(SPLASH_ONLY)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .moveset([ Moves.TACKLE, Moves.SPLASH, Moves.HONE_CLAWS, Moves.BELLY_DRUM ])
+      .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
   });
 
   it("should provide a x1.3 stat stage multiplier", async() => {
@@ -60,8 +61,9 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   }, 20000);
 
   it("should increase existing ACC stat stage by 1 for X_ACCURACY only", async() => {
-    game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
-    game.override.ability(Abilities.SIMPLE);
+    game.override
+      .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }])
+      .ability(Abilities.SIMPLE);
 
     await game.startBattle([
       Species.PIKACHU
@@ -131,8 +133,9 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   }, 20000);
 
   it("should renew how many battles are left of existing booster when picking up new booster of same type", async() => {
-    game.override.startingLevel(200);
-    game.override.itemRewards([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
+    game.override
+      .startingLevel(200)
+      .itemRewards([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
 
     await game.startBattle([
       Species.PIKACHU

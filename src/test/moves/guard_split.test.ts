@@ -24,12 +24,13 @@ describe("Moves - Guard Split", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.enemyAbility(Abilities.NONE);
-    game.override.enemySpecies(Species.MEW);
-    game.override.enemyLevel(200);
-    game.override.moveset([ Moves.GUARD_SPLIT ]);
-    game.override.ability(Abilities.NONE);
+    game.override
+      .battleType("single")
+      .enemyAbility(Abilities.NONE)
+      .enemySpecies(Species.MEW)
+      .enemyLevel(200)
+      .moveset([ Moves.GUARD_SPLIT ])
+      .ability(Abilities.NONE);
   });
 
   it("should average the user's DEF and SPDEF stats with those of the target", async () => {

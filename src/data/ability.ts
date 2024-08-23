@@ -124,7 +124,7 @@ type AbAttrCondition = (pokemon: Pokemon) => boolean;
 
 type PokemonAttackCondition = (user: Pokemon | null, target: Pokemon | null, move: Move) => boolean;
 type PokemonDefendCondition = (target: Pokemon, user: Pokemon, move: Move) => boolean;
-type PokemonStatStageChangeCondition = (target: Pokemon, statsChanged: BattleStat[], stages: integer) => boolean;
+type PokemonStatStageChangeCondition = (target: Pokemon, statsChanged: BattleStat[], stages: number) => boolean;
 
 export abstract class AbAttr {
   public showAbility: boolean;
@@ -206,7 +206,7 @@ export class PostBattleInitStatStageChangeAbAttr extends PostBattleInitAbAttr {
   private stages: number;
   private selfTarget: boolean;
 
-  constructor(stats: BattleStat[], stages: integer, selfTarget?: boolean) {
+  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean) {
     super();
 
     this.stats = stats;
@@ -542,7 +542,7 @@ export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
 }
 
 export class PostStatStageChangeAbAttr extends AbAttr {
-  applyPostStatStageChange(pokemon: Pokemon, simulated: boolean, statsChanged: BattleStat[], levelChanged: integer, selfTarget: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPostStatStageChange(pokemon: Pokemon, simulated: boolean, statsStagesChanged: BattleStat[], levelChanged: integer, selfTarget: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -868,7 +868,7 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
 
 export class PostDefendCritStatStageChangeAbAttr extends PostDefendAbAttr {
   private stat: BattleStat;
-  private stages: integer;
+  private stages: number;
 
   constructor(stat: BattleStat, stages: number) {
     super();
@@ -1079,8 +1079,8 @@ export class PostStatStageChangeStatStageChangeAbAttr extends PostStatStageChang
     this.stages = stages;
   }
 
-  applyPostStatStageChange(pokemon: Pokemon, simulated: boolean, statsChanged: BattleStat[], stagesChanged: integer, selfTarget: boolean, args: any[]): boolean {
-    if (this.condition(pokemon, statsChanged, stagesChanged) && !selfTarget) {
+  applyPostStatStageChange(pokemon: Pokemon, simulated: boolean, statStagesChanged: BattleStat[], stagesChanged: number, selfTarget: boolean, args: any[]): boolean {
+    if (this.condition(pokemon, statStagesChanged, stagesChanged) && !selfTarget) {
       if (!simulated) {
         pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, (pokemon).getBattlerIndex(), true, this.statsToChange, this.stages));
       }
@@ -3570,7 +3570,7 @@ export class StatStageChangeMultiplierAbAttr extends AbAttr {
 export class StatStageChangeCopyAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     if (!simulated) {
-      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, (args[0] as BattleStat[]), (args[1] as integer), true, false, false));
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, (args[0] as BattleStat[]), (args[1] as number), true, false, false));
     }
     return true;
   }

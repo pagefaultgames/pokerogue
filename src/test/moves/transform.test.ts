@@ -24,13 +24,14 @@ describe("Moves - Transform", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.enemySpecies(Species.MEW);
-    game.override.enemyLevel(200);
-    game.override.enemyAbility(Abilities.BEAST_BOOST);
-    game.override.enemyMoveset(SPLASH_ONLY);
-    game.override.ability(Abilities.INTIMIDATE);
-    game.override.moveset([ Moves.TRANSFORM ]);
+    game.override
+      .battleType("single")
+      .enemySpecies(Species.MEW)
+      .enemyLevel(200)
+      .enemyAbility(Abilities.BEAST_BOOST)
+      .enemyMoveset(SPLASH_ONLY)
+      .ability(Abilities.INTIMIDATE)
+      .moveset([ Moves.TRANSFORM ]);
   });
 
   it("should copy species, ability, gender, all stats except HP, all stat stages, moveset, and types of target", async () => {

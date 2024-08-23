@@ -24,13 +24,14 @@ describe("Moves - Speed Swap", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.enemyAbility(Abilities.NONE);
-    game.override.enemyMoveset(SPLASH_ONLY);
-    game.override.enemySpecies(Species.MEW);
-    game.override.enemyLevel(200);
-    game.override.moveset([ Moves.SPEED_SWAP ]);
-    game.override.ability(Abilities.NONE);
+    game.override
+      .battleType("single")
+      .enemyAbility(Abilities.NONE)
+      .enemyMoveset(SPLASH_ONLY)
+      .enemySpecies(Species.MEW)
+      .enemyLevel(200)
+      .moveset([ Moves.SPEED_SWAP ])
+      .ability(Abilities.NONE);
   });
 
   it("should swap the user's SPD and the target's SPD stats", async () => {

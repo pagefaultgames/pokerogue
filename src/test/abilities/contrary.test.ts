@@ -22,11 +22,12 @@ describe("Abilities - Contrary", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.enemySpecies(Species.BULBASAUR);
-    game.override.enemyAbility(Abilities.CONTRARY);
-    game.override.ability(Abilities.INTIMIDATE);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override
+      .battleType("single")
+      .enemySpecies(Species.BULBASAUR)
+      .enemyAbility(Abilities.CONTRARY)
+      .ability(Abilities.INTIMIDATE)
+      .enemyMoveset(SPLASH_ONLY);
   });
 
   it("should invert stat changes when applied", async() => {

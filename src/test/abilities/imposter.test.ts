@@ -24,13 +24,14 @@ describe("Abilities - Imposter", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.enemySpecies(Species.MEW);
-    game.override.enemyLevel(200);
-    game.override.enemyAbility(Abilities.BEAST_BOOST);
-    game.override.enemyMoveset(SPLASH_ONLY);
-    game.override.ability(Abilities.IMPOSTER);
-    game.override.moveset([ Moves.TACKLE ]);
+    game.override
+      .battleType("single")
+      .enemySpecies(Species.MEW)
+      .enemyLevel(200)
+      .enemyAbility(Abilities.BEAST_BOOST)
+      .enemyMoveset(SPLASH_ONLY)
+      .ability(Abilities.IMPOSTER)
+      .moveset([ Moves.TACKLE ]);
   });
 
   it("should copy species, ability, gender, all stats except HP, all stat stages, moveset, and types of target", async () => {

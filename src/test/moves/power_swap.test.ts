@@ -24,13 +24,14 @@ describe("Moves - Power Swap", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset(new Array(4).fill(Moves.SHELL_SMASH));
-    game.override.enemySpecies(Species.MEW);
-    game.override.enemyLevel(200);
-    game.override.moveset([ Moves.POWER_SWAP ]);
-    game.override.ability(Abilities.NONE);
+    game.override
+      .battleType("single")
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyMoveset(new Array(4).fill(Moves.SHELL_SMASH))
+      .enemySpecies(Species.MEW)
+      .enemyLevel(200)
+      .moveset([ Moves.POWER_SWAP ])
+      .ability(Abilities.NONE);
   });
 
   it("should swap the user's ATK AND SPATK stat stages with the target's", async () => {

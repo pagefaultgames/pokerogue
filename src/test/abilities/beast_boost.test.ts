@@ -27,16 +27,17 @@ describe("Abilities - Beast Boost", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.enemySpecies(Species.BULBASAUR);
-    game.override.enemyAbility(Abilities.BEAST_BOOST);
-    game.override.ability(Abilities.BEAST_BOOST);
-    game.override.startingLevel(2000);
-    game.override.moveset([ Moves.FLAMETHROWER ]);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override
+      .battleType("single")
+      .enemySpecies(Species.BULBASAUR)
+      .enemyAbility(Abilities.BEAST_BOOST)
+      .ability(Abilities.BEAST_BOOST)
+      .startingLevel(2000)
+      .moveset([ Moves.FLAMETHROWER ])
+      .enemyMoveset(SPLASH_ONLY);
   });
 
-  // Note that both MOXIE and BEAST_BOOST test for their current implementation and not the mainline behavior.
+  // Note that both MOXIE and BEAST_BOOST test for their current implementation and not their mainline behavior.
   it("should prefer highest stat to boost its corresponding stat stage by 1 when winning a battle", async() => {
     // SLOWBRO's highest stat is DEF, so it should be picked here
     await game.startBattle([
