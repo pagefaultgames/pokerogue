@@ -2382,7 +2382,9 @@ export class PostSummonWeatherSuppressedFormChangeAbAttr extends PostSummonAbAtt
       return false;
     }
 
-    pokemon.scene.arena.triggerWeatherBasedFormChangesToNormal();
+    if (!simulated) {
+      pokemon.scene.arena.triggerWeatherBasedFormChangesToNormal();
+    }
 
     return true;
   }
@@ -2413,7 +2415,7 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
    * @returns whether the form change was triggered
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
+    if (!simulated && pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeRevertWeatherFormTrigger);
       queueShowAbility(pokemon, passive);
@@ -3100,7 +3102,7 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
    * @returns whether the form change was triggered
    */
   applyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
-    if (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
+    if (!simulated && pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
       const formRevertingWeathers: WeatherType[] = [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG ];
       const weatherType = pokemon.scene.arena.weather?.weatherType;
 
@@ -3909,7 +3911,9 @@ export class PostFaintUnsuppressedWeatherFormChangeAbAttr extends PostFaintAbAtt
       return false;
     }
 
-    pokemon.scene.arena.triggerWeatherBasedFormChanges();
+    if (!simulated) {
+      pokemon.scene.arena.triggerWeatherBasedFormChanges();
+    }
 
     return true;
   }

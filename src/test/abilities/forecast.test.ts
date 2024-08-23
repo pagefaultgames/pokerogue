@@ -1,6 +1,5 @@
 import { Abilities } from "#app/enums/abilities.js";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
@@ -35,7 +34,7 @@ describe("Abilities - Forecast", () => {
     game.override.weather(weather).starterForms({[Species.CASTFORM]: initialForm});
     await game.startBattle([Species.CASTFORM]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
 
     expect(game.scene.getPlayerPokemon()?.formIndex).toBe(form);
   };
@@ -49,7 +48,7 @@ describe("Abilities - Forecast", () => {
     game.override.starterForms({ [Species.CASTFORM]: SUNNY_FORM }).enemyAbility(ability);
     await game.startBattle([Species.CASTFORM]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
 
     expect(game.scene.getPlayerPokemon()?.formIndex).toBe(NORMAL_FORM);
   };
@@ -66,7 +65,7 @@ describe("Abilities - Forecast", () => {
 
     expect(castform?.formIndex).toBe(NORMAL_FORM);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(DamagePhase);
 
@@ -171,7 +170,7 @@ describe("Abilities - Forecast", () => {
     game.override.enemyAbility(Abilities.FORECAST).enemySpecies(Species.SHUCKLE);
     await game.startBattle([Species.CASTFORM]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.RAIN_DANCE));
+    game.move.select(Moves.RAIN_DANCE);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.getPlayerPokemon()?.formIndex).toBe(RAINY_FORM);
@@ -182,7 +181,7 @@ describe("Abilities - Forecast", () => {
     game.override.enemyAbility(Abilities.TRACE);
     await game.startBattle([Species.CASTFORM]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
 
     expect(game.scene.getEnemyPokemon()?.hasAbility(Abilities.FORECAST)).toBe(false);
   });
@@ -195,13 +194,13 @@ describe("Abilities - Forecast", () => {
     expect(castform?.formIndex).toBe(RAINY_FORM);
 
     // First turn - loses Forecast
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SKILL_SWAP));
+    game.move.select(Moves.SKILL_SWAP);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(castform?.formIndex).toBe(NORMAL_FORM);
 
     // Second turn - regains Forecast
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SKILL_SWAP));
+    game.move.select(Moves.SKILL_SWAP);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(castform?.formIndex).toBe(RAINY_FORM);
@@ -215,7 +214,7 @@ describe("Abilities - Forecast", () => {
     expect(castform?.formIndex).toBe(RAINY_FORM);
 
     // First turn - loses Forecast
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(castform?.formIndex).toBe(NORMAL_FORM);
@@ -237,11 +236,11 @@ describe("Abilities - Forecast", () => {
     await game.startBattle([Species.CASTFORM]);
     const castform = game.scene.getPlayerPokemon();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SUNNY_DAY));
+    game.move.select(Moves.SUNNY_DAY);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     while (game.scene.arena.weather && game.scene.arena.weather.turnsLeft > 0) {
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       expect(castform?.formIndex).toBe(SUNNY_FORM);
       await game.toNextTurn();
     }
@@ -257,7 +256,7 @@ describe("Abilities - Forecast", () => {
     expect(castform?.formIndex).toBe(RAINY_FORM);
 
     // First turn - Forecast is suppressed
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.move.forceHit();
 
@@ -284,7 +283,7 @@ describe("Abilities - Forecast", () => {
     game.override.enemyMoveset(Array(4).fill(Moves.TRANSFORM));
     await game.startBattle([Species.CASTFORM]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SUNNY_DAY));
+    game.move.select(Moves.SUNNY_DAY);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
 
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -298,7 +297,7 @@ describe("Abilities - Forecast", () => {
     await game.startBattle([Species.PIKACHU, Species.CASTFORM]);
 
     // First turn - set up stealth rock
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.toNextTurn();
 
     // Second turn - switch in Castform, regains Forecast
