@@ -36,7 +36,7 @@ describe("Abilities - Serene Grace", () => {
     game.override.enemySpecies(Species.ONIX);
     game.override.startingLevel(100);
     game.override.moveset(movesToUse);
-    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
   it("Move chance without Serene Grace", async() => {

@@ -211,7 +211,7 @@ describe("Abilities - Parental Bond", () => {
     "ability should not apply multiplier to counter moves",
     async () => {
       game.override.moveset([Moves.COUNTER]);
-      game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+      game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -554,7 +554,7 @@ describe("Abilities - Parental Bond", () => {
     "ability should not cause user to hit into King's Shield more than once",
     async () => {
       game.override.moveset([Moves.TACKLE]);
-      game.override.enemyMoveset([Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD]);
+      game.override.enemyMoveset([Moves.KINGS_SHIELD, Moves.KINGS_SHIELD, Moves.KINGS_SHIELD, Moves.KINGS_SHIELD]);
 
       await game.startBattle([Species.CHARIZARD]);
 

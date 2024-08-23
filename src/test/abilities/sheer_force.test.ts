@@ -36,7 +36,7 @@ describe("Abilities - Sheer Force", () => {
     game.override.enemySpecies(Species.ONIX);
     game.override.startingLevel(100);
     game.override.moveset(movesToUse);
-    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
   it("Sheer Force", async() => {

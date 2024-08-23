@@ -273,7 +273,7 @@ describe("Test Battle Phase", () => {
     game.override.startingLevel(2000);
     game.override.startingWave(3);
     game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
     await game.startBattle([
       Species.DARMANITAN,
       Species.CHARIZARD,
@@ -302,7 +302,7 @@ describe("Test Battle Phase", () => {
     game.override.startingLevel(2000);
     game.override.startingWave(3);
     game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
     await game.startBattle();
     const turn = game.scene.currentBattle.turn;
     game.doAttack(0);
@@ -320,7 +320,7 @@ describe("Test Battle Phase", () => {
     game.override.startingLevel(2000);
     game.override.startingWave(3);
     game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
     await game.startBattle();
     const waveIndex = game.scene.currentBattle.waveIndex;
     game.doAttack(0);

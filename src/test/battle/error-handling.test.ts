@@ -31,7 +31,7 @@ describe("Error Handling", () => {
     game.override.ability(Abilities.ZEN_MODE);
     game.override.startingLevel(2000);
     game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
   it.skip("to next turn", async() => {

@@ -99,7 +99,7 @@ describe("Abilities - Magic Guard", () => {
   it(
     "ability effect should not persist when the ability is replaced",
     async () => {
-      game.override.enemyMoveset([Moves.WORRY_SEED,Moves.WORRY_SEED,Moves.WORRY_SEED,Moves.WORRY_SEED]);
+      game.override.enemyMoveset([Moves.WORRY_SEED, Moves.WORRY_SEED, Moves.WORRY_SEED, Moves.WORRY_SEED]);
       game.override.statusEffect(StatusEffect.POISON);
 
       await game.startBattle([Species.MAGIKARP]);

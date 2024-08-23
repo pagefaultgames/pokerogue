@@ -85,7 +85,7 @@ describe("Moves - Dragon Tail", () => {
   );
 
   test(
-    "Double battles should proceed without crashing" ,
+    "Double battles should proceed without crashing",
     async () => {
       game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
       game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER])
@@ -128,7 +128,7 @@ describe("Moves - Dragon Tail", () => {
   );
 
   test(
-    "Flee move redirection works" ,
+    "Flee move redirection works",
     async () => {
       game.override.battleType("double").enemyMoveset(SPLASH_ONLY);
       game.override.moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER]);

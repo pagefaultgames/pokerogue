@@ -37,7 +37,7 @@ describe("Abilities - Shield Dust", () => {
     game.override.enemyAbility(Abilities.SHIELD_DUST);
     game.override.startingLevel(100);
     game.override.moveset(movesToUse);
-    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
   it("Shield Dust", async() => {

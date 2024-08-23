@@ -339,7 +339,7 @@ export class Arena {
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
     this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
-    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType,this.terrain?.terrainType!, this.terrain?.turnsLeft!)); // TODO: are those bangs correct?
+    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType, this.terrain?.terrainType!, this.terrain?.turnsLeft!)); // TODO: are those bangs correct?
 
     if (this.terrain) {
       if (!ignoreAnim) {

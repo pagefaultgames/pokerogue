@@ -33,7 +33,7 @@ describe("Moves - Roost", () => {
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
     game.override.moveset([ Moves.STOMPING_TANTRUM ]);
-    game.override.enemyMoveset([Moves.ROOST,Moves.ROOST,Moves.ROOST,Moves.ROOST]);
+    game.override.enemyMoveset([Moves.ROOST, Moves.ROOST, Moves.ROOST, Moves.ROOST]);
   });
 
   test(

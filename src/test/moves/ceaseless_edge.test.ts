@@ -36,7 +36,7 @@ describe("Moves - Ceaseless Edge", () => {
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
     game.override.moveset([ Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR ]);
-    game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
     vi.spyOn(allMoves[Moves.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);
 
   });

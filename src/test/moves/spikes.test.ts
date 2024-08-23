@@ -31,8 +31,8 @@ describe("Moves - Spikes", () => {
     game.override.ability(Abilities.HYDRATION);
     game.override.passiveAbility(Abilities.HYDRATION);
     game.override.startingWave(3);
-    game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
-    game.override.moveset([Moves.SPIKES,Moves.SPLASH, Moves.ROAR]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.moveset([Moves.SPIKES, Moves.SPLASH, Moves.ROAR]);
   });
 
   it("single - wild - stay on field - no damage", async() => {

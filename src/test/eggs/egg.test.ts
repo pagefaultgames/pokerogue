@@ -61,7 +61,7 @@ describe("Egg Generation Tests", () => {
     const scene = game.scene;
     const expectedSpecies = Species.ARCEUS;
 
-    const result = new Egg({scene,species: expectedSpecies}).generatePlayerPokemon(scene).species.speciesId;
+    const result = new Egg({scene, species: expectedSpecies}).generatePlayerPokemon(scene).species.speciesId;
 
     expect(result).toBe(expectedSpecies);
   });

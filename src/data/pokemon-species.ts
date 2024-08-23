@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, variantColorCache } from "./variant";
 import { variantData } from "./variant";
 import { GrowthRate } from "./exp";
-import { EvolutionLevel,SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
+import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
 import { Type } from "./type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
 import { uncatchableSpecies } from "./biomes";

@@ -32,7 +32,7 @@ describe("Moves - Thousand Arrows", () => {
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
     game.override.moveset([ Moves.THOUSAND_ARROWS ]);
-    game.override.enemyMoveset([Moves.SPLASH,Moves.SPLASH,Moves.SPLASH,Moves.SPLASH]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
   });
 
   it(
