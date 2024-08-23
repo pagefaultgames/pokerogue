@@ -12,6 +12,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Egg Generation Tests", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  const EGG_HATCH_COUNT: integer = 1000;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -47,14 +48,21 @@ describe("Egg Generation Tests", () => {
 
     expect(result).toBe(expectedSpecies);
   });
-  it("should hatch an Arceus. Set from legendary gacha", async () => {
+  it("should hatch an Arceus around half the time. Set from legendary gacha", async () => {
     const scene = game.scene;
     const timestamp = new Date(2024, 6, 10, 15, 0, 0, 0).getTime();
     const expectedSpecies = Species.ARCEUS;
+    let gachaSpeciesCount = 0;
 
-    const result = new Egg({ scene, timestamp, sourceType: EggSourceType.GACHA_LEGENDARY, tier: EggTier.MASTER }).generatePlayerPokemon(scene).species.speciesId;
+    for (let i = 0; i < EGG_HATCH_COUNT; i++) {
+      const result = new Egg({ scene, timestamp, sourceType: EggSourceType.GACHA_LEGENDARY, tier: EggTier.MASTER }).generatePlayerPokemon(scene).species.speciesId;
+      if (result === expectedSpecies) {
+        gachaSpeciesCount++;
+      }
+    }
 
-    expect(result).toBe(expectedSpecies);
+    expect(gachaSpeciesCount).toBeGreaterThan(0.4 * EGG_HATCH_COUNT);
+    expect(gachaSpeciesCount).toBeLessThan(0.6 * EGG_HATCH_COUNT);
   });
   it("should hatch an Arceus. Set from species", () => {
     const scene = game.scene;
@@ -156,7 +164,7 @@ describe("Egg Generation Tests", () => {
     const scene = game.scene;
 
     const eggMoveIndex = new Egg({ scene }).eggMoveIndex;
-    const result = eggMoveIndex && eggMoveIndex >= 0 && eggMoveIndex <= 3;
+    const result = !Utils.isNullOrUndefined(eggMoveIndex) && eggMoveIndex >= 0 && eggMoveIndex <= 3;
 
     expect(result).toBe(true);
   });
@@ -308,5 +316,64 @@ describe("Egg Generation Tests", () => {
     const egg = new Egg({ scene, isShiny: true, variantTier: VariantTier.EPIC, species: Species.MIRAIDON });
 
     expect(egg.variantTier).toBe(VariantTier.EPIC);
+  });
+
+  it("should generate egg moves, species, shinyness, and ability unpredictably for the egg gacha", () => {
+    const scene = game.scene;
+    scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    scene.resetSeed();
+
+    const firstEgg = new Egg({scene, sourceType: EggSourceType.GACHA_SHINY, tier: EggTier.COMMON});
+    const firstHatch = firstEgg.generatePlayerPokemon(scene);
+    let diffEggMove = false;
+    let diffSpecies = false;
+    let diffShiny = false;
+    let diffAbility = false;
+    for (let i = 0; i < EGG_HATCH_COUNT; i++) {
+      scene.gameData.unlockPity[EggTier.COMMON] = 0;
+      scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+      scene.resetSeed(); // Make sure that eggs are unpredictable even if using same seed
+
+      const newEgg = new Egg({scene, sourceType: EggSourceType.GACHA_SHINY, tier: EggTier.COMMON});
+      const newHatch = newEgg.generatePlayerPokemon(scene);
+      diffEggMove = diffEggMove || (newEgg.eggMoveIndex !== firstEgg.eggMoveIndex);
+      diffSpecies = diffSpecies || (newHatch.species.speciesId !== firstHatch.species.speciesId);
+      diffShiny = diffShiny || (newHatch.shiny !== firstHatch.shiny);
+      diffAbility = diffAbility || (newHatch.abilityIndex !== firstHatch.abilityIndex);
+    }
+
+    expect(diffEggMove).toBe(true);
+    expect(diffSpecies).toBe(true);
+    expect(diffShiny).toBe(true);
+    expect(diffAbility).toBe(true);
+  });
+
+  it("should generate egg moves, shinyness, and ability unpredictably for species eggs", () => {
+    const scene = game.scene;
+    scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    scene.resetSeed();
+
+    const firstEgg = new Egg({scene, species: Species.BULBASAUR});
+    const firstHatch = firstEgg.generatePlayerPokemon(scene);
+    let diffEggMove = false;
+    let diffSpecies = false;
+    let diffShiny = false;
+    let diffAbility = false;
+    for (let i = 0; i < EGG_HATCH_COUNT; i++) {
+      scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+      scene.resetSeed(); // Make sure that eggs are unpredictable even if using same seed
+
+      const newEgg = new Egg({scene, species: Species.BULBASAUR});
+      const newHatch = newEgg.generatePlayerPokemon(scene);
+      diffEggMove = diffEggMove || (newEgg.eggMoveIndex !== firstEgg.eggMoveIndex);
+      diffSpecies = diffSpecies || (newHatch.species.speciesId !== firstHatch.species.speciesId);
+      diffShiny = diffShiny || (newHatch.shiny !== firstHatch.shiny);
+      diffAbility = diffAbility || (newHatch.abilityIndex !== firstHatch.abilityIndex);
+    }
+
+    expect(diffEggMove).toBe(true);
+    expect(diffSpecies).toBe(false);
+    expect(diffShiny).toBe(true);
+    expect(diffAbility).toBe(true);
   });
 });

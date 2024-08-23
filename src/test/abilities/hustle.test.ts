@@ -47,7 +47,7 @@ describe("Abilities - Hustle", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to(DamagePhase);
 
-    expect(pikachu.getBattleStat).toHaveReturnedWith(atk * 1.5);
+    expect(pikachu.getBattleStat).toHaveReturnedWith(Math.floor(atk * 1.5));
   });
 
   it("lowers the accuracy of the user's physical moves by 20%", async () => {
