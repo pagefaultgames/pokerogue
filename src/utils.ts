@@ -552,3 +552,25 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
   }
   return null;
 }
+
+/**
+ * Returns if an object is null or undefined
+ * @param object
+ */
+export function isNullOrUndefined(object: any): boolean {
+  return null === object || undefined === object;
+}
+
+/**
+ * This function is used in the context of a Pokémon battle game to calculate the actual integer damage value from a float result.
+ * Many damage calculation formulas involve various parameters and result in float values.
+ * The actual damage applied to a Pokémon's HP must be an integer.
+ * This function helps in ensuring that by flooring the float value and enforcing a minimum damage value.
+ *
+ * @param value - The float value to convert.
+ * @param minValue - The minimum integer value to return. Defaults to 1.
+ * @returns The converted value as an integer.
+ */
+export function toDmgValue(value: number, minValue: number = 1) {
+  return Math.max(Math.floor(value), minValue);
+}

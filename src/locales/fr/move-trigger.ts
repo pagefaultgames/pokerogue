@@ -61,6 +61,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "faintCountdown": "{{pokemonName}}\nsera K.O. dans {{turnCount}} tours !",
   "copyType": "{{pokemonName}} prend le type\nde {{targetPokemonName}} !",
   "suppressAbilities": "Le talent de {{pokemonName}}\na été rendu inactif !",
+  "revivalBlessing": "{{pokemonName}} a repris connaissance\net est prêt à se battre de nouveau !",
   "swapArenaTags": "Les effets affectant chaque côté du terrain\nont été échangés par {{pokemonName}} !",
   "trickOnSwap": "{{pokemonNameWithAffix}} échange\nun objet avec sa cible !",
   "trickFoeNewItem": "{{pokemonNameWithAffix}} obtient\nl’objet {{itemName}} !",

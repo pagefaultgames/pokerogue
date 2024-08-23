@@ -1,9 +1,11 @@
-import BattleScene from "#app/battle-scene.js";
-import { LoginPhase, TitlePhase, UnavailablePhase } from "#app/phases.js";
-import { Mode } from "#app/ui/ui.js";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
+import BattleScene from "#app/battle-scene";
+import { LoginPhase } from "#app/phases/login-phase";
+import { TitlePhase } from "#app/phases/title-phase";
+import { UnavailablePhase } from "#app/phases/unavailable-phase";
+import { Mode } from "#app/ui/ui";
 import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Phases", () => {
   let phaserGame: Phaser.Game;

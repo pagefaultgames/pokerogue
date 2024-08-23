@@ -1,14 +1,14 @@
 import { SimpleTranslationEntries } from "#app/interfaces/locales";
 
 export const modifier: SimpleTranslationEntries = {
-  "surviveDamageApply": "{{pokemonNameWithAffix}} hung on\nusing its {{typeName}}!",
-  "turnHealApply": "{{pokemonNameWithAffix}} restored a little HP using\nits {{typeName}}!",
-  "hitHealApply": "{{pokemonNameWithAffix}} restored a little HP using\nits {{typeName}}!",
-  "pokemonInstantReviveApply": "{{pokemonNameWithAffix}} was revived\nby its {{typeName}}!",
-  "pokemonResetNegativeStatStageApply": "{{pokemonNameWithAffix}}'s lowered stats were restored\nby its {{typeName}}!",
-  "moneyInterestApply": "You received interest of ₽{{moneyAmount}}\nfrom the {{typeName}}!",
-  "turnHeldItemTransferApply": "{{pokemonNameWithAffix}}'s {{itemName}} was absorbed\nby {{pokemonName}}'s {{typeName}}!",
-  "contactHeldItemTransferApply": "{{pokemonNameWithAffix}}'s {{itemName}} was snatched\nby {{pokemonName}}'s {{typeName}}!",
-  "enemyTurnHealApply": "{{pokemonNameWithAffix}}\nrestored some HP!",
+  "surviveDamageApply": "{{pokemonNameWithAffix}} resiste\ngrazie al/alla suo/a {{typeName}}!",
+  "turnHealApply": "{{pokemonNameWithAffix}} recupera alcuni PS con\nil/la suo/a {{typeName}}!",
+  "hitHealApply": "{{pokemonNameWithAffix}} recupera alcuni PS con\nil/la suo/a {{typeName}}!",
+  "pokemonInstantReviveApply": "{{pokemonNameWithAffix}} torna in forze\ngrazie al/alla suo/a {{typeName}}!",
+  "pokemonResetNegativeStatStageApply": "La riduzione alle statistiche di {{pokemonNameWithAffix}}\nviene annullata grazie al/alla suo/a {{typeName}}!",
+  "moneyInterestApply": "Ricevi un interesse pari a {{moneyAmount}}₽\ngrazie al/allo/a {{typeName}}!",
+  "turnHeldItemTransferApply": "Il/l'/lo/la {{itemName}} di {{pokemonNameWithAffix}} è stato assorbito\ndal {{typeName}} di {{pokemonName}}!",
+  "contactHeldItemTransferApply": "Il/l'/lo/la {{itemName}} di {{pokemonNameWithAffix}} è stato rubato\nda {{pokemonName}} con {{typeName}}!",
+  "enemyTurnHealApply": "{{pokemonNameWithAffix}}\nristabilisce parte dei PS!",
   "bypassSpeedChanceApply": "{{pokemonName}} agisce più rapidamente del normale grazie al suo {{itemName}}!",
 } as const;

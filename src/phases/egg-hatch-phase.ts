@@ -1,18 +1,17 @@
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import BattleScene, { AnySound } from "#app/battle-scene.js";
+import { Egg, EGG_SEED } from "#app/data/egg.js";
+import { EggCountChangedEvent } from "#app/events/egg.js";
+import { PlayerPokemon } from "#app/field/pokemon.js";
+import { getPokemonNameWithAffix } from "#app/messages.js";
+import { Phase } from "#app/phase.js";
+import { achvs } from "#app/system/achv.js";
+import EggCounterContainer from "#app/ui/egg-counter-container.js";
+import EggHatchSceneHandler from "#app/ui/egg-hatch-scene-handler.js";
+import PokemonInfoContainer from "#app/ui/pokemon-info-container.js";
+import { Mode } from "#app/ui/ui.js";
 import i18next from "i18next";
-import { Phase } from "./phase";
-import BattleScene, { AnySound } from "./battle-scene";
-import * as Utils from "./utils";
-import { Mode } from "./ui/ui";
-import { EGG_SEED, Egg } from "./data/egg";
-import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
-import { PlayerPokemon } from "./field/pokemon";
-import { achvs } from "./system/achv";
-import PokemonInfoContainer from "./ui/pokemon-info-container";
-import EggCounterContainer from "./ui/egg-counter-container";
-import { EggCountChangedEvent } from "./events/egg";
-import { getPokemonNameWithAffix } from "./messages";
-
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import * as Utils from "#app/utils.js";
 /**
  * Class that represents egg hatching
  */

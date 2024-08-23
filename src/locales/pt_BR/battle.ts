@@ -24,6 +24,7 @@ export const battle: SimpleTranslationEntries = {
   "hitResultSuperEffective": "É supereficaz!",
   "hitResultNotVeryEffective": "É pouco eficaz...",
   "hitResultNoEffect": "Isso não afeta {{pokemonName}}!",
+  "hitResultImmune": "{{pokemonName}} não é afetado!",
   "hitResultOneHitKO": "Foi um nocaute de um golpe!",
   "attackFailed": "Mas falhou!",
   "attackMissed": "{{pokemonNameWithAffix}} desviou do ataque!",
