@@ -2,7 +2,7 @@ import GameManager from "#app/test/utils/gameManager";
 import Phaser from "phaser";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { TurnEndPhase } from "#app/phases";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier.js";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
@@ -59,10 +59,10 @@ describe("Moves - Trick", () => {
   });
 
   it(
-    "both pokemon have at least one item, and therefore swap their selected items",
+    "both pokemon have two items, they will always swap Leftovers and Golden Punch, due to the priority system",
     async () => {
-      game.override.startingHeldItems([{name: "LUCKY_EGG"}]);
-      game.override.enemyHeldItems([{name: "LEFTOVERS"}, {name: "LUCKY_EGG"}]);
+      game.override.startingHeldItems([{name: "MULTI_LENS"}, {name: "GOLDEN_PUNCH"}]);
+      game.override.enemyHeldItems([{name: "LEFTOVERS"}, {name: "GOLDEN_PUNCH"}]);
       game.override.moveset(TRICK_ONLY);
       game.override.enemySpecies(Species.MAGIKARP);
       game.override.enemyMoveset(SPLASH_ONLY);
@@ -71,16 +71,12 @@ describe("Moves - Trick", () => {
       const playerPokemon = game.scene.getPlayerPokemon();
       const enemyPokemon = game.scene.getEnemyPokemon();
 
-      vi.spyOn(playerPokemon, "randSeedInt").mockReturnValue(0);
-      vi.spyOn(enemyPokemon, "randSeedInt").mockReturnValue(0);
-
-      const playerLostItem = playerPokemon.getHeldItems()[0];
+      const playerLostItem = playerPokemon.getHeldItems()[1];
       const enemyLostItem = enemyPokemon.getHeldItems()[0];
       const prevPlayerLostItemStack = playerLostItem.stackCount;
       const prevEnemyLostItemStack = enemyLostItem.stackCount;
       const prevPlayerGainedItemModifier = getHeldItemModifierFromId(playerPokemon.getHeldItems(), enemyLostItem.type.id);
       const prevEnemyGainedItemModifier = getHeldItemModifierFromId(enemyPokemon.getHeldItems(), playerLostItem.type.id);
-
 
       let prevPlayerGainedItemStackCount = 0;
       let prevEnemyGainedItemStackCount = 0;
@@ -109,25 +105,30 @@ describe("Moves - Trick", () => {
       expect(currPlayerGainedItemModifier).toBeDefined();
       expect(currEnemyGainedItemModifier).toBeDefined();
 
-      const currPlayerGainedItemStackCount = currPlayerGainedItemModifier.stackCount;
-      const currEnemyGainedItemStackCount = currEnemyGainedItemModifier.stackCount;
+      if (currPlayerGainedItemModifier && currEnemyGainedItemModifier) {
 
-      printStackCount(playerPokemon.name, playerLostItem.type.id, currPlayerLostItemStack);
-      printStackCount(playerPokemon.name, enemyLostItem.type.id, currPlayerGainedItemStackCount);
-      printStackCount(enemyPokemon.name, enemyLostItem.type.id, currEnemyLostItemStack);
-      printStackCount(enemyPokemon.name, playerLostItem.type.id, currEnemyGainedItemStackCount);
+        const currPlayerGainedItemStackCount = currPlayerGainedItemModifier.stackCount;
+        const currEnemyGainedItemStackCount = currEnemyGainedItemModifier.stackCount;
 
-      const didPlayerTransferItems = prevPlayerLostItemStack > currPlayerLostItemStack && prevPlayerGainedItemStackCount < currPlayerGainedItemStackCount;
-      const didEnemyTransferItems = prevEnemyLostItemStack > currEnemyLostItemStack && prevEnemyGainedItemStackCount < currEnemyGainedItemStackCount;
+        printStackCount(playerPokemon.name, playerLostItem.type.id, currPlayerLostItemStack);
+        printStackCount(playerPokemon.name, enemyLostItem.type.id, currPlayerGainedItemStackCount);
+        printStackCount(enemyPokemon.name, enemyLostItem.type.id, currEnemyLostItemStack);
+        printStackCount(enemyPokemon.name, playerLostItem.type.id, currEnemyGainedItemStackCount);
 
-      expect(didPlayerTransferItems && didEnemyTransferItems).toBeTruthy();
+        const didPlayerTransferItems = prevPlayerLostItemStack > currPlayerLostItemStack && prevPlayerGainedItemStackCount < currPlayerGainedItemStackCount;
+        const didEnemyTransferItems = prevEnemyLostItemStack > currEnemyLostItemStack && prevEnemyGainedItemStackCount < currEnemyGainedItemStackCount;
+        const playerReceivedLeftovers = currPlayerGainedItemModifier.type.id === "LEFTOVERS";
+        const enemyReceivedGoldenPunch = currEnemyGainedItemModifier.type.id === "GOLDEN_PUNCH";
+
+        expect(didPlayerTransferItems && didEnemyTransferItems && playerReceivedLeftovers && enemyReceivedGoldenPunch).toBeTruthy();
+      }
     }, TIMEOUT
   );
 
   it(
     "the move fails and no transfer occurs when a wild pokemon is the user",
     async () => {
-      game.override.startingHeldItems([{name: "LUCKY_EGG"}]);
+      game.override.startingHeldItems([{name: "GOLDEN_PUNCH"}]);
       game.override.enemyHeldItems([{name: "LEFTOVERS"}]);
       game.override.moveset(SPLASH_ONLY);
       game.override.enemySpecies(Species.MIME_JR);
@@ -161,7 +162,7 @@ describe("Moves - Trick", () => {
   it(
     "the move fails and no transfer occurs when the target pokemon has sticky hold",
     async () => {
-      game.override.startingHeldItems([{name: "LUCKY_EGG"}]);
+      game.override.startingHeldItems([{name: "GOLDEN_PUNCH"}]);
       game.override.enemyHeldItems([{name: "LEFTOVERS"}]);
       game.override.moveset(TRICK_ONLY);
       game.override.enemySpecies(Species.MAGIKARP);
