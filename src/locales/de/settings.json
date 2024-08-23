@@ -96,5 +96,10 @@
   "gamepadSupport": "Controllerunterstützung",
   "showBgmBar": "Musiknamen anzeigen",
   "moveTouchControls": "Bewegung Touch Steuerung",
-  "shopOverlayOpacity": "Shop Overlay Deckkraft"
+  "shopOverlayOpacity": "Shop Overlay Deckkraft",
+  "shopCursorTarget": "Ziel des Shop-Cursors",
+  "items": "Items",
+  "reroll": "Neu rollen",
+  "shop": "Shop",
+  "checkTeam": "Team überprüfen"
 }
