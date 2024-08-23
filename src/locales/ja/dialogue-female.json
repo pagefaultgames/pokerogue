@@ -2369,7 +2369,7 @@
       "1": "@c{smile}Ah, je te cherchais ! Je savais que t’étais pressée de partir, mais je m’attendais quand même à un au revoir…\n$@c{smile_eclosed}T’as finalement décidé de réaliser ton rêve ?\nJ’ai peine à y croire.\n$@c{serious_smile_fists}Vu que t’es là, ça te dis un petit combat ?\nJe voudrais quand même m’assurer que t’es prête.\n$@c{serious_mopen_fists}Surtout ne te retiens pas et donne-moi tout ce que t’as !"
     },
     "victory": {
-      "1": "@c{shock}Wah… Tu m’as vraiment lavé.\nT’es vraiment une débutante ?\n$@c{smile}T’as peut-être eu de la chance, mais…\nPeut-être que t’arriveras jusqu’au bout du chemin.\n$D’ailleurs, le prof m’a demandé de te filer ces objets.\nIls ont l’air sympas.\n$@c{serious_smile_fists}Bonne chance à toi !\n$@c{smile}Oh, et profite bien de l’évènement !"
+      "1": "@c{shock}Wah… Tu m’as vraiment lavé.\nT’es vraiment une débutante ?\n$@c{smile}T’as peut-être eu de la chance, mais…\nPeut-être que t’arriveras jusqu’au bout du chemin.\n$D’ailleurs, le prof m’a demandé de te filer ces objets.\nIls ont l’air sympas."
     }
   },
   "rival_female": {
@@ -2377,7 +2377,7 @@
       "1": "@c{smile_wave}Ah, je te cherchais ! Je t’ai cherchée partout !\n@c{angry_mopen}On oublie de dire au revoir à sa meilleure amie ?\n$@c{smile_ehalf}T’as décidé de réaliser ton rêve, hein ?\nCe jour est donc vraiment arrivé…\n$@c{smile}Je veux bien te pardonner de m’avoir oubliée,\nà une conditon. @c{smile_wave_wink}Que tu m’affronte !\n$@c{angry_mopen}Donne tout ! Ce serait dommage que ton aventure finisse avant d’avoir commencé, hein ?"
     },
     "victory": {
-      "1": "@c{shock}Tu viens de commencer et t’es déjà si forte ?!@d{96}\n@c{angry}T’as triché non ? Avoue !\n$@c{smile_wave_wink}J’déconne !@d{64} @c{smile_eclosed}J’ai perdu dans les règles…\nJ’ai le sentiment que tu vas très bien t’en sortir.\n$@c{smile}D’ailleurs, le prof veut que je te donne ces quelques objets. Ils te seront utiles, pour sûr !\n$@c{smile_wave}Fais de ton mieux, comme toujours !\nJe crois fort en toi !\n$@c{smile}Oh, et profite bien de l’évènement !"
+      "1": "@c{shock}Tu viens de commencer et t’es déjà si forte ?!@d{96}\n@c{angry}T’as triché non ? Avoue !\n$@c{smile_wave_wink}J’déconne !@d{64} @c{smile_eclosed}J’ai perdu dans les règles…\nJ’ai le sentiment que tu vas très bien t’en sortir.\n$@c{smile}D’ailleurs, le prof veut que je te donne ces quelques objets. Ils te seront utiles, pour sûr !\n$@c{smile_wave}Fais de ton mieux, comme toujours !\nJe crois fort en toi !l’évènement !"
     }
   },
   "rival_2": {

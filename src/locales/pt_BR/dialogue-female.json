@@ -2405,7 +2405,7 @@
       "1": "@c{smile}Eai, estava procurando você! Sabia que você estava ansiosa para começar, mas esperava pelo menos um tchau…\n$@c{smile_eclosed}Então você está realmente perseguindo seu sonho, hein?\n Quase não consigo acreditar.\n$@c{serious_smile_fists}Já que estamos aqui, que tal uma batalha?\nAfinal, quero ter certeza de que você está pronta.\n$@c{serious_mopen_fists}Não se segure, quero que você dê tudo de si!"
     },
     "victory": {
-      "1": "@c{shock}Caramba… Você me limpou.\nVocê é mesmo uma novata?\n$@c{smile}Talvez tenha sido um pouco de sorte, mas…\nQuem sabe você consiga chegar até o fim.\n$Aliás, o professor me pediu para te dar esses itens. Eles parecem bem legais.\n$@c{serious_smile_fists}Boa sorte lá fora!\n$@c{smile}Ah- e eu espero que você aproveite o evento!"
+      "1": "@c{shock}Caramba… Você me limpou.\nVocê é mesmo uma novata?\n$@c{smile}Talvez tenha sido um pouco de sorte, mas…\nQuem sabe você consiga chegar até o fim.\n$Aliás, o professor me pediu para te dar esses itens. Eles parecem bem legais.\n$@c{serious_smile_fists}Boa sorte lá fora!"
     }
   },
   "rival_female": {
@@ -2413,7 +2413,7 @@
       "1": "@c{smile_wave}Aí está você! Procurei você em todo lugar!\n@c{angry_mopen}Esqueceu de se despedir da sua melhor amiga?\n$@c{smile_ehalf}Você está indo atrás do seu sonho, né?\nEsse dia realmente chegou, não é…\n$@c{smile}Enfim, vou te perdoar por ter me esquecido, mas com uma condição. @c{smile_wave_wink}Você tem que lutar comigo!\n$@c{angry_mopen}Dê o seu melhor! Não quer que sua aventura acabe antes de começar, né?"
     },
     "victory": {
-      "1": "@c{shock}Você acabou de começar e já está tão forte?!@d{96}\n@c{angry}Você trapaceou, não foi?\n$@c{smile_wave_wink}Brincadeirinha!@d{64} @c{smile_eclosed}Eu perdi de forma justa… Tenho a sensação de que você vai se sair muito bem lá fora.\n$@c{smile}Aliás, o professor pediu para eu te dar alguns itens. Espero que sejam úteis!\n$@c{smile_wave}Dê o seu melhor, como sempre! Eu acredito em você!\n$@c{smile}Ah- e eu espero que você aproveite o evento!"
+      "1": "@c{shock}Você acabou de começar e já está tão forte?!@d{96}\n@c{angry}Você trapaceou, não foi?\n$@c{smile_wave_wink}Brincadeirinha!@d{64} @c{smile_eclosed}Eu perdi de forma justa… Tenho a sensação de que você vai se sair muito bem lá fora.\n$@c{smile}Aliás, o professor pediu para eu te dar alguns itens. Espero que sejam úteis!\n$@c{smile_wave}Dê o seu melhor, como sempre! Eu acredito em você!"
     }
   },
   "rival_2": {

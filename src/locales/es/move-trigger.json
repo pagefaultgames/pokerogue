@@ -6,5 +6,6 @@
   "isOverflowingWithSpacePower": "¡{{pokemonName}} rebosa\nenergía cósmica!",
   "usedUpAllElectricity": "¡{{pokemonName}} ha descargado toda su electricidad!",
   "stoleItem": "¡{{pokemonName}} robó el objeto\n{{itemName}} de {{targetName}}!",
-  "statEliminated": "¡Los cambios en estadísticas fueron eliminados!"
+  "statEliminated": "¡Los cambios en estadísticas fueron eliminados!",
+  "revivalBlessing": "¡{{pokemonName}} ha revivido!"
 }

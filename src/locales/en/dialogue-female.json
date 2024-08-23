@@ -2439,7 +2439,7 @@
       "1": "@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…$@c{smile_eclosed}So you're really pursuing your dream after all? I almost can't believe it.$@c{serious_smile_fists}Since we're here, how about a battle?After all, I want to make sure you're ready.$@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!"
     },
     "victory": {
-      "1": "@c{shock}Wow… You cleaned me out.Are you actually a beginner?$@c{smile}Maybe it was a bit of luck but…Who knows you might just be able to go all the way.$By the way, the professor asked me to give you these items. They look pretty cool.$@c{serious_smile_fists}Good luck out there!$@c{smile}Oh- and I hope you enjoy the event!"
+      "1": "@c{shock}Wow… You cleaned me out.Are you actually a beginner?$@c{smile}Maybe it was a bit of luck but…Who knows you might just be able to go all the way.$By the way, the professor asked me to give you these items. They look pretty cool.$@c{serious_smile_fists}Good luck out there!"
     }
   },
   "rival_female": {
@@ -2447,7 +2447,7 @@
       "1": "@c{smile_wave}There you are! I've been looking everywhere for you!\n@c{angry_mopen}Did you forget to say goodbye to your best friend?\n$@c{smile_ehalf}You're going after your dream, huh?\nThat day is really today isn't it…\n$@c{smile}Anyway, I'll forgive you for forgetting me, but on one condition. @c{smile_wave_wink}You have to battle me!\n$@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?"
     },
     "victory": {
-      "1": "@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?\n$@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.\n$@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!\n$@c{smile_wave}Do your best like always! I believe in you!\n$@c{smile}Oh- and I hope you enjoy the event!"
+      "1": "@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?\n$@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.\n$@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!\n$@c{smile_wave}Do your best like always! I believe in you!\n"
     }
   },
   "rival_2": {
@@ -2455,7 +2455,7 @@
       "1": "@c{smile}Hey, you're here too?\n@c{smile_eclosed}Still a perfect record, huh…?\n$@c{serious_mopen_fists}I know it kind of looks like I followed you here, but that's mostly not true.\n$@c{serious_smile_fists}Honestly though, I've been itching for a rematch since you beat me back at home.\n$I've been doing a lot of my own training so I'll definitely put up a fight this time.\n$@c{serious_mopen_fists}Don't hold back, just like before!\nLet's go!"
     },
     "victory": {
-      "1": "@c{neutral_eclosed}Oh. I guess I was overconfident.\n$@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n\n$@c{smile}Oh, not that you really need the help, but I had an extra one of each of these lying around and figured you might want them.\n\n$@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all.\n$@c{smile}Anyway, take care, and enjoy the event!"
+      "1": "@c{neutral_eclosed}Oh. I guess I was overconfident.\n$@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n\n$@c{smile}Oh, not that you really need the help, but I had an extra one of each of these lying around and figured you might want them.\n\n$@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all."
     }
   },
   "rival_2_female": {
@@ -2463,7 +2463,7 @@
       "1": "@c{smile_wave}Oh, fancy meeting you here. Looks like you're still undefeated. @c{angry_mopen}Huh… Not bad!\n$@c{angry_mopen}I know what you're thinking, and no, I wasn't creeping on you. @c{smile_eclosed}I just happened to be in the area.\n$@c{smile_ehalf}I'm happy for you but I just want to let you know that it's OK to lose sometimes.\n$@c{smile}We learn from our mistakes, often more than we would if we kept succeeding.\n$@c{angry_mopen}In any case, I've been training hard for our rematch, so you'd better give it your all!"
     },
     "victory": {
-      "1": "@c{neutral}I… wasn't supposed to lose that time…\n$@c{smile}Aw well. That just means I'll have to train even harder for next time!\n$@c{smile_wave}I also got you another two of these!\n@c{smile_wave_wink}No need to thank me~.\n$@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!\n$@c{smile_wave}Keep at it, and enjoy the event!"
+      "1": "@c{neutral}I… wasn't supposed to lose that time…\n$@c{smile}Aw well. That just means I'll have to train even harder for next time!\n$@c{smile_wave}I also got you another two of these!\n@c{smile_wave_wink}No need to thank me~.\n$@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!"
     },
     "defeat": {
       "1": "It's OK to lose sometimes…"
