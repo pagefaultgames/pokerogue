@@ -9,6 +9,7 @@ import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n.js";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 function getTranslation(key: string): string {
   if (!getIsInitialized()) {
@@ -102,6 +103,7 @@ export const SettingKeys = {
   Damage_Numbers: "DAMAGE_NUMBERS",
   Move_Animations: "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
+  Reroll_Target: "REROLL_TARGET",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
   Move_Info: "MOVE_INFO",
@@ -586,6 +588,30 @@ export const Setting: Array<Setting> = [
     isHidden: () => !hasTouchscreen()
   },
   {
+    key: SettingKeys.Reroll_Target,
+    label: i18next.t("settings:shopCursorTarget"),
+    options: [
+      {
+        value:"Reroll",
+        label: i18next.t("settings:reroll")
+      },
+      {
+        value:"Items",
+        label: i18next.t("settings:items")
+      },
+      {
+        value:"Shop",
+        label: i18next.t("settings:shop")
+      },
+      {
+        value:"Check Team",
+        label: i18next.t("settings:checkTeam")
+      }
+    ],
+    default: ShopCursorTarget.CHECK_TEAM,
+    type: SettingType.DISPLAY
+  },
+  {
     key: SettingKeys.Shop_Overlay_Opacity,
     label: i18next.t("settings:shopOverlayOpacity"),
     options: SHOP_OVERLAY_OPACITY_OPTIONS,
@@ -721,6 +747,8 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Show_Stats_on_Level_Up:
     scene.showLevelUpStats = Setting[index].options[value].value === "On";
     break;
+  case SettingKeys.Reroll_Target:
+    scene.shopCursorTarget = value;
   case SettingKeys.EXP_Gains_Speed:
     scene.expGainsSpeed = value;
     break;
