@@ -285,7 +285,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
         const gameOutcomeLabel = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:defeatedWild"+genderLabel)}`, TextStyle.WINDOW);
         enemyContainer.add(gameOutcomeLabel);
         data.enemyParty.forEach((enemyData, e) => {
-          const enemyIconContainer = this.scene.add.container(65+(e*25),-8);
+          const enemyIconContainer = this.scene.add.container(65+(e*25), -8);
           enemyIconContainer.setScale(0.75);
           enemyData.boss = false;
           enemyData["player"] = true;

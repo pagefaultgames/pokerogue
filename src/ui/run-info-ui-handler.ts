@@ -375,10 +375,10 @@ export default class RunInfoUiHandler extends UiHandler {
       modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
       modeText.appendText(`\t\t${i18next.t("runHistory:challengeRules")}: `);
       const runChallenges = this.runInfo.challenges;
-      const rules = [];
+      const rules: string[] = [];
       for (let i = 0; i < runChallenges.length; i++) {
         if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
-          rules.push(i18next.t(`runHistory:challengeMonoGen${runChallenges[i].value}` as const));
+          rules.push(i18next.t(`runHistory:challengeMonoGen${runChallenges[i].value}`));
         } else if (runChallenges[i].id === Challenges.SINGLE_TYPE && runChallenges[i].value !== 0) {
           rules.push(i18next.t(`pokemonInfo:Type.${Type[runChallenges[i].value-1]}` as const));
         } else if (runChallenges[i].id === Challenges.FRESH_START && runChallenges[i].value !== 0) {
@@ -523,7 +523,7 @@ export default class RunInfoUiHandler extends UiHandler {
       // Colored Arrows (Red/Blue) are placed by stats that are boosted from natures
       const pokeStatTextContainer = this.scene.add.container(-35, 6);
       const pStats : string[]= [];
-      pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element,1)));
+      pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element, 1)));
       for (let i = 0; i < pStats.length; i++) {
         const isMult = getNatureStatMultiplier(pokemon.nature, i);
         pStats[i] = (isMult < 1) ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
@@ -583,7 +583,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const movesetContainer = this.scene.add.container(70, -29);
       const pokemonMoveBgs : Phaser.GameObjects.NineSlice[] = [];
       const pokemonMoveLabels : Phaser.GameObjects.Text[] = [];
-      const movePos = [[-6.5,35.5],[37,35.5],[-6.5,43.5],[37,43.5]];
+      const movePos = [[-6.5, 35.5], [37, 35.5], [-6.5, 43.5], [37, 43.5]];
       for (let m = 0; m < pokemonMoveset?.length; m++) {
       	const moveContainer = this.scene.add.container(movePos[m][0], movePos[m][1]);
         moveContainer.setScale(0.5);
@@ -679,7 +679,7 @@ export default class RunInfoUiHandler extends UiHandler {
    * Shows the ending art.
    */
   private createVictorySplash(): void {
-    this.endCardContainer = this.scene.add.container(0,0);
+    this.endCardContainer = this.scene.add.container(0, 0);
     const endCard = this.scene.add.image(0, 0, `end_${this.isPGF ? "f" : "m"}`);
     endCard.setOrigin(0);
     endCard.setScale(0.5);

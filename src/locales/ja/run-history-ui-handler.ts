@@ -27,7 +27,7 @@ export const runHistory: SimpleTranslationEntries = {
   "challengeMonoGen9":"IX世代",
   "playerItems":"プレイヤーアイテム",
   "personalBest":"自己ベスト！",
-  "SPDshortened":"速さ",//
+  "SPDshortened":"速さ", //
   "runInfo":"ラン情報",
   "money":"お金",
   "runLength":"ラン最高ウェーブ",
