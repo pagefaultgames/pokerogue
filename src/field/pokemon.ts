@@ -2228,7 +2228,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
             break;
           case HitResult.IMMUNE:
-            this.scene.queueMessage(`${this.name} is unaffected!`);
+            this.scene.queueMessage(i18next.t("battle:hitResultImmune", { pokemonName: this.name }));
             break;
           case HitResult.ONE_HIT_KO:
             this.scene.queueMessage(i18next.t("battle:hitResultOneHitKO"));
@@ -3456,7 +3456,7 @@ export class PlayerPokemon extends Pokemon {
           pokemon.resetTurnData();
           pokemon.resetStatus();
           pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
-          this.scene.queueMessage(`${pokemon.name} was revived!`,0,true);
+          this.scene.queueMessage(i18next.t("moveTriggers:revivalBlessing", {pokemonName: pokemon.name}),0,true);
 
           if (this.scene.currentBattle.double && this.scene.getParty().length > 1) {
             const allyPokemon = this.getAlly();
