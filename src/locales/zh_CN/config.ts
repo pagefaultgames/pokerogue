@@ -54,6 +54,7 @@ import { settings } from "./settings.js";
 import { common } from "./common.js";
 import { modifierSelectUiHandler } from "./modifier-select-ui-handler";
 import { moveTriggers } from "./move-trigger";
+import { runHistory } from "./run-history-ui-handler";
 
 export const zhCnConfig = {
   ability: ability,
@@ -114,5 +115,6 @@ export const zhCnConfig = {
   weather: weather,
   partyUiHandler: partyUiHandler,
   modifierSelectUiHandler: modifierSelectUiHandler,
-  moveTriggers: moveTriggers
+  moveTriggers: moveTriggers,
+  runHistory: runHistory,
 };

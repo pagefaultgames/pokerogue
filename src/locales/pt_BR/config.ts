@@ -54,6 +54,7 @@ import { titles, trainerClasses, trainerNames } from "./trainers";
 import { tutorial } from "./tutorial";
 import { voucher } from "./voucher";
 import { terrain, weather } from "./weather";
+import { runHistory } from "./run-history-ui-handler";
 
 export const ptBrConfig = {
   ability: ability,
@@ -114,5 +115,6 @@ export const ptBrConfig = {
   trainerNames: trainerNames,
   tutorial: tutorial,
   voucher: voucher,
-  weather: weather
+  weather: weather,
+  runHistory: runHistory,
 };
