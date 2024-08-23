@@ -12,6 +12,7 @@ export const teleportingHijinksDialogue = {
     2: {
       label: "A Pokémon Helps",
       tooltip: "(-) {{option2PrimaryName}} Helps\n(+) {{option2PrimaryName}} gains EXP\n(?) Teleport to New Biome",
+      disabled_tooltip: "You need a Steel or Electric Type Pokémon to choose this",
       selected: `{{option2PrimaryName}} uses its typing and overloads the machine!
         $The capsule opens, and you step inside...`
     },
