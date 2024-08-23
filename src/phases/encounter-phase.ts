@@ -358,22 +358,30 @@ export class EncounterPhase extends BattlePhase {
     case BattleSpec.FINAL_BOSS:
       const enemy = this.scene.getEnemyPokemon();
       this.scene.ui.showText(this.getEncounterMessage(), null, () => {
-        const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
-        //The two lines below check if English ordinals (1st, 2nd, 3rd, Xth) are used and determine which one to use.
-        //Otherwise, it defaults to an empty string.
-        //As of 08-07-24: Spanish and Italian default to the English translations
-        const ordinalUse = ["en", "es", "it"];
-        const currentLanguage = i18next.resolvedLanguage ?? "en";
-        const ordinalIndex = (ordinalUse.includes(currentLanguage)) ? ["st", "nd", "rd"][((count + 90) % 100 - 10) % 10 - 1] ?? "th" : "";
-        const cycleCount = count.toLocaleString() + ordinalIndex;
-        const encounterDialogue = i18next.t(`${(this.scene.gameData.gender === PlayerGender.FEMALE) ? "PGF" : "PGM"}battleSpecDialogue:encounter`, {cycleCount: cycleCount});
-        this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
+        const localizationKey = ((this.scene.gameData.gender === PlayerGender.FEMALE) ? "PGF" : "PGM")+"battleSpecDialogue:encounter";
+        if (this.scene.skipSeenDialogues && this.scene.gameData.getSeenDialogues()[localizationKey] === true) {
+          console.log(`Dialogue ${localizationKey} skipped`);
           this.doEncounterCommon(false);
-        });
+        } else {
+          const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
+          //The two lines below check if English ordinals (1st, 2nd, 3rd, Xth) are used and determine which one to use.
+          //Otherwise, it defaults to an empty string.
+          //As of 08-07-24: Spanish and Italian default to the English translations
+          const ordinalUse = ["en", "es", "it"];
+          const currentLanguage = i18next.resolvedLanguage ?? "en";
+          const ordinalIndex = (ordinalUse.includes(currentLanguage)) ? ["st", "nd", "rd"][((count + 90) % 100 - 10) % 10 - 1] ?? "th" : "";
+          const cycleCount = count.toLocaleString() + ordinalIndex;
+          const encounterDialogue = i18next.t(localizationKey, {cycleCount: cycleCount});
+          if (!this.scene.gameData.getSeenDialogues()[localizationKey]) {
+            this.scene.gameData.saveSeenDialogue(localizationKey);
+          }
+          this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
+            this.doEncounterCommon(false);
+          });
+        }
       }, 1500, true);
       return true;
     }
-
     return false;
   }
 }
