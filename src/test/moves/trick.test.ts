@@ -126,6 +126,41 @@ describe("Moves - Trick", () => {
   );
 
   it(
+    "the user will always give Toxic Orb, as it has special priority to be given",
+    async () => {
+      game.override.startingHeldItems([{name: "GOLDEN_PUNCH"}, {name: "TOXIC_ORB"}]);
+      game.override.enemyHeldItems([{name: "LEFTOVERS"}, {name: "GOLDEN_PUNCH"}]);
+      game.override.moveset(TRICK_ONLY);
+      game.override.enemySpecies(Species.MAGIKARP);
+      game.override.enemyMoveset(SPLASH_ONLY);
+      await game.startBattle([Species.MIME_JR]);
+
+      game.doAttack(0);
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      const playerPokemon = game.scene.getPlayerPokemon();
+      expect(playerPokemon.getHeldItems()[1].type.id === "TOXIC_ORB").toBeFalsy();
+    }
+  );
+
+  it(
+    "the user will never take Flame Orb, as it has special priority to not be taken",
+    async () => {
+      game.override.enemyHeldItems([{name: "FLAME_ORB"}, {name: "GOLDEN_PUNCH"}]);
+      game.override.moveset(TRICK_ONLY);
+      game.override.enemySpecies(Species.MAGIKARP);
+      game.override.enemyMoveset(SPLASH_ONLY);
+      await game.startBattle([Species.MIME_JR]);
+
+      game.doAttack(0);
+      await game.phaseInterceptor.to(TurnEndPhase);
+
+      const enemyPokemon = game.scene.getEnemyPokemon();
+      expect(enemyPokemon.getHeldItems()[0].type.id === "FLAME_ORB").toBeTruthy();
+    }
+  );
+
+  it(
     "the move fails and no transfer occurs when a wild pokemon is the user",
     async () => {
       game.override.startingHeldItems([{name: "GOLDEN_PUNCH"}]);
