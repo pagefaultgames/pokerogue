@@ -2,6 +2,7 @@
   "GAME_SETTINGS": "せってい",
   "ACHIEVEMENTS": "じっせき",
   "STATS": "とうけい",
+  "RUN_HISTORY":"ラン履歴",
   "VOUCHERS": "クーポン",
   "EGG_LIST": "タマゴリスト",
   "EGG_GACHA": "タマゴガチャ",
@@ -11,6 +12,8 @@
   "slot": "スロット {{slotNumber}}",
   "importSession": "セッションのインポート",
   "exportSession": "セッションのエクスポート",
+  "importRunHistory":"ラン履歴インポート",
+  "exportRunHistory":"ラン履歴エクスポート",
   "importData": "データのインポート",
   "exportData": "データのエクスポート",
   "cancel": "キャンセル"

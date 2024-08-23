@@ -57,6 +57,7 @@ import weather from "./weather.json";
 import terrain from "./terrain.json";
 import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
 import moveTriggers from "./move-trigger.json";
+import runHistory from "./run-history-ui-handler.json";
 
 export const zhCnConfig = {
   ability,
@@ -118,4 +119,5 @@ export const zhCnConfig = {
   partyUiHandler,
   modifierSelectUiHandler,
   moveTriggers,
+  runHistory,
 };
