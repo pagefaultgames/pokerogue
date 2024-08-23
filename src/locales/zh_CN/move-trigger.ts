@@ -61,6 +61,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "faintCountdown": "{{pokemonName}}\n将在{{turnCount}}回合后灭亡！",
   "copyType": "{{pokemonName}}\n变成了{{targetPokemonName}}的属性！",
   "suppressAbilities": "{{pokemonName}}的特性\n变得无效了！",
+  "revivalBlessing": "{{pokemonName}}复活了！",
   "swapArenaTags": "{{pokemonName}}\n交换了双方的场地效果！",
   "exposedMove": "{{pokemonName}}识破了\n{{targetPokemonName}}的原型！",
 } as const;

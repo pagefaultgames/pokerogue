@@ -61,6 +61,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "faintCountdown": "{{pokemonName}} geht nach {{turnCount}} Runden K.O.!",
   "copyType": "{{pokemonName}} hat den Typ von {{targetPokemonName}} angenommen!",
   "suppressAbilities": "Die Fähigkeit von {{pokemonName}} wirkt nicht mehr!",
+  "revivalBlessing": "{{pokemonName}} ist wieder fit und kampfbereit!",
   "swapArenaTags": "{{pokemonName}} hat die Effekte, die auf den beiden Seiten des Kampffeldes wirken, miteinander getauscht!",
   "exposedMove": "{{pokemonName}} erkennt {{targetPokemonName}}!",
 } as const;

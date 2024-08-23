@@ -61,6 +61,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "faintCountdown": "{{pokemonName}}\nirá desmaiar em {{turnCount}} turnos.",
   "copyType": "O tipo de {{pokemonName}}\nmudou para combinar com {{targetPokemonName}}!",
   "suppressAbilities": "A habilidade de {{pokemonName}}\nfoi suprimida!",
+  "revivalBlessing": "{{pokemonName}} foi reanimado!",
   "swapArenaTags": "{{pokemonName}} trocou os efeitos de batalha que afetam cada lado do campo!",
   "exposedMove": "{{pokemonName}} identificou\n{{targetPokemonName}}!",
 } as const;

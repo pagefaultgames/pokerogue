@@ -46,6 +46,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postFaintContactDamage": "{{abilityName}} di {{pokemonNameWithAffix}}\nferisce il Pokémon che lo ha attaccato!",
   "postFaintHpDamage": "{{abilityName}} di {{pokemonNameWithAffix}}\nferisce il Pokémon che lo ha attaccato!",
   "postSummonPressure": "{{pokemonNameWithAffix}} fa pressione!",
+  "weatherEffectDisappeared": "Le condizioni atmosferiche non hanno alcun effetto.",
   "postSummonMoldBreaker": "{{pokemonNameWithAffix}} ha l’abilità Rompiforma!",
   "postSummonAnticipation": "{{pokemonNameWithAffix}} rabbrividisce!",
   "postSummonTurboblaze": "{{pokemonNameWithAffix}} emana un’aura infuocata!",
