@@ -94,7 +94,7 @@ describe("Moves - Trick", () => {
       printStackCount(enemyPokemon.name, enemyLostItem.type.id, prevEnemyLostItemStack);
       printStackCount(enemyPokemon.name, playerLostItem.type.id, prevEnemyGainedItemStackCount);
 
-      game.doAttack(0);
+      game.move.select(Moves.TRICK);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const currPlayerLostItemStack = playerLostItem.stackCount;
@@ -135,7 +135,7 @@ describe("Moves - Trick", () => {
       game.override.enemyMoveset(SPLASH_ONLY);
       await game.startBattle([Species.MIME_JR]);
 
-      game.doAttack(0);
+      game.move.select(Moves.TRICK);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const playerPokemon = game.scene.getPlayerPokemon();
@@ -152,7 +152,7 @@ describe("Moves - Trick", () => {
       game.override.enemyMoveset(SPLASH_ONLY);
       await game.startBattle([Species.MIME_JR]);
 
-      game.doAttack(0);
+      game.move.select(Moves.TRICK);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const enemyPokemon = game.scene.getEnemyPokemon();
@@ -178,7 +178,7 @@ describe("Moves - Trick", () => {
       printStackCount(playerPokemon.name, playerPokemonFirstHeldItem.type.id, playerPokemonFirstHeldItem.stackCount);
       printStackCount(enemyPokemon.name, enemyPokemonFirstHeldItem.type.id, enemyPokemonFirstHeldItem.stackCount);
 
-      game.doAttack(0);
+      game.move.select(Moves.TRICK);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const playerPokemonCurrentHeldItem = playerPokemon.getHeldItems()[0];
@@ -213,7 +213,7 @@ describe("Moves - Trick", () => {
       printStackCount(playerPokemon.name, playerPokemonFirstHeldItem.type.id, playerPokemonFirstHeldItem.stackCount);
       printStackCount(enemyPokemon.name, enemyPokemonFirstHeldItem.type.id, enemyPokemonFirstHeldItem.stackCount);
 
-      game.doAttack(0);
+      game.move.select(Moves.TRICK);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const playerPokemonCurrentHeldItem = playerPokemon.getHeldItems()[0];
@@ -243,7 +243,7 @@ describe("Moves - Trick", () => {
       expect(playerPokemon.getHeldItems().length === 0);
       expect(enemyPokemon.getHeldItems().length === 0);
 
-      game.doAttack(0);
+      game.move.select(Moves.TRICK);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(playerPokemon.getHeldItems().length === 0);
