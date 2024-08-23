@@ -611,6 +611,10 @@ export class Arena {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }
 
+  hasTag(tagType: ArenaTagType) : boolean {
+    return !!this.getTag(tagType);
+  }
+
   getTagOnSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide): ArenaTag | undefined {
     return typeof(tagType) === "string"
       ? this.tags.find(t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side))
