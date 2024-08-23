@@ -7,7 +7,6 @@ import { Moves } from "#app/enums/moves.js";
 import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { Abilities } from "#app/enums/abilities.js";
-import Overrides from "#app/overrides";
 import { TempStatStageBoosterModifier } from "#app/modifier/modifier.js";
 import { Mode } from "#app/ui/ui.js";
 import { Button } from "#app/enums/buttons.js";
@@ -39,8 +38,8 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.MEW);
     game.override.enemyMoveset(SPLASH_ONLY);
-    game.override.enemyAbility(Abilities.PICKUP);
-    game.override.moveset([ Moves.TACKLE, Moves.HONE_CLAWS, Moves.BELLY_DRUM ]);
+    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.moveset([ Moves.TACKLE, Moves.SPLASH, Moves.HONE_CLAWS, Moves.BELLY_DRUM ]);
     game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
   });
 
@@ -102,12 +101,14 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
   it("should renew how many battles are left of existing booster when picking up new booster of same type", async() => {
     game.override.startingLevel(200);
-    vi.spyOn(Overrides, "ITEM_REWARD_OVERRIDE", "get").mockReturnValue([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
+    game.override.itemRewards([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
     await game.startBattle([
       Species.PIKACHU
     ]);
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(Moves.SPLASH);
+
+    await game.doKillOpponents();
 
     await game.phaseInterceptor.to(BattleEndPhase);
 

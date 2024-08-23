@@ -281,6 +281,12 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
 
+  itemRewards(items: ModifierOverride[]) {
+    vi.spyOn(Overrides, "ITEM_REWARD_OVERRIDE", "get").mockReturnValue(items);
+    this.log("Item rewards set to:", items);
+    return this;
+  }
+
   private log(...params: any[]) {
     console.log("Overrides:", ...params);
   }
