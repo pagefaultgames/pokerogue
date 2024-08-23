@@ -2551,7 +2551,7 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
       if (simulated) {
         return defender.canAddTag(BattlerTagType.CONFUSED);
       } else {
-        return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedInt(3,2), move.id, defender.id);
+        return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedInt(3, 2), move.id, defender.id);
       }
     }
     return false;
