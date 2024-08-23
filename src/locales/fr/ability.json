@@ -887,7 +887,7 @@
     "name": "Receveur",
     "description": "Le Pokémon reçoit le talent d’un allié mis K.O."
   },
-  "powerofAlchemy": {
+  "powerOfAlchemy": {
     "name": "Osmose",
     "description": "Le Pokémon acquiert le talent d’un allié mis K.O."
   },
