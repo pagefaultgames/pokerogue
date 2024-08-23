@@ -601,6 +601,7 @@ export default class Move implements Localizable {
           this.checkFlag(MoveFlags.MAKES_CONTACT, user, target)) {
         return true;
       }
+      break;
     }
 
     return !!(this.flags & flag);
