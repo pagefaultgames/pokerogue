@@ -46,6 +46,7 @@ export const abilityTriggers: SimpleTranslationEntries = {
   "postFaintContactDamage": "{{pokemonNameWithAffix}}[[는]] {{abilityName}}[[로]]\n상대에게 데미지를 입혔다!",
   "postFaintHpDamage": "{{pokemonNameWithAffix}}[[는]] {{abilityName}}[[로]]\n상대에게 데미지를 입혔다!",
   "postSummonPressure": "{{pokemonNameWithAffix}}[[는]]\n프레셔를 발산하고 있다!",
+  "weatherEffectDisappeared": "날씨의 영향이 없어졌다!",
   "postSummonMoldBreaker": "{{pokemonNameWithAffix}}의\n틀깨기!",
   "postSummonAnticipation": "{{pokemonNameWithAffix}}[[는]]\n몸을 떨었다!",
   "postSummonTurboblaze": "{{pokemonNameWithAffix}}[[는]]\n활활 타오르는 오라를 발산하고 있다!",

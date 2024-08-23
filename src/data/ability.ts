@@ -3288,11 +3288,25 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
   }
 }
 
+/**
+ * Attribute used for {@linkcode Abilities.MOODY}
+ */
 export class MoodyAbAttr extends PostTurnAbAttr {
   constructor() {
     super(true);
   }
-
+  /**
+   * Randomly increases one BattleStat by 2 stages and decreases a different BattleStat by 1 stage
+   * @param {Pokemon} pokemon Pokemon that has this ability
+   * @param passive N/A
+   * @param simulated true if applying in a simulated call.
+   * @param args N/A
+   * @returns true
+   *
+   * Any BattleStats at +6 or -6 are excluded from being increased or decreased, respectively
+   * If the pokemon already has all BattleStats raised to stage 6, it will only decrease one BattleStat by 1 stage
+   * If the pokemon already has all BattleStats lowered to stage -6, it will only increase one BattleStat by 2 stages
+   */
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const increaseStatArray = EFFECTIVE_STATS.filter(s => pokemon.getStatStage(s) < 6);
     let decreaseStatArray = EFFECTIVE_STATS.filter(s => pokemon.getStatStage(s) > -6);
@@ -3303,7 +3317,7 @@ export class MoodyAbAttr extends PostTurnAbAttr {
       pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [increaseStat], 2));
     }
     if (!simulated && decreaseStatArray.length > 0) {
-      const decreaseStat = EFFECTIVE_STATS[Utils.randInt(EFFECTIVE_STATS.length)];
+      const decreaseStat = decreaseStatArray[Utils.randInt(EFFECTIVE_STATS.length)];
       pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [decreaseStat], -1));
     }
     return true;
@@ -4579,7 +4593,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
       .attr(SuppressWeatherEffectAbAttr, true)
-      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared."),
+      .attr(PostSummonUnnamedMessageAbAttr, i18next.t("abilityTriggers:weatherEffectDisappeared")),
     new Ability(Abilities.COMPOUND_EYES, 3)
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.3),
     new Ability(Abilities.INSOMNIA, 3)
@@ -4774,7 +4788,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.AIR_LOCK, 3)
       .attr(SuppressWeatherEffectAbAttr, true)
-      .attr(PostSummonUnnamedMessageAbAttr, "The effects of the weather disappeared."),
+      .attr(PostSummonUnnamedMessageAbAttr, i18next.t("abilityTriggers:weatherEffectDisappeared")),
     new Ability(Abilities.TANGLED_FEET, 4)
       .conditionalAttr(pokemon => !!pokemon.getTag(BattlerTagType.CONFUSED), StatMultiplierAbAttr, Stat.EVA, 2)
       .ignorable(),
