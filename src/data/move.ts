@@ -4380,9 +4380,13 @@ export class DisableMoveAttr extends MoveEffectAttr {
   }
 }
 
-export class FrenzyAttr extends MoveEffectAttr {
-  constructor() {
+export class nonStopAttr extends MoveEffectAttr {
+  public tagType: BattlerTagType;
+  private rounds: number;
+  constructor(tagType: BattlerTagType, rounds:number = 0) {
     super(true, MoveEffectTrigger.HIT, false, true);
+    this.tagType = tagType;
+    this.rounds = rounds;
   }
 
   canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
@@ -4394,24 +4398,29 @@ export class FrenzyAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (!user.getTag(BattlerTagType.FRENZY) && !user.getMoveQueue().length) {
-      const turnCount = user.randSeedIntRange(1, 2);
+    if (!user.getTag(this.tagType) && !user.getMoveQueue().length) {
+      let turnCount = this.rounds;
+      if (!this.rounds) {
+        turnCount = user.randSeedIntRange(1, 2);
+      }
       new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
-      user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
+      user.addTag(this.tagType, turnCount, move.id, user.id);
     } else {
       applyMoveAttrs(AddBattlerTagAttr, user, target, move, args);
-      user.lapseTag(BattlerTagType.FRENZY); // if FRENZY is already in effect (moveQueue.length > 0), lapse the tag
+      user.lapseTag(this.tagType); // if NONSTOP/FRENZY is already in effect (moveQueue.length > 0), lapse the tag
     }
 
     return true;
   }
 }
 
-export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move) => {
+export const nonStopMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move) => {
   while (user.getMoveQueue().length && user.getMoveQueue()[0].move === move.id) {
     user.getMoveQueue().shift();
   }
-  user.removeTag(BattlerTagType.FRENZY); // FRENZY tag should be disrupted on miss/no effect
+  // NONSTOP/FRENZY tag should be disrupted on miss/no effect
+  user.removeTag(BattlerTagType.FRENZY);
+  user.removeTag(BattlerTagType.NONSTOP);
 
   return true;
 };
@@ -6513,9 +6522,9 @@ export function initMoves() {
       .attr(RecoilAttr)
       .recklessMove(),
     new AttackMove(Moves.THRASH, Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 1)
-      .attr(FrenzyAttr)
-      .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(NoEffectAttr, frenzyMissFunc)
+      .attr(nonStopAttr, BattlerTagType.FRENZY)
+      .attr(MissEffectAttr, nonStopMissFunc)
+      .attr(NoEffectAttr, nonStopMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(Moves.DOUBLE_EDGE, Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, 0, 1)
       .attr(RecoilAttr, false, 0.33)
@@ -6633,9 +6642,9 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .powderMove(),
     new AttackMove(Moves.PETAL_DANCE, Type.GRASS, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 1)
-      .attr(FrenzyAttr)
-      .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(NoEffectAttr, frenzyMissFunc)
+      .attr(nonStopAttr, BattlerTagType.FRENZY)
+      .attr(MissEffectAttr, nonStopMissFunc)
+      .attr(NoEffectAttr, nonStopMissFunc)
       .makesContact()
       .danceMove()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
@@ -6977,9 +6986,9 @@ export function initMoves() {
     new StatusMove(Moves.LOCK_ON, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(IgnoreAccuracyAttr),
     new AttackMove(Moves.OUTRAGE, Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 2)
-      .attr(FrenzyAttr)
-      .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(NoEffectAttr, frenzyMissFunc)
+      .attr(nonStopAttr, BattlerTagType.FRENZY)
+      .attr(MissEffectAttr, nonStopMissFunc)
+      .attr(NoEffectAttr, nonStopMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.SANDSTORM, Type.ROCK, -1, 10, -1, 0, 2)
       .attr(WeatherChangeAttr, WeatherType.SANDSTORM)
@@ -6992,7 +7001,10 @@ export function initMoves() {
     new StatusMove(Moves.CHARM, Type.FAIRY, 100, 20, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.ATK, -2),
     new AttackMove(Moves.ROLLOUT, Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, 0, 2)
-      .attr(ConsecutiveUseDoublePowerAttr, 5, true, true, Moves.DEFENSE_CURL),
+      .attr(ConsecutiveUseDoublePowerAttr, 5, true, true, Moves.DEFENSE_CURL)
+      .attr(nonStopAttr, BattlerTagType.NONSTOP, 4)
+      .attr(MissEffectAttr, nonStopMissFunc)
+      .attr(NoEffectAttr, nonStopMissFunc),
     new AttackMove(Moves.FALSE_SWIPE, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 40, -1, 0, 2)
       .attr(SurviveDamageAttr),
     new StatusMove(Moves.SWAGGER, Type.NORMAL, 85, 15, -1, 0, 2)
@@ -7275,6 +7287,9 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.ICE_BALL, Type.ICE, MoveCategory.PHYSICAL, 30, 90, 20, -1, 0, 3)
       .attr(ConsecutiveUseDoublePowerAttr, 5, true, true, Moves.DEFENSE_CURL)
+      .attr(nonStopAttr, BattlerTagType.NONSTOP, 4)
+      .attr(MissEffectAttr, nonStopMissFunc)
+      .attr(NoEffectAttr, nonStopMissFunc)
       .ballBombMove(),
     new AttackMove(Moves.NEEDLE_ARM, Type.GRASS, MoveCategory.PHYSICAL, 60, 100, 15, 30, 0, 3)
       .attr(FlinchAttr),
@@ -8836,9 +8851,9 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, 1, true),
     new AttackMove(Moves.RAGING_FURY, Type.FIRE, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 8)
       .makesContact(false)
-      .attr(FrenzyAttr)
-      .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(NoEffectAttr, frenzyMissFunc)
+      .attr(nonStopAttr, BattlerTagType.FRENZY)
+      .attr(MissEffectAttr, nonStopMissFunc)
+      .attr(NoEffectAttr, nonStopMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(Moves.WAVE_CRASH, Type.WATER, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 8)
       .attr(RecoilAttr, false, 0.33)

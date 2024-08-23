@@ -599,15 +599,27 @@ export class NightmareTag extends BattlerTag {
   }
 }
 
-export class FrenzyTag extends BattlerTag {
-  constructor(turnCount: number, sourceMove: Moves, sourceId: number) {
-    super(BattlerTagType.FRENZY, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
+export class NonStopTag extends BattlerTag {
+  public frenzy: boolean;
+
+  constructor(tagtype: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number, frenzy: boolean = true) {
+    super(tagtype, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
+    this.frenzy = frenzy;
+  }
+
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.frenzy = source.frenzy as boolean;
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    if (this.turnCount < 2) { // Only add CONFUSED tag if a disruption occurs on the final confusion-inducing turn of FRENZY
+    if (this.turnCount < 2 && this.frenzy) { // Only add CONFUSED tag if a disruption occurs on the final confusion-inducing turn of FRENZY
       pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
     }
   }
@@ -1885,7 +1897,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.NIGHTMARE:
     return new NightmareTag();
   case BattlerTagType.FRENZY:
-    return new FrenzyTag(turnCount, sourceMove, sourceId);
+    return new NonStopTag(tagType, turnCount, sourceMove, sourceId, true);
+  case BattlerTagType.NONSTOP:
+    return new NonStopTag(tagType, turnCount, sourceMove, sourceId, false);
   case BattlerTagType.CHARGING:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
   case BattlerTagType.ENCORE:
