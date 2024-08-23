@@ -29,7 +29,13 @@ import { type ModifierOverride } from "./modifier/modifier-type";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {
+  ABILITY_OVERRIDE: Abilities.STURDY,
+  OPP_ABILITY_OVERRIDE: Abilities.UNSEEN_FIST,
+  MOVESET_OVERRIDE: [Moves.SPLASH],
+  OPP_MOVESET_OVERRIDE: [Moves.WICKED_BLOW, Moves.WICKED_BLOW, Moves.WICKED_BLOW, Moves.WICKED_BLOW],
+  OPP_LEVEL_OVERRIDE: 20
+} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
