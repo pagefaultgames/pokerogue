@@ -38,7 +38,8 @@ export default [
                 "ignoreComments": false // Enforces the rule on lines containing comments
             }],
             "space-before-blocks": ["error", "always"], // Enforces a space before blocks
-            "keyword-spacing": ["error", { "before": true, "after": true }] // Enforces spacing before and after keywords
+            "keyword-spacing": ["error", { "before": true, "after": true }], // Enforces spacing before and after keywords
+            "comma-spacing": ["error", { "before": false, "after": true }] // Enforces spacing after comma
         }
     }
 ]
