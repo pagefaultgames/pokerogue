@@ -1208,6 +1208,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Calculates the type of a move when used by this Pokemon after
+   * type-changing move and ability attributes have applied.
+   * @param move {@linkcode Move} - The move being used.
+   * @param simulated - If `true`, prevents showing abilities applied in this calculation.
+   * @returns the {@linkcode Type} of the move after attributes are applied
+   */
+  getMoveType(move: Move, simulated: boolean = true): Type {
+    const moveTypeHolder = new Utils.IntegerHolder(move.type);
+
+    applyMoveAttrs(VariableMoveTypeAttr, this, null, move, moveTypeHolder);
+    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, this, null, move, simulated, moveTypeHolder);
+
+    return moveTypeHolder.value as Type;
+  }
+
+  /**
    * Calculates the effectiveness of a move against the Pokémon.
    *
    * @param source - The Pokémon using the move.
@@ -1219,28 +1235,43 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return 1;
     }
 
-    return this.getAttackMoveEffectiveness(source, move, !this.battleData?.abilityRevealed);
+    return this.getAttackMoveEffectiveness(source, move.getMove(), !this.battleData?.abilityRevealed);
   }
 
   /**
    * Calculates the effectiveness of an attack move against the Pokémon.
    *
-   * @param source - The attacking Pokémon.
-   * @param pokemonMove - The move being used by the attacking Pokémon.
+   * @param source {@linkcode Pokemon} - The attacking Pokémon.
+   * @param move {@linkcode Move} - The move being used by the attacking Pokémon.
    * @param ignoreAbility - Whether to check for abilities that might affect type effectiveness or immunity.
    * @returns The type damage multiplier, indicating the effectiveness of the move
    */
-  getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove, ignoreAbility: boolean = false): TypeDamageMultiplier {
-    const move = pokemonMove.getMove();
-    const typeless = move.hasAttr(TypelessAttr);
-    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move, source));
+  getAttackMoveEffectiveness(source: Pokemon, move: Move, ignoreAbility: boolean = false, simulated: boolean = true): TypeDamageMultiplier {
+    if (move.hasAttr(TypelessAttr)) {
+      return 1;
+    }
+    const moveType = source.getMoveType(move);
+
+    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(moveType, source, false, simulated));
     const cancelled = new Utils.BooleanHolder(false);
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
-    if (!typeless && !ignoreAbility) {
-      applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, true, typeMultiplier);
+    if (this.getTypes().find(t => move.isTypeImmune(source, this, t))) {
+      typeMultiplier.value = 0;
+    }
+    if (!ignoreAbility) {
+      applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, simulated, typeMultiplier);
+      applyMoveAttrs(NeutralDamageAgainstFlyingTypeMultiplierAttr, source, this, move, typeMultiplier); // this is ugly
     }
     if (!cancelled.value && !ignoreAbility) {
-      applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, true, typeMultiplier);
+      applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, simulated, typeMultiplier);
+    }
+
+    const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
+    for (const tag of immuneTags) {
+      if (move && !move.getAttrs(HitsTagAttr).some(attr => attr.tagType === tag.tagType)) {
+        typeMultiplier.value = 0;
+        break;
+      }
     }
 
     return (!cancelled.value ? Number(typeMultiplier.value) : 0) as TypeDamageMultiplier;
@@ -1248,20 +1279,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Calculates the type effectiveness multiplier for an attack type
-   * @param moveOrType The move being used, or a type if the move is unknown
+   * @param moveType {@linkcode Type} the type of the move being used
    * @param source the Pokemon using the move
    * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
    * @param simulated tag to only apply the strong winds effect message when the move is used
    * @returns a multiplier for the type effectiveness
    */
-  getAttackTypeEffectiveness(moveOrType: Move | Type, source?: Pokemon, ignoreStrongWinds: boolean = false, simulated: boolean = true): TypeDamageMultiplier {
-    const move = (moveOrType instanceof Move)
-      ? moveOrType
-      : undefined;
-    const moveType = (moveOrType instanceof Move)
-      ? move!.type // TODO: is this bang correct?
-      : moveOrType;
-
+  getAttackTypeEffectiveness(moveType: Type, source?: Pokemon, ignoreStrongWinds: boolean = false, simulated: boolean = true): TypeDamageMultiplier {
     if (moveType === Type.STELLAR) {
       return this.isTerastallized() ? 2 : 1;
     }
@@ -1281,7 +1305,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (source) {
         const ignoreImmunity = new Utils.BooleanHolder(false);
         if (source.isActive(true) && source.hasAbilityWithAttr(IgnoreTypeImmunityAbAttr)) {
-          applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, false, moveType, defType);
+          applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, simulated, moveType, defType);
         }
         if (ignoreImmunity.value) {
           return 1;
@@ -1303,15 +1327,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.scene.queueMessage(i18next.t("weather:strongWindsEffectMessage"));
       }
     }
-
-    const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
-    for (const tag of immuneTags) {
-      if (move && !move.getAttrs(HitsTagAttr).some(attr => attr.tagType === tag.tagType)) {
-        multiplier = 0;
-        break;
-      }
-    }
-
     return multiplier as TypeDamageMultiplier;
   }
 
@@ -1965,28 +1980,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, variableCategory);
     const moveCategory = variableCategory.value as MoveCategory;
 
-    const variableType = new Utils.IntegerHolder(move.type);
-    applyMoveAttrs(VariableMoveTypeAttr, source, this, move, variableType);
-    // This is simulated because it's called again within move.calculateBattlePower()
-    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, this, move, true, variableType);
-    const moveType = variableType.value as Type;
-
+    const moveType = source.getMoveType(move);
     const types = this.getTypes(true, true);
-
-    const cancelled = new Utils.BooleanHolder(false);
-    const power = move.calculateBattlePower(source, this);
-    const typeless = move.hasAttr(TypelessAttr);
-
-    const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType)))
-      ? this.getAttackTypeEffectiveness(move, source, false, false)
+    const typeMultiplier = (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType))
+      ? this.getAttackMoveEffectiveness(source, move, false, false)
       : 1);
-    applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
-    if (typeless) {
-      typeMultiplier.value = 1;
+
+    const cancelled = new Utils.BooleanHolder(typeMultiplier === 0);
+
+    if (!cancelled.value) {
+      defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled));
     }
-    if (types.find(t => move.isTypeImmune(source, this, t))) {
-      typeMultiplier.value = 0;
-    }
+
 
     switch (moveCategory) {
     case MoveCategory.PHYSICAL:
@@ -1994,14 +1999,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const isPhysical = moveCategory === MoveCategory.PHYSICAL;
       const sourceTeraType = source.getTeraType();
 
-      if (!typeless) {
-        applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
-        applyMoveAttrs(NeutralDamageAgainstFlyingTypeMultiplierAttr, source, this, move, typeMultiplier);
-      }
-      if (!cancelled.value) {
-        applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
-        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, false, typeMultiplier));
-      }
+      const power = move.calculateBattlePower(source, this);
 
       if (cancelled.value) {
         source.stopMultiHit(this);
@@ -2064,7 +2062,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (!isCritical) {
           this.scene.arena.applyTagsForSide(WeakenMoveScreenTag, defendingSide, move.category, this.scene.currentBattle.double, screenMultiplier);
         }
-        const isTypeImmune = (typeMultiplier.value * arenaAttackTypeMultiplier.value) === 0;
+        const isTypeImmune = (typeMultiplier * arenaAttackTypeMultiplier.value) === 0;
         const sourceTypes = source.getTypes();
         const matchesSourceType = sourceTypes[0] === moveType || (sourceTypes.length > 1 && sourceTypes[1] === moveType);
         const stabMultiplier = new Utils.NumberHolder(1);
@@ -2099,7 +2097,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           const randomMultiplier = ((this.scene.randBattleSeedInt(16) + 85) / 100);
           damage.value = Utils.toDmgValue((((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2)
                                    * stabMultiplier.value
-                                   * typeMultiplier.value
+                                   * typeMultiplier
                                    * arenaAttackTypeMultiplier.value
                                    * screenMultiplier.value
                                    * twoStrikeMultiplier.value
@@ -2147,7 +2145,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         result = result!; // telling TS compiler that result is defined!
 
         if (!result) {
-          if (!typeMultiplier.value) {
+          if (typeMultiplier === 0) {
             result = move.id === Moves.SHEER_COLD ? HitResult.IMMUNE : HitResult.NO_EFFECT;
           } else {
             const isOneHitKo = new Utils.BooleanHolder(false);
@@ -2156,9 +2154,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               result = HitResult.ONE_HIT_KO;
               isCritical = false;
               damage.value = this.hp;
-            } else if (typeMultiplier.value >= 2) {
+            } else if (typeMultiplier >= 2) {
               result = HitResult.SUPER_EFFECTIVE;
-            } else if (typeMultiplier.value >= 1) {
+            } else if (typeMultiplier >= 1) {
               result = HitResult.EFFECTIVE;
             } else {
               result = HitResult.NOT_VERY_EFFECTIVE;
@@ -2255,17 +2253,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       break;
     case MoveCategory.STATUS:
-      if (!typeless) {
-        applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
-      }
-      if (!cancelled.value) {
-        applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
-        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, false, typeMultiplier));
-      }
-      if (!typeMultiplier.value) {
+      if (cancelled.value) {
         this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
       }
-      result = cancelled.value || !typeMultiplier.value ? HitResult.NO_EFFECT : HitResult.STATUS;
+      result = cancelled.value ? HitResult.NO_EFFECT : HitResult.STATUS;
       break;
     }
 
@@ -3922,7 +3913,7 @@ export class EnemyPokemon extends Pokemon {
                * Attack moves are given extra multipliers to their base benefit score based on
                * the move's type effectiveness against the target and whether the move is a STAB move.
                */
-              const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove);
+              const effectiveness = target.getAttackMoveEffectiveness(this, move, !target.battleData?.abilityRevealed);
               if (target.isPlayer() !== this.isPlayer()) {
                 targetScore *= effectiveness;
                 if (this.isOfType(move.type)) {

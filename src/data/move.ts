@@ -737,7 +737,7 @@ export default class Move implements Localizable {
     const power = new Utils.NumberHolder(this.power);
     const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
 
-    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, simulated, null, typeChangeMovePowerMultiplier);
+    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, null, typeChangeMovePowerMultiplier);
 
     const sourceTeraType = source.getTeraType();
     if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !source.scene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
@@ -1857,7 +1857,7 @@ export class MultiHitAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let hitTimes: integer;
 
-    if (target.getAttackMoveEffectiveness(user, new PokemonMove(move.id)) === 0) {
+    if (target.getAttackMoveEffectiveness(user, move) === 0) {
       // If there is a type immunity, the attack will stop no matter what
       hitTimes = 1;
     } else {
@@ -3795,18 +3795,21 @@ export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
  * @extends VariablePowerAttr
  */
 export class TeraBlastPowerAttr extends VariablePowerAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
   /**
-   * @param user {@linkcode Pokemon} Pokemon using the move
-   * @param target {@linkcode Pokemon} N/A
-   * @param move {@linkcode Move} {@linkcode Move.TERA_BLAST}
-   * @param {any[]} args N/A
-   * @returns true or false
+   * Sets Tera Blast's power to 100 if the user is terastallized with
+   * the Stellar tera type.
+   * @param user {@linkcode Pokemon} the Pokemon using this move
+   * @param target n/a
+   * @param move {@linkcode Move} the Move with this attribute (i.e. Tera Blast)
+   * @param args
+   *   - [0] {@linkcode Utils.NumberHolder} the applied move's power, factoring in
+   *       previously applied power modifiers.
+   * @returns
    */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
-    if (user.isTerastallized() && move.type === Type.STELLAR) {
-      //200 instead of 100 to reflect lack of stellar being 2x dmg on any type
-      power.value = 200;
+    if (user.isTerastallized() && user.getTeraType() === Type.STELLAR) {
+      power.value = 100;
       return true;
     }
 
