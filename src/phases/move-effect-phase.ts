@@ -63,6 +63,7 @@ export class MoveEffectPhase extends PokemonPhase {
       }
 
       user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
+      move.type = move.defaultType; //resetting the move's type back to its original typing just in case
       applyPreAttackAbAttrs(MoveTypeChangeAbAttr, user, this.getTarget() ?? null, move);
 
       /**
