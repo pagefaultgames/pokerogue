@@ -9,7 +9,7 @@ import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag, WeakenMoveTypeTag } from "./arena-tag";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, IgnoreProtectOnContactAbAttr, IgnoreMoveEffectsAbAttr, applyPreDefendAbAttrs, MoveEffectChanceMultiplierAbAttr, WonderSkinAbAttr, applyPreAttackAbAttrs, MoveTypeChangeAttr, UserFieldMoveTypePowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AllyMoveCategoryPowerBoostAbAttr, VariableMovePowerAbAttr } from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, BlockItemTheftAbAttr, applyPostAttackAbAttrs, ConfusionOnStatusEffectAbAttr, HealFromBerryUseAbAttr, IgnoreProtectOnContactAbAttr, IgnoreMoveEffectsAbAttr, applyPreDefendAbAttrs, MoveEffectChanceMultiplierAbAttr, WonderSkinAbAttr, applyPreAttackAbAttrs, MoveTypeChangeAbAttr, UserFieldMoveTypePowerBoostAbAttr, FieldMoveTypePowerBoostAbAttr, AllyMoveCategoryPowerBoostAbAttr, VariableMovePowerAbAttr } from "./ability";
 import { allAbilities } from "./ability";
 import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier, PokemonMoveAccuracyBoosterModifier, AttackTypeBoosterModifier, PokemonMultiHitModifier } from "../modifier/modifier";
 import { BattlerIndex, BattleType } from "../battle";
@@ -112,9 +112,8 @@ type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
 export default class Move implements Localizable {
   public id: Moves;
   public name: string;
-  public type: Type;
-  public defaultType: Type;
-  public category: MoveCategory;
+  private _type: Type;
+  private _category: MoveCategory;
   public moveTarget: MoveTarget;
   public power: integer;
   public accuracy: integer;
@@ -132,9 +131,8 @@ export default class Move implements Localizable {
     this.id = id;
 
     this.nameAppend = "";
-    this.type = type;
-    this.defaultType = type;
-    this.category = category;
+    this._type = type;
+    this._category = category;
     this.moveTarget = defaultMoveTarget;
     this.power = power;
     this.accuracy = accuracy;
@@ -155,6 +153,13 @@ export default class Move implements Localizable {
     }
 
     this.localize();
+  }
+
+  get type() {
+    return this._type;
+  }
+  get category() {
+    return this._category;
   }
 
   localize(): void {
@@ -732,7 +737,7 @@ export default class Move implements Localizable {
     const power = new Utils.NumberHolder(this.power);
     const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
 
-    applyPreAttackAbAttrs(MoveTypeChangeAttr, source, target, this, simulated, typeChangeMovePowerMultiplier);
+    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, simulated, null, typeChangeMovePowerMultiplier);
 
     const sourceTeraType = source.getTeraType();
     if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !source.scene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
@@ -3861,10 +3866,15 @@ export class VariableMoveTypeAttr extends MoveAttr {
 
 export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const moveType = args[0];
+    if (!(moveType instanceof Utils.IntegerHolder)) {
+      return false;
+    }
+
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.ARCEUS) || [user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.SILVALLY)) {
       const form = user.species.speciesId === Species.ARCEUS || user.species.speciesId === Species.SILVALLY ? user.formIndex : user.fusionSpecies?.formIndex!; // TODO: is this bang correct?
 
-      move.type = Type[Type[form]];
+      moveType.value = Type[Type[form]];
       return true;
     }
 
@@ -3874,24 +3884,29 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
 
 export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const moveType = args[0];
+    if (!(moveType instanceof Utils.IntegerHolder)) {
+      return false;
+    }
+
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.GENESECT)) {
       const form = user.species.speciesId === Species.GENESECT ? user.formIndex : user.fusionSpecies?.formIndex;
 
       switch (form) {
       case 1: // Shock Drive
-        move.type = Type.ELECTRIC;
+        moveType.value = Type.ELECTRIC;
         break;
       case 2: // Burn Drive
-        move.type = Type.FIRE;
+        moveType.value = Type.FIRE;
         break;
       case 3: // Chill Drive
-        move.type = Type.ICE;
+        moveType.value = Type.ICE;
         break;
       case 4: // Douse Drive
-        move.type = Type.WATER;
+        moveType.value = Type.WATER;
         break;
       default:
-        move.type = Type.NORMAL;
+        moveType.value = Type.NORMAL;
         break;
       }
       return true;
@@ -3903,15 +3918,20 @@ export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
 
 export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const moveType = args[0];
+    if (!(moveType instanceof Utils.IntegerHolder)) {
+      return false;
+    }
+
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.MORPEKO)) {
       const form = user.species.speciesId === Species.MORPEKO ? user.formIndex : user.fusionSpecies?.formIndex;
 
       switch (form) {
       case 1: // Hangry Mode
-        move.type = Type.DARK;
+        moveType.value = Type.DARK;
         break;
       default: // Full Belly Mode
-        move.type = Type.ELECTRIC;
+        moveType.value = Type.ELECTRIC;
         break;
       }
       return true;
@@ -3923,18 +3943,23 @@ export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
 
 export class RagingBullTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const moveType = args[0];
+    if (!(moveType instanceof Utils.IntegerHolder)) {
+      return false;
+    }
+
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.PALDEA_TAUROS)) {
       const form = user.species.speciesId === Species.PALDEA_TAUROS ? user.formIndex : user.fusionSpecies?.formIndex;
 
       switch (form) {
       case 1: // Blaze breed
-        move.type = Type.FIRE;
+        moveType.value = Type.FIRE;
         break;
       case 2: // Aqua breed
-        move.type = Type.WATER;
+        moveType.value = Type.WATER;
         break;
       default:
-        move.type = Type.FIGHTING;
+        moveType.value = Type.FIGHTING;
         break;
       }
       return true;
@@ -3946,25 +3971,30 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
 
 export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const moveType = args[0];
+    if (!(moveType instanceof Utils.IntegerHolder)) {
+      return false;
+    }
+
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.OGERPON)) {
       const form = user.species.speciesId === Species.OGERPON ? user.formIndex : user.fusionSpecies?.formIndex;
 
       switch (form) {
       case 1: // Wellspring Mask
       case 5: // Wellspring Mask Tera
-        move.type = Type.WATER;
+        moveType.value = Type.WATER;
         break;
       case 2: // Hearthflame Mask
       case 6: // Hearthflame Mask Tera
-        move.type = Type.FIRE;
+        moveType.value = Type.FIRE;
         break;
       case 3: // Cornerstone Mask
       case 7: // Cornerstone Mask Tera
-        move.type = Type.ROCK;
+        moveType.value = Type.ROCK;
         break;
       case 4: // Teal Mask Tera
       default:
-        move.type = Type.GRASS;
+        moveType.value = Type.GRASS;
         break;
       }
       return true;
@@ -3976,22 +4006,27 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
 
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const moveType = args[0];
+    if (!(moveType instanceof Utils.IntegerHolder)) {
+      return false;
+    }
+
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
       switch (user.scene.arena.weather?.weatherType) {
       case WeatherType.SUNNY:
       case WeatherType.HARSH_SUN:
-        move.type = Type.FIRE;
+        moveType.value = Type.FIRE;
         break;
       case WeatherType.RAIN:
       case WeatherType.HEAVY_RAIN:
-        move.type = Type.WATER;
+        moveType.value = Type.WATER;
         break;
       case WeatherType.SANDSTORM:
-        move.type = Type.ROCK;
+        moveType.value = Type.ROCK;
         break;
       case WeatherType.HAIL:
       case WeatherType.SNOW:
-        move.type = Type.ICE;
+        moveType.value = Type.ICE;
         break;
       default:
         return false;
@@ -4018,6 +4053,11 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const moveType = args[0];
+    if (!(moveType instanceof Utils.IntegerHolder)) {
+      return false;
+    }
+
     if (!user.isGrounded()) {
       return false;
     }
@@ -4025,16 +4065,16 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
     const currentTerrain = user.scene.arena.getTerrainType();
     switch (currentTerrain) {
     case TerrainType.MISTY:
-      move.type = Type.FAIRY;
+      moveType.value = Type.FAIRY;
       break;
     case TerrainType.ELECTRIC:
-      move.type = Type.ELECTRIC;
+      moveType.value = Type.ELECTRIC;
       break;
     case TerrainType.GRASSY:
-      move.type = Type.GRASS;
+      moveType.value = Type.GRASS;
       break;
     case TerrainType.PSYCHIC:
-      move.type = Type.PSYCHIC;
+      moveType.value = Type.PSYCHIC;
       break;
     default:
       return false;
@@ -4043,8 +4083,17 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+/**
+ * Changes type based on the user's IVs
+ * @extends VariableMoveTypeAttr
+ */
 export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const moveType = args[0];
+    if (!(moveType instanceof Utils.IntegerHolder)) {
+      return false;
+    }
+
     const iv_val = Math.floor(((user.ivs[Stat.HP] & 1)
       +(user.ivs[Stat.ATK] & 1) * 2
       +(user.ivs[Stat.DEF] & 1) * 4
@@ -4052,7 +4101,7 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
       +(user.ivs[Stat.SPATK] & 1) * 16
       +(user.ivs[Stat.SPDEF] & 1) * 32) * 15/63);
 
-    move.type = [
+    moveType.value = [
       Type.FIGHTING, Type.FLYING, Type.POISON, Type.GROUND,
       Type.ROCK, Type.BUG, Type.GHOST, Type.STEEL,
       Type.FIRE, Type.WATER, Type.GRASS, Type.ELECTRIC,
@@ -4067,16 +4116,21 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
  * @extends VariableMoveTypeAttr
  */
 export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
   /**
-   * @param user {@linkcode Pokemon} the user's type is checked
+   * @param user {@linkcode Pokemon} the user of the move
    * @param target {@linkcode Pokemon} N/A
-   * @param move {@linkcode Move} {@linkcode Move.TeraBlastTypeAttr}
-   * @param {any[]} args N/A
-   * @returns true or false
+   * @param move {@linkcode Move} the move with this attribute
+   * @param args `[0]` the move's type to be modified
+   * @returns `true` if the move's type was modified; `false` otherwise
    */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const moveType = args[0];
+    if (!(moveType instanceof Utils.IntegerHolder)) {
+      return false;
+    }
+
     if (user.isTerastallized()) {
-      move.type = user.getTeraType(); //changes move type to tera type
+      moveType.value = user.getTeraType(); // changes move type to tera type
       return true;
     }
 
@@ -4086,14 +4140,18 @@ export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
 
 export class MatchUserTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const moveType = args[0];
+    if (!(moveType instanceof Utils.IntegerHolder)) {
+      return false;
+    }
     const userTypes = user.getTypes(true);
 
     if (userTypes.includes(Type.STELLAR)) { // will not change to stellar type
       const nonTeraTypes = user.getTypes();
-      move.type = nonTeraTypes[0];
+      moveType.value = nonTeraTypes[0];
       return true;
     } else if (userTypes.length > 0) {
-      move.type = userTypes[0];
+      moveType.value = userTypes[0];
       return true;
     } else {
       return false;

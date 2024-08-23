@@ -1211,7 +1211,7 @@ export class FieldMultiplyBattleStatAbAttr extends AbAttr {
 
 }
 
-export class MoveTypeChangeAttr extends PreAttackAbAttr {
+export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   constructor(
     private newType: Type,
     private powerMultiplier: number,
@@ -1220,11 +1220,14 @@ export class MoveTypeChangeAttr extends PreAttackAbAttr {
     super(true);
   }
 
+  // TODO: Decouple this into two attributes (type change / power boost)
   applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
     if (this.condition && this.condition(pokemon, defender, move)) {
-      move.type = this.newType;
       if (args[0] && args[0] instanceof Utils.NumberHolder) {
-        args[0].value *= this.powerMultiplier;
+        args[0].value = this.newType;
+      }
+      if (args[1] && args[1] instanceof Utils.NumberHolder) {
+        args[1].value *= this.powerMultiplier;
       }
       return true;
     }
@@ -1256,22 +1259,20 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
         attr instanceof CopyMoveAttr
       )
     ) {
-      // TODO remove this copy when phase order is changed so that damage, type, category, etc.
-      // TODO are all calculated prior to playing the move animation.
-      const moveCopy = new Move(move.id, move.type, move.category, move.moveTarget, move.power, move.accuracy, move.pp, move.chance, move.priority, move.generation);
-      moveCopy.attrs = move.attrs;
+      const moveType = new Utils.IntegerHolder(move.type);
 
       // Moves like Weather Ball ignore effects of abilities like Normalize and Refrigerate
       if (move.findAttr(attr => attr instanceof VariableMoveTypeAttr)) {
-        applyMoveAttrs(VariableMoveTypeAttr, pokemon, null, moveCopy);
+        applyMoveAttrs(VariableMoveTypeAttr, pokemon, null, move, moveType);
       } else {
-        applyPreAttackAbAttrs(MoveTypeChangeAttr, pokemon, null, moveCopy);
+        // This is always simulated to hide the ability pop-up
+        applyPreAttackAbAttrs(MoveTypeChangeAbAttr, pokemon, null, move, true, moveType);
       }
 
-      if (pokemon.getTypes().some((t) => t !== moveCopy.type)) {
+      if (pokemon.getTypes().some((t) => t !== moveType.value)) {
         if (!simulated) {
-          this.moveType = moveCopy.type;
-          pokemon.summonData.types = [moveCopy.type];
+          this.moveType = moveType.value;
+          pokemon.summonData.types = [moveType.value];
           pokemon.updateInfo();
         }
 
@@ -4859,7 +4860,7 @@ export function initAbilities() {
       .conditionalAttr(pokemon => pokemon.status ? pokemon.status.effect === StatusEffect.PARALYSIS : false, BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(Abilities.COMATOSE), BattleStatMultiplierAbAttr, BattleStat.SPD, 1.5),
     new Ability(Abilities.NORMALIZE, 4)
-      .attr(MoveTypeChangeAttr, Type.NORMAL, 1.2, (user, target, move) => {
+      .attr(MoveTypeChangeAbAttr, Type.NORMAL, 1.2, (user, target, move) => {
         return ![Moves.HIDDEN_POWER, Moves.WEATHER_BALL, Moves.NATURAL_GIFT, Moves.JUDGMENT, Moves.TECHNO_BLAST].includes(move.id);
       }),
     new Ability(Abilities.SNIPER, 4)
@@ -5100,7 +5101,7 @@ export function initAbilities() {
     new Ability(Abilities.STRONG_JAW, 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.BITING_MOVE), 1.5),
     new Ability(Abilities.REFRIGERATE, 6)
-      .attr(MoveTypeChangeAttr, Type.ICE, 1.2, (user, target, move) => move.type === Type.NORMAL),
+      .attr(MoveTypeChangeAbAttr, Type.ICE, 1.2, (user, target, move) => move.type === Type.NORMAL),
     new Ability(Abilities.SWEET_VEIL, 6)
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(UserFieldBattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
@@ -5123,11 +5124,11 @@ export function initAbilities() {
     new Ability(Abilities.TOUGH_CLAWS, 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 1.3),
     new Ability(Abilities.PIXILATE, 6)
-      .attr(MoveTypeChangeAttr, Type.FAIRY, 1.2, (user, target, move) => move.type === Type.NORMAL),
+      .attr(MoveTypeChangeAbAttr, Type.FAIRY, 1.2, (user, target, move) => move.type === Type.NORMAL),
     new Ability(Abilities.GOOEY, 6)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), BattleStat.SPD, -1, false),
     new Ability(Abilities.AERILATE, 6)
-      .attr(MoveTypeChangeAttr, Type.FLYING, 1.2, (user, target, move) => move.type === Type.NORMAL),
+      .attr(MoveTypeChangeAbAttr, Type.FLYING, 1.2, (user, target, move) => move.type === Type.NORMAL),
     new Ability(Abilities.PARENTAL_BOND, 6)
       .attr(AddSecondStrikeAbAttr, 0.25),
     new Ability(Abilities.DARK_AURA, 6)
@@ -5199,11 +5200,11 @@ export function initAbilities() {
     new Ability(Abilities.LONG_REACH, 7)
       .attr(IgnoreContactAbAttr),
     new Ability(Abilities.LIQUID_VOICE, 7)
-      .attr(MoveTypeChangeAttr, Type.WATER, 1, (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED)),
+      .attr(MoveTypeChangeAbAttr, Type.WATER, 1, (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED)),
     new Ability(Abilities.TRIAGE, 7)
       .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.hasFlag(MoveFlags.TRIAGE_MOVE), 3),
     new Ability(Abilities.GALVANIZE, 7)
-      .attr(MoveTypeChangeAttr, Type.ELECTRIC, 1.2, (user, target, move) => move.type === Type.NORMAL),
+      .attr(MoveTypeChangeAbAttr, Type.ELECTRIC, 1.2, (user, target, move) => move.type === Type.NORMAL),
     new Ability(Abilities.SURGE_SURFER, 7)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPD, 2),
     new Ability(Abilities.SCHOOLING, 7)
