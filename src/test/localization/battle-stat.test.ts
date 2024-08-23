@@ -1,10 +1,10 @@
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "#app/data/battle-stat";
 import { battle as deBattleStat } from "#app/locales/de/battle";
 import { pokemonInfo as dePokemonInfo } from "#app/locales/de/pokemon-info";
-import { battle as enBattleStat } from "#app/locales/en/battle";
-import { pokemonInfo as enPokemonInfo } from "#app/locales/en/pokemon-info";
-import { battle as esBattleStat } from "#app/locales/es/battle";
-import { pokemonInfo as esPokemonInfo } from "#app/locales/es/pokemon-info";
+import enBattleStat from "#app/locales/en/battle.json";
+import enPokemonInfo from "#app/locales/en/pokemon-info.json";
+import esBattleStat from "#app/locales/es/battle.json";
+import esPokemonInfo from "#app/locales/es/pokemon-info.json";
 import { battle as frBattleStat } from "#app/locales/fr/battle";
 import { pokemonInfo as frPokemonInfo } from "#app/locales/fr/pokemon-info";
 import { battle as itBattleStat } from "#app/locales/it/battle";
