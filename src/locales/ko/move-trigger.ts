@@ -8,7 +8,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "goingAllOutForAttack": "{{pokemonName}}[[는]]\n전력을 다하기 시작했다!",
   "regainedHealth": "{{pokemonName}}[[는]]\n기력을 회복했다!",
   "keptGoingAndCrashed": "{{pokemonName}}[[는]]\n의욕이 넘쳐서 땅에 부딪쳤다!",
-  "fled": "{{pokemonName}}[[는]]\N도망쳤다!",
+  "fled": "{{pokemonName}}[[는]]\n도망쳤다!",
   "cannotBeSwitchedOut": "{{pokemonName}}[[를]]\n돌아오게 할 수 없습니다!",
   "swappedAbilitiesWithTarget": "{{pokemonName}}[[는]]\n서로의 특성을 교체했다!",
   "coinsScatteredEverywhere": "돈이 주위에 흩어졌다!",
@@ -61,6 +61,7 @@ export const moveTriggers: SimpleTranslationEntries = {
   "faintCountdown": "{{pokemonName}}[[는]]\n{{turnCount}}턴 후에 쓰러져 버린다!",
   "copyType": "{{pokemonName}}[[는]]\n{{targetPokemonName}}[[와]] 같은 타입이 되었다!",
   "suppressAbilities": "{{pokemonName}}의\n특성이 효과를 발휘하지 못하게 되었다!",
+  "revivalBlessing": "{{pokemonName}}[[는]]\n정신을 차려 싸울 수 있게 되었다!",
   "swapArenaTags": "{{pokemonName}}[[는]]\n서로의 필드 효과를 교체했다!",
   "exposedMove": "{{pokemonName}}[[는]]\n{{targetPokemonName}}의 정체를 꿰뚫어 보았다!",
 } as const;
