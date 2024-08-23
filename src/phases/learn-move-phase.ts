@@ -16,7 +16,6 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
 
   constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves) {
     super(scene, partyMemberIndex);
-
     this.moveId = moveId;
   }
 

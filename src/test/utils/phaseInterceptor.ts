@@ -8,6 +8,7 @@ import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
+import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MessagePhase } from "#app/phases/message-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
@@ -83,6 +84,7 @@ export default class PhaseInterceptor {
     [NextEncounterPhase, this.startPhase],
     [NewBattlePhase, this.startPhase],
     [VictoryPhase, this.startPhase],
+    [LearnMovePhase, this.startPhase],
     [MoveEndPhase, this.startPhase],
     [StatChangePhase, this.startPhase],
     [ShinySparklePhase, this.startPhase],
