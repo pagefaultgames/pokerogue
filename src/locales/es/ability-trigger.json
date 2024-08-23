@@ -1,11 +1,12 @@
 {
   "blockRecoilDamage": "¡{{abilityName}} de {{pokemonName}}\nlo protegió del daño de retroceso!",
   "badDreams": "¡{{pokemonName}} está atormentado!",
+  "costar": "¡{{pokemonName}} ha copiado los cambios en las características de {{allyName}}!",
   "iceFaceAvoidedDamage": "¡{{pokemonNameWithAffix}} evitó\ndaño con {{abilityName}}!",
   "trace": "¡{{pokemonName}} ha copiado la habilidad {{abilityName}} \nde {{targetName}}!",
   "windPowerCharged": "¡{{pokemonName}} se ha cargado de electricidad gracias a {{moveName}}!",
   "quickDraw": "¡{{pokemonName}} ataca primero gracias a la habilidad Mano Rápida!",
   "disguiseAvoidedDamage": "¡El disfraz de {{pokemonNameWithAffix}} se ha roto!",
-  "preventBerryUse": "{{pokemonNameWithAffix}} está muy nervioso y no puede comer bayas!",
-  "weatherEffectDisappeared": "El tiempo atmosférico ya no ejerce ninguna influencia."
+  "weatherEffectDisappeared": "El tiempo atmosférico ya no ejerce ninguna influencia.",
+  "preventBerryUse": "{{pokemonNameWithAffix}} está muy nervioso y no puede comer bayas!"
 }
