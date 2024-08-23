@@ -26,7 +26,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "DamageAchv": {
-    description: "在單次攻擊中造成 {{damageAmount}} 點傷害",
+    description: "在單次攻擊中造成\n {{damageAmount}} 點傷害",
   },
   "250_DMG": {
     name: "重拳出擊",
@@ -42,7 +42,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
 
   "HealAchv": {
-    description: "通過技能、能力或攜帶的道具一次性治療 {{healAmount}} {{HP}}點",
+    description: "通過技能、能力或攜帶的道具\n一次性治療 {{healAmount}} {{HP}}點",
   },
   "250_HEAL": {
     name: "新手奶媽",
@@ -91,11 +91,11 @@ export const PGMachv: AchievementTranslationEntries = {
 
   "TRANSFER_MAX_BATTLE_STAT": {
     name: "團隊協作",
-    description: "在一項屬性強化至最大時用接力棒傳遞給其他寶可夢",
+    description: "在一項屬性強化至最大時用\n接力棒傳遞給其他寶可夢",
   },
   "MAX_FRIENDSHIP": {
     name: "親密無間",
-    description: "使一隻寶可夢的親密度達到最大值",
+    description: "使一隻寶可夢的親密度\n達到最大值",
   },
   "MEGA_EVOLVE": {
     name: "大變身",
@@ -115,7 +115,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "SPLICE": {
     name: "無限融合",
-    description: "使用基因之楔將兩隻寶可夢融合在一起",
+    description: "使用基因之楔將兩隻寶可夢\n融合在一起",
   },
   "MINI_BLACK_HOLE": {
     name: "一大洞的道具",
@@ -139,7 +139,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "SHINY_PARTY": {
     name: "嘔心瀝血",
-    description: "擁有一支由閃光寶可夢組成的滿員隊伍",
+    description: "擁有一支由閃光寶可夢組成\n的滿員隊伍",
   },
   "HATCH_MYTHICAL": {
     name: "幻獸蛋",
@@ -147,7 +147,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "HATCH_SUB_LEGENDARY": {
     name: "二級傳說蛋",
-    description: "從蛋中孵化出一隻準傳說寶可夢",
+    description: "從蛋中孵化出一隻準傳說\n寶可夢",
   },
   "HATCH_LEGENDARY": {
     name: "傳說蛋",
@@ -159,11 +159,11 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "HIDDEN_ABILITY": {
     name: "隱藏實力",
-    description: "捕捉一隻擁有隱藏特性的寶可夢",
+    description: "捕捉一隻擁有隱藏特性\n的寶可夢",
   },
   "PERFECT_IVS": {
     name: "合格證",
-    description: "獲得一隻擁有完美個體值的寶可夢",
+    description: "獲得一隻擁有完美個體值\n的寶可夢",
   },
   "CLASSIC_VICTORY": {
     name: "戰無不勝",
@@ -171,7 +171,7 @@ export const PGMachv: AchievementTranslationEntries = {
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
     name: "帶孩上班",
-    description: "通關經典模式時隊伍中至少有一名未進化的寶可夢"
+    description: "通關經典模式時隊伍中至少有\n一名未進化的寶可夢"
   },
 
   "MONO_GEN_ONE": {

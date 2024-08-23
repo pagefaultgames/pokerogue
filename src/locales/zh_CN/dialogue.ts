@@ -396,7 +396,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
   },
   "ariana": {
     "encounter": {
-      1: `站住！我们可不能放过你！" 
+      1: `站住！我们可不能放过你！
           $这会损伤火箭对的名誉，明白吗？`,
       2: `我不知道也不想知道我的所作所为正确与否…
           $我只要遵从坂木老大的指令就可以了！`,

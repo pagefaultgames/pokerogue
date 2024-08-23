@@ -92,7 +92,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     },
     PokemonMultiHitModifierType: {
       description:
-                "攻擊造成一次額外傷害，每次堆疊額外傷害\n分別衰減60/75/82.5%。",
+                "攻擊以40/25/17.5%的傷害造成2/3/4次傷害。",
     },
     TmModifierType: {
       name: "招式學習器 {{moveId}} - {{moveName}}",
@@ -233,21 +233,21 @@ export const modifierType: ModifierTypeTranslationEntries = {
     CANDY_JAR: { name: "糖果罐", description: "神奇糖果提供的升級提升1級。" },
     BERRY_POUCH: {
       name: "樹果袋",
-      description: "使用樹果時有30%的幾率不會消耗樹果。",
+      description: "使用樹果時增加30%的幾率不會消耗樹果。",
     },
     FOCUS_BAND: {
       name: "氣勢頭帶",
       description:
-                "攜帶該道具的寶可夢有10%幾率在受到\n攻擊而將陷入瀕死狀態時，保留1點HP不陷入瀕死狀態。",
+                "攜帶該道具的寶可夢增加10%幾率在受到\n攻擊而將陷入瀕死狀態時，保留1點HP不陷入瀕死狀態。",
     },
     QUICK_CLAW: {
       name: "先制之爪",
-      description: "有10%的幾率無視速度優先使出招式\n(先制技能優先)。",
+      description: "增加10%的幾率無視速度優先使出招式\n(先制技能優先)。",
     },
     KINGS_ROCK: {
       name: "王者之證",
       description:
-                "攜帶該道具的寶可夢使用任意原本不會造成\n畏縮狀態的攻擊招式並造成傷害時，有\n10%幾率使目標陷入畏縮狀態。",
+                "攜帶該道具的寶可夢使用任意原本不會造成\n畏縮狀態的攻擊招式並造成傷害時，增加\n10%幾率使目標陷入畏縮狀態。",
     },
     LEFTOVERS: {
       name: "喫剩的東西",
