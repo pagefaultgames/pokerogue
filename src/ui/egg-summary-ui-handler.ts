@@ -10,6 +10,7 @@ import { EggTier } from "#app/enums/egg-type.js";
 import PokemonHatchInfoContainer from "./pokemon-hatch-info-container";
 import { EggHatchData } from "#app/phases/egg-hatch-phase.js";
 import { EggSummaryPhase } from "#app/phases/egg-summary-phase.js";
+import { DexAttr } from "#app/system/game-data.js";
 
 export default class EggSummaryUiHandler extends MessageUiHandler {
   private pokemonListContainer: Phaser.GameObjects.Container;
@@ -51,6 +52,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
     this.eggHatchContainer.setVisible(false);
     ui.add(this.eggHatchContainer);
+
     // this.scene.fieldUI.add(this.eggHatchContainer);
 
     // const bgColor = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0x006860);
@@ -62,6 +64,8 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchBg = this.scene.add.image(0, 0, "egg_summary_bg");
     this.eggHatchBg.setOrigin(0, 0);
     this.eggHatchContainer.add(this.eggHatchBg);
+    // this.eggHatchContainer.add(addWindow(this.scene, 107, 1, 212, 178));
+
 
     this.pokemonIconsContainer = this.scene.add.container(115, 9);
     this.pokemonIconSpritesContainer = this.scene.add.container(115, 9);
@@ -159,7 +163,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       // set tint for passive bg
       switch (getEggTierForSpecies(displayPokemon.species)) {
       case EggTier.COMMON:
-        bg.setTint(0xabddab);
+        bg.setVisible(false);
         break;
       case EggTier.GREAT:
         bg.setTint(0xabafff);
@@ -181,8 +185,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       this.pokemonIconSpritesContainer.add(icon);
       this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
 
-      // add shiny
-      const shiny = this.scene.add.image(x + 12, y + 2, "shiny_star_small");
+      const shiny = this.scene.add.image(x + 12, y + 4, "shiny_star_small");
       shiny.setScale(0.5);
       shiny.setVisible(displayPokemon.shiny);
       shiny.setTint(getVariantTint(displayPokemon.variant));
@@ -196,10 +199,17 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       const pb = this.scene.add.image(x + 12, y + 14, "icon_owned");
       pb.setOrigin(0, 0);
       pb.setScale(0.5);
+
+      // add animation for new unlocks (new catch or new shiny or new form)
       const dexEntry = value.prevDexEntry;
       const caughtAttr = dexEntry.caughtAttr;
-      pb.setVisible(!caughtAttr);
-      if (!caughtAttr) {
+      const newShiny = BigInt(1 << (displayPokemon.shiny ? 1 : 0));
+      const newVariant = BigInt(1 << (displayPokemon.variant + 4));
+      const newShinyOrVariant = ((newShiny & caughtAttr) === BigInt(0)) || ((newVariant & caughtAttr) === BigInt(0));
+      const newForm = (BigInt(1 << displayPokemon.formIndex) * DexAttr.DEFAULT_FORM & caughtAttr) === BigInt(0);
+
+      pb.setVisible(!caughtAttr || newForm);
+      if (!caughtAttr || newShinyOrVariant || newForm) {
         this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
       }
       this.pokemonIconsContainer.add(pb);

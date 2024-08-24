@@ -29,6 +29,7 @@ export class EggSummaryPhase extends Phase {
         });
 
       } else {
+        this.eggHatchData[i].setDex();
         this.eggHatchData[i].updatePokemon().then(() => {
           console.log("updating next pokemon");
           if (i < this.eggHatchData.length) {
