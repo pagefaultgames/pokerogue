@@ -1817,15 +1817,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (this.canCycleAbility) {
             const abilityCount = this.lastSpecies.getAbilityCount();
             const abilityAttr = this.scene.gameData.starterData[this.lastSpecies.speciesId].abilityAttr;
+            const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
             let newAbilityIndex = this.abilityCursor;
             do {
               newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
-              if (!newAbilityIndex) {
-                if (abilityAttr & AbilityAttr.ABILITY_1) {
+              if (newAbilityIndex === 0) {
+                if (hasAbility1) {
                   break;
                 }
               } else if (newAbilityIndex === 1) {
-                if (this.lastSpecies.ability1 === this.lastSpecies.ability2) {
+                // If ability 1 and 2 are the same and ability 1 is unlocked, skip over ability 2
+                if (this.lastSpecies.ability1 === this.lastSpecies.ability2 && hasAbility1) {
                   newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
                 }
                 break;
@@ -3068,8 +3070,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.canCycleShiny = isVariantCaught || isVariant2Caught || isVariant3Caught;
         this.canCycleGender = isMaleCaught && isFemaleCaught;
         const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
-        const hasAbility2 = (abilityAttr & AbilityAttr.ABILITY_2) && (species.ability2 !== species.ability1);
+        let hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
         const hasHiddenAbility = abilityAttr & AbilityAttr.ABILITY_HIDDEN;
+
+        /*
+         * Check for Pokemon with a single ability (at some point it was possible to catch them with their ability 2 attribute)
+         * This prevents cycling between ability 1 and 2 if they are both unlocked and the same
+         * but we still need to account for the possibility ability 1 was never unlocked and fallback on ability 2 in this case
+         */
+        if (hasAbility1 && hasAbility2 && species.ability1 === species.ability2) {
+          hasAbility2 = 0;
+        }
+
         this.canCycleAbility = [ hasAbility1, hasAbility2, hasHiddenAbility ].filter(a => a).length > 1;
         this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
           .map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(f => f).length > 1;
