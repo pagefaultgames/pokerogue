@@ -334,7 +334,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
             success = false;
             break;
           case 1:
-            success = this.rerollButtonContainer.visible && this.setCursor(0);
+            if (this.transferButtonContainer.visible) {
+              success = this.setCursor(3);
+            } else {
+              success = this.rerollButtonContainer.visible && this.setCursor(0);
+            }
             break;
           case 2:
             if (this.transferButtonContainer.visible) {
