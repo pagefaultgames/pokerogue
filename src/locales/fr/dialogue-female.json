@@ -468,7 +468,7 @@
   },
   "rival": {
     "encounter": {
-      "1": "@c{smile}Ah, je te cherchais ! Je savais que t’étais pressée de partir, mais je m’attendais quand même à un au revoir…\n$@c{smile_eclosed}T’as finalement décidé de réaliser ton rêve ?\nJ’ai peine à y croire.\n$@c{serious_smile_fists}Vu que t’es là, ça te dis un petit combat ?\nJe voudrais quand même m’assurer que t’es prête.\n$@c{serious_mopen_fists}Surtout ne te retiens pas et donne-moi tout ce que t’as !"
+      "1": "@c{smile}Ah, te voilà ! Je t’ai cherchée partout ! Je savais que t’étais pressée de partir, mais je m’attendais quand même à un au revoir…\n$@c{smile_eclosed}T’as finalement décidé de réaliser ton rêve ?\nJ’ai peine à y croire.\n$@c{serious_smile_fists}Vu que t’es là, ça te dis un petit combat ?\nJe voudrais quand même m’assurer que t’es prête.\n$@c{serious_mopen_fists}Surtout ne te retiens pas et donne-moi tout ce que t’as !"
     },
     "victory": {
       "1": "@c{shock}Wah… Tu m’as vraiment lavé.\nT’es vraiment une débutante ?\n$@c{smile}T’as peut-être eu de la chance, mais…\nPeut-être que t’arriveras jusqu’au bout du chemin.\n$D’ailleurs, le prof m’a demandé de te filer ces objets.\nIls ont l’air sympas.\n$@c{serious_smile_fists}Bonne chance à toi !"
