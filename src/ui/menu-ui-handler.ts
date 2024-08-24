@@ -244,50 +244,51 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true
     });
-    manageDataOptions.push({
-      label: i18next.t("menuUiHandler:testDialogue"),
-      handler: () => {
-
-        ui.playSelect();
-        let nickname = "";
-        nickname = decodeURIComponent(escape(atob(nickname)));
-        ui.setMode(Mode.TEST_DIALOGUE, {
-          buttonActions: [
-            (sanitizedName: string) => {
-              ui.revertMode();
-              ui.playSelect();
-              const dialogueTestName = sanitizedName;
-              const dialogueName = decodeURIComponent(escape(atob(dialogueTestName)));
-              console.log(dialogueName);
-              const handler = ui.getHandler() as AwaitableUiHandler;
-              handler.tutorialActive = true;
-              const interpolatorOptions: any = {};
-              const splitArr = dialogueName.split(" ");
-              const translatedString = splitArr[0]; // this is our outputted i18 string
-              const regex = RegExp("\\{\\{(\\w*)\\}\\}", "g"); // this is a regex expression to find all the text between {{ }} in the i18 output
-              const matches = i18next.t(translatedString).match(regex) ?? [];
-              if (matches.length > 0) {
-                for (let match = 0; match < matches.length; match++) {
-                  // we add 1 here  because splitArr[0] is our first value for the translatedString, and after that is where the variables are
-                  // the regex here in the replace is to remove the {{ and }} and just give us all alphanumeric characters
-                  if (typeof splitArr[match + 1] !== "undefined") {
-                    interpolatorOptions[matches[match].replace(/\W/g, "")] = i18next.t(splitArr[match + 1]);
+    if (Utils.isLocal || Utils.isBeta) {
+      manageDataOptions.push({
+        label: i18next.t("menuUiHandler:testDialogue"),
+        handler: () => {
+          ui.playSelect();
+          let nickname = "";
+          nickname = decodeURIComponent(escape(atob(nickname)));
+          ui.setMode(Mode.TEST_DIALOGUE, {
+            buttonActions: [
+              (sanitizedName: string) => {
+                ui.revertMode();
+                ui.playSelect();
+                const dialogueTestName = sanitizedName;
+                const dialogueName = decodeURIComponent(escape(atob(dialogueTestName)));
+                console.log(dialogueName);
+                const handler = ui.getHandler() as AwaitableUiHandler;
+                handler.tutorialActive = true;
+                const interpolatorOptions: any = {};
+                const splitArr = dialogueName.split(" ");
+                const translatedString = splitArr[0]; // this is our outputted i18 string
+                const regex = RegExp("\\{\\{(\\w*)\\}\\}", "g"); // this is a regex expression to find all the text between {{ }} in the i18 output
+                const matches = i18next.t(translatedString).match(regex) ?? [];
+                if (matches.length > 0) {
+                  for (let match = 0; match < matches.length; match++) {
+                    // we add 1 here  because splitArr[0] is our first value for the translatedString, and after that is where the variables are
+                    // the regex here in the replace is to remove the {{ and }} and just give us all alphanumeric characters
+                    if (typeof splitArr[match + 1] !== "undefined") {
+                      interpolatorOptions[matches[match].replace(/\W/g, "")] = i18next.t(splitArr[match + 1]);
+                    }
                   }
                 }
+                ui.showText(i18next.t(translatedString, interpolatorOptions), null, () => this.scene.ui.showText("", 0, () => handler.tutorialActive = false), null, true);
+              },
+              () => {
+                ui.revertMode();
               }
-              ui.showText(i18next.t(translatedString, interpolatorOptions), null, () => this.scene.ui.showText("", 0, () => handler.tutorialActive = false), null, true);
-            },
-            () => {
-              ui.revertMode();
-            }
-          ]
-        }, nickname);
+            ]
+          }, nickname);
 
 
-        return true;
-      },
-      keepOpen: true
-    });
+          return true;
+        },
+        keepOpen: true
+      });
+    }
     manageDataOptions.push({
       label: i18next.t("menuUiHandler:cancel"),
       handler: () => {

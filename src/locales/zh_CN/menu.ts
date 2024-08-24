@@ -59,4 +59,7 @@ export const menu: SimpleTranslationEntries = {
   "rename": "起名",
   "nickname": "昵称",
   "errorServerDown": "糟糕！访问服务器时发生了错误。\n\n你可以保持页面开启，\n游戏会自动重新连接。",
+  "check": "Check",
+  "testDialogue": "Test dialogue",
+  "dialogue": "Dialogue:"
 } as const;

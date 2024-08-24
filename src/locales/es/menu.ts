@@ -59,4 +59,7 @@ export const menu: SimpleTranslationEntries = {
   "rename": "Rename",
   "nickname": "Nickname",
   "errorServerDown": "¡Ups! Ha habido un problema al contactar con el servidor.\n\nPuedes mantener esta ventana abierta,\nel juego se reconectará automáticamente.",
+  "check": "Check",
+  "testDialogue": "Test dialogue",
+  "dialogue": "Dialogue:"
 } as const;

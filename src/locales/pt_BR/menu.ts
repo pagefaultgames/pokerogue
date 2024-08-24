@@ -59,4 +59,7 @@ export const menu: SimpleTranslationEntries = {
   "rename": "Renomear",
   "nickname": "Apelido",
   "errorServerDown": "Opa! Não foi possível conectar-se ao servidor.\n\nVocê pode deixar essa janela aberta,\npois o jogo irá se reconectar automaticamente.",
+  "check": "Check",
+  "testDialogue": "Test dialogue",
+  "dialogue": "Dialogue:"
 } as const;

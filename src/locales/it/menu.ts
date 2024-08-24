@@ -59,4 +59,7 @@ export const menu: SimpleTranslationEntries = {
   "rename": "Rinomina",
   "nickname": "Nickname",
   "errorServerDown": "Poffarbacco! C'è stato un errore nella comunicazione col server.\n\nPuoi lasciare questa finestra aperta,\nil gioco si riconnetterà automaticamente.",
+  "check": "Check",
+  "testDialogue": "Test dialogue",
+  "dialogue": "Dialogue:"
 } as const;

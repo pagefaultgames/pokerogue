@@ -59,4 +59,7 @@ export const menu: SimpleTranslationEntries = {
   "rename": "Umbenennen",
   "nickname": "Spitzname",
   "errorServerDown": "Ups! Es gab einen Fehler beim Versuch\nden Server zu kontaktieren\nLasse dieses Fenster offen\nDu wirst automatisch neu verbunden.",
+  "check": "Check",
+  "testDialogue": "Test dialogue",
+  "dialogue": "Dialogue:"
 } as const;
