@@ -3,10 +3,11 @@ import { Egg, EGG_SEED } from "#app/data/egg.js";
 import { Phase } from "#app/phase.js";
 import i18next from "i18next";
 import Overrides from "#app/overrides";
-import { EggHatchData, EggHatchPhase, EggSummaryPhase } from "./egg-hatch-phase";
+import { EggHatchData, EggHatchPhase } from "./egg-hatch-phase";
 import { Mode } from "#app/ui/ui.js";
 import { achvs } from "#app/system/achv.js";
 import { PlayerPokemon } from "#app/field/pokemon.js";
+import { EggSummaryPhase } from "./egg-summary-phase";
 
 export class EggLapsePhase extends Phase {
 
@@ -26,14 +27,15 @@ export class EggLapsePhase extends Phase {
     this.eggHatchData= [];
     if (eggsToHatchCount > 0) {
 
-      if (eggsToHatchCount >= 1) {
+      if (eggsToHatchCount >= 5) {
         this.scene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
           // show prompt for skip
-          this.scene.ui.showText("Lots of eggs ?", 0);
+          this.scene.ui.showText("Skip to egg summary?", 0);
           this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
             for (const egg of eggsToHatch) {
               this.hatchEggSilently(egg);
             }
+
             this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
             this.end();
           }, () => {
@@ -41,6 +43,7 @@ export class EggLapsePhase extends Phase {
               this.scene.unshiftPhase(new EggHatchPhase(this.scene, this, egg, eggsToHatchCount));
               eggsToHatchCount--;
             }
+
             this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
             this.end();
           }
@@ -52,6 +55,7 @@ export class EggLapsePhase extends Phase {
           this.scene.unshiftPhase(new EggHatchPhase(this.scene, this, egg, eggsToHatchCount));
           eggsToHatchCount--;
         }
+
         this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
         this.end();
       }
@@ -107,6 +111,7 @@ export class EggLapsePhase extends Phase {
     this.scene.executeWithSeedOffset(() => {
       ret = egg.generatePlayerPokemon(this.scene);
       newHatchData = new EggHatchData(this.scene, ret, egg.eggMoveIndex);
+      newHatchData.setDex();
       this.eggHatchData.push(newHatchData);
 
     }, egg.id, EGG_SEED.toString());

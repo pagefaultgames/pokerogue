@@ -8,7 +8,8 @@ import { Gender } from "#app/data/gender.js";
 import { getVariantTint } from "#app/data/variant.js";
 import { EggTier } from "#app/enums/egg-type.js";
 import PokemonHatchInfoContainer from "./pokemon-hatch-info-container";
-import { EggHatchData, EggSummaryPhase } from "#app/phases/egg-hatch-phase.js";
+import { EggHatchData } from "#app/phases/egg-hatch-phase.js";
+import { EggSummaryPhase } from "#app/phases/egg-summary-phase.js";
 
 export default class EggSummaryUiHandler extends MessageUiHandler {
   private pokemonListContainer: Phaser.GameObjects.Container;
