@@ -1978,8 +1978,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, variableCategory);
     const moveCategory = variableCategory.value as MoveCategory;
 
+    /** The move's type after type-changing effects are applied */
     const moveType = source.getMoveType(move);
+
+    /** If `value` is `true`, cancels the move and suppresses "No Effect" messages */
     const cancelled = new Utils.BooleanHolder(false);
+
+    /**
+     * The effectiveness of the move being used. Along with type matchups, this
+     * accounts for changes in effectiveness from the move's attributes and the
+     * abilities of both the source and this Pokemon.
+     */
     const typeMultiplier = this.getMoveEffectiveness(source, move, false, false, cancelled);
 
     switch (moveCategory) {
@@ -1991,6 +2000,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const power = move.calculateBattlePower(source, this);
 
       if (cancelled.value) {
+        // Cancelled moves fail silently
         source.stopMultiHit(this);
         return HitResult.NO_EFFECT;
       } else {
@@ -1999,11 +2009,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           source.removeTag(typeBoost.tagType);
         }
 
+        /** Combined damage multiplier from field effects such as weather, terrain, etc. */
         const arenaAttackTypeMultiplier = new Utils.NumberHolder(this.scene.arena.getAttackTypeMultiplier(moveType, source.isGrounded()));
         applyMoveAttrs(IgnoreWeatherTypeDebuffAttr, source, this, move, arenaAttackTypeMultiplier);
 
+        /**
+         * Whether or not this Pokemon is immune to the incoming move.
+         * Note that this isn't fully resolved in `getMoveEffectiveness` because
+         * of possible type-suppressing field effects (e.g. Desolate Land's effect on Water-type attacks).
+         */
         const isTypeImmune = (typeMultiplier * arenaAttackTypeMultiplier.value) === 0;
         if (isTypeImmune) {
+          // Moves with no effect but were not cancelled queue a "no effect" message before failing
           source.stopMultiHit(this);
           result = (move.id === Moves.SHEER_COLD)
             ? HitResult.IMMUNE
@@ -2250,10 +2267,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       break;
     case MoveCategory.STATUS:
-      if (cancelled.value || typeMultiplier === 0) {
+      if (typeMultiplier === 0) {
         this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
       }
-      result = (cancelled.value || typeMultiplier === 0) ? HitResult.NO_EFFECT : HitResult.STATUS;
+      result = (typeMultiplier === 0) ? HitResult.NO_EFFECT : HitResult.STATUS;
       break;
     }
 
