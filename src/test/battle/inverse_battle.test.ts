@@ -20,6 +20,14 @@ describe("Inverse Battle", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
+  const challenges = [
+    {
+      id: Challenges.INVERSE_BATTLE,
+      value: 1,
+      severity: 1,
+    },
+  ].map(challenge => copyChallenge(challenge));
+
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -33,13 +41,6 @@ describe("Inverse Battle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    const challenge = {
-      id: Challenges.INVERSE_BATTLE,
-      value: 1,
-      severity: 1,
-    };
-
-    game.scene.gameMode.challenges = [copyChallenge(challenge)];
     game.override
       .battleType("single")
       .starterSpecies(Species.FEEBAS)
@@ -51,7 +52,7 @@ describe("Inverse Battle", () => {
   it("1. immune types are 2x effective - Thunderbolt against Ground Type", async () => {
     game.override.enemySpecies(Species.SANDSHREW);
 
-    await game.startBattle(undefined, false);
+    await game.startChallengeBattle(challenges);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -62,7 +63,7 @@ describe("Inverse Battle", () => {
   it("2. 2x effective types are 0.5x effective - Thunderbolt against Flying Type", async () => {
     game.override.enemySpecies(Species.PIDGEY);
 
-    await game.startBattle(undefined, false);
+    await game.startChallengeBattle(challenges);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -73,7 +74,7 @@ describe("Inverse Battle", () => {
   it("3. 0.5x effective types are 2x effective - Thunderbolt against Electric Type", async () => {
     game.override.enemySpecies(Species.CHIKORITA);
 
-    await game.startBattle(undefined, false);
+    await game.startChallengeBattle(challenges);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -87,7 +88,7 @@ describe("Inverse Battle", () => {
       .enemySpecies(Species.CHARIZARD)
       .enemyLevel(100);
 
-    await game.startBattle(undefined, false);
+    await game.startChallengeBattle(challenges);
 
     const charizard = game.scene.getEnemyPokemon()!;
 
@@ -104,7 +105,7 @@ describe("Inverse Battle", () => {
   it("5. Freeze Dry is 2x effective against Water Type like other Ice type Move - Freeze Dry against Squirtle", async () => {
     game.override.enemySpecies(Species.SQUIRTLE);
 
-    await game.startBattle(undefined, false);
+    await game.startChallengeBattle(challenges);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -117,7 +118,7 @@ describe("Inverse Battle", () => {
       .moveset([Moves.WATER_GUN])
       .enemyAbility(Abilities.WATER_ABSORB);
 
-    await game.startBattle(undefined, false);
+    await game.startChallengeBattle(challenges);
 
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = enemy.getMaxHp() - 1;
@@ -134,7 +135,7 @@ describe("Inverse Battle", () => {
       .moveset([Moves.WILL_O_WISP])
       .enemySpecies(Species.CHARMANDER);
 
-    await game.startBattle(undefined, false);
+    await game.startChallengeBattle(challenges);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -153,7 +154,7 @@ describe("Inverse Battle", () => {
       .enemySpecies(Species.PIKACHU)
       .enemyLevel(50);
 
-    await game.startBattle(undefined, false);
+    await game.startChallengeBattle(challenges);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -172,7 +173,7 @@ describe("Inverse Battle", () => {
       .enemySpecies(Species.SANDSHREW)
       .enemyAbility(Abilities.ANTICIPATION);
 
-    await game.startBattle(undefined, false);
+    await game.startChallengeBattle(challenges);
 
     expect(game.scene.getEnemyPokemon()?.summonData.abilitiesApplied[0]).toBe(Abilities.ANTICIPATION);
   }, TIMEOUT);
@@ -182,7 +183,7 @@ describe("Inverse Battle", () => {
       .moveset([Moves.CONVERSION_2])
       .enemyMoveset([Moves.DRAGON_CLAW, Moves.DRAGON_CLAW, Moves.DRAGON_CLAW, Moves.DRAGON_CLAW]);
 
-    await game.startBattle(undefined, false);
+    await game.startChallengeBattle(challenges);
 
     const player = game.scene.getPlayerPokemon()!;
 

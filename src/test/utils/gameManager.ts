@@ -39,10 +39,11 @@ import fs from "fs";
 import { vi } from "vitest";
 import { ClassicModeHelper } from "./helpers/classicModeHelper";
 import { DailyModeHelper } from "./helpers/dailyModeHelper";
+import { ChallengeModeHelper } from "./helpers/challengeModeHelper";
 import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
-import overrides from "#app/overrides";
+import { Challenge } from "#app/data/challenge";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -57,6 +58,7 @@ export default class GameManager {
   public readonly move: MoveHelper;
   public readonly classicMode: ClassicModeHelper;
   public readonly dailyMode: DailyModeHelper;
+  public readonly challengeMode: ChallengeModeHelper;
   public readonly settings: SettingsHelper;
 
   /**
@@ -77,6 +79,7 @@ export default class GameManager {
     this.move = new MoveHelper(this);
     this.classicMode = new ClassicModeHelper(this);
     this.dailyMode = new DailyModeHelper(this);
+    this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
   }
 
@@ -139,28 +142,6 @@ export default class GameManager {
   }
 
   /**
-   * Runs the game to the summon phase.
-   * @param species - Optional array of species to summon.
-   * @returns A promise that resolves when the summon phase is reached.
-   */
-  async runToSummon(species?: Species[]) {
-    await this.runToTitle();
-
-    this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      const starters = generateStarter(this.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(this.scene);
-      this.scene.pushPhase(new EncounterPhase(this.scene, false));
-      selectStarterPhase.initBattle(starters);
-    });
-
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
-      this.removeEnemyHeldItems();
-    }
-
-    await this.phaseInterceptor.run(EncounterPhase);
-  }
-
-  /**
    * Helper function to run to the final boss encounter as it's a bit tricky due to extra dialogue
    * Also handles Major/Minor bosses from endless modes
    * @param game - The game manager
@@ -197,12 +178,30 @@ export default class GameManager {
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
-  async startBattle(species?: Species[], isClassicMode = true) {
-    if (isClassicMode) {
-      await this.classicMode.runToSummon(species);
-    } else {
-      await this.runToSummon(species);
-    }
+  async startBattle(species?: Species[]) {
+    await this.classicMode.runToSummon(species);
+
+    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+      this.setMode(Mode.MESSAGE);
+      this.endPhase();
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+
+    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+      this.setMode(Mode.MESSAGE);
+      this.endPhase();
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+
+    await this.phaseInterceptor.to(CommandPhase);
+    console.log("==================[New Turn]==================");
+  }
+
+  /**
+   * Transitions to the start of a battle in challenge mode.
+   * @param species - Optional array of species to start the battle with.
+   * @returns A promise that resolves when the battle is started.
+   */
+  async startChallengeBattle(challenges: Challenge[], species?: Species[]) {
+    await this.challengeMode.runToSummon(challenges, species);
 
     this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
       this.setMode(Mode.MESSAGE);
