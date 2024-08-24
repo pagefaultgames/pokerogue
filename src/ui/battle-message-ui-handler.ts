@@ -116,7 +116,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
     this.levelUpStatsIncrContent = levelUpStatsIncrContent;
 
-    const levelUpStatsValuesContent = addBBCodeTextObject(this.scene, (this.scene.game.canvas.width / 6) - 7, -94, "", TextStyle.WINDOW, { maxLines: 6 , lineSpacing: 5});
+    const levelUpStatsValuesContent = addBBCodeTextObject(this.scene, (this.scene.game.canvas.width / 6) - 7, -94, "", TextStyle.WINDOW, { maxLines: 6, lineSpacing: 5});
     levelUpStatsValuesContent.setOrigin(1, 0);
     levelUpStatsValuesContent.setAlign("right");
     levelUpStatsContainer.add(levelUpStatsValuesContent);

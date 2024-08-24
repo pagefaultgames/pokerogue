@@ -461,7 +461,7 @@ export class LoadingScene extends SceneBase {
       intro.play();
     });
 
-    this.load.on(this.LOAD_EVENTS.PROGRESS , (progress: number) => {
+    this.load.on(this.LOAD_EVENTS.PROGRESS, (progress: number) => {
       percentText.setText(`${Math.floor(progress * 100)}%`);
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 0.8);

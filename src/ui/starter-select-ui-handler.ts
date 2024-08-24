@@ -131,6 +131,8 @@ const starterCandyCosts: { passive: integer, costReduction: [integer, integer], 
   { passive: 10, costReduction: [5, 15], egg: 10 },  // 10 Cost
 ];
 
+const valueReductionMax = 2;
+
 // Position of UI elements
 const filterBarHeight = 17;
 const speciesContainerX = 109; // if team on the RIGHT: 109 / if on the LEFT: 143
@@ -1009,11 +1011,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const starterData = this.scene.gameData.starterData[speciesId];
 
     return starterData.candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[starterData.valueReduction]
-        && starterData.valueReduction < 2;
+        && starterData.valueReduction < valueReductionMax;
   }
 
   /**
-   * Determines if an same species egg can be baught for the given species ID
+   * Determines if an same species egg can be bought for the given species ID
    * @param speciesId The ID of the species to check the value reduction of
    * @returns true if the user has enough candies
    */
@@ -1062,15 +1064,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       ],};
 
-    const passiveAvailable = this.isPassiveAvailable(species.speciesId);
-    // 'Only Passives' mode
+    const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
+    const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
+    const isSameSpeciesEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
+
+    // 'Passives Only' mode
     if (this.scene.candyUpgradeNotification === 1) {
-      if (passiveAvailable) {
+      if (isPassiveAvailable) {
         this.scene.tweens.chain(tweenChain).paused = startPaused;
       }
     // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
-      if (passiveAvailable || this.isValueReductionAvailable(species.speciesId)) {
+      if (isPassiveAvailable || isValueReductionAvailable || isSameSpeciesEggAvailable) {
         this.scene.tweens.chain(tweenChain).paused = startPaused;
       }
     }
@@ -1089,16 +1094,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       return;
     }
 
-    const passiveAvailable = this.isPassiveAvailable(species.speciesId);
-    // 'Only Passive Unlocks' mode
+    const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
+    const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
+    const isSameSpeciesEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
+
+    // 'Passive Only' mode
     if (this.scene.candyUpgradeNotification === 1) {
-      starter.candyUpgradeIcon.setVisible(slotVisible && passiveAvailable);
+      starter.candyUpgradeIcon.setVisible(slotVisible && isPassiveAvailable);
       starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
 
       // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
       starter.candyUpgradeIcon.setVisible(
-        slotVisible && ( passiveAvailable || this.isValueReductionAvailable(species.speciesId)));
+        slotVisible && ( isPassiveAvailable || isValueReductionAvailable || isSameSpeciesEggAvailable ));
       starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
     }
   }
@@ -1263,7 +1271,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         } else if (numberOfStarters > 0) {
           // UP from filter bar to bottom of Pokemon list
           this.setFilterMode(false);
-          this.scrollCursor = Math.max(0,numOfRows - 9);
+          this.scrollCursor = Math.max(0, numOfRows - 9);
           this.updateScroll();
           const proportion = (this.filterBarCursor + 0.5) / this.filterBar.numFilters;
           const targetCol = Math.min(8, Math.floor(proportion * 11));
@@ -1630,7 +1638,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             }
             const valueReduction = starterData.valueReduction;
-            if (valueReduction < 2) {
+            if (valueReduction < valueReductionMax) {
               const reductionCost = getValueReductionCandyCounts(speciesStarters[this.lastSpecies.speciesId])[valueReduction];
               options.push({
                 label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
@@ -2386,7 +2394,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     });
 
-    this.starterSelectScrollBar.setPages(Math.ceil((this.filteredStarterContainers.length - 81) / 9) + 1);
+    this.starterSelectScrollBar.setPages(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
     this.starterSelectScrollBar.setPage(0);
 
     // sort
@@ -2506,7 +2514,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.filterBar.setCursor(cursor);
     } else {
-      cursor = Math.max(Math.min(this.filteredStarterContainers.length - 1, cursor),0);
+      cursor = Math.max(Math.min(this.filteredStarterContainers.length - 1, cursor), 0);
       changed = super.setCursor(cursor);
 
       const pos = calcStarterPosition(cursor, this.scrollCursor);
@@ -2737,7 +2745,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.pokemonCandyDarknessOverlay.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
           }
 
-          this.pokemonCandyDarknessOverlay.setCrop(0,0,16, candyCropY);
+          this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
         }
 
 
