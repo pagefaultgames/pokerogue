@@ -1263,7 +1263,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         } else if (numberOfStarters > 0) {
           // UP from filter bar to bottom of Pokemon list
           this.setFilterMode(false);
-          this.scrollCursor = Math.max(0,numOfRows - 9);
+          this.scrollCursor = Math.max(0, numOfRows - 9);
           this.updateScroll();
           const proportion = (this.filterBarCursor + 0.5) / this.filterBar.numFilters;
           const targetCol = Math.min(8, Math.floor(proportion * 11));
@@ -2386,7 +2386,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     });
 
-    this.starterSelectScrollBar.setPages(Math.ceil((this.filteredStarterContainers.length - 81) / 9) + 1);
+    this.starterSelectScrollBar.setPages(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
     this.starterSelectScrollBar.setPage(0);
 
     // sort
@@ -2506,7 +2506,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.filterBar.setCursor(cursor);
     } else {
-      cursor = Math.max(Math.min(this.filteredStarterContainers.length - 1, cursor),0);
+      cursor = Math.max(Math.min(this.filteredStarterContainers.length - 1, cursor), 0);
       changed = super.setCursor(cursor);
 
       const pos = calcStarterPosition(cursor, this.scrollCursor);
@@ -2737,7 +2737,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.pokemonCandyDarknessOverlay.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
           }
 
-          this.pokemonCandyDarknessOverlay.setCrop(0,0,16, candyCropY);
+          this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
         }
 
 
