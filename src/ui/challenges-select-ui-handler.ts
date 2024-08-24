@@ -111,7 +111,6 @@ export default class GameChallengesUiHandler extends UiHandler {
     startText.setOrigin(0, 0);
     startText.setPositionRelative(startBg, 8, 4);
 
-
     this.startCursor = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, (this.scene.game.canvas.width / 18) - 10, 16, 1, 1, 1, 1);
     this.startCursor.setName("9s-start-cursor");
     this.startCursor.setOrigin(0, 0);
