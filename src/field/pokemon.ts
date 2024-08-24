@@ -1257,6 +1257,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, simulated, typeMultiplier);
     }
 
+    if (!cancelled.value) {
+      const defendingSidePlayField = this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField();
+      defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled));
+    }
+
     const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
     for (const tag of immuneTags) {
       if (move && !move.getAttrs(HitsTagAttr).some(attr => attr.tagType === tag.tagType)) {
@@ -1965,7 +1970,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let result: HitResult;
     const damage = new Utils.NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    const defendingSidePlayField = this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField();
 
     const variableCategory = new Utils.IntegerHolder(move.category);
     applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, variableCategory);
@@ -1974,11 +1978,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const moveType = source.getMoveType(move);
     const typeMultiplier = this.getMoveEffectiveness(source, move, false, false);
     const cancelled = new Utils.BooleanHolder(typeMultiplier === 0);
-
-    if (!cancelled.value) {
-      defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled));
-    }
-
 
     switch (moveCategory) {
     case MoveCategory.PHYSICAL:
