@@ -1855,19 +1855,11 @@ export class MultiHitAttr extends MoveAttr {
    * @returns True
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    let hitTimes: integer;
+    const hitType = new Utils.IntegerHolder(this.multiHitType);
+    applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
+    this.multiHitType = hitType.value;
 
-    if (target.getMoveEffectiveness(user, move) === 0) {
-      // If there is a type immunity, the attack will stop no matter what
-      hitTimes = 1;
-    } else {
-      const hitType = new Utils.IntegerHolder(this.multiHitType);
-      applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
-      this.multiHitType = hitType.value;
-      hitTimes = this.getHitCount(user, target);
-    }
-
-    (args[0] as Utils.IntegerHolder).value = hitTimes;
+    (args[0] as Utils.IntegerHolder).value = this.getHitCount(user, target);
     return true;
   }
 
