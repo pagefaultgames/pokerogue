@@ -215,7 +215,7 @@ describe("Abilities - Disguise", () => {
     const mimikyu = game.scene.getEnemyPokemon()!;
     mimikyu.hp = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SHADOW_SNEAK));
+    game.move.select(Moves.SHADOW_SNEAK);
     await game.toNextWave();
 
     expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
