@@ -31,7 +31,6 @@ export class ChallengeModeHelper extends GameManagerHelper {
 
   /**
    * Runs the Challenge game to the summon phase.
-   * @param species - Optional array of species to summon.
    * @param gameMode - Optional game mode to set.
    * @returns A promise that resolves when the summon phase is reached.
    */
