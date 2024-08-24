@@ -668,6 +668,13 @@ export class FreshStartChallenge extends Challenge {
   override getDifficulty(): number {
     return 0;
   }
+
+  static loadChallenge(source: FreshStartChallenge | any): FreshStartChallenge {
+    const newChallenge = new FreshStartChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
 }
 
 /**
