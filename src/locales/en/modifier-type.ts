@@ -90,7 +90,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
       description: "Increases friendship gain per victory by 50%.",
     },
     "PokemonRegionalEvolutionModifierType": {
-      description: "When the holder evolves, its evolution will be its Alolan, Galarian, or Hisuian form.",
+      description: "When the holder evolves, it will evolve into its Alolan, Galarian, or Hisuian form.",
     },
     "PokemonMoveAccuracyBoosterModifierType": {
       description: "Increases move accuracy by {{accuracyAmount}} (maximum 100).",

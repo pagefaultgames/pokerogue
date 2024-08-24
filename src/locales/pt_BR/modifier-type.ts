@@ -89,6 +89,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonFriendshipBoosterModifierType": {
       description: "Aumenta o ganho de amizade por vitória em 50%.",
     },
+    "PokemonRegionalEvolutionModifierType": {
+      description: "When the holder evolves, it will evolve into its Alolan, Galarian, or Hisuian form.",
+    },
     "PokemonMoveAccuracyBoosterModifierType": {
       description: "Aumenta a precisão dos movimentos em {{accuracyAmount}} (máximo 100).",
     },
@@ -183,6 +186,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Ovo Dourado" },
 
     "SOOTHE_BELL": { name: "Guizo" },
+
+    "STRANGE_SOUVENIR": { name: "Strange Souvenir" },
 
     "SCOPE_LENS": { name: "Lentes de Mira", description: "Estas lentes facilitam o foco em pontos fracos. Aumenta a chance de acerto crítico de quem a segurar." },
     "LEEK": { name: "Alho-poró", description: "Esse talo de alho-poró muito longo e rígido aumenta a taxa de acerto crítico dos movimentos do Farfetch'd." },

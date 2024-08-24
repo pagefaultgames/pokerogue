@@ -89,6 +89,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonFriendshipBoosterModifierType": {
       description: "每场战斗获得的好感度提升50%。",
     },
+    "PokemonRegionalEvolutionModifierType": {
+      description: "When the holder evolves, it will evolve into its Alolan, Galarian, or Hisuian form.",
+    },
     "PokemonMoveAccuracyBoosterModifierType": {
       description: "招式命中率增加{{accuracyAmount}}(最大100)。",
     },
@@ -183,6 +186,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "金蛋" },
 
     "SOOTHE_BELL": { name: "安抚之铃" },
+
+    "STRANGE_SOUVENIR": { name: "Strange Souvenir" },
 
     "SCOPE_LENS": { name: "焦点镜", description: "能看见弱点的镜片。携带它的宝可梦的招式\n会变得容易击中要害。" },
     "LEEK": { name: "大葱", description: "非常长且坚硬的茎。让大葱鸭携带后，\n招式会变得容易击中要害。" },

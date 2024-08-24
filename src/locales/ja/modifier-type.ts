@@ -89,6 +89,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonFriendshipBoosterModifierType": {
       description: "しょうりごとに 50%パーセント なかよく なりやすくなる",
     },
+    "PokemonRegionalEvolutionModifierType": {
+      description: "When the holder evolves, it will evolve into its Alolan, Galarian, or Hisuian form.",
+    },
     "PokemonMoveAccuracyBoosterModifierType": {
       description: "わざのめいちゅうりつを{{accuracyAmount}}ふやす (さいだい100)",
     },
@@ -183,6 +186,8 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "おうごんタマゴ" },
 
     "SOOTHE_BELL": { name: "やすらぎのすず" },
+
+    "STRANGE_SOUVENIR": { name: "ふしぎなおきもの" },
 
     "SCOPE_LENS": { name: "ピントレンズ", description: "弱点が 見える レンズ。持たせた ポケモンの技が 急所に 当たりやすくなる。"},
     "LEEK": { name: "ながねぎ", description: "とても長くて 硬いクキ。カモネギに 持たせると 技が 急所に 当たりやすくなる。"},

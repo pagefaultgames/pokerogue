@@ -1900,8 +1900,13 @@ export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
   }
 }
 
+/**
+ * Causes a Pokemon to evolve into the Alolan, Galarian, or Hisuian form of its evolution if possible.
+ * The item itself does nothing and is simply checked to see if it's there.
+ * @extends PokemonHeldItemModifier
+ * @see apply (Doesn't get called)
+ */
 export class PokemonRegionalEvolutionModifier extends PokemonHeldItemModifier {
-  public species: Species[];
   constructor(type: ModifierTypes.PokemonRegionalEvolutionModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }

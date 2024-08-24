@@ -89,6 +89,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonFriendshipBoosterModifierType": {
       description: "Aumenta la ganancia de amistad por victoria en un 50%.",
     },
+    "PokemonRegionalEvolutionModifierType": {
+      description: "When the holder evolves, it will evolve into its Alolan, Galarian, or Hisuian form.",
+    },
     "PokemonMoveAccuracyBoosterModifierType": {
       description: "Aumenta la precisión de los movimiento en un {{accuracyAmount}} (máximo 100).",
     },
@@ -183,6 +186,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Huevo Dorado" },
 
     "SOOTHE_BELL": { name: "Camp. Alivio" },
+    "STRANGE_SOUVENIR": { name: "Estatuilla Rara" },
 
     "SCOPE_LENS": { name: "Periscopio", description: "Aumenta la probabilidad de asestar un golpe crítico." },
     "LEEK": { name: "Puerro", description: "Puerro muy largo y duro que aumenta la probabilidad de asestar un golpe crítico. Debe llevarlo Farfetch'd." },

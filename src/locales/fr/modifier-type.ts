@@ -89,6 +89,9 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonFriendshipBoosterModifierType": {
       description: "Augmente le gain d’amitié de 50% par victoire.",
     },
+    "PokemonRegionalEvolutionModifierType": {
+      description: "When the holder evolves, it will evolve into its Alolan, Galarian, or Hisuian form.",
+    },
     "PokemonMoveAccuracyBoosterModifierType": {
       description: "Augmente de {{accuracyAmount}} la précision des capacités (maximum 100).",
     },
@@ -183,6 +186,7 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Œuf d’Or" },
 
     "SOOTHE_BELL": { name: "Grelot Zen" },
+    "STRANGE_SOUVENIR": { name: "Bibelot Bizarre" },
 
     "SCOPE_LENS": { name: "Lentilscope", description: "Une lentille qui augmente d’un cran le taux de critiques du porteur." },
     "LEEK": { name: "Poireau", description: "À faire tenir à Canarticho ou Palarticho. Un poireau très long et solide qui augmente de 2 crans le taux de critiques." },
