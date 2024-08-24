@@ -18,6 +18,12 @@ export class ChallengeModeHelper extends GameManagerHelper {
 
   challenges: Challenge[] = [];
 
+  /**
+   * Adds a challenge to the challenge mode helper.
+   * @param id - The challenge id.
+   * @param value - The challenge value.
+   * @param severity - The challenge severity.
+   */
   addChallenge(id: Challenges, value: number, severity: number) {
     const challenge = copyChallenge({ id, value, severity });
     this.challenges.push(challenge);
