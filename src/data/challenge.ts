@@ -635,13 +635,6 @@ export class FreshStartChallenge extends Challenge {
     super(Challenges.FRESH_START, 1);
   }
 
-  static loadChallenge(source: InverseBattleChallenge | any): InverseBattleChallenge {
-    const newChallenge = new InverseBattleChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
-
   applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
     if (!defaultStarterSpecies.includes(pokemon.speciesId)) {
       valid.value = false;
@@ -684,10 +677,15 @@ export class InverseBattleChallenge extends Challenge {
   constructor() {
     super(Challenges.INVERSE_BATTLE, 1);
   }
-  /**
-   * @overrides
-   */
-  getDifficulty(): number {
+
+  static loadChallenge(source: InverseBattleChallenge | any): InverseBattleChallenge {
+    const newChallenge = new InverseBattleChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+
+  override getDifficulty(): number {
     return 0;
   }
 
@@ -702,15 +700,7 @@ export class InverseBattleChallenge extends Challenge {
 
     return false;
   }
-
-  static loadChallenge(source: InverseBattleChallenge | any): InverseBattleChallenge {
-    const newChallenge = new InverseBattleChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
 }
-
 
 /**
  * Lowers the amount of starter points available.
