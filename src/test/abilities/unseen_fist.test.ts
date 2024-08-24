@@ -1,11 +1,10 @@
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { BerryPhase } from "#app/phases/berry-phase.js";
 
@@ -102,7 +101,7 @@ async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, pro
 
   const enemyStartingHp = enemyPokemon.hp;
 
-  game.doAttack(getMovePosition(game.scene, 0, attackMove));
+  game.move.select(attackMove);
   await game.phaseInterceptor.to(TurnEndPhase, false);
 
   if (shouldSucceed) {

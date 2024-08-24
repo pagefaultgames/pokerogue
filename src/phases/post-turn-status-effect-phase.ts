@@ -34,7 +34,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
           break;
         case StatusEffect.BURN:
           damage.value = Math.max(pokemon.getMaxHp() >> 4, 1);
-          applyAbAttrs(ReduceBurnDamageAbAttr, pokemon, null, damage);
+          applyAbAttrs(ReduceBurnDamageAbAttr, pokemon, null, false, damage);
           break;
         }
         if (damage.value) {
