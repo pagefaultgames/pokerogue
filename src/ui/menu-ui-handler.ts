@@ -8,7 +8,7 @@ import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui
 import { Tutorial, handleTutorial } from "../tutorial";
 import { loggedInUser, updateUserInfo } from "../account";
 import i18next from "i18next";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 
@@ -97,7 +97,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   render() {
     const ui = this.getUi();
-    console.log(ui.getModeChain());
+    this.scene.updateGameInfo();
     this.excludedMenus = () => [
       { condition: ![Mode.COMMAND, Mode.TITLE].includes(ui.getModeChain()[0]), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
       { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
