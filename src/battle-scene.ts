@@ -1897,6 +1897,8 @@ export default class BattleScene extends SceneBase {
       return 22.770;
     case "battle_legendary_dia_pal": //ORAS Dialga & Palkia Battle
       return 16.009;
+    case "battle_legendary_origin_form": //LA Origin Dialga & Palkia Battle
+      return 18.961;
     case "battle_legendary_giratina": //ORAS Giratina Battle
       return 10.451;
     case "battle_legendary_arceus": //HGSS Arceus Battle
@@ -1925,6 +1927,8 @@ export default class BattleScene extends SceneBase {
       return 12.503;
     case "battle_legendary_calyrex": //SWSH Calyrex Battle
       return 50.641;
+    case "battle_legendary_riders": //SWSH Ice & Shadow Rider Calyrex Battle
+      return 18.155;
     case "battle_legendary_birds_galar": //SWSH Galarian Legendary Birds Battle
       return 0.175;
     case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
