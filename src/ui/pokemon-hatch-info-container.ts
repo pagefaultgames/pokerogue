@@ -45,7 +45,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonNameText.setOrigin(0, 0);
     this.pokemonListContainer.add(this.pokemonNameText);
 
-    this.pokemonHatchedIcon = this.scene.add.sprite(-2, 90, "egg_icons");
+    this.pokemonHatchedIcon = this.scene.add.sprite(-5, 90, "egg_icons");
     this.pokemonHatchedIcon.setOrigin(0, 0.2);
     this.pokemonHatchedIcon.setScale(0.8);
     this.pokemonListContainer.add(this.pokemonHatchedIcon);
@@ -63,7 +63,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonEggMovesContainer.add(eggMovesLabel);
 
     for (let m = 0; m < 4; m++) {
-      const eggMoveContainer = this.scene.add.container(0, 7 + 5.25 * m);
+      const eggMoveContainer = this.scene.add.container(0, 0 + 6 * m);
 
       const eggMoveBg = this.scene.add.nineslice(70, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
       eggMoveBg.setOrigin(1, 0);
@@ -78,7 +78,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
 
       eggMoveContainer.add(eggMoveBg);
       eggMoveContainer.add(eggMoveLabel);
-      eggMoveContainer.setScale(0.375);
+      eggMoveContainer.setScale(0.44);
 
       this.pokemonEggMoveContainers.push(eggMoveContainer);
 

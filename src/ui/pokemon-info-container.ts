@@ -386,8 +386,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     // const infoContainerTextSize = textSettings?.infoContainerTextSize || "64px";
 
 
-    this.pokemonGenderText.setPosition(87, -2);
-    this.pokemonGenderNewText.setPosition(77, -2);
+    this.pokemonGenderText.setPosition(89, -2);
+    this.pokemonGenderNewText.setPosition(79, -2);
     this.pokemonShinyIcon.setPosition(82, 87);
     this.pokemonShinyNewIcon.setPosition(72, 87);
 
