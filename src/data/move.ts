@@ -4381,7 +4381,7 @@ export class DisableMoveAttr extends MoveEffectAttr {
 }
 
 /**
- * Handles moves that are usd consecutively without user command
+ * Handles moves that are used consecutively without user command
  * @extends MoveEffectAttr
  * @param tagTypes: The types of tags decided by moves
  * @param turnCount: The turns move planned to keep use non-stop
