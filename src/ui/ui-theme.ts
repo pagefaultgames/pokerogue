@@ -1,4 +1,4 @@
-import { UiTheme } from "#app/enums/ui-theme";
+import { UiTheme } from "#enums/ui-theme";
 import { legacyCompatibleImages } from "#app/scene-base";
 import BattleScene from "../battle-scene";
 
@@ -43,16 +43,28 @@ export function addWindow(scene: BattleScene, x: number, y: number, width: numbe
 
   const borderSize = scene.uiTheme ? 6 : 8;
 
-  const window = scene.add.nineslice(x, y, `window_${scene.windowType}${getWindowVariantSuffix(windowVariant)}`, null, width, height, borderSize, borderSize, borderSize, borderSize);
+  const window = scene.add.nineslice(x, y, `window_${scene.windowType}${getWindowVariantSuffix(windowVariant)}`, undefined, width, height, borderSize, borderSize, borderSize, borderSize);
   window.setOrigin(0, 0);
 
-  if (mergeMaskTop || mergeMaskLeft) {
-    const maskRect = scene.make.graphics({});
+  if (mergeMaskLeft || mergeMaskTop || maskOffsetX || maskOffsetY) {
+    /**
+     * x: left
+     * y: top
+     * width: right
+     * height: bottom
+     */
+    const maskRect = new Phaser.GameObjects.Rectangle(
+      scene,
+      6*(x  - (mergeMaskLeft ? 2 : 0) - (maskOffsetX || 0)),
+      6*(y + (mergeMaskTop ? 2 : 0) + (maskOffsetY || 0)),
+      width - (mergeMaskLeft ? 2 : 0),
+      height - (mergeMaskTop ? 2 : 0),
+      0xffffff
+    );
+    maskRect.setOrigin(0);
     maskRect.setScale(6);
-    maskRect.fillStyle(0xFFFFFF);
-    maskRect.beginPath();
-    maskRect.fillRect(window.x + (mergeMaskLeft ? 2 : 0) + (maskOffsetX || 0), window.y + (mergeMaskTop ? 2 : 0) + (maskOffsetY || 0), window.width - (mergeMaskLeft ? 2 : 0), window.height - (mergeMaskTop ? 2 : 0));
-    window.setMask(maskRect.createGeometryMask());
+    const mask = maskRect.createGeometryMask();
+    window.setMask(mask);
   }
 
   return window;

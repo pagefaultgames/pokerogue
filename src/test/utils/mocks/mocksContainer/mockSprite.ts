@@ -1,9 +1,10 @@
+import Phaser from "phaser";
+import { MockGameObject } from "../mockGameObject";
 import Sprite = Phaser.GameObjects.Sprite;
 import Frame = Phaser.Textures.Frame;
-import Phaser from "phaser";
 
 
-export default class MockSprite {
+export default class MockSprite implements MockGameObject {
   private phaserSprite;
   public pipelineData;
   public texture;
@@ -12,10 +13,11 @@ export default class MockSprite {
   public textureManager;
   public scene;
   public anims;
-  public list = [];
+  public list: MockGameObject[] = [];
   constructor(textureManager, x, y, texture) {
     this.textureManager = textureManager;
     this.scene = textureManager.scene;
+    // @ts-ignore
     Phaser.GameObjects.Sprite.prototype.setInteractive = this.setInteractive;
     // @ts-ignore
     Phaser.GameObjects.Sprite.prototype.setTexture = this.setTexture;
@@ -31,6 +33,7 @@ export default class MockSprite {
     };
     this.anims = {
       pause: () => null,
+      stop: () => null,
     };
   }
 
@@ -90,6 +93,10 @@ export default class MockSprite {
     return this.phaserSprite.setPosition(x, y);
   }
 
+  setRotation(radians) {
+    return this.phaserSprite.setRotation(radians);
+  }
+
   stop() {
     return this.phaserSprite.stop();
   }
@@ -120,6 +127,10 @@ export default class MockSprite {
   setPositionRelative(source, x, y) {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
     return this.phaserSprite.setPositionRelative(source, x, y);
+  }
+
+  setY(y) {
+    return this.phaserSprite.setY(y);
   }
 
   setCrop(x, y, width, height) {

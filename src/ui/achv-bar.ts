@@ -2,7 +2,7 @@ import BattleScene from "../battle-scene";
 import { Achv, getAchievementDescription } from "../system/achv";
 import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";
-import { PlayerGender } from "#app/data/enums/player-gender";
+import { PlayerGender } from "#enums/player-gender";
 
 export default class AchvBar extends Phaser.GameObjects.Container {
   private defaultWidth: number;
@@ -28,7 +28,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.defaultWidth = 160;
     this.defaultHeight = 40;
 
-    this.bg = this.scene.add.nineslice(0, 0, "achv_bar", null, this.defaultWidth, this.defaultHeight, 41, 6, 16, 4);
+    this.bg = this.scene.add.nineslice(0, 0, "achv_bar", undefined, this.defaultWidth, this.defaultHeight, 41, 6, 16, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
@@ -119,7 +119,8 @@ export default class AchvBar extends Phaser.GameObjects.Container {
         this.shown = false;
         this.setVisible(false);
         if (this.queue.length) {
-          this.showAchv(this.queue.shift());
+          const shifted = this.queue.shift();
+          shifted && this.showAchv(shifted);
         }
       }
     });

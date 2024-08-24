@@ -5,8 +5,8 @@ import { TextStyle, addTextInputObject, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import * as Utils from "../utils";
-import i18next from "../plugins/i18n";
-import {Button} from "../enums/buttons";
+import i18next from "i18next";
+import {Button} from "#enums/buttons";
 
 export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;
@@ -17,10 +17,10 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   protected inputContainers: Phaser.GameObjects.Container[];
   protected inputs: InputText[];
   protected errorMessage: Phaser.GameObjects.Text;
-  protected submitAction: Function;
+  protected submitAction: Function | null;
   protected tween: Phaser.Tweens.Tween;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
     this.editing = false;

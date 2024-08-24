@@ -2,15 +2,16 @@
 	"compilerOptions": {
 		"target": "ES2020",
 		"module": "ES2020",
-		"moduleResolution": "Bundler",
+		"moduleResolution": "bundler",
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
-		"strictNullChecks": false,
+		"strictNullChecks": true,
 		"sourceMap": false,
 		"strict": false,
 		"rootDir": "./src",
 		"baseUrl": "./src",
 		"paths": {
+			"#enums/*": ["./enums/*.ts"],
 			"#app/*": ["*.ts"],
 			"#app": ["."],
 			"#test/*": ["./test/*.ts"]
@@ -19,8 +20,16 @@
 		"noEmit": true
 	},
 	"typedocOptions": {
-        "entryPoints": ["src/"],
+		"entryPoints": ["./src"],
 		"entryPointStrategy": "expand",
-        "out": "typedoc",
-    }
+		"exclude": "**/*+.test.ts",
+		"out": "typedoc"
+	},
+	"exclude": [
+		"node_modules",
+		"dist",
+		"vite.config.ts",
+		"vitest.config.ts",
+		"vitest.workspace.ts",
+	]
 }

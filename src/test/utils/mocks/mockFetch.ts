@@ -5,12 +5,12 @@ export const MockFetch = (input, init) => {
   let responseText;
 
   const handlers = {
-    "account/info": {"username":"greenlamp","lastSessionSlot":0},
+    "account/info": {"username":"greenlamp", "lastSessionSlot":0},
     "savedata/session": {},
     "savedata/system": {},
     "savedata/updateall": "",
     "daily/rankingpagecount": { data: 0 },
-    "game/titlestats": {"playerCount":0,"battleCount":5},
+    "game/titlestats": {"playerCount":0, "battleCount":5},
     "daily/rankings": [],
   };
 
@@ -23,10 +23,13 @@ export const MockFetch = (input, init) => {
     }
   }
 
-  return Promise.resolve({
+  const response: Partial<Response> = {
     ok: true,
     status: 200,
     json: responseHandler,
     text: responseText,
-  });
+    headers: new Headers({}),
+  };
+
+  return Promise.resolve(response);
 };

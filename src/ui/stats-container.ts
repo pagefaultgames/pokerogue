@@ -8,7 +8,7 @@ const ivChartStatCoordMultipliers = [[0, -1], [0.825, -0.5], [0.825, 0.5], [-0.8
 const speedLabelOffset = -3;
 const sideLabelOffset = 1;
 const ivLabelOffset = [0, sideLabelOffset, -sideLabelOffset, sideLabelOffset, -sideLabelOffset, speedLabelOffset];
-const ivChartStatIndexes = [0,1,2,5,4,3]; // swap special attack and speed
+const ivChartStatIndexes = [0, 1, 2, 5, 4, 3]; // swap special attack and speed
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
 export class StatsContainer extends Phaser.GameObjects.Container {
@@ -26,7 +26,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    this.setName("container-stats");
+    this.setName("stats");
     const ivChartBgData = new Array(6).fill(null).map((_, i: integer) => [ ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
 
     const ivChartBg = this.scene.add.polygon(48, 44, ivChartBgData, 0xd8e0f0, 0.625);

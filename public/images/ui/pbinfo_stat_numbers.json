@@ -281,6 +281,27 @@
 						"w": 9,
 						"h": 8
 					}
+				},
+        {
+					"filename": "empty",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1,
+						"h": 8
+					},
+					"frame": {
+						"x": 117,
+						"y": 0,
+						"w": 1,
+						"h": 8
+					}
 				}
 			]
 		}
