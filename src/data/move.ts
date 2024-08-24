@@ -3,7 +3,7 @@ import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, TrappedTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
-import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
+import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects } from "./status-effect";
 import { getTypeResistances, Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
@@ -6026,12 +6026,6 @@ export class VariableTargetAttr extends MoveAttr {
 }
 
 export class AfterYouAttr extends MoveEffectAttr {
-  private afterYouText:string;
-
-  constructor() {
-    super();
-  }
-
   /**
    * Allows the target of this move to act right after the user.
    * @param user {@linkcode Pokemon} that is using the move.
@@ -6041,13 +6035,13 @@ export class AfterYouAttr extends MoveEffectAttr {
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.scene.queueMessage(getPokemonMessage(target," took the kind offer!"));
+    user.scene.queueMessage(i18next.t("moveTriggers:afterYou", {pokemonName: getPokemonNameWithAffix(target)}));
 
     /* Will find next acting phase of the targeted pokémon,
     delete it and queue it next on successful delete. */
 
-    const nextAttackPhase:MovePhase = target.scene.findPhase((phase:MovePhase) => phase.pokemon === target) as MovePhase;
-    if (target.scene.tryRemovePhase((phase:MovePhase) => phase.pokemon === target)) {
+    const nextAttackPhase: MovePhase = target.scene.findPhase((phase: MovePhase) => phase.pokemon === target) as MovePhase;
+    if (target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
       target.scene.unshiftPhase(new MovePhase(target.scene, target, [...nextAttackPhase.targets], nextAttackPhase.move));
     }
 
