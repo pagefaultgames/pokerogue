@@ -12,6 +12,7 @@ import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -249,11 +250,22 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         duration: 250
       });
 
-      this.setCursor(0);
-      this.setRowCursor(1);
+      const updateCursorTarget = () => {
+        if (this.scene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
+          this.setRowCursor(0);
+          this.setCursor(2);
+        } else {
+          this.setRowCursor(this.scene.shopCursorTarget);
+          this.setCursor(0);
+        }
+      };
 
-      handleTutorial(this.scene, Tutorial.Select_Item).then(() => {
-        this.setCursor(0);
+      updateCursorTarget();
+
+      handleTutorial(this.scene, Tutorial.Select_Item).then((res) => {
+        if (res) {
+          updateCursorTarget();
+        }
         this.awaitingActionInput = true;
         this.onActionInput = args[2];
       });
@@ -322,7 +334,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
             success = false;
             break;
           case 1:
-            success = this.rerollButtonContainer.visible && this.setCursor(0);
+            if (this.transferButtonContainer.visible) {
+              success = this.setCursor(3);
+            } else {
+              success = this.rerollButtonContainer.visible && this.setCursor(0);
+            }
             break;
           case 2:
             if (this.transferButtonContainer.visible) {
@@ -355,6 +371,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
             break;
           case 2:
             success = false;
+            break;
+          case 3:
+            if (this.transferButtonContainer.visible) {
+              success = this.setCursor(1);
+            } else {
+              success = this.setCursor(2);
+            }
             break;
           }
         } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {

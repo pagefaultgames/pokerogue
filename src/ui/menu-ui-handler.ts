@@ -16,6 +16,7 @@ enum MenuOptions {
   GAME_SETTINGS,
   ACHIEVEMENTS,
   STATS,
+  RUN_HISTORY,
   VOUCHERS,
   EGG_LIST,
   EGG_GACHA,
@@ -69,7 +70,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   setup(): void {
     const ui = this.getUi();
     // wiki url directs based on languges available on wiki
-    const lang = i18next.resolvedLanguage?.substring(0,2)!; // TODO: is this bang correct?
+    const lang = i18next.resolvedLanguage?.substring(0, 2)!; // TODO: is this bang correct?
     if (["de", "fr", "ko", "zh"].includes(lang)) {
       wikiUrl = `https://wiki.pokerogue.net/${lang}:start`;
     }
@@ -85,7 +86,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.menuOverlay = new Phaser.GameObjects.Rectangle(this.scene, -1, -1, this.scene.scaledCanvas.width, this.scene.scaledCanvas.height, 0xffffff, 0.3);
     this.menuOverlay.setName("menu-overlay");
-    this.menuOverlay.setOrigin(0,0);
+    this.menuOverlay.setOrigin(0, 0);
     this.menuContainer.add(this.menuOverlay);
 
     this.menuContainer.add(this.bgmBar);
@@ -97,6 +98,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   render() {
     const ui = this.getUi();
+    console.log(ui.getModeChain());
     this.excludedMenus = () => [
       { condition: ![Mode.COMMAND, Mode.TITLE].includes(ui.getModeChain()[0]), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
       { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
@@ -208,6 +210,22 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true
     });
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:importRunHistory"),
+      handler: () => {
+        this.scene.gameData.importData(GameDataType.RUN_HISTORY);
+        return true;
+      },
+      keepOpen: true
+    });
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:exportRunHistory"),
+      handler: () => {
+        this.scene.gameData.tryExportData(GameDataType.RUN_HISTORY);
+        return true;
+      },
+      keepOpen: true
+    });
     if (Utils.isLocal || Utils.isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
@@ -224,10 +242,11 @@ export default class MenuUiHandler extends MessageUiHandler {
       handler: () => {
         this.scene.gameData.tryExportData(GameDataType.SYSTEM);
         return true;
-      }
+      },
+      keepOpen: true
     },
     {
-      label: "Consent Preferences",
+      label: i18next.t("menuUiHandler:consentPreferences"),
       handler: () => {
         const consentLink = document.querySelector(".termly-display-preferences") as HTMLInputElement;
         const clickEvent = new MouseEvent("click", {
@@ -250,9 +269,11 @@ export default class MenuUiHandler extends MessageUiHandler {
       keepOpen: true
     });
 
+    //Thank you Vassiat
     this.manageDataConfig = {
       xOffset: 98,
-      options: manageDataOptions
+      options: manageDataOptions,
+      maxOptions: 7
     };
 
     const communityOptions: OptionSelectItem[] = [
@@ -363,6 +384,10 @@ export default class MenuUiHandler extends MessageUiHandler {
         ui.setOverlayMode(Mode.GAME_STATS);
         success = true;
         break;
+      case MenuOptions.RUN_HISTORY:
+        ui.setOverlayMode(Mode.RUN_HISTORY);
+        success = true;
+        break;
       case MenuOptions.VOUCHERS:
         ui.setOverlayMode(Mode.VOUCHERS);
         success = true;
@@ -384,7 +409,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         break;
       case MenuOptions.MANAGE_DATA:
         if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === i18next.t("menuUiHandler:linkDiscord") || o.label === i18next.t("menuUiHandler:unlinkDiscord"))) {
-          this.manageDataConfig.options.splice(this.manageDataConfig.options.length-1,0,
+          this.manageDataConfig.options.splice(this.manageDataConfig.options.length-1, 0,
             {
               label: loggedInUser?.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
               handler: () => {

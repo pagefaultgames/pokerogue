@@ -8,13 +8,22 @@ import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
+import { getIsInitialized, initI18n } from "#app/plugins/i18n.js";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+
+function getTranslation(key: string): string {
+  if (!getIsInitialized()) {
+    initI18n();
+  }
+  return i18next.t(key);
+}
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i ? {
   value: (i * 10).toString(),
   label: (i * 10).toString(),
 } : {
   value: "Mute",
-  label: i18next.t("settings:mute")
+  label: getTranslation("settings:mute")
 });
 const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {
   const value = ((i + 1) * 10).toString();
@@ -65,6 +74,10 @@ export interface Setting {
   default: number
   type: SettingType
   requireReload?: boolean
+  /** Whether the setting can be activated or not */
+  activatable?: boolean
+  /** Determines whether the setting should be hidden from the UI */
+  isHidden?: () => boolean
 }
 
 /**
@@ -90,6 +103,7 @@ export const SettingKeys = {
   Damage_Numbers: "DAMAGE_NUMBERS",
   Move_Animations: "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
+  Reroll_Target: "REROLL_TARGET",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
   Move_Info: "MOVE_INFO",
@@ -106,6 +120,7 @@ export const SettingKeys = {
   SE_Volume: "SE_VOLUME",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
 };
 
@@ -551,13 +566,51 @@ export const Setting: Array<Setting> = [
     requireReload: true
   },
   {
+    key: SettingKeys.Move_Touch_Controls,
+    label: i18next.t("settings:moveTouchControls"),
+    options: [
+      {
+        value: "Configure",
+        label: i18next.t("settings:change")
+      }
+    ],
+    default: 0,
+    type: SettingType.GENERAL,
+    activatable: true,
+    isHidden: () => !hasTouchscreen()
+  },
+  {
+    key: SettingKeys.Reroll_Target,
+    label: i18next.t("settings:shopCursorTarget"),
+    options: [
+      {
+        value:"Reroll",
+        label: i18next.t("settings:reroll")
+      },
+      {
+        value:"Items",
+        label: i18next.t("settings:items")
+      },
+      {
+        value:"Shop",
+        label: i18next.t("settings:shop")
+      },
+      {
+        value:"Check Team",
+        label: i18next.t("settings:checkTeam")
+      }
+    ],
+    default: ShopCursorTarget.CHECK_TEAM,
+    type: SettingType.DISPLAY
+  },
+  {
     key: SettingKeys.Shop_Overlay_Opacity,
     label: i18next.t("settings:shopOverlayOpacity"),
     options: SHOP_OVERLAY_OPACITY_OPTIONS,
     default: 7,
     type: SettingType.DISPLAY,
     requireReload: false
-  },
+  }
 ];
 
 /**
@@ -682,6 +735,8 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
   case SettingKeys.Show_Stats_on_Level_Up:
     scene.showLevelUpStats = Setting[index].options[value].value === "On";
     break;
+  case SettingKeys.Reroll_Target:
+    scene.shopCursorTarget = value;
   case SettingKeys.EXP_Gains_Speed:
     scene.expGainsSpeed = value;
     break;
@@ -778,10 +833,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
               label: "日本語",
               handler: () => changeLocaleHandler("ja")
             },
-            {
-              label: "Català",
-              handler: () => changeLocaleHandler("ca-ES")
-            },
+            // {
+            //   label: "Català",
+            //   handler: () => changeLocaleHandler("ca-ES")
+            // },
             {
               label: i18next.t("settings:back"),
               handler: () => cancelHandler()
