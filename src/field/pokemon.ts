@@ -1292,8 +1292,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           return 1;
         }
       }
-      const multiplier = new Utils.NumberHolder(1);
-      multiplier.value = getTypeDamageMultiplier(moveType, defType);
+      const multiplier = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, defType));
       applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
       return multiplier.value;
     }).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
