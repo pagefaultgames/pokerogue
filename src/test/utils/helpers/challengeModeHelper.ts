@@ -53,7 +53,6 @@ export class ChallengeModeHelper extends GameManagerHelper {
 
   /**
    * Starts a battle in challenge mode.
-   * @param challenges - Array of challenges to set.
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
