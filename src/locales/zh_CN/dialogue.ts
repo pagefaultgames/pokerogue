@@ -2463,7 +2463,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "@c{smile}嘿，我在找你呢！我知道你急着上路，\n但至少说个再见吧…$@c{smile_eclosed}所以你终于要开始追逐梦想了？\n我几乎不敢相信。$@c{serious_smile_fists}来都来了，来一场对战怎么样？\n毕竟，我想看看你是不是准备周全了。$@c{serious_mopen_fists}不要手下留情，我想让你全力以赴！",
     },
     "victory": {
-      1: "@c{shock}哇…你彻底击败了我。\n你是真初学者吗？$@c{smile}也许是靠点运气，但是…\n谁知道，你可能真的能一路走下去。$顺便说一下，博士让我给你这些东西。它们看起来可牛了。$@c{serious_smile_fists}祝你好运！$@c{smile}哦！我希望你能喜欢这次的活动！ ",
+      1: "@c{shock}哇…你彻底击败了我。\n你是真初学者吗？$@c{smile}也许是靠点运气，但是…\n谁知道，你可能真的能一路走下去。$顺便说一下，博士让我给你这些东西。它们看起来可牛了。$@c{serious_smile_fists}祝你好运！",
     },
   },
   "rival_female": {
@@ -2471,7 +2471,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "@c{smile_wave}你在这儿啊！我到处找你呢！$@c{angry_mopen}你忘了和你最好的朋友说再见了吗？$@c{smile_ehalf}你要去追逐梦想了，对吧？\n从今天开始，是不是…$@c{smile}不管怎样，忘了我的事就原谅你吧，\n但有个条件。@c{smile_wave_wink}你必须和我对战！$@c{angry_mopen}全力以赴！\n你也不想让你的冒险在开始之前就结束了，对吧？",
     },
     "victory": {
-      1: "@c{shock}你刚开始就已经这么强了？！@d{96}$@c{angry}你是不是开了？$@c{smile_wave_wink}只是开个玩笑啦！@d{64} @c{smile_eclosed}我输地心服口服了…\n我感觉你出去挺有天赋的。$@c{smile}顺便说一下，博士想让我给你一些东西。\n希望它们能帮上忙！$@c{smile_wave}像往常一样尽力而为！\n我相信你！$@c{smile}哦！我希望你能喜欢这次的活动！ ",
+      1: "@c{shock}你刚开始就已经这么强了？！@d{96}$@c{angry}你是不是开了？$@c{smile_wave_wink}只是开个玩笑啦！@d{64} @c{smile_eclosed}我输地心服口服了…\n我感觉你出去挺有天赋的。$@c{smile}顺便说一下，博士想让我给你一些东西。\n希望它们能帮上忙！$@c{smile_wave}像往常一样尽力而为！\n我相信你！",
     },
   },
   "rival_2": {
@@ -2479,7 +2479,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "@c{smile}嘿，你也在这里吗？$@c{smile_eclosed}一路过关斩将，是吧？$@c{serious_mopen_fists}我知道看起来好像我尾随着你来到这里，\n怎么可能啦。$@c{serious_smile_fists}说真的，自从你在老家打败我后，\n我就一直很渴望再比一场。$我自己也进行了很多训练，\n所以这次我肯定会好好打一场。$@c{serious_mopen_fists}不要手下留情，就像以前一样！$让我们开始吧！",
     },
     "victory": {
-      1: "@c{neutral_eclosed}哦。我过于自信了。$@c{smile}不过没关系。我猜到可能会这样。$@c{serious_mopen_fists}这只意味着我下次需要更努力！$$@c{smile}呃，不是特意帮你，我正好有多余的这个，\n我觉得你可能想要。$$@c{serious_smile_fists}不过这次之后别指望再有了！$我不能一直给我的对手优势。$@c{smile}反正，保重，要享受活动哦！",
+      1: "@c{neutral_eclosed}哦。我过于自信了。$@c{smile}不过没关系。我猜到可能会这样。$@c{serious_mopen_fists}这只意味着我下次需要更努力！$$@c{smile}呃，不是特意帮你，我正好有多余的这个，\n我觉得你可能想要。$$@c{serious_smile_fists}不过这次之后别指望再有了！$我不能一直给我的对手优势。$@c{smile}反正，保重！",
     },
   },
   "rival_2_female": {
@@ -2487,7 +2487,7 @@ export const PGMdialogue: DialogueTranslationEntries = {
       1: "@c{smile_wave}哦，真巧，在这里遇见你。\n看来你还没输过嘛。@c{angry_mopen}哈……好家伙！$@c{angry_mopen}我知道你在想什么，\n不，我才不会跟踪你什么呢。 @c{smile_eclosed}我只是碰巧在附近。$@c{smile_ehalf}我为你感到高兴，但我只想让你知道\n有时输了是可以接受的。$@c{smile}我们从错误中学到的东西\n往往比我们一直成功时学到的还要多。$@c{angry_mopen}无论如何，我为了我们的复赛已经努力训练了\n所以你最好全力以赴！",
     },
     "victory": {
-      1: "@c{neutral}我……没打算会输来着……$@c{smile}嗷……好吧。看来我要再更加努力训练了！$@c{smile_wave}我还给你带了个这个$@c{smile_wave_wink}不用谢我哦~.$@c{angry_mopen}不过，这是最后一个啦！\n你可别想再从我这赚小便宜了~$@c{smile_wave}要保重哦，要享受活动哦！",
+      1: "@c{neutral}我……没打算会输来着……$@c{smile}嗷……好吧。看来我要再更加努力训练了！$@c{smile_wave}我还给你带了个这个$@c{smile_wave_wink}不用谢我哦~.$@c{angry_mopen}不过，这是最后一个啦！\n你可别想再从我这赚小便宜了~$@c{smile_wave}要保重哦！",
     },
     "defeat": {
       1: "输了有时候也不要紧的…",
