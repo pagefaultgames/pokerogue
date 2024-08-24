@@ -395,6 +395,77 @@
       "1": "Les ignorants sans aucune vision n’auront donc de cesse de souiller ce monde."
     }
   },
+  "brock": {
+    "encounter": {
+      1: "Mon expertise des type Roche va te mettre au sol ! En garde !",
+      2: "Tu veux toujours te battre avec moi ? Même en sachant que tu vas perdre ?",
+      3: "Laisse-moi de montrer la véritable force de mes Pokémon Roche !"
+    },
+    "victory": {
+      1: "J’étais trop sûr de moi, c’est pour ça que j’ai perdu.",
+      2: "Ce monde est vaste ! Je suis honoré d’avoir pu t’affronter.",
+      3: "Peut-être bie nque je n’aurais pas dû abandonner ma vocation d’Éleveur…"
+    },
+    "defeat": {
+      1: "La défense est la meilleure des attaques !\nTelle est ma méthode !",
+      2: "Viens étudier des roches avec moi la prochaine fois si tu veux apprendre à lmieux les aborder !",
+      3: "Tout ce temps à voyager autour du monde paie enfin !"
+    }
+  },
+  "misty": {
+    "encounter": {
+      1: "Ma tactique ? Attaquer avec des Pokémon Eau !",
+      2: "Je vais te prouver le tsuanmi que sont mes Pokémon aquatiques !",
+      3: "Mon rêve, c’était de voyager et de défier des Dresseurs super forts. Seras-tu à la hauteur ?"
+    },
+    "victory": {
+      1: "OK. T’es pas naze… Je le reconnais…",
+      2: "Pfff… T’as juste eu de la chance hein ?!",
+      3: "Ouah ! T’es super balèze !"
+    },
+    "defeat": {
+      1: "Qu’en dis-tu? C’est ça, la puissance des Pokémon Eau !",
+      2: "J’espère que t’as pris note des élégantes techniques de nage de mes Pokémon !",
+      3: "Tes Pokémon ne jouent visiblement pas dans le même bassin…"
+    }
+  },
+  "lt_surge": {
+    "encounter": {
+      1: "T’as pas froid aux yeux, soldat ! Les combats Pokémon, c’est la guerre !",
+      2: "Tu as du guts pour venir me fight ici ! Je vais te shock !",
+      3: "Compte tes dents, tu vas morfler !\nMes Pokémon Électrik vont t’atomiser !"
+    },
+    "victory": {
+      1: "Whoo ! T’iras loin toi.",
+      2: "Oh noes ! Mes tricks électriques sont à plat…\nYou are very fortiche!",
+      3: "Tu es very costaud ! Je vais training very dur mes Pokémon, moi too, et on sera Number One !"
+    },
+    "defeat": {
+      1: "Oh yeah !\nMes Pokémon Électrik sont les best du monde !",
+      2: "Oh yeah, baby ! I am trop fort !",
+      3: "Une combat Pokémon, c’est comme une guerre et t’as eu droit à une bataille de premier ordre !"
+    }
+  },
+  "erika": {
+    "encounter": {
+      1: "Il fait beau, aujourd’hui, n’est-ce pas… ?\nQuoi un combat… ? Très bien…",
+      2: "L’arrangement floral est ma spécialité, et mes Pokémon sont de type Plante. Quoi ? Tu veux te battre ?",
+      3: "Il fait beau… Le soleil brille… Les plantes bourgeonnent… Je m’ennuie…",
+      4: "Voir un tel jardin rempli de fleurs et si apaisant…"
+    },
+    "victory": {
+      1: "Bien joué, c’est mértié.",
+      2: "Dommage, on s’amusait si bien…",
+      3: "Oh non, le combat est terminé…",
+      4: "Aaah, ça fait du bien !\nMerci, j’en avais besoin."
+    },
+    "defeat": {
+      1: "J’ai failli m’endormir…",
+      2: "Oh non… Mes Pokémon Plante ont l’air de t’avoir bien endormi…",
+      3: "Ce combat était si apaisant…",
+      4: "Oh non… C’est tout ?"
+    }
+  },
   "alder": {
     "encounter": {
       "1": "Prépare-toi pour un combat contre le meilleur Dresseur d’Unys !"
