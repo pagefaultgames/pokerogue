@@ -10,7 +10,7 @@ import { Mode } from "./ui";
 export default class TestDialogueUiHandler extends FormModalUiHandler {
 
   keys: string[];
-  pokemonKeys: string[];
+  /*pokemonKeys: string[];*/
 
   constructor(scene, mode) {
     super(scene, mode);
@@ -53,22 +53,22 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
     this.keys = keys;
 
 
-    const pokemonKeysCollect = (object, topKey?: string): Array<any> => {
-      return Object.keys(object).map((t, i) => {
-        const value = Object.values(object)[i];
+    //const pokemonKeysCollect = (object, topKey?: string): Array<any> => {
+    //  return Object.keys(object).map((t, i) => {
+    //    const value = Object.values(object)[i];
 
-        if (typeof value !== "string" && typeof value === "object") {
-          return pokemonKeysCollect(value, t).filter((t) => t.length > 0);
-        } else if (typeof value === "string" && ["pokemon"].some((v) => topKey?.toLowerCase() === v)) {
-          return `${topKey}:${t}`;
-        }
-      }).filter((t) => t);
-    };
+    //    if (typeof value !== "string" && typeof value === "object") {
+    //      return pokemonKeysCollect(value, t).filter((t) => t.length > 0);
+    //    } else if (typeof value === "string" && ["pokemon"].some((v) => topKey?.toLowerCase() === v)) {
+    //      return `${topKey}:${t}`;
+    //    }
+    //  }).filter((t) => t);
+    //};
 
-    const pokemon = pokemonKeysCollect(enConfig);
-    const pokemonKeys = pokemon.flat(Infinity).map(String);
+    //const pokemon = pokemonKeysCollect(enConfig);
+    //const pokemonKeys = pokemon.flat(Infinity).map(String);
 
-    this.pokemonKeys = pokemonKeys;
+    //this.pokemonKeys = pokemonKeys;
 
     this.inputs[0].setMaxLength(255);
   }
@@ -121,14 +121,17 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
       }
 
       let options: OptionSelectItem[] = [];
-      const filteredKeys = this.keys.filter((command) => command.toLowerCase().includes(inputObject.text.toLowerCase()));
-      if (inputObject.text !== "" && filteredKeys.length > 0 && !inputObject.text.includes(" ")) {
+      const splitArr = inputObject.text.split(" ");
+      const filteredKeys = this.keys.filter((command) => command.toLowerCase().includes(splitArr[splitArr.length - 1].toLowerCase()));
+      if (inputObject.text !== "" && filteredKeys.length > 0) {
         options = filteredKeys.slice(0).map((value) => {
           return {
             label: value,
             handler: () => {
               if (!isNullOrUndefined(evt.data)) {
-                inputObject.setText(value);
+                const separatedArray = inputObject.text.split(" ");
+                separatedArray[separatedArray.length - 1] = value;
+                inputObject.setText(separatedArray.join(" "));
               }
               ui.revertMode();
               return true;
@@ -136,26 +139,26 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
           };
         });
       }
-      if (inputObject.text.includes(" ")) {
-        const filteredPokemonKeys = this.pokemonKeys.filter((command) => command.toLowerCase().includes(inputObject.text.split(" ")[1].toLowerCase()));
+      //if (inputObject.text.includes(" ")) {
+      //  const filteredPokemonKeys = this.pokemonKeys.filter((command) => command.toLowerCase().includes(inputObject.text.split(" ")[1].toLowerCase()));
 
-        if (inputObject.text !== "" && filteredPokemonKeys.length > 0) { // no need to check for inputObject.text.includes(" ") like we did above since we have it within the if statement above
-          options = filteredPokemonKeys.slice(0).map((value) => {
-            return {
-              label: value,
-              handler: () => {
-                if (!isNullOrUndefined(evt.data)) {
-                  const splitArr = inputObject.text.split(" ");
-                  splitArr[1] = value;
-                  inputObject.setText(splitArr.join(" "));
-                }
-                ui.revertMode();
-                return true;
-              }
-            };
-          });
-        }
-      }
+      //  if (inputObject.text !== "" && filteredPokemonKeys.length > 0) { // no need to check for inputObject.text.includes(" ") like we did above since we have it within the if statement above
+      //    options = filteredPokemonKeys.slice(0).map((value) => {
+      //      return {
+      //        label: value,
+      //        handler: () => {
+      //          if (!isNullOrUndefined(evt.data)) {
+      //            const splitArr = inputObject.text.split(" ");
+      //            splitArr[1] = value;
+      //            inputObject.setText(splitArr.join(" "));
+      //          }
+      //          ui.revertMode();
+      //          return true;
+      //        }
+      //      };
+      //    });
+      //  }
+      //}
 
       if (options !== []) {
         const modalOpts = {

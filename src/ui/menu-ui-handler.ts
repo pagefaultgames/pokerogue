@@ -261,7 +261,21 @@ export default class MenuUiHandler extends MessageUiHandler {
               console.log(dialogueName);
               const handler = ui.getHandler() as AwaitableUiHandler;
               handler.tutorialActive = true;
-              ui.showText(i18next.t(dialogueName), null, () => this.scene.ui.showText("", 0, () => handler.tutorialActive = false), null, true);
+              const interpolatorOptions: any = {};
+              const splitArr = dialogueName.split(" ");
+              const translatedString = splitArr[0]; // this is our outputted i18 string
+              const regex = RegExp("\\{\\{(\\w*)\\}\\}", "g"); // this is a regex expression to find all the text between {{ }} in the i18 output
+              const matches = i18next.t(translatedString).match(regex) ?? [];
+              if (matches.length > 0) {
+                for (let match = 0; match < matches.length; match++) {
+                  // we add 1 here  because splitArr[0] is our first value for the translatedString, and after that is where the variables are
+                  // the regex here in the replace is to remove the {{ and }} and just give us all alphanumeric characters
+                  if (typeof splitArr[match + 1] !== "undefined") {
+                    interpolatorOptions[matches[match].replace(/\W/g, "")] = i18next.t(splitArr[match + 1]);
+                  }
+                }
+              }
+              ui.showText(i18next.t(translatedString, interpolatorOptions), null, () => this.scene.ui.showText("", 0, () => handler.tutorialActive = false), null, true);
             },
             () => {
               ui.revertMode();
