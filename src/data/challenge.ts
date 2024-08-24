@@ -635,6 +635,13 @@ export class FreshStartChallenge extends Challenge {
     super(Challenges.FRESH_START, 1);
   }
 
+  static loadChallenge(source: InverseBattleChallenge | any): InverseBattleChallenge {
+    const newChallenge = new InverseBattleChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+
   applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
     if (!defaultStarterSpecies.includes(pokemon.speciesId)) {
       valid.value = false;
@@ -665,18 +672,8 @@ export class FreshStartChallenge extends Challenge {
     return true;
   }
 
-  /**
-   * @overrides
-   */
-  getDifficulty(): number {
+  override getDifficulty(): number {
     return 0;
-  }
-
-  static loadChallenge(source: FreshStartChallenge | any): FreshStartChallenge {
-    const newChallenge = new FreshStartChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
   }
 }
 
