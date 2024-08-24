@@ -2653,6 +2653,7 @@ export default class BattleScene extends SceneBase {
       party: this.party ? this.party.map(p => {
         return { name: p.name, level: p.level };
       }) : [],
+      modeChain: this.ui?.getModeChain() ?? [],
     };
     (window as any).gameInfo = gameInfo;
   }
