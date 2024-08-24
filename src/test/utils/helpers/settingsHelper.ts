@@ -16,7 +16,7 @@ export class SettingsHelper extends GameManagerHelper {
    * @param mode {@linkcode BattleStyle.SWITCH} or {@linkcode BattleStyle.SET}
    */
   set battleStyle(mode: BattleStyle.SWITCH | BattleStyle.SET) {
-    this.battleStyle = mode;
+    this._battleStyle = mode;
   }
 
   /**
