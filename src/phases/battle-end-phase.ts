@@ -38,6 +38,11 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     this.scene.clearEnemyHeldItemModifiers();
+    try {
+      this.scene.getEnemyParty().forEach(p => p.destroy());
+    } catch {
+      console.log("Garbage collection failed.");
+    }
 
     const lapsingModifiers = this.scene.findModifiers(m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier) as (LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
     for (const m of lapsingModifiers) {
