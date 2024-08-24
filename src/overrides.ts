@@ -29,10 +29,8 @@ import { type ModifierOverride } from "./modifier/modifier-type";
  * }
  * ```
  */
-const overrides = {
-  EGG_IMMEDIATE_HATCH_OVERRIDE: true,
-  EGG_FREE_GACHA_PULLS_OVERRIDE: true
-} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+
+const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
