@@ -4161,8 +4161,8 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!target.getTag(BattlerTagType.IGNORE_FLYING)) {
       const multiplier = args[0] as Utils.NumberHolder;
-      //When a flying type is hit, the first hit is always 1x multiplier. Levitating pokemon are instantly affected by typing
-      if (target.isOfType(Type.FLYING) || target.hasAbility(Abilities.LEVITATE)) {
+      //When a flying type is hit, the first hit is always 1x multiplier.
+      if (target.isOfType(Type.FLYING)) {
         multiplier.value = 1;
       }
       return true;
