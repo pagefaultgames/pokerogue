@@ -197,7 +197,7 @@
       "3": "Impossible ! T’es qu’un gosse !",
       "4": "Aahhh…\nJ’aurais dû directement rentrer à la planque…",
       "5": "Tu m’as démoli… Tu crois que le boss va suspendre mon salaire ?"
-    },
+    }
   },
   "aqua_grunt": {
     "encounter": {
@@ -213,7 +213,7 @@
       "3": "J’ai perdu ?! Super, j’ai plus qu’à nager jusqu’à la planque maintenant…",
       "4": "Oh non quelle angoisse…\nLe boss va me démonter…",
       "5": "Je suis battu… Tu penses que le boss va me faire subir le supplice de la planche ?…"
-    },
+    }
   },
   "galactic_grunt": {
     "encounter": {
@@ -229,7 +229,7 @@
       "3": "Notre projet est bien plus important que cette défaite.",
       "4": "Comment ?!",
       "5": "Note à moi-même :\nM’entrainer aux combats Pokémon. Ça urge…"
-    },
+    }
   },
   "plasma_grunt": {
     "encounter": {
@@ -245,7 +245,7 @@
       "3": "… Ce Pokémon est nul, j’vais aller en voler de meilleurs !",
       "4": "Les plans ambitieux connaissent toujours leurs lots d’interruptions.",
       "5": "C’est mauvais… MAUVAIS MAUVAIS MAUVAIS MAUVAIS !\nVa falloir battre en retraite, c’est la méga cata !"
-    },
+    }
   },
   "flare_grunt": {
     "encounter": {
@@ -261,7 +261,7 @@
       "3": "Ehhhh ?! J’ai perdu ?!",
       "4": "Même dans la défaite, l’élégance de la Team Flare continue de rayonner sur ce monde.",
       "5": "J’appelle pas ça perdre, j’appelle ça échouer avec panache !"
-    },
+    }
   },
   "rocket_boss_giovanni_1": {
     "encounter": {
