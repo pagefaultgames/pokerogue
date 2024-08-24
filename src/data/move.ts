@@ -4391,7 +4391,7 @@ export class DisableMoveAttr extends MoveEffectAttr {
 export class nonStopAttr extends MoveEffectAttr {
   public tagType: BattlerTagType;
   private turnCount: number;
-  // no round specify means frenzy rand 2-3 turns
+  // no round specify means it's a frenzy move that rand 2-3 turns
   constructor(tagType: BattlerTagType, turnCount:number = 0) {
     super(true, MoveEffectTrigger.HIT, false, true);
     this.tagType = tagType;
