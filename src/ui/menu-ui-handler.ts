@@ -11,6 +11,7 @@ import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
+import AwaitableUiHandler from "./awaitable-ui-handler";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -242,8 +243,38 @@ export default class MenuUiHandler extends MessageUiHandler {
         return true;
       },
       keepOpen: true
-    },
-    {
+    });
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:testDialogue"),
+      handler: () => {
+
+        ui.playSelect();
+        let nickname = "";
+        nickname = decodeURIComponent(escape(atob(nickname)));
+        ui.setMode(Mode.TEST_DIALOGUE, {
+          buttonActions: [
+            (sanitizedName: string) => {
+              ui.revertMode();
+              ui.playSelect();
+              const dialogueTestName = sanitizedName;
+              const dialogueName = decodeURIComponent(escape(atob(dialogueTestName)));
+              console.log(dialogueName);
+              const handler = ui.getHandler() as AwaitableUiHandler;
+              handler.tutorialActive = true;
+              ui.showText(i18next.t(dialogueName), null, () => this.scene.ui.showText("", 0, () => handler.tutorialActive = false), null, true);
+            },
+            () => {
+              ui.revertMode();
+            }
+          ]
+        }, nickname);
+
+
+        return true;
+      },
+      keepOpen: true
+    });
+    manageDataOptions.push({
       label: i18next.t("menuUiHandler:cancel"),
       handler: () => {
         this.scene.ui.revertMode();
