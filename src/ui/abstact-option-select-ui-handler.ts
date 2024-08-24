@@ -1,11 +1,11 @@
 import BattleScene from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
+import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 
 export interface OptionSelectConfig {
   xOffset?: number;
@@ -14,15 +14,17 @@ export interface OptionSelectConfig {
   maxOptions?: integer;
   delay?: integer;
   noCancel?: boolean;
+  supportHover?: boolean;
 }
 
 export interface OptionSelectItem {
   label: string;
   handler: () => boolean;
+  onHover?: () => void;
   keepOpen?: boolean;
   overrideSound?: boolean;
   item?: string;
-  itemArgs?: any[]
+  itemArgs?: any[];
 }
 
 const scrollUpLabel = "↑";
@@ -34,36 +36,42 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected optionSelectText: Phaser.GameObjects.Text;
   protected optionSelectIcons: Phaser.GameObjects.Sprite[];
 
-  protected config: OptionSelectConfig;
+  protected config: OptionSelectConfig | null;
 
   protected blockInput: boolean;
 
   protected scrollCursor: integer = 0;
 
-  private cursorObj: Phaser.GameObjects.Image;
+  protected scale: number = 0.1666666667;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  private cursorObj: Phaser.GameObjects.Image | null;
+
+  constructor(scene: BattleScene, mode: Mode | null) {
     super(scene, mode);
   }
 
   abstract getWindowWidth(): integer;
 
   getWindowHeight(): integer {
-    return (Math.min((this.config?.options || []).length, this.config?.maxOptions || 99) + 1) * 16;
+    return (Math.min((this.config?.options || []).length, this.config?.maxOptions || 99) + 1) * 96 * this.scale;
   }
 
   setup() {
     const ui = this.getUi();
 
     this.optionSelectContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -48);
+    this.optionSelectContainer.setName(`option-select-${this.mode ? Mode[this.mode] : "UNKNOWN"}`);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
 
     this.optionSelectBg = addWindow(this.scene, 0, 0, this.getWindowWidth(), this.getWindowHeight());
+    this.optionSelectBg.setName("option-select-bg");
     this.optionSelectBg.setOrigin(1, 1);
     this.optionSelectContainer.add(this.optionSelectBg);
 
     this.optionSelectIcons = [];
+
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, (this.scene as BattleScene).uiTheme).scale;
 
     this.setCursor(0);
   }
@@ -80,41 +88,45 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     }
 
     this.optionSelectText = addTextObject(this.scene, 0, 0, options.map(o => o.item ? `    ${o.label}` : o.label).join("\n"), TextStyle.WINDOW, { maxLines: options.length });
+    this.optionSelectText.setLineSpacing(this.scale * 72);
+    this.optionSelectText.setName("text-option-select");
     this.optionSelectText.setLineSpacing(12);
     this.optionSelectContainer.add(this.optionSelectText);
     this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
 
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
 
-    if (this.config?.options.length > this.config?.maxOptions) {
+    if (this.config?.options && this.config?.options.length > (this.config?.maxOptions!)) { // TODO: is this bang correct?
       this.optionSelectText.setText(this.getOptionsWithScroll().map(o => o.label).join("\n"));
     }
 
     this.optionSelectBg.height = this.getWindowHeight();
 
-    this.optionSelectText.setPositionRelative(this.optionSelectBg, 16, 9);
+    this.optionSelectText.setPositionRelative(this.optionSelectBg, 12+24*this.scale, 2+42*this.scale);
 
     options.forEach((option: OptionSelectItem, i: integer) => {
       if (option.item) {
         const itemIcon = this.scene.add.sprite(0, 0, "items", option.item);
-        itemIcon.setScale(0.5);
+        itemIcon.setScale(3 * this.scale);
         this.optionSelectIcons.push(itemIcon);
 
         this.optionSelectContainer.add(itemIcon);
 
-        itemIcon.setPositionRelative(this.optionSelectText, 6, 7 + 16 * i);
+        itemIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
         if (option.item === "candy") {
           const itemOverlayIcon = this.scene.add.sprite(0, 0, "items", "candy_overlay");
-          itemOverlayIcon.setScale(0.5);
+          itemOverlayIcon.setScale(3 * this.scale);
           this.optionSelectIcons.push(itemOverlayIcon);
 
           this.optionSelectContainer.add(itemOverlayIcon);
 
-          itemOverlayIcon.setPositionRelative(this.optionSelectText, 6, 7 + 16 * i);
+          itemOverlayIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
-          itemIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[0])));
-          itemOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[1])));
+          if (option.itemArgs) {
+            itemIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[0])));
+            itemOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[1])));
+          }
         }
       }
     });
@@ -185,13 +197,21 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       case Button.UP:
         if (this.cursor) {
           success = this.setCursor(this.cursor - 1);
+        } else if (this.cursor === 0) {
+          success = this.setCursor(options.length -1);
         }
         break;
       case Button.DOWN:
         if (this.cursor < options.length - 1) {
           success = this.setCursor(this.cursor + 1);
+        } else {
+          success = this.setCursor(0);
         }
         break;
+      }
+      if (this.config?.supportHover) {
+        // handle hover code if the element supports hover-handlers and the option has the optional hover-handler set.
+        this.config?.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))]?.onHover?.();
       }
     }
 
@@ -252,11 +272,13 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     let isScroll = false;
     const options = this.getOptionsWithScroll();
     if (changed && this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {
-      const optionsScrollTotal = options.length;
       if (Math.abs(cursor - this.cursor) === options.length - 1) {
+        // Wrap around the list
+        const optionsScrollTotal = this.config.options.length;
         this.scrollCursor = cursor ? optionsScrollTotal - (this.config.maxOptions - 1) : 0;
         this.setupOptions();
       } else {
+        // Move the cursor up or down by 1
         const isDown = cursor && cursor > this.cursor;
         if (isDown) {
           if (options[cursor].label === scrollDownLabel) {
@@ -285,7 +307,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.optionSelectContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setPositionRelative(this.optionSelectBg, 12, 17 + this.cursor * 16);
+    this.cursorObj.setScale(this.scale * 6);
+    this.cursorObj.setPositionRelative(this.optionSelectBg, 12, 102*this.scale + this.cursor * (114 * this.scale - 3));
 
     return changed;
   }

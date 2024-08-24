@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
@@ -6,8 +7,8 @@ import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
-import {Button} from "../enums/buttons";
-import i18next from "../plugins/i18n";
+import {Button} from "#enums/buttons";
+import i18next from "i18next";
 
 interface DisplayStat {
   label_key?: string;
@@ -88,7 +89,7 @@ const displayStats: DisplayStats = {
   },
   highestMoney: {
     label_key: "highestMoney",
-    sourceFunc: gameData => Utils.formatFancyLargeNumber(gameData.gameStats.highestMoney, 3),
+    sourceFunc: gameData => Utils.formatFancyLargeNumber(gameData.gameStats.highestMoney),
   },
   highestDamage: {
     label_key: "highestDamage",
@@ -156,7 +157,7 @@ const displayStats: DisplayStats = {
   },
   mythicalPokemonHatched: {
     label_key: "mythicalsHatched",
-    sourceFunc: gameData => gameData.gameStats.legendaryPokemonHatched.toString(),
+    sourceFunc: gameData => gameData.gameStats.mythicalPokemonHatched.toString(),
     hidden: true
   },
   shinyPokemonSeen: {
@@ -217,7 +218,7 @@ export default class GameStatsUiHandler extends UiHandler {
   private statLabels: Phaser.GameObjects.Text[];
   private statValues: Phaser.GameObjects.Text[];
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
     this.statLabels = [];
@@ -298,7 +299,7 @@ export default class GameStatsUiHandler extends UiHandler {
     const statKeys = Object.keys(displayStats).slice(this.cursor * 2, this.cursor * 2 + 18);
     statKeys.forEach((key, s) => {
       const stat = displayStats[key] as DisplayStat;
-      const value = stat.sourceFunc(this.scene.gameData);
+      const value = stat.sourceFunc!(this.scene.gameData); // TODO: is this bang correct?
       this.statLabels[s].setText(!stat.hidden || isNaN(parseInt(value)) || parseInt(value) ? i18next.t(`gameStatsUiHandler:${stat.label_key}`) : "???");
       this.statValues[s].setText(value);
     });

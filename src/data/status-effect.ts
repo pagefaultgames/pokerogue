@@ -1,25 +1,18 @@
 import * as Utils from "../utils";
+import { StatusEffect } from "#enums/status-effect";
+import i18next, { ParseKeys } from "i18next";
 
-export enum StatusEffect {
-  NONE,
-  POISON,
-  TOXIC,
-  PARALYSIS,
-  SLEEP,
-  FREEZE,
-  BURN,
-  FAINT
-}
+export { StatusEffect };
 
 export class Status {
   public effect: StatusEffect;
   public turnCount: integer;
-  public cureTurn: integer;
+  public cureTurn: integer | null;
 
   constructor(effect: StatusEffect, turnCount: integer = 0, cureTurn?: integer) {
     this.effect = effect;
     this.turnCount = turnCount === undefined ? 0 : turnCount;
-    this.cureTurn = cureTurn;
+    this.cureTurn = cureTurn!; // TODO: is this bang correct?
   }
 
   incrementTurn(): void {
@@ -31,94 +24,52 @@ export class Status {
   }
 }
 
-export function getStatusEffectObtainText(statusEffect: StatusEffect, sourceText?: string): string {
-  const sourceClause = sourceText ? ` ${statusEffect !== StatusEffect.SLEEP ? "by" : "from"} ${sourceText}` : "";
+function getStatusEffectMessageKey(statusEffect: StatusEffect | undefined): string {
   switch (statusEffect) {
   case StatusEffect.POISON:
-    return `\nwas poisoned${sourceClause}!`;
+    return "statusEffect:poison";
   case StatusEffect.TOXIC:
-    return `\nwas badly poisoned${sourceClause}!`;
+    return "statusEffect:toxic";
   case StatusEffect.PARALYSIS:
-    return ` was paralyzed${sourceClause}!\nIt may be unable to move!`;
+    return "statusEffect:paralysis";
   case StatusEffect.SLEEP:
-    return `\nfell asleep${sourceClause}!`;
+    return "statusEffect:sleep";
   case StatusEffect.FREEZE:
-    return `\nwas frozen solid${sourceClause}!`;
+    return "statusEffect:freeze";
   case StatusEffect.BURN:
-    return `\nwas burned${sourceClause}!`;
+    return "statusEffect:burn";
+  default:
+    return "statusEffect:none";
   }
-
-  return "";
 }
 
-export function getStatusEffectActivationText(statusEffect: StatusEffect): string {
-  switch (statusEffect) {
-  case StatusEffect.POISON:
-  case StatusEffect.TOXIC:
-    return " is hurt\nby poison!";
-  case StatusEffect.PARALYSIS:
-    return " is paralyzed!\nIt can't move!";
-  case StatusEffect.SLEEP:
-    return " is fast asleep.";
-  case StatusEffect.FREEZE:
-    return " is\nfrozen solid!";
-  case StatusEffect.BURN:
-    return " is hurt\nby its burn!";
+export function getStatusEffectObtainText(statusEffect: StatusEffect | undefined, pokemonNameWithAffix: string, sourceText?: string): string {
+  if (!sourceText) {
+    const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtain`as ParseKeys;
+    return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
   }
-
-  return "";
+  const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtainSource`as ParseKeys;
+  return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix, sourceText: sourceText });
 }
 
-export function getStatusEffectOverlapText(statusEffect: StatusEffect): string {
-  switch (statusEffect) {
-  case StatusEffect.POISON:
-  case StatusEffect.TOXIC:
-    return " is\nalready poisoned!";
-  case StatusEffect.PARALYSIS:
-    return " is\nalready paralyzed!";
-  case StatusEffect.SLEEP:
-    return " is\nalready asleep!";
-  case StatusEffect.FREEZE:
-    return " is\nalready frozen!";
-  case StatusEffect.BURN:
-    return " is\nalready burned!";
-  }
-
-  return "";
+export function getStatusEffectActivationText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {
+  const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.activation` as ParseKeys;
+  return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
 }
 
-export function getStatusEffectHealText(statusEffect: StatusEffect): string {
-  switch (statusEffect) {
-  case StatusEffect.POISON:
-  case StatusEffect.TOXIC:
-    return " was\ncured of its poison!";
-  case StatusEffect.PARALYSIS:
-    return " was\nhealed of paralysis!";
-  case StatusEffect.SLEEP:
-    return " woke up!";
-  case StatusEffect.FREEZE:
-    return " was\ndefrosted!";
-  case StatusEffect.BURN:
-    return " was\nhealed of its burn!";
-  }
+export function getStatusEffectOverlapText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {
+  const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.overlap` as ParseKeys;
+  return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
+}
 
-  return "";
+export function getStatusEffectHealText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {
+  const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.heal` as ParseKeys;
+  return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
 }
 
 export function getStatusEffectDescriptor(statusEffect: StatusEffect): string {
-  switch (statusEffect) {
-  case StatusEffect.POISON:
-  case StatusEffect.TOXIC:
-    return "poisoning";
-  case StatusEffect.PARALYSIS:
-    return "paralysis";
-  case StatusEffect.SLEEP:
-    return "sleep";
-  case StatusEffect.FREEZE:
-    return "freezing";
-  case StatusEffect.BURN:
-    return "burn";
-  }
+  const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.description` as ParseKeys;
+  return i18next.t(i18nKey);
 }
 
 export function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect): number {
@@ -164,11 +115,11 @@ export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB
 * @param statusA The first Status
 * @param statusB The second Status
 */
-export function getRandomStatus(statusA: Status, statusB: Status): Status {
-  if (statusA === undefined || statusA.effect === StatusEffect.NONE || statusA.effect === StatusEffect.FAINT) {
+export function getRandomStatus(statusA: Status | null, statusB: Status | null): Status | null {
+  if (!statusA || statusA.effect === StatusEffect.NONE || statusA.effect === StatusEffect.FAINT) {
     return statusB;
   }
-  if (statusB === undefined || statusB.effect === StatusEffect.NONE || statusB.effect === StatusEffect.FAINT) {
+  if (!statusB || statusB.effect === StatusEffect.NONE || statusB.effect === StatusEffect.FAINT) {
     return statusA;
   }
 
