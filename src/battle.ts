@@ -279,7 +279,7 @@ export default class Battle {
               return "battle_legendary_dia_pal";
             }
             if (pokemon.getFormKey() === "origin") {
-              return "battle_legendary_origin_form";
+              return "battle_legendary_origin_forme";
             }
           }
           if (pokemon.species.speciesId === Species.GIRATINA) {

@@ -1897,7 +1897,7 @@ export default class BattleScene extends SceneBase {
       return 22.770;
     case "battle_legendary_dia_pal": //ORAS Dialga & Palkia Battle
       return 16.009;
-    case "battle_legendary_origin_form": //LA Origin Dialga & Palkia Battle
+    case "battle_legendary_origin_forme": //LA Origin Dialga & Palkia Battle
       return 18.961;
     case "battle_legendary_giratina": //ORAS Giratina Battle
       return 10.451;
