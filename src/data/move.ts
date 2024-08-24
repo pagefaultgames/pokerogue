@@ -1087,15 +1087,11 @@ export class PreMoveMessageAttr extends MoveAttr {
   }
 }
 
-export class StatusMoveTypeImmunityAttr extends MoveAttr {
-  public immuneType: Type;
-
-  constructor(immuneType: Type) {
-    super(false);
-
-    this.immuneType = immuneType;
-  }
-}
+/**
+ * Attribute for Status moves that take attack type effectiveness
+ * into consideration (i.e. {@linkcode https://bulbapedia.bulbagarden.net/wiki/Thunder_Wave_(move) | Thunder Wave})
+ */
+export class RespectAttackTypeImmunityAttr extends MoveAttr { }
 
 export class IgnoreOpponentStatChangesAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -6549,7 +6545,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new StatusMove(Moves.THUNDER_WAVE, Type.ELECTRIC, 90, 20, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .attr(StatusMoveTypeImmunityAttr, Type.GROUND),
+      .attr(RespectAttackTypeImmunityAttr),
     new AttackMove(Moves.THUNDER, Type.ELECTRIC, MoveCategory.SPECIAL, 110, 70, 10, 30, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .attr(ThunderAccuracyAttr)
