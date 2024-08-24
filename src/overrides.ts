@@ -12,6 +12,7 @@ import { type PokeballCounts } from "./battle-scene";
 import { Gender } from "./data/gender";
 import { allSpecies } from "./data/pokemon-species"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { Variant } from "./data/variant";
+import { Stat } from "./enums/stat";
 import { type ModifierOverride } from "./modifier/modifier-type";
 
 /**
@@ -29,7 +30,9 @@ import { type ModifierOverride } from "./modifier/modifier-type";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {
+  ITEM_REWARD_OVERRIDE: [{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }, { name: "BASE_STAT_BOOSTER" }, { name: "DIRE_HIT" }]
+} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
