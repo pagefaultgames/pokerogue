@@ -140,7 +140,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       };
     }
 
-    this.monoTypeValue = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+    this.monoTypeValue = this.scene.add.sprite(8, 98, Utils.getLocalizedSpriteKey("types"));
     this.monoTypeValue.setName("challenge-value-monotype-sprite");
     this.monoTypeValue.setScale(0.86);
     this.monoTypeValue.setVisible(false);
