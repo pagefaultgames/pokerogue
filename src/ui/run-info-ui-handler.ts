@@ -409,7 +409,9 @@ export default class RunInfoUiHandler extends UiHandler {
 
     // Duration + Money
     const runInfoTextContainer = this.scene.add.container(0, 0);
-    const runInfoText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize : "50px", lineSpacing:3});
+    // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
+    const lineSpacing = (i18next.resolvedLanguage === "ja") ? 12 : 3;
+    const runInfoText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize: "50px", lineSpacing: lineSpacing});
     const runTime = Utils.getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
     const runMoney = Utils.formatMoney(this.scene.moneyFormat, this.runInfo.money);
@@ -513,7 +515,9 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       const pPassiveInfo = pokemon.passive ? passiveLabel+": "+pokemon.getPassiveAbility().name : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
-      const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
+      // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
+      const lineSpacing = (i18next.resolvedLanguage === "ja") ? 12 : 3;
+      const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing: lineSpacing});
       pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`);
       pokeInfoText.appendText(pAbilityInfo);
       pokeInfoText.appendText(pPassiveInfo);
@@ -537,12 +541,12 @@ export default class RunInfoUiHandler extends UiHandler {
       const speedLabel = (currentLanguage==="es"||currentLanguage==="pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
       const speed = speedLabel+": "+pStats[5];
       // Column 1: HP Atk Def
-      const pokeStatText1 = addBBCodeTextObject(this.scene, -5, 0, hp, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
+      const pokeStatText1 = addBBCodeTextObject(this.scene, -5, 0, hp, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing: lineSpacing});
       pokeStatText1.appendText(atk);
       pokeStatText1.appendText(def);
       pokeStatTextContainer.add(pokeStatText1);
       // Column 2: SpAtk SpDef Speed
-      const pokeStatText2 = addBBCodeTextObject(this.scene, 25, 0, spatk, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
+      const pokeStatText2 = addBBCodeTextObject(this.scene, 25, 0, spatk, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing: lineSpacing});
       pokeStatText2.appendText(spdef);
       pokeStatText2.appendText(speed);
       pokeStatTextContainer.add(pokeStatText2);
