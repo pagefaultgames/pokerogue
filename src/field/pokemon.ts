@@ -2267,7 +2267,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       break;
     case MoveCategory.STATUS:
-      if (typeMultiplier === 0) {
+      if (!cancelled.value && typeMultiplier === 0) {
         this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
       }
       result = (typeMultiplier === 0) ? HitResult.NO_EFFECT : HitResult.STATUS;
