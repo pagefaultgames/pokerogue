@@ -348,7 +348,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
     if ([ MoveTarget.BOTH_SIDES, MoveTarget.ENEMY_SIDE, MoveTarget.USER_SIDE ].includes(move.moveTarget)) {
       return false;
     }
-    if (attacker !== pokemon && move.type === this.immuneType) {
+    if (attacker !== pokemon && attacker.getMoveType(move) === this.immuneType) {
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
@@ -455,7 +455,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   }
 
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (move instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.type, attacker) < 2) {
+    if (move instanceof AttackMove && pokemon.getAttackTypeEffectiveness(pokemon.getMoveType(move), attacker) < 2) {
       cancelled.value = true;
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
@@ -763,7 +763,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
       if (simulated) {
         return true;
       }
-      const type = move.type;
+      const type = attacker.getMoveType(move);
       const pokemonTypes = pokemon.getTypes(true);
       if (pokemonTypes.length !== 1 || pokemonTypes[0] !== type) {
         pokemon.summonData.types = [ type ];
@@ -2911,16 +2911,20 @@ function getAnticipationCondition(): AbAttrCondition {
   return (pokemon: Pokemon) => {
     for (const opponent of pokemon.getOpponents()) {
       for (const move of opponent.moveset) {
-        // move is super effective
-        if (move!.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move!.getMove().type, opponent, true) >= 2) { // TODO: is this bang correct?
+        // ignore null/undefined moves
+        if (!move) {
+          continue;
+        }
+        // move is super effective (not accounting for )
+        if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move!.getMove().type, opponent, true) >= 2) { // TODO: is this bang correct?
           return true;
         }
         // move is a OHKO
-        if (move?.getMove().hasAttr(OneHitKOAttr)) {
+        if (move.getMove().hasAttr(OneHitKOAttr)) {
           return true;
         }
         // edge case for hidden power, type is computed
-        if (move?.getMove().id === Moves.HIDDEN_POWER) {
+        if (move.getMove().id === Moves.HIDDEN_POWER) {
           const iv_val = Math.floor(((opponent.ivs[Stat.HP] & 1)
               +(opponent.ivs[Stat.ATK] & 1) * 2
               +(opponent.ivs[Stat.DEF] & 1) * 4
