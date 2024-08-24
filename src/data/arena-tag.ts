@@ -14,10 +14,10 @@ import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 
 export enum ArenaTagSide {
   BOTH,

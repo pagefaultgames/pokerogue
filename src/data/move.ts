@@ -24,17 +24,17 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { MoveUsedEvent } from "#app/events/battle-scene.js";
+import { MoveUsedEvent } from "#app/events/battle-scene";
 import { Stat, type BattleStat, type EffectiveStat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#app/enums/stat";
-import { PartyStatusCurePhase } from "#app/phases/party-status-cure-phase.js";
-import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { MovePhase } from "#app/phases/move-phase.js";
-import { NewBattlePhase } from "#app/phases/new-battle-phase.js";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase.js";
-import { SwitchPhase } from "#app/phases/switch-phase.js";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
+import { PartyStatusCurePhase } from "#app/phases/party-status-cure-phase";
+import { BattleEndPhase } from "#app/phases/battle-end-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { MovePhase } from "#app/phases/move-phase";
+import { NewBattlePhase } from "#app/phases/new-battle-phase";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { SwitchPhase } from "#app/phases/switch-phase";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 
 export enum MoveCategory {
   PHYSICAL,

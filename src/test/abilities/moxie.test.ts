@@ -7,8 +7,8 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { BattlerIndex } from "#app/battle";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
-import { VictoryPhase } from "#app/phases/victory-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { VictoryPhase } from "#app/phases/victory-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 
 describe("Abilities - Moxie", () => {

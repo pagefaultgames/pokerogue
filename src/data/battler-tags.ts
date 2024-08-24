@@ -14,14 +14,14 @@ import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import i18next from "#app/plugins/i18n.js";
+import i18next from "#app/plugins/i18n";
 import { Stat, type BattleStat, type EffectiveStat, EFFECTIVE_STATS, getStatKey } from "#app/enums/stat";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { MovePhase } from "#app/phases/move-phase.js";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
-import { StatStageChangePhase, StatStageChangeCallback } from "#app/phases/stat-stage-change-phase.js";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { MovePhase } from "#app/phases/move-phase";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { StatStageChangePhase, StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 
 export enum BattlerTagLapseType {
   FAINT,

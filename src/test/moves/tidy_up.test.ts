@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import { ArenaTagType } from "#app/enums/arena-tag-type.js";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";

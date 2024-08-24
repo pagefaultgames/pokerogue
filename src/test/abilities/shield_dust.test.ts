@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { applyAbAttrs, applyPreDefendAbAttrs, IgnoreMoveEffectsAbAttr, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
 import { Stat } from "#enums/stat";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import * as Utils from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";

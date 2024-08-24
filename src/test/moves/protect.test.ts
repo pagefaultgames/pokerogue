@@ -5,9 +5,9 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { allMoves } from "#app/data/move.js";
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag.js";
-import { BerryPhase } from "#app/phases/berry-phase.js";
+import { allMoves } from "#app/data/move";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { BerryPhase } from "#app/phases/berry-phase";
 
 const TIMEOUT = 20 * 1000;
 

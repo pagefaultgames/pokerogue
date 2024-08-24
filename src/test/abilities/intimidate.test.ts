@@ -8,8 +8,8 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { CommandPhase } from "#app/phases/command-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;

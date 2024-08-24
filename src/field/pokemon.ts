@@ -38,7 +38,7 @@ import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
@@ -47,16 +47,16 @@ import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { DamagePhase } from "#app/phases/damage-phase.js";
-import { FaintPhase } from "#app/phases/faint-phase.js";
-import { LearnMovePhase } from "#app/phases/learn-move-phase.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase.js";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase.js";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
-import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase.js";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { FaintPhase } from "#app/phases/faint-phase";
+import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
+import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 
 export enum FieldPosition {
   CENTER,

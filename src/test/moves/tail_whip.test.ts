@@ -6,8 +6,8 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 
 describe("Moves - Tail whip", () => {

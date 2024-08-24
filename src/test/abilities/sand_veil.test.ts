@@ -1,4 +1,4 @@
-import { StatMultiplierAbAttr, allAbilities } from "#app/data/ability.js";
+import { StatMultiplierAbAttr, allAbilities } from "#app/data/ability";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#app/data/weather";
 import { CommandPhase } from "#app/phases/command-phase";

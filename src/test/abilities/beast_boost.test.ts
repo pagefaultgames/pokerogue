@@ -6,7 +6,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { BattlerIndex } from "#app/battle";

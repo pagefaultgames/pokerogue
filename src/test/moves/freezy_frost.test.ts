@@ -6,8 +6,8 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { allMoves } from "#app/data/move.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { allMoves } from "#app/data/move";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Freezy Frost", () => {
   let phaserGame: Phaser.Game;

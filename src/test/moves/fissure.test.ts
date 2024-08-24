@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import { Species } from "#app/enums/species.js";
+import { Species } from "#app/enums/species";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { DamagePhase } from "#app/phases/damage-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";

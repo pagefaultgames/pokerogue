@@ -1,13 +1,13 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { applyPreStatStageChangeAbAttrs, ProtectStatAbAttr, applyAbAttrs, StatStageChangeMultiplierAbAttr, StatStageChangeCopyAbAttr, applyPostStatStageChangeAbAttrs, PostStatStageChangeAbAttr } from "#app/data/ability.js";
-import { MistTag, ArenaTagSide } from "#app/data/arena-tag.js";
-import Pokemon from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { ResetNegativeStatStageModifier } from "#app/modifier/modifier.js";
-import { handleTutorial, Tutorial } from "#app/tutorial.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { applyPreStatStageChangeAbAttrs, ProtectStatAbAttr, applyAbAttrs, StatStageChangeMultiplierAbAttr, StatStageChangeCopyAbAttr, applyPostStatStageChangeAbAttrs, PostStatStageChangeAbAttr } from "#app/data/ability";
+import { MistTag, ArenaTagSide } from "#app/data/arena-tag";
+import Pokemon from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { ResetNegativeStatStageModifier } from "#app/modifier/modifier";
+import { handleTutorial, Tutorial } from "#app/tutorial";
 import i18next from "i18next";
-import * as Utils from "#app/utils.js";
+import * as Utils from "#app/utils";
 import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
 

@@ -1,5 +1,5 @@
-import { MovePhase } from "#app/phases/move-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { MovePhase } from "#app/phases/move-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Stat } from "#enums/stat";

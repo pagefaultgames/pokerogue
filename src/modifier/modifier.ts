@@ -3,7 +3,6 @@ import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { MAX_PER_TYPE_POKEBALLS, PokeballType } from "../data/pokeball";
 import Pokemon, { PlayerPokemon } from "../field/pokemon";
-import { Stat } from "#enums/stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from "../data/type";
 import { EvolutionPhase } from "../phases/evolution-phase";
@@ -22,7 +21,7 @@ import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler";
 import { Species } from "#enums/species";
-import { type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS  } from "#app/enums/stat";
+import { Stat, type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS  } from "#app/enums/stat";
 import i18next from "i18next";
 
 import { allMoves } from "#app/data/move";

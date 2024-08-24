@@ -6,7 +6,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Haze", () => {
   describe("integration tests", () => {

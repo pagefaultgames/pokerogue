@@ -3,19 +3,19 @@ import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { Moves } from "#app/enums/moves.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { Moves } from "#app/enums/moves";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { Abilities } from "#app/enums/abilities.js";
-import { TempStatStageBoosterModifier } from "#app/modifier/modifier.js";
-import { Mode } from "#app/ui/ui.js";
-import { Button } from "#app/enums/buttons.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { NewBattlePhase } from "#app/phases/new-battle-phase.js";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
-import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { Abilities } from "#app/enums/abilities";
+import { TempStatStageBoosterModifier } from "#app/modifier/modifier";
+import { Mode } from "#app/ui/ui";
+import { Button } from "#app/enums/buttons";
+import { CommandPhase } from "#app/phases/command-phase";
+import { NewBattlePhase } from "#app/phases/new-battle-phase";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { BattleEndPhase } from "#app/phases/battle-end-phase";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 
 
 describe("Items - Temporary Stat Stage Boosters", () => {

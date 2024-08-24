@@ -5,9 +5,9 @@ import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { BerryPhase } from "#app/phases/berry-phase.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { CommandPhase } from "#app/phases/command-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 
 const TIMEOUT = 20 * 1000;
 

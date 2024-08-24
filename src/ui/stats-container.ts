@@ -1,7 +1,7 @@
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import BattleScene from "../battle-scene";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
-import { PERMANENT_STATS, getStatKey } from "#app/enums/stat.js";
+import { PERMANENT_STATS, getStatKey } from "#app/enums/stat";
 import i18next from "i18next";
 
 const ivChartSize = 24;

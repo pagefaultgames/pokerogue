@@ -1,9 +1,9 @@
 import BattleScene from "#app/battle-scene";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import Pokemon, { PokemonSummonData } from "#app/field/pokemon.js";
-import { StockpilingTag } from "#app/data/battler-tags.js";
+import Pokemon, { PokemonSummonData } from "#app/field/pokemon";
+import { StockpilingTag } from "#app/data/battler-tags";
 import { Stat } from "#enums/stat";
-import * as messages from "#app/messages.js";
+import * as messages from "#app/messages";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 
 beforeEach(() => {

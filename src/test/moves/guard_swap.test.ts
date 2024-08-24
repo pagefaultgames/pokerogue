@@ -6,7 +6,7 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
 
 describe("Moves - Guard Swap", () => {
   let phaserGame: Phaser.Game;

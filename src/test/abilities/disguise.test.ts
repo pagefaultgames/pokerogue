@@ -7,7 +7,7 @@ import { Mode } from "#app/ui/ui";
 import { toDmgValue } from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { StatusEffect } from "#app/data/status-effect.js";
+import { StatusEffect } from "#app/data/status-effect";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

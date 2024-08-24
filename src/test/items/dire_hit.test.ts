@@ -1,18 +1,18 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
-import { TempCritBoosterModifier } from "#app/modifier/modifier.js";
-import { Mode } from "#app/ui/ui.js";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler.js";
-import { Button } from "#app/enums/buttons.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { NewBattlePhase } from "#app/phases/new-battle-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
+import { BattleEndPhase } from "#app/phases/battle-end-phase";
+import { TempCritBoosterModifier } from "#app/modifier/modifier";
+import { Mode } from "#app/ui/ui";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import { Button } from "#app/enums/buttons";
+import { CommandPhase } from "#app/phases/command-phase";
+import { NewBattlePhase } from "#app/phases/new-battle-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Items - Dire Hit", () => {
   let phaserGame: Phaser.Game;

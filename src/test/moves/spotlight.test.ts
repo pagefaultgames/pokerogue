@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle.js";
+import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
