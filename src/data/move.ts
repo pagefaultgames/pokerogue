@@ -4384,18 +4384,18 @@ export class DisableMoveAttr extends MoveEffectAttr {
  * Handles moves that are usd consecutively without user command
  * @extends MoveEffectAttr
  * @param tagTypes: The types of tags decided by moves
- * @param rounds: The rounds move planned to keep use non-stop
+ * @param turnCount: The turns move planned to keep use non-stop
  * example: @see {@linkcode Moves.THRASH} for frenzy moves
  * example: @see {@linkcode Moves.ICE_BALL} for non stop moves
  */
 export class nonStopAttr extends MoveEffectAttr {
   public tagType: BattlerTagType;
-  private rounds: number;
+  private turnCount: number;
   // no round specify means frenzy rand 2-3 turns
-  constructor(tagType: BattlerTagType, rounds:number = 0) {
+  constructor(tagType: BattlerTagType, turnCount:number = 0) {
     super(true, MoveEffectTrigger.HIT, false, true);
     this.tagType = tagType;
-    this.rounds = rounds;
+    this.turnCount = turnCount;
   }
 
   canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
@@ -4408,8 +4408,8 @@ export class nonStopAttr extends MoveEffectAttr {
     }
 
     if (!user.getTag(this.tagType) && !user.getMoveQueue().length) {
-      let turnCount = this.rounds;
-      if (!this.rounds) {
+      let turnCount = this.turnCount;
+      if (!this.turnCount) {
         turnCount = user.randSeedIntRange(1, 2);
       }
       new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
