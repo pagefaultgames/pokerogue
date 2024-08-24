@@ -392,6 +392,7 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
         const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
         pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
           Utils.toDmgValue(pokemon.getMaxHp() / 4), i18next.t("abilityTriggers:typeImmunityHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }), true));
+        cancelled.value = true; // Suppresses "No Effect" message
       }
       return true;
     }
@@ -415,7 +416,7 @@ class TypeImmunityStatChangeAbAttr extends TypeImmunityAbAttr {
     const ret = super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
 
     if (ret) {
-      cancelled.value = true;
+      cancelled.value = true; // Suppresses "No Effect" message
       if (!simulated) {
         pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ this.stat ], this.levels));
       }
@@ -440,7 +441,7 @@ class TypeImmunityAddBattlerTagAbAttr extends TypeImmunityAbAttr {
     const ret = super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
 
     if (ret) {
-      cancelled.value = true;
+      cancelled.value = true; // Suppresses "No Effect" message
       if (!simulated) {
         pokemon.addTag(this.tagType, this.turnCount, undefined, pokemon.id);
       }
@@ -457,7 +458,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
 
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (move instanceof AttackMove && pokemon.getAttackTypeEffectiveness(pokemon.getMoveType(move), attacker) < 2) {
-      cancelled.value = true;
+      cancelled.value = true; // Suppresses "No Effect" message
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
