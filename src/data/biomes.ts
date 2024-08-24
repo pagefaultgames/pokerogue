@@ -7709,7 +7709,7 @@ export function initBiomes() {
       ? pokemonEvolutions[speciesId]
       : [];
 
-    if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId))[3] as any[]).filter(b => b[0] !== Biome.END).length).length) {
+    if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId)!)[3] as any[]).filter(b => b[0] !== Biome.END).length).length) { // TODO: is the bang on the `find()` correct?
       uncatchableSpecies.push(speciesId);
     }
 

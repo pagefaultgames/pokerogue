@@ -1,17 +1,13 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import {
-  CommandPhase,
-  MoveEndPhase,
-  StatChangePhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { BattleStat } from "#app/data/battle-stat";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { StatChangePhase } from "#app/phases/stat-change-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -44,17 +40,9 @@ describe("Moves - Make It Rain", () => {
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerField();
-    expect(playerPokemon.length).toBe(2);
-    playerPokemon.forEach(p => expect(p).toBeDefined());
 
-    const enemyPokemon = game.scene.getEnemyField();
-    expect(enemyPokemon.length).toBe(2);
-    enemyPokemon.forEach(p => expect(p).toBeDefined());
-
-    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
-
-    await game.phaseInterceptor.to(CommandPhase);
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.MAKE_IT_RAIN);
+    game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -67,13 +55,10 @@ describe("Moves - Make It Rain", () => {
 
     await game.startBattle([Species.CHARIZARD]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
-    expect(playerPokemon).toBeDefined();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    expect(enemyPokemon).toBeDefined();
-
-    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
+    game.move.select(Moves.MAKE_IT_RAIN);
 
     await game.phaseInterceptor.to(StatChangePhase);
 
@@ -87,19 +72,30 @@ describe("Moves - Make It Rain", () => {
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerField();
-    playerPokemon.forEach(p => expect(p).toBeDefined());
-
     const enemyPokemon = game.scene.getEnemyField();
-    enemyPokemon.forEach(p => expect(p).toBeDefined());
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.MAKE_IT_RAIN));
-
-    await game.phaseInterceptor.to(CommandPhase);
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.MAKE_IT_RAIN);
+    game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to(StatChangePhase);
 
     enemyPokemon.forEach(p => expect(p.isFainted()).toBe(true));
+    expect(playerPokemon[0].summonData.battleStats[BattleStat.SPATK]).toBe(-1);
+  }, TIMEOUT);
+
+  it("should reduce Sp. Atk if it only hits the second target", async () => {
+    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+
+    const playerPokemon = game.scene.getPlayerField();
+
+    game.move.select(Moves.MAKE_IT_RAIN);
+    game.move.select(Moves.SPLASH, 1);
+
+    // Make Make It Rain miss the first target
+    await game.move.forceMiss(true);
+
+    await game.phaseInterceptor.to(MoveEndPhase);
+
     expect(playerPokemon[0].summonData.battleStats[BattleStat.SPATK]).toBe(-1);
   }, TIMEOUT);
 });

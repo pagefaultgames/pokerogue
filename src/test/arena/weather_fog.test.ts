@@ -1,13 +1,10 @@
-import { allMoves } from "#app/data/move.js";
-import { WeatherType } from "#app/data/weather.js";
-import { Abilities } from "#app/enums/abilities.js";
-import {
-  MoveEffectPhase,
-} from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { allMoves } from "#app/data/move";
+import { WeatherType } from "#app/data/weather";
+import { Abilities } from "#app/enums/abilities";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -43,7 +40,7 @@ describe("Weather - Fog", () => {
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
     await game.startBattle([Species.MAGIKARP]);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100 * 0.9);

@@ -116,7 +116,7 @@ export function randSeedWeightedItem<T>(items: T[]): T {
     : Phaser.Math.RND.weightedPick(items);
 }
 
-export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T {
+export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T | null {
   if (!items.length) {
     return null;
   }
@@ -246,16 +246,16 @@ export function formatStat(stat: integer, forHp: boolean = false): string {
   return formatLargeNumber(stat, forHp ? 100000 : 1000000);
 }
 
-export function getEnumKeys(enumType): string[] {
-  return Object.values(enumType).filter(v => isNaN(parseInt(v.toString()))).map(v => v.toString());
+export function getEnumKeys(enumType: any): string[] {
+  return Object.values(enumType).filter(v => isNaN(parseInt(v!.toString()))).map(v => v!.toString());
 }
 
-export function getEnumValues(enumType): integer[] {
-  return Object.values(enumType).filter(v => !isNaN(parseInt(v.toString()))).map(v => parseInt(v.toString()));
+export function getEnumValues(enumType: any): integer[] {
+  return Object.values(enumType).filter(v => !isNaN(parseInt(v!.toString()))).map(v => parseInt(v!.toString()));
 }
 
-export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T> {
-  return condition ? promiseFunc() : new Promise<T>(resolve => resolve(null));
+export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
+  return condition ? promiseFunc() : new Promise<T | null>(resolve => resolve(null));
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
@@ -281,6 +281,10 @@ export function setCookie(cName: string, cValue: string): void {
 }
 
 export function removeCookie(cName: string): void {
+  if (isBeta) {
+    document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=pokerogue.net;Path=/;Max-Age=-1`; // we need to remove the cookie from the main domain as well
+  }
+
   document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Max-Age=-1`;
   document.cookie = `${cName}=;Secure;SameSite=Strict;Path=/;Max-Age=-1`; // legacy cookie without domain, for older cookies to prevent a login loop
 }
@@ -432,7 +436,7 @@ export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
 }
 
 export function rgbHexToRgba(hex: string) {
-  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
+  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i)!; // TODO: is this bang correct?
   return {
     r: parseInt(color[1], 16),
     g: parseInt(color[2], 16),
@@ -466,6 +470,7 @@ export function verifyLang(lang?: string): boolean {
   case "zh-TW":
   case "pt-BR":
   case "ko":
+  case "ja":
     return true;
   default:
     return false;
@@ -546,4 +551,26 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
     return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
   }
   return null;
+}
+
+/**
+ * Returns if an object is null or undefined
+ * @param object
+ */
+export function isNullOrUndefined(object: any): boolean {
+  return null === object || undefined === object;
+}
+
+/**
+ * This function is used in the context of a Pokémon battle game to calculate the actual integer damage value from a float result.
+ * Many damage calculation formulas involve various parameters and result in float values.
+ * The actual damage applied to a Pokémon's HP must be an integer.
+ * This function helps in ensuring that by flooring the float value and enforcing a minimum damage value.
+ *
+ * @param value - The float value to convert.
+ * @param minValue - The minimum integer value to return. Defaults to 1.
+ * @returns The converted value as an integer.
+ */
+export function toDmgValue(value: number, minValue: number = 1) {
+  return Math.max(Math.floor(value), minValue);
 }

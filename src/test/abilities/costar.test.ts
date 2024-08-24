@@ -1,13 +1,13 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { CommandPhase, MessagePhase } from "#app/phases.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { Abilities } from "#app/enums/abilities";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MessagePhase } from "#app/phases/message-phase";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import GameManager from "../utils/gameManager";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -42,18 +42,16 @@ describe("Abilities - COSTAR", () => {
       await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
 
       let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
-      expect(leftPokemon).toBeDefined();
-      expect(rightPokemon).toBeDefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.NASTY_PLOT));
+      game.move.select(Moves.NASTY_PLOT);
       await game.phaseInterceptor.to(CommandPhase);
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
       await game.toNextTurn();
 
       expect(leftPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(+2);
       expect(rightPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(0);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(CommandPhase);
       game.doSwitchPokemon(2);
       await game.phaseInterceptor.to(MessagePhase);
@@ -73,13 +71,11 @@ describe("Abilities - COSTAR", () => {
       await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
 
       let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
-      expect(leftPokemon).toBeDefined();
-      expect(rightPokemon).toBeDefined();
 
       expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
       expect(leftPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-2);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(CommandPhase);
       game.doSwitchPokemon(2);
       await game.phaseInterceptor.to(MessagePhase);

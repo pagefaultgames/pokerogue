@@ -39,7 +39,7 @@ export interface TurnCommand {
 }
 
 interface TurnCommands {
-    [key: integer]: TurnCommand
+    [key: integer]: TurnCommand | null
 }
 
 export default class Battle {
@@ -47,8 +47,8 @@ export default class Battle {
   public waveIndex: integer;
   public battleType: BattleType;
   public battleSpec: BattleSpec;
-  public trainer: Trainer;
-  public enemyLevels: integer[];
+  public trainer: Trainer | null;
+  public enemyLevels: integer[] | undefined;
   public enemyParty: EnemyPokemon[];
   public seenEnemyPartyMemberIds: Set<integer>;
   public double: boolean;
@@ -62,26 +62,26 @@ export default class Battle {
   public escapeAttempts: integer;
   public lastMove: Moves;
   public battleSeed: string;
-  private battleSeedState: string;
+  private battleSeedState: string | null;
   public moneyScattered: number;
-  public lastUsedPokeball: PokeballType;
+  public lastUsedPokeball: PokeballType | null;
   public playerFaints: number; // The amount of times pokemon on the players side have fainted
   public enemyFaints: number; // The amount of times pokemon on the enemies side have fainted
 
   private rngCounter: integer = 0;
 
-  constructor(gameMode: GameMode, waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean) {
+  constructor(gameMode: GameMode, waveIndex: integer, battleType: BattleType, trainer?: Trainer, double?: boolean) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
-    this.trainer = trainer;
+    this.trainer = trainer ?? null;
     this.initBattleSpec();
     this.enemyLevels = battleType !== BattleType.TRAINER
       ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
-      : trainer.getPartyLevels(this.waveIndex);
+      : trainer?.getPartyLevels(this.waveIndex);
     this.enemyParty = [];
     this.seenEnemyPartyMemberIds = new Set<integer>();
-    this.double = double;
+    this.double = !!double;
     this.enemySwitchCounter = 0;
     this.turn = 0;
     this.playerParticipantIds = new Set<integer>();
@@ -159,6 +159,7 @@ export default class Battle {
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
     this.postBattleLoot.push(...enemyPokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferrable, false).map(i => {
       const ret = i as PokemonHeldItemModifier;
+      //@ts-ignore - this is awful to fix/change
       ret.pokemonId = null;
       return ret;
     }));
@@ -177,7 +178,7 @@ export default class Battle {
     const userLocale = navigator.language || "en-US";
     const formattedMoneyAmount = moneyAmount.value.toLocaleString(userLocale);
     const message = i18next.t("battle:moneyPickedUp", { moneyAmount: formattedMoneyAmount });
-    scene.queueMessage(message, null, true);
+    scene.queueMessage(message, undefined, true);
 
     scene.currentBattle.moneyScattered = 0;
   }
@@ -200,16 +201,16 @@ export default class Battle {
     scene.updateScoreText();
   }
 
-  getBgmOverride(scene: BattleScene): string {
+  getBgmOverride(scene: BattleScene): string | null {
     const battlers = this.enemyParty.slice(0, this.getBattlerCount());
     if (this.battleType === BattleType.TRAINER) {
-      if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages()?.length) {
-        return `encounter_${this.trainer.getEncounterBgm()}`;
+      if (!this.started && this.trainer?.config.encounterBgm && this.trainer?.getEncounterMessages()?.length) {
+        return `encounter_${this.trainer?.getEncounterBgm()}`;
       }
       if (scene.musicPreference === 0) {
-        return this.trainer.getBattleBgm();
+        return this.trainer?.getBattleBgm() ?? null;
       } else {
-        return this.trainer.getMixedBattleBgm();
+        return this.trainer?.getMixedBattleBgm() ?? null;
       }
     } else if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS) {
       return "end_summit";
@@ -382,7 +383,7 @@ export default class Battle {
 
 export class FixedBattle extends Battle {
   constructor(scene: BattleScene, waveIndex: integer, config: FixedBattleConfig) {
-    super(scene.gameMode, waveIndex, config.battleType, config.battleType === BattleType.TRAINER ? config.getTrainer(scene) : null, config.double);
+    super(scene.gameMode, waveIndex, config.battleType, config.battleType === BattleType.TRAINER ? config.getTrainer(scene) : undefined, config.double);
     if (config.getEnemyParty) {
       this.enemyParty = config.getEnemyParty(scene);
     }
@@ -425,22 +426,28 @@ export class FixedBattleConfig {
   }
 }
 
+
 /**
  * Helper function to generate a random trainer for evil team trainers and the elite 4/champion
  * @param trainerPool The TrainerType or list of TrainerTypes that can possibly be generated
  * @param randomGender whether or not to randomly (50%) generate a female trainer (for use with evil team grunts)
+ * @param seedOffset the seed offset to use for the random generation of the trainer
  * @returns the generated trainer
  */
-function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], randomGender: boolean = false): GetTrainerFunc {
+function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], randomGender: boolean = false, seedOffset: number  = 0): GetTrainerFunc {
   return (scene: BattleScene) => {
     const rand = Utils.randSeedInt(trainerPool.length);
     const trainerTypes: TrainerType[] = [];
-    for (const trainerPoolEntry of trainerPool) {
-      const trainerType = Array.isArray(trainerPoolEntry)
-        ? Utils.randSeedItem(trainerPoolEntry)
-        : trainerPoolEntry;
-      trainerTypes.push(trainerType);
-    }
+
+    scene.executeWithSeedOffset(() => {
+      for (const trainerPoolEntry of trainerPool) {
+        const trainerType = Array.isArray(trainerPoolEntry)
+          ? Utils.randSeedItem(trainerPoolEntry)
+          : trainerPoolEntry;
+        trainerTypes.push(trainerType);
+      }
+    }, seedOffset);
+
     let trainerGender = TrainerVariant.DEFAULT;
     if (randomGender) {
       trainerGender = (Utils.randInt(2) === 0) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT;
@@ -464,7 +471,8 @@ export interface FixedBattleConfigs {
 /**
  * Youngster/Lass on 5
  * Rival on 8, 55, 95, 145, 195
- * Evil team grunts on 35, 62, 64, 66, 112, 114
+ * Evil team grunts on 35, 62, 64, and 112
+ * Evil team admin on 66 and 114
  * Evil leader on 115, 165
  * E4 on 182, 184, 186, 188
  * Champion on 190
@@ -485,13 +493,13 @@ export const classicFixedBattles: FixedBattleConfigs = {
   [64]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
     .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT ], true)),
   [66]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT ], true)),
+    .setGetTrainerFunc(getRandomTrainerFunc([[ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ], [ TrainerType.TABITHA, TrainerType.COURTNEY ], [ TrainerType.MATT, TrainerType.SHELLY ], [ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ], [ TrainerType.ZINZOLIN, TrainerType.ROOD ], [ TrainerType.XEROSIC, TrainerType.BRYONY ] ], true)),
   [95]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
     .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_4, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
   [112]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
     .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT ], true)),
   [114]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT ], true)),
+    .setGetTrainerFunc(getRandomTrainerFunc([[ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ], [ TrainerType.TABITHA, TrainerType.COURTNEY ], [ TrainerType.MATT, TrainerType.SHELLY ], [ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ], [ TrainerType.ZINZOLIN, TrainerType.ROOD ], [ TrainerType.XEROSIC, TrainerType.BRYONY ] ], true, 1)),
   [115]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
     .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerType.MAXIE, TrainerType.ARCHIE, TrainerType.CYRUS, TrainerType.GHETSIS, TrainerType.LYSANDRE ])),
   [145]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)

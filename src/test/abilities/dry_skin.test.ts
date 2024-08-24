@@ -1,12 +1,11 @@
-import { Species } from "#app/enums/species.js";
-import { TurnEndPhase } from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { Species } from "#app/enums/species";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
 
 describe("Abilities - Dry Skin", () => {
   let phaserGame: Phaser.Game;
@@ -38,18 +37,18 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     // first turn
     let previousEnemyHp = enemy.hp;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SUNNY_DAY));
+    game.move.select(Moves.SUNNY_DAY);
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeLessThan(previousEnemyHp);
 
     // second turn
     previousEnemyHp = enemy.hp;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeLessThan(previousEnemyHp);
   });
@@ -59,20 +58,20 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
 
     // first turn
     let previousEnemyHp = enemy.hp;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.RAIN_DANCE));
+    game.move.select(Moves.RAIN_DANCE);
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeGreaterThan(previousEnemyHp);
 
     // second turn
     previousEnemyHp = enemy.hp;
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeGreaterThan(previousEnemyHp);
   });
@@ -82,13 +81,12 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
-    expect(enemy).toBeDefined();
+    const enemy = game.scene.getEnemyPokemon()!;
     const initialHP = 1000;
     enemy.hp = initialHP;
 
     // first turn
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
+    game.move.select(Moves.FLAMETHROWER);
     await game.phaseInterceptor.to(TurnEndPhase);
     const fireDamageTakenWithDrySkin = initialHP - enemy.hp;
 
@@ -97,7 +95,7 @@ describe("Abilities - Dry Skin", () => {
     game.override.enemyAbility(Abilities.NONE);
 
     // second turn
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLAMETHROWER));
+    game.move.select(Moves.FLAMETHROWER);
     await game.phaseInterceptor.to(TurnEndPhase);
     const fireDamageTakenWithoutDrySkin = initialHP - enemy.hp;
 
@@ -109,12 +107,12 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+    game.move.select(Moves.WATER_GUN);
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBeGreaterThan(1);
   });
@@ -124,13 +122,13 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
     game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+    game.move.select(Moves.WATER_GUN);
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemy.hp).toBe(1);
   });
@@ -140,20 +138,20 @@ describe("Abilities - Dry Skin", () => {
 
     await game.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).not.toBe(undefined);
 
     enemy.hp = 1;
 
     // first turn
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_SHURIKEN));
+    game.move.select(Moves.WATER_SHURIKEN);
     await game.phaseInterceptor.to(TurnEndPhase);
     const healthGainedFromWaterShuriken = enemy.hp - 1;
 
     enemy.hp = 1;
 
     // second turn
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+    game.move.select(Moves.WATER_GUN);
     await game.phaseInterceptor.to(TurnEndPhase);
     const healthGainedFromWaterGun = enemy.hp - 1;
 

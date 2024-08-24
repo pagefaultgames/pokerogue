@@ -1,10 +1,9 @@
 import { allAbilities, BypassSpeedChanceAbAttr } from "#app/data/ability";
-import { FaintPhase } from "#app/phases";
-import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
+import { FaintPhase } from "#app/phases/faint-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -41,13 +40,13 @@ describe("Abilities - Quick Draw", () => {
   test("makes pokemon going first in its priority bracket", async () => {
     await game.startBattle();
 
-    const pokemon = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const pokemon = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     pokemon.hp = 1;
     enemy.hp = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(FaintPhase, false);
 
     expect(pokemon.isFainted()).toBe(false);
@@ -61,13 +60,13 @@ describe("Abilities - Quick Draw", () => {
   }, async () => {
     await game.startBattle();
 
-    const pokemon = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const pokemon = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     pokemon.hp = 1;
     enemy.hp = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TAIL_WHIP));
+    game.move.select(Moves.TAIL_WHIP);
     await game.phaseInterceptor.to(FaintPhase, false);
 
     expect(pokemon.isFainted()).toBe(true);
@@ -81,13 +80,13 @@ describe("Abilities - Quick Draw", () => {
 
     await game.startBattle();
 
-    const pokemon = game.scene.getPlayerPokemon();
-    const enemy = game.scene.getEnemyPokemon();
+    const pokemon = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     pokemon.hp = 1;
     enemy.hp = 1;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(FaintPhase, false);
 
     expect(pokemon.isFainted()).toBe(true);

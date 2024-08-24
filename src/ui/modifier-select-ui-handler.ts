@@ -12,6 +12,7 @@ import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -35,7 +36,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   public options: ModifierOption[];
   public shopOptionsRows: ModifierOption[][];
 
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.CONFIRM);
@@ -52,10 +53,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-    const [ , styleOptions, , , ] = getTextStyleOptions(TextStyle.PARTY, (this.scene as BattleScene).uiTheme);
-    context.font = styleOptions.fontSize + "px " + styleOptions.fontFamily;
-    this.transferButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:transfer")).width;
-    this.checkButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:checkTeam")).width;
+    const styleOptions = getTextStyleOptions(TextStyle.PARTY, (this.scene as BattleScene).uiTheme).styleOptions;
+
+    if (context) {
+      context.font = styleOptions.fontSize + "px " + styleOptions.fontFamily;
+      this.transferButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:transfer")).width;
+      this.checkButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:checkTeam")).width;
+    }
 
     this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width - this.checkButtonWidth) / 6 - 21, -64);
     this.transferButtonContainer.setName("transfer-btn");
@@ -246,11 +250,22 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         duration: 250
       });
 
-      this.setCursor(0);
-      this.setRowCursor(1);
+      const updateCursorTarget = () => {
+        if (this.scene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
+          this.setRowCursor(0);
+          this.setCursor(2);
+        } else {
+          this.setRowCursor(this.scene.shopCursorTarget);
+          this.setCursor(0);
+        }
+      };
 
-      handleTutorial(this.scene, Tutorial.Select_Item).then(() => {
-        this.setCursor(0);
+      updateCursorTarget();
+
+      handleTutorial(this.scene, Tutorial.Select_Item).then((res) => {
+        if (res) {
+          updateCursorTarget();
+        }
         this.awaitingActionInput = true;
         this.onActionInput = args[2];
       });
@@ -394,7 +409,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
 
       const type = options[this.cursor].modifierTypeOption.type;
-      ui.showText(type.getDescription(this.scene));
+      type && ui.showText(type.getDescription(this.scene));
       if (type instanceof TmModifierType) {
         // prepare the move overlay to be shown with the toggle
         this.moveInfoOverlay.show(allMoves[type.moveId]);
@@ -574,7 +589,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.add(this.itemContainer);
 
     const getItem = () => {
-      const item = this.scene.add.sprite(0, 0, "items", this.modifierTypeOption.type.iconImage);
+      const item = this.scene.add.sprite(0, 0, "items", this.modifierTypeOption.type?.iconImage);
       return item;
     };
 
@@ -587,10 +602,10 @@ class ModifierOption extends Phaser.GameObjects.Container {
       this.itemContainer.add(this.itemTint);
     }
 
-    this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type.name, TextStyle.PARTY, { align: "center" });
+    this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type?.name!, TextStyle.PARTY, { align: "center" }); // TODO: is this bang correct?
     this.itemText.setOrigin(0.5, 0);
     this.itemText.setAlpha(0);
-    this.itemText.setTint(getModifierTierTextTint(this.modifierTypeOption.type.tier));
+    this.itemText.setTint(this.modifierTypeOption.type?.tier ? getModifierTierTextTint(this.modifierTypeOption.type?.tier) : undefined);
     this.add(this.itemText);
 
     if (this.modifierTypeOption.cost) {
@@ -722,7 +737,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   getPbAtlasKey(tierOffset: integer = 0) {
-    return getPokeballAtlasKey((this.modifierTypeOption.type.tier + tierOffset) as integer as PokeballType);
+    return getPokeballAtlasKey((this.modifierTypeOption.type?.tier! + tierOffset) as integer as PokeballType); // TODO: is this bang correct?
   }
 
   updateCostText(): void {
