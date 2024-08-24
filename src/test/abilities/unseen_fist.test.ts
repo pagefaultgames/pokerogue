@@ -77,7 +77,7 @@ describe("Abilities - Unseen Fist", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, enemyPokemon.id);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.move.select(Moves.TACKLE);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
