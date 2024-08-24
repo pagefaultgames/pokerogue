@@ -5,7 +5,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodete
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BattleScene from "../battle-scene";
 import { ModifierTier } from "../modifier/modifier-tier";
-import i18next from "#app/plugins/i18n.js";
+import i18next from "#app/plugins/i18n";
 
 export enum TextStyle {
   MESSAGE,
@@ -227,7 +227,7 @@ export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: Ui
 }
 
 export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: UiTheme = UiTheme.DEFAULT): string {
-  const legacyTheme = uiTheme === UiTheme.LEGACY;
+  const isLegacyTheme = uiTheme === UiTheme.LEGACY;
   switch (textStyle) {
   case TextStyle.MESSAGE:
     return !shadow ? "#f8f8f8" : "#6b5a73";
@@ -236,29 +236,29 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.MOVE_PP_FULL:
   case TextStyle.TOOLTIP_CONTENT:
   case TextStyle.SETTINGS_VALUE:
-    if (legacyTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#484848" : "#d0d0c8";
     }
     return !shadow ? "#f8f8f8" : "#6b5a73";
   case TextStyle.MOVE_PP_HALF_FULL:
-    if (legacyTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#a68e17" : "#ebd773";
     }
     return !shadow ? "#ccbe00" : "#6e672c";
   case TextStyle.MOVE_PP_NEAR_EMPTY:
-    if (legacyTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#d64b00" : "#f7b18b";
     }
     return !shadow ? "#d64b00" : "#69402a";
   case TextStyle.MOVE_PP_EMPTY:
-    if (legacyTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#e13d3d" : "#fca2a2";
     }
     return !shadow ? "#e13d3d" : "#632929";
   case TextStyle.WINDOW_ALT:
     return !shadow ? "#484848" : "#d0d0c8";
   case TextStyle.BATTLE_INFO:
-    if (legacyTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#404040" : "#ded6b5";
     }
     return !shadow ? "#f8f8f8" : "#6b5a73";
@@ -269,7 +269,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.SUMMARY:
     return !shadow ? "#f8f8f8" : "#636363";
   case TextStyle.SUMMARY_ALT:
-    if (legacyTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#f8f8f8" : "#636363";
     }
     return !shadow ? "#484848" : "#d0d0c8";
@@ -289,7 +289,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.STATS_LABEL:
     return !shadow ? "#f8b050" : "#c07800";
   case TextStyle.STATS_VALUE:
-    if (legacyTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#484848" : "#d0d0c8";
     }
     return !shadow ? "#f8f8f8" : "#6b5a73";

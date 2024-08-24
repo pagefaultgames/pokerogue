@@ -9,7 +9,7 @@ import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
 import {Button} from "#enums/buttons";
 import i18next from "i18next";
-import { UiTheme } from "#app/enums/ui-theme.js";
+import { UiTheme } from "#app/enums/ui-theme";
 
 interface DisplayStat {
   label_key?: string;
@@ -275,10 +275,10 @@ export default class GameStatsUiHandler extends UiHandler {
     this.gameStatsContainer.add(this.statsContainer);
 
     // arrows to show that we can scroll through the stats
-    const legacyTheme = this.scene.uiTheme === UiTheme.LEGACY;
-    this.arrowDown = this.scene.add.sprite(statsBgWidth, this.scene.game.canvas.height / 6 - (legacyTheme? 9 : 5), "prompt");
+    const isLegacyTheme = this.scene.uiTheme === UiTheme.LEGACY;
+    this.arrowDown = this.scene.add.sprite(statsBgWidth, this.scene.game.canvas.height / 6 - (isLegacyTheme? 9 : 5), "prompt");
     this.gameStatsContainer.add(this.arrowDown);
-    this.arrowUp = this.scene.add.sprite(statsBgWidth, headerBg.height + (legacyTheme? 7 : 3), "prompt");
+    this.arrowUp = this.scene.add.sprite(statsBgWidth, headerBg.height + (isLegacyTheme? 7 : 3), "prompt");
     this.arrowUp.flipY = true;
     this.gameStatsContainer.add(this.arrowUp);
 
@@ -330,6 +330,9 @@ export default class GameStatsUiHandler extends UiHandler {
     }
   }
 
+  /**
+   * Show arrows at the top / bottom of the page if it's possible to scroll in that direction
+   */
   updateArrows(): void {
     const showUpArrow = this.cursor > 0;
     this.arrowUp.setVisible(showUpArrow);
