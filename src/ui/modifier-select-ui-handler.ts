@@ -334,7 +334,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
             success = false;
             break;
           case 1:
-            success = this.rerollButtonContainer.visible && this.setCursor(0);
+            if (this.transferButtonContainer.visible) {
+              success = this.setCursor(3);
+            } else {
+              success = this.rerollButtonContainer.visible && this.setCursor(0);
+            }
             break;
           case 2:
             if (this.transferButtonContainer.visible) {
@@ -367,6 +371,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
             break;
           case 2:
             success = false;
+            break;
+          case 3:
+            if (this.transferButtonContainer.visible) {
+              success = this.setCursor(1);
+            } else {
+              success = this.setCursor(2);
+            }
             break;
           }
         } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
