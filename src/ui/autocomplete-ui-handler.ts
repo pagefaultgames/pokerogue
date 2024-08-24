@@ -24,13 +24,15 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
     }
     return false;
   }
+
   protected setupOptions() {
     super.setupOptions();
     if (this.modalContainer) {
       this.optionSelectContainer.setSize(this.optionSelectContainer.height, Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth()));
-      this.optionSelectContainer.setPositionRelative(this.modalContainer, this.optionSelectBg.width * 0.78, this.optionSelectBg.height + 50);
+      this.optionSelectContainer.setPositionRelative(this.modalContainer, this.optionSelectBg.width, this.optionSelectBg.height + 50);
     }
   }
+
   processInput(button: Button): boolean {
     if (button !== Button.CANCEL) {
       return super.processInput(button);
