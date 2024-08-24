@@ -43,7 +43,6 @@ import { ChallengeModeHelper } from "./helpers/challengeModeHelper";
 import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
-import { Challenge } from "#app/data/challenge";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -174,34 +173,14 @@ export default class GameManager {
   }
 
   /**
+   * @deprecated Use classicMode.startBattle() instead.
+   *
    * Transitions to the start of a battle.
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
   async startBattle(species?: Species[]) {
     await this.classicMode.runToSummon(species);
-
-    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.setMode(Mode.MESSAGE);
-      this.endPhase();
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
-
-    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.setMode(Mode.MESSAGE);
-      this.endPhase();
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
-
-    await this.phaseInterceptor.to(CommandPhase);
-    console.log("==================[New Turn]==================");
-  }
-
-  /**
-   * Transitions to the start of a battle in challenge mode.
-   * @param species - Optional array of species to start the battle with.
-   * @returns A promise that resolves when the battle is started.
-   */
-  async startChallengeBattle(challenges: Challenge[], species?: Species[]) {
-    await this.challengeMode.runToSummon(challenges, species);
 
     this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
       this.setMode(Mode.MESSAGE);

@@ -5,6 +5,8 @@ import { TitlePhase } from "#app/phases/title-phase";
 import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { GameManagerHelper } from "./gameManagerHelper";
+import { CommandPhase } from "#app/phases/command-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 /**
  * Helper to handle daily mode specifics
@@ -33,5 +35,26 @@ export class DailyModeHelper extends GameManagerHelper {
     if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
       this.game.removeEnemyHeldItems();
     }
+  }
+
+  /**
+   * Starts a battle in daily mode.
+   * @returns A promise that resolves when the battle is started.
+   */
+  async startBattle() {
+    await this.runToSummon();
+
+    this.game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+      this.game.setMode(Mode.MESSAGE);
+      this.game.endPhase();
+    }, () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase));
+
+    this.game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+      this.game.setMode(Mode.MESSAGE);
+      this.game.endPhase();
+    }, () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase));
+
+    await this.game.phaseInterceptor.to(CommandPhase);
+    console.log("==================[New Turn]==================");
   }
 }
