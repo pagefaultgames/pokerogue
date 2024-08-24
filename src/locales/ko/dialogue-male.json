@@ -1606,6 +1606,17 @@
   },
   "koga": {
     "encounter": {
+      "1": "Fwahahaha! Very well, I shall show you true terror as a ninja master!"
+    },
+    "victory": {
+      "1": "Humph! You've proven your worth!"
+    },
+    "defeat": {
+      "1": "Despair to the creeping horror of Poison-type Pokémon!"
+    }
+  },
+  "koga_elite": {
+    "encounter": {
       "1": "후하하하! 포켓몬은 단순히 강한 것만이 아니다--곧 알려주지!"
     },
     "victory": {

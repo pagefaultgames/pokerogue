@@ -1606,6 +1606,17 @@
   },
   "koga": {
     "encounter": {
+      "1": "Fwahahaha! Very well, I shall show you true terror as a ninja master!"
+    },
+    "victory": {
+      "1": "Humph! You've proven your worth!"
+    },
+    "defeat": {
+      "1": "Despair to the creeping horror of Poison-type Pokémon!"
+    }
+  },
+  "koga_elite": {
+    "encounter": {
       "1": "哇哈哈哈哈！$宝可梦不仅仅是关于蛮力，拭目以待吧！"
     },
     "victory": {
