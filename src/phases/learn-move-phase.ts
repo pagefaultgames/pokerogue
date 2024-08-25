@@ -37,7 +37,6 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     // If the Pokemon has less than 4 moves, the new move is added to the largest empty moveset index
     // If it has 4 moves, the phase then checks if the player wants to replace the move itself.
     if (currentMoveset.length < 4) {
-      this.scene.playSound("level_up_fanfare");
       this.learnMove(currentMoveset.length, move, pokemon);
     } else {
       this.replaceMoveCheck(move, pokemon);
@@ -123,6 +122,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     pokemon.setMove(index, this.moveId);
     initMoveAnim(this.scene, this.moveId).then(() => {
       loadMoveAnimAssets(this.scene, [this.moveId], true);
+      this.scene.playSound("level_up_fanfare"); // Sound loaded into game as is
     });
     this.scene.ui.setMode(this.messageMode);
     const learnMoveText = i18next.t("battle:learnMove", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });

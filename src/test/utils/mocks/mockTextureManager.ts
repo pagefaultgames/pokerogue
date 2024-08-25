@@ -43,7 +43,7 @@ export default class MockTextureManager {
     return container;
   }
 
-  sprite(x,y, texture) {
+  sprite(x, y, texture) {
     const sprite = new MockSprite(this, x, y, texture);
     this.list.push(sprite);
     return sprite;
