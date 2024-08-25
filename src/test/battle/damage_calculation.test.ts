@@ -1,14 +1,13 @@
 import { DamagePhase } from "#app/phases/damage-phase.js";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { toDmgValue } from "#app/utils";
 
 describe("Round Down and Minimun 1 test in Damage Calculation", () => {
   let phaserGame: Phaser.Game;
@@ -41,7 +40,7 @@ describe("Round Down and Minimun 1 test in Damage Calculation", () => {
 
     const shedinja = game.scene.getPlayerPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.JUMP_KICK));
+    game.move.select(Moves.JUMP_KICK);
 
     await game.phaseInterceptor.to(DamagePhase);
 

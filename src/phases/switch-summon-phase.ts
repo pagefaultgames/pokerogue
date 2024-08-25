@@ -160,6 +160,8 @@ export class SwitchSummonPhase extends SummonPhase {
     this.lastPokemon?.resetSummonData();
 
     this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+    // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out
+    this.scene.arena.triggerWeatherBasedFormChanges();
   }
 
   queuePostSummon(): void {
