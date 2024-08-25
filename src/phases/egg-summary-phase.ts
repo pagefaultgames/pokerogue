@@ -23,7 +23,7 @@ export class EggSummaryPhase extends Phase {
       if (i >= this.eggHatchData.length) {
         console.log("displayed all pokemon");
         this.scene.ui.setModeForceTransition(Mode.EGG_HATCH_SUMMARY, this.eggHatchData).then(() => {
-          this.scene.fadeOutBgm(null, false);
+          this.scene.fadeOutBgm(undefined, false);
           this.eggHatchHandler = this.scene.ui.getHandler() as EggHatchSceneHandler;
 
         });

@@ -115,7 +115,7 @@ export class EggLapsePhase extends Phase {
       this.eggHatchData.push(newHatchData);
 
     }, egg.id, EGG_SEED.toString());
-    return newHatchData;
+    return newHatchData!;
   }
 
 }
