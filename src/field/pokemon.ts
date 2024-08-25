@@ -197,7 +197,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionVariant = dataSource.fusionVariant || 0;
       this.fusionGender = dataSource.fusionGender;
       this.fusionLuck = dataSource.fusionLuck;
-      this.usedTMs = dataSource.usedTMs || [];
+      this.usedTMs = dataSource.usedTMs ?? [];
     } else {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
@@ -936,7 +936,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.metBiome === -1 && !this.scene.gameMode.isFreshStartChallenge() && !this.scene.gameMode.isDaily) {
       levelMoves = this.getUnlockedEggMoves().concat(levelMoves);
     }
-    levelMoves = this.usedTMs?.length? this.usedTMs.filter(m => !levelMoves.includes(m)).concat(levelMoves) : levelMoves;
+    if (Array.isArray(this.usedTMs) && this.usedTMs.length > 0) {
+      levelMoves = this.usedTMs.filter(m => !levelMoves.includes(m)).concat(levelMoves);
+    }
     levelMoves = levelMoves.filter(lm => !this.moveset.some(m => m?.moveId === lm));
     return levelMoves;
   }

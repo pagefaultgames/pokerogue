@@ -18,7 +18,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     super(scene, partyMemberIndex);
 
     this.moveId = moveId;
-    this.fromTM = fromTM || false;
+    this.fromTM = fromTM ?? false;
   }
 
   start() {
