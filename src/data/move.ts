@@ -1339,6 +1339,7 @@ export class SacrificialAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
 	  user.turnData.damageTaken += user.hp;
+    user.pushMoveHistory({ move: move.id, targets: [ user.getBattlerIndex() ], result: MoveResult.OTHER });
 
     return true;
   }
@@ -1377,6 +1378,7 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
 
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
     user.turnData.damageTaken += user.hp;
+    user.pushMoveHistory({ move: move.id, targets: [ user.getBattlerIndex() ], result: MoveResult.OTHER });
 
     return true;
   }
