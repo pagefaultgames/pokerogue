@@ -1411,6 +1411,7 @@ export class GameData {
               case GameDataType.RUN_HISTORY:
                 const data = JSON.parse(dataStr);
                 const keys = Object.keys(data);
+                dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
                 keys.forEach((key) => {
                   const entryKeys = Object.keys(data[key]);
                   valid = ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
