@@ -1,10 +1,10 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
-import * as Utils from "#app/utils";
+//import * as Utils from "#app/utils";
 import { Moves } from "#enums/moves";
-import BattleScene from "#app/battle-scene";
+// import BattleScene from "#app/battle-scene";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import Overrides from "#app/overrides";
 //import { allMoves } from "#app/data/move";
@@ -12,7 +12,6 @@ import Overrides from "#app/overrides";
 describe("Learn Move Phase", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  let scene: BattleScene;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -26,7 +25,6 @@ describe("Learn Move Phase", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    scene = game.scene;
     Overrides.XP_MULTIPLIER_OVERRIDE = 50;
     game.override.startingLevel(5);
   });
@@ -39,11 +37,10 @@ describe("Learn Move Phase", () => {
     game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to(LearnMovePhase);
-    const newMove = pokemon.getMoveset()[newMovePos];
     const levelMove = pokemon.getLevelMoves(5)[0];
     const levelReq = levelMove[0];
     const levelMoveId = levelMove[1];
     expect(pokemon.level).toBeGreaterThanOrEqual(levelReq);
-    expect(newMove?.moveId).toBe(levelMoveId);
+    expect(pokemon.getMoveset()[newMovePos]).toBe(levelMoveId);
   });
 });
