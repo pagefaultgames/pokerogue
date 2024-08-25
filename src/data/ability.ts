@@ -4055,10 +4055,10 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon | undefined, move: Move | undefined, hitResult: HitResult | undefined, args: any[]): boolean {
     if (move !== undefined && attacker !== undefined) { //If the mon didn't die to indirect damage
       if (!simulated) {
-      const damage = pokemon.turnData.attacksReceived[0].damage;
+        const damage = pokemon.turnData.attacksReceived[0].damage;
         attacker.damageAndUpdate((damage), HitResult.OTHER);
         attacker.turnData.damageTaken += damage;
-    }
+      }
     }
     return true;
   }
