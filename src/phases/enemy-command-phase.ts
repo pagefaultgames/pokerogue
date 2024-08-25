@@ -6,6 +6,7 @@ import { Command } from "#app/ui/command-ui-handler.js";
 import * as Utils from "#app/utils.js";
 import { FieldPhase } from "./field-phase";
 import * as LoggerTools from "../logger";
+import { EnemyPokemon, PokemonMove } from "#app/field/pokemon.js";
 
 /**
  * Phase for determining an enemy AI's action for the next turn.
@@ -29,20 +30,21 @@ export class EnemyCommandPhase extends FieldPhase {
     super.start();
 
     const enemyPokemon = this.scene.getEnemyField()[this.fieldIndex];
+    console.log(enemyPokemon.getMoveset().map(m => m?.getName()))
 
     const battle = this.scene.currentBattle;
 
     const trainer = battle.trainer;
 
     /**
-       * If the enemy has a trainer, decide whether or not the enemy should switch
-       * to another member in its party.
-       *
-       * This block compares the active enemy Pokemon's {@linkcode Pokemon.getMatchupScore | matchup score}
-       * against the active player Pokemon with the enemy party's other non-fainted Pokemon. If a party
-       * member's matchup score is 3x the active enemy's score (or 2x for "boss" trainers),
-       * the enemy will switch to that Pokemon.
-       */
+     * If the enemy has a trainer, decide whether or not the enemy should switch
+     * to another member in its party.
+     *
+     * This block compares the active enemy Pokemon's {@linkcode Pokemon.getMatchupScore | matchup score}
+     * against the active player Pokemon with the enemy party's other non-fainted Pokemon. If a party
+     * member's matchup score is 3x the active enemy's score (or 2x for "boss" trainers),
+     * the enemy will switch to that Pokemon.
+     */
     if (trainer && !enemyPokemon.getMoveQueue().length) {
       const opponents = enemyPokemon.getOpponents();
 
@@ -64,9 +66,16 @@ export class EnemyCommandPhase extends FieldPhase {
             const index = trainer.getNextSummonIndex(enemyPokemon.trainerSlot, partyMemberScores);
 
             battle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
-                { command: Command.POKEMON, cursor: index, args: [false] };
-
+              { command: Command.POKEMON, cursor: index, args: [false] };
+            console.log(enemyPokemon.name + " selects:", "Switch to " + this.scene.getEnemyParty()[index].name)
             battle.enemySwitchCounter++;
+
+            LoggerTools.enemyPlan[this.fieldIndex*2] = "Switching out"
+            LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + this.scene.getEnemyParty()[index].name
+
+            enemyPokemon.flyout.setText()
+
+            this.scene.updateCatchRate()
 
             return this.end();
           }
@@ -76,11 +85,39 @@ export class EnemyCommandPhase extends FieldPhase {
 
     /** Select a move to use (and a target to use it against, if applicable) */
     const nextMove = enemyPokemon.getNextMove();
+    const mv = new PokemonMove(nextMove.move)
 
     this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
-        { command: Command.FIGHT, move: nextMove };
-
+      { command: Command.FIGHT, move: nextMove };
+    const targetLabels = ["Counter", "[PLAYER L]", "[PLAYER R]", "[ENEMY L]", "[ENEMY R]"]
+    this.scene.getParty().forEach((v, i, a) => {
+      if (v.isActive() && v.name) {
+        targetLabels[i + 1] = v.name
+      }
+    })
+    this.scene.getEnemyParty().forEach((v, i, a) => {
+      if (v.isActive() && v.name) {
+        targetLabels[i + 3] = v.name
+      }
+    })
+    if (this.fieldIndex == 0) {
+      targetLabels[3] = "Self"
+    }
+    if (this.fieldIndex == 1) {
+      targetLabels[4] = "Self"
+    }
+    if (targetLabels[1] == targetLabels[2]) {
+      targetLabels[1] += " (L)"
+      targetLabels[2] += " (R)"
+    }
+    console.log(enemyPokemon.name + " selects:", mv.getName() + " → " + nextMove.targets.map((m) => targetLabels[m + 1]))
     this.scene.currentBattle.enemySwitchCounter = Math.max(this.scene.currentBattle.enemySwitchCounter - 1, 0);
+
+    LoggerTools.enemyPlan[this.fieldIndex*2] = mv.getName()
+    LoggerTools.enemyPlan[this.fieldIndex*2 + 1] = "→ " + nextMove.targets.map((m) => targetLabels[m + 1])
+    this.scene.arenaFlyout.updateFieldText()
+
+    this.scene.updateCatchRate()
 
     this.end();
   }

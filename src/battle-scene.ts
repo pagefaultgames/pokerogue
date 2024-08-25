@@ -411,6 +411,7 @@ export default class BattleScene extends SceneBase {
 
     this.fieldUI = fieldUI;
 
+    /*
     const transition = this.make.rexTransitionImagePack({
       x: 0,
       y: 0,
@@ -430,6 +431,7 @@ export default class BattleScene extends SceneBase {
     });
 
     this.add.existing(transition);
+    */
 
     const uiContainer = this.add.container(0, 0);
     uiContainer.setName("ui");

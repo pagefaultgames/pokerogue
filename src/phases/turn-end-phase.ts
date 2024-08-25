@@ -23,6 +23,8 @@ export class TurnEndPhase extends FieldPhase {
   start() {
     super.start();
 
+    this.scene.arenaFlyout.updateFieldText()
+
     this.scene.currentBattle.incrementTurn(this.scene);
     this.scene.eventTarget.dispatchEvent(new TurnEndEvent(this.scene.currentBattle.turn));
 

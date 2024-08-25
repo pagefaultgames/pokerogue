@@ -54,8 +54,8 @@ export class CommandPhase extends FieldPhase {
     const moveQueue = playerPokemon.getMoveQueue();
 
     while (moveQueue.length && moveQueue[0]
-        && moveQueue[0].move && (!playerPokemon.getMoveset().find(m => m?.moveId === moveQueue[0].move)
-          || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m?.moveId === moveQueue[0].move)]!.isUsable(playerPokemon, moveQueue[0].ignorePP))) { // TODO: is the bang correct?
+      && moveQueue[0].move && (!playerPokemon.getMoveset().find(m => m?.moveId === moveQueue[0].move)
+        || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m?.moveId === moveQueue[0].move)]!.isUsable(playerPokemon, moveQueue[0].ignorePP))) { // TODO: is the bang correct?
       moveQueue.shift();
     }
 
@@ -85,8 +85,8 @@ export class CommandPhase extends FieldPhase {
     case Command.FIGHT:
       let useStruggle = false;
       if (cursor === -1 ||
-            playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
-            (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m?.isUsable(playerPokemon)).length)) {
+          playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
+          (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m?.isUsable(playerPokemon)).length)) {
         const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor]!.moveId : Moves.NONE : Moves.STRUGGLE; // TODO: is the bang correct?
         const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
         const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
@@ -98,9 +98,9 @@ export class CommandPhase extends FieldPhase {
           this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
         }
         if (moveTargets.targets.length <= 1 || moveTargets.multiple) {
-            turnCommand.move!.targets = moveTargets.targets; //TODO: is the bang correct here?
+          turnCommand.move!.targets = moveTargets.targets; //TODO: is the bang correct here?
         } else if (playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
-            turnCommand.move!.targets = playerPokemon.getMoveQueue()[0].targets; //TODO: is the bang correct here?
+          turnCommand.move!.targets = playerPokemon.getMoveQueue()[0].targets; //TODO: is the bang correct here?
         } else {
           this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
         }
@@ -112,8 +112,8 @@ export class CommandPhase extends FieldPhase {
 
         // Decides between a Disabled, Not Implemented, or No PP translation message
         const errorMessage =
-              playerPokemon.summonData.disabledMove === move.moveId ? "battle:moveDisabled" :
-                move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
+            playerPokemon.summonData.disabledMove === move.moveId ? "battle:moveDisabled" :
+              move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
         const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
         this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
@@ -158,11 +158,11 @@ export class CommandPhase extends FieldPhase {
             }, null, true);
           } else {
             this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.BALL, cursor: cursor };
-              this.scene.currentBattle.turnCommands[this.fieldIndex]!.targets = targets;
-              if (this.fieldIndex) {
-                this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
-              }
-              success = true;
+            this.scene.currentBattle.turnCommands[this.fieldIndex]!.targets = targets;
+            if (this.fieldIndex) {
+              this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
+            }
+            success = true;
           }
         }
       }
@@ -198,7 +198,7 @@ export class CommandPhase extends FieldPhase {
             : { command: Command.RUN };
           success = true;
           if (!isSwitch && this.fieldIndex) {
-              this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
+            this.scene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
           }
         } else if (trapTag) {
           if (trapTag.sourceMove === Moves.INGRAIN && trapTag.sourceId && this.scene.getPokemonById(trapTag.sourceId)?.isOfType(Type.GHOST)) {

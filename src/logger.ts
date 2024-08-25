@@ -1905,7 +1905,7 @@ export function resetWaveActions(scene: BattleScene, floor: integer = scene.curr
 
 
 // #region Utils from Phases.ts
-const tierNames = [
+export const tierNames = [
   "Poké",
   "Great",
   "Ultra",

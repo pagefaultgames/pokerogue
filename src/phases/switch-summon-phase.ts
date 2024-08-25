@@ -21,14 +21,14 @@ export class SwitchSummonPhase extends SummonPhase {
   private lastPokemon: Pokemon;
 
   /**
-     * Constructor for creating a new SwitchSummonPhase
-     * @param scene {@linkcode BattleScene} the scene the phase is associated with
-     * @param fieldIndex integer representing position on the battle field
-     * @param slotIndex integer for the index of pokemon (in party of 6) to switch into
-     * @param doReturn boolean whether to render "comeback" dialogue
-     * @param batonPass boolean if the switch is from baton pass
-     * @param player boolean if the switch is from the player
-     */
+   * Constructor for creating a new SwitchSummonPhase
+   * @param scene {@linkcode BattleScene} the scene the phase is associated with
+   * @param fieldIndex integer representing position on the battle field
+   * @param slotIndex integer for the index of pokemon (in party of 6) to switch into
+   * @param doReturn boolean whether to render "comeback" dialogue
+   * @param batonPass boolean if the switch is from baton pass
+   * @param player boolean if the switch is from the player
+   */
   constructor(scene: BattleScene, fieldIndex: integer, slotIndex: integer, doReturn: boolean, batonPass: boolean, player?: boolean) {
     super(scene, fieldIndex, player !== undefined ? player : true);
 
@@ -99,7 +99,7 @@ export class SwitchSummonPhase extends SummonPhase {
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id));
       if (!this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
         const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
-            && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
+          && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
         if (batonPassModifier && !this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
           this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedInPokemon, false);
         }

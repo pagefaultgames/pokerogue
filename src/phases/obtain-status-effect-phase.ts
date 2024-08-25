@@ -29,7 +29,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
     if (!pokemon?.status) {
       if (pokemon?.trySetStatus(this.statusEffect, false, this.sourcePokemon)) {
         if (this.cureTurn) {
-            pokemon.status!.cureTurn = this.cureTurn; // TODO: is this bang correct?
+          pokemon.status!.cureTurn = this.cureTurn; // TODO: is this bang correct?
         }
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(this.scene, () => {

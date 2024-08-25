@@ -30,8 +30,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   }
 
   /**
-    * Sends out a Pokemon before the battle begins and shows the appropriate messages
-    */
+  * Sends out a Pokemon before the battle begins and shows the appropriate messages
+  */
   preSummon(): void {
     const partyMember = this.getPokemon();
     // If the Pokemon about to be sent out is fainted or illegal under a challenge, switch to the first non-fainted legal Pokemon

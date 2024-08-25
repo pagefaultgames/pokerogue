@@ -170,7 +170,7 @@ export class StatChangePhase extends PokemonPhase {
 
   getRandomStat(): BattleStat {
     const allStats = Utils.getEnumValues(BattleStat);
-    return this.getPokemon() ? allStats[this.getPokemon()!.randSeedInt(BattleStat.SPD + 1)] : BattleStat.ATK; // TODO: return default ATK on random? idk...
+    return this.getPokemon() ? allStats[this.getPokemon()!.randSeedInt(BattleStat.SPD + 1, undefined, "Randomly selecting a stat")] : BattleStat.ATK; // TODO: return default ATK on random? idk...
   }
 
   aggregateStatChanges(random: boolean = false): void {

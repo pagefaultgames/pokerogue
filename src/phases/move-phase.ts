@@ -218,10 +218,10 @@ export class MovePhase extends BattlePhase {
       }
 
       /**
-         * Trigger pokemon type change before playing the move animation
-         * Will still change the user's type when using Roar, Whirlwind, Trick-or-Treat, and Forest's Curse,
-         * regardless of whether the move successfully executes or not.
-         */
+       * Trigger pokemon type change before playing the move animation
+       * Will still change the user's type when using Roar, Whirlwind, Trick-or-Treat, and Forest's Curse,
+       * regardless of whether the move successfully executes or not.
+       */
       if (success || [Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)) {
         applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
       }
@@ -254,7 +254,7 @@ export class MovePhase extends BattlePhase {
 
       switch (this.pokemon.status.effect) {
       case StatusEffect.PARALYSIS:
-        if (!this.pokemon.randSeedInt(4)) {
+        if (!this.pokemon.randSeedInt(4, undefined, "Paralysis chance")) {
           activated = true;
           this.cancelled = true;
         }
@@ -266,7 +266,7 @@ export class MovePhase extends BattlePhase {
         this.cancelled = activated;
         break;
       case StatusEffect.FREEZE:
-        healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5);
+        healed = !!this.move.getMove().findAttr(attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE)) || !this.pokemon.randSeedInt(5, undefined, "Chance to thaw out from freeze");
         activated = !healed;
         this.cancelled = activated;
         break;

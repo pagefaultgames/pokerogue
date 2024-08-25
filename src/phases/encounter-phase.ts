@@ -26,6 +26,7 @@ import { ScanIvsPhase } from "./scan-ivs-phase";
 import { ShinySparklePhase } from "./shiny-sparkle-phase";
 import { SummonPhase } from "./summon-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
+import { GameModes } from "#app/game-mode.js";
 import * as LoggerTools from "../logger";
 
 export class EncounterPhase extends BattlePhase {
@@ -57,11 +58,17 @@ export class EncounterPhase extends BattlePhase {
 
     let totalBst = 0;
 
+    while (LoggerTools.rarities.length > 0) {
+      LoggerTools.rarities.pop()
+    }
+    LoggerTools.rarityslot[0] = 0
+    //console.log(this.scene.gameMode.getDailyOverride())
     battle.enemyLevels?.forEach((level, e) => {
       if (!this.loaded) {
         if (battle.battleType === BattleType.TRAINER) {
           battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
         } else {
+          LoggerTools.rarityslot[0] = e
           const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
           battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
           if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
@@ -105,6 +112,7 @@ export class EncounterPhase extends BattlePhase {
 
       console.log(getPokemonNameWithAffix(enemyPokemon), enemyPokemon.species.speciesId, enemyPokemon.stats);
     });
+    console.log(LoggerTools.rarities)
 
     if (this.scene.getParty().filter(p => p.isShiny()).length === 6) {
       this.scene.validateAchv(achvs.SHINY_PARTY);
@@ -174,10 +182,10 @@ export class EncounterPhase extends BattlePhase {
     this.scene.setFieldScale(1);
 
     /*if (startingWave > 10) {
-        for (let m = 0; m < Math.min(Math.floor(startingWave / 10), 99); m++)
-          this.scene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getParty())[0].type.newModifier(), true);
-        this.scene.updateModifiers(true);
-      }*/
+      for (let m = 0; m < Math.min(Math.floor(startingWave / 10), 99); m++)
+        this.scene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getParty())[0].type.newModifier(), true);
+      this.scene.updateModifiers(true);
+    }*/
 
     for (const pokemon of this.scene.getParty()) {
       if (pokemon) {
@@ -225,6 +233,30 @@ export class EncounterPhase extends BattlePhase {
 
   doEncounterCommon(showEncounterMessage: boolean = true) {
     const enemyField = this.scene.getEnemyField();
+
+    //LoggerTools.resetWave(this.scene, this.scene.currentBattle.waveIndex)
+    if (this.scene.lazyReloads) {
+      LoggerTools.flagResetIfExists(this.scene)
+    }
+    LoggerTools.logTeam(this.scene, this.scene.currentBattle.waveIndex)
+    if (this.scene.getEnemyParty()[0].hasTrainer()) {
+      LoggerTools.logTrainer(this.scene, this.scene.currentBattle.waveIndex)
+    }
+    if (this.scene.currentBattle.waveIndex == 1) {
+      LoggerTools.logPlayerTeam(this.scene)
+      if (this.scene.gameMode.modeId == GameModes.DAILY && this.scene.disableDailyShinies) {
+        this.scene.getParty().forEach(p => {
+          p.species.luckOverride = 0; // Disable shiny luck for party members
+        })
+      }
+    }
+    LoggerTools.resetWaveActions(this.scene, undefined, true)
+
+    //this.scene.doShinyCheck()
+
+    if (LoggerTools.autoCheckpoints.includes(this.scene.currentBattle.waveIndex)) {
+      //this.scene.gameData.saveGameToAuto(this.scene)
+    }
 
     if (this.scene.currentBattle.battleType === BattleType.WILD) {
       enemyField.forEach(enemyPokemon => {
@@ -351,7 +383,15 @@ export class EncounterPhase extends BattlePhase {
         }
       }
     }
-    handleTutorial(this.scene, Tutorial.Access_Menu).then(() => super.end());
+    handleTutorial(this.scene, Tutorial.Access_Menu).then(() => {
+      // Auto-show the flyout
+      if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+        this.scene.arenaFlyout.display2()
+        this.scene.arenaFlyout.toggleFlyout(true)
+        this.scene.arenaFlyout.isAuto = true
+      }
+      super.end()
+    });
   }
 
   tryOverrideForBattleSpec(): boolean {

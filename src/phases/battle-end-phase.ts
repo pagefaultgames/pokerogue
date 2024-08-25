@@ -51,6 +51,37 @@ export class BattleEndPhase extends BattlePhase {
       }
     }
 
+    // Format this wave's logs
+    var drpd: LoggerTools.DRPD = LoggerTools.getDRPD(this.scene)
+    var wv: LoggerTools.Wave = LoggerTools.getWave(drpd, this.scene.currentBattle.waveIndex, this.scene)
+    var lastcount = 0;
+    var lastval;
+    var tempActions: string[] = wv.actions.slice();
+    var prevWaveActions: string[] = []
+    wv.actions = []
+    // Loop through each action
+    for (var i = 0; i < tempActions.length; i++) {
+      if (tempActions[i].substring(0, 10) == "[MOVEBACK]") {
+        prevWaveActions.push(tempActions[i].substring(10))
+      } else if (tempActions[i] != lastval) {
+        if (lastcount > 0) {
+          wv.actions.push(lastval + (lastcount == 1 ? "" : " x" + lastcount))
+        }
+        lastval = tempActions[i]
+        lastcount = 1
+      } else {
+        lastcount++
+      }
+    }
+    if (lastcount > 0) {
+      wv.actions.push(lastval + (lastcount == 1 ? "" : " x" + lastcount))
+    }
+    console.log(tempActions, wv.actions)
+    var wv2: LoggerTools.Wave = LoggerTools.getWave(drpd, this.scene.currentBattle.waveIndex - 1, this.scene)
+    wv2.actions = wv2.actions.concat(prevWaveActions)
+    console.log(drpd)
+    LoggerTools.save(this.scene, drpd)
+
     this.scene.updateModifiers().then(() => this.end());
   }
 }
