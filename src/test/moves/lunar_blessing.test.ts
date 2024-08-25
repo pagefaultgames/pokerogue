@@ -45,13 +45,20 @@ describe("Moves - Lunar Blessing", () => {
     rightPlayer["hp"] = initialHp;
     const expectedHeal = 25;
 
+    vi.spyOn(leftPlayer, "heal");
+    vi.spyOn(rightPlayer, "heal");
+
+
     game.move.select(Moves.LUNAR_BLESSING, 0);
     await game.phaseInterceptor.to(CommandPhase);
     game.move.select(Moves.SPLASH, 1);
     await game.toNextTurn();
 
-    expect(leftPlayer.hp).toBe(expectedHeal + initialHp);
-    expect(rightPlayer.hp).toBe(expectedHeal + initialHp);
+    expect(leftPlayer.heal).toHaveBeenCalledOnce();
+    expect(leftPlayer.heal).toHaveReturnedWith(expectedHeal);
+
+    expect(rightPlayer.heal).toHaveBeenCalledOnce();
+    expect(rightPlayer.heal).toHaveReturnedWith(expectedHeal);
   });
 
   it("should cure status effect of the user and its ally", async () => {
@@ -59,11 +66,16 @@ describe("Moves - Lunar Blessing", () => {
     await game.startBattle([Species.RATTATA, Species.RATTATA]);
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
 
+    vi.spyOn(leftPlayer, "resetStatus");
+    vi.spyOn(rightPlayer, "resetStatus");
 
     game.move.select(Moves.LUNAR_BLESSING, 0);
     await game.phaseInterceptor.to(CommandPhase);
     game.move.select(Moves.SPLASH, 1);
     await game.toNextTurn();
+
+    expect(leftPlayer.resetStatus).toHaveBeenCalledOnce();
+    expect(rightPlayer.resetStatus).toHaveBeenCalledOnce();
 
     expect(leftPlayer.status?.effect).toBeUndefined();
     expect(rightPlayer.status?.effect).toBeUndefined();
