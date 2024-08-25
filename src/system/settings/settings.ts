@@ -119,7 +119,7 @@ export const SettingKeys = {
   BGM_Volume: "BGM_VOLUME",
   Field_Volume: "FIELD_VOLUME",
   SE_Volume: "SE_VOLUME",
-  UI_Sound_Effects: "UI_SOUND_EFFECTS",
+  UI_Volume: "UI_SOUND_EFFECTS",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
@@ -558,8 +558,8 @@ export const Setting: Array<Setting> = [
     type: SettingType.AUDIO
   },
   {
-    key: SettingKeys.UI_Sound_Effects,
-    label: i18next.t("settings:uiSoundEffects"),
+    key: SettingKeys.UI_Volume,
+    label: i18next.t("settings:uiVolume"),
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO
@@ -678,7 +678,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.seVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     scene.updateSoundVolume();
     break;
-  case SettingKeys.UI_Sound_Effects:
+  case SettingKeys.UI_Volume:
     scene.uiVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     break;
   case SettingKeys.Music_Preference:

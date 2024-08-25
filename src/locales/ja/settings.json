@@ -48,7 +48,6 @@
   "masterVolume": "マスターボリューム",
   "bgmVolume": "BGMのボリューム",
   "seVolume": "SEのボリューム",
-  "uiSoundEffects": "UI Sound Effects",
   "reset": "リセット",
   "requireReload": "再読み込みが必要",
   "action": "決定",
