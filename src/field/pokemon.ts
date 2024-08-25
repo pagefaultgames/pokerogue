@@ -1210,8 +1210,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculates the type of a move when used by this Pokemon after
    * type-changing move and ability attributes have applied.
-   * @param move {@linkcode Move} - The move being used.
-   * @param simulated - If `true`, prevents showing abilities applied in this calculation.
+   * @param move {@linkcode Move} The move being used.
+   * @param simulated If `true`, prevents showing abilities applied in this calculation.
    * @returns the {@linkcode Type} of the move after attributes are applied
    */
   getMoveType(move: Move, simulated: boolean = true): Type {
@@ -1228,15 +1228,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculates the effectiveness of a move against the Pokémon.
    *
-   * @param source {@linkcode Pokemon} - The attacking Pokémon.
-   * @param move {@linkcode Move} - The move being used by the attacking Pokémon.
-   * @param ignoreAbility - Whether to ignore abilities that might affect type effectiveness or immunity (defaults to `false`).
-   * @param simulated - Whether to apply abilities via simulated calls (defaults to `true`)
-   * @param cancelled {@linkcode Utils.BooleanHolder} - Stores whether the move was cancelled by a non-type-based immunity.
+   * @param source {@linkcode Pokemon} The attacking Pokémon.
+   * @param move {@linkcode Move} The move being used by the attacking Pokémon.
+   * @param ignoreAbility Whether to ignore abilities that might affect type effectiveness or immunity (defaults to `false`).
+   * @param simulated Whether to apply abilities via simulated calls (defaults to `true`)
+   * @param cancelled {@linkcode Utils.BooleanHolder} Stores whether the move was cancelled by a non-type-based immunity.
    * Currently only used by {@linkcode Pokemon.apply} to determine whether a "No effect" message should be shown.
    * @returns The type damage multiplier, indicating the effectiveness of the move
    */
-  getMoveEffectiveness(source: Pokemon, move: Move, ignoreAbility: boolean = false, simulated: boolean = true, cancelled: Utils.BooleanHolder | null = null): TypeDamageMultiplier {
+  getMoveEffectiveness(source: Pokemon, move: Move, ignoreAbility: boolean = false, simulated: boolean = true, cancelled?: Utils.BooleanHolder): TypeDamageMultiplier {
     if (move.hasAttr(TypelessAttr)) {
       return 1;
     }
@@ -1255,7 +1255,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!ignoreAbility) {
       applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelledHolder, simulated, typeMultiplier);
 
-      if (!cancelledHolder.value && !ignoreAbility) {
+      if (!cancelledHolder.value) {
         applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelledHolder, simulated, typeMultiplier);
       }
 
@@ -2020,7 +2020,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
          */
         const isTypeImmune = (typeMultiplier * arenaAttackTypeMultiplier.value) === 0;
         if (isTypeImmune) {
-          // Moves with no effect but were not cancelled queue a "no effect" message before failing
+          // Moves with no effect that were not cancelled queue a "no effect" message before failing
           source.stopMultiHit(this);
           result = (move.id === Moves.SHEER_COLD)
             ? HitResult.IMMUNE
