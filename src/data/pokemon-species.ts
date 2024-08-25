@@ -2263,7 +2263,7 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.APPLETUN, 8, false, false, false, "Apple Nectar Pokémon", Type.GRASS, Type.DRAGON, 0.4, 13, Abilities.RIPEN, Abilities.GLUTTONY, Abilities.THICK_FAT, 485, 110, 85, 80, 100, 80, 30, 45, 50, 170, GrowthRate.ERRATIC, 50, false, true,
       new PokemonForm("Normal", "", Type.GRASS, Type.DRAGON, 0.4, 13, Abilities.RIPEN, Abilities.GLUTTONY, Abilities.THICK_FAT, 485, 110, 85, 80, 100, 80, 30, 45, 50, 170, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.GRASS, Type.DRAGON, 24, 13, Abilities.THICK_FAT, Abilities.THICK_FAT, Abilities.THICK_FAT, 585, 130, 75, 115, 120, 115, 25, 45, 50, 170),
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.GRASS, Type.DRAGON, 24, 13, Abilities.THICK_FAT, Abilities.THICK_FAT, Abilities.THICK_FAT, 585, 130, 75, 115, 125, 115, 25, 45, 50, 170),
     ),
     new PokemonSpecies(Species.SILICOBRA, 8, false, false, false, "Sand Snake Pokémon", Type.GROUND, null, 2.2, 7.6, Abilities.SAND_SPIT, Abilities.SHED_SKIN, Abilities.SAND_VEIL, 315, 52, 57, 75, 35, 50, 46, 255, 50, 63, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.SANDACONDA, 8, false, false, false, "Sand Snake Pokémon", Type.GROUND, null, 3.8, 65.5, Abilities.SAND_SPIT, Abilities.SHED_SKIN, Abilities.SAND_VEIL, 510, 72, 107, 125, 65, 70, 71, 120, 50, 179, GrowthRate.MEDIUM_FAST, 50, false, true,
