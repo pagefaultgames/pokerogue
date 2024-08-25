@@ -57,7 +57,7 @@ import weather from "./weather.json";
 import terrain from "./terrain.json";
 import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
 import moveTriggers from "./move-trigger.json";
-import runHistory from "./run-history-ui-handler.json";
+import runHistory from "./run-history.json";
 
 export const jaConfig = {
   ability,
