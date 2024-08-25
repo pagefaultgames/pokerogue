@@ -1261,20 +1261,12 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
         attr instanceof CopyMoveAttr
       )
     ) {
-      const moveType = new Utils.IntegerHolder(move.type);
+      const moveType = pokemon.getMoveType(move);
 
-      // Moves like Weather Ball ignore effects of abilities like Normalize and Refrigerate
-      if (move.findAttr(attr => attr instanceof VariableMoveTypeAttr)) {
-        applyMoveAttrs(VariableMoveTypeAttr, pokemon, null, move, moveType);
-      } else {
-        // This is always simulated to hide the ability pop-up
-        applyPreAttackAbAttrs(MoveTypeChangeAbAttr, pokemon, null, move, true, moveType);
-      }
-
-      if (pokemon.getTypes().some((t) => t !== moveType.value)) {
+      if (pokemon.getTypes().some((t) => t !== moveType)) {
         if (!simulated) {
-          this.moveType = moveType.value;
-          pokemon.summonData.types = [moveType.value];
+          this.moveType = moveType;
+          pokemon.summonData.types = [moveType];
           pokemon.updateInfo();
         }
 
@@ -2917,7 +2909,7 @@ function getAnticipationCondition(): AbAttrCondition {
         if (!move) {
           continue;
         }
-        // move is super effective (not accounting for )
+        // the move's base type (not accounting for variable type changes) is super effective
         if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().type, opponent, true) >= 2) {
           return true;
         }

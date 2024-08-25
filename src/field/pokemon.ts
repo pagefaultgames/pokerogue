@@ -1273,7 +1273,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    return (!cancelledHolder.value ? Number(typeMultiplier.value) : 0) as TypeDamageMultiplier;
+    return (!cancelledHolder.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
   }
 
   /**
