@@ -702,7 +702,7 @@
   "plumeria": {
     "encounter": {
       "1": " ...Hmph. You don't look like anything special to me.",
-      "2": "It takes these dumb Grunts way too long to deal with you kids..",
+      "2": "It takes these dumb Grunts way too long to deal with you kids...",
       "3": "Mess with anyone in Team Skull, and I'll show you how serious I can get."
     },
     "victory": {
@@ -872,7 +872,7 @@
       "1": "You're going to startle my sweet beast! It looks like I'll need to silence you first."
     },
     "victory": {
-      "1": "How.. how can you be so awful!"
+      "1": "How... how can you be so awful!"
     },
     "defeat": {
       "1": "Hmph..."
