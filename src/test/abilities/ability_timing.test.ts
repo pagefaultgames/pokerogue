@@ -1,15 +1,15 @@
+import { CommandPhase } from "#app/phases/command-phase";
+import { MessagePhase } from "#app/phases/message-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import i18next, { initI18n } from "#app/plugins/i18n";
-import GameManager from "#test/utils/gameManager";
 import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { MessagePhase } from "#app/phases/message-phase.js";
-import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 
 describe("Ability Timing", () => {
