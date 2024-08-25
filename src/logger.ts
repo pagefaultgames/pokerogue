@@ -6,14 +6,24 @@ import { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import { Nature, getNatureDecrease, getNatureIncrease, getNatureName } from "./data/nature";
 import BattleScene from "./battle-scene";
 import { OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
-import { PokemonHeldItemModifier } from "./modifier/modifier";
+import { BypassSpeedChanceModifier, EnemyAttackStatusEffectChanceModifier, ExtraModifierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { getBiomeName, PokemonPools, SpeciesTree } from "./data/biomes";
 import { Mode } from "./ui/ui";
-import { parseSlotData, TitlePhase } from "./phases";
+import { TitlePhase } from "./phases/title-phase";
 import Trainer from "./field/trainer";
 import { Species } from "./enums/species";
 import { GameMode, GameModes } from "./game-mode";
+import PersistentModifierData from "./system/modifier-data";
 import PokemonSpecies from "./data/pokemon-species";
+import { getStatusEffectCatchRateMultiplier, StatusEffect } from "./data/status-effect";
+import { decrypt, SessionSaveData } from "./system/game-data";
+import { loggedInUser } from "./account";
+import PokemonData from "./system/pokemon-data";
+import TrainerData from "./system/trainer-data";
+import ArenaData from "./system/arena-data";
+import ChallengeData from "./system/challenge-data";
+import { Challenges } from "./enums/challenges";
+import { getPlayerModifierTypeOptions, ModifierPoolType, ModifierTypeOption, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 
 /*
 SECTIONS
@@ -641,10 +651,10 @@ export interface Wave {
    */
   clearActionsFlag: boolean,
   /** The trainer that you fight in this floor, if any.
-   * @see TrainerData
+   * @see LogTrainerData
    * @see Wave.type
    */
-  trainer?: TrainerData,
+  trainer?: LogTrainerData,
   /** The Pokémon that you have to battle against.
    * Not included if this is a trainer battle.
    * @see PokeData
@@ -1251,7 +1261,7 @@ function printIV(inData: string, indent: string, iv: IVData) {
  * 
  * If the wave has a Trainer, their party is not logged, and `Wave.pokemon` is left empty.
  */
-export interface TrainerData {
+export interface LogTrainerData {
   /** The trainer type's position in the Trainers enum.
    * @see Trainer
   */
@@ -1262,11 +1272,11 @@ export interface TrainerData {
   type: string,
 }
 /**
- * Exports the opposing trainer as `TrainerData`.
+ * Exports the opposing trainer as `LogTrainerData`.
  * @param trainer The Trainer to store.
  * @returns The Trainer data.
  */
-export function exportTrainer(trainer: Trainer): TrainerData {
+export function exportTrainer(trainer: Trainer): LogTrainerData {
   return {
     id: trainer.config.trainerType,
     name: trainer.getNameOnly(),
@@ -1277,12 +1287,12 @@ export function exportTrainer(trainer: Trainer): TrainerData {
  * Prints a Trainer as a string, for saving a DRPD to your device.
  * @param inData The data to add on to.
  * @param indent The indent string (just a bunch of spaces).
- * @param wave The `TrainerData` to export.
+ * @param wave The `LogTrainerData` to export.
  * @returns `inData`, with all the Trainer's data appended to it.
  * 
  * @see printDRPD
  */
-function printTrainer(inData: string, indent: string, trainer: TrainerData) {
+function printTrainer(inData: string, indent: string, trainer: LogTrainerData) {
   inData += "{"
   inData += "\n" + indent + "  \"id\": \"" + trainer.id + "\""
   inData += ",\n" + indent + "  \"name\": \"" + trainer.name + "\""
@@ -1816,7 +1826,7 @@ export function logTrainer(scene: BattleScene, floor: integer = scene.currentBat
   drpd = updateLog(drpd);
   console.log(`Logging trainer: ${scene.currentBattle.trainer!.getTitleOnly()} ${scene.currentBattle.trainer!.getNameOnly()}`)
   var wv: Wave = getWave(drpd, floor, scene)
-  var t: TrainerData = exportTrainer(scene.currentBattle.trainer!)
+  var t: LogTrainerData = exportTrainer(scene.currentBattle.trainer!)
   wv.trainer = t
   wv.type = "trainer"
   console.log("--> ", drpd)
@@ -1889,3 +1899,379 @@ export function resetWaveActions(scene: BattleScene, floor: integer = scene.curr
   localStorage.setItem(getLogID(scene), JSON.stringify(drpd))
 }
 //#endregion
+
+
+
+
+
+// #region Utils from Phases.ts
+const tierNames = [
+  "Poké",
+  "Great",
+  "Ultra",
+  "Rogue",
+  "Master"
+]
+/**
+ * This function rolls for modifiers with a certain luck value, checking to see if shiny luck would affect your results.
+ * @param scene 
+ * @param predictionCost 
+ * @param rerollOverride 
+ * @param modifierOverride 
+ * @returns 
+ */
+export function shinyCheckStep(scene: BattleScene, predictionCost: Utils.IntegerHolder, rerollOverride: integer, modifierOverride?: integer) {
+  var minLuck = -1
+  var modifierPredictions: ModifierTypeOption[][] = []
+  const party = scene.getParty();
+  regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER, rerollOverride);
+  const modifierCount = new Utils.IntegerHolder(3);
+  scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
+  if (modifierOverride) {
+    //modifierCount.value = modifierOverride
+  }
+  var isOk = true;
+  const typeOptions: ModifierTypeOption[] = getPlayerModifierTypeOptions(modifierCount.value, scene.getParty(), undefined, scene, true, true);
+  typeOptions.forEach((option, idx) => {
+    let lastTier = option.type!.tier
+    if (option.alternates && option.alternates.length > 0) {
+      for (var i = 0; i < option.alternates.length; i++) {
+        if (option.alternates[i] > lastTier) {
+          //lastTier = option.alternates[i]
+          //console.log("Conflict found! (" + i + " luck, " + rerollOverride + " rolls, item " + (idx + 1) + ")")
+          isOk = false // Shiny Luck affects this wave in some way
+          if (minLuck == -1 && i != 0)
+            minLuck = i
+        }
+      }
+    }
+  })
+  modifierPredictions.push(typeOptions)
+  predictionCost.value += (Math.min(Math.ceil(scene.currentBattle.waveIndex / 10) * 250 * Math.pow(2, rerollOverride), Number.MAX_SAFE_INTEGER))
+  return [isOk, minLuck];
+}
+/**
+ * Simulates modifier rolls for as many rerolls as you can afford, checking to see if shiny luck will alter your results.
+ * @param scene The current `BattleScene`.
+ * @returns `true` if no changes were detected, `false` otherwise
+ */
+export function runShinyCheck(scene: BattleScene, mode: integer, wv?: integer) {
+  var minLuck: integer = -1
+  if (mode == 1) {
+    scene.emulateReset(wv)
+  } else {
+    scene.resetSeed(wv);
+  }
+  const predictionCost = new Utils.IntegerHolder(0)
+  var isOk = true;
+  for (var i = 0; predictionCost.value < scene.money && i < 8; i++) {
+    var r = shinyCheckStep(scene, predictionCost, i)
+    isOk = isOk && (r[0] as boolean)
+    if (isOk || (r[1] as integer) === -1) {
+      // Do nothing
+    } else if (minLuck == -1) {
+      minLuck = (r[1] as integer)
+      console.log("Luck " + r[1] + " breaks")
+    } else {
+      console.log("Updated from " + minLuck + " to " + Math.min(minLuck, (r[1] as integer)))
+      minLuck = Math.min(minLuck, (r[1] as integer))
+    }
+  }
+  if (mode == 1) {
+    scene.restoreSeed(wv)
+  } else {
+    scene.resetSeed(wv);
+  }
+  if (!isOk) {
+    console.log("Conflict found!")
+  }
+  if (minLuck == 15) {
+    //minLuck = 0
+  }
+  return [isOk, minLuck]
+}
+function catchCalc(pokemon: EnemyPokemon) {
+  const _3m = 3 * pokemon.getMaxHp();
+  const _2h = 2 * pokemon.hp;
+  const catchRate = pokemon.species.catchRate;
+  const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
+  const rate1 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 1) / _3m) * statusMultiplier)))));
+  const rate2 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 1.5) / _3m) * statusMultiplier)))));
+  const rate3 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 2) / _3m) * statusMultiplier)))));
+  const rate4 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 3) / _3m) * statusMultiplier)))));
+
+  var rates = [rate1, rate2, rate3, rate4]
+  var rates2 = rates.map(r => ((r/65536) ** 3))
+  //console.log(rates2)
+
+  return rates2
+}
+function catchCalcRaw(pokemon: EnemyPokemon) {
+  const _3m = 3 * pokemon.getMaxHp();
+  const _2h = 2 * pokemon.hp;
+  const catchRate = pokemon.species.catchRate;
+  const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
+  const rate1 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 1) / _3m) * statusMultiplier)))));
+  const rate2 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 1.5) / _3m) * statusMultiplier)))));
+  const rate3 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 2) / _3m) * statusMultiplier)))));
+  const rate4 = Math.round(65536 / Math.sqrt(Math.sqrt(255 / (Math.round((((_3m - _2h) * catchRate * 3) / _3m) * statusMultiplier)))));
+
+  var rates = [rate1, rate2, rate3, rate4]
+  var rates2 = rates.map(r => ((r/65536) ** 3))
+  //console.log(rates2)
+  //console.log("output: ", rates)
+
+  return rates
+}
+
+/**
+ * Finds the best Poké Ball to catch a Pokemon with, and the % chance of capturing it.
+ * @param pokemon The Pokémon to get the catch rate for.
+ * @param override Show the best Poké Ball to use, even if you don't have any.
+ * @returns The name and % rate of the best Poké Ball.
+ */
+export function findBest(scene: BattleScene, pokemon: EnemyPokemon, override?: boolean) {
+  var rates = catchCalc(pokemon)
+  var rates_raw = catchCalcRaw(pokemon)
+  var rolls = []
+  var offset = 0
+  scene.getModifiers(BypassSpeedChanceModifier, true).forEach(m => {
+    //console.log(m, m.getPokemon(this.scene), pokemon)
+    var p = m.getPokemon(scene)
+    scene.getField().forEach((p2, idx) => {
+      if (p == p2) {
+        console.log(m.getPokemon(scene)?.name + " (Position: " + (idx + 1) + ") has a Quick Claw")
+        offset++
+      }
+    })
+  })
+  scene.currentBattle.multiInt(scene, rolls, offset + 3, 65536, undefined, "Catch prediction")
+  //console.log(rolls)
+  //console.log(rolls.slice(offset, offset + 3))
+  if (scene.pokeballCounts[0] == 0 && !override) rates[0] = 0
+  if (scene.pokeballCounts[1] == 0 && !override) rates[1] = 0
+  if (scene.pokeballCounts[2] == 0 && !override) rates[2] = 0
+  if (scene.pokeballCounts[3] == 0 && !override) rates[3] = 0
+  var rates2 = rates.slice()
+  rates2.sort(function(a, b) {return b - a})
+  const ballNames = [
+    "Poké Ball",
+    "Great Ball",
+    "Ultra Ball",
+    "Rogue Ball",
+    "Master Ball"
+  ]
+  var func_output = ""
+  rates_raw.forEach((v, i) => {
+    if (scene.pokeballCounts[i] == 0 && !override)
+      return; // Don't list success for Poke Balls we don't have
+    //console.log(ballNames[i])
+    //console.log(v, rolls[offset + 0], v > rolls[offset + 0])
+    //console.log(v, rolls[offset + 1], v > rolls[offset + 1])
+    //console.log(v, rolls[offset + 2], v > rolls[offset + 2])
+    if (v > rolls[offset + 0]) {
+      //console.log("1 roll")
+      if (v > rolls[offset + 1]) {
+        //console.log("2 roll")
+        if (v > rolls[offset + 2]) {
+          //console.log("Caught!")
+          if (func_output == "") {
+            func_output = ballNames[i] + " catches"
+          }
+        }
+      }
+    }
+    if (v > rolls[offset] && v > rolls[1 + offset] && v > rolls[2 + offset]) {
+      if (func_output == "") {
+        func_output = ballNames[i] + " catches"
+      }
+    }
+  })
+  if (func_output != "") {
+    return func_output
+  }
+  return "Can't catch"
+  var n = ""
+  switch (rates2[0]) {
+    case rates[0]:
+      // Poke Balls are best
+      n = "Poké Ball "
+      break;
+    case rates[1]:
+      // Great Balls are best
+      n = "Great Ball "
+      break;
+    case rates[2]:
+      // Ultra Balls are best
+      n = "Ultra Ball "
+      break;
+    case rates[3]:
+      // Rogue Balls are best
+      n = "Rogue Ball "
+      break;
+    default:
+      // Master Balls are the only thing that will work
+      if (scene.pokeballCounts[4] != 0 || override) {
+        return "Master Ball";
+      } else {
+        return "No balls"
+      }
+  }
+  return n + " (FAIL)"
+  return n + Math.round(rates2[0] * 100) + "%";
+}
+export function parseSlotData(slotId: integer): SessionSaveData | undefined {
+  var S = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)
+  if (S == null) {
+    // No data in this slot
+    return undefined;
+  }
+  var dataStr = decrypt(S, true)
+  var Save = JSON.parse(dataStr, (k: string, v: any) => {
+    /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
+
+    if (versions[0] !== versions[1]) {
+      const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
+    }*/
+
+    if (k === "party" || k === "enemyParty") {
+      const ret: PokemonData[] = [];
+      if (v === null) {
+        v = [];
+      }
+      for (const pd of v) {
+        ret.push(new PokemonData(pd));
+      }
+      return ret;
+    }
+
+    if (k === "trainer") {
+      return v ? new TrainerData(v) : null;
+    }
+
+    if (k === "modifiers" || k === "enemyModifiers") {
+      const player = k === "modifiers";
+      const ret: PersistentModifierData[] = [];
+      if (v === null) {
+        v = [];
+      }
+      for (const md of v) {
+        if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
+          md.stackCount = Math.min(md.stackCount, 4);
+        }
+        if (md instanceof EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
+          continue;
+        }
+        ret.push(new PersistentModifierData(md, player));
+      }
+      return ret;
+    }
+
+    if (k === "arena") {
+      return new ArenaData(v);
+    }
+
+    if (k === "challenges") {
+      const ret: ChallengeData[] = [];
+      if (v === null) {
+        v = [];
+      }
+      for (const c of v) {
+        ret.push(new ChallengeData(c));
+      }
+      return ret;
+    }
+
+    return v;
+  }) as SessionSaveData;
+  Save.slot = slotId
+  Save.description = (slotId + 1) + " - "
+  var challengeParts: ChallengeData[] | undefined[] = new Array(5)
+  var nameParts: string[] | undefined[] = new Array(5)
+  if (Save.challenges != undefined) {
+    for (var i = 0; i < Save.challenges.length; i++) {
+      switch (Save.challenges[i].id) {
+        case Challenges.SINGLE_TYPE:
+          challengeParts[0] = Save.challenges[i]
+          nameParts[1] = Save.challenges[i].toChallenge().getValue()
+          nameParts[1] = nameParts[1][0].toUpperCase() + nameParts[1].substring(1)
+          if (nameParts[1] == "unknown") {
+            nameParts[1] = undefined
+            challengeParts[1] = undefined
+          }
+          break;
+        case Challenges.SINGLE_GENERATION:
+          challengeParts[1] = Save.challenges[i]
+          nameParts[0] = "Gen " + Save.challenges[i].value
+          if (nameParts[0] == "Gen 0") {
+            nameParts[0] = undefined
+            challengeParts[0] = undefined
+          }
+          break;
+        case Challenges.LOWER_MAX_STARTER_COST:
+          challengeParts[2] = Save.challenges[i]
+          nameParts[3] = (10 - challengeParts[0]!.value) + "cost"
+          break;
+        case Challenges.LOWER_STARTER_POINTS:
+          challengeParts[3] = Save.challenges[i]
+          nameParts[4] = (10 - challengeParts[0]!.value) + "pt"
+          break;
+        case Challenges.FRESH_START:
+          challengeParts[4] = Save.challenges[i]
+          nameParts[2] = "FS"
+          break;
+      }
+    }
+  }
+  for (var i = 0; i < challengeParts.length; i++) {
+    if (challengeParts[i] == undefined || challengeParts[i] == null) {
+      challengeParts.splice(i, 1)
+      i--
+    }
+  }
+  for (var i = 0; i < nameParts.length; i++) {
+    if (nameParts[i] == undefined || nameParts[i] == null || nameParts[i] == "") {
+      nameParts.splice(i, 1)
+      i--
+    }
+  }
+  if (challengeParts.length == 1 && false) {
+    switch (challengeParts[0]!.id) {
+      case Challenges.SINGLE_TYPE:
+        Save.description += "Mono " + challengeParts[0]!.toChallenge().getValue()
+        break;
+      case Challenges.SINGLE_GENERATION:
+        Save.description += "Gen " + challengeParts[0]!.value
+        break;
+      case Challenges.LOWER_MAX_STARTER_COST:
+        Save.description += "Max cost " + (10 - challengeParts[0]!.value)
+        break;
+      case Challenges.LOWER_STARTER_POINTS:
+        Save.description += (10 - challengeParts[0]!.value) + "-point"
+        break;
+      case Challenges.FRESH_START:
+        Save.description += "Fresh Start"
+        break;
+    }
+  } else if (challengeParts.length == 0) {
+    switch (Save.gameMode) {
+      case GameModes.CLASSIC:
+        Save.description += "Classic";
+        break;
+      case GameModes.ENDLESS:
+        Save.description += "Endless";
+        break;
+      case GameModes.SPLICED_ENDLESS:
+        Save.description += "Endless+";
+        break;
+      case GameModes.DAILY:
+        Save.description += "Daily";
+        break;
+    }
+  } else {
+    Save.description += nameParts.join(" ")
+  }
+  Save.description += " (" + getBiomeName(Save.arena.biome) + " " + Save.waveIndex + ")"
+  return Save;
+}
+// #endregion

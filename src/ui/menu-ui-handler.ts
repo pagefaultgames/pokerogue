@@ -309,14 +309,6 @@ export default class MenuUiHandler extends MessageUiHandler {
         }
       },
       {
-        label: "Vouchers",
-        handler: () => {
-          ui.revertMode()
-          ui.setOverlayMode(Mode.VOUCHERS);
-          return true;
-        }
-      },
-      {
         label: i18next.t("menuUiHandler:cancel"),
         handler: () => {
           this.scene.ui.revertMode();
