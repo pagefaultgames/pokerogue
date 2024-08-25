@@ -17,6 +17,12 @@ body {
   background: #484050;
 }
 
+@media (display-mode: fullscreen) {
+  body {
+    background: #000000;
+  }
+}
+
 #links {
   width: 90%;
   text-align: center;
