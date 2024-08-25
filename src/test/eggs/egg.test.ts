@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { EggSourceType } from "#app/enums/egg-source-types.js";
 import { EggTier } from "#app/enums/egg-type.js";
-import { VariantTier } from "#app/enums/variant-tiers.js";
+import { VariantTier } from "#app/enums/variant-tier.js";
 import GameManager from "#test/utils/gameManager";
 import EggData from "#app/system/egg-data.js";
 import * as Utils from "#app/utils.js";
@@ -129,9 +129,9 @@ describe("Egg Generation Tests", () => {
 
     expect(result).toBe(expectedResult);
   });
-  it("should return a shiny common variant", () => {
+  it("should return a shiny standard variant", () => {
     const scene = game.scene;
-    const expectedVariantTier = VariantTier.COMMON;
+    const expectedVariantTier = VariantTier.STANDARD;
 
     const result = new Egg({scene, isShiny: true, variantTier: expectedVariantTier, species: Species.BULBASAUR}).generatePlayerPokemon(scene).variant;
 
