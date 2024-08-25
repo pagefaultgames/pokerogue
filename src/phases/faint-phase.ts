@@ -65,6 +65,8 @@ export class FaintPhase extends PokemonPhase {
     if (pokemon.turnData?.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
       applyPostFaintAbAttrs(PostFaintAbAttr, pokemon, this.scene.getPokemonById(lastAttack.sourceId)!, new PokemonMove(lastAttack.move).getMove(), lastAttack.result); // TODO: is this bang correct?
+    } else { //If killed by indirect damage, apply post-faint abilities without providing a last move
+      applyPostFaintAbAttrs(PostFaintAbAttr, pokemon, undefined, undefined, undefined);
     }
 
     const alivePlayField = this.scene.getField(true);
