@@ -2302,7 +2302,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.HATTREM, 8, false, false, false, "Serene Pokémon", Type.PSYCHIC, null, 0.6, 4.8, Abilities.HEALER, Abilities.ANTICIPATION, Abilities.MAGIC_BOUNCE, 370, 57, 40, 65, 86, 73, 49, 120, 50, 130, GrowthRate.SLOW, 0, false),
     new PokemonSpecies(Species.HATTERENE, 8, false, false, false, "Silent Pokémon", Type.PSYCHIC, Type.FAIRY, 2.1, 5.1, Abilities.HEALER, Abilities.ANTICIPATION, Abilities.MAGIC_BOUNCE, 510, 57, 90, 95, 136, 103, 29, 45, 50, 255, GrowthRate.SLOW, 0, false, true,
       new PokemonForm("Normal", "", Type.PSYCHIC, Type.FAIRY, 2.1, 5.1, Abilities.HEALER, Abilities.ANTICIPATION, Abilities.MAGIC_BOUNCE, 510, 57, 90, 95, 136, 103, 29, 45, 50, 255, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.PSYCHIC, Type.FAIRY, 26, 5.1, Abilities.MAGIC_BOUNCE, Abilities.MAGIC_BOUNCE, Abilities.MAGIC_BOUNCE, 610, 97, 83, 105, 146, 119, 50, 45, 50, 255),
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.PSYCHIC, Type.FAIRY, 26, 5.1, Abilities.MAGIC_BOUNCE, Abilities.MAGIC_BOUNCE, Abilities.MAGIC_BOUNCE, 610, 97, 90, 105, 146, 122, 50, 45, 50, 255),
     ),
     new PokemonSpecies(Species.IMPIDIMP, 8, false, false, false, "Wily Pokémon", Type.DARK, Type.FAIRY, 0.4, 5.5, Abilities.PRANKSTER, Abilities.FRISK, Abilities.PICKPOCKET, 265, 45, 45, 30, 55, 40, 50, 255, 50, 53, GrowthRate.MEDIUM_FAST, 100, false),
     new PokemonSpecies(Species.MORGREM, 8, false, false, false, "Devious Pokémon", Type.DARK, Type.FAIRY, 0.8, 12.5, Abilities.PRANKSTER, Abilities.FRISK, Abilities.PICKPOCKET, 370, 65, 60, 45, 75, 55, 70, 120, 50, 130, GrowthRate.MEDIUM_FAST, 100, false),
