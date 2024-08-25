@@ -408,14 +408,14 @@
     },
     "defeat": {
       "1": "La défense est la meilleure des attaques !\nTelle est ma méthode !",
-      "2": "Viens étudier des roches avec moi la prochaine fois si tu veux apprendre à lmieux les aborder !",
+      "2": "Viens étudier des roches avec moi la prochaine fois si tu veux apprendre à mieux les aborder !",
       "3": "Tout ce temps à voyager autour du monde paie enfin !"
     }
   },
   "misty": {
     "encounter": {
       "1": "Ma tactique ? Attaquer avec des Pokémon Eau !",
-      "2": "Je vais te prouver le tsuanmi que sont mes Pokémon aquatiques !",
+      "2": "Je vais te prouver le tsunami que sont mes Pokémon aquatiques !",
       "3": "Mon rêve, c’était de voyager et de défier des Dresseurs super forts. Seras-tu à la hauteur ?"
     },
     "victory": {
