@@ -1140,7 +1140,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * effects which can affect whether an ability will be present or in effect, and both passive and
    * non-passive. This is the primary way to check whether a pokemon has a particular ability.
    * @param {Abilities} ability The ability to check for
-   * @param {boolean} canApply If false, it doesn't check whether the abiltiy is currently active
+   * @param {boolean} canApply If false, it doesn't check whether the ability is currently active
    * @param {boolean} ignoreOverride If true, it ignores ability changing effects
    * @returns {boolean} Whether the ability is present and active
    */
@@ -1447,7 +1447,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * This causes problems when there are intentional duplicates (i.e. Smeargle with Sketch)
      */
     if (levelMoves) {
-      this.getUniqueMoves(levelMoves,ret);
+      this.getUniqueMoves(levelMoves, ret);
     }
 
     return ret;
@@ -1759,7 +1759,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         // Sqrt the weight of any damaging moves with overlapping types. This is about a 0.05 - 0.1 multiplier.
         // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights double if STAB.
         // Status moves remain unchanged on weight, this encourages 1-2
-        movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo?.moveId)).map(m => [m[0], this.moveset.some(mo => mo?.getMove().category !== MoveCategory.STATUS && mo?.getMove().type === allMoves[m[0]].type) ? Math.ceil(Math.sqrt(m[1])) : allMoves[m[0]].category !== MoveCategory.STATUS ? Math.ceil(m[1]/Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power!) > 1).length)/8,0.5) * (this.isOfType(allMoves[m[0]].type) ? 2 : 1)) : m[1]]); // TODO: is this bang correct?
+        movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo?.moveId)).map(m => [m[0], this.moveset.some(mo => mo?.getMove().category !== MoveCategory.STATUS && mo?.getMove().type === allMoves[m[0]].type) ? Math.ceil(Math.sqrt(m[1])) : allMoves[m[0]].category !== MoveCategory.STATUS ? Math.ceil(m[1]/Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power!) > 1).length)/8, 0.5) * (this.isOfType(allMoves[m[0]].type) ? 2 : 1)) : m[1]]); // TODO: is this bang correct?
       } else { // Non-trainer pokemon just use normal weights
         movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo?.moveId));
       }
@@ -2228,7 +2228,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
             break;
           case HitResult.IMMUNE:
-            this.scene.queueMessage(`${this.name} is unaffected!`);
+            this.scene.queueMessage(i18next.t("battle:hitResultImmune", { pokemonName: this.name }));
             break;
           case HitResult.ONE_HIT_KO:
             this.scene.queueMessage(i18next.t("battle:hitResultOneHitKO"));
@@ -2572,7 +2572,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return this.fusionFaintCry(callback);
     }
 
-    const key = this.getSpeciesForm().getCryKey(this.formIndex);
+    const key = `cry/${this.getSpeciesForm().getCryKey(this.formIndex)}`;
     //eslint-disable-next-line @typescript-eslint/no-unused-vars
     let i = 0;
     let rate = 0.85;
@@ -2997,7 +2997,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   sparkle(): void {
     if (this.shinySparkle) {
       this.shinySparkle.play(`sparkle${this.variant ? `_${this.variant + 1}` : ""}`);
-      this.scene.playSound("sparkle");
+      this.scene.playSound("se/sparkle");
     }
   }
 
@@ -3456,7 +3456,7 @@ export class PlayerPokemon extends Pokemon {
           pokemon.resetTurnData();
           pokemon.resetStatus();
           pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
-          this.scene.queueMessage(`${pokemon.name} was revived!`,0,true);
+          this.scene.queueMessage(i18next.t("moveTriggers:revivalBlessing", {pokemonName: pokemon.name}), 0, true);
 
           if (this.scene.currentBattle.double && this.scene.getParty().length > 1) {
             const allyPokemon = this.getAlly();
