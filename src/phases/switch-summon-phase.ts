@@ -18,7 +18,7 @@ export class SwitchSummonPhase extends SummonPhase {
   private doReturn: boolean;
   private batonPass: boolean;
 
-  private lastPokemon: Pokemon;
+  protected lastPokemon: Pokemon;
 
   /**
      * Constructor for creating a new SwitchSummonPhase

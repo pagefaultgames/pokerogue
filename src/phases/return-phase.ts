@@ -1,4 +1,5 @@
 import BattleScene from "#app/battle-scene";
+import { applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "#app/data/ability.js";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 
@@ -8,6 +9,8 @@ export class ReturnPhase extends SwitchSummonPhase {
   }
 
   switchAndSummon(): void {
+    this.lastPokemon = this.getPokemon();
+    applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     this.end();
   }
 
