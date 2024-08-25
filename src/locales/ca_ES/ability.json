@@ -1,1 +1,623 @@
-{}
+{
+  "stench": {
+    "name": "Catalan_Stench_0"
+  },
+  "drizzle": {
+  },
+  "speedBoost": {
+  },
+  "battleArmor": {
+  },
+  "sturdy": {
+  },
+  "damp": {
+  },
+  "limber": {
+  },
+  "sandVeil": {
+  },
+  "static": {
+  },
+  "voltAbsorb": {
+  },
+  "waterAbsorb": {
+  },
+  "oblivious": {
+  },
+  "cloudNine": {
+  },
+  "compoundEyes": {
+  },
+  "insomnia": {
+  },
+  "colorChange": {
+  },
+  "immunity": {
+  },
+  "flashFire": {
+  },
+  "shieldDust": {
+  },
+  "ownTempo": {
+  },
+  "suctionCups": {
+  },
+  "intimidate": {
+  },
+  "shadowTag": {
+  },
+  "roughSkin": {
+  },
+  "wonderGuard": {
+  },
+  "levitate": {
+  },
+  "effectSpore": {
+  },
+  "synchronize": {
+  },
+  "clearBody": {
+  },
+  "naturalCure": {
+  },
+  "lightningRod": {
+  },
+  "sereneGrace": {
+  },
+  "swiftSwim": {
+  },
+  "chlorophyll": {
+  },
+  "illuminate": {
+  },
+  "trace": {
+  },
+  "hugePower": {
+  },
+  "poisonPoint": {
+  },
+  "innerFocus": {
+  },
+  "magmaArmor": {
+  },
+  "waterVeil": {
+  },
+  "magnetPull": {
+  },
+  "soundproof": {
+  },
+  "rainDish": {
+  },
+  "sandStream": {
+  },
+  "pressure": {
+  },
+  "thickFat": {
+  },
+  "earlyBird": {
+  },
+  "flameBody": {
+  },
+  "runAway": {
+  },
+  "keenEye": {
+  },
+  "hyperCutter": {
+  },
+  "pickup": {
+  },
+  "truant": {
+  },
+  "hustle": {
+  },
+  "cuteCharm": {
+  },
+  "plus": {
+  },
+  "minus": {
+  },
+  "forecast": {
+  },
+  "stickyHold": {
+  },
+  "shedSkin": {
+  },
+  "guts": {
+  },
+  "marvelScale": {
+  },
+  "liquidOoze": {
+  },
+  "overgrow": {
+  },
+  "blaze": {
+  },
+  "torrent": {
+  },
+  "swarm": {
+  },
+  "rockHead": {
+  },
+  "drought": {
+  },
+  "arenaTrap": {
+  },
+  "vitalSpirit": {
+  },
+  "whiteSmoke": {
+  },
+  "purePower": {
+  },
+  "shellArmor": {
+  },
+  "airLock": {
+  },
+  "tangledFeet": {
+  },
+  "motorDrive": {
+  },
+  "rivalry": {
+  },
+  "steadfast": {
+  },
+  "snowCloak": {
+  },
+  "gluttony": {
+  },
+  "angerPoint": {
+  },
+  "unburden": {
+  },
+  "heatproof": {
+  },
+  "simple": {
+  },
+  "drySkin": {
+  },
+  "download": {
+  },
+  "ironFist": {
+  },
+  "poisonHeal": {
+  },
+  "adaptability": {
+  },
+  "skillLink": {
+  },
+  "hydration": {
+  },
+  "solarPower": {
+  },
+  "quickFeet": {
+  },
+  "normalize": {
+  },
+  "sniper": {
+  },
+  "magicGuard": {
+  },
+  "noGuard": {
+  },
+  "stall": {
+  },
+  "technician": {
+  },
+  "leafGuard": {
+  },
+  "klutz": {
+  },
+  "moldBreaker": {
+  },
+  "superLuck": {
+  },
+  "aftermath": {
+  },
+  "anticipation": {
+  },
+  "forewarn": {
+  },
+  "unaware": {
+  },
+  "tintedLens": {
+  },
+  "filter": {
+  },
+  "slowStart": {
+  },
+  "scrappy": {
+  },
+  "stormDrain": {
+  },
+  "iceBody": {
+  },
+  "solidRock": {
+  },
+  "snowWarning": {
+  },
+  "honeyGather": {
+  },
+  "frisk": {
+  },
+  "reckless": {
+  },
+  "multitype": {
+  },
+  "flowerGift": {
+  },
+  "badDreams": {
+  },
+  "pickpocket": {
+  },
+  "sheerForce": {
+  },
+  "contrary": {
+  },
+  "unnerve": {
+  },
+  "defiant": {
+  },
+  "defeatist": {
+  },
+  "cursedBody": {
+  },
+  "healer": {
+  },
+  "friendGuard": {
+  },
+  "weakArmor": {
+  },
+  "heavyMetal": {
+  },
+  "lightMetal": {
+  },
+  "multiscale": {
+  },
+  "toxicBoost": {
+  },
+  "flareBoost": {
+  },
+  "harvest": {
+  },
+  "telepathy": {
+  },
+  "moody": {
+  },
+  "overcoat": {
+  },
+  "poisonTouch": {
+  },
+  "regenerator": {
+  },
+  "bigPecks": {
+  },
+  "sandRush": {
+  },
+  "wonderSkin": {
+  },
+  "analytic": {
+  },
+  "illusion": {
+  },
+  "imposter": {
+  },
+  "infiltrator": {
+  },
+  "mummy": {
+  },
+  "moxie": {
+  },
+  "justified": {
+  },
+  "rattled": {
+  },
+  "magicBounce": {
+  },
+  "sapSipper": {
+  },
+  "prankster": {
+  },
+  "sandForce": {
+  },
+  "ironBarbs": {
+  },
+  "zenMode": {
+  },
+  "victoryStar": {
+  },
+  "turboblaze": {
+  },
+  "teravolt": {
+  },
+  "aromaVeil": {
+  },
+  "flowerVeil": {
+  },
+  "cheekPouch": {
+  },
+  "protean": {
+  },
+  "furCoat": {
+  },
+  "magician": {
+  },
+  "bulletproof": {
+  },
+  "competitive": {
+  },
+  "strongJaw": {
+  },
+  "refrigerate": {
+  },
+  "sweetVeil": {
+  },
+  "stanceChange": {
+  },
+  "galeWings": {
+  },
+  "megaLauncher": {
+  },
+  "grassPelt": {
+  },
+  "symbiosis": {
+  },
+  "toughClaws": {
+  },
+  "pixilate": {
+  },
+  "gooey": {
+  },
+  "aerilate": {
+  },
+  "parentalBond": {
+  },
+  "darkAura": {
+  },
+  "fairyAura": {
+  },
+  "auraBreak": {
+  },
+  "primordialSea": {
+  },
+  "desolateLand": {
+  },
+  "deltaStream": {
+  },
+  "stamina": {
+  },
+  "wimpOut": {
+  },
+  "emergencyExit": {
+  },
+  "waterCompaction": {
+  },
+  "merciless": {
+  },
+  "shieldsDown": {
+  },
+  "stakeout": {
+  },
+  "waterBubble": {
+  },
+  "steelworker": {
+  },
+  "berserk": {
+  },
+  "slushRush": {
+  },
+  "longReach": {
+  },
+  "liquidVoice": {
+  },
+  "triage": {
+  },
+  "galvanize": {
+  },
+  "surgeSurfer": {
+  },
+  "schooling": {
+  },
+  "disguise": {
+  },
+  "battleBond": {
+  },
+  "powerConstruct": {
+  },
+  "corrosion": {
+  },
+  "comatose": {
+  },
+  "queenlyMajesty": {
+  },
+  "innardsOut": {
+  },
+  "dancer": {
+  },
+  "battery": {
+  },
+  "fluffy": {
+  },
+  "dazzling": {
+  },
+  "soulHeart": {
+  },
+  "tanglingHair": {
+  },
+  "receiver": {
+  },
+  "powerOfAlchemy": {
+  },
+  "beastBoost": {
+  },
+  "rksSystem": {
+  },
+  "electricSurge": {
+  },
+  "psychicSurge": {
+  },
+  "mistySurge": {
+  },
+  "grassySurge": {
+  },
+  "fullMetalBody": {
+  },
+  "shadowShield": {
+  },
+  "prismArmor": {
+  },
+  "neuroforce": {
+  },
+  "intrepidSword": {
+  },
+  "dauntlessShield": {
+  },
+  "libero": {
+  },
+  "ballFetch": {
+  },
+  "cottonDown": {
+  },
+  "propellerTail": {
+  },
+  "mirrorArmor": {
+  },
+  "gulpMissile": {
+  },
+  "stalwart": {
+  },
+  "steamEngine": {
+  },
+  "punkRock": {
+  },
+  "sandSpit": {
+  },
+  "iceScales": {
+  },
+  "ripen": {
+  },
+  "iceFace": {
+  },
+  "powerSpot": {
+  },
+  "mimicry": {
+  },
+  "screenCleaner": {
+  },
+  "steelySpirit": {
+  },
+  "perishBody": {
+  },
+  "wanderingSpirit": {
+  },
+  "gorillaTactics": {
+  },
+  "neutralizingGas": {
+  },
+  "pastelVeil": {
+  },
+  "hungerSwitch": {
+  },
+  "quickDraw": {
+  },
+  "unseenFist": {
+  },
+  "curiousMedicine": {
+  },
+  "transistor": {
+  },
+  "dragonsMaw": {
+  },
+  "chillingNeigh": {
+  },
+  "grimNeigh": {
+  },
+  "asOneGlastrier": {
+  },
+  "asOneSpectrier": {
+  },
+  "lingeringAroma": {
+  },
+  "seedSower": {
+  },
+  "thermalExchange": {
+  },
+  "angerShell": {
+  },
+  "purifyingSalt": {
+  },
+  "wellBakedBody": {
+  },
+  "windRider": {
+  },
+  "guardDog": {
+  },
+  "rockyPayload": {
+  },
+  "windPower": {
+  },
+  "zeroToHero": {
+  },
+  "commander": {
+  },
+  "electromorphosis": {
+  },
+  "protosynthesis": {
+  },
+  "quarkDrive": {
+  },
+  "goodAsGold": {
+  },
+  "vesselOfRuin": {
+  },
+  "swordOfRuin": {
+  },
+  "tabletsOfRuin": {
+  },
+  "beadsOfRuin": {
+  },
+  "orichalcumPulse": {
+  },
+  "hadronEngine": {
+  },
+  "opportunist": {
+  },
+  "cudChew": {
+  },
+  "sharpness": {
+  },
+  "supremeOverlord": {
+  },
+  "costar": {
+  },
+  "toxicDebris": {
+  },
+  "armorTail": {
+  },
+  "earthEater": {
+  },
+  "myceliumMight": {
+  },
+  "mindsEye": {
+  },
+  "supersweetSyrup": {
+  },
+  "hospitality": {
+  },
+  "toxicChain": {
+  },
+  "embodyAspectTeal": {
+  },
+  "embodyAspectWellspring": {
+  },
+  "embodyAspectHearthflame": {
+  },
+  "embodyAspectCornerstone": {
+  },
+  "teraShift": {
+  },
+  "teraShell": {
+  },
+  "teraformZero": {
+  },
+  "poisonPuppeteer": {
+  }
+}
