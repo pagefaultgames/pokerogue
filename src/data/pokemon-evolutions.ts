@@ -251,7 +251,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.CUBONE]: [
     new SpeciesEvolution(Species.ALOLA_MAROWAK, 28, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT) && p.getHeldItems()?.some(m => m instanceof PokemonRegionalEvolutionModifier)), SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.MAROWAK, 28, null, null)
+    new SpeciesEvolution(Species.MAROWAK, 28, null, new SpeciesEvolutionCondition(p => !p.getHeldItems() || p.getHeldItems().length === 0 || !p.getHeldItems().some(m => m instanceof PokemonRegionalEvolutionModifier)))
   ],
   [Species.TYROGUE]: [
     new SpeciesEvolution(Species.HITMONLEE, 20, null, new SpeciesEvolutionCondition(p => p.stats[Stat.ATK] > p.stats[Stat.DEF])),
