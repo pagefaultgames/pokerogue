@@ -11,6 +11,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 
 function testMoveEffectiveness(game: GameManager, move: Moves, targetSpecies: Species,
   expected: number, targetAbility: Abilities = Abilities.BALL_FETCH): void {
+  // Suppress getPokemonNameWithAffix because it calls on a null battle spec
   vi.spyOn(Messages, "getPokemonNameWithAffix").mockReturnValue("");
   const user = game.scene.addPlayerPokemon(getPokemonSpecies(Species.SNORLAX), 5);
   const target = game.scene.addEnemyPokemon(getPokemonSpecies(targetSpecies), 5, TrainerSlot.NONE);

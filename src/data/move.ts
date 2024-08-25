@@ -3755,7 +3755,7 @@ export class VariableMoveCategoryAttr extends MoveAttr {
 
 export class PhotonGeyserCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const category = (args[0] as Utils.IntegerHolder);
+    const category = (args[0] as Utils.NumberHolder);
 
     if (user.getBattleStat(Stat.ATK, target, move) > user.getBattleStat(Stat.SPATK, target, move)) {
       category.value = MoveCategory.PHYSICAL;
@@ -3768,7 +3768,7 @@ export class PhotonGeyserCategoryAttr extends VariableMoveCategoryAttr {
 
 export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const category = (args[0] as Utils.IntegerHolder);
+    const category = (args[0] as Utils.NumberHolder);
 
     if (user.isTerastallized() && user.getBattleStat(Stat.ATK, target, move) > user.getBattleStat(Stat.SPATK, target, move)) {
       category.value = MoveCategory.PHYSICAL;
@@ -3859,7 +3859,7 @@ export class VariableMoveTypeAttr extends MoveAttr {
 export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof Utils.IntegerHolder)) {
+    if (!(moveType instanceof Utils.NumberHolder)) {
       return false;
     }
 
@@ -3877,7 +3877,7 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
 export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof Utils.IntegerHolder)) {
+    if (!(moveType instanceof Utils.NumberHolder)) {
       return false;
     }
 
@@ -3911,7 +3911,7 @@ export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
 export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof Utils.IntegerHolder)) {
+    if (!(moveType instanceof Utils.NumberHolder)) {
       return false;
     }
 
@@ -3936,7 +3936,7 @@ export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
 export class RagingBullTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof Utils.IntegerHolder)) {
+    if (!(moveType instanceof Utils.NumberHolder)) {
       return false;
     }
 
@@ -3964,7 +3964,7 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
 export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof Utils.IntegerHolder)) {
+    if (!(moveType instanceof Utils.NumberHolder)) {
       return false;
     }
 
@@ -3999,7 +3999,7 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof Utils.IntegerHolder)) {
+    if (!(moveType instanceof Utils.NumberHolder)) {
       return false;
     }
 
@@ -4041,12 +4041,12 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
    * @param user {@linkcode Pokemon} using this move
    * @param target N/A
    * @param move N/A
-   * @param args [0] {@linkcode Utils.IntegerHolder} The move's type to be modified
+   * @param args [0] {@linkcode Utils.NumberHolder} The move's type to be modified
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof Utils.IntegerHolder)) {
+    if (!(moveType instanceof Utils.NumberHolder)) {
       return false;
     }
 
@@ -4082,7 +4082,7 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
 export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof Utils.IntegerHolder)) {
+    if (!(moveType instanceof Utils.NumberHolder)) {
       return false;
     }
 
@@ -4117,7 +4117,7 @@ export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof Utils.IntegerHolder)) {
+    if (!(moveType instanceof Utils.NumberHolder)) {
       return false;
     }
 
@@ -4133,7 +4133,7 @@ export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
 export class MatchUserTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof Utils.IntegerHolder)) {
+    if (!(moveType instanceof Utils.NumberHolder)) {
       return false;
     }
     const userTypes = user.getTypes(true);

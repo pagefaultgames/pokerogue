@@ -1215,7 +1215,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns the {@linkcode Type} of the move after attributes are applied
    */
   getMoveType(move: Move, simulated: boolean = true): Type {
-    const moveTypeHolder = new Utils.IntegerHolder(move.type);
+    const moveTypeHolder = new Utils.NumberHolder(move.type);
 
     applyMoveAttrs(VariableMoveTypeAttr, this, null, move, moveTypeHolder);
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, this, null, move, simulated, moveTypeHolder);
@@ -1974,7 +1974,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const damage = new Utils.NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-    const variableCategory = new Utils.IntegerHolder(move.category);
+    const variableCategory = new Utils.NumberHolder(move.category);
     applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, variableCategory);
     const moveCategory = variableCategory.value as MoveCategory;
 

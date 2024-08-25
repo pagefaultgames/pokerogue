@@ -2918,7 +2918,7 @@ function getAnticipationCondition(): AbAttrCondition {
           continue;
         }
         // move is super effective (not accounting for )
-        if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move!.getMove().type, opponent, true) >= 2) { // TODO: is this bang correct?
+        if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().type, opponent, true) >= 2) {
           return true;
         }
         // move is a OHKO
