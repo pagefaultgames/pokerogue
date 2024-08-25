@@ -325,11 +325,11 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
     const soundConfig = { rate: (this.pitch * 0.01), volume: (this.volume * 0.01) };
     if (this.resourceName) {
       try {
-        scene.playSound(this.resourceName, soundConfig);
+        scene.playSound(`battle_anims/${this.resourceName}`, soundConfig);
       } catch (err) {
         console.error(err);
       }
-      return Math.ceil((scene.sound.get(this.resourceName).totalDuration * 1000) / 33.33);
+      return Math.ceil((scene.sound.get(`battle_anims/${this.resourceName}`).totalDuration * 1000) / 33.33);
     } else {
       return Math.ceil((battleAnim.user!.cry(soundConfig).totalDuration * 1000) / 33.33); // TODO: is the bang behind user correct?
     }
@@ -683,8 +683,8 @@ export abstract class BattleAnim {
   private dstLine: number[];
 
   constructor(user?: Pokemon, target?: Pokemon) {
-    this.user = user!; // TODO: is this bang correct?
-    this.target = target!; // TODO: is this bang correct?
+    this.user = user ?? null;
+    this.target = target ?? null;
     this.sprites = [];
   }
 

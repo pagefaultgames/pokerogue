@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, variantColorCache } from "./variant";
 import { variantData } from "./variant";
 import { GrowthRate } from "./exp";
-import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
+import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
 import { Type } from "./type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
 import { uncatchableSpecies } from "./biomes";
@@ -455,7 +455,7 @@ export abstract class PokemonSpeciesForm {
     return new Promise(resolve => {
       const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant);
       scene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
-      scene.load.audio(this.getCryKey(formIndex), `audio/cry/${this.getCryKey(formIndex)}.m4a`);
+      scene.load.audio(`cry/${this.getCryKey(formIndex)}`, `audio/cry/${this.getCryKey(formIndex)}.m4a`);
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot
@@ -511,7 +511,7 @@ export abstract class PokemonSpeciesForm {
     if (cry?.pendingRemove) {
       cry = null;
     }
-    cry = scene.playSound(cry || cryKey, soundConfig);
+    cry = scene.playSound(`cry/${(cry ?? cryKey)}`, soundConfig);
     if (ignorePlay) {
       cry.stop();
     }
@@ -761,8 +761,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.speciesId;
   }
 
-  getEvolutionLevels(): [Species, integer][] {
-    const evolutionLevels: [Species, integer][] = [];
+  getEvolutionLevels(): EvolutionLevel[] {
+    const evolutionLevels: EvolutionLevel[] = [];
 
     //console.log(Species[this.speciesId], pokemonEvolutions[this.speciesId])
 
@@ -782,8 +782,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return evolutionLevels;
   }
 
-  getPrevolutionLevels(): [Species, integer][] {
-    const prevolutionLevels: [Species, integer][] = [];
+  getPrevolutionLevels(): EvolutionLevel[] {
+    const prevolutionLevels: EvolutionLevel[] = [];
 
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
     for (const p of allEvolvingPokemon) {
@@ -804,8 +804,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
-  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): [Species, integer][] {
-    const ret: [Species, integer][] = [];
+  getSimulatedEvolutionChain(currentLevel: integer, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): EvolutionLevel[] {
+    const ret: EvolutionLevel[] = [];
     if (pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
       const prevolutionLevels = this.getPrevolutionLevels().reverse();
       const levelDiff = player ? 0 : forTrainer || isBoss ? forTrainer && isBoss ? 2.5 : 5 : 10;
@@ -2581,7 +2581,7 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.WALKING_WAKE, 9, false, false, false, "Paradox Pokémon", Type.WATER, Type.DRAGON, 3.5, 280, Abilities.PROTOSYNTHESIS, Abilities.NONE, Abilities.NONE, 590, 99, 83, 91, 125, 83, 109, 5, 0, 295, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.IRON_LEAVES, 9, false, false, false, "Paradox Pokémon", Type.GRASS, Type.PSYCHIC, 1.5, 125, Abilities.QUARK_DRIVE, Abilities.NONE, Abilities.NONE, 590, 90, 130, 88, 70, 108, 104, 5, 0, 295, GrowthRate.SLOW, null, false),
-    new PokemonSpecies(Species.DIPPLIN, 9, false, false, false, "Candy Apple Pokémon", Type.GRASS, Type.DRAGON, 0.4, 9.7, Abilities.SUPERSWEET_SYRUP, Abilities.GLUTTONY, Abilities.STICKY_HOLD, 485, 80, 80, 110, 95, 80, 40, 45, 50, 170, GrowthRate.ERRATIC, null, false),
+    new PokemonSpecies(Species.DIPPLIN, 9, false, false, false, "Candy Apple Pokémon", Type.GRASS, Type.DRAGON, 0.4, 9.7, Abilities.SUPERSWEET_SYRUP, Abilities.GLUTTONY, Abilities.STICKY_HOLD, 485, 80, 80, 110, 95, 80, 40, 45, 50, 170, GrowthRate.ERRATIC, 50, false),
     new PokemonSpecies(Species.POLTCHAGEIST, 9, false, false, false, "Matcha Pokémon", Type.GRASS, Type.GHOST, 0.1, 1.1, Abilities.HOSPITALITY, Abilities.NONE, Abilities.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, GrowthRate.SLOW, null, false, false,
       new PokemonForm("Counterfeit Form", "counterfeit", Type.GRASS, Type.GHOST, 0.1, 1.1, Abilities.HOSPITALITY, Abilities.NONE, Abilities.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, null, true),
       new PokemonForm("Artisan Form", "artisan", Type.GRASS, Type.GHOST, 0.1, 1.1, Abilities.HOSPITALITY, Abilities.NONE, Abilities.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, null, true),
@@ -2729,8 +2729,8 @@ export const speciesStarters = {
   [Species.VOLTORB]: 2,
   [Species.EXEGGCUTE]: 3,
   [Species.CUBONE]: 3,
-  [Species.HITMONLEE]: 5,
-  [Species.HITMONCHAN]: 5,
+  [Species.HITMONLEE]: 4,
+  [Species.HITMONCHAN]: 4,
   [Species.LICKITUNG]: 3,
   [Species.KOFFING]: 2,
   [Species.RHYHORN]: 3,
@@ -3003,7 +3003,7 @@ export const speciesStarters = {
   [Species.FERROSEED]: 3,
   [Species.KLINK]: 3,
   [Species.TYNAMO]: 2,
-  [Species.ELGYEM]: 3,
+  [Species.ELGYEM]: 2,
   [Species.LITWICK]: 3,
   [Species.AXEW]: 4,
   [Species.CUBCHOO]: 2,
@@ -3136,9 +3136,9 @@ export const speciesStarters = {
   [Species.ALOLA_GEODUDE]: 3,
   [Species.ALOLA_GRIMER]: 3,
 
-  [Species.GROOKEY]: 4,
+  [Species.GROOKEY]: 3,
   [Species.SCORBUNNY]: 4,
-  [Species.SOBBLE]: 4,
+  [Species.SOBBLE]: 3,
   [Species.SKWOVET]: 2,
   [Species.ROOKIDEE]: 3,
   [Species.BLIPBUG]: 2,
@@ -3253,7 +3253,7 @@ export const speciesStarters = {
   [Species.IRON_MOTH]: 6,
   [Species.IRON_THORNS]: 6,
   [Species.FRIGIBAX]: 4,
-  [Species.GIMMIGHOUL]: 5,
+  [Species.GIMMIGHOUL]: 4,
   [Species.WO_CHIEN]: 6,
   [Species.CHIEN_PAO]: 7,
   [Species.TING_LU]: 6,
@@ -3317,6 +3317,28 @@ export function getStarterValueFriendshipCap(value: integer): integer {
   }
 }
 
+/**
+* Method to get the daily list of starters with Pokerus.
+* @param scene {@linkcode BattleScene} used as part of RNG
+* @returns A list of starters with Pokerus
+*/
+export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
+  const pokerusStarters: PokemonSpecies[] = [];
+  const date = new Date();
+  const starterCount = 3; //for easy future adjustment!
+  date.setUTCHours(0, 0, 0, 0);
+  scene.executeWithSeedOffset(() => {
+    while (pokerusStarters.length < starterCount) {
+      const randomSpeciesId = parseInt(Utils.randSeedItem(Object.keys(speciesStarters)), 10);
+      const species = getPokemonSpecies(randomSpeciesId);
+      if (!pokerusStarters.includes(species)) {
+        pokerusStarters.push(species);
+      }
+    }
+  }, 0, date.getTime().toString());
+  return pokerusStarters;
+}
+
 export const starterPassiveAbilities = {
   [Species.BULBASAUR]: Abilities.GRASSY_SURGE,
   [Species.CHARMANDER]: Abilities.BEAST_BOOST,
@@ -3366,7 +3388,7 @@ export const starterPassiveAbilities = {
   [Species.RHYHORN]: Abilities.FILTER,
   [Species.TANGELA]: Abilities.SEED_SOWER,
   [Species.KANGASKHAN]: Abilities.GUTS,
-  [Species.HORSEA]: Abilities.DRIZZLE,
+  [Species.HORSEA]: Abilities.DRAGONS_MAW,
   [Species.GOLDEEN]: Abilities.MULTISCALE,
   [Species.STARYU]: Abilities.REGENERATOR,
   [Species.SCYTHER]: Abilities.TINTED_LENS,
@@ -3375,7 +3397,7 @@ export const starterPassiveAbilities = {
   [Species.MAGIKARP]: Abilities.MULTISCALE,
   [Species.LAPRAS]: Abilities.LIGHTNING_ROD,
   [Species.DITTO]: Abilities.ADAPTABILITY,
-  [Species.EEVEE]: Abilities.SIMPLE,
+  [Species.EEVEE]: Abilities.PICKUP,
   [Species.PORYGON]: Abilities.PROTEAN,
   [Species.OMANYTE]: Abilities.STURDY,
   [Species.KABUTO]: Abilities.TOUGH_CLAWS,
@@ -3438,7 +3460,7 @@ export const starterPassiveAbilities = {
   [Species.SUICUNE]: Abilities.UNAWARE,
   [Species.LARVITAR]: Abilities.SAND_RUSH,
   [Species.LUGIA]: Abilities.DELTA_STREAM,
-  [Species.HO_OH]: Abilities.MAGIC_GUARD,
+  [Species.HO_OH]: Abilities.DROUGHT,
   [Species.CELEBI]: Abilities.GRASSY_SURGE,
   [Species.TREECKO]: Abilities.TINTED_LENS,
   [Species.TORCHIC]: Abilities.RECKLESS,
@@ -3472,7 +3494,7 @@ export const starterPassiveAbilities = {
   [Species.GULPIN]: Abilities.EARTH_EATER,
   [Species.CARVANHA]: Abilities.SHEER_FORCE,
   [Species.WAILMER]: Abilities.LEVITATE,
-  [Species.NUMEL]: Abilities.STAMINA,
+  [Species.NUMEL]: Abilities.FUR_COAT,
   [Species.TORKOAL]: Abilities.ANALYTIC,
   [Species.SPOINK]: Abilities.PSYCHIC_SURGE,
   [Species.SPINDA]: Abilities.SIMPLE,
@@ -3515,7 +3537,7 @@ export const starterPassiveAbilities = {
   [Species.DEOXYS]: Abilities.PROTEAN,
   [Species.TURTWIG]: Abilities.THICK_FAT,
   [Species.CHIMCHAR]: Abilities.BEAST_BOOST,
-  [Species.PIPLUP]: Abilities.LIGHTNING_ROD,
+  [Species.PIPLUP]: Abilities.DRIZZLE,
   [Species.STARLY]: Abilities.ROCK_HEAD,
   [Species.BIDOOF]: Abilities.SAP_SIPPER,
   [Species.KRICKETOT]: Abilities.SHARPNESS,
@@ -3559,7 +3581,7 @@ export const starterPassiveAbilities = {
   [Species.HEATRAN]: Abilities.EARTH_EATER,
   [Species.REGIGIGAS]: Abilities.MINDS_EYE,
   [Species.GIRATINA]: Abilities.SHADOW_SHIELD,
-  [Species.CRESSELIA]: Abilities.MAGIC_BOUNCE,
+  [Species.CRESSELIA]: Abilities.UNAWARE,
   [Species.PHIONE]: Abilities.SIMPLE,
   [Species.MANAPHY]: Abilities.PRIMORDIAL_SEA,
   [Species.DARKRAI]: Abilities.UNNERVE,
@@ -3600,7 +3622,7 @@ export const starterPassiveAbilities = {
   [Species.YAMASK]: Abilities.PURIFYING_SALT,
   [Species.TIRTOUGA]: Abilities.WATER_ABSORB,
   [Species.ARCHEN]: Abilities.MULTISCALE,
-  [Species.TRUBBISH]: Abilities.NEUTRALIZING_GAS,
+  [Species.TRUBBISH]: Abilities.TOXIC_DEBRIS,
   [Species.ZORUA]: Abilities.DARK_AURA,
   [Species.MINCCINO]: Abilities.FUR_COAT,
   [Species.GOTHITA]: Abilities.UNNERVE,
@@ -3761,7 +3783,7 @@ export const starterPassiveAbilities = {
   [Species.SINISTEA]: Abilities.SHADOW_SHIELD,
   [Species.HATENNA]: Abilities.FAIRY_AURA,
   [Species.IMPIDIMP]: Abilities.FUR_COAT,
-  [Species.MILCERY]: Abilities.REGENERATOR,
+  [Species.MILCERY]: Abilities.MISTY_SURGE,
   [Species.FALINKS]: Abilities.PARENTAL_BOND,
   [Species.PINCURCHIN]: Abilities.ELECTROMORPHOSIS,
   [Species.SNOM]: Abilities.SNOW_WARNING,
@@ -3771,14 +3793,14 @@ export const starterPassiveAbilities = {
   [Species.MORPEKO]: Abilities.MOODY,
   [Species.CUFANT]: Abilities.EARTH_EATER,
   [Species.DRACOZOLT]: Abilities.NO_GUARD,
-  [Species.ARCTOZOLT]: Abilities.SNOW_WARNING,
+  [Species.ARCTOZOLT]: Abilities.TRANSISTOR,
   [Species.DRACOVISH]: Abilities.SWIFT_SWIM,
-  [Species.ARCTOVISH]: Abilities.SNOW_WARNING,
+  [Species.ARCTOVISH]: Abilities.STRONG_JAW,
   [Species.DURALUDON]: Abilities.STEELWORKER,
   [Species.DREEPY]: Abilities.PARENTAL_BOND,
   [Species.ZACIAN]: Abilities.UNNERVE,
   [Species.ZAMAZENTA]: Abilities.STAMINA,
-  [Species.ETERNATUS]: Abilities.SUPREME_OVERLORD,
+  [Species.ETERNATUS]: Abilities.NEUTRALIZING_GAS,
   [Species.KUBFU]: Abilities.IRON_FIST,
   [Species.ZARUDE]: Abilities.TOUGH_CLAWS,
   [Species.REGIELEKI]: Abilities.ELECTRIC_SURGE,
@@ -3839,9 +3861,9 @@ export const starterPassiveAbilities = {
   [Species.FRIGIBAX]: Abilities.SNOW_WARNING,
   [Species.GIMMIGHOUL]: Abilities.HONEY_GATHER,
   [Species.WO_CHIEN]: Abilities.VESSEL_OF_RUIN,
-  [Species.CHIEN_PAO]: Abilities.INTREPID_SWORD,
+  [Species.CHIEN_PAO]: Abilities.SNOW_WARNING,
   [Species.TING_LU]: Abilities.STAMINA,
-  [Species.CHI_YU]: Abilities.DROUGHT,
+  [Species.CHI_YU]: Abilities.BERSERK,
   [Species.ROARING_MOON]: Abilities.TOUGH_CLAWS,
   [Species.IRON_VALIANT]: Abilities.ADAPTABILITY,
   [Species.KORAIDON]: Abilities.OPPORTUNIST,
@@ -3859,7 +3881,7 @@ export const starterPassiveAbilities = {
   [Species.IRON_CROWN]: Abilities.SHARPNESS,
   [Species.TERAPAGOS]: Abilities.SOUL_HEART,
   [Species.PECHARUNT]: Abilities.TOXIC_CHAIN,
-  [Species.ALOLA_RATTATA]: Abilities.STRONG_JAW,
+  [Species.ALOLA_RATTATA]: Abilities.ADAPTABILITY,
   [Species.ALOLA_SANDSHREW]: Abilities.TOUGH_CLAWS,
   [Species.ALOLA_VULPIX]: Abilities.SHEER_FORCE,
   [Species.ALOLA_DIGLETT]: Abilities.STURDY,

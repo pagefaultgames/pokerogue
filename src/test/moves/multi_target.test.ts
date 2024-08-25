@@ -1,13 +1,12 @@
-import { getMoveTargets } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { Species } from "#app/enums/species.js";
-import { TurnEndPhase } from "#app/phases.js";
-import GameManager from "#test/utils/gameManager";
+import { getMoveTargets } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { Species } from "#app/enums/species";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -88,15 +87,15 @@ async function checkTargetMultiplier(game: GameManager, attackMove: Moves, killA
 
 async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAlly: boolean, killSecondEnemy: boolean, shouldDecreased: boolean, ability?: Abilities) {
   // Tested combination on first turn, 1v1 on second turn
-  await game.runToSummon([Species.EEVEE, Species.EEVEE]);
+  await game.classicMode.runToSummon([Species.EEVEE, Species.EEVEE]);
 
   if (ability !== undefined) {
     game.scene.getPlayerField()[1].abilityIndex = ability;
     game.scene.getEnemyField()[1].abilityIndex = ability;
   }
 
-  game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-  game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+  game.move.select(Moves.SPLASH);
+  game.move.select(Moves.SPLASH, 1);
 
 
   await game.phaseInterceptor.to(TurnEndPhase);
@@ -105,9 +104,9 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
   await game.toNextTurn();
 
   const initialHp = game.scene.getEnemyField()[0].hp;
-  game.doAttack(getMovePosition(game.scene, 0, attackMove));
+  game.move.select(attackMove);
   if (!killAlly) {
-    game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+    game.move.select(Moves.SPLASH, 1);
   }
 
   await game.phaseInterceptor.to(TurnEndPhase);
@@ -119,7 +118,7 @@ async function checkDamageDecrease(game: GameManager, attackMove: Moves, killAll
   game.scene.getEnemyField()[0].hp = initialHp;
 
   const initialHp1v1 = game.scene.getEnemyField()[0].hp;
-  game.doAttack(getMovePosition(game.scene, 0, attackMove));
+  game.move.select(attackMove);
 
   await game.phaseInterceptor.to(TurnEndPhase);
   const afterHp1v1 = game.scene.getEnemyField()[0].hp;
