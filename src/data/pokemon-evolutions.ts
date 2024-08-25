@@ -11,7 +11,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { PokemonRegionalEvolutionModifier } from "#app/modifier/modifier.js";
+import { PokemonRegionalEvolutionModifier } from "#app/modifier/modifier";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
