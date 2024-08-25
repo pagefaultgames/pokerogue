@@ -1,12 +1,12 @@
-import { Species } from "./enums/species";
 import { Type } from "./type";
 import * as Utils from "../utils";
-import beautify from "json-beautify";
-import { TrainerType } from "./enums/trainer-type";
-import { TimeOfDay } from "./enums/time-of-day";
-import { Biome } from "./enums/biome";
 import {pokemonEvolutions, SpeciesFormEvolution} from "./pokemon-evolutions";
 import i18next from "i18next";
+import { Biome } from "#enums/biome";
+import { Species } from "#enums/species";
+import { TimeOfDay } from "#enums/time-of-day";
+import { TrainerType } from "#enums/trainer-type";
+// import beautify from "json-beautify";
 
 export function getBiomeName(biome: Biome | -1) {
   if (biome === -1) {
@@ -17,8 +17,6 @@ export function getBiomeName(biome: Biome | -1) {
     return i18next.t("biome:GRASS");
   case Biome.RUINS:
     return i18next.t("biome:RUINS");
-  case Biome.ABYSS:
-    return i18next.t("biome:ABYSS");
   case Biome.END:
     return i18next.t("biome:END");
   default:
@@ -1691,7 +1689,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.SEA]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.SWIMMER ],
+    [BiomePoolTier.COMMON]: [ TrainerType.SWIMMER, TrainerType.SAILOR ],
     [BiomePoolTier.UNCOMMON]: [],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1713,7 +1711,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.BEACH]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.FISHERMAN, TrainerType.PARASOL_LADY ],
+    [BiomePoolTier.COMMON]: [ TrainerType.FISHERMAN, TrainerType.PARASOL_LADY, TrainerType.SAILOR ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER, TrainerType.BREEDER ],
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1823,7 +1821,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.VOLCANO]: {
-    [BiomePoolTier.COMMON]: [],
+    [BiomePoolTier.COMMON]: [ TrainerType.FIREBREATHER ],
     [BiomePoolTier.UNCOMMON]: [],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -2934,7 +2932,7 @@ export function initBiomes() {
     [ Species.AZUMARILL, Type.WATER, Type.FAIRY, [
       [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
       [ Biome.LAKE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
-      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
+      [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
     [ Species.SUDOWOODO, Type.ROCK, -1, [
@@ -3630,7 +3628,7 @@ export function initBiomes() {
     [ Species.FLYGON, Type.GROUND, Type.DRAGON, [
       [ Biome.DESERT, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
       [ Biome.WASTELAND, BiomePoolTier.COMMON ],
-      [ Biome.WASTELAND, BiomePoolTier.BOSS ],
+      [ Biome.WASTELAND, BiomePoolTier.BOSS ]
     ]
     ],
     [ Species.CACNEA, Type.GRASS, -1, [
@@ -3694,14 +3692,14 @@ export function initBiomes() {
     [ Species.BALTOY, Type.GROUND, Type.PSYCHIC, [
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.SPACE, BiomePoolTier.UNCOMMON ],
-      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.CLAYDOL, Type.GROUND, Type.PSYCHIC, [
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.RUINS, BiomePoolTier.BOSS ],
       [ Biome.SPACE, BiomePoolTier.UNCOMMON ],
-      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.LILEEP, Type.ROCK, Type.GRASS, [
@@ -4199,14 +4197,14 @@ export function initBiomes() {
     [ Species.SKORUPI, Type.POISON, Type.BUG, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.DESERT, BiomePoolTier.COMMON ],
-      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.DRAPION, Type.POISON, Type.DARK, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.DESERT, BiomePoolTier.COMMON ],
       [ Biome.DESERT, BiomePoolTier.BOSS ],
-      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.CROAGUNK, Type.POISON, Type.FIGHTING, [
@@ -4793,7 +4791,7 @@ export function initBiomes() {
     ]
     ],
     [ Species.CINCCINO, Type.NORMAL, -1, [
-      [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+      [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
     ]
     ],
     [ Species.GOTHITA, Type.PSYCHIC, -1, [
@@ -4898,7 +4896,7 @@ export function initBiomes() {
     ]
     ],
     [ Species.JOLTIK, Type.BUG, Type.ELECTRIC, [
-      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
+      [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ Species.GALVANTULA, Type.BUG, Type.ELECTRIC, [
@@ -7304,6 +7302,15 @@ export function initBiomes() {
       [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
     ]
     ],
+    [ TrainerType.FIREBREATHER, [
+      [ Biome.VOLCANO, BiomePoolTier.COMMON ]
+    ]
+    ],
+    [ TrainerType.SAILOR, [
+      [ Biome.SEA, BiomePoolTier.COMMON ],
+      [ Biome.BEACH, BiomePoolTier.COMMON ]
+    ]
+    ],
     [ TrainerType.BROCK, [
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
@@ -7698,7 +7705,7 @@ export function initBiomes() {
       ? pokemonEvolutions[speciesId]
       : [];
 
-    if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId))[3] as any[]).filter(b => b[0] !== Biome.END).length).length) {
+    if (!biomeEntries.filter(b => b[0] !== Biome.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId)!)[3] as any[]).filter(b => b[0] !== Biome.END).length).length) { // TODO: is the bang on the `find()` correct?
       uncatchableSpecies.push(speciesId);
     }
 
@@ -7799,57 +7806,56 @@ export function initBiomes() {
 
 
   // used in a commented code
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function outputPools() {
-    const pokemonOutput = {};
-    const trainerOutput = {};
+  // function outputPools() {
+  //   const pokemonOutput = {};
+  //   const trainerOutput = {};
 
-    for (const b of Object.keys(biomePokemonPools)) {
-      const biome = Biome[b];
-      pokemonOutput[biome] = {};
-      trainerOutput[biome] = {};
+  //   for (const b of Object.keys(biomePokemonPools)) {
+  //     const biome = Biome[b];
+  //     pokemonOutput[biome] = {};
+  //     trainerOutput[biome] = {};
 
-      for (const t of Object.keys(biomePokemonPools[b])) {
-        const tier = BiomePoolTier[t];
+  //     for (const t of Object.keys(biomePokemonPools[b])) {
+  //       const tier = BiomePoolTier[t];
 
-        pokemonOutput[biome][tier] = {};
+  //       pokemonOutput[biome][tier] = {};
 
-        for (const tod of Object.keys(biomePokemonPools[b][t])) {
-          const timeOfDay = TimeOfDay[tod];
+  //       for (const tod of Object.keys(biomePokemonPools[b][t])) {
+  //         const timeOfDay = TimeOfDay[tod];
 
-          pokemonOutput[biome][tier][timeOfDay] = [];
+  //         pokemonOutput[biome][tier][timeOfDay] = [];
 
-          for (const f of biomePokemonPools[b][t][tod]) {
-            if (typeof f === "number") {
-              pokemonOutput[biome][tier][timeOfDay].push(Species[f]);
-            } else {
-              const tree = {};
+  //         for (const f of biomePokemonPools[b][t][tod]) {
+  //           if (typeof f === "number") {
+  //             pokemonOutput[biome][tier][timeOfDay].push(Species[f]);
+  //           } else {
+  //             const tree = {};
 
-              for (const l of Object.keys(f)) {
-                tree[l] = f[l].map(s => Species[s]);
-              }
+  //             for (const l of Object.keys(f)) {
+  //               tree[l] = f[l].map(s => Species[s]);
+  //             }
 
-              pokemonOutput[biome][tier][timeOfDay].push(tree);
-            }
-          }
+  //             pokemonOutput[biome][tier][timeOfDay].push(tree);
+  //           }
+  //         }
 
-        }
-      }
+  //       }
+  //     }
 
-      for (const t of Object.keys(biomeTrainerPools[b])) {
-        const tier = BiomePoolTier[t];
+  //     for (const t of Object.keys(biomeTrainerPools[b])) {
+  //       const tier = BiomePoolTier[t];
 
-        trainerOutput[biome][tier] = [];
+  //       trainerOutput[biome][tier] = [];
 
-        for (const f of biomeTrainerPools[b][t]) {
-          trainerOutput[biome][tier].push(TrainerType[f]);
-        }
-      }
-    }
+  //       for (const f of biomeTrainerPools[b][t]) {
+  //         trainerOutput[biome][tier].push(TrainerType[f]);
+  //       }
+  //     }
+  //   }
 
-    console.log(beautify(pokemonOutput, null, 2, 180).replace(/(        |        (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |(?:,|\[) (?:"\w+": \[ |(?:\{ )?"\d+": \[ )?)"(\w+)"(?= |,|\n)/g, "$1Species.$2").replace(/"(\d+)": /g, "$1: ").replace(/((?:      )|(?:(?!\n)    "(?:.*?)": \{) |\[(?: .*? )?\], )"(\w+)"/g, "$1[TimeOfDay.$2]").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
-    console.log(beautify(trainerOutput, null, 2, 120).replace(/(      |      (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |, (?:(?:\{ )?"\d+": \[ )?)"(.*?)"/g, "$1TrainerType.$2").replace(/"(\d+)": /g, "$1: ").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
-  }
+  //   console.log(beautify(pokemonOutput, null, 2, 180).replace(/(        |        (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |(?:,|\[) (?:"\w+": \[ |(?:\{ )?"\d+": \[ )?)"(\w+)"(?= |,|\n)/g, "$1Species.$2").replace(/"(\d+)": /g, "$1: ").replace(/((?:      )|(?:(?!\n)    "(?:.*?)": \{) |\[(?: .*? )?\], )"(\w+)"/g, "$1[TimeOfDay.$2]").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
+  //   console.log(beautify(trainerOutput, null, 2, 120).replace(/(      |      (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |, (?:(?:\{ )?"\d+": \[ )?)"(.*?)"/g, "$1TrainerType.$2").replace(/"(\d+)": /g, "$1: ").replace(/(    )"(.*?)"/g, "$1[BiomePoolTier.$2]").replace(/(  )"(.*?)"/g, "$1[Biome.$2]"));
+  // }
 
   /*for (let pokemon of allSpecies) {
     if (pokemon.speciesId >= Species.XERNEAS)

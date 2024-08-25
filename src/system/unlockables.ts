@@ -1,18 +1,22 @@
-import { GameModes, gameModes } from "../game-mode";
+import i18next from "i18next";
+import { GameMode, GameModes } from "../game-mode";
 
 export enum Unlockables {
   ENDLESS_MODE,
   MINI_BLACK_HOLE,
-  SPLICED_ENDLESS_MODE
+  SPLICED_ENDLESS_MODE,
+  EVIOLITE
 }
 
 export function getUnlockableName(unlockable: Unlockables) {
   switch (unlockable) {
   case Unlockables.ENDLESS_MODE:
-    return `${gameModes[GameModes.ENDLESS].getName()} Mode`;
+    return `${GameMode.getModeName(GameModes.ENDLESS)} Mode`;
   case Unlockables.MINI_BLACK_HOLE:
-    return "Mini Black Hole";
+    return i18next.t("modifierType:ModifierType.MINI_BLACK_HOLE.name");
   case Unlockables.SPLICED_ENDLESS_MODE:
-    return `${gameModes[GameModes.SPLICED_ENDLESS].getName()} Mode`;
+    return `${GameMode.getModeName(GameModes.SPLICED_ENDLESS)} Mode`;
+  case Unlockables.EVIOLITE:
+    return i18next.t("modifierType:ModifierType.EVIOLITE.name");
   }
 }

@@ -2,9 +2,10 @@ import Pokemon from "../field/pokemon";
 import Move from "./move";
 import { Type } from "./type";
 import * as Utils from "../utils";
-import { IncrementMovePriorityAbAttr, applyAbAttrs } from "./ability";
+import { ChangeMovePriorityAbAttr, applyAbAttrs } from "./ability";
 import { ProtectAttr } from "./move";
 import { BattlerIndex } from "#app/battle.js";
+import i18next from "i18next";
 
 export enum TerrainType {
   NONE,
@@ -56,16 +57,33 @@ export class Terrain {
   isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
     switch (this.terrainType) {
     case TerrainType.PSYCHIC:
-      if (!move.getAttrs(ProtectAttr).length) {
+      if (!move.hasAttr(ProtectAttr)) {
         const priority = new Utils.IntegerHolder(move.priority);
-        applyAbAttrs(IncrementMovePriorityAbAttr, user, null, move, priority);
-        return priority.value > 0 && user.getOpponents().filter(o => targets.includes(o.getBattlerIndex())).length > 0;
+        applyAbAttrs(ChangeMovePriorityAbAttr, user, null, false, move, priority);
+        // Cancels move if the move has positive priority and targets a Pokemon grounded on the Psychic Terrain
+        return priority.value > 0 && user.getOpponents().some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded());
       }
     }
 
     return false;
   }
 }
+
+export function getTerrainName(terrainType: TerrainType): string {
+  switch (terrainType) {
+  case TerrainType.MISTY:
+    return i18next.t("terrain:misty");
+  case TerrainType.ELECTRIC:
+    return i18next.t("terrain:electric");
+  case TerrainType.GRASSY:
+    return i18next.t("terrain:grassy");
+  case TerrainType.PSYCHIC:
+    return i18next.t("terrain:psychic");
+  }
+
+  return "";
+}
+
 
 export function getTerrainColor(terrainType: TerrainType): [ integer, integer, integer ] {
   switch (terrainType) {
