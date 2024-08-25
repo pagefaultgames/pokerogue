@@ -1,7 +1,7 @@
 {
   "blue_red_double": {
     "encounter": {
-      "1": "Blue : Hé Red, montrons-leur de quel bois on se chauffe !\n$Red : …\n$Blue : Voilà la puissance du Bourg Palette !"
+      "1": "Blue : Hé Red, montrons-lui de quel bois on se chauffe !\n$Red : …\n$Blue : Voilà la puissance du Bourg Palette !"
     },
     "victory": {
       "1": "Blue : C’était un magnifique combat !\n$Red : …"
