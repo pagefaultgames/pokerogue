@@ -1,8 +1,10 @@
+import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { HitResult } from "#app/field/pokemon";
 import { BerryPhase } from "#app/phases/berry-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
@@ -31,7 +33,7 @@ describe("Abilities - Galvanize", () => {
       .battleType("single")
       .startingLevel(100)
       .ability(Abilities.GALVANIZE)
-      .moveset([Moves.TACKLE, Moves.REVELATION_DANCE])
+      .moveset([Moves.TACKLE, Moves.REVELATION_DANCE, Moves.FURY_SWIPES])
       .enemySpecies(Species.DUSCLOPS)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(SPLASH_ONLY)
@@ -91,6 +93,33 @@ describe("Abilities - Galvanize", () => {
 
       expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.NO_EFFECT);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    }
+  );
+
+  it(
+    "should affect all hits of a Normal-type multi-hit move",
+    async () => {
+      await game.startBattle();
+
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      vi.spyOn(enemyPokemon, "apply");
+
+      game.move.select(Moves.FURY_SWIPES);
+      await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+      await game.move.forceHit();
+
+      await game.phaseInterceptor.to(MoveEffectPhase);
+      expect(playerPokemon.turnData.hitCount).toBeGreaterThan(1);
+      expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+
+      while (playerPokemon.turnData.hitsLeft > 0) {
+        const enemyStartingHp = enemyPokemon.hp;
+        await game.phaseInterceptor.to(MoveEffectPhase);
+        expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
+      }
+
+      expect(enemyPokemon.apply).not.toHaveReturnedWith(HitResult.NO_EFFECT);
     }
   );
 });
