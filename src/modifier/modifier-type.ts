@@ -2046,7 +2046,7 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
   ];
 
   if (hasRegionalSplitEvos) {
-    options[0].push(new ModifierTypeOption(modifierTypes.STRANGE_SOUVENIR(), 0, baseCost));
+    options[0].push(new ModifierTypeOption(modifierTypes.STRANGE_SOUVENIR(), 0, baseCost * 0.5));
   }
 
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
