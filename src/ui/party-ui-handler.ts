@@ -1,4 +1,3 @@
-import { CommandPhase, SelectModifierPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import Pokemon, { MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
@@ -24,6 +23,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
 import * as LoggerTools from "../logger";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase.js";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 

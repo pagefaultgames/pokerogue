@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, variantColorCache } from "./variant";
 import { variantData } from "./variant";
 import { GrowthRate } from "./exp";
-import { EvolutionLevel,SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
+import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
 import { Type } from "./type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
 import { uncatchableSpecies } from "./biomes";
@@ -455,7 +455,7 @@ export abstract class PokemonSpeciesForm {
     return new Promise(resolve => {
       const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant);
       scene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
-      scene.load.audio(this.getCryKey(formIndex), `audio/cry/${this.getCryKey(formIndex)}.m4a`);
+      scene.load.audio(`cry/${this.getCryKey(formIndex)}`, `audio/cry/${this.getCryKey(formIndex)}.m4a`);
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot
@@ -511,7 +511,7 @@ export abstract class PokemonSpeciesForm {
     if (cry?.pendingRemove) {
       cry = null;
     }
-    cry = scene.playSound(cry || cryKey, soundConfig);
+    cry = scene.playSound(`cry/${(cry ?? cryKey)}`, soundConfig);
     if (ignorePlay) {
       cry.stop();
     }
@@ -2582,7 +2582,7 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.WALKING_WAKE, 9, false, false, false, "Paradox Pokémon", Type.WATER, Type.DRAGON, 3.5, 280, Abilities.PROTOSYNTHESIS, Abilities.NONE, Abilities.NONE, 590, 99, 83, 91, 125, 83, 109, 5, 0, 295, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.IRON_LEAVES, 9, false, false, false, "Paradox Pokémon", Type.GRASS, Type.PSYCHIC, 1.5, 125, Abilities.QUARK_DRIVE, Abilities.NONE, Abilities.NONE, 590, 90, 130, 88, 70, 108, 104, 5, 0, 295, GrowthRate.SLOW, null, false),
-    new PokemonSpecies(Species.DIPPLIN, 9, false, false, false, "Candy Apple Pokémon", Type.GRASS, Type.DRAGON, 0.4, 9.7, Abilities.SUPERSWEET_SYRUP, Abilities.GLUTTONY, Abilities.STICKY_HOLD, 485, 80, 80, 110, 95, 80, 40, 45, 50, 170, GrowthRate.ERRATIC, null, false),
+    new PokemonSpecies(Species.DIPPLIN, 9, false, false, false, "Candy Apple Pokémon", Type.GRASS, Type.DRAGON, 0.4, 9.7, Abilities.SUPERSWEET_SYRUP, Abilities.GLUTTONY, Abilities.STICKY_HOLD, 485, 80, 80, 110, 95, 80, 40, 45, 50, 170, GrowthRate.ERRATIC, 50, false),
     new PokemonSpecies(Species.POLTCHAGEIST, 9, false, false, false, "Matcha Pokémon", Type.GRASS, Type.GHOST, 0.1, 1.1, Abilities.HOSPITALITY, Abilities.NONE, Abilities.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, GrowthRate.SLOW, null, false, false,
       new PokemonForm("Counterfeit Form", "counterfeit", Type.GRASS, Type.GHOST, 0.1, 1.1, Abilities.HOSPITALITY, Abilities.NONE, Abilities.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, null, true),
       new PokemonForm("Artisan Form", "artisan", Type.GRASS, Type.GHOST, 0.1, 1.1, Abilities.HOSPITALITY, Abilities.NONE, Abilities.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, null, true),
@@ -3316,6 +3316,28 @@ export function getStarterValueFriendshipCap(value: integer): integer {
   default:
     return 600;
   }
+}
+
+/**
+* Method to get the daily list of starters with Pokerus.
+* @param scene {@linkcode BattleScene} used as part of RNG
+* @returns A list of starters with Pokerus
+*/
+export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
+  const pokerusStarters: PokemonSpecies[] = [];
+  const date = new Date();
+  const starterCount = 3; //for easy future adjustment!
+  date.setUTCHours(0, 0, 0, 0);
+  scene.executeWithSeedOffset(() => {
+    while (pokerusStarters.length < starterCount) {
+      const randomSpeciesId = parseInt(Utils.randSeedItem(Object.keys(speciesStarters)), 10);
+      const species = getPokemonSpecies(randomSpeciesId);
+      if (!pokerusStarters.includes(species)) {
+        pokerusStarters.push(species);
+      }
+    }
+  }, 0, date.getTime().toString());
+  return pokerusStarters;
 }
 
 export const starterPassiveAbilities = {

@@ -23,7 +23,6 @@ import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
 import EggGachaUiHandler from "./egg-gacha-ui-handler";
-import VouchersUiHandler from "./vouchers-ui-handler";
 import {addWindow} from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
@@ -49,6 +48,8 @@ import BgmBar from "#app/ui/bgm-bar";
 import RenameFormUiHandler from "./rename-form-ui-handler";
 import LogNameFormUiHandler from "./log-name-form-ui-handler";
 import LogSelectUiHandler from "./log-select-ui-handler";
+import RunHistoryUiHandler from "./run-history-ui-handler";
+import RunInfoUiHandler from "./run-info-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -77,7 +78,6 @@ export enum Mode {
   KEYBOARD_BINDING,
   ACHIEVEMENTS,
   GAME_STATS,
-  VOUCHERS,
   EGG_LIST,
   EGG_GACHA,
   LOGIN_FORM,
@@ -89,7 +89,9 @@ export enum Mode {
   CHALLENGE_SELECT,
   NAME_LOG,
   LOG_HANDLER,
-  RENAME_POKEMON
+  RENAME_POKEMON,
+  RUN_HISTORY,
+  RUN_INFO,
 }
 
 const transitionModes = [
@@ -103,7 +105,8 @@ const transitionModes = [
   Mode.EGG_GACHA,
   Mode.CHALLENGE_SELECT,
   Mode.NAME_LOG,
-  Mode.LOG_HANDLER
+  Mode.LOG_HANDLER,
+  Mode.RUN_HISTORY,
 ];
 
 const noTransitionModes = [
@@ -121,14 +124,13 @@ const noTransitionModes = [
   Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
   Mode.GAME_STATS,
-  Mode.VOUCHERS,
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
   Mode.OUTDATED,
-  Mode.RENAME_POKEMON
+  Mode.RENAME_POKEMON,
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -180,7 +182,6 @@ export default class UI extends Phaser.GameObjects.Container {
       new KeyboardBindingUiHandler(scene),
       new AchvsUiHandler(scene),
       new GameStatsUiHandler(scene),
-      new VouchersUiHandler(scene),
       new EggListUiHandler(scene),
       new EggGachaUiHandler(scene),
       new LoginFormUiHandler(scene),
@@ -193,6 +194,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new LogNameFormUiHandler(scene),
       new LogSelectUiHandler(scene),
       new RenameFormUiHandler(scene),
+      new RunHistoryUiHandler(scene),
+      new RunInfoUiHandler(scene),
     ];
   }
 
@@ -404,11 +407,11 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   playSelect(): void {
-    (this.scene as BattleScene).playSound("select");
+    (this.scene as BattleScene).playSound("ui/select");
   }
 
   playError(): void {
-    (this.scene as BattleScene).playSound("error");
+    (this.scene as BattleScene).playSound("ui/error");
   }
 
   fadeOut(duration: integer): Promise<void> {
