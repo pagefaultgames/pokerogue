@@ -26,16 +26,17 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { MoveUsedEvent } from "#app/events/battle-scene.js";
-import { PartyStatusCurePhase } from "#app/phases/party-status-cure-phase.js";
-import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { MovePhase } from "#app/phases/move-phase.js";
-import { NewBattlePhase } from "#app/phases/new-battle-phase.js";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
-import { StatChangePhase } from "#app/phases/stat-change-phase.js";
-import { SwitchPhase } from "#app/phases/switch-phase.js";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
+import { MoveUsedEvent } from "#app/events/battle-scene";
+import { PartyStatusCurePhase } from "#app/phases/party-status-cure-phase";
+import { BattleEndPhase } from "#app/phases/battle-end-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { MovePhase } from "#app/phases/move-phase";
+import { NewBattlePhase } from "#app/phases/new-battle-phase";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { StatChangePhase } from "#app/phases/stat-change-phase";
+import { SwitchPhase } from "#app/phases/switch-phase";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
+import { SpeciesFormChangeRevertWeatherFormTrigger } from "./pokemon-forms";
 import { NumberHolder } from "#app/utils";
 import { GameMode } from "#app/game-mode";
 import { applyChallenges, ChallengeType } from "./challenge";
@@ -5742,7 +5743,10 @@ export class AbilityChangeAttr extends MoveEffectAttr {
       return false;
     }
 
-    (this.selfTarget ? user : target).summonData.ability = this.ability;
+    const moveTarget = this.selfTarget ? user : target;
+
+    moveTarget.summonData.ability = this.ability;
+    user.scene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
 
     user.scene.queueMessage(i18next.t("moveTriggers:acquiredAbility", {pokemonName: getPokemonNameWithAffix((this.selfTarget ? user : target)), abilityName: allAbilities[this.ability].name}));
 
@@ -5828,6 +5832,10 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
     target.summonData.ability = tempAbilityId;
 
     user.scene.queueMessage(i18next.t("moveTriggers:swappedAbilitiesWithTarget", {pokemonName: getPokemonNameWithAffix(user)}));
+    // Swaps Forecast from Castform
+    user.scene.arena.triggerWeatherBasedFormChangesToNormal();
+    // Swaps Forecast to Castform (edge case)
+    user.scene.arena.triggerWeatherBasedFormChanges();
 
     return true;
   }
@@ -5853,6 +5861,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
     }
 
     target.summonData.abilitySuppressed = true;
+    target.scene.arena.triggerWeatherBasedFormChangesToNormal();
 
     target.scene.queueMessage(i18next.t("moveTriggers:suppressAbilities", {pokemonName: getPokemonNameWithAffix(target)}));
 
