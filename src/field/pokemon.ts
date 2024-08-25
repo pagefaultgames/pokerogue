@@ -2572,7 +2572,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return this.fusionFaintCry(callback);
     }
 
-    const key = this.getSpeciesForm().getCryKey(this.formIndex);
+    const key = `cry/${this.getSpeciesForm().getCryKey(this.formIndex)}`;
     //eslint-disable-next-line @typescript-eslint/no-unused-vars
     let i = 0;
     let rate = 0.85;
@@ -2997,7 +2997,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   sparkle(): void {
     if (this.shinySparkle) {
       this.shinySparkle.play(`sparkle${this.variant ? `_${this.variant + 1}` : ""}`);
-      this.scene.playSound("sparkle");
+      this.scene.playSound("se/sparkle");
     }
   }
 

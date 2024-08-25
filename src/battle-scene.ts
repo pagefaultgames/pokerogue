@@ -124,6 +124,7 @@ export default class BattleScene extends SceneBase {
   public lastSavePlayTime: integer | null = null;
   public masterVolume: number = 0.5;
   public bgmVolume: number = 1;
+  public fieldVolume: number = 1;
   public seVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
@@ -1748,8 +1749,25 @@ export default class BattleScene extends SceneBase {
 
   updateSoundVolume(): void {
     if (this.sound) {
-      for (const sound of this.sound.getAllPlaying()) {
-        (sound as AnySound).setVolume(this.masterVolume * (this.bgmCache.has(sound.key) ? this.bgmVolume : this.seVolume));
+      for (const sound of this.sound.getAllPlaying() as AnySound[]) {
+        if (this.bgmCache.has(sound.key)) {
+          sound.setVolume(this.masterVolume * this.bgmVolume);
+        } else {
+          const soundDetails = sound.key.split("/");
+          switch (soundDetails[0]) {
+          case "battle_anims":
+          case "cry":
+            if (soundDetails[1].startsWith("PRSFX- ")) {
+              sound.setVolume(this.masterVolume*this.fieldVolume*0.5);
+            } else {
+              sound.setVolume(this.masterVolume*this.fieldVolume);
+            }
+            break;
+          case "se":
+          case "ui":
+            sound.setVolume(this.masterVolume*this.seVolume);
+          }
+        }
       }
     }
   }
@@ -1768,25 +1786,30 @@ export default class BattleScene extends SceneBase {
   }
 
   playSound(sound: string | AnySound, config?: object): AnySound {
-    if (config) {
-      if (config.hasOwnProperty("volume")) {
-        config["volume"] *= this.masterVolume * this.seVolume;
-      } else {
+    const key = typeof sound === "string" ? sound : sound.key;
+    config = config ?? {};
+    try {
+      const keyDetails = key.split("/");
+      switch (keyDetails[0]) {
+      case "battle_anims":
+      case "cry":
+        config["volume"] = this.masterVolume * this.fieldVolume;
+        //PRSFX sound files are unusually loud
+        if (key.startsWith("PRSFX- ")) {
+          config["volume"] *= 0.5;
+        }
+        break;
+      case "se":
+      case "ui":
+      default:
         config["volume"] = this.masterVolume * this.seVolume;
+        break;
       }
-    } else {
-      config = { volume: this.masterVolume * this.seVolume };
-    }
-    // PRSFX sounds are mixed too loud
-    if ((typeof sound === "string" ? sound : sound.key).startsWith("PRSFX- ")) {
-      config["volume"] *= 0.5;
-    }
-    if (typeof sound === "string") {
-      this.sound.play(sound, config);
-      return this.sound.get(sound) as AnySound;
-    } else {
-      sound.play(config);
-      return sound;
+      this.sound.play(key, config);
+      return this.sound.get(key) as AnySound;
+    } catch {
+      console.log(`${key} not found`);
+      return sound as AnySound;
     }
   }
 

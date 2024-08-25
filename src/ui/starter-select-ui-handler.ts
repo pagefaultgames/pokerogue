@@ -1656,7 +1656,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     });
                     this.tryUpdateValue(0);
                     ui.setMode(Mode.STARTER_SELECT);
-                    this.scene.playSound("buy");
+                    this.scene.playSound("se/buy");
 
                     // if starterContainer exists, update the value reduction background
                     if (starterContainer) {
