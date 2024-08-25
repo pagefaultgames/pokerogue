@@ -12,7 +12,7 @@
 /src/locales @pagefaultgames/translation-leads
 
 # Catalan (Spain/Spanish)
-/src/locales/ca_ES @pagefaultgames/calatan-translation-team
+/src/locales/ca_ES @pagefaultgames/catalan-translation-team
 
 # German
 /src/locales/de @pagefaultgames/german-translation-team
