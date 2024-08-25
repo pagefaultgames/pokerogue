@@ -161,7 +161,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     if (foundInfo) {
       foundInfo.ppUsed = moveUsedEvent.ppUsed;
     } else {
-      var idx = this.pokemon.moveset.indexOf(this.pokemon.moveset.find((v) => (v.getMove().id == moveUsedEvent.move.id)))
+      var idx = this.pokemon.moveset.indexOf(this.pokemon.moveset.find((v) => (v!.getMove().id == moveUsedEvent.move.id))!)
       if (idx == -1) {
         this.moveInfo.push({move: moveUsedEvent.move, maxPp: moveUsedEvent.move.pp, ppUsed: moveUsedEvent.ppUsed});
       } else {
@@ -187,15 +187,6 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     foundInfo.ppUsed = Math.max(foundInfo.ppUsed - 10, 0);
 
     this.setText();
-  }
-
-  public revealMoves() {
-    return;
-    this.moveInfo = new Array<MoveInfo>(4);
-    this.pokemon.moveset.forEach((mv, idx) => {
-      this.moveInfo[idx] = {move: mv.getMove(), maxPp: mv.getMovePp(), ppUsed: mv.ppUsed}
-    })
-    this.setText()
   }
 
   /** Animates the flyout to either show or hide it by applying a fade and translation */
