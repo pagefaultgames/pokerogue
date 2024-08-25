@@ -1,4 +1,5 @@
 import { BattlerIndex } from "#app/battle";
+import { allMoves } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
@@ -41,18 +42,22 @@ describe("Abilities - Galvanize", () => {
   });
 
   it(
-    "should change Normal-type attacks to Electric type",
+    "should change Normal-type attacks to Electric type and boost their power",
     async () => {
       await game.startBattle();
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       vi.spyOn(enemyPokemon, "apply");
 
+      const move = allMoves[Moves.TACKLE];
+      vi.spyOn(move, "calculateBattlePower");
+
       game.move.select(Moves.TACKLE);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.EFFECTIVE);
+      expect(move.calculateBattlePower).toHaveReturnedWith(48);
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     }, TIMEOUT
   );
