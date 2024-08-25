@@ -211,12 +211,11 @@ export default class AchvsUiHandler extends MessageUiHandler {
       if (this.currentPage === Page.ACHIEVEMENTS) {
         this.currentPage = Page.VOUCHERS;
         this.updateVoucherIcons();
-        this.setCursor(0);
       } else if (this.currentPage === Page.VOUCHERS) {
         this.currentPage = Page.ACHIEVEMENTS;
         this.updateAchvIcons();
-        this.setCursor(0);
       }
+      this.setCursor(0, true);
       this.mainContainer.update();
     }
     if (button === Button.CANCEL) {
