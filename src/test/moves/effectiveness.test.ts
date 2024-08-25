@@ -1,6 +1,3 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#app/enums/abilities";
 import { Species } from "#app/enums/species";
 import { Moves } from "#app/enums/moves";
@@ -8,6 +5,9 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { allMoves } from "#app/data/move";
 import * as Messages from "#app/messages";
+import Phaser from "phaser";
+import GameManager from "#test/utils/gameManager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 function testMoveEffectiveness(game: GameManager, move: Moves, targetSpecies: Species,
   expected: number, targetAbility: Abilities = Abilities.BALL_FETCH): void {
