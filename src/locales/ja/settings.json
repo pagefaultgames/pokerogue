@@ -47,7 +47,6 @@
   "typeHints": "相性のヒント",
   "masterVolume": "マスターボリューム",
   "bgmVolume": "BGMのボリューム",
-  "fieldVolume": "Field Volume",
   "seVolume": "SEのボリューム",
   "reset": "リセット",
   "requireReload": "再読み込みが必要",
