@@ -23,6 +23,7 @@ import { SummonPhase } from "./summon-phase";
 import { EndCardPhase } from "./end-card-phase";
 import { PostGameOverPhase } from "./post-game-over-phase";
 import { UnlockPhase } from "./unlock-phase";
+import * as LoggerTools from "../logger";
 
 export class GameOverPhase extends BattlePhase {
   private victory: boolean;

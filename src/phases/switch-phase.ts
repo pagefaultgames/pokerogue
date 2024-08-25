@@ -3,6 +3,7 @@ import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handl
 import { Mode } from "#app/ui/ui.js";
 import { BattlePhase } from "./battle-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
+import * as LoggerTools from "../logger";
 
 /**
  * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}

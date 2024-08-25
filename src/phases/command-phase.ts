@@ -18,6 +18,7 @@ import i18next from "i18next";
 import * as Utils from "#app/utils.js";
 import { FieldPhase } from "./field-phase";
 import { SelectTargetPhase } from "./select-target-phase";
+import * as LoggerTools from "../logger";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: integer;

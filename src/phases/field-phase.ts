@@ -4,6 +4,7 @@ import { Stat } from "#app/enums/stat.js";
 import Pokemon from "#app/field/pokemon.js";
 import { BattlePhase } from "./battle-phase";
 import * as Utils from "#app/utils.js";
+import * as LoggerTools from "../logger";
 
 type PokemonFunc = (pokemon: Pokemon) => void;
 

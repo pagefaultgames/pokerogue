@@ -5,6 +5,7 @@ import { TrappedTag } from "#app/data/battler-tags.js";
 import { Command } from "#app/ui/command-ui-handler.js";
 import * as Utils from "#app/utils.js";
 import { FieldPhase } from "./field-phase";
+import * as LoggerTools from "../logger";
 
 /**
  * Phase for determining an enemy AI's action for the next turn.

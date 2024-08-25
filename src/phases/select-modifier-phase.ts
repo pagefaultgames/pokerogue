@@ -9,6 +9,7 @@ import i18next from "i18next";
 import * as Utils from "#app/utils.js";
 import { BattlePhase } from "./battle-phase";
 import Overrides from "#app/overrides";
+import * as LoggerTools from "../logger";
 
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;

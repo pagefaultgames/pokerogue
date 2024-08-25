@@ -4,6 +4,7 @@ import { applyPostSummonAbAttrs, PostSummonAbAttr } from "#app/data/ability.js";
 import { ArenaTrapTag } from "#app/data/arena-tag.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
 import { PokemonPhase } from "./pokemon-phase";
+import * as LoggerTools from "../logger";
 
 export class PostSummonPhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex) {

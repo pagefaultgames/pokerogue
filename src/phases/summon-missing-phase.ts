@@ -2,6 +2,7 @@ import BattleScene from "#app/battle-scene.js";
 import { getPokemonNameWithAffix } from "#app/messages.js";
 import i18next from "i18next";
 import { SummonPhase } from "./summon-phase";
+import * as LoggerTools from "../logger";
 
 export class SummonMissingPhase extends SummonPhase {
   constructor(scene: BattleScene, fieldIndex: integer) {

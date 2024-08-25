@@ -9,6 +9,7 @@ import { BattlePhase } from "./battle-phase";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { MoneyRewardPhase } from "./money-reward-phase";
 import { TrainerSlot } from "#app/data/trainer-config";
+import * as LoggerTools from "../logger";
 
 export class TrainerVictoryPhase extends BattlePhase {
   constructor(scene: BattleScene) {

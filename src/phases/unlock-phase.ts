@@ -3,6 +3,7 @@ import { Phase } from "#app/phase.js";
 import { Unlockables, getUnlockableName } from "#app/system/unlockables.js";
 import { Mode } from "#app/ui/ui.js";
 import i18next from "i18next";
+import * as LoggerTools from "../logger";
 
 export class UnlockPhase extends Phase {
   private unlockable: Unlockables;

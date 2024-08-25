@@ -9,6 +9,7 @@ import PartyUiHandler from "../ui/party-ui-handler";
 import { getPokemonNameWithAffix } from "../messages";
 import { EndEvolutionPhase } from "./end-evolution-phase";
 import { EvolutionPhase } from "./evolution-phase";
+import * as LoggerTools from "../logger";
 
 export class FormChangePhase extends EvolutionPhase {
   private formChange: SpeciesFormChange;

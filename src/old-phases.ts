@@ -6962,7 +6962,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
 
 
-//#region 70 AttemptRunPhase
+//#region 70 AttemptRunPhase`
 export class AttemptRunPhase extends PokemonPhase {
   constructor(scene: BattleScene, fieldIndex: integer) {
     super(scene, fieldIndex);
@@ -6977,7 +6977,7 @@ export class AttemptRunPhase extends PokemonPhase {
     const enemySpeed = enemyField.reduce((total: integer, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD), 0) / enemyField.length;
 
     const escapeChance = new Utils.IntegerHolder((((playerPokemon.getStat(Stat.SPD) * 128) / enemySpeed) + (30 * this.scene.currentBattle.escapeAttempts++)) % 256);
-    applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, escapeChance);
+    applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, true, escapeChance);
 
     if (playerPokemon.randSeedInt(256, undefined, "Run attempt") < escapeChance.value) {
       this.scene.playSound("flee");

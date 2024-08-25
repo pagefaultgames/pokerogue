@@ -4,6 +4,7 @@ import { Command } from "#app/ui/command-ui-handler.js";
 import { Mode } from "#app/ui/ui.js";
 import { CommandPhase } from "./command-phase";
 import { PokemonPhase } from "./pokemon-phase";
+import * as LoggerTools from "../logger";
 
 export class SelectTargetPhase extends PokemonPhase {
   constructor(scene: BattleScene, fieldIndex: integer) {

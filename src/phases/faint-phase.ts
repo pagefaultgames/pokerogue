@@ -17,6 +17,7 @@ import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { SwitchPhase } from "./switch-phase";
 import { VictoryPhase } from "./victory-phase";
+import * as LoggerTools from "../logger";
 
 export class FaintPhase extends PokemonPhase {
   private preventEndure: boolean;

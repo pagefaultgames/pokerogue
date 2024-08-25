@@ -12,6 +12,7 @@ import { Mode } from "#app/ui/ui.js";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import * as Utils from "#app/utils.js";
+import * as LoggerTools from "../logger";
 /**
  * Class that represents egg hatching
  */

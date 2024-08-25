@@ -9,10 +9,10 @@ import { cos, sin } from "../field/anims";
 import { PlayerPokemon } from "../field/pokemon";
 import { getTypeRgb } from "../data/type";
 import i18next from "i18next";
-import * as LoggerTools from "../logger";
 import { getPokemonNameWithAffix } from "../messages";
 import { LearnMovePhase } from "./learn-move-phase";
 import { EndEvolutionPhase } from "./end-evolution-phase";
+import * as LoggerTools from "../logger";
 
 export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;

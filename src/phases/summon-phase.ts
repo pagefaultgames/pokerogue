@@ -12,6 +12,7 @@ import { PartyMemberPokemonPhase } from "./party-member-pokemon-phase";
 import { PostSummonPhase } from "./post-summon-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { ShinySparklePhase } from "./shiny-sparkle-phase";
+import * as LoggerTools from "../logger";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
   private loaded: boolean;

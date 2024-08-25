@@ -26,6 +26,7 @@ import { ScanIvsPhase } from "./scan-ivs-phase";
 import { ShinySparklePhase } from "./shiny-sparkle-phase";
 import { SummonPhase } from "./summon-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
+import * as LoggerTools from "../logger";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;

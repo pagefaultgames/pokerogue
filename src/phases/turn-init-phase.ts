@@ -9,6 +9,7 @@ import { CommandPhase } from "./command-phase";
 import { EnemyCommandPhase } from "./enemy-command-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { TurnStartPhase } from "./turn-start-phase";
+import * as LoggerTools from "../logger";
 
 export class TurnInitPhase extends FieldPhase {
   constructor(scene: BattleScene) {

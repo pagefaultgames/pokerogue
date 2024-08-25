@@ -22,6 +22,7 @@ import { CommonAnimPhase } from "./common-anim-phase";
 import { MoveEffectPhase } from "./move-effect-phase";
 import { MoveEndPhase } from "./move-end-phase";
 import { ShowAbilityPhase } from "./show-ability-phase";
+import * as LoggerTools from "../logger";
 
 export class MovePhase extends BattlePhase {
   public pokemon: Pokemon;

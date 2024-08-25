@@ -17,6 +17,7 @@ import { PostTurnStatusEffectPhase } from "./post-turn-status-effect-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { TurnEndPhase } from "./turn-end-phase";
 import { WeatherEffectPhase } from "./weather-effect-phase";
+import * as LoggerTools from "../logger";
 
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {

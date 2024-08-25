@@ -1,6 +1,7 @@
 import BattleScene from "#app/battle-scene.js";
 import * as Utils from "#app/utils.js";
 import { BattlePhase } from "./battle-phase";
+import * as LoggerTools from "../logger";
 
 export class PartyHealPhase extends BattlePhase {
   private resumeBgm: boolean;

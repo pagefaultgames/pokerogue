@@ -9,6 +9,7 @@ import { SummaryUiMode } from "#app/ui/summary-ui-handler.js";
 import { Mode } from "#app/ui/ui.js";
 import i18next from "i18next";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
+import * as LoggerTools from "../logger";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;

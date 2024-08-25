@@ -2,6 +2,7 @@ import BattleScene from "#app/battle-scene.js";
 import { BattlerIndex } from "#app/battle.js";
 import Pokemon from "#app/field/pokemon.js";
 import { FieldPhase } from "./field-phase";
+import * as LoggerTools from "../logger";
 
 export abstract class PokemonPhase extends FieldPhase {
   protected battlerIndex: BattlerIndex | integer;

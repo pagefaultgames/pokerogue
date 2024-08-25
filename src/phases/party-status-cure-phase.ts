@@ -3,6 +3,7 @@ import { Abilities } from "#app/enums/abilities.js";
 import Pokemon from "#app/field/pokemon.js";
 import { BattlePhase } from "./battle-phase";
 import { ShowAbilityPhase } from "./show-ability-phase";
+import * as LoggerTools from "../logger";
 
 /**
  * Cures the party of all non-volatile status conditions, shows a message

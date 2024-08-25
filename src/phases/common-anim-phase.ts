@@ -2,6 +2,7 @@ import BattleScene from "#app/battle-scene.js";
 import { BattlerIndex } from "#app/battle.js";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims.js";
 import { PokemonPhase } from "./pokemon-phase";
+import * as LoggerTools from "../logger";
 
 export class CommonAnimPhase extends PokemonPhase {
   private anim: CommonAnim | null;

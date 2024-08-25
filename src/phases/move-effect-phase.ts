@@ -14,6 +14,7 @@ import { PokemonMultiHitModifier, FlinchChanceModifier, EnemyAttackStatusEffectC
 import i18next from "i18next";
 import * as Utils from "#app/utils.js";
 import { PokemonPhase } from "./pokemon-phase";
+import * as LoggerTools from "../logger";
 
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;

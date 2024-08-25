@@ -2,6 +2,7 @@ import BattleScene from "#app/battle-scene.js";
 import { BattlerIndex } from "#app/battle.js";
 import { BattlerTagLapseType } from "#app/data/battler-tags.js";
 import { PokemonPhase } from "./pokemon-phase";
+import * as LoggerTools from "../logger";
 
 export class MoveEndPhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex) {

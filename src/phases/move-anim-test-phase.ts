@@ -4,6 +4,7 @@ import { allMoves, SelfStatusMove } from "#app/data/move.js";
 import { Moves } from "#app/enums/moves.js";
 import * as Utils from "#app/utils.js";
 import { BattlePhase } from "./battle-phase";
+import * as LoggerTools from "../logger";
 
 export class MoveAnimTestPhase extends BattlePhase {
   private moveQueue: Moves[];

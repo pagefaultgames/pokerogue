@@ -7,6 +7,7 @@ import Pokemon from "#app/field/pokemon.js";
 import { getPokemonNameWithAffix } from "#app/messages.js";
 import { PokemonPhase } from "./pokemon-phase";
 import { PostTurnStatusEffectPhase } from "./post-turn-status-effect-phase";
+import * as LoggerTools from "../logger";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
   private statusEffect: StatusEffect | undefined;

@@ -8,6 +8,7 @@ import { BattlePhase } from "./battle-phase";
 import { PostSummonPhase } from "./post-summon-phase";
 import { SummonMissingPhase } from "./summon-missing-phase";
 import { SwitchPhase } from "./switch-phase";
+import * as LoggerTools from "../logger";
 
 export class CheckSwitchPhase extends BattlePhase {
   protected fieldIndex: integer;

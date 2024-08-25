@@ -10,6 +10,7 @@ import { HealAchv } from "#app/system/achv.js";
 import i18next from "i18next";
 import * as Utils from "#app/utils.js";
 import { CommonAnimPhase } from "./common-anim-phase";
+import * as LoggerTools from "../logger";
 
 export class PokemonHealPhase extends CommonAnimPhase {
   private hpHealed: integer;

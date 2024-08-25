@@ -13,6 +13,7 @@ import { Mode } from "#app/ui/ui.js";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { TitlePhase } from "./title-phase";
 import Overrides from "#app/overrides";
+import * as LoggerTools from "../logger";
 
 export class SelectStarterPhase extends Phase {
 

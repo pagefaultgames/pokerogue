@@ -8,6 +8,7 @@ import { getPokemonNameWithAffix } from "#app/messages.js";
 import { BattlePhase } from "./battle-phase";
 import { MovePhase } from "./move-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";
+import * as LoggerTools from "../logger";
 
 export class QuietFormChangePhase extends BattlePhase {
   protected pokemon: Pokemon;

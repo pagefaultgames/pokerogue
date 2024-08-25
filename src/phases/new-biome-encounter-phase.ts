@@ -2,6 +2,7 @@ import BattleScene from "#app/battle-scene.js";
 import { applyAbAttrs, PostBiomeChangeAbAttr } from "#app/data/ability.js";
 import { getRandomWeatherType } from "#app/data/weather.js";
 import { NextEncounterPhase } from "./next-encounter-phase";
+import * as LoggerTools from "../logger";
 
 export class NewBiomeEncounterPhase extends NextEncounterPhase {
   constructor(scene: BattleScene) {

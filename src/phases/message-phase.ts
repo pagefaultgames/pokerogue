@@ -1,5 +1,6 @@
 import BattleScene from "#app/battle-scene.js";
 import { Phase } from "#app/phase.js";
+import * as LoggerTools from "../logger";
 
 export class MessagePhase extends Phase {
   private text: string;

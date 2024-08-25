@@ -10,6 +10,7 @@ import { handleTutorial, Tutorial } from "#app/tutorial.js";
 import i18next from "i18next";
 import * as Utils from "#app/utils.js";
 import { PokemonPhase } from "./pokemon-phase";
+import * as LoggerTools from "../logger";
 
 export type StatChangeCallback = (target: Pokemon | null, changed: BattleStat[], relativeChanges: number[]) => void;
 

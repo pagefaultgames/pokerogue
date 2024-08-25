@@ -15,6 +15,7 @@ import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { SelectModifierPhase } from "./select-modifier-phase";
 import { ShowPartyExpBarPhase } from "./show-party-exp-bar-phase";
 import { TrainerVictoryPhase } from "./trainer-victory-phase";
+import * as LoggerTools from "../logger";
 
 export class VictoryPhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex) {

@@ -11,6 +11,7 @@ import { Command } from "#app/ui/command-ui-handler.js";
 import i18next from "i18next";
 import { PostSummonPhase } from "./post-summon-phase";
 import { SummonPhase } from "./summon-phase";
+import * as LoggerTools from "../logger";
 
 export class SwitchSummonPhase extends SummonPhase {
   private slotIndex: integer;

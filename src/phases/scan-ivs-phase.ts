@@ -7,6 +7,7 @@ import { getTextColor, TextStyle } from "#app/ui/text.js";
 import { Mode } from "#app/ui/ui.js";
 import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
+import * as LoggerTools from "../logger";
 
 export class ScanIvsPhase extends PokemonPhase {
   private shownIvs: integer;

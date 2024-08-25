@@ -4,6 +4,7 @@ import { Phase } from "#app/phase.js";
 import i18next from "i18next";
 import Overrides from "#app/overrides";
 import { EggHatchPhase } from "./egg-hatch-phase";
+import * as LoggerTools from "../logger";
 
 export class EggLapsePhase extends Phase {
   constructor(scene: BattleScene) {

@@ -2,6 +2,7 @@ import BattleScene from "#app/battle-scene.js";
 import { applyMoveAttrs, MoveHeaderAttr } from "#app/data/move.js";
 import Pokemon, { PokemonMove } from "#app/field/pokemon.js";
 import { BattlePhase } from "./battle-phase";
+import * as LoggerTools from "../logger";
 
 export class MoveHeaderPhase extends BattlePhase {
   public pokemon: Pokemon;

@@ -13,6 +13,7 @@ import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { MessagePhase } from "./message-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";
+import * as LoggerTools from "../logger";
 
 export class TurnEndPhase extends FieldPhase {
   constructor(scene: BattleScene) {

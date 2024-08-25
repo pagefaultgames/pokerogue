@@ -4,6 +4,7 @@ import { MoneyMultiplierModifier } from "#app/modifier/modifier.js";
 import i18next from "i18next";
 import * as Utils from "#app/utils.js";
 import { BattlePhase } from "./battle-phase";
+import * as LoggerTools from "../logger";
 
 export class MoneyRewardPhase extends BattlePhase {
   private moneyMultiplier: number;

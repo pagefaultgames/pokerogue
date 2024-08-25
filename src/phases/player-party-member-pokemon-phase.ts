@@ -1,6 +1,7 @@
 import BattleScene from "#app/battle-scene.js";
 import { PlayerPokemon } from "#app/field/pokemon.js";
 import { PartyMemberPokemonPhase } from "./party-member-pokemon-phase";
+import * as LoggerTools from "../logger";
 
 export abstract class PlayerPartyMemberPokemonPhase extends PartyMemberPokemonPhase {
   constructor(scene: BattleScene, partyMemberIndex: integer) {

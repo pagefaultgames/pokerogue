@@ -1,5 +1,6 @@
 import BattleScene from "#app/battle-scene.js";
 import { EncounterPhase } from "./encounter-phase";
+import * as LoggerTools from "../logger";
 
 export class NextEncounterPhase extends EncounterPhase {
   constructor(scene: BattleScene) {

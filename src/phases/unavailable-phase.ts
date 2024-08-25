@@ -2,6 +2,7 @@ import BattleScene from "#app/battle-scene.js";
 import { Phase } from "#app/phase.js";
 import { Mode } from "#app/ui/ui.js";
 import { LoginPhase } from "./login-phase";
+import * as LoggerTools from "../logger";
 
 export class UnavailablePhase extends Phase {
   constructor(scene: BattleScene) {

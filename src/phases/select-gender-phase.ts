@@ -4,6 +4,7 @@ import { Phase } from "#app/phase.js";
 import { SettingKeys } from "#app/system/settings/settings.js";
 import { Mode } from "#app/ui/ui.js";
 import i18next from "i18next";
+import * as LoggerTools from "../logger";
 
 export class SelectGenderPhase extends Phase {
   constructor(scene: BattleScene) {

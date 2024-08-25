@@ -8,6 +8,7 @@ import { BattlePhase } from "./battle-phase";
 import * as Utils from "#app/utils.js";
 import { PartyHealPhase } from "./party-heal-phase";
 import { SwitchBiomePhase } from "./switch-biome-phase";
+import * as LoggerTools from "../logger";
 
 export class SelectBiomePhase extends BattlePhase {
   constructor(scene: BattleScene) {

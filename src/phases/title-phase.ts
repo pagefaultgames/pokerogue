@@ -21,6 +21,7 @@ import { EncounterPhase } from "./encounter-phase";
 import { SelectChallengePhase } from "./select-challenge-phase";
 import { SelectStarterPhase } from "./select-starter-phase";
 import { SummonPhase } from "./summon-phase";
+import * as LoggerTools from "../logger";
 
 
 export class TitlePhase extends Phase {

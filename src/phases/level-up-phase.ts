@@ -8,6 +8,7 @@ import i18next from "i18next";
 import * as Utils from "#app/utils.js";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
 import { LearnMovePhase } from "./learn-move-phase";
+import * as LoggerTools from "../logger";
 
 export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   private lastLevel: integer;
