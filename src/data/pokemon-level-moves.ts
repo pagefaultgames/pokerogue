@@ -18693,6 +18693,31 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 44, Moves.THUNDER ],
       [ 48, Moves.PIKA_PAPOW ],
     ],
+    8: [
+      [ 1, Moves.TAIL_WHIP ],
+      [ 1, Moves.GROWL ],
+      [ 1, Moves.THUNDER_SHOCK ],
+      [ 1, Moves.QUICK_ATTACK ],
+      [ 1, Moves.SWEET_KISS ],
+      [ 1, Moves.CHARM ],
+      [ 1, Moves.NASTY_PLOT ],
+      [ 1, Moves.PLAY_NICE ],
+      [ 1, Moves.NUZZLE ],
+      [ 4, Moves.THUNDER_WAVE ],
+      [ 8, Moves.DOUBLE_TEAM ],
+      [ 12, Moves.ELECTRO_BALL ],
+      [ 16, Moves.FEINT ],
+      [ 20, Moves.ZIPPY_ZAP ], //Custom
+      [ 24, Moves.AGILITY ],
+      [ 28, Moves.IRON_TAIL ],
+      [ 32, Moves.DISCHARGE ],
+      [ 34, Moves.FLOATY_FALL ], //Custom
+      [ 36, Moves.THUNDERBOLT ],
+      [ 40, Moves.LIGHT_SCREEN ],
+      [ 42, Moves.SPLISHY_SPLASH ], //Custom
+      [ 44, Moves.THUNDER ],
+      [ 48, Moves.PIKA_PAPOW ],
+    ],
   },
   [Species.EEVEE]: { //Custom
     1: [
