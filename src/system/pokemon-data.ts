@@ -92,7 +92,7 @@ export default class PokemonData {
     }
     this.pokerus = !!source.pokerus;
 
-    this.evoCounter = source.evoCounter || 0;
+    this.evoCounter = source.evoCounter ?? 0;
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;

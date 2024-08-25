@@ -189,7 +189,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metSpecies = dataSource.metSpecies ?? (this.metBiome !== -1 ? this.species.speciesId : this.species.getRootSpeciesId(true));
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
-      this.evoCounter = dataSource.evoCounter || 0;
+      this.evoCounter = dataSource.evoCounter ?? 0;
       this.fusionSpecies = dataSource.fusionSpecies instanceof PokemonSpecies ? dataSource.fusionSpecies : dataSource.fusionSpecies ? getPokemonSpecies(dataSource.fusionSpecies) : null;
       this.fusionFormIndex = dataSource.fusionFormIndex;
       this.fusionAbilityIndex = dataSource.fusionAbilityIndex;
@@ -2212,10 +2212,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.battleData.hitCount++;
           const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
           this.turnData.attacksReceived.unshift(attackResult);
-          if (source.isPlayer()) {
-            if (!this.isPlayer()) {
-              this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
-            }
+          if (source.isPlayer() && !this.isPlayer()) {
+            this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
           }
         }
 
