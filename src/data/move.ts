@@ -2773,28 +2773,27 @@ export class ResetStatsAttr extends MoveEffectAttr {
     super();
     this.targetAllPokemon = targetAllPokemon;
   }
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      const promises: Promise<void>[] = [];
+      if (this.targetAllPokemon) { // Target all pokemon on the field when Freezy Frost or Haze are used
+        const activePokemon = user.scene.getField(true);
+        activePokemon.forEach(p => promises.push(this.resetStats(p)));
+        target.scene.queueMessage(i18next.t("moveTriggers:statEliminated"));
+      } else { // Affects only the single target when Clear Smog is used
+        promises.push(this.resetStats(target));
+        target.scene.queueMessage(i18next.t("moveTriggers:resetStats", {pokemonName: getPokemonNameWithAffix(target)}));
+      }
 
-    if (this.targetAllPokemon) { // Target all pokemon on the field when Freezy Frost or Haze are used
-      const activePokemon = user.scene.getField(true);
-      activePokemon.forEach(p => this.resetStats(p));
-      target.scene.queueMessage(i18next.t("moveTriggers:statEliminated"));
-    } else { // Affects only the single target when Clear Smog is used
-      this.resetStats(target);
-      target.scene.queueMessage(i18next.t("moveTriggers:resetStats", {pokemonName: getPokemonNameWithAffix(target)}));
-    }
-
-    return true;
+      Promise.all(promises).then(() => resolve(true));
+    });
   }
 
-  resetStats(pokemon: Pokemon) {
+  resetStats(pokemon: Pokemon): Promise<void> {
     for (let s = 0; s < pokemon.summonData.battleStats.length; s++) {
       pokemon.summonData.battleStats[s] = 0;
     }
-    pokemon.updateInfo();
+    return pokemon.updateInfo();
   }
 }
 
