@@ -89,9 +89,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonFriendshipBoosterModifierType": {
       description: "Aumenta del 50% il guadagno di amicizia per vittoria.",
     },
-    "PokemonRegionalEvolutionModifierType": {
-      description: "When the holder evolves, it will evolve into its Alolan, Galarian, or Hisuian form.",
-    },
     "PokemonMoveAccuracyBoosterModifierType": {
       description: "Aumenta la precisione delle mosse di {{accuracyAmount}} (massimo 100).",
     },
@@ -186,7 +183,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "Uovo dorato" },
 
     "SOOTHE_BELL": { name: "Calmanella" },
-    "STRANGE_SOUVENIR": { name: "Stranno ninnolo" },
 
     "SCOPE_LENS": { name: "Mirino", description: "Lente che aumenta la probabilità di sferrare brutti colpi." },
     "LEEK": { name: "Porro", description: "Strumento da dare a Farfetch'd. Lungo gambo di porro che aumenta la probabilità di sferrare brutti colpi." },

@@ -87,9 +87,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     PokemonFriendshipBoosterModifierType: {
       description: "每場戰鬥獲得的好感度提升50%。",
     },
-    PokemonRegionalEvolutionModifierType: {
-      description: "When the holder evolves, it will evolve into its Alolan, Galarian, or Hisuian form.",
-    },
     PokemonMoveAccuracyBoosterModifierType: {
       description: "招式命中率增加{{accuracyAmount}} (最大100)。",
     },
@@ -194,7 +191,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     LUCKY_EGG: { name: "幸運蛋" },
     GOLDEN_EGG: { name: "金蛋" },
     SOOTHE_BELL: { name: "安撫之鈴" },
-    STRANGE_SOUVENIR: { name: "Strange Souvenir" },
     SCOPE_LENS: {
       name: "焦點鏡",
       description: "能看見弱點的鏡片。攜帶它的寶可夢的招式 會變得容易擊中要害。"

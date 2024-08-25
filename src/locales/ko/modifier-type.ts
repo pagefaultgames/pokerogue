@@ -89,9 +89,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "PokemonFriendshipBoosterModifierType": {
       description: "배틀 승리로 얻는 친밀도가 50% 증가한다.",
     },
-    "PokemonRegionalEvolutionModifierType": {
-      description: "When the holder evolves, it will evolve into its Alolan, Galarian, or Hisuian form.",
-    },
     "PokemonMoveAccuracyBoosterModifierType": {
       description: "기술의 명중률이 {{accuracyAmount}} 증가한다. (최대 100)",
     },
@@ -186,8 +183,6 @@ export const modifierType: ModifierTypeTranslationEntries = {
     "GOLDEN_EGG": { name: "황금의알" },
 
     "SOOTHE_BELL": { name: "평온의방울" },
-
-    "STRANGE_SOUVENIR": { name: "Strange Souvenir" },
 
     "SCOPE_LENS": { name: "초점렌즈", description: "약점이 보이는 렌즈. 지니게 한 포켓몬의 기술이 급소에 맞기 쉬워진다." },
     "LEEK": { name: "대파", description: "매우 길고 단단한 줄기. 파오리에게 지니게 하면 기술이 급소에 맞기 쉬워진다." },
