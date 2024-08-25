@@ -1563,6 +1563,10 @@ export class EncounterPhase extends BattlePhase {
         } else if (!(battle.waveIndex % 1000)) {
           enemyPokemon.formIndex = 1;
           enemyPokemon.updateScale();
+          const bossMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;
+          this.scene.removeModifier(bossMBH!);
+          bossMBH?.setTransferrableFalse();
+          this.scene.addEnemyModifier(bossMBH!);
         }
       }
 
@@ -1712,7 +1716,7 @@ export class EncounterPhase extends BattlePhase {
     }
     LoggerTools.resetWaveActions(this.scene, undefined, true)
 
-    this.scene.doShinyCheck()
+    //this.scene.doShinyCheck()
 
     if (LoggerTools.autoCheckpoints.includes(this.scene.currentBattle.waveIndex)) {
       //this.scene.gameData.saveGameToAuto(this.scene)
@@ -1785,7 +1789,6 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     enemyField.forEach((enemyPokemon, e) => {
-      enemyPokemon.flyout.revealMoves()
       if (enemyPokemon.isShiny()) {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
       }
@@ -5378,13 +5381,24 @@ export class FaintPhase extends PokemonPhase {
     }
 
     if (this.player) {
-      const nonFaintedLegalPartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
-      const nonFaintedPartyMemberCount = nonFaintedLegalPartyMembers.length;
-      if (!nonFaintedPartyMemberCount) {
+      /** The total number of Pokemon in the player's party that can legally fight */
+      const legalPlayerPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
+      /** The total number of legal player Pokemon that aren't currently on the field */
+      const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
+      if (!legalPlayerPokemon.length) {
+        /** If the player doesn't have any legal Pokemon, end the game */
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
-      } else if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double) {
+      } else if (this.scene.currentBattle.double && legalPlayerPokemon.length === 1 && legalPlayerPartyPokemon.length === 0) {
+        /**
+         * If the player has exactly one Pokemon in total at this point in a double battle, and that Pokemon
+         * is already on the field, unshift a phase that moves that Pokemon to center position.
+         */
         this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
-      } else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount()) {
+      } else if (legalPlayerPartyPokemon.length > 0) {
+        /**
+         * If previous conditions weren't met, and the player has at least 1 legal Pokemon off the field,
+         * push a phase that prompts the player to summon a Pokemon from their party.
+         */
         LoggerTools.isFaintSwitch.value = true;
         this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
       }
@@ -6999,9 +7013,10 @@ export function runShinyCheck(scene: BattleScene, mode: integer, wv?: integer) {
 }
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: integer;
-  private modifierTiers: ModifierTier[];
+  private modifierTiers: ModifierTier[] = [];
   private modifierPredictions: ModifierTypeOption[][] = []
-  private predictionCost: integer;
+  private predictionCost: integer = 0;
+  private costTiers: integer[] = [];
 
   constructor(scene: BattleScene, rerollCount: integer = 0, modifierTiers?: ModifierTier[], predictionCost?: integer, modifierPredictions?: ModifierTypeOption[][]) {
     super(scene);
@@ -7013,13 +7028,19 @@ export class SelectModifierPhase extends BattlePhase {
       this.modifierPredictions = modifierPredictions;
     }
     this.predictionCost = 0
+    this.costTiers = []
   }
 
-  generateSelection(rerollOverride: integer, modifierOverride?: integer) {
+  generateSelection(rerollOverride: integer, modifierOverride?: integer, eviolite?: boolean) {
     //const STATE = Phaser.Math.RND.state() // Store RNG state
     //console.log("====================")
     //console.log("  Reroll Prediction: " + rerollOverride)
     const party = this.scene.getParty();
+    if (eviolite) {
+      setEvioliteOverride("on")
+    } else {
+      setEvioliteOverride("off")
+    }
     regenerateModifierPoolThresholds(party, this.getPoolType(), rerollOverride);
     const modifierCount = new Utils.IntegerHolder(3);
     if (this.isPlayer()) {
@@ -7029,11 +7050,31 @@ export class SelectModifierPhase extends BattlePhase {
       //modifierCount.value = modifierOverride
     }
     const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value, true, true);
+    setEvioliteOverride("")
     typeOptions.forEach((option, idx) => {
+      option.netprice = this.predictionCost
+      if (option.type.name == "Nugget") {
+        option.netprice -= this.scene.getWaveMoneyAmount(1)
+      }
+      if (option.type.name == "Big Nugget") {
+        option.netprice -= this.scene.getWaveMoneyAmount(2.5)
+      }
+      if (option.type.name == "Relic Gold") {
+        option.netprice -= this.scene.getWaveMoneyAmount(10)
+      }
       //console.log(option.type.name)
     })
     //console.log("====================")
-    this.modifierPredictions.push(typeOptions)
+    if (eviolite) {
+      this.modifierPredictions[rerollOverride].forEach((m, i) => {
+        if (m.type.name != typeOptions[i].type.name) {
+          m.eviolite = typeOptions[i].type
+        }
+      })
+    } else {
+      this.modifierPredictions[rerollOverride] = typeOptions
+    }
+    this.costTiers.push(this.predictionCost)
     this.predictionCost += this.getRerollCost(typeOptions, false, rerollOverride)
     //Phaser.Math.RND.state(STATE) // Restore RNG state like nothing happened
   }
@@ -7043,10 +7084,19 @@ export class SelectModifierPhase extends BattlePhase {
 
     if (!this.rerollCount) {
       this.updateSeed();
-      console.log("\n\nPerforming reroll prediction\n\n\n")
+      console.log(calculateItemConditions(this.scene.getParty(), false, true))
+      console.log("\n\nPerforming reroll prediction (Eviolite OFF)\n\n\n")
       this.predictionCost = 0
+      this.costTiers = []
       for (var idx = 0; idx < 10 && this.predictionCost < this.scene.money; idx++) {
-        this.generateSelection(idx)
+        this.generateSelection(idx, undefined, false)
+      }
+      this.updateSeed();
+      console.log("\n\nPerforming reroll prediction (Eviolite ON)\n\n\n")
+      this.predictionCost = 0
+      this.costTiers = []
+      for (var idx = 0; idx < 10 && this.predictionCost < this.scene.money; idx++) {
+        this.generateSelection(idx, undefined, true)
       }
       this.updateSeed();
     } else {
@@ -7272,35 +7322,83 @@ export class SelectModifierPhase extends BattlePhase {
       return !cost!;// TODO: is the bang correct?
     };
     if (this.rerollCount == 0) {
-      this.modifierPredictions.forEach((mp, r) => {
-        console.log("Rerolls: " + r)
-        mp.forEach((m, i) => {
-          console.log("  " + m.type!.name)
-          if (m.alternates) {
-            let showedLuckFlag = false
-            for (var j = 0, currentTier = m.type!.tier; j < m.alternates.length; j++) {
-              if (m.alternates[j] > currentTier) {
-                currentTier = m.alternates[j]
-                if (m.advancedAlternates) {
-                  if (!showedLuckFlag) {
-                    showedLuckFlag = true
-                    console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
+      if (true) {
+        this.modifierPredictions.forEach((mp, r) => {
+          // costTiers
+          console.log("Rerolls: " + r + (this.costTiers[r] != 0 ? " - ₽" + this.costTiers[r] : ""))
+          mp.forEach((m, i) => {
+            console.log("  " + m.type!.name + (m.netprice != this.costTiers[r] ? " - ₽" + m.netprice : ""))
+            if (m.eviolite) {
+              console.log("    With Eviolite unlocked: " + m.eviolite.name)
+            }
+            if (m.alternates) {
+              //console.log(m.alternates)
+              let showedLuckFlag = false
+              for (var j = 0, currentTier = m.type!.tier; j < m.alternates.length; j++) {
+                if (m.alternates[j] > currentTier) {
+                  currentTier = m.alternates[j]
+                  if (m.advancedAlternates) {
+                    if (!showedLuckFlag) {
+                      showedLuckFlag = true
+                      console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
+                    }
+                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + m.advancedAlternates[j])
+                  } else {
+                    if (!showedLuckFlag) {
+                      showedLuckFlag = true
+                      console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
+                    }
+                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + tierNames[currentTier] + "-tier item (failed to generate item)")
                   }
-                  console.log("    At " + j + " luck (" + getLuckString(j) + "): " + m.advancedAlternates[j])
-                } else {
-                  if (!showedLuckFlag) {
-                    showedLuckFlag = true
-                    console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
-                  }
-                  console.log("    At " + j + " luck (" + getLuckString(j) + "): " + tierNames[currentTier] + "-tier item (failed to generate item)")
                 }
               }
+            } else {
+              //console.log("    No alt-luck data")
             }
-          } else {
-            console.log("    No alt-luck data")
-          }
+          })
         })
-      })
+      } else {
+        let modifierList: string[] = []
+        this.modifierPredictions.forEach((mp, r) => {
+          //console.log("Rerolls: " + r)
+          mp.forEach((m, i) => {
+            modifierList.push(m.type!.name + (r > 0 ? " (x" + r + ")" : ""))
+            //console.log("  " + m.type!.name)
+            if (m.eviolite) {
+              modifierList.push(m.type!.name + (r > 0 ? " (x" + r + " with eviolite unlocked)" : " (With eviolite unlocked)"))
+              //console.log("    With Eviolite unlocked: " + m.eviolite.name)
+            }
+            if (m.alternates) {
+              //console.log(m.alternates)
+              let showedLuckFlag = false
+              for (var j = 0, currentTier = m.type!.tier; j < m.alternates.length; j++) {
+                if (m.alternates[j] > currentTier) {
+                  currentTier = m.alternates[j]
+                  if (m.advancedAlternates) {
+                    if (!showedLuckFlag) {
+                      showedLuckFlag = true
+                      console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
+                    }
+                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + m.advancedAlternates[j])
+                  } else {
+                    if (!showedLuckFlag) {
+                      showedLuckFlag = true
+                      console.log("    Your luck: " + getPartyLuckValue(party) + " (" + getLuckString(getPartyLuckValue(party)) + ")")
+                    }
+                    console.log("    At " + j + " luck (" + getLuckString(j) + "): " + tierNames[currentTier] + "-tier item (failed to generate item)")
+                  }
+                }
+              }
+            } else {
+              //console.log("    No alt-luck data")
+            }
+          })
+        })
+        modifierList.sort()
+        modifierList.forEach(v => {
+          console.log(v)
+        })
+      }
     }
     this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
   }
