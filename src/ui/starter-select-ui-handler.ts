@@ -410,7 +410,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (index === 0 || index === 19) {
         return;
       }
-      const typeSprite = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+      const typeSprite = this.scene.add.sprite(0, 0, Utils.getLocalizedSpriteKey("types"));
       typeSprite.setScale(0.5);
       typeSprite.setFrame(type.toLowerCase());
       typeOptions.push(new DropDownOption(this.scene, index, new DropDownLabel("", typeSprite)));
@@ -668,12 +668,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+    this.type1Icon = this.scene.add.sprite(8, 98, Utils.getLocalizedSpriteKey("types"));
     this.type1Icon.setScale(0.5);
     this.type1Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type1Icon);
 
-    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+    this.type2Icon = this.scene.add.sprite(26, 98, Utils.getLocalizedSpriteKey("types"));
     this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
@@ -1656,7 +1656,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     });
                     this.tryUpdateValue(0);
                     ui.setMode(Mode.STARTER_SELECT);
-                    this.scene.playSound("buy");
+                    this.scene.playSound("se/buy");
 
                     // if starterContainer exists, update the value reduction background
                     if (starterContainer) {
@@ -1795,15 +1795,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (this.canCycleAbility) {
             const abilityCount = this.lastSpecies.getAbilityCount();
             const abilityAttr = this.scene.gameData.starterData[this.lastSpecies.speciesId].abilityAttr;
+            const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
             let newAbilityIndex = this.abilityCursor;
             do {
               newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
-              if (!newAbilityIndex) {
-                if (abilityAttr & AbilityAttr.ABILITY_1) {
+              if (newAbilityIndex === 0) {
+                if (hasAbility1) {
                   break;
                 }
               } else if (newAbilityIndex === 1) {
-                if (this.lastSpecies.ability1 === this.lastSpecies.ability2) {
+                // If ability 1 and 2 are the same and ability 1 is unlocked, skip over ability 2
+                if (this.lastSpecies.ability1 === this.lastSpecies.ability2 && hasAbility1) {
                   newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
                 }
                 break;
@@ -3045,7 +3047,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         this.canCycleShiny = isVariantCaught || isVariant2Caught || isVariant3Caught;
         this.canCycleGender = isMaleCaught && isFemaleCaught;
-        this.canCycleAbility = [ abilityAttr & AbilityAttr.ABILITY_1, (abilityAttr & AbilityAttr.ABILITY_2) && species.ability2, abilityAttr & AbilityAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
+        const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
+        let hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
+        const hasHiddenAbility = abilityAttr & AbilityAttr.ABILITY_HIDDEN;
+
+        /*
+         * Check for Pokemon with a single ability (at some point it was possible to catch them with their ability 2 attribute)
+         * This prevents cycling between ability 1 and 2 if they are both unlocked and the same
+         * but we still need to account for the possibility ability 1 was never unlocked and fallback on ability 2 in this case
+         */
+        if (hasAbility1 && hasAbility2 && species.ability1 === species.ability2) {
+          hasAbility2 = 0;
+        }
+
+        this.canCycleAbility = [ hasAbility1, hasAbility2, hasHiddenAbility ].filter(a => a).length > 1;
         this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
           .map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(f => f).length > 1;
         this.canCycleNature = this.scene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
