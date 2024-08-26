@@ -35,7 +35,7 @@ import { DexAttr, StarterDataEntry, StarterMoveset } from "../system/game-data";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from "../data/pokemon-forms";
-import { TerrainType } from "../data/terrain";
+import { getTerrainName, TerrainType } from "../data/terrain";
 import { TrainerSlot } from "../data/trainer-config";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
@@ -2690,7 +2690,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
+  // check the endpoint
   canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
+    console.log("attempt5");
+
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
         return false;
@@ -2767,6 +2770,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   trySetStatus(effect: StatusEffect | undefined, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, cureTurn: integer | null = 0, sourceText: string | null = null): boolean {
     if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
+      switch (effect) {
+      case StatusEffect.SLEEP:
+        if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.ELECTRIC) {
+          this.scene.queueMessage(i18next.t("terrain:defaultBlockMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(this), terrainName: getTerrainName(TerrainType.ELECTRIC) }));
+          return false;
+        }
+        break;
+      }
       return false;
     }
 
