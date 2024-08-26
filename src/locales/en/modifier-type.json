@@ -76,7 +76,7 @@
     },
     "PokemonBaseStatFlatModifierType": {
       "name": "Old Gateau",
-      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream.",
+      "description": "Increases the holder's {{stats}} base stats by {{statValue}}. Found after a strange dream."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restores 100% HP for all Pokémon."
