@@ -21,6 +21,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   public movesWindowContainer: Phaser.GameObjects.Container;
   public nameBoxContainer: Phaser.GameObjects.Container;
 
+  public readonly wordWrapWidth: number = 1780;
+
   constructor(scene: BattleScene) {
     super(scene, Mode.MESSAGE);
   }
@@ -63,7 +65,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     const message = addTextObject(this.scene, 0, 0, "", TextStyle.MESSAGE, {
       maxLines: 2,
       wordWrap: {
-        width: 1780
+        width: this.wordWrapWidth
       }
     });
     messageContainer.add(message);
@@ -129,7 +131,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
     this.commandWindow.setVisible(false);
     this.movesWindowContainer.setVisible(false);
-    this.message.setWordWrapWidth(1780);
+    this.message.setWordWrapWidth(this.wordWrapWidth);
 
     return true;
   }

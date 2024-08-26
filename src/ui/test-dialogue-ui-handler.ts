@@ -97,7 +97,9 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
           return {
             label: value,
             handler: () => {
-              if (!isNullOrUndefined(evt.data)) {
+              // this is here to make sure that if you try to backspace then enter, the last known evt.data (backspace) is picked up
+              // this is because evt.data is null for backspace, so without this, the autocomplete windows just closes
+              if (!isNullOrUndefined(evt.data) || evt.inputType?.toLowerCase() === "deletecontentbackward") {
                 const separatedArray = inputObject.text.split(" ");
                 separatedArray[separatedArray.length - 1] = value;
                 inputObject.setText(separatedArray.join(" "));
