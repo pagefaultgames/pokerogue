@@ -5339,7 +5339,7 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
 export class RandomMovesetMoveAttr extends RandomMoveAttr {
   private includeParty: boolean;
   private moveId: number;
-  constructor(invalidMoves: Moves[], includeParty?: boolean) {
+  constructor(invalidMoves: Moves[], includeParty: boolean = false) {
     super(invalidMoves);
     this.includeParty = includeParty;
   }
@@ -5366,12 +5366,12 @@ export class RandomMovesetMoveAttr extends RandomMoveAttr {
         allies = [user];
       }
       const partyMoveset = allies.map(p => p.moveset).flat();
-      const moves = partyMoveset.filter(m => !this.invalidMoves.includes(m.moveId) && !m.getMove().name.endsWith(" (N)"));
+      const moves = partyMoveset.filter(m => !this.invalidMoves.includes(m!.moveId) && !m!.getMove().name.endsWith(" (N)"));
       if (moves.length === 0) {
         return false;
       }
 
-      this.moveId = moves[user.randSeedInt(moves.length)].moveId;
+      this.moveId = moves[user.randSeedInt(moves.length)]!.moveId;
       return true;
     };
   }
