@@ -1597,7 +1597,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
     new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => {
       const { gameMode, gameData } = party[0].scene;
-      if (!gameMode.isFreshStartChallenge() && !gameMode.isDaily && gameData.unlocks[Unlockables.EVIOLITE]) {
+      if (gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.unlocks[Unlockables.EVIOLITE])) {
         return party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier)) ? 10 : 0;
       }
       return 0;
@@ -1675,7 +1675,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.MULTI_LENS, 18),
     new WeightedModifierType(modifierTypes.VOUCHER_PREMIUM, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily && !party[0].scene.gameMode.isEndless && !party[0].scene.gameMode.isSplicedOnly ? Math.max(5 - rerollCount * 2, 0) : 0, 5),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
-    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE]) ? 1 : 0, 1),
+    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => (party[0].scene.gameMode.isDaily || (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE])) ? 1 : 0, 1),
   ].map(m => {
     m.setTier(ModifierTier.MASTER); return m;
   })
@@ -2089,6 +2089,30 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): Modifiers.P
 
   return ret;
 }
+
+/*
+export function getModifierThresholdPool(poolType: ModifierPoolType) {
+  let thresholds: {}
+  switch (poolType) {
+    case ModifierPoolType.PLAYER:
+      thresholds = modifierPoolThresholds;
+      break;
+    case ModifierPoolType.WILD:
+      thresholds = enemyModifierPoolThresholds;
+      break;
+    case ModifierPoolType.TRAINER:
+      thresholds = enemyModifierPoolThresholds;
+      break;
+    case ModifierPoolType.ENEMY_BUFF:
+      thresholds = enemyBuffModifierPoolThresholds;
+      break;
+    case ModifierPoolType.DAILY_STARTER:
+      thresholds = dailyStarterModifierPoolThresholds;
+      break;
+    }
+  return thresholds;
+}
+*/
 
 function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: integer, retryCount: integer = 0): ModifierTypeOption | null {
   const player = !poolType;
