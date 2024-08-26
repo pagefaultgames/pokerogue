@@ -1995,11 +1995,11 @@ export default class BattleScene extends SceneBase {
       return 12.974;
     case "battle_flare_grunt": //XY Team Flare Battle
       return 4.228;
-    case "battle_aether_grunt": // Battle!(Aether Foundation)
+    case "battle_aether_grunt": // SM Aether Foundation Battle
       return 16.00;
-    case "battle_skull_grunt": // Battle!(Team Skull)
+    case "battle_skull_grunt": // SM Team Skull Battle
       return 20.87;
-    case "battle_macro_grunt": // Battle!(Trainer) Sword / Shield
+    case "battle_macro_grunt": // SWSH Trainer Battle
       return 11.56;
     case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
       return 11.997;
@@ -2017,11 +2017,11 @@ export default class BattleScene extends SceneBase {
       return 25.624;
     case "battle_flare_boss": //XY Lysandre Battle
       return 8.085;
-    case "battle_aether_boss": //Battle!(Lusamine)
+    case "battle_aether_boss": //SM Lusamine Battle
       return 11.33;
-    case "battle_skull_boss": //Battle!(Team Skull Boss)
+    case "battle_skull_boss": //SM Guzma Battle
       return 13.13;
-    case "battle_macro_boss": //Battle!(Rose)
+    case "battle_macro_boss": //SWSH Rose Battle
       return 11.42;
     }
 
