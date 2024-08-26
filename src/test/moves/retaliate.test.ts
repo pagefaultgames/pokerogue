@@ -25,16 +25,16 @@ describe("Moves - Retaliate", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset([Moves.GIGA_IMPACT, Moves.GIGA_IMPACT, Moves.GIGA_IMPACT, Moves.GIGA_IMPACT]);
-    game.override.enemyHeldItems([{name: "WIDE_LENS", count: 3}]);
-    game.override.enemyLevel(100);
-
-    game.override.moveset([Moves.RETALIATE, Moves.SPLASH]);
-    game.override.startingHeldItems([{name: "WIDE_LENS", count: 3}]);
-    game.override.startingLevel(80);
-    game.override.disableCrits();
+    game.override
+      .battleType("single")
+      .enemySpecies(Species.SNORLAX)
+      .enemyMoveset([Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE])
+      .enemyHeldItems([{name: "WIDE_LENS", count: 3}])
+      .enemyLevel(100)
+      .moveset([Moves.RETALIATE, Moves.SPLASH])
+      .startingHeldItems([{name: "WIDE_LENS", count: 3}])
+      .startingLevel(80)
+      .disableCrits();
   });
 
   it("increases power if ally died previous turn", async () => {
