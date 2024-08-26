@@ -3752,9 +3752,9 @@ export class EnemyPokemon extends Pokemon {
 
     const speciesId = this.species.speciesId;
 
-    if (speciesId in Overrides.OPP_FORM_OVERRIDES &&
-      Overrides.OPP_FORM_OVERRIDES[speciesId] &&
-      this.species.forms[Overrides.OPP_FORM_OVERRIDES[speciesId]]) {
+    if (speciesId in Overrides.OPP_FORM_OVERRIDES
+      && Overrides.OPP_FORM_OVERRIDES[speciesId]
+      && this.species.forms[Overrides.OPP_FORM_OVERRIDES[speciesId]]) {
       this.formIndex = Overrides.OPP_FORM_OVERRIDES[speciesId] ?? 0;
     }
 
