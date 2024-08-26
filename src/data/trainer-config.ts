@@ -599,21 +599,21 @@ export class TrainerConfig {
     case "aether": {
       return {
         [TrainerPoolTier.COMMON]: [ Species.BRUXISH, Species.SLOWPOKE, Species.BALTOY, Species.EXEGGCUTE, Species.ABRA, Species.ALOLA_RAICHU, Species.ELGYEM, Species.NATU],
-        [TrainerPoolTier.UNCOMMON]: [Species.GALAR_SLOWPOKE, Species.MEDITITE, Species.BELDUM, Species.ORANGURU, Species.HATENNA, Species.INKAY, Species.RALTS],
+        [TrainerPoolTier.UNCOMMON]: [Species.GALAR_SLOWKING, Species.MEDITITE, Species.BELDUM, Species.ORANGURU, Species.HATTERENE, Species.INKAY, Species.RALTS],
         [TrainerPoolTier.RARE]: [Species.ARMAROUGE, Species.GIRAFARIG, Species.PORYGON]
       };
     }
     case "skull": {
       return {
-        [TrainerPoolTier.COMMON]: [ Species.MAREANIE, Species.ALOLA_GRIMER, Species.GASTLY, Species.ZUBAT, Species.FOMANTIS, Species.VENIPEDE, Species.BUDEW, Species.KOFFING],
-        [TrainerPoolTier.UNCOMMON]: [Species.GALAR_SLOWPOKE, Species.SKORUPI, Species.PALDEA_WOOPER, Species.NIDORAN_F, Species.CROAGUNK, Species.VULLABY],
+        [TrainerPoolTier.COMMON]: [ Species.MAREANIE, Species.ALOLA_GRIMER, Species.GASTLY, Species.ZUBAT, Species.LURANTIS, Species.VENIPEDE, Species.BUDEW, Species.KOFFING],
+        [TrainerPoolTier.UNCOMMON]: [Species.GALAR_SLOWBRO, Species.SKORUPI, Species.PALDEA_WOOPER, Species.NIDORAN_F, Species.CROAGUNK, Species.MANDIBUZZ],
         [TrainerPoolTier.RARE]: [Species.DRAGALGE, Species.HISUI_SNEASEL]
       };
     }
     case "macro": {
       return {
-        [TrainerPoolTier.COMMON]: [ Species.HATENNA, Species.FEEBAS, Species.BOUNSWEET, Species.SALANDIT, Species.GALAR_PONYTA, Species.GOTHITA, Species.FROSLASS],
-        [TrainerPoolTier.UNCOMMON]: [Species.VULLABY, Species.MAREANIE, Species.ALOLA_VULPIX, Species.TOGEPI, Species.GALAR_CORSOLA, Species.SINISTEA, Species.APPLIN],
+        [TrainerPoolTier.COMMON]: [ Species.HATTERENE, Species.MILOTIC, Species.TSAREENA, Species.SALANDIT, Species.GALAR_PONYTA, Species.GOTHITA, Species.FROSLASS],
+        [TrainerPoolTier.UNCOMMON]: [Species.MANDIBUZZ, Species.MAREANIE, Species.ALOLA_VULPIX, Species.TOGEPI, Species.GALAR_CORSOLA, Species.SINISTEA, Species.APPLIN],
         [TrainerPoolTier.RARE]: [Species.TINKATINK, Species.HISUI_LILLIGANT]
       };
     }
