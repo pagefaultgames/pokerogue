@@ -28,6 +28,7 @@
   },
   "inverseBattle": {
     "name": "Batalha Inversa",
+    "shortName": "Inversa",
     "desc": "Fraquezas e resistências de tipos são invertidas e nenhum tipo é imune a outro tipo.\nDesativa as conquistas de outros desafios.",
     "value.0": "Desligado",
     "value.1": "Ligado"
