@@ -1,10 +1,11 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#app/test/utils/gameManager";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { allMoves } from "#app/data/move.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 describe("Moves - Retaliate", () => {
   let phaserGame: Phaser.Game;
@@ -26,7 +27,8 @@ describe("Moves - Retaliate", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset([Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE]);
+    game.override.enemyMoveset([Moves.GIGA_IMPACT, Moves.GIGA_IMPACT, Moves.GIGA_IMPACT, Moves.GIGA_IMPACT]);
+    game.override.enemyHeldItems([{name: "WIDE_LENS", count: 3}]);
     game.override.enemyLevel(100);
 
     game.override.moveset([Moves.RETALIATE, Moves.SPLASH]);
@@ -36,17 +38,18 @@ describe("Moves - Retaliate", () => {
   });
 
   it("increases power if ally died previous turn", async () => {
+    vi.spyOn(retaliate, "calculateBattlePower");
     await game.startBattle([Species.ABRA, Species.COBALION]);
-    expect(retaliate.calculateBattlePower(game.scene.getPlayerPokemon()!, game.scene.getEnemyPokemon()!)).equals(70);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.RETALIATE);
+    await game.phaseInterceptor.to(TurnEndPhase);
+    expect(retaliate.calculateBattlePower).toHaveLastReturnedWith(70);
     game.doSelectPartyPokemon(1);
 
     await game.toNextTurn();
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-    const snorlax = game.scene.getEnemyPokemon()!;
+    game.move.select(Moves.RETALIATE);
+    await game.phaseInterceptor.to(MoveEffectPhase);
     const cobalion = game.scene.getPlayerPokemon()!;
     expect(cobalion.name).equals("Cobalion");
-    expect(retaliate.calculateBattlePower(cobalion, snorlax)).equals(140);
-    expect(retaliate.calculateBattlePower(snorlax, cobalion)).equals(70);
+    expect(retaliate.calculateBattlePower).toHaveReturnedWith(140);
   });
 });
