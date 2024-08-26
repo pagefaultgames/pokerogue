@@ -201,7 +201,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     /* Multiplies the appearance duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
     this.scene.showShopOverlay(750 * this.scene.gameSpeed);
-    this.scene.updateAndShowText(750, this.scene.gameMode.modeId == GameModes.DAILY);
+    this.scene.updateAndShowText(750, this.scene.gameMode.modeId === GameModes.DAILY);
     this.scene.updateBiomeWaveText();
     this.scene.updateMoneyText();
 
