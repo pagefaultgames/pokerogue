@@ -68,8 +68,8 @@ describe("Moves - Trick", () => {
       game.override.enemyMoveset(SPLASH_ONLY);
       await game.startBattle([Species.MIME_JR]);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       const playerLostItem = playerPokemon.getHeldItems()[1];
       const enemyLostItem = enemyPokemon.getHeldItems()[0];
@@ -138,7 +138,7 @@ describe("Moves - Trick", () => {
       game.move.select(Moves.TRICK);
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
       expect(playerPokemon.getHeldItems()[1].type.id === "TOXIC_ORB").toBeFalsy();
     }
   );
@@ -170,8 +170,8 @@ describe("Moves - Trick", () => {
       game.override.enemyMoveset(TRICK_ONLY);
       await game.startBattle([Species.MAGIKARP]);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       const playerPokemonFirstHeldItem = deepCopy(playerPokemon.getHeldItems()[0]) as PokemonHeldItemModifier;
       const enemyPokemonFirstHeldItem = deepCopy(enemyPokemon.getHeldItems()[0]) as PokemonHeldItemModifier;
 
@@ -205,8 +205,8 @@ describe("Moves - Trick", () => {
       game.override.enemyAbility(Abilities.STICKY_HOLD);
       await game.startBattle([Species.MIME_JR]);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       const playerPokemonFirstHeldItem = deepCopy(playerPokemon.getHeldItems()[0]) as PokemonHeldItemModifier;
       const enemyPokemonFirstHeldItem = deepCopy(enemyPokemon.getHeldItems()[0]) as PokemonHeldItemModifier;
 
@@ -237,8 +237,8 @@ describe("Moves - Trick", () => {
       game.override.enemyMoveset(SPLASH_ONLY);
       await game.startBattle([Species.MIME_JR]);
 
-      const playerPokemon = game.scene.getPlayerPokemon();
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       expect(playerPokemon.getHeldItems().length === 0);
       expect(enemyPokemon.getHeldItems().length === 0);
