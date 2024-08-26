@@ -28,7 +28,7 @@ import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
-import { GameModes } from "#app/game-mode.js";
+import { GameModes } from "#app/game-mode";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;

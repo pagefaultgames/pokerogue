@@ -1549,7 +1549,7 @@ export default class BattleScene extends SceneBase {
     this.scoreText.setVisible(this.gameMode.isDaily);
   }
 
-  updateAndShowText(duration: integer, isDaily?: boolean): void {
+  updateAndShowText(duration: number, isDaily?: boolean): void {
     const labels = [ this.luckLabelText, this.luckText ];
     labels.forEach(t => t.setAlpha(0));
     const luckValue = getPartyLuckValue(this.getParty());
