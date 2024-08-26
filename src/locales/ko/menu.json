@@ -41,6 +41,7 @@
   "score": "점수",
   "wave": "웨이브",
   "loading": "로딩 중…",
+  "loadingAsset": "리소스 로드 중: {{assetName}}",
   "playersOnline": "플레이어 온라인",
   "yes": "예",
   "no": "아니오",
