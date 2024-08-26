@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
-import { allMoves } from "#app/data/move";
+import Move, { allMoves } from "#app/data/move";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
 import { Moves } from "#app/enums/moves";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -9,6 +9,7 @@ import { SummaryUiMode } from "#app/ui/summary-ui-handler";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
+import Pokemon from "#app/field/pokemon";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
@@ -33,7 +34,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }
 
     this.messageMode = this.scene.ui.getHandler() instanceof EvolutionSceneHandler ? Mode.EVOLUTION_SCENE : Mode.MESSAGE;
-
+    this.scene.ui.setMode(this.messageMode);
     // If the Pokemon has less than 4 moves, the new move is added to the largest empty moveset index
     // If it has 4 moves, the phase then checks if the player wants to replace the move itself.
     if (currentMoveset.length < 4) {
@@ -68,18 +69,16 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * If a player does not select a move or chooses the new move (moveIndex === 4), the game goes to this.rejectMoveAndEnd()
    * If an old move is selected, the function then passes the moveIndex to this.learnMove()
    */
-  forgetMoveProcess(move, pokemon) {
+  forgetMoveProcess(move: Move, pokemon: Pokemon) {
     this.scene.ui.setMode(this.messageMode);
     this.scene.ui.showText(i18next.t("battle:learnMoveForgetQuestion"), null, () => {
       this.scene.ui.setModeWithoutClear(Mode.SUMMARY, pokemon, SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
         if (moveIndex === 4) {
           this.rejectMoveAndEnd(move, pokemon);
-          return;
         }
-        this.scene.ui.setMode(this.messageMode);
         const forgetSuccessText = i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex]!.getName() });
         const fullText = [i18next.t("battle:countdownPoof"), forgetSuccessText, i18next.t("battle:learnMoveAnd")].join("$");
-        this.learnMove(moveIndex, move, pokemon, fullText);
+        this.scene.ui.setMode(this.messageMode).then(() => this.learnMove(moveIndex, move, pokemon, fullText));
       });
     }, null, true);
   }
@@ -90,13 +89,15 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * If the player wishes to not teach the Pokemon the move, it displays a message and ends the phase.
    * If the player reconsiders, it repeats the process for a Pokemon with a full moveset once again.
    */
-  rejectMoveAndEnd(move, pokemon) {
+  rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
     this.scene.ui.setMode(this.messageMode);
     this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
       this.scene.ui.setModeWithoutClear(Mode.CONFIRM,
         () => {
           this.scene.ui.setMode(this.messageMode);
-          this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => this.end(), null, true);
+          this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
+            this.unshiftPhase(); this.end();
+          }, null, true);
         },
         () => {
           this.scene.ui.setMode(this.messageMode);

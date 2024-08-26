@@ -2,12 +2,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
-//import * as Utils from "#app/utils";
 import { Moves } from "#enums/moves";
-// import BattleScene from "#app/battle-scene";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import Overrides from "#app/overrides";
-//import { allMoves } from "#app/data/move";
 
 describe("Learn Move Phase", () => {
   let phaserGame: Phaser.Game;
@@ -41,6 +38,12 @@ describe("Learn Move Phase", () => {
     const levelReq = levelMove[0];
     const levelMoveId = levelMove[1];
     expect(pokemon.level).toBeGreaterThanOrEqual(levelReq);
-    expect(pokemon.getMoveset()[newMovePos]).toBe(levelMoveId);
+    expect(pokemon?.getMoveset()[newMovePos]?.moveId).toBe(levelMoveId);
   });
+
+  /**
+   * Future Tests:
+   * If a Pokemon has four moves, the user can specify an old move to be forgotten and a new move will take its place.
+   * If a Pokemon has four moves, the user can reject the new move, keeping the moveset the same.
+   */
 });

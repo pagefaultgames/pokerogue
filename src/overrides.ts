@@ -50,7 +50,7 @@ class DefaultOverrides {
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override */
-  readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
+  readonly XP_MULTIPLIER_OVERRIDE: number | null = 50;
   readonly NEVER_CRIT_OVERRIDE: boolean = false;
   /** default 1000 */
   readonly STARTING_MONEY_OVERRIDE: integer = 0;
