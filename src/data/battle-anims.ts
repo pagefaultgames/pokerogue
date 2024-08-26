@@ -339,11 +339,11 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
     const soundConfig = { rate: (this.pitch * 0.01), volume: (this.volume * 0.01) };
     if (this.resourceName) {
       try {
-        scene.playSound(this.resourceName, soundConfig);
+        scene.playSound(`battle_anims/${this.resourceName}`, soundConfig);
       } catch (err) {
         console.error(err);
       }
-      return Math.ceil((scene.sound.get(this.resourceName).totalDuration * 1000) / 33.33);
+      return Math.ceil((scene.sound.get(`battle_anims/${this.resourceName}`).totalDuration * 1000) / 33.33);
     } else {
       return Math.ceil((battleAnim.user!.cry(soundConfig).totalDuration * 1000) / 33.33); // TODO: is the bang behind user correct?
     }
@@ -1045,7 +1045,7 @@ export abstract class BattleAnim {
       let t = 0;
 
       for (const frame of frames) {
-        let { x , y } = frame;
+        let { x, y } = frame;
         const scaleX = (frame.zoomX / 100) * (!frame.mirror ? 1 : -1);
         const scaleY = (frame.zoomY / 100);
         x += targetInitialX;

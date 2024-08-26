@@ -578,3 +578,12 @@ export function capitalizeFirstLetter(str: string) {
 export function toDmgValue(value: number, minValue: number = 1) {
   return Math.max(Math.floor(value), minValue);
 }
+
+/**
+ * Helper method to localize a sprite key (e.g. for types)
+ * @param baseKey the base key of the sprite (e.g. `type`)
+ * @returns the localized sprite key
+ */
+export function getLocalizedSpriteKey(baseKey: string) {
+  return `${baseKey}${verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
+}
