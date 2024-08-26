@@ -35,7 +35,7 @@ interface BiomeDepths {
 export const biomeLinks: BiomeLinks = {
   [Biome.TOWN]: Biome.PLAINS,
   [Biome.PLAINS]: [ Biome.GRASS, Biome.METROPOLIS, Biome.LAKE ],
-  [Biome.GRASS]: Biome.TALL_GRASS,
+  [Biome.GRASS]: [ Biome.TALL_GRASS, [ Biome.CONSTRUCTION_SITE, 2 ] ],
   [Biome.TALL_GRASS]: [ Biome.FOREST, Biome.CAVE ],
   [Biome.SLUM]: Biome.CONSTRUCTION_SITE,
   [Biome.FOREST]: [ Biome.JUNGLE, Biome.MEADOW ],
@@ -59,7 +59,7 @@ export const biomeLinks: BiomeLinks = {
   [Biome.WASTELAND]: Biome.BADLANDS,
   [Biome.ABYSS]: [ Biome.CAVE, [ Biome.SPACE, 2 ], [ Biome.WASTELAND, 2 ] ],
   [Biome.SPACE]: Biome.RUINS,
-  [Biome.CONSTRUCTION_SITE]: [ Biome.POWER_PLANT, [Biome.DOJO, 2 ] ],
+  [Biome.CONSTRUCTION_SITE]: [ Biome.POWER_PLANT, Biome.DOJO ],
   [Biome.JUNGLE]: [ Biome.TEMPLE ],
   [Biome.FAIRY_CAVE]: [ Biome.ICE_CAVE, [ Biome.SPACE, 2 ] ],
   [Biome.TEMPLE]: [ Biome.SWAMP, [ Biome.RUINS, 2 ] ],
