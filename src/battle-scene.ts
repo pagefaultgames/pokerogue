@@ -1801,6 +1801,7 @@ export default class BattleScene extends SceneBase {
         }
         break;
       case "ui":
+        //As of, right now this applies to the "select", "menu_open", "error" sound effects
         config["volume"] = this.masterVolume * this.uiVolume;
         break;
       case "se":
