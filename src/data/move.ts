@@ -1495,10 +1495,24 @@ export class AddSubstituteAttr extends MoveEffectAttr {
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    if (user.isBoss() || user.getHpRatio() < 0.25) {
+    if (user.isBoss()) {
       return -10;
     }
-    return Math.ceil(user.getHpRatio() * 10);
+    return 5;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => !user.getTag(SubstituteTag) && user.hp > Math.floor(user.getMaxHp() / 4) && user.getMaxHp() > 1;
+  }
+
+  getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
+    if (user.getTag(SubstituteTag)) {
+      return i18next.t("moveTriggers:substituteOnOverlap", { pokemonName: getPokemonNameWithAffix(user) });
+    } else if (user.hp <= Math.floor(user.getMaxHp() / 4) || user.getMaxHp() === 1) {
+      return i18next.t("moveTriggers:substituteNotEnoughHp");
+    } else {
+      return i18next.t("battle:attackFailed");
+    }
   }
 }
 
@@ -6914,8 +6928,7 @@ export function initMoves() {
       .attr(HighCritAttr)
       .slicingMove(),
     new SelfStatusMove(Moves.SUBSTITUTE, Type.NORMAL, -1, 10, -1, 0, 1)
-      .attr(AddSubstituteAttr)
-      .condition((user, target, move) => !user.getTag(SubstituteTag) && user.getHpRatio() > 0.25 && user.getMaxHp() > 1),
+      .attr(AddSubstituteAttr),
     new AttackMove(Moves.STRUGGLE, Type.NORMAL, MoveCategory.PHYSICAL, 50, -1, 1, -1, 0, 1)
       .attr(RecoilAttr, true, 0.25, true)
       .attr(TypelessAttr)

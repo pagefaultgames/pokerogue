@@ -215,9 +215,12 @@ export class TrappedTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
+    const source = pokemon.scene.getPokemonById(this.sourceId!)!;
+    const move = allMoves[this.sourceMove];
+
     const isGhost = pokemon.isOfType(Type.GHOST);
     const isTrapped = pokemon.getTag(BattlerTagType.TRAPPED);
-    const hasSubstitute = pokemon.getTag(BattlerTagType.SUBSTITUTE);
+    const hasSubstitute = move.hitsSubstitute(source, pokemon);
 
     return !isTrapped && !isGhost && !hasSubstitute;
   }

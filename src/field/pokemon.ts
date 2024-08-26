@@ -2296,13 +2296,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               this.scene.gameData.gameStats.highestDamage = damage.value;
             }
           }
-          source.turnData.damageDealt += damage.value;
-          source.turnData.currDamageDealt = damage.value;
-          this.battleData.hitCount++;
-          const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
-          this.turnData.attacksReceived.unshift(attackResult);
-          if (source.isPlayer() && !this.isPlayer()) {
-            this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
+
+          if (damage.value > 0) {
+            source.turnData.damageDealt += damage.value;
+            source.turnData.currDamageDealt = damage.value;
+            this.battleData.hitCount++;
+            const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
+            this.turnData.attacksReceived.unshift(attackResult);
+
+            if (source.isPlayer() && !this.isPlayer()) {
+              this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
+            }
           }
         }
 
