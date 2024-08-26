@@ -1,4 +1,4 @@
-import * as battleScene from "#app/battle-scene.js";
+import * as battleScene from "#app/battle-scene";
 import { describe, expect, it, vi } from "vitest";
 import { initLoggedInUser, loggedInUser, updateUserInfo } from "../account";
 import * as utils from "../utils";
@@ -8,21 +8,21 @@ describe("account", () => {
     it("should set loggedInUser to Guest and lastSessionSlot to -1", () => {
       initLoggedInUser();
 
-      expect(loggedInUser.username).toBe("Guest");
-      expect(loggedInUser.lastSessionSlot).toBe(-1);
+      expect(loggedInUser!.username).toBe("Guest");
+      expect(loggedInUser!.lastSessionSlot).toBe(-1);
     });
   });
 
   describe("updateUserInfo", () => {
-    it("should set loggedInUser to Guest if bypassLogin is true", async () => {
+    it("should set loggedInUser! to Guest if bypassLogin is true", async () => {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(true);
 
       const [success, status] = await updateUserInfo();
 
       expect(success).toBe(true);
       expect(status).toBe(200);
-      expect(loggedInUser.username).toBe("Guest");
-      expect(loggedInUser.lastSessionSlot).toBe(-1);
+      expect(loggedInUser!.username).toBe("Guest");
+      expect(loggedInUser!.lastSessionSlot).toBe(-1);
     });
 
     it("should fetch user info from the API if bypassLogin is false", async () => {
@@ -43,8 +43,8 @@ describe("account", () => {
 
       expect(success).toBe(true);
       expect(status).toBe(200);
-      expect(loggedInUser.username).toBe("test");
-      expect(loggedInUser.lastSessionSlot).toBe(99);
+      expect(loggedInUser!.username).toBe("test");
+      expect(loggedInUser!.lastSessionSlot).toBe(99);
     });
 
     it("should handle resolved API errors", async () => {

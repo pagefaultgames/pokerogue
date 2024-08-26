@@ -42,6 +42,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
     // this.loadImage("pride-update", "events");
+    this.loadImage("august-variant-update", "events");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
@@ -93,6 +94,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("shiny_star_small", "ui", "shiny_small.png");
     this.loadImage("shiny_star_small_1", "ui", "shiny_small_1.png");
     this.loadImage("shiny_star_small_2", "ui", "shiny_small_2.png");
+    this.loadImage("favorite", "ui", "favorite.png");
     this.loadImage("passive_bg", "ui", "passive_bg.png");
     this.loadAtlas("shiny_icons", "ui");
     this.loadImage("ha_capsule", "ui", "ha_capsule.png");
@@ -280,8 +282,9 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("xbox", "inputs");
     this.loadAtlas("keyboard", "inputs");
 
-    this.loadSe("select");
-    this.loadSe("menu_open");
+    this.loadSe("select", "ui");
+    this.loadSe("menu_open", "ui");
+    this.loadSe("error", "ui");
     this.loadSe("hit");
     this.loadSe("hit_strong");
     this.loadSe("hit_weak");
@@ -301,7 +304,6 @@ export class LoadingScene extends SceneBase {
     this.loadSe("upgrade");
     this.loadSe("buy");
     this.loadSe("achv");
-    this.loadSe("error");
 
     this.loadSe("pb_rel");
     this.loadSe("pb_throw");
@@ -453,13 +455,13 @@ export class LoadingScene extends SceneBase {
       // videos do not need to be preloaded
       intro.loadURL("images/intro_dark.mp4", true);
       if (mobile) {
-        intro.video.setAttribute("webkit-playsinline", "webkit-playsinline");
-        intro.video.setAttribute("playsinline", "playsinline");
+        intro.video?.setAttribute("webkit-playsinline", "webkit-playsinline");
+        intro.video?.setAttribute("playsinline", "playsinline");
       }
       intro.play();
     });
 
-    this.load.on(this.LOAD_EVENTS.PROGRESS , (progress: number) => {
+    this.load.on(this.LOAD_EVENTS.PROGRESS, (progress: number) => {
       percentText.setText(`${Math.floor(progress * 100)}%`);
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 0.8);
