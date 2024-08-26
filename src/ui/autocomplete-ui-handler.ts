@@ -34,7 +34,10 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
   }
 
   processInput(button: Button): boolean {
-    if (button !== Button.CANCEL) {
+    // the cancel and action button are here because if you're typing, x and z are used for cancel/action. This means you could be typing something and accidentally cancel/select when you don't mean to
+    // the submit button is therefore used to select a choice (the enter button), though this does not work on my local dev testing for phones, as for my phone/keyboard combo, the enter and z key are both
+    // bound to Button.ACTION, which makes this not work on mobile
+    if (button !== Button.CANCEL && button !== Button.ACTION) {
       return super.processInput(button);
     }
     return false;

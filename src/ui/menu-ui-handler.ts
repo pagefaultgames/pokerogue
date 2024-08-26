@@ -51,6 +51,9 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   public bgmBar: BgmBar;
 
+  private readonly defaultWordWrapWidth = 1224;
+
+  private readonly defaultMessageBoxWidth = 220;
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
@@ -135,13 +138,13 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuMessageBoxContainer.setVisible(false);
     this.menuContainer.add(this.menuMessageBoxContainer);
 
-    const menuMessageBox = addWindow(this.scene, 0, -0, 220, 48);
+    const menuMessageBox = addWindow(this.scene, 0, -0, this.defaultMessageBoxWidth, 48);
     menuMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageBox);
 
     const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
     menuMessageText.setName("menu-message");
-    menuMessageText.setWordWrapWidth(1224);
+    menuMessageText.setWordWrapWidth(this.defaultWordWrapWidth);
     menuMessageText.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageText);
 
@@ -269,13 +272,24 @@ export default class MenuUiHandler extends MessageUiHandler {
                 if (matches.length > 0) {
                   for (let match = 0; match < matches.length; match++) {
                     // we add 1 here  because splitArr[0] is our first value for the translatedString, and after that is where the variables are
-                    // the regex here in the replace is to remove the {{ and }} and just give us all alphanumeric characters
+                    // the regex here in the replace (/\W/g) is to remove the {{ and }} and just give us all alphanumeric characters
                     if (typeof splitArr[match + 1] !== "undefined") {
                       interpolatorOptions[matches[match].replace(/\W/g, "")] = i18next.t(splitArr[match + 1]);
                     }
                   }
                 }
-                ui.showText(i18next.t(translatedString, interpolatorOptions), null, () => this.scene.ui.showText("", 0, () => handler.tutorialActive = false), null, true);
+                //const messageBoxText = this.menuMessageBoxContainer.list.find(o => o.type === "Text");
+                //const messageBoxContainer = this.menuMessageBoxContainer.list.find(o => o.type === "NineSlice");
+                // the value of 1780 is taken from the battle-message-ui-handler; this is the width of the dialogue before it starts to wrap
+                //messageBoxText.setWordWrapWidth(1780);
+                //messageBoxContainer.width = 1320;
+                ui.setMode(Mode.MESSAGE);
+                ui.showText(i18next.t(translatedString, interpolatorOptions), null, () => this.scene.ui.showText("", 0, () => {
+                  handler.tutorialActive = false;
+                  ui.revertMode();
+                  //messageBoxText.setWordWrapWidth(this.defaultWordWrapWidth);
+                  //messageBoxContainer.width = this.defaultMessageBoxWidth;
+                }), null, true);
               },
               () => {
                 ui.revertMode();
