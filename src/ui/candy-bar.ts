@@ -11,8 +11,8 @@ export default class CandyBar extends Phaser.GameObjects.Container {
   private countText: Phaser.GameObjects.Text;
   private speciesId: Species;
 
-  private tween: Phaser.Tweens.Tween;
-  private autoHideTimer: NodeJS.Timeout;
+  private tween: Phaser.Tweens.Tween | null;
+  private autoHideTimer: NodeJS.Timeout | null;
 
   public shown: boolean;
 
@@ -21,7 +21,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.bg = this.scene.add.nineslice(0, 0, "party_exp_bar", null, 8, 18, 21, 5, 6, 4);
+    this.bg = this.scene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
@@ -71,7 +71,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
         this.tween.stop();
       }
 
-      (this.scene as BattleScene).playSound("shing");
+      (this.scene as BattleScene).playSound("se/shing");
 
       this.tween = this.scene.tweens.add({
         targets: this,

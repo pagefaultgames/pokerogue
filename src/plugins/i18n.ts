@@ -2,6 +2,7 @@ import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
+import { caEsConfig} from "#app/locales/ca_ES/config.js";
 import { deConfig } from "#app/locales/de/config.js";
 import { enConfig } from "#app/locales/en/config.js";
 import { esConfig } from "#app/locales/es/config.js";
@@ -25,6 +26,7 @@ const unicodeRanges = {
   kana: "U+3040-30FF",
   CJKCommon: "U+2E80-2EFF,U+3000-303F,U+31C0-31EF,U+3200-32FF,U+3400-4DBF,U+F900-FAFF,U+FE30-FE4F",
   CJKIdeograph: "U+4E00-9FFF",
+  specialCharacters: "U+266A,U+2605,U+2665,U+2663" //♪.★,♥,♣
 };
 const rangesByLanguage = {
   korean: [unicodeRanges.CJKCommon, unicodeRanges.hangul].join(","),
@@ -33,6 +35,15 @@ const rangesByLanguage = {
 };
 
 const fonts: Array<LoadingFontFaceProperty> = [
+  // unicode (special character from PokePT)
+  {
+    face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: unicodeRanges.specialCharacters }),
+  },
+  {
+    face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: unicodeRanges.specialCharacters }),
+    extraOptions: { sizeAdjust: "133%" },
+  },
+  // unicode (korean)
   {
     face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", { unicodeRange: rangesByLanguage.korean }),
   },
@@ -44,12 +55,12 @@ const fonts: Array<LoadingFontFaceProperty> = [
   {
     face: new FontFace("emerald", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
     extraOptions: { sizeAdjust: "70%", format: "woff2" },
-    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko" ],
+    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca" ],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
     extraOptions: { format: "woff2" },
-    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko" ],
+    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca" ],
   },
   // japanese
   {
@@ -108,7 +119,7 @@ export async function initI18n(): Promise<void> {
   await i18next.init({
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ja"],
+    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ja", "ca"],
     defaultNS: "menu",
     ns: Object.keys(enConfig),
     detection: {
@@ -148,12 +159,15 @@ export async function initI18n(): Promise<void> {
       },
       ja: {
         ...jaConfig
+      },
+      "ca-ES": {
+        ...caEsConfig
       }
     },
     postProcess: ["korean-postposition"],
   });
 
-  await initFonts(localStorage.getItem("prLang"));
+  await initFonts(localStorage.getItem("prLang") ?? undefined);
 }
 
 export default i18next;

@@ -11,15 +11,15 @@ export interface DailyRunConfig {
   starters: Starter;
 }
 
-export function fetchDailyRunSeed(): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
+export function fetchDailyRunSeed(): Promise<string | null> {
+  return new Promise<string | null>((resolve, reject) => {
     Utils.apiFetch("daily/seed").then(response => {
       if (!response.ok) {
         resolve(null);
         return;
       }
       return response.text();
-    }).then(seed => resolve(seed))
+    }).then(seed => resolve(seed ?? null))
       .catch(err => reject(err));
   });
 }
