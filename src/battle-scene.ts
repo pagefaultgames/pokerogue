@@ -1756,6 +1756,7 @@ export default class BattleScene extends SceneBase {
         } else {
           const soundDetails = sound.key.split("/");
           switch (soundDetails[0]) {
+
           case "battle_anims":
           case "cry":
             if (soundDetails[1].startsWith("PRSFX- ")) {
@@ -1792,6 +1793,16 @@ export default class BattleScene extends SceneBase {
     try {
       const keyDetails = key.split("/");
       switch (keyDetails[0]) {
+      case "level_up_fanfare":
+      case "item_fanfare":
+      case "minor_fanfare":
+      case "heal":
+      case "evolution":
+      case "evolution_fanfare":
+        // These sounds are loaded in as BGM, but played as sound effects
+        // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
+        config["volume"] = this.masterVolume * this.bgmVolume;
+        break;
       case "battle_anims":
       case "cry":
         config["volume"] = this.masterVolume * this.fieldVolume;
@@ -1805,10 +1816,8 @@ export default class BattleScene extends SceneBase {
         config["volume"] = this.masterVolume * this.uiVolume;
         break;
       case "se":
-      default:
         config["volume"] = this.masterVolume * this.seVolume;
         break;
-
       }
       this.sound.play(key, config);
       return this.sound.get(key) as AnySound;

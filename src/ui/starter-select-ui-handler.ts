@@ -1701,7 +1701,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     }
                   });
                   ui.setMode(Mode.STARTER_SELECT);
-                  this.scene.playSound("buy");
+                  this.scene.playSound("se/buy");
 
                   return true;
                 }
@@ -1753,7 +1753,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             starterAttributes.shiny = starterAttributes.shiny ? !starterAttributes.shiny : true;
             this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
             if (starterAttributes.shiny) {
-              this.scene.playSound("sparkle");
+              this.scene.playSound("se/sparkle");
               // Set the variant label to the shiny tint
               const tint = getVariantTint(newVariant);
               this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant));

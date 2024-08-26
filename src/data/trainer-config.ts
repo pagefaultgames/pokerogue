@@ -16,7 +16,6 @@ import {Moves} from "#enums/moves";
 import {PartyMemberStrength} from "#enums/party-member-strength";
 import {Species} from "#enums/species";
 import {TrainerType} from "#enums/trainer-type";
-import {Gender} from "./gender";
 
 export enum TrainerPoolTier {
     COMMON,
@@ -143,7 +142,7 @@ export const trainerPartyTemplates = {
   FIVE_WEAK_BALANCED: new TrainerPartyTemplate(5, PartyMemberStrength.WEAK, false, true),
   SIX_WEAKER: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER),
   SIX_WEAKER_SAME: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER, true),
-  SIX_WEAK_SAME: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER, true),
+  SIX_WEAK_SAME: new TrainerPartyTemplate(6, PartyMemberStrength.WEAK, true),
   SIX_WEAK_BALANCED: new TrainerPartyTemplate(6, PartyMemberStrength.WEAK, false, true),
 
   GYM_LEADER_1: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, PartyMemberStrength.STRONG)),
@@ -565,7 +564,7 @@ export class TrainerConfig {
       return {
         [TrainerPoolTier.COMMON]: [Species.NUMEL, Species.POOCHYENA, Species.SLUGMA, Species.SOLROCK, Species.HIPPOPOTAS, Species.SANDACONDA, Species.PHANPY, Species.ROLYCOLY, Species.GLIGAR],
         [TrainerPoolTier.UNCOMMON]: [Species.TRAPINCH, Species.HEATMOR],
-        [TrainerPoolTier.RARE]: [Species.TURTONATOR, Species.CHARCADET]
+        [TrainerPoolTier.RARE]: [Species.CAPSAKID, Species.CHARCADET]
       };
     }
     case "aqua": {
@@ -996,7 +995,7 @@ function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSl
   return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
     let species = Utils.randSeedItem(speciesPool);
     if (!ignoreEvolution) {
-      species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength);
+      species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength, scene.currentBattle.waveIndex);
     }
     return scene.addEnemyPokemon(getPokemonSpecies(species), level, trainerSlot, undefined, undefined, postProcess);
   };
@@ -1006,7 +1005,7 @@ function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilt
   const originalSpeciesFilter = speciesFilter;
   speciesFilter = (species: PokemonSpecies) => (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical)) && !species.isTrainerForbidden() && originalSpeciesFilter(species);
   return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
-    const ret = scene.addEnemyPokemon(getPokemonSpecies(scene.randomSpecies(scene.currentBattle.waveIndex, level, false, speciesFilter).getTrainerSpeciesForLevel(level, true, strength)), level, trainerSlot, undefined, undefined, postProcess);
+    const ret = scene.addEnemyPokemon(getPokemonSpecies(scene.randomSpecies(scene.currentBattle.waveIndex, level, false, speciesFilter).getTrainerSpeciesForLevel(level, true, strength, scene.currentBattle.waveIndex)), level, trainerSlot, undefined, undefined, postProcess);
     return ret;
   };
 }
