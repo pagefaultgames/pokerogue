@@ -57,7 +57,7 @@ export enum ChallengeType {
   FIXED_BATTLES,
   /**
    * Modifies the effectiveness of Type matchups in battle
-   * @see {@link Challenge.applyTypeEffectiveness}
+   * @see {@linkcode Challenge.applyTypeEffectiveness}
   */
   TYPE_EFFECTIVENESS,
   /**
@@ -334,8 +334,8 @@ export abstract class Challenge {
 
   /**
    * An apply function for TYPE_EFFECTIVENESS challenges. Derived classes should alter this.
-   * @param effectiveness {@link Utils.NumberHolder} The current effectiveness of the move.
-   * @returns {@link boolean} Whether this function did anything.
+   * @param effectiveness {@linkcode Utils.NumberHolder} The current effectiveness of the move.
+   * @returns Whether this function did anything.
    */
   applyTypeEffectiveness(effectiveness: Utils.NumberHolder): boolean {
     return false;
@@ -830,9 +830,9 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.FIXED_BATTLES, waveIndex: Number, battleConfig: FixedBattleConfig): boolean;
 /**
  * Apply all challenges that modify type effectiveness.
- * @param gameMode {@link GameMode} The current gameMode
- * @param challengeType {@link ChallengeType} ChallengeType.TYPE_EFFECTIVENESS
- * @param effectiveness {@link Utils.NumberHolder} The current effectiveness of the move.
+ * @param gameMode {@linkcode GameMode} The current gameMode
+ * @param challengeType {@linkcode ChallengeType} ChallengeType.TYPE_EFFECTIVENESS
+ * @param effectiveness {@linkcode Utils.NumberHolder} The current effectiveness of the move.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.TYPE_EFFECTIVENESS, effectiveness: Utils.NumberHolder): boolean;
