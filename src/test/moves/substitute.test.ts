@@ -7,10 +7,8 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BerryType } from "#app/enums/berry-type";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import { BerryPhase } from "#app/phases/berry-phase";
+import { MoveResult } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { MovePhase } from "#app/phases/move-phase";
 import GameManager from "#app/test/utils/gameManager";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
@@ -56,7 +54,7 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SUBSTITUTE);
 
-      await game.phaseInterceptor.to(MoveEndPhase, false);
+      await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(leadPokemon.hp).toBe(Math.ceil(leadPokemon.getMaxHp() * 3/4));
     }, TIMEOUT
@@ -73,13 +71,13 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SUBSTITUTE);
 
-      await game.phaseInterceptor.to(MoveEndPhase, false);
+      await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(leadPokemon.hp).toBe(Math.ceil(leadPokemon.getMaxHp() * 3/4));
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
       const postSubHp = leadPokemon.hp;
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.hp).toBe(postSubHp);
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
@@ -99,13 +97,13 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SUBSTITUTE);
 
-      await game.phaseInterceptor.to(MoveEndPhase, false);
+      await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(leadPokemon.hp).toBe(Math.ceil(leadPokemon.getMaxHp() * 3/4));
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
       const postSubHp = leadPokemon.hp;
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.hp).toBe(postSubHp);
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeUndefined();
@@ -123,7 +121,7 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SUBSTITUTE);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
@@ -141,12 +139,12 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SUBSTITUTE);
 
-      await game.phaseInterceptor.to(MoveEndPhase);
+      await game.phaseInterceptor.to("MoveEndPhase");
 
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
       const postSubHp = leadPokemon.hp;
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
       expect(leadPokemon.hp).toBeLessThan(postSubHp);
@@ -165,12 +163,12 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SUBSTITUTE);
 
-      await game.phaseInterceptor.to(MoveEndPhase);
+      await game.phaseInterceptor.to("MoveEndPhase");
 
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
       const postSubHp = leadPokemon.hp;
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
       expect(leadPokemon.hp).toBeLessThan(postSubHp);
@@ -186,12 +184,12 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SUBSTITUTE);
 
-      await game.phaseInterceptor.to(MoveEndPhase);
+      await game.phaseInterceptor.to("MoveEndPhase");
       await game.toNextTurn();
 
       game.move.select(Moves.SWORDS_DANCE);
 
-      await game.phaseInterceptor.to(MoveEndPhase, false);
+      await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
     }, TIMEOUT
@@ -212,7 +210,7 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.TACKLE);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     }, TIMEOUT
@@ -232,7 +230,7 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SPLASH);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getTag(TrappedTag)).toBeUndefined();
     }, TIMEOUT
@@ -252,7 +250,7 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SPLASH);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.summonData.battleStats[BattleStat.DEF]).toBe(0);
     }, TIMEOUT
@@ -271,7 +269,7 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SPLASH);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.status?.effect).not.toBe(StatusEffect.PARALYSIS);
     }, TIMEOUT
@@ -292,7 +290,7 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SPLASH);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getHeldItems().length).toBe(1);
     }, TIMEOUT
@@ -313,7 +311,7 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.KNOCK_OFF);
 
-      await game.phaseInterceptor.to(MoveEndPhase, false);
+      await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(enemyPokemon.getHeldItems().length).toBe(enemyNumItems);
     }, TIMEOUT
@@ -334,10 +332,10 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.TACKLE);
 
-      await game.phaseInterceptor.to(MoveEndPhase, false);
+      await game.phaseInterceptor.to("MoveEndPhase", false);
       const enemyPostAttackHp = enemyPokemon.hp;
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getHeldItems().length).toBe(1);
       expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
@@ -357,7 +355,7 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SWORDS_DANCE);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
     }, TIMEOUT
@@ -377,7 +375,7 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SWORDS_DANCE);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getTag(BattlerTagType.CONFUSED)).toBeUndefined();
       expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
@@ -400,7 +398,7 @@ describe("Moves - Substitute", () => {
         (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, 1, true);
       });
 
-      await game.phaseInterceptor.to(MovePhase, false);
+      await game.phaseInterceptor.to("MovePhase", false);
 
       const switchedPokemon = game.scene.getPlayerPokemon()!;
       const subTag = switchedPokemon.getTag(SubstituteTag)!;
@@ -409,7 +407,7 @@ describe("Moves - Substitute", () => {
     }, TIMEOUT
   );
 
-  it (
+  it(
     "should prevent the source's Rough Skin from activating when hit",
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
@@ -421,9 +419,97 @@ describe("Moves - Substitute", () => {
 
       game.move.select(Moves.SUBSTITUTE);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+      await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     }, TIMEOUT
+  );
+
+  it(
+    "should prevent the source's Focus Punch from failing when hit",
+    async () => {
+      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.moveset([Moves.FOCUS_PUNCH]);
+
+      // Make Focus Punch 40 power to avoid a KO
+      vi.spyOn(allMoves[Moves.FOCUS_PUNCH], "calculateBattlePower").mockReturnValue(40);
+
+      await game.startBattle([Species.BLASTOISE]);
+
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+      playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, playerPokemon.id);
+
+      game.move.select(Moves.FOCUS_PUNCH);
+
+      await game.phaseInterceptor.to("BerryPhase", false);
+
+      expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+      expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    }, TIMEOUT
+  );
+
+  it(
+    "should not allow Shell Trap to activate when attacked",
+    async () => {
+      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.moveset([Moves.SHELL_TRAP]);
+
+      await game.startBattle([Species.BLASTOISE]);
+
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+
+      playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, playerPokemon.id);
+
+      game.move.select(Moves.SHELL_TRAP);
+
+      await game.phaseInterceptor.to("BerryPhase", false);
+
+      expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    }, TIMEOUT
+  );
+
+  it(
+    "should not allow Beak Blast to burn opponents when hit",
+    async () => {
+      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.moveset([Moves.BEAK_BLAST]);
+
+      await game.startBattle([Species.BLASTOISE]);
+
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+      playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, playerPokemon.id);
+
+      game.move.select(Moves.BEAK_BLAST);
+
+      await game.phaseInterceptor.to("MoveEndPhase");
+
+      expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
+    }, TIMEOUT
+  );
+
+  it(
+    "should cause incoming attacks to not activate Counter",
+    async() => {
+      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.moveset([Moves.COUNTER]);
+
+      await game.startBattle([Species.BLASTOISE]);
+
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+      playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, playerPokemon.id);
+
+      game.move.select(Moves.COUNTER);
+
+      await game.phaseInterceptor.to("BerryPhase", false);
+
+      expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    }
   );
 });
