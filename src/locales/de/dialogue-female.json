@@ -355,6 +355,30 @@
       "1": "Ich werde für das nächste Rennen tunen."
     }
   },
+  "firebreather": {
+    "encounter": {
+      "1": "Meine Flammen werden dich verschlingen!",
+      "2": "Meine Seele hat Feuer gefangen. Ich werde dir zeigen, wie heiß sie brennt!",
+      "3": "Komm näher und sieh dir meine Flammen an!"
+    },
+    "victory": {
+      "1": "Verbrannt bis zur Asche...",
+      "2": "Yow! Das ist heiß!",
+      "3": "Auuu! Ich habe mir die Nasenspitze verbrannt!"
+    }
+  },
+  "sailor": {
+    "encounter": {
+      "1": "Matrose, du gehst über Bord, wenn du verlierst!",
+      "2": "Komm schon! Mein Stolz als Seemann steht auf dem Spiel!",
+      "3": "Ahoj! Bist du seekrank?"
+    },
+    "victory": {
+      "1": "Argh! Von einem Kind besiegt!",
+      "2": "Dein Geist hat mich versenkt!",
+      "3": "Ich glaube, ich bin der der seekrank ist..."
+    }
+  },
   "archer": {
     "encounter": {
       "1": "Bevor du weitergehst, lass uns sehen, wie du dich gegen uns, Team Rocket, schlägst!",
@@ -533,30 +557,6 @@
       "1": "Du bist ziemlich stark. Oh ja—sehr stark, in der Tat.",
       "2": "Ding-ding-ding! Du hast dich gut geschlagen. Der Sieg gehört dir.",
       "3": "Wunderbar! Bemerkenswert! Deine Fähigkeiten und dein Mut sind lobenswert."
-    }
-  },
-  "firebreather": {
-    "encounter": {
-      "1": "Meine Flammen werden dich verschlingen!",
-      "2": "Meine Seele hat Feuer gefangen. Ich werde dir zeigen, wie heiß sie brennt!",
-      "3": "Komm näher und sieh dir meine Flammen an!"
-    },
-    "victory": {
-      "1": "Verbrannt bis zur Asche...",
-      "2": "Yow! Das ist heiß!",
-      "3": "Auuu! Ich habe mir die Nasenspitze verbrannt!"
-    }
-  },
-  "sailor": {
-    "encounter": {
-      "1": "Matrose, du gehst über Bord, wenn du verlierst!",
-      "2": "Komm schon! Mein Stolz als Seemann steht auf dem Spiel!",
-      "3": "Ahoj! Bist du seekrank?"
-    },
-    "victory": {
-      "1": "Argh! Von einem Kind besiegt!",
-      "2": "Dein Geist hat mich versenkt!",
-      "3": "Ich glaube, ich bin der der seekrank ist..."
     }
   },
   "rocket_grunt": {
@@ -2455,7 +2455,7 @@
       "1": "@c{smile}Hey, du auch hier?\n@c{smile_eclosed}Immernoch ungeschlagen, hmm…?\n$@c{serious_mopen_fists}Ich weiß es sieht so aus, als wäre ich dir hierher gefolgt, aber das ist so nicht ganz richtig.\n$@c{serious_smile_fists}Ehrlicherweise kann ich es, seit du mich damals besiegt hast, garnicht erwarten erneut gegen dich zu kämpfen.\n$Ich habe selbst hart traniert. Ich werde dir diesesmal also ein würdigerer Gegner sein!.\n$@c{serious_mopen_fists}Halt dich nicht zurück, genauso wie beim letzten Mal!\nLos gehts!"
     },
     "victory": {
-      "1": "@c{neutral_eclosed}Oh. Ich war also zu sehr von mir überzeugt.\n$@c{smile}Das ist Ok. Ich hatte mir schon gedacht, dass sowas passiert.\n\n$@c{serious_mopen_fists}Es bedeutet einfach, dass ich mich beim nächsten Mal mehr anstrengen muss!\n\n$@c{smile}Nicht, dass du wirklich Hilfe benötigen würdest, aber ich habe hier noch eins von diesen Dingern herumliegen.\n$Du kannst es haben.\n\n$@c{serious_smile_fists}Erwarte aber nicht, dass ich dir noch mehr gebe!\nIch kann meinen Rivalen doch keine Vorteile verschaffen.\n$@c{smile}Egal, pass auf dich auf und genieße das Event!"
+      "1": "@c{neutral_eclosed}Oh. Ich war also zu sehr von mir überzeugt.\n$@c{smile}Das ist Ok. Ich hatte mir schon gedacht, dass sowas passiert.\n\n$@c{serious_mopen_fists}Es bedeutet einfach, dass ich mich beim nächsten Mal mehr anstrengen muss!\n\n$@c{smile}Nicht, dass du wirklich Hilfe benötigen würdest, aber ich habe hier noch eins von diesen Dingern herumliegen.\n$Du kannst es haben.\n\n$@c{serious_smile_fists}Erwarte aber nicht, dass ich dir noch mehr gebe!\nIch kann meinen Rivalen doch keine Vorteile verschaffen.\n$@c{smile}Egal, pass auf dich auf!"
     }
   },
   "rival_2_female": {
@@ -2463,7 +2463,7 @@
       "1": "@c{smile_wave}Oh, wie schön dich hier zu trefen. Sieht so aus als wärst du noch ungeschlagen. @c{angry_mopen}Hmm… Nicht schlecht!\n$@c{angry_mopen}Ich weiß was du denkst, und nein, ich habe dich nicht verfolgt. @c{smile_eclosed}Ich bin einfach in der Gegend gewesen.\n$@c{smile_ehalf}Ich freu mich für dich, aber ich muss dich wissen lassen, dass es auch Ok ist ab und zu mal zu verlieren.\n$@c{smile}Wir lernen oft mehr aus unseren Fehlern, als aus unseren Erfolgen.\n$@c{angry_mopen}Auf jeden Fall habe ich für unseren Rückkampf hart traniert. Also zeig mir was du drauf hast!"
     },
     "victory": {
-      "1": "@c{neutral}Ich… sollte dieses Mal doch nicht verlieren…\n$@c{smile}Na gut. Das bedeutet ich muss noch härter tranieren!\n$@c{smile_wave}Ich habe noch eins von diesen Dingern!\n@c{smile_wave_wink}Kein Grund mir zu danken~.\n$@c{angry_mopen}Das ist aber das Letzte! Du bekommst ab jett keine Geschenke mehr von mir!\n$@c{smile_wave}Bleib stark und genieße das Event!"
+      "1": "@c{neutral}Ich… sollte dieses Mal doch nicht verlieren…\n$@c{smile}Na gut. Das bedeutet ich muss noch härter tranieren!\n$@c{smile_wave}Ich habe noch eins von diesen Dingern!\n@c{smile_wave_wink}Kein Grund mir zu danken~.\n$@c{angry_mopen}Das ist aber das Letzte! Du bekommst ab jett keine Geschenke mehr von mir!\n$@c{smile_wave}Bleib stark!"
     },
     "defeat": {
       "1": "Es ist Ok manchmal zu verlieren…"
