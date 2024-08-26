@@ -8,7 +8,7 @@ import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
-import { getIsInitialized, initI18n } from "#app/plugins/i18n.js";
+import { getIsInitialized, initI18n, languages } from "#app/plugins/i18n.js";
 
 function getTranslation(key: string): string {
   if (!getIsInitialized()) {
@@ -79,66 +79,8 @@ export interface Setting {
   isHidden?: () => boolean
 }
 
-type LanguageType = {
-  key: string;
-  label: string;
-  handler?: () => {};
-  value?: string;
-};
-
-const languages: Array<LanguageType> = [
-  {
-    key: "en",
-    label: "English",
-  },
-  {
-    key: "es",
-    label: "Español",
-  },
-  {
-    key: "it",
-    label: "Italiano",
-  },
-  {
-    key: "fr",
-    label: "Français",
-  },
-  {
-    key: "de",
-    label: "Deutsch",
-  },
-  {
-    key: "pt-BR",
-    label: "Português (BR)",
-  },
-  {
-    key: "zh-CN",
-    label: "简体中文",
-  },
-  {
-    key: "zh-TW",
-    label: "繁體中文",
-  },
-  {
-    key: "ko",
-    label: "한국어",
-  },
-  {
-    key: "ko-KR",
-    label: "한국어",
-  },
-  {
-    key: "ja",
-    label: "日本語",
-  },
-  // {
-  //   key:"ca-ES",
-  //   label: "Català",
-  // },
-];
-
 // default is English
-const currentLanguage = languages.find((locale) => i18next.resolvedLanguage! === locale.key)?.label ?? "English";
+export const currentLanguage = languages[i18next.resolvedLanguage!] ?? "English";
 
 /**
  * Setting Keys for existing settings
@@ -828,18 +770,24 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
           }
         };
         scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
-          options: [...languages.filter((locale,i,a) => {
-            // Remove language active and sames labels
-            if (currentLanguage !== locale.label && a.findIndex((t) => t.label === locale.label) === i) {
-              locale.handler = () => changeLocaleHandler(locale.key);
-              return locale;
-            }
-          }),
-          {
-            label: i18next.t("settings:back"),
-            handler: () => cancelHandler(),
-          }],
-          maxOptions: 7
+          options: [
+            ...Object.values(languages)
+              .map((lang, index) => {
+                return {
+                  label: lang,
+                  handler: () => changeLocaleHandler(Object.keys(languages)[index]),
+                };
+              })
+              .filter((lang) => {
+                // Remove language active
+                return currentLanguage !== lang.label;
+              }),
+            {
+              label: i18next.t("settings:back"),
+              handler: () => cancelHandler(),
+            },
+          ],
+          maxOptions: 7,
         });
         return false;
       }

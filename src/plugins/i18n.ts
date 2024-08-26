@@ -79,6 +79,24 @@ async function initFonts(language: string | undefined) {
   }
 }
 
+type LanguageType = {
+  [key:string]: string
+};
+
+export const languages: LanguageType = {
+  "en":    "English",
+  "es":    "Español",
+  "it":    "Italiano",
+  "fr":    "Français",
+  "de":    "Deutsch",
+  "pt-BR": "Português (BR)",
+  "zh-CN": "简体中文",
+  "zh-TW": "繁體中文",
+  "ko":    "한국어",
+  "ja":    "日本語",
+  // "ca-ES": "Català",
+};
+
 export async function initI18n(): Promise<void> {
   // Prevent reinitialization
   if (isInitialized) {
@@ -92,7 +110,7 @@ export async function initI18n(): Promise<void> {
    * Q: How do I add a new language?
    * A: To add a new language, create a new folder in the locales directory with the language code.
    *    Each language folder should contain a file for each namespace (ex. menu.ts) with the translations.
-   *    Don't forget to declare new language in `supportedLngs` i18next initializer
+   *    Don't forgot declare new language in `languages` const with language code as key and language label as value.
    *
    * Q: How do I add a new namespace?
    * A: To add a new namespace, create a new file in each language folder with the translations.
@@ -109,7 +127,9 @@ export async function initI18n(): Promise<void> {
   await i18next.init({
     nonExplicitSupportedLngs: true,
     fallbackLng: "en",
-    supportedLngs: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ja", "ca"],
+    supportedLngs: Object.keys(languages).map((langKey)=>langKey.split("-")[0]).filter((lang,i,a) => {
+      return (a.findIndex((t) => t === lang) === i);
+    }),
     defaultNS: "menu",
     ns: Object.keys(enConfig),
     detection: {
