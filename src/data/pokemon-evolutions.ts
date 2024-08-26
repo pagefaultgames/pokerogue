@@ -59,6 +59,8 @@ export enum EvolutionItem {
   AUSPICIOUS_ARMOR,
   MALICIOUS_ARMOR,
   MASTERPIECE_TEACUP,
+  SUN_FLUTE,
+  MOON_FLUTE,
 
   BLACK_AUGURITE = 51,
   PEAT_BLOCK,
@@ -987,11 +989,11 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.KOMMO_O, 45, null, null)
   ],
   [Species.COSMOG]: [
-    new SpeciesEvolution(Species.COSMOEM, 43, null, null)
+    new SpeciesEvolution(Species.COSMOEM, 23, null, null)
   ],
   [Species.COSMOEM]: [
-    new SpeciesEvolution(Species.SOLGALEO, 53, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY)),
-    new SpeciesEvolution(Species.LUNALA, 53, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT))
+    new SpeciesEvolution(Species.SOLGALEO, 53, EvolutionItem.SUN_FLUTE, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(Species.LUNALA, 53, EvolutionItem.MOON_FLUTE, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MELTAN]: [
     new SpeciesEvolution(Species.MELMETAL, 48, null, null)
