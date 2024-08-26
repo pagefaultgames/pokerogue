@@ -1332,6 +1332,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
+    if (move.category === MoveCategory.STATUS && move.hitsSubstitute(source, this)) {
+      typeMultiplier.value = 0;
+    }
+
     return (!cancelledHolder.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
   }
 
@@ -2335,14 +2339,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       break;
     case MoveCategory.STATUS:
-      if (move.hitsSubstitute(source, this)) {
-        // TODO: add status move into substitute message
-        cancelled.value = true;
-      }
       if (!cancelled.value && typeMultiplier === 0) {
         this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
       }
-      result = (typeMultiplier === 0) ? HitResult.NO_EFFECT : HitResult.STATUS;
+      result = (cancelled.value || typeMultiplier === 0) ? HitResult.NO_EFFECT : HitResult.STATUS;
       break;
     }
 
