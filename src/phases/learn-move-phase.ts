@@ -74,7 +74,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     this.scene.ui.showText(i18next.t("battle:learnMoveForgetQuestion"), null, () => {
       this.scene.ui.setModeWithoutClear(Mode.SUMMARY, pokemon, SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
         if (moveIndex === 4) {
-          this.rejectMoveAndEnd(move, pokemon);
+          this.scene.ui.setMode(this.messageMode).then(() => this.rejectMoveAndEnd(move, pokemon));
         }
         const forgetSuccessText = i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex]!.getName() });
         const fullText = [i18next.t("battle:countdownPoof"), forgetSuccessText, i18next.t("battle:learnMoveAnd")].join("$");
@@ -96,7 +96,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         () => {
           this.scene.ui.setMode(this.messageMode);
           this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
-            this.unshiftPhase(); this.end();
+            this.end();
           }, null, true);
         },
         () => {
