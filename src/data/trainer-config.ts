@@ -16,6 +16,7 @@ import {Moves} from "#enums/moves";
 import {PartyMemberStrength} from "#enums/party-member-strength";
 import {Species} from "#enums/species";
 import {TrainerType} from "#enums/trainer-type";
+import {Gender} from "./gender";
 
 export enum TrainerPoolTier {
     COMMON,
