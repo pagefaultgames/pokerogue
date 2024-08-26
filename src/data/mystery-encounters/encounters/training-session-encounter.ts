@@ -2,9 +2,8 @@ import { Ability, allAbilities } from "#app/data/ability";
 import { EnemyPartyConfig, initBattleWithEnemyConfig, selectPokemonForOption, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getNatureName, Nature } from "#app/data/nature";
 import { speciesStarters } from "#app/data/pokemon-species";
-import { Stat } from "#app/data/pokemon-stat";
+import { getStatName } from "#app/data/pokemon-stat";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
-import { pokemonInfo } from "#app/locales/en/pokemon-info";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { AbilityAttr } from "#app/system/game-data";
 import PokemonData from "#app/system/pokemon-data";
@@ -104,23 +103,6 @@ export const TrainingSessionEncounter: MysteryEncounter =
           );
           scene.removePokemonFromPlayerParty(playerPokemon, false);
 
-          const getIvName = (index: number) => {
-            switch (index) {
-            case Stat.HP:
-              return pokemonInfo.Stat["HPshortened"];
-            case Stat.ATK:
-              return pokemonInfo.Stat["ATKshortened"];
-            case Stat.DEF:
-              return pokemonInfo.Stat["DEFshortened"];
-            case Stat.SPATK:
-              return pokemonInfo.Stat["SPATKshortened"];
-            case Stat.SPDEF:
-              return pokemonInfo.Stat["SPDEFshortened"];
-            case Stat.SPD:
-              return pokemonInfo.Stat["SPDshortened"];
-            }
-          };
-
           const onBeforeRewardsPhase = () => {
             encounter.setDialogueToken("stat1", "-");
             encounter.setDialogueToken("stat2", "-");
@@ -147,12 +129,12 @@ export const TrainingSessionEncounter: MysteryEncounter =
               if (improvedCount === 0) {
                 encounter.setDialogueToken(
                   "stat1",
-                  getIvName(ivToChange.index) ?? ""
+                  getStatName(ivToChange.index) ?? ""
                 );
               } else {
                 encounter.setDialogueToken(
                   "stat2",
-                  getIvName(ivToChange.index) ?? ""
+                  getStatName(ivToChange.index) ?? ""
                 );
               }
 
@@ -399,7 +381,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
     )
     .build();
 
-function getEnemyConfig(scene: BattleScene, playerPokemon: PlayerPokemon,segments: number,modifiers: ModifiersHolder): EnemyPartyConfig {
+function getEnemyConfig(scene: BattleScene, playerPokemon: PlayerPokemon, segments: number, modifiers: ModifiersHolder): EnemyPartyConfig {
   playerPokemon.resetSummonData();
 
   // Passes modifiers by reference
