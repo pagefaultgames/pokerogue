@@ -38,7 +38,7 @@
       "3": "Je te connais pas. Ça te dis de te battre ?",
       "4": "Prenons du bon temps avec ce combat Pokémon !",
       "5": "Je vais t’apprendre à te battre avec tes Pokémon !",
-      "6": "Un combat doit être pris au sérieux. T’es prête à te battre ?",
+      "6": "Un combat doit toujours être pris au sérieux.\nT’es prête à te battre ?",
       "7": "Tu seras pas jeune éternellement. T’as qu’une chance pendant un combat. Bientôt, tu seras plus qu’un souvenir.",
       "8": "Tu ferais mieux d’y aller doucement avec moi. Mais je vais me battre sérieusement !",
       "9": "Je m’ennuie à l’école. Y’a rien à y faire. *Baille*\nJe me bats juste pour passer le temps."
@@ -69,7 +69,7 @@
     "defeat": {
       "1": "Tu ne devrais pas t’énerver sur tes Pokémon, même après une défaite.",
       "2": "Alors ? Pas mal mes Pokémon, hein ? Je suis fait pour ça.",
-      "3": "Peut importe à quel point t’aimes tes Pokémon, il faut toujours de la discipline s’ils se comportent mal."
+      "3": "Peu importe à quel point t’aimes tes Pokémon, il faut toujours de la discipline s’ils se comportent mal."
     }
   },
   "breeder_female": {
@@ -148,7 +148,7 @@
     },
     "victory": {
       "1": "Très bien… T’as de bons Pokémon…",
-      "2": "Quoi ?! Mais c'est moi le génie des combats !",
+      "2": "Quoi ?! Mais c’est moi le génie des combats !",
       "3": "Évidemment que t’es le personnage principal !",
       "4": "OK ! OK ! Tu pourrais être une Topdresseuse !"
     },
@@ -169,50 +169,98 @@
   },
   "rocket_grunt": {
     "encounter": {
-      "1": "Nous sommes de retour !"
+      "1": "Nous sommes de retour !",
+      "2": "Ça bosse dur, ici ! Alors du balai !",
+      "3": "File-nous tes Pokémon ou tu vas gouter à la colère de la Team Rocket !",
+      "4": "Sois témoin de ce qu’est une vraie terreur de la Team Rocket!",
+      "5": "Hé gamine ! Moi être guy member of la Team Rocket !"
     },
     "victory": {
-      "1": "Une fois de plus la Team Rocket s’envole vers d’autres cieux !"
+      "1": "Une fois de plus la Team Rocket s’envole vers d’autres cieux !",
+      "2": "Mince! J’ai laissé tomber\nla Clé Ascenseur !",
+      "3": "J’ai tout foiré !",
+      "4": "Mes compagnons vont me venger !",
+      "5": "Toi dire quoi ? Forget que tu m’as vu !\nYou n’as rien seen !"
     }
   },
   "magma_grunt": {
     "encounter": {
-      "1": "N’espère pas recevoir de la pitié si tu te mets sur le chemin de la Team Magma !"
+      "1": "N’espère pas recevoir de la pitié si tu te mets sur le chemin de la Team Magma !",
+      "2": "Ne te mêle pas de nos affaires ! On va rendre ce monde meilleur !",
+      "3": "Hors de mon chemin ! La Team Magma n’a pas de temps pour les gamins !",
+      "4": "J’espère que t’as quelques marshmallows, car ça va chauffer !",
+      "5": "On va utiliser le puissance d’un volcan ! Ça va être… explosif ! Tu l’as… ? Héhé !"
     },
     "victory": {
-      "1": "Je…?\nJ’ai perdu ?!"
+      "1": "Je…?\nJ’ai perdu ?!",
+      "2": "Je peux pas croire que j’ai pas pris mon déjeuner juste pour ça…",
+      "3": "Impossible ! T’es qu’une gosse !",
+      "4": "Aahhh…\nJ’aurais dû directement rentrer à la planque…",
+      "5": "Tu m’as démoli… Tu crois que le boss va suspendre mon salaire ?"
     }
   },
   "aqua_grunt": {
     "encounter": {
-      "1": "Aucune pitié si tu te mets sur le chemin de la Team Aqua, même pour une gamine !"
+      "1": "Aucune pitié si tu te mets sur le chemin de la Team Aqua, même pour un gamin !",
+      "2": "Grrr…\nTu as eu le culot de t’opposer à la Team Aqua !",
+      "3": "Je vais te liquéfier !\nEt ce sera pas qu’à cause des mes Pokémon Eau !",
+      "4": "Nous, la Team Aqua, existons pour le bien commun !",
+      "5": "Prépare-toi à te faire emporter par le courant de…\nEuh… Mes Pokémon ! Oui, mes Pokémon !"
     },
     "victory": {
-      "1": "Comment ça ?"
+      "1": "Comment ça ?",
+      "2": "Ah, j’avais pas prévu d’être gêné par un mouflet qui se mêle de tout !",
+      "3": "J’ai perdu ?! Super, j’ai plus qu’à nager jusqu’à la planque maintenant…",
+      "4": "Oh non quelle angoisse…\nLe boss va me démonter…",
+      "5": "Je suis battu… Tu penses que le boss va me faire subir le supplice de la planche ?…"
     }
   },
   "galactic_grunt": {
     "encounter": {
-      "1": "Ne te mets pas en travers de la Team Galaxie !"
+      "1": "Ne te mets pas en travers de la Team Galaxie !",
+      "2": "Sois témoin de la puissance de notre technologie et du futur qui se profile !",
+      "3": "Au nom de la Team Galaxie, j’éliminerai quiconque se mettera sur notre route !",
+      "4": "Prépare ta défaite !",
+      "5": "J’espère que t’es prête à te prendre une raclée de l’espace !"
     },
     "victory": {
-      "1": "Désactivation…"
+      "1": "Désactivation…",
+      "2": "Cet échec n’est qu’une poussière face à nos ambitions débordantes.",
+      "3": "Notre projet est bien plus important que cette défaite.",
+      "4": "Comment ?!",
+      "5": "Note à moi-même :\nM’entrainer aux combats Pokémon. Ça urge…"
     }
   },
   "plasma_grunt": {
     "encounter": {
-      "1": "Pas de quatiers à ceux qui ne suivent pas notre idéal !"
+      "1": "Pas de quatiers à ceux qui ne suivent pas notre idéal !",
+      "2": "Si je gagne, tu relâches tous tes Pokémon !",
+      "3": "Si tu te mets en travers de la Team Plasma, je m’occuperai de toi personnellement !",
+      "4": "La Team Plasma va libérer les Pokémon de tous les humains égoïstes dans ton genre !",
+      "5": "Nos coupes sont lunaires… Mais en combat ?\nTu vas vite le découvrir."
     },
     "victory": {
-      "1": "Plasmaaaaaaaaa !"
+      "1": "Plasmaaaaaaaaa !",
+      "2": "Comment ai-je pu perdre…",
+      "3": "… Ce Pokémon est nul, j’vais aller en voler de meilleurs !",
+      "4": "Les plans ambitieux connaissent toujours leurs lots d’interruptions.",
+      "5": "C’est mauvais… MAUVAIS MAUVAIS MAUVAIS MAUVAIS !\nVa falloir battre en retraite, c’est la méga cata !"
     }
   },
   "flare_grunt": {
     "encounter": {
-      "1": "Le style et le bon gout, il n’y a que ça qui compte !"
+      "1": "Tes Pokémon ne sont pas dignes de l’élégance de la Team Flare.",
+      "2": "T’as des lunettes de soleil j’espère ?\nCar prépare-toi à être éblouie !",
+      "3": "La Team Flare va purifier ce monde de toute imperfection !",
+      "4": "Prépare-toi à découvrir l’indiscutable sens du style de la Team Flare !",
+      "5": "La mode, c’est important !"
     },
     "victory": {
-      "1": "Mon futur me semble guère radieux."
+      "1": "Mon futur n’a pas l’air si radieux.",
+      "2": "Les combats semblent être plus complexes que je le pensais.\nRetour aux planches à dessin.",
+      "3": "Ehhhh ?! J’ai perdu ?!",
+      "4": "Même dans la défaite, l’élégance de la Team Flare continue de rayonner sur ce monde.",
+      "5": "J’appelle pas ça perdre, j’appelle ça échouer avec panache !"
     }
   },
   "rocket_boss_giovanni_1": {
@@ -223,7 +271,7 @@
       "1": "QUOI ? IMPOSSIBLE !"
     },
     "defeat": {
-      "1": "Retiens bien. Ton incapacité à évaluer ta propre force est\nla démonstration claire que tu n'es encore qu’une gamine."
+      "1": "Retiens bien. Ton incapacité à évaluer ta propre force est\nla démonstration claire que tu n’es encore qu’une gamine."
     }
   },
   "rocket_boss_giovanni_2": {
@@ -336,6 +384,77 @@
       "1": "Les Pokémon… Ne devraient plus exister."
     }
   },
+  "brock": {
+    "encounter": {
+      "1": "Mon expertise des types Roche va te mettre au sol ! En garde !",
+      "2": "Tu veux toujours te battre avec moi ? Même en sachant que tu vas perdre ?",
+      "3": "Laisse-moi de montrer la véritable force de mes Pokémon Roche !"
+    },
+    "victory": {
+      "1": "J’étais trop sûr de moi, c’est pour ça que j’ai perdu.",
+      "2": "Ce monde est vaste ! Je suis honoré d’avoir pu t’affronter.",
+      "3": "Peut-être bien que je n’aurais pas dû abandonner ma vocation d’Éleveur…"
+    },
+    "defeat": {
+      "1": "La défense est la meilleure des attaques !\nTelle est ma méthode !",
+      "2": "Viens étudier des roches avec moi la prochaine fois si tu veux apprendre à mieux les aborder !",
+      "3": "Tout ce temps à voyager autour du monde paie enfin !"
+    }
+  },
+  "misty": {
+    "encounter": {
+      "1": "Ma tactique ? Attaquer avec des Pokémon Eau !",
+      "2": "Je vais te prouver le tsunami que sont mes Pokémon aquatiques !",
+      "3": "Mon rêve, c’était de voyager et de défier des Dresseurs super forts. Seras-tu à la hauteur ?"
+    },
+    "victory": {
+      "1": "OK. T’es pas naze… Je le reconnais…",
+      "2": "Pfff… T’as juste eu de la chance hein ?!",
+      "3": "Ouah ! T’es super balèze !"
+    },
+    "defeat": {
+      "1": "Qu’en dis-tu? C’est ça, la puissance des Pokémon Eau !",
+      "2": "J’espère que t’as pris note des élégantes techniques de nage de mes Pokémon !",
+      "3": "Tes Pokémon ne jouent visiblement pas dans le même bassin…"
+    }
+  },
+  "lt_surge": {
+    "encounter": {
+      "1": "T’as pas froid aux yeux, soldat ! Les combats Pokémon, c’est la guerre !",
+      "2": "Tu as du guts pour venir me fight ici ! Je vais te shock !",
+      "3": "Compte tes dents, tu vas morfler !\nMes Pokémon Électrik vont t’atomiser !"
+    },
+    "victory": {
+      "1": "Whoo ! T’iras loin toi.",
+      "2": "Oh noes ! Mes tricks électriques sont à plat…\nYou are very fortiche!",
+      "3": "Tu es very costaud ! Je vais training very dur mes Pokémon, moi too, et on sera Number One !"
+    },
+    "defeat": {
+      "1": "Oh yeah !\nMes Pokémon Électrik sont les best du monde !",
+      "2": "Oh yeah, baby ! I am trop fort !",
+      "3": "Une combat Pokémon, c’est comme une guerre et t’as eu droit à une bataille de premier ordre !"
+    }
+  },
+  "erika": {
+    "encounter": {
+      "1": "Il fait beau, aujourd’hui, n’est-ce pas… ?\nQuoi un combat… ? Très bien…",
+      "2": "L’arrangement floral est ma spécialité, et mes Pokémon sont de type Plante. Quoi ? Tu veux te battre ?",
+      "3": "Il fait beau… Le soleil brille… Les plantes bourgeonnent… Je m’ennuie…",
+      "4": "Voir un tel jardin rempli de fleurs est si apaisant…"
+    },
+    "victory": {
+      "1": "Bien joué, c’est mértié.",
+      "2": "Dommage, on s’amusait si bien…",
+      "3": "Oh non, le combat est terminé…",
+      "4": "Aaah, ça fait du bien !\nMerci, j’en avais besoin."
+    },
+    "defeat": {
+      "1": "J’ai failli m’endormir…",
+      "2": "Oh non… Mes Pokémon Plante ont l’air de t’avoir bien endormie…",
+      "3": "Ce combat était si apaisant…",
+      "4": "Oh non… C’est tout ?"
+    }
+  },
   "flare_boss_lysandre_2": {
     "encounter": {
       "1": "Ton futur ou le mien…\nVoyons lequel mérite plus d’aboutir."
@@ -349,7 +468,7 @@
   },
   "rival": {
     "encounter": {
-      "1": "@c{smile}Ah, je te cherchais ! Je savais que t’étais pressée de partir, mais je m’attendais quand même à un au revoir…\n$@c{smile_eclosed}T’as finalement décidé de réaliser ton rêve ?\nJ’ai peine à y croire.\n$@c{serious_smile_fists}Vu que t’es là, ça te dis un petit combat ?\nJe voudrais quand même m’assurer que t’es prête.\n$@c{serious_mopen_fists}Surtout ne te retiens pas et donne-moi tout ce que t’as !"
+      "1": "@c{smile}Ah, te voilà ! Je t’ai cherchée partout ! Je savais que t’étais pressée de partir, mais je m’attendais quand même à un au revoir…\n$@c{smile_eclosed}T’as finalement décidé de réaliser ton rêve ?\nJ’ai peine à y croire.\n$@c{serious_smile_fists}Vu que t’es là, ça te dis un petit combat ?\nJe voudrais quand même m’assurer que t’es prête.\n$@c{serious_mopen_fists}Surtout ne te retiens pas et donne-moi tout ce que t’as !"
     },
     "victory": {
       "1": "@c{shock}Wah… Tu m’as vraiment lavé.\nT’es vraiment une débutante ?\n$@c{smile}T’as peut-être eu de la chance, mais…\nPeut-être que t’arriveras jusqu’au bout du chemin.\n$D’ailleurs, le prof m’a demandé de te filer ces objets.\nIls ont l’air sympas.\n$@c{serious_smile_fists}Bonne chance à toi !"
@@ -441,7 +560,7 @@
   },
   "rival_6": {
     "encounter": {
-      "1": "@c{smile_eclosed}Nous y revoilà.\n$@c{neutral}J’ai eu du temps pour réfléchir à tout ça.\nIl y a une raison à pourquoi tout semble étrange.\n$@c{neutral_eclosed}Ton rêve, ma volonté de te battre…\nFont partie de quelque chose de plus grand.\n$@c{serious}C’est même pas à propos de moi, ni de toi… Mais du monde, @c{serious_mhalf_fists}et te repousser dans tes limites est ma mission.\n$@c{neutral_eclosed}J’ignore si je serai capable de l’accomplir, mais je ferai tout ce qui est en mon pouvoir.\n$@c{neutral}Cet endroit est terrifiant… Et pourtant il m’a l’air familier, comme si j’y avais déjà mis les pieds.\n$@c{serious_mhalf_fists}Tu ressens la même chose, pas vrai ?\n$@c{serious}… et c’est comme si quelque chose ici me parlait.\n$Comme si c’était tout ce que ce monde avait toujours connu.\n$Ces précieux moments ensemble semblent si proches ne sont rien de plus qu’un lointain souvenir.\n$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels ?\n$@c{serious_mopen_fists}Il faut que tu persévères. Si tu t’arrêtes, ça n'aura jamais de fin et t’es la seule à en être capable.\n$@c{serious_smile_fists}Difficile de comprendre le sens de tout ça, je sais juste que c’est la réalité.\n$@c{serious_mopen_fists}Si tu ne parviens à pas me battre ici et maintenant, tu n’as aucune chance."
+      "1": "@c{smile_eclosed}Nous y revoilà.\n$@c{neutral}J’ai eu du temps pour réfléchir à tout ça.\nIl y a une raison à pourquoi tout semble étrange.\n$@c{neutral_eclosed}Ton rêve, ma volonté de te battre…\nFont partie de quelque chose de plus grand.\n$@c{serious}C’est même pas à propos de moi, ni de toi… Mais du monde, @c{serious_mhalf_fists}et te repousser dans tes limites est ma mission.\n$@c{neutral_eclosed}J’ignore si je serai capable de l’accomplir, mais je ferai tout ce qui est en mon pouvoir.\n$@c{neutral}Cet endroit est terrifiant… Et pourtant il m’a l’air familier, comme si j’y avais déjà mis les pieds.\n$@c{serious_mhalf_fists}Tu ressens la même chose, pas vrai ?\n$@c{serious}… et c’est comme si quelque chose ici me parlait.\n$Comme si c’était tout ce que ce monde avait toujours connu.\n$Ces précieux moments ensemble semblent si proches ne sont rien de plus qu’un lointain souvenir.\n$@c{neutral_eclosed}D’ailleurs, qui peut dire aujourd’hui qu’ils ont pu être réels ?\n$@c{serious_mopen_fists}Il faut que tu persévères. Si tu t’arrêtes, ça n’aura jamais de fin et t’es la seule à en être capable.\n$@c{serious_smile_fists}Difficile de comprendre le sens de tout ça, je sais juste que c’est la réalité.\n$@c{serious_mopen_fists}Si tu ne parviens à pas me battre ici et maintenant, tu n’as aucune chance."
     },
     "victory": {
       "1": "@c{smile_eclosed}J’ai fait ce que j’avais à faire.\n$Promets-moi juste une chose.\n@c{smile}Après avoir réparé ce monde… Rentre à la maison."

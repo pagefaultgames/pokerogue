@@ -26,17 +26,18 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { MoveUsedEvent } from "#app/events/battle-scene.js";
+import { MoveUsedEvent } from "#app/events/battle-scene";
+import { PartyStatusCurePhase } from "#app/phases/party-status-cure-phase";
+import { BattleEndPhase } from "#app/phases/battle-end-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { MovePhase } from "#app/phases/move-phase";
+import { NewBattlePhase } from "#app/phases/new-battle-phase";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { StatChangePhase } from "#app/phases/stat-change-phase";
+import { SwitchPhase } from "#app/phases/switch-phase";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
+import { SpeciesFormChangeRevertWeatherFormTrigger } from "./pokemon-forms";
 import { ModifierTier } from "#app/modifier/modifier-tier.js";
-import { PartyStatusCurePhase } from "#app/phases/party-status-cure-phase.js";
-import { BattleEndPhase } from "#app/phases/battle-end-phase.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { MovePhase } from "#app/phases/move-phase.js";
-import { NewBattlePhase } from "#app/phases/new-battle-phase.js";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
-import { StatChangePhase } from "#app/phases/stat-change-phase.js";
-import { SwitchPhase } from "#app/phases/switch-phase.js";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -5740,7 +5741,10 @@ export class AbilityChangeAttr extends MoveEffectAttr {
       return false;
     }
 
-    (this.selfTarget ? user : target).summonData.ability = this.ability;
+    const moveTarget = this.selfTarget ? user : target;
+
+    moveTarget.summonData.ability = this.ability;
+    user.scene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
 
     user.scene.queueMessage(i18next.t("moveTriggers:acquiredAbility", {pokemonName: getPokemonNameWithAffix((this.selfTarget ? user : target)), abilityName: allAbilities[this.ability].name}));
 
@@ -5826,6 +5830,10 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
     target.summonData.ability = tempAbilityId;
 
     user.scene.queueMessage(i18next.t("moveTriggers:swappedAbilitiesWithTarget", {pokemonName: getPokemonNameWithAffix(user)}));
+    // Swaps Forecast from Castform
+    user.scene.arena.triggerWeatherBasedFormChangesToNormal();
+    // Swaps Forecast to Castform (edge case)
+    user.scene.arena.triggerWeatherBasedFormChanges();
 
     return true;
   }
@@ -5851,6 +5859,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
     }
 
     target.summonData.abilitySuppressed = true;
+    target.scene.arena.triggerWeatherBasedFormChangesToNormal();
 
     target.scene.queueMessage(i18next.t("moveTriggers:suppressAbilities", {pokemonName: getPokemonNameWithAffix(target)}));
 
@@ -8421,8 +8430,8 @@ export function initMoves() {
       .partial()
       .ignoresVirtual(),
     /* End Unused */
-    new AttackMove(Moves.ZIPPY_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 80, 100, 10, 100, 2, 7)
-      .attr(StatChangeAttr, BattleStat.EVA, 1, true),
+    new AttackMove(Moves.ZIPPY_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 50, 100, 15, 100, 2, 7) //LGPE Implementation
+      .attr(CritOnlyAttr),
     new AttackMove(Moves.SPLISHY_SPLASH, Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, 30, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -8708,7 +8717,6 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.JUNGLE_HEALING, Type.GRASS, -1, 10, -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
-      .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP)
       .attr(HealStatusEffectAttr, false, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP)
       .target(MoveTarget.USER_AND_ALLIES),
     new AttackMove(Moves.WICKED_BLOW, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
@@ -8812,8 +8820,7 @@ export function initMoves() {
       .windMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.LUNAR_BLESSING, Type.PSYCHIC, -1, 5, -1, 0, 8)
-      .attr(HealAttr, 0.25)
-      .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP)
+      .attr(HealAttr, 0.25, true, false)
       .attr(HealStatusEffectAttr, false, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP)
       .target(MoveTarget.USER_AND_ALLIES)
       .triageMove(),

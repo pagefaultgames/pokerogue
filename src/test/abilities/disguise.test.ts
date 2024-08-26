@@ -207,4 +207,18 @@ describe("Abilities - Disguise", () => {
 
     expect(mimikyu1.formIndex).toBe(disguisedForm);
   }, TIMEOUT);
+
+  it("doesn't faint twice when fainting due to Disguise break damage, nor prevent faint from Disguise break damage if using Endure", async () => {
+    game.override.enemyMoveset(Array(4).fill(Moves.ENDURE));
+    await game.startBattle();
+
+    const mimikyu = game.scene.getEnemyPokemon()!;
+    mimikyu.hp = 1;
+
+    game.move.select(Moves.SHADOW_SNEAK);
+    await game.toNextWave();
+
+    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.currentBattle.waveIndex).toBe(2);
+  }, TIMEOUT);
 });
