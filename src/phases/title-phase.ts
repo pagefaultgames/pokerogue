@@ -220,6 +220,7 @@ export class TitlePhase extends Phase {
 
         const modifiers: Modifier[] = Array(3).fill(null).map(() => modifierTypes.EXP_SHARE().withIdFromFunc(modifierTypes.EXP_SHARE).newModifier())
           .concat(Array(3).fill(null).map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()))
+          .concat([modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier()])
           .concat(getDailyRunStarterModifiers(party))
           .filter((m) => m !== null);
 
