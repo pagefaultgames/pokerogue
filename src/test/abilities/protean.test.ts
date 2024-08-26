@@ -1,18 +1,17 @@
-import { allMoves } from "#app/data/move.js";
-import { Type } from "#app/data/type.js";
-import { Weather, WeatherType } from "#app/data/weather.js";
-import { PlayerPokemon } from "#app/field/pokemon.js";
-import { TurnEndPhase } from "#app/phases.js";
+import { allMoves } from "#app/data/move";
+import { Type } from "#app/data/type";
+import { Weather, WeatherType } from "#app/data/weather";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -49,7 +48,7 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
@@ -67,17 +66,17 @@ describe("Abilities - Protean", () => {
       let leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.AGILITY));
+      game.move.select(Moves.AGILITY);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied.filter((a) => a === Abilities.PROTEAN)).toHaveLength(1);
       const leadPokemonType = Type[leadPokemon.getTypes()[0]];
-      const moveType = Type[allMoves[Moves.AGILITY].defaultType];
+      const moveType = Type[allMoves[Moves.AGILITY].type];
       expect(leadPokemonType).not.toBe(moveType);
 
       await game.toNextTurn();
@@ -89,7 +88,7 @@ describe("Abilities - Protean", () => {
       leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.SPLASH);
@@ -108,7 +107,7 @@ describe("Abilities - Protean", () => {
       expect(leadPokemon).not.toBe(undefined);
 
       game.scene.arena.weather = new Weather(WeatherType.SUNNY);
-      game.doAttack(getMovePosition(game.scene, 0, Moves.WEATHER_BALL));
+      game.move.select(Moves.WEATHER_BALL);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).toContain(Abilities.PROTEAN);
@@ -131,7 +130,7 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.move.select(Moves.TACKLE);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).toContain(Abilities.PROTEAN);
@@ -154,7 +153,7 @@ describe("Abilities - Protean", () => {
       expect(leadPokemon).not.toBe(undefined);
 
       game.scene.arena.biomeType = Biome.MOUNTAIN;
-      game.doAttack(getMovePosition(game.scene, 0, Moves.NATURE_POWER));
+      game.move.select(Moves.NATURE_POWER);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.AIR_SLASH);
@@ -172,7 +171,7 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DIG));
+      game.move.select(Moves.DIG);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.DIG);
@@ -191,7 +190,7 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.move.select(Moves.TACKLE);
       await game.move.forceMiss();
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -213,7 +212,7 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.move.select(Moves.TACKLE);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
@@ -232,7 +231,7 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.move.select(Moves.TACKLE);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TACKLE);
@@ -250,8 +249,8 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      leadPokemon.summonData.types = [allMoves[Moves.SPLASH].defaultType];
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      leadPokemon.summonData.types = [allMoves[Moves.SPLASH].type];
+      game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
@@ -271,7 +270,7 @@ describe("Abilities - Protean", () => {
 
       vi.spyOn(leadPokemon, "isTerastallized").mockReturnValue(true);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
@@ -289,7 +288,7 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.STRUGGLE));
+      game.move.select(Moves.STRUGGLE);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
@@ -307,7 +306,7 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BURN_UP));
+      game.move.select(Moves.BURN_UP);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
@@ -326,7 +325,7 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TRICK_OR_TREAT));
+      game.move.select(Moves.TRICK_OR_TREAT);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.TRICK_OR_TREAT);
@@ -344,7 +343,7 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CURSE));
+      game.move.select(Moves.CURSE);
       await game.phaseInterceptor.to(TurnEndPhase);
 
       testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.CURSE);
@@ -358,6 +357,6 @@ function testPokemonTypeMatchesDefaultMoveType(pokemon: PlayerPokemon, move: Mov
   expect(pokemon.summonData.abilitiesApplied).toContain(Abilities.PROTEAN);
   expect(pokemon.getTypes()).toHaveLength(1);
   const pokemonType = Type[pokemon.getTypes()[0]],
-    moveType = Type[allMoves[move].defaultType];
+    moveType = Type[allMoves[move].type];
   expect(pokemonType).toBe(moveType);
 }
