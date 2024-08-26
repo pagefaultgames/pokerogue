@@ -155,7 +155,7 @@ describe("Moves - Trick", () => {
       game.move.select(Moves.TRICK);
       await game.phaseInterceptor.to(TurnEndPhase);
 
-      const enemyPokemon = game.scene.getEnemyPokemon();
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon.getHeldItems()[0].type.id === "FLAME_ORB").toBeTruthy();
     }
   );
