@@ -1,6 +1,7 @@
 import tseslint from '@typescript-eslint/eslint-plugin';
+import stylisticTs from '@stylistic/eslint-plugin-ts'
 import parser from '@typescript-eslint/parser';
-import imports from 'eslint-plugin-import';
+// import imports from 'eslint-plugin-import'; // Disabled due to not being compatible with eslint v9
 
 export default [ 
     {
@@ -10,7 +11,8 @@ export default [
             parser: parser
         },
         plugins: {
-            imports: imports.configs.recommended,
+            // imports: imports.configs.recommended // Disabled due to not being compatible with eslint v9
+            '@stylistic/ts': stylisticTs,
             '@typescript-eslint': tseslint
         },
         rules: {
@@ -25,18 +27,19 @@ export default [
                 "ignoreRestSiblings": true // Allows unused variables that are part of a rest property in object destructuring. Useful for excluding certain properties from an object while using the rest.
             }],
             "eol-last": ["error", "always"], // Enforces at least one newline at the end of files
-            "@typescript-eslint/semi": ["error", "always"], // Requires semicolons for TypeScript-specific syntax
+            "@stylistic/ts/semi": ["error", "always"], // Requires semicolons for TypeScript-specific syntax
             "semi": "off", // Disables the general semi rule for TypeScript files
             "no-extra-semi": ["error"], // Disallows unnecessary semicolons for TypeScript-specific syntax
             "brace-style": "off", // Note: you must disable the base rule as it can report incorrect errors
             "curly": ["error", "all"], // Enforces the use of curly braces for all control statements
-            "@typescript-eslint/brace-style": ["error", "1tbs"],
+            "@stylistic/ts/brace-style": ["error", "1tbs"],
             "no-trailing-spaces": ["error", { // Disallows trailing whitespace at the end of lines
                 "skipBlankLines": false, // Enforces the rule even on blank lines
                 "ignoreComments": false // Enforces the rule on lines containing comments
             }],
             "space-before-blocks": ["error", "always"], // Enforces a space before blocks
-            "keyword-spacing": ["error", { "before": true, "after": true }] // Enforces spacing before and after keywords
+            "keyword-spacing": ["error", { "before": true, "after": true }], // Enforces spacing before and after keywords
+            "comma-spacing": ["error", { "before": false, "after": true }] // Enforces spacing after comma
         }
     }
 ]

@@ -1,4 +1,4 @@
-import i18next from "../plugins/i18n";
+import i18next from "i18next";
 
 export function getBattleCountSplashMessage(): string {
   return `{COUNT} ${i18next.t("splashMessages:battlesWon")}`;
@@ -6,7 +6,7 @@ export function getBattleCountSplashMessage(): string {
 
 export function getSplashMessages(): string[] {
   const splashMessages = Array(10).fill(getBattleCountSplashMessage());
-  splashMessages.push(...[
+  splashMessages.push(
     i18next.t("splashMessages:joinTheDiscord"),
     i18next.t("splashMessages:infiniteLevels"),
     i18next.t("splashMessages:everythingStacks"),
@@ -39,7 +39,8 @@ export function getSplashMessages(): string[] {
     i18next.t("splashMessages:alsoTryRadicalRed"),
     i18next.t("splashMessages:eeveeExpo"),
     i18next.t("splashMessages:ynoproject"),
-  ]);
+    i18next.t("splashMessages:breedersInSpace"),
+  );
 
   return splashMessages;
 }

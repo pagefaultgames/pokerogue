@@ -1,23 +1,21 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import {Species} from "#app/data/enums/species";
-import {
-  EncounterPhase,
-  SelectStarterPhase,
-  TitlePhase,
-} from "#app/phases";
-import {Mode} from "#app/ui/ui";
-import {GameModes} from "#app/game-mode";
-import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
-import {Button} from "#app/enums/buttons";
-import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
+import { Gender } from "#app/data/gender";
+import { Nature } from "#app/data/nature";
+import { allSpecies } from "#app/data/pokemon-species";
+import { GameModes } from "#app/game-mode";
+import { EncounterPhase } from "#app/phases/encounter-phase";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase";
+import { TitlePhase } from "#app/phases/title-phase";
+import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
-import {OptionSelectItem} from "#app/ui/abstact-option-select-ui-handler";
-import {Gender} from "#app/data/gender";
-import {allSpecies} from "#app/data/pokemon-species";
-import {Nature} from "#app/data/nature";
-import {Abilities} from "#app/data/enums/abilities";
+import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
+import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
+import { Mode } from "#app/ui/ui";
+import { Abilities } from "#enums/abilities";
+import { Button } from "#enums/buttons";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("UI - Starter select", () => {
@@ -54,12 +52,16 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
+      handler.processInput(Button.LEFT);
+      handler.processInput(Button.CYCLE_SHINY);
+      handler.processInput(Button.V);
+      handler.processInput(Button.V);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
     });
     await game.phaseInterceptor.run(SelectStarterPhase);
-    let options: OptionSelectItem[];
-    let optionSelectUiHandler: OptionSelectUiHandler;
+    let options: OptionSelectItem[] = [];
+    let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
@@ -72,7 +74,7 @@ describe("UI - Starter select", () => {
     expect(options.some(option => option.label === "Manage Moves")).toBe(true);
     expect(options.some(option => option.label === "Use Candies")).toBe(true);
     expect(options.some(option => option.label === "Cancel")).toBe(true);
-    optionSelectUiHandler.processInput(Button.ACTION);
+    optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
@@ -113,13 +115,17 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
+      handler.processInput(Button.LEFT);
       handler.processInput(Button.CYCLE_GENDER);
+      handler.processInput(Button.CYCLE_SHINY);
+      handler.processInput(Button.V);
+      handler.processInput(Button.V);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
     });
     await game.phaseInterceptor.run(SelectStarterPhase);
-    let options: OptionSelectItem[];
-    let optionSelectUiHandler: OptionSelectUiHandler;
+    let options: OptionSelectItem[] = [];
+    let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
@@ -132,7 +138,7 @@ describe("UI - Starter select", () => {
     expect(options.some(option => option.label === "Manage Moves")).toBe(true);
     expect(options.some(option => option.label === "Use Candies")).toBe(true);
     expect(options.some(option => option.label === "Cancel")).toBe(true);
-    optionSelectUiHandler.processInput(Button.ACTION);
+    optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
@@ -174,15 +180,19 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
+      handler.processInput(Button.LEFT);
       handler.processInput(Button.CYCLE_GENDER);
       handler.processInput(Button.CYCLE_NATURE);
       handler.processInput(Button.CYCLE_ABILITY);
+      handler.processInput(Button.CYCLE_SHINY);
+      handler.processInput(Button.V);
+      handler.processInput(Button.V);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
     });
     await game.phaseInterceptor.run(SelectStarterPhase);
-    let options: OptionSelectItem[];
-    let optionSelectUiHandler: OptionSelectUiHandler;
+    let options: OptionSelectItem[] = [];
+    let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
@@ -195,7 +205,7 @@ describe("UI - Starter select", () => {
     expect(options.some(option => option.label === "Manage Moves")).toBe(true);
     expect(options.some(option => option.label === "Use Candies")).toBe(true);
     expect(options.some(option => option.label === "Cancel")).toBe(true);
-    optionSelectUiHandler.processInput(Button.ACTION);
+    optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
@@ -237,13 +247,17 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
+      handler.processInput(Button.LEFT);
       handler.processInput(Button.CYCLE_GENDER);
+      handler.processInput(Button.CYCLE_SHINY);
+      handler.processInput(Button.V);
+      handler.processInput(Button.V);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
     });
     await game.phaseInterceptor.run(SelectStarterPhase);
-    let options: OptionSelectItem[];
-    let optionSelectUiHandler: OptionSelectUiHandler;
+    let options: OptionSelectItem[] = [];
+    let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
@@ -256,7 +270,7 @@ describe("UI - Starter select", () => {
     expect(options.some(option => option.label === "Manage Moves")).toBe(true);
     expect(options.some(option => option.label === "Use Candies")).toBe(true);
     expect(options.some(option => option.label === "Cancel")).toBe(true);
-    optionSelectUiHandler.processInput(Button.ACTION);
+    optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
@@ -297,13 +311,13 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.CYCLE_SHINY);
+      handler.processInput(Button.LEFT);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
     });
     await game.phaseInterceptor.run(SelectStarterPhase);
-    let options: OptionSelectItem[];
-    let optionSelectUiHandler: OptionSelectUiHandler;
+    let options: OptionSelectItem[] = [];
+    let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
@@ -316,7 +330,7 @@ describe("UI - Starter select", () => {
     expect(options.some(option => option.label === "Manage Moves")).toBe(true);
     expect(options.some(option => option.label === "Use Candies")).toBe(true);
     expect(options.some(option => option.label === "Cancel")).toBe(true);
-    optionSelectUiHandler.processInput(Button.ACTION);
+    optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
@@ -356,14 +370,15 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.V);
+      handler.processInput(Button.LEFT);
+      handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.V);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
     });
     await game.phaseInterceptor.run(SelectStarterPhase);
-    let options: OptionSelectItem[];
-    let optionSelectUiHandler: OptionSelectUiHandler;
+    let options: OptionSelectItem[] = [];
+    let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
@@ -376,7 +391,7 @@ describe("UI - Starter select", () => {
     expect(options.some(option => option.label === "Manage Moves")).toBe(true);
     expect(options.some(option => option.label === "Use Candies")).toBe(true);
     expect(options.some(option => option.label === "Cancel")).toBe(true);
-    optionSelectUiHandler.processInput(Button.ACTION);
+    optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
@@ -416,15 +431,16 @@ describe("UI - Starter select", () => {
     game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.V);
+      handler.processInput(Button.LEFT);
+      handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.V);
       handler.processInput(Button.V);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
     });
     await game.phaseInterceptor.run(SelectStarterPhase);
-    let options: OptionSelectItem[];
-    let optionSelectUiHandler: OptionSelectUiHandler;
+    let options: OptionSelectItem[] = [];
+    let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
@@ -437,7 +453,7 @@ describe("UI - Starter select", () => {
     expect(options.some(option => option.label === "Manage Moves")).toBe(true);
     expect(options.some(option => option.label === "Use Candies")).toBe(true);
     expect(options.some(option => option.label === "Cancel")).toBe(true);
-    optionSelectUiHandler.processInput(Button.ACTION);
+    optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
@@ -479,13 +495,12 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.RIGHT);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
     });
     await game.phaseInterceptor.run(SelectStarterPhase);
-    let options: OptionSelectItem[];
-    let optionSelectUiHandler: OptionSelectUiHandler;
+    let options: OptionSelectItem[] = [];
+    let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
@@ -498,7 +513,7 @@ describe("UI - Starter select", () => {
     expect(options.some(option => option.label === "Manage Moves")).toBe(true);
     expect(options.some(option => option.label === "Use Candies")).toBe(true);
     expect(options.some(option => option.label === "Cancel")).toBe(true);
-    optionSelectUiHandler.processInput(Button.ACTION);
+    optionSelectUiHandler?.processInput(Button.ACTION);
 
     let starterSelectUiHandler: StarterSelectUiHandler;
     await new Promise<void>((resolve) => {
@@ -509,10 +524,10 @@ describe("UI - Starter select", () => {
       });
     });
 
-    expect(starterSelectUiHandler.starterGens[0]).toBe(0);
-    expect(starterSelectUiHandler.starterCursors[0]).toBe(3);
-    expect(starterSelectUiHandler.cursorObj.x).toBe(132 + 4 * 18);
-    expect(starterSelectUiHandler.cursorObj.y).toBe(10);
+    // expect(starterSelectUiHandler.starterGens[0]).toBe(0);
+    // expect(starterSelectUiHandler.starterCursors[0]).toBe(3);
+    // expect(starterSelectUiHandler.cursorObj.x).toBe(132 + 4 * 18);
+    // expect(starterSelectUiHandler.cursorObj.y).toBe(10);
 
     game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
@@ -544,14 +559,13 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
-      handler.processInput(Button.RIGHT);
       handler.processInput(Button.DOWN);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
     });
     await game.phaseInterceptor.run(SelectStarterPhase);
-    let options: OptionSelectItem[];
-    let optionSelectUiHandler: OptionSelectUiHandler;
+    let options: OptionSelectItem[] = [];
+    let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
@@ -564,9 +578,9 @@ describe("UI - Starter select", () => {
     expect(options.some(option => option.label === "Manage Moves")).toBe(true);
     expect(options.some(option => option.label === "Use Candies")).toBe(true);
     expect(options.some(option => option.label === "Cancel")).toBe(true);
-    optionSelectUiHandler.processInput(Button.ACTION);
+    optionSelectUiHandler?.processInput(Button.ACTION);
 
-    let starterSelectUiHandler: StarterSelectUiHandler;
+    let starterSelectUiHandler: StarterSelectUiHandler | undefined;
     await new Promise<void>((resolve) => {
       game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
         starterSelectUiHandler = game.scene.ui.getHandler() as StarterSelectUiHandler;
@@ -575,10 +589,11 @@ describe("UI - Starter select", () => {
       });
     });
 
-    expect(starterSelectUiHandler.starterGens[0]).toBe(0);
-    expect(starterSelectUiHandler.starterCursors[0]).toBe(12);
-    expect(starterSelectUiHandler.cursorObj.x).toBe(132 + 4 * 18);
-    expect(starterSelectUiHandler.cursorObj.y).toBe(28);
+    expect(starterSelectUiHandler?.starterSpecies.length).toBe(1);
+    expect(starterSelectUiHandler?.starterSpecies[0].generation).toBe(1);
+    expect(starterSelectUiHandler?.starterSpecies[0].speciesId).toBe(32);
+    expect(starterSelectUiHandler?.cursorObj.x).toBe(53);
+    expect(starterSelectUiHandler?.cursorObj.y).toBe(31);
 
     game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;

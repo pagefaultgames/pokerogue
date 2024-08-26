@@ -1,8 +1,8 @@
+import i18next from "i18next";
 import BattleScene from "../battle-scene";
+import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
-import * as Utils from "../utils";
-import i18next from "i18next";
 
 interface RankingEntry {
   rank: integer,
@@ -59,14 +59,14 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    const titleWindow = addWindow(this.scene, 0, 0, 114, 18, false, false, null, null, WindowVariant.THIN);
+    const titleWindow = addWindow(this.scene, 0, 0, 114, 18, false, false, undefined, undefined, WindowVariant.THIN);
     this.add(titleWindow);
 
     this.titleLabel = addTextObject(this.scene, titleWindow.displayWidth / 2, titleWindow.displayHeight / 2, i18next.t("menu:loading"), TextStyle.WINDOW, { fontSize: "64px" });
     this.titleLabel.setOrigin(0.5, 0.5);
     this.add(this.titleLabel);
 
-    const window = addWindow(this.scene, 0, 17, 114, 118, false, false, null, null, WindowVariant.THIN);
+    const window = addWindow(this.scene, 0, 17, 114, 118, false, false, undefined, undefined, WindowVariant.THIN);
     this.add(window);
 
     this.rankingsContainer = this.scene.add.container(6, 21);
@@ -154,7 +154,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       return entryContainer;
     };
 
-    this.rankingsContainer.add(getEntry("#", "Username", "Score", "Wave"));
+    this.rankingsContainer.add(getEntry(i18next.t("menu:positionIcon"), i18next.t("menu:usernameScoreboard"), i18next.t("menu:score"), i18next.t("menu:wave")));
 
     rankings.forEach((r: RankingEntry, i: integer) => {
       const entryContainer = getEntry(r.rank.toString(), r.username, r.score.toString(), r.wave.toString());

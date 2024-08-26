@@ -1,11 +1,11 @@
-import { describe, expect, it} from "vitest";
-import {initStatsKeys} from "#app/ui/game-stats-ui-handler";
+import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
+import { describe, expect, it } from "vitest";
 
 async function importModule() {
   try {
     initStatsKeys();
     const { PokemonMove } = await import("#app/field/pokemon");
-    const { Species } = await import("#app/data/enums/species");
+    const { Species } = await import("#enums/species");
     return {
       PokemonMove,
       Species,
