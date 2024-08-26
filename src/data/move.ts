@@ -37,7 +37,7 @@ import { StatChangePhase } from "#app/phases/stat-change-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "./pokemon-forms";
-import { ModifierTier } from "#app/modifier/modifier-tier.js";
+import { ModifierTier } from "#app/modifier/modifier-tier";
 
 export enum MoveCategory {
   PHYSICAL,
