@@ -2223,7 +2223,7 @@ export class ModifierTypeOption {
 }
 
 export function getPartyLuckValue(party: Pokemon[]): integer {
-  if (party[0].scene.gameMode.modeId === GameModes.DAILY) {
+  if (party[0].scene.gameMode.isDaily) {
     return 0;
   }
   const luck = Phaser.Math.Clamp(party.map(p => p.isFainted() ? 0 : p.getLuck())
