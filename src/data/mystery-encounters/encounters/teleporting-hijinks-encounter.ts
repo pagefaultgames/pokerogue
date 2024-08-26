@@ -25,7 +25,7 @@ const namespace = "mysteryEncounter:teleportingHijinks";
 
 const MONEY_COST_MULTIPLIER = 2.5;
 const BIOME_CANDIDATES = [Biome.SPACE, Biome.FAIRY_CAVE, Biome.LABORATORY, Biome.ISLAND];
-const MACHINE_INTERFACING_TYPES = [Type.ELECTRIC, Type.FLYING];
+const MACHINE_INTERFACING_TYPES = [Type.ELECTRIC, Type.STEEL];
 
 /**
  * Teleporting Hijinks encounter.

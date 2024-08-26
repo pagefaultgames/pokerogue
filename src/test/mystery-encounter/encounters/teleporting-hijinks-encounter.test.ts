@@ -196,7 +196,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     });
   });
 
-  describe("Option 2 - Attempt to Steal", () => {
+  describe("Option 2 - Use Electric/Steel Typing", () => {
     it("should have the correct properties", () => {
       const option = TeleportingHijinksEncounter.options[1];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL);
