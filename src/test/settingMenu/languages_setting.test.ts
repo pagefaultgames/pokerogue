@@ -1,10 +1,10 @@
 import { setSetting, SettingKeys } from "#app/system/settings/settings.js";
 import i18next from "i18next";
-import { expect, describe, it, beforeAll, afterEach, vi } from "vitest";
+import { expect, describe, it, beforeAll, afterEach, vi, beforeEach } from "vitest";
 import GameManager from "../utils/gameManager";
 import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler.js";
 import { Mode } from "#app/ui/ui.js";
-import { languages } from "#app/plugins/i18n.js";
+import { languages, languagesKeys, languagesLabels } from "#app/plugins/i18n.js";
 
 class TestingOptionSelectUiHandler extends OptionSelectUiHandler {
   public get getOptions() {
@@ -15,6 +15,7 @@ class TestingOptionSelectUiHandler extends OptionSelectUiHandler {
 describe("Check Languages", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  let optionSelectUiHandler: TestingOptionSelectUiHandler;
 
   beforeAll(async () => {
     phaserGame = new Phaser.Game({
@@ -23,21 +24,22 @@ describe("Check Languages", () => {
     game = new GameManager(phaserGame);
     expect(languages).not.toBe(undefined);
     await game.runToTitle();
+    vi.spyOn(game.scene.ui, "hideTooltip").mockReturnValueOnce();
+    game.scene.ui.handlers[Mode.OPTION_SELECT] = new TestingOptionSelectUiHandler(game.scene);
+    game.scene.ui.handlers[Mode.OPTION_SELECT].setup();
+  });
+
+  beforeEach(() => {
+    game.setMode(Mode.SETTINGS_DISPLAY);
+    setSetting(game.scene, SettingKeys.Language, 1);
+    optionSelectUiHandler = game.scene.ui.getHandler();
   });
 
   afterEach(async () => {
     game.phaseInterceptor.restoreOg();
   });
 
-  it("correct structure: { label: string, handler: function}", () => {
-    vi.spyOn(game.scene.ui, "hideTooltip").mockReturnValueOnce();
-    game.scene.ui.handlers[Mode.OPTION_SELECT] = new TestingOptionSelectUiHandler(game.scene);
-    game.scene.ui.handlers[Mode.OPTION_SELECT].setup();
-    game.setMode(Mode.SETTINGS_DISPLAY);
-
-    setSetting(game.scene, SettingKeys.Language, 1);
-    const optionSelectUiHandler = game.scene.ui.getHandler() as TestingOptionSelectUiHandler;
-
+  it("Correct structure is expected: { label: string, handler: function }", () => {
     expect(
       optionSelectUiHandler.getOptions?.every((option) => {
         return (
@@ -48,12 +50,16 @@ describe("Check Languages", () => {
     ).toBe(true);
   });
 
-  [...Object.values(languages)].map(async (lang, index, array) => {
+  [...languagesLabels].map(async (lang, index, array) => {
     return it(`Check ${lang}`, async () => {
-      expect(i18next.resolvedLanguage).toBe(Object.keys(languages)[index]);
-      i18next.changeLanguage(
-        Object.keys(languages)[(index + 1) % array.length]
-      );
+      // Active language should be the current one.
+      expect(i18next.resolvedLanguage).toBe(languagesKeys[index]);
+
+      // Active language should not be among the options.
+      expect(optionSelectUiHandler.getOptions?.some(({ label }) => label === lang)).toBe(false);
+
+      // Change to following language.
+      i18next.changeLanguage(languagesKeys[(index + 1) % array.length]);
     });
   });
 });

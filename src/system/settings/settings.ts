@@ -8,7 +8,7 @@ import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
-import { getIsInitialized, initI18n, languages } from "#app/plugins/i18n.js";
+import { getIsInitialized, initI18n, languages, languagesKeys, languagesLabels } from "#app/plugins/i18n.js";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 function getTranslation(key: string): string {
@@ -79,9 +79,6 @@ export interface Setting {
   /** Determines whether the setting should be hidden from the UI */
   isHidden?: () => boolean
 }
-
-// default is English
-export const currentLanguage = languages[i18next.resolvedLanguage!] ?? "English";
 
 /**
  * Setting Keys for existing settings
@@ -306,8 +303,8 @@ export const Setting: Array<Setting> = [
      * Update to current language or return default value.
      */
       {
-        value: currentLanguage,
-        label: currentLanguage
+        value: languages[i18next.resolvedLanguage!] ?? "English",
+        label: languages[i18next.resolvedLanguage!] ?? "English"
       },
       {
         value: "Change",
@@ -811,21 +808,19 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
         };
         scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
           options: [
-            ...Object.values(languages)
-              .map((lang, index) => {
-                return {
-                  label: lang,
-                  handler: () => changeLocaleHandler(Object.keys(languages)[index]),
-                };
-              })
-              .filter((lang) => {
-                // Remove language active
-                return currentLanguage !== lang.label;
-              }),
+            ...languagesLabels.map((lang, index) => {
+              return {
+                label: lang,
+                handler: () => changeLocaleHandler(languagesKeys[index]),
+              };
+            }).filter((lang) => {
+              // Remove active language.
+              return languages[i18next.resolvedLanguage!] !== lang.label;
+            }),
             {
               label: i18next.t("settings:back"),
-              handler: () => cancelHandler(),
-            },
+              handler: () => cancelHandler()
+            }
           ],
           maxOptions: 7,
         });
