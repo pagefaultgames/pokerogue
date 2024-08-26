@@ -20,7 +20,10 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase.js";
+import { Abilities } from "#app/enums/abilities";
+import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 
 export class Arena {
   public scene: BattleScene;
@@ -329,6 +332,30 @@ export class Arena {
     });
 
     return true;
+  }
+
+  /**
+   * Function to trigger all weather based form changes
+   */
+  triggerWeatherBasedFormChanges(): void {
+    this.scene.getField(true).forEach( p => {
+      if (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM) {
+        new ShowAbilityPhase(this.scene, p.getBattlerIndex());
+        this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
+      }
+    });
+  }
+
+  /**
+   * Function to trigger all weather based form changes back into their normal forms
+   */
+  triggerWeatherBasedFormChangesToNormal(): void {
+    this.scene.getField(true).forEach( p => {
+      if (p.hasAbility(Abilities.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM) {
+        new ShowAbilityPhase(this.scene, p.getBattlerIndex());
+        return this.scene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
+      }
+    });
   }
 
   trySetTerrain(terrain: TerrainType, hasPokemonSource: boolean, ignoreAnim: boolean = false): boolean {

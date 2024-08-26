@@ -61,6 +61,7 @@
   "typeHints": "Indications de type",
   "masterVolume": "Vol. principal",
   "bgmVolume": "Vol. musique",
+  "fieldVolume": "Vol. combats",
   "seVolume": "Vol. effets",
   "musicPreference": "Préf. musicale",
   "mixed": "Mixte",

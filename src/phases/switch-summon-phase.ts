@@ -85,7 +85,7 @@ export class SwitchSummonPhase extends SummonPhase {
         pokemonName: getPokemonNameWithAffix(pokemon)
       })
     );
-    this.scene.playSound("pb_rel");
+    this.scene.playSound("se/pb_rel");
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     this.scene.tweens.add({
@@ -181,6 +181,8 @@ export class SwitchSummonPhase extends SummonPhase {
     this.lastPokemon?.resetSummonData();
 
     this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+    // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out
+    this.scene.arena.triggerWeatherBasedFormChanges();
   }
 
   queuePostSummon(): void {
