@@ -712,7 +712,7 @@ export abstract class BattleAnim {
       const user = !isOppAnim ? this.user : this.target;
       const target = !isOppAnim ? this.target : this.user;
 
-      const targetSubstitute = (!!onSubstitute && user !== target) ? target!.getTag(SubstituteTag) : null;
+      const targetSubstitute = (onSubstitute && user !== target) ? target!.getTag(SubstituteTag) : null;
 
       const userInitialX = user!.x; // TODO: is this bang correct?
       const userInitialY = user!.y; // TODO: is this bang correct?
