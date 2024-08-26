@@ -1950,6 +1950,9 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Removes illusions when a Pokemon is summoned.
+ */
 export class PostSummonRemoveIllusionAbAttr extends PostSummonAbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     pokemon.scene.getField(true).map(pokemon => {
