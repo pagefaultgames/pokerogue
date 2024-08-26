@@ -242,6 +242,14 @@ export default class Move implements Localizable {
   }
 
   /**
+   * get Move type
+   * @returns {@linkcode Type} the type of the move
+   */
+  getType(): Type {
+    return this._type;
+  }
+
+  /**
    * Sets the move target of this move
    * @param moveTarget {@linkcode MoveTarget} the move target to set
    * @returns the called object {@linkcode Move}
@@ -4181,8 +4189,12 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
     if (target.isOfType(Type.WATER)) {
-      multiplier.value *= 4; // Increased twice because initial reduction against water
-      return true;
+      const effectivenessAgainstWater = new Utils.NumberHolder(getTypeDamageMultiplier(move.getType(), Type.WATER));
+      applyChallenges(user.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstWater);
+      if (effectivenessAgainstWater.value < 1) {
+        multiplier.value *= 4; // Increased twice because initial reduction against water
+        return true;
+      }
     }
 
     return false;
