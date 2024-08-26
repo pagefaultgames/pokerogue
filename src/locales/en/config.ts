@@ -58,6 +58,7 @@ import terrain from "./terrain.json";
 import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
 import moveTriggers from "./move-trigger.json";
 import runHistory from "./run-history.json";
+import { mysteryEncounter } from "#app/locales/en/mystery-encounter";
 
 export const enConfig = {
   ability,
@@ -119,5 +120,6 @@ export const enConfig = {
   partyUiHandler,
   modifierSelectUiHandler,
   moveTriggers,
-  runHistory
+  runHistory,
+  mysteryEncounter: mysteryEncounter
 };

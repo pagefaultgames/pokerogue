@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "teleporter.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 64,
+				"h": 78
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 78
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 78
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 78
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:a8e006630c2838130468b0d5c9aeb8a6:684c1813cb6c86e395c18027a593ed28:ce1615396ce7b0a146766d50b319bb81$"
+	}
+}

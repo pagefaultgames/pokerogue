@@ -10,7 +10,7 @@ import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat } from "../data/pokemon-stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
+import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
@@ -59,6 +59,7 @@ import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase.
 import { StatChangePhase } from "#app/phases/stat-change-phase.js";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
 import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase.js";
+import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
 
 export enum FieldPosition {
   CENTER,
@@ -112,6 +113,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public battleData: PokemonBattleData;
   public battleSummonData: PokemonBattleSummonData;
   public turnData: PokemonTurnData;
+  public mysteryEncounterData: MysteryEncounterPokemonData;
+
+  /** Used by Mystery Encounters to execute pokemon-specific logic (such as stat boosts) at start of battle */
+  public mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
 
   public fieldPosition: FieldPosition;
 
@@ -195,6 +200,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionVariant = dataSource.fusionVariant || 0;
       this.fusionGender = dataSource.fusionGender;
       this.fusionLuck = dataSource.fusionLuck;
+      this.mysteryEncounterData = dataSource.mysteryEncounterData;
     } else {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
@@ -242,6 +248,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
       this.fusionLuck = this.luck;
+      this.mysteryEncounterData = new MysteryEncounterPokemonData();
     }
 
     this.generateName();
@@ -314,6 +321,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns {boolean} True if pokemon is allowed in battle
    */
   isAllowedInBattle(): boolean {
+    return !this.isFainted() && this.isAllowed();
+  }
+
+  /**
+   * Check if this pokemon is allowed (no challenge exclusion)
+   * This is frequently a better alternative to {@link isFainted}
+   * @returns {boolean} True if pokemon is allowed in battle
+   */
+  isAllowed(): boolean {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
     return !this.isFainted() && !this.wildFlee && challengeAllowed.value;
@@ -558,6 +574,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const formKey = this.getFormKey();
     if (formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 || formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1) {
       return 1.5;
+    } else if (this?.mysteryEncounterData?.spriteScale) {
+      return this.mysteryEncounterData.spriteScale;
     }
     return 1;
   }
@@ -761,6 +779,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
     }
     const baseStats = this.getSpeciesForm().baseStats.slice(0);
+    this.scene.applyModifiers(PokemonBaseStatTotalModifier, this.isPlayer(), this, baseStats);
     if (this.fusionSpecies) {
       const fusionBaseStats = this.getFusionSpeciesForm().baseStats;
       for (let s = 0; s < this.stats.length; s++) {
@@ -800,6 +819,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.stats[s] = value;
     }
+    this.scene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, this.stats);
   }
 
   getNature(): Nature {
@@ -954,7 +974,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (!types.length || !includeTeraType) {
-      if (!ignoreOverride && this.summonData?.types && this.summonData.types.length !== 0) {
+      if (this.mysteryEncounterData?.types && this.mysteryEncounterData.types.length > 0) {
+        // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
+        this.mysteryEncounterData.types.forEach(t => types.push(t));
+      } else if (!ignoreOverride && this.summonData?.types && this.summonData.types.length > 0) {
         this.summonData.types.forEach(t => types.push(t));
       } else {
         const speciesForm = this.getSpeciesForm(ignoreOverride);
@@ -1015,6 +1038,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.OPP_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
     }
+    if (this.mysteryEncounterData?.ability) {
+      return allAbilities[this.mysteryEncounterData.ability];
+    }
     if (this.isFusion()) {
       return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
     }
@@ -1038,6 +1064,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_PASSIVE_ABILITY_OVERRIDE];
+    }
+    if (this.mysteryEncounterData?.passive) {
+      return allAbilities[this.mysteryEncounterData.passive];
     }
 
     let starterSpeciesId = this.species.speciesId;
@@ -1486,6 +1515,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
 
+  /**
+   * Get a list of all egg moves
+   *
+   * @returns list of egg moves
+   */
+  getEggMoves() : Moves[] {
+    return speciesEggMoves[this.species.speciesId];
+  }
+
   setMove(moveIndex: integer, moveId: Moves): void {
     const move = moveId ? new PokemonMove(moveId) : null;
     this.moveset[moveIndex] = move;
@@ -1821,7 +1859,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   hideInfo(): Promise<void> {
     return new Promise(resolve => {
-      if (this.battleInfo.visible) {
+      if (this.battleInfo && this.battleInfo.visible) {
         this.scene.tweens.add({
           targets: [ this.battleInfo, this.battleInfo.expMaskRect ],
           x: this.isPlayer() ? "+=150" : `-=${!this.isBoss() ? 150 : 246}`,
@@ -4282,6 +4320,7 @@ export class PokemonSummonData {
   public speciesForm: PokemonSpeciesForm | null;
   public fusionSpeciesForm: PokemonSpeciesForm;
   public ability: Abilities = Abilities.NONE;
+  public passiveAbility: Abilities = Abilities.NONE;
   public gender: Gender;
   public fusionGender: Gender;
   public stats: integer[];

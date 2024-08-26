@@ -15,10 +15,17 @@ import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { SelectModifierPhase } from "./select-modifier-phase";
 import { ShowPartyExpBarPhase } from "./show-party-exp-bar-phase";
 import { TrainerVictoryPhase } from "./trainer-victory-phase";
+import { PokemonIncrementingStatModifier } from "#app/modifier/modifier";
+import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 
 export class VictoryPhase extends PokemonPhase {
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
+  /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */
+  isExpOnly: boolean;
+
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, isExpOnly: boolean = false) {
     super(scene, battlerIndex);
+
+    this.isExpOnly = isExpOnly;
   }
 
   start() {
@@ -39,12 +46,20 @@ export class VictoryPhase extends PokemonPhase {
       let expValue = this.getPokemon().getExpValue();
       if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
         expValue = Math.floor(expValue * 1.5);
+      } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+        expValue = Math.floor(expValue * this.scene.currentBattle.mysteryEncounter.expMultiplier);
       }
       for (const partyMember of nonFaintedPartyMembers) {
         const pId = partyMember.id;
         const participated = participantIds.has(pId);
         if (participated) {
           partyMember.addFriendship(2);
+          const machoBraceModifier = partyMember.getHeldItems().find(m => m instanceof PokemonIncrementingStatModifier);
+          if (machoBraceModifier && machoBraceModifier.stackCount < machoBraceModifier.getMaxStackCount(this.scene)) {
+            machoBraceModifier.stackCount++;
+            this.scene.updateModifiers(true, true);
+            partyMember.updateInfo();
+          }
         }
         if (!expPartyMembers.includes(partyMember)) {
           continue;
@@ -107,7 +122,13 @@ export class VictoryPhase extends PokemonPhase {
       }
     }
 
-    if (!this.scene.getEnemyParty().find(p => this.scene.currentBattle.battleType ? !p?.isFainted(true) : p.isOnField())) {
+    if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      handleMysteryEncounterVictory(this.scene, false, this.isExpOnly);
+      this.end();
+      return;
+    }
+
+    if (!this.scene.getEnemyParty().find(p => this.scene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted(true))) {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));

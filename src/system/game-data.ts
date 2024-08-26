@@ -45,6 +45,8 @@ import { TerrainType } from "#app/data/terrain.js";
 import { OutdatedPhase } from "#app/phases/outdated-phase.js";
 import { ReloadSessionPhase } from "#app/phases/reload-session-phase.js";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
+import { MysteryEncounterData } from "../data/mystery-encounters/mystery-encounter-data";
+import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -89,7 +91,7 @@ export function encrypt(data: string, bypassLogin: boolean): string {
 
 export function decrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
-    ? (data: string) => atob(data)
+    ? (data: string) => decodeURIComponent(atob(data))
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
 }
 
@@ -129,6 +131,8 @@ export interface SessionSaveData {
   gameVersion: string;
   timestamp: integer;
   challenges: ChallengeData[];
+  mysteryEncounter: MysteryEncounter;
+  mysteryEncounterData: MysteryEncounterData;
 }
 
 interface Unlocks {
@@ -962,7 +966,9 @@ export class GameData {
       trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime(),
-      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c))
+      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
+      mysteryEncounter: scene.currentBattle.mysteryEncounter,
+      mysteryEncounterData: scene.mysteryEncounterData
     } as SessionSaveData;
   }
 
@@ -1053,11 +1059,14 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
+          scene.mysteryEncounterData = sessionData?.mysteryEncounterData ? sessionData?.mysteryEncounterData : new MysteryEncounterData(null);
+
           scene.newArena(sessionData.arena.biome);
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
-          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1)!; // TODO: is this bang correct?
+          const mysteryEncounterConfig = sessionData?.mysteryEncounter;
+          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1, mysteryEncounterConfig)!; // TODO: is this bang correct?
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
           scene.arena.init();
@@ -1269,6 +1278,14 @@ export class GameData {
           ret.push(new ChallengeData(c));
         }
         return ret;
+      }
+
+      if (k === "mysteryEncounter") {
+        return new MysteryEncounter(v);
+      }
+
+      if (k === "mysteryEncounterData") {
+        return new MysteryEncounterData(v);
       }
 
       return v;
@@ -1555,12 +1572,20 @@ export class GameData {
     }
   }
 
-  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
-    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg);
+  /**
+   *
+   * @param pokemon
+   * @param incrementCount
+   * @param fromEgg
+   * @param showNewStarterMessage
+   * @returns - true if Pokemon catch unlocked a new starter, false if Pokemon catch did not unlock a starter
+   */
+  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false, showNewStarterMessage: boolean = true): Promise<boolean> {
+    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showNewStarterMessage);
   }
 
-  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
-    return new Promise<void>(resolve => {
+  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false, showNewStarterMessage: boolean = true): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
       const formIndex = pokemon.formIndex;
@@ -1615,20 +1640,20 @@ export class GameData {
         }
       }
 
-      const checkPrevolution = () => {
+      const checkPrevolution = (newStarter: boolean) => {
         if (hasPrevolution) {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
-          return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg).then(() => resolve());
+          return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg, showNewStarterMessage).then(result => resolve(result));
         } else {
-          resolve();
+          resolve(newStarter);
         }
       };
 
-      if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
+      if (newCatch && speciesStarters.hasOwnProperty(species.speciesId) && showNewStarterMessage) {
         this.scene.playSound("level_up_fanfare");
-        this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
+        this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(true), null, true);
       } else {
-        checkPrevolution();
+        checkPrevolution(false);
       }
     });
   }
@@ -1670,7 +1695,7 @@ export class GameData {
     this.starterData[species.speciesId].candyCount += count;
   }
 
-  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer): Promise<boolean> {
+  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, prependSpeciesToMessage: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const speciesId = species.speciesId;
       if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
@@ -1694,7 +1719,10 @@ export class GameData {
       this.scene.playSound("level_up_fanfare");
 
       const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
-      this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, () => resolve(true), null, true);
+      let message = prependSpeciesToMessage ? species.getName() + " " : "";
+      message += eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName });
+
+      this.scene.ui.showText(message, null, () => resolve(true), null, true);
     });
   }
 

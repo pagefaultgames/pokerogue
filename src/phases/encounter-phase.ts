@@ -26,6 +26,11 @@ import { ScanIvsPhase } from "./scan-ivs-phase";
 import { ShinySparklePhase } from "./shiny-sparkle-phase";
 import { SummonPhase } from "./summon-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
+import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { doTrainerExclamation } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -54,6 +59,29 @@ export class EncounterPhase extends BattlePhase {
 
     const battle = this.scene.currentBattle;
 
+    // Init Mystery Encounter if there is one
+    const mysteryEncounter = battle.mysteryEncounter;
+    if (mysteryEncounter) {
+      // If ME has an onInit() function, call it
+      // Usually used for calculating rand data before initializing anything visual
+      // Also prepopulates any dialogue tokens from encounter/option requirements
+      this.scene.executeWithSeedOffset(() => {
+        if (mysteryEncounter.onInit) {
+          mysteryEncounter.onInit(this.scene);
+        }
+        mysteryEncounter.populateDialogueTokensFromRequirements(this.scene);
+      }, this.scene.currentBattle.waveIndex);
+
+      // Add any special encounter animations to load
+      if (mysteryEncounter.encounterAnimations && mysteryEncounter.encounterAnimations.length > 0) {
+        loadEnemyAssets.push(initEncounterAnims(this.scene, mysteryEncounter.encounterAnimations).then(() => loadEncounterAnimAssets(this.scene, true)));
+      }
+
+      // Add intro visuals for mystery encounter
+      mysteryEncounter.initIntroVisuals(this.scene);
+      this.scene.field.add(mysteryEncounter.introVisuals!);
+    }
+
     let totalBst = 0;
 
     battle.enemyLevels?.forEach((level, e) => {
@@ -78,7 +106,7 @@ export class EncounterPhase extends BattlePhase {
       }
 
       if (!this.loaded) {
-        this.scene.gameData.setPokemonSeen(enemyPokemon, true, battle.battleType === BattleType.TRAINER);
+        this.scene.gameData.setPokemonSeen(enemyPokemon, true, battle.battleType === BattleType.TRAINER || battle?.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE);
       }
 
       if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
@@ -111,6 +139,21 @@ export class EncounterPhase extends BattlePhase {
 
     if (battle.battleType === BattleType.TRAINER) {
       loadEnemyAssets.push(battle.trainer?.loadAssets().then(() => battle.trainer?.initSprite())!); // TODO: is this bang correct?
+    } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      if (!battle.mysteryEncounter) {
+        const newEncounter = this.scene.getMysteryEncounter(mysteryEncounter);
+        battle.mysteryEncounter = newEncounter;
+      }
+      loadEnemyAssets.push(battle.mysteryEncounter.introVisuals!.loadAssets().then(() => battle.mysteryEncounter.introVisuals!.initSprite()));
+      // Load Mystery Encounter Exclamation bubble and sfx
+      loadEnemyAssets.push(new Promise<void>(resolve => {
+        this.scene.loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav");
+        this.scene.loadImage("exclaim", "mystery-encounters");
+        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
+        if (!this.scene.load.isLoading()) {
+          this.scene.load.start();
+        }
+      }));
     } else {
       // This block only applies for double battles to init the boss segments (idk why it's split up like this)
       if (battle.enemyParty.filter(p => p.isBoss()).length > 1) {
@@ -138,6 +181,8 @@ export class EncounterPhase extends BattlePhase {
           } else if (battle.battleType === BattleType.TRAINER) {
             enemyPokemon.setVisible(false);
             this.scene.currentBattle.trainer?.tint(0, 0.5);
+          } else if (battle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+            // TODO: this may not be necessary, but leaving as placeholder
           }
           if (battle.double) {
             enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
@@ -199,6 +244,19 @@ export class EncounterPhase extends BattlePhase {
         }
       }
     });
+
+    const encounterIntroVisuals = this.scene.currentBattle?.mysteryEncounter?.introVisuals;
+    if (encounterIntroVisuals) {
+      const enterFromRight = encounterIntroVisuals.enterFromRight;
+      if (enterFromRight) {
+        encounterIntroVisuals.x += 500;
+      }
+      this.scene.tweens.add({
+        targets: encounterIntroVisuals,
+        x: enterFromRight ? "-=200" : "+=300",
+        duration: 2000
+      });
+    }
   }
 
   getEncounterMessage(): string {
@@ -285,6 +343,62 @@ export class EncounterPhase extends BattlePhase {
           showDialogueAndSummon();
         }
       }
+    } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      const introVisuals = this.scene.currentBattle.mysteryEncounter.introVisuals!;
+      introVisuals.playAnim();
+
+      if (this.scene.currentBattle.mysteryEncounter.onVisualsStart) {
+        this.scene.currentBattle.mysteryEncounter.onVisualsStart(this.scene);
+      }
+
+      const doEncounter = () => {
+        const doShowEncounterOptions = () => {
+          this.scene.ui.clearText();
+          this.scene.ui.getMessageHandler().hideNameText();
+
+          this.scene.unshiftPhase(new MysteryEncounterPhase(this.scene));
+          this.end();
+        };
+
+        if (showEncounterMessage) {
+          const introDialogue = this.scene.currentBattle.mysteryEncounter.dialogue.intro;
+          if (!introDialogue) {
+            doShowEncounterOptions();
+          } else {
+            const FIRST_DIALOGUE_PROMPT_DELAY = 750;
+            let i = 0;
+            const showNextDialogue = () => {
+              const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
+              const dialogue = introDialogue[i];
+              const title = getEncounterText(this.scene, dialogue?.speaker);
+              const text = getEncounterText(this.scene, dialogue.text)!;
+              i++;
+              if (title) {
+                this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0);
+              } else {
+                this.scene.ui.showText(text, null, nextAction, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
+              }
+            };
+
+            if (introDialogue.length > 0) {
+              showNextDialogue();
+            }
+          }
+        } else {
+          doShowEncounterOptions();
+        }
+      };
+
+      const encounterMessage = i18next.t("battle:mysteryEncounterAppeared");
+
+      if (!encounterMessage) {
+        doEncounter();
+      } else {
+        doTrainerExclamation(this.scene);
+        this.scene.ui.showDialogue(encounterMessage, "???", null, () => {
+          this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doEncounter()));
+        });
+      }
     }
   }
 
@@ -297,7 +411,7 @@ export class EncounterPhase extends BattlePhase {
       }
     });
 
-    if (this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+    if (this.scene.currentBattle.battleType !== BattleType.TRAINER && this.scene.currentBattle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
       enemyField.map(p => this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
         // if there is not a player party, we can't continue
         if (!this.scene.getParty()?.length) {

@@ -8,8 +8,10 @@ import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierOverride } from "#app/modifier/modifier-type.js";
 import Overrides from "#app/overrides";
-import { vi } from "vitest";
+import { MockInstance, vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Helper to handle overrides in tests
@@ -279,6 +281,41 @@ export class OverridesHelper extends GameManagerHelper {
     vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
     this.log("Enemy Pokemon held items set to:", items);
     return this;
+  }
+
+  /**
+   * Override the encounter chance for a mystery encounter.
+   * @param percentage the encounter chance in %
+   * @returns spy instance
+   */
+  mysteryEncounterChance(percentage: number) {
+    const maxRate: number = 256; // 100%
+    const rate = maxRate * (percentage / 100);
+    const spy = vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(rate);
+    this.log(`Mystery encounter chance set to ${percentage}% (=${rate})!`);
+    return spy;
+  }
+
+  /**
+   * Override the encounter chance for a mystery encounter.
+   * @returns spy instance
+   * @param tier
+   */
+  mysteryEncounterTier(tier: MysteryEncounterTier): MockInstance {
+    const spy = vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_TIER_OVERRIDE", "get").mockReturnValue(tier);
+    this.log(`Mystery encounter tier set to ${tier}!`);
+    return spy;
+  }
+
+  /**
+   * Override the encounter that spawns for the scene
+   * @param encounterType
+   * @returns spy instance
+   */
+  mysteryEncounter(encounterType: MysteryEncounterType) {
+    const spy = vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(encounterType);
+    this.log(`Mystery encounter override set to ${encounterType}!`);
+    return spy;
   }
 
   private log(...params: any[]) {
