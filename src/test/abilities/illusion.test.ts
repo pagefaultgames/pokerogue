@@ -9,7 +9,6 @@ import {
   TurnEndPhase,
 } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
 
 describe("Abilities - Illusion", () => {
@@ -51,7 +50,7 @@ describe("Abilities - Illusion", () => {
 
   it("break after receiving damaging move", async () => {
     await game.startBattle([Species.AXEW]);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -62,7 +61,7 @@ describe("Abilities - Illusion", () => {
 
   it("break after getting ability changed", async () => {
     await game.startBattle([Species.AXEW]);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.WORRY_SEED));
+    game.move.select(Moves.WORRY_SEED);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -101,7 +100,7 @@ describe("Abilities - Illusion", () => {
 
     await game.startBattle([Species.ZOROARK, Species.AZUMARILL]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FLARE_BLITZ));
+    game.move.select(Moves.FLARE_BLITZ);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
