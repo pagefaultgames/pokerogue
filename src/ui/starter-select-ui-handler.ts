@@ -13,7 +13,7 @@ import { allMoves } from "../data/move";
 import { Nature, getNatureName } from "../data/nature";
 import { pokemonFormChanges } from "../data/pokemon-forms";
 import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities, getPokerusStarters } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { GameModes } from "../game-mode";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "../system/game-data";
@@ -130,6 +130,8 @@ const starterCandyCosts: { passive: integer, costReduction: [integer, integer], 
   { passive: 10, costReduction: [5, 15], egg: 10 },  // 9 Cost
   { passive: 10, costReduction: [5, 15], egg: 10 },  // 10 Cost
 ];
+
+const valueReductionMax = 2;
 
 // Position of UI elements
 const filterBarHeight = 17;
@@ -872,38 +874,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.message.setOrigin(0, 0);
     this.starterSelectMessageBoxContainer.add(this.message);
 
-    const date = new Date();
-    date.setUTCHours(0, 0, 0, 0);
-
-    this.scene.executeWithSeedOffset(() => {
-      for (let c = 0; c < 3; c++) {
-        let randomSpeciesId: Species;
-        let species: PokemonSpecies | undefined;
-
-        const generateSpecies = () => {
-          randomSpeciesId = Utils.randSeedItem(starterSpecies);
-          species = getPokemonSpecies(randomSpeciesId);
-        };
-
-        let dupe = false;
-
-        do {
-          dupe = false;
-
-          generateSpecies();
-
-          for (let ps = 0; ps < c; ps++) {
-            if (this.pokerusSpecies[ps] === species) {
-              dupe = true;
-              break;
-            }
-          }
-        } while (dupe);
-
-        this.pokerusSpecies.push(species!); // TODO: is the bang correct?
-      }
-    }, 0, date.getTime().toString());
-
     this.statsContainer = new StatsContainer(this.scene, 6, 16);
 
     this.scene.add.existing(this.statsContainer);
@@ -934,6 +904,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterPreferences = StarterPrefs.load();
     }
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
+    this.pokerusSpecies = getPokerusStarters(this.scene);
+
     if (args.length >= 1 && args[0] instanceof Function) {
       super.show(args);
       this.starterSelectCallback = args[0] as StarterSelectCallback;
@@ -1039,11 +1011,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const starterData = this.scene.gameData.starterData[speciesId];
 
     return starterData.candyCount >= getValueReductionCandyCounts(speciesStarters[speciesId])[starterData.valueReduction]
-        && starterData.valueReduction < 2;
+        && starterData.valueReduction < valueReductionMax;
   }
 
   /**
-   * Determines if an same species egg can be baught for the given species ID
+   * Determines if an same species egg can be bought for the given species ID
    * @param speciesId The ID of the species to check the value reduction of
    * @returns true if the user has enough candies
    */
@@ -1092,15 +1064,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       ],};
 
-    const passiveAvailable = this.isPassiveAvailable(species.speciesId);
-    // 'Only Passives' mode
+    const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
+    const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
+    const isSameSpeciesEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
+
+    // 'Passives Only' mode
     if (this.scene.candyUpgradeNotification === 1) {
-      if (passiveAvailable) {
+      if (isPassiveAvailable) {
         this.scene.tweens.chain(tweenChain).paused = startPaused;
       }
     // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
-      if (passiveAvailable || this.isValueReductionAvailable(species.speciesId)) {
+      if (isPassiveAvailable || isValueReductionAvailable || isSameSpeciesEggAvailable) {
         this.scene.tweens.chain(tweenChain).paused = startPaused;
       }
     }
@@ -1119,16 +1094,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       return;
     }
 
-    const passiveAvailable = this.isPassiveAvailable(species.speciesId);
-    // 'Only Passive Unlocks' mode
+    const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
+    const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
+    const isSameSpeciesEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
+
+    // 'Passive Only' mode
     if (this.scene.candyUpgradeNotification === 1) {
-      starter.candyUpgradeIcon.setVisible(slotVisible && passiveAvailable);
+      starter.candyUpgradeIcon.setVisible(slotVisible && isPassiveAvailable);
       starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
 
       // 'On' mode
     } else if (this.scene.candyUpgradeNotification === 2) {
       starter.candyUpgradeIcon.setVisible(
-        slotVisible && ( passiveAvailable || this.isValueReductionAvailable(species.speciesId)));
+        slotVisible && ( isPassiveAvailable || isValueReductionAvailable || isSameSpeciesEggAvailable ));
       starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
     }
   }
@@ -1293,7 +1271,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         } else if (numberOfStarters > 0) {
           // UP from filter bar to bottom of Pokemon list
           this.setFilterMode(false);
-          this.scrollCursor = Math.max(0,numOfRows - 9);
+          this.scrollCursor = Math.max(0, numOfRows - 9);
           this.updateScroll();
           const proportion = (this.filterBarCursor + 0.5) / this.filterBar.numFilters;
           const targetCol = Math.min(8, Math.floor(proportion * 11));
@@ -1660,7 +1638,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             }
             const valueReduction = starterData.valueReduction;
-            if (valueReduction < 2) {
+            if (valueReduction < valueReductionMax) {
               const reductionCost = getValueReductionCandyCounts(speciesStarters[this.lastSpecies.speciesId])[valueReduction];
               options.push({
                 label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
@@ -2416,7 +2394,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     });
 
-    this.starterSelectScrollBar.setPages(Math.ceil((this.filteredStarterContainers.length - 81) / 9) + 1);
+    this.starterSelectScrollBar.setPages(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
     this.starterSelectScrollBar.setPage(0);
 
     // sort
@@ -2536,7 +2514,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.filterBar.setCursor(cursor);
     } else {
-      cursor = Math.max(Math.min(this.filteredStarterContainers.length - 1, cursor),0);
+      cursor = Math.max(Math.min(this.filteredStarterContainers.length - 1, cursor), 0);
       changed = super.setCursor(cursor);
 
       const pos = calcStarterPosition(cursor, this.scrollCursor);
@@ -2767,7 +2745,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.pokemonCandyDarknessOverlay.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
           }
 
-          this.pokemonCandyDarknessOverlay.setCrop(0,0,16, candyCropY);
+          this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
         }
 
 
