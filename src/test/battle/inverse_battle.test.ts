@@ -50,7 +50,7 @@ describe("Inverse Battle", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    expect(enemy.getAttackTypeEffectiveness(allMoves[Moves.THUNDERBOLT].type, player)).toBe(2);
+    expect(enemy.getMoveEffectiveness(player, allMoves[Moves.THUNDERBOLT])).toBe(2);
   }, TIMEOUT);
 
   it("2. 2x effective types are 0.5x effective - Thunderbolt against Flying Type", async () => {
@@ -61,7 +61,7 @@ describe("Inverse Battle", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    expect(enemy.getAttackTypeEffectiveness(allMoves[Moves.THUNDERBOLT].type, player)).toBe(0.5);
+    expect(enemy.getMoveEffectiveness(player, allMoves[Moves.THUNDERBOLT])).toBe(0.5);
   }, TIMEOUT);
 
   it("3. 0.5x effective types are 2x effective - Thunderbolt against Electric Type", async () => {
@@ -72,7 +72,7 @@ describe("Inverse Battle", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    expect(enemy.getAttackTypeEffectiveness(allMoves[Moves.THUNDERBOLT].type, player)).toBe(2);
+    expect(enemy.getMoveEffectiveness(player, allMoves[Moves.THUNDERBOLT])).toBe(2);
   }, TIMEOUT);
 
   it("4. Stealth Rock follows the inverse matchups - Stealth Rock against Charizard deals 1/32 of max HP", async () => {
@@ -92,7 +92,7 @@ describe("Inverse Battle", () => {
     const expectedHP = maxHp - damage_prediction;
 
     console.log("Charizard's max HP: " + maxHp, "Damage: " + damage_prediction, "Current HP: " + currentHp, "Expected HP: " + expectedHP);
-    expect(expectedHP).toBeGreaterThan(maxHp * 31 / 32 - 1);
+    expect(currentHp).toBeGreaterThan(maxHp * 31 / 32 - 1);
   }, TIMEOUT);
 
   it("5. Freeze Dry is 2x effective against Water Type like other Ice type Move - Freeze Dry against Squirtle", async () => {
@@ -103,7 +103,7 @@ describe("Inverse Battle", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    expect(enemy.getAttackTypeEffectiveness(allMoves[Moves.FREEZE_DRY].type, player)).toBe(2);
+    expect(enemy.getMoveEffectiveness(player, allMoves[Moves.FREEZE_DRY])).toBe(2);
   }, TIMEOUT);
 
   it("6. Water Absorb should heal against water moves - Water Absorb against Water gun", async () => {
@@ -186,5 +186,18 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getTypes()[0]).toBe(Type.DRAGON);
+  }, TIMEOUT);
+
+  it("12. Flying Press should be 0.25x effective against Grass + Dark Type - Flying Press against Meowscarada", async () => {
+    game.override
+      .moveset([Moves.FLYING_PRESS])
+      .enemySpecies(Species.MEOWSCARADA);
+
+    await game.challengeMode.startBattle();
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    expect(enemy.getMoveEffectiveness(player, allMoves[Moves.FLYING_PRESS])).toBe(0.25);
   }, TIMEOUT);
 });
