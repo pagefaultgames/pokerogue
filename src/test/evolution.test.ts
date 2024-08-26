@@ -1,11 +1,10 @@
 import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#app/data/pokemon-evolutions";
 import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
+import { Moves } from "#app/enums/moves.js";
 import { Species } from "#app/enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { getMovePosition } from "./utils/gameManagerUtils";
 import { SPLASH_ONLY } from "./utils/testUtils";
 
 describe("Evolution", () => {
@@ -113,7 +112,7 @@ describe("Evolution", () => {
 
     expect(golem.hp).toBe(1);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
+    game.move.select(Moves.SURF);
     await game.phaseInterceptor.to("EndEvolutionPhase");
 
     expect(totodile.hp).toBe(totodile.getMaxHp());
@@ -142,7 +141,7 @@ describe("Evolution", () => {
 
     expect(golem.hp).toBe(1);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SURF));
+    game.move.select(Moves.SURF);
     await game.phaseInterceptor.to("EndEvolutionPhase");
 
     expect(cyndaquil.getMaxHp()).toBeGreaterThan(maxHpBefore);

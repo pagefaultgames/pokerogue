@@ -1,0 +1,5 @@
+{
+  "noCritOnAddPlayer": "{{moveName}}保護了你的\n隊伍不被擊中要害！",
+  "noCritOnAddEnemy": "{{moveName}}保護了對方的\n隊伍不被擊中要害！",
+  "noCritOnRemove": "{{pokemonNameWithAffix}}的{{moveName}}\n效果消失了！"
+}
