@@ -49,8 +49,8 @@ import CandyBar from "./ui/candy-bar";
 import { Variant, variantData } from "./data/variant";
 import { Localizable } from "#app/interfaces/locales";
 import Overrides from "#app/overrides";
-import {InputsController} from "./inputs-controller";
-import {UiInputs} from "./ui-inputs";
+import { InputsController } from "./inputs-controller";
+import { UiInputs } from "./ui-inputs";
 import { NewArenaEvent } from "./events/battle-scene";
 import { ArenaFlyout } from "./ui/arena-flyout";
 import { EaseType } from "#enums/ease-type";
@@ -65,7 +65,7 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
-import {TrainerType} from "#enums/trainer-type";
+import { TrainerType } from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
 import { LoadingScene } from "./loading-scene";
 import { LevelCapPhase } from "./phases/level-cap-phase";
@@ -2668,7 +2668,8 @@ export default class BattleScene extends SceneBase {
       wave: this.currentBattle?.waveIndex || 0,
       party: this.party ? this.party.map(p => {
         return { name: p.name, level: p.level };
-      }) : []
+      }) : [],
+      modeChain: this.ui?.getModeChain() ?? [],
     };
     (window as any).gameInfo = gameInfo;
   }
