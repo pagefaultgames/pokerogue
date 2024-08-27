@@ -1,5 +1,5 @@
-import { MockGameObject } from "../mockGameObject";
 import MockTextureManager from "#test/utils/mocks/mockTextureManager";
+import { MockGameObject } from "../mockGameObject";
 
 
 /**

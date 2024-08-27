@@ -1,0 +1,11 @@
+{
+  "noCritOnAddPlayer": "{{moveName}}保護了你的\n隊伍不被擊中要害！",
+  "noCritOnAddEnemy": "{{moveName}}保護了對方的\n隊伍不被擊中要害！",
+  "noCritOnRemove": "{{pokemonNameWithAffix}}的{{moveName}}\n效果消失了！",
+  "safeguardOnAdd": "整個場地被\n神秘之幕包圍了！",
+  "safeguardOnAddPlayer": "我方被\n神秘之幕包圍了！",
+  "safeguardOnAddEnemy": "對手被\n神秘之幕包圍了！",
+  "safeguardOnRemove": "包圍整個場地的\n神秘之幕消失了！",
+  "safeguardOnRemovePlayer": "包圍我方的\n神秘之幕消失了！",
+  "safeguardOnRemoveEnemy": "包圍對手的\n神秘之幕消失了！"
+}
