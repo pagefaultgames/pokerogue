@@ -1351,7 +1351,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.WEAVILE, 1, EvolutionItem.RAZOR_CLAW, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT /* Razor claw at night*/), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.URSARING]: [
-    new SpeciesEvolution(Species.URSALUNA, 1, EvolutionItem.PEAT_BLOCK, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT /* Peat block at night*/), SpeciesWildEvolutionDelay.VERY_LONG) //Ursaring does not evolve into Bloodmoon Ursaluna
+    new SpeciesEvolution(Species.URSALUNA, 1, EvolutionItem.PEAT_BLOCK, null, SpeciesWildEvolutionDelay.VERY_LONG) //Ursaring does not evolve into Bloodmoon Ursaluna
   ],
   [Species.PILOSWINE]: [
     new SpeciesEvolution(Species.MAMOSWINE, 1, null, new SpeciesEvolutionCondition(p => p.moveset.filter(m => m?.moveId === Moves.ANCIENT_POWER).length > 0), SpeciesWildEvolutionDelay.VERY_LONG)
