@@ -6680,7 +6680,12 @@ export function initMoves() {
       .ignoresProtect()
       .attr(DestinyBondAttr)
       .condition((user, target, move) => {
+	// Retrieves user's previous move, returns empty array if no moves have been used
         const lastTurnMove = user.getLastXMoves(1);
+	// Checks last move and allows destiny bond to be used if: 
+	// - no previous moves have been made 
+	// - the previous move used was not destiny bond
+	// - the previous move was unsuccessful
         return lastTurnMove.length === 0 || lastTurnMove[0].move !== move.id || lastTurnMove[0].result !== MoveResult.SUCCESS;
       }),
     new StatusMove(Moves.PERISH_SONG, Type.NORMAL, -1, 5, -1, 0, 2)
