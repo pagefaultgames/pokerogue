@@ -1508,7 +1508,7 @@ export class SaltCuredTag extends BattlerTag {
   private sourceIndex: number;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.SALT_CURED, BattlerTagLapseType.TURN_END, 1, Moves.SALT_CURE, sourceId, true);
+    super(BattlerTagType.SALT_CURED, BattlerTagLapseType.TURN_END, 1, Moves.SALT_CURE, sourceId);
   }
 
   /**
