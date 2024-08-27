@@ -4183,12 +4183,10 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
     if (target.isOfType(Type.WATER)) {
       const effectivenessAgainstWater = new Utils.NumberHolder(getTypeDamageMultiplier(move.type, Type.WATER));
       applyChallenges(user.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstWater);
-      if (effectivenessAgainstWater.value === 0) {
-        multiplier.value = 2;
-      } else {
+      if (effectivenessAgainstWater.value !== 0) {
         multiplier.value *= 2 / effectivenessAgainstWater.value;
+        return true;
       }
-      return true;
     }
 
     return false;
