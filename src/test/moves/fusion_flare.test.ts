@@ -27,7 +27,7 @@ describe("Moves - Fusion Flare", () => {
     game.override.moveset([fusionFlare]);
     game.override.startingLevel(1);
 
-    game.override.enemySpecies(Species.RESHIRAM);
+    game.override.enemySpecies(Species.RATTATA);
     game.override.enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST]);
 
     game.override.battleType("single");

@@ -26,6 +26,7 @@ import { ScanIvsPhase } from "./scan-ivs-phase";
 import { ShinySparklePhase } from "./shiny-sparkle-phase";
 import { SummonPhase } from "./summon-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
+import Overrides from "#app/overrides";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -112,10 +113,11 @@ export class EncounterPhase extends BattlePhase {
     if (battle.battleType === BattleType.TRAINER) {
       loadEnemyAssets.push(battle.trainer?.loadAssets().then(() => battle.trainer?.initSprite())!); // TODO: is this bang correct?
     } else {
-      // This block only applies for double battles to init the boss segments (idk why it's split up like this)
-      if (battle.enemyParty.filter(p => p.isBoss()).length > 1) {
+      const overridedBossSegments = Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE > 1;
+      // for double battles, reduce the health segments for boss Pokemon unless there is an override
+      if (!overridedBossSegments && battle.enemyParty.filter(p => p.isBoss()).length > 1) {
         for (const enemyPokemon of battle.enemyParty) {
-          // If the enemy pokemon is a boss and wasn't populated from data source, then set it up
+          // If the enemy pokemon is a boss and wasn't populated from data source, then update the number of segments
           if (enemyPokemon.isBoss() && !enemyPokemon.isPopulatedFromDataSource) {
             enemyPokemon.setBoss(true, Math.ceil(enemyPokemon.bossSegments * (enemyPokemon.getSpeciesForm().baseTotal / totalBst)));
             enemyPokemon.initBattleInfo();
