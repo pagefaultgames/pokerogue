@@ -10,6 +10,7 @@ import { ModifierOverride } from "#app/modifier/modifier-type.js";
 import Overrides from "#app/overrides";
 import { vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
+import { Unlockables } from "#app/system/unlockables.js";
 
 /**
  * Helper to handle overrides in tests
@@ -278,6 +279,18 @@ export class OverridesHelper extends GameManagerHelper {
   enemyHeldItems(items: ModifierOverride[]) {
     vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
     this.log("Enemy Pokemon held items set to:", items);
+    return this;
+  }
+
+  unlockUnlockable(unlockable: Unlockables[]) {
+    vi.spyOn(Overrides, "UNLOCK_OVERRIDE", "get").mockReturnValue(unlockable);
+    this.log("Temporarily unlocked the following content: ", unlockable);
+    return this;
+  }
+
+  lockUnlockable(unlockable: Unlockables[]) {
+    vi.spyOn(Overrides, "DISABLE_UNLOCK_OVERRIDE", "get").mockReturnValue(unlockable);
+    this.log("Temporarily re-locked the following content: ", unlockable);
     return this;
   }
 

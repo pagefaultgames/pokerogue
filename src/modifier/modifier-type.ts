@@ -10,7 +10,7 @@ import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from "..
 import * as Utils from "../utils";
 import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from "../data/temp-battle-stat";
 import { getBerryEffectDescription, getBerryName } from "../data/berry";
-import { Unlockables } from "../system/unlockables";
+import { isUnlocked, Unlockables } from "../system/unlockables";
 import { StatusEffect, getStatusEffectDescriptor } from "../data/status-effect";
 import { SpeciesFormKey } from "../data/pokemon-species";
 import BattleScene from "../battle-scene";
@@ -1597,7 +1597,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
     new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => {
       const { gameMode, gameData } = party[0].scene;
-      if (gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.unlocks[Unlockables.EVIOLITE])) {
+      if (gameMode.isDaily || (!gameMode.isFreshStartChallenge() && isUnlocked(Unlockables.EVIOLITE, gameData))) {
         return party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))) && !p.getHeldItems().some(i => i instanceof Modifiers.EvolutionStatBoosterModifier)) ? 10 : 0;
       }
       return 0;
@@ -1675,7 +1675,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.MULTI_LENS, 18),
     new WeightedModifierType(modifierTypes.VOUCHER_PREMIUM, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily && !party[0].scene.gameMode.isEndless && !party[0].scene.gameMode.isSplicedOnly ? Math.max(5 - rerollCount * 2, 0) : 0, 5),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
-    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => (party[0].scene.gameMode.isDaily || (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE])) ? 1 : 0, 1),
+    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => (party[0].scene.gameMode.isDaily || (!party[0].scene.gameMode.isFreshStartChallenge() && isUnlocked(Unlockables.MINI_BLACK_HOLE, party[0].scene.gameData))) ? 1 : 0, 1),
   ].map(m => {
     m.setTier(ModifierTier.MASTER); return m;
   })
@@ -1867,9 +1867,13 @@ export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool
 }
 
 const tierWeights = [ 768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
+export let poolHasEviolite: boolean = false;
+export let poolHasBlackHole: boolean = false;
 
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount: integer = 0) {
   const pool = getModifierPoolForType(poolType);
+  poolHasEviolite = false;
+  poolHasBlackHole = false;
 
   const ignoredIndexes = {};
   const modifierTableData = {};
@@ -1905,6 +1909,12 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
       } else {
         ignoredIndexes[t].push(i++);
         return total;
+      }
+      if (modifierType.modifierType.id === "EVIOLITE") {
+        poolHasEviolite = true;
+      }
+      if (modifierType.modifierType.id === "MINI_BLACK_HOLE") {
+        poolHasBlackHole = true;
       }
       thresholds.set(total, i++);
       return total;

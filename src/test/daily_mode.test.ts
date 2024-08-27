@@ -1,6 +1,11 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "./utils/gameManager";
 import { MapModifier } from "#app/modifier/modifier.js";
+import { SelectModifierPhase } from "../phases/select-modifier-phase";
+import { Moves } from "#app/enums/moves.js";
+import { Abilities } from "#app/enums/abilities.js";
+import { Unlockables } from "#app/system/unlockables.js";
+import { poolHasEviolite, poolHasBlackHole } from "#app/modifier/modifier-type.js";
 
 describe("Daily Mode", () => {
   let phaserGame: Phaser.Game;
@@ -32,13 +37,38 @@ describe("Daily Mode", () => {
     expect(game.scene.getModifiers(MapModifier).length).toBeGreaterThan(0);
   });
 
-  /*
-  Can't figure out how to check the shop's item pool :(
   describe("Shop modifications", async () => {
-    const modifierPhase = new SelectModifierPhase(game.scene);
-    game.scene.unshiftPhase(modifierPhase);
-    await game.phaseInterceptor.run(SelectModifierPhase);
-    expect(getModifierThresholdPool(ModifierPoolType.PLAYER));
+    beforeEach(() => {
+      game = new GameManager(phaserGame);
+
+      game.override
+        .battleType("single")
+        .startingLevel(200)
+        .moveset([Moves.SURF])
+        .enemyAbility(Abilities.BALL_FETCH)
+        .startingModifier([{ name: "LOCK_CAPSULE" }])
+        .lockUnlockable([Unlockables.MINI_BLACK_HOLE, Unlockables.EVIOLITE]);
+    });
+    afterEach(() => {
+      game.phaseInterceptor.restoreOg();
+    });
+    it("should only allow Mini Black Hole and Eviolite outside of Daily if unlocked", async () => {
+      await game.classicMode.runToSummon();
+      await game.startBattle();
+
+      game.move.select(Moves.SURF);
+      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      expect(poolHasEviolite).toBeFalsy();
+      expect(poolHasBlackHole).toBeFalsy();
+    });
+    it("should allow Eviolite and Mini Black Hole in shop when in Daily Run", async () => {
+      await game.dailyMode.runToSummon();
+      await game.startBattle();
+
+      game.move.select(Moves.SURF);
+      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      expect(poolHasEviolite).toBeTruthy();
+      expect(poolHasBlackHole).toBeTruthy();
+    });
   });
-  */
 });
