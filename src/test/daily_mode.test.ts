@@ -50,8 +50,7 @@ describe("Daily Mode", () => {
       game.phaseInterceptor.restoreOg();
     });
     it("should only allow Mini Black Hole and Eviolite outside of Daily if unlocked", async () => {
-      await game.classicMode.runToSummon();
-      await game.startBattle();
+      await game.classicMode.startBattle();
 
       game.move.select(Moves.SURF);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
@@ -59,8 +58,7 @@ describe("Daily Mode", () => {
       expect(poolHasBlackHole).toBeFalsy();
     });
     it("should allow Eviolite and Mini Black Hole in shop when in Daily Run", async () => {
-      await game.dailyMode.runToSummon();
-      await game.startBattle();
+      await game.dailyMode.startBattle();
 
       game.move.select(Moves.SURF);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
