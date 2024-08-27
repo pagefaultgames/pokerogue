@@ -554,7 +554,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         duration: 750,
         onComplete: () => {
           this.dexProgressContainer.on("pointerover", () => {
-            (this.scene as BattleScene).ui.showTooltip("", i18next.t("mysteryEncounter:affects_pokedex"), true);
+            (this.scene as BattleScene).ui.showTooltip("", i18next.t("mysteryEncounterMessages:affects_pokedex"), true);
           });
           this.dexProgressContainer.on("pointerout", () => {
             (this.scene as BattleScene).ui.hideTooltip();

@@ -140,7 +140,7 @@ export const PartTimerEncounter: MysteryEncounter =
         }
         const moneyChange = scene.getWaveMoneyAmount(moneyMultiplier);
         updatePlayerMoney(scene, moneyChange, true, false);
-        await showEncounterText(scene, i18next.t("mysteryEncounter:receive_money", { amount: moneyChange }));
+        await showEncounterText(scene, i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
         await showEncounterText(scene, `${namespace}.pokemon_tired`);
 
         setEncounterRewards(scene, { fillRemaining: true });
@@ -221,7 +221,7 @@ export const PartTimerEncounter: MysteryEncounter =
         }
         const moneyChange = scene.getWaveMoneyAmount(moneyMultiplier);
         updatePlayerMoney(scene, moneyChange, true, false);
-        await showEncounterText(scene, i18next.t("mysteryEncounter:receive_money", { amount: moneyChange }));
+        await showEncounterText(scene, i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
         await showEncounterText(scene, `${namespace}.pokemon_tired`);
 
         setEncounterRewards(scene, { fillRemaining: true });
@@ -273,7 +273,7 @@ export const PartTimerEncounter: MysteryEncounter =
           await showEncounterDialogue(scene, `${namespace}.job_complete_good`, `${namespace}.speaker`);
           const moneyChange = scene.getWaveMoneyAmount(2.5);
           updatePlayerMoney(scene, moneyChange, true, false);
-          await showEncounterText(scene, i18next.t("mysteryEncounter:receive_money", { amount: moneyChange }));
+          await showEncounterText(scene, i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
           await showEncounterText(scene, `${namespace}.pokemon_tired`);
 
           setEncounterRewards(scene, { fillRemaining: true });

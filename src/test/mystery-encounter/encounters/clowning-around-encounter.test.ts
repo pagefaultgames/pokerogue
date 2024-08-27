@@ -8,7 +8,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import * as BattleAnims from "#app/data/battle-anims";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
+import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
 import BattleScene from "#app/battle-scene";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
@@ -301,7 +301,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       expect(secondItemsAfter.length).toBe(1);
       expect(secondItemsAfter[0].type.id).toBe("SOUL_DEW");
       expect(secondItemsAfter[0]?.stackCount).toBe(5);
-    }, 2000000);
+    });
 
     it("should leave encounter without battle", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");

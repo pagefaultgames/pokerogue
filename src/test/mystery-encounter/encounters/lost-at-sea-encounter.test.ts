@@ -8,7 +8,7 @@ import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "../encounterTestUtils";
+import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "../encounter-test-utils";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";

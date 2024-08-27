@@ -45,12 +45,6 @@ export const mysteryEncounter = {
   // DO NOT REMOVE
   "unit_test_dialogue": "{{test}}{{test}} {{test{{test}}}} {{test1}} {{test\}} {{test\\}} {{test\\\}} {test}}",
 
-  // General use content
-  "paid_money": "You paid ₽{{amount, number}}.",
-  "receive_money": "You received ₽{{amount, number}}!",
-  "affects_pokedex": "Affects Pokédex Data",
-  "cancel_option": "Return to encounter option select.",
-
   mysteriousChallengers: mysteriousChallengersDialogue,
   mysteriousChest: mysteriousChestDialogue,
   darkDeal: darkDealDialogue,

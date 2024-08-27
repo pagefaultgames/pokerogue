@@ -238,7 +238,6 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
             text: `${namespace}.option.1.selected`,
           },
         ],
-        secondOptionPrompt: `${namespace}.option.3.select_prompt`,
       },
       async (scene: BattleScene) => {
         // Select battle the bug trainer
@@ -552,7 +551,13 @@ function getTrainerConfigForWave(waveIndex: number) {
         p.generateAndPopulateMoveset();
         p.generateName();
       }))
-      .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
+      .setPartyMemberFunc(2, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
+        if (!isNullOrUndefined(pool3Mon.formIndex)) {
+          p.formIndex = pool3Mon.formIndex!;
+          p.generateAndPopulateMoveset();
+          p.generateName();
+        }
+      }))
       .setPartyMemberFunc(3, getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
         if (!isNullOrUndefined(pool3Mon.formIndex)) {
           p.formIndex = pool3Mon.formIndex!;
@@ -614,7 +619,7 @@ function doBugTypeMoveTutor(scene: BattleScene): Promise<void> {
       moveInfoOverlay.setVisible(false);
     };
 
-    const result = await selectOptionThenPokemon(scene, optionSelectItems, `${namespace}.option.3.select_prompt`, undefined, onHoverOverCancel);
+    const result = await selectOptionThenPokemon(scene, optionSelectItems, `${namespace}.teach_move_prompt`, undefined, onHoverOverCancel);
     // let forceExit = !!result;
     if (!result) {
       moveInfoOverlay.active = false;
@@ -635,7 +640,7 @@ function doBugTypeMoveTutor(scene: BattleScene): Promise<void> {
     //     forceExit = true;
     //   } else {
     //     // Re-show learn menu
-    //     result = await selectOptionThenPokemon(scene, optionSelectItems, `${namespace}.option.3.select_prompt`, undefined, onHoverOverCancel);
+    //     result = await selectOptionThenPokemon(scene, optionSelectItems, `${namespace}.teach_move_prompt`, undefined, onHoverOverCancel);
     //     if (!result) {
     //       moveInfoOverlay.active = false;
     //       moveInfoOverlay.setVisible(false);

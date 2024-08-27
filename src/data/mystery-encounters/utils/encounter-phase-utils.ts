@@ -367,9 +367,9 @@ export function updatePlayerMoney(scene: BattleScene, changeValue: number, playS
   }
   if (showMessage) {
     if (changeValue < 0) {
-      scene.queueMessage(i18next.t("mysteryEncounter:paid_money", { amount: -changeValue }), null, true);
+      scene.queueMessage(i18next.t("mysteryEncounterMessages:paid_money", { amount: -changeValue }), null, true);
     } else {
-      scene.queueMessage(i18next.t("mysteryEncounter:receive_money", { amount: changeValue }), null, true);
+      scene.queueMessage(i18next.t("mysteryEncounterMessages:receive_money", { amount: changeValue }), null, true);
     }
   }
 }
@@ -457,7 +457,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
                   return true;
                 },
                 onHover: () => {
-                  scene.ui.showText(i18next.t("mysteryEncounter:cancel_option"));
+                  scene.ui.showText(i18next.t("mysteryEncounterMessages:cancel_option"));
                 }
               });
 
@@ -571,7 +571,7 @@ export function selectOptionThenPokemon(scene: BattleScene, options: OptionSelec
         if (onHoverOverCancelOption) {
           onHoverOverCancelOption();
         }
-        scene.ui.showText(i18next.t("mysteryEncounter:cancel_option"));
+        scene.ui.showText(i18next.t("mysteryEncounterMessages:cancel_option"));
       }
     });
 

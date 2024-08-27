@@ -53,7 +53,7 @@ describe("Final Boss", () => {
     expect(game.scene.getEnemyPokemon()!.species.speciesId).not.toBe(Species.ETERNATUS);
   });
 
-  it("should not have passive enabled on Eternatus", async () => {
+  it("should NOT have passive enabled on Eternatus", async () => {
     await game.runToFinalBossEncounter(game, [Species.BIDOOF], GameModes.CLASSIC);
 
     const eternatus = game.scene.getEnemyPokemon();

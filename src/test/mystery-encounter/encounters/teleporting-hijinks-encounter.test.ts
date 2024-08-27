@@ -4,7 +4,7 @@ import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
+import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
 import BattleScene from "#app/battle-scene";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -151,7 +151,6 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     it("should NOT be selectable if the player doesn't have enough money", async () => {
       game.scene.money = 0;
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
-      scene.getParty().forEach(p => p.moveset = []);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
