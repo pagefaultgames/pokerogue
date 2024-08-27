@@ -2100,30 +2100,6 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): Modifiers.P
   return ret;
 }
 
-/*
-export function getModifierThresholdPool(poolType: ModifierPoolType) {
-  let thresholds: {}
-  switch (poolType) {
-    case ModifierPoolType.PLAYER:
-      thresholds = modifierPoolThresholds;
-      break;
-    case ModifierPoolType.WILD:
-      thresholds = enemyModifierPoolThresholds;
-      break;
-    case ModifierPoolType.TRAINER:
-      thresholds = enemyModifierPoolThresholds;
-      break;
-    case ModifierPoolType.ENEMY_BUFF:
-      thresholds = enemyBuffModifierPoolThresholds;
-      break;
-    case ModifierPoolType.DAILY_STARTER:
-      thresholds = dailyStarterModifierPoolThresholds;
-      break;
-    }
-  return thresholds;
-}
-*/
-
 function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: integer, retryCount: integer = 0): ModifierTypeOption | null {
   const player = !poolType;
   const pool = getModifierPoolForType(poolType);
