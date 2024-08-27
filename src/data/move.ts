@@ -6680,7 +6680,7 @@ export function initMoves() {
       .ignoresProtect()
       .attr(DestinyBondAttr)
       .condition((user, target, move) => {
-        const turnMove = user.getLastXMoves(1);
+        const lastTurnMove = user.getLastXMoves(1);
         return turnMove.length === 0 || turnMove[0].move !== move.id || turnMove[0].result !== MoveResult.SUCCESS;
       }),
     new StatusMove(Moves.PERISH_SONG, Type.NORMAL, -1, 5, -1, 0, 2)
