@@ -45,6 +45,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         loadMoveAnimAssets(this.scene, [this.moveId], true)
           .then(() => {
             this.scene.ui.setMode(messageMode).then(() => {
+              // Sound loaded into game as is
               this.scene.playSound("level_up_fanfare");
               this.scene.ui.showText(i18next.t("battle:learnMove", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
                 this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);

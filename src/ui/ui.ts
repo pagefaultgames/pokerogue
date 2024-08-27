@@ -1,53 +1,54 @@
+import BgmBar from "#app/ui/bgm-bar";
+import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
+import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
+import { Button } from "#enums/buttons";
+import { PlayerGender } from "#enums/player-gender";
+import i18next, { ParseKeys } from "i18next";
 import { default as BattleScene } from "../battle-scene";
-import UiHandler from "./ui-handler";
-import BattleMessageUiHandler from "./battle-message-ui-handler";
-import CommandUiHandler from "./command-ui-handler";
-import PartyUiHandler from "./party-ui-handler";
-import FightUiHandler from "./fight-ui-handler";
-import MessageUiHandler from "./message-ui-handler";
-import ConfirmUiHandler from "./confirm-ui-handler";
-import ModifierSelectUiHandler from "./modifier-select-ui-handler";
-import BallUiHandler from "./ball-ui-handler";
-import SummaryUiHandler from "./summary-ui-handler";
-import StarterSelectUiHandler from "./starter-select-ui-handler";
-import EvolutionSceneHandler from "./evolution-scene-handler";
-import TargetSelectUiHandler from "./target-select-ui-handler";
-import SettingsUiHandler from "./settings/settings-ui-handler";
-import SettingsGamepadUiHandler from "./settings/settings-gamepad-ui-handler";
-import GameChallengesUiHandler from "./challenges-select-ui-handler";
-import { TextStyle, addTextObject } from "./text";
+import * as Utils from "../utils";
 import AchvBar from "./achv-bar";
-import MenuUiHandler from "./menu-ui-handler";
 import AchvsUiHandler from "./achvs-ui-handler";
-import OptionSelectUiHandler from "./settings/option-select-ui-handler";
+import AdminUiHandler from "./admin-ui-handler";
+import AwaitableUiHandler from "./awaitable-ui-handler";
+import BallUiHandler from "./ball-ui-handler";
+import BattleMessageUiHandler from "./battle-message-ui-handler";
+import GameChallengesUiHandler from "./challenges-select-ui-handler";
+import CommandUiHandler from "./command-ui-handler";
+import ConfirmUiHandler from "./confirm-ui-handler";
+import EggGachaUiHandler from "./egg-gacha-ui-handler";
 import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
-import EggGachaUiHandler from "./egg-gacha-ui-handler";
-import VouchersUiHandler from "./vouchers-ui-handler";
-import { addWindow } from "./ui-theme";
-import LoginFormUiHandler from "./login-form-ui-handler";
-import RegistrationFormUiHandler from "./registration-form-ui-handler";
-import LoadingModalUiHandler from "./loading-modal-ui-handler";
-import * as Utils from "../utils";
+import EvolutionSceneHandler from "./evolution-scene-handler";
+import FightUiHandler from "./fight-ui-handler";
 import GameStatsUiHandler from "./game-stats-ui-handler";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import SaveSlotSelectUiHandler from "./save-slot-select-ui-handler";
-import TitleUiHandler from "./title-ui-handler";
-import SavingIconHandler from "./saving-icon-handler";
-import UnavailableModalUiHandler from "./unavailable-modal-ui-handler";
+import LoadingModalUiHandler from "./loading-modal-ui-handler";
+import LoginFormUiHandler from "./login-form-ui-handler";
+import MenuUiHandler from "./menu-ui-handler";
+import MessageUiHandler from "./message-ui-handler";
+import ModifierSelectUiHandler from "./modifier-select-ui-handler";
 import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
-import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
-import { Button } from "#enums/buttons";
-import i18next, { ParseKeys } from "i18next";
-import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
-import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
-import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
-import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
-import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
-import { PlayerGender } from "#enums/player-gender";
-import BgmBar from "#app/ui/bgm-bar";
+import PartyUiHandler from "./party-ui-handler";
+import RegistrationFormUiHandler from "./registration-form-ui-handler";
 import RenameFormUiHandler from "./rename-form-ui-handler";
-import AdminUiHandler from "./admin-ui-handler";
+import RunHistoryUiHandler from "./run-history-ui-handler";
+import RunInfoUiHandler from "./run-info-ui-handler";
+import SaveSlotSelectUiHandler from "./save-slot-select-ui-handler";
+import SavingIconHandler from "./saving-icon-handler";
+import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
+import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
+import OptionSelectUiHandler from "./settings/option-select-ui-handler";
+import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
+import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
+import SettingsGamepadUiHandler from "./settings/settings-gamepad-ui-handler";
+import SettingsUiHandler from "./settings/settings-ui-handler";
+import StarterSelectUiHandler from "./starter-select-ui-handler";
+import SummaryUiHandler from "./summary-ui-handler";
+import TargetSelectUiHandler from "./target-select-ui-handler";
+import { TextStyle, addTextObject } from "./text";
+import TitleUiHandler from "./title-ui-handler";
+import UiHandler from "./ui-handler";
+import { addWindow } from "./ui-theme";
+import UnavailableModalUiHandler from "./unavailable-modal-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -76,7 +77,6 @@ export enum Mode {
   KEYBOARD_BINDING,
   ACHIEVEMENTS,
   GAME_STATS,
-  VOUCHERS,
   EGG_LIST,
   EGG_GACHA,
   LOGIN_FORM,
@@ -88,6 +88,9 @@ export enum Mode {
   CHALLENGE_SELECT,
   RENAME_POKEMON,
   ADMIN,
+
+  RUN_HISTORY,
+  RUN_INFO,
 }
 
 const transitionModes = [
@@ -99,7 +102,8 @@ const transitionModes = [
   Mode.EGG_HATCH_SCENE,
   Mode.EGG_LIST,
   Mode.EGG_GACHA,
-  Mode.CHALLENGE_SELECT
+  Mode.CHALLENGE_SELECT,
+  Mode.RUN_HISTORY,
 ];
 
 const noTransitionModes = [
@@ -117,7 +121,6 @@ const noTransitionModes = [
   Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
   Mode.GAME_STATS,
-  Mode.VOUCHERS,
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
@@ -177,7 +180,6 @@ export default class UI extends Phaser.GameObjects.Container {
       new KeyboardBindingUiHandler(scene),
       new AchvsUiHandler(scene),
       new GameStatsUiHandler(scene),
-      new VouchersUiHandler(scene),
       new EggListUiHandler(scene),
       new EggGachaUiHandler(scene),
       new LoginFormUiHandler(scene),
@@ -188,6 +190,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new OutdatedModalUiHandler(scene),
       new GameChallengesUiHandler(scene),
       new RenameFormUiHandler(scene),
+      new RunHistoryUiHandler(scene),
+      new RunInfoUiHandler(scene),
       new AdminUiHandler(scene),
     ];
   }
@@ -400,11 +404,11 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   playSelect(): void {
-    (this.scene as BattleScene).playSound("select");
+    (this.scene as BattleScene).playSound("ui/select");
   }
 
   playError(): void {
-    (this.scene as BattleScene).playSound("error");
+    (this.scene as BattleScene).playSound("ui/error");
   }
 
   fadeOut(duration: integer): Promise<void> {
@@ -457,6 +461,7 @@ export default class UI extends Phaser.GameObjects.Container {
           }
           if (chainMode && this.mode && !clear) {
             this.modeChain.push(this.mode);
+            (this.scene as BattleScene).updateGameInfo();
           }
           this.mode = mode;
           const touchControls = document?.getElementById("touchControls");
@@ -504,6 +509,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
   resetModeChain(): void {
     this.modeChain = [];
+    (this.scene as BattleScene).updateGameInfo();
   }
 
   revertMode(): Promise<boolean> {
@@ -517,6 +523,7 @@ export default class UI extends Phaser.GameObjects.Container {
       const doRevertMode = () => {
         this.getHandler().clear();
         this.mode = this.modeChain.pop()!; // TODO: is this bang correct?
+        (this.scene as BattleScene).updateGameInfo();
         const touchControls = document.getElementById("touchControls");
         if (touchControls) {
           touchControls.dataset.uiMode = Mode[this.mode];
