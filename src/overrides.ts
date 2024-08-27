@@ -72,8 +72,6 @@ class DefaultOverrides {
   };
   /** Forces an item to be UNLOCKED */
   readonly UNLOCK_OVERRIDE: Unlockables[] = [];
-  /** Forces an item to be NOT UNLOCKED */
-  readonly DISABLE_UNLOCK_OVERRIDE: Unlockables[] = [];
 
   // ----------------
   // PLAYER OVERRIDES

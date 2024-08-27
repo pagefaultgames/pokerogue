@@ -8,7 +8,7 @@ import { GameModes, GameMode, getGameMode } from "#app/game-mode.js";
 import { regenerateModifierPoolThresholds, ModifierPoolType, modifierTypes, getDailyRunStarterModifiers } from "#app/modifier/modifier-type.js";
 import { Phase } from "#app/phase.js";
 import { SessionSaveData } from "#app/system/game-data.js";
-import { isUnlocked, Unlockables } from "#app/system/unlockables.js";
+import { Unlockables } from "#app/system/unlockables.js";
 import { vouchers } from "#app/system/voucher.js";
 import { OptionSelectItem, OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler.js";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler.js";
@@ -76,7 +76,7 @@ export class TitlePhase extends Phase {
           this.scene.ui.clearText();
           this.end();
         };
-        if (isUnlocked(Unlockables.ENDLESS_MODE, this.scene.gameData)) {
+        if (this.scene.gameData.isUnlocked(Unlockables.ENDLESS_MODE)) {
           const options: OptionSelectItem[] = [
             {
               label: GameMode.getModeName(GameModes.CLASSIC),
@@ -100,7 +100,7 @@ export class TitlePhase extends Phase {
               }
             }
           ];
-          if (isUnlocked(Unlockables.SPLICED_ENDLESS_MODE, this.scene.gameData)) {
+          if (this.scene.gameData.isUnlocked(Unlockables.SPLICED_ENDLESS_MODE)) {
             options.push({
               label: GameMode.getModeName(GameModes.SPLICED_ENDLESS),
               handler: () => {

@@ -364,6 +364,12 @@ export class GameData {
       unlockPity: this.unlockPity.slice(0)
     };
   }
+  public isUnlocked(unlockable: Unlockables): boolean {
+    if (Overrides.UNLOCK_OVERRIDE.includes(unlockable)) {
+      return true;
+    }
+    return this.unlocks[unlockable];
+  }
 
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {

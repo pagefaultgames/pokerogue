@@ -4,8 +4,8 @@ import { MapModifier } from "#app/modifier/modifier.js";
 import { SelectModifierPhase } from "../phases/select-modifier-phase";
 import { Moves } from "#app/enums/moves.js";
 import { Abilities } from "#app/enums/abilities.js";
-import { Unlockables } from "#app/system/unlockables.js";
 import { poolHasEviolite, poolHasBlackHole } from "#app/modifier/modifier-type.js";
+import { TitlePhase } from "#app/phases/title-phase.js";
 
 describe("Daily Mode", () => {
   let phaserGame: Phaser.Game;
@@ -45,14 +45,15 @@ describe("Daily Mode", () => {
         .battleType("single")
         .startingLevel(200)
         .moveset([Moves.SURF])
-        .enemyAbility(Abilities.BALL_FETCH)
-        .startingModifier([{ name: "LOCK_CAPSULE" }])
-        .lockUnlockable([Unlockables.MINI_BLACK_HOLE, Unlockables.EVIOLITE]);
+        .enemyAbility(Abilities.BALL_FETCH);
     });
     afterEach(() => {
       game.phaseInterceptor.restoreOg();
     });
     it("should only allow Mini Black Hole and Eviolite outside of Daily if unlocked", async () => {
+      const titlePhase = new TitlePhase(game.scene);
+      game.scene.unshiftPhase(titlePhase);
+      await game.phaseInterceptor.run(TitlePhase);
       await game.classicMode.runToSummon();
       await game.startBattle();
 
@@ -62,6 +63,9 @@ describe("Daily Mode", () => {
       expect(poolHasBlackHole).toBeFalsy();
     });
     it("should allow Eviolite and Mini Black Hole in shop when in Daily Run", async () => {
+      const titlePhase = new TitlePhase(game.scene);
+      game.scene.unshiftPhase(titlePhase);
+      await game.phaseInterceptor.run(TitlePhase);
       await game.dailyMode.runToSummon();
       await game.startBattle();
 

@@ -288,12 +288,6 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
 
-  lockUnlockable(unlockable: Unlockables[]) {
-    vi.spyOn(Overrides, "DISABLE_UNLOCK_OVERRIDE", "get").mockReturnValue(unlockable);
-    this.log("Temporarily re-locked the following content: ", unlockable);
-    return this;
-  }
-
   private log(...params: any[]) {
     console.log("Overrides:", ...params);
   }
