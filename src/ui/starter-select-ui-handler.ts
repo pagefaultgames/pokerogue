@@ -1827,9 +1827,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         switch (button) {
         case Button.CYCLE_SHINY:
           if (this.canCycleShiny) {
-            const newVariant = props.variant;
+            const newVariant = starterAttributes.variant ? starterAttributes.variant as Variant : props.variant;
             starterAttributes.shiny = starterAttributes.shiny ? !starterAttributes.shiny : true;
-            this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
+            this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : newVariant, undefined, undefined);
             if (starterAttributes.shiny) {
               this.scene.playSound("se/sparkle");
               // Set the variant label to the shiny tint
@@ -1838,10 +1838,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               this.pokemonShinyIcon.setTint(tint);
               this.pokemonShinyIcon.setVisible(true);
             } else {
-              // starterAttributes.variant = 0;
-              if (starterAttributes?.variant) {
-                delete starterAttributes.variant;
-              }
               this.pokemonShinyIcon.setVisible(false);
               success = true;
             }
@@ -3437,14 +3433,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       }
     } else {
-      /* If the pokemon does not have a shiny attribute at all, we firstly add DexAttr.NON_SHINY to our props
-       * And secondly remove the variant from the starter preference if there is one. This is to avoid weird cases
-       * where a disabled shiny has a variant attached to it. We then add the default variant to props
-       */
       props += DexAttr.NON_SHINY;
-      if (this.starterPreferences[speciesId]?.variant) {
-        delete this.starterPreferences[speciesId].variant;
-      }
       props += DexAttr.DEFAULT_VARIANT; // we add the default variant here because non shiny versions are listed as default variant
     }
     if (this.starterPreferences[speciesId]?.form) { // this checks for the form of the pokemon
