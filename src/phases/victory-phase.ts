@@ -46,7 +46,7 @@ export class VictoryPhase extends PokemonPhase {
       let expValue = this.getPokemon().getExpValue();
       if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
         expValue = Math.floor(expValue * 1.5);
-      } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+      } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.scene.currentBattle.mysteryEncounter) {
         expValue = Math.floor(expValue * this.scene.currentBattle.mysteryEncounter.expMultiplier);
       }
       for (const partyMember of nonFaintedPartyMembers) {

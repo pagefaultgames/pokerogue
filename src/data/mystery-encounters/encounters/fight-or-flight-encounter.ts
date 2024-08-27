@@ -46,7 +46,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
       },
     ])
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
       const level = (scene.currentBattle.enemyLevels?.[0] ?? scene.currentBattle.waveIndex) + Math.max(Math.round((scene.currentBattle.waveIndex / 10)), 0);
@@ -122,10 +122,9 @@ export const FightOrFlightEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         // Pick battle
-        const item = scene.currentBattle.mysteryEncounter
-          .misc as ModifierTypeOption;
+        const item = scene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
         setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
-        await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]);
+        await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
       }
     )
     .withOption(
@@ -144,8 +143,8 @@ export const FightOrFlightEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Pick steal
-          const encounter = scene.currentBattle.mysteryEncounter;
-          const item = scene.currentBattle.mysteryEncounter.misc as ModifierTypeOption;
+          const encounter = scene.currentBattle.mysteryEncounter!;
+          const item = scene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
           setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
 
           // Use primaryPokemon to execute the thievery

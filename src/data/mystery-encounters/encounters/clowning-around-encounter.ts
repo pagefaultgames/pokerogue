@@ -102,7 +102,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
       },
     ])
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
 
       const clownTrainerType = TrainerType.HARLEQUIN;
       const clownConfig = trainerConfigs[clownTrainerType].copy();
@@ -159,7 +159,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           ],
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           // Spawn battle
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
@@ -236,7 +236,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           // Swap player's items on pokemon with the most items
           // Item comparisons look at whichever Pokemon has the greatest number of TRANSFERABLE, non-berry items
           // So Vitamins, form change items, etc. are not included
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
 
           const party = scene.getParty();
           let mostHeldItemsPokemon = party[0];
@@ -418,8 +418,8 @@ function onYesAbilitySwap(scene: BattleScene, resolve) {
     if (!pokemon.mysteryEncounterData) {
       pokemon.mysteryEncounterData = new MysteryEncounterPokemonData(undefined, Abilities.AERILATE);
     }
-    pokemon.mysteryEncounterData.ability = scene.currentBattle.mysteryEncounter.misc.ability;
-    scene.currentBattle.mysteryEncounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
+    pokemon.mysteryEncounterData.ability = scene.currentBattle.mysteryEncounter!.misc.ability;
+    scene.currentBattle.mysteryEncounter!.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
     scene.ui.setMode(Mode.MESSAGE).then(() => resolve(true));
   };
 

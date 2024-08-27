@@ -57,7 +57,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
         .withPreOptionPhase(async (scene: BattleScene) => {
           // Play animation
           const introVisuals =
-            scene.currentBattle.mysteryEncounter.introVisuals!;
+            scene.currentBattle.mysteryEncounter!.introVisuals!;
           introVisuals.spriteConfigs[0].disableAnimation = false;
           introVisuals.playAnim();
         })
@@ -113,7 +113,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
             );
             koPlayerPokemon(scene, highestLevelPokemon);
 
-            scene.currentBattle.mysteryEncounter.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
+            scene.currentBattle.mysteryEncounter!.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
             // Show which Pokemon was KOed, then leave encounter with no rewards
             // Does this synchronously so that game over doesn't happen over result message
             await showEncounterText(scene, `${namespace}.option.1.bad`);

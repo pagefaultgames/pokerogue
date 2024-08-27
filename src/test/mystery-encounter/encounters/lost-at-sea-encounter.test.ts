@@ -70,7 +70,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     game.override.startingBiome(Biome.MOUNTAIN);
     await game.runToMysteryEncounter();
 
-    expect(game.scene.currentBattle.mysteryEncounter.encounterType).not.toBe(MysteryEncounterType.LOST_AT_SEA);
+    expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.LOST_AT_SEA);
   });
 
   it("should not run below wave 11", async () => {

@@ -53,7 +53,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
       },
     ])
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
       const level = (scene.currentBattle.enemyLevels?.[0] ?? scene.currentBattle.waveIndex) + Math.max(Math.round((scene.currentBattle.waveIndex / 10)), 0);
@@ -125,7 +125,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         // Pick battle
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         const numBerries = encounter.misc.numBerries;
 
         const doBerryRewards = async () => {
@@ -150,7 +150,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
         }
 
         setEncounterRewards(scene, { guaranteedModifierTypeOptions: shopOptions, fillRemaining: false }, undefined, doBerryRewards);
-        await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0]);
+        await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
       }
     )
     .withOption(
@@ -162,7 +162,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Pick race for berries
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const fastestPokemon = encounter.misc.fastestPokemon;
           const enemySpeed = encounter.misc.enemySpeed;
           const speedDiff = fastestPokemon.getStat(Stat.SPD) / (enemySpeed * 1.1);
@@ -191,7 +191,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
               }
             };
 
-            const config = scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
+            const config = scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
             config.pokemonConfigs![0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
             config.pokemonConfigs![0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
               queueEncounterMessage(pokemon.scene, `${namespace}.option.2.boss_enraged`);

@@ -57,7 +57,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
       const price = scene.getWaveMoneyAmount(MONEY_COST_MULTIPLIER);
       encounter.setDialogueToken("price", price.toString());
       encounter.misc = {
@@ -81,7 +81,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
         })
         .withPreOptionPhase(async (scene: BattleScene) => {
           // Update money
-          updatePlayerMoney(scene, -scene.currentBattle.mysteryEncounter.misc.price, true, false);
+          updatePlayerMoney(scene, -scene.currentBattle.mysteryEncounter!.misc.price, true, false);
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const config: EnemyPartyConfig = await doBiomeTransitionDialogueAndBattleInit(scene);
@@ -107,7 +107,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
         .withOptionPhase(async (scene: BattleScene) => {
           const config: EnemyPartyConfig = await doBiomeTransitionDialogueAndBattleInit(scene);
           setEncounterRewards(scene, { fillRemaining: true });
-          setEncounterExp(scene, scene.currentBattle.mysteryEncounter.selectedOption!.primaryPokemon!.id, 100);
+          setEncounterExp(scene, scene.currentBattle.mysteryEncounter!.selectedOption!.primaryPokemon!.id, 100);
           await initBattleWithEnemyConfig(scene, config);
         })
         .build()
@@ -124,7 +124,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         // Inspect the Machine
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
 
         // Init enemy
         const level = (scene.currentBattle.enemyLevels?.[0] ?? scene.currentBattle.waveIndex) + Math.max(Math.round((scene.currentBattle.waveIndex / 10)), 0);
@@ -150,7 +150,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     .build();
 
 async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
-  const encounter = scene.currentBattle.mysteryEncounter;
+  const encounter = scene.currentBattle.mysteryEncounter!;
 
   // Calculate new biome (cannot be current biome)
   const filteredBiomes = BIOME_CANDIDATES.filter(b => scene.arena.biomeType !== b);

@@ -82,7 +82,7 @@ export const PartTimerEncounter: MysteryEncounter =
         ]
       })
       .withPreOptionPhase(async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
@@ -130,7 +130,7 @@ export const PartTimerEncounter: MysteryEncounter =
         // Bring visuals back in
         await transitionMysteryEncounterIntroVisuals(scene, false, false);
 
-        const moneyMultiplier = scene.currentBattle.mysteryEncounter.misc.moneyMultiplier;
+        const moneyMultiplier = scene.currentBattle.mysteryEncounter!.misc.moneyMultiplier;
 
         // Give money and do dialogue
         if (moneyMultiplier > 2.5) {
@@ -160,7 +160,7 @@ export const PartTimerEncounter: MysteryEncounter =
         ]
       })
       .withPreOptionPhase(async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
@@ -211,7 +211,7 @@ export const PartTimerEncounter: MysteryEncounter =
         // Bring visuals back in
         await transitionMysteryEncounterIntroVisuals(scene, false, false);
 
-        const moneyMultiplier = scene.currentBattle.mysteryEncounter.misc.moneyMultiplier;
+        const moneyMultiplier = scene.currentBattle.mysteryEncounter!.misc.moneyMultiplier;
 
         // Give money and do dialogue
         if (moneyMultiplier > 2.5) {
@@ -244,7 +244,7 @@ export const PartTimerEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const selectedPokemon = encounter.selectedOption?.primaryPokemon!;
           encounter.setDialogueToken("selectedPokemon", selectedPokemon.getNameToRender());
 

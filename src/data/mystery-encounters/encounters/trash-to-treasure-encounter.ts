@@ -54,7 +54,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
       const bossSpecies = getPokemonSpecies(Species.GARBODOR);
@@ -124,7 +124,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
           await showEncounterText(scene, `${namespace}.option.2.selected_2`);
           transitionMysteryEncounterIntroVisuals(scene);
 
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
 
           setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT], fillRemaining: true });
           encounter.startOfBattleEffects.push(

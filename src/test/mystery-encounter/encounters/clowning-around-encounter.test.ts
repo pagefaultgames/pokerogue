@@ -199,7 +199,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
-      const abilityToTrain = scene.currentBattle.mysteryEncounter.misc.ability;
+      const abilityToTrain = scene.currentBattle.mysteryEncounter?.misc.ability;
 
       game.onNextPrompt("PostMysteryEncounterPhase", Mode.MESSAGE, () => {
         game.scene.ui.getHandler().processInput(Button.ACTION);

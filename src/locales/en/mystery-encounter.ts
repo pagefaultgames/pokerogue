@@ -25,6 +25,7 @@ import weirdDreamDialogue from "#app/locales/en/mystery-encounters/weird-dream-d
 import theWinstrateChallengeDialogue from "#app/locales/en/mystery-encounters/the-winstrate-challenge-dialogue.json";
 import teleportingHijinksDialogue from "#app/locales/en/mystery-encounters/teleporting-hijinks-dialogue.json";
 import bugTypeSuperfanDialogue from "#app/locales/en/mystery-encounters/bug-type-superfan-dialogue.json";
+import funAndGamesDialogue from "#app/locales/en/mystery-encounters/fun-and-games-dialogue.json";
 
 /**
  * Injection patterns that can be used:
@@ -71,5 +72,6 @@ export const mysteryEncounter = {
   weirdDream: weirdDreamDialogue,
   theWinstrateChallenge: theWinstrateChallengeDialogue,
   teleportingHijinks: teleportingHijinksDialogue,
-  bugTypeSuperfan: bugTypeSuperfanDialogue
+  bugTypeSuperfan: bugTypeSuperfanDialogue,
+  funAndGames: funAndGamesDialogue
 } as const;

@@ -40,11 +40,11 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   ])
   .withIntroDialogue([{ text: `${namespace}.intro` }])
   .withOnInit((scene: BattleScene) => {
-    const { mysteryEncounter } = scene.currentBattle;
+    const encounter = scene.currentBattle.mysteryEncounter!;
 
-    mysteryEncounter.setDialogueToken("damagePercentage", String(DAMAGE_PERCENTAGE));
-    mysteryEncounter.setDialogueToken("option1RequiredMove", Moves[OPTION_1_REQUIRED_MOVE]);
-    mysteryEncounter.setDialogueToken("option2RequiredMove", Moves[OPTION_2_REQUIRED_MOVE]);
+    encounter.setDialogueToken("damagePercentage", String(DAMAGE_PERCENTAGE));
+    encounter.setDialogueToken("option1RequiredMove", Moves[OPTION_1_REQUIRED_MOVE]);
+    encounter.setDialogueToken("option2RequiredMove", Moves[OPTION_2_REQUIRED_MOVE]);
 
     return true;
   })
@@ -130,7 +130,7 @@ async function handlePokemonGuidingYouPhase(scene: BattleScene) {
   const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
   const { mysteryEncounter } = scene.currentBattle;
 
-  if (mysteryEncounter.selectedOption?.primaryPokemon?.id) {
+  if (mysteryEncounter?.selectedOption?.primaryPokemon?.id) {
     setEncounterExp(scene, mysteryEncounter.selectedOption.primaryPokemon.id, laprasSpecies.baseExp, true);
   } else {
     console.warn("Lost at sea: No guide pokemon found but pokemon guides player. huh!?");

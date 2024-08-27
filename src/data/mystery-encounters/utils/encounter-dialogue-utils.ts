@@ -57,7 +57,7 @@ export function queueEncounterMessage(scene: BattleScene, contentKey: string): v
 export function showEncounterText(scene: BattleScene, contentKey: string, callbackDelay: number = 0, prompt: boolean = true): Promise<void> {
   return new Promise<void>(resolve => {
     const text: string | null = getEncounterText(scene, contentKey);
-    scene.ui.showText(text ?? "", null, () => resolve(), callbackDelay, prompt);
+    scene.ui.showText(text ?? "", undefined, () => resolve(), callbackDelay, prompt);
   });
 }
 

@@ -65,7 +65,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             encounter.misc = {
               playerPokemon: pokemon,
@@ -85,7 +85,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
           return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const playerPokemon: PlayerPokemon = encounter.misc.playerPokemon;
 
           // Spawn light training session with chosen pokemon
@@ -189,7 +189,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
           // Open menu for selecting pokemon and Nature
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const natures = new Array(25).fill(null).map((val, i) => i as Nature);
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for nature selection
@@ -223,7 +223,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
           return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const playerPokemon: PlayerPokemon = encounter.misc.playerPokemon;
 
           // Spawn medium training session with chosen pokemon
@@ -277,7 +277,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
           // Open menu for selecting pokemon and ability to learn
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for ability selection
             const speciesForm = !!pokemon.getFusionSpeciesForm()
@@ -320,7 +320,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
           return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const playerPokemon: PlayerPokemon = encounter.misc.playerPokemon;
 
           // Spawn hard training session with chosen pokemon

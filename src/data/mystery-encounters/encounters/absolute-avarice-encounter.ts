@@ -173,7 +173,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
 
       scene.loadSe("PRSFX- Bug Bite", "battle_anims");
       scene.loadSe("Follow Me", "battle_anims", "Follow Me.mp3");
@@ -242,7 +242,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Pick battle
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
 
           // Provides 1x Reviver Seed to each party member at end of battle
           const revSeed = generateModifierType(scene, modifierTypes.REVIVER_SEED);
@@ -283,7 +283,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           ],
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const berryMap = encounter.misc.berryItemsMap;
 
           // Returns 2/5 of the berries stolen from each Pokemon
@@ -349,7 +349,7 @@ function doGreedentSpriteSteal(scene: BattleScene) {
   const shakeDelay = 50;
   const slideDelay = 500;
 
-  const greedentSprites = scene.currentBattle.mysteryEncounter.introVisuals?.getSpriteAtIndex(1);
+  const greedentSprites = scene.currentBattle.mysteryEncounter!.introVisuals?.getSpriteAtIndex(1);
 
   scene.playSound("battle-anims/Follow Me");
   scene.tweens.chain({
@@ -423,7 +423,7 @@ function doGreedentSpriteSteal(scene: BattleScene) {
 }
 
 function doGreedentEatBerries(scene: BattleScene) {
-  const greedentSprites = scene.currentBattle.mysteryEncounter.introVisuals?.getSpriteAtIndex(1);
+  const greedentSprites = scene.currentBattle.mysteryEncounter!.introVisuals?.getSpriteAtIndex(1);
   let index = 1;
   scene.tweens.add({
     targets: greedentSprites,
@@ -455,7 +455,7 @@ function doBerrySpritePile(scene: BattleScene, isEat: boolean = false) {
   if (isEat) {
     animationOrder = animationOrder.reverse();
   }
-  const encounter = scene.currentBattle.mysteryEncounter;
+  const encounter = scene.currentBattle.mysteryEncounter!;
   animationOrder.forEach((berry, i) => {
     const introVisualsIndex = encounter.spriteConfigs.findIndex(config => config.spriteKey?.includes(berry));
     let sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite;

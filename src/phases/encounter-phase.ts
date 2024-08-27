@@ -150,7 +150,7 @@ export class EncounterPhase extends BattlePhase {
         const newEncounter = this.scene.getMysteryEncounter(mysteryEncounter);
         battle.mysteryEncounter = newEncounter;
       }
-      loadEnemyAssets.push(battle.mysteryEncounter.introVisuals!.loadAssets().then(() => battle.mysteryEncounter.introVisuals!.initSprite()));
+      loadEnemyAssets.push(battle.mysteryEncounter.introVisuals!.loadAssets().then(() => battle.mysteryEncounter!.introVisuals!.initSprite()));
       // Load Mystery Encounter Exclamation bubble and sfx
       loadEnemyAssets.push(new Promise<void>(resolve => {
         this.scene.loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav");
@@ -349,12 +349,13 @@ export class EncounterPhase extends BattlePhase {
           showDialogueAndSummon();
         }
       }
-    } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
-      const introVisuals = this.scene.currentBattle.mysteryEncounter.introVisuals!;
+    } else if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.scene.currentBattle.mysteryEncounter) {
+      const encounter = this.scene.currentBattle.mysteryEncounter;
+      const introVisuals = encounter.introVisuals!;
       introVisuals.playAnim();
 
-      if (this.scene.currentBattle.mysteryEncounter.onVisualsStart) {
-        this.scene.currentBattle.mysteryEncounter.onVisualsStart(this.scene);
+      if (encounter.onVisualsStart) {
+        encounter.onVisualsStart(this.scene);
       }
 
       const doEncounter = () => {
@@ -367,7 +368,7 @@ export class EncounterPhase extends BattlePhase {
         };
 
         if (showEncounterMessage) {
-          const introDialogue = this.scene.currentBattle.mysteryEncounter.dialogue.intro;
+          const introDialogue = encounter.dialogue.intro;
           if (!introDialogue) {
             doShowEncounterOptions();
           } else {

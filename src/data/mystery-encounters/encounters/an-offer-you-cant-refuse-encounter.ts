@@ -58,7 +58,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
       const pokemon = getHighestStatTotalPlayerPokemon(scene, false);
       const price = scene.getWaveMoneyAmount(10);
 
@@ -99,7 +99,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           // Update money and remove pokemon from party
           updatePlayerMoney(scene, encounter.misc.price);
           scene.removePokemonFromPlayerParty(encounter.misc.pokemon);
@@ -132,7 +132,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Extort the rich kid for money
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           // Update money and remove pokemon from party
           updatePlayerMoney(scene, encounter.misc.price);
 
