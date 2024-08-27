@@ -126,6 +126,7 @@ export default class BattleScene extends SceneBase {
   public bgmVolume: number = 1;
   public fieldVolume: number = 1;
   public seVolume: number = 1;
+  public uiVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
@@ -1755,6 +1756,7 @@ export default class BattleScene extends SceneBase {
         } else {
           const soundDetails = sound.key.split("/");
           switch (soundDetails[0]) {
+
           case "battle_anims":
           case "cry":
             if (soundDetails[1].startsWith("PRSFX- ")) {
@@ -1791,6 +1793,16 @@ export default class BattleScene extends SceneBase {
     try {
       const keyDetails = key.split("/");
       switch (keyDetails[0]) {
+      case "level_up_fanfare":
+      case "item_fanfare":
+      case "minor_fanfare":
+      case "heal":
+      case "evolution":
+      case "evolution_fanfare":
+        // These sounds are loaded in as BGM, but played as sound effects
+        // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
+        config["volume"] = this.masterVolume * this.bgmVolume;
+        break;
       case "battle_anims":
       case "cry":
         config["volume"] = this.masterVolume * this.fieldVolume;
@@ -1799,9 +1811,11 @@ export default class BattleScene extends SceneBase {
           config["volume"] *= 0.5;
         }
         break;
-      case "se":
       case "ui":
-      default:
+        //As of, right now this applies to the "select", "menu_open", "error" sound effects
+        config["volume"] = this.masterVolume * this.uiVolume;
+        break;
+      case "se":
         config["volume"] = this.masterVolume * this.seVolume;
         break;
       }

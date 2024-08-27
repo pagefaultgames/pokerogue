@@ -1218,6 +1218,40 @@
       "3": "Cheguei onde estou porque os Pokémon estavam ao meu lado.\nTalvez precisemos pensar por que os Pokémon nos ajudam, não em termos de Pokémon e Treinadores, mas como uma relação entre seres vivos."
     }
   },
+  "chili": {
+    "encounter": {
+      "1": "Yeeeeeooow! Hora de brincar com FOGO!! Eu sou o mais forte de nós irmãos!",
+      "2": "Tcharan! O escaldante Chili tipo Fogo (sou eu) será seu oponente!",
+      "3": "Vou te mostrar o que eu e meus ardentes tipo Fogo podemos fazer!"
+    },
+    "victory": {
+      "1": "Você me pegou. Eu estou… queimado… esgotado…",
+      "2": "Uau! Você tá pegando fogo!",
+      "3": "Ai! Você me pegou!"
+    },
+    "defeat": {
+      "1": "Estou pegando fogo! Brinque comigo e você vai se queimar!",
+      "2": "Quando você brinca com fogo, você se queima!",
+      "3": "Quero dizer, fala sério, seu oponente era eu! Você não teve chance!"
+    }
+  },
+  "cilan": {
+    "encounter": {
+      "1": "Nada pessoal... Sem ressentimentos... Eu e meus Pokémon do tipo Grama vamos...\n$Hum... Nós iremos batalhar, aconteça o que acontecer.",
+      "2": "Então, hum, se você estiver bem comigo, eu vou, hum, dar tudo o que tenho para ser, hum, você sabe, seu oponente.",
+      "3": "OK... Então, eu sou Cilan, eu gosto de Pokémon do tipo Grama."
+    },
+    "victory": {
+      "1": "Er… Já acabou?",
+      "2": "…Que surpresa. Você é muito forte, não é? \n$Eu acho que meus irmãos também não conseguiriam derrotar você…",
+      "3": "…Huh. Parece que meu timing estava, hum, errado?"
+    },
+    "defeat": {
+      "1": "Hein? Eu ganhei?",
+      "2": "Eu acho... \n$Eu acho que ganhei, porque eu estava competindo com meus irmãos Chili e Cress, e todos nós conseguimos ficar mais fortes.",
+      "3": "Foi… foi uma experiência bastante emocionante…"
+    }
+  },
   "roark": {
     "encounter": {
       "1": "Preciso ver seu potencial como Treinadora. E, vou precisar ver a dureza dos Pokémon que batalham com você!",

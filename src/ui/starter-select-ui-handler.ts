@@ -410,7 +410,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (index === 0 || index === 19) {
         return;
       }
-      const typeSprite = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+      const typeSprite = this.scene.add.sprite(0, 0, Utils.getLocalizedSpriteKey("types"));
       typeSprite.setScale(0.5);
       typeSprite.setFrame(type.toLowerCase());
       typeOptions.push(new DropDownOption(this.scene, index, new DropDownLabel("", typeSprite)));
@@ -668,12 +668,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.type1Icon = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+    this.type1Icon = this.scene.add.sprite(8, 98, Utils.getLocalizedSpriteKey("types"));
     this.type1Icon.setScale(0.5);
     this.type1Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type1Icon);
 
-    this.type2Icon = this.scene.add.sprite(26, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+    this.type2Icon = this.scene.add.sprite(26, 98, Utils.getLocalizedSpriteKey("types"));
     this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
@@ -1701,7 +1701,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     }
                   });
                   ui.setMode(Mode.STARTER_SELECT);
-                  this.scene.playSound("buy");
+                  this.scene.playSound("se/buy");
 
                   return true;
                 }
@@ -1753,7 +1753,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             starterAttributes.shiny = starterAttributes.shiny ? !starterAttributes.shiny : true;
             this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
             if (starterAttributes.shiny) {
-              this.scene.playSound("sparkle");
+              this.scene.playSound("se/sparkle");
               // Set the variant label to the shiny tint
               const tint = getVariantTint(newVariant);
               this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant));
