@@ -5,9 +5,9 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const TIMEOUT = 10 * 1000; // 10 ms timeout
+const TIMEOUT = 10 * 1000; // 10 second timeout
 
-describe("Moves - Tera Shell", () => {
+describe("Abilities - Tera Shell", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
