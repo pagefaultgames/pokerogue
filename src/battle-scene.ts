@@ -1807,7 +1807,7 @@ export default class BattleScene extends SceneBase {
       case "cry":
         config["volume"] = this.masterVolume * this.fieldVolume;
         //PRSFX sound files are unusually loud
-        if (key.startsWith("PRSFX- ")) {
+        if (keyDetails[1].startsWith("PRSFX- ")) {
           config["volume"] *= 0.5;
         }
         break;
@@ -2004,6 +2004,18 @@ export default class BattleScene extends SceneBase {
       return 12.974;
     case "battle_flare_grunt": //XY Team Flare Battle
       return 4.228;
+    case "battle_aether_grunt": // SM Aether Foundation Battle
+      return 16.00;
+    case "battle_skull_grunt": // SM Team Skull Battle
+      return 20.87;
+    case "battle_macro_grunt": // SWSH Trainer Battle
+      return 11.56;
+    case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
+      return 11.997;
+    case "battle_skull_admin": //SM Team Skull Admin Battle
+      return 15.463;
+    case "battle_oleana": //SWSH Oleana Battle
+      return 14.110;
     case "battle_rocket_boss": //USUM Giovanni Battle
       return 9.115;
     case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
@@ -2014,6 +2026,12 @@ export default class BattleScene extends SceneBase {
       return 25.624;
     case "battle_flare_boss": //XY Lysandre Battle
       return 8.085;
+    case "battle_aether_boss": //SM Lusamine Battle
+      return 11.33;
+    case "battle_skull_boss": //SM Guzma Battle
+      return 13.13;
+    case "battle_macro_boss": //SWSH Rose Battle
+      return 11.42;
     }
 
     return 0;
