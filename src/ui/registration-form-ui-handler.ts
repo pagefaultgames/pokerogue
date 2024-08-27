@@ -64,7 +64,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
   setup(): void {
     super.setup();
 
-    this.modalContainer.each((child: Phaser.GameObjects.GameObject) => {
+    this.modalContainer.list.forEach((child: Phaser.GameObjects.GameObject) => {
       // if child is a text object, and not the title text, set the font size to 42px
       if (child instanceof Phaser.GameObjects.Text && child !== this.titleText) {
         // if buttonLabelTextSize is defined in languageSettings, set the font size to the value
