@@ -2350,43 +2350,39 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       container.cost = this.scene.gameData.getSpeciesStarterValue(container.species.speciesId);
 
       // First, ensure you have the caught attributes for the species else default to bigint 0
-      const isCaught = this.scene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
+      const caughtAttr = this.scene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
+      const starterData = this.scene.gameData.starterData[container.species.speciesId];
 
-      // Define the variables based on whether their respective variants have been caught
-      const isVariant3Caught = !!(isCaught & DexAttr.VARIANT_3);
-      const isVariant2Caught = !!(isCaught & DexAttr.VARIANT_2);
-      const isVariantCaught = !!(isCaught & DexAttr.SHINY);
-      const isUncaught = !isCaught && !isVariantCaught && !isVariant2Caught && !isVariant3Caught;
-      const isPassiveUnlocked = this.scene.gameData.starterData[container.species.speciesId].passiveAttr > 0;
-      const isPassiveUnlockable = this.isPassiveAvailable(container.species.speciesId) && !isPassiveUnlocked;
-      const isCostReduced = this.scene.gameData.starterData[container.species.speciesId].valueReduction > 0;
-      const isCostReductionUnlockable = this.isValueReductionAvailable(container.species.speciesId);
-      const isFavorite = this.starterPreferences[container.species.speciesId]?.favorite ?? false;
-
-      const isWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount > 0;
-      const isNotWin = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === 0;
-      const isUndefined = this.scene.gameData.starterData[container.species.speciesId].classicWinCount === undefined;
-      const isHA = this.scene.gameData.starterData[container.species.speciesId].abilityAttr & AbilityAttr.ABILITY_HIDDEN;
-      const isEggPurchasable = this.isSameSpeciesEggAvailable(container.species.speciesId);
-
+      // Gen filter
       const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
 
+      // Type filter
       const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
 
+      // Caught / Shiny filter
+      const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
+      const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
+      const isVariant1Caught = isShinyCaught && !!(caughtAttr & DexAttr.DEFAULT_VARIANT);
+      const isVariant2Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_2);
+      const isVariant3Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_3);
+      const isUncaught = !isNonShinyCaught && !isVariant1Caught && !isVariant2Caught && !isVariant3Caught;
       const fitsCaught = this.filterBar.getVals(DropDownColumn.CAUGHT).some(caught => {
         if (caught === "SHINY3") {
           return isVariant3Caught;
         } else if (caught === "SHINY2") {
           return isVariant2Caught && !isVariant3Caught;
         } else if (caught === "SHINY") {
-          return isVariantCaught && !isVariant2Caught && !isVariant3Caught;
+          return isVariant1Caught && !isVariant2Caught && !isVariant3Caught;
         } else if (caught === "NORMAL") {
-          return isCaught && !isVariantCaught && !isVariant2Caught && !isVariant3Caught;
+          return isNonShinyCaught && !isVariant1Caught && !isVariant2Caught && !isVariant3Caught;
         } else if (caught === "UNCAUGHT") {
           return isUncaught;
         }
       });
 
+      // Passive Filter
+      const isPassiveUnlocked = starterData.passiveAttr > 0;
+      const isPassiveUnlockable = this.isPassiveAvailable(container.species.speciesId) && !isPassiveUnlocked;
       const fitsPassive = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(unlocks => {
         if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.ON) {
           return isPassiveUnlocked;
@@ -2399,6 +2395,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       });
 
+      // Cost Reduction Filter
+      const isCostReduced = starterData.valueReduction > 0;
+      const isCostReductionUnlockable = this.isValueReductionAvailable(container.species.speciesId);
       const fitsCostReduction = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(unlocks => {
         if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.ON) {
           return isCostReduced;
@@ -2411,6 +2410,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       });
 
+      // Favorite Filter
+      const isFavorite = this.starterPreferences[container.species.speciesId]?.favorite ?? false;
       const fitsFavorite = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "FAVORITE" && misc.state === DropDownState.ON) {
           return isFavorite;
@@ -2423,26 +2424,34 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       });
 
+      // Ribbon / Classic Win Filter
+      const hasWon = starterData.classicWinCount > 0;
+      const hasNotWon = starterData.classicWinCount === 0;
+      const isUndefined = starterData.classicWinCount === undefined;
       const fitsWin = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "WIN" && misc.state === DropDownState.ON) {
-          return isWin;
+          return hasWon;
         } else if (misc.val === "WIN" && misc.state === DropDownState.EXCLUDE) {
-          return isNotWin || isUndefined;
+          return hasNotWon || isUndefined;
         } else if (misc.val === "WIN" && misc.state === DropDownState.OFF) {
           return true;
         }
       });
 
+      // HA Filter
+      const hasHA = starterData.abilityAttr & AbilityAttr.ABILITY_HIDDEN;
       const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {
-          return isHA;
+          return hasHA;
         } else if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.EXCLUDE) {
-          return !isHA;
+          return !hasHA;
         } else if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.OFF) {
           return true;
         }
       });
 
+      // Egg Purchasable Filter
+      const isEggPurchasable = this.isSameSpeciesEggAvailable(container.species.speciesId);
       const fitsEgg = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "EGG" && misc.state === DropDownState.ON) {
           return isEggPurchasable;
@@ -2453,6 +2462,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       });
 
+      // Pokerus Filter
       const fitsPokerus = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "POKERUS" && misc.state === DropDownState.ON) {
           return this.pokerusSpecies.includes(container.species);
@@ -2924,12 +2934,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const abilityAttr = this.scene.gameData.starterData[species.speciesId].abilityAttr;
 
       const caughtAttr = this.scene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0);
-      const isVariant3Caught = !!(caughtAttr & DexAttr.VARIANT_3);
-      const isVariant2Caught = !!(caughtAttr & DexAttr.VARIANT_2);
-      const isVariantCaught = !!(caughtAttr & DexAttr.SHINY);
-      const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
-      const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
-      const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
 
       if (!dexEntry.caughtAttr) {
         const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
@@ -2995,8 +2999,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           currentFilteredContainer.checkIconId(female, formIndex, shiny, variant);
         }
 
-        this.canCycleShiny = isNonShinyCaught && (isVariantCaught || isVariant2Caught || isVariant3Caught);
+        const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
+        const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
+        const isVariant1Caught = isShinyCaught && !!(caughtAttr & DexAttr.DEFAULT_VARIANT);
+        const isVariant2Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_2);
+        const isVariant3Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_3);
+
+        this.canCycleShiny = isNonShinyCaught && isShinyCaught;
+        this.canCycleVariant = !!shiny && [ isVariant1Caught, isVariant2Caught, isVariant3Caught].filter(v => v).length > 1;
+
+        const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
+        const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
         this.canCycleGender = isMaleCaught && isFemaleCaught;
+
         const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
         let hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
         const hasHiddenAbility = abilityAttr & AbilityAttr.ABILITY_HIDDEN;
@@ -3011,10 +3026,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
 
         this.canCycleAbility = [ hasAbility1, hasAbility2, hasHiddenAbility ].filter(a => a).length > 1;
+
         this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
           .map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(f => f).length > 1;
         this.canCycleNature = this.scene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
-        this.canCycleVariant = !!shiny && [ dexEntry.caughtAttr & DexAttr.DEFAULT_VARIANT, dexEntry.caughtAttr & DexAttr.VARIANT_2, dexEntry.caughtAttr & DexAttr.VARIANT_3].filter(v => v).length > 1;
+
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
