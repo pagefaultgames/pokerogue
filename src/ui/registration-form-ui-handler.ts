@@ -7,7 +7,6 @@ import i18next from "i18next";
 
 
 interface LanguageSetting {
-  buttonLabelFontSize?: string,
   inputFieldFontSize?: string,
   warningMessageFontSize?: string,
   errorMessageFontSize?: string,
@@ -64,18 +63,6 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
 
   setup(): void {
     super.setup();
-
-    this.buttonContainers.forEach((buttonContainer: Phaser.GameObjects.Container, i: number) => {
-      buttonContainer.each((child: Phaser.GameObjects.GameObject) => {
-        if (child instanceof Phaser.GameObjects.Text) {
-          // if buttonLabelFontSize is defined in languageSettings, set the font size to the value
-          const buttonLabelFontSize = languageSettings[i18next.language]?.buttonLabelFontSize;
-          if (buttonLabelFontSize) {
-            child.setFontSize(buttonLabelFontSize);
-          }
-        }
-      });
-    });
 
     this.modalContainer.each((child: Phaser.GameObjects.GameObject) => {
       // if child is a text object, and not the title text, set the font size to 42px
