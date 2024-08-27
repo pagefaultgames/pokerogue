@@ -1,8 +1,8 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
 import { apiFetch } from "#app/utils";
+import GameManager from "#test/utils/gameManager";
 import { waitUntil } from "#test/utils/gameManagerUtils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Test misc", () => {
   let phaserGame: Phaser.Game;
@@ -30,7 +30,7 @@ describe("Test misc", () => {
       return response.json();
     }).then(data => {
       spy(); // Call the spy function
-      expect(data).toEqual({"username":"greenlamp","lastSessionSlot":0});
+      expect(data).toEqual({"username":"greenlamp", "lastSessionSlot":0});
     });
     expect(spy).toHaveBeenCalled();
   });
@@ -43,7 +43,7 @@ describe("Test misc", () => {
       return response.json();
     }).then(data => {
       spy(); // Call the spy function
-      expect(data).toEqual({"username":"greenlamp","lastSessionSlot":0});
+      expect(data).toEqual({"username":"greenlamp", "lastSessionSlot":0});
     });
     expect(spy).toHaveBeenCalled();
   });
@@ -54,7 +54,7 @@ describe("Test misc", () => {
 
     expect(response.ok).toBe(true);
     expect(response.status).toBe(200);
-    expect(data).toEqual({"username":"greenlamp","lastSessionSlot":0});
+    expect(data).toEqual({"username":"greenlamp", "lastSessionSlot":0});
   });
 
   it("test apifetch mock sync", async () => {

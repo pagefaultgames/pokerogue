@@ -111,7 +111,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     );
     this.eventTimerText.setName("text-event-timer");
     this.eventTimerText.setScale(0.15);
-    this.eventTimerText.setOrigin(0,0);
+    this.eventTimerText.setOrigin(0, 0);
 
     this.add([
       this.eventTimerText,

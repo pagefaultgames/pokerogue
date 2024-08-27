@@ -1,0 +1,7 @@
+{
+  "pp": "AP",
+  "power": "Stärke",
+  "accuracy": "Genauigkeit",
+  "abilityFlyInText": "{{passive}}{{abilityName}} von {{pokemonName}} wirkt!",
+  "passive": "Passive Fähigkeit "
+}
