@@ -5951,35 +5951,36 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
 }
 
 export class TransformAttr extends MoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    return new Promise(resolve => {
-      if (!super.apply(user, target, move, args)) {
-        return resolve(false);
-      }
+  async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
 
-      user.summonData.speciesForm = target.getSpeciesForm();
-      user.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
-      user.summonData.ability = target.getAbility().id;
-      user.summonData.gender = target.getGender();
-      user.summonData.fusionGender = target.getFusionGender();
-      user.summonData.stats = [ user.stats[Stat.HP] ].concat(target.stats.slice(1));
-      user.summonData.battleStats = target.summonData.battleStats.slice(0);
-      user.summonData.moveset = target.getMoveset().map(m => {
-        const pp = m?.getMove().pp!;
-        // if PP value is less than 5, do nothing. If greater, we need to reduce the value to 5 using a negative ppUp value.
-        const ppUp = pp <= 5 ? 0 : (5 - pp) / Math.max(Math.floor(pp / 5), 1);
-        return new PokemonMove(m?.moveId!, 0, ppUp);
-      });
-      user.summonData.types = target.getTypes();
-      user.updateInfo();
-
-      user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", {pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target)}));
-
-      user.loadAssets(false).then(() => {
-        user.playAnim();
-        resolve(true);
-      });
+    const promises: Promise<void>[] = [];
+    user.summonData.speciesForm = target.getSpeciesForm();
+    user.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
+    user.summonData.ability = target.getAbility().id;
+    user.summonData.gender = target.getGender();
+    user.summonData.fusionGender = target.getFusionGender();
+    user.summonData.stats = [ user.stats[Stat.HP] ].concat(target.stats.slice(1));
+    user.summonData.battleStats = target.summonData.battleStats.slice(0);
+    user.summonData.moveset = target.getMoveset().map(m => {
+      const pp = m?.getMove().pp!;
+      // if PP value is less than 5, do nothing. If greater, we need to reduce the value to 5 using a negative ppUp value.
+      const ppUp = pp <= 5 ? 0 : (5 - pp) / Math.max(Math.floor(pp / 5), 1);
+      return new PokemonMove(m?.moveId!, 0, ppUp);
     });
+    user.summonData.types = target.getTypes();
+    promises.push(user.updateInfo());
+
+    user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", {pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target)}));
+
+    promises.push(user.loadAssets(false).then(() => {
+      user.playAnim();
+    }));
+
+    await Promise.all(promises);
+    return true;
   }
 }
 

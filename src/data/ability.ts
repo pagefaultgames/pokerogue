@@ -2328,6 +2328,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     if (simulated || !targets.length) {
       return simulated;
     }
+    const promises: Promise<void>[] = [];
 
     let target: Pokemon;
     if (targets.length > 1) {
@@ -2351,9 +2352,13 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
       return new PokemonMove(m?.moveId!, 0, ppUp);
     });
     pokemon.summonData.types = target.getTypes();
-    await pokemon.updateInfo();
+    promises.push(pokemon.updateInfo());
 
     pokemon.scene.queueMessage(i18next.t("abilityTriggers:postSummonTransform", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), targetName: target!.name, }));
+    pokemon.scene.playSound("battle_anims/PRSFX- Transform");
+    promises.push(pokemon.loadAssets(false).then(() => pokemon.playAnim()));
+
+    await Promise.all(promises);
 
     return true;
   }
