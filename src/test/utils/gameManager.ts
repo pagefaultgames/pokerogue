@@ -156,14 +156,8 @@ export default class GameManager {
       selectStarterPhase.initBattle(starters);
     });
 
-    game.onNextPrompt("EncounterPhase", Mode.MESSAGE, async () => {
-      // This will skip all entry dialogue (I can't figure out a way to sequentially handle the 8 chained messages via 1 prompt handler)
-      game.setMode(Mode.MESSAGE);
-      const encounterPhase = game.scene.getCurrentPhase() as EncounterPhase;
-
-      // No need to end phase, this will do it for you
-      encounterPhase.doEncounterCommon(false);
-    });
+    // This will consider all battle entry dialog as seens and skip them
+    vi.spyOn(game.scene.ui, "shouldSkipDialogue").mockReturnValue(true);
 
     await game.phaseInterceptor.to(EncounterPhase, true);
     console.log("===finished run to final boss encounter===");

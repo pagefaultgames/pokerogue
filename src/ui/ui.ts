@@ -295,26 +295,20 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   showDialogue(text: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
-    // First get the gender of the player (default male) (also used if UNSET)
-    let playerGenderPrefix = "PGM";
-    if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
-      playerGenderPrefix = "PGF";
+    // Skip dialogue if the player has enabled the option and the dialogue has been already seen
+    if (this.shouldSkipDialogue(text)) {
+      console.log(`Dialogue ${text} skipped`);
+      callback();
+      return;
     }
-    // Add the prefix to the text
-    const localizationKey: string = playerGenderPrefix + text;
 
-    // Get localized dialogue (if available)
+    // Get the localization key corresponding to the player's gender
+    const localizationKey: string = this.getGenderedLocalizationKey(text);
+
     let hasi18n = false;
     if (i18next.exists(localizationKey) ) {
       text = i18next.t(localizationKey as ParseKeys);
       hasi18n = true;
-
-      // Skip dialogue if the player has enabled the option and the dialogue has been already seen
-      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[localizationKey] === true) {
-        console.log(`Dialogue ${localizationKey} skipped`);
-        callback();
-        return;
-      }
     }
     let showMessageAndCallback = () => {
       hasi18n && (this.scene as BattleScene).gameData.saveSeenDialogue(localizationKey);
@@ -337,14 +331,27 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  shouldSkipDialogue(text): boolean {
+  /**
+   * Adds the appropriate gender marker to a localization key based on the player's selected gender
+   * @param baseKey the localization key to change
+   * @returns the gendered version of the key
+   */
+  getGenderedLocalizationKey(baseKey: string): string {
     let playerGenderPrefix = "PGM";
     if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
       playerGenderPrefix = "PGF";
     }
+    return playerGenderPrefix + baseKey;
+  }
 
-    const key = playerGenderPrefix + text;
-
+  /**
+   * Checks if a dialogue should be skipped based on whether the "skipping seen dialog"
+   * option is enabled and if the given dialog has been seen already
+   * @param text the localization key to use, without their gendered marker
+   * @returns true if the dialog should be skipped
+   */
+  shouldSkipDialogue(text: string): boolean {
+    const key = this.getGenderedLocalizationKey(text);
     if (i18next.exists(key) ) {
       if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[key] === true) {
         return true;
