@@ -1,6 +1,5 @@
 import BattleScene from "#app/battle-scene.js";
 import { getCharVariantFromDialogue } from "#app/data/dialogue.js";
-import { TrainerSlot } from "#app/data/trainer-config.js";
 import { TrainerType } from "#app/enums/trainer-type.js";
 import { modifierTypes } from "#app/modifier/modifier-type.js";
 import { vouchers } from "#app/system/voucher.js";
@@ -9,6 +8,7 @@ import * as Utils from "#app/utils.js";
 import { BattlePhase } from "./battle-phase";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { MoneyRewardPhase } from "./money-reward-phase";
+import { TrainerSlot } from "#app/data/trainer-config";
 
 export class TrainerVictoryPhase extends BattlePhase {
   constructor(scene: BattleScene) {
@@ -42,7 +42,7 @@ export class TrainerVictoryPhase extends BattlePhase {
 
       const showMessage = () => {
         const originalFunc = showMessageOrEnd;
-        showMessageOrEnd = () => this.scene.ui.showDialogue(message, this.scene.currentBattle.trainer?.getName(), null, originalFunc);
+        showMessageOrEnd = () => this.scene.ui.showDialogue(message, this.scene.currentBattle.trainer?.getName(TrainerSlot.TRAINER, true), null, originalFunc);
 
         showMessageOrEnd();
       };

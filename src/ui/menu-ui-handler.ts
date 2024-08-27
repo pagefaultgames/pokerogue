@@ -17,7 +17,7 @@ enum MenuOptions {
   GAME_SETTINGS,
   ACHIEVEMENTS,
   STATS,
-  VOUCHERS,
+  RUN_HISTORY,
   EGG_LIST,
   EGG_GACHA,
   MANAGE_DATA,
@@ -105,7 +105,6 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   render() {
     const ui = this.getUi();
-    console.log(ui.getModeChain());
     this.excludedMenus = () => [
       { condition: ![Mode.COMMAND, Mode.TITLE].includes(ui.getModeChain()[0]), options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] }
@@ -224,6 +223,22 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true
     });
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:importRunHistory"),
+      handler: () => {
+        this.scene.gameData.importData(GameDataType.RUN_HISTORY);
+        return true;
+      },
+      keepOpen: true
+    });
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:exportRunHistory"),
+      handler: () => {
+        this.scene.gameData.tryExportData(GameDataType.RUN_HISTORY);
+        return true;
+      },
+      keepOpen: true
+    });
     if (Utils.isLocal || Utils.isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
@@ -318,9 +333,11 @@ export default class MenuUiHandler extends MessageUiHandler {
       keepOpen: true
     });
 
+    //Thank you Vassiat
     this.manageDataConfig = {
       xOffset: 98,
-      options: manageDataOptions
+      options: manageDataOptions,
+      maxOptions: 7
     };
 
     const communityOptions: OptionSelectItem[] = [
@@ -389,7 +406,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.getUi().hideTooltip();
 
-    this.scene.playSound("menu_open");
+    this.scene.playSound("ui/menu_open");
 
     handleTutorial(this.scene, Tutorial.Menu);
 
@@ -431,8 +448,8 @@ export default class MenuUiHandler extends MessageUiHandler {
         ui.setOverlayMode(Mode.GAME_STATS);
         success = true;
         break;
-      case MenuOptions.VOUCHERS:
-        ui.setOverlayMode(Mode.VOUCHERS);
+      case MenuOptions.RUN_HISTORY:
+        ui.setOverlayMode(Mode.RUN_HISTORY);
         success = true;
         break;
       case MenuOptions.EGG_LIST:
