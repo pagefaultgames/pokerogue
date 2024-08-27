@@ -7,5 +7,6 @@
   "moneyInterestApply": "Recibiste intereses de ₽{{moneyAmount}}\ngracias a {{typeName}}!",
   "turnHeldItemTransferApply": "{{pokemonNameWithAffix}}'s {{itemName}} fue absorbido\npor {{pokemonName}}'s {{typeName}}!",
   "contactHeldItemTransferApply": "{{pokemonNameWithAffix}}'s {{itemName}} fue robado por {{pokemonName}}'s {{typeName}}!",
+  "enemyTurnHealApply": "¡{{pokemonNameWithAffix}}\nrecuperó algunos PS!",
   "bypassSpeedChanceApply": "¡Gracias a su {{itemName}}, {{pokemonName}} puede tener prioridad!"
 }
