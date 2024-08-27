@@ -3830,7 +3830,7 @@ export class EnemyPokemon extends Pokemon {
       this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
         ? [
           new PokemonMove(Moves.DYNAMAX_CANNON),
-          new PokemonMove(Moves.SLUDGE_BOMB),
+          new PokemonMove(Moves.CROSS_POISON),
           new PokemonMove(Moves.FLAMETHROWER),
           new PokemonMove(Moves.RECOVER, 0, -4)
         ]
