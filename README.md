@@ -7,11 +7,11 @@ This program is for Windows - it does not have installers for Mac or Linux right
 (You can still do run validation without this mod, of course)
 
 ## Feature progress
-- [ ] Logs all the steps you take while playing
+- [x] Logs all the steps you take while playing
 - [x] Logs the wild Pokémon you encounter and their stats
 - [x] Logs the category of trainers you encounter
 - [x] In-Game GUI to export logs
-- [ ] Show damage values for attacks (present, but incomplete)
+- [x] Show damage values for attacks (present, but incomplete)
 - [x] Show catch rates
 - [x] Show attributes of wild Pokémon (max IVs, nature, abilities)
 
