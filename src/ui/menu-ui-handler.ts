@@ -289,24 +289,34 @@ export default class MenuUiHandler extends MessageUiHandler {
           return true;
         },
         keepOpen: true
-      },
-      {
+      }];
+    if (!bypassLogin && loggedInUser?.hasAdminRole) {
+      communityOptions.push({
         label: "Admin",
         handler: () => {
-          ui.setOverlayMode(Mode.SETTINGS);
+          ui.playSelect();
+          ui.setOverlayMode(Mode.ADMIN, {
+            buttonActions: [
+              () => {
+                ui.revertMode();
+              },
+              () => {
+                ui.revertMode();
+              }
+            ]
+          });
           return true;
         },
         keepOpen: true
-      },
-      {
-        label: i18next.t("menuUiHandler:cancel"),
-        handler: () => {
-          this.scene.ui.revertMode();
-          return true;
-        }
+      });
+    }
+    communityOptions.push({
+      label: i18next.t("menuUiHandler:cancel"),
+      handler: () => {
+        this.scene.ui.revertMode();
+        return true;
       }
-    ];
-
+    });
     this.communityConfig = {
       xOffset: 98,
       options: communityOptions
@@ -437,16 +447,6 @@ export default class MenuUiHandler extends MessageUiHandler {
                 }
               }
             });
-          if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === "admin") && loggedInUser?.hasAdminRole) {
-            this.manageDataConfig.options.splice(this.manageDataConfig.options.length-1,0, {
-              label: "Admin",
-              handler: () => {
-                ui.setOverlayMode(Mode.ADMIN);
-                return true;
-              },
-              keepOpen: true
-            });
-          }
         }
         ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.manageDataConfig);
         success = true;
