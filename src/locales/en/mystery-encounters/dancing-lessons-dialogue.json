@@ -13,14 +13,14 @@
     "2": {
       "label": "Learn Its Dance",
       "tooltip": "(+) Teach a Pokémon Revelation Dance",
-      "selected": "You watch the Oricorio closely as it performs its dance...\n        $@s{level_up_fanfare}Your {{selectedPokemon}} wants to learn Revelation Dance!"
+      "selected": "You watch the Oricorio closely as it performs its dance...$@s{level_up_fanfare}Your {{selectedPokemon}} wants to learn Revelation Dance!"
     },
     "3": {
       "label": "Show It a Dance",
       "tooltip": "(-) Teach the Oricorio a Dance Move\n(+) The Oricorio Will Like You",
       "disabled_tooltip": "Your Pokémon need to know a Dance move for this.",
       "select_prompt": "Select a Dance type move to use.",
-      "selected": "The Oricorio watches in fascination as\n{{selectedPokemon}} shows off {{selectedMove}}!\n        $It loves the display!\n        $@s{level_up_fanfare}The Oricorio wants to join your party!"
+      "selected": "The Oricorio watches in fascination as\n{{selectedPokemon}} shows off {{selectedMove}}!$It loves the display!$@s{level_up_fanfare}The Oricorio wants to join your party!"
     }
   },
   "invalid_selection": "This Pokémon doesn't know a Dance move"

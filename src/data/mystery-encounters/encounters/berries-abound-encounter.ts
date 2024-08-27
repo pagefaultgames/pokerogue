@@ -37,7 +37,7 @@ const namespace = "mysteryEncounter:berriesAbound";
 
 /**
  * Berries Abound encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/24 | GitHub Issue #24}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3810 | GitHub Issue #3810}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const BerriesAboundEncounter: MysteryEncounter =
@@ -131,7 +131,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
         const doBerryRewards = async () => {
           const berryText = numBerries + " " + i18next.t(`${namespace}.berries`);
 
-          scene.playSound("item_fanfare");
+          scene.playSound("bgm/item_fanfare");
           queueEncounterMessage(scene, i18next.t("battle:rewardGain", { modifierName: berryText }));
 
           // Generate a random berry and give it to the first Pokemon with room for it
@@ -143,7 +143,10 @@ export const BerriesAboundEncounter: MysteryEncounter =
         const shopOptions: ModifierTypeOption[] = [];
         for (let i = 0; i < 5; i++) {
           // Generate shop berries
-          shopOptions.push(generateModifierTypeOption(scene, modifierTypes.BERRY));
+          const mod = generateModifierTypeOption(scene, modifierTypes.BERRY);
+          if (mod) {
+            shopOptions.push(mod);
+          }
         }
 
         setEncounterRewards(scene, { guaranteedModifierTypeOptions: shopOptions, fillRemaining: false }, undefined, doBerryRewards);
@@ -168,7 +171,10 @@ export const BerriesAboundEncounter: MysteryEncounter =
           const shopOptions: ModifierTypeOption[] = [];
           for (let i = 0; i < 5; i++) {
             // Generate shop berries
-            shopOptions.push(generateModifierTypeOption(scene, modifierTypes.BERRY));
+            const mod = generateModifierTypeOption(scene, modifierTypes.BERRY);
+            if (mod) {
+              shopOptions.push(mod);
+            }
           }
 
           if (speedDiff < 1) {
@@ -176,7 +182,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
             const doBerryRewards = async () => {
               const berryText = numBerries + " " + i18next.t(`${namespace}.berries`);
 
-              scene.playSound("item_fanfare");
+              scene.playSound("bgm/item_fanfare");
               queueEncounterMessage(scene, i18next.t("battle:rewardGain", { modifierName: berryText }));
 
               // Generate a random berry and give it to the first Pokemon with room for it
@@ -202,7 +208,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
             const doFasterBerryRewards = async () => {
               const berryText = numBerriesGrabbed + " " + i18next.t(`${namespace}.berries`);
 
-              scene.playSound("item_fanfare");
+              scene.playSound("bgm/item_fanfare");
               queueEncounterMessage(scene, i18next.t("battle:rewardGain", { modifierName: berryText }));
 
               // Generate a random berry and give it to the first Pokemon with room for it (trying to give to fastest first)

@@ -13,7 +13,7 @@
       "label": "Steal the Item",
       "disabled_tooltip": "Your Pokémon need to know certain moves to choose this",
       "tooltip": "(+) {{option2PrimaryName}} uses {{option2PrimaryMove}}",
-      "selected": ".@d{32}.@d{32}.@d{32}\n        $Your {{option2PrimaryName}} helps you out and uses {{option2PrimaryMove}}!\n        $You nabbed the item!"
+      "selected": ".@d{32}.@d{32}.@d{32}$Your {{option2PrimaryName}} helps you out and uses {{option2PrimaryMove}}!$You nabbed the item!"
     },
     "3": {
       "label": "Leave",

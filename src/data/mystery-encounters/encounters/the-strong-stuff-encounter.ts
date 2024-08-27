@@ -23,7 +23,7 @@ const namespace = "mysteryEncounter:theStrongStuff";
 
 /**
  * The Strong Stuff encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/54 | GitHub Issue #54}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3803 | GitHub Issue #3803}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const TheStrongStuffEncounter: MysteryEncounter =

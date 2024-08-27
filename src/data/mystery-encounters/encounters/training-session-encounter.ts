@@ -24,7 +24,7 @@ const namespace = "mysteryEncounter:trainingSession";
 
 /**
  * Training Session encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/43 | GitHub Issue #43}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3802 | GitHub Issue #3802}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const TrainingSessionEncounter: MysteryEncounter =

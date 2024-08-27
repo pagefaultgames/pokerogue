@@ -94,6 +94,7 @@ export enum TrainerType {
   VIVI,
   VICKY,
   VITO,
+  BUG_TYPE_SUPERFAN,
 
   BROCK = 200,
   MISTY,

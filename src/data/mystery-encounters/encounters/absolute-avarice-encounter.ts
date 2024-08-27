@@ -29,7 +29,7 @@ const namespace = "mysteryEncounter:absoluteAvarice";
 
 /**
  * Absolute Avarice encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/58 | GitHub Issue #58}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3805 | GitHub Issue #3805}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const AbsoluteAvariceEncounter: MysteryEncounter =
@@ -249,8 +249,10 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           const givePartyPokemonReviverSeeds = () => {
             const party = scene.getParty();
             party.forEach(p => {
-              const seedModifier = revSeed.newModifier(p);
-              scene.addModifier(seedModifier, false, false, false, true);
+              if (revSeed) {
+                const seedModifier = revSeed.newModifier(p);
+                scene.addModifier(seedModifier, false, false, false, true);
+              }
             });
             queueEncounterMessage(scene, `${namespace}.option.1.food_stash`);
           };
@@ -349,7 +351,7 @@ function doGreedentSpriteSteal(scene: BattleScene) {
 
   const greedentSprites = scene.currentBattle.mysteryEncounter.introVisuals?.getSpriteAtIndex(1);
 
-  scene.playSound("Follow Me");
+  scene.playSound("battle-anims/Follow Me");
   scene.tweens.chain({
     targets: greedentSprites,
     tweens: [
@@ -431,11 +433,11 @@ function doGreedentEatBerries(scene: BattleScene) {
     y: "-=8",
     loop: 5,
     onStart: () => {
-      scene.playSound("PRSFX- Bug Bite");
+      scene.playSound("battle_anims/PRSFX- Bug Bite");
     },
     onLoop: () => {
       if (index % 2 === 0) {
-        scene.playSound("PRSFX- Bug Bite");
+        scene.playSound("battle_anims/PRSFX- Bug Bite");
       }
       index++;
     }

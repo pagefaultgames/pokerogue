@@ -418,22 +418,34 @@ export class MysteryEncounterRewardsPhase extends Phase {
       });
     } else {
       this.scene.executeWithSeedOffset(() => {
-        if (this.scene.currentBattle.mysteryEncounter.doEncounterExp) {
-          this.scene.currentBattle.mysteryEncounter.doEncounterExp(this.scene);
-        }
-
-        if (this.scene.currentBattle.mysteryEncounter.doEncounterRewards) {
-          this.scene.currentBattle.mysteryEncounter.doEncounterRewards(this.scene);
-        } else if (this.addHealPhase) {
-          this.scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
-          this.scene.unshiftPhase(new SelectModifierPhase(this.scene, 0, undefined, { fillRemaining: false, rerollMultiplier: 0 }));
+        if (encounter.onRewards) {
+          encounter.onRewards(this.scene).then(() => {
+            this.doEncounterRewardsAndContinue();
+          });
+        } else {
+          this.doEncounterRewardsAndContinue();
         }
         // Do not use ME's seedOffset for rewards, these should always be consistent with waveIndex (once per wave)
       }, this.scene.currentBattle.waveIndex * 1000);
-
-      this.scene.pushPhase(new PostMysteryEncounterPhase(this.scene));
-      this.end();
     }
+  }
+
+  doEncounterRewardsAndContinue() {
+    const encounter = this.scene.currentBattle.mysteryEncounter;
+
+    if (encounter.doEncounterExp) {
+      encounter.doEncounterExp(this.scene);
+    }
+
+    if (encounter.doEncounterRewards) {
+      encounter.doEncounterRewards(this.scene);
+    } else if (this.addHealPhase) {
+      this.scene.tryRemovePhase(p => p instanceof SelectModifierPhase);
+      this.scene.unshiftPhase(new SelectModifierPhase(this.scene, 0, undefined, { fillRemaining: false, rerollMultiplier: 0 }));
+    }
+
+    this.scene.pushPhase(new PostMysteryEncounterPhase(this.scene));
+    this.end();
   }
 }
 

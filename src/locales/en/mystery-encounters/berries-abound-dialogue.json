@@ -13,8 +13,8 @@
     "2": {
       "label": "Race to the Bush",
       "tooltip": "(-) {{fastestPokemon}} Uses its Speed\n(+) Gain Berries",
-      "selected": "Your {{fastestPokemon}} races for the berry bush!\n        $It manages to nab {{numBerries}} before the {{enemyPokemon}} can react!\n        $You quickly retreat with your newfound prize.",
-      "selected_bad": "Your {{fastestPokemon}} races for the berry bush!\n        $Oh no! The {{enemyPokemon}} was faster and blocked off the approach!",
+      "selected": "Your {{fastestPokemon}} races for the berry bush!$It manages to nab {{numBerries}} before the {{enemyPokemon}} can react!$You quickly retreat with your newfound prize.",
+      "selected_bad": "Your {{fastestPokemon}} races for the berry bush!$Oh no! The {{enemyPokemon}} was faster and blocked off the approach!",
       "boss_enraged": "The opposing {{enemyPokemon}} has become enraged!"
     },
     "3": {

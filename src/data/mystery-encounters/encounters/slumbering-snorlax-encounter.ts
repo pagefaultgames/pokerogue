@@ -22,7 +22,7 @@ const namespace = "mysteryEncounter:slumberingSnorlax";
 
 /**
  * Sleeping Snorlax encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/103 | GitHub Issue #103}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3815 | GitHub Issue #3815}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const SlumberingSnorlaxEncounter: MysteryEncounter =

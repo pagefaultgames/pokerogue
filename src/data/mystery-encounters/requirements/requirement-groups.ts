@@ -36,8 +36,7 @@ export const DANCING_MOVES = [
   Moves.QUIVER_DANCE,
   Moves.SWORDS_DANCE,
   Moves.TEETER_DANCE,
-  Moves.VICTORY_DANCE,
-  Moves.KNOCK_OFF
+  Moves.VICTORY_DANCE
 ];
 
 export const DISTRACTION_MOVES = [

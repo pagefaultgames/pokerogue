@@ -12,12 +12,12 @@
       "tooltip": "(-) Pay {{price, money}}\n(+) Gain a {{purchasePokemon}} with its Hidden Ability",
       "tooltip_shiny": "(-) Pay {{price, money}}\n(+) Gain a shiny {{purchasePokemon}}",
       "selected_message": "You paid an outrageous sum and bought the {{purchasePokemon}}.",
-      "selected_dialogue": "Excellent choice!\n      $I can see you've a keen eye for business.\n      $Oh, yeah...@d{64} Returns not accepted, got that?"
+      "selected_dialogue": "Excellent choice!$I can see you've a keen eye for business.$Oh, yeah...@d{64} Returns not accepted, got that?"
     },
     "2": {
       "label": "Refuse",
       "tooltip": "(-) No Rewards",
-      "selected": "No?@d{32} You say no?\n        $I'm only doing this as a favor to you!"
+      "selected": "No?@d{32} You say no?$I'm only doing this as a favor to you!"
     }
   }
 }

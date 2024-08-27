@@ -17,7 +17,7 @@ const namespace = "mysteryEncounter:partTimer";
 
 /**
  * Part Timer encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/82 | GitHub Issue #82}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3813 | GitHub Issue #3813}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const PartTimerEncounter: MysteryEncounter =
@@ -290,50 +290,50 @@ export const PartTimerEncounter: MysteryEncounter =
     .build();
 
 function doStrongWorkSfx(scene: BattleScene) {
-  scene.playSound("PRSFX- Horn Drill1");
-  scene.playSound("PRSFX- Horn Drill1");
+  scene.playSound("battle_anims/PRSFX- Horn Drill1");
+  scene.playSound("battle_anims/PRSFX- Horn Drill1");
 
   scene.time.delayedCall(1000, () => {
-    scene.playSound("PRSFX- Guillotine2");
+    scene.playSound("battle_anims/PRSFX- Guillotine2");
   });
 
   scene.time.delayedCall(2000, () => {
-    scene.playSound("PRSFX- Heavy Slam2");
+    scene.playSound("battle_anims/PRSFX- Heavy Slam2");
   });
 
   scene.time.delayedCall(2500, () => {
-    scene.playSound("PRSFX- Guillotine2");
+    scene.playSound("battle_anims/PRSFX- Guillotine2");
   });
 }
 
 function doDeliverySfx(scene: BattleScene) {
-  scene.playSound("PRSFX- Accelerock1");
+  scene.playSound("battle_anims/PRSFX- Accelerock1");
 
   scene.time.delayedCall(1500, () => {
-    scene.playSound("PRSFX- Extremespeed1");
+    scene.playSound("battle_anims/PRSFX- Extremespeed1");
   });
 
   scene.time.delayedCall(2000, () => {
-    scene.playSound("PRSFX- Extremespeed1");
+    scene.playSound("battle_anims/PRSFX- Extremespeed1");
   });
 
   scene.time.delayedCall(2250, () => {
-    scene.playSound("PRSFX- Agility");
+    scene.playSound("battle_anims/PRSFX- Agility");
   });
 }
 
 function doSalesSfx(scene: BattleScene) {
-  scene.playSound("PRSFX- Captivate");
+  scene.playSound("battle_anims/PRSFX- Captivate");
 
   scene.time.delayedCall(1500, () => {
-    scene.playSound("PRSFX- Attract2");
+    scene.playSound("battle_anims/PRSFX- Attract2");
   });
 
   scene.time.delayedCall(2000, () => {
-    scene.playSound("PRSFX- Aurora Veil2");
+    scene.playSound("battle_anims/PRSFX- Aurora Veil2");
   });
 
   scene.time.delayedCall(3000, () => {
-    scene.playSound("PRSFX- Attract2");
+    scene.playSound("battle_anims/PRSFX- Attract2");
   });
 }

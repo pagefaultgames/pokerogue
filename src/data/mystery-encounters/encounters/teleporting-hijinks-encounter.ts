@@ -29,7 +29,7 @@ const MACHINE_INTERFACING_TYPES = [Type.ELECTRIC, Type.STEEL];
 
 /**
  * Teleporting Hijinks encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/119 | GitHub Issue #119}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3817 | GitHub Issue #3817}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const TeleportingHijinksEncounter: MysteryEncounter =
@@ -140,8 +140,8 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
           }],
         };
 
-        const magnet = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.STEEL]);
-        const metalCoat = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.ELECTRIC]);
+        const magnet = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.STEEL])!;
+        const metalCoat = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.ELECTRIC])!;
         setEncounterRewards(scene, { guaranteedModifierTypeOptions: [magnet, metalCoat], fillRemaining: true });
         setEncounterExp(scene, encounter.selectedOption!.primaryPokemon!.id, 100);
         transitionMysteryEncounterIntroVisuals(scene, true, true);

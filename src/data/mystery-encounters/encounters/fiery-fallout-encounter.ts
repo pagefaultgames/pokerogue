@@ -33,7 +33,7 @@ const DAMAGE_PERCENTAGE: number = 20;
 
 /**
  * Fiery Fallout encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/88 | GitHub Issue #88}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3814 | GitHub Issue #3814}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const FieryFalloutEncounter: MysteryEncounter =

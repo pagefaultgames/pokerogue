@@ -13,7 +13,18 @@ import { Arena, ArenaBase } from "./field/arena";
 import { GameData } from "./system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "./ui/text";
 import { allMoves } from "./data/move";
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, modifierTypes } from "./modifier/modifier-type";
+import {
+  ModifierPoolType,
+  getDefaultModifierTypeForTier,
+  getEnemyModifierTypesForWave,
+  getLuckString,
+  getLuckTextTint,
+  getModifierPoolForType,
+  getModifierType,
+  getPartyLuckValue,
+  modifierTypes,
+  PokemonHeldItemModifierType
+} from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, ChangeMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
@@ -38,7 +49,7 @@ import PokemonData from "./system/pokemon-data";
 import { Nature } from "./data/nature";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges, FormChangeItem, SpeciesFormChange } from "./data/pokemon-forms";
 import { FormChangePhase } from "./phases/form-change-phase";
-import { getTypeRgb } from "./data/type";
+import { getTypeRgb, Type } from "./data/type";
 import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler";
 import CharSprite from "./ui/char-sprite";
 import DamageNumberHandler from "./field/damage-number-handler";
@@ -91,6 +102,8 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
+import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -1101,6 +1114,11 @@ export default class BattleScene extends SceneBase {
     this.resetSeed(newWaveIndex);
 
     const playerField = this.getPlayerField();
+
+    const mod = generateModifierType(this, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.BUG]);
+    if (mod) {
+      applyModifierTypeToPlayerPokemon(this, this.getParty()[0], mod as PokemonHeldItemModifierType);
+    }
 
     if (this.gameMode.isFixedBattle(newWaveIndex) && trainerData === undefined) {
       battleConfig = this.gameMode.getFixedBattle(newWaveIndex);

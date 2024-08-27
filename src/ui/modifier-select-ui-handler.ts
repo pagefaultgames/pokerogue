@@ -4,7 +4,7 @@ import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
 import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
-import { LockModifierTiersModifier, PokemonHeldItemModifier, RemoveHealShopModifier } from "../modifier/modifier";
+import { LockModifierTiersModifier, PokemonHeldItemModifier, HealShopCostModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
 import { Button } from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
@@ -13,6 +13,7 @@ import * as Utils from "./../utils";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+import { IntegerHolder } from "./../utils";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -171,9 +172,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.updateRerollCostText();
 
     const typeOptions = args[1] as ModifierTypeOption[];
-    const removeHealShop = this.scene.gameMode.hasNoShop || !!this.scene.findModifier(m => m instanceof RemoveHealShopModifier);
+    const removeHealShop = this.scene.gameMode.hasNoShop;
+    const baseShopCost = new IntegerHolder(this.scene.getWaveMoneyAmount(1));
+    this.scene.applyModifier(HealShopCostModifier, true, baseShopCost);
     const shopTypeOptions = !removeHealShop
-      ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1))
+      ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, baseShopCost.value)
       : [];
     const optionsYOffset = shopTypeOptions.length >= SHOP_OPTIONS_ROW_LIMIT ? -8 : -24;
 

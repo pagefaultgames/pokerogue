@@ -75,7 +75,7 @@ const SENSU_STYLE_BIOMES = [
 
 /**
  * Dancing Lessons encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/130 | GitHub Issue #130}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3823 | GitHub Issue #3823}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const DancingLessonsEncounter: MysteryEncounter =

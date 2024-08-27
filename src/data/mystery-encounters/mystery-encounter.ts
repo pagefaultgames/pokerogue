@@ -122,6 +122,8 @@ export default class MysteryEncounter implements IMysteryEncounter {
   onInit?: (scene: BattleScene) => boolean;
   /** Event when battlefield visuals have finished sliding in and the encounter dialogue begins */
   onVisualsStart?: (scene: BattleScene) => boolean;
+  /** Event prior to any rewards logic in {@link MysteryEncounterRewardsPhase} */
+  onRewards?: (scene: BattleScene) => Promise<void>;
   /** Will provide the player party EXP before rewards are displayed for that wave */
   doEncounterExp?: (scene: BattleScene) => boolean;
   /** Will provide the player a rewards shop for that wave */
