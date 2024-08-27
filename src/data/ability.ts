@@ -475,6 +475,32 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   }
 }
 
+/**
+ * Attribute implementing the effects of {@linkcode https://bulbapedia.bulbagarden.net/wiki/Tera_Shell_(Ability) | Tera Shell}
+ * When the source is at full HP, incoming attacks will have a maximum 0.5x type effectiveness multiplier.
+ * @extends PreDefendAbAttr
+ */
+export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
+    const typeMultiplier = args[0];
+    if (!(typeMultiplier && typeMultiplier instanceof Utils.NumberHolder)) {
+      return false;
+    }
+
+    if (pokemon.isFullHp() && typeMultiplier.value > 0.5) {
+      typeMultiplier.value = 0.5;
+      return true;
+    }
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return i18next.t("abilityTriggers:fullHpResistType", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)
+    });
+  }
+}
+
 export class PostDefendAbAttr extends AbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -5765,10 +5791,10 @@ export function initAbilities() {
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.TERA_SHELL, 9)
+      .attr(FullHpResistTypeAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .ignorable()
-      .unimplemented(),
+      .ignorable(),
     new Ability(Abilities.TERAFORM_ZERO, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
