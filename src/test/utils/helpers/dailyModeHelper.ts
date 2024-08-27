@@ -1,8 +1,9 @@
-import { Button } from "#app/enums/buttons.js";
-import overrides from "#app/overrides.js";
-import { EncounterPhase, TitlePhase } from "#app/phases.js";
-import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import { Button } from "#app/enums/buttons";
+import overrides from "#app/overrides";
+import { EncounterPhase } from "#app/phases/encounter-phase";
+import { TitlePhase } from "#app/phases/title-phase";
+import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { GameManagerHelper } from "./gameManagerHelper";
 
 /**
