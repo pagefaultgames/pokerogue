@@ -88,7 +88,6 @@ export enum Mode {
   CHALLENGE_SELECT,
   RENAME_POKEMON,
   ADMIN,
-
   RUN_HISTORY,
   RUN_INFO,
 }
