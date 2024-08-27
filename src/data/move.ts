@@ -7955,7 +7955,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.FREEZE_DRY, Type.ICE, MoveCategory.SPECIAL, 70, 100, 20, 10, 0, 6)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
-      .attr(WaterSuperEffectTypeMultiplierAttr),
+      .attr(WaterSuperEffectTypeMultiplierAttr)
+      .partial(), // This currently just multiplies the move's power instead of changing its effectiveness. It also doesn't account for abilities that modify type effectiveness such as tera shell.
     new AttackMove(Moves.DISARMING_VOICE, Type.FAIRY, MoveCategory.SPECIAL, 40, -1, 15, -1, 0, 6)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
