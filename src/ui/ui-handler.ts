@@ -8,7 +8,7 @@ import {Button} from "#enums/buttons";
  */
 export default abstract class UiHandler {
   protected scene: BattleScene;
-  protected mode: integer;
+  protected mode: integer | null;
   protected cursor: integer = 0;
   public active: boolean = false;
 
@@ -16,7 +16,7 @@ export default abstract class UiHandler {
    * @param {BattleScene} scene The same scene as everything else.
    * @param {Mode} mode The mode of the UI element. These should be unique.
    */
-  constructor(scene: BattleScene, mode: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     this.scene = scene;
     this.mode = mode;
   }

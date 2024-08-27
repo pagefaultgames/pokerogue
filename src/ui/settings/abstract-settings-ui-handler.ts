@@ -7,7 +7,7 @@ import { addWindow } from "../ui-theme";
 import {Button} from "#enums/buttons";
 import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler.js";
 import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
-import { Setting, SettingKeys } from "#app/system/settings/settings";
+import { Setting, SettingKeys, SettingType } from "#app/system/settings/settings";
 import i18next from "i18next";
 
 
@@ -30,7 +30,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
   protected navigationIcons: InputsIcons;
 
-  private cursorObj: Phaser.GameObjects.NineSlice;
+  private cursorObj: Phaser.GameObjects.NineSlice | null;
 
   private reloadSettings: Array<Setting>;
   private reloadRequired: boolean;
@@ -40,9 +40,9 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   protected settings: Array<Setting>;
   protected localStorageKey: string;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, type: SettingType, mode: Mode | null = null) {
     super(scene, mode);
-
+    this.settings = Setting.filter(s => s.type === type && !s?.isHidden?.());
     this.reloadRequired = false;
     this.rowsToDisplay = 8;
   }
@@ -180,7 +180,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     super.show(args);
     this.updateBindings();
 
-    const settings: object = localStorage.hasOwnProperty(this.localStorageKey) ? JSON.parse(localStorage.getItem(this.localStorageKey)) : {};
+    const settings: object = localStorage.hasOwnProperty(this.localStorageKey) ? JSON.parse(localStorage.getItem(this.localStorageKey)!) : {}; // TODO: is this bang correct?
 
     this.settings.forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting.key) ? settings[setting.key] : this.settings[s].default));
 
@@ -264,6 +264,12 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       case Button.CYCLE_SHINY:
         success = this.navigationContainer.navigate(button);
         break;
+      case Button.ACTION:
+        const setting: Setting = this.settings[cursor];
+        if (setting?.activatable) {
+          success = this.activateSetting(setting);
+        }
+        break;
       }
     }
 
@@ -276,6 +282,20 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   }
 
   /**
+   * Activate the specified setting if it is activatable.
+   * @param setting The setting to activate.
+   * @returns Whether the setting was successfully activated.
+   */
+  activateSetting(setting: Setting): boolean {
+    switch (setting.key) {
+    case SettingKeys.Move_Touch_Controls:
+      this.scene.inputController.moveTouchControlsHandler.enableConfigurationMode(this.getUi(), this.scene);
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Set the cursor to the specified position.
    *
    * @param cursor - The cursor position to set.
@@ -285,7 +305,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.optionsContainer.add(this.cursorObj);
     }

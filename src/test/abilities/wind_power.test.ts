@@ -1,13 +1,12 @@
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { TurnEndPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Wind Power", () => {
   let phaserGame: Phaser.Game;
@@ -34,11 +33,11 @@ describe("Abilities - Wind Power", () => {
 
   it("it becomes charged when hit by wind moves", async () => {
     await game.startBattle([Species.MAGIKARP]);
-    const shiftry = game.scene.getEnemyPokemon();
+    const shiftry = game.scene.getEnemyPokemon()!;
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.PETAL_BLIZZARD));
+    game.move.select(Moves.PETAL_BLIZZARD);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeDefined();
@@ -49,11 +48,11 @@ describe("Abilities - Wind Power", () => {
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
-    const shiftry = game.scene.getPlayerPokemon();
+    const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
+    game.move.select(Moves.TAILWIND);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeDefined();
@@ -64,13 +63,13 @@ describe("Abilities - Wind Power", () => {
     game.override.ability(Abilities.WIND_POWER);
 
     await game.startBattle([Species.SHIFTRY]);
-    const magikarp = game.scene.getEnemyPokemon();
-    const shiftry = game.scene.getPlayerPokemon();
+    const magikarp = game.scene.getEnemyPokemon()!;
+    const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
     expect(magikarp.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TAILWIND));
+    game.move.select(Moves.TAILWIND);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -82,11 +81,11 @@ describe("Abilities - Wind Power", () => {
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
-    const shiftry = game.scene.getPlayerPokemon();
+    const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SANDSTORM));
+    game.move.select(Moves.SANDSTORM);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

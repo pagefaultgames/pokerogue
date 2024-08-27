@@ -1,8 +1,8 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
+import { Abilities } from "#app/enums/abilities";
+import { Species } from "#app/enums/species";
 import GameManager from "#test/utils/gameManager";
-import { Species } from "#app/enums/species.js";
-import { Abilities } from "#app/enums/abilities.js";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Internals", () => {
   let phaserGame: Phaser.Game;
@@ -23,8 +23,8 @@ describe("Internals", () => {
   });
 
   it("should provide Eevee with 3 defined abilities", async () => {
-    await game.runToSummon([Species.EEVEE]);
-    const eevee = game.scene.getPlayerPokemon();
+    await game.classicMode.runToSummon([Species.EEVEE]);
+    const eevee = game.scene.getPlayerPokemon()!;
 
     expect(eevee.getSpeciesForm().getAbilityCount()).toBe(3);
 
@@ -34,8 +34,8 @@ describe("Internals", () => {
   });
 
   it("should set Eeeve abilityIndex between 0-2", async () => {
-    await game.runToSummon([Species.EEVEE]);
-    const eevee = game.scene.getPlayerPokemon();
+    await game.classicMode.runToSummon([Species.EEVEE]);
+    const eevee = game.scene.getPlayerPokemon()!;
 
     expect(eevee.abilityIndex).toBeGreaterThanOrEqual(0);
     expect(eevee.abilityIndex).toBeLessThanOrEqual(2);

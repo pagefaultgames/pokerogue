@@ -60,7 +60,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.setVisible(false);
     ui.add(this.eggGachaContainer);
 
-    const bg = this.scene.add.nineslice(0, 0, "default_bg", null, 320, 180, 0, 0, 16, 0);
+    const bg = this.scene.add.nineslice(0, 0, "default_bg", undefined, 320, 180, 0, 0, 16, 0);
     bg.setOrigin(0, 0);
 
     this.eggGachaContainer.add(bg);
@@ -99,7 +99,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       const gachaInfoContainer = this.scene.add.container(160, 46);
 
-      const currentLanguage = i18next.resolvedLanguage;
+      const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
       let gachaTextStyle = TextStyle.WINDOW_ALT;
       let gachaX = 4;
       let gachaY = 0;
@@ -217,11 +217,11 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       { multiplier: multiplierOne, description: `25 ${i18next.t("egg:pulls")}`, icon: getVoucherTypeIcon(VoucherType.GOLDEN) }
     ];
 
-    const { resolvedLanguage } = i18next;
+    const resolvedLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
     const pullOptionsText = pullOptions.map(option =>{
       const desc = option.description.split(" ");
       if (desc[0].length < 2) {
-        desc[0] += ["zh", "ko"].includes(resolvedLanguage.substring(0,2)) ? " " : "  ";
+        desc[0] += ["zh", "ko"].includes(resolvedLanguage.substring(0, 2)) ? " " : "  ";
       }
       if (option.multiplier === multiplierOne) {
         desc[0] = " " + desc[0];
@@ -335,7 +335,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     return Utils.fixedInt(delay);
   }
 
-  pull(pullCount?: integer, count?: integer, eggs?: Egg[]): void {
+  pull(pullCount: integer = 0, count: integer = 0, eggs?: Egg[]): void {
     if (Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE && !count) {
       pullCount = Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE;
     }
@@ -345,21 +345,21 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     const doPull = () => {
       if (this.transitionCancelled) {
-        return this.showSummary(eggs);
+        return this.showSummary(eggs!);
       }
 
-      const egg = this.scene.add.sprite(127, 75, "egg", `egg_${eggs[count].getKey()}`);
+      const egg = this.scene.add.sprite(127, 75, "egg", `egg_${eggs![count].getKey()}`);
       egg.setScale(0.5);
 
       this.gachaContainers[this.gachaCursor].add(egg);
       this.gachaContainers[this.gachaCursor].moveTo(egg, 2);
 
       const doPullAnim = () => {
-        this.scene.playSound("gacha_running", { loop: true });
+        this.scene.playSound("se/gacha_running", { loop: true });
         this.scene.time.delayedCall(this.getDelayValue(count ? 500 : 1250), () => {
-          this.scene.playSound("gacha_dispense");
+          this.scene.playSound("se/gacha_dispense");
           this.scene.time.delayedCall(this.getDelayValue(750), () => {
-            this.scene.sound.stopByKey("gacha_running");
+            this.scene.sound.stopByKey("se/gacha_running");
             this.scene.tweens.add({
               targets: egg,
               duration: this.getDelayValue(350),
@@ -367,7 +367,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
               ease: "Bounce.easeOut",
               onComplete: () => {
                 this.scene.time.delayedCall(this.getDelayValue(125), () => {
-                  this.scene.playSound("pb_catch");
+                  this.scene.playSound("se/pb_catch");
                   this.gachaHatches[this.gachaCursor].play("open");
                   this.scene.tweens.add({
                     targets: egg,
@@ -391,7 +391,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                           if (++count < pullCount) {
                             this.pull(pullCount, count, eggs);
                           } else {
-                            this.showSummary(eggs);
+                            this.showSummary(eggs!);
                           }
                         }
                       });
@@ -405,7 +405,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       };
 
       if (!count) {
-        this.scene.playSound("gacha_dial");
+        this.scene.playSound("se/gacha_dial");
         this.scene.tweens.add({
           targets: this.gachaKnobs[this.gachaCursor],
           duration: this.getDelayValue(350),
@@ -584,7 +584,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   showError(text: string): void {
-    this.showText(text, null, () => this.showText(this.defaultText), Utils.fixedInt(1500));
+    this.showText(text, undefined, () => this.showText(this.defaultText), Utils.fixedInt(1500));
   }
 
   setTransitioning(transitioning: boolean): void {

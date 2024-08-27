@@ -1,16 +1,17 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { StockpilingTag } from "#app/data/battler-tags.js";
-import { allMoves } from "#app/data/move.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { MoveResult, TurnMove } from "#app/field/pokemon.js";
-import { MovePhase, TurnInitPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
+import { StockpilingTag } from "#app/data/battler-tags";
+import { allMoves } from "#app/data/move";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { MoveResult, TurnMove } from "#app/field/pokemon";
+import { MovePhase } from "#app/phases/move-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Spit Up", () => {
   let phaserGame: Phaser.Game;
@@ -45,16 +46,16 @@ describe("Moves - Spit Up", () => {
 
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
 
       vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
-      game.doAttack(0);
+      game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
@@ -69,17 +70,17 @@ describe("Moves - Spit Up", () => {
 
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
 
       vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
-      game.doAttack(0);
+      game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
@@ -94,18 +95,18 @@ describe("Moves - Spit Up", () => {
 
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
       pokemon.addTag(BattlerTagType.STOCKPILING);
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
 
       vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
-      game.doAttack(0);
+      game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
@@ -118,14 +119,14 @@ describe("Moves - Spit Up", () => {
   it("fails without stacks", { timeout: 10000 }, async () => {
     await game.startBattle([Species.ABOMASNOW]);
 
-    const pokemon = game.scene.getPlayerPokemon();
+    const pokemon = game.scene.getPlayerPokemon()!;
 
-    const stockpilingTag = pokemon.getTag(StockpilingTag);
+    const stockpilingTag = pokemon.getTag(StockpilingTag)!;
     expect(stockpilingTag).toBeUndefined();
 
     vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
-    game.doAttack(0);
+    game.move.select(Moves.SPIT_UP);
     await game.phaseInterceptor.to(TurnInitPhase);
 
     expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.FAIL });
@@ -137,15 +138,15 @@ describe("Moves - Spit Up", () => {
     it("decreases stats based on stored values (both boosts equal)", { timeout: 10000 }, async () => {
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
 
       vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
-      game.doAttack(0);
+      game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(MovePhase);
 
       expect(pokemon.summonData.battleStats[BattleStat.DEF]).toBe(1);
@@ -166,10 +167,10 @@ describe("Moves - Spit Up", () => {
     it("decreases stats based on stored values (different boosts)", { timeout: 10000 }, async () => {
       await game.startBattle([Species.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon();
+      const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
-      const stockpilingTag = pokemon.getTag(StockpilingTag);
+      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
 
       // for the sake of simplicity (and because other tests cover the setup), set boost amounts directly
@@ -185,7 +186,7 @@ describe("Moves - Spit Up", () => {
 
       vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
-      game.doAttack(0);
+      game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS });
