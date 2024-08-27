@@ -22,7 +22,7 @@ const MAX_POKEMON_PRICE_MULTIPLIER = 6;
 
 /**
  * Pokemon Salesman encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/36 | GitHub Issue #36}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3799 | GitHub Issue #3799}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const ThePokemonSalesmanEncounter: MysteryEncounter =

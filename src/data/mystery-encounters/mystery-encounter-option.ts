@@ -81,7 +81,7 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
   }
 
   meetsPrimaryRequirementAndPrimaryPokemonSelected(scene: BattleScene) {
-    if (!this.primaryPokemonRequirements) {
+    if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
       return true;
     }
     let qualified: PlayerPokemon[] = scene.getParty();
@@ -101,7 +101,7 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
       return false;
     }
 
-    if (this.excludePrimaryFromSecondaryRequirements && this.secondaryPokemon) {
+    if (this.excludePrimaryFromSecondaryRequirements && this.secondaryPokemon && this.secondaryPokemon.length > 0) {
       const truePrimaryPool: PlayerPokemon[] = [];
       const overlap: PlayerPokemon[] = [];
       for (const qp of qualified) {
@@ -135,7 +135,7 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
   }
 
   meetsSupportingRequirementAndSupportingPokemonSelected(scene: BattleScene) {
-    if (!this.secondaryPokemonRequirements) {
+    if (!this.secondaryPokemonRequirements || this.secondaryPokemonRequirements.length === 0) {
       this.secondaryPokemon = [];
       return true;
     }

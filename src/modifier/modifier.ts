@@ -734,7 +734,8 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     // Modifies the passed in baseStats[] array
     args[1].forEach((v, i) => {
-      const newVal = Math.floor(v + this.statModifier);
+      // HP is affected by half as much as other stats
+      const newVal = i === 0 ? Math.floor(v + this.statModifier / 2) : Math.floor(v + this.statModifier);
       args[1][i] = Math.min(Math.max(newVal, 1), 999999);
     });
 
@@ -2366,17 +2367,41 @@ export class LockModifierTiersModifier extends PersistentModifier {
   }
 }
 
-export class RemoveHealShopModifier extends PersistentModifier {
+export class HealShopCostModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof RemoveHealShopModifier;
+    return modifier instanceof HealShopCostModifier;
   }
 
-  clone(): RemoveHealShopModifier {
-    return new RemoveHealShopModifier(this.type, this.stackCount);
+  clone(): HealShopCostModifier {
+    return new HealShopCostModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value *= Math.pow(3, this.getStackCount());
+
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 1;
+  }
+}
+
+export class BoostBugSpawnModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof BoostBugSpawnModifier;
+  }
+
+  clone(): HealShopCostModifier {
+    return new BoostBugSpawnModifier(this.type, this.stackCount);
   }
 
   apply(args: any[]): boolean {

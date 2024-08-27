@@ -18,7 +18,7 @@ const namespace = "mysteryEncounter:offerYouCantRefuse";
 
 /**
  * An Offer You Can't Refuse encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/72 | GitHub Issue #72}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3808 | GitHub Issue #3808}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const AnOfferYouCantRefuseEncounter: MysteryEncounter =

@@ -8,7 +8,7 @@
       "label": "Let It Touch You",
       "tooltip": "(?) Something awful or amazing might happen",
       "selected": "You black out.",
-      "selected_2": "@f{150}When you awaken, the Shuckle is gone\nand juice stash completely drained.\n        $Your {{highBstPokemon}} feels a\nterrible lethargy come over it!\n        $Its base stats were reduced by 20 in each stat!\n        $Your remaining Pokémon feel an incredible vigor, though!\n        $Their base stats are increased by 10 in each stat!"
+      "selected_2": "@f{150}When you awaken, the Shuckle is gone\nand juice stash completely drained.$Your {{highBstPokemon}} feels a\nterrible lethargy come over it!$Its base stats were reduced by 20 in each stat!$Your remaining Pokémon feel an incredible vigor, though!$Their base stats are increased by 10 in each stat!"
     },
     "2": {
       "label": "Battle the Shuckle",

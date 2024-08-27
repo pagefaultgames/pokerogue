@@ -59,6 +59,7 @@ import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
 import moveTriggers from "./move-trigger.json";
 import runHistory from "./run-history.json";
 import { mysteryEncounter } from "#app/locales/en/mystery-encounter";
+import mysteryEncounterMessages from "./mystery-encounter-messages.json";
 
 export const enConfig = {
   ability,
@@ -121,5 +122,6 @@ export const enConfig = {
   modifierSelectUiHandler,
   moveTriggers,
   runHistory,
-  mysteryEncounter: mysteryEncounter
+  mysteryEncounter: mysteryEncounter,
+  mysteryEncounterMessages
 };

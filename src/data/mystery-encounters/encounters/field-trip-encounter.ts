@@ -16,7 +16,7 @@ const namespace = "mysteryEncounter:fieldTrip";
 
 /**
  * Field Trip encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/17 | GitHub Issue #17}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3794 | GitHub Issue #3794}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const FieldTripEncounter: MysteryEncounter =
@@ -126,10 +126,10 @@ export const FieldTripEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter;
           if (encounter.misc.correctMove) {
             const modifiers = [
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.ATK]),
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.DEF]),
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPD]),
-              generateModifierTypeOption(scene, modifierTypes.DIRE_HIT),
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.ATK])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.DEF])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPD])!,
+              generateModifierTypeOption(scene, modifierTypes.DIRE_HIT)!,
             ];
 
             setEncounterRewards(scene, { guaranteedModifierTypeOptions: modifiers, fillRemaining: false });
@@ -218,10 +218,10 @@ export const FieldTripEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter;
           if (encounter.misc.correctMove) {
             const modifiers = [
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPATK]),
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPDEF]),
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPD]),
-              generateModifierTypeOption(scene, modifierTypes.DIRE_HIT),
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPATK])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPDEF])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPD])!,
+              generateModifierTypeOption(scene, modifierTypes.DIRE_HIT)!,
             ];
 
             setEncounterRewards(scene, { guaranteedModifierTypeOptions: modifiers, fillRemaining: false });
@@ -304,10 +304,10 @@ export const FieldTripEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter;
           if (encounter.misc.correctMove) {
             const modifiers = [
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.ACC]),
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPD]),
-              generateModifierTypeOption(scene, modifierTypes.GREAT_BALL),
-              generateModifierTypeOption(scene, modifierTypes.IV_SCANNER),
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.ACC])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPD])!,
+              generateModifierTypeOption(scene, modifierTypes.GREAT_BALL)!,
+              generateModifierTypeOption(scene, modifierTypes.IV_SCANNER)!,
             ];
 
             setEncounterRewards(scene, { guaranteedModifierTypeOptions: modifiers, fillRemaining: false });

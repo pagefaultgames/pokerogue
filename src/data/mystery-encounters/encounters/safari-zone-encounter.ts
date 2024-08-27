@@ -26,7 +26,7 @@ const TRAINER_THROW_ANIMATION_TIMES = [512, 184, 768];
 
 /**
  * Safari Zone encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/39 | GitHub Issue #39}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3800 | GitHub Issue #3800}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const SafariZoneEncounter: MysteryEncounter =
@@ -322,7 +322,7 @@ async function throwBait(scene: BattleScene, pokemon: EnemyPokemon): Promise<boo
   return new Promise(resolve => {
     scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
     scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
-      scene.playSound("pb_throw");
+      scene.playSound("se/pb_throw");
 
       // Trainer throw frames
       scene.trainer.setFrame("2");
@@ -351,12 +351,12 @@ async function throwBait(scene: BattleScene, pokemon: EnemyPokemon): Promise<boo
               y: originalY - 5,
               loop: 6,
               onStart: () => {
-                scene.playSound("PRSFX- Bug Bite");
+                scene.playSound("battle-anims/PRSFX- Bug Bite");
                 bait.setFrame("0002.png");
               },
               onLoop: () => {
                 if (index % 2 === 0) {
-                  scene.playSound("PRSFX- Bug Bite");
+                  scene.playSound("battle-anims/PRSFX- Bug Bite");
                 }
                 if (index === 4) {
                   bait.setFrame("0003.png");
@@ -388,7 +388,7 @@ async function throwMud(scene: BattleScene, pokemon: EnemyPokemon): Promise<bool
   return new Promise(resolve => {
     scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
     scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
-      scene.playSound("pb_throw");
+      scene.playSound("se/pb_throw");
 
       // Trainer throw frames
       scene.trainer.setFrame("2");
@@ -407,7 +407,7 @@ async function throwMud(scene: BattleScene, pokemon: EnemyPokemon): Promise<bool
         duration: 500,
         onComplete: () => {
           // Mud frame 2
-          scene.playSound("PRSFX- Sludge Bomb2");
+          scene.playSound("battle-anims/PRSFX- Sludge Bomb2");
           mud.setFrame("0002.png");
           // Mud splat
           scene.time.delayedCall(200, () => {
@@ -433,10 +433,10 @@ async function throwMud(scene: BattleScene, pokemon: EnemyPokemon): Promise<bool
                 y: originalY - 20,
                 loop: 1,
                 onStart: () => {
-                  scene.playSound("PRSFX- Taunt2");
+                  scene.playSound("battle-anims/PRSFX- Taunt2");
                 },
                 onLoop: () => {
-                  scene.playSound("PRSFX- Taunt2");
+                  scene.playSound("battle-anims/PRSFX- Taunt2");
                 },
                 onComplete: () => {
                   resolve(true);

@@ -23,7 +23,7 @@ const namespace = "mysteryEncounter:lostAtSea";
 
 /**
  * Lost at sea encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/9 | GitHub Issue #9}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3793 | GitHub Issue #3793}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.LOST_AT_SEA)
@@ -125,7 +125,6 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
  * Generic handler for using a guiding pokemon to guide you back.
  *
  * @param scene Battle scene
- * @param guidePokemon pokemon choosen as a guide
  */
 async function handlePokemonGuidingYouPhase(scene: BattleScene) {
   const laprasSpecies = getPokemonSpecies(Species.LAPRAS);

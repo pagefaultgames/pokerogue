@@ -53,7 +53,7 @@ const RANDOM_ABILITY_POOL = [
 
 /**
  * Clowning Around encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/69 | GitHub Issue #69}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3807 | GitHub Issue #3807}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const ClowningAroundEncounter: MysteryEncounter =
@@ -334,13 +334,13 @@ export const ClowningAroundEncounter: MysteryEncounter =
               randSeedShuffle(priorityTypes);
             }
 
-            let newTypes;
+            let newTypes: Type[];
             if (!originalTypes || originalTypes.length < 1) {
-              newTypes = priorityTypes?.length > 0 ? [priorityTypes.pop()] : [(randSeedInt(18) as Type)];
+              newTypes = priorityTypes && priorityTypes.length > 0 ? [priorityTypes.pop()!] : [(randSeedInt(18) as Type)];
             } else {
               newTypes = originalTypes.map(m => {
-                if (priorityTypes?.length > 0) {
-                  const ret = priorityTypes.pop();
+                if (priorityTypes && priorityTypes.length > 0) {
+                  const ret = priorityTypes.pop()!;
                   randSeedShuffle(priorityTypes);
                   return ret;
                 }

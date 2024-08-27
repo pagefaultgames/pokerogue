@@ -7,13 +7,13 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import * as BattleAnims from "#app/data/battle-anims";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounterTestUtils";
+import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
 import BattleScene from "#app/battle-scene";
 import { PokemonMove } from "#app/field/pokemon";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { HitHealModifier, RemoveHealShopModifier, TurnHealModifier } from "#app/modifier/modifier";
+import { HitHealModifier, HealShopCostModifier, TurnHealModifier } from "#app/modifier/modifier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
@@ -150,7 +150,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(shellBell).toBeDefined();
       expect(shellBell?.stackCount).toBe(2);
 
-      const blackSludge = scene.findModifier(m => m instanceof RemoveHealShopModifier) as RemoveHealShopModifier;
+      const blackSludge = scene.findModifier(m => m instanceof HealShopCostModifier) as HealShopCostModifier;
       expect(blackSludge).toBeDefined();
       expect(blackSludge?.stackCount).toBe(1);
     });

@@ -122,6 +122,8 @@ export default class MysteryEncounter implements IMysteryEncounter {
   onInit?: (scene: BattleScene) => boolean;
   /** Event when battlefield visuals have finished sliding in and the encounter dialogue begins */
   onVisualsStart?: (scene: BattleScene) => boolean;
+  /** Event prior to any rewards logic in {@link MysteryEncounterRewardsPhase} */
+  onRewards?: (scene: BattleScene) => Promise<void>;
   /** Will provide the player party EXP before rewards are displayed for that wave */
   doEncounterExp?: (scene: BattleScene) => boolean;
   /** Will provide the player a rewards shop for that wave */
@@ -261,7 +263,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
   }
 
   meetsPrimaryRequirementAndPrimaryPokemonSelected(scene: BattleScene): boolean {
-    if (this.primaryPokemonRequirements.length === 0) {
+    if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
       const activeMon = scene.getParty().filter(p => p.isActive(true));
       if (activeMon.length > 0) {
         this.primaryPokemon = activeMon[0];
@@ -284,7 +286,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
       return false;
     }
 
-    if (this.excludePrimaryFromSupportRequirements && this.secondaryPokemon) {
+    if (this.excludePrimaryFromSupportRequirements && this.secondaryPokemon && this.secondaryPokemon.length > 0) {
       const truePrimaryPool: PlayerPokemon[] = [];
       const overlap: PlayerPokemon[] = [];
       for (const qp of qualified) {
@@ -318,7 +320,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
   }
 
   meetsSecondaryRequirementAndSecondaryPokemonSelected(scene: BattleScene): boolean {
-    if (!this.secondaryPokemonRequirements) {
+    if (!this.secondaryPokemonRequirements || this.secondaryPokemonRequirements.length === 0) {
       this.secondaryPokemon = [];
       return true;
     }

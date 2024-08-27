@@ -335,7 +335,7 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
   return new Promise(resolve => {
     scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
     scene.time.delayedCall(512, () => {
-      scene.playSound("pb_throw");
+      scene.playSound("se/pb_throw");
 
       // Trainer throw frames
       scene.trainer.setFrame("2");
@@ -355,7 +355,7 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
         onComplete: () => {
           pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
           scene.time.delayedCall(17, () => pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
-          scene.playSound("pb_rel");
+          scene.playSound("se/pb_rel");
           pokemon.tint(getPokeballTintColor(pokeballType));
 
           addPokeballOpenParticles(scene, pokeball.x, pokeball.y, pokeballType);
@@ -369,7 +369,7 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
             onComplete: () => {
               pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
               pokemon.setVisible(false);
-              scene.playSound("pb_catch");
+              scene.playSound("se/pb_catch");
               scene.time.delayedCall(17, () => pokeball.setTexture("pb", `${pokeballAtlasKey}`));
 
               const doShake = () => {
@@ -397,13 +397,13 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
                       failCatch(scene, pokemon, originalY, pokeball, pokeballType).then(() => resolve(false));
                     } else if (shakeCount++ < 3) {
                       if (randSeedInt(65536) < ballTwitchRate) {
-                        scene.playSound("pb_move");
+                        scene.playSound("se/pb_move");
                       } else {
                         shakeCounter.stop();
                         failCatch(scene, pokemon, originalY, pokeball, pokeballType).then(() => resolve(false));
                       }
                     } else {
-                      scene.playSound("pb_lock");
+                      scene.playSound("se/pb_lock");
                       addPokeballCaptureStars(scene, pokeball);
 
                       const pbTint = scene.add.sprite(pokeball.x, pokeball.y, "pb", "pb");
@@ -445,7 +445,7 @@ export function trainerThrowPokeball(scene: BattleScene, pokemon: EnemyPokemon, 
 
 function failCatch(scene: BattleScene, pokemon: EnemyPokemon, originalY: number, pokeball: Phaser.GameObjects.Sprite, pokeballType: PokeballType) {
   return new Promise<void>(resolve => {
-    scene.playSound("pb_rel");
+    scene.playSound("se/pb_rel");
     pokemon.setY(originalY);
     if (pokemon.status?.effect !== StatusEffect.SLEEP) {
       pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
@@ -591,7 +591,7 @@ function removePb(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite) {
 
 export async function doPokemonFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise<void> {
   await new Promise<void>(resolve => {
-    scene.playSound("flee");
+    scene.playSound("se/flee");
     // Ease pokemon out
     scene.tweens.add({
       targets: pokemon,
@@ -634,4 +634,51 @@ export function doPlayerFlee(scene: BattleScene, pokemon: EnemyPokemon): Promise
       }
     });
   });
+}
+
+// Bug Species and their corresponding weights
+const GOLDEN_BUG_NET_SPECIES_POOL: [Species, number][] = [
+  [Species.SCYTHER, 40],
+  [Species.SCIZOR, 40],
+  [Species.KLEAVOR, 40],
+  [Species.PINSIR, 40],
+  [Species.HERACROSS, 40],
+  [Species.YANMA, 40],
+  [Species.YANMEGA, 40],
+  [Species.SHUCKLE, 40],
+  [Species.ANORITH, 40],
+  [Species.ARMALDO, 40],
+  [Species.ESCAVALIER, 40],
+  [Species.ACCELGOR, 40],
+  [Species.JOLTIK, 40],
+  [Species.GALVANTULA, 40],
+  [Species.DURANT, 40],
+  [Species.LARVESTA, 40],
+  [Species.VOLCARONA, 40],
+  [Species.DEWPIDER, 40],
+  [Species.ARAQUANID, 40],
+  [Species.WIMPOD, 40],
+  [Species.GOLISOPOD, 40],
+  [Species.SIZZLIPEDE, 40],
+  [Species.CENTISKORCH, 40],
+  [Species.NYMBLE, 40],
+  [Species.LOKIX, 40],
+  [Species.BUZZWOLE, 1],
+  [Species.PHEROMOSA, 1],
+];
+
+export function getGoldenBugNetSpecies(scene: BattleScene, waveIndex: integer, level: integer): PokemonSpecies {
+  const totalWeight = GOLDEN_BUG_NET_SPECIES_POOL.reduce((a, b) => a + b[1], 0);
+  const roll = randSeedInt(totalWeight);
+
+  let w = 0;
+  for (const species of GOLDEN_BUG_NET_SPECIES_POOL) {
+    w += species[1];
+    if (roll < w) {
+      return getPokemonSpecies(species);
+    }
+  }
+
+  // Defaults to Scyther
+  return getPokemonSpecies(GOLDEN_BUG_NET_SPECIES_POOL[0][0]);
 }

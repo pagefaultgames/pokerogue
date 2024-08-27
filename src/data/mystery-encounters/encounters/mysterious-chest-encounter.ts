@@ -15,7 +15,7 @@ const namespace = "mysteryEncounter:mysteriousChest";
 
 /**
  * Mysterious Chest encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/32 | GitHub Issue #32}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3796 | GitHub Issue #3796}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const MysteriousChestEncounter: MysteryEncounter =

@@ -31,6 +31,8 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { doTrainerExclamation } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
+import { randSeedInt } from "#app/utils";
+import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -89,7 +91,11 @@ export class EncounterPhase extends BattlePhase {
         if (battle.battleType === BattleType.TRAINER) {
           battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
         } else {
-          const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
+          let enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
+          // If player has golden bug net, rolls 10% chance to replace with species from the golden bug net bug pool
+          if (randSeedInt(10) === 0) {
+            enemySpecies = getGoldenBugNetSpecies(this.scene, battle.waveIndex, level);
+          }
           battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
           if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
             battle.enemyParty[e].ivs = new Array(6).fill(31);

@@ -25,7 +25,7 @@ const SOUND_EFFECT_WAIT_TIME = 700;
 
 /**
  * Trash to Treasure encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/74 | GitHub Issue #74}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3809 | GitHub Issue #3809}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const TrashToTreasureEncounter: MysteryEncounter =
@@ -177,7 +177,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
     }
   }
 
-  scene.playSound("item_fanfare");
+  scene.playSound("bgm/item_fanfare");
   await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2 " + leftovers.name }), undefined, true);
 
   // First Shell bell
@@ -204,17 +204,17 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
     }
   }
 
-  scene.playSound("item_fanfare");
+  scene.playSound("bgm/item_fanfare");
   await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2 " + shellBell.name }), undefined, true);
 }
 
 async function doGarbageDig(scene: BattleScene) {
-  scene.playSound("PRSFX- Dig2");
+  scene.playSound("battle-anims/PRSFX- Dig2");
   scene.time.delayedCall(SOUND_EFFECT_WAIT_TIME, () => {
-    scene.playSound("PRSFX- Dig2");
-    scene.playSound("PRSFX- Venom Drench", { volume: 2 });
+    scene.playSound("battle-anims/PRSFX- Dig2");
+    scene.playSound("battle-anims/PRSFX- Venom Drench", { volume: 2 });
   });
   scene.time.delayedCall(SOUND_EFFECT_WAIT_TIME * 2, () => {
-    scene.playSound("PRSFX- Dig2");
+    scene.playSound("battle-anims/PRSFX- Dig2");
   });
 }

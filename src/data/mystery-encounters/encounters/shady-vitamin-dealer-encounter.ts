@@ -19,7 +19,7 @@ const namespace = "mysteryEncounter:shadyVitaminDealer";
 
 /**
  * Shady Vitamin Dealer encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/34 | GitHub Issue #34}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3798 | GitHub Issue #3798}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const ShadyVitaminDealerEncounter: MysteryEncounter =
@@ -79,8 +79,8 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
             updatePlayerMoney(scene, -(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
             // Calculate modifiers and dialogue tokens
             const modifiers = [
-              generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER),
-              generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER),
+              generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER)!,
+              generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER)!,
             ];
             encounter.setDialogueToken("boost1", modifiers[0].name);
             encounter.setDialogueToken("boost2", modifiers[1].name);
@@ -162,8 +162,8 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
             updatePlayerMoney(scene, -(encounter.options[1].requirements[0] as MoneyRequirement).requiredMoney);
             // Calculate modifiers and dialogue tokens
             const modifiers = [
-              generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER),
-              generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER),
+              generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER)!,
+              generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER)!,
             ];
             encounter.setDialogueToken("boost1", modifiers[0].name);
             encounter.setDialogueToken("boost2", modifiers[1].name);

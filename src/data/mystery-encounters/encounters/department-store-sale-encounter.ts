@@ -17,7 +17,7 @@ const namespace = "mysteryEncounter:departmentStoreSale";
 
 /**
  * Department Store Sale encounter.
- * @see {@link https://github.com/AsdarDevelops/PokeRogue-Events/issues/33 | GitHub Issue #33}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3797 | GitHub Issue #3797}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
 export const DepartmentStoreSaleEncounter: MysteryEncounter =

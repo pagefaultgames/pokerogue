@@ -2104,5 +2104,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyTemplates(trainerPartyTemplates.ONE_AVG),
   [TrainerType.VITO]: new TrainerConfig(++t).setName("Vito").setTitle("The Winstrates")
     .setMoneyMultiplier(2)
-    .setPartyTemplates(new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(2, PartyMemberStrength.STRONG)))
+    .setPartyTemplates(new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE), new TrainerPartyTemplate(2, PartyMemberStrength.STRONG))),
+  [TrainerType.BUG_TYPE_SUPERFAN]: new TrainerConfig(++t).setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.ACE_TRAINER)
+    .setPartyTemplates(new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE))
 };

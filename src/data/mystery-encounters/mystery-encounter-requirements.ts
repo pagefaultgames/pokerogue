@@ -13,6 +13,8 @@ import { StatusEffect } from "../status-effect";
 import { Type } from "../type";
 import { WeatherType } from "../weather";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
+import { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
 
 export interface EncounterRequirement {
   meetsRequirement(scene: BattleScene): boolean; // Boolean to see if a requirement is met
@@ -420,11 +422,11 @@ export class TypeRequirement extends EncounterPokemonRequirement {
   meetsRequirement(scene: BattleScene): boolean {
     let partyPokemon = scene.getParty();
 
-    if (isNullOrUndefined(partyPokemon) || this?.requiredType?.length < 0) {
+    if (isNullOrUndefined(partyPokemon)) {
       return false;
     }
 
-    if (!this.excludeFainted) {
+    if (this.excludeFainted) {
       partyPokemon = partyPokemon.filter((pokemon) => !pokemon.isFainted());
     }
 
@@ -795,7 +797,7 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
 
   meetsRequirement(scene: BattleScene): boolean {
     const partyPokemon = scene.getParty();
-    if (isNullOrUndefined(partyPokemon) || this?.requiredHeldItemModifiers?.length < 0) {
+    if (isNullOrUndefined(partyPokemon)) {
       return false;
     }
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
@@ -820,6 +822,53 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
   getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
     const requiredItems = pokemon?.getHeldItems().filter((it) => {
       return this.requiredHeldItemModifiers.some(heldItem => it.constructor.name === heldItem);
+    });
+    if (requiredItems && requiredItems.length > 0) {
+      return ["heldItem", requiredItems[0].type.name];
+    }
+    return ["heldItem", ""];
+  }
+}
+
+export class AttackTypeBoosterHeldItemTypeRequirement extends EncounterPokemonRequirement {
+  requiredHeldItemTypes: Type[];
+  minNumberOfPokemon: number;
+  invertQuery: boolean;
+
+  constructor(heldItemTypes: Type | Type[], minNumberOfPokemon: number = 1, invertQuery: boolean = false) {
+    super();
+    this.minNumberOfPokemon = minNumberOfPokemon;
+    this.invertQuery = invertQuery;
+    this.requiredHeldItemTypes = Array.isArray(heldItemTypes) ? heldItemTypes : [heldItemTypes];
+  }
+
+  meetsRequirement(scene: BattleScene): boolean {
+    const partyPokemon = scene.getParty();
+    if (isNullOrUndefined(partyPokemon)) {
+      return false;
+    }
+    return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
+  }
+
+  queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
+    if (!this.invertQuery) {
+      return partyPokemon.filter((pokemon) => this.requiredHeldItemTypes.some((heldItemType) => {
+        return pokemon.getHeldItems().some((it) => {
+          return it instanceof AttackTypeBoosterModifier && (it.type as AttackTypeBoosterModifierType).moveType === heldItemType;
+        });
+      }));
+    } else {
+      // for an inverted query, we only want to get the pokemon that have any held items that are NOT in requiredHeldItemModifiers
+      // E.g. functions as a blacklist
+      return partyPokemon.filter((pokemon) => pokemon.getHeldItems().filter((it) => {
+        return !this.requiredHeldItemTypes.some(heldItemType => it instanceof AttackTypeBoosterModifier && (it.type as AttackTypeBoosterModifierType).moveType === heldItemType);
+      }).length > 0);
+    }
+  }
+
+  getDialogueToken(scene: BattleScene, pokemon?: PlayerPokemon): [string, string] {
+    const requiredItems = pokemon?.getHeldItems().filter((it) => {
+      return this.requiredHeldItemTypes.some(heldItemType => it instanceof AttackTypeBoosterModifier && (it.type as AttackTypeBoosterModifierType).moveType === heldItemType);
     });
     if (requiredItems && requiredItems.length > 0) {
       return ["heldItem", requiredItems[0].type.name];

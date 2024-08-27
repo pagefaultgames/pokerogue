@@ -150,8 +150,9 @@ async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number,
 /**
  * For any MysteryEncounter that has a battle, can call this to skip battle and proceed to MysteryEncounterRewardsPhase
  * @param game
+ * @param runRewardsPhase
  */
-export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManager) {
+export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManager, runRewardsPhase: boolean = true) {
   game.scene.clearPhaseQueue();
   game.scene.clearPhaseQueueSplice();
   game.scene.getEnemyParty().forEach(p => {
@@ -161,5 +162,5 @@ export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManage
   });
   game.scene.pushPhase(new VictoryPhase(game.scene, 0));
   game.phaseInterceptor.superEndPhase();
-  await game.phaseInterceptor.to(MysteryEncounterRewardsPhase, true);
+  await game.phaseInterceptor.to(MysteryEncounterRewardsPhase, runRewardsPhase);
 }

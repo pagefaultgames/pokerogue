@@ -841,7 +841,7 @@
       "2": "We're pulling out all the stops to put your Pokémon down."
     },
     "victory": {
-      "1": "At times we battle, and sometimes we team up...\n      $It's great how Trainers can interact."
+      "1": "At times we battle, and sometimes we team up...$It's great how Trainers can interact."
     },
     "defeat": {
       "1": "You put up quite the display.\nBetter luck next time."
@@ -857,7 +857,7 @@
   },
   "winstrates_victoria": {
     "encounter": {
-      "1": "My goodness! Aren't you young?\n      $You must be quite the trainer to beat my husband, though.\n      $Now I suppose it's my turn to battle!"
+      "1": "My goodness! Aren't you young?$You must be quite the trainer to beat my husband, though.$Now I suppose it's my turn to battle!"
     },
     "victory": {
       "1": "Uwah! Just how strong are you?!"
@@ -865,7 +865,7 @@
   },
   "winstrates_vivi": {
     "encounter": {
-      "1": "You're stronger than Mom? Wow!\n      $But I'm strong, too!\nReally! Honestly!"
+      "1": "You're stronger than Mom? Wow!$But I'm strong, too!\nReally! Honestly!"
     },
     "victory": {
       "1": "Huh? Did I really lose?\nSnivel... Grandmaaa!"
@@ -873,7 +873,7 @@
   },
   "winstrates_vicky": {
     "encounter": {
-      "1": "How dare you make my precious\ngranddaughter cry!\n      $I see I need to teach you a lesson.\nPrepare to feel the sting of defeat!"
+      "1": "How dare you make my precious\ngranddaughter cry!$I see I need to teach you a lesson.\nPrepare to feel the sting of defeat!"
     },
     "victory": {
       "1": "Whoa! So strong!\nMy granddaughter wasn't lying."
@@ -881,7 +881,7 @@
   },
   "winstrates_vito": {
     "encounter": {
-      "1": "I trained together with my whole family,\nevery one of us!\n      $I'm not losing to anyone!"
+      "1": "I trained together with my whole family,\nevery one of us!$I'm not losing to anyone!"
     },
     "victory": {
       "1": "I was better than everyone in my family.\nI've never lost before..."

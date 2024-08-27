@@ -24,6 +24,7 @@ import dancingLessonsDialogue from "#app/locales/en/mystery-encounters/dancing-l
 import weirdDreamDialogue from "#app/locales/en/mystery-encounters/weird-dream-dialogue.json";
 import theWinstrateChallengeDialogue from "#app/locales/en/mystery-encounters/the-winstrate-challenge-dialogue.json";
 import teleportingHijinksDialogue from "#app/locales/en/mystery-encounters/teleporting-hijinks-dialogue.json";
+import bugTypeSuperfanDialogue from "#app/locales/en/mystery-encounters/bug-type-superfan-dialogue.json";
 
 /**
  * Injection patterns that can be used:
@@ -43,12 +44,6 @@ import teleportingHijinksDialogue from "#app/locales/en/mystery-encounters/telep
 export const mysteryEncounter = {
   // DO NOT REMOVE
   "unit_test_dialogue": "{{test}}{{test}} {{test{{test}}}} {{test1}} {{test\}} {{test\\}} {{test\\\}} {test}}",
-
-  // General use content
-  "paid_money": "You paid ₽{{amount, number}}.",
-  "receive_money": "You received ₽{{amount, number}}!",
-  "affects_pokedex": "Affects Pokédex Data",
-  "cancel_option": "Return to encounter option select.",
 
   mysteriousChallengers: mysteriousChallengersDialogue,
   mysteriousChest: mysteriousChestDialogue,
@@ -75,5 +70,6 @@ export const mysteryEncounter = {
   dancingLessons: dancingLessonsDialogue,
   weirdDream: weirdDreamDialogue,
   theWinstrateChallenge: theWinstrateChallengeDialogue,
-  teleportingHijinks: teleportingHijinksDialogue
+  teleportingHijinks: teleportingHijinksDialogue,
+  bugTypeSuperfan: bugTypeSuperfanDialogue
 } as const;
