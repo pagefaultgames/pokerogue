@@ -15,6 +15,16 @@ enum Page {
   VOUCHERS
 }
 
+interface LanguageSetting {
+  TextSize: string,
+}
+
+const languageSettings: { [key: string]: LanguageSetting } = {
+  "de":{
+    TextSize: "80px"
+  }
+};
+
 export default class AchvsUiHandler extends MessageUiHandler {
   private readonly ROWS = 4;
   private readonly COLS = 17;
@@ -105,8 +115,13 @@ export default class AchvsUiHandler extends MessageUiHandler {
     titleBg.setOrigin(0, 0);
 
     this.titleText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
+    const textSize = languageSettings[i18next.language]?.TextSize ?? this.titleText.style.fontSize;
+    this.titleText.setFontSize(textSize);
     this.titleText.setOrigin(0, 0);
-    this.titleText.setPositionRelative(titleBg, 8, 4);
+    const titleBgCenterX = titleBg.x + titleBg.width / 2;
+    const titleBgCenterY = titleBg.y + titleBg.height / 2;
+    this.titleText.setOrigin(0.5, 0.5);
+    this.titleText.setPosition(titleBgCenterX, titleBgCenterY);
 
     const scoreBg = addWindow(this.scene, titleBg.x + titleBg.width, titleBg.y, 46, 24);
     scoreBg.setOrigin(0, 0);
@@ -211,12 +226,11 @@ export default class AchvsUiHandler extends MessageUiHandler {
       if (this.currentPage === Page.ACHIEVEMENTS) {
         this.currentPage = Page.VOUCHERS;
         this.updateVoucherIcons();
-        this.setCursor(0);
       } else if (this.currentPage === Page.VOUCHERS) {
         this.currentPage = Page.ACHIEVEMENTS;
         this.updateAchvIcons();
-        this.setCursor(0);
       }
+      this.setCursor(0, true);
       this.mainContainer.update();
     }
     if (button === Button.CANCEL) {
