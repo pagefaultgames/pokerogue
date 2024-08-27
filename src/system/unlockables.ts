@@ -17,7 +17,7 @@ export function isUnlocked(unlockable: Unlockables, gameData: GameData): boolean
   if (Overrides.DISABLE_UNLOCK_OVERRIDE.includes(unlockable)) {
     return false;
   }
-  return !!gameData.unlocks[Unlockables.MINI_BLACK_HOLE];
+  return gameData.unlocks[unlockable];
 }
 
 export function getUnlockableName(unlockable: Unlockables) {
