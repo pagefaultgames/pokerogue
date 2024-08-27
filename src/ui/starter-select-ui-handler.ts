@@ -915,7 +915,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.allSpecies.forEach((species, s) => {
         const icon = this.starterContainers[s].icon;
         const dexEntry = this.scene.gameData.dexData[species.speciesId];
-        this.starterPreferences[species.speciesId] = this.starterPreferences[species.speciesId] ?? {};
+
+        // Initialize the StarterAttributes for this species
+        this.starterPreferences[species.speciesId] = this.initStarterPrefs(species);
 
         if (dexEntry.caughtAttr) {
           icon.clearTint();
@@ -940,6 +942,82 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     return false;
+  }
+
+  /**
+   * Get the starter attributes for the given PokemonSpecies, after sanitizing them.
+   * If somehow a preference is set for a form, variant, gender, etc.
+   * that wasn't actually unlocked or is invalid it will be cleared here
+   *
+   * @param species The species to get Starter Preferences for
+   * @returns StarterAttributes for the species
+   */
+  initStarterPrefs(species: PokemonSpecies): StarterAttributes {
+    const starterAttributes = this.starterPreferences[species.speciesId];
+    const dexEntry = this.scene.gameData.dexData[species.speciesId];
+    const starterData = this.scene.gameData.starterData[species.speciesId];
+
+    // no preferences or Pokemon wasn't caught, return empty attribute
+    if (!starterAttributes || !dexEntry.caughtAttr) {
+      return {};
+    }
+
+    const caughtAttr = dexEntry.caughtAttr;
+
+    if (starterAttributes.shiny) {
+      if (!(caughtAttr & DexAttr.SHINY)) {
+        // shiny form wasn't unlocked, purging shiny and variant setting
+        delete starterAttributes.shiny;
+        delete starterAttributes.variant;
+      }
+    }
+    if (starterAttributes.variant && !isNaN(starterAttributes.variant)) {
+      if (![
+        caughtAttr & DexAttr.NON_SHINY,
+        caughtAttr & DexAttr.SHINY && caughtAttr & DexAttr.DEFAULT_VARIANT,
+        caughtAttr & DexAttr.SHINY && caughtAttr & DexAttr.VARIANT_2,
+        caughtAttr & DexAttr.SHINY && caughtAttr & DexAttr.VARIANT_3
+      ][starterAttributes.variant+1]) { // add 1 as -1 = non-shiny
+        // requested variant wasn't unlocked, purging setting
+        delete starterAttributes.variant;
+      }
+    }
+
+    if (starterAttributes.female && (typeof starterAttributes.female !== "boolean" ||
+      !(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE))) {
+      // requested gender wasn't unlocked, purging setting
+      delete starterAttributes.female;
+    }
+
+    const speciesHasSingleAbility = species.ability2 === species.ability1;
+    const abilityAttr = starterData.abilityAttr;
+    const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
+    const hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
+    const hasHiddenAbility = abilityAttr & AbilityAttr.ABILITY_HIDDEN;
+
+    // Due to a past bug it is possible that some Pokemon with a single ability have the ability2 flag
+    // In this case, we only count ability2 as valid if ability1 was not unlocked, otherwise we ignore it
+    if (starterAttributes.ability &&
+      ![hasAbility1,
+        speciesHasSingleAbility ? hasAbility2 && !hasAbility1 : hasAbility2,
+        hasHiddenAbility
+      ][starterAttributes.ability]) {
+      // requested ability wasn't unlocked, purging setting
+      delete starterAttributes.ability;
+    }
+
+    const selectedForm = starterAttributes.form;
+    if (selectedForm && (!species.forms[selectedForm]?.isStarterSelectable || !(caughtAttr & this.scene.gameData.getFormAttr(selectedForm)))) {
+      // requested form wasn't unlocked/isn't a starter form, purging setting
+      delete starterAttributes.form;
+    }
+
+    if (starterAttributes.nature && this.scene.gameData.getNaturesForAttr(dexEntry.natureAttr).indexOf(starterAttributes.nature as unknown as Nature) < 0) {
+      // requested nature wasn't unlocked, purging setting
+      delete starterAttributes.nature;
+    }
+
+    return starterAttributes;
   }
 
   /**
@@ -2577,56 +2655,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
 
     const starterAttributes : StarterAttributes | null = species ? {...this.starterPreferences[species.speciesId]} : null;
-    // validate starterAttributes
-    if (starterAttributes) {
-      // this may cause changes so we created a copy of the attributes before
-      if (starterAttributes.variant && !isNaN(starterAttributes.variant)) {
-        if (![
-          this.speciesStarterDexEntry!.caughtAttr & DexAttr.NON_SHINY, // TODO: is that bang correct?
-          this.speciesStarterDexEntry!.caughtAttr & DexAttr.DEFAULT_VARIANT, // TODO: is that bang correct?
-          this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_2, // TODO: is that bang correct?
-          this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3 // TODO: is that bang correct?
-        ][starterAttributes.variant+1]) { // add 1 as -1 = non-shiny
-          // requested variant wasn't unlocked, purging setting
-          delete starterAttributes.variant;
-        }
-      }
-
-      if (typeof starterAttributes.female !== "boolean" || !(starterAttributes.female ?
-        this.speciesStarterDexEntry!.caughtAttr & DexAttr.FEMALE : // TODO: is this bang correct?
-        this.speciesStarterDexEntry!.caughtAttr & DexAttr.MALE // TODO: is this bang correct?
-      )) {
-        // requested gender wasn't unlocked, purging setting
-        delete starterAttributes.female;
-      }
-
-      const abilityAttr = this.scene.gameData.starterData[species!.speciesId].abilityAttr; // TODO: is this bang correct?
-      if (![
-        abilityAttr & AbilityAttr.ABILITY_1,
-        species!.ability2 ? (abilityAttr & AbilityAttr.ABILITY_2) : abilityAttr & AbilityAttr.ABILITY_HIDDEN, // TODO: is this bang correct?
-        species!.ability2 && abilityAttr & AbilityAttr.ABILITY_HIDDEN // TODO: is this bang correct?
-      ][starterAttributes.ability!]) { // TODO: is this bang correct?
-        // requested ability wasn't unlocked, purging setting
-        delete starterAttributes.ability;
-      }
-
-      if (!(species?.forms[starterAttributes.form!]?.isStarterSelectable && this.speciesStarterDexEntry!.caughtAttr & this.scene.gameData.getFormAttr(starterAttributes.form!))) { // TODO: are those bangs correct?
-        // requested form wasn't unlocked/isn't a starter form, purging setting
-        delete starterAttributes.form;
-      }
-
-      if (this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr).indexOf(starterAttributes.nature as unknown as Nature) < 0) {
-        // requested nature wasn't unlocked, purging setting
-        delete starterAttributes.nature;
-      }
-    }
 
     if (starterAttributes?.nature) {
       // load default nature from stater save data, if set
       this.natureCursor = starterAttributes.nature;
     }
     if (starterAttributes?.ability && !isNaN(starterAttributes.ability)) {
-      // load default nature from stater save data, if set
+      // load default ability from stater save data, if set
       this.abilityCursor = starterAttributes.ability;
     }
 
@@ -2673,7 +2708,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonLuckText.setText(luck.toString());
         this.pokemonLuckText.setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
         this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
-        this.pokemonShinyIcon.setVisible(this.starterPreferences[species.speciesId]?.shiny ?? false);
+        this.pokemonShinyIcon.setVisible(starterAttributes?.shiny ?? false);
 
         //Growth translate
         let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
@@ -3361,16 +3396,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return canStart;
   }
 
-  /* this creates a temporary dex attr props that we use to check whether a pokemon is valid for a challenge.
-  * when checking for certain challenges (i.e. mono type), we need to check for form changes AND evolutions
-  * However, since some pokemon can evolve based on their intial gender/form, we need a way to look for that
-  * This temporary dex attr will therefore ONLY look at gender and form, since there's no cases of shinies/variants
-  * having different evolutions to their non shiny/variant part, and so those can be ignored
-  * Since the current form and gender is stored in the starter preferences, this is where we get the values from
-  */
+  /**
+   * Creates a temporary dex attr props that will be used to check whether a pokemon is valid for a challenge
+   * and to display the correct shiny, variant, and form based on the StarterPreferences
+   *
+   * @param speciesId the id of the species to get props for
+   * @returns the dex props
+   */
   getCurrentDexProps(speciesId: number): bigint {
     let props = 0n;
     const caughtAttr = this.scene.gameData.dexData[speciesId].caughtAttr;
+
     /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
      *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
      *  If neither of these pass, we add DexAttr.MALE to our temp props
