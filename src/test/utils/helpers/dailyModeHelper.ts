@@ -28,7 +28,7 @@ export class DailyModeHelper extends GameManagerHelper {
       uihandler.processInput(Button.ACTION); // select first slot. that's fine
     });
 
-    await this.game.phaseInterceptor.run(EncounterPhase);
+    await this.game.phaseInterceptor.to(EncounterPhase);
 
     if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
       this.game.removeEnemyHeldItems();
