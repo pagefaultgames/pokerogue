@@ -6681,7 +6681,7 @@ export function initMoves() {
       .attr(DestinyBondAttr)
       .condition((user, target, move) => {
         const lastTurnMove = user.getLastXMoves(1);
-        return turnMove.length === 0 || turnMove[0].move !== move.id || turnMove[0].result !== MoveResult.SUCCESS;
+        return lastTurnMove.length === 0 || lastTurnMove[0].move !== move.id || lastTurnMove[0].result !== MoveResult.SUCCESS;
       }),
     new StatusMove(Moves.PERISH_SONG, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(FaintCountdownAttr)
