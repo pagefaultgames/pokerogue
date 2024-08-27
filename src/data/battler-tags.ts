@@ -372,7 +372,7 @@ export class ConfusedTag extends BattlerTag {
  */
 export class DestinyBondTag extends BattlerTag {
   constructor(sourceMove: Moves, sourceId: number) {
-    super(BattlerTagType.DESTINY_BOND, BattlerTagLapseType.PRE_MOVE, 1, sourceMove, sourceId);
+    super(BattlerTagType.DESTINY_BOND, BattlerTagLapseType.PRE_MOVE, 1, sourceMove, sourceId, true);
   }
 
   /**
@@ -1605,7 +1605,7 @@ export class CursedTag extends BattlerTag {
  */
 export class GroundedTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
-    super(tagType, lapseType, 1, sourceMove, undefined, true);
+    super(tagType, lapseType, 1, sourceMove);
   }
 }
 
@@ -1804,7 +1804,7 @@ export class ExposedTag extends BattlerTag {
   private allowedTypes: Type[];
 
   constructor(tagType: BattlerTagType, sourceMove: Moves, defenderType: Type, allowedTypes: Type[]) {
-    super(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove, undefined, true);
+    super(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove);
     this.defenderType = defenderType;
     this.allowedTypes = allowedTypes;
   }
