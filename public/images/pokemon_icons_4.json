@@ -1522,7 +1522,7 @@
 					}
 				},
 				{
-					"filename": "450-f",
+					"filename": "450",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1645,6 +1645,27 @@
 						"y": 149,
 						"w": 30,
 						"h": 23
+					}
+				},
+				{
+					"filename": "424_1",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 3,
+						"w": 29,
+						"h": 25
+					},
+					"frame": {
+						"x": 120,
+						"y": 149,
+						"w": 29,
+						"h": 25
 					}
 				},
 				{
@@ -2740,7 +2761,7 @@
 					}
 				},
 				{
-					"filename": "450",
+					"filename": "450-f",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2845,7 +2866,7 @@
 					}
 				},
 				{
-					"filename": "450s-f",
+					"filename": "450s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2887,7 +2908,7 @@
 					}
 				},
 				{
-					"filename": "450s",
+					"filename": "450s-f",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5029,7 +5050,7 @@
 					}
 				},
 				{
-					"filename": "449-f",
+					"filename": "449",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5092,7 +5113,7 @@
 					}
 				},
 				{
-					"filename": "449",
+					"filename": "449-f",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5134,7 +5155,7 @@
 					}
 				},
 				{
-					"filename": "449s-f",
+					"filename": "449s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5407,7 +5428,7 @@
 					}
 				},
 				{
-					"filename": "449s",
+					"filename": "449s-f",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -6231,6 +6252,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:840d25653028f4586676114238d98794:576800da918eeca99e7b1b1a0d84af42:3f74c54ad2b3085ce7282c3466535f4a$"
+		"smartupdate": "$TexturePacker:SmartUpdate:b4b98161b1f6d86135dc671aff2b6d8a:4ca054d2a7d475da30cbada037aa3a4e:3f74c54ad2b3085ce7282c3466535f4a$"
 	}
 }

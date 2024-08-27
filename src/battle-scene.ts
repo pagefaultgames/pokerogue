@@ -1,11 +1,10 @@
 import Phaser from "phaser";
 import UI from "./ui/ui";
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase, SummonPhase, ToggleDoublePositionPhase } from "./phases";
 import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import { Constructor } from "#app/utils";
 import * as Utils from "./utils";
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, TurnHeldItemTransferModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "./data/battle-anims";
 import { Phase } from "./phase";
@@ -16,7 +15,7 @@ import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { allMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, modifierTypes } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
-import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
+import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, ChangeMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig } from "./battle";
 import { GameMode, GameModes, getGameMode } from "./game-mode";
@@ -37,8 +36,8 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import { addUiThemeOverrides } from "./ui/ui-theme";
 import PokemonData from "./system/pokemon-data";
 import { Nature } from "./data/nature";
-import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from "./data/pokemon-forms";
-import { FormChangePhase, QuietFormChangePhase } from "./form-change-phase";
+import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges, FormChangeItem, SpeciesFormChange } from "./data/pokemon-forms";
+import { FormChangePhase } from "./phases/form-change-phase";
 import { getTypeRgb } from "./data/type";
 import PokemonSpriteSparkleHandler from "./field/pokemon-sprite-sparkle-handler";
 import CharSprite from "./ui/char-sprite";
@@ -50,12 +49,11 @@ import CandyBar from "./ui/candy-bar";
 import { Variant, variantData } from "./data/variant";
 import { Localizable } from "#app/interfaces/locales";
 import Overrides from "#app/overrides";
-import {InputsController} from "./inputs-controller";
-import {UiInputs} from "./ui-inputs";
+import { InputsController } from "./inputs-controller";
+import { UiInputs } from "./ui-inputs";
 import { NewArenaEvent } from "./events/battle-scene";
 import { ArenaFlyout } from "./ui/arena-flyout";
 import { EaseType } from "#enums/ease-type";
-import { Abilities } from "#enums/abilities";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
 import { Biome } from "#enums/biome";
@@ -67,9 +65,25 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
-import {TrainerType} from "#enums/trainer-type";
+import { TrainerType } from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
 import { LoadingScene } from "./loading-scene";
+import { LevelCapPhase } from "./phases/level-cap-phase";
+import { LoginPhase } from "./phases/login-phase";
+import { MessagePhase } from "./phases/message-phase";
+import { MovePhase } from "./phases/move-phase";
+import { NewBiomeEncounterPhase } from "./phases/new-biome-encounter-phase";
+import { NextEncounterPhase } from "./phases/next-encounter-phase";
+import { QuietFormChangePhase } from "./phases/quiet-form-change-phase";
+import { ReturnPhase } from "./phases/return-phase";
+import { SelectBiomePhase } from "./phases/select-biome-phase";
+import { ShowTrainerPhase } from "./phases/show-trainer-phase";
+import { SummonPhase } from "./phases/summon-phase";
+import { SwitchPhase } from "./phases/switch-phase";
+import { TitlePhase } from "./phases/title-phase";
+import { ToggleDoublePositionPhase } from "./phases/toggle-double-position-phase";
+import { TurnInitPhase } from "./phases/turn-init-phase";
+import { ShopCursorTarget } from "./enums/shop-cursor-target";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -110,10 +124,13 @@ export default class BattleScene extends SceneBase {
   public lastSavePlayTime: integer | null = null;
   public masterVolume: number = 0.5;
   public bgmVolume: number = 1;
+  public fieldVolume: number = 1;
   public seVolume: number = 1;
+  public uiVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
+  public shopCursorTarget: number = ShopCursorTarget.CHECK_TEAM;
   public showMovesetFlyout: boolean = true;
   public showArenaFlyout: boolean = true;
   public showTimeOfDayWidget: boolean = true;
@@ -792,10 +809,11 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
+   * @param isEnemy Whether to return the enemy's modifier bar
    * @returns {ModifierBar}
    */
-  getModifierBar(): ModifierBar {
-    return this.modifierBar;
+  getModifierBar(isEnemy?: boolean): ModifierBar {
+    return isEnemy ? this.enemyModifierBar : this.modifierBar;
   }
 
   // store info toggles to be accessible by the ui
@@ -944,7 +962,7 @@ export default class BattleScene extends SceneBase {
   }
 
   randBattleSeedInt(range: integer, min: integer = 0): integer {
-    return this.currentBattle.randSeedInt(this, range, min);
+    return this.currentBattle?.randSeedInt(this, range, min);
   }
 
   reset(clearScene: boolean = false, clearData: boolean = false, reloadI18n: boolean = false): void {
@@ -1086,7 +1104,7 @@ export default class BattleScene extends SceneBase {
         } else if (trainerConfigs[trainerType].hasDouble) {
           const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
           this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
-          playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
+          playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, false, doubleChance));
           doubleTrainer = !Utils.randSeedInt(doubleChance.value);
           // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
           if (trainerConfigs[trainerType].trainerTypeDouble && ![ TrainerType.TATE, TrainerType.LIZA ].includes(trainerType)) {
@@ -1102,7 +1120,7 @@ export default class BattleScene extends SceneBase {
       if (newBattleType === BattleType.WILD && !this.gameMode.isWaveFinal(newWaveIndex)) {
         const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
         this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
-        playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
+        playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, false, doubleChance));
         newDouble = !Utils.randSeedInt(doubleChance.value);
       } else if (newBattleType === BattleType.TRAINER) {
         newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
@@ -1153,12 +1171,6 @@ export default class BattleScene extends SceneBase {
         playerField.forEach((_, p) => this.pushPhase(new ReturnPhase(this, p)));
 
         for (const pokemon of this.getParty()) {
-          // Only trigger form change when Eiscue is in Noice form
-          // Hardcoded Eiscue for now in case it is fused with another pokemon
-          if (pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE) && pokemon.formIndex === 1) {
-            this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
-          }
-
           pokemon.resetBattleData();
           applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
         }
@@ -1510,7 +1522,7 @@ export default class BattleScene extends SceneBase {
       return;
     }
     const formattedMoney = Utils.formatMoney(this.moneyFormat, this.money);
-    this.moneyText.setText(`₽${formattedMoney}`);
+    this.moneyText.setText(i18next.t("battleScene:moneyOwned", { formattedMoney }));
     this.fieldUI.moveAbove(this.moneyText, this.luckText);
     if (forceVisible) {
       this.moneyText.setVisible(true);
@@ -1619,7 +1631,7 @@ export default class BattleScene extends SceneBase {
 
   randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean, speciesFilter?: PokemonSpeciesFilter, filterAllEvolutions?: boolean): PokemonSpecies {
     if (fromArenaPool) {
-      return this.arena.randomSpecies(waveIndex, level, undefined , getPartyLuckValue(this.party));
+      return this.arena.randomSpecies(waveIndex, level, undefined, getPartyLuckValue(this.party));
     }
     const filteredSpecies = speciesFilter ? [...new Set(allSpecies.filter(s => s.isCatchable()).filter(speciesFilter).map(s => {
       if (!filterAllEvolutions) {
@@ -1738,8 +1750,26 @@ export default class BattleScene extends SceneBase {
 
   updateSoundVolume(): void {
     if (this.sound) {
-      for (const sound of this.sound.getAllPlaying()) {
-        (sound as AnySound).setVolume(this.masterVolume * (this.bgmCache.has(sound.key) ? this.bgmVolume : this.seVolume));
+      for (const sound of this.sound.getAllPlaying() as AnySound[]) {
+        if (this.bgmCache.has(sound.key)) {
+          sound.setVolume(this.masterVolume * this.bgmVolume);
+        } else {
+          const soundDetails = sound.key.split("/");
+          switch (soundDetails[0]) {
+
+          case "battle_anims":
+          case "cry":
+            if (soundDetails[1].startsWith("PRSFX- ")) {
+              sound.setVolume(this.masterVolume*this.fieldVolume*0.5);
+            } else {
+              sound.setVolume(this.masterVolume*this.fieldVolume);
+            }
+            break;
+          case "se":
+          case "ui":
+            sound.setVolume(this.masterVolume*this.seVolume);
+          }
+        }
       }
     }
   }
@@ -1758,25 +1788,42 @@ export default class BattleScene extends SceneBase {
   }
 
   playSound(sound: string | AnySound, config?: object): AnySound {
-    if (config) {
-      if (config.hasOwnProperty("volume")) {
-        config["volume"] *= this.masterVolume * this.seVolume;
-      } else {
+    const key = typeof sound === "string" ? sound : sound.key;
+    config = config ?? {};
+    try {
+      const keyDetails = key.split("/");
+      switch (keyDetails[0]) {
+      case "level_up_fanfare":
+      case "item_fanfare":
+      case "minor_fanfare":
+      case "heal":
+      case "evolution":
+      case "evolution_fanfare":
+        // These sounds are loaded in as BGM, but played as sound effects
+        // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
+        config["volume"] = this.masterVolume * this.bgmVolume;
+        break;
+      case "battle_anims":
+      case "cry":
+        config["volume"] = this.masterVolume * this.fieldVolume;
+        //PRSFX sound files are unusually loud
+        if (key.startsWith("PRSFX- ")) {
+          config["volume"] *= 0.5;
+        }
+        break;
+      case "ui":
+        //As of, right now this applies to the "select", "menu_open", "error" sound effects
+        config["volume"] = this.masterVolume * this.uiVolume;
+        break;
+      case "se":
         config["volume"] = this.masterVolume * this.seVolume;
+        break;
       }
-    } else {
-      config = { volume: this.masterVolume * this.seVolume };
-    }
-    // PRSFX sounds are mixed too loud
-    if ((typeof sound === "string" ? sound : sound.key).startsWith("PRSFX- ")) {
-      config["volume"] *= 0.5;
-    }
-    if (typeof sound === "string") {
-      this.sound.play(sound, config);
-      return this.sound.get(sound) as AnySound;
-    } else {
-      sound.play(config);
-      return sound;
+      this.sound.play(key, config);
+      return this.sound.get(key) as AnySound;
+    } catch {
+      console.log(`${key} not found`);
+      return sound as AnySound;
     }
   }
 
@@ -1887,6 +1934,8 @@ export default class BattleScene extends SceneBase {
       return 22.770;
     case "battle_legendary_dia_pal": //ORAS Dialga & Palkia Battle
       return 16.009;
+    case "battle_legendary_origin_forme": //LA Origin Dialga & Palkia Battle
+      return 18.961;
     case "battle_legendary_giratina": //ORAS Giratina Battle
       return 10.451;
     case "battle_legendary_arceus": //HGSS Arceus Battle
@@ -1915,6 +1964,8 @@ export default class BattleScene extends SceneBase {
       return 12.503;
     case "battle_legendary_calyrex": //SWSH Calyrex Battle
       return 50.641;
+    case "battle_legendary_riders": //SWSH Ice & Shadow Rider Calyrex Battle
+      return 18.155;
     case "battle_legendary_birds_galar": //SWSH Galarian Legendary Birds Battle
       return 0.175;
     case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
@@ -2128,7 +2179,7 @@ export default class BattleScene extends SceneBase {
 
   pushMovePhase(movePhase: MovePhase, priorityOverride?: integer): void {
     const movePriority = new Utils.IntegerHolder(priorityOverride !== undefined ? priorityOverride : movePhase.move.getMove().priority);
-    applyAbAttrs(IncrementMovePriorityAbAttr, movePhase.pokemon, null, movePhase.move.getMove(), movePriority);
+    applyAbAttrs(ChangeMovePriorityAbAttr, movePhase.pokemon, null, false, movePhase.move.getMove(), movePriority);
     const lowerPriorityPhase = this.phaseQueue.find(p => p instanceof MovePhase && p.move.getMove().priority < movePriority.value);
     if (lowerPriorityPhase) {
       this.phaseQueue.splice(this.phaseQueue.indexOf(lowerPriorityPhase), 0, movePhase);
@@ -2222,7 +2273,7 @@ export default class BattleScene extends SceneBase {
           }
         } else if (!virtual) {
           const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
-          this.queueMessage(`The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, undefined, true);
+          this.queueMessage(i18next.t("battle:itemStackFull", { fullItemName: modifier.type.name, itemName: defaultModifierType.name }), undefined, true);
           return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant).then(success => resolve(success));
         }
 
@@ -2403,7 +2454,7 @@ export default class BattleScene extends SceneBase {
       }
 
       party.forEach((enemyPokemon: EnemyPokemon, i: integer) => {
-        const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer?.config.isBoss);
+        const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && !!this.currentBattle.trainer?.config.isBoss);
         let upgradeChance = 32;
         if (isBoss) {
           upgradeChance /= 2;
@@ -2411,7 +2462,7 @@ export default class BattleScene extends SceneBase {
         if (isFinalBoss) {
           upgradeChance /= 8;
         }
-        const modifierChance = this.gameMode.getEnemyModifierChance(isBoss!); // TODO: is this bang correct?
+        const modifierChance = this.gameMode.getEnemyModifierChance(isBoss);
         let pokemonModifierChance = modifierChance;
         if (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer)
           pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i)); // eslint-disable-line
@@ -2427,7 +2478,6 @@ export default class BattleScene extends SceneBase {
         getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance)
           .map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
       });
-
       this.updateModifiers(false).then(() => resolve());
     });
   }
@@ -2582,7 +2632,23 @@ export default class BattleScene extends SceneBase {
 
   triggerPokemonFormChange(pokemon: Pokemon, formChangeTriggerType: Constructor<SpeciesFormChangeTrigger>, delayed: boolean = false, modal: boolean = false): boolean {
     if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)) {
-      const matchingFormChange = pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon));
+
+      // in case this is NECROZMA, determine which forms this
+      const matchingFormChangeOpts = pokemonFormChanges[pokemon.species.speciesId].filter(fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon));
+      let matchingFormChange: SpeciesFormChange | null;
+      if (pokemon.species.speciesId === Species.NECROZMA && matchingFormChangeOpts.length > 1) {
+        // Ultra Necrozma is changing its form back, so we need to figure out into which form it devolves.
+        const formChangeItemModifiers = (this.findModifiers(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id) as PokemonFormChangeItemModifier[]).filter(m => m.active).map(m => m.formChangeItem);
+
+
+        matchingFormChange = formChangeItemModifiers.includes(FormChangeItem.N_LUNARIZER) ?
+          matchingFormChangeOpts[0] :
+          formChangeItemModifiers.includes(FormChangeItem.N_SOLARIZER) ?
+            matchingFormChangeOpts[1] :
+            null;
+      } else {
+        matchingFormChange = matchingFormChangeOpts[0];
+      }
       if (matchingFormChange) {
         let phase: Phase;
         if (pokemon instanceof PlayerPokemon && !matchingFormChange.quiet) {
@@ -2643,7 +2709,8 @@ export default class BattleScene extends SceneBase {
       wave: this.currentBattle?.waveIndex || 0,
       party: this.party ? this.party.map(p => {
         return { name: p.name, level: p.level };
-      }) : []
+      }) : [],
+      modeChain: this.ui?.getModeChain() ?? [],
     };
     (window as any).gameInfo = gameInfo;
   }
@@ -2656,7 +2723,9 @@ export default class BattleScene extends SceneBase {
     if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
       this.fadeOutBgm(Utils.fixedInt(2000), false);
       this.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.species.name, undefined, () => {
-        this.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
+        const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as TurnHeldItemTransferModifier;
+        finalBossMBH.setTransferrableFalse();
+        this.addEnemyModifier(finalBossMBH, false, true);
         pokemon.generateAndPopulateMoveset(1);
         this.setFieldScale(0.75);
         this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);

@@ -23,6 +23,14 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2024, 5, 23, 0)),
     bannerFilename: "pride-update"
   },
+  {
+    name: "August Variant Update",
+    eventType: EventType.SHINY,
+    shinyMultiplier: 2,
+    startDate: new Date(Date.UTC(2024, 7, 16, 0)),
+    endDate: new Date(Date.UTC(2024, 7, 22, 0)),
+    bannerFilename: "august-variant-update"
+  }
 ];
 
 export class TimedEventManager {
@@ -77,22 +85,23 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   setup() {
+    console.log(this.event?.bannerFilename);
     this.banner = new Phaser.GameObjects.Image(this.scene, 29, 64, this.event!.bannerFilename!); // TODO: are the bangs correct here?
     this.banner.setName("img-event-banner");
-    this.banner.setOrigin(0, 0);
-    this.banner.setScale(0.07);
-    this.bannerShadow = new Phaser.GameObjects.Rectangle(
-      this.scene,
-      this.banner.x - 2,
-      this.banner.y + 2,
-      this.banner.width,
-      this.banner.height,
-      0x484848
-    );
-    this.bannerShadow.setName("rect-event-banner-shadow");
-    this.bannerShadow.setScale(0.07);
-    this.bannerShadow.setAlpha(0.5);
-    this.bannerShadow.setOrigin(0,0);
+    this.banner.setOrigin(0.08, -0.35);
+    this.banner.setScale(0.18);
+    // this.bannerShadow = new Phaser.GameObjects.Rectangle(
+    //   this.scene,
+    //   this.banner.x - 2,
+    //   this.banner.y + 2,
+    //   this.banner.width,
+    //   this.banner.height,
+    //   0x484848
+    // );
+    // this.bannerShadow.setName("rect-event-banner-shadow");
+    // this.bannerShadow.setScale(0.07);
+    // this.bannerShadow.setAlpha(0.5);
+    // this.bannerShadow.setOrigin(0,0);
     this.eventTimerText = addTextObject(
       this.scene,
       this.banner.x + 8,
@@ -102,9 +111,12 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     );
     this.eventTimerText.setName("text-event-timer");
     this.eventTimerText.setScale(0.15);
-    this.eventTimerText.setOrigin(0,0);
+    this.eventTimerText.setOrigin(0, 0);
 
-    this.add([this.eventTimerText, this.bannerShadow, this.banner]);
+    this.add([
+      this.eventTimerText,
+      // this.bannerShadow,
+      this.banner]);
   }
 
   show() {
