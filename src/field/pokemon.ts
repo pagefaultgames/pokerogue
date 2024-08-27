@@ -2737,6 +2737,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       break;
     case StatusEffect.SLEEP:
       if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.ELECTRIC) {
+        if (!quiet) {
+          this.scene.queueMessage(i18next.t("terrain:defaultBlockMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(this), terrainName: getTerrainName(TerrainType.ELECTRIC) }));
+        }
         return false;
       }
       break;
@@ -2767,14 +2770,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   trySetStatus(effect: StatusEffect | undefined, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, cureTurn: integer | null = 0, sourceText: string | null = null): boolean {
     if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
-      switch (effect) {
-      case StatusEffect.SLEEP:
-        if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.ELECTRIC) {
-          this.scene.queueMessage(i18next.t("terrain:defaultBlockMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(this), terrainName: getTerrainName(TerrainType.ELECTRIC) }));
-          return false;
-        }
-        break;
-      }
       return false;
     }
 
