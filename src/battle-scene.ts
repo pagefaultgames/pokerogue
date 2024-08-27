@@ -1807,7 +1807,7 @@ export default class BattleScene extends SceneBase {
       case "cry":
         config["volume"] = this.masterVolume * this.fieldVolume;
         //PRSFX sound files are unusually loud
-        if (key.startsWith("PRSFX- ")) {
+        if (keyDetails[1].startsWith("PRSFX- ")) {
           config["volume"] *= 0.5;
         }
         break;
