@@ -281,6 +281,10 @@ export function setCookie(cName: string, cValue: string): void {
 }
 
 export function removeCookie(cName: string): void {
+  if (isBeta) {
+    document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=pokerogue.net;Path=/;Max-Age=-1`; // we need to remove the cookie from the main domain as well
+  }
+
   document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Max-Age=-1`;
   document.cookie = `${cName}=;Secure;SameSite=Strict;Path=/;Max-Age=-1`; // legacy cookie without domain, for older cookies to prevent a login loop
 }
@@ -547,4 +551,35 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
     return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
   }
   return null;
+}
+
+/**
+ * Returns if an object is null or undefined
+ * @param object
+ */
+export function isNullOrUndefined(object: any): boolean {
+  return null === object || undefined === object;
+}
+
+/**
+ * This function is used in the context of a Pokémon battle game to calculate the actual integer damage value from a float result.
+ * Many damage calculation formulas involve various parameters and result in float values.
+ * The actual damage applied to a Pokémon's HP must be an integer.
+ * This function helps in ensuring that by flooring the float value and enforcing a minimum damage value.
+ *
+ * @param value - The float value to convert.
+ * @param minValue - The minimum integer value to return. Defaults to 1.
+ * @returns The converted value as an integer.
+ */
+export function toDmgValue(value: number, minValue: number = 1) {
+  return Math.max(Math.floor(value), minValue);
+}
+
+/**
+ * Helper method to localize a sprite key (e.g. for types)
+ * @param baseKey the base key of the sprite (e.g. `type`)
+ * @returns the localized sprite key
+ */
+export function getLocalizedSpriteKey(baseKey: string) {
+  return `${baseKey}${verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
 }

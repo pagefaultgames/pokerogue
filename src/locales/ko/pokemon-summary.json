@@ -1,0 +1,17 @@
+{
+  "pokemonInfo": "스테이터스",
+  "status": "상태 이상",
+  "powerAccuracyCategory": "위력\n명중\n분류",
+  "type": "타입",
+  "unknownTrainer": "알수없음",
+  "ot": "어버이",
+  "nature": "성격",
+  "expPoints": "현재 경험치",
+  "nextLv": "다음 레벨까지",
+  "cancel": "그만둔다",
+  "memoString": "{{natureFragment}}.\n{{metFragment}}",
+  "metFragment": {
+    "normal": "{{biome}}에서\n레벨 {{level}}일 때 만났다.",
+    "apparently": "{{biome}}에서\n레벨 {{level}}일 때 만난 것 같다."
+  }
+}
