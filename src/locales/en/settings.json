@@ -63,6 +63,7 @@
   "bgmVolume": "BGM Volume",
   "fieldVolume": "Field Volume",
   "seVolume": "SE Volume",
+  "uiVolume": "UI Volume",
   "musicPreference": "Music Preference",
   "mixed": "Mixed",
   "gamepadPleasePlug": "Please Plug in a Gamepad or Press a Button",
