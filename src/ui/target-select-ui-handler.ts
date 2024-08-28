@@ -118,7 +118,7 @@ export default class TargetSelectUiHandler extends UiHandler {
 
     this.targetFlashTween = this.scene.tweens.add({
       targets: this.targetsHighlighted,
-      key: { start: 0.55, to: 1 },
+      key: { start: 1, to: 0.25 },
       loop: -1,
       loopDelay: 150,
       duration: Utils.fixedInt(450),

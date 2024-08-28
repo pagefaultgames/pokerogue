@@ -5,9 +5,8 @@ import * as Utils from "../utils";
 import i18next from "i18next";
 
 type argsAjustText = {
-  padding?: number;
-  ignoreTextBalance?: Array<string> | "all";
-  ignoreLanguages?: Array<string>;
+  ignoreTextBalance?:Array<string>|"all";
+  ignoreLanguages?:Array<string>;
 };
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
@@ -236,18 +235,15 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       textObject.setWordWrapWidth(maxWidth * 0.65);
     }
 
-    // If is very near to border add "padding", not need if border container appareance is nice
-    const padding = opts.padding ?? 0;
-
     // Text ajust
-    if (textWrapped().length > textObject.style.maxLines || (textSize().width + padding) > maxWidth) {
+    if (textWrapped().length > textObject.style.maxLines || (textSize().width + textObject.x) > maxWidth) {
 
       let fontDecrement = fontSize;
-      while (textWrapped().length > textObject.style.maxLines || (textSize().width + padding) > maxWidth) {
+      while (textWrapped().length > textObject.style.maxLines || (textSize().width + textObject.x) > maxWidth) {
         fontDecrement -= 1;
         textObject.setFontSize(fontDecrement);
       }
-      textObject.setFontSize(fontDecrement - padding / 2);
+      textObject.setFontSize(fontDecrement - textObject.x / 2);
 
     }
   }

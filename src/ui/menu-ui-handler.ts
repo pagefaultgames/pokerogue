@@ -8,7 +8,7 @@ import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui
 import { Tutorial, handleTutorial } from "../tutorial";
 import { loggedInUser, updateUserInfo } from "../account";
 import i18next from "i18next";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 
@@ -16,7 +16,7 @@ enum MenuOptions {
   GAME_SETTINGS,
   ACHIEVEMENTS,
   STATS,
-  VOUCHERS,
+  RUN_HISTORY,
   EGG_LIST,
   EGG_GACHA,
   MANAGE_DATA,
@@ -70,7 +70,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   setup(): void {
     const ui = this.getUi();
     // wiki url directs based on languges available on wiki
-    const lang = i18next.resolvedLanguage?.substring(0,2)!; // TODO: is this bang correct?
+    const lang = i18next.resolvedLanguage?.substring(0, 2)!; // TODO: is this bang correct?
     if (["de", "fr", "ko", "zh"].includes(lang)) {
       wikiUrl = `https://wiki.pokerogue.net/${lang}:start`;
     }
@@ -86,7 +86,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.menuOverlay = new Phaser.GameObjects.Rectangle(this.scene, -1, -1, this.scene.scaledCanvas.width, this.scene.scaledCanvas.height, 0xffffff, 0.3);
     this.menuOverlay.setName("menu-overlay");
-    this.menuOverlay.setOrigin(0,0);
+    this.menuOverlay.setOrigin(0, 0);
     this.menuContainer.add(this.menuOverlay);
 
     this.menuContainer.add(this.bgmBar);
@@ -98,7 +98,6 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   render() {
     const ui = this.getUi();
-    console.log(ui.getModeChain());
     this.excludedMenus = () => [
       { condition: ![Mode.COMMAND, Mode.TITLE].includes(ui.getModeChain()[0]), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
       { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ] }
@@ -143,7 +142,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
     menuMessageText.setName("menu-message");
     menuMessageText.setOrigin(0, 0);
-    menuMessageText.setWordWrapWidth(menuMessageBox.getBounds().width - this.menuBg.width * 0.04);
+    menuMessageText.setWordWrapWidth(menuMessageBox.getBounds().width * 0.95);
 
     this.menuMessageBoxContainer.add(menuMessageText);
     this.message = menuMessageText;
@@ -174,7 +173,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               return true;
             }
           }]),
-          xOffset: 98
+          xOffset: this.menuBg.width
         };
         ui.setOverlayMode(Mode.MENU_OPTION_SELECT, config);
       });
@@ -207,6 +206,22 @@ export default class MenuUiHandler extends MessageUiHandler {
             i => dataSlots.indexOf(i) > -1,
             slotId => this.scene.gameData.tryExportData(GameDataType.SESSION, slotId));
         });
+        return true;
+      },
+      keepOpen: true
+    });
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:importRunHistory"),
+      handler: () => {
+        this.scene.gameData.importData(GameDataType.RUN_HISTORY);
+        return true;
+      },
+      keepOpen: true
+    });
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:exportRunHistory"),
+      handler: () => {
+        this.scene.gameData.tryExportData(GameDataType.RUN_HISTORY);
         return true;
       },
       keepOpen: true
@@ -254,10 +269,11 @@ export default class MenuUiHandler extends MessageUiHandler {
       keepOpen: true
     });
 
+    //Thank you Vassiat
     this.manageDataConfig = {
       xOffset: this.menuBg.width,
-      yOffset: 0,
-      options: manageDataOptions
+      options: manageDataOptions,
+      maxOptions: 7
     };
 
     const communityOptions: OptionSelectItem[] = [
@@ -326,7 +342,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.getUi().hideTooltip();
 
-    this.scene.playSound("menu_open");
+    this.scene.playSound("ui/menu_open");
 
     handleTutorial(this.scene, Tutorial.Menu);
 
@@ -368,8 +384,8 @@ export default class MenuUiHandler extends MessageUiHandler {
         ui.setOverlayMode(Mode.GAME_STATS);
         success = true;
         break;
-      case MenuOptions.VOUCHERS:
-        ui.setOverlayMode(Mode.VOUCHERS);
+      case MenuOptions.RUN_HISTORY:
+        ui.setOverlayMode(Mode.RUN_HISTORY);
         success = true;
         break;
       case MenuOptions.EGG_LIST:
@@ -389,7 +405,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         break;
       case MenuOptions.MANAGE_DATA:
         if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === i18next.t("menuUiHandler:linkDiscord") || o.label === i18next.t("menuUiHandler:unlinkDiscord"))) {
-          this.manageDataConfig.options.splice(this.manageDataConfig.options.length-1,0,
+          this.manageDataConfig.options.splice(this.manageDataConfig.options.length-1, 0,
             {
               label: loggedInUser?.discordId === "" ? i18next.t("menuUiHandler:linkDiscord") : i18next.t("menuUiHandler:unlinkDiscord"),
               handler: () => {
@@ -518,7 +534,6 @@ export default class MenuUiHandler extends MessageUiHandler {
   showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
     this.menuMessageBoxContainer.setVisible(!!text);
     this.adjustText(text, this.message, this.messageBoxBg.getBounds().width, {
-      padding: this.message.x,
       ignoreTextBalance: "all"
     });
 
