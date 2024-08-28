@@ -28,17 +28,16 @@ describe("Boss Pokemon / Shields", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
-    game.override.disableTrainerWaves();
-    game.override.disableCrits();
-
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyMoveset(SPLASH_ONLY);
-    game.override.enemyHeldItems([]);
-
-    game.override.startingLevel(1000);
-    game.override.moveset([Moves.FALSE_SWIPE, Moves.SUPER_FANG, Moves.SPLASH]);
-    game.override.ability(Abilities.NO_GUARD);
+    game.override
+      .battleType("single")
+      .disableTrainerWaves()
+      .disableCrits()
+      .enemySpecies(Species.RATTATA)
+      .enemyMoveset(SPLASH_ONLY)
+      .enemyHeldItems([])
+      .startingLevel(1000)
+      .moveset([Moves.FALSE_SWIPE, Moves.SUPER_FANG, Moves.SPLASH])
+      .ability(Abilities.NO_GUARD);
   });
 
   it("Pokemon should get shields based on their Species and level and the current wave", async () => {
@@ -67,9 +66,11 @@ describe("Boss Pokemon / Shields", () => {
   }, TIMEOUT);
 
   it("should reduce the number of shields if we are in a double battle", async () => {
-    game.override.startingWave(150); // Floor 150 > 2 shields / 3 health segments
-    game.override.battleType("double");
-    await game.startBattle([ Species.MEWTWO ]);
+    game.override
+      .battleType("double")
+      .startingWave(150); // Floor 150 > 2 shields / 3 health segments
+
+    await game.classicMode.startBattle([ Species.MEWTWO ]);
 
     const boss1: EnemyPokemon = game.scene.getEnemyParty()[0]!;
     const boss2: EnemyPokemon = game.scene.getEnemyParty()[1]!;
@@ -82,7 +83,7 @@ describe("Boss Pokemon / Shields", () => {
   it("shields should stop overflow damage and give stat boosts when broken", async () => {
     game.override.startingWave(150); // Floor 150 > 2 shields / 3 health segments
 
-    await game.startBattle([ Species.MEWTWO ]);
+    await game.classicMode.startBattle([ Species.MEWTWO ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const segmentHp = enemyPokemon.getMaxHp() / enemyPokemon.bossSegments;
@@ -110,10 +111,11 @@ describe("Boss Pokemon / Shields", () => {
   }, TIMEOUT);
 
   it("breaking multiple shields at once requires extra damage", async () => {
-    game.override.battleType("double");
-    game.override.enemyHealthSegments(5);
+    game.override
+      .battleType("double")
+      .enemyHealthSegments(5);
 
-    await game.startBattle([ Species.MEWTWO ]);
+    await game.classicMode.startBattle([ Species.MEWTWO ]);
 
     // In this test we want to break through 3 shields at once
     const brokenShields = 3;
@@ -147,10 +149,11 @@ describe("Boss Pokemon / Shields", () => {
   it("the number of stats boosts is consistent when several shields are broken at once", async () => {
     const shieldsToBreak = 4;
 
-    game.override.battleType("double");
-    game.override.enemyHealthSegments(shieldsToBreak + 1);
+    game.override
+      .battleType("double")
+      .enemyHealthSegments(shieldsToBreak + 1);
 
-    await game.startBattle([ Species.MEWTWO ]);
+    await game.classicMode.startBattle([ Species.MEWTWO ]);
 
     const boss1: EnemyPokemon = game.scene.getEnemyParty()[0]!;
     const boss1SegmentHp = boss1.getMaxHp() / boss1.bossSegments;
@@ -196,13 +199,6 @@ describe("Boss Pokemon / Shields", () => {
 
   }, TIMEOUT);
 
-  function statsSum(total: number, value: number, index: number) {
-    if (index <= BattleStat.SPD) {
-      return total + value;
-    }
-    return total;
-  }
-
   /**
    * Gets the sum of the ATK, DEF, SP ATK, SP DEF and SPD boosts for the given Pokemon
    * @param enemyPokemon the pokemon to get stats from
@@ -212,5 +208,13 @@ describe("Boss Pokemon / Shields", () => {
     const enemyBattleStats = enemyPokemon.summonData.battleStats;
     return enemyBattleStats?.reduce(statsSum, 0);
   }
+
+  function statsSum(total: number, value: number, index: number) {
+    if (index <= BattleStat.SPD) {
+      return total + value;
+    }
+    return total;
+  }
+
 });
 
