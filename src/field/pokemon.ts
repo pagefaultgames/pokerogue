@@ -10,7 +10,7 @@ import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat } from "../data/pokemon-stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier } from "../modifier/modifier";
+import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, PokemonBaseStatFlatModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
@@ -778,19 +778,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.stats) {
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
     }
-    const baseStats = this.getSpeciesForm().baseStats.slice(0);
-    this.scene.applyModifiers(PokemonBaseStatTotalModifier, this.isPlayer(), this, baseStats);
-    if (this.fusionSpecies) {
-      const fusionBaseStats = this.getFusionSpeciesForm().baseStats;
-      for (let s = 0; s < this.stats.length; s++) {
-        baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
-      }
-    } else if (this.scene.gameMode.isSplicedOnly) {
-      for (let s = 0; s < this.stats.length; s++) {
-        baseStats[s] = Math.ceil(baseStats[s] / 2);
-      }
-    }
-    this.scene.applyModifiers(PokemonBaseStatModifier, this.isPlayer(), this, baseStats);
+    const baseStats = this.calculateBaseStats();
     const stats = Utils.getEnumValues(Stat);
     for (const s of stats) {
       const isHp = s === Stat.HP;
@@ -820,6 +808,27 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stats[s] = value;
     }
     this.scene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, this.stats);
+  }
+
+  calculateBaseStats(): number[] {
+    const baseStats = this.getSpeciesForm().baseStats.slice(0);
+    // Shuckle Juice
+    this.scene.applyModifiers(PokemonBaseStatTotalModifier, this.isPlayer(), this, baseStats);
+    // Old Gateau
+    this.scene.applyModifiers(PokemonBaseStatFlatModifier, this.isPlayer(), this, baseStats);
+    if (this.fusionSpecies) {
+      const fusionBaseStats = this.getFusionSpeciesForm().baseStats;
+      for (let s = 0; s < this.stats.length; s++) {
+        baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
+      }
+    } else if (this.scene.gameMode.isSplicedOnly) {
+      for (let s = 0; s < this.stats.length; s++) {
+        baseStats[s] = Math.ceil(baseStats[s] / 2);
+      }
+    }
+    // Vitamins
+    this.scene.applyModifiers(PokemonBaseStatModifier, this.isPlayer(), this, baseStats);
+    return baseStats;
   }
 
   getNature(): Nature {

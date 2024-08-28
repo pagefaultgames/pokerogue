@@ -31,7 +31,7 @@ const SOUND_EFFECT_WAIT_TIME = 700;
 export const TrashToTreasureEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.TRASH_TO_TREASURE)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(60, 180)
     .withMaxAllowedEncounters(1)
     .withIntroSpriteConfigs([
       {

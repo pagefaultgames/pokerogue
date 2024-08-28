@@ -141,11 +141,11 @@ export const DancingLessonsEncounter: MysteryEncounter =
           species: species,
           dataSource: oricorioData,
           isBoss: true,
-          // Gets +1 to all stats on battle start
+          // Gets +1 to all stats except SPD on battle start
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(pokemon.scene, `${namespace}.option.1.boss_enraged`);
-            pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
+            pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF], 1));
           }
         }],
       };

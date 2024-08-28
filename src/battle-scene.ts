@@ -22,7 +22,7 @@ import {
   getModifierPoolForType,
   getModifierType,
   getPartyLuckValue,
-  modifierTypes
+  modifierTypes, PokemonHeldItemModifierType
 } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, ChangeMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
@@ -2521,13 +2521,19 @@ export default class BattleScene extends SceneBase {
       party.forEach((enemyPokemon: EnemyPokemon, i: integer) => {
         if (heldModifiersConfigs && i < heldModifiersConfigs.length && heldModifiersConfigs[i] && heldModifiersConfigs[i].length > 0) {
           heldModifiersConfigs[i].forEach(mt => {
-            const stackCount = mt.stackCount ?? 1;
-            // const isTransferable = mt.isTransferable ?? true;
-            const modifier = mt.modifierType.newModifier(enemyPokemon);
-            modifier.stackCount = stackCount;
-            // TODO: set isTransferable
-            // modifier.setIsTransferable(isTransferable);
-            this.addEnemyModifier(modifier, true);
+            if (mt.modifier instanceof PokemonHeldItemModifierType) {
+              const stackCount = mt.stackCount ?? 1;
+              // const isTransferable = mt.isTransferable ?? true;
+              const modifier = mt.modifier.newModifier(enemyPokemon);
+              modifier.stackCount = stackCount;
+              // TODO: set isTransferable
+              // modifier.setIsTransferable(isTransferable);
+              this.addEnemyModifier(modifier, true);
+            } else {
+              const modifier = mt.modifier as PokemonHeldItemModifier;
+              modifier.pokemonId = enemyPokemon.id;
+              this.addEnemyModifier(modifier, true);
+            }
           });
         } else {
           const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && !!this.currentBattle.trainer?.config.isBoss);

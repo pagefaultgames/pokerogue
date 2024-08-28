@@ -32,7 +32,7 @@ const namespace = "mysteryEncounter:theWinstrateChallenge";
 export const TheWinstrateChallengeEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_WINSTRATE_CHALLENGE)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
-    .withSceneWaveRangeRequirement(80, 180)
+    .withSceneWaveRangeRequirement(100, 180)
     .withIntroSpriteConfigs([
       {
         spriteKey: "vito",

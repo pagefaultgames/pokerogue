@@ -94,6 +94,7 @@ const STANDARD_BST_TRANSFORM_BASE_VALUES = [40, 50];
 export const WeirdDreamEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.WEIRD_DREAM)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
+    .withSceneWaveRangeRequirement(10, 180)
     .withIntroSpriteConfigs([
       {
         spriteKey: "girawitch",
@@ -111,7 +112,6 @@ export const WeirdDreamEncounter: MysteryEncounter =
         text: `${namespace}.intro_dialogue`,
       },
     ])
-    .withSceneWaveRangeRequirement(10, 180)
     .withTitle(`${namespace}.title`)
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
