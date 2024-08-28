@@ -9,13 +9,15 @@
     "description": "Häufe eine Gesamtsumme von {{moneyAmount}} ₽ an."
   },
   "10K_MONEY": {
-    "name": "Besserverdiener"
+    "name": "Besserverdiener",
+    "name_female": "Besserverdienerin"
   },
   "100K_MONEY": {
     "name": "Reich"
   },
   "1M_MONEY": {
-    "name": "Millionär"
+    "name": "Millionär",
+    "name_female": "Millionärin"
   },
   "10M_MONEY": {
     "name": "Einprozenter"
@@ -33,22 +35,26 @@
     "name": "Das ist ne Menge Schaden!"
   },
   "10000_DMG": {
-    "name": "One Punch Man"
+    "name": "One Punch Man",
+    "name_female": "One Punch Woman"
   },
   "HealAchv": {
     "description": "Heile {{healAmount}} {{HP}} auf einmal. Mit einer Attacke, Fähigkeit oder einem gehaltenen Gegenstand."
   },
   "250_HEAL": {
-    "name": "Anfänger-Heiler"
+    "name": "Anfänger-Heiler",
+    "name_female": "Anfänger-Heilerin"
   },
   "1000_HEAL": {
     "name": "Gesundheitsprofi"
   },
   "2500_HEAL": {
-    "name": "Kleriker"
+    "name": "Kleriker",
+    "name_female": "Klerikerin"
   },
   "10000_HEAL": {
-    "name": "Wiederherstellungsmeister"
+    "name": "Wiederherstellungsmeister",
+    "name_female": "Wiederherstellungsmeisterin"
   },
   "LevelAchv": {
     "description": "Erhöhe das Level eines Pokémon auf {{level}}."
@@ -69,16 +75,19 @@
     "name": "Champion der Pokémon Liga"
   },
   "25_RIBBONS": {
-    "name": "Bänder-Sammler"
+    "name": "Bänder-Sammler",
+    "name_female": "Bänder-Sammlerin"
   },
   "50_RIBBONS": {
-    "name": "Bänder-Experte"
+    "name": "Bänder-Experte",
+    "name_female": "Bänder-Expertin"
   },
   "75_RIBBONS": {
     "name": "Bänder-Guru"
   },
   "100_RIBBONS": {
-    "name": "Bänder-Meister"
+    "name": "Bänder-Meister",
+    "name_female": "Bänder-Meisterin"
   },
   "TRANSFER_MAX_BATTLE_STAT": {
     "name": "Teamwork",
