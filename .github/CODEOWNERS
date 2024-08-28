@@ -1,0 +1,45 @@
+# Order is important; the last matching pattern takes the most precedence.
+
+# everything (whole code-base) - Junior Devs
+* @pagefaultgames/junior-dev-team
+
+# github actions/templates etc. - Dev Leads
+/.github @pagefaultgames/dev-leads
+
+# --- Translations ---
+
+# all translations - Translation Leads
+/src/locales @pagefaultgames/translation-leads
+
+# Catalan (Spain/Spanish)
+/src/locales/ca_ES @pagefaultgames/catalan-translation-team
+
+# German
+/src/locales/de @pagefaultgames/german-translation-team
+
+# English
+/src/locales/en @pagefaultgames/english-translation-team
+
+# Spanish
+/src/locales/es @pagefaultgames/spanish-translation-team
+
+# French
+/src/locales/fr @pagefaultgames/french-translation-team
+
+# Italian
+/src/locales/it @pagefaultgames/italian-translation-team
+
+# Japenese
+/src/locales/ja @pagefaultgames/japanese-translation-team
+
+# Korean
+/src/locales/ko @pagefaultgames/korean-translation-team
+
+# Brasilian (Brasil/Portuguese)
+/src/locales/pt_BR @pagefaultgames/portuguese_br-translation-team
+
+# Chinese (simplified)
+/src/locales/zh_CN @pagefaultgames/chinese_simplified-translation-team
+
+# Chinese (traditional)
+/src/locales/zh_TW @pagefaultgames/chinese_traditional-translation-team 
