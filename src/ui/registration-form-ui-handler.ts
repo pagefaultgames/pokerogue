@@ -14,7 +14,7 @@ interface LanguageSetting {
 
 const languageSettings: { [key: string]: LanguageSetting } = {
   "es":{
-    inputFieldFontSize: "57px",
+    inputFieldFontSize: "50px",
     errorMessageFontSize: "40px",
   }
 };
