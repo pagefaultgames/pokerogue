@@ -869,7 +869,7 @@
   },
   "aether_boss_lusamine_1": {
     "encounter": {
-      "1": "Du wirst mein süßes Biest erschrecken! Wie kannst du nur? Ultra-Besiten sind so niedlich!\n$Es sieht so aus, als müsste ich dich zuerst zum Schweigen bringen."
+      "1": "Du wirst mein süßes Biest erschrecken! Wie kannst du nur? Ultra-Bestien sind so niedlich!\n$Es sieht so aus, als müsste ich dich zuerst zum Schweigen bringen."
     },
     "victory": {
       "1": "Wie kann eine Person nur so grausam sein?!"
@@ -1403,7 +1403,7 @@
       "1": "Ich muss dein Potenzial als Trainer und die Stärke der Pokémon sehen, die mit dir kämpfen!",
       "2": "Los geht's! Dies sind meine Gesteins-Pokémon, mein ganzer Stolz!",
       "3": "Gesteins-Pokémon sind einfach die besten!",
-      "4": "Ich muss dein Potenzial als Trainer und die Stärke der Pokémon sehen, die mit dir kämpfen!"
+      "4": "Tag für Tag grabe ich hier nach Fossilien.\n$Die viele Arbeit hat meine Pokémon felsenfest gemacht\n$und das wirst du jetzt im Kampf zu spüren bekommen!"
     },
     "victory": {
       "1": "W-was? Das kann nicht sein! Meine total tranierten Pokémon!",
