@@ -40,7 +40,7 @@ import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
@@ -49,16 +49,16 @@ import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { DamagePhase } from "#app/phases/damage-phase.js";
-import { FaintPhase } from "#app/phases/faint-phase.js";
-import { LearnMovePhase } from "#app/phases/learn-move-phase.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase.js";
-import { StatChangePhase } from "#app/phases/stat-change-phase.js";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
-import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase.js";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { FaintPhase } from "#app/phases/faint-phase";
+import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
+import { StatChangePhase } from "#app/phases/stat-change-phase";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
+import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 
 export enum FieldPosition {
   CENTER,
@@ -675,7 +675,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.stats[stat];
   }
 
-  getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
+  getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, simulated: boolean = true, isCritical: boolean = false): integer {
     if (stat === Stat.HP) {
       return this.getStat(Stat.HP);
     }
@@ -694,7 +694,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           break;
         }
       }
-      applyAbAttrs(IgnoreOpponentStatChangesAbAttr, opponent, null, false, statLevel);
+      applyAbAttrs(IgnoreOpponentStatChangesAbAttr, opponent, null, simulated, statLevel);
       if (move) {
         applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, opponent, move, statLevel);
       }
@@ -707,12 +707,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const fieldApplied = new Utils.BooleanHolder(false);
     for (const pokemon of this.scene.getField(true)) {
-      applyFieldBattleStatMultiplierAbAttrs(FieldMultiplyBattleStatAbAttr, pokemon, stat, statValue, this, fieldApplied);
+      applyFieldBattleStatMultiplierAbAttrs(FieldMultiplyBattleStatAbAttr, pokemon, stat, statValue, this, fieldApplied, simulated);
       if (fieldApplied.value) {
         break;
       }
     }
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue, simulated);
     let ret = statValue.value * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
     switch (stat) {
     case Stat.ATK:
@@ -1961,6 +1961,222 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     accuracyMultiplier.value /= evasionMultiplier.value;
 
     return accuracyMultiplier.value;
+  }
+
+  getAttackDamage(source: Pokemon, move: Move, ignoreAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): DamageCalculationResult {
+    const damage = new Utils.NumberHolder(0);
+    const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+
+    const variableCategory = new Utils.IntegerHolder(move.category);
+    applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, variableCategory);
+    const moveCategory = variableCategory.value as MoveCategory;
+
+    /** The move's type after type-changing effects are applied */
+    const moveType = source.getMoveType(move);
+
+    /** If `value` is `true`, cancels the move and suppresses "No Effect" messages */
+    const cancelled = new Utils.BooleanHolder(false);
+
+    /**
+     * The effectiveness of the move being used. Along with type matchups, this
+     * accounts for changes in effectiveness from the move's attributes and the
+     * abilities of both the source and this Pokemon.
+     */
+    const typeMultiplier = this.getMoveEffectiveness(source, move, ignoreAbility, simulated, cancelled);
+
+
+    const isPhysical = moveCategory === MoveCategory.PHYSICAL;
+    const sourceTeraType = source.getTeraType();
+
+    /** Combined damage multiplier from field effects such as weather, terrain, etc. */
+    const arenaAttackTypeMultiplier = new Utils.NumberHolder(this.scene.arena.getAttackTypeMultiplier(moveType, source.isGrounded()));
+    applyMoveAttrs(IgnoreWeatherTypeDebuffAttr, source, this, move, arenaAttackTypeMultiplier);
+
+    const isTypeImmune = (typeMultiplier * arenaAttackTypeMultiplier.value) === 0;
+
+    if (cancelled.value || isTypeImmune) {
+      return {
+        move: move.id,
+        cancelled: cancelled.value,
+        result: move.id === Moves.SHEER_COLD ? HitResult.IMMUNE : HitResult.NO_EFFECT,
+        damage: 0
+      };
+    }
+
+    // If the attack deals fixed damaged, return a result with that much damage
+    const fixedDamage = new Utils.IntegerHolder(0);
+    applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
+    if (fixedDamage.value) {
+      return {
+        move: move.id,
+        cancelled: false,
+        result: HitResult.EFFECTIVE,
+        damage: fixedDamage.value
+      };
+    }
+
+    // If the attack is a one-hit KO move, return a result with damage equal to this Pokemon's HP
+    const isOneHitKo = new Utils.BooleanHolder(false);
+    applyMoveAttrs(OneHitKOAttr, source, this, move, isOneHitKo);
+    if (isOneHitKo.value) {
+      return {
+        move: move.id,
+        cancelled: false,
+        result: HitResult.ONE_HIT_KO,
+        damage: this.hp
+      };
+    }
+
+    // ----- BEGIN BASE DAMAGE MULTIPLIERS -----
+
+    /** A base damage multiplier based on the source's level */
+    const levelMultiplier = (2 * source.level / 5 + 2);
+
+    /** The power of the move after power boosts from abilities, etc. have applied */
+    const power = move.calculateBattlePower(source, this, simulated);
+
+    /**
+     * The attacker's offensive stat for the given move's category.
+     * Critical hits ignore negative stat stages.
+     */
+    const sourceAtk = new Utils.NumberHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, simulated, isCritical));
+    applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
+
+    /**
+     * This Pokemon's defensive stat for the given move's category.
+     * Critical hits ignore positive stat stages.
+     */
+    const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, simulated, isCritical));
+    applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
+
+    // ------ END BASE DAMAGE MULTIPLIERS ------
+
+    /** 25% damage debuff on moves hitting more than one non-fainted target (regardless of immunities) */
+    const { targets, multiple } = getMoveTargets(source, move.id);
+    const numTargets = multiple ? targets.length : 1;
+    const targetMultiplier = (numTargets > 1) ? 0.75 : 1;
+
+    /** 0.25x multiplier if this is an added strike from the attacker's Parental Bond */
+    const parentalBondMultiplier = new Utils.NumberHolder(1);
+    applyPreAttackAbAttrs(AddSecondStrikeAbAttr, source, this, move, simulated, numTargets, new Utils.IntegerHolder(0), parentalBondMultiplier);
+
+    /** Doubles damage if this Pokemon's last move was Glaive Rush */
+    const glaiveRushMultiplier = new Utils.IntegerHolder(1);
+    if (this.getTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE)) {
+      glaiveRushMultiplier.value = 2;
+    }
+
+    /** The damage multiplier when the given move critically hits */
+    const criticalMultiplier = new Utils.NumberHolder(isCritical ? 1.5 : 1);
+    applyAbAttrs(MultCritAbAttr, source, null, simulated, criticalMultiplier);
+
+    /**
+     * A multiplier for random damage spread in the range [0.85, 1]
+     * This is always 1 for simulated calls.
+     */
+    const randomMultiplier = simulated ? 1 : ((this.scene.randBattleSeedInt(16) + 85) / 100);
+
+    const sourceTypes = source.getTypes();
+    const matchesSourceType = sourceTypes.includes(moveType);
+    /** A damage multiplier for when the attack is of the attacker's type and/or Tera type. */
+    const stabMultiplier = new Utils.NumberHolder(1);
+    if (sourceTeraType === Type.UNKNOWN && matchesSourceType) {
+      stabMultiplier.value += 0.5;
+    } else if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type) {
+      stabMultiplier.value += 0.5;
+    }
+
+    applyAbAttrs(StabBoostAbAttr, source, null, simulated, stabMultiplier);
+
+    if (sourceTeraType !== Type.UNKNOWN && matchesSourceType) {
+      stabMultiplier.value = Math.min(stabMultiplier.value + 0.5, 2.25);
+    }
+
+    /** Halves damage if the attacker is using a physical attack while burned */
+    const burnMultiplier = new Utils.NumberHolder(1);
+    if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
+      if (!move.hasAttr(BypassBurnDamageReductionAttr)) {
+        const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
+        applyAbAttrs(BypassBurnDamageReductionAbAttr, source, burnDamageReductionCancelled, simulated);
+        if (!burnDamageReductionCancelled.value) {
+          burnMultiplier.value = 0.5;
+        }
+      }
+    }
+
+    /** Reduces damage if this Pokemon has a relevant screen (e.g. Light Screen for special attacks) */
+    const screenMultiplier = new Utils.NumberHolder(1);
+    this.scene.arena.applyTagsForSide(WeakenMoveScreenTag, defendingSide, move.category, this.scene.currentBattle.double, screenMultiplier);
+
+    /**
+     * For each {@link HitsTagAttr} the move has, doubles the damage of the move if:
+     * The target has a {@link BattlerTagType} that this move interacts with
+     * AND
+     * The move doubles damage when used against that tag
+     */
+    const hitsTagMultiplier = new Utils.NumberHolder(1);
+    move.getAttrs(HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
+      if (this.getTag(hta.tagType)) {
+        hitsTagMultiplier.value *= 2;
+      }
+    });
+
+    /** Halves damage if this Pokemon is grounded in Misty Terrain against a Dragon-type attack */
+    const mistyTerrainMultiplier = (this.scene.arena.terrain?.terrainType === TerrainType.MISTY && this.isGrounded() && moveType === Type.DRAGON)
+      ? 0.5
+      : 1;
+
+    damage.value = Utils.toDmgValue((((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2)
+                            * targetMultiplier
+                            * parentalBondMultiplier.value
+                            * arenaAttackTypeMultiplier.value
+                            * glaiveRushMultiplier.value
+                            * criticalMultiplier.value
+                            * randomMultiplier
+                            * stabMultiplier.value
+                            * typeMultiplier
+                            * burnMultiplier.value
+                            * screenMultiplier.value
+                            * hitsTagMultiplier.value
+                            * mistyTerrainMultiplier);
+
+    applyPreAttackAbAttrs(DamageBoostAbAttr, source, this, move, simulated, damage);
+
+    if (!source.isPlayer()) {
+      this.scene.applyModifiers(EnemyDamageBoosterModifier, false, damage);
+    }
+    if (!this.isPlayer()) {
+      this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
+    }
+
+    if (!ignoreAbility) {
+      applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, move, cancelled, simulated, damage);
+    }
+
+    // This attribute may modify damage arbitrarily, so be careful about changing its order of application.
+    applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
+
+    if (this.isFullHp() && !ignoreAbility) {
+      applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, this, source, move, cancelled, false, damage);
+    }
+
+    console.log("damage", damage.value, move.name, power, sourceAtk, targetDef);
+
+    let hitResult: HitResult;
+    if (typeMultiplier < 1) {
+      hitResult = HitResult.NOT_VERY_EFFECTIVE;
+    } else if (typeMultiplier > 1) {
+      hitResult = HitResult.SUPER_EFFECTIVE;
+    } else {
+      hitResult = HitResult.EFFECTIVE;
+    }
+
+    return {
+      move: move.id,
+      cancelled: cancelled.value,
+      result: hitResult,
+      damage: damage.value
+    };
   }
 
   /**
@@ -4346,6 +4562,13 @@ export enum HitResult {
 }
 
 export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.OTHER;
+
+export interface DamageCalculationResult {
+  move: Moves;
+  cancelled: boolean;
+  result: HitResult;
+  damage: number | undefined;
+}
 
 /**
  * Wrapper class for the {@linkcode Move} class for Pokemon to interact with.
