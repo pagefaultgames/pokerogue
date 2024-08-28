@@ -1604,7 +1604,7 @@
       "1": "고마워! 방금 승부 덕분에, 내 연구도 진전을 이룬 것 같아!"
     }
   },
-  "koga": {
+  "koga_gym": {
     "encounter": {
       "1": "Fwahahaha! Very well, I shall show you true terror as a ninja master!"
     },
@@ -1615,7 +1615,7 @@
       "1": "Despair to the creeping horror of Poison-type Pokémon!"
     }
   },
-  "koga_elite": {
+  "koga": {
     "encounter": {
       "1": "후하하하! 포켓몬은 단순히 강한 것만이 아니다--곧 알려주지!"
     },

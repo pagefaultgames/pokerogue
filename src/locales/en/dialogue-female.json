@@ -1604,7 +1604,7 @@
       "1": "Thanks! Thanks to our battle, I was also able to make progress in my research!"
     }
   },
-  "koga": {
+  "koga_gym": {
     "encounter": {
       "1": "Fwahahaha! Very well, I shall show you true terror as a ninja master!"
     },
@@ -1615,7 +1615,7 @@
       "1": "Despair to the creeping horror of Poison-type Pokémon!"
     }
   },
-  "koga_elite": {
+  "koga": {
     "encounter": {
       "1": "Fwahahahaha! Pokémon are not merely about brute force--you shall see soon enough!"
     },

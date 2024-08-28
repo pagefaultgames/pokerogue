@@ -1604,7 +1604,7 @@
       "1": "谢谢！多亏了我们的战斗，\n我的研究也取得了进展！"
     }
   },
-  "koga": {
+  "koga_gym": {
     "encounter": {
       "1": "Fwahahaha! Very well, I shall show you true terror as a ninja master!"
     },
@@ -1615,7 +1615,7 @@
       "1": "Despair to the creeping horror of Poison-type Pokémon!"
     }
   },
-  "koga_elite": {
+  "koga": {
     "encounter": {
       "1": "哇哈哈哈哈！$宝可梦不仅仅是关于蛮力，拭目以待吧！"
     },

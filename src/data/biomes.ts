@@ -1705,7 +1705,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [ TrainerType.JANINE, TrainerType.KOGA ],
+    [BiomePoolTier.BOSS]: [ TrainerType.JANINE, TrainerType.KOGA_GYM ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -7331,7 +7331,7 @@ export function initBiomes() {
       [ Biome.SWAMP, BiomePoolTier.BOSS ]
     ]
     ],
-    [ TrainerType.KOGA, [
+    [ TrainerType.KOGA_GYM, [
       [ Biome.SWAMP, BiomePoolTier.BOSS ]
     ]
     ],
@@ -7616,7 +7616,7 @@ export function initBiomes() {
     [ TrainerType.AGATHA, [] ],
     [ TrainerType.LANCE, [] ],
     [ TrainerType.WILL, [] ],
-    [ TrainerType.KOGA_ELITE, [] ],
+    [ TrainerType.KOGA, [] ],
     [ TrainerType.KAREN, [] ],
     [ TrainerType.SIDNEY, [] ],
     [ TrainerType.PHOEBE, [] ],
