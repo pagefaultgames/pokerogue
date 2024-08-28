@@ -7550,14 +7550,15 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.POUND ],
     [ 1, Moves.COPYCAT ],
     [ 1, Moves.BARRIER ],
+    [ 1, Moves.TICKLE ], //USUM
     [ 4, Moves.BATON_PASS ],
     [ 8, Moves.ENCORE ],
     [ 12, Moves.CONFUSION ],
-    [ 16, Moves.ROLE_PLAY ],
+    [ 16, Moves.MIMIC ], //Custom, swapped with Role Play to be closer to USUM
     [ 20, Moves.PROTECT ],
     [ 24, Moves.RECYCLE ],
     [ 28, Moves.PSYBEAM ],
-    [ 32, Moves.MIMIC ],
+    [ 32, Moves.ROLE_PLAY ], //Custom, swapped with Mimic
     [ 36, Moves.LIGHT_SCREEN ],
     [ 36, Moves.REFLECT ],
     [ 36, Moves.SAFEGUARD ],
