@@ -41,10 +41,10 @@ export class Achv {
 
   /**
    * Get the name of the achievement based on the gender of the player
-   * @param playerGender - the gender of the player
+   * @param playerGender - the gender of the player (default: {@linkcode PlayerGender.UNSET})
    * @returns the name of the achievement localized for the player gender
    */
-  getName(playerGender: PlayerGender): string {
+  getName(playerGender: PlayerGender = PlayerGender.UNSET): string {
     const genderStr = PlayerGender[playerGender].toLowerCase();
     // Localization key is used to get the name of the achievement
     return i18next.t(`achv:${this.localizationKey}.name`, { context: genderStr });
