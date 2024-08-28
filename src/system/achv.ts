@@ -150,7 +150,7 @@ export class ChallengeAchv extends Achv {
  */
 export function getAchievementDescription(localizationKey: string): string {
   // We need to get the player gender from the game data to add the correct prefix to the achievement name
-  const genderIndex = this.scene.gameData.gender ?? PlayerGender.MALE;
+  const genderIndex = this?.scene?.gameData?.gender ?? PlayerGender.MALE; //TODO: why is `this` being used here!? We are not inside a scope (copied from original)
   const genderStr = PlayerGender[genderIndex].toLowerCase();
 
   switch (localizationKey) {
