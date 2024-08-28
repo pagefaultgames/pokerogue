@@ -2593,7 +2593,7 @@
       "1": "@c{smile_wave}There you are! I've been looking everywhere for you!\n@c{angry_mopen}Did you forget to say goodbye to your best friend?\n$@c{smile_ehalf}You're going after your dream, huh?\nThat day is really today isn't it…\n$@c{smile}Anyway, I'll forgive you for forgetting me, but on one condition. @c{smile_wave_wink}You have to battle me!\n$@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?"
     },
     "victory": {
-      "1": "@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?\n$@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.\n$@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!\n$@c{smile_wave}Do your best like always! I believe in you!\n"
+      "1": "@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?\n$@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.\n$@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!\n$@c{smile_wave}Do your best like always! I believe in you!"
     }
   },
   "rival_2": {
