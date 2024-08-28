@@ -5280,6 +5280,29 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
   }
 }
 
+function callMove(user: Pokemon, target: Pokemon, moveId: number): Promise<boolean> {
+  return new Promise(resolve => {
+    // replaces MoveTarget.NEAR_OTHER with MoveTarget.NEAR_ENEMY to prevent ally being targetted
+    const replaceMoveTarget = allMoves[moveId].moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
+    const moveTargets = getMoveTargets(user, moveId, replaceMoveTarget);
+    if (moveTargets.targets.length === 0) {
+      resolve(false);
+      return;
+    }
+    const targets = moveTargets.multiple || moveTargets.targets.length === 1
+      ? moveTargets.targets
+      : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
+        ? [ target.getBattlerIndex() ]
+        : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
+    user.getMoveQueue().push({ move: moveId, targets: targets, ignorePP: true });
+    user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(moveId, 0, 0, true), true));
+    initMoveAnim(user.scene, moveId).then(() => {
+      loadMoveAnimAssets(user.scene, [ moveId ], true)
+        .then(() => resolve(true));
+    });
+  });
+}
+
 /**
  * Attribute used to call a random move
  * Used for {@linkcode Moves.METRONOME}
@@ -5305,28 +5328,7 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     const moveIds = Utils.getEnumValues(Moves).filter(m => !this.invalidMoves.includes(m) && !allMoves[m].name.endsWith(" (N)"));
     const moveId = moveIds[user.randSeedInt(moveIds.length)];
-    return this.callMove(user, target, moveId);
-  }
-
-  callMove(user: Pokemon, target: Pokemon, moveId: number): Promise<boolean> {
-    return new Promise(resolve => {
-      const moveTargets = getMoveTargets(user, moveId);
-      if (moveTargets.targets.length === 0) {
-        resolve(false);
-        return;
-      }
-      const targets = moveTargets.multiple || moveTargets.targets.length === 1
-        ? moveTargets.targets
-        : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
-          ? [ target.getBattlerIndex() ]
-          : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-      user.getMoveQueue().push({ move: moveId, targets: targets, ignorePP: true });
-      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(moveId, 0, 0, true), true));
-      initMoveAnim(user.scene, moveId).then(() => {
-        loadMoveAnimAssets(user.scene, [ moveId ], true)
-          .then(() => resolve(true));
-      });
-    });
+    return callMove(user, target, moveId);
   }
 }
 
@@ -5355,7 +5357,7 @@ export class RandomMovesetMoveAttr extends RandomMoveAttr {
    * @returns {Promise<boolean>}
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    return this.callMove(user, target, this.moveId);
+    return callMove(user, target, this.moveId);
   }
 
   getCondition(): MoveConditionFunc {
@@ -5769,24 +5771,9 @@ const lastMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
 };
 
 export class CopyMoveAttr extends OverrideMoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     const lastMove = user.scene.currentBattle.lastMove;
-
-    const moveTargets = getMoveTargets(user, lastMove);
-    if (!moveTargets.targets.length) {
-      return false;
-    }
-
-    const targets = moveTargets.multiple || moveTargets.targets.length === 1
-      ? moveTargets.targets
-      : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
-        ? [ target.getBattlerIndex() ]
-        : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-    user.getMoveQueue().push({ move: lastMove, targets: targets, ignorePP: true });
-
-    user.scene.unshiftPhase(new MovePhase(user.scene, user as PlayerPokemon, targets, new PokemonMove(lastMove, 0, 0, true), true));
-
-    return true;
+    return callMove(user, target, lastMove);
   }
 
   getCondition(): MoveConditionFunc {
@@ -6509,11 +6496,14 @@ export type MoveTargetSet = {
   multiple: boolean;
 };
 
-export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
+export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveTarget): MoveTargetSet {
   const variableTarget = new Utils.NumberHolder(0);
   user.getOpponents().forEach(p => applyMoveAttrs(VariableTargetAttr, user, p, allMoves[move], variableTarget));
 
-  const moveTarget = allMoves[move].hasAttr(VariableTargetAttr) ? variableTarget.value : move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
+  const moveTarget = allMoves[move].hasAttr(VariableTargetAttr) ? variableTarget.value :
+    replaceTarget !== undefined ? replaceTarget :
+      move ? allMoves[move].moveTarget :
+        move === undefined ? MoveTarget.NEAR_ENEMY : [];
   const opponents = user.getOpponents();
 
   let set: Pokemon[] = [];
