@@ -655,6 +655,86 @@
       "5": "Você pode ter me vencido, mas quando eu perco, eu saio com estilo!"
     }
   },
+  "aether_grunt": {
+    "encounter": {
+      "1": "Eu vou lutar com tudo o que tenho para te eliminar!",
+      "2": "Eu não me importo se você é uma criança ou o que. Eu vou te mandar voando se você nos ameaçar!",
+      "3": "Me mandaram afastar Treinadores, não importa quem sejam!",
+      "4": "Eu vou te mostrar o poder do Paraíso Aether!",
+      "5": "Agora que você descobriu a escuridão no coração do Paraíso Aether, precisamos que você desapareça convenientemente!"
+    },
+    "victory": {
+      "1": "Aff! Você parece ter muita habilidade.",
+      "2": "O que isso significa? O que isso significa!",
+      "3": "Ei! Você é tão forte que não há como eu te afastar!",
+      "4": "Hmm... Parece que eu posso ter perdido.",
+      "5": "Aqui está uma resposta para você: Aiyee!"
+    }
+  },
+  "faba": {
+    "encounter": {
+      "1": "Eu, o Chefe de Ramo Faba, vou te mostrar a dureza do mundo real!",
+      "2": "O homem chamado de última linha de defesa do Paraíso Aether vai batalhar com uma mera criança?",
+      "3": "Eu, Faba, sou o Chefe de Ramo do Paraíso Aether. O único no mundo, eu sou insubstituível."
+    },
+    "victory": {
+      "1": "Aiyee!",
+      "2": "C-c-como assim?! Como uma criança...",
+      "3": "Isso é por que... Isso é por que eu não consigo gostar de crianças."
+    }
+  },
+  "skull_grunt": {
+    "encounter": {
+      "1": "Nós não somos maus, somos apenas durões!",
+      "2": "Quer um pouco de nós? É assim que dizemos olá! Prazer em conhecê-los, otários!",
+      "3": "Somos só um bando de caras e minas com um grande interesse nos Pokémon dos outros!",
+      "4": "Por que você está tentando agir durão quando já somos durões como ossos aqui fora, mano?",
+      "5": "Equipe Skull na área! Não podemos pagar o aluguel! Nos divertimos muito, mas nossa juventude foi desperdiçada!"
+    },
+    "victory": {
+      "1": "Ahn? Já acabou?",
+      "2": "Hora de dar o fora, mano! Vamos ter que dizer tchau, mano!",
+      "3": "Nem precisamos dos seus Pokémon fracotes mesmo!",
+      "4": "Que?! Esse muleque é muito forte! Não tem como negar!",
+      "5": "Então, o que? Eu sou pior que um Pokémon?! Eu já tenho problemas de autoestima, cara."
+    }
+  },
+  "plumeria": {
+    "encounter": {
+      "1": " ...Hmph. Você não parece nada especial para mim.",
+      "2": "Esses Capangas gastam muito tempo tentando lidar com crianças como você...",
+      "3": "Mexe com qualquer um da Equipe Skull, e eu vou te mostrar o quão séria eu posso ficar."
+    },
+    "victory": {
+      "1": "Aff! Você é bem forte. Tenho que admitir.",
+      "2": "Aff! Você é bem forte. Agora eu entendi por que meus Capangas gastam tanto tempo batalhando com crianças.",
+      "3": "Aff! Acho que eu só tenho que aceitar essa derrota."
+    }
+  },
+  "macro_grunt": {
+    "encounter": {
+      "1": "Parece que aqui é o fim da linha para você!",
+      "2": "Você é um treinador, não é? Temo que isso não lhe dê o direito de interferir em nosso trabalho.",
+      "3": "Sou da Macro Cosmos Seguros! Já tem um seguro de vida?"
+    },
+    "victory": {
+      "1": "Eu não tenho muita escolha a não ser recuar respeitosamente.",
+      "2": "Ter que desistir do meu dinheiro... Perder significa que estou de volta no vermelho...",
+      "3": "Ninguém pode vencer a Macro Cosmos quando se trata de nossa dedicação ao trabalho!"
+    }
+  },
+  "oleana": {
+    "encounter": {
+      "1": "Eu não vou deixar ninguém interferir no plano do Sr. Rose!",
+      "2": "Então, você passou por todo o pessoal especial que eu ordenei para te parar. Eu não esperaria nada menos.",
+      "3": "Pelo presidente! Eu não vou perder!"
+    },
+    "victory": {
+      "1": "*suspiro* Eu não consegui vencer... Oleana... você realmente é uma mulher sem esperança.",
+      "2": "Aff! Isso é inaceitável... O que eu estava pensando... Qualquer treinador que chega tão longe não seria um fracote...",
+      "3": "*suspiro* Eu sou uma Oleana cansada..."
+    }
+  },
   "rocket_boss_giovanni_1": {
     "encounter": {
       "1": "Tenho que admitir, estou impressionado que tenha chegado até aqui!"
@@ -785,6 +865,72 @@
     },
     "defeat": {
       "1": "Tolos sem visão continuarão a poluir este belo mundo."
+    }
+  },
+  "aether_boss_lusamine_1": {
+    "encounter": {
+      "1": "Você vai assustar minha fera querida! Parece que eu vou precisar te silenciar primeiro."
+    },
+    "victory": {
+      "1": "Como... como você pode ser tão terrível!"
+    },
+    "defeat": {
+      "1": "Aff..."
+    }
+  },
+  "aether_boss_lusamine_2": {
+    "encounter": {
+      "1": "Por que você continua a me incomodar?! Estou cansada de você. Cansada até a alma!\n$Chega de papo furado... Com o poder de Nihilego, vou mostrar o quão errado você estava em vir aqui!"
+    },
+    "victory": {
+      "1": "Aaauuuggghhhhhhhhh!!!"
+    },
+    "defeat": {
+      "1": "Tudo o que eu quero é minha fera preciosa! Eu não me importo com nenhum de vocês!"
+    }
+  },
+  "skull_boss_guzma_1": {
+    "encounter": {
+      "1": "O odiado chefe que te bate e te bate e nunca para...\n$É. O grande e mau Guzma está aqui!"
+    },
+    "victory": {
+      "1": "Tss. Eu vou te bater um dia desses!"
+    },
+    "defeat": {
+      "1": "E você veio até aqui só pra isso, né?"
+    }
+  },
+  "skull_boss_guzma_2": {
+    "encounter": {
+      "1": "Não importa contra quem eu esteja, eu vou derrotá-los!\n$Isso é o que o grande e mau Guzma é!"
+    },
+    "victory": {
+      "1": "Guzma!!! O que há de errado com você?!"
+    },
+    "defeat": {
+      "1": "Vocês são tudo uns idiotas!"
+    }
+  },
+  "macro_boss_rose_1": {
+    "encounter": {
+      "1": "Devo fornecer energia ilimitada para garantir a prosperidade eterna para todos...\n$É meu propósito, meu dever, meu destino!"
+    },
+    "victory": {
+      "1": "Você ainda não entendeu, treinador...\n$Nós... Não, eu vou mudar o rumo da história!"
+    },
+    "defeat": {
+      "1": "Você ainda não entende nada!"
+    }
+  },
+  "macro_boss_rose_2": {
+    "encounter": {
+      "1": "Estou comprometido em resolver o problema de energia na região de Galar e, claro, em todo o mundo.\n$Minha experiência e conquistas que fizeram da Macro Cosmos um sucesso são a prova de que meus métodos funcionam.\n$Não pretendo mudar de ideia, mesmo que eu perca."
+    },
+    "victory": {
+      "1": "Eu esqueci o quão incríveis são as batalhas Pokémon! Faz tanto tempo desde que eu batalhei...\n$Isso foi realmente satisfatório, eu aceito a derrota para esta batalha."
+    },
+    "defeat": {
+      "1": "Eu suponho que deve parecer que estou fazendo algo terrível. Eu não espero que você entenda.\n$Mas eu devo fornecer à região de Galar energia ilimitada para garantir prosperidade eterna."
     }
   },
   "brock": {
