@@ -256,9 +256,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
           textStyle = TextStyle.SUMMARY_GREEN;
         }
       } else {
-        textStyle = TextStyle.SUMMARY;
+        textStyle = TextStyle.WINDOW;
       }
-      //const textStyle: TextStyle = isBetter ? TextStyle.SUMMARY_GREEN : TextStyle.SUMMARY;
       const color = getTextColor(textStyle, false, uiTheme);
       return `[color=${color}][shadow=${getTextColor(textStyle, true, uiTheme)}]${text}[/shadow][/color]`;
     };

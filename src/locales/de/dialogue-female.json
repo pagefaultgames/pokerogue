@@ -441,7 +441,7 @@
   },
   "courtney": {
     "encounter": {
-      "1": "Das Ding... Das Ding, das du hältst... Das ist es, was...\n$Das ist es, wonach wir von Team Magma suchen...",
+      "1": "Stellt euch...Mir NICHT...IN DEN WEEEG...!!",
       "2": "... Nun dann... Auslöschen...",
       "3": "...?! Du... Hm... ♪ Das trifft sich ausgezeichnet... ♪\n$Dann hole ich mir eben zuerst deine Pokémon... Her damit..."
     },
@@ -470,7 +470,7 @@
       "3": "Was machst du hier? Bist du uns gefolgt?"
     },
     "victory": {
-      "1": "Na gut, bis der Boss Zeit für dich hat, werde ich dein Gegner sein!",
+      "1": "Bwaarharharharhar!! Ich hab zwar verloren, aber das hat Spaß gemacht!",
       "2": "Ich kann es fühlen! Ich kann es spüren, das ist klar! Die Stärke, die von dir ausgeht!\n$Mehr! Ich will noch mehr! Aber es sieht so aus, als hätten wir keine Zeit mehr...",
       "3": "Das war Spaß! Ich wusste, dass du mir eine gute Zeit bieten würdest!\n$Ich freue mich darauf, dich eines Tages wieder zu treffen!"
     }
@@ -655,6 +655,86 @@
       "5": "Du hast mich besiegt, aber Team Flare wird immer in Glanz und Stil erstrahlen."
     }
   },
+  "aether_grunt": {
+    "encounter": {
+      "1": "Ich werde dich mit allem, was ich habe, bekämpfen. Ich werde dich auslöschen!",
+      "2": "Mir ist egal, ob du ein simpler Trainer bist oder nicht.\n$Ich werde dich hochkant rauswerfen, wenn du uns bedrohst!",
+      "3": "Mir wurde gesagt, Trainer abzuweisen, egal wer sie sind!",
+      "4": "Ich zeige dir die Macht des Æther-Paradies",
+      "5": "Jetzt da du die Wahre Natur des Æther-Paradies kennst, müssen wir dich leider beseitigen!"
+    },
+    "victory": {
+      "1": "Hmph! Du scheinst ziemlich geschickt zu sein.",
+      "2": "Was hat das zu bedeuten? Was hat das zu bedeuten!",
+      "3": "Hey, du bist so stark, dass ich dich nicht abweisen kann!",
+      "4": "Hmm... Es scheint, als hätte ich verloren.",
+      "5": "Ich hätte das Blitzdings benutzen sollen..."
+    }
+  },
+  "faba": {
+    "encounter": {
+      "1": "Ich bin Regionalleiter Fabian und ich werde dir zeigen, wie hart die Welt sein kann!",
+      "2": "Die letzte Verteidigungslinie des Æther-Paradieses kämpft gegen einen simplen Trainer?",
+      "3": "Ich Fabian, bin der Regionalleiter der Æther Foundation.\n$Der einzige auf der Welt, ich bin unersetzlich."
+    },
+    "victory": {
+      "1": "Aiyee!",
+      "2": "W-w-wie kann das sein?! Wie konnte dieser Trainer...",
+      "3": "Das ist der Grund... warum ich andere Menschen nicht ausstehen kann."
+    }
+  },
+  "skull_grunt": {
+    "encounter": {
+      "1": "Wir sind nicht böse, wir sind einfach nur nicht nett!",
+      "2": "Willst du Stress, oder was? Das ist unsere Art, Hallo zu sagen! Tschüss, du Punk!",
+      "3": "Wir sind nur ein paar Typen und Mädels mit großem Interesse an den Pokémon anderer Leute!",
+      "4": "Wieso machst du einen auf hart, wenn wir schon hart wie Knochen sind, Homie?",
+      "5": "Yo, platz hier nich’ rein, ♪ wie’n wildes Kleinstein! ♪ Wenn du meinst, dass Team Skull ♪\n$an nix denkt als Krawall, ♪ hast du leider ’nen Knall, ♪ denn das is’ nich’ der Fall! ♪\n$Wir woll’n hier nur gammeln ♪ und gechillt Staub ansammeln! ♪"
+    },
+    "victory": {
+      "1": "Wie jetzt? Schon vorbei?",
+      "2": "Woah, lass uns lieber die Kurve kratzen, yo! Kein Bock, hier meinen Schädel zu riskieren...",
+      "3": "Wir brauchen deine schwachen Pokémon eh nicht!",
+      "4": "Was? Deine Stärke spür ich bis in die Knochen...",
+      "5": "Mein Homie und ich sind also weniger wert als Pokémon? Willste uns dissen, oder was?"
+    }
+  },
+  "plumeria": {
+    "encounter": {
+      "1": "..Hmph. Du siehst nicht so aus, als wärst du etwas Besonderes.",
+      "2": "Die blöden Rüpel brauchen viel zu lange, um mit euch gewöhnlichen Trainern fertig zu werden...",
+      "3": "Lege dich mit irgendjemandem in Team Skull an, und ich zeige dir, wie ernst ich werden kann."
+    },
+    "victory": {
+      "1": "Du bist ziemlich stark. Das muss ich zugeben.",
+      "2": "Jetzt versteh ich, warum meine Rüpel so viel Zeit damit verschwenden...",
+      "3": "Ich denke, ich muss diese Niederlage einfach hinnehmen."
+    }
+  },
+  "macro_grunt": {
+    "encounter": {
+      "1": "Achtung hier ist Endstation für dich!",
+      "2": "Du bist ein Trainer, oder? Wir von MC Wertpapiere wissen so etwas.\n$Ich fürchte, das gibt dir trotzdem nicht das Recht, sich in unsere Arbeit einzumischen.",
+      "3": "Ich bin von MC Versicherungen! Hast du eine Lebensversicherung?"
+    },
+    "victory": {
+      "1": "Ich habe keine andere Wahl, als respektvoll zurückzutreten.",
+      "2": "Mein Erspartes aufzugeben bringt mich in die roten Zahlen...",
+      "3": "Okay zurück an die Arbeit. Versicherungen verkauft sich nicht von alleine."
+    }
+  },
+  "oleana": {
+    "encounter": {
+      "1": "Ich werde keine Störung von Präsident Roses Plänen zulassen!",
+      "2": "Du hast es also durch die Mitarbeiter der Tochterunternehmen geschafft,\n$die ich beauftragt habe, um dich aufzuhalten. Ich hätte nichts anderes erwartet.",
+      "3": "Für den Präsidenten! Ich werde nicht verlieren! \n$Mach dich bereit mit Macro Cosmos Airlines nach Hause zu fliegen!"
+    },
+    "victory": {
+      "1": "Ich habe es nicht geschafft... Olivia... du bist wirklich eine hoffnungslose Frau.",
+      "2": "Arghhh! Das ist unentschuldbar... Was habe ich mir dabei gedacht...\n$Jeder Trainer, der es so weit geschafft hat, muss ein harter Brocken sein...",
+      "3": "Ich bin eine müde Olivia... Ob es Macro Cosmos Betten gibt?"
+    }
+  },
   "rocket_boss_giovanni_1": {
     "encounter": {
       "1": "Ich bin beeindruckt, du hast es bis hierher geschafft!\n$Ich bin Giovanni, der Anführer von Team Rocket!\n$Wir regieren den Untergrund von Kanto!\n$Und wir lassen sicherlich nicht zu, dass ein Kind uns aufhält!"
@@ -785,6 +865,72 @@
     },
     "defeat": {
       "1": "Narren ohne Vision werden weiterhin diese wunderschöne Welt verunreinigen."
+    }
+  },
+  "aether_boss_lusamine_1": {
+    "encounter": {
+      "1": "Du wirst mein süßes Biest erschrecken! Wie kannst du nur? Ultra-Besiten sind so niedlich!\n$Es sieht so aus, als müsste ich dich zuerst zum Schweigen bringen."
+    },
+    "victory": {
+      "1": "Wie kann eine Person nur so grausam sein?!"
+    },
+    "defeat": {
+      "1": "Und jetzt, mein süßes Biest, komm zu Mama!"
+    }
+  },
+  "aether_boss_lusamine_2": {
+    "encounter": {
+      "1": "Wieso musst du mich weiterhin belästigen?! Ich habe die Nase voll von dir.\n$Du machst mich krank! Genug mit diesem nutzlosen Gerede... \n$Mit der Kraft von Anego, von uns als UB-01 Schmarotzer klassifiziert,\n$werde ich dir zeigen, wie falsch du warst, hierher zu kommen!"
+    },
+    "victory": {
+      "1": "Aaauuuggghhhhhhhhh!!!"
+    },
+    "defeat": {
+      "1": "Alles, was ich will, ist mein kostbares Biest! Der Rest von euch ist mir egal!"
+    }
+  },
+  "skull_boss_guzma_1": {
+    "encounter": {
+      "1": "Kein Erbarmen! Keine Gnade! Ich bin dein schlimmster Alptraum! \n$Oh yeah, ich bin der große, böse Bromley!"
+    },
+    "victory": {
+      "1": "Irgendwann mach ich dich platt! Ich hab noch ein Ass im Ärmel. Du wirst schon sehen."
+    },
+    "defeat": {
+      "1": "Du hast den langen Weg hierher DAFÜR aufgenommen? Pah!"
+    }
+  },
+  "skull_boss_guzma_2": {
+    "encounter": {
+      "1": "Mir ist egal, wer du bist. Ich mach dich platt!! Das schreibt mir mein Ego vor. Ich bin Bromley!"
+    },
+    "victory": {
+      "1": "Bromley!!! Was ist falsch mit dir?!"
+    },
+    "defeat": {
+      "1": "Ihr seid wirklich selten dämlich."
+    }
+  },
+  "macro_boss_rose_1": {
+    "encounter": {
+      "1": "Mein Name ist Rose. Ich bin der Präsident der Galar Pokémon-Liga und Geschäftsführer von Macro Cosmos\n$Ich habe eine Aufgabe, eine Berufung! Ich muss die Galar-Region mit unbegrenzter Energie versorgen,\n$damit sie sich bis in alle Ewigkeit in Frieden fortentwickeln kann!"
+    },
+    "victory": {
+      "1": "Du versteht es einfach nicht...So können wir die Geschichte nicht verändern!"
+    },
+    "defeat": {
+      "1": "Ohne deine Einmischung kann ich jetzt endlich weiterarbeiten!"
+    }
+  },
+  "macro_boss_rose_2": {
+    "encounter": {
+      "1": "Ich bin fest entschlossen, das Energieproblem in der Galar-Region\n$und natürlich auf der ganzen Welt zu lösen.\n$Meine Erfahrungen und Erfolge, die Macro Cosmos zu einem Erfolg gemacht haben,\n$sind der Beweis, dass meine Methoden funktionieren.\n$Ich habe nicht vor, meine Meinung zu ändern, selbst wenn ich verliere."
+    },
+    "victory": {
+      "1": "Ich hatte vergessen, wie großartig Pokémon-Kämpfe sind! Es ist so lange her, dass ich gekämpft habe...\n$Das war wirklich befriedigend, ich akzeptiere die Niederlage für diesen Kampf."
+    },
+    "defeat": {
+      "1": "Ich nehme an, es muss den Anschein haben, dass ich etwas Schreckliches tue.\n$Ich erwarte nicht, dass du es verstehst. Aber ich muss der Galar-Region grenzenlose Energie\n$bereitstellen, um ewigen Wohlstand zu gewährleisten."
     }
   },
   "brock": {
