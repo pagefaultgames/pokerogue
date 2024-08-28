@@ -13,7 +13,8 @@
     "SPD": "Veloc.",
     "SPDshortened": "Veloc.",
     "ACC": "Precisão",
-    "EVA": "Evasão"
+    "EVA": "Evasão",
+    "HPStat": "PS"
   },
   "Type": {
     "UNKNOWN": "Desconhecido",

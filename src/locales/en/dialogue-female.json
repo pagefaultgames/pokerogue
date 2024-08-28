@@ -655,6 +655,86 @@
       "5": "You may have beaten me, but when I lose, I go out in style!"
     }
   },
+  "aether_grunt": {
+    "encounter": {
+      "1": "I'll fight you with all I have to wipe you out!",
+      "2": "I don't care if you're a kid or what. I'll send you flying if you threaten us!",
+      "3": "I was told to turn away Trainers, whomever they might be!",
+      "4": "I'll show you the power of Aether Paradise!",
+      "5": "Now that you've learned of the darkness at the heart of Aether Paradise, we'll need you to conveniently disappear!"
+    },
+    "victory": {
+      "1": "Hmph! You seem to have a lot of skill.",
+      "2": "What does this mean? What does this mean!",
+      "3": "Hey! You're so strong that there's no way I can turn you away!",
+      "4": "Hmm... It seems as though I may have lost.",
+      "5": "Here's an impression for you: Aiyee!"
+    }
+  },
+  "faba": {
+    "encounter": {
+      "1": "I, Branch Chief Faba, shall show you the harshness of the real world!",
+      "2": "The man who is called Aether Paradise's last line of defense is to battle a mere child?",
+      "3": "I, Faba, am the Aether Branch Chief. The only one in the world, I'm irreplaceable."
+    },
+    "victory": {
+      "1": "Aiyee!",
+      "2": "H-h-how can this be?! How could this child...",
+      "3": "This is why... This is why I can't bring myself to like children."
+    }
+  },
+  "skull_grunt": {
+    "encounter": {
+      "1": "We're not bad-we're just hard!",
+      "2": "You want some? That's how we say hello! Nice knowing you, punks!",
+      "3": "We're just a bunch of guys and gals with a great interest in other people's Pokémon!",
+      "4": "Why you trying to act hard when we're already hard as bones out here, homie?",
+      "5": "Team Skull represent! We can't pay the rent! Had a lot of fun, but our youth was misspent!"
+    },
+    "victory": {
+      "1": "Huh? Is it over already?",
+      "2": "Time for us to break out, yo! Gotta tell y'all peace out, yo!",
+      "3": "We don't need your wack Pokémon anyway!",
+      "4": "Wha-?! This kid's way too strong-no bones about it!",
+      "5": "So, what? I'm lower than a Pokémon?! I already got self-esteem issues, man."
+    }
+  },
+  "plumeria": {
+    "encounter": {
+      "1": " ...Hmph. You don't look like anything special to me.",
+      "2": "It takes these dumb Grunts way too long to deal with you kids...",
+      "3": "Mess with anyone in Team Skull, and I'll show you how serious I can get."
+    },
+    "victory": {
+      "1": "Hmmph! You're pretty strong. I'll give you that.",
+      "2": "Hmmph. Guess you are pretty tough. Now I understand why my Grunts waste so much time battling kids.",
+      "3": "Hmmph! I guess I just have to hold that loss."
+    }
+  },
+  "macro_grunt": {
+    "encounter": {
+      "1": "It looks like this is the end of the line for you!",
+      "2": "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
+      "3": "I'm from Macro Cosmos Insurance! Do you have a life insurance policy?"
+    },
+    "victory": {
+      "1": "I have little choice but to respectfully retreat.",
+      "2": "Having to give up my pocket money... Losing means I'm back in the red...",
+      "3": "Nobody can beat Macro Cosmos when it comes to our dedication to our work!"
+    }
+  },
+  "oleana": {
+    "encounter": {
+      "1": "I won't let anyone interfere with Mr. Rose's plan!",
+      "2": "So, you got through all of the special staff that I had ordered to stop you. I would expect nothing less.",
+      "3": "For the chairman! I won't lose!"
+    },
+    "victory": {
+      "1": "*sigh* I wasn't able to win... Oleana...you really are a hopeless woman.",
+      "2": "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover..",
+      "3": "*sigh* I am one tired Oleana..."
+    }
+  },
   "rocket_boss_giovanni_1": {
     "encounter": {
       "1": "So! I must say, I am impressed you got here!"
@@ -785,6 +865,72 @@
     },
     "defeat": {
       "1": "Fools with no vision will continue to befoul this beautiful world."
+    }
+  },
+  "aether_boss_lusamine_1": {
+    "encounter": {
+      "1": "You're going to startle my sweet beast! It looks like I'll need to silence you first."
+    },
+    "victory": {
+      "1": "How... how can you be so awful!"
+    },
+    "defeat": {
+      "1": "Hmph..."
+    }
+  },
+  "aether_boss_lusamine_2": {
+    "encounter": {
+      "1": "Why must you continue to pester me?! I am sick of you. Sick through and through!\n$Enough with this useless talk.. with Nihilego's power I will show you how wrong you were to come here!"
+    },
+    "victory": {
+      "1": "Aaauuuggghhhhhhhhh!!!"
+    },
+    "defeat": {
+      "1": "All that I want is my precious beast! I don't care about any of the rest of you!"
+    }
+  },
+  "skull_boss_guzma_1": {
+    "encounter": {
+      "1": "The hated boss who beats you down and beats you down and never lets up...\n$Yeah. Big bad Guzma is here!"
+    },
+    "victory": {
+      "1": "Tch. I'm gonna beat you down one of these days!"
+    },
+    "defeat": {
+      "1": "And you came all the way out here just for that, huh?"
+    }
+  },
+  "skull_boss_guzma_2": {
+    "encounter": {
+      "1": "Doesn't matter who I'm up against, I'm gonna beat them down!\n$That's what big bad Guzma is all about!"
+    },
+    "victory": {
+      "1": "Guzma!!! What is wrong with you?!"
+    },
+    "defeat": {
+      "1": "Y'all are stupid!"
+    }
+  },
+  "macro_boss_rose_1": {
+    "encounter": {
+      "1": "I must provide limitless energy to ensure everlasting prosperity for everyone...\n$It is my purpose, my duty, my destiny!"
+    },
+    "victory": {
+      "1": "You still don't understand, trainer...\n$We... No, I am going to change the course of history!"
+    },
+    "defeat": {
+      "1": "You still don't understand a thing!"
+    }
+  },
+  "macro_boss_rose_2": {
+    "encounter": {
+      "1": "I'm committed to solving the energy problem in the Galar region—and, of course, around the world.\n$My experience and accomplishments that made Macro Cosmos a success are proof my methods work.\n$I don't intend to change my mind, even if I lose."
+    },
+    "victory": {
+      "1": "I'd forgotten how great Pokémon battles are! It's been so long since I battled...\n$That sure was satisfying, I accept defeat for this battle."
+    },
+    "defeat": {
+      "1": "I suppose it must seem that I am doing something terrible. I don't expect you to understand.\n$But I must provide the Galar region with limitless energy to ensure everlasting prosperity."
     }
   },
   "brock": {
