@@ -1,14 +1,15 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { TrappedTag } from "#app/data/battler-tags.js";
-import { CommandPhase, MoveEndPhase, TurnInitPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { TrappedTag } from "#app/data/battler-tags";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Moves - Octolock", () => {
   describe("integration tests", () => {
@@ -45,7 +46,7 @@ describe("Moves - Octolock", () => {
       const enemyPokemon = game.scene.getEnemyField();
 
       // use Octolock and advance to init phase of next turn to check for stat changes
-      game.doAttack(getMovePosition(game.scene, 0, Moves.OCTOLOCK));
+      game.move.select(Moves.OCTOLOCK);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(enemyPokemon[0].summonData.battleStats[BattleStat.DEF]).toBe(-1);
@@ -53,7 +54,7 @@ describe("Moves - Octolock", () => {
 
       // take a second turn to make sure stat changes occur again
       await game.phaseInterceptor.to(CommandPhase);
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
 
       await game.phaseInterceptor.to(TurnInitPhase);
       expect(enemyPokemon[0].summonData.battleStats[BattleStat.DEF]).toBe(-2);
@@ -68,7 +69,7 @@ describe("Moves - Octolock", () => {
       // before Octolock - enemy should not be trapped
       expect(enemyPokemon[0].findTag(t => t instanceof TrappedTag)).toBeUndefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.OCTOLOCK));
+      game.move.select(Moves.OCTOLOCK);
 
       // after Octolock - enemy should be trapped
       await game.phaseInterceptor.to(MoveEndPhase);
