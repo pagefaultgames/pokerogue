@@ -199,7 +199,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
         // Overflow berries will be "lost" on the boss, but it's un-catchable anyway
         for (let i = 0; i < berryMod.stackCount; i++) {
           const modifierType = generateModifierType(scene, modifierTypes.BERRY, [berryMod.berryType]) as PokemonHeldItemModifierType;
-          bossModifierConfigs.push({ modifierType });
+          bossModifierConfigs.push({ modifier: modifierType });
         }
 
         scene.removeModifier(berryMod);

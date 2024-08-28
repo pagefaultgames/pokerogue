@@ -77,16 +77,16 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
             modifierConfigs: [
               {
-                modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType
+                modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType
               },
               {
-                modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.APICOT]) as PokemonHeldItemModifierType
+                modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.APICOT]) as PokemonHeldItemModifierType
               },
               {
-                modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.GANLON]) as PokemonHeldItemModifierType
+                modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.GANLON]) as PokemonHeldItemModifierType
               },
               {
-                modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LUM]) as PokemonHeldItemModifierType,
+                modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LUM]) as PokemonHeldItemModifierType,
                 stackCount: 2
               }
             ],
