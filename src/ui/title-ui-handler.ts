@@ -35,7 +35,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.titleContainer.add(logo);
 
     if (this.scene.eventManager.isEventActive()) {
-      this.eventDisplay = new TimedEventDisplay(this.scene, 0, 0, this.scene.eventManager.activeEvent());
+      this.eventDisplay = new TimedEventDisplay(this.scene, 0, 0, this.scene.eventManager.activeEvents());
       this.eventDisplay.setup();
       this.titleContainer.add(this.eventDisplay);
     }

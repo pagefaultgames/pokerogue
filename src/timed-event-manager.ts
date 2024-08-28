@@ -2,34 +2,32 @@ import BattleScene from "#app/battle-scene.js";
 import { TextStyle, addTextObject } from "#app/ui/text.js";
 
 export enum EventType {
-    SHINY
+  SHINY,
+  GENERIC
 }
 
 interface TimedEvent {
-    name: string;
-    eventType: EventType;
-    shinyMultiplier?: number;
-    startDate: Date;
-    endDate: Date;
-    bannerFilename?: string
+  name: string;
+  eventType: EventType;
+  shinyMultiplier?: number;
+  startDate: Date;
+  endDate: Date;
+  bannerFilename?: string;
+  xPosition?: number;
+  yPosition?: number;
+  scale?: number;
 }
 
 const timedEvents: TimedEvent[] = [
   {
-    name: "Pride Update",
-    eventType: EventType.SHINY,
-    shinyMultiplier: 2,
-    startDate: new Date(Date.UTC(2024, 5, 14, 0)),
-    endDate: new Date(Date.UTC(2024, 5, 23, 0)),
-    bannerFilename: "pride-update"
-  },
-  {
-    name: "August Variant Update",
-    eventType: EventType.SHINY,
-    shinyMultiplier: 2,
-    startDate: new Date(Date.UTC(2024, 7, 16, 0)),
-    endDate: new Date(Date.UTC(2024, 7, 22, 0)),
-    bannerFilename: "august-variant-update"
+    name: "September Update",
+    eventType: EventType.GENERIC,
+    startDate: new Date(Date.UTC(2024, 7, 28, 0)),
+    endDate: new Date(Date.UTC(2024, 8, 15, 0)),
+    bannerFilename: "september-update",
+    xPosition: 26,
+    yPosition: 103,
+    scale: 0.35
   }
 ];
 
@@ -86,10 +84,10 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
 
   setup() {
     console.log(this.event?.bannerFilename);
-    this.banner = new Phaser.GameObjects.Image(this.scene, 29, 64, this.event!.bannerFilename!); // TODO: are the bangs correct here?
+    this.banner = new Phaser.GameObjects.Image(this.scene, this.event!.xPosition ?? 29, this.event!.yPosition ?? 64, this.event!.bannerFilename!); // TODO: are the bangs correct here?
     this.banner.setName("img-event-banner");
     this.banner.setOrigin(0.08, -0.35);
-    this.banner.setScale(0.18);
+    this.banner.setScale(this.event!.scale ?? 0.18);
     // this.bannerShadow = new Phaser.GameObjects.Rectangle(
     //   this.scene,
     //   this.banner.x - 2,
@@ -102,21 +100,21 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     // this.bannerShadow.setScale(0.07);
     // this.bannerShadow.setAlpha(0.5);
     // this.bannerShadow.setOrigin(0,0);
-    this.eventTimerText = addTextObject(
-      this.scene,
-      this.banner.x + 8,
-      this.banner.y + 100,
-      this.timeToGo(this.event!.endDate), // TODO: is the bang correct here?
-      TextStyle.WINDOW
-    );
-    this.eventTimerText.setName("text-event-timer");
-    this.eventTimerText.setScale(0.15);
-    this.eventTimerText.setOrigin(0, 0);
-
-    this.add([
-      this.eventTimerText,
-      // this.bannerShadow,
-      this.banner]);
+    if (this.event!.eventType !== EventType.GENERIC) {
+      this.eventTimerText = addTextObject(
+        this.scene,
+        this.banner.x + 8,
+        this.banner.y + 100,
+        this.timeToGo(this.event!.endDate), // TODO: is the bang correct here?
+        TextStyle.WINDOW
+      );
+      this.eventTimerText.setName("text-event-timer");
+      this.eventTimerText.setScale(0.15);
+      this.eventTimerText.setOrigin(0, 0);
+    
+      this.add(this.eventTimerText);
+    }
+    this.add(this.banner);
   }
 
   show() {
@@ -157,6 +155,8 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   updateCountdown() {
-    this.eventTimerText.setText(this.timeToGo(this.event!.endDate)); // TODO: is the bang correct here?
+    if (this.event!.eventType !== EventType.GENERIC) {
+      this.eventTimerText.setText(this.timeToGo(this.event!.endDate));
+    } 
   }
 }
