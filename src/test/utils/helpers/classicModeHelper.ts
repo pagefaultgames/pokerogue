@@ -9,8 +9,6 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Mode } from "#app/ui/ui";
 import { generateStarter } from "../gameManagerUtils";
 import { GameManagerHelper } from "./gameManagerHelper";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 /**
  * Helper to handle classic mode specifics

@@ -1,3 +1,4 @@
+import { BattleStyle } from "#app/enums/battle-style";
 import { Species } from "#app/enums/species";
 import overrides from "#app/overrides";
 import { EncounterPhase } from "#app/phases/encounter-phase";
@@ -52,22 +53,24 @@ export class ChallengeModeHelper extends GameManagerHelper {
   }
 
   /**
-   * Starts a battle in challenge mode.
+   * Transitions to the start of a battle.
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
   async startBattle(species?: Species[]) {
     await this.runToSummon(species);
 
-    this.game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.game.setMode(Mode.MESSAGE);
-      this.game.endPhase();
-    }, () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase));
+    if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
+      this.game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.game.setMode(Mode.MESSAGE);
+        this.game.endPhase();
+      }, () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase));
 
-    this.game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.game.setMode(Mode.MESSAGE);
-      this.game.endPhase();
-    }, () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase));
+      this.game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.game.setMode(Mode.MESSAGE);
+        this.game.endPhase();
+      }, () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase));
+    }
 
     await this.game.phaseInterceptor.to(CommandPhase);
     console.log("==================[New Turn]==================");
