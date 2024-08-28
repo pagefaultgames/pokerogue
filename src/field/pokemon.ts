@@ -675,7 +675,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.stats[stat];
   }
 
-  getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, simulated: boolean = true, isCritical: boolean = false): integer {
+  getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, ignoreAbility: boolean = false, ignoreOppAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): integer {
     if (stat === Stat.HP) {
       return this.getStat(Stat.HP);
     }
@@ -694,7 +694,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           break;
         }
       }
-      applyAbAttrs(IgnoreOpponentStatChangesAbAttr, opponent, null, simulated, statLevel);
+      if (!ignoreOppAbility) {
+        applyAbAttrs(IgnoreOpponentStatChangesAbAttr, opponent, null, simulated, statLevel);
+      }
       if (move) {
         applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, opponent, move, statLevel);
       }
@@ -705,6 +707,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const statValue = new Utils.NumberHolder(this.getStat(stat));
     this.scene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
 
+    // The Ruin abilities here are never ignored, but they reveal themselves on summon anyway
     const fieldApplied = new Utils.BooleanHolder(false);
     for (const pokemon of this.scene.getField(true)) {
       applyFieldBattleStatMultiplierAbAttrs(FieldMultiplyBattleStatAbAttr, pokemon, stat, statValue, this, fieldApplied, simulated);
@@ -712,7 +715,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         break;
       }
     }
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue, simulated);
+    if (!ignoreAbility) {
+      applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue, simulated);
+    }
+
     let ret = statValue.value * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
     switch (stat) {
     case Stat.ATK:
@@ -1963,6 +1969,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return accuracyMultiplier.value;
   }
 
+  /**
+   * Calculates the damage of an attack made by another Pokemon against this Pokemon
+   * @param source {@linkcode Pokemon} the attacking Pokemon
+   * @param move {@linkcode Pokemon} the move used in the attack
+   * @param ignoreAbility `boolean` if `true`, ignores this Pokemon's defensive ability effects
+   * @param isCritical `boolean` if `true`, calculates damage for a critical hit.
+   * @param simulated `boolean` if `true`, suppresses changes to game state during the calculation.
+   * @returns a {@linkcode DamageCalculationResult} object with four fields:
+   * - `move`: {@linkcode Moves} the identifier for the attacking move.
+   * - `cancelled`: `boolean` whether the move was cancelled by another effect.
+   * - `result`: {@linkcode HitResult} indicates the attack's type effectiveness.
+   * - `damage`: `number` the attack's final damage output.
+   */
   getAttackDamage(source: Pokemon, move: Move, ignoreAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): DamageCalculationResult {
     const damage = new Utils.NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
@@ -2039,14 +2058,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * The attacker's offensive stat for the given move's category.
      * Critical hits ignore negative stat stages.
      */
-    const sourceAtk = new Utils.NumberHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, simulated, isCritical));
+    const sourceAtk = new Utils.NumberHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, false, ignoreAbility, isCritical, simulated));
     applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
 
     /**
      * This Pokemon's defensive stat for the given move's category.
      * Critical hits ignore positive stat stages.
      */
-    const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, simulated, isCritical));
+    const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, ignoreAbility, false, isCritical, simulated));
     applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
 
     // ------ END BASE DAMAGE MULTIPLIERS ------
