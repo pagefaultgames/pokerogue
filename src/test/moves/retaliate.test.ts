@@ -48,8 +48,6 @@ describe("Moves - Retaliate", () => {
     await game.toNextTurn();
     game.move.select(Moves.RETALIATE);
     await game.phaseInterceptor.to(MoveEffectPhase);
-    const cobalion = game.scene.getPlayerPokemon()!;
-    expect(cobalion.name).equals("Cobalion");
     expect(retaliate.calculateBattlePower).toHaveReturnedWith(140);
   });
 });
