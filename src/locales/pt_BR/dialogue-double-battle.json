@@ -57,7 +57,8 @@
   },
   "iris_alder_double": {
     "encounter": {
-      "1": "Iris: Bem-vindo, Desafiante! Eu sou A Campeã de Unova!\n$Alder: Iris, você não está um pouco empolgada demais?"
+      "1": "Iris: Bem-vindo, Desafiante! Eu sou A Campeã de Unova!\n$Alder: Iris, você não está um pouco empolgada demais?",
+      "1_female": "Iris: Bem-vinda, Desafiante! Eu sou A Campeã de Unova!\n$Alder: Iris, você não está um pouco empolgada demais?"
     },
     "victory": {
       "1": "Iris: Uma derrota como essa não é fácil de engolir...\n$Alder: Mas só ficaremos mais fortes a cada derrota!"

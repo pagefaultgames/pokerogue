@@ -366,7 +366,9 @@ export class EncounterPhase extends BattlePhase {
         const currentLanguage = i18next.resolvedLanguage ?? "en";
         const ordinalIndex = (ordinalUse.includes(currentLanguage)) ? ["st", "nd", "rd"][((count + 90) % 100 - 10) % 10 - 1] ?? "th" : "";
         const cycleCount = count.toLocaleString() + ordinalIndex;
-        const encounterDialogue = i18next.t(`${(this.scene.gameData.gender === PlayerGender.FEMALE) ? "PGF" : "PGM"}battleSpecDialogue:encounter`, {cycleCount: cycleCount});
+        const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+        const genderStr = PlayerGender[genderIndex].toLowerCase();
+        const encounterDialogue = i18next.t("battleSpecDialogue:encounter", { context: genderStr, cycleCount: cycleCount });
         this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
           this.doEncounterCommon(false);
         });
