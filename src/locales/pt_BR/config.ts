@@ -58,7 +58,7 @@ import terrain from "./terrain.json";
 import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
 import moveTriggers from "./move-trigger.json";
 import runHistory from "./run-history.json";
-import { fusionAffixes } from "./pokemon-fusion-affixes";
+import fusionAffixes from "./pokemon-fusion-affixes.json";
 
 export const ptBrConfig = {
   ability,
