@@ -1,17 +1,21 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
-import { Mode } from "#app/ui/ui";
 import { BattleStat } from "#app/data/battle-stat";
-import { generateStarter, getMovePosition } from "#test/utils/gameManagerUtils";
-import { Command } from "#app/ui/command-ui-handler";
 import { Status, StatusEffect } from "#app/data/status-effect";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { CommandPhase, DamagePhase, EncounterPhase, EnemyCommandPhase, SelectStarterPhase, TurnInitPhase } from "#app/phases";
+import { CommandPhase } from "#app/phases/command-phase";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { EncounterPhase } from "#app/phases/encounter-phase";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { generateStarter } from "#test/utils/gameManagerUtils";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;
@@ -212,13 +216,7 @@ describe("Abilities - Intimidate", () => {
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(-1);
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.AERIAL_ACE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(Moves.AERIAL_ACE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(DamagePhase);
     await game.killPokemon(game.scene.currentBattle.enemyParty[0]);
     expect(game.scene.currentBattle.enemyParty[0].isFainted()).toBe(true);
@@ -238,13 +236,7 @@ describe("Abilities - Intimidate", () => {
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(-1);
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.AERIAL_ACE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(Moves.AERIAL_ACE);
     console.log("===to new turn===");
     await game.toNextTurn();
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -263,13 +255,7 @@ describe("Abilities - Intimidate", () => {
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(-1);
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.AERIAL_ACE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(Moves.AERIAL_ACE);
     console.log("===to new turn===");
     await game.toNextTurn();
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -277,13 +263,7 @@ describe("Abilities - Intimidate", () => {
     battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.AERIAL_ACE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(Moves.AERIAL_ACE);
     console.log("===to new turn===");
     await game.toNextTurn();
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -302,13 +282,7 @@ describe("Abilities - Intimidate", () => {
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(-1);
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.AERIAL_ACE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(Moves.AERIAL_ACE);
     console.log("===to new turn===");
     await game.toNextTurn();
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
@@ -316,13 +290,7 @@ describe("Abilities - Intimidate", () => {
     battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
     expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, Moves.AERIAL_ACE);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(Moves.AERIAL_ACE);
     console.log("===to new turn===");
     await game.toNextTurn();
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
