@@ -7,7 +7,6 @@ import MessageUiHandler from "./message-ui-handler";
 import { addTextObject, TextStyle } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import { ParseKeys } from "i18next";
 import { PlayerGender } from "#enums/player-gender";
 
 enum Page {
@@ -83,13 +82,10 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.headerActionText.setPositionRelative(this.headerBg, 264, 8);
 
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const playerGender = this.scene.gameData.gender;
-    let genderPrefix = "PGM";
-    if (playerGender === PlayerGender.FEMALE) {
-      genderPrefix = "PGF";
-    }
+    const genderIndex = this.scene.gameData.gender ?? PlayerGender.MALE;
+    const genderStr = PlayerGender[genderIndex].toLowerCase();
 
-    this.achvsName = i18next.t(`${genderPrefix}achv:Achievements.name` as ParseKeys);
+    this.achvsName = i18next.t("achv:Achievements.name", { context: genderStr });
     this.vouchersName = i18next.t("voucher:vouchers");
 
     this.iconsBg = addWindow(this.scene, 0, this.headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - this.headerBg.height - 68);
@@ -189,21 +185,19 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
   protected showAchv(achv: Achv) {
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const playerGender = this.scene.gameData.gender;
-    let genderPrefix = "PGM";
-    if (playerGender === PlayerGender.FEMALE) {
-      genderPrefix = "PGF";
-    }
+    const genderIndex = this.scene.gameData.gender ?? PlayerGender.MALE;
+    const genderStr = PlayerGender[genderIndex].toLowerCase();
 
-    achv.name = i18next.t(`${genderPrefix}achv:${achv.localizationKey}.name` as ParseKeys);
+    achv.name = i18next.t(`achv:${achv.localizationKey}.name`, { context: genderStr });
     achv.description = getAchievementDescription(achv.localizationKey);
     const achvUnlocks = this.scene.gameData.achvUnlocks;
-    const unlocked = achvUnlocks.hasOwnProperty(achv.id);
+    // const unlocked = achvUnlocks.hasOwnProperty(achv.id);
+    const unlocked = true; //TODO: this is only for debugging!
     const hidden = !unlocked && achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
     this.titleText.setText(unlocked ? achv.name : "???");
     this.showText(!hidden ? achv.description : "");
     this.scoreText.setText(`${achv.score}pt`);
-    this.unlockText.setText(unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t(`${genderPrefix}achv:Locked.name` as ParseKeys));
+    this.unlockText.setText(unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t("achv:Locked.name"));
   }
 
   protected showVoucher(voucher: Voucher) {
