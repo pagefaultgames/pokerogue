@@ -126,15 +126,19 @@ export const FunAndGamesEncounter: MysteryEncounter =
         // Start minigame
         const encounter = scene.currentBattle.mysteryEncounter!;
         encounter.misc.turnsRemaining = 3;
+
+        // Update money
         const moneyCost = (encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney;
         updatePlayerMoney(scene, -moneyCost, true, false);
         await showEncounterText(scene, i18next.t("mysteryEncounterMessages:paid_money", { amount: moneyCost }));
-        hideShowmanIntroSprite(scene);
 
+        // Handlers for battle events
+        encounter.onTurnStart = handleNextTurn; // triggered during TurnInitPhase
+        encounter.doContinueEncounter = handleLoseMinigame; // triggered during MysteryEncounterRewardsPhase, post VictoryPhase if the player KOs Wobbuffet
+
+        hideShowmanIntroSprite(scene);
         await summonPlayerPokemon(scene);
         await showWobbuffetHealthBar(scene);
-        encounter.onTurnStart = handleNextTurn;
-        encounter.doContinueEncounter = handleLoseMinigame;
 
         return true;
       })
@@ -248,22 +252,22 @@ function handleNextTurn(scene: BattleScene) {
     handleLoseMinigame(scene);
     return true;
   }
-  if (encounter.misc.turnsRemaining === 0) {
+  if (encounter.misc.turnsRemaining <= 0) {
     // Check Wobbuffet's health for the actual result
     const healthRatio = wobbuffet.hp / wobbuffet.getMaxHp();
     let resultMessageKey: string;
     let isHealPhase = false;
     if (healthRatio < 0.03) {
       // Grand prize
-      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.MULTI_LENS], fillRemaining: true });
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.MULTI_LENS], fillRemaining: false });
       resultMessageKey = `${namespace}.best_result`;
     } else if (healthRatio < 0.15) {
       // 2nd prize
-      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SCOPE_LENS], fillRemaining: true });
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SCOPE_LENS], fillRemaining: false });
       resultMessageKey = `${namespace}.great_result`;
     } else if (healthRatio < 0.33) {
       // 3rd prize
-      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.WIDE_LENS], fillRemaining: true });
+      setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.WIDE_LENS], fillRemaining: false });
       resultMessageKey = `${namespace}.good_result`;
     } else {
       // No prize
