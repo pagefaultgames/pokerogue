@@ -1,6 +1,7 @@
 import { updateUserInfo } from "#app/account";
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
+import { BattleStyle } from "#app/enums/battle-style";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { GameModes, getGameMode } from "#app/game-mode";
@@ -173,7 +174,7 @@ export default class GameManager {
   }
 
   /**
-   * @deprecated Use classicMode.startBattle() instead.
+   * @deprecated Use `game.classicMode.startBattle()` or `game.dailyMode.startBattle()` instead
    *
    * Transitions to the start of a battle.
    * @param species - Optional array of species to start the battle with.
@@ -182,15 +183,17 @@ export default class GameManager {
   async startBattle(species?: Species[]) {
     await this.classicMode.runToSummon(species);
 
-    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.setMode(Mode.MESSAGE);
-      this.endPhase();
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+    if (this.scene.battleStyle === BattleStyle.SWITCH) {
+      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
 
-    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.setMode(Mode.MESSAGE);
-      this.endPhase();
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+    }
 
     await this.phaseInterceptor.to(CommandPhase);
     console.log("==================[New Turn]==================");

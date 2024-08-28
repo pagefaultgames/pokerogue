@@ -604,11 +604,13 @@ export default class Move implements Localizable {
           return true;
         }
       }
+      break;
     case MoveFlags.IGNORE_PROTECT:
       if (user.hasAbilityWithAttr(IgnoreProtectOnContactAbAttr) &&
           this.checkFlag(MoveFlags.MAKES_CONTACT, user, target)) {
         return true;
       }
+      break;
     }
 
     return !!(this.flags & flag);
@@ -8595,7 +8597,8 @@ export function initMoves() {
     new AttackMove(Moves.BODY_PRESS, Type.FIGHTING, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 8)
       .attr(DefAtkAttr),
     new StatusMove(Moves.DECORATE, Type.FAIRY, -1, 15, -1, 0, 8)
-      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 2),
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 2)
+      .ignoresProtect(),
     new AttackMove(Moves.DRUM_BEATING, Type.GRASS, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .makesContact(false),
