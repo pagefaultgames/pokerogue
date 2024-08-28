@@ -117,5 +117,13 @@
   "plasma_grunts": "Sbires de la Team Plasma",
   "flare_grunt": "Sbire de la Team Flare",
   "flare_grunt_female": "Sbire de la Team Flare",
-  "flare_grunts": "Sbires de la Team Flare"
+  "flare_grunts": "Sbires de la Team Flare",
+  "aether_grunt": "Employé de la Fondation Æther",
+  "aether_grunt_female": "Employée de la Fondation Æther",
+  "aether_grunts": "Employés de la Fondation Æther",
+  "skull_grunt": "Sbire de la Team Skull",
+  "skull_grunt_female": "Sbire de la Team Skull",
+  "macro_grunt": "Employé de Macro Cosmos",
+  "macro_grunt_female": "Employée de Macro Cosmos",
+  "macro_grunts": "Employés de Macro Cosmos"
 }
