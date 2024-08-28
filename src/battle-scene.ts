@@ -254,7 +254,7 @@ export default class BattleScene extends SceneBase {
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
   public mysteryEncounterData: MysteryEncounterData = new MysteryEncounterData(null);
-  public lastMysteryEncounter: MysteryEncounter;
+  public lastMysteryEncounter?: MysteryEncounter;
   /** Combined Biome and Wave count text */
   private biomeWaveText: Phaser.GameObjects.Text;
   private moneyText: Phaser.GameObjects.Text;
@@ -1213,7 +1213,7 @@ export default class BattleScene extends SceneBase {
     const maxExpLevel = this.getMaxExpLevel();
 
     this.lastEnemyTrainer = lastBattle?.trainer ?? null;
-    this.lastMysteryEncounter = lastBattle?.mysteryEncounter ?? null;
+    this.lastMysteryEncounter = lastBattle?.mysteryEncounter;
 
     this.executeWithSeedOffset(() => {
       this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);

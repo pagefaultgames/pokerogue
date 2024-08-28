@@ -51,7 +51,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
 
       let species = getPokemonSpecies(getRandomSpeciesByStarterTier([0, 5]));
       const tries = 0;
@@ -118,7 +118,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
           ],
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const price = encounter.misc.price;
           const purchasedPokemon = encounter.misc.pokemon as PlayerPokemon;
 

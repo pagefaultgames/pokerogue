@@ -98,7 +98,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
   it("should initialize fully", async () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
     scene.currentBattle.mysteryEncounter = new MysteryEncounter(MysteriousChallengersEncounter);
-    const encounter = scene.currentBattle.mysteryEncounter;
+    const encounter = scene.currentBattle.mysteryEncounter!;
     scene.currentBattle.waveIndex = defaultWave;
 
     const { onInit } = encounter;
@@ -162,7 +162,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
-      expect(scene.currentBattle.mysteryEncounter.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
+      expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
     });
 
     it("should have normal trainer rewards after battle", async () => {
@@ -204,7 +204,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
-      expect(scene.currentBattle.mysteryEncounter.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
+      expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
     });
 
     it("should have hard trainer rewards after battle", async () => {
@@ -247,7 +247,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
-      expect(scene.currentBattle.mysteryEncounter.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
+      expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
     });
 
     it("should have brutal trainer rewards after battle", async () => {

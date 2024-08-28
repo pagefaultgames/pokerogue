@@ -142,7 +142,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_POKEMON_SALESMAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
 
-      const price = scene.currentBattle.mysteryEncounter.misc.price;
+      const price = scene.currentBattle.mysteryEncounter!.misc.price;
 
       expect(updateMoneySpy).toHaveBeenCalledWith(scene, -price, true, false);
       expect(scene.money).toBe(initialMoney - price);
@@ -153,7 +153,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_POKEMON_SALESMAN, defaultParty);
 
       const initialPartySize = scene.getParty().length;
-      const pokemonName = scene.currentBattle.mysteryEncounter.misc.pokemon.name;
+      const pokemonName = scene.currentBattle.mysteryEncounter!.misc.pokemon.name;
 
       await runMysteryEncounterToEnd(game, 1);
 

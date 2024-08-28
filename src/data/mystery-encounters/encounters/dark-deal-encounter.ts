@@ -127,14 +127,15 @@ export const DarkDealEncounter: MysteryEncounter =
           const removedPokemon = getRandomPlayerPokemon(scene, false, true);
           scene.removePokemonFromPlayerParty(removedPokemon);
 
-          scene.currentBattle.mysteryEncounter.setDialogueToken("pokeName", removedPokemon.getNameToRender());
+          const encounter = scene.currentBattle.mysteryEncounter!;
+          encounter.setDialogueToken("pokeName", removedPokemon.getNameToRender());
 
           // Store removed pokemon types
-          scene.currentBattle.mysteryEncounter.misc = [
+          encounter.misc = [
             removedPokemon.species.type1,
           ];
           if (removedPokemon.species.type2) {
-            scene.currentBattle.mysteryEncounter.misc.push(removedPokemon.species.type2);
+            encounter.misc.push(removedPokemon.species.type2);
           }
         })
         .withOptionPhase(async (scene: BattleScene) => {
@@ -142,7 +143,7 @@ export const DarkDealEncounter: MysteryEncounter =
           scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.ROGUE_BALL));
 
           // Start encounter with random legendary (7-10 starter strength) that has level additive
-          const bossTypes = scene.currentBattle.mysteryEncounter.misc as Type[];
+          const bossTypes = scene.currentBattle.mysteryEncounter!.misc as Type[];
           // Starter egg tier, 35/50/10/5 %odds for tiers 6/7/8/9+
           const roll = randSeedInt(100);
           const starterTier: number | [number, number] =

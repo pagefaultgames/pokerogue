@@ -60,7 +60,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
       },
     ])
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
       const config: EnemyPartyConfig = {
@@ -118,7 +118,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
         ]
       },
       async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         // Do blackout and hide intro visuals during blackout
         scene.time.delayedCall(750, () => {
           transitionMysteryEncounterIntroVisuals(scene, true, true, 50);
@@ -176,7 +176,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         // Pick battle
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SOUL_DEW], fillRemaining: true });
         encounter.startOfBattleEffects.push(
           {

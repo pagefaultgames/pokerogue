@@ -150,7 +150,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
           // Calculate all the newly transformed Pokemon and begin asset load
           const teamTransformations = getTeamTransformations(scene);
           const loadAssets = teamTransformations.map(t => (t.newPokemon as PlayerPokemon).loadAssets());
-          scene.currentBattle.mysteryEncounter.misc = {
+          scene.currentBattle.mysteryEncounter!.misc = {
             teamTransformations,
             loadAssets
           };
@@ -161,8 +161,8 @@ export const WeirdDreamEncounter: MysteryEncounter =
 
           // Change the entire player's party
           // Wait for all new Pokemon assets to be loaded before showing transformation animations
-          await Promise.all(scene.currentBattle.mysteryEncounter.misc.loadAssets);
-          const transformations = scene.currentBattle.mysteryEncounter.misc.teamTransformations;
+          await Promise.all(scene.currentBattle.mysteryEncounter!.misc.loadAssets);
+          const transformations = scene.currentBattle.mysteryEncounter!.misc.teamTransformations;
 
           // If there are 1-3 transformations, do them centered back to back
           // Otherwise, the first 3 transformations are executed side-by-side, then any remaining 1-3 transformations occur in those same respective positions

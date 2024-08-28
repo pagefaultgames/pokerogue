@@ -48,7 +48,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
       },
     ])
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
       console.log(encounter);
 
       // Calculate boss mon
@@ -85,7 +85,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         // Pick battle
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: true});
         encounter.startOfBattleEffects.push(
           {
@@ -137,7 +137,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Steal the Snorlax's Leftovers
-          const instance = scene.currentBattle.mysteryEncounter;
+          const instance = scene.currentBattle.mysteryEncounter!;
           setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS], fillRemaining: false });
           // Snorlax exp to Pokemon that did the stealing
           setEncounterExp(scene, instance.primaryPokemon!.id, getPokemonSpecies(Species.SNORLAX).baseExp);

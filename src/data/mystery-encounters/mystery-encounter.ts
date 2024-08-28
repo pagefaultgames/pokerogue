@@ -42,6 +42,9 @@ export interface IMysteryEncounter {
   catchAllowed: boolean;
   continuousEncounter: boolean;
   maxAllowedEncounters: number;
+  hasBattleAnimationsWithoutTargets: boolean;
+  skipEnemyBattleTurns: boolean;
+  skipToFightInput: boolean;
 
   onInit?: (scene: BattleScene) => boolean;
   onVisualsStart?: (scene: BattleScene) => boolean;
@@ -113,7 +116,20 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * Rogue tier encounters default to 1, others default to 3
    */
   maxAllowedEncounters: number;
-
+  /**
+   * If true, encounter will not animate the target Pokemon as part of battle animations
+   * Used for encounters where it is not a "real" battle, but still uses battle animations and commands (see {@link FunAndGamesEncounter} for an example)
+   */
+  hasBattleAnimationsWithoutTargets: boolean;
+  /**
+   * If true, will skip enemy pokemon turns during battle for the encounter
+   * Used for encounters where it is not a "real" battle, but still uses battle animations and commands (see {@link FunAndGamesEncounter} for an example)
+   */
+  skipEnemyBattleTurns: boolean;
+  /**
+   * If true, will skip COMMAND input and go straight to FIGHT (move select) input menu
+   */
+  skipToFightInput: boolean;
 
   /**
    * Event callback functions
@@ -122,6 +138,8 @@ export default class MysteryEncounter implements IMysteryEncounter {
   onInit?: (scene: BattleScene) => boolean;
   /** Event when battlefield visuals have finished sliding in and the encounter dialogue begins */
   onVisualsStart?: (scene: BattleScene) => boolean;
+  /** Event triggered prior to {@link CommandPhase}, during {@link TurnInitPhase} */
+  onTurnStart?: (scene: BattleScene) => boolean;
   /** Event prior to any rewards logic in {@link MysteryEncounterRewardsPhase} */
   onRewards?: (scene: BattleScene) => Promise<void>;
   /** Will provide the player party EXP before rewards are displayed for that wave */
@@ -471,6 +489,9 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   catchAllowed: boolean = false;
   lockEncounterRewardTiers: boolean = false;
   startOfBattleEffectsComplete: boolean = false;
+  hasBattleAnimationsWithoutTargets: boolean = false;
+  skipEnemyBattleTurns: boolean = false;
+  skipToFightInput: boolean = false;
   maxAllowedEncounters: number = 3;
   expMultiplier: number = 1;
 
@@ -598,6 +619,35 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
   withContinuousEncounter(continuousEncounter: boolean): this & Required<Pick<IMysteryEncounter, "continuousEncounter">> {
     return Object.assign(this, { continuousEncounter: continuousEncounter });
+  }
+
+  /**
+   * If true, encounter will not animate the target Pokemon as part of battle animations
+   * Used for encounters where it is not a "real" battle, but still uses battle animations and commands (see {@link FunAndGamesEncounter} for an example)
+   * Default false
+   * @param hasBattleAnimationsWithoutTargets
+   */
+  withBattleAnimationsWithoutTargets(hasBattleAnimationsWithoutTargets: boolean): this & Required<Pick<IMysteryEncounter, "hasBattleAnimationsWithoutTargets">> {
+    return Object.assign(this, { hasBattleAnimationsWithoutTargets });
+  }
+
+  /**
+   * If true, encounter will not animate the target Pokemon as part of battle animations
+   * Used for encounters where it is not a "real" battle, but still uses battle animations and commands (see {@link FunAndGamesEncounter} for an example)
+   * Default false
+   * @param skipEnemyBattleTurns
+   */
+  withSkipEnemyBattleTurns(skipEnemyBattleTurns: boolean): this & Required<Pick<IMysteryEncounter, "skipEnemyBattleTurns">> {
+    return Object.assign(this, { skipEnemyBattleTurns });
+  }
+
+  /**
+   * If true, will skip COMMAND input and go straight to FIGHT (move select) input menu
+   * Default false
+   * @param skipToFightInput
+   */
+  withSkipToFightInput(skipToFightInput: boolean): this & Required<Pick<IMysteryEncounter, "skipToFightInput">> {
+    return Object.assign(this, { skipToFightInput });
   }
 
   /**

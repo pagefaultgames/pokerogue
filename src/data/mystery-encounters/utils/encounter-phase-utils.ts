@@ -120,7 +120,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
   const partyTrainerConfig = partyConfig?.trainerConfig;
   let trainerConfig: TrainerConfig;
   if (!isNullOrUndefined(trainerType) || partyTrainerConfig) {
-    scene.currentBattle.mysteryEncounter.encounterMode = MysteryEncounterMode.TRAINER_BATTLE;
+    scene.currentBattle.mysteryEncounter!.encounterMode = MysteryEncounterMode.TRAINER_BATTLE;
     if (scene.currentBattle.trainer) {
       scene.currentBattle.trainer.setVisible(false);
       scene.currentBattle.trainer.destroy();
@@ -141,7 +141,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     battle.enemyLevels = scene.currentBattle.trainer.getPartyLevels(scene.currentBattle.waveIndex);
   } else {
     // Wild
-    scene.currentBattle.mysteryEncounter.encounterMode = MysteryEncounterMode.WILD_BATTLE;
+    scene.currentBattle.mysteryEncounter!.encounterMode = MysteryEncounterMode.WILD_BATTLE;
     const numEnemies = partyConfig?.pokemonConfigs && partyConfig.pokemonConfigs.length > 0 ? partyConfig?.pokemonConfigs?.length : doubleBattle ? 2 : 1;
     battle.enemyLevels = new Array(numEnemies).fill(null).map(() => scene.currentBattle.getLevelForWave());
   }
@@ -184,7 +184,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
           enemySpecies = config.species;
           isBoss = config.isBoss;
           if (isBoss) {
-            scene.currentBattle.mysteryEncounter.encounterMode = MysteryEncounterMode.BOSS_BATTLE;
+            scene.currentBattle.mysteryEncounter!.encounterMode = MysteryEncounterMode.BOSS_BATTLE;
           }
         } else {
           enemySpecies = scene.randomSpecies(battle.waveIndex, level, true);
@@ -429,7 +429,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
           const pokemon = scene.getParty()[slotIndex];
           const secondaryOptions = onPokemonSelected(pokemon);
           if (!secondaryOptions) {
-            scene.currentBattle.mysteryEncounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
+            scene.currentBattle.mysteryEncounter!.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
             resolve(true);
             return;
           }
@@ -443,7 +443,7 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
                 const onSelect = option.handler;
                 option.handler = () => {
                   onSelect();
-                  scene.currentBattle.mysteryEncounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
+                  scene.currentBattle.mysteryEncounter!.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
                   resolve(true);
                   return true;
                 };
@@ -595,7 +595,7 @@ export function selectOptionThenPokemon(scene: BattleScene, options: OptionSelec
  * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before MysteryEncounterRewardsPhase)
  */
 export function setEncounterRewards(scene: BattleScene, customShopRewards?: CustomModifierSettings, eggRewards?: IEggOptions[], preRewardsCallback?: Function) {
-  scene.currentBattle.mysteryEncounter.doEncounterRewards = (scene: BattleScene) => {
+  scene.currentBattle.mysteryEncounter!.doEncounterRewards = (scene: BattleScene) => {
     if (preRewardsCallback) {
       preRewardsCallback();
     }
@@ -638,7 +638,7 @@ export function setEncounterRewards(scene: BattleScene, customShopRewards?: Cust
 export function setEncounterExp(scene: BattleScene, participantId: integer | integer[], baseExpValue: number, useWaveIndex: boolean = true) {
   const participantIds = Array.isArray(participantId) ? participantId : [participantId];
 
-  scene.currentBattle.mysteryEncounter.doEncounterExp = (scene: BattleScene) => {
+  scene.currentBattle.mysteryEncounter!.doEncounterExp = (scene: BattleScene) => {
     const party = scene.getParty();
     const expShareModifier = scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
     const expBalanceModifier = scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
@@ -650,7 +650,7 @@ export function setEncounterExp(scene: BattleScene, participantId: integer | int
     let expValue = Math.floor(baseExpValue * (useWaveIndex ? scene.currentBattle.waveIndex : 1) / 5 + 1);
 
     if (participantIds?.length > 0) {
-      if (scene.currentBattle.mysteryEncounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
+      if (scene.currentBattle.mysteryEncounter!.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
         expValue = Math.floor(expValue * 1.5);
       }
       for (const partyMember of nonFaintedPartyMembers) {
@@ -752,7 +752,7 @@ export function initSubsequentOptionSelect(scene: BattleScene, optionSelectSetti
  * @param encounterMode - Can set custom encounter mode if necessary (may be required for forcing Pokemon to return before next phase)
  */
 export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: boolean = false, encounterMode: MysteryEncounterMode = MysteryEncounterMode.NO_BATTLE) {
-  scene.currentBattle.mysteryEncounter.encounterMode = encounterMode;
+  scene.currentBattle.mysteryEncounter!.encounterMode = encounterMode;
   scene.clearPhaseQueue();
   scene.clearPhaseQueueSplice();
   handleMysteryEncounterVictory(scene, addHealPhase);
@@ -775,7 +775,7 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
 
   // If in repeated encounter variant, do nothing
   // Variant must eventually be swapped in order to handle "true" end of the encounter
-  const encounter = scene.currentBattle.mysteryEncounter;
+  const encounter = scene.currentBattle.mysteryEncounter!;
   if (encounter.continuousEncounter || doNotContinue) {
     return;
   } else if (encounter.encounterMode === MysteryEncounterMode.NO_BATTLE) {
@@ -805,7 +805,7 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
  */
 export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide: boolean = true, destroy: boolean = true, duration: number = 750): Promise<boolean> {
   return new Promise(resolve => {
-    const introVisuals = scene.currentBattle.mysteryEncounter.introVisuals;
+    const introVisuals = scene.currentBattle.mysteryEncounter!.introVisuals;
     const enemyPokemon = scene.getEnemyField();
     if (enemyPokemon) {
       scene.currentBattle.enemyParty = [];
@@ -835,7 +835,7 @@ export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide:
               scene.field.remove(pokemon, true);
             });
 
-            scene.currentBattle.mysteryEncounter.introVisuals = undefined;
+            scene.currentBattle.mysteryEncounter!.introVisuals = undefined;
           }
           resolve(true);
         }
@@ -852,8 +852,8 @@ export function transitionMysteryEncounterIntroVisuals(scene: BattleScene, hide:
  * @param scene
  */
 export function handleMysteryEncounterBattleStartEffects(scene: BattleScene) {
-  const encounter = scene.currentBattle?.mysteryEncounter;
-  if (scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
+  const encounter = scene.currentBattle.mysteryEncounter;
+  if (scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && encounter && encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
     const effects = encounter.startOfBattleEffects;
     effects.forEach(effect => {
       let source;
@@ -882,6 +882,21 @@ export function handleMysteryEncounterBattleStartEffects(scene: BattleScene) {
 
     encounter.startOfBattleEffectsComplete = true;
   }
+}
+
+/**
+ * Can queue extra phases or logic during {@link TurnInitPhase}
+ * Mostly useful for allowing MysteryEncounter enemies to "cheat" and use moves before the first turn
+ * @param scene
+ * @return boolean - if true, will skip the remainder of the {@link TurnInitPhase}
+ */
+export function handleMysteryEncounterTurnStartEffects(scene: BattleScene): boolean {
+  const encounter = scene.currentBattle.mysteryEncounter;
+  if (scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && encounter && encounter.onTurnStart) {
+    return encounter.onTurnStart(scene);
+  }
+
+  return false;
 }
 
 /**

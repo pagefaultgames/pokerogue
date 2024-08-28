@@ -326,7 +326,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
   displayEncounterOptions(slideInDescription: boolean = true): void {
     this.getUi().clearText();
-    const mysteryEncounter = this.scene.currentBattle.mysteryEncounter;
+    const mysteryEncounter = this.scene.currentBattle.mysteryEncounter!;
     this.encounterOptions = this.overrideSettings?.overrideOptions ?? mysteryEncounter.options;
     this.optionsMeetsReqs = [];
 

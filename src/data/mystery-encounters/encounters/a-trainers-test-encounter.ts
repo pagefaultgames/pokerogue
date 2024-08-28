@@ -34,7 +34,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
     ])
     .withAutoHideIntroVisuals(false)
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
 
       // Randomly pick from 1 of the 5 stat trainers to spawn
       let trainerType: TrainerType;
@@ -135,7 +135,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
         buttonTooltip: `${namespace}.option.1.tooltip`
       },
       async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         // Spawn standard trainer battle with memory mushroom reward
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
@@ -160,7 +160,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
         buttonTooltip: `${namespace}.option.2.tooltip`
       },
       async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         // Full heal party
         scene.unshiftPhase(new PartyHealPhase(scene, true));
 

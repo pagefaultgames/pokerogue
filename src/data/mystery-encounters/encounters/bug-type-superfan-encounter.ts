@@ -204,7 +204,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       },
     ])
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
       // Calculates what trainers are available for battle in the encounter
 
       // Bug type superfan trainer config
@@ -241,7 +241,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         // Select battle the bug trainer
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
         // Init the moves available for tutor
@@ -272,7 +272,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       })
       .withPreOptionPhase(async (scene: BattleScene) => {
         // Player shows off their bug types
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
 
         // Player gets different rewards depending on the number of bug types they have
         const numBugTypes = scene.getParty().filter(p => p.isOfType(Type.BUG, true)).length;
@@ -360,7 +360,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         secondOptionPrompt: `${namespace}.option.3.select_prompt`,
       })
       .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
           const validItems = pokemon.getHeldItems().filter(item => {
@@ -403,7 +403,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
       })
       .withOptionPhase(async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         const modifier = encounter.misc.chosenModifier;
 
         // Remove the modifier if its stacks go to 0
@@ -583,7 +583,7 @@ function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSl
 
 function doBugTypeMoveTutor(scene: BattleScene): Promise<void> {
   return new Promise<void>(async resolve => {
-    const moveOptions = scene.currentBattle.mysteryEncounter.misc.moveTutorOptions;
+    const moveOptions = scene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
     await showEncounterDialogue(scene, `${namespace}.battle_won`, `${namespace}.speaker`);
 
     const overlayScale = 1;

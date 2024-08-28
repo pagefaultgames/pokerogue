@@ -80,7 +80,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
     ])
     .withAutoHideIntroVisuals(false)
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
 
       // Loaded back to front for pop() operations
       encounter.enemyPartyConfigs.push(getVitoTrainerConfig(scene));
@@ -107,8 +107,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         // Spawn 5 trainer battles back to back with Macho Brace in rewards
-        // scene.currentBattle.mysteryEncounter.continuousEncounter = true;
-        scene.currentBattle.mysteryEncounter.doContinueEncounter = (scene: BattleScene) => {
+        scene.currentBattle.mysteryEncounter!.doContinueEncounter = (scene: BattleScene) => {
           return endTrainerBattleAndShowDialogue(scene);
         };
         await transitionMysteryEncounterIntroVisuals(scene, true, false);
@@ -136,7 +135,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
     .build();
 
 async function spawnNextTrainerOrEndEncounter(scene: BattleScene) {
-  const encounter = scene.currentBattle.mysteryEncounter;
+  const encounter = scene.currentBattle.mysteryEncounter!;
   const nextConfig = encounter.enemyPartyConfigs.pop();
   if (!nextConfig) {
     await transitionMysteryEncounterIntroVisuals(scene, false, false);
@@ -151,7 +150,7 @@ async function spawnNextTrainerOrEndEncounter(scene: BattleScene) {
 
 function endTrainerBattleAndShowDialogue(scene: BattleScene): Promise<void> {
   return new Promise(async resolve => {
-    if (scene.currentBattle.mysteryEncounter.enemyPartyConfigs.length === 0) {
+    if (scene.currentBattle.mysteryEncounter!.enemyPartyConfigs.length === 0) {
       // Battle is over
       const trainer = scene.currentBattle.trainer;
       if (trainer) {

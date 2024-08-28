@@ -119,7 +119,7 @@ describe("Berries Abound - Mystery Encounter", () => {
     it("should start a fight against the boss", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
-      const config = game.scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
+      const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
       const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId;
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
@@ -133,7 +133,7 @@ describe("Berries Abound - Mystery Encounter", () => {
     it("should reward the player with X berries based on wave", { retry: 5 }, async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
-      const numBerries = game.scene.currentBattle.mysteryEncounter.misc.numBerries;
+      const numBerries = game.scene.currentBattle.mysteryEncounter!.misc.numBerries;
       scene.modifiers = [];
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
@@ -179,7 +179,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
-      const config = game.scene.currentBattle.mysteryEncounter.enemyPartyConfigs[0];
+      const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
       const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId;
       // Setting enemy's level arbitrarily high to outspeed
       config.pokemonConfigs![0].dataSource!.level = 1000;

@@ -70,7 +70,7 @@ export default class Battle {
   public lastUsedPokeball: PokeballType | null;
   public playerFaints: number; // The amount of times pokemon on the players side have fainted
   public enemyFaints: number; // The amount of times pokemon on the enemies side have fainted
-  public mysteryEncounter: MysteryEncounter;
+  public mysteryEncounter?: MysteryEncounter;
 
   private rngCounter: integer = 0;
 

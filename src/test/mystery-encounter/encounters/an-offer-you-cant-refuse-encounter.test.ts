@@ -140,7 +140,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
 
-      const price = scene.currentBattle.mysteryEncounter.misc.price;
+      const price = scene.currentBattle.mysteryEncounter!.misc.price;
 
       expect(updateMoneySpy).toHaveBeenCalledWith(scene, price);
       expect(scene.money).toBe(initialMoney + price);
@@ -160,7 +160,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
 
       const initialPartySize = scene.getParty().length;
-      const pokemonName = scene.currentBattle.mysteryEncounter.misc.pokemon.name;
+      const pokemonName = scene.currentBattle.mysteryEncounter!.misc.pokemon.name;
 
       await runMysteryEncounterToEnd(game, 1);
 
@@ -227,7 +227,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
 
-      const price = scene.currentBattle.mysteryEncounter.misc.price;
+      const price = scene.currentBattle.mysteryEncounter!.misc.price;
 
       expect(updateMoneySpy).toHaveBeenCalledWith(scene, price);
       expect(scene.money).toBe(initialMoney + price);

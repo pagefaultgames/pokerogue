@@ -73,7 +73,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Update money
             updatePlayerMoney(scene, -(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
@@ -105,7 +105,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Choose Cheap Option
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const chosenPokemon = encounter.misc.chosenPokemon;
           const modifiers = encounter.misc.modifiers;
 
@@ -117,7 +117,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
           // Damage and status applied after dealer leaves (to make thematic sense)
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const chosenPokemon = encounter.misc.chosenPokemon;
 
           // Pokemon takes 1/3 max HP damage
@@ -156,7 +156,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Update money
             updatePlayerMoney(scene, -(encounter.options[1].requirements[0] as MoneyRequirement).requiredMoney);
@@ -188,7 +188,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Choose Expensive Option
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const chosenPokemon = encounter.misc.chosenPokemon;
           const modifiers = encounter.misc.modifiers;
 
@@ -200,7 +200,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         })
         .withPostOptionPhase(async (scene: BattleScene) => {
           // Status applied after dealer leaves (to make thematic sense)
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const chosenPokemon = encounter.misc.chosenPokemon;
 
           // Roll for poison (20%)

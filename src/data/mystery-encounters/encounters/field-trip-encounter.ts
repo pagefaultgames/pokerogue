@@ -67,7 +67,7 @@ export const FieldTripEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for Pokemon move valid for this option
             return pokemon.moveset.map((move: PokemonMove) => {
@@ -123,7 +123,7 @@ export const FieldTripEncounter: MysteryEncounter =
           return selectPokemonForOption(scene, onPokemonSelected);
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           if (encounter.misc.correctMove) {
             const modifiers = [
               generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.ATK])!,
@@ -153,7 +153,7 @@ export const FieldTripEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for Pokemon move valid for this option
             return pokemon.moveset.map((move: PokemonMove) => {
@@ -215,7 +215,7 @@ export const FieldTripEncounter: MysteryEncounter =
           return selectPokemonForOption(scene, onPokemonSelected);
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           if (encounter.misc.correctMove) {
             const modifiers = [
               generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPATK])!,
@@ -245,7 +245,7 @@ export const FieldTripEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for Pokemon move valid for this option
             return pokemon.moveset.map((move: PokemonMove) => {
@@ -301,7 +301,7 @@ export const FieldTripEncounter: MysteryEncounter =
           return selectPokemonForOption(scene, onPokemonSelected);
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           if (encounter.misc.correctMove) {
             const modifiers = [
               generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.ACC])!,

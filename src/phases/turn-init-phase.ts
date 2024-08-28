@@ -9,7 +9,7 @@ import { CommandPhase } from "./command-phase";
 import { EnemyCommandPhase } from "./enemy-command-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { TurnStartPhase } from "./turn-start-phase";
-import { handleMysteryEncounterBattleStartEffects } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { handleMysteryEncounterBattleStartEffects, handleMysteryEncounterTurnStartEffects } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 
 export class TurnInitPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -48,6 +48,12 @@ export class TurnInitPhase extends FieldPhase {
     this.scene.eventTarget.dispatchEvent(new TurnInitEvent());
 
     handleMysteryEncounterBattleStartEffects(this.scene);
+
+    // If true, will skip remainder of current phase (and not queue CommandPhases etc.)
+    if (handleMysteryEncounterTurnStartEffects(this.scene)) {
+      this.end();
+      return;
+    }
 
     this.scene.getField().forEach((pokemon, i) => {
       if (pokemon?.isActive()) {

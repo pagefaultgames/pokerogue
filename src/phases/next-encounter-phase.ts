@@ -24,11 +24,11 @@ export class NextEncounterPhase extends EncounterPhase {
 
     const enemyField = this.scene.getEnemyField();
     const moveTargets: any[] = [this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.lastEnemyTrainer];
-    const lastEncounterVisuals = this.scene?.lastMysteryEncounter?.introVisuals;
+    const lastEncounterVisuals = this.scene.lastMysteryEncounter?.introVisuals;
     if (lastEncounterVisuals) {
       moveTargets.push(lastEncounterVisuals);
     }
-    const nextEncounterVisuals = this.scene.currentBattle?.mysteryEncounter?.introVisuals;
+    const nextEncounterVisuals = this.scene.currentBattle.mysteryEncounter?.introVisuals;
     if (nextEncounterVisuals) {
       const enterFromRight = nextEncounterVisuals.enterFromRight;
       if (enterFromRight) {
@@ -58,7 +58,7 @@ export class NextEncounterPhase extends EncounterPhase {
         }
         if (lastEncounterVisuals) {
           this.scene.field.remove(lastEncounterVisuals, true);
-          this.scene.lastMysteryEncounter.introVisuals = undefined;
+          this.scene.lastMysteryEncounter!.introVisuals = undefined;
         }
 
         if (!this.tryOverrideForBattleSpec()) {

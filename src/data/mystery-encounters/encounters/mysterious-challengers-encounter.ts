@@ -37,7 +37,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
       },
     ])
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
       // Calculates what trainers are available for battle in the encounter
 
       // Normal difficulty trainer is randomly pulled from biome
@@ -137,7 +137,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         ],
       },
       async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         // Spawn standard trainer battle with memory mushroom reward
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
@@ -162,7 +162,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         ],
       },
       async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         // Spawn hard fight with ULTRA/GREAT reward (can improve with luck)
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
 
@@ -187,7 +187,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         ],
       },
       async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         // Spawn brutal fight with ROGUE/ULTRA/GREAT reward (can improve with luck)
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[2];
 

@@ -102,7 +102,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
     .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
 
       const species = getPokemonSpecies(Species.ORICORIO);
       const enemyPokemon = scene.addEnemyPokemon(species, scene.currentBattle.enemyLevels![0], TrainerSlot.NONE, false);
@@ -170,7 +170,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Pick battle
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
 
           transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
 
@@ -200,7 +200,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
         })
         .withPreOptionPhase(async (scene: BattleScene) => {
           // Learn its Dance
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
 
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
@@ -236,7 +236,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
         })
         .withPreOptionPhase(async (scene: BattleScene) => {
           // Open menu for selecting pokemon with a Dancing move
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for nature selection
             return pokemon.moveset
@@ -272,7 +272,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Show the Oricorio a dance, and recruit it
-          const encounter = scene.currentBattle.mysteryEncounter;
+          const encounter = scene.currentBattle.mysteryEncounter!;
           const oricorio = encounter.misc.oricorioData.toPokemon(scene);
           oricorio.passive = true;
 

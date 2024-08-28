@@ -54,12 +54,13 @@ export class MysteryEncounterPhase extends Phase {
     this.scene.clearPhaseQueue();
     this.scene.clearPhaseQueueSplice();
 
-    this.scene.currentBattle.mysteryEncounter.updateSeedOffset(this.scene);
+    const encounter = this.scene.currentBattle.mysteryEncounter!;
+    encounter.updateSeedOffset(this.scene);
 
     if (!this.optionSelectSettings) {
       // Sets flag that ME was encountered, only if this is not a followup option select phase
       // Can be used in later MEs to check for requirements to spawn, etc.
-      this.scene.mysteryEncounterData.encounteredEvents.push([this.scene.currentBattle.mysteryEncounter.encounterType, this.scene.currentBattle.mysteryEncounter.encounterTier]);
+      this.scene.mysteryEncounterData.encounteredEvents.push([encounter.encounterType, encounter.encounterTier]);
     }
 
     // Initiates encounter dialogue window and option select
@@ -68,14 +69,14 @@ export class MysteryEncounterPhase extends Phase {
 
   handleOptionSelect(option: MysteryEncounterOption, index: number): boolean {
     // Set option selected flag
-    this.scene.currentBattle.mysteryEncounter.selectedOption = option;
+    this.scene.currentBattle.mysteryEncounter!.selectedOption = option;
 
     if (!option.onOptionPhase) {
       return false;
     }
 
     // Populate dialogue tokens for option requirements
-    this.scene.currentBattle.mysteryEncounter.populateDialogueTokensFromRequirements(this.scene);
+    this.scene.currentBattle.mysteryEncounter!.populateDialogueTokensFromRequirements(this.scene);
 
     if (option.onPreOptionPhase) {
       this.scene.executeWithSeedOffset(async () => {
@@ -85,7 +86,7 @@ export class MysteryEncounterPhase extends Phase {
               this.continueEncounter();
             }
           });
-      }, this.scene.currentBattle.mysteryEncounter.getSeedOffset());
+      }, this.scene.currentBattle.mysteryEncounter?.getSeedOffset());
     } else {
       this.continueEncounter();
     }
@@ -149,25 +150,25 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
 
   constructor(scene: BattleScene) {
     super(scene);
-    this.onOptionSelect = this.scene.currentBattle.mysteryEncounter.selectedOption!.onOptionPhase;
+    this.onOptionSelect = this.scene.currentBattle.mysteryEncounter!.selectedOption!.onOptionPhase;
   }
 
   start() {
     super.start();
-    if (this.scene.currentBattle.mysteryEncounter.autoHideIntroVisuals) {
+    if (this.scene.currentBattle.mysteryEncounter?.autoHideIntroVisuals) {
       transitionMysteryEncounterIntroVisuals(this.scene).then(() => {
         this.scene.executeWithSeedOffset(() => {
           this.onOptionSelect(this.scene).finally(() => {
             this.end();
           });
-        }, this.scene.currentBattle.mysteryEncounter.getSeedOffset());
+        }, this.scene.currentBattle.mysteryEncounter?.getSeedOffset());
       });
     } else {
       this.scene.executeWithSeedOffset(() => {
         this.onOptionSelect(this.scene).finally(() => {
           this.end();
         });
-      }, this.scene.currentBattle.mysteryEncounter.getSeedOffset());
+      }, this.scene.currentBattle.mysteryEncounter?.getSeedOffset());
     }
   }
 }
@@ -222,7 +223,7 @@ export class MysteryEncounterBattlePhase extends Phase {
 
   getBattleMessage(scene: BattleScene): string {
     const enemyField = scene.getEnemyField();
-    const encounterMode = scene.currentBattle.mysteryEncounter.encounterMode;
+    const encounterMode = scene.currentBattle.mysteryEncounter!.encounterMode;
 
     if (scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
       return i18next.t("battle:bossAppeared", { bossName: enemyField[0].name });
@@ -243,7 +244,7 @@ export class MysteryEncounterBattlePhase extends Phase {
   }
 
   doMysteryEncounterBattle(scene: BattleScene) {
-    const encounterMode = scene.currentBattle.mysteryEncounter.encounterMode;
+    const encounterMode = scene.currentBattle.mysteryEncounter!.encounterMode;
     if (encounterMode === MysteryEncounterMode.WILD_BATTLE || encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
       // Summons the wild/boss Pokemon
       if (encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
@@ -255,7 +256,7 @@ export class MysteryEncounterBattlePhase extends Phase {
         scene.unshiftPhase(new SummonPhase(scene, 1, false));
       }
 
-      if (!scene.currentBattle.mysteryEncounter.hideBattleIntroMessage) {
+      if (!scene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
         scene.ui.showText(this.getBattleMessage(scene), null, () => this.endBattleSetup(scene), 0);
       } else {
         this.endBattleSetup(scene);
@@ -276,7 +277,7 @@ export class MysteryEncounterBattlePhase extends Phase {
           }
           this.endBattleSetup(scene);
         };
-        if (!scene.currentBattle.mysteryEncounter.hideBattleIntroMessage) {
+        if (!scene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
           scene.ui.showText(this.getBattleMessage(scene), null, doTrainerSummon, 1000, true);
         } else {
           doTrainerSummon();
@@ -290,7 +291,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       } else {
         const trainer = this.scene.currentBattle.trainer;
         let message: string;
-        scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.mysteryEncounter.getSeedOffset());
+        scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.mysteryEncounter?.getSeedOffset());
         message = message!; // tell TS compiler it's defined now
         const showDialogueAndSummon = () => {
           scene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {
@@ -308,7 +309,7 @@ export class MysteryEncounterBattlePhase extends Phase {
 
   endBattleSetup(scene: BattleScene) {
     const enemyField = scene.getEnemyField();
-    const encounterMode = scene.currentBattle.mysteryEncounter.encounterMode;
+    const encounterMode = scene.currentBattle.mysteryEncounter!.encounterMode;
 
     // PostSummon and ShinySparkle phases are handled by SummonPhase
 
@@ -410,7 +411,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
 
   start() {
     super.start();
-    const encounter = this.scene.currentBattle.mysteryEncounter;
+    const encounter = this.scene.currentBattle.mysteryEncounter!;
 
     if (encounter.doContinueEncounter) {
       encounter.doContinueEncounter(this.scene).then(() => {
@@ -431,7 +432,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
   }
 
   doEncounterRewardsAndContinue() {
-    const encounter = this.scene.currentBattle.mysteryEncounter;
+    const encounter = this.scene.currentBattle.mysteryEncounter!;
 
     if (encounter.doEncounterExp) {
       encounter.doEncounterExp(this.scene);
@@ -462,7 +463,7 @@ export class PostMysteryEncounterPhase extends Phase {
 
   constructor(scene: BattleScene) {
     super(scene);
-    this.onPostOptionSelect = this.scene.currentBattle.mysteryEncounter.selectedOption?.onPostOptionPhase;
+    this.onPostOptionSelect = this.scene.currentBattle.mysteryEncounter?.selectedOption?.onPostOptionPhase;
   }
 
   start() {
@@ -476,7 +477,7 @@ export class PostMysteryEncounterPhase extends Phase {
               this.continueEncounter();
             }
           });
-      }, this.scene.currentBattle.mysteryEncounter.getSeedOffset());
+      }, this.scene.currentBattle.mysteryEncounter?.getSeedOffset());
     } else {
       this.continueEncounter();
     }

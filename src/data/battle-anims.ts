@@ -891,6 +891,8 @@ export abstract class BattleAnim {
               const isUser = frame.target === AnimFrameTarget.USER;
               if (isUser && target === user) {
                 continue;
+              } else if (this.playOnEmptyField && frame.target === AnimFrameTarget.TARGET) {
+                continue;
               }
               const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
               const spriteSource = isUser ? userSprite : targetSprite;
@@ -1223,8 +1225,8 @@ export class CommonBattleAnim extends BattleAnim {
 export class MoveAnim extends BattleAnim {
   public move: Moves;
 
-  constructor(move: Moves, user: Pokemon, target: BattlerIndex) {
-    super(user, user.scene.getField()[target]);
+  constructor(move: Moves, user: Pokemon, target: BattlerIndex, playOnEmptyField: boolean = false) {
+    super(user, user.scene.getField()[target], playOnEmptyField);
 
     this.move = move;
   }

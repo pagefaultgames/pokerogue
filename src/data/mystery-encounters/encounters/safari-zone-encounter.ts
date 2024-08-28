@@ -65,7 +65,7 @@ export const SafariZoneEncounter: MysteryEncounter =
       })
       .withOptionPhase(async (scene: BattleScene) => {
         // Start safari encounter
-        const encounter = scene.currentBattle.mysteryEncounter;
+        const encounter = scene.currentBattle.mysteryEncounter!;
         encounter.continuousEncounter = true;
         encounter.misc = {
           safariPokemonRemaining: 3
@@ -130,7 +130,7 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
     })
     .withOptionPhase(async (scene: BattleScene) => {
       // Throw a ball option
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
       const pokemon = encounter.misc.pokemon;
       const catchResult = await throwPokeball(scene, pokemon);
 
@@ -165,7 +165,7 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
     })
     .withOptionPhase(async (scene: BattleScene) => {
       // Throw bait option
-      const pokemon = scene.currentBattle.mysteryEncounter.misc.pokemon;
+      const pokemon = scene.currentBattle.mysteryEncounter!.misc.pokemon;
       await throwBait(scene, pokemon);
 
       // 100% chance to increase catch stage +2
@@ -195,7 +195,7 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
     })
     .withOptionPhase(async (scene: BattleScene) => {
       // Throw mud option
-      const pokemon = scene.currentBattle.mysteryEncounter.misc.pokemon;
+      const pokemon = scene.currentBattle.mysteryEncounter!.misc.pokemon;
       await throwMud(scene, pokemon);
       // 100% chance to decrease flee stage -2
       tryChangeFleeStage(scene, -2);
@@ -219,7 +219,7 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
     })
     .withOptionPhase(async (scene: BattleScene) => {
       // Flee option
-      const encounter = scene.currentBattle.mysteryEncounter;
+      const encounter = scene.currentBattle.mysteryEncounter!;
       const pokemon = encounter.misc.pokemon;
       await doPlayerFlee(scene, pokemon);
       // Check how many safari pokemon left
@@ -237,7 +237,7 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
 ];
 
 async function summonSafariPokemon(scene: BattleScene) {
-  const encounter = scene.currentBattle.mysteryEncounter;
+  const encounter = scene.currentBattle.mysteryEncounter!;
   // Message pokemon remaining
   encounter.setDialogueToken("remainingCount", encounter.misc.safariPokemonRemaining);
   scene.queueMessage(getEncounterText(scene, `${namespace}.safari.remaining_count`) ?? "", null, true);
@@ -301,7 +301,7 @@ async function summonSafariPokemon(scene: BattleScene) {
 function throwPokeball(scene: BattleScene, pokemon: EnemyPokemon): Promise<boolean> {
   const baseCatchRate = pokemon.species.catchRate;
   // Catch stage ranges from -6 to +6 (like stat boost stages)
-  const safariCatchStage = scene.currentBattle.mysteryEncounter.misc.catchStage;
+  const safariCatchStage = scene.currentBattle.mysteryEncounter!.misc.catchStage;
   // Catch modifier ranges from 2/8 (-6 stage) to 8/2 (+6)
   const safariModifier = (2 + Math.min(Math.max(safariCatchStage, 0), 6)) / (2 - Math.max(Math.min(safariCatchStage, 0), -6));
   // Catch rate same as safari ball
@@ -464,8 +464,8 @@ function tryChangeFleeStage(scene: BattleScene, change: number, chance?: number)
   if (chance && randSeedInt(10) >= chance) {
     return false;
   }
-  const currentFleeStage = scene.currentBattle.mysteryEncounter.misc.fleeStage ?? 0;
-  scene.currentBattle.mysteryEncounter.misc.fleeStage = Math.min(Math.max(currentFleeStage + change, -6), 6);
+  const currentFleeStage = scene.currentBattle.mysteryEncounter!.misc.fleeStage ?? 0;
+  scene.currentBattle.mysteryEncounter!.misc.fleeStage = Math.min(Math.max(currentFleeStage + change, -6), 6);
   return true;
 }
 
@@ -473,13 +473,13 @@ function tryChangeCatchStage(scene: BattleScene, change: number, chance?: number
   if (chance && randSeedInt(10) >= chance) {
     return false;
   }
-  const currentCatchStage = scene.currentBattle.mysteryEncounter.misc.catchStage ?? 0;
-  scene.currentBattle.mysteryEncounter.misc.catchStage = Math.min(Math.max(currentCatchStage + change, -6), 6);
+  const currentCatchStage = scene.currentBattle.mysteryEncounter!.misc.catchStage ?? 0;
+  scene.currentBattle.mysteryEncounter!.misc.catchStage = Math.min(Math.max(currentCatchStage + change, -6), 6);
   return true;
 }
 
 async function doEndTurn(scene: BattleScene, cursorIndex: number) {
-  const encounter = scene.currentBattle.mysteryEncounter;
+  const encounter = scene.currentBattle.mysteryEncounter!;
   const pokemon = encounter.misc.pokemon;
   const isFlee = isPokemonFlee(pokemon, encounter.misc.fleeStage);
   if (isFlee) {
