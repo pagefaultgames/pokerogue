@@ -142,7 +142,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     const menuMessageText = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
     menuMessageText.setName("menu-message");
     menuMessageText.setOrigin(0, 0);
-    menuMessageText.setWordWrapWidth(menuMessageBox.getBounds().width - this.menuBg.width * 0.04);
+    menuMessageText.setWordWrapWidth(menuMessageBox.getBounds().width * 0.95);
 
     this.menuMessageBoxContainer.add(menuMessageText);
     this.message = menuMessageText;
@@ -173,7 +173,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               return true;
             }
           }]),
-          xOffset: 98
+          xOffset: this.menuBg.width
         };
         ui.setOverlayMode(Mode.MENU_OPTION_SELECT, config);
       });
@@ -534,7 +534,6 @@ export default class MenuUiHandler extends MessageUiHandler {
   showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
     this.menuMessageBoxContainer.setVisible(!!text);
     this.adjustText(text, this.message, this.messageBoxBg.getBounds().width, {
-      padding: this.message.x,
       ignoreTextBalance: "all"
     });
 
