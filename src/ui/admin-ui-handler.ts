@@ -66,11 +66,13 @@ export default class AdminUiHandler extends FormModalUiHandler {
             if (!response.ok) {
               console.error(response);
             }
-            this.scene.ui.revertMode();
+            this.inputs[0].setText("");
+            this.inputs[1].setText("");
+            this.scene.ui.setMode(Mode.ADMIN);
           })
           .catch((err) => {
             console.error(err);
-            this.scene.ui.revertMode();
+            this.scene.ui.setMode(Mode.ADMIN);
           });
         return false;
       };
