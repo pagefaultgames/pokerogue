@@ -269,5 +269,9 @@
   "FRESH_START": {
     "name": "Hussa, noch einmal von vorn!",
     "description": "Schließe die 'Neuanfang' Herausforderung ab"
+  },
+  "INVERSE_BATTLE": {
+    "name": "Spieglein, Spieglein an der Wand",
+    "description": "Schließe die 'Umkehrkampf' Herausforderung ab"
   }
 }
