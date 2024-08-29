@@ -2250,7 +2250,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
 
-      const { cancelled, result, damage } = this.getAttackDamage(source, move, false, isCritical, false);
+      const { cancelled, result, damage: dmg } = this.getAttackDamage(source, move, false, isCritical, false);
 
       const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === source.getMoveType(move)) as TypeBoostTag;
       if (typeBoost?.oneUse) {
@@ -2270,8 +2270,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return result;
       }
 
-      this.turnData.damageTaken += damage;
-
       if (isCritical) {
         this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
       }
@@ -2281,8 +2279,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       const isOneHitKo = result === HitResult.ONE_HIT_KO;
 
-      if (damage) {
-        if (!this.isPlayer() && damage >= this.hp) {
+      if (dmg) {
+        if (!this.isPlayer() && dmg >= this.hp) {
           this.scene.applyModifiers(EnemyEndureChanceModifier, false, this);
         }
 
@@ -2290,21 +2288,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
          * We explicitly require to ignore the faint phase here, as we want to show the messages
          * about the critical hit and the super effective/not very effective messages before the faint phase.
          */
-        const updatedDamage = this.damageAndUpdate(damage, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true);
+        const damage = this.damageAndUpdate(dmg, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true);
 
         if (source.isPlayer()) {
-          this.scene.validateAchvs(DamageAchv, updatedDamage);
-          if (updatedDamage > this.scene.gameData.gameStats.highestDamage) {
-            this.scene.gameData.gameStats.highestDamage = updatedDamage;
+          this.scene.validateAchvs(DamageAchv, damage);
+          if (damage > this.scene.gameData.gameStats.highestDamage) {
+            this.scene.gameData.gameStats.highestDamage = damage;
           }
         }
-        source.turnData.damageDealt += updatedDamage;
-        source.turnData.currDamageDealt = updatedDamage;
+        source.turnData.damageDealt += damage;
+        source.turnData.currDamageDealt = damage;
+        this.turnData.damageTaken += damage;
         this.battleData.hitCount++;
-        const attackResult = { move: move.id, result: result as DamageResult, damage: updatedDamage, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
+        const attackResult = { move: move.id, result: result as DamageResult, damage: damage, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
         this.turnData.attacksReceived.unshift(attackResult);
         if (source.isPlayer() && !this.isPlayer()) {
-          this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, updatedDamage);
+          this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
         }
       }
 
@@ -2330,7 +2329,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.resetSummonData();
       }
 
-      if (damage) {
+      if (dmg) {
         destinyTag?.lapse(source, BattlerTagLapseType.CUSTOM);
       }
 
