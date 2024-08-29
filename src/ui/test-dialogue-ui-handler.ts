@@ -73,6 +73,8 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
     const input = this.inputs[0];
     input.setMaxLength(255);
 
+    input.node.disabled = false;
+
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
       if (["escape", "space"].some((v) => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) && ui.getMode() === Mode.AUTO_COMPLETE) {
         // Delete autocomplete list and recovery focus.

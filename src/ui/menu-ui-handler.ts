@@ -278,45 +278,43 @@ export default class MenuUiHandler extends MessageUiHandler {
         label: "Test Dialogue",
         handler: () => {
           ui.playSelect();
-          let nickname = "";
-          nickname = decodeURIComponent(escape(atob(nickname)));
-          ui.setMode(Mode.TEST_DIALOGUE, {
-            buttonActions: [
-              (sanitizedName: string) => {
-                ui.revertMode();
-                ui.playSelect();
-                const dialogueTestName = sanitizedName;
-                const dialogueName = decodeURIComponent(escape(atob(dialogueTestName)));
-                const handler = ui.getHandler() as AwaitableUiHandler;
-                handler.tutorialActive = true;
-                const interpolatorOptions: any = {};
-                const splitArr = dialogueName.split(" "); // this splits our inputted text into words to cycle through later
-                const translatedString = splitArr[0]; // this is our outputted i18 string
-                const regex = RegExp("\\{\\{(\\w*)\\}\\}", "g"); // this is a regex expression to find all the text between {{ }} in the i18 output
-                const matches = i18next.t(translatedString).match(regex) ?? [];
-                if (matches.length > 0) {
-                  for (let match = 0; match < matches.length; match++) {
-                    // we add 1 here  because splitArr[0] is our first value for the translatedString, and after that is where the variables are
-                    // the regex here in the replace (/\W/g) is to remove the {{ and }} and just give us all alphanumeric characters
-                    if (typeof splitArr[match + 1] !== "undefined") {
-                      interpolatorOptions[matches[match].replace(/\W/g, "")] = i18next.t(splitArr[match + 1]);
-                    }
+          const prefilledText = "";
+          const buttonAction: any = {};
+          buttonAction["buttonActions"] = [
+            (sanitizedName: string) => {
+              ui.revertMode();
+              ui.playSelect();
+              const dialogueTestName = sanitizedName;
+              const dialogueName = decodeURIComponent(escape(atob(dialogueTestName)));
+              const handler = ui.getHandler() as AwaitableUiHandler;
+              handler.tutorialActive = true;
+              const interpolatorOptions: any = {};
+              const splitArr = dialogueName.split(" "); // this splits our inputted text into words to cycle through later
+              const translatedString = splitArr[0]; // this is our outputted i18 string
+              const regex = RegExp("\\{\\{(\\w*)\\}\\}", "g"); // this is a regex expression to find all the text between {{ }} in the i18 output
+              const matches = i18next.t(translatedString).match(regex) ?? [];
+              if (matches.length > 0) {
+                for (let match = 0; match < matches.length; match++) {
+                  // we add 1 here  because splitArr[0] is our first value for the translatedString, and after that is where the variables are
+                  // the regex here in the replace (/\W/g) is to remove the {{ and }} and just give us all alphanumeric characters
+                  if (typeof splitArr[match + 1] !== "undefined") {
+                    interpolatorOptions[matches[match].replace(/\W/g, "")] = i18next.t(splitArr[match + 1]);
                   }
                 }
-                // Switch to the dialog test window
-                this.setDialogTestMode(true);
-                ui.showText(String(i18next.t(translatedString, interpolatorOptions)), null, () => this.scene.ui.showText("", 0, () => {
-                  handler.tutorialActive = false;
-                  // Go back to the default message window
-                  this.setDialogTestMode(false);
-                }), null, true);
-              },
-              () => {
-                ui.revertMode();
               }
-            ]
-          }, nickname);
-
+              // Switch to the dialog test window
+              this.setDialogTestMode(true);
+              ui.showText(String(i18next.t(translatedString, interpolatorOptions)), null, () => this.scene.ui.showText("", 0, () => {
+                handler.tutorialActive = false;
+                // Go back to the default message window
+                this.setDialogTestMode(false);
+              }), null, true);
+            },
+            () => {
+              ui.revertMode();
+            }
+          ];
+          ui.setMode(Mode.TEST_DIALOGUE, buttonAction, prefilledText);
           return true;
         },
         keepOpen: true
