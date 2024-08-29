@@ -76,7 +76,7 @@ describe("Abilities - Libero", () => {
 
       expect(leadPokemon.summonData.abilitiesApplied.filter((a) => a === Abilities.LIBERO)).toHaveLength(1);
       const leadPokemonType = Type[leadPokemon.getTypes()[0]];
-      const moveType = Type[allMoves[Moves.AGILITY].defaultType];
+      const moveType = Type[allMoves[Moves.AGILITY].type];
       expect(leadPokemonType).not.toBe(moveType);
 
       await game.toNextTurn();
@@ -249,7 +249,7 @@ describe("Abilities - Libero", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      leadPokemon.summonData.types = [allMoves[Moves.SPLASH].defaultType];
+      leadPokemon.summonData.types = [allMoves[Moves.SPLASH].type];
       game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -357,6 +357,6 @@ function testPokemonTypeMatchesDefaultMoveType(pokemon: PlayerPokemon, move: Mov
   expect(pokemon.summonData.abilitiesApplied).toContain(Abilities.LIBERO);
   expect(pokemon.getTypes()).toHaveLength(1);
   const pokemonType = Type[pokemon.getTypes()[0]],
-    moveType = Type[allMoves[move].defaultType];
+    moveType = Type[allMoves[move].type];
   expect(pokemonType).toBe(moveType);
 }
