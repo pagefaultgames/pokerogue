@@ -43,6 +43,7 @@ describe("Test Battle Phase", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    game.scene.gameData.gender = undefined!; // just for these tests!
   });
 
   it("test phase interceptor with prompt", async () => {

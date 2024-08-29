@@ -139,7 +139,7 @@ export default class GameManager {
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
     this.scene.enableTutorials = false;
-    this.scene.gameData.gender = PlayerGender.MALE;
+    this.scene.gameData.gender = PlayerGender.MALE; // set initial player gender
 
   }
 
