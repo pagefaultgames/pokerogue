@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "new_skull_grunt_f.png",
+			"image": "skull_grunt_f.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 74,
