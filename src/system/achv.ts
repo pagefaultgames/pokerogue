@@ -6,9 +6,8 @@ import i18next from "i18next";
 import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
 import { Challenge, FreshStartChallenge, InverseBattleChallenge, SingleGenerationChallenge, SingleTypeChallenge } from "#app/data/challenge";
-import { ConditionFn } from "#app/@types/common";
 import { Challenges } from "#app/enums/challenges";
-import { ConditionFn } from "#app/@types/common.js";
+import { ConditionFn } from "#app/@types/common";
 
 export enum AchvTier {
   COMMON,
