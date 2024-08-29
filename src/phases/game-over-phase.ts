@@ -23,7 +23,6 @@ import { SummonPhase } from "./summon-phase";
 import { EndCardPhase } from "./end-card-phase";
 import { PostGameOverPhase } from "./post-game-over-phase";
 import { UnlockPhase } from "./unlock-phase";
-import { Challenges } from "#app/enums/challenges.js";
 import { SessionSaveData } from "../system/game-data";
 import TrainerData from "../system/trainer-data";
 import PokemonData from "../system/pokemon-data";
@@ -117,16 +116,7 @@ export class GameOverPhase extends BattlePhase {
           this.scene.ui.clearText();
 
           if (this.victory && this.scene.gameMode.isChallenge) {
-            // if it is inverse battle challenge, does not validate achvs except inverse battle achvs
-            if (!this.scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE)) {
-              this.scene.gameMode.challenges.forEach(c => this.scene.validateAchvs(ChallengeAchv, c));
-            } else {
-              this.scene.gameMode.challenges.forEach(c => {
-                if (c.id === Challenges.INVERSE_BATTLE) {
-                  this.scene.validateAchvs(ChallengeAchv, c);
-                }
-              });
-            }
+            this.scene.gameMode.challenges.forEach(c => this.scene.validateAchvs(ChallengeAchv, c));
           }
 
           const clear = (endCardPhase?: EndCardPhase) => {
