@@ -24,6 +24,8 @@ const namespace = "mysteryEncounter:safariZone";
 
 const TRAINER_THROW_ANIMATION_TIMES = [512, 184, 768];
 
+const SAFARI_MONEY_MULTIPLIER = 2.75;
+
 /**
  * Safari Zone encounter.
  * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3800 | GitHub Issue #3800}
@@ -33,7 +35,7 @@ export const SafariZoneEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SAFARI_ZONE)
     .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180)
-    .withSceneRequirement(new MoneyRequirement(0, 2.75)) // Cost equal to 1 Max Revive
+    .withSceneRequirement(new MoneyRequirement(0, SAFARI_MONEY_MULTIPLIER)) // Cost equal to 1 Max Revive
     .withIntroSpriteConfigs([
       {
         spriteKey: "safari_zone",
@@ -53,7 +55,7 @@ export const SafariZoneEncounter: MysteryEncounter =
     .withQuery(`${namespace}.query`)
     .withOption(MysteryEncounterOptionBuilder
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-      .withSceneRequirement(new MoneyRequirement(0, 2.75)) // Cost equal to 1 Max Revive
+      .withSceneRequirement(new MoneyRequirement(0, SAFARI_MONEY_MULTIPLIER)) // Cost equal to 1 Max Revive
       .withDialogue({
         buttonLabel: `${namespace}.option.1.label`,
         buttonTooltip: `${namespace}.option.1.tooltip`,

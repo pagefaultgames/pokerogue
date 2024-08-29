@@ -21,18 +21,27 @@ const namespace = "mysteryEncounter:mysteriousChest";
 export const MysteriousChestEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.MYSTERIOUS_CHEST)
     .withEncounterTier(MysteryEncounterTier.COMMON)
-    .withSceneWaveRangeRequirement(10, 180) // waves 2 to 180
+    .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
     .withAutoHideIntroVisuals(false)
     .withIntroSpriteConfigs([
       {
         spriteKey: "chest_blue",
         fileRoot: "mystery-encounters",
         hasShadow: true,
-        x: 4,
-        y: 10,
-        yShadow: 3,
+        y: 8,
+        yShadow: 6,
+        alpha: 1,
         disableAnimation: true, // Re-enabled after option select
       },
+      {
+        spriteKey: "chest_red",
+        fileRoot: "mystery-encounters",
+        hasShadow: false,
+        y: 8,
+        yShadow: 6,
+        alpha: 0,
+        disableAnimation: true, // Re-enabled after option select
+      }
     ])
     .withIntroDialogue([
       {
@@ -56,14 +65,30 @@ export const MysteriousChestEncounter: MysteryEncounter =
         })
         .withPreOptionPhase(async (scene: BattleScene) => {
           // Play animation
-          const introVisuals =
-            scene.currentBattle.mysteryEncounter!.introVisuals!;
+          const encounter = scene.currentBattle.mysteryEncounter!;
+          const introVisuals = encounter.introVisuals!;
+
+          // Determine roll first
+          const roll = randSeedInt(100);
+          encounter.misc = {
+            roll
+          };
+
+          if (roll <= 35) {
+            // Chest is springing trap, change to red chest sprite
+            const blueChestSprites = introVisuals.getSpriteAtIndex(0);
+            const redChestSprites = introVisuals.getSpriteAtIndex(1);
+            redChestSprites[0].setAlpha(1);
+            blueChestSprites[0].setAlpha(0.001);
+          }
           introVisuals.spriteConfigs[0].disableAnimation = false;
+          introVisuals.spriteConfigs[1].disableAnimation = false;
           introVisuals.playAnim();
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Open the chest
-          const roll = randSeedInt(100);
+          const encounter = scene.currentBattle.mysteryEncounter!;
+          const roll = encounter.misc.roll;
           if (roll > 60) {
             // Choose between 2 COMMON / 2 GREAT tier items (40%)
             setEncounterRewards(scene, {
@@ -106,14 +131,14 @@ export const MysteriousChestEncounter: MysteryEncounter =
             queueEncounterMessage(scene, `${namespace}.option.1.amazing`);
             leaveEncounterWithoutBattle(scene);
           } else {
-            // Your highest level unfainted Pok�mon gets OHKO. Progress with no rewards (35%)
+            // Your highest level unfainted Pokemon gets OHKO. Progress with no rewards (35%)
             const highestLevelPokemon = getHighestLevelPlayerPokemon(
               scene,
               true
             );
             koPlayerPokemon(scene, highestLevelPokemon);
 
-            scene.currentBattle.mysteryEncounter!.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
+            encounter.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
             // Show which Pokemon was KOed, then leave encounter with no rewards
             // Does this synchronously so that game over doesn't happen over result message
             await showEncounterText(scene, `${namespace}.option.1.bad`);

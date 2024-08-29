@@ -177,7 +177,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
     }
   }
 
-  scene.playSound("bgm/item_fanfare");
+  scene.playSound("item_fanfare");
   await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2 " + leftovers.name }), undefined, true);
 
   // First Shell bell
@@ -204,7 +204,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
     }
   }
 
-  scene.playSound("bgm/item_fanfare");
+  scene.playSound("item_fanfare");
   await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2 " + shellBell.name }), undefined, true);
 }
 

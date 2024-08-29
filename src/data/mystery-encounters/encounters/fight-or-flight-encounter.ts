@@ -64,7 +64,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
       encounter.enemyPartyConfigs = [config];
 
       // Calculate item
-      // 10-40 GREAT, 60-120 ULTRA, 120-160 ROGUE, 160-180 MASTER
+      // Waves 10-40 GREAT, 60-120 ULTRA, 120-160 ROGUE, 160-180 MASTER
       const tier =
         scene.currentBattle.waveIndex > 160
           ? ModifierTier.MASTER
