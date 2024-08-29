@@ -306,16 +306,34 @@ export default class MenuUiHandler extends MessageUiHandler {
           return true;
         },
         keepOpen: true
-      },
-      {
-        label: i18next.t("menuUiHandler:cancel"),
+      }];
+    if (!bypassLogin && loggedInUser?.hasAdminRole) {
+      communityOptions.push({
+        label: "Admin",
         handler: () => {
-          this.scene.ui.revertMode();
+          ui.playSelect();
+          ui.setOverlayMode(Mode.ADMIN, {
+            buttonActions: [
+              () => {
+                ui.revertMode();
+              },
+              () => {
+                ui.revertMode();
+              }
+            ]
+          });
           return true;
-        }
+        },
+        keepOpen: true
+      });
+    }
+    communityOptions.push({
+      label: i18next.t("menuUiHandler:cancel"),
+      handler: () => {
+        this.scene.ui.revertMode();
+        return true;
       }
-    ];
-
+    });
     this.communityConfig = {
       xOffset: 98,
       options: communityOptions

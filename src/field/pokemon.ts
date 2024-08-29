@@ -3761,6 +3761,18 @@ export class EnemyPokemon extends Pokemon {
       this.status = new Status(Overrides.OPP_STATUS_OVERRIDE);
     }
 
+    if (Overrides.OPP_GENDER_OVERRIDE) {
+      this.gender = Overrides.OPP_GENDER_OVERRIDE;
+    }
+
+    const speciesId = this.species.speciesId;
+
+    if (speciesId in Overrides.OPP_FORM_OVERRIDES
+      && Overrides.OPP_FORM_OVERRIDES[speciesId]
+      && this.species.forms[Overrides.OPP_FORM_OVERRIDES[speciesId]]) {
+      this.formIndex = Overrides.OPP_FORM_OVERRIDES[speciesId] ?? 0;
+    }
+
     if (!dataSource) {
       this.generateAndPopulateMoveset();
 
