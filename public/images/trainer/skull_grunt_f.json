@@ -4,8 +4,8 @@
 			"image": "skull_grunt_f.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 69,
-				"h": 69
+				"w": 74,
+				"h": 74
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 80,
-						"h": 80
+						"w": 31,
+						"h": 74
 					},
 					"spriteSourceSize": {
-						"x": 27,
-						"y": 9,
-						"w": 29,
-						"h": 69
+						"x": 0,
+						"y": 0,
+						"w": 31,
+						"h": 74
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 29,
-						"h": 69
+						"w": 31,
+						"h": 74
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:2e44c39efe8e78ec75d9119731b9b1cb:4923b5197ea74a9ed0b861e2408f595b:9035f560a0ab0d45bcc084aba7172990$"
+		"smartupdate": "$TexturePacker:SmartUpdate:71a1f5b1981674c6e81163ac8ea576c3:a5e612d58e5f0a1489e111212baea09d:dd369353af16e4c5eb6547e129dfac18$"
 	}
 }
