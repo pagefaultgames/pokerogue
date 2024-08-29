@@ -598,6 +598,14 @@ function updateLog(drpd: DRPD): DRPD {
     drpd.maxluck = 14
     drpd.minSafeLuckFloor = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   } // 1.1.0 → 1.1.0a
+  if (drpd.version == "1.1.0a") {
+    drpd.version = "1.1.0b"
+    for (var i = 0; i < drpd.waves.length; i++) {
+      if (drpd.waves[i] && drpd.waves[i].pokemon) {
+
+      }
+    }
+  } // 1.1.0a → 1.1.0b
   return drpd;
 }
 // #endregion
@@ -1016,6 +1024,10 @@ export interface PokeData {
   /** The Pokémon's IVs. Influences its base stats.
    * @see IVData
    */
+  iv_raw: IVData,
+  /** The Pokémon's IVs, printed as ordered text. */
+  iv: string[],
+  /** @deprecated */
   ivs: IVData,
   /** The Pokémon that was used to generate this `PokeData`. Not exported.
    * @see Pokemon
@@ -1217,6 +1229,16 @@ export function exportIVs(ivs: integer[]): IVData {
     spdef: ivs[4],
     speed: ivs[5]
   }
+}
+export function formatIVs(ivs: integer[]): IVData {
+  return [
+    `HP: `,
+    `Attack: `,
+    `Defense: `,
+    `Sp. Atk: `,
+    `Sp. Def: `,
+    `Speed: `,
+  ]
 }
 /**
  * Prints a Pokemon's IV data as a string, for saving a DRPD to your device.
