@@ -73,8 +73,8 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
       }
     });
 
-    const warningMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.warningMessageFontSize;
-    const label = addTextObject(this.scene, 10, 87, i18next.t("menu:registrationAgeWarning"), TextStyle.TOOLTIP_CONTENT, { fontSize: warningMessageFontSize ?? "42px" });
+    const warningMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.warningMessageFontSize ?? "42px";
+    const label = addTextObject(this.scene, 10, 87, i18next.t("menu:registrationAgeWarning"), TextStyle.TOOLTIP_CONTENT, { fontSize: warningMessageFontSize});
 
     this.modalContainer.add(label);
   }
