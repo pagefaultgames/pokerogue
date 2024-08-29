@@ -49,8 +49,8 @@ import CandyBar from "./ui/candy-bar";
 import { Variant, variantData } from "./data/variant";
 import { Localizable } from "#app/interfaces/locales";
 import Overrides from "#app/overrides";
-import {InputsController} from "./inputs-controller";
-import {UiInputs} from "./ui-inputs";
+import { InputsController } from "./inputs-controller";
+import { UiInputs } from "./ui-inputs";
 import { NewArenaEvent } from "./events/battle-scene";
 import { ArenaFlyout } from "./ui/arena-flyout";
 import { EaseType } from "#enums/ease-type";
@@ -65,7 +65,7 @@ import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager.js";
 import i18next from "i18next";
-import {TrainerType} from "#enums/trainer-type";
+import { TrainerType } from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
 import { LoadingScene } from "./loading-scene";
 import { LevelCapPhase } from "./phases/level-cap-phase";
@@ -83,6 +83,7 @@ import { SwitchPhase } from "./phases/switch-phase";
 import { TitlePhase } from "./phases/title-phase";
 import { ToggleDoublePositionPhase } from "./phases/toggle-double-position-phase";
 import { TurnInitPhase } from "./phases/turn-init-phase";
+import { ShopCursorTarget } from "./enums/shop-cursor-target";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -123,10 +124,13 @@ export default class BattleScene extends SceneBase {
   public lastSavePlayTime: integer | null = null;
   public masterVolume: number = 0.5;
   public bgmVolume: number = 1;
+  public fieldVolume: number = 1;
   public seVolume: number = 1;
+  public uiVolume: number = 1;
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
+  public shopCursorTarget: number = ShopCursorTarget.CHECK_TEAM;
   public showMovesetFlyout: boolean = true;
   public showArenaFlyout: boolean = true;
   public showTimeOfDayWidget: boolean = true;
@@ -840,14 +844,13 @@ export default class BattleScene extends SceneBase {
     if (Overrides.OPP_SPECIES_OVERRIDE) {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
     }
-    const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+
     if (Overrides.OPP_LEVEL_OVERRIDE !== 0) {
-      pokemon.level = Overrides.OPP_LEVEL_OVERRIDE;
+      level = Overrides.OPP_LEVEL_OVERRIDE;
     }
 
-    if (Overrides.OPP_GENDER_OVERRIDE !== null) {
-      pokemon.gender = Overrides.OPP_GENDER_OVERRIDE;
-    }
+    const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+
     overrideModifiers(this, false);
     overrideHeldItems(this, pokemon, false);
     if (boss && !dataSource) {
@@ -1627,7 +1630,7 @@ export default class BattleScene extends SceneBase {
 
   randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean, speciesFilter?: PokemonSpeciesFilter, filterAllEvolutions?: boolean): PokemonSpecies {
     if (fromArenaPool) {
-      return this.arena.randomSpecies(waveIndex, level, undefined , getPartyLuckValue(this.party));
+      return this.arena.randomSpecies(waveIndex, level, undefined, getPartyLuckValue(this.party));
     }
     const filteredSpecies = speciesFilter ? [...new Set(allSpecies.filter(s => s.isCatchable()).filter(speciesFilter).map(s => {
       if (!filterAllEvolutions) {
@@ -1746,8 +1749,26 @@ export default class BattleScene extends SceneBase {
 
   updateSoundVolume(): void {
     if (this.sound) {
-      for (const sound of this.sound.getAllPlaying()) {
-        (sound as AnySound).setVolume(this.masterVolume * (this.bgmCache.has(sound.key) ? this.bgmVolume : this.seVolume));
+      for (const sound of this.sound.getAllPlaying() as AnySound[]) {
+        if (this.bgmCache.has(sound.key)) {
+          sound.setVolume(this.masterVolume * this.bgmVolume);
+        } else {
+          const soundDetails = sound.key.split("/");
+          switch (soundDetails[0]) {
+
+          case "battle_anims":
+          case "cry":
+            if (soundDetails[1].startsWith("PRSFX- ")) {
+              sound.setVolume(this.masterVolume*this.fieldVolume*0.5);
+            } else {
+              sound.setVolume(this.masterVolume*this.fieldVolume);
+            }
+            break;
+          case "se":
+          case "ui":
+            sound.setVolume(this.masterVolume*this.seVolume);
+          }
+        }
       }
     }
   }
@@ -1766,25 +1787,42 @@ export default class BattleScene extends SceneBase {
   }
 
   playSound(sound: string | AnySound, config?: object): AnySound {
-    if (config) {
-      if (config.hasOwnProperty("volume")) {
-        config["volume"] *= this.masterVolume * this.seVolume;
-      } else {
+    const key = typeof sound === "string" ? sound : sound.key;
+    config = config ?? {};
+    try {
+      const keyDetails = key.split("/");
+      switch (keyDetails[0]) {
+      case "level_up_fanfare":
+      case "item_fanfare":
+      case "minor_fanfare":
+      case "heal":
+      case "evolution":
+      case "evolution_fanfare":
+        // These sounds are loaded in as BGM, but played as sound effects
+        // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
+        config["volume"] = this.masterVolume * this.bgmVolume;
+        break;
+      case "battle_anims":
+      case "cry":
+        config["volume"] = this.masterVolume * this.fieldVolume;
+        //PRSFX sound files are unusually loud
+        if (keyDetails[1].startsWith("PRSFX- ")) {
+          config["volume"] *= 0.5;
+        }
+        break;
+      case "ui":
+        //As of, right now this applies to the "select", "menu_open", "error" sound effects
+        config["volume"] = this.masterVolume * this.uiVolume;
+        break;
+      case "se":
         config["volume"] = this.masterVolume * this.seVolume;
+        break;
       }
-    } else {
-      config = { volume: this.masterVolume * this.seVolume };
-    }
-    // PRSFX sounds are mixed too loud
-    if ((typeof sound === "string" ? sound : sound.key).startsWith("PRSFX- ")) {
-      config["volume"] *= 0.5;
-    }
-    if (typeof sound === "string") {
-      this.sound.play(sound, config);
-      return this.sound.get(sound) as AnySound;
-    } else {
-      sound.play(config);
-      return sound;
+      this.sound.play(key, config);
+      return this.sound.get(key) as AnySound;
+    } catch {
+      console.log(`${key} not found`);
+      return sound as AnySound;
     }
   }
 
@@ -1895,6 +1933,8 @@ export default class BattleScene extends SceneBase {
       return 22.770;
     case "battle_legendary_dia_pal": //ORAS Dialga & Palkia Battle
       return 16.009;
+    case "battle_legendary_origin_forme": //LA Origin Dialga & Palkia Battle
+      return 18.961;
     case "battle_legendary_giratina": //ORAS Giratina Battle
       return 10.451;
     case "battle_legendary_arceus": //HGSS Arceus Battle
@@ -1923,6 +1963,8 @@ export default class BattleScene extends SceneBase {
       return 12.503;
     case "battle_legendary_calyrex": //SWSH Calyrex Battle
       return 50.641;
+    case "battle_legendary_riders": //SWSH Ice & Shadow Rider Calyrex Battle
+      return 18.155;
     case "battle_legendary_birds_galar": //SWSH Galarian Legendary Birds Battle
       return 0.175;
     case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
@@ -1961,6 +2003,18 @@ export default class BattleScene extends SceneBase {
       return 12.974;
     case "battle_flare_grunt": //XY Team Flare Battle
       return 4.228;
+    case "battle_aether_grunt": // SM Aether Foundation Battle
+      return 16.00;
+    case "battle_skull_grunt": // SM Team Skull Battle
+      return 20.87;
+    case "battle_macro_grunt": // SWSH Trainer Battle
+      return 11.56;
+    case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
+      return 11.997;
+    case "battle_skull_admin": //SM Team Skull Admin Battle
+      return 15.463;
+    case "battle_oleana": //SWSH Oleana Battle
+      return 14.110;
     case "battle_rocket_boss": //USUM Giovanni Battle
       return 9.115;
     case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
@@ -1971,6 +2025,12 @@ export default class BattleScene extends SceneBase {
       return 25.624;
     case "battle_flare_boss": //XY Lysandre Battle
       return 8.085;
+    case "battle_aether_boss": //SM Lusamine Battle
+      return 11.33;
+    case "battle_skull_boss": //SM Guzma Battle
+      return 13.13;
+    case "battle_macro_boss": //SWSH Rose Battle
+      return 11.42;
     }
 
     return 0;
@@ -2666,7 +2726,8 @@ export default class BattleScene extends SceneBase {
       wave: this.currentBattle?.waveIndex || 0,
       party: this.party ? this.party.map(p => {
         return { name: p.name, level: p.level };
-      }) : []
+      }) : [],
+      modeChain: this.ui?.getModeChain() ?? [],
     };
     (window as any).gameInfo = gameInfo;
   }
