@@ -49,6 +49,7 @@ import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { Challenges } from "#enums/challenges";
 import { getPokemonNameWithAffix } from "#app/messages.js";
 import { DamagePhase } from "#app/phases/damage-phase.js";
 import { FaintPhase } from "#app/phases/faint-phase.js";
@@ -3842,19 +3843,35 @@ export class EnemyPokemon extends Pokemon {
       ];
       break;
     case (this.species.speciesId === Species.ETERNATUS):
-      this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
-        ? [
-          new PokemonMove(Moves.DYNAMAX_CANNON),
-          new PokemonMove(Moves.SLUDGE_BOMB),
-          new PokemonMove(Moves.FLAMETHROWER),
-          new PokemonMove(Moves.RECOVER, 0, -4)
-        ]
-        : [
-          new PokemonMove(Moves.ETERNABEAM),
-          new PokemonMove(Moves.SLUDGE_BOMB),
-          new PokemonMove(Moves.FLAMETHROWER),
-          new PokemonMove(Moves.COSMIC_POWER)
-        ];
+      if (this.scene.gameMode.hasChallenge(Challenges.INVERSE_BATTLE)) {
+        this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
+          ? [
+            new PokemonMove(Moves.DYNAMAX_CANNON),
+            new PokemonMove(Moves.SLUDGE_BOMB),
+            new PokemonMove(Moves.THUNDERBOLT),
+            new PokemonMove(Moves.RECOVER, 0, -4)
+          ]
+          : [
+            new PokemonMove(Moves.ETERNABEAM),
+            new PokemonMove(Moves.SLUDGE_BOMB),
+            new PokemonMove(Moves.THUNDERBOLT),
+            new PokemonMove(Moves.CONVERSION_2)
+          ];
+      } else {
+        this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
+          ? [
+            new PokemonMove(Moves.DYNAMAX_CANNON),
+            new PokemonMove(Moves.SLUDGE_BOMB),
+            new PokemonMove(Moves.FLAMETHROWER),
+            new PokemonMove(Moves.RECOVER, 0, -4)
+          ]
+          : [
+            new PokemonMove(Moves.ETERNABEAM),
+            new PokemonMove(Moves.SLUDGE_BOMB),
+            new PokemonMove(Moves.FLAMETHROWER),
+            new PokemonMove(Moves.COSMIC_POWER)
+          ];
+      }
       break;
     default:
       super.generateAndPopulateMoveset();
