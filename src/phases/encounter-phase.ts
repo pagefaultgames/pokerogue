@@ -358,16 +358,15 @@ export class EncounterPhase extends BattlePhase {
     case BattleSpec.FINAL_BOSS:
       const enemy = this.scene.getEnemyPokemon();
       this.scene.ui.showText(this.getEncounterMessage(), null, () => {
-        const encounterLocalizationKey = "battleSpecDialogue:encounter";
-        if (this.scene.ui.shouldSkipDialogue(encounterLocalizationKey)) {
+        const localizationKey = "battleSpecDialogue:encounter";
+        if (this.scene.ui.shouldSkipDialogue(localizationKey)) {
           // Logging mirrors logging found in dialogue-ui-handler
-          console.log(`Dialogue ${encounterLocalizationKey} skipped`);
+          console.log(`Dialogue ${localizationKey} skipped`);
           this.doEncounterCommon(false);
         } else {
-          const localizationKey = ((this.scene.gameData.gender === PlayerGender.FEMALE) ? "PGF" : "PGM") + encounterLocalizationKey;
           const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
           // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
-          const ordinalUsed = !i18next.exists(localizationKey, {fallbackLng: []}) || i18next.resolvedLanguage === "en" ? i18next.t("PGMbattleSpecDialogue:key", { count: count, ordinal: true }) : "";
+          const ordinalUsed = !i18next.exists(localizationKey, {fallbackLng: []}) || i18next.resolvedLanguage === "en" ? i18next.t("battleSpecDialogue:key", { count: count, ordinal: true }) : "";
           const cycleCount = count.toLocaleString() + ordinalUsed;
           const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
           const genderStr = PlayerGender[genderIndex].toLowerCase();
