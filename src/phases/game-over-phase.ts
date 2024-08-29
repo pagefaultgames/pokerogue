@@ -24,6 +24,7 @@ import { EndCardPhase } from "./end-card-phase";
 import { PostGameOverPhase } from "./post-game-over-phase";
 import { UnlockPhase } from "./unlock-phase";
 import { Challenges } from "#app/enums/challenges.js";
+import { SessionSaveData } from "../system/game-data";
 import TrainerData from "../system/trainer-data";
 import PokemonData from "../system/pokemon-data";
 import PersistentModifierData from "../system/modifier-data";
