@@ -131,7 +131,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
         const doBerryRewards = async () => {
           const berryText = numBerries + " " + i18next.t(`${namespace}.berries`);
 
-          scene.playSound("bgm/item_fanfare");
+          scene.playSound("item_fanfare");
           queueEncounterMessage(scene, i18next.t("battle:rewardGain", { modifierName: berryText }));
 
           // Generate a random berry and give it to the first Pokemon with room for it
@@ -182,7 +182,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
             const doBerryRewards = async () => {
               const berryText = numBerries + " " + i18next.t(`${namespace}.berries`);
 
-              scene.playSound("bgm/item_fanfare");
+              scene.playSound("item_fanfare");
               queueEncounterMessage(scene, i18next.t("battle:rewardGain", { modifierName: berryText }));
 
               // Generate a random berry and give it to the first Pokemon with room for it
@@ -208,7 +208,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
             const doFasterBerryRewards = async () => {
               const berryText = numBerriesGrabbed + " " + i18next.t(`${namespace}.berries`);
 
-              scene.playSound("bgm/item_fanfare");
+              scene.playSound("item_fanfare");
               queueEncounterMessage(scene, i18next.t("battle:rewardGain", { modifierName: berryText }));
 
               // Generate a random berry and give it to the first Pokemon with room for it (trying to give to fastest first)

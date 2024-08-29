@@ -1,31 +1,32 @@
-import lostAtSeaDialogue from "./mystery-encounters/lost-at-sea-dialogue.json";
-import mysteriousChestDialogue from "#app/locales/en/mystery-encounters/mysterious-chest-dialogue.json";
-import mysteriousChallengersDialogue from "#app/locales/en/mystery-encounters/mysterious-challengers-dialogue.json";
-import darkDealDialogue from "#app/locales/en/mystery-encounters/dark-deal-dialogue.json";
-import departmentStoreSaleDialogue from "#app/locales/en/mystery-encounters/department-store-sale-dialogue.json";
-import fieldTripDialogue from "#app/locales/en/mystery-encounters/field-trip-dialogue.json";
-import fieryFalloutDialogue from "#app/locales/en/mystery-encounters/fiery-fallout-dialogue.json";
-import fightOrFlightDialogue from "#app/locales/en/mystery-encounters/fight-or-flight-dialogue.json";
-import safariZoneDialogue from "#app/locales/en/mystery-encounters/safari-zone-dialogue.json";
-import shadyVitaminDealerDialogue from "#app/locales/en/mystery-encounters/shady-vitamin-dealer-dialogue.json";
-import slumberingSnorlaxDialogue from "#app/locales/en/mystery-encounters/slumbering-snorlax-dialogue.json";
-import trainingSessionDialogue from "#app/locales/en/mystery-encounters/training-session-dialogue.json";
-import theStrongStuffDialogue from "#app/locales/en/mystery-encounters/the-strong-stuff-dialogue.json";
-import thePokemonSalesmanDialogue from "#app/locales/en/mystery-encounters/the-pokemon-salesman-dialogue.json";
-import anOfferYouCantRefuseDialogue from "#app/locales/en/mystery-encounters/an-offer-you-cant-refuse-dialogue.json";
-import delibirdyDialogue from "#app/locales/en/mystery-encounters/delibirdy-dialogue.json";
-import absoluteAvariceDialogue from "#app/locales/en/mystery-encounters/absolute-avarice-dialogue.json";
-import aTrainersTestDialogue from "#app/locales/en/mystery-encounters/a-trainers-test-dialogue.json";
-import trashToTreasureDialogue from "#app/locales/en/mystery-encounters/trash-to-treasure-dialogue.json";
-import berriesAboundDialogue from "#app/locales/en/mystery-encounters/berries-abound-dialogue.json";
-import clowningAroundDialogue from "#app/locales/en/mystery-encounters/clowning-around-dialogue.json";
-import partTimerDialogue from "#app/locales/en/mystery-encounters/part-timer-dialogue.json";
-import dancingLessonsDialogue from "#app/locales/en/mystery-encounters/dancing-lessons-dialogue.json";
-import weirdDreamDialogue from "#app/locales/en/mystery-encounters/weird-dream-dialogue.json";
-import theWinstrateChallengeDialogue from "#app/locales/en/mystery-encounters/the-winstrate-challenge-dialogue.json";
-import teleportingHijinksDialogue from "#app/locales/en/mystery-encounters/teleporting-hijinks-dialogue.json";
-import bugTypeSuperfanDialogue from "#app/locales/en/mystery-encounters/bug-type-superfan-dialogue.json";
-import funAndGamesDialogue from "#app/locales/en/mystery-encounters/fun-and-games-dialogue.json";
+import lostAtSea from "./mystery-encounters/lost-at-sea-dialogue.json";
+import mysteriousChest from "#app/locales/en/mystery-encounters/mysterious-chest-dialogue.json";
+import mysteriousChallengers from "#app/locales/en/mystery-encounters/mysterious-challengers-dialogue.json";
+import darkDeal from "#app/locales/en/mystery-encounters/dark-deal-dialogue.json";
+import departmentStoreSale from "#app/locales/en/mystery-encounters/department-store-sale-dialogue.json";
+import fieldTrip from "#app/locales/en/mystery-encounters/field-trip-dialogue.json";
+import fieryFallout from "#app/locales/en/mystery-encounters/fiery-fallout-dialogue.json";
+import fightOrFlight from "#app/locales/en/mystery-encounters/fight-or-flight-dialogue.json";
+import safariZone from "#app/locales/en/mystery-encounters/safari-zone-dialogue.json";
+import shadyVitaminDealer from "#app/locales/en/mystery-encounters/shady-vitamin-dealer-dialogue.json";
+import slumberingSnorlax from "#app/locales/en/mystery-encounters/slumbering-snorlax-dialogue.json";
+import trainingSession from "#app/locales/en/mystery-encounters/training-session-dialogue.json";
+import theStrongStuff from "#app/locales/en/mystery-encounters/the-strong-stuff-dialogue.json";
+import pokemonSalesman from "#app/locales/en/mystery-encounters/the-pokemon-salesman-dialogue.json";
+import offerYouCantRefuse from "#app/locales/en/mystery-encounters/an-offer-you-cant-refuse-dialogue.json";
+import delibirdy from "#app/locales/en/mystery-encounters/delibirdy-dialogue.json";
+import absoluteAvarice from "#app/locales/en/mystery-encounters/absolute-avarice-dialogue.json";
+import aTrainersTest from "#app/locales/en/mystery-encounters/a-trainers-test-dialogue.json";
+import trashToTreasure from "#app/locales/en/mystery-encounters/trash-to-treasure-dialogue.json";
+import berriesAbound from "#app/locales/en/mystery-encounters/berries-abound-dialogue.json";
+import clowningAround from "#app/locales/en/mystery-encounters/clowning-around-dialogue.json";
+import partTimer from "#app/locales/en/mystery-encounters/part-timer-dialogue.json";
+import dancingLessons from "#app/locales/en/mystery-encounters/dancing-lessons-dialogue.json";
+import weirdDream from "#app/locales/en/mystery-encounters/weird-dream-dialogue.json";
+import theWinstrateChallenge from "#app/locales/en/mystery-encounters/the-winstrate-challenge-dialogue.json";
+import teleportingHijinks from "#app/locales/en/mystery-encounters/teleporting-hijinks-dialogue.json";
+import bugTypeSuperfan from "#app/locales/en/mystery-encounters/bug-type-superfan-dialogue.json";
+import funAndGames from "#app/locales/en/mystery-encounters/fun-and-games-dialogue.json";
+import uncommonBreed from "#app/locales/en/mystery-encounters/uncommon-breed-dialogue.json";
 
 /**
  * Injection patterns that can be used:
@@ -46,32 +47,33 @@ export const mysteryEncounter = {
   // DO NOT REMOVE
   "unit_test_dialogue": "{{test}}{{test}} {{test{{test}}}} {{test1}} {{test\}} {{test\\}} {{test\\\}} {test}}",
 
-  mysteriousChallengers: mysteriousChallengersDialogue,
-  mysteriousChest: mysteriousChestDialogue,
-  darkDeal: darkDealDialogue,
-  fightOrFlight: fightOrFlightDialogue,
-  slumberingSnorlax: slumberingSnorlaxDialogue,
-  trainingSession: trainingSessionDialogue,
-  departmentStoreSale: departmentStoreSaleDialogue,
-  shadyVitaminDealer: shadyVitaminDealerDialogue,
-  fieldTrip: fieldTripDialogue,
-  safariZone: safariZoneDialogue,
-  lostAtSea: lostAtSeaDialogue,
-  fieryFallout: fieryFalloutDialogue,
-  theStrongStuff: theStrongStuffDialogue,
-  pokemonSalesman: thePokemonSalesmanDialogue,
-  offerYouCantRefuse: anOfferYouCantRefuseDialogue,
-  delibirdy: delibirdyDialogue,
-  absoluteAvarice: absoluteAvariceDialogue,
-  aTrainersTest: aTrainersTestDialogue,
-  trashToTreasure: trashToTreasureDialogue,
-  berriesAbound: berriesAboundDialogue,
-  clowningAround: clowningAroundDialogue,
-  partTimer: partTimerDialogue,
-  dancingLessons: dancingLessonsDialogue,
-  weirdDream: weirdDreamDialogue,
-  theWinstrateChallenge: theWinstrateChallengeDialogue,
-  teleportingHijinks: teleportingHijinksDialogue,
-  bugTypeSuperfan: bugTypeSuperfanDialogue,
-  funAndGames: funAndGamesDialogue
+  mysteriousChallengers,
+  mysteriousChest,
+  darkDeal,
+  fightOrFlight,
+  slumberingSnorlax,
+  trainingSession,
+  departmentStoreSale,
+  shadyVitaminDealer,
+  fieldTrip,
+  safariZone,
+  lostAtSea,
+  fieryFallout,
+  theStrongStuff,
+  pokemonSalesman,
+  offerYouCantRefuse,
+  delibirdy,
+  absoluteAvarice,
+  aTrainersTest,
+  trashToTreasure,
+  berriesAbound,
+  clowningAround,
+  partTimer,
+  dancingLessons,
+  weirdDream,
+  theWinstrateChallenge,
+  teleportingHijinks,
+  bugTypeSuperfan,
+  funAndGames,
+  uncommonBreed,
 } as const;

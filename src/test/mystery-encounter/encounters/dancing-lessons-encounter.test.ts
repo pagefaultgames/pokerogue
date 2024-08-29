@@ -119,7 +119,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.ORICORIO);
-      expect(enemyField[0].summonData.battleStats).toEqual([1, 1, 1, 1, 1, 0, 0]);
+      expect(enemyField[0].summonData.battleStats).toEqual([1, 1, 1, 1, 0, 0, 0]);
       const moveset = enemyField[0].moveset.map(m => m?.moveId);
       expect(moveset.some(m => m === Moves.REVELATION_DANCE)).toBeTruthy();
 

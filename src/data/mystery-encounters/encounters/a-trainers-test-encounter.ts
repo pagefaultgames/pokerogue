@@ -13,6 +13,8 @@ import { IEggOptions } from "#app/data/egg";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
+import { ModifierTier } from "#app/modifier/modifier-tier";
+import { modifierTypes } from "#app/modifier/modifier-type";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:aTrainersTest";
@@ -136,7 +138,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         const encounter = scene.currentBattle.mysteryEncounter!;
-        // Spawn standard trainer battle with memory mushroom reward
+        // Battle the stat trainer for an Egg and great rewards
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
         await transitionMysteryEncounterIntroVisuals(scene);
@@ -149,7 +151,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
           tier: EggTier.ULTRA
         };
         encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.epic`));
-        setEncounterRewards(scene, { fillRemaining: true }, [eggOptions]);
+        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SACRED_ASH], guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA], fillRemaining: true }, [eggOptions]);
 
         return initBattleWithEnemyConfig(scene, config);
       }

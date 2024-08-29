@@ -1,5 +1,5 @@
 import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
@@ -88,7 +88,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
     .withOnVisualsStart((scene: BattleScene) => {
-      const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getPlayerPokemon());
+      const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getParty()[0]);
       danceAnim.play(scene);
 
       return true;
@@ -105,7 +105,8 @@ export const DancingLessonsEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter!;
 
       const species = getPokemonSpecies(Species.ORICORIO);
-      const enemyPokemon = scene.addEnemyPokemon(species, scene.currentBattle.enemyLevels![0], TrainerSlot.NONE, false);
+      const level = (scene.currentBattle.enemyLevels?.[0] ?? scene.currentBattle.waveIndex) + Math.max(Math.round((scene.currentBattle.waveIndex / 10)), 0);
+      const enemyPokemon = new EnemyPokemon(scene, species, level, TrainerSlot.NONE, false);
       if (!enemyPokemon.moveset.some(m => m && m.getMove().id === Moves.REVELATION_DANCE)) {
         if (enemyPokemon.moveset.length < 4) {
           enemyPokemon.moveset.push(new PokemonMove(Moves.REVELATION_DANCE));
@@ -130,10 +131,11 @@ export const DancingLessonsEncounter: MysteryEncounter =
       }
 
       const oricorioData = new PokemonData(enemyPokemon);
+      const oricorio = scene.addEnemyPokemon(species, scene.currentBattle.enemyLevels![0], TrainerSlot.NONE, false, oricorioData);
 
       // Adds a real Pokemon sprite to the field (required for the animation)
-      scene.currentBattle.enemyParty[0] = enemyPokemon;
-      scene.field.add(enemyPokemon);
+      scene.currentBattle.enemyParty[0] = oricorio;
+      scene.field.add(oricorio);
 
       const config: EnemyPartyConfig = {
         levelAdditiveMultiplier: 1,
@@ -141,11 +143,11 @@ export const DancingLessonsEncounter: MysteryEncounter =
           species: species,
           dataSource: oricorioData,
           isBoss: true,
-          // Gets +1 to all stats on battle start
+          // Gets +1 to all stats except SPD on battle start
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(pokemon.scene, `${namespace}.option.1.boss_enraged`);
-            pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
+            pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF], 1));
           }
         }],
       };

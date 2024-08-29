@@ -10,7 +10,7 @@ import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat } from "../data/pokemon-stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier } from "../modifier/modifier";
+import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, PokemonBaseStatFlatModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
@@ -778,19 +778,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.stats) {
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
     }
-    const baseStats = this.getSpeciesForm().baseStats.slice(0);
-    this.scene.applyModifiers(PokemonBaseStatTotalModifier, this.isPlayer(), this, baseStats);
-    if (this.fusionSpecies) {
-      const fusionBaseStats = this.getFusionSpeciesForm().baseStats;
-      for (let s = 0; s < this.stats.length; s++) {
-        baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
-      }
-    } else if (this.scene.gameMode.isSplicedOnly) {
-      for (let s = 0; s < this.stats.length; s++) {
-        baseStats[s] = Math.ceil(baseStats[s] / 2);
-      }
-    }
-    this.scene.applyModifiers(PokemonBaseStatModifier, this.isPlayer(), this, baseStats);
+    const baseStats = this.calculateBaseStats();
     const stats = Utils.getEnumValues(Stat);
     for (const s of stats) {
       const isHp = s === Stat.HP;
@@ -820,6 +808,27 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stats[s] = value;
     }
     this.scene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, this.stats);
+  }
+
+  calculateBaseStats(): number[] {
+    const baseStats = this.getSpeciesForm().baseStats.slice(0);
+    // Shuckle Juice
+    this.scene.applyModifiers(PokemonBaseStatTotalModifier, this.isPlayer(), this, baseStats);
+    // Old Gateau
+    this.scene.applyModifiers(PokemonBaseStatFlatModifier, this.isPlayer(), this, baseStats);
+    if (this.fusionSpecies) {
+      const fusionBaseStats = this.getFusionSpeciesForm().baseStats;
+      for (let s = 0; s < this.stats.length; s++) {
+        baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
+      }
+    } else if (this.scene.gameMode.isSplicedOnly) {
+      for (let s = 0; s < this.stats.length; s++) {
+        baseStats[s] = Math.ceil(baseStats[s] / 2);
+      }
+    }
+    // Vitamins
+    this.scene.applyModifiers(PokemonBaseStatModifier, this.isPlayer(), this, baseStats);
+    return baseStats;
   }
 
   getNature(): Nature {
@@ -2679,7 +2688,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   private fusionFaintCry(callback: Function): void {
-    const key = this.getSpeciesForm().getCryKey(this.formIndex);
+    const key = `cry/${this.getSpeciesForm().getCryKey(this.formIndex)}`;
     let i = 0;
     let rate = 0.85;
     const cry = this.scene.playSound(key, { rate: rate }) as AnySound;
@@ -2687,7 +2696,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const tintSprite = this.getTintSprite();
     let duration = cry.totalDuration * 1000;
 
-    let fusionCry = this.scene.playSound(this.getFusionSpeciesForm().getCryKey(this.fusionFormIndex), { rate: rate }) as AnySound;
+    const fusionCryKey = `cry/${this.getFusionSpeciesForm().getCryKey(this.fusionFormIndex)}`;
+    let fusionCry = this.scene.playSound(fusionCryKey, { rate: rate }) as AnySound;
     fusionCry.stop();
     duration = Math.min(duration, fusionCry.totalDuration * 1000);
     fusionCry.destroy();
@@ -2731,7 +2741,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         if (i === transitionIndex) {
           SoundFade.fadeOut(this.scene, cry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)));
-          fusionCry = this.scene.playSound(this.getFusionSpeciesForm().getCryKey(this.fusionFormIndex), Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0), rate: rate }));
+          fusionCry = this.scene.playSound(fusionCryKey, Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0), rate: rate }));
           SoundFade.fadeIn(this.scene, fusionCry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)), this.scene.masterVolume * this.scene.seVolume, 0);
         }
         rate *= 0.99;
@@ -3793,6 +3803,18 @@ export class EnemyPokemon extends Pokemon {
 
     if (Overrides.OPP_STATUS_OVERRIDE) {
       this.status = new Status(Overrides.OPP_STATUS_OVERRIDE);
+    }
+
+    if (Overrides.OPP_GENDER_OVERRIDE) {
+      this.gender = Overrides.OPP_GENDER_OVERRIDE;
+    }
+
+    const speciesId = this.species.speciesId;
+
+    if (speciesId in Overrides.OPP_FORM_OVERRIDES
+      && Overrides.OPP_FORM_OVERRIDES[speciesId]
+      && this.species.forms[Overrides.OPP_FORM_OVERRIDES[speciesId]]) {
+      this.formIndex = Overrides.OPP_FORM_OVERRIDES[speciesId] ?? 0;
     }
 
     if (!dataSource) {

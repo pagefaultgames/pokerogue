@@ -6,7 +6,7 @@ import {
   setEncounterRewards
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { EnemyPokemon } from "#app/field/pokemon";
+import Pokemon, { EnemyPokemon } from "#app/field/pokemon";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import {
   getPartyLuckValue,
@@ -24,6 +24,10 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { TrainerSlot } from "#app/data/trainer-config";
 import { getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { StatChangePhase } from "#app/phases/stat-change-phase";
+import { randSeedInt } from "#app/utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fightOrFlight";
@@ -58,13 +62,19 @@ export const FightOrFlightEncounter: MysteryEncounter =
           level: level,
           species: bossSpecies,
           dataSource: new PokemonData(bossPokemon),
-          isBoss: true
+          isBoss: true,
+          tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+          mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
+            queueEncounterMessage(pokemon.scene, `${namespace}.option.1.stat_boost`);
+            // Randomly boost 1 stat 2 stages
+            pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [randSeedInt(8)], 2));
+          }
         }],
       };
       encounter.enemyPartyConfigs = [config];
 
       // Calculate item
-      // 10-40 GREAT, 60-120 ULTRA, 120-160 ROGUE, 160-180 MASTER
+      // Waves 10-40 GREAT, 60-120 ULTRA, 120-160 ROGUE, 160-180 MASTER
       const tier =
         scene.currentBattle.waveIndex > 160
           ? ModifierTier.MASTER
@@ -122,6 +132,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         // Pick battle
+        // Pokemon will randomly boost 1 stat by 2 stages
         const item = scene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
         setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
         await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);

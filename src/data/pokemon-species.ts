@@ -1,24 +1,21 @@
-
+import { Localizable } from "#app/interfaces/locales";
+import { Abilities } from "#enums/abilities";
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { Species } from "#enums/species";
+import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
+import i18next from "i18next";
 import BattleScene, { AnySound } from "../battle-scene";
-import { Variant, variantColorCache } from "./variant";
-import { variantData } from "./variant";
+import { GameMode } from "../game-mode";
+import { StarterMoveset } from "../system/game-data";
+import * as Utils from "../utils";
+import { uncatchableSpecies } from "./biomes";
+import { speciesEggMoves } from "./egg-moves";
 import { GrowthRate } from "./exp";
 import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
 import { Type } from "./type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
-import { uncatchableSpecies } from "./biomes";
-import * as Utils from "../utils";
-import { StarterMoveset } from "../system/game-data";
-import { speciesEggMoves } from "./egg-moves";
-import { GameMode } from "../game-mode";
-import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
-import { VariantSet } from "./variant";
-import i18next from "i18next";
-import { Localizable } from "#app/interfaces/locales";
 import { Stat } from "./pokemon-stat";
-import { Abilities } from "#enums/abilities";
-import { PartyMemberStrength } from "#enums/party-member-strength";
-import { Species } from "#enums/species";
+import { Variant, VariantSet, variantColorCache, variantData } from "./variant";
 
 export enum Region {
   NORMAL,
@@ -28,7 +25,15 @@ export enum Region {
   PALDEA
 }
 
-export function getPokemonSpecies(species: Species | Species[]): PokemonSpecies {
+/**
+ * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode Species} enum given
+ * @param species The species to fetch
+ * @returns The associated {@linkcode PokemonSpecies} object
+ */
+export function getPokemonSpecies(species: Species | Species[] | undefined): PokemonSpecies {
+  if (!species) {
+    throw new Error("`species` must not be undefined in `getPokemonSpecies()`");
+  }
   // If a special pool (named trainers) is used here it CAN happen that they have a array as species (which means choose one of those two). So we catch that with this code block
   if (Array.isArray(species)) {
     // Pick a random species from the list
@@ -309,7 +314,7 @@ export abstract class PokemonSpeciesForm {
     let variantDataIndex: integer | string = this.speciesId;
     const species = getPokemonSpecies(this.speciesId);
     if (species.forms.length > 0 && formIndex !== undefined) {
-      formkey = species.forms[formIndex]?.formSpriteKey;
+      formkey = species.forms[formIndex]?.getFormSpriteKey(formIndex);
       if (formkey) {
         variantDataIndex = `${this.speciesId}-${formkey}`;
       }
@@ -656,8 +661,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.getSpeciesForLevel(level, allowEvolving, false, (isBoss ? PartyMemberStrength.WEAKER : PartyMemberStrength.AVERAGE) + (gameMode?.isEndless ? 1 : 0));
   }
 
-  getTrainerSpeciesForLevel(level: integer, allowEvolving: boolean = false, strength: PartyMemberStrength): Species {
-    return this.getSpeciesForLevel(level, allowEvolving, true, strength);
+  getTrainerSpeciesForLevel(level: integer, allowEvolving: boolean = false, strength: PartyMemberStrength, currentWave: number = 0): Species {
+    return this.getSpeciesForLevel(level, allowEvolving, true, strength, currentWave);
   }
 
   private getStrengthLevelDiff(strength: PartyMemberStrength): integer {
@@ -677,7 +682,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     }
   }
 
-  getSpeciesForLevel(level: integer, allowEvolving: boolean = false, forTrainer: boolean = false, strength: PartyMemberStrength = PartyMemberStrength.WEAKER): Species {
+  getSpeciesForLevel(level: integer, allowEvolving: boolean = false, forTrainer: boolean = false, strength: PartyMemberStrength = PartyMemberStrength.WEAKER, currentWave: number = 0): Species {
     const prevolutionLevels = this.getPrevolutionLevels();
 
     if (prevolutionLevels.length) {
@@ -738,6 +743,11 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
           evolutionChance = Math.min(0.65 * easeInFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel) + 0.35 * easeOutFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel * 2.5) / (preferredMinLevel * 2.5)), 1);
         }
       }
+      /* (Most) Trainers shouldn't be using unevolved Pokemon by the third gym leader / wave 80. Exceptions to this include Breeders, whose large teams are balanced by the use of weaker pokemon */
+      if (currentWave >= 80 && forTrainer && strength > PartyMemberStrength.WEAKER) {
+        evolutionChance = 1;
+        noEvolutionChance = 0;
+      }
 
       if (evolutionChance > 0) {
         if (isRegionalEvolution) {
@@ -762,7 +772,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
     for (const weight of evolutionPool.keys()) {
       if (randValue < weight) {
-        return getPokemonSpecies(evolutionPool.get(weight)!).getSpeciesForLevel(level, true, forTrainer, strength); // TODO: is the bang correct?
+        return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true, forTrainer, strength, currentWave);
       }
     }
 

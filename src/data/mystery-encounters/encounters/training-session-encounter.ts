@@ -4,7 +4,7 @@ import { getNatureName, Nature } from "#app/data/nature";
 import { speciesStarters } from "#app/data/pokemon-species";
 import { getStatName } from "#app/data/pokemon-stat";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { AbilityAttr } from "#app/system/game-data";
 import PokemonData from "#app/system/pokemon-data";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -247,9 +247,10 @@ export const TrainingSessionEncounter: MysteryEncounter =
             playerPokemon.setNature(encounter.misc.chosenNature);
             scene.gameData.setPokemonCaught(playerPokemon, false);
 
-            // Add pokemon and mods back
+            // Add pokemon and modifiers back
             scene.getParty().push(playerPokemon);
             for (const mod of modifiers.value) {
+              mod.pokemonId = playerPokemon.id;
               scene.addModifier(mod, true, false, false, true);
             }
             scene.updateModifiers(true);
@@ -385,10 +386,10 @@ function getEnemyConfig(scene: BattleScene, playerPokemon: PlayerPokemon, segmen
   playerPokemon.resetSummonData();
 
   // Passes modifiers by reference
-  modifiers.value = scene.findModifiers((m) => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === playerPokemon.id) as PokemonHeldItemModifier[];
+  modifiers.value = playerPokemon.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier));
   const modifierConfigs = modifiers.value.map((mod) => {
     return {
-      modifierType: mod.type
+      modifier: mod
     };
   }) as HeldModifierConfig[];
 

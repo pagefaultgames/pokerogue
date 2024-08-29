@@ -32,7 +32,7 @@ const namespace = "mysteryEncounter:theWinstrateChallenge";
 export const TheWinstrateChallengeEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_WINSTRATE_CHALLENGE)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
-    .withSceneWaveRangeRequirement(80, 180)
+    .withSceneWaveRangeRequirement(100, 180)
     .withIntroSpriteConfigs([
       {
         spriteKey: "vito",
@@ -221,11 +221,11 @@ function getVictorTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.FACADE, Moves.BRAVE_BIRD, Moves.PROTECT, Moves.QUICK_ATTACK],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.FLAME_ORB) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.FLAME_ORB) as PokemonHeldItemModifierType,
             isTransferable: false
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.FOCUS_BAND) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.FOCUS_BAND) as PokemonHeldItemModifierType,
             stackCount: 2,
             isTransferable: false
           },
@@ -239,11 +239,11 @@ function getVictorTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.FACADE, Moves.OBSTRUCT, Moves.NIGHT_SLASH, Moves.FIRE_PUNCH],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.FLAME_ORB) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.FLAME_ORB) as PokemonHeldItemModifierType,
             isTransferable: false
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.LEFTOVERS) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.LEFTOVERS) as PokemonHeldItemModifierType,
             stackCount: 2,
             isTransferable: false
           }
@@ -265,11 +265,11 @@ function getVictoriaTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.SYNTHESIS, Moves.SLUDGE_BOMB, Moves.GIGA_DRAIN, Moves.SLEEP_POWDER],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType,
             isTransferable: false
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.QUICK_CLAW) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.QUICK_CLAW) as PokemonHeldItemModifierType,
             stackCount: 2,
             isTransferable: false
           }
@@ -283,12 +283,12 @@ function getVictoriaTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.PSYSHOCK, Moves.MOONBLAST, Moves.SHADOW_BALL, Moves.WILL_O_WISP],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.PSYCHIC]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.PSYCHIC]) as PokemonHeldItemModifierType,
             stackCount: 1,
             isTransferable: false
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FAIRY]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [Type.FAIRY]) as PokemonHeldItemModifierType,
             stackCount: 1,
             isTransferable: false
           }
@@ -310,12 +310,12 @@ function getViviTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.WATERFALL, Moves.MEGAHORN, Moves.KNOCK_OFF, Moves.REST],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LUM]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LUM]) as PokemonHeldItemModifierType,
             stackCount: 2,
             isTransferable: false
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER, [Stat.HP]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER, [Stat.HP]) as PokemonHeldItemModifierType,
             stackCount: 4,
             isTransferable: false
           }
@@ -329,12 +329,12 @@ function getViviTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.SPORE, Moves.SWORDS_DANCE, Moves.SEED_BOMB, Moves.DRAIN_PUNCH],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER, [Stat.HP]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER, [Stat.HP]) as PokemonHeldItemModifierType,
             stackCount: 4,
             isTransferable: false
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.TOXIC_ORB) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.TOXIC_ORB) as PokemonHeldItemModifierType,
             isTransferable: false
           }
         ]
@@ -347,7 +347,7 @@ function getViviTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.EARTH_POWER, Moves.FIRE_BLAST, Moves.YAWN, Moves.PROTECT],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.QUICK_CLAW) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.QUICK_CLAW) as PokemonHeldItemModifierType,
             stackCount: 3,
             isTransferable: false
           },
@@ -369,7 +369,7 @@ function getVickyTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.AXE_KICK, Moves.ICE_PUNCH, Moves.ZEN_HEADBUTT, Moves.BULLET_PUNCH],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType,
             isTransferable: false
           }
         ]
@@ -390,7 +390,7 @@ function getVitoTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.THUNDERBOLT, Moves.GIGA_DRAIN, Moves.FOUL_PLAY, Moves.THUNDER_WAVE],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER, [Stat.SPD]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BASE_STAT_BOOSTER, [Stat.SPD]) as PokemonHeldItemModifierType,
             stackCount: 2,
             isTransferable: false
           }
@@ -404,47 +404,47 @@ function getVitoTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.SLUDGE_BOMB, Moves.GIGA_DRAIN, Moves.ICE_BEAM, Moves.EARTHQUAKE],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType,
             stackCount: 2,
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.APICOT]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.APICOT]) as PokemonHeldItemModifierType,
             stackCount: 2,
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.GANLON]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.GANLON]) as PokemonHeldItemModifierType,
             stackCount: 2,
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.STARF]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.STARF]) as PokemonHeldItemModifierType,
             stackCount: 2,
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.SALAC]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.SALAC]) as PokemonHeldItemModifierType,
             stackCount: 2,
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LUM]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LUM]) as PokemonHeldItemModifierType,
             stackCount: 2,
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LANSAT]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LANSAT]) as PokemonHeldItemModifierType,
             stackCount: 2,
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LIECHI]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LIECHI]) as PokemonHeldItemModifierType,
             stackCount: 2,
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.PETAYA]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.PETAYA]) as PokemonHeldItemModifierType,
             stackCount: 2,
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.ENIGMA]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.ENIGMA]) as PokemonHeldItemModifierType,
             stackCount: 2,
           },
           {
-            modifierType: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LEPPA]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.BERRY, [BerryType.LEPPA]) as PokemonHeldItemModifierType,
             stackCount: 2,
           }
         ]
@@ -457,7 +457,7 @@ function getVitoTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.DRILL_PECK, Moves.QUICK_ATTACK, Moves.THRASH, Moves.KNOCK_OFF],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.KINGS_ROCK) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.KINGS_ROCK) as PokemonHeldItemModifierType,
             stackCount: 2,
             isTransferable: false
           }
@@ -471,7 +471,7 @@ function getVitoTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.PSYCHIC, Moves.SHADOW_BALL, Moves.FOCUS_BLAST, Moves.THUNDERBOLT],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.WIDE_LENS) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.WIDE_LENS) as PokemonHeldItemModifierType,
             stackCount: 2,
             isTransferable: false
           },
@@ -485,7 +485,7 @@ function getVitoTrainerConfig(scene: BattleScene): EnemyPartyConfig {
         moveSet: [Moves.EARTHQUAKE, Moves.U_TURN, Moves.FLARE_BLITZ, Moves.ROCK_SLIDE],
         modifierConfigs: [
           {
-            modifierType: generateModifierType(scene, modifierTypes.QUICK_CLAW) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(scene, modifierTypes.QUICK_CLAW) as PokemonHeldItemModifierType,
             stackCount: 2,
             isTransferable: false
           },

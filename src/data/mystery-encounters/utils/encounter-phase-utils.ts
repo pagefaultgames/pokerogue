@@ -886,7 +886,7 @@ export function handleMysteryEncounterBattleStartEffects(scene: BattleScene) {
 
 /**
  * Can queue extra phases or logic during {@link TurnInitPhase}
- * Mostly useful for allowing MysteryEncounter enemies to "cheat" and use moves before the first turn
+ * Should mostly just be used for injecting custom phases into the battle system on turn start
  * @param scene
  * @return boolean - if true, will skip the remainder of the {@link TurnInitPhase}
  */

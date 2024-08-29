@@ -31,7 +31,7 @@ const SOUND_EFFECT_WAIT_TIME = 700;
 export const TrashToTreasureEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.TRASH_TO_TREASURE)
     .withEncounterTier(MysteryEncounterTier.ULTRA)
-    .withSceneWaveRangeRequirement(10, 180)
+    .withSceneWaveRangeRequirement(60, 180)
     .withMaxAllowedEncounters(1)
     .withIntroSpriteConfigs([
       {
@@ -177,7 +177,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
     }
   }
 
-  scene.playSound("bgm/item_fanfare");
+  scene.playSound("item_fanfare");
   await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2 " + leftovers.name }), undefined, true);
 
   // First Shell bell
@@ -204,17 +204,17 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
     }
   }
 
-  scene.playSound("bgm/item_fanfare");
+  scene.playSound("item_fanfare");
   await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: "2 " + shellBell.name }), undefined, true);
 }
 
 async function doGarbageDig(scene: BattleScene) {
-  scene.playSound("battle-anims/PRSFX- Dig2");
+  scene.playSound("battle_anims/PRSFX- Dig2");
   scene.time.delayedCall(SOUND_EFFECT_WAIT_TIME, () => {
-    scene.playSound("battle-anims/PRSFX- Dig2");
-    scene.playSound("battle-anims/PRSFX- Venom Drench", { volume: 2 });
+    scene.playSound("battle_anims/PRSFX- Dig2");
+    scene.playSound("battle_anims/PRSFX- Venom Drench", { volume: 2 });
   });
   scene.time.delayedCall(SOUND_EFFECT_WAIT_TIME * 2, () => {
-    scene.playSound("battle-anims/PRSFX- Dig2");
+    scene.playSound("battle_anims/PRSFX- Dig2");
   });
 }

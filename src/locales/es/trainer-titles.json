@@ -16,6 +16,8 @@
   "galactic_boss": "Team Galactic Boss",
   "plasma_boss": "Team Plasma Boss",
   "flare_boss": "Team Flare Boss",
+  "aether_boss": "Presidente Æther",
+
   "rocket_admin": "Team Rocket Admin",
   "rocket_admin_female": "Team Rocket Admin",
   "magma_admin": "Team Magma Admin",
@@ -27,5 +29,6 @@
   "plasma_sage": "Team Plasma Sage",
   "plasma_admin": "Team Plasma Admin",
   "flare_admin": "Team Flare Admin",
-  "flare_admin_female": "Team Flare Admin"
+  "flare_admin_female": "Team Flare Admin",
+  "aether_admin": "Director de la Fundación Æther"
 }
