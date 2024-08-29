@@ -29,6 +29,7 @@ import { TheWinstrateChallengeEncounter } from "#app/data/mystery-encounters/enc
 import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encounters/teleporting-hijinks-encounter";
 import { BugTypeSuperfanEncounter } from "#app/data/mystery-encounters/encounters/bug-type-superfan-encounter";
 import { FunAndGamesEncounter } from "#app/data/mystery-encounters/encounters/fun-and-games-encounter";
+import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -175,7 +176,8 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.CLOWNING_AROUND,
   MysteryEncounterType.WEIRD_DREAM,
   MysteryEncounterType.TELEPORTING_HIJINKS,
-  MysteryEncounterType.BUG_TYPE_SUPERFAN
+  MysteryEncounterType.BUG_TYPE_SUPERFAN,
+  MysteryEncounterType.UNCOMMON_BREED
 ];
 
 /**
@@ -282,6 +284,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.TELEPORTING_HIJINKS] = TeleportingHijinksEncounter;
   allMysteryEncounters[MysteryEncounterType.BUG_TYPE_SUPERFAN] = BugTypeSuperfanEncounter;
   allMysteryEncounters[MysteryEncounterType.FUN_AND_GAMES] = FunAndGamesEncounter;
+  allMysteryEncounters[MysteryEncounterType.UNCOMMON_BREED] = UncommonBreedEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {

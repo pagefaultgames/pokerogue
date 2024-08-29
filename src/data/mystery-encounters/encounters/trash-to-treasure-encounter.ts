@@ -209,12 +209,12 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
 }
 
 async function doGarbageDig(scene: BattleScene) {
-  scene.playSound("battle-anims/PRSFX- Dig2");
+  scene.playSound("battle_anims/PRSFX- Dig2");
   scene.time.delayedCall(SOUND_EFFECT_WAIT_TIME, () => {
-    scene.playSound("battle-anims/PRSFX- Dig2");
-    scene.playSound("battle-anims/PRSFX- Venom Drench", { volume: 2 });
+    scene.playSound("battle_anims/PRSFX- Dig2");
+    scene.playSound("battle_anims/PRSFX- Venom Drench", { volume: 2 });
   });
   scene.time.delayedCall(SOUND_EFFECT_WAIT_TIME * 2, () => {
-    scene.playSound("battle-anims/PRSFX- Dig2");
+    scene.playSound("battle_anims/PRSFX- Dig2");
   });
 }

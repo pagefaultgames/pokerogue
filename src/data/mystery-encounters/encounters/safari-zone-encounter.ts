@@ -74,9 +74,9 @@ export const SafariZoneEncounter: MysteryEncounter =
         };
         updatePlayerMoney(scene, -(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
         // Load bait/mud assets
-        scene.loadSe("PRSFX- Bug Bite", "battle_anims");
-        scene.loadSe("PRSFX- Sludge Bomb2", "battle_anims");
-        scene.loadSe("PRSFX- Taunt2", "battle_anims");
+        scene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
+        scene.loadSe("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav");
+        scene.loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav");
         scene.loadAtlas("bait", "mystery-encounters");
         scene.loadAtlas("mud", "mystery-encounters");
         await summonSafariPokemon(scene);
@@ -353,12 +353,12 @@ async function throwBait(scene: BattleScene, pokemon: EnemyPokemon): Promise<boo
               y: originalY - 5,
               loop: 6,
               onStart: () => {
-                scene.playSound("battle-anims/PRSFX- Bug Bite");
+                scene.playSound("battle_anims/PRSFX- Bug Bite");
                 bait.setFrame("0002.png");
               },
               onLoop: () => {
                 if (index % 2 === 0) {
-                  scene.playSound("battle-anims/PRSFX- Bug Bite");
+                  scene.playSound("battle_anims/PRSFX- Bug Bite");
                 }
                 if (index === 4) {
                   bait.setFrame("0003.png");
@@ -409,7 +409,7 @@ async function throwMud(scene: BattleScene, pokemon: EnemyPokemon): Promise<bool
         duration: 500,
         onComplete: () => {
           // Mud frame 2
-          scene.playSound("battle-anims/PRSFX- Sludge Bomb2");
+          scene.playSound("battle_anims/PRSFX- Sludge Bomb2");
           mud.setFrame("0002.png");
           // Mud splat
           scene.time.delayedCall(200, () => {
@@ -435,10 +435,10 @@ async function throwMud(scene: BattleScene, pokemon: EnemyPokemon): Promise<bool
                 y: originalY - 20,
                 loop: 1,
                 onStart: () => {
-                  scene.playSound("battle-anims/PRSFX- Taunt2");
+                  scene.playSound("battle_anims/PRSFX- Taunt2");
                 },
                 onLoop: () => {
-                  scene.playSound("battle-anims/PRSFX- Taunt2");
+                  scene.playSound("battle_anims/PRSFX- Taunt2");
                 },
                 onComplete: () => {
                   resolve(true);

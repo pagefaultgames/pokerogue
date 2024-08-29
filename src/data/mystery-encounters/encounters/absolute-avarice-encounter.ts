@@ -175,7 +175,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
 
-      scene.loadSe("PRSFX- Bug Bite", "battle_anims");
+      scene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
       scene.loadSe("Follow Me", "battle_anims", "Follow Me.mp3");
 
       // Get all player berry items, remove from party, and store reference
@@ -351,7 +351,7 @@ function doGreedentSpriteSteal(scene: BattleScene) {
 
   const greedentSprites = scene.currentBattle.mysteryEncounter!.introVisuals?.getSpriteAtIndex(1);
 
-  scene.playSound("battle-anims/Follow Me");
+  scene.playSound("battle_anims/Follow Me");
   scene.tweens.chain({
     targets: greedentSprites,
     tweens: [

@@ -22,6 +22,8 @@ import { ReturnPhase } from "#app/phases/return-phase";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
+import { GameOverPhase } from "#app/phases/game-over-phase";
+import { SwitchPhase } from "#app/phases/switch-phase";
 
 /**
  * Will handle (in order):
@@ -161,21 +163,22 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
           this.onOptionSelect(this.scene).finally(() => {
             this.end();
           });
-        }, this.scene.currentBattle.mysteryEncounter?.getSeedOffset());
+        }, this.scene.currentBattle.mysteryEncounter?.getSeedOffset() * 500);
       });
     } else {
       this.scene.executeWithSeedOffset(() => {
         this.onOptionSelect(this.scene).finally(() => {
           this.end();
         });
-      }, this.scene.currentBattle.mysteryEncounter?.getSeedOffset());
+      }, this.scene.currentBattle.mysteryEncounter?.getSeedOffset() * 500);
     }
   }
 }
 
 /**
  * Runs at the beginning of an Encounter's battle
- * Will cleanup any residual flinches, Endure, etc. that are left over from startOfBattleEffects
+ * Will clean up any residual flinches, Endure, etc. that are left over from startOfBattleEffects
+ * Will also handle Game Overs, switches, etc. that could happen from handleMysteryEncounterBattleStartEffects
  * See [TurnEndPhase](../phases.ts) for more details
  */
 export class MysteryEncounterBattleStartCleanupPhase extends Phase {
@@ -194,6 +197,28 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     // Remove any status tick phases
     while (!!this.scene.findPhase(p => p instanceof PostTurnStatusEffectPhase)) {
       this.scene.tryRemovePhase(p => p instanceof PostTurnStatusEffectPhase);
+    }
+
+    // The total number of Pokemon in the player's party that can legally fight
+    const legalPlayerPokemon = this.scene.getParty().filter(p => p.isAllowedInBattle());
+    // The total number of legal player Pokemon that aren't currently on the field
+    const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
+    if (!legalPlayerPokemon.length) {
+      this.scene.unshiftPhase(new GameOverPhase(this.scene));
+    }
+
+    // Check for any KOd player mons and switch
+    // For each fainted mon on the field, if there is a legal replacement, summon it
+    const playerField = this.scene.getPlayerField();
+    playerField.forEach((pokemon, i) => {
+      if (!pokemon.isAllowedInBattle() && legalPlayerPartyPokemon.length > i) {
+        this.scene.unshiftPhase(new SwitchPhase(this.scene, i, true, false));
+      }
+    });
+
+    // THEN, if is a double battle, and player only has 1 summoned pokemon, center pokemon on field
+    if (this.scene.currentBattle.double && legalPlayerPokemon.length === 1 && legalPlayerPartyPokemon.length === 0) {
+      this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
     }
 
     super.end();
@@ -477,7 +502,7 @@ export class PostMysteryEncounterPhase extends Phase {
               this.continueEncounter();
             }
           });
-      }, this.scene.currentBattle.mysteryEncounter?.getSeedOffset());
+      }, this.scene.currentBattle.mysteryEncounter?.getSeedOffset() * 2000);
     } else {
       this.continueEncounter();
     }
