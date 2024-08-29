@@ -2582,10 +2582,10 @@
   },
   "rival": {
     "encounter": {
-      "1": "@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…$@c{smile_eclosed}So you're really pursuing your dream after all? I almost can't believe it.$@c{serious_smile_fists}Since we're here, how about a battle?After all, I want to make sure you're ready.$@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!"
+      "1": "@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…$@c{smile_eclosed}So you're really pursuing your dream after all? I almost can't believe it.$@c{serious_smile_fists}Since we're here, how about a battle?\nAfter all, I want to make sure you're ready.$@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!"
     },
     "victory": {
-      "1": "@c{shock}Wow… You cleaned me out.Are you actually a beginner?$@c{smile}Maybe it was a bit of luck but…Who knows you might just be able to go all the way.$By the way, the professor asked me to give you these items. They look pretty cool.$@c{serious_smile_fists}Good luck out there!"
+      "1": "@c{shock}Wow… You cleaned me out.\nAre you actually a beginner?$@c{smile}Maybe it was a bit of luck but…Who knows you might just be able to go all the way.$By the way, the professor asked me to give you these items. They look pretty cool.$@c{serious_smile_fists}Good luck out there!"
     }
   },
   "rival_female": {

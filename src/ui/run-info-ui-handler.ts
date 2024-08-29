@@ -42,7 +42,6 @@ enum RunInfoUiMode {
 export default class RunInfoUiHandler extends UiHandler {
   protected runInfo: SessionSaveData;
   protected isVictory: boolean;
-  protected isPGF: boolean;
   protected pageMode: RunInfoUiMode;
   protected runContainer: Phaser.GameObjects.Container;
 
@@ -94,7 +93,6 @@ export default class RunInfoUiHandler extends UiHandler {
     // Assigning information necessary for the UI's creation
     this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
     this.isVictory = run.isVictory;
-    this.isPGF = this.scene.gameData.gender === PlayerGender.FEMALE;
     this.pageMode = RunInfoUiMode.MAIN;
 
     // Creates Header and adds to this.runContainer
@@ -173,8 +171,10 @@ export default class RunInfoUiHandler extends UiHandler {
    *
    */
   private async parseRunResult() {
+    const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+    const genderStr = PlayerGender[genderIndex];
     const runResultTextStyle = this.isVictory ? TextStyle.SUMMARY : TextStyle.SUMMARY_RED;
-    const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : (this.isPGF ? i18next.t("runHistory:defeatedF") : i18next.t("runHistory:defeatedM"));
+    const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated", { context: genderStr });
     const runResultText = addBBCodeTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, {fontSize : "65px", lineSpacing: 0.1});
 
     if (this.isVictory) {
@@ -684,7 +684,9 @@ export default class RunInfoUiHandler extends UiHandler {
    */
   private createVictorySplash(): void {
     this.endCardContainer = this.scene.add.container(0, 0);
-    const endCard = this.scene.add.image(0, 0, `end_${this.isPGF ? "f" : "m"}`);
+    const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+    const isFemale = genderIndex === PlayerGender.FEMALE;
+    const endCard = this.scene.add.image(0, 0, `end_${isFemale ? "f" : "m"}`);
     endCard.setOrigin(0);
     endCard.setScale(0.5);
     const text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, i18next.t("battle:congratulations"), TextStyle.SUMMARY, { fontSize: "128px" });
@@ -698,16 +700,19 @@ export default class RunInfoUiHandler extends UiHandler {
    * This could be adapted into a public-facing method for victory screens. Perhaps.
    */
   private createHallofFame(): void {
+    const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+    const isFemale = genderIndex === PlayerGender.FEMALE;
+    const genderStr = PlayerGender[genderIndex].toLowerCase();
     // Issue Note (08-05-2024): It seems as if fused pokemon do not appear with the averaged color b/c pokemonData's loadAsset requires there to be some active battle?
     // As an alternative, the icons of the second/bottom fused Pokemon have been placed next to their fellow fused Pokemon in Hall of Fame
     this.hallofFameContainer = this.scene.add.container(0, 0);
     // Thank you Hayuna for the code
-    const endCard = this.scene.add.image(0, 0, `end_${this.isPGF ? "f" : "m"}`);
+    const endCard = this.scene.add.image(0, 0, `end_${isFemale ? "f" : "m"}`);
     endCard.setOrigin(0);
     endCard.setPosition(-1, -1);
     endCard.setScale(0.5);
     const endCardCoords = endCard.getBottomCenter();
-    const overlayColor = this.isPGF ? "red" : "blue";
+    const overlayColor = isFemale ? "red" : "blue";
     const hallofFameBg = this.scene.add.image(0, 0, "hall_of_fame_"+overlayColor);
     hallofFameBg.setPosition(159, 89);
     hallofFameBg.setSize(this.scene.game.canvas.width, this.scene.game.canvas.height+10);
@@ -715,7 +720,7 @@ export default class RunInfoUiHandler extends UiHandler {
     this.hallofFameContainer.add(endCard);
     this.hallofFameContainer.add(hallofFameBg);
 
-    const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText"+(this.isPGF ? "F" : "M")), TextStyle.WINDOW);
+    const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText", { context: genderStr }), TextStyle.WINDOW);
     hallofFameText.setPosition(endCardCoords.x-(hallofFameText.displayWidth/2), 164);
     this.hallofFameContainer.add(hallofFameText);
     this.runInfo.party.forEach((p, i) => {
