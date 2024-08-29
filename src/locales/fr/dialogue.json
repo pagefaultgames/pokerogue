@@ -13,10 +13,12 @@
       "10": "Baisse pas ta garde si tu veux pas pleurer d’avoir perdu face à un gamin.",
       "11": "J’ai tout donné pour élever mes Pokémon. Attention à toi si tu leur fait du mal !",
       "12": "Incroyable que t’y sois parvenu ! Mais la suite va pas être une partie de plaisir.",
+      "12_female": "Incroyable que t’y sois parvenue ! Mais la suite va pas être une partie de plaisir.",
       "13": "Les combats sont éternels ! Bienvenue dans un monde sans fin !"
     },
     "victory": {
       "1": "Hé, mais t’es trop fort !",
+      "1_female": "Hé, mais t’es trop forte !",
       "2": "En vrai j’avais aucune chance hein ?",
       "3": "J’te retrouverai un jour, et là j’te battrai !",
       "4": "Arg… J’ai plus aucun Pokémon.",
@@ -35,10 +37,12 @@
     "encounter": {
       "1": "Affrontons-nous, d’accord ?",
       "2": "T’as l’air d’un nouveau Dresseur. Battons nous !",
+      "2_female": "T’as l’air d’une nouvelle Dresseuse. Battons nous !",
       "3": "Je te connais pas. Ça te dis de te battre ?",
       "4": "Prenons du bon temps avec ce combat Pokémon !",
       "5": "Je vais t’apprendre à te battre avec tes Pokémon !",
       "6": "Un combat doit toujours être pris au sérieux.\nT’es prêt à te battre ?",
+      "6_female": "Un combat doit toujours être pris au sérieux.\nT’es prête à te battre ?",
       "7": "Tu seras pas jeune éternellement. T’as qu’une chance pendant un combat. Bientôt, tu seras plus qu’un souvenir.",
       "8": "Tu ferais mieux d’y aller doucement avec moi. Mais je vais me battre sérieusement !",
       "9": "Je m’ennuie à l’école. Y’a rien à y faire. *Baille*\nJe me bats juste pour passer le temps."
@@ -46,10 +50,12 @@
     "victory": {
       "1": "Wah, c’était impressionnant ! J’ai encore beaucoup à apprendre.",
       "2": "Je ne pensais pas que je perdrais comme ça…",
+      "2_female": "Je pensais pas que je perdrais comme ça…",
       "3": "J’espère que j’aurai ma revanche un jour.",
       "4": "C’était super amusant ! Mais ce combat m’a épuisée…",
       "5": "Tu m’as appris une belle leçon ! T’es vraiment incroyable !",
       "6": "Vraiment ? J’ai perdu… ? C’est des choses qui arrivent, ça me déprime mais tu es vraiment très cool.",
+      "6_female": "Vraiment ? J’ai perdu… ? C’est des choses qui arrivent, ça me déprime mais t’es vraiment très cool.",
       "7": "J’ai pas besoin de ce genre de souvenirs.\n*Suppression de mémoire en cours…*",
       "8": "Hé ! Je t’avais dit d’y aller doucement avec moi ! Mais t’es vraiment si cool quand tu te bats sérieusement…",
       "9": "J’en ai marre des combats Pokémon…\nJe vais chercher d’autres trucs à faire…"
@@ -142,6 +148,7 @@
   "ace_trainer": {
     "encounter": {
       "1": "T’as l’air plutôt confiant.",
+      "1_female": "T’as l’air plutôt confiante.",
       "2": "Tes Pokémon… Montre-les-moi…",
       "3": "Les gens pensent que je suis fort par que je suis un Topdresseur.",
       "4": "T’es au courant de ce que ça signifie d’être un Topdresseur ?"
@@ -150,7 +157,8 @@
       "1": "Très bien… T’as de bons Pokémon…",
       "2": "Quoi ?! Mais c’est moi le génie des combats !",
       "3": "Évidemment que t’es le personnage principal !",
-      "4": "OK ! OK ! Tu pourrais être un Topdresseur !"
+      "4": "OK ! OK ! Tu pourrais être un Topdresseur !",
+      "4_female": "OK ! OK ! Tu pourrais être une Topdresseuse !"
     },
     "defeat": {
       "1": "Je me dévoue corps et âme aux combats Pokémon !",
@@ -164,7 +172,7 @@
       "1": "Honorons ce terrain de combat avec élégance et équilibre !"
     },
     "victory": {
-      "2": "Mon élégance demeure inébranlable !"
+      "1": "Mon élégance demeure inébranlable !"
     }
   },
   "rocket_grunt": {
@@ -173,7 +181,8 @@
       "2": "Ça bosse dur, ici ! Alors du balai !",
       "3": "File-nous tes Pokémon ou tu vas gouter à la colère de la Team Rocket !",
       "4": "Sois témoin de ce qu’est une vraie terreur de la Team Rocket!",
-      "5": "Hé gamin ! Moi être guy member of la Team Rocket !"
+      "5": "Hé gamin ! Moi être guy member of la Team Rocket !",
+      "5_female": "Hé gamine ! Moi être guy member of la Team Rocket !"
     },
     "victory": {
       "1": "Une fois de plus la Team Rocket s’envole vers d’autres cieux !",
@@ -195,6 +204,7 @@
       "1": "Je…?\nJ’ai perdu ?!",
       "2": "Je peux pas croire que j’ai pas pris mon déjeuner juste pour ça…",
       "3": "Impossible ! T’es qu’un gosse !",
+      "3_female": "Impossible ! T’es qu’une gosse !",
       "4": "Aahhh…\nJ’aurais dû directement rentrer à la planque…",
       "5": "Tu m’as démoli… Tu crois que le boss va suspendre mon salaire ?"
     }
@@ -221,7 +231,8 @@
       "2": "Sois témoin de la puissance de notre technologie et du futur qui se profile !",
       "3": "Au nom de la Team Galaxie, j’éliminerai quiconque se mettera sur notre route !",
       "4": "Prépare ta défaite !",
-      "5": "J’espère que t’es prêt à te prendre une raclée de l’espace !"
+      "5": "J’espère que t’es prêt à te prendre une raclée de l’espace !",
+      "5_female": "J’espère que t’es prête à te prendre une raclée de l’espace !"
     },
     "victory": {
       "1": "Désactivation…",
@@ -251,6 +262,7 @@
     "encounter": {
       "1": "Tes Pokémon ne sont pas dignes de l’élégance de la Team Flare.",
       "2": "T’as des lunettes de soleil j’espère ?\nCar prépare-toi à être ébloui !",
+      "2_female": "T’as des lunettes de soleil j’espère ?\nCar prépare-toi à être éblouie !",
       "3": "La Team Flare va purifier ce monde de toute imperfection !",
       "4": "Prépare-toi à découvrir l’indiscutable sens du style de la Team Flare !",
       "5": "La mode, c’est important !"
@@ -271,7 +283,8 @@
       "1": "QUOI ? IMPOSSIBLE !"
     },
     "defeat": {
-      "1": "Retiens bien. Ton incapacité à évaluer ta propre force est\nla démonstration claire que tu n’es encore qu’un gamin."
+      "1": "Retiens bien. Ton incapacité à évaluer ta propre force est\nla démonstration claire que tu n’es encore qu’un gamin.",
+      "1_female": "Retiens bien. Ton incapacité à évaluer ta propre force est\nla démonstration claire que tu n’es encore qu’une gamine."
     }
   },
   "rocket_boss_giovanni_2": {
@@ -331,7 +344,8 @@
   },
   "galactic_boss_cyrus_1": {
     "encounter": {
-      "1": "Tu t’es senti obligé de venir ici dans un acte vide de sens. Je vais te le faire regretter."
+      "1": "Tu t’es senti obligé de venir ici dans un acte vide de sens. Je vais te le faire regretter.",
+      "1_female": "Tu t’es sentie obligée de venir ici dans un acte vide de sens. Je vais te le faire regretter."
     },
     "victory": {
       "1": "Intéressant. Et plutôt curieux."
@@ -462,6 +476,7 @@
     "defeat": {
       "1": "J’ai failli m’endormir…",
       "2": "Oh non… Mes Pokémon Plante ont l’air de t’avoir bien endormi…",
+      "2_female": "Oh non… Mes Pokémon Plante ont l’air de t’avoir bien endormie…",
       "3": "Ce combat était si apaisant…",
       "4": "Oh non… C’est tout ?"
     }
