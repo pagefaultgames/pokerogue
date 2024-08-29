@@ -73,7 +73,8 @@
   },
   "marnie_piers_double": {
     "encounter": {
-      "1": "Peterson : Chauds pour un concert ?\n$Rosemary : Frérot… Il est pas là pour chanter, mais se battre…"
+      "1": "Peterson : Chauds pour un concert ?\n$Rosemary : Frérot… Il est pas là pour chanter, mais se battre…",
+      "1_female": "Peterson : Chauds pour un concert ?\n$Rosemary : Frérot… Elle est pas là pour chanter, mais se battre…"
     },
     "victory": {
       "1": "Peterson : Ça c’est du rock !\n$Rosemary : Frérot…"
