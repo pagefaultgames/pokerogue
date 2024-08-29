@@ -57,6 +57,7 @@ import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase"
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
+import { Challenges } from "#enums/challenges";
 
 export enum FieldPosition {
   CENTER,
@@ -1399,12 +1400,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           return 1;
         }
       }
-
-      return getTypeDamageMultiplier(moveType, defType);
+      const multiplier = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, defType));
+      applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
+      return multiplier.value;
     }).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
 
+    const typeMultiplierAgainstFlying = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, Type.FLYING));
+    applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, typeMultiplierAgainstFlying);
     // Handle strong winds lowering effectiveness of types super effective against pure flying
-    if (!ignoreStrongWinds && arena.weather?.weatherType === WeatherType.STRONG_WINDS && !arena.weather.isEffectSuppressed(this.scene) && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(moveType, Type.FLYING) === 2) {
+    if (!ignoreStrongWinds && arena.weather?.weatherType === WeatherType.STRONG_WINDS && !arena.weather.isEffectSuppressed(this.scene) && this.isOfType(Type.FLYING) && typeMultiplierAgainstFlying.value === 2) {
       multiplier /= 2;
       if (!simulated) {
         this.scene.queueMessage(i18next.t("weather:strongWindsEffectMessage"));
@@ -3879,6 +3883,18 @@ export class EnemyPokemon extends Pokemon {
       this.status = new Status(Overrides.OPP_STATUS_OVERRIDE);
     }
 
+    if (Overrides.OPP_GENDER_OVERRIDE) {
+      this.gender = Overrides.OPP_GENDER_OVERRIDE;
+    }
+
+    const speciesId = this.species.speciesId;
+
+    if (speciesId in Overrides.OPP_FORM_OVERRIDES
+      && Overrides.OPP_FORM_OVERRIDES[speciesId]
+      && this.species.forms[Overrides.OPP_FORM_OVERRIDES[speciesId]]) {
+      this.formIndex = Overrides.OPP_FORM_OVERRIDES[speciesId] ?? 0;
+    }
+
     if (!dataSource) {
       this.generateAndPopulateMoveset();
 
@@ -3961,6 +3977,9 @@ export class EnemyPokemon extends Pokemon {
           new PokemonMove(Moves.FLAMETHROWER),
           new PokemonMove(Moves.COSMIC_POWER)
         ];
+      if (this.scene.gameMode.hasChallenge(Challenges.INVERSE_BATTLE)) {
+        this.moveset[2] = new PokemonMove(Moves.THUNDERBOLT);
+      }
       break;
     default:
       super.generateAndPopulateMoveset();
