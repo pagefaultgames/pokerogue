@@ -1,7 +1,7 @@
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import i18next from "i18next";
-import { PlayerPokemon } from "#app/field/pokemon.js";
+import { PlayerPokemon } from "#app/field/pokemon";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { isNullOrUndefined } from "#app/utils";
 import { Mode } from "./ui";
@@ -34,11 +34,9 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
       }).filter((t) => t);
     };
 
-    const keysInArrays = flattenKeys(i18next.getDataByLanguage(i18next.resolvedLanguage)).filter((t) => t.length > 0); // Array of arrays
+    const keysInArrays = flattenKeys(i18next.getDataByLanguage(String(i18next.resolvedLanguage))).filter((t) => t.length > 0); // Array of arrays
     const keys = keysInArrays.flat(Infinity).map(String); // One array of string
     this.keys = keys;
-
-    this.inputs[0].setMaxLength(255);
   }
 
   getModalTitle(config?: ModalConfig): string {
@@ -73,6 +71,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
   show(args: any[]): boolean {
     const ui = this.getUi();
     const input = this.inputs[0];
+    input.setMaxLength(255);
 
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
       if (["escape", "space"].some((v) => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) && ui.getMode() === Mode.AUTO_COMPLETE) {
@@ -111,7 +110,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
         });
       }
 
-      if (options !== []) {
+      if (options.length > 0) {
         const modalOpts = {
           options: options,
           maxOptions: 5,

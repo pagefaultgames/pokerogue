@@ -194,7 +194,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new RenameFormUiHandler(scene),
       new RunHistoryUiHandler(scene),
       new RunInfoUiHandler(scene),
-      new TestDialogueUiHandler(scene),
+      new TestDialogueUiHandler(scene, Mode.TEST_DIALOGUE),
       new AutoCompleteUiHandler(scene),
     ];
   }

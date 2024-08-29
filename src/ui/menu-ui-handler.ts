@@ -306,7 +306,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                 }
                 // Switch to the dialog test window
                 this.setDialogTestMode(true);
-                ui.showText(i18next.t(translatedString, interpolatorOptions), null, () => this.scene.ui.showText("", 0, () => {
+                ui.showText(String(i18next.t(translatedString, interpolatorOptions)), null, () => this.scene.ui.showText("", 0, () => {
                   handler.tutorialActive = false;
                   // Go back to the default message window
                   this.setDialogTestMode(false);

@@ -87,7 +87,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     if (configOptions.length >= 10 && this.scene.ui.getMode() === Mode.AUTO_COMPLETE) {
       const optionsScrollTotal = configOptions.length;
       const optionStartIndex = this.scrollCursor;
-      const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.scrollCursor + (this.config?.maxOptions - 1) >= optionsScrollTotal ? this.config?.maxOptions - 1 : this.config?.maxOptions - 2));
+      const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.scrollCursor + (this.config?.maxOptions! - 1) >= optionsScrollTotal ? this.config?.maxOptions! - 1 : this.config?.maxOptions! - 2));
       options = configOptions.slice(optionStartIndex, optionEndIndex + 2);
     } else {
       options = configOptions;
