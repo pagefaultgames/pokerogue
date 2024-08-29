@@ -40,11 +40,11 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
   }
 
   getModalTitle(config?: ModalConfig): string {
-    return i18next.t("menu:testDialogue");
+    return "Test Dialogue";
   }
 
   getFields(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:dialogue") ];
+    return [ "Dialogue" ];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -56,7 +56,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:check"), i18next.t("menu:cancel") ];
+    return [ "Check", "Cancel" ];
   }
 
   getReadableErrorMessage(error: string): string {
@@ -136,7 +136,6 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
           this.sanitizeInputs();
           const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
           config.buttonActions[0](sanitizedName);
-          console.log(i18next.t(input.text.split(" ")[0], { pokemonName: "Bulbasaur" }));
           return true;
         }
         return false;

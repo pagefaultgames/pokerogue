@@ -275,7 +275,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     });
     if (Utils.isLocal || Utils.isBeta) { // this should make sure we don't have this option in live
       manageDataOptions.push({
-        label: i18next.t("menuUiHandler:testDialogue"),
+        label: "Test Dialogue",
         handler: () => {
           ui.playSelect();
           let nickname = "";
@@ -287,7 +287,6 @@ export default class MenuUiHandler extends MessageUiHandler {
                 ui.playSelect();
                 const dialogueTestName = sanitizedName;
                 const dialogueName = decodeURIComponent(escape(atob(dialogueTestName)));
-                console.log(dialogueName);
                 const handler = ui.getHandler() as AwaitableUiHandler;
                 handler.tutorialActive = true;
                 const interpolatorOptions: any = {};
@@ -317,7 +316,6 @@ export default class MenuUiHandler extends MessageUiHandler {
               }
             ]
           }, nickname);
-
 
           return true;
         },
