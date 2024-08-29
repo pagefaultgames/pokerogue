@@ -2257,15 +2257,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         source.removeTag(typeBoost.tagType);
       }
 
-      if (cancelled) {
-        return HitResult.NO_EFFECT;
-      }
+      if (cancelled || result === HitResult.IMMUNE || result === HitResult.NO_EFFECT) {
+        source.stopMultiHit(this);
 
-      if (result === HitResult.IMMUNE || result === HitResult.NO_EFFECT) {
-        if (result === HitResult.IMMUNE) {
-          this.scene.queueMessage(i18next.t("battle:hitResultImmune", { pokemonName: getPokemonNameWithAffix(this) }));
-        } else {
-          this.scene.queueMessage(i18next.t("battle:hitResultNoEffect"));
+        if (!cancelled) {
+          if (result === HitResult.IMMUNE) {
+            this.scene.queueMessage(i18next.t("battle:hitResultImmune", { pokemonName: getPokemonNameWithAffix(this) }));
+          } else {
+            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect"));
+          }
         }
         return result;
       }
