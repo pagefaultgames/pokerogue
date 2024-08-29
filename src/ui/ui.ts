@@ -23,7 +23,7 @@ import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
 import EggGachaUiHandler from "./egg-gacha-ui-handler";
-import {addWindow} from "./ui-theme";
+import { addWindow } from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
 import LoadingModalUiHandler from "./loading-modal-ui-handler";
@@ -46,6 +46,7 @@ import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
 import RenameFormUiHandler from "./rename-form-ui-handler";
+import AdminUiHandler from "./admin-ui-handler";
 import RunHistoryUiHandler from "./run-history-ui-handler";
 import RunInfoUiHandler from "./run-info-ui-handler";
 
@@ -86,6 +87,7 @@ export enum Mode {
   OUTDATED,
   CHALLENGE_SELECT,
   RENAME_POKEMON,
+  ADMIN,
   RUN_HISTORY,
   RUN_INFO,
 }
@@ -124,7 +126,8 @@ const noTransitionModes = [
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
   Mode.OUTDATED,
-  Mode.RENAME_POKEMON
+  Mode.RENAME_POKEMON,
+  Mode.ADMIN,
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -188,6 +191,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new RenameFormUiHandler(scene),
       new RunHistoryUiHandler(scene),
       new RunInfoUiHandler(scene),
+      new AdminUiHandler(scene),
     ];
   }
 
