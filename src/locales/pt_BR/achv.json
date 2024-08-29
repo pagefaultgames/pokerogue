@@ -42,13 +42,16 @@
     "name": "Residente"
   },
   "1000_HEAL": {
-    "name": "Enfermeiro"
+    "name": "Enfermeiro",
+    "name_female": "Enfermeira"
   },
   "2500_HEAL": {
-    "name": "Médico"
+    "name": "Médico",
+    "name_female": "Médica"
   },
   "10000_HEAL": {
-    "name": "Médico de Plantão"
+    "name": "Médico de Plantão",
+    "name_female": "Médica de Plantão"
   },
   "LevelAchv": {
     "description": "Aumente o nível de um Pokémon para o Nv{{level}}"
@@ -57,7 +60,8 @@
     "name": "Calma Que Tem Mais!"
   },
   "LV_250": {
-    "name": "Treinador de Elite"
+    "name": "Treinador de Elite",
+    "name_female": "Treinadora de Elite"
   },
   "LV_1000": {
     "name": "Ao Infinito e Além!"

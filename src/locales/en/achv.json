@@ -9,16 +9,20 @@
     "description": "Accumulate a total of ₽{{moneyAmount}}"
   },
   "10K_MONEY": {
-    "name": "Money Haver"
+    "name": "Money Haver",
+    "name_female": null
   },
   "100K_MONEY": {
-    "name": "Rich"
+    "name": "Rich",
+    "name_female": null
   },
   "1M_MONEY": {
-    "name": "Millionaire"
+    "name": "Millionaire",
+    "name_female": null
   },
   "10M_MONEY": {
-    "name": "One Percenter"
+    "name": "One Percenter",
+    "name_female": null
   },
   "DamageAchv": {
     "description": "Inflict {{damageAmount}} damage in one hit"
@@ -27,28 +31,35 @@
     "name": "Hard Hitter"
   },
   "1000_DMG": {
-    "name": "Harder Hitter"
+    "name": "Harder Hitter",
+    "name_female": null
   },
   "2500_DMG": {
-    "name": "That's a Lotta Damage!"
+    "name": "That's a Lotta Damage!",
+    "name_female": null
   },
   "10000_DMG": {
-    "name": "One Punch Man"
+    "name": "One Punch Man",
+    "name_female": "One Punch Woman"
   },
   "HealAchv": {
     "description": "Heal {{healAmount}} {{HP}} at once with a move, ability, or held item"
   },
   "250_HEAL": {
-    "name": "Novice Healer"
+    "name": "Novice Healer",
+    "name_female": null
   },
   "1000_HEAL": {
-    "name": "Big Healer"
+    "name": "Big Healer",
+    "name_female": null
   },
   "2500_HEAL": {
-    "name": "Cleric"
+    "name": "Cleric",
+    "name_female": null
   },
   "10000_HEAL": {
-    "name": "Recovery Master"
+    "name": "Recovery Master",
+    "name_female": null
   },
   "LevelAchv": {
     "description": "Level up a Pokémon to Lv{{level}}"
@@ -57,7 +68,8 @@
     "name": "But Wait, There's More!"
   },
   "LV_250": {
-    "name": "Elite"
+    "name": "Elite",
+    "name_female": null
   },
   "LV_1000": {
     "name": "To Go Even Further Beyond"
@@ -66,19 +78,24 @@
     "description": "Accumulate a total of {{ribbonAmount}} Ribbons"
   },
   "10_RIBBONS": {
-    "name": "Pokémon League Champion"
+    "name": "Pokémon League Champion",
+    "name_female": null
   },
   "25_RIBBONS": {
-    "name": "Great League Champion"
+    "name": "Great League Champion",
+    "name_female": null
   },
   "50_RIBBONS": {
-    "name": "Ultra League Champion"
+    "name": "Ultra League Champion",
+    "name_female": null
   },
   "75_RIBBONS": {
-    "name": "Rogue League Champion"
+    "name": "Rogue League Champion",
+    "name_female": null
   },
   "100_RIBBONS": {
-    "name": "Master League Champion"
+    "name": "Master League Champion",
+    "name_female": null
   },
   "TRANSFER_MAX_BATTLE_STAT": {
     "name": "Teamwork",
@@ -130,6 +147,7 @@
   },
   "SHINY_PARTY": {
     "name": "That's Dedication",
+    "name_female": null,
     "description": "Have a full party of shiny Pokémon"
   },
   "HATCH_MYTHICAL": {
@@ -158,6 +176,7 @@
   },
   "CLASSIC_VICTORY": {
     "name": "Undefeated",
+    "name_female": null,
     "description": "Beat the game in classic mode"
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
