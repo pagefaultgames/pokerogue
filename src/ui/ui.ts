@@ -89,11 +89,11 @@ export enum Mode {
   OUTDATED,
   CHALLENGE_SELECT,
   RENAME_POKEMON,
-  ADMIN,
   RUN_HISTORY,
   RUN_INFO,
   TEST_DIALOGUE,
-  AUTO_COMPLETE
+  AUTO_COMPLETE,
+  ADMIN,
 }
 
 const transitionModes = [
