@@ -4,8 +4,7 @@ import ability from "./ability.json";
 import abilityTriggers from "./ability-trigger.json";
 import arenaFlyout from "./arena-flyout.json";
 import arenaTag from "./arena-tag.json";
-import achvMale from "./achv-male.json";
-import achvFemale from "./achv-female.json";
+import achv from "./achv.json";
 import battle from "./battle.json";
 import battleScene from "./battle-scene.json";
 import battleInfo from "./battle-info.json";
@@ -72,8 +71,7 @@ export const caEsConfig = {
   challenges,
   commandUiHandler,
   common,
-  PGMachv: achvMale,
-  PGFachv: achvFemale,
+  achv,
   dialogue,
   battleSpecDialogue,
   miscDialogue,
