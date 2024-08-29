@@ -9,5 +9,6 @@
   "gigantamaxChange": "¡{{preName}} ha gigamaxizado a {{pokemonName}}!",
   "eternamaxChange": "¡{{preName}} ha eternamaxizado a {{pokemonName}}!",
   "revertChange": "¡{{pokemonName}} ha revertido a su forma original!",
-  "formChange": "¡{{preName}} ha cambiado de forma!"
+  "formChange": "¡{{preName}} ha cambiado de forma!",
+  "disguiseChange": "¡El disfraz ha actuado como señuelo!\t"
 }
