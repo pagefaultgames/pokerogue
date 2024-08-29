@@ -7664,8 +7664,9 @@ export function initBiomes() {
 
   const traverseBiome = (biome: Biome, depth: integer) => {
     while (biome === Biome.END) {
-      const randIndex = Utils.randInt(Object.values(Biome).length, 1);
-      biome = Biome[randIndex];
+      const biomeList = Object.values(Biome);
+      const randIndex = Utils.randInt(biomeList.length, 1);
+      biome = biomeList[randIndex];
     }
     const linkedBiomes: (Biome | [ Biome, integer ])[] = Array.isArray(biomeLinks[biome])
       ? biomeLinks[biome] as (Biome | [ Biome, integer ])[]
