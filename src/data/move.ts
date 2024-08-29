@@ -5280,6 +5280,34 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
   }
 }
 
+export class CallMoveAttr extends OverrideMoveEffectAttr {
+  private moveId: number;
+  constructor() {
+    super();
+  }
+  async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    const replaceMoveTarget = allMoves[this.moveId].moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
+    const moveTargets = getMoveTargets(user, this.moveId, replaceMoveTarget);
+    if (moveTargets.targets.length === 0) {
+      return false;
+    }
+    const targets = moveTargets.multiple || moveTargets.targets.length === 1
+      ? moveTargets.targets
+      : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
+        ? [ target.getBattlerIndex() ]
+        : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
+    user.getMoveQueue().push({ move: this.moveId, targets: targets, ignorePP: true });
+    user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(this.moveId, 0, 0, true), true));
+
+    const promises: Promise<void>[] = [];
+    promises.push(initMoveAnim(user.scene, this.moveId));
+    promises.push(loadMoveAnimAssets(user.scene, [ this.moveId ], true));
+
+    await Promise.all(promises);
+    return true;
+  }
+}
+
 function callMove(user: Pokemon, target: Pokemon, moveId: number): Promise<boolean> {
   return new Promise(resolve => {
     // replaces MoveTarget.NEAR_OTHER with MoveTarget.NEAR_ENEMY to prevent ally being targetted
