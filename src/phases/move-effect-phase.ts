@@ -311,8 +311,6 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   end() {
-    const move = this.move.getMove();
-    move.type = move.defaultType;
     const user = this.getUserPokemon();
     /**
        * If this phase isn't for the invoked move's last strike,

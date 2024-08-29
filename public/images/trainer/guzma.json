@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "guzma.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 58,
+				"h": 58
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 21,
+						"y": 20,
+						"w": 37,
+						"h": 58
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 37,
+						"h": 58
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:c3b08a562a2882d1ca8b5e031e245da9:72a8305e547f091d15abccd2b142e401:3b302c7f9eb6ea81b65bcaeead4a95a9$"
+	}
+}

@@ -1,9 +1,9 @@
 {
   "victory": "승리!",
-  "defeatedWild": "야생에서 패배: ",
-  "defeatedTrainer": "트레이너에게 패배: ",
-  "defeatedTrainerDouble": "더블 배틀에서 패배",
-  "defeatedRival": "라이벌에게 패배",
+  "defeatedWildM": "야생에서 패배: ",
+  "defeatedTrainerM": "트레이너에게 패배: ",
+  "defeatedTrainerDoubleM": "더블 배틀에서 패배",
+  "defeatedRivalM": "라이벌에게 패배",
   "defeatedM": "패배",
   "defeatedWildF": "야생에서 패배: ",
   "defeatedTrainerF": "트레이너에게 패배: ",
