@@ -29,10 +29,8 @@ describe("Moves - Retaliate", () => {
       .battleType("single")
       .enemySpecies(Species.SNORLAX)
       .enemyMoveset([Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE])
-      .enemyHeldItems([{name: "WIDE_LENS", count: 3}])
       .enemyLevel(100)
       .moveset([Moves.RETALIATE, Moves.SPLASH])
-      .startingHeldItems([{name: "WIDE_LENS", count: 3}])
       .startingLevel(80)
       .disableCrits();
   });
