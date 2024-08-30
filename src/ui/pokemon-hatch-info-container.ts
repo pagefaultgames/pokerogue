@@ -14,6 +14,7 @@ import { starterColors } from "../battle-scene";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { EggHatchData } from "#app/data/egg-hatch-data.js";
 import { PlayerPokemon } from "#app/field/pokemon.js";
+import { getPokemonSpeciesForm } from "#app/data/pokemon-species.js";
 
 /**
  * Class for the hatch info summary of each pokemon
@@ -32,6 +33,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
   private pokemonCandyIcon: Phaser.GameObjects.Sprite;
   private pokemonCandyOverlayIcon: Phaser.GameObjects.Sprite;
   private pokemonCandyCountText: Phaser.GameObjects.Text;
+  private assetLoadCancelled: Utils.BooleanHolder | null;
 
   constructor(scene: BattleScene, listContainer : Phaser.GameObjects.Container, x: number = 115, y: number = 9,) {
     super(scene, x, y);
@@ -121,6 +123,13 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.currentPokemonSprite.setVisible(false);
   }
 
+  interruptDisplay() {
+    if (this.assetLoadCancelled) {
+      this.assetLoadCancelled.value = true;
+      this.assetLoadCancelled = null;
+    }
+  }
+
   /**
    * Display a given pokemon sprite with animations
    */
@@ -131,14 +140,19 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     const formIndex = pokemon.formIndex;
     const shiny = pokemon.shiny;
     const variant = pokemon.variant;
+    const assetLoadCancelled = new Utils.BooleanHolder(false);
+    this.assetLoadCancelled = assetLoadCancelled;
+
     species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
-      // if (assetLoadCancelled.value) {
-      //   return;
-      // }
-      // this.assetLoadCancelled = null;
+      if (assetLoadCancelled.value) {
+        console.log("interrupted");
+        return;
+      }
+      this.assetLoadCancelled = null;
       // this.speciesLoaded.set(species.speciesId, true);
       // redundant setVisible(true) but makes sure sprite is only visible after being rendered (no substitute visible)
       this.currentPokemonSprite.setVisible(true);
+      getPokemonSpeciesForm(species.speciesId, pokemon.formIndex).cry(this.scene);
       this.currentPokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
       this.currentPokemonSprite.setPipelineData("shiny", shiny);
       this.currentPokemonSprite.setPipelineData("variant", variant);

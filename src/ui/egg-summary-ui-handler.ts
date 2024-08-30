@@ -212,11 +212,11 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       em.setScale(0.5);
       em.setVisible(value.eggMoveUnlocked);
       this.pokemonIconsContainer.add(em);
-      if (i === 0) {
-        this.infoContainer.displayPokemon(displayPokemon);
-      }
     });
     this.setCursor(0);
+
+    // TODO nice animation reveal for all eggs hatching at once
+    this.scene.playSoundWithoutBgm("evolution_fanfare");
 
     return true;
   }
@@ -278,6 +278,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     const lastCursor = this.cursor;
 
     changed = super.setCursor(cursor);
+    this.infoContainer.interruptDisplay();
 
     if (changed) {
       this.cursorObj.setPosition(114 + 18 * (cursor % 11), 10 + 18 * Math.floor(cursor / 11));

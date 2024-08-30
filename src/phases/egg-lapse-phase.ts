@@ -54,13 +54,12 @@ export class EggLapsePhase extends Phase {
           );
         }, 100, true);
       } else {
+        // regular hatches, no summary
         this.scene.queueMessage(i18next.t("battle:eggHatching"));
         for (const egg of eggsToHatch) {
           this.scene.unshiftPhase(new EggHatchPhase(this.scene, this, egg, eggsToHatchCount));
           eggsToHatchCount--;
         }
-
-        this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
         this.end();
       }
 
