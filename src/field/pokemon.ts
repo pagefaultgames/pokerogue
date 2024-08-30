@@ -2787,14 +2787,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
-  /**
-   * Checks if it is possible for a pokemon to be afflicted with the given status
-   * @param effect {@linkcode StatusEffect} the status effect being checked.
-   * @param quiet a boolean value determining whether or not to show messages.
-   * @param overrideStatus a boolean value to determine whether a status should be overriden.  If true, the pokemon cannot be statused essentially
-   * @param sourcePokemon {@linkcode Pokemon} The pokemon causing the status.  The target pokemon is 'this'.
-   * @returns true if the pokemon can be affected by the status, false if not.
-   */
+  // This function only checks if it is possible to set status.  If will not apply anything or do anything, just check if possible.
   checkIfCanSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
@@ -2878,6 +2871,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
     const checkIfPossible = this.checkIfCanSetStatus(effect, quiet, overrideStatus, sourcePokemon);
 
+
+    return true;
+  }
+
+
+  canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
+    const checker = this.checkIfCanSetStatus(effect, quiet, overrideStatus, sourcePokemon);
+
     const cancelled = new Utils.BooleanHolder(false);
     applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
 
@@ -2888,7 +2889,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    return checkIfPossible;
+    return checker;
   }
 
   trySetStatus(effect: StatusEffect | undefined, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, cureTurn: integer | null = 0, sourceText: string | null = null): boolean {

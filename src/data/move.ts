@@ -1954,14 +1954,12 @@ export class StatusEffectAttr extends MoveEffectAttr {
         }
       }
 
-      if (user !== target && target.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)) {
-        if (move.category === MoveCategory.STATUS) {
-          user.scene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target)}));
-        }
-        return false;
+      if (!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0)) {
+        pokemon.checkIfCanSetStatus(this.effect, false, false, user);
       }
+
       if ((!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0))
-        && pokemon.trySetStatus(this.effect, false, user, this.cureTurn)) {
+        && pokemon.trySetStatus(this.effect, true, user, this.cureTurn, null)) {
         applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
         return true;
       }
