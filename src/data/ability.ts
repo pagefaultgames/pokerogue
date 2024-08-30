@@ -4711,7 +4711,7 @@ export function applyPostBattleAbAttrs(attrType: Constructor<PostBattleAbAttr>,
 }
 
 export function applyPostFaintAbAttrs(attrType: Constructor<PostFaintAbAttr>,
-  pokemon: Pokemon, attacker: Pokemon | undefined, move: Move | undefined, hitResult: HitResult | undefined, simulated: boolean = false, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, attacker?: Pokemon, move?: Move, hitResult?: HitResult, simulated: boolean = false, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostFaintAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostFaint(pokemon, passive, simulated, attacker, move, hitResult, args), args, false, simulated);
 }
 
