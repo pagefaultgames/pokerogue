@@ -162,8 +162,8 @@
     "description": "クラシックモードを　クリアする"
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
-    "name": "Bring Your Child To Work Day",
-    "description": "Beat the game in Classic Mode with at least one unevolved party member."
+    "name": "はじめてのおつかい",
+    "description": "少なくとも　一つの　進化していない　手持ちポケモンで\nクラシックモードを　クリアする"
   },
   "MONO_GEN_ONE": {
     "name": "原始",
