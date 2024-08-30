@@ -1,5 +1,9 @@
 {
   "SEND_OUT": "Enviar",
+  "SUMMARY": "Resumen",
+  "CANCEL": "Cancelar",
+  "RELEASE": "Liberar",
+  "APPLY": "Aplicar",
   "TEACH": "Enseñar",
   "SPLICE": "Fusionar",
   "UNSPLICE": "Separar",
