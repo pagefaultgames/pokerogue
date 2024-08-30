@@ -468,7 +468,8 @@
     "description": "Invoca una nevada al entrar en combate."
   },
   "honeyGather": {
-    "name": "Recogemiel"
+    "name": "Recogemiel",
+    "description": "El Pokémon recoge miel tras cada batalla. La miel se vende inmediatamente por ₽."
   },
   "frisk": {
     "name": "Cacheo",
@@ -1207,16 +1208,20 @@
     "description": "Gracias al poder de su cadena impregnada de toxinas, puede envenenar gravemente al Pokémon al que ataque."
   },
   "embodyAspectTeal": {
-    "name": "Evocarrecuerdos"
+    "name": "Evocarrecuerdos",
+    "description": "Al evocar viejos recuerdos, el Pokémon hace brillar la máscara turquesa y aumenta su velocidad."
   },
   "embodyAspectWellspring": {
-    "name": "Evocarrecuerdos"
+    "name": "Evocarrecuerdos",
+    "description": "Al evocar viejos recuerdos, el Pokémon hace brillar la máscara fuente y aumenta su defensa especial."
   },
   "embodyAspectHearthflame": {
-    "name": "Evocarrecuerdos"
+    "name": "Evocarrecuerdos",
+    "description": "Al evocar viejos recuerdos, el Pokémon hace brillar la máscara horno y aumenta su ataque."
   },
   "embodyAspectCornerstone": {
-    "name": "Evocarrecuerdos"
+    "name": "Evocarrecuerdos",
+    "description": "Al evocar viejos recuerdos, el Pokémon hace brillar la máscara cimiento y aumenta su defensa."
   },
   "teraShift": {
     "name": "Teracambio",
