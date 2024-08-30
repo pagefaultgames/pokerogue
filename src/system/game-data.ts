@@ -243,6 +243,8 @@ export class StarterPrefs {
     if (pStr !== StarterPrefers_private_latest) {
       // something changed, store the update
       localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
+      // update the latest prefs
+      StarterPrefers_private_latest = pStr;
     }
   }
 }
@@ -635,13 +637,13 @@ export class GameData {
   async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, isVictory: boolean): Promise<boolean> {
     const runHistoryData = await this.getRunHistoryData(scene);
     // runHistoryData should always return run history or {} empty object
-    const timestamps = Object.keys(runHistoryData);
-    const timestampsNo = timestamps.map(Number);
+    let timestamps = Object.keys(runHistoryData).map(Number);
 
     // Arbitrary limit of 25 entries per user --> Can increase or decrease
     while (timestamps.length >= RUN_HISTORY_LIMIT ) {
-      const oldestTimestamp = Math.min.apply(Math, timestampsNo);
+      const oldestTimestamp = (Math.min.apply(Math, timestamps)).toString();
       delete runHistoryData[oldestTimestamp];
+      timestamps = Object.keys(runHistoryData).map(Number);
     }
 
     const timestamp = (runEntry.timestamp).toString();
@@ -1411,6 +1413,7 @@ export class GameData {
               case GameDataType.RUN_HISTORY:
                 const data = JSON.parse(dataStr);
                 const keys = Object.keys(data);
+                dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
                 keys.forEach((key) => {
                   const entryKeys = Object.keys(data[key]);
                   valid = ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;

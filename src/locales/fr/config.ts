@@ -4,8 +4,7 @@ import ability from "./ability.json";
 import abilityTriggers from "./ability-trigger.json";
 import arenaFlyout from "./arena-flyout.json";
 import arenaTag from "./arena-tag.json";
-import achvMale from "./achv-male.json";
-import achvFemale from "./achv-female.json";
+import achv from "./achv.json";
 import battle from "./battle.json";
 import battleScene from "./battle-scene.json";
 import battleInfo from "./battle-info.json";
@@ -16,14 +15,10 @@ import bgmName from "./bgm-name.json";
 import biome from "./biome.json";
 import challenges from "./challenges.json";
 import commandUiHandler from "./command-ui-handler.json";
-import dialogueMale from "./dialogue-male.json";
-import dialogueFemale from "./dialogue-female.json";
-import dialogueEndbossMale from "./dialogue-final-boss-male.json";
-import dialogueEndbossFemale from "./dialogue-final-boss-female.json";
-import dialogueMiscMale from "./dialogue-misc-male.json";
-import dialogueMiscFemale from "./dialogue-misc-female.json";
-import dialogueDoubleBattleMale from "./dialogue-double-battle-male.json";
-import dialogueDoubleBattleFemale from "./dialogue-double-battle-female.json";
+import dialogue from "./dialogue.json";
+import battleSpecDialogue from "./dialogue-final-boss.json";
+import miscDialogue from "./dialogue-misc.json";
+import doubleBattleDialogue from "./dialogue-double-battle.json";
 import egg from "./egg.json";
 import fightUiHandler from "./fight-ui-handler.json";
 import filterBar from "./filter-bar.json";
@@ -57,7 +52,7 @@ import weather from "./weather.json";
 import terrain from "./terrain.json";
 import modifierSelectUiHandler from "./modifier-select-ui-handler.json";
 import moveTriggers from "./move-trigger.json";
-import runHistory from "./run-history-ui-handler.json";
+import runHistory from "./run-history.json";
 
 export const frConfig = {
   ability,
@@ -76,16 +71,11 @@ export const frConfig = {
   challenges,
   commandUiHandler,
   common,
-  PGMachv: achvMale,
-  PGFachv: achvFemale,
-  PGMdialogue: dialogueMale,
-  PGFdialogue: dialogueFemale,
-  PGMbattleSpecDialogue: dialogueEndbossMale,
-  PGFbattleSpecDialogue: dialogueEndbossFemale,
-  PGMmiscDialogue: dialogueMiscMale,
-  PGFmiscDialogue: dialogueMiscFemale,
-  PGMdoubleBattleDialogue: dialogueDoubleBattleMale,
-  PGFdoubleBattleDialogue: dialogueDoubleBattleFemale,
+  achv,
+  dialogue,
+  battleSpecDialogue,
+  miscDialogue,
+  doubleBattleDialogue,
   egg,
   fightUiHandler,
   filterBar,
