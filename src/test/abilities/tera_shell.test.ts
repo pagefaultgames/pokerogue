@@ -38,7 +38,7 @@ describe("Abilities - Tera Shell", () => {
   it(
     "should change the effectiveness of non-resisted attacks when the source is at full HP",
     async () => {
-      await game.startBattle([Species.SNORLAX]);
+      await game.classicMode.startBattle([Species.SNORLAX]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(playerPokemon, "getMoveEffectiveness");
@@ -62,7 +62,7 @@ describe("Abilities - Tera Shell", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
 
-      await game.startBattle([Species.SNORLAX]);
+      await game.classicMode.startBattle([Species.SNORLAX]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(playerPokemon, "getMoveEffectiveness");
@@ -79,7 +79,7 @@ describe("Abilities - Tera Shell", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.QUICK_ATTACK));
 
-      await game.startBattle([Species.AGGRON]);
+      await game.classicMode.startBattle([Species.AGGRON]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(playerPokemon, "getMoveEffectiveness");
@@ -96,7 +96,7 @@ describe("Abilities - Tera Shell", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.DRAGON_RAGE));
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(playerPokemon, "apply");
