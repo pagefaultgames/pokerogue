@@ -261,5 +261,9 @@
   "FRESH_START": {
     "name": "一発で！",
     "description": "出直しチャレンジを　クリアする"
+  },
+  "INVERSE_BATTLE": {
+    "name": "カガミよミガカ",
+    "description": "反転バトルチャレンジを　クリアする\nるすアリク　をジンレャチルトバ転反"
   }
 }
