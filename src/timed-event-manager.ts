@@ -25,9 +25,9 @@ const timedEvents: TimedEvent[] = [
     startDate: new Date(Date.UTC(2024, 7, 28, 0)),
     endDate: new Date(Date.UTC(2024, 8, 15, 0)),
     bannerFilename: "september-update",
-    xPosition: 26,
-    yPosition: 103,
-    scale: 0.35
+    xPosition: 19,
+    yPosition: 115,
+    scale: 0.30
   }
 ];
 
@@ -111,7 +111,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
       this.eventTimerText.setName("text-event-timer");
       this.eventTimerText.setScale(0.15);
       this.eventTimerText.setOrigin(0, 0);
-    
+
       this.add(this.eventTimerText);
     }
     this.add(this.banner);
@@ -157,6 +157,6 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   updateCountdown() {
     if (this.event!.eventType !== EventType.GENERIC) {
       this.eventTimerText.setText(this.timeToGo(this.event!.endDate));
-    } 
+    }
   }
 }
