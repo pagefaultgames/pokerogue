@@ -243,6 +243,8 @@ export class StarterPrefs {
     if (pStr !== StarterPrefers_private_latest) {
       // something changed, store the update
       localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
+      // update the latest prefs
+      StarterPrefers_private_latest = pStr;
     }
   }
 }
