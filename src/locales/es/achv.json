@@ -170,5 +170,9 @@
   "CLASSIC_VICTORY": {
     "name": "Imbatible",
     "description": "Completa el juego en modo clásico."
+  },
+  "INVERSE_BATTLE": {
+    "name": "Espejo ojepsE",
+    "description": "Completa el reto de Combate Inverso.\n.osrevnI etabmoC ed oter le atelpmoC"
   }
 }

@@ -64,12 +64,15 @@ export default class AdminUiHandler extends FormModalUiHandler {
         Utils.apiPost("admin/account/discord-link", `username=${encodeURIComponent(this.inputs[0].text)}&discordId=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded", true)
           .then(response => {
             if (!response.ok) {
-              return response.text();
+              console.error(response);
             }
-            return response.json();
+            this.inputs[0].setText("");
+            this.inputs[1].setText("");
+            this.scene.ui.revertMode();
           })
-          .then(response => {
-            this.scene.ui.setMode(Mode.ADMIN, config);
+          .catch((err) => {
+            console.error(err);
+            this.scene.ui.revertMode();
           });
         return false;
       };
