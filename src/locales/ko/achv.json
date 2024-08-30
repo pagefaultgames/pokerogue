@@ -260,5 +260,9 @@
   "FRESH_START": {
     "name": "첫트!",
     "description": "새 출발 챌린지 모드 클리어."
+  },
+  "INVERSE_BATTLE": {
+    "name": "상성 전문가(였던 것)",
+    "description": "거꾸로 배틀 챌린지 모드 클리어."
   }
 }
