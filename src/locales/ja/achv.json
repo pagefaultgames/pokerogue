@@ -33,10 +33,11 @@
     "name": "カカロット"
   },
   "10000_DMG": {
-    "name": "ワンパンマン"
+    "name": "ワンパンマン",
+    "name_female": "ワンパンウーマン"
   },
   "HealAchv": {
-    "description": "一つの　技や　特性や　持っているアイテムで　{{healAmount}}{{HP}}を　一気に　回復する"
+    "description": "一つの　技や　特性や　持っているアイテムで\\n　{{healAmount}}{{HP}}を　一気に　回復する"
   },
   "250_HEAL": {
     "name": "回復発見者"
@@ -82,7 +83,7 @@
   },
   "TRANSFER_MAX_BATTLE_STAT": {
     "name": "同力",
-    "description": "少なくとも　一つの　能力を　最大まで　あげて　他の　手持ちポケモンに　バトンタッチする"
+    "description": "少なくとも　一つの　能力を　最大まで　あげて\\n他の　手持ちポケモンに　バトンタッチする"
   },
   "MAX_FRIENDSHIP": {
     "name": "マブ達",
@@ -106,7 +107,7 @@
   },
   "SPLICE": {
     "name": "インフィニット・フュジョン",
-    "description": "いでんしのくさびで　二つの　ポケモンを　吸収合体させる"
+    "description": "遺伝子のくさびで　二つの　ポケモンを　吸収合体させる"
   },
   "MINI_BLACK_HOLE": {
     "name": "アイテムホーリック",
