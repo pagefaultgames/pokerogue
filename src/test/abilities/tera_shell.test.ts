@@ -1,6 +1,7 @@
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
+import { HitResult } from "#app/field/pokemon.js";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -87,6 +88,24 @@ describe("Abilities - Tera Shell", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0.25);
+    }, TIMEOUT
+  );
+
+  it(
+    "should not affect the effectiveness of fixed-damage moves",
+    async () => {
+      game.override.enemyMoveset(Array(4).fill(Moves.DRAGON_RAGE));
+
+      await game.startBattle([Species.SNORLAX]);
+
+      const playerPokemon = game.scene.getPlayerPokemon()!;
+      vi.spyOn(playerPokemon, "apply");
+
+      game.move.select(Moves.SPLASH);
+
+      await game.phaseInterceptor.to("BerryPhase", false);
+      expect(playerPokemon.apply).toHaveLastReturnedWith(HitResult.EFFECTIVE);
+      expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp() - 40);
     }, TIMEOUT
   );
 });

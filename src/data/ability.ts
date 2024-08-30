@@ -8,7 +8,7 @@ import { Weather, WeatherType } from "./weather";
 import { BattlerTag, GroundedTag, GulpMissileTag, SemiInvulnerableTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, ChargeAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, ChargeAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { Stat, getStatName } from "./pokemon-stat";
 import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
@@ -481,9 +481,24 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
  * @extends PreDefendAbAttr
  */
 export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
+  /**
+   * Reduces a type multiplier to 0.5 if the source is at full HP.
+   * @param pokemon {@linkcode Pokemon} the Pokemon with this ability
+   * @param passive n/a
+   * @param simulated n/a (this doesn't change game state)
+   * @param attacker n/a
+   * @param move {@linkcode Move} the move being used on the source
+   * @param cancelled n/a
+   * @param args `[0]` a container for the move's current type effectiveness multiplier
+   * @returns `true` if the move's effectiveness is reduced; `false` otherwise
+   */
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
     const typeMultiplier = args[0];
     if (!(typeMultiplier && typeMultiplier instanceof Utils.NumberHolder)) {
+      return false;
+    }
+
+    if (move && move.hasAttr(FixedDamageAttr)) {
       return false;
     }
 
