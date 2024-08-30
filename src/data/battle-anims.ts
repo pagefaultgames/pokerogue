@@ -1,7 +1,7 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "../battle-scene";
 import { AttackMove, BeakBlastHeaderAttr, ChargeAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
-import Pokemon from "../field/pokemon";
+import Pokemon, { EnemyPokemon } from "../field/pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 import { Element } from "json-stable-stringify";
@@ -787,12 +787,20 @@ export abstract class BattleAnim {
         targetSprite.setAlpha(1);
         targetSprite.pipelineData["tone"] = [ 0.0, 0.0, 0.0, 0.0 ];
         targetSprite.setAngle(0);
+        console.log(
+          "anim: ", this.getAnim()?.graphic,
+          "\n\tUser", user.name, " | this.user:", this.user?.name,
+          "\n\tTarget", target.name, " | this.target:", this.target?.name,
+          "\n\tIs Opponen Animation:", isOppAnim,
+          "\n\ttarget instanceof EnemyPokemon:", target instanceof EnemyPokemon,
+        );
         if (!this.isHideUser() && userSprite) {
           userSprite.setVisible(true);
         }
-        if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser())) {
-          targetSprite.setVisible(true);
-        }
+        targetSprite.setVisible(true);
+        // if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser())) {
+        //   targetSprite.setVisible(true);
+        // }
         for (const ms of Object.values(spriteCache).flat()) {
           if (ms) {
             ms.destroy();
@@ -1019,7 +1027,7 @@ export class MoveAnim extends BattleAnim {
   }
 
   isOppAnim(): boolean {
-    return !this.user?.isPlayer() && Array.isArray(moveAnims.get(this.move));
+    return !this.user?.isPlayer();
   }
 
   protected isHideUser(): boolean {
