@@ -81,11 +81,13 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("does not increase Attack when Tailwind is present on opposing side", async () => {
+    game.override.ability(Abilities.WIND_RIDER);
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
     const magikarp = game.scene.getEnemyPokemon()!;
     const shiftry = game.scene.getPlayerPokemon()!;
+    expect(shiftry.hasAbility(Abilities.WIND_RIDER)).toBe(true);
 
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
     expect(magikarp.summonData.battleStats[BattleStat.ATK]).toBe(0);
