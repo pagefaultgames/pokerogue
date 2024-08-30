@@ -306,16 +306,18 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  showDialogue(i18nKey: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
+  showDialogue(keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
     const battleScene = this.scene as BattleScene;
     // Get localized dialogue (if available)
     let hasi18n = false;
+    let text = keyOrText;
     const genderIndex = battleScene.gameData.gender ?? PlayerGender.UNSET;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
-    const text = i18next.t(i18nKey, { context: genderStr });
 
-    if (i18next.exists(i18nKey) ) {
+    if (i18next.exists(keyOrText) ) {
+      const i18nKey = keyOrText;
       hasi18n = true;
+      text = i18next.t(i18nKey, { context: genderStr }); // override text with translation
 
       // Skip dialogue if the player has enabled the option and the dialogue has been already seen
       if (battleScene.skipSeenDialogues && battleScene.gameData.getSeenDialogues()[i18nKey] === true) {
@@ -325,7 +327,7 @@ export default class UI extends Phaser.GameObjects.Container {
       }
     }
     let showMessageAndCallback = () => {
-      hasi18n && battleScene.gameData.saveSeenDialogue(i18nKey);
+      hasi18n && battleScene.gameData.saveSeenDialogue(keyOrText);
       callback();
     };
     if (text.indexOf("$") > -1) {
