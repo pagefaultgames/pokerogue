@@ -82,7 +82,7 @@
   },
   "TRANSFER_MAX_BATTLE_STAT": {
     "name": "同力",
-    "description": "少なくとも　一つの　能力を　最大まで　あげて\\n他の　手持ちポケモンに　バトンタッチする"
+    "description": "少なくとも　一つの　能力を　最大まで　あげて\n他　手持ちポケモンに　バトンタッチする"
   },
   "MAX_FRIENDSHIP": {
     "name": "マブ達",
@@ -162,7 +162,7 @@
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
     "name": "はじめてのおつかい",
-    "description": "少なくとも　一つの　進化していない　手持ちポケモンで\\nクラシックモードを　クリアする"
+    "description": "少なくとも　一つの　進化していない　手持ちポケモンで\nクラシックモードを　クリアする"
   },
   "MONO_GEN_ONE": {
     "name": "原始",
@@ -263,6 +263,6 @@
   },
   "INVERSE_BATTLE": {
     "name": "カガミよミガカ",
-    "description": "反転バトルチャレンジを　クリアする\\nるすアリク　をジンレャチルトバ転反"
+    "description": "反転バトルチャレンジを　クリアする\nるすアリク　をジンレャチルトバ転反"
   }
 }
