@@ -45,6 +45,7 @@ import { DropDownColumn, FilterBar } from "./filter-bar";
 import { ScrollBar } from "./scroll-bar";
 import { SelectChallengePhase } from "#app/phases/select-challenge-phase.js";
 import { TitlePhase } from "#app/phases/title-phase.js";
+import { Abilities } from "#app/enums/abilities.js";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -2450,12 +2451,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       });
 
       // HA Filter
+      const speciesHasHiddenAbility = container.species.abilityHidden !== container.species.ability1 && container.species.abilityHidden !== Abilities.NONE;
       const hasHA = starterData.abilityAttr & AbilityAttr.ABILITY_HIDDEN;
       const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {
           return hasHA;
         } else if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.EXCLUDE) {
-          return !hasHA;
+          return speciesHasHiddenAbility && !hasHA;
         } else if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.OFF) {
           return true;
         }
