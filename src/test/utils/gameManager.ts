@@ -40,6 +40,7 @@ import fs from "fs";
 import { vi } from "vitest";
 import { ClassicModeHelper } from "./helpers/classicModeHelper";
 import { DailyModeHelper } from "./helpers/dailyModeHelper";
+import { ChallengeModeHelper } from "./helpers/challengeModeHelper";
 import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
@@ -57,6 +58,7 @@ export default class GameManager {
   public readonly move: MoveHelper;
   public readonly classicMode: ClassicModeHelper;
   public readonly dailyMode: DailyModeHelper;
+  public readonly challengeMode: ChallengeModeHelper;
   public readonly settings: SettingsHelper;
 
   /**
@@ -77,6 +79,7 @@ export default class GameManager {
     this.move = new MoveHelper(this);
     this.classicMode = new ClassicModeHelper(this);
     this.dailyMode = new DailyModeHelper(this);
+    this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
   }
 

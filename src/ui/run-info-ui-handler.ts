@@ -374,23 +374,14 @@ export default class RunInfoUiHandler extends UiHandler {
     case GameModes.CHALLENGE:
       modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
       modeText.appendText(`\t\t${i18next.t("runHistory:challengeRules")}: `);
-      const runChallenges = this.runInfo.challenges;
-      const rules: string[] = [];
-      for (let i = 0; i < runChallenges.length; i++) {
-        if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
-          rules.push(i18next.t(`runHistory:challengeMonoGen${runChallenges[i].value}`));
-        } else if (runChallenges[i].id === Challenges.SINGLE_TYPE && runChallenges[i].value !== 0) {
-          rules.push(i18next.t(`pokemonInfo:Type.${Type[runChallenges[i].value-1]}` as const));
-        } else if (runChallenges[i].id === Challenges.FRESH_START && runChallenges[i].value !== 0) {
-          rules.push(i18next.t("challenges:freshStart.name"));
-        }
-      }
+      const rules: string[] = this.challengeParser();
       if (rules) {
         for (let i = 0; i < rules.length; i++) {
+          const newline = i > 0 && i%2 === 0;
           if (i > 0) {
-            modeText.appendText(" + ", false);
+            modeText.appendText(" + ", newline);
           }
-          modeText.appendText(rules[i], false);
+          modeText.appendText(rules[i], newline);
         }
       }
       break;
@@ -464,6 +455,34 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runInfoContainer.add(modeText);
     this.runInfoContainer.add(runInfoTextContainer);
     this.runContainer.add(this.runInfoContainer);
+  }
+
+  /**
+   * This function parses the Challenges section of the Run Entry and returns a list of active challenge.
+   * @return string[] of active challenge names
+   */
+  private challengeParser(): string[] {
+    const rules: string[] = [];
+    for (let i = 0; i < this.runInfo.challenges.length; i++) {
+      if (this.runInfo.challenges[i].value !== 0) {
+        switch (this.runInfo.challenges[i].id) {
+        case Challenges.SINGLE_GENERATION:
+          rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
+          break;
+        case Challenges.SINGLE_TYPE:
+          rules.push(i18next.t(`pokemonInfo:Type.${Type[this.runInfo.challenges[i].value-1]}` as const));
+          break;
+        case Challenges.FRESH_START:
+          rules.push(i18next.t("challenges:freshStart.name"));
+          break;
+        case Challenges.INVERSE_BATTLE:
+          //
+          rules.push(i18next.t("challenges:inverseBattle.shortName").split("").reverse().join(""));
+          break;
+        }
+      }
+    }
+    return rules;
   }
 
   /**
