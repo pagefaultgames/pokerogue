@@ -602,7 +602,11 @@ function updateLog(drpd: DRPD): DRPD {
     drpd.version = "1.1.0b"
     for (var i = 0; i < drpd.waves.length; i++) {
       if (drpd.waves[i] && drpd.waves[i].pokemon) {
-
+        for (var j = 0; j < drpd.waves[i].pokemon!.length; j++) {
+          drpd.waves[i].pokemon![j].iv_raw = drpd.waves[i].pokemon![j].ivs
+          drpd.waves[i].pokemon![j].ivs = undefined
+          drpd.waves[i].pokemon![j].iv = formatIVs(drpd.waves[i].pokemon![j].ivs)
+        }
       }
     }
   } // 1.1.0a → 1.1.0b
@@ -1028,7 +1032,7 @@ export interface PokeData {
   /** The Pokémon's IVs, printed as ordered text. */
   iv: string[],
   /** @deprecated */
-  ivs: IVData,
+  ivs?: IVData,
   /** The Pokémon that was used to generate this `PokeData`. Not exported.
    * @see Pokemon
    */
@@ -1053,7 +1057,8 @@ export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeD
     captured: false,
     level: pokemon.level,
     items: pokemon.getHeldItems().map((item, idx) => exportItem(item)),
-    ivs: exportIVs(pokemon.ivs)
+    iv_raw: exportIVs(pokemon.ivs),
+    iv: formatIVs(pokemon.ivs)
   }
 }
 /**
@@ -1113,7 +1118,7 @@ function printPoke(inData: string, indent: string, pokemon: PokeData) {
     }
   }
   inData += ",\n" + indent + "  \"ivs\": "
-  inData = printIV(inData, indent + "  ", pokemon.ivs)
+  inData = printIV(inData, indent + "  ", pokemon.iv_raw)
   //inData += ",\n" + indent + "  \"rarity\": " + pokemon.rarity
   inData += "\n" + indent + "}"
   return inData;
@@ -1230,14 +1235,14 @@ export function exportIVs(ivs: integer[]): IVData {
     speed: ivs[5]
   }
 }
-export function formatIVs(ivs: integer[]): IVData {
+export function formatIVs(ivs: integer[] | IVData): string[] {
   return [
-    `HP: `,
-    `Attack: `,
-    `Defense: `,
-    `Sp. Atk: `,
-    `Sp. Def: `,
-    `Speed: `,
+    `HP: ${Array.isArray(ivs) ? ivs[0] : ivs.hp}`,
+    `Attack: ${Array.isArray(ivs) ? ivs[1] : ivs.hp}`,
+    `Defense: ${Array.isArray(ivs) ? ivs[2] : ivs.hp}`,
+    `Sp. Atk: ${Array.isArray(ivs) ? ivs[3] : ivs.hp}`,
+    `Sp. Def: ${Array.isArray(ivs) ? ivs[4] : ivs.hp}`,
+    `Speed: ${Array.isArray(ivs) ? ivs[5] : ivs.hp}`,
   ]
 }
 /**
