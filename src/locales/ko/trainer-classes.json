@@ -117,5 +117,14 @@
   "plasma_grunts": "플라스마단 조무래기들",
   "flare_grunt": "플레어단 조무래기",
   "flare_grunt_female": "플레어단 조무래기",
-  "flare_grunts": "플레어단 조무래기들"
+  "flare_grunts": "플레어단 조무래기들",
+  "aether_grunt": "에테르재단 직원",
+  "aether_grunt_female": "에테르재단 직원",
+  "aether_grunts": "에테르재단 직원들",
+  "skull_grunt": "스컬단 조무래기",
+  "skull_grunt_female": "스컬단 조무래기",
+  "skull_grunts": "스컬단 조무래기들",
+  "macro_grunt": "매크로코스모스 직원",
+  "macro_grunt_female": "매크로코스모스 직원",
+  "macro_grunts": "매크로코스모스 직원들"
 }
