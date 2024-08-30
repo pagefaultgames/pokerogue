@@ -5281,13 +5281,13 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 }
 
 export class CallMoveAttr extends OverrideMoveEffectAttr {
-  private moveId: number;
+  protected invalidMoves: Moves[];
   constructor() {
     super();
   }
   async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    const replaceMoveTarget = allMoves[this.moveId].moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
-    const moveTargets = getMoveTargets(user, this.moveId, replaceMoveTarget);
+    const replaceMoveTarget = move.moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
+    const moveTargets = getMoveTargets(user, move.id, replaceMoveTarget);
     if (moveTargets.targets.length === 0) {
       return false;
     }
@@ -5296,39 +5296,14 @@ export class CallMoveAttr extends OverrideMoveEffectAttr {
       : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
         ? [ target.getBattlerIndex() ]
         : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-    user.getMoveQueue().push({ move: this.moveId, targets: targets, ignorePP: true });
-    user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(this.moveId, 0, 0, true), true));
+    user.getMoveQueue().push({ move: move.id, targets: targets, ignorePP: true });
+    user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(move.id, 0, 0, true), true));
 
-    const promises: Promise<void>[] = [];
-    promises.push(initMoveAnim(user.scene, this.moveId));
-    promises.push(loadMoveAnimAssets(user.scene, [ this.moveId ], true));
-
-    await Promise.all(promises);
+    await Promise.resolve(initMoveAnim(user.scene, move.id).then(() => {
+      loadMoveAnimAssets(user.scene, [ move.id ], true);
+    }));
     return true;
   }
-}
-
-function callMove(user: Pokemon, target: Pokemon, moveId: number): Promise<boolean> {
-  return new Promise(resolve => {
-    // replaces MoveTarget.NEAR_OTHER with MoveTarget.NEAR_ENEMY to prevent ally being targetted
-    const replaceMoveTarget = allMoves[moveId].moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
-    const moveTargets = getMoveTargets(user, moveId, replaceMoveTarget);
-    if (moveTargets.targets.length === 0) {
-      resolve(false);
-      return;
-    }
-    const targets = moveTargets.multiple || moveTargets.targets.length === 1
-      ? moveTargets.targets
-      : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
-        ? [ target.getBattlerIndex() ]
-        : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-    user.getMoveQueue().push({ move: moveId, targets: targets, ignorePP: true });
-    user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(moveId, 0, 0, true), true));
-    initMoveAnim(user.scene, moveId).then(() => {
-      loadMoveAnimAssets(user.scene, [ moveId ], true)
-        .then(() => resolve(true));
-    });
-  });
 }
 
 /**
@@ -5337,11 +5312,10 @@ function callMove(user: Pokemon, target: Pokemon, moveId: number): Promise<boole
  * @see {@linkcode apply} for move selection and move call
  * @extends OverrideMoveEffectAttr
  */
-export class RandomMoveAttr extends OverrideMoveEffectAttr {
-  protected invalidMoves: Moves[];
+export class RandomMoveAttr extends CallMoveAttr {
   constructor(invalidMoves: Moves[]) {
     super();
-    this.invalidMoves = invalidMoves!;
+    this.invalidMoves = invalidMoves;
   }
 
   /**
@@ -5356,7 +5330,7 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     const moveIds = Utils.getEnumValues(Moves).filter(m => !this.invalidMoves.includes(m) && !allMoves[m].name.endsWith(" (N)"));
     const moveId = moveIds[user.randSeedInt(moveIds.length)];
-    return callMove(user, target, moveId);
+    return super.apply(user, target, allMoves[moveId], args);
   }
 }
 
@@ -5368,12 +5342,13 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
  * Fails if the user has no callable moves
  * Invalid moves are indicated by what is passed in to invalidMoves: {@constant invalidAssistMoves} or {@constant invalidSleepTalkMoves}
  */
-export class RandomMovesetMoveAttr extends RandomMoveAttr {
+export class RandomMovesetMoveAttr extends CallMoveAttr {
   private includeParty: boolean;
   private moveId: number;
   constructor(invalidMoves: Moves[], includeParty: boolean = false) {
-    super(invalidMoves);
+    super();
     this.includeParty = includeParty;
+    this.invalidMoves = invalidMoves;
   }
 
   /**
@@ -5385,7 +5360,7 @@ export class RandomMovesetMoveAttr extends RandomMoveAttr {
    * @returns {Promise<boolean>}
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    return callMove(user, target, this.moveId);
+    return super.apply(user, target, allMoves[this.moveId], args);
   }
 
   getCondition(): MoveConditionFunc {
@@ -5798,10 +5773,10 @@ const lastMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
   return true;
 };
 
-export class CopyMoveAttr extends OverrideMoveEffectAttr {
+export class CopyMoveAttr extends CallMoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     const lastMove = user.scene.currentBattle.lastMove;
-    return callMove(user, target, lastMove);
+    return super.apply(user, target, allMoves[lastMove], args);
   }
 
   getCondition(): MoveConditionFunc {
