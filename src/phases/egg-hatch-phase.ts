@@ -12,8 +12,8 @@ import { Mode } from "#app/ui/ui.js";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import * as Utils from "#app/utils.js";
-import { DexEntry, StarterDataEntry } from "#app/system/game-data.js";
 import { EggLapsePhase } from "./egg-lapse-phase";
+import { EggHatchData } from "#app/data/egg-hatch-data.js";
 
 
 /**
@@ -444,119 +444,12 @@ export class EggHatchPhase extends Phase {
 
   /**
    * Generates a Pokemon to be hatched by the egg
+   * Also stores the generated pokemon in this.eggHatchData
    * @returns the hatched PlayerPokemon
    */
   generatePokemon(): PlayerPokemon {
-    // let ret: PlayerPokemon;
-
-    // this.scene.executeWithSeedOffset(() => {
-    //   ret = this.egg.generatePlayerPokemon(this.scene);
-    // }, this.egg.id, EGG_SEED.toString());
-    // this.eggHatchContainer.add(new EggHatchData(this.scene, ))
-
-    // return ret;
     this.eggHatchData = this.hatchScene.generatePokemon(this.egg);
     this.eggHatchData.setDex();
     return this.eggHatchData.pokemon;
-  }
-
-  //   getNewProperties(pokemon: PlayerPokemon) {
-  //     const speciesId = pokemon.species.speciesId;
-  //     let newProperties = {newEggMove: false, newStarter: false};
-
-  //     if (!this.starterData[speciesId].eggMoves) {
-  //       this.starterData[speciesId].eggMoves = 0;
-  //     }
-
-  //     const value = Math.pow(2, eggMoveIndex);
-
-//     if (this.starterData[speciesId].eggMoves & value) {
-//       resolve(false);
-//       return;
-//     }
-//   }
-}
-
-export class EggHatchData {
-  public pokemon: PlayerPokemon;
-  public eggMoveIndex: integer;
-  public eggMoveUnlocked: boolean;
-  public prevDexEntry: DexEntry;
-  public prevStarterEntry: StarterDataEntry;
-  private scene: BattleScene;
-
-  constructor(scene: BattleScene, pokemon: PlayerPokemon, eggMoveIndex: integer) {
-    this.scene = scene;
-    this.pokemon = pokemon;
-    this.eggMoveIndex = eggMoveIndex;
-  }
-
-  setEggMoveUnlocked(unlocked: boolean) {
-    this.eggMoveUnlocked  = unlocked;
-  }
-
-  setDex() {
-    const currDexEntry = this.scene.gameData.dexData[this.pokemon.species.speciesId];
-    const starterDataEntry = this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()];
-    // this.prevDexEntry = this.scene.gameData.dexData[this.pokemon.species.speciesId];
-    this.prevDexEntry = {
-      seenAttr: currDexEntry.seenAttr,
-      caughtAttr: currDexEntry.caughtAttr,
-      natureAttr: currDexEntry.natureAttr,
-      seenCount: currDexEntry.seenCount,
-      caughtCount: currDexEntry.caughtCount,
-      hatchedCount: currDexEntry.hatchedCount,
-      ivs: [...currDexEntry.ivs]
-    };
-    this.prevStarterEntry = {
-      moveset: starterDataEntry.moveset,
-      eggMoves: starterDataEntry.eggMoves,
-      candyCount: starterDataEntry.candyCount,
-      friendship: starterDataEntry.friendship,
-      abilityAttr: starterDataEntry.abilityAttr,
-      passiveAttr: starterDataEntry.passiveAttr,
-      valueReduction: starterDataEntry.valueReduction,
-      classicWinCount: starterDataEntry.classicWinCount
-    };
-    console.log("setting dex:");
-    console.log(this.prevDexEntry);
-    // export interface DexEntry {
-
-    // }
-  }
-
-  getDex(): DexEntry {
-    console.log("getting dex:");
-    console.log(this.prevDexEntry);
-    return this.prevDexEntry;
-  }
-
-  // function that can be called when doing egg summary to set dex one at a time
-  updatePokemon(showMessage : boolean = false) {
-    // console.log("setting dex (actual, local):");
-    // const currDexEntry = this.scene.gameData.dexData[this.pokemon.species.speciesId];
-    // console.log(currDexEntry);
-    // console.log(this.prevDexEntry);
-    // this.setDex();
-    // TODO seperate dex updates for skip or serial hatch
-    // this.setDex();
-    return new Promise<void>(resolve => {
-      this.scene.gameData.setPokemonCaught(this.pokemon, true, true, showMessage).then(() => {
-        this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
-        this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex, showMessage).then((value) => {
-          this.eggMoveUnlocked = value;
-          console.log("updates complete, logging actual dex and local dexEntry");
-          const currDexEntry = this.scene.gameData.dexData[this.pokemon.species.speciesId];
-          console.log(currDexEntry);
-          console.log(this.prevDexEntry);
-
-          resolve();
-        });
-      });
-    });
-  }
-
-  getEggMove() {
-    // TODO easy function to get egg move for display (or no egg move)
   }
 }

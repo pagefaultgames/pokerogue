@@ -1,14 +1,18 @@
 import BattleScene from "#app/battle-scene.js";
 import { Phase } from "#app/phase.js";
-import { EggHatchData } from "./egg-hatch-phase";
 import { Mode } from "#app/ui/ui.js";
 import EggHatchSceneHandler from "#app/ui/egg-hatch-scene-handler.js";
+import { EggHatchData } from "#app/data/egg-hatch-data.js";
 
+/**
+ * Class that represents the egg summary phase
+ * It does some of the function for updating egg data
+ * Phase is handled mostly by the egg-hatch-scene-handler UI
+ */
 export class EggSummaryPhase extends Phase {
   private eggHatchData: EggHatchData[];
 
   private eggHatchHandler: EggHatchSceneHandler;
-  private eggHatchOverlay: Phaser.GameObjects.Rectangle;
 
   constructor(scene: BattleScene, eggHatchData: EggHatchData[]) {
     super(scene);
@@ -46,6 +50,8 @@ export class EggSummaryPhase extends Phase {
     console.log("ended egg hatch summary phase");
     this.eggHatchHandler.clear();
     //   this.scene.time.delayedCall(250, () => this.scene.setModifiersVisible(true));
+    this.scene.ui.setModeForceTransition(Mode.MESSAGE).then(() => {
+    });
     super.end();
   }
 }

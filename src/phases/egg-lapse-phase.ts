@@ -3,11 +3,12 @@ import { Egg, EGG_SEED } from "#app/data/egg.js";
 import { Phase } from "#app/phase.js";
 import i18next from "i18next";
 import Overrides from "#app/overrides";
-import { EggHatchData, EggHatchPhase } from "./egg-hatch-phase";
+import { EggHatchPhase } from "./egg-hatch-phase";
 import { Mode } from "#app/ui/ui.js";
 import { achvs } from "#app/system/achv.js";
 import { PlayerPokemon } from "#app/field/pokemon.js";
 import { EggSummaryPhase } from "./egg-summary-phase";
+import { EggHatchData } from "#app/data/egg-hatch-data.js";
 
 export class EggLapsePhase extends Phase {
 
@@ -23,11 +24,14 @@ export class EggLapsePhase extends Phase {
       return Overrides.EGG_IMMEDIATE_HATCH_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
 
-    let eggsToHatchCount: integer = eggsToHatch.length;
+    let eggsToHatchCount: number = eggsToHatch.length;
     this.eggHatchData= [];
+
+    const minEggsToPromptSkip = 5;
+
     if (eggsToHatchCount > 0) {
 
-      if (eggsToHatchCount >= 5) {
+      if (eggsToHatchCount >= minEggsToPromptSkip) {
         this.scene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
           // show prompt for skip
           this.scene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
@@ -67,6 +71,12 @@ export class EggLapsePhase extends Phase {
     }
   }
 
+  /**
+   * Hatches an egg and stores it in the local EggHatchData array without animations
+   * Also validates the achievements for the hatched pokemon and removes the egg
+   * @param egg egg to hatch
+   * @returns
+   */
   hatchEggSilently(egg: Egg) {
     const eggIndex = this.scene.gameData.eggs.findIndex(e => e.id === egg.id);
     if (eggIndex === -1) {
@@ -100,9 +110,8 @@ export class EggLapsePhase extends Phase {
 
   }
 
-  // TODO fix duplicated code neatly
   /**
-   * Generates a Pokemon and hatch data to be hatched by the egg
+   * Generates a Pokemon and creates a new EggHatchData instance for the given egg
    * @returns the hatched PlayerPokemon
    */
   generatePokemon(egg: Egg): EggHatchData {

@@ -10,10 +10,14 @@ import { speciesEggMoves } from "#app/data/egg-moves.js";
 import { allMoves } from "#app/data/move.js";
 import { Species } from "#app/enums/species.js";
 import { getEggTierForSpecies } from "#app/data/egg.js";
-import { EggHatchData } from "#app/phases/egg-hatch-phase.js";
 import { starterColors } from "../battle-scene";
 import { argbFromRgba } from "@material/material-color-utilities";
+import { EggHatchData } from "#app/data/egg-hatch-data.js";
 
+/**
+ * Class for the hatch info summary of each pokemon
+ * Holds an info container aswell as an additional egg sprite, name, egg moves and main sprite
+ */
 export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
   private currentPokemonSprite: Phaser.GameObjects.Sprite;
   private pokemonNumberText: Phaser.GameObjects.Text;
@@ -42,6 +46,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.currentPokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.pokemonListContainer.add(this.currentPokemonSprite);
 
+    // setup name and number
     this.pokemonNumberText = addTextObject(this.scene, 80, 107.5, "0000", TextStyle.SUMMARY, {fontSize: 74});
     this.pokemonNumberText.setOrigin(0, 0);
     this.pokemonListContainer.add(this.pokemonNumberText);
@@ -50,6 +55,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonNameText.setOrigin(0, 0);
     this.pokemonListContainer.add(this.pokemonNameText);
 
+    // setup egg icon and candy count
     this.pokemonHatchedIcon = this.scene.add.sprite(-5, 90, "egg_icons");
     this.pokemonHatchedIcon.setOrigin(0, 0.2);
     this.pokemonHatchedIcon.setScale(0.8);
@@ -69,6 +75,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonCandyCountText.setOrigin(0, 0);
     this.pokemonListContainer.add(this.pokemonCandyCountText);
 
+    // setup egg moves
     this.pokemonEggMoveContainers = [];
     this.pokemonEggMoveBgs = [];
     this.pokemonEggMoveLabels = [];
@@ -106,7 +113,13 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
 
   }
 
+  /**
+   * Updates the info container with the appropriate dex data and starter entry from the hatchInfo
+   * Also updates the displayed name, number, egg moves and main animated sprite for the pokemon
+   * @param hatchInfo The EggHatchData of the pokemon / new hatch to show
+   */
   showHatchInfo(hatchInfo: EggHatchData) {
+    console.log("showing hatch info", hatchInfo.pokemon.name);
     this.pokemonEggMovesContainer.setVisible(true);
 
     const displayPokemon = hatchInfo.pokemon;
@@ -115,7 +128,8 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     const formIndex = displayPokemon.formIndex;
     const shiny = displayPokemon.shiny;
     const variant = displayPokemon.variant;
-    super.show(displayPokemon, false, 1, hatchInfo.getDex(), hatchInfo.prevStarterEntry, true);
+
+    super.show(displayPokemon, false, 1, hatchInfo.getDex(), hatchInfo.getStarterEntry(), true);
     const colorScheme = starterColors[species.speciesId];
 
     this.pokemonCandyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
@@ -138,7 +152,6 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
       this.currentPokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
       // this.pokemonSprite.setVisible(!this.statsMode);
     });
-    // TODO pokemon name and number
 
     this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 4));
     this.pokemonNameText.setText(species.name);
@@ -146,13 +159,12 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     const hasEggMoves = species && speciesEggMoves.hasOwnProperty(species.speciesId);
 
     for (let em = 0; em < 4; em++) {
-      // TODO add some new egg move indicator
       const eggMove = hasEggMoves ? allMoves[speciesEggMoves[species.speciesId][em]] : null;
       const eggMoveUnlocked = eggMove && this.scene.gameData.starterData[species.speciesId].eggMoves & Math.pow(2, em);
       this.pokemonEggMoveBgs[em].setFrame(Type[eggMove ? eggMove.type : Type.UNKNOWN].toString().toLowerCase());
 
       this.pokemonEggMoveLabels[em].setText(eggMove && eggMoveUnlocked ? eggMove.name : "???");
-      if (!(eggMove && hatchInfo.prevStarterEntry.eggMoves & Math.pow(2, em)) && eggMoveUnlocked) {
+      if (!(eggMove && hatchInfo.starterDataEntryBeforeUpdate.eggMoves & Math.pow(2, em)) && eggMoveUnlocked) {
         this.pokemonEggMoveLabels[em].setText("(+) " + eggMove.name);
       }
     }
@@ -160,7 +172,6 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     // will always have at least one egg move
     this.pokemonEggMovesContainer.setVisible(true);
 
-    // TODO show egg tier / icon
     if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
       this.pokemonHatchedIcon.setFrame("manaphy");
     } else {
@@ -168,6 +179,5 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     }
 
   }
-
 
 }
