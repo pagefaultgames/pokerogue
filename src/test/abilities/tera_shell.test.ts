@@ -96,7 +96,7 @@ describe("Abilities - Tera Shell", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.DRAGON_RAGE));
 
-      await game.startBattle([Species.SNORLAX]);
+      await game.startBattle([Species.CHARIZARD]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(playerPokemon, "apply");
