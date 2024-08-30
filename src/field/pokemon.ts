@@ -34,7 +34,7 @@ import { DexAttr, StarterDataEntry, StarterMoveset } from "../system/game-data";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from "../data/pokemon-forms";
-import { TerrainType } from "../data/terrain";
+import { getTerrainName, TerrainType } from "../data/terrain";
 import { TrainerSlot } from "../data/trainer-config";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
@@ -2783,6 +2783,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       break;
     case StatusEffect.SLEEP:
       if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.ELECTRIC) {
+        if (!quiet) {
+          this.scene.queueMessage(i18next.t("terrain:defaultBlockMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(this), terrainName: getTerrainName(TerrainType.ELECTRIC) }));
+        }
         return false;
       }
       break;
