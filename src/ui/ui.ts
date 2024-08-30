@@ -49,6 +49,8 @@ import RenameFormUiHandler from "./rename-form-ui-handler";
 import AdminUiHandler from "./admin-ui-handler";
 import RunHistoryUiHandler from "./run-history-ui-handler";
 import RunInfoUiHandler from "./run-info-ui-handler";
+import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
+import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -89,6 +91,8 @@ export enum Mode {
   RENAME_POKEMON,
   RUN_HISTORY,
   RUN_INFO,
+  TEST_DIALOGUE,
+  AUTO_COMPLETE,
   ADMIN,
 }
 
@@ -127,6 +131,8 @@ const noTransitionModes = [
   Mode.UNAVAILABLE,
   Mode.OUTDATED,
   Mode.RENAME_POKEMON,
+  Mode.TEST_DIALOGUE,
+  Mode.AUTO_COMPLETE,
   Mode.ADMIN,
 ];
 
@@ -191,6 +197,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new RenameFormUiHandler(scene),
       new RunHistoryUiHandler(scene),
       new RunInfoUiHandler(scene),
+      new TestDialogueUiHandler(scene, Mode.TEST_DIALOGUE),
+      new AutoCompleteUiHandler(scene),
       new AdminUiHandler(scene),
     ];
   }
