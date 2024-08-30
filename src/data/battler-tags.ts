@@ -570,7 +570,7 @@ export class PowderTag extends BattlerTag {
       const movePhase = pokemon.scene.getCurrentPhase();
       if (movePhase instanceof MovePhase) {
         const move = movePhase.move.getMove();
-        if (move.type === Type.FIRE) {
+        if (pokemon.getMoveType(move) === Type.FIRE) {
           movePhase.cancel();
 
           const cancelDamage = new Utils.BooleanHolder(false);

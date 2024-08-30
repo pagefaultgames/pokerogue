@@ -4,7 +4,6 @@ import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { MoveResult } from "#app/field/pokemon";
 import { Type } from "#app/data/type";
@@ -31,23 +30,23 @@ describe("Moves - Powder", () => {
     game = new GameManager(phaserGame);
     game.override.battleType("single");
 
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyLevel(100);
-    game.override.enemyMoveset(Array(4).fill(Moves.EMBER));
-    game.override.enemyAbility(Abilities.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.moveset([Moves.POWDER, Moves.SPLASH, Moves.FIERY_DANCE]);
+    game.override
+      .enemySpecies(Species.SNORLAX)
+      .enemyLevel(100)
+      .enemyMoveset(Array(4).fill(Moves.EMBER))
+      .enemyAbility(Abilities.INSOMNIA)
+      .startingLevel(100)
+      .moveset([Moves.POWDER, Moves.SPLASH, Moves.FIERY_DANCE]);
   });
 
   it(
     "should cancel the target's Fire-type move and damage the target",
     async () => {
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.POWDER));
+      game.move.select(Moves.POWDER);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
@@ -66,11 +65,11 @@ describe("Moves - Powder", () => {
     async () => {
       game.override.enemyAbility(Abilities.MAGIC_GUARD);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.POWDER));
+      game.move.select(Moves.POWDER);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
@@ -85,11 +84,11 @@ describe("Moves - Powder", () => {
         .enemyMoveset(Array(4).fill(Moves.FLAME_WHEEL))
         .enemyStatusEffect(StatusEffect.FREEZE);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.POWDER));
+      game.move.select(Moves.POWDER);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.FREEZE);
@@ -103,11 +102,11 @@ describe("Moves - Powder", () => {
     async () => {
       game.override.enemyAbility(Abilities.PROTEAN);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.POWDER));
+      game.move.select(Moves.POWDER);
 
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
@@ -123,12 +122,12 @@ describe("Moves - Powder", () => {
         .enemySpecies(Species.BLASTOISE)
         .enemyAbility(Abilities.DANCER);
 
-      await game.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.CHARIZARD]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FIERY_DANCE));
+      game.move.select(Moves.FIERY_DANCE);
 
       await game.phaseInterceptor.to(MoveEffectPhase);
       const enemyStartingHp = enemyPokemon.hp;
@@ -141,7 +140,7 @@ describe("Moves - Powder", () => {
     }, TIMEOUT
   );
 
-  it.todo("should cancel Hidden Power if it becomes a Fire-type move");
+  it.todo("should cancel Revelation Dance if it becomes a Fire-type move");
 
   it.todo("should cancel Shell Trap and damage the target, even if the move would fail");
 });
