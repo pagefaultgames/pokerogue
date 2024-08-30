@@ -13,6 +13,7 @@ import { getEggTierForSpecies } from "#app/data/egg.js";
 import { starterColors } from "../battle-scene";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { EggHatchData } from "#app/data/egg-hatch-data.js";
+import { PlayerPokemon } from "#app/field/pokemon.js";
 
 /**
  * Class for the hatch info summary of each pokemon
@@ -114,30 +115,22 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
   }
 
   /**
-   * Updates the info container with the appropriate dex data and starter entry from the hatchInfo
-   * Also updates the displayed name, number, egg moves and main animated sprite for the pokemon
-   * @param hatchInfo The EggHatchData of the pokemon / new hatch to show
+   * Disable the sprite (and replace with substitute)
    */
-  showHatchInfo(hatchInfo: EggHatchData) {
-    console.log("showing hatch info", hatchInfo.pokemon.name);
-    this.pokemonEggMovesContainer.setVisible(true);
+  hideDisplayPokemon() {
+    this.currentPokemonSprite.setVisible(false);
+  }
 
-    const displayPokemon = hatchInfo.pokemon;
-    const species = displayPokemon.species;
-    const female = displayPokemon.gender === Gender.FEMALE;
-    const formIndex = displayPokemon.formIndex;
-    const shiny = displayPokemon.shiny;
-    const variant = displayPokemon.variant;
-
-    super.show(displayPokemon, false, 1, hatchInfo.getDex(), hatchInfo.getStarterEntry(), true);
-    const colorScheme = starterColors[species.speciesId];
-
-    this.pokemonCandyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
-    this.pokemonCandyIcon.setVisible(true);
-    this.pokemonCandyOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
-    this.pokemonCandyOverlayIcon.setVisible(true);
-    this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
-    this.pokemonCandyCountText.setVisible(true);
+  /**
+   * Display a given pokemon sprite with animations
+   */
+  displayPokemon(pokemon: PlayerPokemon) {
+    console.log("displaying pokemon", pokemon.name);
+    const species = pokemon.species;
+    const female = pokemon.gender === Gender.FEMALE;
+    const formIndex = pokemon.formIndex;
+    const shiny = pokemon.shiny;
+    const variant = pokemon.variant;
     species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
       // if (assetLoadCancelled.value) {
       //   return;
@@ -152,6 +145,30 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
       this.currentPokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
       // this.pokemonSprite.setVisible(!this.statsMode);
     });
+  }
+
+  /**
+   * Updates the info container with the appropriate dex data and starter entry from the hatchInfo
+   * Also updates the displayed name, number, egg moves and main animated sprite for the pokemon
+   * @param hatchInfo The EggHatchData of the pokemon / new hatch to show
+   */
+  showHatchInfo(hatchInfo: EggHatchData) {
+    console.log("showing hatch info", hatchInfo.pokemon.name);
+    this.pokemonEggMovesContainer.setVisible(true);
+
+    const pokemon = hatchInfo.pokemon;
+    const species = pokemon.species;
+    this.displayPokemon(pokemon);
+
+    super.show(pokemon, false, 1, hatchInfo.getDex(), hatchInfo.getStarterEntry(), true);
+    const colorScheme = starterColors[species.speciesId];
+
+    this.pokemonCandyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
+    this.pokemonCandyIcon.setVisible(true);
+    this.pokemonCandyOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
+    this.pokemonCandyOverlayIcon.setVisible(true);
+    this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
+    this.pokemonCandyCountText.setVisible(true);
 
     this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 4));
     this.pokemonNameText.setText(species.name);

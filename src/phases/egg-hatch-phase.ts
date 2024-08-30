@@ -314,7 +314,6 @@ export class EggHatchPhase extends Phase {
    */
   doReveal(): void {
     // set the previous dex data so info container can show new unlocks in egg summary
-    this.eggHatchData.setDex();
     const isShiny = this.pokemon.isShiny();
     if (this.pokemon.species.subLegendary) {
       this.scene.validateAchv(achvs.HATCH_SUB_LEGENDARY);
@@ -449,7 +448,6 @@ export class EggHatchPhase extends Phase {
    */
   generatePokemon(): PlayerPokemon {
     this.eggHatchData = this.hatchScene.generatePokemon(this.egg);
-    this.eggHatchData.setDex();
     return this.eggHatchData.pokemon;
   }
 }

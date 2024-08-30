@@ -139,6 +139,8 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.pokemonIconsContainer.setVisible(true);
     this.eggHatchBg.setVisible(true);
 
+    this.infoContainer.hideDisplayPokemon();
+
     this.eggHatchData.forEach( (value: EggHatchData, i: number) => {
       const x = (i % 11) * 18;
       const y = Math.floor(i / 11) * 18;
@@ -210,8 +212,10 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       em.setScale(0.5);
       em.setVisible(value.eggMoveUnlocked);
       this.pokemonIconsContainer.add(em);
+      if (i === 0) {
+        this.infoContainer.displayPokemon(displayPokemon);
+      }
     });
-
     this.setCursor(0);
 
     return true;
