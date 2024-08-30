@@ -37,7 +37,7 @@
     "name_female": "ワンパンウーマン"
   },
   "HealAchv": {
-    "description": "一つの　技や　特性や　持っているアイテムで\\n　{{healAmount}}{{HP}}を　一気に　回復する"
+    "description": "一つの　技や　特性や　持っているアイテムで\n　{{healAmount}}{{HP}}を　一気に　回復する"
   },
   "250_HEAL": {
     "name": "回復発見者"
@@ -83,7 +83,7 @@
   },
   "TRANSFER_MAX_BATTLE_STAT": {
     "name": "同力",
-    "description": "少なくとも　一つの　能力を　最大まで　あげて\\n他の　手持ちポケモンに　バトンタッチする"
+    "description": "少なくとも　一つの　能力を　最大まで　あげて\n他の　手持ちポケモンに　バトンタッチする"
   },
   "MAX_FRIENDSHIP": {
     "name": "マブ達",
