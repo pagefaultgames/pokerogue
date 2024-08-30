@@ -143,7 +143,7 @@ export class GameOverPhase extends BattlePhase {
                 const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
                 const genderStr = PlayerGender[genderIndex].toLowerCase();
                 // Dialogue has to be retrieved so that the rival's expressions can be loaded and shown via getCharVariantFromDialogue
-                const dialogue = i18next.t(dialogueKey, {context: genderStr});
+                const dialogue = i18next.t(dialogueKey, { context: genderStr });
                 this.scene.charSprite.showCharacter(`rival_${this.scene.gameData.gender === PlayerGender.FEMALE ? "m" : "f"}`, getCharVariantFromDialogue(dialogue)).then(() => {
                   this.scene.ui.showDialogue(dialogueKey, this.scene.gameData.gender === PlayerGender.FEMALE ? trainerConfigs[TrainerType.RIVAL].name : trainerConfigs[TrainerType.RIVAL].nameFemale, null, () => {
                     this.scene.ui.fadeOut(500).then(() => {
