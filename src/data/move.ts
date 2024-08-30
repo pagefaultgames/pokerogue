@@ -1950,8 +1950,11 @@ export class StatusEffectAttr extends MoveEffectAttr {
           return false;
         }
       }
+      if (!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0)) {
+        pokemon.canSetStatus(this.effect, false, false, user);
+      }
       if ((!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0))
-        && pokemon.trySetStatus(this.effect, false, user, this.cureTurn)) {
+        && pokemon.trySetStatus(this.effect, true, user, this.cureTurn)) {
         applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
         return true;
       }
