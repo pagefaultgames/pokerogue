@@ -157,7 +157,7 @@ export class EvolutionPhase extends Phase {
                 this.evolutionBg.setVisible(true);
                 this.evolutionBg.play();
               });
-              this.scene.playSound("charge");
+              this.scene.playSound("se/charge");
               this.doSpiralUpward();
               this.scene.tweens.addCounter({
                 from: 0,
@@ -169,7 +169,7 @@ export class EvolutionPhase extends Phase {
                 onComplete: () => {
                   this.pokemonSprite.setVisible(false);
                   this.scene.time.delayedCall(1100, () => {
-                    this.scene.playSound("beam");
+                    this.scene.playSound("se/beam");
                     this.doArcDownward();
                     this.scene.time.delayedCall(1500, () => {
                       this.pokemonEvoTintSprite.setScale(0.25);
@@ -214,7 +214,7 @@ export class EvolutionPhase extends Phase {
                           return;
                         }
 
-                        this.scene.playSound("sparkle");
+                        this.scene.playSound("se/sparkle");
                         this.pokemonEvoSprite.setVisible(true);
                         this.doCircleInward();
                         this.scene.time.delayedCall(900, () => {
@@ -227,7 +227,7 @@ export class EvolutionPhase extends Phase {
                             }
                             this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
 
-                            this.scene.playSound("shine");
+                            this.scene.playSound("se/shine");
                             this.doSpray();
                             this.scene.tweens.add({
                               targets: this.evolutionOverlay,

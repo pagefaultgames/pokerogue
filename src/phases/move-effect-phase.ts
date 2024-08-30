@@ -74,7 +74,7 @@ export class MoveEffectPhase extends PokemonPhase {
         // Assume single target for multi hit
         applyMoveAttrs(MultiHitAttr, user, this.getTarget() ?? null, move, hitCount);
         // If Parental Bond is applicable, double the hit count
-        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, null, move, targets.length, hitCount, new Utils.IntegerHolder(0));
+        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, null, move, false, targets.length, hitCount, new Utils.IntegerHolder(0));
         // If Multi-Lens is applicable, multiply the hit count by 1 + the number of Multi-Lenses held by the user
         if (move instanceof AttackMove && !move.hasAttr(FixedDamageAttr)) {
           this.scene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, hitCount, new Utils.IntegerHolder(0));
@@ -311,8 +311,6 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   end() {
-    const move = this.move.getMove();
-    move.type = move.defaultType;
     const user = this.getUserPokemon();
     /**
        * If this phase isn't for the invoked move's last strike,
