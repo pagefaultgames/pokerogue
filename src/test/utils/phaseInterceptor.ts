@@ -16,6 +16,7 @@ import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
+import { NewBiomeEncounterPhase } from "#app/phases/new-biome-encounter-phase.js";
 import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
@@ -62,6 +63,7 @@ export default class PhaseInterceptor {
     [TitlePhase, this.startPhase],
     [SelectGenderPhase, this.startPhase],
     [EncounterPhase, this.startPhase],
+    [NewBiomeEncounterPhase, this.startPhase],
     [SelectStarterPhase, this.startPhase],
     [PostSummonPhase, this.startPhase],
     [SummonPhase, this.startPhase],
@@ -235,6 +237,22 @@ export default class PhaseInterceptor {
   pop() {
     this.onHold.pop();
     this.scene.shiftPhase();
+  }
+
+  /**
+   * Remove the current phase from the phase interceptor.
+   *
+   * Do not call this unless absolutely necessary. This function is intended
+   * for cleaning up the phase interceptor when, for whatever reason, a phase
+   * is manually ended without using the phase interceptor.
+   *
+   * @param shouldRun Whether or not the current scene should also be run.
+   */
+  shift(shouldRun: boolean = false) : void {
+    this.onHold.shift();
+    if (shouldRun) {
+      this.scene.shiftPhase();
+    }
   }
 
   /**

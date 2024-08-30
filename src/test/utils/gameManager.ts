@@ -44,6 +44,7 @@ import { ChallengeModeHelper } from "./helpers/challengeModeHelper";
 import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
+import { ReloadHelper } from "./helpers/reloadHelper";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -60,6 +61,7 @@ export default class GameManager {
   public readonly dailyMode: DailyModeHelper;
   public readonly challengeMode: ChallengeModeHelper;
   public readonly settings: SettingsHelper;
+  public readonly reload: ReloadHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -81,6 +83,7 @@ export default class GameManager {
     this.dailyMode = new DailyModeHelper(this);
     this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
+    this.reload = new ReloadHelper(this);
   }
 
   /**
