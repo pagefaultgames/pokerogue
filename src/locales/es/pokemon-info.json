@@ -1,0 +1,41 @@
+{
+  "Stat": {
+    "HP": "PS",
+    "HPshortened": "PS",
+    "ATK": "Ataque",
+    "ATKshortened": "Atq.",
+    "DEF": "Defensa",
+    "DEFshortened": "Def.",
+    "SPATK": "Atq. Esp.",
+    "SPATKshortened": "AtqEs.",
+    "SPDEF": "Def. Esp.",
+    "SPDEFshortened": "DefEs.",
+    "SPD": "Velocidad",
+    "SPDshortened": "Veloc.",
+    "ACC": "Precisión",
+    "EVA": "Evasión",
+    "HPStat": "PS"
+  },
+  "Type": {
+    "UNKNOWN": "Desconocido",
+    "NORMAL": "Normal",
+    "FIGHTING": "Lucha",
+    "FLYING": "Volador",
+    "POISON": "Veneno",
+    "GROUND": "Tierra",
+    "ROCK": "Roca",
+    "BUG": "Bicho",
+    "GHOST": "Fantasma",
+    "STEEL": "Acero",
+    "FIRE": "Fuego",
+    "WATER": "Agua",
+    "GRASS": "Planta",
+    "ELECTRIC": "Eléctrico",
+    "PSYCHIC": "Psíquico",
+    "ICE": "Hielo",
+    "DRAGON": "Dragón",
+    "DARK": "Siniestro",
+    "FAIRY": "Hada",
+    "STELLAR": "Astral"
+  }
+}

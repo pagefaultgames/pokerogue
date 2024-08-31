@@ -1,19 +1,25 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import * as Overrides from "#app/overrides";
+import { BattleStat } from "#app/data/battle-stat";
+import { StatusEffect } from "#app/data/status-effect";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { Mode } from "#app/ui/ui";
+import { toDmgValue } from "#app/utils";
 import { Moves } from "#enums/moves";
-import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
-import { Status, StatusEffect } from "#app/data/status-effect.js";
-import { TurnEndPhase } from "#app/phases.js";
-import { QuietFormChangePhase } from "#app/form-change-phase.js";
+import GameManager from "#test/utils/gameManager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
-describe("Abilities - DISGUISE", () => {
+describe("Abilities - Disguise", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  const bustedForm = 1;
+  const disguisedForm = 0;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -27,41 +33,192 @@ describe("Abilities - DISGUISE", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.SPLASH;
-    vi.spyOn(Overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.DISGUISE);
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-  });
+    game.override.battleType("single");
 
-  test(
-    "check if fainted pokemon switched to base form on arena reset",
-    async () => {
-      const baseForm = 0,
-        bustedForm = 1;
-      vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(4);
-      vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue({
-        [Species.MIMIKYU]: bustedForm,
-      });
+    game.override.enemySpecies(Species.MIMIKYU);
+    game.override.enemyMoveset(SPLASH_ONLY);
 
-      await game.startBattle([Species.MAGIKARP, Species.MIMIKYU]);
+    game.override.starterSpecies(Species.REGIELEKI);
+    game.override.moveset([Moves.SHADOW_SNEAK, Moves.VACUUM_WAVE, Moves.TOXIC_THREAD, Moves.SPLASH]);
+  }, TIMEOUT);
 
-      const mimikyu = game.scene.getParty().find((p) => p.species.speciesId === Species.MIMIKYU);
-      expect(mimikyu).not.toBe(undefined);
-      expect(mimikyu.formIndex).toBe(bustedForm);
+  it("takes no damage from attacking move and transforms to Busted form, takes 1/8 max HP damage from the disguise breaking", async () => {
+    await game.startBattle();
 
-      mimikyu.hp = 0;
-      mimikyu.status = new Status(StatusEffect.FAINT);
-      expect(mimikyu.isFainted()).toBe(true);
+    const mimikyu = game.scene.getEnemyPokemon()!;
+    const maxHp = mimikyu.getMaxHp();
+    const disguiseDamage = toDmgValue(maxHp / 8);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
-      await game.doKillOpponents();
-      await game.phaseInterceptor.to(TurnEndPhase);
-      game.doSelectModifier();
-      await game.phaseInterceptor.to(QuietFormChangePhase);
+    expect(mimikyu.formIndex).toBe(disguisedForm);
 
-      expect(mimikyu.formIndex).toBe(baseForm);
-    },
-    TIMEOUT
-  );
+    game.move.select(Moves.SHADOW_SNEAK);
+
+    await game.phaseInterceptor.to(MoveEndPhase);
+
+    expect(mimikyu.hp).equals(maxHp - disguiseDamage);
+    expect(mimikyu.formIndex).toBe(bustedForm);
+  }, TIMEOUT);
+
+  it("doesn't break disguise when attacked with ineffective move", async () => {
+    await game.startBattle();
+
+    const mimikyu = game.scene.getEnemyPokemon()!;
+
+    expect(mimikyu.formIndex).toBe(disguisedForm);
+
+    game.move.select(Moves.VACUUM_WAVE);
+
+    await game.phaseInterceptor.to(MoveEndPhase);
+
+    expect(mimikyu.formIndex).toBe(disguisedForm);
+  }, TIMEOUT);
+
+  it("takes no damage from the first hit of a multihit move and transforms to Busted form, then takes damage from the second hit", async () => {
+    game.override.moveset([Moves.SURGING_STRIKES]);
+    game.override.enemyLevel(5);
+    await game.startBattle();
+
+    const mimikyu = game.scene.getEnemyPokemon()!;
+    const maxHp = mimikyu.getMaxHp();
+    const disguiseDamage = toDmgValue(maxHp / 8);
+
+    expect(mimikyu.formIndex).toBe(disguisedForm);
+
+    game.move.select(Moves.SURGING_STRIKES);
+
+    // First hit
+    await game.phaseInterceptor.to(MoveEffectPhase);
+    expect(mimikyu.hp).equals(maxHp - disguiseDamage);
+    expect(mimikyu.formIndex).toBe(disguisedForm);
+
+    // Second hit
+    await game.phaseInterceptor.to(MoveEffectPhase);
+    expect(mimikyu.hp).lessThan(maxHp - disguiseDamage);
+    expect(mimikyu.formIndex).toBe(bustedForm);
+  }, TIMEOUT);
+
+  it("takes effects from status moves and damage from status effects", async () => {
+    await game.startBattle();
+
+    const mimikyu = game.scene.getEnemyPokemon()!;
+    expect(mimikyu.hp).toBe(mimikyu.getMaxHp());
+
+    game.move.select(Moves.TOXIC_THREAD);
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(mimikyu.formIndex).toBe(disguisedForm);
+    expect(mimikyu.status?.effect).toBe(StatusEffect.POISON);
+    expect(mimikyu.summonData.battleStats[BattleStat.SPD]).toBe(-1);
+    expect(mimikyu.hp).toBeLessThan(mimikyu.getMaxHp());
+  }, TIMEOUT);
+
+  it("persists form change when switched out", async () => {
+    game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
+    game.override.starterSpecies(0);
+
+    await game.startBattle([Species.MIMIKYU, Species.FURRET]);
+
+    const mimikyu = game.scene.getPlayerPokemon()!;
+    const maxHp = mimikyu.getMaxHp();
+    const disguiseDamage = toDmgValue(maxHp / 8);
+
+    game.move.select(Moves.SPLASH);
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(mimikyu.formIndex).toBe(bustedForm);
+    expect(mimikyu.hp).equals(maxHp - disguiseDamage);
+
+    await game.toNextTurn();
+    game.doSwitchPokemon(1);
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(mimikyu.formIndex).toBe(bustedForm);
+  }, TIMEOUT);
+
+  it("persists form change when wave changes with no arena reset", async () => {
+    game.override.starterSpecies(0);
+    game.override.starterForms({
+      [Species.MIMIKYU]: bustedForm
+    });
+    await game.startBattle([Species.FURRET, Species.MIMIKYU]);
+
+    const mimikyu = game.scene.getParty()[1]!;
+    expect(mimikyu.formIndex).toBe(bustedForm);
+
+    game.move.select(Moves.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+
+    expect(mimikyu.formIndex).toBe(bustedForm);
+  }, TIMEOUT);
+
+  it("reverts to Disguised form on arena reset", async () => {
+    game.override.startingWave(4);
+    game.override.starterSpecies(Species.MIMIKYU);
+    game.override.starterForms({
+      [Species.MIMIKYU]: bustedForm
+    });
+
+    await game.startBattle();
+
+    const mimikyu = game.scene.getPlayerPokemon()!;
+
+    expect(mimikyu.formIndex).toBe(bustedForm);
+
+    game.move.select(Moves.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+
+    expect(mimikyu.formIndex).toBe(disguisedForm);
+  }, TIMEOUT);
+
+  it("reverts to Disguised form on biome change when fainted", async () => {
+    game.override.startingWave(10);
+    game.override.starterSpecies(0);
+    game.override.starterForms({
+      [Species.MIMIKYU]: bustedForm
+    });
+
+    await game.startBattle([Species.MIMIKYU, Species.FURRET]);
+
+    const mimikyu1 = game.scene.getPlayerPokemon()!;
+
+    expect(mimikyu1.formIndex).toBe(bustedForm);
+
+    game.move.select(Moves.SPLASH);
+    await game.killPokemon(mimikyu1);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+    game.move.select(Moves.SPLASH);
+    await game.doKillOpponents();
+    game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => { // TODO: Make tests run in set mode instead of switch mode
+      game.setMode(Mode.MESSAGE);
+      game.endPhase();
+    }, () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(TurnInitPhase));
+
+    game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+      game.setMode(Mode.MESSAGE);
+      game.endPhase();
+    }, () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(TurnInitPhase));
+    await game.phaseInterceptor.to("PartyHealPhase");
+
+    expect(mimikyu1.formIndex).toBe(disguisedForm);
+  }, TIMEOUT);
+
+  it("doesn't faint twice when fainting due to Disguise break damage, nor prevent faint from Disguise break damage if using Endure", async () => {
+    game.override.enemyMoveset(Array(4).fill(Moves.ENDURE));
+    await game.startBattle();
+
+    const mimikyu = game.scene.getEnemyPokemon()!;
+    mimikyu.hp = 1;
+
+    game.move.select(Moves.SHADOW_SNEAK);
+    await game.toNextWave();
+
+    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.currentBattle.waveIndex).toBe(2);
+  }, TIMEOUT);
 });

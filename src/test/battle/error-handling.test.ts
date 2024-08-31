@@ -1,14 +1,14 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it, vi} from "vitest";
-import GameManager from "#app/test/utils/gameManager";
-import Phaser from "phaser";
-import * as overrides from "#app/overrides";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Test Battle Phase", () => {
+describe("Error Handling", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  const moveToUse = Moves.SPLASH;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -22,22 +22,22 @@ describe("Test Battle Phase", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.SPLASH;
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.MEWTWO);
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.RATTATA);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.HYDRATION);
-    vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.ZEN_MODE);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(2000);
-    vi.spyOn(overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(3);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([moveToUse]);
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override
+      .battleType("single")
+      .startingWave(3);
+    game.override.starterSpecies(Species.MEWTWO);
+    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemyAbility(Abilities.HYDRATION);
+    game.override.ability(Abilities.ZEN_MODE);
+    game.override.startingLevel(2000);
+    game.override.moveset([moveToUse]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
-  it.skip("to next turn", async() => {
+  it.skip("to next turn", async () => {
     await game.startBattle();
     const turn = game.scene.currentBattle.turn;
-    game.doAttack(0);
+    game.move.select(moveToUse);
     await game.toNextTurn();
     expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
   }, 20000);

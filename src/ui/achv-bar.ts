@@ -25,10 +25,10 @@ export default class AchvBar extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.defaultWidth = 160;
+    this.defaultWidth = 200;
     this.defaultHeight = 40;
 
-    this.bg = this.scene.add.nineslice(0, 0, "achv_bar", null, this.defaultWidth, this.defaultHeight, 41, 6, 16, 4);
+    this.bg = this.scene.add.nineslice(0, 0, "achv_bar", undefined, this.defaultWidth, this.defaultHeight, 41, 6, 16, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
@@ -90,7 +90,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.bg.height = Math.max(this.defaultHeight, this.titleText.displayHeight + this.descriptionText.displayHeight + 8);
     this.icon.y = (this.bg.height / 2) - (this.icon.height / 2);
 
-    (this.scene as BattleScene).playSound("achv");
+    (this.scene as BattleScene).playSound("se/achv");
 
     this.scene.tweens.add({
       targets: this,
@@ -119,7 +119,8 @@ export default class AchvBar extends Phaser.GameObjects.Container {
         this.shown = false;
         this.setVisible(false);
         if (this.queue.length) {
-          this.showAchv(this.queue.shift());
+          const shifted = this.queue.shift();
+          shifted && this.showAchv(shifted);
         }
       }
     });

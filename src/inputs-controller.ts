@@ -21,6 +21,7 @@ import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
 import TouchControl from "#app/touch-controls";
 import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
+import MoveTouchControlsHandler from "./ui/settings/move-touch-controls-handler";
 
 export interface DeviceMapping {
     [key: string]: number;
@@ -49,21 +50,6 @@ export interface InterfaceConfig {
 }
 
 const repeatInputDelayMillis = 250;
-
-// Phaser.Input.Gamepad.GamepadPlugin#refreshPads
-declare module "phaser" {
-  namespace Input {
-    namespace Gamepad {
-      interface GamepadPlugin {
-        /**
-         * Refreshes the list of connected Gamepads.
-         * This is called automatically when a gamepad is connected or disconnected, and during the update loop.
-         */
-        refreshPads(): void;
-      }
-    }
-  }
-}
 
 /**
  * Manages and handles all input controls for the game, including keyboard and gamepad interactions.
@@ -105,6 +91,7 @@ export class InputsController {
   public lastSource: string = "keyboard";
   private inputInterval: NodeJS.Timeout[] = new Array();
   private touchControls: TouchControl;
+  public moveTouchControlsHandler: MoveTouchControlsHandler;
 
   /**
      * Initializes a new instance of the game control system, setting up initial state and configurations.
@@ -154,7 +141,7 @@ export class InputsController {
     });
 
     if (typeof this.scene.input.gamepad !== "undefined") {
-      this.scene.input.gamepad.on("connected", function (thisGamepad) {
+      this.scene.input.gamepad?.on("connected", function (thisGamepad) {
         if (!thisGamepad) {
           return;
         }
@@ -163,25 +150,26 @@ export class InputsController {
         this.onReconnect(thisGamepad);
       }, this);
 
-      this.scene.input.gamepad.on("disconnected", function (thisGamepad) {
+      this.scene.input.gamepad?.on("disconnected", function (thisGamepad) {
         this.onDisconnect(thisGamepad); // when a gamepad is disconnected
       }, this);
 
       // Check to see if the gamepad has already been setup by the browser
-      this.scene.input.gamepad.refreshPads();
-      if (this.scene.input.gamepad.total) {
+      this.scene.input.gamepad?.refreshPads();
+      if (this.scene.input.gamepad?.total) {
         this.refreshGamepads();
         for (const thisGamepad of this.gamepads) {
           this.scene.input.gamepad.emit("connected", thisGamepad);
         }
       }
 
-      this.scene.input.gamepad.on("down", this.gamepadButtonDown, this);
-      this.scene.input.gamepad.on("up", this.gamepadButtonUp, this);
-      this.scene.input.keyboard.on("keydown", this.keyboardKeyDown, this);
-      this.scene.input.keyboard.on("keyup", this.keyboardKeyUp, this);
+      this.scene.input.gamepad?.on("down", this.gamepadButtonDown, this);
+      this.scene.input.gamepad?.on("up", this.gamepadButtonUp, this);
+      this.scene.input.keyboard?.on("keydown", this.keyboardKeyDown, this);
+      this.scene.input.keyboard?.on("keyup", this.keyboardKeyUp, this);
     }
     this.touchControls = new TouchControl(this.scene);
+    this.moveTouchControlsHandler = new MoveTouchControlsHandler(this.touchControls);
   }
 
   /**
@@ -338,9 +326,9 @@ export class InputsController {
      */
   refreshGamepads(): void {
     // Sometimes, gamepads are undefined. For some reason.
-    this.gamepads = this.scene.input.gamepad.gamepads.filter(function (el) {
+    this.gamepads = this.scene.input.gamepad?.gamepads.filter(function (el) {
       return el !== null;
-    });
+    }) ?? [];
 
     for (const [index, thisGamepad] of this.gamepads.entries()) {
       thisGamepad.index = index; // Overwrite the gamepad index, in case we had undefined gamepads earlier

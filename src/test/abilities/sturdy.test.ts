@@ -1,16 +1,12 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, test, vi} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import {
-  DamagePhase,
-  MoveEndPhase,
-} from "#app/phases";
-import {getMovePosition} from "#app/test/utils/gameManagerUtils";
+import { EnemyPokemon } from "#app/field/pokemon";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { EnemyPokemon } from "#app/field/pokemon.js";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -30,22 +26,22 @@ describe("Abilities - Sturdy", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("single");
 
-    vi.spyOn(overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(Species.LUCARIO);
-    vi.spyOn(overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(100);
-    vi.spyOn(overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([Moves.CLOSE_COMBAT, Moves.FISSURE]);
+    game.override.starterSpecies(Species.LUCARIO);
+    game.override.startingLevel(100);
+    game.override.moveset([Moves.CLOSE_COMBAT, Moves.FISSURE]);
 
-    vi.spyOn(overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(Species.ARON);
-    vi.spyOn(overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(5);
-    vi.spyOn(overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.STURDY);
+    game.override.enemySpecies(Species.ARON);
+    game.override.enemyLevel(5);
+    game.override.enemyAbility(Abilities.STURDY);
   });
 
   test(
     "Sturdy activates when user is at full HP",
     async () => {
       await game.startBattle();
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLOSE_COMBAT));
+      game.move.select(Moves.CLOSE_COMBAT);
       await game.phaseInterceptor.to(MoveEndPhase);
       expect(game.scene.getEnemyParty()[0].hp).toBe(1);
     },
@@ -60,7 +56,7 @@ describe("Abilities - Sturdy", () => {
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
       enemyPokemon.hp = enemyPokemon.getMaxHp() - 1;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLOSE_COMBAT));
+      game.move.select(Moves.CLOSE_COMBAT);
       await game.phaseInterceptor.to(DamagePhase);
 
       expect(enemyPokemon.hp).toBe(0);
@@ -73,11 +69,11 @@ describe("Abilities - Sturdy", () => {
     "Sturdy pokemon should be immune to OHKO moves",
     async () => {
       await game.startBattle();
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+      game.move.select(Moves.FISSURE);
       await game.phaseInterceptor.to(MoveEndPhase);
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
-      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+      expect(enemyPokemon.isFullHp()).toBe(true);
     },
     TIMEOUT
   );
@@ -85,10 +81,10 @@ describe("Abilities - Sturdy", () => {
   test(
     "Sturdy is ignored by pokemon with `Abilities.MOLD_BREAKER`",
     async () => {
-      vi.spyOn(overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(Abilities.MOLD_BREAKER);
+      game.override.ability(Abilities.MOLD_BREAKER);
 
       await game.startBattle();
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLOSE_COMBAT));
+      game.move.select(Moves.CLOSE_COMBAT);
       await game.phaseInterceptor.to(DamagePhase);
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
