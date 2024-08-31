@@ -185,13 +185,22 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
         bg.setTint(0xdfffaf);
         break;
       }
+      const species = displayPokemon.species;
+      const female = displayPokemon.gender === Gender.FEMALE;
+      const formIndex = displayPokemon.formIndex;
+      const variant = displayPokemon.variant;
+      const isShiny = displayPokemon.shiny;
 
-      const icon = this.scene.add.sprite(x-2, y+2, displayPokemon.species.getIconAtlasKey(displayPokemon.formIndex, displayPokemon.shiny, displayPokemon.variant));
-      // const icon = this.scene.add.sprite(x - 2, y + 2, "egg_icons");
+      const icon = this.scene.add.sprite(x-2, y+2, species.getIconAtlasKey(formIndex, isShiny, variant));
       icon.setScale(0.5);
       icon.setOrigin(0, 0);
-      icon.setFrame(displayPokemon.species.getIconId(displayPokemon.gender === Gender.FEMALE, displayPokemon.formIndex, displayPokemon.shiny, displayPokemon.variant));
-      // icon.setFrame(egg.getKey());
+      icon.setFrame(species.getIconId(female, formIndex, isShiny, variant));
+
+      if (icon.frame.name !== species.getIconId(female, formIndex, isShiny, variant)) {
+        console.log(`${species.name}'s variant icon does not exist. Replacing with default.`);
+        icon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
+        icon.setFrame(species.getIconId(female, formIndex, false, variant));
+      }
       this.pokemonIconSpritesContainer.add(icon);
       this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
 

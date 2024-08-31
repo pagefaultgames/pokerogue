@@ -42,13 +42,13 @@ export class EggLapsePhase extends Phase {
             for (const egg of eggsToHatch) {
               this.hatchEggSilently(egg);
             }
+            this.showSummary();
           }, () => {
             for (const egg of eggsToHatch) {
               this.scene.unshiftPhase(new EggHatchPhase(this.scene, this, egg, eggsToHatchCount));
               eggsToHatchCount--;
             }
             this.showSummary();
-
           }
           );
         }, 100, true);
@@ -79,7 +79,6 @@ export class EggLapsePhase extends Phase {
    */
   hatchEggSilently(egg: Egg) {
     const eggIndex = this.scene.gameData.eggs.findIndex(e => e.id === egg.id);
-    const eggsRemaining = this.scene.gameData.eggs.length;
     if (eggIndex === -1) {
       return this.end();
     }
@@ -91,15 +90,12 @@ export class EggLapsePhase extends Phase {
       pokemon.clearFusionSpecies();
     }
 
-    console.time("loading assets " + pokemon.name + " " + eggsRemaining);
     // pokemon.loadAssets().then(() => {
     this.loadsWaiting--;
     console.log(this.loadsWaiting);
-    console.timeEnd("loading assets " + pokemon.name  + " " + eggsRemaining);
 
     if (this.loadsWaiting === 0) {
       console.timeEnd("hatch eggs");
-      this.showSummary();
     }
 
     if (pokemon.species.subLegendary) {
