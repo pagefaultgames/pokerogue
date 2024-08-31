@@ -1,17 +1,13 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { Stat } from "#app/data/pokemon-stat";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { Command } from "#app/ui/command-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { VictoryPhase } from "#app/phases/victory-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
-import { VictoryPhase } from "#app/phases/victory-phase.js";
 
 
 describe("Abilities - Moxie", () => {
@@ -37,10 +33,10 @@ describe("Abilities - Moxie", () => {
     game.override.ability(Abilities.MOXIE);
     game.override.startingLevel(2000);
     game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
-  it("MOXIE", async() => {
+  it("MOXIE", async () => {
     const moveToUse = Moves.AERIAL_ACE;
     await game.startBattle([
       Species.MIGHTYENA,
@@ -50,13 +46,7 @@ describe("Abilities - Moxie", () => {
     let battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[Stat.ATK]).toBe(0);
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(moveToUse);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(VictoryPhase);
     battleStatsPokemon = game.scene.getParty()[0].summonData.battleStats;
     expect(battleStatsPokemon[BattleStat.ATK]).toBe(1);
