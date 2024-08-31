@@ -5888,9 +5888,9 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
     target.summonData.ability = tempAbilityId;
 
     user.scene.queueMessage(i18next.t("moveTriggers:swappedAbilitiesWithTarget", {pokemonName: getPokemonNameWithAffix(user)}));
-    // Swaps Forecast from Castform
+    // Swaps Forecast/Flower Gift from Castform/Cherrim
     user.scene.arena.triggerWeatherBasedFormChangesToNormal();
-    // Swaps Forecast to Castform (edge case)
+    // Swaps Forecast/Flower Gift to Castform/Cherrim (edge case)
     user.scene.arena.triggerWeatherBasedFormChanges();
 
     return true;
