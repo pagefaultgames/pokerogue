@@ -33,7 +33,8 @@
     "name": "때릴 줄 아시는군요!"
   },
   "10000_DMG": {
-    "name": "원펀맨"
+    "name": "원펀맨",
+    "name_female": "원펀맨"
   },
   "HealAchv": {
     "description": "기술이나 특성, 지닌 도구로 한 번에 {{healAmount}} {{HP}} 회복"
@@ -260,9 +261,5 @@
   "FRESH_START": {
     "name": "첫트!",
     "description": "새 출발 챌린지 모드 클리어."
-  },
-  "INVERSE_BATTLE": {
-    "name": "상성 전문가(였던 것)",
-    "description": "거꾸로 배틀 챌린지 모드 클리어."
   }
 }
