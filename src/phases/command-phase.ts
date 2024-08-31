@@ -191,7 +191,6 @@ export class CommandPhase extends FieldPhase {
         if (!batonPass) {
           enemyField.forEach(enemyPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trapped, playerPokemon, trappedAbMessages, true));
         }
-        console.log(trappedAbMessages);
         if (batonPass || (!trapTag && !trapped.value)) {
           this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
             ? { command: Command.POKEMON, cursor: cursor, args: args }
