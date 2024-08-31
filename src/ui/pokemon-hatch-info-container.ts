@@ -144,24 +144,24 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     const assetLoadCancelled = new Utils.BooleanHolder(false);
     this.assetLoadCancelled = assetLoadCancelled;
 
-    species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
-      if (assetLoadCancelled.value) {
-        console.log("interrupted");
-        console.timeEnd("display pokemon" + pokemon.name);
-        return;
-      }
-      this.assetLoadCancelled = null;
-      // this.speciesLoaded.set(species.speciesId, true);
-      // redundant setVisible(true) but makes sure sprite is only visible after being rendered (no substitute visible)
-      this.currentPokemonSprite.setVisible(true);
-      getPokemonSpeciesForm(species.speciesId, pokemon.formIndex).cry(this.scene);
-      this.currentPokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
-      this.currentPokemonSprite.setPipelineData("shiny", shiny);
-      this.currentPokemonSprite.setPipelineData("variant", variant);
-      this.currentPokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
+    // species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
+    if (assetLoadCancelled.value) {
+      console.log("interrupted");
       console.timeEnd("display pokemon" + pokemon.name);
-      // this.pokemonSprite.setVisible(!this.statsMode);
-    });
+      return;
+    }
+    this.assetLoadCancelled = null;
+    // this.speciesLoaded.set(species.speciesId, true);
+    // redundant setVisible(true) but makes sure sprite is only visible after being rendered (no substitute visible)
+    this.currentPokemonSprite.setVisible(true);
+    getPokemonSpeciesForm(species.speciesId, pokemon.formIndex).cry(this.scene);
+    this.currentPokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
+    this.currentPokemonSprite.setPipelineData("shiny", shiny);
+    this.currentPokemonSprite.setPipelineData("variant", variant);
+    this.currentPokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
+    console.timeEnd("display pokemon" + pokemon.name);
+    // this.pokemonSprite.setVisible(!this.statsMode);
+    // });
   }
 
   /**
