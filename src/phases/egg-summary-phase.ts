@@ -21,11 +21,12 @@ export class EggSummaryPhase extends Phase {
 
   start() {
     super.start();
+    console.time("update egg dex");
 
     const updateNextPokemon = (i: integer) => {
-      console.log(i);
       if (i >= this.eggHatchData.length) {
-        console.log("displayed all pokemon");
+        console.timeEnd("update egg dex");
+
         this.scene.ui.setModeForceTransition(Mode.EGG_HATCH_SUMMARY, this.eggHatchData).then(() => {
           this.scene.fadeOutBgm(undefined, false);
           this.eggHatchHandler = this.scene.ui.getHandler() as EggHatchSceneHandler;
@@ -35,7 +36,6 @@ export class EggSummaryPhase extends Phase {
       } else {
         this.eggHatchData[i].setDex();
         this.eggHatchData[i].updatePokemon().then(() => {
-          console.log("updating next pokemon");
           if (i < this.eggHatchData.length) {
             updateNextPokemon(i + 1);
           }

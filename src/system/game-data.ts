@@ -1618,12 +1618,10 @@ export class GameData {
       }
 
       const checkPrevolution = () => {
-        console.log("checking prevolution");
         if (hasPrevolution) {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
           this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg, showMessage).then(() => resolve());
         } else {
-          console.log("resolving");
           resolve();
         }
       };

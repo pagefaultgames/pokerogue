@@ -36,9 +36,11 @@ export class EggLapsePhase extends Phase {
           // show prompt for skip
           this.scene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
           this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
+            console.time("hatch eggs");
             for (const egg of eggsToHatch) {
               this.hatchEggSilently(egg);
             }
+            console.timeEnd("hatch eggs");
 
             this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
             this.end();
@@ -62,9 +64,6 @@ export class EggLapsePhase extends Phase {
         }
         this.end();
       }
-
-
-      console.log(this.eggHatchData);
     } else {
       this.end();
     }
@@ -88,7 +87,6 @@ export class EggLapsePhase extends Phase {
     if (pokemon.fusionSpecies) {
       pokemon.clearFusionSpecies();
     }
-    console.log(pokemon);
 
     pokemon.loadAssets().then(() => {
 

@@ -134,6 +134,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
    * Display a given pokemon sprite with animations
    */
   displayPokemon(pokemon: PlayerPokemon) {
+    console.time("display pokemon" + pokemon.name);
     console.log("displaying pokemon", pokemon.name);
     const species = pokemon.species;
     const female = pokemon.gender === Gender.FEMALE;
@@ -146,6 +147,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
       if (assetLoadCancelled.value) {
         console.log("interrupted");
+        console.timeEnd("display pokemon" + pokemon.name);
         return;
       }
       this.assetLoadCancelled = null;
@@ -157,6 +159,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
       this.currentPokemonSprite.setPipelineData("shiny", shiny);
       this.currentPokemonSprite.setPipelineData("variant", variant);
       this.currentPokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
+      console.timeEnd("display pokemon" + pokemon.name);
       // this.pokemonSprite.setVisible(!this.statsMode);
     });
   }
@@ -167,7 +170,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
    * @param hatchInfo The EggHatchData of the pokemon / new hatch to show
    */
   showHatchInfo(hatchInfo: EggHatchData) {
-    console.log("showing hatch info", hatchInfo.pokemon.name);
+    console.time("show hatch info" + hatchInfo.pokemon.name);
     this.pokemonEggMovesContainer.setVisible(true);
 
     const pokemon = hatchInfo.pokemon;
@@ -208,6 +211,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     } else {
       this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
     }
+    console.timeEnd("show hatch info" + hatchInfo.pokemon.name);
 
   }
 

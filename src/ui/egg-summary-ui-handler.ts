@@ -140,6 +140,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchBg.setVisible(true);
 
     this.infoContainer.hideDisplayPokemon();
+    console.time("display icons");
 
     this.eggHatchData.forEach( (value: EggHatchData, i: number) => {
       const x = (i % 11) * 18;
@@ -213,6 +214,8 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       em.setVisible(value.eggMoveUnlocked);
       this.pokemonIconsContainer.add(em);
     });
+    console.timeEnd("display icons");
+
     this.setCursor(0);
 
     // TODO nice animation reveal for all eggs hatching at once
@@ -226,7 +229,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
     let success = false;
     const error = false;
-    console.log("egg handler button " + button);
     if (button === Button.CANCEL) {
       const phase = this.scene.getCurrentPhase();
       if (phase instanceof EggSummaryPhase) {
