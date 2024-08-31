@@ -4,8 +4,6 @@ import GameManager from "#app/test/utils/gameManager";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
 import { allMoves } from "#app/data/move";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 
 describe("Moves - Retaliate", () => {
   let phaserGame: Phaser.Game;
