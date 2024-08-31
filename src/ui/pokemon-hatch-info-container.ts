@@ -128,14 +128,17 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     const formIndex = pokemon.formIndex;
     const shiny = pokemon.shiny;
     const variant = pokemon.variant;
+    this.currentPokemonSprite.setVisible(false);
+    species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
 
-    getPokemonSpeciesForm(species.speciesId, pokemon.formIndex).cry(this.scene);
-    this.currentPokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
-    this.currentPokemonSprite.setPipelineData("shiny", shiny);
-    this.currentPokemonSprite.setPipelineData("variant", variant);
-    this.currentPokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
-    this.currentPokemonSprite.setVisible(true);
-    console.timeEnd("display pokemon" + pokemon.name);
+      getPokemonSpeciesForm(species.speciesId, pokemon.formIndex).cry(this.scene);
+      this.currentPokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
+      this.currentPokemonSprite.setPipelineData("shiny", shiny);
+      this.currentPokemonSprite.setPipelineData("variant", variant);
+      this.currentPokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
+      this.currentPokemonSprite.setVisible(true);
+      console.timeEnd("display pokemon" + pokemon.name);
+    });
   }
 
   /**

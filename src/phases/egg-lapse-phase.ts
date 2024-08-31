@@ -92,29 +92,29 @@ export class EggLapsePhase extends Phase {
     }
 
     console.time("loading assets " + pokemon.name + " " + eggsRemaining);
-    pokemon.loadAssets().then(() => {
-      this.loadsWaiting--;
-      console.log(this.loadsWaiting);
-      console.timeEnd("loading assets " + pokemon.name  + " " + eggsRemaining);
+    // pokemon.loadAssets().then(() => {
+    this.loadsWaiting--;
+    console.log(this.loadsWaiting);
+    console.timeEnd("loading assets " + pokemon.name  + " " + eggsRemaining);
 
-      if (this.loadsWaiting === 0) {
-        console.timeEnd("hatch eggs");
-        this.showSummary();
-      }
+    if (this.loadsWaiting === 0) {
+      console.timeEnd("hatch eggs");
+      this.showSummary();
+    }
 
-      if (pokemon.species.subLegendary) {
-        this.scene.validateAchv(achvs.HATCH_SUB_LEGENDARY);
-      }
-      if (pokemon.species.legendary) {
-        this.scene.validateAchv(achvs.HATCH_LEGENDARY);
-      }
-      if (pokemon.species.mythical) {
-        this.scene.validateAchv(achvs.HATCH_MYTHICAL);
-      }
-      if (pokemon.isShiny()) {
-        this.scene.validateAchv(achvs.HATCH_SHINY);
-      }
-    });
+    if (pokemon.species.subLegendary) {
+      this.scene.validateAchv(achvs.HATCH_SUB_LEGENDARY);
+    }
+    if (pokemon.species.legendary) {
+      this.scene.validateAchv(achvs.HATCH_LEGENDARY);
+    }
+    if (pokemon.species.mythical) {
+      this.scene.validateAchv(achvs.HATCH_MYTHICAL);
+    }
+    if (pokemon.isShiny()) {
+      this.scene.validateAchv(achvs.HATCH_SHINY);
+    }
+    // });
 
   }
 
