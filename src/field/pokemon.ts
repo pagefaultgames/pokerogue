@@ -251,7 +251,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.shiny = false;
     }
 
-    this.calculateStats();
+    if (!dataSource) {
+      this.calculateStats();
+    }
   }
 
 

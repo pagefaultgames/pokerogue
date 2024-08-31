@@ -12,6 +12,7 @@ import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 import AwaitableUiHandler from "./awaitable-ui-handler";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -106,7 +107,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   render() {
     const ui = this.getUi();
     this.excludedMenus = () => [
-      { condition: ![Mode.COMMAND, Mode.TITLE].includes(ui.getModeChain()[0]), options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
+      { condition: this.scene.getCurrentPhase() instanceof SelectModifierPhase, options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] }
     ];
 
