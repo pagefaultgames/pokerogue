@@ -94,10 +94,26 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     // this.currentPokemonSprite.setVisible(false);
     // this.pokemonEggMovesContainer.setVisible(false);
     this.getUi().hideTooltip();
-    // TODO clear EggHatchData
-    // TODO back sprites and extra sprites etc.
+    const activeKeys = this.scene.getActiveKeys();
+    // Removing unnecessary sprites from animation manager
+    const animKeys = Object.keys(this.scene.anims["anims"]["entries"]);
+    animKeys.forEach(key => {
+      if (key.startsWith("pkmn__") && !activeKeys.includes(key)) {
+        this.scene.anims.remove(key);
+      }
+    });
+    // Removing unnecessary cries from audio cache
+    const audioKeys = Object.keys(this.scene.cache.audio.entries.entries);
+    audioKeys.forEach(key => {
+      if (key.startsWith("cry/") && !activeKeys.includes(key)) {
+        delete this.scene.cache.audio.entries.entries[key];
+      }
+    });
+    // Clears eggHatchData in EggSummaryUiHandler
+    this.eggHatchData.length = 0;
+    // Removes Pokemon icons in EggSummaryUiHandler
+    this.iconAnimHandler.removeAll();
     console.log("Egg Summary Handler cleared");
-
   }
 
   show(args: any[]): boolean {
