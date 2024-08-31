@@ -3,7 +3,6 @@ import PokemonInfoContainer from "./pokemon-info-container";
 import BattleScene from "../battle-scene";
 import { Gender } from "../data/gender";
 import { Type } from "../data/type";
-import i18next from "i18next";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
 import { speciesEggMoves } from "#app/data/egg-moves.js";
@@ -33,7 +32,6 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
   private pokemonCandyIcon: Phaser.GameObjects.Sprite;
   private pokemonCandyOverlayIcon: Phaser.GameObjects.Sprite;
   private pokemonCandyCountText: Phaser.GameObjects.Text;
-  private assetLoadCancelled: Utils.BooleanHolder | null;
 
   constructor(scene: BattleScene, listContainer : Phaser.GameObjects.Container, x: number = 115, y: number = 9,) {
     super(scene, x, y);
@@ -74,7 +72,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonCandyOverlayIcon.setOrigin(0, 0);
     this.pokemonListContainer.add(this.pokemonCandyOverlayIcon);
 
-    this.pokemonCandyCountText = addTextObject(this.scene, 14, 40, "x0", TextStyle.WINDOW_ALT, { fontSize: "56px" });
+    this.pokemonCandyCountText = addTextObject(this.scene, 14, 40, "x0", TextStyle.SUMMARY, { fontSize: "56px" });
     this.pokemonCandyCountText.setOrigin(0, 0);
     this.pokemonListContainer.add(this.pokemonCandyCountText);
 
@@ -85,11 +83,6 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonEggMovesContainer = this.scene.add.container(0, 200);
     this.pokemonEggMovesContainer.setVisible(false);
     this.pokemonEggMovesContainer.setScale(0.5);
-
-    const eggMovesLabel = addTextObject(this.scene, 70, 0, i18next.t("starterSelectUiHandler:eggMoves"), TextStyle.WINDOW_ALT);
-    eggMovesLabel.setOrigin(0.5, 0);
-
-    this.pokemonEggMovesContainer.add(eggMovesLabel);
 
     for (let m = 0; m < 4; m++) {
       const eggMoveContainer = this.scene.add.container(0, 0 + 6 * m);
@@ -123,15 +116,9 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.currentPokemonSprite.setVisible(false);
   }
 
-  interruptDisplay() {
-    if (this.assetLoadCancelled) {
-      this.assetLoadCancelled.value = true;
-      this.assetLoadCancelled = null;
-    }
-  }
-
   /**
    * Display a given pokemon sprite with animations
+   * @precondition the specific pokemon sprite has already been loaded
    */
   displayPokemon(pokemon: PlayerPokemon) {
     console.time("display pokemon" + pokemon.name);
@@ -141,27 +128,14 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     const formIndex = pokemon.formIndex;
     const shiny = pokemon.shiny;
     const variant = pokemon.variant;
-    const assetLoadCancelled = new Utils.BooleanHolder(false);
-    this.assetLoadCancelled = assetLoadCancelled;
 
-    // species.loadAssets(this.scene, female, formIndex, shiny, variant, true).then(() => {
-    if (assetLoadCancelled.value) {
-      console.log("interrupted");
-      console.timeEnd("display pokemon" + pokemon.name);
-      return;
-    }
-    this.assetLoadCancelled = null;
-    // this.speciesLoaded.set(species.speciesId, true);
-    // redundant setVisible(true) but makes sure sprite is only visible after being rendered (no substitute visible)
-    this.currentPokemonSprite.setVisible(true);
     getPokemonSpeciesForm(species.speciesId, pokemon.formIndex).cry(this.scene);
     this.currentPokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
     this.currentPokemonSprite.setPipelineData("shiny", shiny);
     this.currentPokemonSprite.setPipelineData("variant", variant);
     this.currentPokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
+    this.currentPokemonSprite.setVisible(true);
     console.timeEnd("display pokemon" + pokemon.name);
-    // this.pokemonSprite.setVisible(!this.statsMode);
-    // });
   }
 
   /**

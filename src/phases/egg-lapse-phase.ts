@@ -13,6 +13,7 @@ import { EggHatchData } from "#app/data/egg-hatch-data.js";
 export class EggLapsePhase extends Phase {
 
   private eggHatchData: EggHatchData[] = [];
+  private loadsWaiting: number;
   constructor(scene: BattleScene) {
     super(scene);
   }
@@ -28,6 +29,7 @@ export class EggLapsePhase extends Phase {
     this.eggHatchData= [];
 
     const minEggsToPromptSkip = 5;
+    this.loadsWaiting = eggsToHatch.length;
 
     if (eggsToHatchCount > 0) {
 
@@ -40,18 +42,13 @@ export class EggLapsePhase extends Phase {
             for (const egg of eggsToHatch) {
               this.hatchEggSilently(egg);
             }
-            console.timeEnd("hatch eggs");
-
-            this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
-            this.end();
           }, () => {
             for (const egg of eggsToHatch) {
               this.scene.unshiftPhase(new EggHatchPhase(this.scene, this, egg, eggsToHatchCount));
               eggsToHatchCount--;
             }
+            this.showSummary();
 
-            this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
-            this.end();
           }
           );
         }, 100, true);
@@ -69,6 +66,11 @@ export class EggLapsePhase extends Phase {
     }
   }
 
+  showSummary() {
+    this.scene.unshiftPhase(new EggSummaryPhase(this.scene, this.eggHatchData));
+    this.end();
+  }
+
   /**
    * Hatches an egg and stores it in the local EggHatchData array without animations
    * Also validates the achievements for the hatched pokemon and removes the egg
@@ -77,6 +79,7 @@ export class EggLapsePhase extends Phase {
    */
   hatchEggSilently(egg: Egg) {
     const eggIndex = this.scene.gameData.eggs.findIndex(e => e.id === egg.id);
+    const eggsRemaining = this.scene.gameData.eggs.length;
     if (eggIndex === -1) {
       return this.end();
     }
@@ -88,7 +91,16 @@ export class EggLapsePhase extends Phase {
       pokemon.clearFusionSpecies();
     }
 
+    console.time("loading assets " + pokemon.name + " " + eggsRemaining);
     pokemon.loadAssets().then(() => {
+      this.loadsWaiting--;
+      console.log(this.loadsWaiting);
+      console.timeEnd("loading assets " + pokemon.name  + " " + eggsRemaining);
+
+      if (this.loadsWaiting === 0) {
+        console.timeEnd("hatch eggs");
+        this.showSummary();
+      }
 
       if (pokemon.species.subLegendary) {
         this.scene.validateAchv(achvs.HATCH_SUB_LEGENDARY);
@@ -102,7 +114,6 @@ export class EggLapsePhase extends Phase {
       if (pokemon.isShiny()) {
         this.scene.validateAchv(achvs.HATCH_SHINY);
       }
-
     });
 
   }

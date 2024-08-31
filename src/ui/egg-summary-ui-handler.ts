@@ -296,7 +296,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     const lastCursor = this.cursor;
 
     changed = super.setCursor(cursor);
-    this.infoContainer.interruptDisplay();
 
     if (changed) {
       this.cursorObj.setPosition(114 + 18 * (cursor % 11), 10 + 18 * Math.floor(cursor / 11));
