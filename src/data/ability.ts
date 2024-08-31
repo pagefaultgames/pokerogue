@@ -2410,8 +2410,8 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
    * @returns whether the form change was triggered
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const isCastformWithForecast = pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST;
-    const isCherrimWithFlowerGift = pokemon.species.speciesId === Species.CHERRIM && this.ability === Abilities.FLOWER_GIFT;
+    const isCastformWithForecast = (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST);
+    const isCherrimWithFlowerGift = (pokemon.species.speciesId === Species.CHERRIM && this.ability === Abilities.FLOWER_GIFT);
 
     if (isCastformWithForecast || isCherrimWithFlowerGift) {
       if (simulated) {
@@ -3110,8 +3110,8 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
    * @returns whether the form change was triggered
    */
   applyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
-    const isCastformWithForecast = pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST;
-    const isCherrimWithFlowerGift = pokemon.species.speciesId === Species.CHERRIM && this.ability === Abilities.FLOWER_GIFT;
+    const isCastformWithForecast = (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST);
+    const isCherrimWithFlowerGift = (pokemon.species.speciesId === Species.CHERRIM && this.ability === Abilities.FLOWER_GIFT);
 
     if (isCastformWithForecast || isCherrimWithFlowerGift) {
       if (simulated) {
@@ -4710,8 +4710,8 @@ function setAbilityRevealed(pokemon: Pokemon): void {
  */
 function getPokemonWithWeatherBasedForms(scene: BattleScene) {
   return scene.getField(true).filter(p =>
-    p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM
-    || p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM
+    (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM)
+    || (p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM)
   );
 }
 
