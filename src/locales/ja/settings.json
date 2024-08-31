@@ -99,7 +99,7 @@
   "showBgmBar": "BGMの名前を表示",
   "moveTouchControls": "タッチ移動操作",
   "shopOverlayOpacity": "ショップオーバレイ不透明度",
-  "shopCursorTarget": "ショップでカーソルの初位置",
+  "shopCursorTarget": "ショップカーソル初位置",
   "items": "アイテム",
   "reroll": "選択肢変更",
   "shop": "ショップ",
