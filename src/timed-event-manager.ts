@@ -6,16 +6,19 @@ export enum EventType {
   GENERIC
 }
 
-interface TimedEvent {
+interface EventBanner {
+  bannerFilename?: string;
+  xPosition?: number;
+  yPosition?: number;
+  scale?: number;
+}
+
+interface TimedEvent extends EventBanner {
   name: string;
   eventType: EventType;
   shinyMultiplier?: number;
   startDate: Date;
   endDate: Date;
-  bannerFilename?: string;
-  xPosition?: number;
-  yPosition?: number;
-  scale?: number;
 }
 
 const timedEvents: TimedEvent[] = [
