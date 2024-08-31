@@ -1,6 +1,7 @@
 import { updateUserInfo } from "#app/account";
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
+import { BattleStyle } from "#app/enums/battle-style";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { GameModes, getGameMode } from "#app/game-mode";
@@ -39,6 +40,7 @@ import fs from "fs";
 import { vi } from "vitest";
 import { ClassicModeHelper } from "./helpers/classicModeHelper";
 import { DailyModeHelper } from "./helpers/dailyModeHelper";
+import { ChallengeModeHelper } from "./helpers/challengeModeHelper";
 import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
@@ -56,6 +58,7 @@ export default class GameManager {
   public readonly move: MoveHelper;
   public readonly classicMode: ClassicModeHelper;
   public readonly dailyMode: DailyModeHelper;
+  public readonly challengeMode: ChallengeModeHelper;
   public readonly settings: SettingsHelper;
 
   /**
@@ -76,6 +79,7 @@ export default class GameManager {
     this.move = new MoveHelper(this);
     this.classicMode = new ClassicModeHelper(this);
     this.dailyMode = new DailyModeHelper(this);
+    this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
   }
 
@@ -133,7 +137,7 @@ export default class GameManager {
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
     this.scene.enableTutorials = false;
-    this.scene.gameData.gender = PlayerGender.MALE;
+    this.scene.gameData.gender = PlayerGender.MALE; // set initial player gender
 
   }
 
@@ -170,6 +174,8 @@ export default class GameManager {
   }
 
   /**
+   * @deprecated Use `game.classicMode.startBattle()` or `game.dailyMode.startBattle()` instead
+   *
    * Transitions to the start of a battle.
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
@@ -177,15 +183,17 @@ export default class GameManager {
   async startBattle(species?: Species[]) {
     await this.classicMode.runToSummon(species);
 
-    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.setMode(Mode.MESSAGE);
-      this.endPhase();
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+    if (this.scene.battleStyle === BattleStyle.SWITCH) {
+      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
 
-    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.setMode(Mode.MESSAGE);
-      this.endPhase();
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+    }
 
     await this.phaseInterceptor.to(CommandPhase);
     console.log("==================[New Turn]==================");

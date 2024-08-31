@@ -825,10 +825,7 @@ export default class SummaryUiHandler extends UiHandler {
           biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
           level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
         }),
-        natureFragment:
-          i18next.exists(`pokemonSummary:natureFragment.${rawNature}`) ?
-            i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature }) :
-            nature,
+        natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature })
       });
 
       const memoText = addBBCodeTextObject(this.scene, 7, 113, String(memoString), TextStyle.WINDOW_ALT);
