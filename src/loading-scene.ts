@@ -342,8 +342,8 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
-    initVouchers();
     initAchievements();
+    initVouchers();
     initStatsKeys();
     initPokemonPrevolutions();
     initBiomes();
