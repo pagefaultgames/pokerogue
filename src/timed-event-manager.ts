@@ -157,8 +157,8 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   updateCountdown() {
-    if (this.event!.eventType !== EventType.GENERIC) {
-      this.eventTimerText.setText(this.timeToGo(this.event!.endDate));
+    if (this.event && this.event.eventType !== EventType.GENERIC) {
+      this.eventTimerText.setText(this.timeToGo(this.event.endDate));
     }
   }
 }
