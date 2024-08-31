@@ -553,6 +553,12 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
   return null;
 }
 
+export function debugLog(object: any): void {
+  if ( isLocal || isBeta ) {
+    console.log(object);
+  }
+}
+
 /**
  * Returns if an object is null or undefined
  * @param object
