@@ -464,7 +464,7 @@ export class GameData {
         const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
         const lsItem = localStorage.getItem(lsItemKey);
         if (!lsItem) {
-          localStorage.setItem(lsItemKey, encrypt("", true));
+          localStorage.setItem(lsItemKey, encrypt("", bypassLogin));
         }
 
         this.trainerId = systemData.trainerId;
@@ -594,7 +594,7 @@ export class GameData {
       if (lsItem) {
         const cachedResponse  = lsItem;
         if (cachedResponse) {
-          const runHistory = JSON.parse(decrypt(cachedResponse, true));
+          const runHistory = JSON.parse(decrypt(cachedResponse, bypassLogin));
           return runHistory;
         }
         return {};
@@ -616,7 +616,7 @@ export class GameData {
       if (lsItem) {
         const cachedResponse = lsItem;
         if (cachedResponse) {
-          const runHistory : RunHistoryData = JSON.parse(decrypt(cachedResponse, true));
+          const runHistory : RunHistoryData = JSON.parse(decrypt(cachedResponse, bypassLogin));
           return runHistory;
         }
         return {};
@@ -652,7 +652,7 @@ export class GameData {
       isVictory: isVictory,
       isFavorite: false,
     };
-    localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), true));
+    localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), bypassLogin));
     /**
      * Networking Code DO NOT DELETE
      *
@@ -1368,7 +1368,7 @@ export class GameData {
       } else {
         const data = localStorage.getItem(dataKey);
         if (data) {
-          handleData(decrypt(data, (dataType !== GameDataType.RUN_HISTORY) ? bypassLogin : true));
+          handleData(decrypt(data, bypassLogin));
           // This conditional is necessary because at the moment, run history is stored locally only so it has to be decoded from Base64 as if it was local
         }
         resolve(!!data);
@@ -1437,7 +1437,7 @@ export class GameData {
 
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-                localStorage.setItem(dataKey, encrypt(dataStr, (dataType !== GameDataType.RUN_HISTORY) ? bypassLogin : true));
+                localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {
