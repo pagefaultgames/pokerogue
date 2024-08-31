@@ -151,7 +151,7 @@ export class Egg {
         this.checkForPityTierOverrides(eggOptions.scene!); // TODO: is this bang correct?
       }
 
-      this._id = eggOptions?.id ?? Utils.randSeedInt(EGG_SEED, EGG_SEED * this._tier);
+      this._id = eggOptions?.id ?? Utils.randInt(EGG_SEED, EGG_SEED * this._tier);
 
       this._sourceType = eggOptions?.sourceType ?? undefined;
       this._hatchWaves = eggOptions?.hatchWaves ?? this.getEggTierDefaultHatchWaves();
