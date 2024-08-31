@@ -4498,7 +4498,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
   applyFunc: AbAttrApplyFunc<TAttr>,
   args: any[],
   showAbilityInstant: boolean = false,
-  isQuiet: boolean = false,
+  simulated: boolean = false,
   messages: string[] = [],
 ) {
   for (const passive of [false, true]) {
@@ -4520,32 +4520,30 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
       if (result instanceof Promise) {
         result = await result;
       }
-
+      console.log(args);
       if (result) {
         if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
           pokemon.summonData.abilitiesApplied.push(ability.id);
         }
-        if (pokemon.battleData && !isQuiet && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
+        if (pokemon.battleData && !simulated && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
           pokemon.battleData.abilitiesApplied.push(ability.id);
         }
-        if (attr.showAbility && !isQuiet) {
+        if (attr.showAbility && !simulated) {
           if (showAbilityInstant) {
             pokemon.scene.abilityBar.showAbility(pokemon, passive);
           } else {
             queueShowAbility(pokemon, passive);
           }
         }
-
         const message = attr.getTriggerMessage(pokemon, ability.name, args);
         if (message) {
-          if (!isQuiet) {
+          if (!simulated) {
             pokemon.scene.queueMessage(message);
           }
         }
         messages.push(message!);
       }
     }
-
     pokemon.scene.clearPhaseQueueSplice();
   }
 }
@@ -4670,8 +4668,8 @@ export function applyPostTerrainChangeAbAttrs(attrType: Constructor<PostTerrainC
 }
 
 export function applyCheckTrappedAbAttrs(attrType: Constructor<CheckTrappedAbAttr>,
-  pokemon: Pokemon, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, isQuiet: boolean, messages: string[], simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, simulated, trapped, otherPokemon, args), args, false, isQuiet, messages);
+  pokemon: Pokemon, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, messages: string[], simulated: boolean = false, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, simulated, trapped, otherPokemon, args), args, false, simulated, messages);
 }
 
 export function applyPostBattleAbAttrs(attrType: Constructor<PostBattleAbAttr>,
