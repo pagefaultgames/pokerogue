@@ -5,7 +5,6 @@ import { StatusEffect } from "#app/enums/status-effect";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
@@ -43,11 +42,11 @@ describe("Moves - Burning Jealousy", () => {
   });
 
   it("should burn the opponent if their stats were raised", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BURNING_JEALOUSY));
+    game.move.select(Moves.BURNING_JEALOUSY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -58,12 +57,12 @@ describe("Moves - Burning Jealousy", () => {
     game.override
       .starterSpecies(0)
       .battleType("double");
-    await game.startBattle([Species.FEEBAS, Species.ABRA]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.ABRA]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BURNING_JEALOUSY));
-    game.doAttack(getMovePosition(game.scene, 1, Moves.GROWL));
+    game.move.select(Moves.BURNING_JEALOUSY);
+    game.move.select(Moves.GROWL, 1);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -75,18 +74,18 @@ describe("Moves - Burning Jealousy", () => {
       .enemySpecies(Species.DITTO)
       .enemyAbility(Abilities.IMPOSTER)
       .enemyMoveset(SPLASH_ONLY);
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BURNING_JEALOUSY));
+    game.move.select(Moves.BURNING_JEALOUSY);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.status?.effect).toBeUndefined();
   }, TIMEOUT);
 
   it.skip("should ignore weakness policy", async () => { // TODO: Make this test if WP is implemented
-    await game.startBattle();
+    await game.classicMode.startBattle();
   }, TIMEOUT);
 
   it("should be boosted by Sheer Force even if opponent didn't raise stats", async () => {
@@ -94,9 +93,9 @@ describe("Moves - Burning Jealousy", () => {
       .ability(Abilities.SHEER_FORCE)
       .enemyMoveset(SPLASH_ONLY);
     vi.spyOn(allMoves[Moves.BURNING_JEALOUSY], "calculateBattlePower");
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.BURNING_JEALOUSY));
+    game.move.select(Moves.BURNING_JEALOUSY);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(allMoves[Moves.BURNING_JEALOUSY].calculateBattlePower).toHaveReturnedWith(allMoves[Moves.BURNING_JEALOUSY].power * 5461 / 4096);

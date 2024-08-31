@@ -4,7 +4,6 @@ import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -42,9 +41,9 @@ describe("Moves - Lash Out", () => {
 
   it("should deal double damage if the user's stats were lowered this turn", async () => {
     vi.spyOn(allMoves[Moves.LASH_OUT], "calculateBattlePower");
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.LASH_OUT));
+    game.move.select(Moves.LASH_OUT);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
