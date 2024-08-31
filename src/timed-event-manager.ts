@@ -83,9 +83,9 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    if (this.event) {
+    if (this.event && this.event.bannerFilename) {
       console.log(this.event.bannerFilename);
-      this.banner = new Phaser.GameObjects.Image(this.scene, this.event.xPosition ?? 29, this.event.yPosition ?? 64, this.event.bannerFilename!);
+      this.banner = new Phaser.GameObjects.Image(this.scene, this.event.xPosition ?? 29, this.event.yPosition ?? 64, this.event.bannerFilename);
       this.banner.setName("img-event-banner");
       this.banner.setOrigin(0.08, -0.35);
       this.banner.setScale(this.event.scale ?? 0.18);
