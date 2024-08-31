@@ -1210,6 +1210,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !!this.getTag(GroundedTag) || (!this.isOfType(Type.FLYING, true, true) && !this.hasAbility(Abilities.LEVITATE) && !this.getTag(BattlerTagType.MAGNET_RISEN) && !this.getTag(SemiInvulnerableTag));
   }
 
+  /**
+   * Determines whether this Pokemon is prevented from running or switching due
+   * to effects from moves and/or abilities.
+   * @param trappedAbMessages `string[]` If defined, ability trigger messages
+   * (e.g. from Shadow Tag) are forwarded through this array.
+   * @param simulated `boolean` if `true`, applies abilities via simulated calls.
+   * @returns
+   */
   isTrapped(trappedAbMessages?: string[], simulated: boolean = true): boolean {
     if (this.isOfType(Type.GHOST)) {
       return false;
