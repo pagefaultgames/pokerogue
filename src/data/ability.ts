@@ -4542,7 +4542,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
             pokemon.scene.queueMessage(message);
           }
         }
-        messages.push(message);
+        messages.push(message!);
       }
     }
 
@@ -4671,7 +4671,7 @@ export function applyPostTerrainChangeAbAttrs(attrType: Constructor<PostTerrainC
 
 export function applyCheckTrappedAbAttrs(attrType: Constructor<CheckTrappedAbAttr>,
   pokemon: Pokemon, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, isQuiet: boolean, messages: string[], simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, simulated, trapped, otherPokemon, args), args, false, isQuiet, messages, simulated);
+  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, simulated, trapped, otherPokemon, args), args, false, isQuiet, messages);
 }
 
 export function applyPostBattleAbAttrs(attrType: Constructor<PostBattleAbAttr>,
