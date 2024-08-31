@@ -39,7 +39,7 @@ describe("Moves - Retaliate", () => {
     vi.spyOn(retaliate, "calculateBattlePower");
     await game.startBattle([Species.ABRA, Species.COBALION]);
     game.move.select(Moves.RETALIATE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(retaliate.calculateBattlePower).toHaveLastReturnedWith(70);
     game.doSelectPartyPokemon(1);
 
