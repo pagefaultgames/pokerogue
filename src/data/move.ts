@@ -3,8 +3,8 @@ import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, TrappedTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
-import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects} from "./status-effect";
-import { getTypeResistances, Type } from "./type";
+import { StatusEffect, getStatusEffectHealText, isNonVolatileStatusEffect, getNonVolatileStatusEffects } from "./status-effect";
+import { getTypeDamageMultiplier, Type } from "./type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
@@ -37,6 +37,9 @@ import { StatChangePhase } from "#app/phases/stat-change-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "./pokemon-forms";
+import { NumberHolder } from "#app/utils";
+import { GameMode } from "#app/game-mode";
+import { applyChallenges, ChallengeType } from "./challenge";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -4180,8 +4183,12 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
     if (target.isOfType(Type.WATER)) {
-      multiplier.value *= 4; // Increased twice because initial reduction against water
-      return true;
+      const effectivenessAgainstWater = new Utils.NumberHolder(getTypeDamageMultiplier(move.type, Type.WATER));
+      applyChallenges(user.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstWater);
+      if (effectivenessAgainstWater.value !== 0) {
+        multiplier.value *= 2 / effectivenessAgainstWater.value;
+        return true;
+      }
     }
 
     return false;
@@ -6203,7 +6210,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
     const userTypes = user.getTypes();
-    const validTypes = getTypeResistances(moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
+    const validTypes = this.getTypeResistances(user.scene.gameMode, moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
     if (!validTypes.length) {
       return false;
     }
@@ -6213,6 +6220,25 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
     user.updateInfo();
 
     return true;
+  }
+
+  /**
+   * Retrieve the types resisting a given type. Used by Conversion 2
+   * @returns An array populated with Types, or an empty array if no resistances exist (Unknown or Stellar type)
+   */
+  getTypeResistances(gameMode: GameMode, type: number): Type[] {
+    const typeResistances: Type[] = [];
+
+    for (let i = 0; i < Object.keys(Type).length; i++) {
+      const multiplier = new NumberHolder(1);
+      multiplier.value = getTypeDamageMultiplier(type, i);
+      applyChallenges(gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
+      if (multiplier.value < 1) {
+        typeResistances.push(i);
+      }
+    }
+
+    return typeResistances;
   }
 
   getCondition(): MoveConditionFunc {
@@ -6854,7 +6880,16 @@ export function initMoves() {
       .attr(ExposedMoveAttr, BattlerTagType.IGNORE_GHOST),
     new SelfStatusMove(Moves.DESTINY_BOND, Type.GHOST, -1, 5, -1, 0, 2)
       .ignoresProtect()
-      .attr(DestinyBondAttr),
+      .attr(DestinyBondAttr)
+      .condition((user, target, move) => {
+        // Retrieves user's previous move, returns empty array if no moves have been used
+        const lastTurnMove = user.getLastXMoves(1);
+        // Checks last move and allows destiny bond to be used if:
+        // - no previous moves have been made
+        // - the previous move used was not destiny bond
+        // - the previous move was unsuccessful
+        return lastTurnMove.length === 0 || lastTurnMove[0].move !== move.id || lastTurnMove[0].result !== MoveResult.SUCCESS;
+      }),
     new StatusMove(Moves.PERISH_SONG, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(FaintCountdownAttr)
       .ignoresProtect()
@@ -7931,7 +7966,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.FREEZE_DRY, Type.ICE, MoveCategory.SPECIAL, 70, 100, 20, 10, 0, 6)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
-      .attr(WaterSuperEffectTypeMultiplierAttr),
+      .attr(WaterSuperEffectTypeMultiplierAttr)
+      .partial(), // This currently just multiplies the move's power instead of changing its effectiveness. It also doesn't account for abilities that modify type effectiveness such as tera shell.
     new AttackMove(Moves.DISARMING_VOICE, Type.FAIRY, MoveCategory.SPECIAL, 40, -1, 15, -1, 0, 6)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
