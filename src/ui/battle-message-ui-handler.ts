@@ -21,6 +21,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   public movesWindowContainer: Phaser.GameObjects.Container;
   public nameBoxContainer: Phaser.GameObjects.Container;
 
+  public readonly wordWrapWidth: number = 1780;
+
   constructor(scene: BattleScene) {
     super(scene, Mode.MESSAGE);
   }
@@ -63,7 +65,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     const message = addTextObject(this.scene, 0, 0, "", TextStyle.MESSAGE, {
       maxLines: 2,
       wordWrap: {
-        width: 1780
+        width: this.wordWrapWidth
       }
     });
     messageContainer.add(message);
@@ -129,7 +131,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
     this.commandWindow.setVisible(false);
     this.movesWindowContainer.setVisible(false);
-    this.message.setWordWrapWidth(1780);
+    this.message.setWordWrapWidth(this.wordWrapWidth);
 
     return true;
   }
@@ -161,7 +163,9 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   }
 
   showDialogue(text: string, name?: string, delay?: integer | null, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
-    name && this.showNameText(name);
+    if (name) {
+      this.showNameText(name);
+    }
     super.showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
@@ -252,9 +256,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
           textStyle = TextStyle.SUMMARY_GREEN;
         }
       } else {
-        textStyle = TextStyle.SUMMARY;
+        textStyle = TextStyle.WINDOW;
       }
-      //const textStyle: TextStyle = isBetter ? TextStyle.SUMMARY_GREEN : TextStyle.SUMMARY;
       const color = getTextColor(textStyle, false, uiTheme);
       return `[color=${color}][shadow=${getTextColor(textStyle, true, uiTheme)}]${text}[/shadow][/color]`;
     };
