@@ -1369,7 +1369,6 @@ export class GameData {
         const data = localStorage.getItem(dataKey);
         if (data) {
           handleData(decrypt(data, bypassLogin));
-          // This conditional is necessary because at the moment, run history is stored locally only so it has to be decoded from Base64 as if it was local
         }
         resolve(!!data);
       }
