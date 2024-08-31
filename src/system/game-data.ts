@@ -464,7 +464,7 @@ export class GameData {
         const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
         const lsItem = localStorage.getItem(lsItemKey);
         if (!lsItem) {
-          localStorage.setItem(lsItemKey, encrypt("", bypassLogin));
+          localStorage.setItem(lsItemKey, "");
         }
 
         this.trainerId = systemData.trainerId;
