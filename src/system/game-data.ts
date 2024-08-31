@@ -1418,9 +1418,6 @@ export class GameData {
                   const entryKeys = Object.keys(data[key]);
                   valid = ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
                 });
-                if (valid) {
-                  localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, dataStr);
-                }
                 break;
               case GameDataType.SETTINGS:
               case GameDataType.TUTORIALS:
@@ -1440,7 +1437,7 @@ export class GameData {
 
             this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
               this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-                localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
+                localStorage.setItem(dataKey, encrypt(dataStr, (dataType !== GameDataType.RUN_HISTORY) ? bypassLogin : true));
 
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {
