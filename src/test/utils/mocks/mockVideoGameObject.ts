@@ -1,6 +1,7 @@
 import { vi } from "vitest";
 import { MockGameObject } from "./mockGameObject";
 
+/** Mocks video-related stuff */
 export class MockVideoGameObject implements MockGameObject {
   constructor() {}
 
