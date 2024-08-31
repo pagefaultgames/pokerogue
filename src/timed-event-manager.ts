@@ -83,38 +83,40 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    console.log(this.event?.bannerFilename);
-    this.banner = new Phaser.GameObjects.Image(this.scene, this.event!.xPosition ?? 29, this.event!.yPosition ?? 64, this.event!.bannerFilename!); // TODO: are the bangs correct here?
-    this.banner.setName("img-event-banner");
-    this.banner.setOrigin(0.08, -0.35);
-    this.banner.setScale(this.event!.scale ?? 0.18);
-    // this.bannerShadow = new Phaser.GameObjects.Rectangle(
-    //   this.scene,
-    //   this.banner.x - 2,
-    //   this.banner.y + 2,
-    //   this.banner.width,
-    //   this.banner.height,
-    //   0x484848
-    // );
-    // this.bannerShadow.setName("rect-event-banner-shadow");
-    // this.bannerShadow.setScale(0.07);
-    // this.bannerShadow.setAlpha(0.5);
-    // this.bannerShadow.setOrigin(0,0);
-    if (this.event!.eventType !== EventType.GENERIC) {
-      this.eventTimerText = addTextObject(
-        this.scene,
-        this.banner.x + 8,
-        this.banner.y + 100,
-        this.timeToGo(this.event!.endDate), // TODO: is the bang correct here?
-        TextStyle.WINDOW
-      );
-      this.eventTimerText.setName("text-event-timer");
-      this.eventTimerText.setScale(0.15);
-      this.eventTimerText.setOrigin(0, 0);
+    if (this.event) {
+      console.log(this.event.bannerFilename);
+      this.banner = new Phaser.GameObjects.Image(this.scene, this.event.xPosition ?? 29, this.event.yPosition ?? 64, this.event.bannerFilename!);
+      this.banner.setName("img-event-banner");
+      this.banner.setOrigin(0.08, -0.35);
+      this.banner.setScale(this.event.scale ?? 0.18);
+      // this.bannerShadow = new Phaser.GameObjects.Rectangle(
+      //   this.scene,
+      //   this.banner.x - 2,
+      //   this.banner.y + 2,
+      //   this.banner.width,
+      //   this.banner.height,
+      //   0x484848
+      // );
+      // this.bannerShadow.setName("rect-event-banner-shadow");
+      // this.bannerShadow.setScale(0.07);
+      // this.bannerShadow.setAlpha(0.5);
+      // this.bannerShadow.setOrigin(0,0);
+      if (this.event.eventType !== EventType.GENERIC) {
+        this.eventTimerText = addTextObject(
+          this.scene,
+          this.banner.x + 8,
+          this.banner.y + 100,
+          this.timeToGo(this.event.endDate),
+          TextStyle.WINDOW
+        );
+        this.eventTimerText.setName("text-event-timer");
+        this.eventTimerText.setScale(0.15);
+        this.eventTimerText.setOrigin(0, 0);
 
-      this.add(this.eventTimerText);
+        this.add(this.eventTimerText);
+      }
+      this.add(this.banner);
     }
-    this.add(this.banner);
   }
 
   show() {
