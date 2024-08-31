@@ -212,7 +212,7 @@ export class TrappedTag extends BattlerTag {
 
   canAdd(pokemon: Pokemon): boolean {
     const isGhost = pokemon.isOfType(Type.GHOST);
-    const isTrapped = pokemon.getTag(BattlerTagType.TRAPPED);
+    const isTrapped = pokemon.getTag(TrappedTag);
 
     return !isTrapped && !isGhost;
   }
@@ -242,6 +242,23 @@ export class TrappedTag extends BattlerTag {
 
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battlerTags:trappedOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
+  }
+}
+
+/**
+ * BattlerTag implementing No Retreat's trapping effect.
+ * This is treated separately from other trapping effects to prevent
+ * Ghost-type Pokemon from being able to reuse the move.
+ * @extends TrappedTag
+ */
+class NoRetreatTag extends TrappedTag {
+  constructor(sourceId: number) {
+    super(BattlerTagType.NO_RETREAT, BattlerTagLapseType.CUSTOM, 0, Moves.NO_RETREAT, sourceId);
+  }
+
+  /** overrides {@linkcode TrappedTag.apply}, removing the Ghost-type condition */
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.getTag(TrappedTag);
   }
 }
 
@@ -864,7 +881,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isOfType(Type.GHOST) && !pokemon.findTag(t => t instanceof DamagingTrapTag);
+    return !pokemon.getTag(TrappedTag);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1864,6 +1881,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new DrowsyTag();
   case BattlerTagType.TRAPPED:
     return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
+  case BattlerTagType.NO_RETREAT:
+    return new NoRetreatTag(sourceId);
   case BattlerTagType.BIND:
     return new BindTag(turnCount, sourceId);
   case BattlerTagType.WRAP:
