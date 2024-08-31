@@ -33,7 +33,8 @@
     "name": "Essa Doeu Muito!"
   },
   "10000_DMG": {
-    "name": "Essa Doeu Pra Caramba!"
+    "name": "Essa Doeu Pra Caramba!",
+    "name_female": "Essa Doeu Pra Caramba!"
   },
   "HealAchv": {
     "description": "Cure {{healAmount}} {{HP}} de uma vez só com um movimento, habilidade ou item segurado"
@@ -42,16 +43,13 @@
     "name": "Residente"
   },
   "1000_HEAL": {
-    "name": "Enfermeiro",
-    "name_female": "Enfermeira"
+    "name": "Enfermeiro"
   },
   "2500_HEAL": {
-    "name": "Médico",
-    "name_female": "Médica"
+    "name": "Médico"
   },
   "10000_HEAL": {
-    "name": "Médico de Plantão",
-    "name_female": "Médica de Plantão"
+    "name": "Médico de Plantão"
   },
   "LevelAchv": {
     "description": "Aumente o nível de um Pokémon para o Nv{{level}}"
@@ -60,8 +58,7 @@
     "name": "Calma Que Tem Mais!"
   },
   "LV_250": {
-    "name": "Treinador de Elite",
-    "name_female": "Treinadora de Elite"
+    "name": "Treinador de Elite"
   },
   "LV_1000": {
     "name": "Ao Infinito e Além!"
@@ -264,9 +261,5 @@
   "FRESH_START": {
     "name": "De Primeira!",
     "description": "Complete o desafio de novo começo."
-  },
-  "INVERSE_BATTLE": {
-    "name": "A torre da derrotA",
-    "description": "Complete o desafio da Batalha Inversa.\n.asrevnI ahlataB ad oifased o etelpmoC"
   }
 }
