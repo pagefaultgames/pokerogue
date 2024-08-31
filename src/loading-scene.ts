@@ -41,7 +41,6 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
-    this.loadImage("september-update", "events");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
@@ -245,7 +244,12 @@ export class LoadingScene extends SceneBase {
     } else {
       this.loadAtlas("types", "");
     }
-
+    const availableLangs = ["en"];
+    if (lang && availableLangs.includes(lang)) {
+      this.loadImage("september-update-"+lang, "events");
+    } else {
+      this.loadImage("september-update-en", "events");
+    }
 
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");

@@ -1,5 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { TextStyle, addTextObject } from "#app/ui/text.js";
+import BattleScene from "#app/battle-scene";
+import { TextStyle, addTextObject } from "#app/ui/text";
+import i18next from "i18next";
 
 export enum EventType {
   SHINY,
@@ -7,10 +8,11 @@ export enum EventType {
 }
 
 interface EventBanner {
-  bannerFilename?: string;
+  bannerKey?: string;
   xPosition?: number;
   yPosition?: number;
   scale?: number;
+  availableLangs?: string[];
 }
 
 interface TimedEvent extends EventBanner {
@@ -27,10 +29,11 @@ const timedEvents: TimedEvent[] = [
     eventType: EventType.GENERIC,
     startDate: new Date(Date.UTC(2024, 7, 28, 0)),
     endDate: new Date(Date.UTC(2024, 8, 15, 0)),
-    bannerFilename: "september-update",
+    bannerKey: "september-update",
     xPosition: 19,
     yPosition: 115,
-    scale: 0.30
+    scale: 0.30,
+    availableLangs: ["en"]
   }
 ];
 
@@ -68,7 +71,7 @@ export class TimedEventManager {
   }
 
   getEventBannerFilename(): string {
-    return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerFilename!; // TODO: is this bang correct?
+    return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerKey!; // TODO: is this bang correct?
   }
 }
 
@@ -86,9 +89,15 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    if (this.event && this.event.bannerFilename) {
-      console.log(this.event.bannerFilename);
-      this.banner = new Phaser.GameObjects.Image(this.scene, this.event.xPosition ?? 29, this.event.yPosition ?? 64, this.event.bannerFilename);
+    const lang = i18next.resolvedLanguage;
+    if (this.event && this.event.bannerKey) {
+      if (lang && this.event.availableLangs && this.event.availableLangs.length > 0) {
+        if (this.event.availableLangs.includes(lang)) {
+          this.event.bannerKey += "-"+lang;
+        }
+      }
+      console.log(this.event.bannerKey);
+      this.banner = new Phaser.GameObjects.Image(this.scene, this.event.xPosition ?? 29, this.event.yPosition ?? 64, this.event.bannerKey);
       this.banner.setName("img-event-banner");
       this.banner.setOrigin(0.08, -0.35);
       this.banner.setScale(this.event.scale ?? 0.18);
