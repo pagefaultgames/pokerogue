@@ -55,7 +55,7 @@ export const biomeLinks: BiomeLinks = {
   [Biome.GRAVEYARD]: Biome.ABYSS,
   [Biome.DOJO]: [ Biome.PLAINS, [ Biome.JUNGLE, 2], [ Biome.TEMPLE, 2 ] ],
   [Biome.FACTORY]: [ Biome.TALL_GRASS, [ Biome.LABORATORY, 2 ] ],
-  [Biome.RUINS]: [ Biome.FOREST ],
+  [Biome.RUINS]: [ Biome.MOUNTAIN, [ Biome.FOREST, 2 ] ],
   [Biome.WASTELAND]: Biome.BADLANDS,
   [Biome.ABYSS]: [ Biome.CAVE, [ Biome.SPACE, 2 ], [ Biome.WASTELAND, 2 ] ],
   [Biome.SPACE]: Biome.RUINS,
