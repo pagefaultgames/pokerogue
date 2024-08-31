@@ -2912,7 +2912,8 @@
     "effect": "Kommo-o ataca con toda su fuerza al objetivo tras imbuirse del Poder Z. Además, potencia sus propias características."
   },
   "zippyZap": {
-    "name": "Pikaturbo"
+    "name": "Pikaturbo",
+    "effect": "Ataque eléctrico a la velocidad del rayo. Este movimiento tiene prioridad alta y propina golpes críticos."
   },
   "splishySplash": {
     "name": "Salpikasurf",
