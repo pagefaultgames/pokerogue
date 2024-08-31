@@ -1,0 +1,14 @@
+{
+  "mega": "Mega {{pokemonName}}",
+  "mega-x": "Mega {{pokemonName}} X",
+  "mega-y": "Mega {{pokemonName}} Y",
+  "primal": "Primal {{pokemonName}}",
+  "gigantamax": "G-Max {{pokemonName}}",
+  "eternamax": "E-Max {{pokemonName}}",
+  "megaChange": "{{preName}}超級進化成了\n{{pokemonName}}！",
+  "gigantamaxChange": "{{preName}}超極巨化成了\n{{pokemonName}}！",
+  "eternamaxChange": "{{preName}}無極巨化成了\n{{pokemonName}}！",
+  "revertChange": "{{pokemonName}}變回了\n原本的樣子！",
+  "formChange": "{{preName}}變為其他樣子了。",
+  "disguiseChange": "它的畫皮被當作誘餌使用了！"
+}
