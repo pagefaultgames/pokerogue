@@ -1218,16 +1218,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param simulated `boolean` if `true`, applies abilities via simulated calls.
    * @returns
    */
-  isTrapped(trappedAbMessages?: string[], simulated: boolean = true): boolean {
+  isTrapped(trappedAbMessages: string[] = [], simulated: boolean = true): boolean {
     if (this.isOfType(Type.GHOST)) {
       return false;
     }
 
-    const trappedMessages = trappedAbMessages ?? [];
     const trappedByAbility = new Utils.BooleanHolder(false);
 
     this.scene.getEnemyField()!.forEach(enemyPokemon =>
-      applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trappedByAbility, this, trappedMessages, simulated)
+      applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trappedByAbility, this, trappedAbMessages, simulated)
     );
 
     return (trappedByAbility.value || !!this.getTag(TrappedTag));
