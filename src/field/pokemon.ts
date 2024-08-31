@@ -362,7 +362,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   loadAssets(ignoreOverride: boolean = true): Promise<void> {
     return new Promise(resolve => {
+      console.time("total asset loading for " + this.name + (this.shiny ? "" : "shiny"));
       const moveIds = this.getMoveset().map(m => m!.getMove().id); // TODO: is this bang correct?
+      console.time("loading moves " + this.name);
       Promise.allSettled(moveIds.map(m => initMoveAnim(this.scene, m)))
         .then(() => {
           loadMoveAnimAssets(this.scene, moveIds);
@@ -392,10 +394,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             }
             this.playAnim();
             const updateFusionPaletteAndResolve = () => {
+              console.time("fusion loading " + this.name);
               this.updateFusionPalette();
               if (this.summonData?.speciesForm) {
                 this.updateFusionPalette(true);
               }
+              console.timeEnd("fusion loading " + this.name);
+              console.timeEnd("total asset loading for " + this.name + (this.shiny ? "" : "shiny"));
               resolve();
             };
             if (this.shiny) {
