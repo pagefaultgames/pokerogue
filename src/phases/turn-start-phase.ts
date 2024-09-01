@@ -16,7 +16,7 @@ import { MovePhase } from "./move-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { TurnEndPhase } from "./turn-end-phase";
 import { WeatherEffectPhase } from "./weather-effect-phase";
-import {CheckStatusEffectPhase} from "#app/phases/check-status-effect-phase";
+import { CheckStatusEffectPhase } from "#app/phases/check-status-effect-phase";
 
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {

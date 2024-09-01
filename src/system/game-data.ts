@@ -45,8 +45,8 @@ import { TerrainType } from "#app/data/terrain.js";
 import { OutdatedPhase } from "#app/phases/outdated-phase.js";
 import { ReloadSessionPhase } from "#app/phases/reload-session-phase.js";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
-import {TagAddedEvent} from "#app/events/arena";
-import {ArenaTrapTag} from "#app/data/arena-tag";
+import { TagAddedEvent } from "#app/events/arena";
+import { ArenaTrapTag } from "#app/data/arena-tag";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
