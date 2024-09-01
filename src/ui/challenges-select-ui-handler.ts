@@ -276,14 +276,10 @@ export default class GameChallengesUiHandler extends UiHandler {
     let success = false;
 
     if (button === Button.CANCEL) {
-      if (this.startCursor.visible) {
-        this.startCursor.setVisible(false);
-        this.cursorObj?.setVisible(true);
-      } else {
-        this.scene.clearPhaseQueue();
-        this.scene.pushPhase(new TitlePhase(this.scene));
-        this.scene.getCurrentPhase()?.end();
-      }
+
+      this.scene.clearPhaseQueue();
+      this.scene.pushPhase(new TitlePhase(this.scene));
+      this.scene.getCurrentPhase()?.end();
       success = true;
     } else if (button === Button.SUBMIT || button === Button.ACTION) {
       if (this.hasSelectedChallenge) {
