@@ -40,7 +40,7 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
     }
 
     const starterCosts: integer[] = [];
-    starterCosts.push(Math.round(3.5 + Math.abs(Utils.randSeedGauss(1))));
+    starterCosts.push(Math.min(Math.round(3.5 + Math.abs(Utils.randSeedGauss(1))), 8));
     starterCosts.push(Utils.randSeedInt(9 - starterCosts[0], 1));
     starterCosts.push(10 - (starterCosts[0] + starterCosts[1]));
 
