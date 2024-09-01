@@ -2241,13 +2241,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         console.log(`crit stage: +${critLevel.value}`);
         const critChance = [24, 8, 2, 1][Math.max(0, Math.min(critLevel.value, 3))];
         isCritical = critChance === 1 || !this.scene.randBattleSeedInt(critChance);
+      }
 
-        const noCritTag = this.scene.arena.getTagOnSide(NoCritTag, defendingSide);
-        const blockCrit = new Utils.BooleanHolder(false);
-        applyAbAttrs(BlockCritAbAttr, this, null, false, blockCrit);
-        if (noCritTag || blockCrit.value || Overrides.NEVER_CRIT_OVERRIDE) {
-          isCritical = false;
-        }
+      const noCritTag = this.scene.arena.getTagOnSide(NoCritTag, defendingSide);
+      const blockCrit = new Utils.BooleanHolder(false);
+      applyAbAttrs(BlockCritAbAttr, this, null, false, blockCrit);
+      if (noCritTag || blockCrit.value || Overrides.NEVER_CRIT_OVERRIDE) {
+        isCritical = false;
       }
 
       const { cancelled, result, damage: dmg } = this.getAttackDamage(source, move, false, isCritical, false);
