@@ -28,7 +28,6 @@ export default class GameChallengesUiHandler extends UiHandler {
 
   private descriptionText: BBCodeText;
 
-
   private challengeLabels: Array<{ label: Phaser.GameObjects.Text, value: Phaser.GameObjects.Text }>;
   private monoTypeValue: Phaser.GameObjects.Sprite;
 
