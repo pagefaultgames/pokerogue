@@ -39,12 +39,13 @@ import { Species } from "#enums/species";
 import {Button} from "#enums/buttons";
 import { EggSourceType } from "#app/enums/egg-source-types.js";
 import AwaitableUiHandler from "./awaitable-ui-handler";
-import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType } from "./dropdown";
+import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "./dropdown";
 import { StarterContainer } from "./starter-container";
 import { DropDownColumn, FilterBar } from "./filter-bar";
 import { ScrollBar } from "./scroll-bar";
 import { SelectChallengePhase } from "#app/phases/select-challenge-phase.js";
 import { TitlePhase } from "#app/phases/title-phase.js";
+import { Abilities } from "#app/enums/abilities";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -501,11 +502,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     // sort filter
     const sortOptions = [
-      new DropDownOption(this.scene, 0, new DropDownLabel(i18next.t("filterBar:sortByNumber"), undefined, DropDownState.ON)),
-      new DropDownOption(this.scene, 1, new DropDownLabel(i18next.t("filterBar:sortByCost"))),
-      new DropDownOption(this.scene, 2, new DropDownLabel(i18next.t("filterBar:sortByCandies"))),
-      new DropDownOption(this.scene, 3, new DropDownLabel(i18next.t("filterBar:sortByIVs"))),
-      new DropDownOption(this.scene, 4, new DropDownLabel(i18next.t("filterBar:sortByName")))
+      new DropDownOption(this.scene, SortCriteria.NUMBER, new DropDownLabel(i18next.t("filterBar:sortByNumber"), undefined, DropDownState.ON)),
+      new DropDownOption(this.scene, SortCriteria.COST, new DropDownLabel(i18next.t("filterBar:sortByCost"))),
+      new DropDownOption(this.scene, SortCriteria.CANDY, new DropDownLabel(i18next.t("filterBar:sortByCandies"))),
+      new DropDownOption(this.scene, SortCriteria.IV, new DropDownLabel(i18next.t("filterBar:sortByIVs"))),
+      new DropDownOption(this.scene, SortCriteria.NAME, new DropDownLabel(i18next.t("filterBar:sortByName")))
     ];
     this.filterBar.addFilter(DropDownColumn.SORT, i18next.t("filterBar:sortFilter"), new DropDown(this.scene, 0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
     this.filterBarContainer.add(this.filterBar);
@@ -2363,6 +2364,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       // First, ensure you have the caught attributes for the species else default to bigint 0
       const caughtAttr = this.scene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
       const starterData = this.scene.gameData.starterData[container.species.speciesId];
+      const isStarterProgressable = speciesEggMoves.hasOwnProperty(container.species.speciesId);
 
       // Gen filter
       const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
@@ -2398,7 +2400,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.ON) {
           return isPassiveUnlocked;
         } else if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.EXCLUDE) {
-          return !isPassiveUnlocked;
+          return isStarterProgressable && !isPassiveUnlocked;
         } else if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.UNLOCKABLE) {
           return isPassiveUnlockable;
         } else if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.OFF) {
@@ -2413,7 +2415,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.ON) {
           return isCostReduced;
         } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.EXCLUDE) {
-          return !isCostReduced;
+          return isStarterProgressable && !isCostReduced;
         } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.UNLOCKABLE) {
           return isCostReductionUnlockable;
         } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.OFF) {
@@ -2450,12 +2452,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       });
 
       // HA Filter
+      const speciesHasHiddenAbility = container.species.abilityHidden !== container.species.ability1 && container.species.abilityHidden !== Abilities.NONE;
       const hasHA = starterData.abilityAttr & AbilityAttr.ABILITY_HIDDEN;
       const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {
           return hasHA;
         } else if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.EXCLUDE) {
-          return !hasHA;
+          return speciesHasHiddenAbility && !hasHA;
         } else if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.OFF) {
           return true;
         }
@@ -2467,7 +2470,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (misc.val === "EGG" && misc.state === DropDownState.ON) {
           return isEggPurchasable;
         } else if (misc.val === "EGG" && misc.state === DropDownState.EXCLUDE) {
-          return !isEggPurchasable;
+          return isStarterProgressable && !isEggPurchasable;
         } else if (misc.val === "EGG" && misc.state === DropDownState.OFF) {
           return true;
         }
@@ -2498,19 +2501,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       switch (sort.val) {
       default:
         break;
-      case 0:
+      case SortCriteria.NUMBER:
         return (a.species.speciesId - b.species.speciesId) * -sort.dir;
-      case 1:
+      case SortCriteria.COST:
         return (a.cost - b.cost) * -sort.dir;
-      case 2:
+      case SortCriteria.CANDY:
         const candyCountA = this.scene.gameData.starterData[a.species.speciesId].candyCount;
         const candyCountB = this.scene.gameData.starterData[b.species.speciesId].candyCount;
         return (candyCountA - candyCountB) * -sort.dir;
-      case 3:
+      case SortCriteria.IV:
         const avgIVsA = this.scene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0) / this.scene.gameData.dexData[a.species.speciesId].ivs.length;
         const avgIVsB = this.scene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0) / this.scene.gameData.dexData[b.species.speciesId].ivs.length;
         return (avgIVsA - avgIVsB) * -sort.dir;
-      case 4:
+      case SortCriteria.NAME:
         return a.species.name.localeCompare(b.species.name) * -sort.dir;
       }
       return 0;
