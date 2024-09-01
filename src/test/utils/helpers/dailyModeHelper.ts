@@ -1,4 +1,3 @@
-
 import { BattleStyle } from "#app/enums/battle-style";
 import { Button } from "#app/enums/buttons";
 import overrides from "#app/overrides";

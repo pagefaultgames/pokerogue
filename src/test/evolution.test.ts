@@ -1,9 +1,11 @@
 import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#app/data/pokemon-evolutions";
 import { Abilities } from "#app/enums/abilities";
+import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { SPLASH_ONLY } from "./utils/testUtils";
 
 describe("Evolution", () => {
   let phaserGame: Phaser.Game;
@@ -89,4 +91,61 @@ describe("Evolution", () => {
 
     expect(speciesFormEvo.wildDelay).toBe(SpeciesWildEvolutionDelay.NONE);
   });
+
+  it("should increase both HP and max HP when evolving", async () => {
+    game.override.moveset([Moves.SURF])
+      .enemySpecies(Species.GOLEM)
+      .enemyMoveset(SPLASH_ONLY)
+      .startingWave(21)
+      .startingLevel(16)
+      .enemyLevel(50);
+
+    await game.startBattle([Species.TOTODILE]);
+
+    const totodile = game.scene.getPlayerPokemon()!;
+    const hpBefore = totodile.hp;
+
+    expect(totodile.hp).toBe(totodile.getMaxHp());
+
+    const golem = game.scene.getEnemyPokemon()!;
+    golem.hp = 1;
+
+    expect(golem.hp).toBe(1);
+
+    game.move.select(Moves.SURF);
+    await game.phaseInterceptor.to("EndEvolutionPhase");
+
+    expect(totodile.hp).toBe(totodile.getMaxHp());
+    expect(totodile.hp).toBeGreaterThan(hpBefore);
+  }, TIMEOUT);
+
+  it("should not fully heal HP when evolving", async () => {
+    game.override.moveset([Moves.SURF])
+      .enemySpecies(Species.GOLEM)
+      .enemyMoveset(SPLASH_ONLY)
+      .startingWave(21)
+      .startingLevel(13)
+      .enemyLevel(30);
+
+    await game.startBattle([Species.CYNDAQUIL]);
+
+    const cyndaquil = game.scene.getPlayerPokemon()!;
+    cyndaquil.hp = Math.floor(cyndaquil.getMaxHp() / 2);
+    const hpBefore = cyndaquil.hp;
+    const maxHpBefore = cyndaquil.getMaxHp();
+
+    expect(cyndaquil.hp).toBe(Math.floor(cyndaquil.getMaxHp() / 2));
+
+    const golem = game.scene.getEnemyPokemon()!;
+    golem.hp = 1;
+
+    expect(golem.hp).toBe(1);
+
+    game.move.select(Moves.SURF);
+    await game.phaseInterceptor.to("EndEvolutionPhase");
+
+    expect(cyndaquil.getMaxHp()).toBeGreaterThan(maxHpBefore);
+    expect(cyndaquil.hp).toBeGreaterThan(hpBefore);
+    expect(cyndaquil.hp).toBeLessThan(cyndaquil.getMaxHp());
+  }, TIMEOUT);
 });
