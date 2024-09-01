@@ -221,10 +221,14 @@ export default class GameChallengesUiHandler extends UiHandler {
 
     this.hasSelectedChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
     if (this.hasSelectedChallenge) {
+
+      this.startCursor.setVisible(true);
       this.startText.setText(i18next.t("common:start"));
       this.startText.setAlpha(1);
       this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
     } else {
+
+      this.startCursor.setVisible(false);
       this.startText.setText(i18next.t("challenges:noneSelected"));
       this.startText.setAlpha(0.5);
       this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
@@ -283,8 +287,6 @@ export default class GameChallengesUiHandler extends UiHandler {
       success = true;
     } else if (button === Button.SUBMIT || button === Button.ACTION) {
       if (this.hasSelectedChallenge) {
-        this.startCursor.setVisible(true);
-        this.cursorObj?.setVisible(false);
         if (this.startCursor.visible) {
           this.scene.unshiftPhase(new SelectStarterPhase(this.scene));
           this.scene.getCurrentPhase()?.end();
