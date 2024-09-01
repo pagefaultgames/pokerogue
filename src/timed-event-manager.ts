@@ -33,7 +33,7 @@ const timedEvents: TimedEvent[] = [
     xPosition: 19,
     yPosition: 115,
     scale: 0.30,
-    availableLangs: ["en"]
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es", "pt_BR", "zh_CN"]
   }
 ];
 
@@ -94,6 +94,8 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
       if (lang && this.event.availableLangs && this.event.availableLangs.length > 0) {
         if (this.event.availableLangs.includes(lang)) {
           this.event.bannerKey += "-"+lang;
+        } else {
+          this.event.bannerKey += "-en";
         }
       }
       console.log(this.event.bannerKey);

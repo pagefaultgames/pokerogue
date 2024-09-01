@@ -244,7 +244,7 @@ export class LoadingScene extends SceneBase {
     } else {
       this.loadAtlas("types", "");
     }
-    const availableLangs = ["en"];
+    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt_BR", "zh_CN"];
     if (lang && availableLangs.includes(lang)) {
       this.loadImage("september-update-"+lang, "events");
     } else {
