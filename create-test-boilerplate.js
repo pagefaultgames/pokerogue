@@ -4,6 +4,9 @@ import { fileURLToPath } from 'url';
 
 /**
  * This script creates a test boilerplate file for a move or ability.
+ * @param {string} type - The type of test to create. Either "move" or "ability".
+ * @param {string} fileName - The name of the file to create.
+ * @example npm run create-test move tackle
  */
 
 // Get the directory name of the current module file
