@@ -222,13 +222,11 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.hasSelectedChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
     if (this.hasSelectedChallenge) {
 
-      this.startCursor.setVisible(true);
       this.startText.setText(i18next.t("common:start"));
       this.startText.setAlpha(1);
       this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
     } else {
 
-      this.startCursor.setVisible(false);
       this.startText.setText(i18next.t("challenges:noneSelected"));
       this.startText.setAlpha(0.5);
       this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
@@ -276,85 +274,92 @@ export default class GameChallengesUiHandler extends UiHandler {
     let success = false;
 
     if (button === Button.CANCEL) {
-
-      this.scene.clearPhaseQueue();
-      this.scene.pushPhase(new TitlePhase(this.scene));
-      this.scene.getCurrentPhase()?.end();
+      if (this.startCursor.visible) {
+        this.startCursor.setVisible(false);
+        this.cursorObj?.setVisible(true);
+      } else {
+        this.scene.clearPhaseQueue();
+        this.scene.pushPhase(new TitlePhase(this.scene));
+        this.scene.getCurrentPhase()?.end();
+      }
       success = true;
     } else if (button === Button.SUBMIT || button === Button.ACTION) {
       if (this.hasSelectedChallenge) {
         if (this.startCursor.visible) {
           this.scene.unshiftPhase(new SelectStarterPhase(this.scene));
           this.scene.getCurrentPhase()?.end();
-          success = true;
-        } else  {
-          success = false;
+        } else {
+          this.startCursor.setVisible(true);
+          this.cursorObj?.setVisible(false);
         }
+        success = true;
       } else {
         success = false;
       }
     } else {
-      switch (button) {
-      case Button.UP:
-        if (this.cursor === 0) {
-          if (this.scrollCursor === 0) {
-            // When at the top of the menu and pressing UP, move to the bottommost item.
-            if (this.scene.gameMode.challenges.length > rowsToDisplay) { // If there are more than 9 challenges, scroll to the bottom
-              // First, set the cursor to the last visible element, preparing for the scroll to the end.
-              const successA = this.setCursor(rowsToDisplay - 1);
-              // Then, adjust the scroll to display the bottommost elements of the menu.
-              const successB = this.setScrollCursor(this.scene.gameMode.challenges.length - rowsToDisplay);
-              success = successA && successB; // success is just there to play the little validation sound effect
-            } else { // If there are 9 or less challenges, just move to the bottom one
-              success = this.setCursor(this.scene.gameMode.challenges.length - 1);
+      if (this.cursorObj?.visible && !this.startCursor.visible) {
+        switch (button) {
+        case Button.UP:
+          if (this.cursor === 0) {
+            if (this.scrollCursor === 0) {
+              // When at the top of the menu and pressing UP, move to the bottommost item.
+              if (this.scene.gameMode.challenges.length > rowsToDisplay) { // If there are more than 9 challenges, scroll to the bottom
+                // First, set the cursor to the last visible element, preparing for the scroll to the end.
+                const successA = this.setCursor(rowsToDisplay - 1);
+                // Then, adjust the scroll to display the bottommost elements of the menu.
+                const successB = this.setScrollCursor(this.scene.gameMode.challenges.length - rowsToDisplay);
+                success = successA && successB; // success is just there to play the little validation sound effect
+              } else { // If there are 9 or less challenges, just move to the bottom one
+                success = this.setCursor(this.scene.gameMode.challenges.length - 1);
+              }
+            } else {
+              success = this.setScrollCursor(this.scrollCursor - 1);
             }
           } else {
-            success = this.setScrollCursor(this.scrollCursor - 1);
+            success = this.setCursor(this.cursor - 1);
           }
-        } else {
-          success = this.setCursor(this.cursor - 1);
-        }
-        if (success) {
-          this.updateText();
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor === rowsToDisplay - 1) {
-          if (this.scrollCursor < this.scene.gameMode.challenges.length - rowsToDisplay) {
-            // When at the bottom and pressing DOWN, scroll if possible.
-            success = this.setScrollCursor(this.scrollCursor + 1);
+          if (success) {
+            this.updateText();
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor === rowsToDisplay - 1) {
+            if (this.scrollCursor < this.scene.gameMode.challenges.length - rowsToDisplay) {
+              // When at the bottom and pressing DOWN, scroll if possible.
+              success = this.setScrollCursor(this.scrollCursor + 1);
+            } else {
+              // When at the bottom of a scrolling menu and pressing DOWN, move to the topmost item.
+              // First, set the cursor to the first visible element, preparing for the scroll to the top.
+              const successA = this.setCursor(0);
+              // Then, adjust the scroll to display the topmost elements of the menu.
+              const successB = this.setScrollCursor(0);
+              success = successA && successB; // success is just there to play the little validation sound effect
+            }
+          } else if (this.scene.gameMode.challenges.length < rowsToDisplay && this.cursor === this.scene.gameMode.challenges.length - 1) {
+            // When at the bottom of a non-scrolling menu and pressing DOWN, move to the topmost item.
+            success = this.setCursor(0);
           } else {
-            // When at the bottom of a scrolling menu and pressing DOWN, move to the topmost item.
-            // First, set the cursor to the first visible element, preparing for the scroll to the top.
-            const successA = this.setCursor(0);
-            // Then, adjust the scroll to display the topmost elements of the menu.
-            const successB = this.setScrollCursor(0);
-            success = successA && successB; // success is just there to play the little validation sound effect
+            success = this.setCursor(this.cursor + 1);
           }
-        } else if (this.scene.gameMode.challenges.length < rowsToDisplay && this.cursor === this.scene.gameMode.challenges.length - 1) {
-          // When at the bottom of a non-scrolling menu and pressing DOWN, move to the topmost item.
-          success = this.setCursor(0);
-        } else {
-          success = this.setCursor(this.cursor + 1);
+          if (success) {
+            this.updateText();
+          }
+          break;
+        case Button.LEFT:
+          // Moves the option cursor left, if possible.
+          success = this.getActiveChallenge().decreaseValue();
+          if (success) {
+            this.updateText();
+          }
+          break;
+        case Button.RIGHT:
+          // Moves the option cursor right, if possible.
+          success = this.getActiveChallenge().increaseValue();
+          if (success) {
+            this.updateText();
+          }
+          break;
         }
-        if (success) {
-          this.updateText();
-        }
-        break;
-      case Button.LEFT:
-        // Moves the option cursor left, if possible.
-        success = this.getActiveChallenge().decreaseValue();
-        if (success) {
-          this.updateText();
-        }
-        break;
-      case Button.RIGHT:
-        // Moves the option cursor right, if possible.
-        success = this.getActiveChallenge().increaseValue();
-        if (success) {
-          this.updateText();
-        }
-        break;
       }
     }
 
