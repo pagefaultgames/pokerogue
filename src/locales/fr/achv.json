@@ -33,8 +33,7 @@
     "name": "Distributeur de pains"
   },
   "10000_DMG": {
-    "name": "One Punch Man",
-    "name_female": "One Punch Woman"
+    "name": "One Punch Man"
   },
   "HealAchv": {
     "description": "Soigner {{healAmount}} {{HP}} en une fois avec une capacité,\nun talent ou un objet tenu."
