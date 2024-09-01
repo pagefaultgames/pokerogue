@@ -1982,7 +1982,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * - `result`: {@linkcode HitResult} indicates the attack's type effectiveness.
    * - `damage`: `number` the attack's final damage output.
    */
-  getAttackDamage(source: Pokemon, move: Move, ignoreAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): DamageCalculationResult {
+  getAttackDamage(source: Pokemon, move: Move, ignoreAbility: boolean = false, ignoreSourceAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): DamageCalculationResult {
     const damage = new Utils.NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
@@ -2000,9 +2000,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * The effectiveness of the move being used. Along with type matchups, this
      * accounts for changes in effectiveness from the move's attributes and the
      * abilities of both the source and this Pokemon.
+     *
+     * Note that the source's abilities are not ignored here
      */
     const typeMultiplier = this.getMoveEffectiveness(source, move, ignoreAbility, simulated, cancelled);
-
 
     const isPhysical = moveCategory === MoveCategory.PHYSICAL;
     const sourceTeraType = source.getTeraType();
@@ -2055,15 +2056,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * The attacker's offensive stat for the given move's category.
      * Critical hits ignore negative stat stages.
      */
-    const sourceAtk = new Utils.NumberHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, false, ignoreAbility, isCritical, simulated));
+    const sourceAtk = new Utils.NumberHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, ignoreSourceAbility, ignoreAbility, isCritical, simulated));
     applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
 
     /**
      * This Pokemon's defensive stat for the given move's category.
      * Critical hits ignore positive stat stages.
      */
-    const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, ignoreAbility, false, isCritical, simulated));
+    const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, ignoreAbility, ignoreSourceAbility, isCritical, simulated));
     applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
+
+    /**
+     * The attack's base damage, as determined by the source's level, move power
+     * and Attack stat as well as this Pokemon's Defense stat
+     */
+    const baseDamage = ((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2;
 
     // ------ END BASE DAMAGE MULTIPLIERS ------
 
@@ -2074,7 +2081,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** 0.25x multiplier if this is an added strike from the attacker's Parental Bond */
     const parentalBondMultiplier = new Utils.NumberHolder(1);
-    applyPreAttackAbAttrs(AddSecondStrikeAbAttr, source, this, move, simulated, numTargets, new Utils.IntegerHolder(0), parentalBondMultiplier);
+    if (!ignoreSourceAbility) {
+      applyPreAttackAbAttrs(AddSecondStrikeAbAttr, source, this, move, simulated, numTargets, new Utils.IntegerHolder(0), parentalBondMultiplier);
+    }
 
     /** Doubles damage if this Pokemon's last move was Glaive Rush */
     const glaiveRushMultiplier = new Utils.IntegerHolder(1);
@@ -2103,7 +2112,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       stabMultiplier.value += 0.5;
     }
 
-    applyAbAttrs(StabBoostAbAttr, source, null, simulated, stabMultiplier);
+    if (!ignoreSourceAbility) {
+      applyAbAttrs(StabBoostAbAttr, source, null, simulated, stabMultiplier);
+    }
 
     if (sourceTeraType !== Type.UNKNOWN && matchesSourceType) {
       stabMultiplier.value = Math.min(stabMultiplier.value + 0.5, 2.25);
@@ -2114,7 +2125,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
       if (!move.hasAttr(BypassBurnDamageReductionAttr)) {
         const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
-        applyAbAttrs(BypassBurnDamageReductionAbAttr, source, burnDamageReductionCancelled, simulated);
+        if (!ignoreSourceAbility) {
+          applyAbAttrs(BypassBurnDamageReductionAbAttr, source, burnDamageReductionCancelled, simulated);
+        }
         if (!burnDamageReductionCancelled.value) {
           burnMultiplier.value = 0.5;
         }
@@ -2143,22 +2156,26 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ? 0.5
       : 1;
 
-    damage.value = Utils.toDmgValue((((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2)
-                            * targetMultiplier
-                            * parentalBondMultiplier.value
-                            * arenaAttackTypeMultiplier.value
-                            * glaiveRushMultiplier.value
-                            * criticalMultiplier.value
-                            * randomMultiplier
-                            * stabMultiplier.value
-                            * typeMultiplier
-                            * burnMultiplier.value
-                            * screenMultiplier.value
-                            * hitsTagMultiplier.value
-                            * mistyTerrainMultiplier);
+    damage.value = Utils.toDmgValue(
+      baseDamage
+      * targetMultiplier
+      * parentalBondMultiplier.value
+      * arenaAttackTypeMultiplier.value
+      * glaiveRushMultiplier.value
+      * criticalMultiplier.value
+      * randomMultiplier
+      * stabMultiplier.value
+      * typeMultiplier
+      * burnMultiplier.value
+      * screenMultiplier.value
+      * hitsTagMultiplier.value
+      * mistyTerrainMultiplier
+    );
 
     /** Doubles damage if the attacker has Tinted Lens and is using a resisted move */
-    applyPreAttackAbAttrs(DamageBoostAbAttr, source, this, move, simulated, damage);
+    if (!ignoreSourceAbility) {
+      applyPreAttackAbAttrs(DamageBoostAbAttr, source, this, move, simulated, damage);
+    }
 
     /** Apply the enemy's Damage and Resistance tokens */
     if (!source.isPlayer()) {
@@ -2250,7 +2267,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         isCritical = false;
       }
 
-      const { cancelled, result, damage: dmg } = this.getAttackDamage(source, move, false, isCritical, false);
+      const { cancelled, result, damage: dmg } = this.getAttackDamage(source, move, false, false, isCritical, false);
 
       const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === source.getMoveType(move)) as TypeBoostTag;
       if (typeBoost?.oneUse) {
