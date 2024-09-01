@@ -37,7 +37,7 @@ export default class GameChallengesUiHandler extends UiHandler {
   private startBg: Phaser.GameObjects.NineSlice;
   private startCursor: Phaser.GameObjects.NineSlice;
   private startText: Phaser.GameObjects.Text;
-  private hasActiveChallenge: boolean;
+  private hasSelectedChallenge: boolean;
 
   private optionsWidth: number;
 
@@ -220,8 +220,8 @@ export default class GameChallengesUiHandler extends UiHandler {
       this.monoTypeValue.setVisible(false);
     }
 
-    this.hasActiveChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
-    if (this.hasActiveChallenge) {
+    this.hasSelectedChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
+    if (this.hasSelectedChallenge) {
       this.startText.setText(i18next.t("common:start"));
       this.startText.setAlpha(1);
       this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
@@ -243,7 +243,7 @@ export default class GameChallengesUiHandler extends UiHandler {
 
     this.startCursor.setVisible(false);
     this.challengesContainer.setVisible(true);
-    this.hasActiveChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
+    this.hasSelectedChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
     this.setCursor(0);
 
     this.initLabels();
@@ -283,7 +283,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       }
       success = true;
     } else if (button === Button.SUBMIT || button === Button.ACTION) {
-      if (this.hasActiveChallenge) {
+      if (this.hasSelectedChallenge) {
         this.startCursor.setVisible(true);
         this.cursorObj?.setVisible(false);
         if (this.startCursor.visible) {
