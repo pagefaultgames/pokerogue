@@ -17,6 +17,12 @@ body {
   background: #484050;
 }
 
+@media (display-mode: fullscreen) {
+  body {
+    background: #000000;
+  }
+}
+
 #links {
   width: 90%;
   text-align: center;
@@ -142,10 +148,10 @@ input:-internal-autofill-selected {
 
 /* Show cycle buttons only on STARTER_SELECT and on touch configuration panel */
 #touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadOpenFilters,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleForm,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleShiny,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleForm,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleShiny,
 #touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleNature,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleAbility,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleAbility,
 #touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleGender,
 #touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleVariant {
  display: none;

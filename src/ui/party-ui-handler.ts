@@ -1,4 +1,3 @@
-import { CommandPhase, SelectModifierPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import Pokemon, { MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
@@ -6,7 +5,7 @@ import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { PokemonBaseStatModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
+import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
 import { allMoves, ForceSwitchOutAttr } from "../data/move";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
@@ -23,6 +22,8 @@ import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase.js";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
@@ -988,14 +989,8 @@ export default class PartyUiHandler extends MessageUiHandler {
       optionText.setOrigin(0, 0);
 
       /** For every item that has stack bigger than 1, display the current quantity selection */
-      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && this.transferQuantitiesMax[option] > 1) {
-        const itemModifier = itemModifiers[option];
-
-        /** Not sure why getMaxHeldItemCount had an error, but it only checks the Pokemon parameter if the modifier is PokemonBaseStatModifier */
-        if (itemModifier === undefined || itemModifier instanceof PokemonBaseStatModifier) {
-          continue;
-        }
-
+      const itemModifier = itemModifiers[option];
+      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && this.transferQuantitiesMax[option] > 1 && !this.transferMode && itemModifier !== undefined && itemModifier.type.name === optionName) {
         let amountText = ` (${this.transferQuantities[option]})`;
 
         /** If the amount held is the maximum, display the count in red */
