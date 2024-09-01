@@ -90,9 +90,7 @@ export class EggLapsePhase extends Phase {
       pokemon.clearFusionSpecies();
     }
 
-    // pokemon.loadAssets().then(() => {
     this.loadsWaiting--;
-    console.log(this.loadsWaiting);
 
     if (this.loadsWaiting === 0) {
       console.timeEnd("hatch eggs");
@@ -110,7 +108,6 @@ export class EggLapsePhase extends Phase {
     if (pokemon.isShiny()) {
       this.scene.validateAchv(achvs.HATCH_SHINY);
     }
-    // });
 
   }
 

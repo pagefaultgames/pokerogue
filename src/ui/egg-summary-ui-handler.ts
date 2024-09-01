@@ -156,7 +156,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchBg.setVisible(true);
 
     this.infoContainer.hideDisplayPokemon();
-    console.time("display icons");
 
     this.eggHatchData.forEach( (value: EggHatchData, i: number) => {
       const x = (i % 11) * 18;
@@ -191,6 +190,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       const variant = displayPokemon.variant;
       const isShiny = displayPokemon.shiny;
 
+      // set pokemon icon (and replace with base sprite if there is a mismatch)
       const icon = this.scene.add.sprite(x-2, y+2, species.getIconAtlasKey(formIndex, isShiny, variant));
       icon.setScale(0.5);
       icon.setOrigin(0, 0);
@@ -239,7 +239,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       em.setVisible(value.eggMoveUnlocked);
       this.pokemonIconsContainer.add(em);
     });
-    console.timeEnd("display icons");
 
     this.setCursor(0);
 
