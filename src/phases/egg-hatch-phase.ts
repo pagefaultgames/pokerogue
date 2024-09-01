@@ -359,7 +359,6 @@ export class EggHatchPhase extends Phase {
             });
           });
         }, null, true, 3000);
-        //this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
       });
     });
     this.scene.tweens.add({

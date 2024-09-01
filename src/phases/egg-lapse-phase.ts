@@ -91,7 +91,6 @@ export class EggLapsePhase extends Phase {
     }
 
     this.loadsWaiting--;
-
     if (this.loadsWaiting === 0) {
       console.timeEnd("hatch eggs");
     }

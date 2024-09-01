@@ -1627,14 +1627,13 @@ export class GameData {
       };
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
-        if (showMessage) {
-          this.scene.playSound("level_up_fanfare");
-          console.log(`${species.name} has been\nadded as a starter!`);
-          this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
-          console.log("show text passed");
-        } else {
+        if (!showMessage) {
           resolve();
+          return;
         }
+        this.scene.playSound("level_up_fanfare");
+        console.log(`${species.name} has been\nadded as a starter!`);
+        this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
       } else {
         checkPrevolution();
       }
@@ -1698,16 +1697,15 @@ export class GameData {
       }
 
       this.starterData[speciesId].eggMoves |= value;
-
-      if (showMessage) {
-        this.scene.playSound("level_up_fanfare");
-        const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
-        this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, (() => {
-          resolve(true);
-        }), null, true);
-      } else {
+      if (!showMessage) {
         resolve(true);
+        return;
       }
+      this.scene.playSound("level_up_fanfare");
+      const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
+      this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, (() => {
+        resolve(true);
+      }), null, true);
     });
   }
 

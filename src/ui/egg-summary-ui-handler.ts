@@ -21,13 +21,10 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
   private pokemonListContainer: Phaser.GameObjects.Container;
   private pokemonIconSpritesContainer: Phaser.GameObjects.Container;
   private pokemonIconsContainer: Phaser.GameObjects.Container;
-  private eggListMessageBoxContainer: Phaser.GameObjects.Container;
   private eggHatchContainer: Phaser.GameObjects.Container;
   private eggHatchBg: Phaser.GameObjects.Image;
 
-
   private infoContainer: PokemonHatchInfoContainer;
-
 
   private cursorObj: Phaser.GameObjects.Image;
 
@@ -91,9 +88,9 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.pokemonIconSpritesContainer.removeAll(true);
     this.pokemonIconsContainer.removeAll(true);
     this.eggHatchBg.setVisible(false);
-    // this.currentPokemonSprite.setVisible(false);
-    // this.pokemonEggMovesContainer.setVisible(false);
     this.getUi().hideTooltip();
+
+
     const activeKeys = this.scene.getActiveKeys();
     // Removing unnecessary sprites from animation manager
     const animKeys = Object.keys(this.scene.anims["anims"]["entries"]);
@@ -125,7 +122,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
 
     if (args.length >= 1) {
-      // this.pokemonHatched = args[0];
       this.eggHatchData = args[0].sort(function sortHatchData(a: EggHatchData, b: EggHatchData) {
         const speciesA = a.pokemon.species;
         const speciesB = b.pokemon.species;
@@ -146,7 +142,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
       );
     }
-    // this.pokemonHatched = [];
 
     this.getUi().bringToTop(this.pokemonListContainer);
 
