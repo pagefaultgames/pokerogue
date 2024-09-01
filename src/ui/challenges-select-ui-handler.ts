@@ -219,6 +219,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       this.monoTypeValue.setVisible(false);
     }
 
+    // This checks if a challenge has been selected by the user and updates the text/its opacity accordingly.
     this.hasSelectedChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
     if (this.hasSelectedChallenge) {
 
@@ -244,6 +245,7 @@ export default class GameChallengesUiHandler extends UiHandler {
 
     this.startCursor.setVisible(false);
     this.challengesContainer.setVisible(true);
+    // Should always be false at the start
     this.hasSelectedChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
     this.setCursor(0);
 
@@ -275,6 +277,7 @@ export default class GameChallengesUiHandler extends UiHandler {
 
     if (button === Button.CANCEL) {
       if (this.startCursor.visible) {
+        // If the user presses cancel when the start cursor has been activated, the game deactivates the start cursor and allows typical challenge selection behavior
         this.startCursor.setVisible(false);
         this.cursorObj?.setVisible(true);
       } else {
