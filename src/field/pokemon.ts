@@ -18,7 +18,7 @@ import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { BattleStat } from "../data/battle-stat";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag, DragonCheerTag, CritBoostTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
@@ -2064,9 +2064,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               critLevel.value += 1;
             }
           }
-          if (source.getTag(BattlerTagType.CRIT_BOOST)) {
-            critLevel.value += 2;
+
+          const critBoostTag = source.getTag(CritBoostTag);
+          if (critBoostTag) {
+            if (critBoostTag instanceof DragonCheerTag) {
+              critLevel.value += critBoostTag.typesOnAdd.includes(Type.DRAGON) ? 2 : 1;
+            } else {
+              critLevel.value += 2;
+            }
           }
+
           console.log(`crit stage: +${critLevel.value}`);
           const critChance = [24, 8, 2, 1][Math.max(0, Math.min(critLevel.value, 3))];
           isCritical = critChance === 1 || !this.scene.randBattleSeedInt(critChance);
