@@ -4,7 +4,6 @@ import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import Overrides from "#app/overrides";
 
 describe("Learn Move Phase", () => {
   let phaserGame: Phaser.Game;
@@ -22,7 +21,7 @@ describe("Learn Move Phase", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    Overrides.XP_MULTIPLIER_OVERRIDE = 50;
+    game.override.xpMultiplier(50);
   });
 
   it("If Pokemon has less than 4 moves, its newest move will be added to the lowest empty index", async () => {
