@@ -10,13 +10,14 @@ import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
+import { LevelCapPhase } from "#app/phases/level-cap-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MessagePhase } from "#app/phases/message-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
-import { NewBiomeEncounterPhase } from "#app/phases/new-biome-encounter-phase.js";
+import { NewBiomeEncounterPhase } from "#app/phases/new-biome-encounter-phase";
 import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
@@ -98,6 +99,7 @@ export default class PhaseInterceptor {
     [PartyHealPhase, this.startPhase],
     [EvolutionPhase, this.startPhase],
     [EndEvolutionPhase, this.startPhase],
+    [LevelCapPhase, this.startPhase],
   ];
 
   private endBySetMode = [

@@ -45,6 +45,7 @@ import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
 import { ReloadHelper } from "./helpers/reloadHelper";
+import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -235,12 +236,12 @@ export default class GameManager {
     this.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
       handler.processInput(Button.CANCEL);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase), true);
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase) || this.isCurrentPhase(CheckSwitchPhase), true);
 
     this.onNextPrompt("SelectModifierPhase", Mode.CONFIRM, () => {
       const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
       handler.processInput(Button.ACTION);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase));
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase) || this.isCurrentPhase(CheckSwitchPhase));
   }
 
   forceOpponentToSwitch() {

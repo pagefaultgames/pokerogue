@@ -1,11 +1,10 @@
-import { Species } from "#app/enums/species.js";
-import { GameModes, getGameMode } from "#app/game-mode.js";
+import { Species } from "#app/enums/species";
+import { GameModes } from "#app/game-mode";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "./utils/testUtils";
-import { Moves } from "#app/enums/moves.js";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
-import { DamagePhase } from "#app/phases/damage-phase.js";
+import { Moves } from "#app/enums/moves";
+import { Biome } from "#app/enums/biome";
 
 describe("Reload", () => {
   let phaserGame: Phaser.Game;
@@ -39,21 +38,22 @@ describe("Reload", () => {
 
   it("should not have RNG inconsistencies after a biome switch", async () => {
     game.override
-      .startingWave(15)
+      .startingWave(10)
+      .startingBiome(Biome.CAVE) // Will lead to biomes with randomly generated weather
       .battleType("single")
       .startingLevel(100)
       .enemyLevel(1000)
       .disableTrainerWaves()
       .moveset([Moves.KOWTOW_CLEAVE])
       .enemyMoveset(SPLASH_ONLY);
-    await game.classicMode.startBattle();
-    game.scene.gameMode = getGameMode(GameModes.ENDLESS);
+    await game.dailyMode.startBattle();
 
-    // Transition from Wave 15 to Wave 16 in order to trigger biome switch
+    // Transition from Daily Run Wave 10 to Wave 11 in order to trigger biome switch
     game.move.select(Moves.KOWTOW_CLEAVE);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(DamagePhase);
+    await game.phaseInterceptor.to("DamagePhase");
     await game.doKillOpponents();
     await game.toNextWave();
+    expect(game.phaseInterceptor.log).toContain("NewBiomeEncounterPhase");
 
     const preReloadRngState = Phaser.Math.RND.state();
 
