@@ -91,7 +91,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   setup() {
     const lang = i18next.resolvedLanguage;
     if (this.event && this.event.bannerKey) {
-      const key = this.event.bannerKey;
+      let key = this.event.bannerKey;
       if (lang && this.event.availableLangs && this.event.availableLangs.length > 0) {
         if (this.event.availableLangs.includes(lang)) {
           key += "-"+lang;
