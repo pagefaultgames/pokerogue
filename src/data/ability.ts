@@ -5025,7 +5025,7 @@ export function initAbilities() {
       .attr(AlwaysHitAbAttr)
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.STALL, 4)
-      .attr(ChangeMovePriorityAbAttr, (pokemon, move: Move) => true, -0.5),
+      .attr(ChangeMovePriorityAbAttr, (pokemon, move: Move) => true, -0.2),
     new Ability(Abilities.TECHNICIAN, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
         const power = new Utils.NumberHolder(move.power);
@@ -5713,7 +5713,7 @@ export function initAbilities() {
       .partial() // Healing not blocked by Heal Block
       .ignorable(),
     new Ability(Abilities.MYCELIUM_MIGHT, 9)
-      .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS, -0.5)
+      .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS, -0.2)
       .attr(PreventBypassSpeedChanceAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS)
       .attr(MoveAbilityBypassAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS),
     new Ability(Abilities.MINDS_EYE, 9)
