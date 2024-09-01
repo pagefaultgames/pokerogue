@@ -6,7 +6,9 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { DamagePhase } from "#app/phases/damage-phase";
 import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
+import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MessagePhase } from "#app/phases/message-phase";
@@ -92,6 +94,8 @@ export default class PhaseInterceptor {
     [SwitchPhase, this.startPhase],
     [SwitchSummonPhase, this.startPhase],
     [PartyHealPhase, this.startPhase],
+    [EvolutionPhase, this.startPhase],
+    [EndEvolutionPhase, this.startPhase],
   ];
 
   private endBySetMode = [
