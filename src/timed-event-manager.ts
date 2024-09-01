@@ -91,15 +91,16 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   setup() {
     const lang = i18next.resolvedLanguage;
     if (this.event && this.event.bannerKey) {
+      const key = this.event.bannerKey;
       if (lang && this.event.availableLangs && this.event.availableLangs.length > 0) {
         if (this.event.availableLangs.includes(lang)) {
-          this.event.bannerKey += "-"+lang;
+          key += "-"+lang;
         } else {
-          this.event.bannerKey += "-en";
+          key += "-en";
         }
       }
       console.log(this.event.bannerKey);
-      this.banner = new Phaser.GameObjects.Image(this.scene, this.event.xPosition ?? 29, this.event.yPosition ?? 64, this.event.bannerKey);
+      this.banner = new Phaser.GameObjects.Image(this.scene, this.event.xPosition ?? 29, this.event.yPosition ?? 64, key);
       this.banner.setName("img-event-banner");
       this.banner.setOrigin(0.08, -0.35);
       this.banner.setScale(this.event.scale ?? 0.18);
