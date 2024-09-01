@@ -822,11 +822,11 @@ export class DrowsyTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    const checkTerrain = pokemon.scene.arena.terrain?.terrainType !== TerrainType.ELECTRIC || !pokemon.isGrounded();
-    if (checkTerrain === false) {
+    const isNotElectricTerrainProtected = pokemon.scene.arena.terrain?.terrainType !== TerrainType.ELECTRIC || !pokemon.isGrounded();
+    if (!isNotElectricTerrainProtected) {
       pokemon.scene.queueMessage(i18next.t("terrain:defaultBlockMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), terrainName: getTerrainName(TerrainType.ELECTRIC) }));
     }
-    return checkTerrain;
+    return isNotElectricTerrainProtected;
   }
 
   onAdd(pokemon: Pokemon): void {
