@@ -5,13 +5,13 @@ import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import {Button} from "#enums/buttons";
 import i18next from "i18next";
-import { Challenge } from "#app/data/challenge.js";
+import { Challenge } from "#app/data/challenge";
 import * as Utils from "../utils";
-import { Challenges } from "#app/enums/challenges.js";
+import { Challenges } from "#app/enums/challenges";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { Color, ShadowColor } from "#app/enums/color.js";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
-import { TitlePhase } from "#app/phases/title-phase.js";
+import { Color, ShadowColor } from "#app/enums/color";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase";
+import { TitlePhase } from "#app/phases/title-phase";
 
 /**
  * Handles all the UI for choosing optional challenges.
@@ -28,12 +28,16 @@ export default class GameChallengesUiHandler extends UiHandler {
 
   private descriptionText: BBCodeText;
 
+
   private challengeLabels: Array<{ label: Phaser.GameObjects.Text, value: Phaser.GameObjects.Text }>;
   private monoTypeValue: Phaser.GameObjects.Sprite;
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
 
+  private startBg: Phaser.GameObjects.NineSlice;
   private startCursor: Phaser.GameObjects.NineSlice;
+  private startText: Phaser.GameObjects.Text;
+  private hasActiveChallenge: boolean;
 
   private optionsWidth: number;
 
@@ -104,20 +108,20 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.descriptionText.setShadow(4, 5, ShadowColor.ORANGE);
     this.descriptionText.setOrigin(0, 0);
 
-    const startBg = addWindow(this.scene, 0, 0, descriptionBg.width, 24);
-    startBg.setName("window-start-bg");
-    startBg.setOrigin(0, 0);
-    startBg.setPositionRelative(descriptionBg, 0, descriptionBg.height);
+    this.startBg = addWindow(this.scene, 0, 0, descriptionBg.width, 24);
+    this.startBg.setName("window-start-bg");
+    this.startBg.setOrigin(0, 0);
+    this.startBg.setPositionRelative(descriptionBg, 0, descriptionBg.height);
 
-    const startText = addTextObject(this.scene, 0, 0, i18next.t("common:start"), TextStyle.SETTINGS_LABEL);
-    startText.setName("text-start");
-    startText.setOrigin(0, 0);
-    startText.setPositionRelative(startBg, (startBg.width - startText.displayWidth) / 2, 4);
+    this.startText = addTextObject(this.scene, 0, 0, i18next.t("challenges:noneSelected"), TextStyle.SETTINGS_LABEL);
+    this.startText.setName("text-start");
+    this.startText.setOrigin(0, 0);
+    this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
 
     this.startCursor = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, descriptionBg.width - 8, 16, 1, 1, 1, 1);
     this.startCursor.setName("9s-start-cursor");
     this.startCursor.setOrigin(0, 0);
-    this.startCursor.setPositionRelative(startBg, 4, 3);
+    this.startCursor.setPositionRelative(this.startBg, 4, 3);
     this.startCursor.setVisible(false);
 
     this.valuesContainer = this.scene.add.container(0, 0);
@@ -157,8 +161,8 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.challengesContainer.add(this.optionsBg);
     this.challengesContainer.add(descriptionBg);
     this.challengesContainer.add(this.descriptionText);
-    this.challengesContainer.add(startBg);
-    this.challengesContainer.add(startText);
+    this.challengesContainer.add(this.startBg);
+    this.challengesContainer.add(this.startText);
     this.challengesContainer.add(this.startCursor);
     this.challengesContainer.add(this.valuesContainer);
 
@@ -216,6 +220,18 @@ export default class GameChallengesUiHandler extends UiHandler {
       this.monoTypeValue.setVisible(false);
     }
 
+    this.hasActiveChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
+    if (this.hasActiveChallenge) {
+      this.startText.setText(i18next.t("common:start"));
+      this.startText.setAlpha(1);
+      this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
+    } else {
+      this.startText.setText(i18next.t("challenges:noneSelected"));
+      this.startText.setAlpha(0.5);
+      this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
+    }
+    this.challengesContainer.update();
+
     // const totalDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getDifficulty(), 0);
     // const totalMinDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getMinDifficulty(), 0);
     // this.difficultyText.text = `${totalDifficulty}` + (totalMinDifficulty ? `/${totalMinDifficulty}` : "");
@@ -227,6 +243,7 @@ export default class GameChallengesUiHandler extends UiHandler {
 
     this.startCursor.setVisible(false);
     this.challengesContainer.setVisible(true);
+    this.hasActiveChallenge = this.scene.gameMode.challenges.some(c => c.value !== 0);
     this.setCursor(0);
 
     this.initLabels();
@@ -266,20 +283,18 @@ export default class GameChallengesUiHandler extends UiHandler {
       }
       success = true;
     } else if (button === Button.SUBMIT || button === Button.ACTION) {
-      if (this.startCursor.visible) {
-        const totalDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getDifficulty(), 0);
-        const totalMinDifficulty = this.scene.gameMode.challenges.reduce((v, c) => v + c.getMinDifficulty(), 0);
-        if (totalDifficulty >= totalMinDifficulty) {
+      if (this.hasActiveChallenge) {
+        this.startCursor.setVisible(true);
+        this.cursorObj?.setVisible(false);
+        if (this.startCursor.visible) {
           this.scene.unshiftPhase(new SelectStarterPhase(this.scene));
           this.scene.getCurrentPhase()?.end();
           success = true;
-        } else {
+        } else  {
           success = false;
         }
       } else {
-        this.startCursor.setVisible(true);
-        this.cursorObj?.setVisible(false);
-        success = true;
+        success = false;
       }
     } else {
       switch (button) {
@@ -350,7 +365,6 @@ export default class GameChallengesUiHandler extends UiHandler {
     if (success) {
       ui.playSelect();
     }
-
     return success;
   }
 
