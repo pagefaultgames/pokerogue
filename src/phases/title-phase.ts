@@ -293,7 +293,7 @@ export class TitlePhase extends Phase {
     }
 
     for (const achv of Object.keys(this.scene.gameData.achvUnlocks)) {
-      if (vouchers.hasOwnProperty(achv)) {
+      if (vouchers.hasOwnProperty(achv) && achv !== "CLASSIC_VICTORY") {
         this.scene.validateVoucher(vouchers[achv]);
       }
     }
