@@ -23,7 +23,6 @@ describe("Learn Move Phase", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     Overrides.XP_MULTIPLIER_OVERRIDE = 50;
-    game.override.startingLevel(5);
   });
 
   it("If Pokemon has less than 4 moves, its newest move will be added to the lowest empty index", async () => {
