@@ -4025,7 +4025,7 @@ export class EnemyPokemon extends Pokemon {
          * If there are any moves that can KO an opponent (i.e. a player Pokemon),
          * those moves are the only ones considered for selection on this turn.
          */
-        const killMoves = movePool.filter(pkmnMove => {
+        const koMoves = movePool.filter(pkmnMove => {
           if (!pkmnMove) {
             return false;
           }
@@ -4041,8 +4041,8 @@ export class EnemyPokemon extends Pokemon {
             && moveTargets.some(p => p.getAttackDamage(this, move, !p.battleData.abilityRevealed, false, isCritical).damage >= p.hp);
         }, this);
 
-        if (killMoves.length > 0) {
-          movePool = killMoves;
+        if (koMoves.length > 0) {
+          movePool = koMoves;
         }
 
         /**
