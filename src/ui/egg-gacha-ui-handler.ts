@@ -14,6 +14,8 @@ import { GachaType } from "#app/enums/gacha-types";
 import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
 
+const showFuture: boolean = true;
+
 export default class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaContainer: Phaser.GameObjects.Container;
   private eggGachaMessageBox: Phaser.GameObjects.NineSlice;
@@ -145,7 +147,23 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         pokemonIcon.setScale(0.5);
         pokemonIcon.setOrigin(0, 0.5);
 
+        const pokemonIcon_3 = this.scene.add.sprite(5, pokemonIconY + 13, "pokemon_icons_0");
+        const pokemonIcon_2 = this.scene.add.sprite(-7, pokemonIconY + 15, "pokemon_icons_0");
+        const pokemonIcon_1 = this.scene.add.sprite(-19, pokemonIconY + 13, "pokemon_icons_0");
+        pokemonIcon_1.setScale(0.4);
+        pokemonIcon_1.setOrigin(0, 0.5);
+        pokemonIcon_1.setVisible(showFuture);
+        pokemonIcon_2.setScale(0.4);
+        pokemonIcon_2.setOrigin(0, 0.5);
+        pokemonIcon_2.setVisible(showFuture);
+        pokemonIcon_3.setScale(0.4);
+        pokemonIcon_3.setOrigin(0, 0.5);
+        pokemonIcon_3.setVisible(showFuture);
+
         gachaInfoContainer.add(pokemonIcon);
+        gachaInfoContainer.add(pokemonIcon_1);
+        gachaInfoContainer.add(pokemonIcon_2);
+        gachaInfoContainer.add(pokemonIcon_3);
         break;
       case GachaType.MOVE:
         if (["de", "es", "fr", "pt-BR"].includes(currentLanguage)) {
@@ -547,11 +565,19 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     const infoContainer = this.gachaInfoContainers[gachaType];
     switch (gachaType as GachaType) {
     case GachaType.LEGENDARY:
-      const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(this.scene, new Date().getTime()));
-      const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
-      pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
-      break;
+      this.updateGachaIcon(infoContainer)
+      if (showFuture) {
+        this.updateGachaIcon(infoContainer, 1)
+        this.updateGachaIcon(infoContainer, 2)
+        this.updateGachaIcon(infoContainer, 3)
+      }
     }
+  }
+
+  updateGachaIcon(infoContainer: Phaser.GameObjects.Container, offset: integer = 0): void {
+    const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(this.scene, new Date().getTime() + offset*86400000));
+    const pokemonIcon = infoContainer.getAt(1 + offset) as Phaser.GameObjects.Sprite;
+    pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
   }
 
   consumeVouchers(voucherType: VoucherType, count: integer): void {
