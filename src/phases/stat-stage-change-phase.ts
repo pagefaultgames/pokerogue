@@ -1,13 +1,13 @@
-import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { applyPreStatStageChangeAbAttrs, ProtectStatAbAttr, applyAbAttrs, StatStageChangeMultiplierAbAttr, StatStageChangeCopyAbAttr, applyPostStatStageChangeAbAttrs, PostStatStageChangeAbAttr } from "#app/data/ability";
-import { MistTag, ArenaTagSide } from "#app/data/arena-tag";
+import BattleScene from "#app/battle-scene";
+import { applyAbAttrs, applyPostStatStageChangeAbAttrs, applyPreStatStageChangeAbAttrs, PostStatStageChangeAbAttr, ProtectStatAbAttr, StatStageChangeCopyAbAttr, StatStageChangeMultiplierAbAttr } from "#app/data/ability";
+import { ArenaTagSide, MistTag } from "#app/data/arena-tag";
 import Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ResetNegativeStatStageModifier } from "#app/modifier/modifier";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import i18next from "i18next";
 import * as Utils from "#app/utils";
+import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
 
@@ -83,6 +83,20 @@ export class StatStageChangePhase extends PokemonPhase {
       }
 
       for (const s of filteredStats) {
+        if (stages.value > 0 && pokemon.getStatStage(s) < 6) {
+          if (!pokemon.turnData) {
+            // Temporary fix for missing turn data struct on turn 1
+            pokemon.resetTurnData();
+          }
+          pokemon.turnData.statStagesIncreased = true;
+        } else if (stages.value < 0 && pokemon.getStatStage(s) > -6) {
+          if (!pokemon.turnData) {
+            // Temporary fix for missing turn data struct on turn 1
+            pokemon.resetTurnData();
+          }
+          pokemon.turnData.statStagesDecreased = true;
+        }
+
         pokemon.setStatStage(s, pokemon.getStatStage(s) + stages.value);
       }
 

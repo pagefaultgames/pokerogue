@@ -598,6 +598,6 @@
     "DRAGON_MEMORY": "龙存储碟",
     "DARK_MEMORY": "黑暗存储碟",
     "FAIRY_MEMORY": "妖精存储碟",
-    "BLANK_MEMORY": "空白存储碟"
+    "NORMAL_MEMORY": "一般存储碟"
   }
 }

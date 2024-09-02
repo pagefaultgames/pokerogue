@@ -211,7 +211,7 @@ export class TrappedTag extends BattlerTag {
 
   canAdd(pokemon: Pokemon): boolean {
     const isGhost = pokemon.isOfType(Type.GHOST);
-    const isTrapped = pokemon.getTag(BattlerTagType.TRAPPED);
+    const isTrapped = pokemon.getTag(TrappedTag);
 
     return !isTrapped && !isGhost;
   }
@@ -241,6 +241,23 @@ export class TrappedTag extends BattlerTag {
 
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battlerTags:trappedOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
+  }
+}
+
+/**
+ * BattlerTag implementing No Retreat's trapping effect.
+ * This is treated separately from other trapping effects to prevent
+ * Ghost-type Pokemon from being able to reuse the move.
+ * @extends TrappedTag
+ */
+class NoRetreatTag extends TrappedTag {
+  constructor(sourceId: number) {
+    super(BattlerTagType.NO_RETREAT, BattlerTagLapseType.CUSTOM, 0, Moves.NO_RETREAT, sourceId);
+  }
+
+  /** overrides {@linkcode TrappedTag.apply}, removing the Ghost-type condition */
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.getTag(TrappedTag);
   }
 }
 
@@ -749,7 +766,7 @@ export class OctolockTag extends TrappedTag {
     const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (shouldLapse) {
-      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.DEF, Stat.SPDEF ], -1));
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [ Stat.DEF, Stat.SPDEF ], -1));
       return true;
     }
 
@@ -863,7 +880,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isOfType(Type.GHOST) && !pokemon.findTag(t => t instanceof DamagingTrapTag);
+    return !pokemon.getTag(TrappedTag);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1505,6 +1522,25 @@ export class CritBoostTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag for the effects of Dragon Cheer, which boosts the critical hit ratio of the user's allies.
+ * @extends {CritBoostTag}
+ */
+export class DragonCheerTag extends CritBoostTag {
+  /** The types of the user's ally when the tag is added */
+  public typesOnAdd: Type[];
+
+  constructor() {
+    super(BattlerTagType.CRIT_BOOST, Moves.DRAGON_CHEER);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    this.typesOnAdd = pokemon.getTypes(true);
+  }
+}
+
 export class SaltCuredTag extends BattlerTag {
   private sourceIndex: number;
 
@@ -1862,6 +1898,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new DrowsyTag();
   case BattlerTagType.TRAPPED:
     return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
+  case BattlerTagType.NO_RETREAT:
+    return new NoRetreatTag(sourceId);
   case BattlerTagType.BIND:
     return new BindTag(turnCount, sourceId);
   case BattlerTagType.WRAP:
@@ -1921,6 +1959,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new TypeBoostTag(tagType, sourceMove, Type.FIRE, 1.5, false);
   case BattlerTagType.CRIT_BOOST:
     return new CritBoostTag(tagType, sourceMove);
+  case BattlerTagType.DRAGON_CHEER:
+    return new DragonCheerTag();
   case BattlerTagType.ALWAYS_CRIT:
   case BattlerTagType.IGNORE_ACCURACY:
     return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);

@@ -437,6 +437,6 @@
     "DRAGON_MEMORY": "ROM Dragon",
     "DARK_MEMORY": "ROM Ténèbres",
     "FAIRY_MEMORY": "ROM Fée",
-    "BLANK_MEMORY": "ROM Vierge"
+    "NORMAL_MEMORY": "ROM Normal"
   }
 }

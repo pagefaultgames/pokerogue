@@ -742,7 +742,7 @@
   "plumeria": {
     "encounter": {
       "1": " ...Hmph. You don't look like anything special to me.",
-      "2": "It takes these dumb Grunts way too long to deal with you kids..",
+      "2": "It takes these dumb Grunts way too long to deal with you kids...",
       "3": "Mess with anyone in Team Skull, and I'll show you how serious I can get."
     },
     "victory": {
@@ -1479,21 +1479,21 @@
       "1_female": "I need to see your potential as a Trainer. And, I'll need to see the toughness of the Pokémon that battle with you!",
       "2": "Here goes! These are my rocking Pokémon, my pride and joy!",
       "3": "Rock-type Pokémon are simply the best!",
-      "4": "I need to see your potential as a Trainer. And, I'll need to see the toughness of the Pokémon that battle with you!",
-      "4_female": "I need to see your potential as a Trainer. And, I'll need to see the toughness of the Pokémon that battle with you!"
+      "4": "Every day, I toughened up my Pokémon by digging up Fossils nonstop.\n$Could I show you how tough I made them in a battle?",
+      "4_female": "Every day, I toughened up my Pokémon by digging up Fossils nonstop.\n$Could I show you how tough I made them in a battle?"
     },
     "victory": {
       "1": "W-what? That can't be! My buffed-up Pokémon!",
       "2": "…We lost control there. Next time I'd like to challenge you to a Fossil-digging race underground.",
       "2_female": "…We lost control there. Next time I'd like to challenge you to a Fossil-digging race underground.",
       "3": "With skill like yours, it's natural for you to win.",
-      "4": "Wh-what?! It can't be! Even that wasn't enough?",
-      "5": "I blew it."
+      "4": "Wh-what?! It can't be! Even that wasn't enough?"
     },
     "defeat": {
       "1": "See? I'm proud of my rocking battle style!",
       "2": "Thanks! The battle gave me confidence that I may be able to beat my dad!",
-      "3": "I feel like I just smashed through a really stubborn boulder!"
+      "3": "See? These are my rocking Pokémon, my pride and joy!",
+      "4": "I knew I would win!"
     }
   },
   "morty": {
