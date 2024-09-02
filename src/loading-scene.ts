@@ -41,7 +41,6 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
-    // this.loadImage("pride-update", "events");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
@@ -245,7 +244,12 @@ export class LoadingScene extends SceneBase {
     } else {
       this.loadAtlas("types", "");
     }
-
+    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt_BR", "zh_CN"];
+    if (lang && availableLangs.includes(lang)) {
+      this.loadImage("september-update-"+lang, "events");
+    } else {
+      this.loadImage("september-update-en", "events");
+    }
 
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
@@ -281,8 +285,9 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("xbox", "inputs");
     this.loadAtlas("keyboard", "inputs");
 
-    this.loadSe("select");
-    this.loadSe("menu_open");
+    this.loadSe("select", "ui");
+    this.loadSe("menu_open", "ui");
+    this.loadSe("error", "ui");
     this.loadSe("hit");
     this.loadSe("hit_strong");
     this.loadSe("hit_weak");
@@ -302,7 +307,6 @@ export class LoadingScene extends SceneBase {
     this.loadSe("upgrade");
     this.loadSe("buy");
     this.loadSe("achv");
-    this.loadSe("error");
 
     this.loadSe("pb_rel");
     this.loadSe("pb_throw");
@@ -341,8 +345,8 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
-    initVouchers();
     initAchievements();
+    initVouchers();
     initStatsKeys();
     initPokemonPrevolutions();
     initBiomes();
@@ -460,7 +464,7 @@ export class LoadingScene extends SceneBase {
       intro.play();
     });
 
-    this.load.on(this.LOAD_EVENTS.PROGRESS , (progress: number) => {
+    this.load.on(this.LOAD_EVENTS.PROGRESS, (progress: number) => {
       percentText.setText(`${Math.floor(progress * 100)}%`);
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 0.8);

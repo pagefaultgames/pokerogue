@@ -221,7 +221,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     const pullOptionsText = pullOptions.map(option =>{
       const desc = option.description.split(" ");
       if (desc[0].length < 2) {
-        desc[0] += ["zh", "ko"].includes(resolvedLanguage.substring(0,2)) ? " " : "  ";
+        desc[0] += ["zh", "ko"].includes(resolvedLanguage.substring(0, 2)) ? " " : "  ";
       }
       if (option.multiplier === multiplierOne) {
         desc[0] = " " + desc[0];
@@ -355,11 +355,11 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       this.gachaContainers[this.gachaCursor].moveTo(egg, 2);
 
       const doPullAnim = () => {
-        this.scene.playSound("gacha_running", { loop: true });
+        this.scene.playSound("se/gacha_running", { loop: true });
         this.scene.time.delayedCall(this.getDelayValue(count ? 500 : 1250), () => {
-          this.scene.playSound("gacha_dispense");
+          this.scene.playSound("se/gacha_dispense");
           this.scene.time.delayedCall(this.getDelayValue(750), () => {
-            this.scene.sound.stopByKey("gacha_running");
+            this.scene.sound.stopByKey("se/gacha_running");
             this.scene.tweens.add({
               targets: egg,
               duration: this.getDelayValue(350),
@@ -367,7 +367,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
               ease: "Bounce.easeOut",
               onComplete: () => {
                 this.scene.time.delayedCall(this.getDelayValue(125), () => {
-                  this.scene.playSound("pb_catch");
+                  this.scene.playSound("se/pb_catch");
                   this.gachaHatches[this.gachaCursor].play("open");
                   this.scene.tweens.add({
                     targets: egg,
@@ -405,7 +405,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       };
 
       if (!count) {
-        this.scene.playSound("gacha_dial");
+        this.scene.playSound("se/gacha_dial");
         this.scene.tweens.add({
           targets: this.gachaKnobs[this.gachaCursor],
           duration: this.getDelayValue(350),

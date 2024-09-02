@@ -1,13 +1,13 @@
-import { allMoves } from "#app/data/move.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { BerryPhase, TurnEndPhase } from "#app/phases.js";
+import { allMoves } from "#app/data/move";
+import { Abilities } from "#app/enums/abilities";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout for all tests
 
@@ -47,7 +47,7 @@ describe("Moves - Hyper Beam", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.HYPER_BEAM));
+      game.move.select(Moves.HYPER_BEAM);
 
       await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -62,7 +62,7 @@ describe("Moves - Hyper Beam", () => {
       expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
       expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.move.select(Moves.TACKLE);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

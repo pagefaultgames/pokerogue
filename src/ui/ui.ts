@@ -1,4 +1,4 @@
-import {default as BattleScene} from "../battle-scene";
+import { default as BattleScene } from "../battle-scene";
 import UiHandler from "./ui-handler";
 import BattleMessageUiHandler from "./battle-message-ui-handler";
 import CommandUiHandler from "./command-ui-handler";
@@ -23,8 +23,7 @@ import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
 import EggGachaUiHandler from "./egg-gacha-ui-handler";
-import VouchersUiHandler from "./vouchers-ui-handler";
-import {addWindow} from "./ui-theme";
+import { addWindow } from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
 import LoadingModalUiHandler from "./loading-modal-ui-handler";
@@ -37,8 +36,8 @@ import SavingIconHandler from "./saving-icon-handler";
 import UnavailableModalUiHandler from "./unavailable-modal-ui-handler";
 import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
 import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
-import {Button} from "#enums/buttons";
-import i18next, {ParseKeys} from "i18next";
+import { Button } from "#enums/buttons";
+import i18next from "i18next";
 import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
@@ -47,6 +46,11 @@ import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
 import { PlayerGender } from "#enums/player-gender";
 import BgmBar from "#app/ui/bgm-bar";
 import RenameFormUiHandler from "./rename-form-ui-handler";
+import AdminUiHandler from "./admin-ui-handler";
+import RunHistoryUiHandler from "./run-history-ui-handler";
+import RunInfoUiHandler from "./run-info-ui-handler";
+import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
+import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -75,7 +79,6 @@ export enum Mode {
   KEYBOARD_BINDING,
   ACHIEVEMENTS,
   GAME_STATS,
-  VOUCHERS,
   EGG_LIST,
   EGG_GACHA,
   LOGIN_FORM,
@@ -85,7 +88,12 @@ export enum Mode {
   UNAVAILABLE,
   OUTDATED,
   CHALLENGE_SELECT,
-  RENAME_POKEMON
+  RENAME_POKEMON,
+  RUN_HISTORY,
+  RUN_INFO,
+  TEST_DIALOGUE,
+  AUTO_COMPLETE,
+  ADMIN,
 }
 
 const transitionModes = [
@@ -97,7 +105,8 @@ const transitionModes = [
   Mode.EGG_HATCH_SCENE,
   Mode.EGG_LIST,
   Mode.EGG_GACHA,
-  Mode.CHALLENGE_SELECT
+  Mode.CHALLENGE_SELECT,
+  Mode.RUN_HISTORY,
 ];
 
 const noTransitionModes = [
@@ -115,14 +124,16 @@ const noTransitionModes = [
   Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
   Mode.GAME_STATS,
-  Mode.VOUCHERS,
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
   Mode.OUTDATED,
-  Mode.RENAME_POKEMON
+  Mode.RENAME_POKEMON,
+  Mode.TEST_DIALOGUE,
+  Mode.AUTO_COMPLETE,
+  Mode.ADMIN,
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -174,7 +185,6 @@ export default class UI extends Phaser.GameObjects.Container {
       new KeyboardBindingUiHandler(scene),
       new AchvsUiHandler(scene),
       new GameStatsUiHandler(scene),
-      new VouchersUiHandler(scene),
       new EggListUiHandler(scene),
       new EggGachaUiHandler(scene),
       new LoginFormUiHandler(scene),
@@ -185,6 +195,11 @@ export default class UI extends Phaser.GameObjects.Container {
       new OutdatedModalUiHandler(scene),
       new GameChallengesUiHandler(scene),
       new RenameFormUiHandler(scene),
+      new RunHistoryUiHandler(scene),
+      new RunInfoUiHandler(scene),
+      new TestDialogueUiHandler(scene, Mode.TEST_DIALOGUE),
+      new AutoCompleteUiHandler(scene),
+      new AdminUiHandler(scene),
     ];
   }
 
@@ -287,33 +302,33 @@ export default class UI extends Phaser.GameObjects.Container {
       } else {
         this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
       }
+
     }
   }
 
-  showDialogue(text: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
-    // First get the gender of the player (default male) (also used if UNSET)
-    let playerGenderPrefix = "PGM";
-    if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
-      playerGenderPrefix = "PGF";
-    }
-    // Add the prefix to the text
-    const localizationKey: string = playerGenderPrefix + text;
-
+  showDialogue(keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
+    const battleScene = this.scene as BattleScene;
     // Get localized dialogue (if available)
     let hasi18n = false;
-    if (i18next.exists(localizationKey) ) {
-      text = i18next.t(localizationKey as ParseKeys);
+    let text = keyOrText;
+    const genderIndex = battleScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderStr = PlayerGender[genderIndex].toLowerCase();
+
+    if (i18next.exists(keyOrText) ) {
+      const i18nKey = keyOrText;
       hasi18n = true;
 
+      text = i18next.t(i18nKey, { context: genderStr }); // override text with translation
+
       // Skip dialogue if the player has enabled the option and the dialogue has been already seen
-      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[localizationKey] === true) {
-        console.log(`Dialogue ${localizationKey} skipped`);
+      if (this.shouldSkipDialogue(i18nKey)) {
+        console.log(`Dialogue ${i18nKey} skipped`);
         callback();
         return;
       }
     }
     let showMessageAndCallback = () => {
-      hasi18n && (this.scene as BattleScene).gameData.saveSeenDialogue(localizationKey);
+      hasi18n && battleScene.gameData.saveSeenDialogue(keyOrText);
       callback();
     };
     if (text.indexOf("$") > -1) {
@@ -333,16 +348,11 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  shouldSkipDialogue(text): boolean {
-    let playerGenderPrefix = "PGM";
-    if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
-      playerGenderPrefix = "PGF";
-    }
+  shouldSkipDialogue(i18nKey: string): boolean {
+    const battleScene = this.scene as BattleScene;
 
-    const key = playerGenderPrefix + text;
-
-    if (i18next.exists(key) ) {
-      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[key] === true) {
+    if (i18next.exists(i18nKey) ) {
+      if (battleScene.skipSeenDialogues && battleScene.gameData.getSeenDialogues()[i18nKey] === true) {
         return true;
       }
     }
@@ -395,11 +405,11 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   playSelect(): void {
-    (this.scene as BattleScene).playSound("select");
+    (this.scene as BattleScene).playSound("ui/select");
   }
 
   playError(): void {
-    (this.scene as BattleScene).playSound("error");
+    (this.scene as BattleScene).playSound("ui/error");
   }
 
   fadeOut(duration: integer): Promise<void> {
@@ -452,6 +462,7 @@ export default class UI extends Phaser.GameObjects.Container {
           }
           if (chainMode && this.mode && !clear) {
             this.modeChain.push(this.mode);
+            (this.scene as BattleScene).updateGameInfo();
           }
           this.mode = mode;
           const touchControls = document?.getElementById("touchControls");
@@ -497,6 +508,11 @@ export default class UI extends Phaser.GameObjects.Container {
     return this.setModeInternal(mode, false, false, true, args);
   }
 
+  resetModeChain(): void {
+    this.modeChain = [];
+    (this.scene as BattleScene).updateGameInfo();
+  }
+
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (!this?.modeChain?.length) {
@@ -508,6 +524,7 @@ export default class UI extends Phaser.GameObjects.Container {
       const doRevertMode = () => {
         this.getHandler().clear();
         this.mode = this.modeChain.pop()!; // TODO: is this bang correct?
+        (this.scene as BattleScene).updateGameInfo();
         const touchControls = document.getElementById("touchControls");
         if (touchControls) {
           touchControls.dataset.uiMode = Mode[this.mode];

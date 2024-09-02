@@ -1,13 +1,12 @@
 import { Arena } from "../field/arena";
 import { Type } from "./type";
 import * as Utils from "../utils";
-import { MoveCategory, allMoves, MoveTarget } from "./move";
+import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "./move";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { MoveEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
-import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
 import { BattleStat } from "./battle-stat";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import i18next from "i18next";
@@ -15,6 +14,10 @@ import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
+import { StatChangePhase } from "#app/phases/stat-change-phase.js";
 
 export enum ArenaTagSide {
   BOTH,
@@ -186,20 +189,23 @@ class AuroraVeilTag extends WeakenMoveScreenTag {
   }
 }
 
-type ProtectConditionFunc = (...args: any[]) => boolean;
+type ProtectConditionFunc = (arena: Arena, moveId: Moves) => boolean;
 
 /**
- * Abstract class to implement conditional team protection
+ * Class to implement conditional team protection
  * applies protection based on the attributes of incoming moves
- * @param protectConditionFunc: The function determining if an incoming move is negated
  */
-abstract class ConditionalProtectTag extends ArenaTag {
+export class ConditionalProtectTag extends ArenaTag {
+  /** The condition function to determine which moves are negated */
   protected protectConditionFunc: ProtectConditionFunc;
+  /** Does this apply to all moves, including those that ignore other forms of protection? */
+  protected ignoresBypass: boolean;
 
-  constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, side: ArenaTagSide, condition: ProtectConditionFunc) {
+  constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, side: ArenaTagSide, condition: ProtectConditionFunc, ignoresBypass: boolean = false) {
     super(tagType, 1, sourceMove, sourceId, side);
 
     this.protectConditionFunc = condition;
+    this.ignoresBypass = ignoresBypass;
   }
 
   onAdd(arena: Arena): void {
@@ -213,27 +219,60 @@ abstract class ConditionalProtectTag extends ArenaTag {
    * apply(): Checks incoming moves against the condition function
    * and protects the target if conditions are met
    * @param arena The arena containing this tag
-   * @param args[0] (Utils.BooleanHolder) Signals if the move is cancelled
-   * @param args[1] (Pokemon) The intended target of the move
-   * @param args[2...] (any[]) The parameters to the condition function
+   * @param args\[0\] (Utils.BooleanHolder) Signals if the move is cancelled
+   * @param args\[1\] (Pokemon) The Pokemon using the move
+   * @param args\[2\] (Pokemon) The intended target of the move
+   * @param args\[3\] (Moves) The parameters to the condition function
+   * @param args\[4\] (Utils.BooleanHolder) Signals if the applied protection supercedes protection-ignoring effects
    * @returns
    */
   apply(arena: Arena, args: any[]): boolean {
-    if ((args[0] as Utils.BooleanHolder).value) {
-      return false;
-    }
+    const [ cancelled, user, target, moveId, ignoresBypass ] = args;
 
-    const target = args[1] as Pokemon;
-    if ((this.side === ArenaTagSide.PLAYER) === target.isPlayer()
-         && this.protectConditionFunc(...args.slice(2))) {
-      (args[0] as Utils.BooleanHolder).value = true;
-      new CommonBattleAnim(CommonAnim.PROTECT, target).play(arena.scene);
-      arena.scene.queueMessage(i18next.t("arenaTag:conditionalProtectApply", { moveName: super.getMoveName(), pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
-      return true;
+    if (cancelled instanceof Utils.BooleanHolder
+        && user instanceof Pokemon
+        && target instanceof Pokemon
+        && typeof moveId === "number"
+        && ignoresBypass instanceof Utils.BooleanHolder) {
+
+      if ((this.side === ArenaTagSide.PLAYER) === target.isPlayer()
+          && this.protectConditionFunc(arena, moveId)) {
+        if (!cancelled.value) {
+          cancelled.value = true;
+          user.stopMultiHit(target);
+
+          new CommonBattleAnim(CommonAnim.PROTECT, target).play(arena.scene);
+          arena.scene.queueMessage(i18next.t("arenaTag:conditionalProtectApply", { moveName: super.getMoveName(), pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+        }
+
+        ignoresBypass.value = ignoresBypass.value || this.ignoresBypass;
+        return true;
+      }
     }
     return false;
   }
 }
+
+/**
+ * Condition function for {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Guard_(move) Quick Guard's}
+ * protection effect.
+ * @param arena {@linkcode Arena} The arena containing the protection effect
+ * @param moveId {@linkcode Moves} The move to check against this condition
+ * @returns `true` if the incoming move's priority is greater than 0. This includes
+ * moves with modified priorities from abilities (e.g. Prankster)
+ */
+const QuickGuardConditionFunc: ProtectConditionFunc = (arena, moveId) => {
+  const move = allMoves[moveId];
+  const priority = new Utils.IntegerHolder(move.priority);
+  const effectPhase = arena.scene.getCurrentPhase();
+
+  if (effectPhase instanceof MoveEffectPhase) {
+    const attacker = effectPhase.getUserPokemon()!;
+    applyMoveAttrs(IncrementMovePriorityAttr, attacker, null, move, priority);
+    applyAbAttrs(ChangeMovePriorityAbAttr, attacker, null, false, move, priority);
+  }
+  return priority.value > 0;
+};
 
 /**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Guard_(move) Quick Guard}
@@ -241,13 +280,29 @@ abstract class ConditionalProtectTag extends ArenaTag {
  */
 class QuickGuardTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.QUICK_GUARD, Moves.QUICK_GUARD, sourceId, side,
-      (priority: integer) : boolean => {
-        return priority > 0;
-      }
-    );
+    super(ArenaTagType.QUICK_GUARD, Moves.QUICK_GUARD, sourceId, side, QuickGuardConditionFunc);
   }
 }
+
+/**
+ * Condition function for {@link https://bulbapedia.bulbagarden.net/wiki/Wide_Guard_(move) Wide Guard's}
+ * protection effect.
+ * @param arena {@linkcode Arena} The arena containing the protection effect
+ * @param moveId {@linkcode Moves} The move to check against this condition
+ * @returns `true` if the incoming move is multi-targeted (even if it's only used against one Pokemon).
+ */
+const WideGuardConditionFunc: ProtectConditionFunc = (arena, moveId) : boolean => {
+  const move = allMoves[moveId];
+
+  switch (move.moveTarget) {
+  case MoveTarget.ALL_ENEMIES:
+  case MoveTarget.ALL_NEAR_ENEMIES:
+  case MoveTarget.ALL_OTHERS:
+  case MoveTarget.ALL_NEAR_OTHERS:
+    return true;
+  }
+  return false;
+};
 
 /**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Wide_Guard_(move) Wide Guard}
@@ -256,20 +311,21 @@ class QuickGuardTag extends ConditionalProtectTag {
  */
 class WideGuardTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.WIDE_GUARD, Moves.WIDE_GUARD, sourceId, side,
-      (moveTarget: MoveTarget) : boolean => {
-        switch (moveTarget) {
-        case MoveTarget.ALL_ENEMIES:
-        case MoveTarget.ALL_NEAR_ENEMIES:
-        case MoveTarget.ALL_OTHERS:
-        case MoveTarget.ALL_NEAR_OTHERS:
-          return true;
-        }
-        return false;
-      }
-    );
+    super(ArenaTagType.WIDE_GUARD, Moves.WIDE_GUARD, sourceId, side, WideGuardConditionFunc);
   }
 }
+
+/**
+ * Condition function for {@link https://bulbapedia.bulbagarden.net/wiki/Mat_Block_(move) Mat Block's}
+ * protection effect.
+ * @param arena {@linkcode Arena} The arena containing the protection effect.
+ * @param moveId {@linkcode Moves} The move to check against this condition.
+ * @returns `true` if the incoming move is not a Status move.
+ */
+const MatBlockConditionFunc: ProtectConditionFunc = (arena, moveId) : boolean => {
+  const move = allMoves[moveId];
+  return move.category !== MoveCategory.STATUS;
+};
 
 /**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Mat_Block_(move) Mat Block}
@@ -277,11 +333,7 @@ class WideGuardTag extends ConditionalProtectTag {
  */
 class MatBlockTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.MAT_BLOCK, Moves.MAT_BLOCK, sourceId, side,
-      (moveCategory: MoveCategory) : boolean => {
-        return moveCategory !== MoveCategory.STATUS;
-      }
-    );
+    super(ArenaTagType.MAT_BLOCK, Moves.MAT_BLOCK, sourceId, side, MatBlockConditionFunc);
   }
 
   onAdd(arena: Arena) {
@@ -297,20 +349,29 @@ class MatBlockTag extends ConditionalProtectTag {
 }
 
 /**
+ * Condition function for {@link https://bulbapedia.bulbagarden.net/wiki/Crafty_Shield_(move) Crafty Shield's}
+ * protection effect.
+ * @param arena {@linkcode Arena} The arena containing the protection effect
+ * @param moveId {@linkcode Moves} The move to check against this condition
+ * @returns `true` if the incoming move is a Status move, is not a hazard, and does not target all
+ * Pokemon or sides of the field.
+ */
+const CraftyShieldConditionFunc: ProtectConditionFunc = (arena, moveId) => {
+  const move = allMoves[moveId];
+  return move.category === MoveCategory.STATUS
+    && move.moveTarget !== MoveTarget.ENEMY_SIDE
+    && move.moveTarget !== MoveTarget.BOTH_SIDES
+    && move.moveTarget !== MoveTarget.ALL;
+};
+
+/**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Crafty_Shield_(move) Crafty Shield}
  * Condition: The incoming move is a Status move, is not a hazard, and does
  * not target all Pokemon or sides of the field.
 */
 class CraftyShieldTag extends ConditionalProtectTag {
   constructor(sourceId: integer, side: ArenaTagSide) {
-    super(ArenaTagType.CRAFTY_SHIELD, Moves.CRAFTY_SHIELD, sourceId, side,
-      (moveCategory: MoveCategory, moveTarget: MoveTarget) : boolean => {
-        return moveCategory === MoveCategory.STATUS
-          && moveTarget !== MoveTarget.ENEMY_SIDE
-          && moveTarget !== MoveTarget.BOTH_SIDES
-          && moveTarget !== MoveTarget.ALL;
-      }
-    );
+    super(ArenaTagType.CRAFTY_SHIELD, Moves.CRAFTY_SHIELD, sourceId, side, CraftyShieldConditionFunc, true);
   }
 }
 
@@ -366,7 +427,7 @@ class WishTag extends ArenaTag {
       if (user) {
         this.battlerIndex = user.getBattlerIndex();
         this.triggerMessage = i18next.t("arenaTag:wishTagOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(user) });
-        this.healHp = Math.max(Math.floor(user.getMaxHp() / 2), 1);
+        this.healHp = Utils.toDmgValue(user.getMaxHp() / 2);
       } else {
         console.warn("Failed to get source for WishTag onAdd");
       }
@@ -524,7 +585,7 @@ class SpikesTag extends ArenaTrapTag {
 
       if (!cancelled.value) {
         const damageHpRatio = 1 / (10 - 2 * this.layers);
-        const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
+        const damage = Utils.toDmgValue(pokemon.getMaxHp() * damageHpRatio);
 
         pokemon.scene.queueMessage(i18next.t("arenaTag:spikesActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
         pokemon.damageAndUpdate(damage, HitResult.OTHER);
@@ -684,7 +745,7 @@ class StealthRockTag extends ArenaTrapTag {
     const damageHpRatio = this.getDamageHpRatio(pokemon);
 
     if (damageHpRatio) {
-      const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
+      const damage = Utils.toDmgValue(pokemon.getMaxHp() * damageHpRatio);
       pokemon.scene.queueMessage(i18next.t("arenaTag:stealthRockActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       pokemon.damageAndUpdate(damage, HitResult.OTHER);
       if (pokemon.turnData) {
@@ -844,6 +905,21 @@ class HappyHourTag extends ArenaTag {
   }
 }
 
+class SafeguardTag extends ArenaTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.SAFEGUARD, turnCount, Moves.SAFEGUARD, sourceId, side);
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t(`arenaTag:safeguardOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
+  }
+
+  onRemove(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t(`arenaTag:safeguardOnRemove${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
+  }
+}
+
+
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
   case ArenaTagType.MIST:
@@ -889,6 +965,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new TailwindTag(turnCount, sourceId, side);
   case ArenaTagType.HAPPY_HOUR:
     return new HappyHourTag(turnCount, sourceId, side);
+  case ArenaTagType.SAFEGUARD:
+    return new SafeguardTag(turnCount, sourceId, side);
   default:
     return null;
   }

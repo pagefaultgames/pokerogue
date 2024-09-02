@@ -1,4 +1,3 @@
-import { PokemonHealPhase, StatChangePhase } from "../phases";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { HitResult } from "../field/pokemon";
 import { BattleStat } from "./battle-stat";
@@ -8,6 +7,8 @@ import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } 
 import i18next from "i18next";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
+import { StatChangePhase } from "#app/phases/stat-change-phase.js";
 
 export function getBerryName(berryType: BerryType): string {
   return i18next.t(`berry:${BerryType[berryType]}.name`);
@@ -35,25 +36,25 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
     return (pokemon: Pokemon) => {
       const threshold = new Utils.NumberHolder(0.25);
       const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
-      applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
+      applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, false, threshold);
       return pokemon.getHpRatio() < threshold.value && pokemon.summonData.battleStats[battleStat] < 6;
     };
   case BerryType.LANSAT:
     return (pokemon: Pokemon) => {
       const threshold = new Utils.NumberHolder(0.25);
-      applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
+      applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, false, threshold);
       return pokemon.getHpRatio() < 0.25 && !pokemon.getTag(BattlerTagType.CRIT_BOOST);
     };
   case BerryType.STARF:
     return (pokemon: Pokemon) => {
       const threshold = new Utils.NumberHolder(0.25);
-      applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
+      applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, false, threshold);
       return pokemon.getHpRatio() < 0.25;
     };
   case BerryType.LEPPA:
     return (pokemon: Pokemon) => {
       const threshold = new Utils.NumberHolder(0.25);
-      applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
+      applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, false, threshold);
       return !!pokemon.getMoveset().find(m => !m?.getPpRatio());
     };
   }
@@ -69,8 +70,8 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       if (pokemon.battleData) {
         pokemon.battleData.berriesEaten.push(berryType);
       }
-      const hpHealed = new Utils.NumberHolder(Math.floor(pokemon.getMaxHp() / 4));
-      applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, hpHealed);
+      const hpHealed = new Utils.NumberHolder(Utils.toDmgValue(pokemon.getMaxHp() / 4));
+      applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, hpHealed);
       pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
         hpHealed.value, i18next.t("battle:hpHealBerry", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), berryName: getBerryName(berryType) }), true));
     };
@@ -96,7 +97,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       }
       const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
       const statLevels = new Utils.NumberHolder(1);
-      applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statLevels);
+      applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, statLevels);
       pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ battleStat ], statLevels.value));
     };
   case BerryType.LANSAT:
@@ -112,7 +113,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         pokemon.battleData.berriesEaten.push(berryType);
       }
       const statLevels = new Utils.NumberHolder(2);
-      applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statLevels);
+      applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, statLevels);
       pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ BattleStat.RAND ], statLevels.value));
     };
   case BerryType.LEPPA:

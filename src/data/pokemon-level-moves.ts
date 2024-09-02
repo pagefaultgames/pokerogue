@@ -1063,7 +1063,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.CONFUSION ], //Custom
   ],
   [Species.KADABRA]: [
-    [ EVOLVE_MOVE, Moves.PSYBEAM ], //Custom
+    [ EVOLVE_MOVE, Moves.PSYBEAM ], //LGPE
     [ 1, Moves.DISABLE ],
     [ 1, Moves.TELEPORT ],
     [ 1, Moves.KINESIS ],
@@ -2681,8 +2681,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.CYNDAQUIL]: [
     [ 1, Moves.TACKLE ],
     [ 1, Moves.LEER ],
-    [ 5, Moves.EMBER ], //Custom, moved to 5
-    [ 10, Moves.SMOKESCREEN ], //Custom, moved to 10
+    [ 5, Moves.EMBER ], //Custom, moved from 10 to 5
+    [ 10, Moves.SMOKESCREEN ], //Custom, moved from 6 to 10
     [ 13, Moves.QUICK_ATTACK ],
     [ 19, Moves.FLAME_WHEEL ],
     [ 22, Moves.DEFENSE_CURL ],
@@ -4074,11 +4074,18 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 49, Moves.IMPRISON ],
     [ 55, Moves.DOUBLE_EDGE ],
   ],
+  // Reverting Smeargle back to pre gen9 implementation, to make it less dependent on access to Memory Mushrooms
   [Species.SMEARGLE]: [
     [ 1, Moves.SKETCH ],
-    [ 1, Moves.SKETCH ],
-    [ 1, Moves.SKETCH ],
-    [ 1, Moves.SKETCH ],
+    [ 11, Moves.SKETCH ],
+    [ 21, Moves.SKETCH ],
+    [ 31, Moves.SKETCH ],
+    [ 41, Moves.SKETCH ],
+    [ 51, Moves.SKETCH ],
+    [ 61, Moves.SKETCH ],
+    [ 71, Moves.SKETCH ],
+    [ 81, Moves.SKETCH ],
+    [ 91, Moves.SKETCH ],
   ],
   [Species.TYROGUE]: [
     [ 1, Moves.TACKLE ],
@@ -6723,7 +6730,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.TURTWIG]: [
     [ 1, Moves.TACKLE ],
     [ 5, Moves.WITHDRAW ],
-    [ 5, Moves.ABSORB ], //Custom, moved from 9 to 5
+    [ 5, Moves.LEAFAGE ], //Custom, moved from 10 to 5, BDSP
+    [ 9, Moves.GROWTH ], //Fill empty moveslot, from BDSP level 6
     [ 13, Moves.RAZOR_LEAF ],
     [ 17, Moves.CURSE ],
     [ 21, Moves.BITE ],
@@ -6738,6 +6746,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.TACKLE ],
     [ 1, Moves.ABSORB ],
     [ 1, Moves.WITHDRAW ],
+    [ 1, Moves.LEAFAGE ],
     [ 13, Moves.RAZOR_LEAF ],
     [ 17, Moves.CURSE ],
     [ 22, Moves.BITE ],
@@ -6752,6 +6761,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ EVOLVE_MOVE, Moves.EARTHQUAKE ],
     [ 1, Moves.TACKLE ],
     [ 1, Moves.ABSORB ],
+    [ 1, Moves.LEAFAGE ],
     [ 1, Moves.RAZOR_LEAF ],
     [ 1, Moves.WITHDRAW ],
     [ 1, Moves.WOOD_HAMMER ],
@@ -8464,8 +8474,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.GIRATINA]: [
     [ 1, Moves.SHADOW_SNEAK ],
     [ 1, Moves.DEFOG ],
-    [ 1, Moves.TWISTER ], //Custom
-    [ 7, Moves.DRAGON_BREATH ],
+    [ 1, Moves.DRAGON_BREATH ], //USUM
+    [ 7, Moves.OMINOUS_WIND ], //USUM
     [ 14, Moves.ANCIENT_POWER ],
     [ 21, Moves.HEX ],
     [ 28, Moves.SLASH ],
@@ -9230,6 +9240,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 60, Moves.FOCUS_PUNCH ],
   ],
   [Species.TYMPOLE]: [
+    [ 1, Moves.BUBBLE ], //USUM
     [ 1, Moves.GROWL ],
     [ 1, Moves.ECHOED_VOICE ],
     [ 4, Moves.ACID ],
@@ -9246,6 +9257,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 48, Moves.HYDRO_PUMP ],
   ],
   [Species.PALPITOAD]: [
+    [ 1, Moves.BUBBLE ], //USUM
     [ 1, Moves.GROWL ],
     [ 1, Moves.SUPERSONIC ],
     [ 1, Moves.ACID ],
@@ -9263,6 +9275,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.SEISMITOAD]: [
     [ EVOLVE_MOVE, Moves.DRAIN_PUNCH ],
+    [ 1, Moves.BUBBLE ], //USUM
     [ 1, Moves.GROWL ],
     [ 1, Moves.SUPERSONIC ],
     [ 1, Moves.ACID ],
@@ -9280,7 +9293,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 70, Moves.HYDRO_PUMP ],
   ],
   [Species.THROH]: [
-    [ 1, Moves.KARATE_CHOP ], //Custom
+    [ 1, Moves.ROCK_SMASH ], //Custom
     [ 1, Moves.LEER ],
     [ 1, Moves.BIDE ],
     [ 1, Moves.MAT_BLOCK ],
@@ -13811,7 +13824,9 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.MAGEARNA]: [
     [ 1, Moves.HELPING_HAND ],
     [ 1, Moves.GYRO_BALL ],
-    [ 1, Moves.FAIRY_WIND ], //Custom
+    [ 1, Moves.DISARMING_VOICE ], //Custom
+    [ 1, Moves.CRAFTY_SHIELD ],
+    [ 1, Moves.GEAR_UP ],
     [ 6, Moves.DEFENSE_CURL ],
     [ 12, Moves.ROLLOUT ],
     [ 18, Moves.IRON_DEFENSE ],
@@ -16847,7 +16862,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.CONFUSE_RAY ],
     [ 1, Moves.SPITE ],
     [ 1, Moves.ASTONISH ],
-    [ 7, Moves.PSYBEAM ],
+    [ 1, Moves.PSYBEAM ], //Custom, moved from 7 to 1
     [ 14, Moves.MEAN_LOOK ],
     [ 21, Moves.MEMENTO ],
     [ 28, Moves.WISH ],
@@ -18784,6 +18799,85 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 40, Moves.LIGHT_SCREEN ],
       [ 44, Moves.THUNDER ],
       [ 48, Moves.PIKA_PAPOW ],
+    ],
+    8: [
+      [ 1, Moves.TAIL_WHIP ],
+      [ 1, Moves.GROWL ],
+      [ 1, Moves.THUNDER_SHOCK ],
+      [ 1, Moves.QUICK_ATTACK ],
+      [ 1, Moves.SWEET_KISS ],
+      [ 1, Moves.CHARM ],
+      [ 1, Moves.NASTY_PLOT ],
+      [ 1, Moves.PLAY_NICE ],
+      [ 1, Moves.NUZZLE ],
+      [ 4, Moves.THUNDER_WAVE ],
+      [ 8, Moves.DOUBLE_TEAM ],
+      [ 12, Moves.ELECTRO_BALL ],
+      [ 16, Moves.FEINT ],
+      [ 20, Moves.ZIPPY_ZAP ], //Custom
+      [ 24, Moves.AGILITY ],
+      [ 28, Moves.IRON_TAIL ],
+      [ 32, Moves.DISCHARGE ],
+      [ 34, Moves.FLOATY_FALL ], //Custom
+      [ 36, Moves.THUNDERBOLT ],
+      [ 40, Moves.LIGHT_SCREEN ],
+      [ 42, Moves.SPLISHY_SPLASH ], //Custom
+      [ 44, Moves.THUNDER ],
+      [ 48, Moves.PIKA_PAPOW ],
+    ],
+  },
+  [Species.EEVEE]: { //Custom
+    1: [
+      [ 1, Moves.TACKLE ],
+      [ 1, Moves.TAIL_WHIP ],
+      [ 1, Moves.GROWL ],
+      [ 1, Moves.HELPING_HAND ],
+      [ 1, Moves.COVET ],
+      [ 5, Moves.SAND_ATTACK ],
+      [ 10, Moves.QUICK_ATTACK ],
+      [ 15, Moves.BABY_DOLL_EYES ],
+      [ 18, Moves.BOUNCY_BUBBLE ], //Custom
+      [ 18, Moves.SIZZLY_SLIDE ], //Custom
+      [ 18, Moves.BUZZY_BUZZ ], //Custom
+      [ 20, Moves.SWIFT ],
+      [ 25, Moves.BITE ],
+      [ 30, Moves.COPYCAT ],
+      [ 33, Moves.BADDY_BAD ], //Custom
+      [ 33, Moves.GLITZY_GLOW ], //Custom
+      [ 35, Moves.BATON_PASS ],
+      [ 40, Moves.VEEVEE_VOLLEY ], //Custom, replaces Take Down
+      [ 43, Moves.FREEZY_FROST ], //Custom
+      [ 43, Moves.SAPPY_SEED ], //Custom
+      [ 45, Moves.CHARM ],
+      [ 50, Moves.DOUBLE_EDGE ],
+      [ 53, Moves.SPARKLY_SWIRL ], //Custom
+      [ 55, Moves.LAST_RESORT ],
+    ],
+    2: [
+      [ 1, Moves.TACKLE ],
+      [ 1, Moves.TAIL_WHIP ],
+      [ 1, Moves.GROWL ],
+      [ 1, Moves.HELPING_HAND ],
+      [ 1, Moves.COVET ],
+      [ 5, Moves.SAND_ATTACK ],
+      [ 10, Moves.QUICK_ATTACK ],
+      [ 15, Moves.BABY_DOLL_EYES ],
+      [ 18, Moves.BOUNCY_BUBBLE ], //Custom
+      [ 18, Moves.SIZZLY_SLIDE ], //Custom
+      [ 18, Moves.BUZZY_BUZZ ], //Custom
+      [ 20, Moves.SWIFT ],
+      [ 25, Moves.BITE ],
+      [ 30, Moves.COPYCAT ],
+      [ 33, Moves.BADDY_BAD ], //Custom
+      [ 33, Moves.GLITZY_GLOW ], //Custom
+      [ 35, Moves.BATON_PASS ],
+      [ 40, Moves.VEEVEE_VOLLEY ], //Custom, replaces Take Down
+      [ 43, Moves.FREEZY_FROST ], //Custom
+      [ 43, Moves.SAPPY_SEED ], //Custom
+      [ 45, Moves.CHARM ],
+      [ 50, Moves.DOUBLE_EDGE ],
+      [ 53, Moves.SPARKLY_SWIRL ], //Custom
+      [ 55, Moves.LAST_RESORT ],
     ],
   },
   [Species.DEOXYS]: {

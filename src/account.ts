@@ -6,6 +6,7 @@ export interface UserInfo {
   lastSessionSlot: integer;
   discordId: string;
   googleId: string;
+  hasAdminRole: boolean;
 }
 
 export let loggedInUser: UserInfo | null = null;
@@ -13,13 +14,13 @@ export let loggedInUser: UserInfo | null = null;
 export const clientSessionId = Utils.randomString(32);
 
 export function initLoggedInUser(): void {
-  loggedInUser = { username: "Guest", lastSessionSlot: -1, discordId: "", googleId: ""};
+  loggedInUser = { username: "Guest", lastSessionSlot: -1, discordId: "", googleId: "", hasAdminRole: false };
 }
 
 export function updateUserInfo(): Promise<[boolean, integer]> {
   return new Promise<[boolean, integer]>(resolve => {
     if (bypassLogin) {
-      loggedInUser = { username: "Guest", lastSessionSlot: -1, discordId: "", googleId: "" };
+      loggedInUser = { username: "Guest", lastSessionSlot: -1, discordId: "", googleId: "", hasAdminRole: false};
       let lastSessionSlot = -1;
       for (let s = 0; s < 5; s++) {
         if (localStorage.getItem(`sessionData${s ? s : ""}_${loggedInUser.username}`)) {

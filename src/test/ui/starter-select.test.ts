@@ -1,19 +1,21 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/utils/gameManager";
-import { EncounterPhase, SelectStarterPhase, TitlePhase } from "#app/phases";
-import { Mode } from "#app/ui/ui";
-import { GameModes } from "#app/game-mode";
-import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
-import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
-import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
-import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { Gender } from "#app/data/gender";
+import { Nature } from "#app/data/nature";
 import { allSpecies } from "#app/data/pokemon-species";
-import { Nature} from "#app/data/nature";
-import { Button } from "#enums/buttons";
+import { GameModes } from "#app/game-mode";
+import { EncounterPhase } from "#app/phases/encounter-phase";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase";
+import { TitlePhase } from "#app/phases/title-phase";
+import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
+import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
+import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
+import { Button } from "#enums/buttons";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("UI - Starter select", () => {

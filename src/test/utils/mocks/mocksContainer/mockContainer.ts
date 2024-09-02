@@ -1,4 +1,5 @@
 import MockTextureManager from "#test/utils/mocks/mockTextureManager";
+import { vi } from "vitest";
 import { MockGameObject } from "../mockGameObject";
 
 export default class MockContainer implements MockGameObject {
@@ -13,6 +14,7 @@ export default class MockContainer implements MockGameObject {
   public frame;
   protected textureManager;
   public list: MockGameObject[] = [];
+  private name?: string;
 
   constructor(textureManager: MockTextureManager, x, y) {
     this.x = x;
@@ -159,9 +161,10 @@ export default class MockContainer implements MockGameObject {
     // Moves this Game Object to be below the given Game Object in the display list.
   }
 
-  setName(name) {
+  setName = vi.fn((name: string) => {
+    this.name = name;
     // return this.phaserSprite.setName(name);
-  }
+  });
 
   bringToTop(obj) {
     // Brings this Game Object to the top of its parents display list.

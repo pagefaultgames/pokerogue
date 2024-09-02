@@ -1,0 +1,1242 @@
+{
+  "stench": {
+    "name": "あくしゅう",
+    "description": "臭い においを 放つことによって 攻撃した ときに 相手を ひるませることが ある。"
+  },
+  "drizzle": {
+    "name": "あめふらし",
+    "description": "登場 したときに 天気を 雨に する。"
+  },
+  "speedBoost": {
+    "name": "かそく",
+    "description": "毎ターン 素早さが 上がる。"
+  },
+  "battleArmor": {
+    "name": "カブトアーマー",
+    "description": "硬い 甲羅に 守られて 相手の 攻撃が 急所に 当たらない。"
+  },
+  "sturdy": {
+    "name": "がんじょう",
+    "description": "相手の 技を 受けても 一撃で 倒されることが ない。 一撃必殺技も 効かない。"
+  },
+  "damp": {
+    "name": "しめりけ",
+    "description": "あたりを 湿らせることに よって じばく などの 爆発する 技を だれも 使えなくなる。"
+  },
+  "limber": {
+    "name": "じゅうなん",
+    "description": "柔軟な 体によって まひ状態に ならない。"
+  },
+  "sandVeil": {
+    "name": "すながくれ",
+    "description": "砂あらしの とき 回避率が 上がる。"
+  },
+  "static": {
+    "name": "せいでんき",
+    "description": "静電気を 体に まとい 触った 相手を まひさせる ことがある。"
+  },
+  "voltAbsorb": {
+    "name": "ちくでん",
+    "description": "でんきタイプの 技を 受けると ダメージを 受けずに 回復する。"
+  },
+  "waterAbsorb": {
+    "name": "ちょすい",
+    "description": "みずタイプの 技を 受けると ダメージを 受けずに 回復する。"
+  },
+  "oblivious": {
+    "name": "どんかん",
+    "description": "鈍感なので メロメロや ちょうはつ状態に ならない。"
+  },
+  "cloudNine": {
+    "name": "ノーてんき",
+    "description": "あらゆる 天気の 影響が なくなって しまう。"
+  },
+  "compoundEyes": {
+    "name": "ふくがん",
+    "description": "複眼を 持っているため 技の 命中率が 上がる。"
+  },
+  "insomnia": {
+    "name": "ふみん",
+    "description": "眠れない 体質 なので ねむり状態に ならない。"
+  },
+  "colorChange": {
+    "name": "へんしょく",
+    "description": "相手から 受けた 技の タイプに 自分の タイプが 変化 する。"
+  },
+  "immunity": {
+    "name": "めんえき",
+    "description": "体内に 免疫を 持っているため どく状態に ならない。"
+  },
+  "flashFire": {
+    "name": "もらいび",
+    "description": "ほのおタイプの 技を 受けると 炎を もらい 自分が 出す ほのおタイプの 技が 強くなる。"
+  },
+  "shieldDust": {
+    "name": "りんぷん",
+    "description": "りんぷんに 守られて 技の 追加効果を 受けなくなる。"
+  },
+  "ownTempo": {
+    "name": "マイペース",
+    "description": "マイペースなので こんらん状態に ならない。"
+  },
+  "suctionCups": {
+    "name": "きゅうばん",
+    "description": "吸盤で 地面に 張り付き ポケモンを 入れ替えさせる 技や 道具が 効かなくなる。"
+  },
+  "intimidate": {
+    "name": "いかく",
+    "description": "登場 したとき 威嚇して 相手を 萎縮させ 相手の 攻撃を 下げて しまう。"
+  },
+  "shadowTag": {
+    "name": "かげふみ",
+    "description": "相手の 影を 踏み 逃げたり 交代 できなくする。"
+  },
+  "roughSkin": {
+    "name": "さめはだ",
+    "description": "攻撃を 受けたとき 自分に 触れた 相手を ざらざらの 肌で キズつける。"
+  },
+  "wonderGuard": {
+    "name": "ふしぎなまもり",
+    "description": "効果バツグンの 技しか 当たらない 不思議な 力。"
+  },
+  "levitate": {
+    "name": "ふゆう",
+    "description": "地面から 浮くことによって じめんタイプの 技を 受けない。"
+  },
+  "effectSpore": {
+    "name": "ほうし",
+    "description": "攻撃で 自分に 触れた 相手を どくや まひや ねむり状態に する ことがある。"
+  },
+  "synchronize": {
+    "name": "シンクロ",
+    "description": "自分が なってしまった どくや まひや やけどを 相手に うつす。"
+  },
+  "clearBody": {
+    "name": "クリアボディ",
+    "description": "相手の 技や 特性で 能力を 下げられない。"
+  },
+  "naturalCure": {
+    "name": "しぜんかいふく",
+    "description": "手持ちに ひっこむと 状態異常が 治る。"
+  },
+  "lightningRod": {
+    "name": "ひらいしん",
+    "description": "でんきタイプの 技を 自分に 寄せつけ ダメージを 受けずに 特攻が 上がる。"
+  },
+  "sereneGrace": {
+    "name": "てんのめぐみ",
+    "description": "天の恵みの おかげで 技の 追加効果が でやすい。"
+  },
+  "swiftSwim": {
+    "name": "すいすい",
+    "description": "天気が 雨のとき 素早さが 上がる。"
+  },
+  "chlorophyll": {
+    "name": "ようりょくそ",
+    "description": "天気が 晴れのとき 素早さが 上がる。"
+  },
+  "illuminate": {
+    "name": "はっこう",
+    "description": "あたりを 明るくすることで 命中率を 下げられない。"
+  },
+  "trace": {
+    "name": "トレース",
+    "description": "登場 したとき 相手の 特性を トレースして 同じ 特性に なる。"
+  },
+  "hugePower": {
+    "name": "ちからもち",
+    "description": "物理攻撃の 威力が ２倍になる。"
+  },
+  "poisonPoint": {
+    "name": "どくのトゲ",
+    "description": "自分に 触った 相手を どく状態に することがある。"
+  },
+  "innerFocus": {
+    "name": "せいしんりょく",
+    "description": "鍛えられた 精神に よって 相手の 攻撃に ひるまない。"
+  },
+  "magmaArmor": {
+    "name": "マグマのよろい",
+    "description": "熱い マグマを 身にまとい こおり状態に ならない。"
+  },
+  "waterVeil": {
+    "name": "みずのベール",
+    "description": "水のベールを 身にまとい やけど状態に ならない。"
+  },
+  "magnetPull": {
+    "name": "じりょく",
+    "description": "はがねタイプの ポケモンを 磁力で 引きつけて 逃げられなくする。"
+  },
+  "soundproof": {
+    "name": "ぼうおん",
+    "description": "音を 遮断 することに よって 音の 攻撃を 受けない。"
+  },
+  "rainDish": {
+    "name": "あめうけざら",
+    "description": "天気が 雨のとき 少しずつ ＨＰを 回復する。"
+  },
+  "sandStream": {
+    "name": "すなおこし",
+    "description": "登場 したとき 天気を 砂あらしにする。"
+  },
+  "pressure": {
+    "name": "プレッシャー",
+    "description": "プレッシャーを あたえて 相手の 使う 技の ＰＰを 多く 減らす。"
+  },
+  "thickFat": {
+    "name": "あついしぼう",
+    "description": "厚い 脂肪で 守られているので ほのおタイプと こおりタイプの 技の ダメージを 半減させる。"
+  },
+  "earlyBird": {
+    "name": "はやおき",
+    "description": "ねむり状態に なっても ２倍の 早さで 目覚める ことが できる。"
+  },
+  "flameBody": {
+    "name": "ほのおのからだ",
+    "description": "自分に 触った 相手を やけど状態に する ことがある。"
+  },
+  "runAway": {
+    "name": "にげあし",
+    "description": "野生の ポケモンから 必ず 逃げられる。"
+  },
+  "keenEye": {
+    "name": "するどいめ",
+    "description": "鋭い 目の おかげで 命中率を 下げられない。"
+  },
+  "hyperCutter": {
+    "name": "かいりきバサミ",
+    "description": "力自慢の ハサミを 持っているので 相手に 攻撃を 下げられない。"
+  },
+  "pickup": {
+    "name": "ものひろい",
+    "description": "戦闘が 終わったとき 相手の 持った 道具を 一つ 拾ってくることが ある。"
+  },
+  "truant": {
+    "name": "なまけ",
+    "description": "技を 出すと 次の ターンは 休んでしまう。"
+  },
+  "hustle": {
+    "name": "はりきり",
+    "description": "自分の 攻撃が 高くなるが 命中率が 下がる。"
+  },
+  "cuteCharm": {
+    "name": "メロメロボディ",
+    "description": "自分に 触った 相手を メロメロに することが ある。"
+  },
+  "plus": {
+    "name": "プラス",
+    "description": "プラスか マイナスの 特性を 持つ ポケモンが 仲間に いると 自分の 特攻が 上がる。"
+  },
+  "minus": {
+    "name": "マイナス",
+    "description": "プラスか マイナスの 特性を 持つ ポケモンが 仲間に いると 自分の 特攻が 上がる。"
+  },
+  "forecast": {
+    "name": "てんきや",
+    "description": "天気の 影響を 受けて みずタイプ ほのおタイプ こおりタイプの どれかに 変化する。"
+  },
+  "stickyHold": {
+    "name": "ねんちゃく",
+    "description": "粘着質の 体に 道具が くっついているため 相手に 道具を 奪われない。"
+  },
+  "shedSkin": {
+    "name": "だっぴ",
+    "description": "体の 皮を 脱ぎ捨てることで 状態異常を 治すことが ある。"
+  },
+  "guts": {
+    "name": "こんじょう",
+    "description": "状態異常に なると 根性を だして 攻撃が 上がる。"
+  },
+  "marvelScale": {
+    "name": "ふしぎなうろこ",
+    "description": "状態異常に なると 不思議なウロコが 反応して 防御が 上がる。"
+  },
+  "liquidOoze": {
+    "name": "ヘドロえき",
+    "description": "ヘドロ液を 吸い取った 相手は 強烈な 悪臭で ダメージを 受けて ＨＰを 減らす。"
+  },
+  "overgrow": {
+    "name": "しんりょく",
+    "description": "ＨＰが 減ったとき くさタイプの 技の 威力が 上がる。"
+  },
+  "blaze": {
+    "name": "もうか",
+    "description": "ＨＰが 減ったとき ほのおタイプの 技の 威力が 上がる。"
+  },
+  "torrent": {
+    "name": "げきりゅう",
+    "description": "ＨＰが 減ったとき みずタイプの 技の 威力が 上がる。"
+  },
+  "swarm": {
+    "name": "むしのしらせ",
+    "description": "ＨＰが 減ったとき むしタイプの 技の 威力が 上がる。"
+  },
+  "rockHead": {
+    "name": "いしあたま",
+    "description": "反動を 受ける 技を 出しても ＨＰが 減らない。"
+  },
+  "drought": {
+    "name": "ひでり",
+    "description": "登場 したときに 天気を 晴れに する。"
+  },
+  "arenaTrap": {
+    "name": "ありじごく",
+    "description": "戦闘で 相手を 逃げられなくする。"
+  },
+  "vitalSpirit": {
+    "name": "やるき",
+    "description": "やる気を だすことに よって ねむり状態に ならない。"
+  },
+  "whiteSmoke": {
+    "name": "しろいけむり",
+    "description": "白い煙に 守られて 相手に 能力を 下げられない。"
+  },
+  "purePower": {
+    "name": "ヨガパワー",
+    "description": "ヨガの 力で 物理攻撃の 威力が ２倍に なる。"
+  },
+  "shellArmor": {
+    "name": "シェルアーマー",
+    "description": "硬い 殻に 守られ 相手の 攻撃が 急所に 当たらない。"
+  },
+  "airLock": {
+    "name": "エアロック",
+    "description": "あらゆる 天気の 影響が なくなって しまう。"
+  },
+  "tangledFeet": {
+    "name": "ちどりあし",
+    "description": "こんらん状態の ときは 回避率が アップする。"
+  },
+  "motorDrive": {
+    "name": "でんきエンジン",
+    "description": "でんきタイプの 技を 受けると ダメージを 受けずに 素早さが 上がる。"
+  },
+  "rivalry": {
+    "name": "とうそうしん",
+    "description": "性別が 同じだと 闘争心を 燃やして 強くなる。 性別が 違うと 弱くなる。"
+  },
+  "steadfast": {
+    "name": "ふくつのこころ",
+    "description": "ひるむ たびに 不屈の心を 燃やして 素早さが 上がる。"
+  },
+  "snowCloak": {
+    "name": "ゆきがくれ",
+    "description": "天気が ゆきのとき 回避率が 上がる。"
+  },
+  "gluttony": {
+    "name": "くいしんぼう",
+    "description": "ＨＰが 少なくなったら 食べる きのみを ＨＰ 半分の 時に 食べてしまう。"
+  },
+  "angerPoint": {
+    "name": "いかりのつぼ",
+    "description": "急所に 攻撃が 当たると 怒りくるって 攻撃力が 最大に なる。"
+  },
+  "unburden": {
+    "name": "かるわざ",
+    "description": "持っていた 道具が なくなると 素早さが 上がる。"
+  },
+  "heatproof": {
+    "name": "たいねつ",
+    "description": "耐熱の 体に よって ほのおタイプの 技の 威力を 半減させる。"
+  },
+  "simple": {
+    "name": "たんじゅん",
+    "description": "能力 変化が いつもの ２倍に なる。"
+  },
+  "drySkin": {
+    "name": "かんそうはだ",
+    "description": "天気が 雨の時や みずタイプの 技で ＨＰが 回復し はれの時や ほのおタイプの 技で 減ってしまう。"
+  },
+  "download": {
+    "name": "ダウンロード",
+    "description": "相手の 防御と 特防を くらべて 低い ほうの 能力に あわせて 自分の 攻撃か 特攻を 上げる。"
+  },
+  "ironFist": {
+    "name": "てつのこぶし",
+    "description": "パンチを 使う 技の 威力が 上がる。"
+  },
+  "poisonHeal": {
+    "name": "ポイズンヒール",
+    "description": "どく状態に なると ＨＰが 減らずに 増えていく。"
+  },
+  "adaptability": {
+    "name": "てきおうりょく",
+    "description": "自分と おなじ タイプの 技の 威力が 上がる。"
+  },
+  "skillLink": {
+    "name": "スキルリンク",
+    "description": "連続技を 使うと いつも 最高回数 出すことが できる。"
+  },
+  "hydration": {
+    "name": "うるおいボディ",
+    "description": "天気が 雨のとき 状態異常が 治る。"
+  },
+  "solarPower": {
+    "name": "サンパワー",
+    "description": "天気が 晴れると 特攻が 上がるが 毎ターン ＨＰが 減る。"
+  },
+  "quickFeet": {
+    "name": "はやあし",
+    "description": "状態異常に なると 素早さが 上がる。"
+  },
+  "normalize": {
+    "name": "ノーマルスキン",
+    "description": "どんな タイプの 技でも すべて ノーマルタイプに なる。 威力が 少し 上がる。"
+  },
+  "sniper": {
+    "name": "スナイパー",
+    "description": "攻撃を 急所に 当てると 威力が さらに 上がる。"
+  },
+  "magicGuard": {
+    "name": "マジックガード",
+    "description": "攻撃 以外では ダメージを 受けない。"
+  },
+  "noGuard": {
+    "name": "ノーガード",
+    "description": "ノーガード戦法に よって お互いの 出す 技が かならず 当たる ようになる。"
+  },
+  "stall": {
+    "name": "あとだし",
+    "description": "技を 出す 順番が かならず 最後に なる。"
+  },
+  "technician": {
+    "name": "テクニシャン",
+    "description": "威力が 低い 技の 威力を 高くして 攻撃できる。"
+  },
+  "leafGuard": {
+    "name": "リーフガード",
+    "description": "天気が 晴れのときは 状態異常に ならない。"
+  },
+  "klutz": {
+    "name": "ぶきよう",
+    "description": "持っている 道具を 使うことが できない。"
+  },
+  "moldBreaker": {
+    "name": "かたやぶり",
+    "description": "相手の 特性に ジャマされる ことなく 相手に 技を 出すことが できる。"
+  },
+  "superLuck": {
+    "name": "きょううん",
+    "description": "強運を 持っているため 相手の 急所に 攻撃が 当たりやすい。"
+  },
+  "aftermath": {
+    "name": "ゆうばく",
+    "description": "ひんしに なったとき 触った 相手に ダメージを あたえる。"
+  },
+  "anticipation": {
+    "name": "きけんよち",
+    "description": "相手の 持つ 危険な 技を 察知する ことができる。"
+  },
+  "forewarn": {
+    "name": "よちむ",
+    "description": "登場 したとき 相手の 持つ 技を ひとつだけ 読み取る。"
+  },
+  "unaware": {
+    "name": "てんねん",
+    "description": "相手の 能力の 変化を 無視して 攻撃が できる。"
+  },
+  "tintedLens": {
+    "name": "いろめがね",
+    "description": "効果が いまひとつの 技を 通常の 威力で 出すことが できる。"
+  },
+  "filter": {
+    "name": "フィルター",
+    "description": "効果バツグンに なってしまう 攻撃の 威力を 弱める ことが できる。"
+  },
+  "slowStart": {
+    "name": "スロースタート",
+    "description": "５ターンの あいだ 攻撃と 素早さが 半分に なる。"
+  },
+  "scrappy": {
+    "name": "きもったま",
+    "description": "ゴーストタイプの ポケモンに ノーマルタイプと かくとうタイプの 技を 当てることが できる。"
+  },
+  "stormDrain": {
+    "name": "よびみず",
+    "description": "みずタイプの 技を 自分に よせつけ ダメージは 受けずに 特攻が 上がる。"
+  },
+  "iceBody": {
+    "name": "アイスボディ",
+    "description": "天気が ゆきのとき HPを 少しずつ 回復 する。"
+  },
+  "solidRock": {
+    "name": "ハードロック",
+    "description": "効果バツグンに なってしまう 攻撃の 威力を 弱める ことが できる。"
+  },
+  "snowWarning": {
+    "name": "ゆきふらし",
+    "description": "登場 したときに 天気を ゆきに する。"
+  },
+  "honeyGather": {
+    "name": "みつあつめ",
+    "description": "戦闘が 終わったとき あまいミツを 拾う。そのあまいミツが 売られて お金を もらう。"
+  },
+  "frisk": {
+    "name": "おみとおし",
+    "description": "登場 したとき 相手の 持ち物を 見通すことが できる。"
+  },
+  "reckless": {
+    "name": "すてみ",
+    "description": "反動で ダメージを 受ける 技の 威力が 上がる。"
+  },
+  "multitype": {
+    "name": "マルチタイプ",
+    "description": "持っている プレートや Ｚクリスタルの タイプによって 自分の タイプが 変わる。"
+  },
+  "flowerGift": {
+    "name": "フラワーギフト",
+    "description": "天気が 晴れのとき 自分と 味方の 攻撃と 特防の 能力が 上がる。"
+  },
+  "badDreams": {
+    "name": "ナイトメア",
+    "description": "ねむり状態の 相手に ダメージを あたえる。"
+  },
+  "pickpocket": {
+    "name": "わるいてぐせ",
+    "description": "触られた 相手の 道具を 盗んで しまう。"
+  },
+  "sheerForce": {
+    "name": "ちからずく",
+    "description": "技の 追加効果は なくなるが そのぶん 高い 威力で 技を 出すことが できる。"
+  },
+  "contrary": {
+    "name": "あまのじゃく",
+    "description": "能力の 変化が 逆転して 上がるときに 下がり 下がるときに 上がる。"
+  },
+  "unnerve": {
+    "name": "きんちょうかん",
+    "description": "相手を 緊張させて きのみを 食べられなく させる。"
+  },
+  "defiant": {
+    "name": "まけんき",
+    "description": "能力を 下げられると 攻撃が ぐーんと 上がる。"
+  },
+  "defeatist": {
+    "name": "よわき",
+    "description": "ＨＰが 半分に なると 弱気に なって 攻撃と 特攻が 半減する。"
+  },
+  "cursedBody": {
+    "name": "のろわれボディ",
+    "description": "攻撃を 受けると 相手の 技を かなしばり状態に することが ある。"
+  },
+  "healer": {
+    "name": "いやしのこころ",
+    "description": "状態異常の 味方を たまに 治してあげる。"
+  },
+  "friendGuard": {
+    "name": "フレンドガード",
+    "description": "味方の ダメージを 減らすことが できる。"
+  },
+  "weakArmor": {
+    "name": "くだけるよろい",
+    "description": "物理技で ダメージを 受けると 防御が 下がり 素早さが ぐーんと 上がる。"
+  },
+  "heavyMetal": {
+    "name": "ヘヴィメタル",
+    "description": "自分の 重さが ２倍に なる。"
+  },
+  "lightMetal": {
+    "name": "ライトメタル",
+    "description": "自分の 重さが 半分に なる。"
+  },
+  "multiscale": {
+    "name": "マルチスケイル",
+    "description": "ＨＰが 満タンの ときに 受ける ダメージが 少なくなる。"
+  },
+  "toxicBoost": {
+    "name": "どくぼうそう",
+    "description": "どく状態に なったとき 物理技の 威力が 上がる。"
+  },
+  "flareBoost": {
+    "name": "ねつぼうそう",
+    "description": "やけど状態に なったとき 特殊技の 威力が 上がる。"
+  },
+  "harvest": {
+    "name": "しゅうかく",
+    "description": "使った きのみを 何回も 作りだす。"
+  },
+  "telepathy": {
+    "name": "テレパシー",
+    "description": "味方の 攻撃を 読み取って 技を 回避する。"
+  },
+  "moody": {
+    "name": "ムラっけ",
+    "description": "毎ターン 能力の どれかが ぐーんと 上がって どれかが 下がる。"
+  },
+  "overcoat": {
+    "name": "ぼうじん",
+    "description": "すなあらしや あられなどの ダメージを 受けない。 粉の 技を 受けない。"
+  },
+  "poisonTouch": {
+    "name": "どくしゅ",
+    "description": "触る だけで 相手を どく 状態に することがある。"
+  },
+  "regenerator": {
+    "name": "さいせいりょく",
+    "description": "手持ちに 引っ込むと ＨＰが 少し 回復する。"
+  },
+  "bigPecks": {
+    "name": "はとむね",
+    "description": "防御を 下げる 効果を 受けない。"
+  },
+  "sandRush": {
+    "name": "すなかき",
+    "description": "天気が すなあらし のとき 素早さが 上がる。"
+  },
+  "wonderSkin": {
+    "name": "ミラクルスキン",
+    "description": "変化技を 受けにくい 体に なっている。"
+  },
+  "analytic": {
+    "name": "アナライズ",
+    "description": "いちばん 最後に 技を 出すと 技の 威力が 上がる。"
+  },
+  "illusion": {
+    "name": "イリュージョン",
+    "description": "手持ちの いちばん うしろに いる ポケモンに なりきって 登場して 相手を 化かす。"
+  },
+  "imposter": {
+    "name": "かわりもの",
+    "description": "目の前の ポケモンに 変身 してしまう。"
+  },
+  "infiltrator": {
+    "name": "すりぬけ",
+    "description": "相手の 壁や 身代わりを すりぬけて 攻撃 できる"
+  },
+  "mummy": {
+    "name": "ミイラ",
+    "description": "相手に 触られると 相手を ミイラに してしまう。"
+  },
+  "moxie": {
+    "name": "じしんかじょう",
+    "description": "相手を 倒すと 自信が ついて 攻撃が 上がる。"
+  },
+  "justified": {
+    "name": "せいぎのこころ",
+    "description": "あくタイプの 攻撃を 受けると 正義感で 攻撃が 上がる。"
+  },
+  "rattled": {
+    "name": "びびり",
+    "description": "あく ゴースト むしタイプの 攻撃を 受けたり いかくを されると びびって 素早さが 上がる。"
+  },
+  "magicBounce": {
+    "name": "マジックミラー",
+    "description": "相手に だされた 変化技を 受けずに そのまま 返す ことが できる。"
+  },
+  "sapSipper": {
+    "name": "そうしょく",
+    "description": "くさタイプの 技を 受けると ダメージを 受けずに 攻撃が 上がる。"
+  },
+  "prankster": {
+    "name": "いたずらごころ",
+    "description": "変化技を 先制で 出すことが できる。"
+  },
+  "sandForce": {
+    "name": "すなのちから",
+    "description": "天気が すなあらしの とき いわタイプと じめんタイプと はがねタイプの 威力が 上がる。"
+  },
+  "ironBarbs": {
+    "name": "てつのトゲ",
+    "description": "自分に 触った 相手に 鉄のトゲで ダメージを あたえる。"
+  },
+  "zenMode": {
+    "name": "ダルマモード",
+    "description": "ＨＰが 半分 以下に なると 姿が 変化する。"
+  },
+  "victoryStar": {
+    "name": "しょうりのほし",
+    "description": "自分や 味方の 命中率が 上がる。"
+  },
+  "turboblaze": {
+    "name": "ターボブレイズ",
+    "description": "相手の 特性に ジャマされる ことなく 相手に 技を 出すことが できる。"
+  },
+  "teravolt": {
+    "name": "テラボルテージ",
+    "description": "相手の 特性に ジャマされる ことなく 相手に 技を 出すことが できる。"
+  },
+  "aromaVeil": {
+    "name": "アロマベール",
+    "description": "自分と 味方への メンタル 攻撃を 防ぐことが できる。"
+  },
+  "flowerVeil": {
+    "name": "フラワーベール",
+    "description": "味方の 草ポケモンは 能力が 下がらず 状態異常にも ならない。"
+  },
+  "cheekPouch": {
+    "name": "ほおぶくろ",
+    "description": "どんな きのみでも 食べると ＨＰも 回復する。"
+  },
+  "protean": {
+    "name": "へんげんじざい",
+    "description": "自分が 出す 技と 同じ タイプに 変化する。"
+  },
+  "furCoat": {
+    "name": "ファーコート",
+    "description": "相手から 受ける 物理技の ダメージが 半分に なる。"
+  },
+  "magician": {
+    "name": "マジシャン",
+    "description": "技を 当てた 相手の 道具を 奪ってしまう。"
+  },
+  "bulletproof": {
+    "name": "ぼうだん",
+    "description": "相手の 弾や 爆弾などの 技を 防ぐことが できる。"
+  },
+  "competitive": {
+    "name": "かちき",
+    "description": "能力を 下げられると 特攻が ぐーんと 上がる。"
+  },
+  "strongJaw": {
+    "name": "がんじょうあご",
+    "description": "あごが 頑丈で 噛む 技の 威力が 高くなる。"
+  },
+  "refrigerate": {
+    "name": "フリーズスキン",
+    "description": "ノーマルタイプの 技が こおりタイプに なる。 威力が 少し 上がる。"
+  },
+  "sweetVeil": {
+    "name": "スイートベール",
+    "description": "味方の ポケモンは 眠らなくなる。"
+  },
+  "stanceChange": {
+    "name": "バトルスイッチ",
+    "description": "攻撃技を 出すと ブレードフォルムに 技 キングシールドを 出すと シールドフォルムに 変化する。"
+  },
+  "galeWings": {
+    "name": "はやてのつばさ",
+    "description": "ＨＰが 満タン だと ひこうタイプの 技を 先制で 出すことが できる。"
+  },
+  "megaLauncher": {
+    "name": "メガランチャー",
+    "description": "波動の 技の 威力が 高くなる。"
+  },
+  "grassPelt": {
+    "name": "くさのけがわ",
+    "description": "グラスフィールドのとき 防御が 上がる。"
+  },
+  "symbiosis": {
+    "name": "きょうせい",
+    "description": "味方が 道具を 使うと 自分の 持っている 道具を 味方に 渡す。"
+  },
+  "toughClaws": {
+    "name": "かたいツメ",
+    "description": "相手に 接触する 技の 威力が 高くなる。"
+  },
+  "pixilate": {
+    "name": "フェアリースキン",
+    "description": "ノーマルタイプの 技が フェアリータイプになる。 威力が 少し 上がる。"
+  },
+  "gooey": {
+    "name": "ぬめぬめ",
+    "description": "攻撃で 自分に 触れた 相手の 素早さを 下げる。"
+  },
+  "aerilate": {
+    "name": "スカイスキン",
+    "description": "ノーマルタイプの 技が ひこうタイプになる。 威力が 少し 上がる。"
+  },
+  "parentalBond": {
+    "name": "おやこあい",
+    "description": "親子 ２匹で ２回 攻撃することが できる。"
+  },
+  "darkAura": {
+    "name": "ダークオーラ",
+    "description": "全員の あくタイプの 技が 強くなる。"
+  },
+  "fairyAura": {
+    "name": "フェアリーオーラ",
+    "description": "全員の フェアリータイプの 技が 強くなる。"
+  },
+  "auraBreak": {
+    "name": "オーラブレイク",
+    "description": "オーラの 効果を 逆転させて 威力を 下げる。"
+  },
+  "primordialSea": {
+    "name": "はじまりのうみ",
+    "description": "ほのおタイプの 攻撃を 受けない 天気にする。"
+  },
+  "desolateLand": {
+    "name": "おわりのだいち",
+    "description": "みずタイプの 攻撃を 受けない 天気にする。"
+  },
+  "deltaStream": {
+    "name": "デルタストリーム",
+    "description": "ひこうタイプの 弱点が なくなる 天気にする。"
+  },
+  "stamina": {
+    "name": "じきゅうりょく",
+    "description": "攻撃を 受けると 防御が 上がる。"
+  },
+  "wimpOut": {
+    "name": "にげごし",
+    "description": "ＨＰが 半分に なると あわてて 逃げ出して 手持ちに 引っ込んで しまう。"
+  },
+  "emergencyExit": {
+    "name": "ききかいひ",
+    "description": "ＨＰが 半分に なると 危険を 回避するため 手持ちに 引っ込んで しまう。"
+  },
+  "waterCompaction": {
+    "name": "みずがため",
+    "description": "みずタイプの 技を 受けると 防御が ぐーんと 上がる。"
+  },
+  "merciless": {
+    "name": "ひとでなし",
+    "description": "どく状態の 相手を 攻撃すると かならず 急所に 当たる。"
+  },
+  "shieldsDown": {
+    "name": "リミットシールド",
+    "description": "ＨＰが 半分に なると 殻が 壊れて 攻撃的に なる。"
+  },
+  "stakeout": {
+    "name": "はりこみ",
+    "description": "交代で 出てきた 相手に ２倍の ダメージで 攻撃 できる。"
+  },
+  "waterBubble": {
+    "name": "すいほう",
+    "description": "自分に 対する ほのおタイプの 技の 威力を 下げる。 やけど しない。"
+  },
+  "steelworker": {
+    "name": "はがねつかい",
+    "description": "はがねタイプの 技の 威力が 上がる。"
+  },
+  "berserk": {
+    "name": "ぎゃくじょう",
+    "description": "相手の 攻撃で ＨＰが 半分に なると 特攻が 上がる。"
+  },
+  "slushRush": {
+    "name": "ゆきかき",
+    "description": "天気が ゆき のとき 素早さが 上がる。"
+  },
+  "longReach": {
+    "name": "えんかく",
+    "description": "すべての 技を 相手に 接触 しないで 出すことが できる。"
+  },
+  "liquidVoice": {
+    "name": "うるおいボイス",
+    "description": "すべての 音技が みずタイプに なる。"
+  },
+  "triage": {
+    "name": "ヒーリングシフト",
+    "description": "回復技を 先制で 出すことが できる。"
+  },
+  "galvanize": {
+    "name": "エレキスキン",
+    "description": "ノーマルタイプの 技が でんきタイプになる。 威力が 少し 上がる。"
+  },
+  "surgeSurfer": {
+    "name": "サーフテール",
+    "description": "エレキフィールド のとき 素早さが ２倍に なる。"
+  },
+  "schooling": {
+    "name": "ぎょぐん",
+    "description": "ＨＰが 多いときは 群れて 強くなる。 ＨＰの 残りが 少なくなると 群れは 散り散りに なってしまう。"
+  },
+  "disguise": {
+    "name": "ばけのかわ",
+    "description": "体を 被う 化けの皮で １回 攻撃を 防ぐことが できる。"
+  },
+  "battleBond": {
+    "name": "きずなへんげ",
+    "description": "相手を 倒すと トレーナーとの キズナが 深まり サトシゲッコウガに 変化する。みずしゅりけんが 強くなる。"
+  },
+  "powerConstruct": {
+    "name": "スワームチェンジ",
+    "description": "ＨＰが 半分に なると セルたちが 応援に 駆けつけ パーフェクトフォルムに 姿を 変える。"
+  },
+  "corrosion": {
+    "name": "ふしょく",
+    "description": "はがねタイプや どくタイプも どく状態に することが できる。"
+  },
+  "comatose": {
+    "name": "ぜったいねむり",
+    "description": "つねに 夢うつつの 状態で 絶対に 目覚めない。 眠ったまま 攻撃が できる。"
+  },
+  "queenlyMajesty": {
+    "name": "じょおうのいげん",
+    "description": "相手に 威圧感を あたえ こちらに むかって 先制技を 出せない ようにする。"
+  },
+  "innardsOut": {
+    "name": "とびだすなかみ",
+    "description": "相手に 倒されたとき ＨＰの 残りの ぶんだけ 相手に ダメージを あたえる。"
+  },
+  "dancer": {
+    "name": "おどりこ",
+    "description": "だれかが 踊り技を 使うと 自分も それに 続いて 踊り技を 出すことが できる。"
+  },
+  "battery": {
+    "name": "バッテリー",
+    "description": "味方の 特殊技の 威力を 上げる。"
+  },
+  "fluffy": {
+    "name": "もふもふ",
+    "description": "相手から 受けた 接触する 技の ダメージを 半減するが ほのおタイプの 技の ダメージは ２倍になる。"
+  },
+  "dazzling": {
+    "name": "ビビッドボディ",
+    "description": "相手を びっくり させて こちらに むかって 先制技を 出せない ようにする。"
+  },
+  "soulHeart": {
+    "name": "ソウルハート",
+    "description": "ポケモンが ひんしに なるたびに 特攻が 上がる。"
+  },
+  "tanglingHair": {
+    "name": "カーリーヘアー",
+    "description": "攻撃で 自分に 触れた 相手の 素早さを 下げる。"
+  },
+  "receiver": {
+    "name": "レシーバー",
+    "description": "倒された 味方の 特性を 受け継いで 同じ 特性に なる。"
+  },
+  "powerOfAlchemy": {
+    "name": "かがくのちから",
+    "description": "倒された 味方の 特性を 受け継いで 同じ 特性に なる。"
+  },
+  "beastBoost": {
+    "name": "ビーストブースト",
+    "description": "相手を 倒したとき 自分の いちばん 高い 能力が 上がる。"
+  },
+  "rksSystem": {
+    "name": "ＡＲシステム",
+    "description": "持っている メモリで 自分の タイプが 変わる。"
+  },
+  "electricSurge": {
+    "name": "エレキメイカー",
+    "description": "登場 したときに エレキフィールドを はりめぐらせる。"
+  },
+  "psychicSurge": {
+    "name": "サイコメイカー",
+    "description": "登場 したときに サイコフィールドを はりめぐらせる。"
+  },
+  "mistySurge": {
+    "name": "ミストメイカー",
+    "description": "登場 したときに ミストフィールドを はりめぐらせる。"
+  },
+  "grassySurge": {
+    "name": "グラスメイカー",
+    "description": "登場 したときに グラスフィールドを はりめぐらせる。"
+  },
+  "fullMetalBody": {
+    "name": "メタルプロテクト",
+    "description": "相手の 技や 特性で 能力を 下げられない。"
+  },
+  "shadowShield": {
+    "name": "ファントムガード",
+    "description": "ＨＰが 満タンの ときに 受ける ダメージが 少なくなる。"
+  },
+  "prismArmor": {
+    "name": "プリズムアーマー",
+    "description": "効果バツグンに なってしまう 攻撃の 威力を 弱める ことが できる。"
+  },
+  "neuroforce": {
+    "name": "ブレインフォース",
+    "description": "効果バツグンの 攻撃で 威力が さらに 上がる。"
+  },
+  "intrepidSword": {
+    "name": "ふとうのけん",
+    "description": "登場 したときに 攻撃が 上がる。"
+  },
+  "dauntlessShield": {
+    "name": "ふくつのたて",
+    "description": "登場 したときに 防御が 上がる。"
+  },
+  "libero": {
+    "name": "リベロ",
+    "description": "自分が 出す 技と 同じ タイプに 変化する。"
+  },
+  "ballFetch": {
+    "name": "たまひろい",
+    "description": "1回目に 投げて 失敗 した モンスターボールを 拾ってくる。"
+  },
+  "cottonDown": {
+    "name": "わたげ",
+    "description": "攻撃を 受けると わたげを ばらまいて 自分以外の ポケモン すべての 素早さを 下げる。"
+  },
+  "propellerTail": {
+    "name": "スクリューおびれ",
+    "description": "相手の 技を 引き受ける 特性や 技の 影響を 無視 できる。"
+  },
+  "mirrorArmor": {
+    "name": "ミラーアーマー",
+    "description": "自分が 受けた 能力 ダウンの 効果 だけを 跳ね返す。"
+  },
+  "gulpMissile": {
+    "name": "うのミサイル",
+    "description": "なみのりか ダイビングを すると 獲物を くわえてくる。 ダメージを 受けると 獲物を 吐きだして 攻撃。"
+  },
+  "stalwart": {
+    "name": "すじがねいり",
+    "description": "相手の 技を 引き受ける 特性や 技の 影響を 無視 できる。"
+  },
+  "steamEngine": {
+    "name": "じょうききかん",
+    "description": "みずタイプ ほのおタイプの 技を 受けると 素早さが ぐぐーんと 上がる。"
+  },
+  "punkRock": {
+    "name": "パンクロック",
+    "description": "音技の 威力が 上がる。 受けた 音技の ダメージは 半分に なる。"
+  },
+  "sandSpit": {
+    "name": "すなはき",
+    "description": "攻撃を 受けると 砂あらしを 起こす。"
+  },
+  "iceScales": {
+    "name": "こおりのりんぷん",
+    "description": "こおりのりんぷんに 守られて 特殊攻撃で 受ける ダメージが 半減 する。"
+  },
+  "ripen": {
+    "name": "じゅくせい",
+    "description": "熟成 させることで きのみの 効果が 倍に なる。"
+  },
+  "iceFace": {
+    "name": "アイスフェイス",
+    "description": "物理攻撃は 頭の 氷が みがわりに なるが 姿も 変わる。 氷は あられが 降ると 元に戻る。"
+  },
+  "powerSpot": {
+    "name": "パワースポット",
+    "description": "隣に いるだけで 技の 威力が 上がる。"
+  },
+  "mimicry": {
+    "name": "ぎたい",
+    "description": "フィールドの 状態に あわせて ポケモンの タイプが 変わる。"
+  },
+  "screenCleaner": {
+    "name": "バリアフリー",
+    "description": "登場 したときに 敵と 味方の ひかりのかべ リフレクター オーロラベールの 効果が 消える。"
+  },
+  "steelySpirit": {
+    "name": "はがねのせいしん",
+    "description": "味方の はがねタイプの 攻撃の 威力が 上がる。"
+  },
+  "perishBody": {
+    "name": "ほろびのボディ",
+    "description": "接触する 技を 受けると お互い ３ターン たつと ひんしになる。 交代すると 効果は なくなる。"
+  },
+  "wanderingSpirit": {
+    "name": "さまようたましい",
+    "description": "接触する 技で 攻撃 してきた ポケモンと 特性を 入れ替える。"
+  },
+  "gorillaTactics": {
+    "name": "ごりむちゅう",
+    "description": "攻撃は 上がるが 最初に 選んだ 技しか 出せなくなる。"
+  },
+  "neutralizingGas": {
+    "name": "かがくへんかガス",
+    "description": "かがくへんかガスの ポケモンが 場にいると すべての ポケモンの 特性の 効果が 消えたり 発動 しなくなる。"
+  },
+  "pastelVeil": {
+    "name": "パステルベール",
+    "description": "自分も 味方も どくの 状態異常を 受けなくなる。"
+  },
+  "hungerSwitch": {
+    "name": "はらぺこスイッチ",
+    "description": "ターンの 終わりに まんぷくもよう はらぺこもよう まんぷくもよう……と 交互に 姿を 変える。"
+  },
+  "quickDraw": {
+    "name": "クイックドロウ",
+    "description": "相手より 先に 行動できることが ある。"
+  },
+  "unseenFist": {
+    "name": "ふかしのこぶし",
+    "description": "相手に 接触する 技なら 守りの 効果を 無視して 攻撃することが できる。"
+  },
+  "curiousMedicine": {
+    "name": "きみょうなくすり",
+    "description": "登場 したときに 貝がらから 薬を 振りまいて 味方の 能力変化を 元に戻す。"
+  },
+  "transistor": {
+    "name": "トランジスタ",
+    "description": "でんきタイプの 技の 威力が 上がる。"
+  },
+  "dragonsMaw": {
+    "name": "りゅうのあぎと",
+    "description": "ドラゴンタイプの 技の 威力が 上がる。"
+  },
+  "chillingNeigh": {
+    "name": "しろのいななき",
+    "description": "相手を 倒すと 冷たい 声で いなないて 攻撃が 上がる。"
+  },
+  "grimNeigh": {
+    "name": "くろのいななき",
+    "description": "相手を 倒すと 恐ろしい 声で いなないて 特攻が 上がる。"
+  },
+  "asOneGlastrier": {
+    "name": "じんばいったい",
+    "description": "バドレックスの きんちょうかんと ブリザポスの しろのいななきの 二つの 特性を あわせ持つ。"
+  },
+  "asOneSpectrier": {
+    "name": "じんばいったい",
+    "description": "バドレックスの きんちょうかんと レイスポスの くろのいななきの 二つの 特性を あわせ持つ。"
+  },
+  "lingeringAroma": {
+    "name": "とれないにおい",
+    "description": "直接攻撃を受けたとき、相手の特性もとれないにおいにする。"
+  },
+  "seedSower": {
+    "name": "こぼれダネ",
+    "description": "攻撃を 受けると グラスフィールドに する。"
+  },
+  "thermalExchange": {
+    "name": "ねつこうかん",
+    "description": "ほのおタイプの 技を 受けると 攻撃が 上がる。 やけど状態に ならない。"
+  },
+  "angerShell": {
+    "name": "いかりのこうら",
+    "description": "相手の攻撃で HPが 半分に なると 怒りで 防御と 特防が 下がるが 攻撃 特攻 素早さが 上がる。"
+  },
+  "purifyingSalt": {
+    "name": "きよめのしお",
+    "description": "清らかな塩で 状態異常に ならない。 ゴーストタイプの 技の ダメージを 半減させる。"
+  },
+  "wellBakedBody": {
+    "name": "こんがりボディ",
+    "description": "ほのおタイプの 技を 受けると ダメージを 受けずに 防御が ぐーんと 上がる。"
+  },
+  "windRider": {
+    "name": "かぜのり",
+    "description": "おいかぜが 吹いたり 風技を 受けると ダメージを 受けずに 攻撃が 上がる。"
+  },
+  "guardDog": {
+    "name": "ばんけん",
+    "description": "いかく されると 攻撃が 上がる。 ポケモンを 入れ替えさせる 技や 道具が 効かない。"
+  },
+  "rockyPayload": {
+    "name": "いわはこび",
+    "description": "いわタイプの 技の 威力が 上がる。"
+  },
+  "windPower": {
+    "name": "ふうりょくでんき",
+    "description": "風技を 受けると じゅうでん 状態に なる。"
+  },
+  "zeroToHero": {
+    "name": "マイティチェンジ",
+    "description": "手持ちに ひっこむと マイティフォルムに 変化する。"
+  },
+  "commander": {
+    "name": "しれいとう",
+    "description": "登場したとき 味方に ヘイラッシャが いると 口の中に 入って そこから 指令を だす。"
+  },
+  "electromorphosis": {
+    "name": "でんきにかえる",
+    "description": "ダメージを 受けると じゅうでん 状態に なる。"
+  },
+  "protosynthesis": {
+    "name": "こだいかっせい",
+    "description": "ブーストエナジーを 持たせるか 天気が 晴れのとき いちばん 高い能力が 上がる。"
+  },
+  "quarkDrive": {
+    "name": "クォークチャージ",
+    "description": "ブーストエナジーを 持たせるか エレキフィールドのとき いちばん 高い能力が 上がる。"
+  },
+  "goodAsGold": {
+    "name": "おうごんのからだ",
+    "description": "酸化せず 丈夫な 黄金の体は 相手からの 変化技を 受けない。"
+  },
+  "vesselOfRuin": {
+    "name": "わざわいのうつわ",
+    "description": "災厄を 呼ぶ 器の力で 自分以外の 特攻が 弱くなる。"
+  },
+  "swordOfRuin": {
+    "name": "わざわいのつるぎ",
+    "description": "災厄を 呼ぶ 剣の力で 自分以外の 防御が 弱くなる。"
+  },
+  "tabletsOfRuin": {
+    "name": "わざわいのおふだ",
+    "description": "災厄を 呼ぶ 木札の力で 自分以外の 攻撃が 弱くなる。"
+  },
+  "beadsOfRuin": {
+    "name": "わざわいのたま",
+    "description": "災厄を 呼ぶ 勾玉の力で 自分以外の 特防が 弱くなる。"
+  },
+  "orichalcumPulse": {
+    "name": "ひひいろのこどう",
+    "description": "登場したとき 天気を 晴れにする。 日差しが 強いと 古代の 鼓動により 攻撃が 高まる。"
+  },
+  "hadronEngine": {
+    "name": "ハドロンエンジン",
+    "description": "登場したとき エレキフィールドを はる。 エレキフィールドだと 未来の 機関により 特攻が 高まる。"
+  },
+  "opportunist": {
+    "name": "びんじょう",
+    "description": "相手の 能力が 上がったとき 自分も 便乗して 同じように 能力を 上げる。"
+  },
+  "cudChew": {
+    "name": "はんすう",
+    "description": "きのみを 食べると 次のターンの 終わりに 胃から 出して もう1回だけ 食べる。"
+  },
+  "sharpness": {
+    "name": "きれあじ",
+    "description": "相手を 切る技の 威力が 上がる。"
+  },
+  "supremeOverlord": {
+    "name": "そうだいしょう",
+    "description": "登場したとき 今まで 倒された 味方の 数が 多いほど 少しずつ 攻撃と 特攻が 上がる。"
+  },
+  "costar": {
+    "name": "きょうえん",
+    "description": "登場 したときに 味方の 能力変化を コピーする。"
+  },
+  "toxicDebris": {
+    "name": "どくげしょう",
+    "description": "物理技で ダメージを 受けると 相手の 足下に どくびしが ちらばる。"
+  },
+  "armorTail": {
+    "name": "テイルアーマー",
+    "description": "頭を包む 謎のしっぽが こちらに むかって 先制技を 出せない ようにする。"
+  },
+  "earthEater": {
+    "name": "どしょく",
+    "description": "じめんタイプの 技を 受けると ダメージを 受けずに 回復する。"
+  },
+  "myceliumMight": {
+    "name": "きんしのちから",
+    "description": "変化技を 出すとき 必ず 行動が 遅くなるが 相手の 特性に ジャマされない。"
+  },
+  "mindsEye": {
+    "name": "しんがん",
+    "description": "ノーマル かくとうタイプの技を ゴーストタイプに 当てることが できる。 相手の 回避率の 変化を 無視し 命中率も 下げられない。"
+  },
+  "supersweetSyrup": {
+    "name": "かんろなミツ",
+    "description": "最初に 登場 したとき 甘ったるい 蜜の香りを ふりまいて 相手の 回避率を 下げる。"
+  },
+  "hospitality": {
+    "name": "おもてなし",
+    "description": "登場したとき 味方を もてなして HPを 少しだけ 回復してあげる。"
+  },
+  "toxicChain": {
+    "name": "どくのくさり",
+    "description": "毒素を ふくんだ 鎖の力で 技を 当てた 相手を 猛毒の状態に することが ある。"
+  },
+  "embodyAspectTeal": {
+    "name": "おもかげやどし",
+    "description": "思い出を 心に 宿すことで みどりのめんを かがやかせ 自分の 素早さを 上げる。"
+  },
+  "embodyAspectWellspring": {
+    "name": "おもかげやどし",
+    "description": "思い出を 心に 宿すことで いどのめんを かがやかせ 自分の 特防を 上げる。"
+  },
+  "embodyAspectHearthflame": {
+    "name": "おもかげやどし",
+    "description": "思い出を 心に 宿すことで かまどのめんを かがやかせ 自分の 攻撃を 上げる。"
+  },
+  "embodyAspectCornerstone": {
+    "name": "おもかげやどし",
+    "description": "思い出を 心に 宿すことで いしずえのめんを かがやかせ 自分の 防御を 上げる。"
+  },
+  "teraShift": {
+    "name": "テラスチェンジ",
+    "description": "登場したとき 周囲の エネルギーを 吸収し テラスタルフォルムに 変化する。"
+  },
+  "teraShell": {
+    "name": "テラスシェル",
+    "description": "全タイプの力を 秘めた甲羅は HPが 満タンの ときに 受ける ダメージを すべて 今ひとつに する。"
+  },
+  "teraformZero": {
+    "name": "ゼロフォーミング",
+    "description": "テラパゴスが ステラフォルムに なったとき 秘められた力で 天気と フィールドの 影響を すべて ゼロにする。"
+  },
+  "poisonPuppeteer": {
+    "name": "どくくぐつ",
+    "description": "モモワロウの 技によって どく状態に なった 相手は こんらん状態にも なってしまう。"
+  }
+}

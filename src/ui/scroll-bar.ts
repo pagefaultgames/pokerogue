@@ -29,8 +29,8 @@ export class ScrollBar extends Phaser.GameObjects.Container {
 
   setPages(pages: number): void {
     this.pages = pages;
-    this.handleBody.height = (this.bg.displayHeight - 1 - this.handleBottom.displayHeight) / this.pages;
+    this.handleBody.height = (this.bg.displayHeight - 1 - this.handleBottom.displayHeight) * 9 / this.pages;
 
-    this.setVisible(this.pages > 1);
+    this.setVisible(this.pages > 9);
   }
 }

@@ -1,16 +1,21 @@
-import { BattleStat } from "#app/data/battle-stat.js";
-import { StatusEffect } from "#app/data/status-effect.js";
-import { Type } from "#app/data/type.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BerryPhase, CommandPhase, DamagePhase, MoveEffectPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
+import { BattleStat } from "#app/data/battle-stat";
+import { StatusEffect } from "#app/data/status-effect";
+import { Type } from "#app/data/type";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { CommandPhase } from "#app/phases/command-phase";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -55,7 +60,7 @@ describe("Abilities - Parental Bond", () => {
 
       let enemyStartingHp = enemyPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.move.select(Moves.TACKLE);
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
 
@@ -68,7 +73,7 @@ describe("Abilities - Parental Bond", () => {
       const secondStrikeDamage = enemyStartingHp - enemyPokemon.hp;
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
-      expect(secondStrikeDamage).toBe(Math.ceil(0.25 * firstStrikeDamage));
+      expect(secondStrikeDamage).toBe(toDmgValue(0.25 * firstStrikeDamage));
     }, TIMEOUT
   );
 
@@ -86,7 +91,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.POWER_UP_PUNCH));
+      game.move.select(Moves.POWER_UP_PUNCH);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -108,7 +113,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BABY_DOLL_EYES));
+      game.move.select(Moves.BABY_DOLL_EYES);
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
@@ -128,7 +133,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DOUBLE_HIT));
+      game.move.select(Moves.DOUBLE_HIT);
       await game.move.forceHit();
 
       await game.phaseInterceptor.to(BerryPhase, false);
@@ -150,7 +155,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SELF_DESTRUCT));
+      game.move.select(Moves.SELF_DESTRUCT);
 
       await game.phaseInterceptor.to(DamagePhase, false);
 
@@ -171,7 +176,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.ROLLOUT));
+      game.move.select(Moves.ROLLOUT);
       await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase, false);
@@ -195,7 +200,7 @@ describe("Abilities - Parental Bond", () => {
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_RAGE));
+      game.move.select(Moves.DRAGON_RAGE);
       await game.phaseInterceptor.to(BerryPhase, false);
 
       expect(enemyPokemon.hp).toBe(enemyStartingHp - 80);
@@ -206,7 +211,7 @@ describe("Abilities - Parental Bond", () => {
     "ability should not apply multiplier to counter moves",
     async () => {
       game.override.moveset([Moves.COUNTER]);
-      game.override.enemyMoveset([Moves.TACKLE,Moves.TACKLE,Moves.TACKLE,Moves.TACKLE]);
+      game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -219,14 +224,14 @@ describe("Abilities - Parental Bond", () => {
       const playerStartingHp = leadPokemon.hp;
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.COUNTER));
+      game.move.select(Moves.COUNTER);
       await game.phaseInterceptor.to(DamagePhase);
 
       const playerDamage = playerStartingHp - leadPokemon.hp;
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(enemyPokemon.hp).toBe(enemyStartingHp - 4*playerDamage);
+      expect(enemyPokemon.hp).toBe(enemyStartingHp - 4 * playerDamage);
     }, TIMEOUT
   );
 
@@ -246,10 +251,10 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon.length).toBe(2);
       enemyPokemon.forEach(p => expect(p).not.toBe(undefined));
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      game.move.select(Moves.EARTHQUAKE);
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.EARTHQUAKE));
+      game.move.select(Moves.EARTHQUAKE, 1);
       await game.phaseInterceptor.to(BerryPhase, false);
 
       playerPokemon.forEach(p => expect(p.turnData.hitCount).toBe(1));
@@ -269,7 +274,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      game.move.select(Moves.EARTHQUAKE);
       await game.phaseInterceptor.to(DamagePhase, false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
@@ -289,7 +294,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.MIND_BLOWN));
+      game.move.select(Moves.MIND_BLOWN);
 
       await game.phaseInterceptor.to(DamagePhase, false);
 
@@ -298,7 +303,7 @@ describe("Abilities - Parental Bond", () => {
       // This test will time out if the user faints
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(leadPokemon.hp).toBe(Math.floor(leadPokemon.getMaxHp()/2));
+      expect(leadPokemon.hp).toBe(toDmgValue(leadPokemon.getMaxHp() / 2));
     }, TIMEOUT
   );
 
@@ -315,7 +320,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.BURN_UP));
+      game.move.select(Moves.BURN_UP);
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -333,7 +338,7 @@ describe("Abilities - Parental Bond", () => {
     "Moves boosted by this ability and Multi-Lens should strike 4 times",
     async () => {
       game.override.moveset([Moves.TACKLE]);
-      game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
+      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -343,7 +348,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.move.select(Moves.TACKLE);
 
       await game.phaseInterceptor.to(DamagePhase);
 
@@ -355,7 +360,7 @@ describe("Abilities - Parental Bond", () => {
     "Super Fang boosted by this ability and Multi-Lens should strike twice",
     async () => {
       game.override.moveset([Moves.SUPER_FANG]);
-      game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
+      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -367,7 +372,7 @@ describe("Abilities - Parental Bond", () => {
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SUPER_FANG));
+      game.move.select(Moves.SUPER_FANG);
       await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase);
@@ -384,7 +389,7 @@ describe("Abilities - Parental Bond", () => {
     "Seismic Toss boosted by this ability and Multi-Lens should strike twice",
     async () => {
       game.override.moveset([Moves.SEISMIC_TOSS]);
-      game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
+      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -396,7 +401,7 @@ describe("Abilities - Parental Bond", () => {
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SEISMIC_TOSS));
+      game.move.select(Moves.SEISMIC_TOSS);
       await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase);
@@ -422,7 +427,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.HYPER_BEAM));
+      game.move.select(Moves.HYPER_BEAM);
       await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase);
@@ -450,7 +455,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.ANCHOR_SHOT));
+      game.move.select(Moves.ANCHOR_SHOT);
       await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase);
@@ -480,7 +485,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SMACK_DOWN));
+      game.move.select(Moves.SMACK_DOWN);
       await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase);
@@ -507,7 +512,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.U_TURN));
+      game.move.select(Moves.U_TURN);
       await game.move.forceHit();
 
       await game.phaseInterceptor.to(MoveEffectPhase);
@@ -531,7 +536,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.WAKE_UP_SLAP));
+      game.move.select(Moves.WAKE_UP_SLAP);
       await game.move.forceHit();
 
       await game.phaseInterceptor.to(DamagePhase);
@@ -549,7 +554,7 @@ describe("Abilities - Parental Bond", () => {
     "ability should not cause user to hit into King's Shield more than once",
     async () => {
       game.override.moveset([Moves.TACKLE]);
-      game.override.enemyMoveset([Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD,Moves.KINGS_SHIELD]);
+      game.override.enemyMoveset([Moves.KINGS_SHIELD, Moves.KINGS_SHIELD, Moves.KINGS_SHIELD, Moves.KINGS_SHIELD]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -559,7 +564,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+      game.move.select(Moves.TACKLE);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -581,7 +586,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).not.toBe(undefined);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.WATER_GUN));
+      game.move.select(Moves.WATER_GUN);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -594,7 +599,7 @@ describe("Abilities - Parental Bond", () => {
     async () => {
       game.override.battleType("double");
       game.override.moveset([Moves.EARTHQUAKE, Moves.SPLASH]);
-      game.override.startingHeldItems([{name: "MULTI_LENS", count: 1}]);
+      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
       await game.startBattle([Species.CHARIZARD, Species.PIDGEOT]);
 
@@ -608,10 +613,10 @@ describe("Abilities - Parental Bond", () => {
 
       const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.EARTHQUAKE));
+      game.move.select(Moves.EARTHQUAKE);
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.doAttack(getMovePosition(game.scene, 1, Moves.SPLASH));
+      game.move.select(Moves.SPLASH, 1);
 
       await game.phaseInterceptor.to(MoveEffectPhase, false);
 
@@ -620,7 +625,7 @@ describe("Abilities - Parental Bond", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      enemyPokemon.forEach((p, i) => expect(enemyStartingHp[i] - p.hp).toBe(2*enemyFirstHitDamage[i]));
+      enemyPokemon.forEach((p, i) => expect(enemyStartingHp[i] - p.hp).toBe(2 * enemyFirstHitDamage[i]));
 
     }, TIMEOUT
   );

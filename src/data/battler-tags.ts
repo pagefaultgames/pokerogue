@@ -1,5 +1,4 @@
-import { CommonAnim, CommonBattleAnim, MoveChargeAnim, ChargeAnim } from "./battle-anims";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangeCallback, StatChangePhase } from "../phases";
+import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "./battle-anims";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
@@ -18,6 +17,12 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import i18next from "#app/plugins/i18n.js";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
+import { MovePhase } from "#app/phases/move-phase.js";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
+import { StatChangePhase, StatChangeCallback } from "#app/phases/stat-change-phase.js";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -214,7 +219,7 @@ export class RechargingTag extends BattlerTag {
 }
 
 /**
- * BattlerTag representing the "charge phase" of Beak Blast
+ * BattlerTag representing the "charge phase" of Beak Blast.
  * Pokemon with this tag will inflict BURN status on any attacker that makes contact.
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Beak_Blast_(move) | Beak Blast}
  */
@@ -251,6 +256,50 @@ export class BeakBlastChargingTag extends BattlerTag {
   }
 }
 
+/**
+ * BattlerTag implementing Shell Trap's pre-move behavior.
+ * Pokemon with this tag will act immediately after being hit by a physical move.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Shell_Trap_(move) | Shell Trap}
+ */
+export class ShellTrapTag extends BattlerTag {
+  public activated: boolean;
+
+  constructor() {
+    super(BattlerTagType.SHELL_TRAP, BattlerTagLapseType.TURN_END, 1);
+    this.activated = false;
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    pokemon.scene.queueMessage(i18next.t("moveTriggers:setUpShellTrap", { pokemonName: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  /**
+   * "Activates" the shell trap, causing the tag owner to move next.
+   * @param pokemon {@linkcode Pokemon} the owner of this tag
+   * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
+   * @returns `true` if invoked with the `CUSTOM` lapse type; `false` otherwise
+   */
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      const shellTrapPhaseIndex = pokemon.scene.phaseQueue.findIndex(
+        phase => phase instanceof MovePhase && phase.pokemon === pokemon
+      );
+      const firstMovePhaseIndex = pokemon.scene.phaseQueue.findIndex(
+        phase => phase instanceof MovePhase
+      );
+
+      if (shellTrapPhaseIndex !== -1 && shellTrapPhaseIndex !== firstMovePhaseIndex) {
+        const shellTrapMovePhase = pokemon.scene.phaseQueue.splice(shellTrapPhaseIndex, 1)[0];
+        pokemon.scene.prependToPhase(shellTrapMovePhase, MovePhase);
+      }
+
+      this.activated = true;
+      return true;
+    }
+    return super.lapse(pokemon, lapseType);
+  }
+}
+
 export class TrappedTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: number, sourceMove: Moves, sourceId: number) {
     super(tagType, lapseType, turnCount, sourceMove, sourceId);
@@ -258,7 +307,7 @@ export class TrappedTag extends BattlerTag {
 
   canAdd(pokemon: Pokemon): boolean {
     const isGhost = pokemon.isOfType(Type.GHOST);
-    const isTrapped = pokemon.getTag(BattlerTagType.TRAPPED);
+    const isTrapped = pokemon.getTag(TrappedTag);
 
     return !isTrapped && !isGhost;
   }
@@ -288,6 +337,23 @@ export class TrappedTag extends BattlerTag {
 
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battle:battlerTagsTrappedOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
+  }
+}
+
+/**
+ * BattlerTag implementing No Retreat's trapping effect.
+ * This is treated separately from other trapping effects to prevent
+ * Ghost-type Pokemon from being able to reuse the move.
+ * @extends TrappedTag
+ */
+class NoRetreatTag extends TrappedTag {
+  constructor(sourceId: number) {
+    super(BattlerTagType.NO_RETREAT, BattlerTagLapseType.CUSTOM, 0, Moves.NO_RETREAT, sourceId);
+  }
+
+  /** overrides {@linkcode TrappedTag.apply}, removing the Ghost-type condition */
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.getTag(TrappedTag);
   }
 }
 
@@ -393,8 +459,8 @@ export class ConfusedTag extends BattlerTag {
       if (pokemon.randSeedInt(3) === 0) {
         const atk = pokemon.getBattleStat(Stat.ATK);
         const def = pokemon.getBattleStat(Stat.DEF);
-        const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
-        pokemon.scene.queueMessage(i18next.t("battle:battlerTagsConfusedLapseHurtItself"));
+        const damage = Utils.toDmgValue(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
+        pokemon.scene.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
         pokemon.damageAndUpdate(damage);
         pokemon.battleData.hitCount++;
         (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
@@ -570,7 +636,7 @@ export class SeedTag extends BattlerTag {
         if (!cancelled.value) {
           pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED));
 
-          const damage = pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / 8), 1));
+          const damage = pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / 8));
           const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr, false);
           pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(),
             !reverseDrain ? damage : damage * -1,
@@ -616,7 +682,7 @@ export class NightmareTag extends BattlerTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / 4));
+        pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / 4));
       }
     }
 
@@ -760,8 +826,8 @@ export class IngrainTag extends TrappedTag {
         new PokemonHealPhase(
           pokemon.scene,
           pokemon.getBattlerIndex(),
-          Math.floor(pokemon.getMaxHp() / 16),
-          i18next.t("battle:battlerTagsIngrainLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+          Utils.toDmgValue(pokemon.getMaxHp() / 16),
+          i18next.t("battlerTags:ingrainLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
           true
         )
       );
@@ -796,7 +862,7 @@ export class OctolockTag extends TrappedTag {
     const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (shouldLapse) {
-      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.DEF, BattleStat.SPDEF], -1));
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [BattleStat.DEF, BattleStat.SPDEF], -1));
       return true;
     }
 
@@ -823,8 +889,8 @@ export class AquaRingTag extends BattlerTag {
         new PokemonHealPhase(
           pokemon.scene,
           pokemon.getBattlerIndex(),
-          Math.floor(pokemon.getMaxHp() / 16),
-          i18next.t("battle:battlerTagsAquaRingLapse", {
+          Utils.toDmgValue(pokemon.getMaxHp() / 16),
+          i18next.t("battlerTags:aquaRingLapse", {
             moveName: this.getMoveName(),
             pokemonName: getPokemonNameWithAffix(pokemon)
           }),
@@ -910,7 +976,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isOfType(Type.GHOST) && !pokemon.findTag(t => t instanceof DamagingTrapTag);
+    return !pokemon.getTag(TrappedTag);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -929,7 +995,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / 8));
+        pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / 8));
       }
     }
 
@@ -1113,7 +1179,7 @@ export class ContactDamageProtectedTag extends ProtectedTag {
       if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
         const attacker = effectPhase.getPokemon();
         if (!attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
-          attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+          attacker.damageAndUpdate(Utils.toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
         }
       }
     }
@@ -1553,6 +1619,25 @@ export class CritBoostTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag for the effects of Dragon Cheer, which boosts the critical hit ratio of the user's allies.
+ * @extends {CritBoostTag}
+ */
+export class DragonCheerTag extends CritBoostTag {
+  /** The types of the user's ally when the tag is added */
+  public typesOnAdd: Type[];
+
+  constructor() {
+    super(BattlerTagType.CRIT_BOOST, Moves.DRAGON_CHEER);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    this.typesOnAdd = pokemon.getTypes(true);
+  }
+}
+
 export class SaltCuredTag extends BattlerTag {
   private sourceIndex: number;
 
@@ -1587,7 +1672,7 @@ export class SaltCuredTag extends BattlerTag {
 
       if (!cancelled.value) {
         const pokemonSteelOrWater = pokemon.isOfType(Type.STEEL) || pokemon.isOfType(Type.WATER);
-        pokemon.damageAndUpdate(Math.max(Math.floor(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), 1));
+        pokemon.damageAndUpdate(Utils.toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8));
 
         pokemon.scene.queueMessage(
           i18next.t("battle:battlerTagsSaltCuredLapse", {
@@ -1633,8 +1718,8 @@ export class CursedTag extends BattlerTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / 4), 1));
-        pokemon.scene.queueMessage(i18next.t("battle:battlerTagsCursedLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+        pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / 4));
+        pokemon.scene.queueMessage(i18next.t("battlerTags:cursedLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       }
     }
 
@@ -1873,6 +1958,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new RechargingTag(sourceMove);
   case BattlerTagType.BEAK_BLAST_CHARGING:
     return new BeakBlastChargingTag();
+  case BattlerTagType.SHELL_TRAP:
+    return new ShellTrapTag();
   case BattlerTagType.FLINCHED:
     return new FlinchedTag(sourceMove);
   case BattlerTagType.INTERRUPTED:
@@ -1901,6 +1988,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new DrowsyTag();
   case BattlerTagType.TRAPPED:
     return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
+  case BattlerTagType.NO_RETREAT:
+    return new NoRetreatTag(sourceId);
   case BattlerTagType.BIND:
     return new BindTag(turnCount, sourceId);
   case BattlerTagType.WRAP:
@@ -1960,6 +2049,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new TypeBoostTag(tagType, sourceMove, Type.FIRE, 1.5, false);
   case BattlerTagType.CRIT_BOOST:
     return new CritBoostTag(tagType, sourceMove);
+  case BattlerTagType.DRAGON_CHEER:
+    return new DragonCheerTag();
   case BattlerTagType.ALWAYS_CRIT:
   case BattlerTagType.IGNORE_ACCURACY:
     return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
