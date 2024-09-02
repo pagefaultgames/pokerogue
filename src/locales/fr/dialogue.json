@@ -275,6 +275,96 @@
       "5": "J’appelle pas ça perdre, j’appelle ça échouer avec panache !"
     }
   },
+  "aether_grunt": {
+    "encounter": {
+      "1": "Je vais te mettre ta raclée !",
+      "2": "J’en ai rien à faire que tu sois une gosse. Tu vas tutoyer les étoiles si tu nous menaces !",
+      "2_female": "J’en ai rien à faire que tu sois une gosse. Tu vas tutoyer les étoiles si tu nous menaces !",
+      "3": "J’ai pour ordre de ne laisser passer aucun Dresseur, peu importe qui c’est !",
+      "4": "Je vais te montrer le pouvoir du Paradis Æther !",
+      "5": "Maintenant que t’es au courant de ce qu’il se passe au cœur du Paradis Æther, fais-moi une faveur et disparait !"
+    },
+    "victory": {
+      "1": "C’est plutôt toi qui devrait m’apprendre à en mettre…",
+      "2": "Pardon ? J’ai pas compris…",
+      "3": "Peu importe les ordres, jamais j’aurais pu te retenir en fait…",
+      "4": "Mhh… Il semblerait que j’ai perdu.",
+      "5": "C’est plutôt moi qui va disparaitre je crois."
+    }
+  },
+  "faba": {
+    "encounter": {
+      "1": "Moi, Directeur Saubohne, je vais te montrer de quel bois je me chauffe !",
+      "2": "Donc là, l’homme supposé être la dernière ligne défense du Paradis Æther doit affronter un mioche ?",
+      "2_female": "Donc là, l’homme supposé être la dernière ligne défense du Paradis Æther doit affronter un mioche ?",
+      "3": "S’il n’y a qu’un seul nom à retenir au sein de la Fondation Æther, c’est le mien : Saubohne !"
+    },
+    "victory": {
+      "1": "Gloups !",
+      "2": "Malheur ! J’ai perdu face à un simple enfant ?!",
+      "2_female": "Malheur ! J’ai perdu face à une simple enfant ?!",
+      "3": "J’ai HORREUR des enfants !"
+    }
+  },
+  "skull_grunt": {
+    "encounter": {
+      "1": "Oush oush ! On est pas méchants, sauf si tu viens nous allumer la mèche-han !",
+      "2": "Ce manque de respect, j’hallucine ! T’es allé trop loin, le mioche !",
+      "2_female": "Ce manque de respect, j’hallucine ! T’es allée trop loin, la mioche !",
+      "3": "On est juste des gars et des meufs normaux, on voit un Pokémon on le prend !",
+      "4": "Pourquoi tu te la joue comme ça ? C'est avec tes dents que t’vas jouer frérot.",
+      "4_female": "Pourquoi tu te la joue comme ça ? C'est avec tes dents que t’vas jouer ma reus.",
+      "5": "Cousin, écoute-nous bien ! ♪\nSe taper dessus, ça sert à rien ! ♪\n$Tu t’incrustes chez nous, ça s’fait pas ! ♪\n$Mais on est sympa, on a un plan pour toi ! ♪"
+      "5_female": "Cousine, écoute-nous bien ! ♪\nSe taper dessus, ça sert à rien ! ♪\n$Tu t’incrustes chez nous, ça s’fait pas ! ♪\n$Mais on est sympa, on a un plan pour toi ! ♪"
+    },
+    "victory": {
+      "1": "Hein ? C’est déjà terminé ?",
+      "2": "… Ça craint grave ! On s’tire !",
+      "3": "Ouais de toute on en avait pas b’soin de ton Pokémon… Ah ah…",
+      "4": "Ouh là, c’est bon, j’en demandais pas tant…",
+      "5": "On pèse plus que des Pokémon, t’entends ?\nAlors tu vas nous respecter, oush !"
+    }
+  },
+  "plumeria": {
+    "encounter": {
+      "1": "Tsk. T’es un gamin tout ce qu’il y a de plus banal, en fait.",
+      "1_female": "Tsk. T’es une gamine tout ce qu’il y a de plus banal, en fait.",
+      "2": "Abrutis de sbires. Trop incompétants pour arriver à se débarasser de gamins…",
+      "3": "Si tu touches encore à un cheveu de mes lascars, tu vas pas comprendre c’qui t’arrive !"
+    },
+    "victory": {
+      "1": "Tsk. T’es pas mauvais. J’te l’accorde.",
+      "1_female": "Tsk. T’es pas mauvaise. J’te l’accorde.",
+      "2": "Tsk. J’dois reconnaitre que t’en as dans le ventre.\n$Maintenant, j’comprends pourquoi mes gars n’arrêtent pas de se faire battre par toi.",
+      "3": "Tsk. J’crois que j'ai plus qu’à assumer ma défaite."
+    }
+  },
+  "macro_grunt": {
+    "encounter": {
+      "1": "Hop hop hop ! Terminus !",
+      "2": "T’es un Dresseur n’est-ce pas ?\n$J’ai bien peur ce que ne soit pas une excuse suffisante pour nous interrompre dans notre travail.",
+      "2": "T’es une Dresseuse n’est-ce pas ?\n$J’ai bien peur ce que ne soit pas une excuse suffisante pour nous interrompre dans notre travail.",
+      "3": "Je travaille à Macro Cosmos Assurances !\nBesoin d’une assurance-vie ?"
+    },
+    "victory": {
+      "1": "Je n’ai d’autre choix que respectueusement me retirer.",
+      "2": "Mon argent de poche…\nPlus qu’à manger des pâtes pour la fin du mois…",
+      "3": "Chez Macro Cosmos, rien n’est comparable à notre dévotion au travail !"
+    }
+  },
+  "oleana": {
+    "encounter": {
+      "1": "Je ne laisserai personne interférer avec les projets du président Shehroz.",
+      "2": "Je vois que vous avez su vous défaire de mes subalternes.\n$Mais assez joué. Il est temps de rentrer chez vous, maintenant.",
+      "3": "Je gagnerai en votre nom, monsieur le président."
+    },
+    "victory": {
+      "1": "*soupir* Comment ai-je fait pour perdre ainsi… ?\nJe ne suis vraiment pas à la hauteur…",
+      "2": "Ah ! Quelle erreur… Je n’aurais pas dû sous-estimer un Dresseur de ton calibre…",
+      "2_female": "Ah ! Quelle erreur… Je n’aurais pas dû sous-estimer une Dresseuse de ton calibre…",
+      "3": "*soupir* Je suis fatiguée parton…"
+    }
+  },
   "rocket_boss_giovanni_1": {
     "encounter": {
       "1": "Bien. Je dois admettre que je suis impressionné de te voir ici !"
