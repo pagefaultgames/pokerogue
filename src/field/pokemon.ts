@@ -2861,10 +2861,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param quiet a boolean value that is sometimes used as the asPhase boolean which in this case affects that.
    * @param overrideStatus a boolean value to determine whether a status should be overriden.  If true, the pokemon cannot be statused essentially
    * @param sourcePokemon {@linkcode Pokemon} The pokemon causing the status.  The target pokemon is 'this'.
-   * @returns true if the pokemon can be affected by the status, false if not.
+   * @returns true if the pokemon can be affected by the status, false if not.  Also, while not a return value, it will apply applyPreSetStatusAbAttrs which means this function should be used sparingly compared to checkIfCanSetStatus
    */
   canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
-    const canSetStatus = this.checkIfCanSetStatus(effect, quiet, overrideStatus, sourcePokemon);
+    const canSetStatusResult = this.checkIfCanSetStatus(effect, quiet, overrideStatus, sourcePokemon);
 
     const cancelled = new Utils.BooleanHolder(false);
     applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
@@ -2876,7 +2876,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    return canSetStatus;
+    return canSetStatusResult;
   }
 
   trySetStatus(effect: StatusEffect | undefined, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, cureTurn: integer | null = 0, sourceText: string | null = null): boolean {
