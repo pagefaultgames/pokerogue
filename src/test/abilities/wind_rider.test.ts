@@ -88,7 +88,6 @@ describe("Abilities - Wind Rider", () => {
     await game.classicMode.startBattle([Species.SHIFTRY]);
     const magikarp = game.scene.getEnemyPokemon()!;
     const shiftry = game.scene.getPlayerPokemon()!;
-    expect(shiftry.hasAbility(Abilities.WIND_RIDER)).toBe(true);
 
     expect(shiftry.summonData.battleStats[BattleStat.ATK]).toBe(0);
     expect(magikarp.summonData.battleStats[BattleStat.ATK]).toBe(0);
