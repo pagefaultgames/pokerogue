@@ -42,15 +42,23 @@ export class StatStageChangePhase extends PokemonPhase {
       return this.end();
     }
 
+    let simulate = false;
+
     const filteredStats = this.stats.filter(stat => {
       const cancelled = new Utils.BooleanHolder(false);
 
       if (!this.selfTarget && this.stages < 0) {
+        // TODO: Include simulate boolean when tag applications can be simulated
         this.scene.arena.applyTagsForSide(MistTag, pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, cancelled);
       }
 
       if (!cancelled.value && !this.selfTarget && this.stages < 0) {
-        applyPreStatStageChangeAbAttrs(ProtectStatAbAttr, pokemon, stat, cancelled);
+        applyPreStatStageChangeAbAttrs(ProtectStatAbAttr, pokemon, stat, cancelled, simulate);
+      }
+
+      // If one stat stage decrease is cancelled, simulate the rest of the applications
+      if (cancelled.value) {
+        simulate = true;
       }
 
       return !cancelled.value;
