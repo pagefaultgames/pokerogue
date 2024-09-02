@@ -850,7 +850,7 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
-  private chance: integer;
+  public chance: integer;
   private effects: StatusEffect[];
 
   constructor(chance: integer, ...effects: StatusEffect[]) {
