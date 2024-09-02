@@ -52,7 +52,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * > However, [Pokemon] alreadyknows four moves.
    * > Should a move be forgotten and replaced with [MoveName]? --> Mode.CONFIRM -> Yes: Go to this.forgetMoveProcess(), No: Go to this.rejectMoveAndEnd()
    */
-  replaceMoveCheck(move, pokemon) {
+  replaceMoveCheck(move: Move, pokemon: Pokemon) {
     const learnMovePrompt = i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
     const moveLimitReached = i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) });
     const shouldReplaceQ = i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name });
@@ -100,8 +100,10 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
           this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
             this.end();
           });
-      });
-    }
+        });
+    });
+  }
+
   /**
    * This teaches the Pokemon the new move and ends the phase.
    * When a Pokemon forgets a move and learns a new one, its 'Learn Move' message is significantly longer.
@@ -115,7 +117,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * > And...
    * > [Pokemon] learned [MoveName]!
    */
-  learnMove(index: number, move, pokemon, textMessage?: string) {
+  learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
     if (this.fromTM) {
       pokemon.usedTMs.push(this.moveId);
     }
