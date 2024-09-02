@@ -1511,7 +1511,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * The exact mechanic is that it calculates E as the XOR of the player's trainer ID and secret ID
    * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits
-   * The XOR of E and F are then compared to the thresholdOverride (default case 32) to see whether or not to generate a shiny
+   * The XOR of E and F are then compared to the thresholdOverride (default case 64) to see whether or not to generate a shiny
    * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance
    * @returns true if the Pokemon has been set as a shiny, false otherwise
    */
@@ -1527,7 +1527,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const E = this.scene.gameData.trainerId ^ this.scene.gameData.secretId;
     const F = rand1 ^ rand2;
 
-    const shinyThreshold = new Utils.IntegerHolder(32);
+    const shinyThreshold = new Utils.IntegerHolder(64);
     if (thresholdOverride === undefined) {
       if (this.scene.eventManager.isEventActive()) {
         shinyThreshold.value *= this.scene.eventManager.getShinyMultiplier();
@@ -1540,7 +1540,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.shiny = (E ^ F) < shinyThreshold.value;
-    if ((E ^ F) < 32) {
+    if ((E ^ F) < 64) {
       console.log("REAL SHINY!!");
     }
 
