@@ -2872,7 +2872,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns true if the pokemon can be affected by the status, false if not.
    */
   canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
-    const checker = this.checkIfCanSetStatus(effect, quiet, overrideStatus, sourcePokemon);
+    const checkIfPossible = this.checkIfCanSetStatus(effect, quiet, overrideStatus, sourcePokemon);
 
     const cancelled = new Utils.BooleanHolder(false);
     applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
@@ -2884,7 +2884,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    return checker;
+    return checkIfPossible;
   }
 
   trySetStatus(effect: StatusEffect | undefined, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, cureTurn: integer | null = 0, sourceText: string | null = null): boolean {
