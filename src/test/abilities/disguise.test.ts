@@ -1,11 +1,5 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { StatusEffect } from "#app/data/status-effect";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { Mode } from "#app/ui/ui";
 import { toDmgValue } from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -33,13 +27,12 @@ describe("Abilities - Disguise", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-
-    game.override.enemySpecies(Species.MIMIKYU);
-    game.override.enemyMoveset(SPLASH_ONLY);
-
-    game.override.starterSpecies(Species.REGIELEKI);
-    game.override.moveset([Moves.SHADOW_SNEAK, Moves.VACUUM_WAVE, Moves.TOXIC_THREAD, Moves.SPLASH]);
+    game.override
+      .battleType("single")
+      .enemySpecies(Species.MIMIKYU)
+      .enemyMoveset(SPLASH_ONLY)
+      .starterSpecies(Species.REGIELEKI)
+      .moveset([Moves.SHADOW_SNEAK, Moves.VACUUM_WAVE, Moves.TOXIC_THREAD, Moves.SPLASH]);
   }, TIMEOUT);
 
   it("takes no damage from attacking move and transforms to Busted form, takes 1/8 max HP damage from the disguise breaking", async () => {
@@ -53,7 +46,7 @@ describe("Abilities - Disguise", () => {
 
     game.move.select(Moves.SHADOW_SNEAK);
 
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(mimikyu.hp).equals(maxHp - disguiseDamage);
     expect(mimikyu.formIndex).toBe(bustedForm);
@@ -68,7 +61,7 @@ describe("Abilities - Disguise", () => {
 
     game.move.select(Moves.VACUUM_WAVE);
 
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
   }, TIMEOUT);
@@ -87,12 +80,12 @@ describe("Abilities - Disguise", () => {
     game.move.select(Moves.SURGING_STRIKES);
 
     // First hit
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
     expect(mimikyu.hp).equals(maxHp - disguiseDamage);
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
     // Second hit
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
     expect(mimikyu.hp).lessThan(maxHp - disguiseDamage);
     expect(mimikyu.formIndex).toBe(bustedForm);
   }, TIMEOUT);
@@ -105,7 +98,7 @@ describe("Abilities - Disguise", () => {
 
     game.move.select(Moves.TOXIC_THREAD);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
     expect(mimikyu.status?.effect).toBe(StatusEffect.POISON);
@@ -125,7 +118,7 @@ describe("Abilities - Disguise", () => {
 
     game.move.select(Moves.SPLASH);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(mimikyu.formIndex).toBe(bustedForm);
     expect(mimikyu.hp).equals(maxHp - disguiseDamage);
@@ -133,7 +126,7 @@ describe("Abilities - Disguise", () => {
     await game.toNextTurn();
     game.doSwitchPokemon(1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(mimikyu.formIndex).toBe(bustedForm);
   }, TIMEOUT);
@@ -194,15 +187,6 @@ describe("Abilities - Disguise", () => {
     await game.toNextTurn();
     game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
-    game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => { // TODO: Make tests run in set mode instead of switch mode
-      game.setMode(Mode.MESSAGE);
-      game.endPhase();
-    }, () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(TurnInitPhase));
-
-    game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      game.setMode(Mode.MESSAGE);
-      game.endPhase();
-    }, () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(TurnInitPhase));
     await game.phaseInterceptor.to("PartyHealPhase");
 
     expect(mimikyu1.formIndex).toBe(disguisedForm);

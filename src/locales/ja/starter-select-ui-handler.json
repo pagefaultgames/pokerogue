@@ -1,5 +1,5 @@
 {
-  "confirmStartTeam": "この条件で　チャレンジを　始めますか？",
+  "confirmStartTeam": "この手持ちで　始めますか？",
   "confirmExit": "終了しますか？",
   "invalidParty": "手持ちは　チャレンジの　条件で　認められない！",
   "gen1": "1世代",
@@ -16,8 +16,8 @@
   "passive": "パッシブ:",
   "nature": "性格:",
   "eggMoves": "タマゴ技",
-  "start": "始める",
   "addToParty": "手持ちに入れる",
+  "removeFromParty": "手持ちから除く",
   "toggleIVs": "個体値を表示",
   "manageMoves": "技を並び替える",
   "manageNature": "性格を変える",
@@ -36,9 +36,10 @@
   "cycleAbility": ": 特性変更",
   "cycleNature": ": 性格変更",
   "cycleVariant": ": 色変更",
+  "goFilter": ": フィルタ へ ",
   "enablePassive": "パッシブ - オン",
   "disablePassive": "パッシブ - オフ",
-  "locked": "開放されていない",
+  "locked": "非開放",
   "disabled": "無効",
   "uncaught": "捕まっていない"
 }
