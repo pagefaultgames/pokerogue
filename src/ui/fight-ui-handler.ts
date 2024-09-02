@@ -5,11 +5,9 @@ import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
-import { CommandPhase, MoveEffectPhase } from "../phases";
 import Move, * as MoveData from "../data/move";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
-import Pokemon, { DamageResult, EnemyPokemon, HitResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon.js";
 import Battle from "#app/battle.js";
 import { Stat } from "#app/data/pokemon-stat.js";
 import { Abilities } from "#app/enums/abilities.js";
@@ -26,6 +24,10 @@ import { TempBattleStat } from "#app/data/temp-battle-stat.js";
 import { StatusEffect } from "#app/data/status-effect.js";
 import { BattleStat } from "#app/data/battle-stat.js";
 import { PokemonMultiHitModifierType } from "#app/modifier/modifier-type.js";
+import { MoveCategory } from "#app/data/move.js";
+import Pokemon, { EnemyPokemon, HitResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
 
 export default class FightUiHandler extends UiHandler {
   public static readonly MOVES_CONTAINER_NAME = "moves";
@@ -60,7 +62,7 @@ export default class FightUiHandler extends UiHandler {
     this.moveInfoContainer.setName("move-info");
     ui.add(this.moveInfoContainer);
 
-    this.typeIcon = this.scene.add.sprite(this.scene.scaledCanvas.width - 57, -36,`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}` , "unknown");
+    this.typeIcon = this.scene.add.sprite(this.scene.scaledCanvas.width - 57, -36, Utils.getLocalizedSpriteKey("types"), "unknown");
     this.typeIcon.setVisible(false);
     this.moveInfoContainer.add(this.typeIcon);
 
@@ -172,7 +174,7 @@ export default class FightUiHandler extends UiHandler {
   }
 
   simulateAttack(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move) {
-    let result: HitResult;
+    let result: HitResult | undefined = undefined;
     const damage1 = new Utils.NumberHolder(0);
     const damage2 = new Utils.NumberHolder(0);
     const defendingSidePlayField = target.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField();
@@ -183,7 +185,7 @@ export default class FightUiHandler extends UiHandler {
 
     const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
     MoveData.applyMoveAttrs(MoveData.VariableMoveTypeAttr, user, target, move);
-    applyPreAttackAbAttrs(MoveTypeChangeAttr, user, target, move, typeChangeMovePowerMultiplier);
+    applyPreAttackAbAttrs(MoveTypeChangeAttr, user, target, move, true, typeChangeMovePowerMultiplier);
     const types = target.getTypes(true, true);
 
     const cancelled = new Utils.BooleanHolder(false);
@@ -217,10 +219,10 @@ export default class FightUiHandler extends UiHandler {
       if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type && power.value < 60 && move.priority <= 0 && !move.hasAttr(MoveData.MultiHitAttr) && !this.scene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === user.id)) {
         power.value = 60;
       }
-      applyPreAttackAbAttrs(VariableMovePowerAbAttr, user, target, move, power);
+      applyPreAttackAbAttrs(VariableMovePowerAbAttr, user, target, move, true, power);
 
       if (user.getAlly()?.hasAbilityWithAttr(AllyMoveCategoryPowerBoostAbAttr)) {
-        applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, user, target, move, power);
+        applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, user, target, move, true, power);
       }
 
       const fieldAuras = new Set(
@@ -230,11 +232,11 @@ export default class FightUiHandler extends UiHandler {
       );
       for (const aura of fieldAuras) {
         // The only relevant values are `move` and the `power` holder
-        aura.applyPreAttack(null, null, null, move, [power]);
+        aura.applyPreAttack(null, null, true, null, move, [power]);
       }
 
       const alliedField: Pokemon[] = user instanceof PlayerPokemon ? this.scene.getPlayerField() : this.scene.getEnemyField();
-      alliedField.forEach(p => applyPreAttackAbAttrs(UserFieldMoveTypePowerBoostAbAttr, p, user, move, power));
+      alliedField.forEach(p => applyPreAttackAbAttrs(UserFieldMoveTypePowerBoostAbAttr, p, user, move, true, power));
 
       power.value *= typeChangeMovePowerMultiplier.value;
 
@@ -246,8 +248,8 @@ export default class FightUiHandler extends UiHandler {
         MoveData.applyMoveAttrs(MoveData.NeutralDamageAgainstFlyingTypeMultiplierAttr, user, target, move, typeMultiplier);
       }
       if (!cancelled.value) {
-        applyPreDefendAbAttrs(MoveImmunityAbAttr, user, target, move, cancelled, typeMultiplier);
-        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, user, move, cancelled, typeMultiplier));
+        applyPreDefendAbAttrs(MoveImmunityAbAttr, user, target, move, cancelled, true, typeMultiplier);
+        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, user, move, cancelled, true, typeMultiplier));
       }
 
       if (cancelled.value) {
@@ -281,20 +283,20 @@ export default class FightUiHandler extends UiHandler {
         const critOnly = new Utils.BooleanHolder(false);
         const critAlways = user.getTag(BattlerTagType.ALWAYS_CRIT);
         MoveData.applyMoveAttrs(MoveData.CritOnlyAttr, user, target, move, critOnly);
-        applyAbAttrs(ConditionalCritAbAttr, user, null, critOnly, target, move);
+        applyAbAttrs(ConditionalCritAbAttr, user, null, true, critOnly, target, move);
         if (isCritical) {
           const blockCrit = new Utils.BooleanHolder(false);
-          applyAbAttrs(BlockCritAbAttr, target, null, blockCrit);
+          applyAbAttrs(BlockCritAbAttr, target, null, true, blockCrit);
           if (blockCrit.value) {
             isCritical = false;
           }
         }
-        const sourceAtk = new Utils.IntegerHolder(user.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, target, null, false));
+        const sourceAtk = new Utils.IntegerHolder(user.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, target, move, false));
         const targetDef = new Utils.IntegerHolder(target.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, user, move, false));
-        const sourceAtkCrit = new Utils.IntegerHolder(user.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, target, null, isCritical));
+        const sourceAtkCrit = new Utils.IntegerHolder(user.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, target, move, isCritical));
         const targetDefCrit = new Utils.IntegerHolder(target.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, user, move, isCritical));
         const criticalMultiplier = new Utils.NumberHolder(isCritical ? 1.5 : 1);
-        applyAbAttrs(MultCritAbAttr, user, null, criticalMultiplier);
+        applyAbAttrs(MultCritAbAttr, user, null, true, criticalMultiplier);
         const screenMultiplier = new Utils.NumberHolder(1);
         if (!isCritical) {
           this.scene.arena.applyTagsForSide(WeakenMoveScreenTag, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, move.category, this.scene.currentBattle.double, screenMultiplier);
@@ -309,7 +311,7 @@ export default class FightUiHandler extends UiHandler {
           stabMultiplier.value += 0.5;
         }
 
-        applyAbAttrs(StabBoostAbAttr, user, null, stabMultiplier);
+        applyAbAttrs(StabBoostAbAttr, user, null, true, stabMultiplier);
 
         if (sourceTeraType !== Type.UNKNOWN && matchesSourceType) {
           stabMultiplier.value = Math.min(stabMultiplier.value + 0.5, 2.25);
@@ -326,7 +328,7 @@ export default class FightUiHandler extends UiHandler {
           numTargets = effectPhase.getTargets().length;
         }
         const twoStrikeMultiplier = new Utils.NumberHolder(1);
-        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, target, move, numTargets, new Utils.IntegerHolder(0), twoStrikeMultiplier);
+        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, target, move, true, numTargets, new Utils.IntegerHolder(0), twoStrikeMultiplier);
 
         if (!isTypeImmune) {
           damage1.value = Math.ceil(((((2 * user.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier.value * screenMultiplier.value * twoStrikeMultiplier.value * 0.85); // low roll
@@ -342,8 +344,8 @@ export default class FightUiHandler extends UiHandler {
             }
           }
 
-          applyPreAttackAbAttrs(DamageBoostAbAttr, user, target, move, damage1);
-          applyPreAttackAbAttrs(DamageBoostAbAttr, user, target, move, damage2);
+          applyPreAttackAbAttrs(DamageBoostAbAttr, user, target, move, true, damage1);
+          applyPreAttackAbAttrs(DamageBoostAbAttr, user, target, move, true, damage2);
 
           /**
            * For each {@link HitsTagAttr} the move has, doubles the damage of the move if:
@@ -418,8 +420,8 @@ export default class FightUiHandler extends UiHandler {
 
         MoveData.applyMoveAttrs(MoveData.ModifiedDamageAttr, user, target, move, damage1);
         MoveData.applyMoveAttrs(MoveData.ModifiedDamageAttr, user, target, move, damage2);
-        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, damage1);
-        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, damage2);
+        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, true, damage1);
+        applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, user, target, move, cancelled, true, damage2);
 
         //console.log("damage (min)", damage1.value, move.name, power.value, sourceAtk, targetDef);
         //console.log("damage (max)", damage2.value, move.name, power.value, sourceAtkCrit, targetDefCrit);
@@ -430,23 +432,23 @@ export default class FightUiHandler extends UiHandler {
         const oneHitKo = result === HitResult.ONE_HIT_KO;
         if (damage1.value) {
           if (target.getHpRatio() === 1) {
-            applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, target, user, move, cancelled, damage1);
+            applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, target, user, move, cancelled, true, damage1);
           }
         }
         if (damage2.value) {
           if (target.getHpRatio() === 1) {
-            applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, target, user, move, cancelled, damage2);
+            applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, target, user, move, cancelled, true, damage2);
           }
         }
       }
       break;
     case MoveData.MoveCategory.STATUS:
       if (!typeless) {
-        applyPreDefendAbAttrsNoApply(TypeImmunityAbAttr, target, user, move, cancelled, typeMultiplier);
+        applyPreDefendAbAttrsNoApply(TypeImmunityAbAttr, target, user, move, cancelled, true, typeMultiplier);
       }
       if (!cancelled.value) {
-        applyPreDefendAbAttrs(MoveImmunityAbAttr, target, user, move, cancelled, typeMultiplier);
-        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, user, move, cancelled, typeMultiplier));
+        applyPreDefendAbAttrs(MoveImmunityAbAttr, target, user, move, cancelled, true, typeMultiplier);
+        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, user, move, cancelled, true, typeMultiplier));
       }
       if (!typeMultiplier.value) {
         return -1
@@ -523,7 +525,7 @@ export default class FightUiHandler extends UiHandler {
     const moveAccuracy = new Utils.NumberHolder(move.getMove().accuracy);
 
     MoveData.applyMoveAttrs(MoveData.VariableAccuracyAttr, user, target, move.getMove(), moveAccuracy);
-    applyPreDefendAbAttrs(WonderSkinAbAttr, target, user, move.getMove(), { value: false }, moveAccuracy);
+    applyPreDefendAbAttrs(WonderSkinAbAttr, target, user, move.getMove(), { value: false }, true, moveAccuracy);
 
     if (moveAccuracy.value === -1) {
       return -1;
@@ -545,9 +547,9 @@ export default class FightUiHandler extends UiHandler {
 
     const userAccuracyLevel = new Utils.IntegerHolder(user.summonData.battleStats[BattleStat.ACC]);
     const targetEvasionLevel = new Utils.IntegerHolder(target.summonData.battleStats[BattleStat.EVA]);
-    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, userAccuracyLevel);
-    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, user, null, targetEvasionLevel);
-    applyAbAttrs(IgnoreOpponentEvasionAbAttr, user, null, targetEvasionLevel);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, true, userAccuracyLevel);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, user, null, true, targetEvasionLevel);
+    applyAbAttrs(IgnoreOpponentEvasionAbAttr, user, null, true, targetEvasionLevel);
     MoveData.applyMoveAttrs(MoveData.IgnoreOpponentStatChangesAttr, user, target, move.getMove(), targetEvasionLevel);
     this.scene.applyModifiers(TempBattleStatBoosterModifier, user.isPlayer(), TempBattleStat.ACC, userAccuracyLevel);
 
@@ -558,10 +560,10 @@ export default class FightUiHandler extends UiHandler {
         : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
     }
 
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, user, BattleStat.ACC, accuracyMultiplier, move.getMove());
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, user, BattleStat.ACC, accuracyMultiplier, true, move.getMove());
 
     const evasionMultiplier = new Utils.NumberHolder(1);
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier, true);
 
     accuracyMultiplier.value /= evasionMultiplier.value;
 
@@ -707,15 +709,15 @@ export default class FightUiHandler extends UiHandler {
       var percentChance = 1 - ((target.hp - dmgLow + 1) / (dmgHigh - dmgLow + 1))
       koText = " (" + Math.round(percentChance * 100) + "% KO)"
     }
-    if (target.getMoveEffectiveness(user, move) == undefined) {
+    if (target.getMoveEffectiveness(user, move.getMove(), false, true) == undefined) {
       return "---"
     }
     if (scene.damageDisplay == "Value")
-      return target.getMoveEffectiveness(user, move) + "x - " + (Math.round(dmgLow) == Math.round(dmgHigh) ? Math.round(dmgLow).toString() + qSuffix : Math.round(dmgLow) + "-" + Math.round(dmgHigh) + qSuffix) + koText
+      return target.getMoveEffectiveness(user, move.getMove(), false, true) + "x - " + (Math.round(dmgLow) == Math.round(dmgHigh) ? Math.round(dmgLow).toString() + qSuffix : Math.round(dmgLow) + "-" + Math.round(dmgHigh) + qSuffix) + koText
     if (scene.damageDisplay == "Percent")
-      return target.getMoveEffectiveness(user, move) + "x - " + (dmgLowP == dmgHighP ? dmgLowP + "%" + qSuffix : dmgLowP + "%-" + dmgHighP + "%" + qSuffix) + koText
+      return target.getMoveEffectiveness(user, move.getMove(), false, true) + "x - " + (dmgLowP == dmgHighP ? dmgLowP + "%" + qSuffix : dmgLowP + "%-" + dmgHighP + "%" + qSuffix) + koText
     if (scene.damageDisplay == "Off")
-      return target.getMoveEffectiveness(user, move) + "x" + ((Math.floor(dmgLow) >= target.hp) ? " (KO)" : "")
+      return target.getMoveEffectiveness(user, move.getMove(), false, true) + "x" + ((Math.floor(dmgLow) >= target.hp) ? " (KO)" : "")
   }
 
   setCursor(cursor: integer): boolean {
@@ -742,9 +744,12 @@ export default class FightUiHandler extends UiHandler {
 
     if (hasMove) {
       const pokemonMove = moveset[cursor]!; // TODO: is the bang correct?
-      this.typeIcon.setTexture(`types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
-      this.moveCategoryIcon.setTexture("categories", MoveData.MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
+      const moveType = pokemon.getMoveType(pokemonMove.getMove());
+      const textureKey = Utils.getLocalizedSpriteKey("types");
+      this.typeIcon.setTexture(textureKey, Type[moveType].toLowerCase()).setScale(0.8);
 
+      const moveCategory = pokemonMove.getMove().category;
+      this.moveCategoryIcon.setTexture("categories", MoveCategory[moveCategory].toLowerCase()).setScale(1.0);
       const power = pokemonMove.getMove().power;
       const accuracy = pokemonMove.getMove().accuracy;
       const maxPP = pokemonMove.getMovePp();
@@ -752,8 +757,9 @@ export default class FightUiHandler extends UiHandler {
 
       const accuracy1 = this.calculateAccuracy(pokemon, this.scene.getEnemyField()[0], pokemonMove)
       const accuracy2 = this.calculateAccuracy(pokemon, this.scene.getEnemyField()[1], pokemonMove)
-
-      this.ppText.setText(`${Utils.padInt(pp, 2, "  ")}/${Utils.padInt(maxPP, 2, "  ")}`);
+      const ppLeftStr = Utils.padInt(pp, 2, "  ");
+      const ppMaxStr = Utils.padInt(maxPP, 2, "  ");
+      this.ppText.setText(`${ppLeftStr}/${ppMaxStr}`);
       this.powerText.setText(`${power >= 0 ? power : "---"}`);
       this.accuracyText.setText(`${accuracy >= 0 ? accuracy : "---"}`);
       this.accuracyText.setText(`${accuracy1 >= 0 ? Math.round(accuracy1) : "---"}`);
@@ -801,7 +807,7 @@ export default class FightUiHandler extends UiHandler {
    * Returns undefined if it's a status move
    */
   private getEffectivenessText(pokemon: Pokemon, opponent: Pokemon, pokemonMove: PokemonMove): string | undefined {
-    const effectiveness = opponent.getMoveEffectiveness(pokemon, pokemonMove);
+    const effectiveness = opponent.getMoveEffectiveness(pokemon, pokemonMove.getMove(), !opponent.battleData?.abilityRevealed);
     if (effectiveness === undefined) {
       return undefined;
     }
@@ -844,7 +850,7 @@ export default class FightUiHandler extends UiHandler {
     }
 
     const moveColors = opponents
-      .map((opponent) => opponent.getMoveEffectiveness(pokemon, pokemonMove))
+      .map((opponent) => opponent.getMoveEffectiveness(pokemon, pokemonMove.getMove(), !opponent.battleData.abilityRevealed))
       .sort((a, b) => b - a)
       .map((effectiveness) => getTypeDamageMultiplierColor(effectiveness ?? 0, "offense"));
 

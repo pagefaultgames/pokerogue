@@ -23,6 +23,14 @@ export enum SortDirection {
   DESC = 1
 }
 
+export enum SortCriteria {
+  NUMBER = 0,
+  COST = 1,
+  CANDY = 2,
+  IV = 3,
+  NAME = 4
+}
+
 export class DropDownLabel {
   public state: DropDownState;
   public text: string;
@@ -472,7 +480,7 @@ export class DropDown extends Phaser.GameObjects.Container {
   private getSettings(): any[] {
     const settings : any[] = [];
     for (let i = 0; i < this.options.length; i++) {
-      settings.push({ val: this.options[i].val, state: this.options[i].state , cursor: (this.cursor === i), dir: this.options[i].dir });
+      settings.push({ val: this.options[i].val, state: this.options[i].state, cursor: (this.cursor === i), dir: this.options[i].dir });
     }
     return settings;
   }

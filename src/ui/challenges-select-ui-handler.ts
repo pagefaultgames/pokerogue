@@ -5,12 +5,13 @@ import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import {Button} from "#enums/buttons";
 import i18next from "i18next";
-import { SelectStarterPhase, TitlePhase } from "#app/phases.js";
 import { Challenge } from "#app/data/challenge.js";
 import * as Utils from "../utils";
 import { Challenges } from "#app/enums/challenges.js";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Color, ShadowColor } from "#app/enums/color.js";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase.js";
+import { TitlePhase } from "#app/phases/title-phase.js";
 
 /**
  * Handles all the UI for choosing optional challenges.
@@ -33,6 +34,8 @@ export default class GameChallengesUiHandler extends UiHandler {
   private cursorObj: Phaser.GameObjects.NineSlice | null;
 
   private startCursor: Phaser.GameObjects.NineSlice;
+
+  private optionsWidth: number;
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
@@ -73,18 +76,19 @@ export default class GameChallengesUiHandler extends UiHandler {
     // difficultyName.setOrigin(0, 0);
     // difficultyName.setPositionRelative(difficultyBg, difficultyBg.width - difficultyName.displayWidth - 8, 4);
 
-    this.optionsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 9), (this.scene.game.canvas.height / 6) - headerBg.height - 2);
+    this.optionsWidth = this.scene.scaledCanvas.width * 0.6;
+    this.optionsBg = addWindow(this.scene, 0, headerBg.height, this.optionsWidth, this.scene.scaledCanvas.height - headerBg.height - 2);
     this.optionsBg.setName("window-options-bg");
     this.optionsBg.setOrigin(0, 0);
 
-    const descriptionBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 18) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 26);
+    const descriptionBg = addWindow(this.scene, 0, headerBg.height, this.scene.scaledCanvas.width - this.optionsWidth, this.scene.scaledCanvas.height - headerBg.height - 26);
     descriptionBg.setName("window-desc-bg");
     descriptionBg.setOrigin(0, 0);
     descriptionBg.setPositionRelative(this.optionsBg, this.optionsBg.width, 0);
 
     this.descriptionText = new BBCodeText(this.scene, descriptionBg.x + 6, descriptionBg.y + 4, "", {
       fontFamily: "emerald",
-      fontSize: 96,
+      fontSize: 84,
       color: Color.ORANGE,
       padding: {
         bottom: 6
@@ -108,12 +112,12 @@ export default class GameChallengesUiHandler extends UiHandler {
     const startText = addTextObject(this.scene, 0, 0, i18next.t("common:start"), TextStyle.SETTINGS_LABEL);
     startText.setName("text-start");
     startText.setOrigin(0, 0);
-    startText.setPositionRelative(startBg, 8, 4);
+    startText.setPositionRelative(startBg, (startBg.width - startText.displayWidth) / 2, 4);
 
-    this.startCursor = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, (this.scene.game.canvas.width / 18) - 10, 16, 1, 1, 1, 1);
+    this.startCursor = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, descriptionBg.width - 8, 16, 1, 1, 1, 1);
     this.startCursor.setName("9s-start-cursor");
     this.startCursor.setOrigin(0, 0);
-    this.startCursor.setPositionRelative(startBg, 4, 4);
+    this.startCursor.setPositionRelative(startBg, 4, 3);
     this.startCursor.setVisible(false);
 
     this.valuesContainer = this.scene.add.container(0, 0);
@@ -139,7 +143,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       };
     }
 
-    this.monoTypeValue = this.scene.add.sprite(8, 98, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`);
+    this.monoTypeValue = this.scene.add.sprite(8, 98, Utils.getLocalizedSpriteKey("types"));
     this.monoTypeValue.setName("challenge-value-monotype-sprite");
     this.monoTypeValue.setScale(0.86);
     this.monoTypeValue.setVisible(false);
@@ -354,7 +358,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     let ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, (this.scene.game.canvas.width / 9) - 10, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, this.optionsWidth - 8, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.valuesContainer.add(this.cursorObj);
     }
