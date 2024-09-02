@@ -21,11 +21,9 @@ export class EggSummaryPhase extends Phase {
 
   start() {
     super.start();
-    console.time("update egg dex");
 
     const updateNextPokemon = (i: integer) => {
       if (i >= this.eggHatchData.length) {
-        console.timeEnd("update egg dex");
 
         this.scene.ui.setModeForceTransition(Mode.EGG_HATCH_SUMMARY, this.eggHatchData).then(() => {
           this.scene.fadeOutBgm(undefined, false);

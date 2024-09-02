@@ -13,7 +13,6 @@ import { EggHatchData } from "#app/data/egg-hatch-data.js";
 export class EggLapsePhase extends Phase {
 
   private eggHatchData: EggHatchData[] = [];
-  private loadsWaiting: number;
   constructor(scene: BattleScene) {
     super(scene);
   }
@@ -29,7 +28,6 @@ export class EggLapsePhase extends Phase {
     this.eggHatchData= [];
 
     const minEggsToPromptSkip = 5;
-    this.loadsWaiting = eggsToHatch.length;
 
     if (eggsToHatchCount > 0) {
 
@@ -38,7 +36,6 @@ export class EggLapsePhase extends Phase {
           // show prompt for skip
           this.scene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
           this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
-            console.time("hatch eggs");
             for (const egg of eggsToHatch) {
               this.hatchEggSilently(egg);
             }
@@ -88,11 +85,6 @@ export class EggLapsePhase extends Phase {
     const pokemon = data.pokemon;
     if (pokemon.fusionSpecies) {
       pokemon.clearFusionSpecies();
-    }
-
-    this.loadsWaiting--;
-    if (this.loadsWaiting === 0) {
-      console.timeEnd("hatch eggs");
     }
 
     if (pokemon.species.subLegendary) {

@@ -458,7 +458,6 @@ export abstract class PokemonSpeciesForm {
 
   loadAssets(scene: BattleScene, female: boolean, formIndex?: integer, shiny?: boolean, variant?: Variant, startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
-      console.time("fetching assets " + this.speciesId);
       const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant);
       scene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
       scene.load.audio(`cry/${this.getCryKey(formIndex)}`, `audio/cry/${this.getCryKey(formIndex)}.m4a`);
@@ -499,7 +498,6 @@ export abstract class PokemonSpeciesForm {
           populateVariantColors(spriteKey).then(() => resolve());
           return;
         }
-        console.timeEnd("fetching assets " + this.speciesId);
 
         resolve();
       });

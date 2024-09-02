@@ -1632,7 +1632,6 @@ export class GameData {
           return;
         }
         this.scene.playSound("level_up_fanfare");
-        console.log(`${species.name} has been\nadded as a starter!`);
         this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
       } else {
         checkPrevolution();
