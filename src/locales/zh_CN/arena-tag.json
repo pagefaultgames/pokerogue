@@ -47,5 +47,11 @@
   "tailwindOnRemovePlayer": "我方的顺风停止了！",
   "tailwindOnRemoveEnemy": "敌方的顺风停止了！",
   "happyHourOnAdd": "大家被欢乐的\n气氛包围了！",
-  "happyHourOnRemove": "气氛回复到平常了。"
+  "happyHourOnRemove": "气氛回复到平常了。",
+  "safeguardOnAdd": "整个场地被\n神秘之幕包围了！",
+  "safeguardOnAddPlayer": "我方被\n神秘之幕包围了！",
+  "safeguardOnAddEnemy": "对手被\n神秘之幕包围了！",
+  "safeguardOnRemove": "包围整个场地的\n神秘之幕消失了！",
+  "safeguardOnRemovePlayer": "包围我方的\n神秘之幕消失了！",
+  "safeguardOnRemoveEnemy": "包围对手的\n神秘之幕消失了！"
 }
