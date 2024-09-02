@@ -1,5 +1,4 @@
 import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
@@ -32,28 +31,28 @@ describe("Moves - Fake Out", () => {
   });
 
   it("can only be used on the first turn a pokemon is sent out", async() => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FAKE_OUT));
+    game.move.select(Moves.FAKE_OUT);
     await game.toNextTurn();
 
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
     const postTurnOneHp = enemy.hp;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FAKE_OUT));
+    game.move.select(Moves.FAKE_OUT);
     await game.toNextTurn();
 
     expect(enemy.hp).toBe(postTurnOneHp);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+    game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
 
     const newEnemy = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FAKE_OUT));
+    game.move.select(Moves.FAKE_OUT);
     await game.toNextTurn();
 
     expect(newEnemy.hp).toBe(newEnemy.getMaxHp());
@@ -61,11 +60,11 @@ describe("Moves - Fake Out", () => {
 
   it("can be used again if recalled and sent back out", async() => {
     game.override.startingWave(4);
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemy1 = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FAKE_OUT));
+    game.move.select(Moves.FAKE_OUT);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
@@ -73,7 +72,7 @@ describe("Moves - Fake Out", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.FAKE_OUT));
+    game.move.select(Moves.FAKE_OUT);
     await game.toNextTurn();
 
     const enemy2 = game.scene.getEnemyPokemon()!;

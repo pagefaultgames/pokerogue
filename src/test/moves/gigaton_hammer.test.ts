@@ -1,6 +1,5 @@
 import { BattlerIndex } from "#app/battle.js";
 import GameManager from "#app/test/utils/gameManager";
-import { getMovePosition } from "#app/test/utils/gameManagerUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
@@ -35,11 +34,11 @@ describe("Moves - Gigaton Hammer", () => {
   });
 
   it("can't be used two turns in a row", async() => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemy1 = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GIGATON_HAMMER));
+    game.move.select(Moves.GIGATON_HAMMER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -48,7 +47,7 @@ describe("Moves - Gigaton Hammer", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GIGATON_HAMMER));
+    game.move.select(Moves.GIGATON_HAMMER);
     await game.toNextTurn();
 
     const enemy2 = game.scene.getEnemyPokemon()!;
@@ -58,11 +57,11 @@ describe("Moves - Gigaton Hammer", () => {
 
   it("can be used again if recalled and sent back out", async() => {
     game.override.startingWave(4);
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemy1 = game.scene.getEnemyPokemon()!;
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GIGATON_HAMMER));
+    game.move.select(Moves.GIGATON_HAMMER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -71,7 +70,7 @@ describe("Moves - Gigaton Hammer", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.GIGATON_HAMMER));
+    game.move.select(Moves.GIGATON_HAMMER);
     await game.toNextTurn();
 
     const enemy2 = game.scene.getEnemyPokemon()!;
