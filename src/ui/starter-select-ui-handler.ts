@@ -263,6 +263,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonHatchedIcon : Phaser.GameObjects.Sprite;
   private pokemonHatchedCountText: Phaser.GameObjects.Text;
   private pokemonShinyIcon: Phaser.GameObjects.Sprite;
+  private pokemonPassiveDisabledIcon: Phaser.GameObjects.Sprite;
+  private pokemonPassiveLockedIcon: Phaser.GameObjects.Sprite;
 
   private instructionsContainer: Phaser.GameObjects.Container;
   private filterInstructionsContainer: Phaser.GameObjects.Container;
@@ -574,6 +576,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonPassiveText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonPassiveText);
 
+    this.pokemonPassiveDisabledIcon = this.scene.add.sprite(starterInfoXPos, 137 + starterInfoYOffset, "icon_stop");
+    this.pokemonPassiveDisabledIcon.setOrigin(0, 0.5);
+    this.pokemonPassiveDisabledIcon.setDisplaySize(5.5, 5.5);
+    this.pokemonPassiveDisabledIcon.setVisible(false);
+    this.starterSelectContainer.add(this.pokemonPassiveDisabledIcon);
+
+    this.pokemonPassiveLockedIcon = this.scene.add.sprite(starterInfoXPos, 137 + starterInfoYOffset, "icon_lock");
+    this.pokemonPassiveLockedIcon.setOrigin(0, 0.5);
+    this.pokemonPassiveLockedIcon.setDisplaySize(5, 5);
+    this.pokemonPassiveLockedIcon.setVisible(false);
+    this.starterSelectContainer.add(this.pokemonPassiveLockedIcon);
+
     this.pokemonNatureLabelText = addTextObject(this.scene, 6, 145 + starterInfoYOffset, i18next.t("starterSelectUiHandler:nature"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonNatureLabelText.setOrigin(0, 0);
     this.pokemonNatureLabelText.setVisible(false);
@@ -734,7 +748,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonShinyIcon = this.scene.add.sprite(14, 76, "shiny_icons");
     this.pokemonShinyIcon.setOrigin(0.15, 0.2);
     this.pokemonShinyIcon.setScale(1);
-    this.pokemonCaughtHatchedContainer.add ((this.pokemonShinyIcon));
+    this.pokemonCaughtHatchedContainer.add(this.pokemonShinyIcon);
 
     this.pokemonHatchedCountText = addTextObject(this.scene, 24, 19, "0", TextStyle.SUMMARY_ALT);
     this.pokemonHatchedCountText.setOrigin(0, 0);
@@ -3069,27 +3083,39 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const passiveAbility = allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]];
 
         if (passiveAbility) {
-          const isUnlocked = passiveAttr & PassiveAttr.UNLOCKED;
-          const isEnabled = passiveAttr & PassiveAttr.ENABLED;
+          const isUnlocked = !!(passiveAttr & PassiveAttr.UNLOCKED);
+          const isEnabled = !!(passiveAttr & PassiveAttr.ENABLED);
 
-          const labelStyle = isUnlocked ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GRAY;
           const textStyle = isUnlocked && isEnabled ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GRAY;
-          const labelAlpha = isUnlocked ? 1 : 0.5;
           const textAlpha = isUnlocked && isEnabled ? 1 : 0.5;
 
-          this.pokemonPassiveLabelText.setVisible(true);
-          this.pokemonPassiveLabelText.setColor(this.getTextColor(labelStyle));
-          this.pokemonPassiveLabelText.setAlpha(labelAlpha);
-          this.pokemonPassiveLabelText.setShadowColor(this.getTextColor(labelStyle, true));
+          this.pokemonPassiveLabelText
+            .setVisible(true)
+            .setColor(this.getTextColor(TextStyle.SUMMARY_ALT))
+            .setShadowColor(this.getTextColor(TextStyle.SUMMARY_ALT, true));
+          this.pokemonPassiveText
+            .setVisible(true)
+            .setText(passiveAbility.name)
+            .setColor(this.getTextColor(textStyle))
+            .setAlpha(textAlpha)
+            .setShadowColor(this.getTextColor(textStyle, true));
 
-          this.pokemonPassiveText.setVisible(true);
-          this.pokemonPassiveText.setText(passiveAbility.name);
-          this.pokemonPassiveText.setColor(this.getTextColor(textStyle));
-          this.pokemonPassiveText.setAlpha(textAlpha);
-          this.pokemonPassiveText.setShadowColor(this.getTextColor(textStyle, true));
+          const iconPosition = {
+            x: this.pokemonPassiveText.x + this.pokemonPassiveText.displayWidth + 1,
+            y: this.pokemonPassiveText.y + this.pokemonPassiveText.displayHeight / 2
+          };
+          this.pokemonPassiveDisabledIcon
+            .setVisible(isUnlocked && !isEnabled)
+            .setPosition(iconPosition.x, iconPosition.y);
+          this.pokemonPassiveLockedIcon
+            .setVisible(!isUnlocked)
+            .setPosition(iconPosition.x, iconPosition.y);
+
         } else {
           this.pokemonPassiveLabelText.setVisible(false);
           this.pokemonPassiveText.setVisible(false);
+          this.pokemonPassiveDisabledIcon.setVisible(false);
+          this.pokemonPassiveLockedIcon.setVisible(false);
         }
 
         this.pokemonNatureText.setText(getNatureName(natureIndex as unknown as Nature, true, true, false, this.scene.uiTheme));
