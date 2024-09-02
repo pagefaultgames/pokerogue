@@ -10,5 +10,5 @@
   "eternamaxChange": "{{preName}} hat sich zu {{pokemonName}} unendynamaximiert!",
   "revertChange": "{{pokemonName}} hat seine ursprüngliche Form zurückerlangt!",
   "formChange": "{{preName}} hat seine Form geändert!",
-  "disguiseChange": "\tSein Kostüm hat die Attacke absorbiert!"
+  "disguiseChange": "Sein Kostüm hat die Attacke absorbiert!"
 }
