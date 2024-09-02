@@ -22,7 +22,7 @@ import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoo
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AddSecondStrikeAbAttr, IgnoreOpponentEvasionAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr } from "../data/ability";
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AddSecondStrikeAbAttr, IgnoreOpponentEvasionAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -49,6 +49,7 @@ import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { Challenges } from "#enums/challenges";
 import { getPokemonNameWithAffix } from "#app/messages.js";
 import { DamagePhase } from "#app/phases/damage-phase.js";
 import { FaintPhase } from "#app/phases/faint-phase.js";
@@ -250,7 +251,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.shiny = false;
     }
 
-    this.calculateStats();
+    if (!dataSource) {
+      this.calculateStats();
+    }
   }
 
 
@@ -1273,6 +1276,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
+    // Apply Tera Shell's effect to attacks after all immunities are accounted for
+    if (!ignoreAbility && move.category !== MoveCategory.STATUS) {
+      applyPreDefendAbAttrs(FullHpResistTypeAbAttr, this, source, move, cancelledHolder, simulated, typeMultiplier);
+    }
+
     return (!cancelledHolder.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
   }
 
@@ -1315,12 +1323,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           return 1;
         }
       }
-
-      return getTypeDamageMultiplier(moveType, defType);
+      const multiplier = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, defType));
+      applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
+      return multiplier.value;
     }).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
 
+    const typeMultiplierAgainstFlying = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, Type.FLYING));
+    applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, typeMultiplierAgainstFlying);
     // Handle strong winds lowering effectiveness of types super effective against pure flying
-    if (!ignoreStrongWinds && arena.weather?.weatherType === WeatherType.STRONG_WINDS && !arena.weather.isEffectSuppressed(this.scene) && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(moveType, Type.FLYING) === 2) {
+    if (!ignoreStrongWinds && arena.weather?.weatherType === WeatherType.STRONG_WINDS && !arena.weather.isEffectSuppressed(this.scene) && this.isOfType(Type.FLYING) && typeMultiplierAgainstFlying.value === 2) {
       multiplier /= 2;
       if (!simulated) {
         this.scene.queueMessage(i18next.t("weather:strongWindsEffectMessage"));
@@ -3842,7 +3853,7 @@ export class EnemyPokemon extends Pokemon {
       this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
         ? [
           new PokemonMove(Moves.DYNAMAX_CANNON),
-          new PokemonMove(Moves.SLUDGE_BOMB),
+          new PokemonMove(Moves.CROSS_POISON),
           new PokemonMove(Moves.FLAMETHROWER),
           new PokemonMove(Moves.RECOVER, 0, -4)
         ]
@@ -3852,6 +3863,9 @@ export class EnemyPokemon extends Pokemon {
           new PokemonMove(Moves.FLAMETHROWER),
           new PokemonMove(Moves.COSMIC_POWER)
         ];
+      if (this.scene.gameMode.hasChallenge(Challenges.INVERSE_BATTLE)) {
+        this.moveset[2] = new PokemonMove(Moves.THUNDERBOLT);
+      }
       break;
     default:
       super.generateAndPopulateMoveset();

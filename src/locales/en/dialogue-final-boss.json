@@ -1,0 +1,10 @@
+{
+  "encounter": "It appears the time has finally come once again.\nYou know why you have come here, do you not?\n$You were drawn here, because you have been here before.\nCountless times.\n$Though, perhaps it can be counted.\nTo be precise, this is in fact your {{cycleCount}} cycle.\n$Each cycle your mind reverts to its former state.\nEven so, somehow, remnants of your former selves remain.\n$Until now you have yet to succeed, but I sense a different presence in you this time.\n\n$You are the only one here, though it is as if there is… another.\n$Will you finally prove a formidable challenge to me?\nThe challenge I have longed after for millennia?\n$We begin.",
+  "encounter_female": "It appears the time has finally come once again.\nYou know why you have come here, do you not?\n$You were drawn here, because you have been here before.\nCountless times.\n$Though, perhaps it can be counted.\nTo be precise, this is in fact your {{cycleCount}} cycle.\n$Each cycle your mind reverts to its former state.\nEven so, somehow, remnants of your former selves remain.\n$Until now you have yet to succeed, but I sense a different presence in you this time.\n\n$You are the only one here, though it is as if there is… another.\n$Will you finally prove a formidable challenge to me?\nThe challenge I have longed after for millennia?\n$We begin.",
+  "firstStageWin": "I see. The presence I felt was indeed real.\nIt appears I no longer need to hold back.\n$Do not disappoint me.",
+  "secondStageWin": "…Magnificent.",
+  "key_ordinal_one": "st",
+  "key_ordinal_two": "nd",
+  "key_ordinal_few": "rd",
+  "key_ordinal_other": "th"
+}

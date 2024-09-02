@@ -8,7 +8,7 @@ import { Weather, WeatherType } from "./weather";
 import { BattlerTag, GroundedTag, GulpMissileTag, SemiInvulnerableTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, ChargeAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, ChargeAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { Stat, getStatName } from "./pokemon-stat";
 import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
@@ -471,6 +471,47 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
     return i18next.t("abilityTriggers:nonSuperEffectiveImmunity", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName
+    });
+  }
+}
+
+/**
+ * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Tera_Shell_(Ability) | Tera Shell}
+ * When the source is at full HP, incoming attacks will have a maximum 0.5x type effectiveness multiplier.
+ * @extends PreDefendAbAttr
+ */
+export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
+  /**
+   * Reduces a type multiplier to 0.5 if the source is at full HP.
+   * @param pokemon {@linkcode Pokemon} the Pokemon with this ability
+   * @param passive n/a
+   * @param simulated n/a (this doesn't change game state)
+   * @param attacker n/a
+   * @param move {@linkcode Move} the move being used on the source
+   * @param cancelled n/a
+   * @param args `[0]` a container for the move's current type effectiveness multiplier
+   * @returns `true` if the move's effectiveness is reduced; `false` otherwise
+   */
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
+    const typeMultiplier = args[0];
+    if (!(typeMultiplier && typeMultiplier instanceof Utils.NumberHolder)) {
+      return false;
+    }
+
+    if (move && move.hasAttr(FixedDamageAttr)) {
+      return false;
+    }
+
+    if (pokemon.isFullHp() && typeMultiplier.value > 0.5) {
+      typeMultiplier.value = 0.5;
+      return true;
+    }
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return i18next.t("abilityTriggers:fullHpResistType", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)
     });
   }
 }
@@ -4498,7 +4539,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
   applyFunc: AbAttrApplyFunc<TAttr>,
   args: any[],
   showAbilityInstant: boolean = false,
-  quiet: boolean = false,
+  simulated: boolean = false,
   messages: string[] = [],
 ) {
   for (const passive of [false, true]) {
@@ -4520,33 +4561,29 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
       if (result instanceof Promise) {
         result = await result;
       }
-
       if (result) {
         if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
           pokemon.summonData.abilitiesApplied.push(ability.id);
         }
-        if (pokemon.battleData && !quiet && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
+        if (pokemon.battleData && !simulated && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
           pokemon.battleData.abilitiesApplied.push(ability.id);
         }
-
-        if (attr.showAbility && !quiet) {
+        if (attr.showAbility && !simulated) {
           if (showAbilityInstant) {
             pokemon.scene.abilityBar.showAbility(pokemon, passive);
           } else {
             queueShowAbility(pokemon, passive);
           }
         }
-
-        if (!quiet) {
-          const message = attr.getTriggerMessage(pokemon, ability.name, args);
-          if (message) {
+        const message = attr.getTriggerMessage(pokemon, ability.name, args);
+        if (message) {
+          if (!simulated) {
             pokemon.scene.queueMessage(message);
-            messages.push(message);
           }
         }
+        messages.push(message!);
       }
     }
-
     pokemon.scene.clearPhaseQueueSplice();
   }
 }
@@ -5029,7 +5066,7 @@ export function initAbilities() {
       .attr(AlwaysHitAbAttr)
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.STALL, 4)
-      .attr(ChangeMovePriorityAbAttr, (pokemon, move: Move) => true, -0.5),
+      .attr(ChangeMovePriorityAbAttr, (pokemon, move: Move) => true, -0.2),
     new Ability(Abilities.TECHNICIAN, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
         const power = new Utils.NumberHolder(move.power);
@@ -5717,7 +5754,7 @@ export function initAbilities() {
       .partial() // Healing not blocked by Heal Block
       .ignorable(),
     new Ability(Abilities.MYCELIUM_MIGHT, 9)
-      .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS, -0.5)
+      .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS, -0.2)
       .attr(PreventBypassSpeedChanceAbAttr, (pokemon, move) => move.category === MoveCategory.STATUS)
       .attr(MoveAbilityBypassAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS),
     new Ability(Abilities.MINDS_EYE, 9)
@@ -5765,10 +5802,10 @@ export function initAbilities() {
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.TERA_SHELL, 9)
+      .attr(FullHpResistTypeAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .ignorable()
-      .unimplemented(),
+      .ignorable(),
     new Ability(Abilities.TERAFORM_ZERO, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)

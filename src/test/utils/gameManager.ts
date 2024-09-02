@@ -40,6 +40,7 @@ import fs from "fs";
 import { vi } from "vitest";
 import { ClassicModeHelper } from "./helpers/classicModeHelper";
 import { DailyModeHelper } from "./helpers/dailyModeHelper";
+import { ChallengeModeHelper } from "./helpers/challengeModeHelper";
 import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
@@ -57,6 +58,7 @@ export default class GameManager {
   public readonly move: MoveHelper;
   public readonly classicMode: ClassicModeHelper;
   public readonly dailyMode: DailyModeHelper;
+  public readonly challengeMode: ChallengeModeHelper;
   public readonly settings: SettingsHelper;
 
   /**
@@ -77,6 +79,7 @@ export default class GameManager {
     this.move = new MoveHelper(this);
     this.classicMode = new ClassicModeHelper(this);
     this.dailyMode = new DailyModeHelper(this);
+    this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
   }
 
@@ -134,7 +137,7 @@ export default class GameManager {
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
     this.scene.enableTutorials = false;
-    this.scene.gameData.gender = PlayerGender.MALE;
+    this.scene.gameData.gender = PlayerGender.MALE; // set initial player gender
     this.scene.battleStyle = this.settings.battleStyle;
   }
 
@@ -378,7 +381,7 @@ export default class GameManager {
   }
 
   /**
-   * Intercepts `TurnStartPhase` and mocks the getOrder's return value {@linkcode TurnStartPhase.getOrder}
+   * Intercepts `TurnStartPhase` and mocks the getSpeedOrder's return value {@linkcode TurnStartPhase.getSpeedOrder}
    * Used to modify the turn order.
    * @param {BattlerIndex[]} order The turn order to set
    * @example
@@ -389,7 +392,7 @@ export default class GameManager {
   async setTurnOrder(order: BattlerIndex[]): Promise<void> {
     await this.phaseInterceptor.to(TurnStartPhase, false);
 
-    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue(order);
+    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
   }
 
   /**

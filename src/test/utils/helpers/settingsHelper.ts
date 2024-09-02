@@ -1,3 +1,4 @@
+import { PlayerGender } from "#app/enums/player-gender";
 import { BattleStyle } from "#app/enums/battle-style";
 import { GameManagerHelper } from "./gameManagerHelper";
 
@@ -25,5 +26,19 @@ export class SettingsHelper extends GameManagerHelper {
    */
   typeHints(enable: boolean): void {
     this.game.scene.typeHints = enable;
+    this.log(`Type Hints ${enable? "enabled" : "disabled"}` );
+  }
+
+  /**
+   * Change the player gender
+   * @param gender the {@linkcode PlayerGender} to set
+   */
+  playerGender(gender: PlayerGender) {
+    this.game.scene.gameData.gender = gender;
+    this.log(`Gender set to: ${PlayerGender[gender]} (=${gender})` );
+  }
+
+  private log(...params: any[]) {
+    console.log("Settings:", ...params);
   }
 }
