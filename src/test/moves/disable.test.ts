@@ -3,13 +3,15 @@ import GameManager from "../utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { CommandPhase, EnemyCommandPhase, TurnInitPhase } from "#app/phases.js";
 import { Mode } from "#app/ui/ui.js";
 import { getMovePosition } from "../utils/gameManagerUtils";
 import { Command } from "#app/ui/command-ui-handler";
 import { MoveResult } from "#app/field/pokemon.js";
 import { Stat } from "#app/data/pokemon-stat.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
+import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
 
 describe("Moves - Disable", () => {
   let phaserGame: Phaser.Game;
