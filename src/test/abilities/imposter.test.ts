@@ -8,6 +8,7 @@ import { Stat, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
+// TODO: Add more tests once Imposter is fully implemented
 describe("Abilities - Imposter", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -29,9 +30,10 @@ describe("Abilities - Imposter", () => {
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
       .enemyAbility(Abilities.BEAST_BOOST)
+      .enemyPassiveAbility(Abilities.BALL_FETCH)
       .enemyMoveset(SPLASH_ONLY)
       .ability(Abilities.IMPOSTER)
-      .moveset([ Moves.TACKLE ]);
+      .moveset(SPLASH_ONLY);
   });
 
   it("should copy species, ability, gender, all stats except HP, all stat stages, moveset, and types of target", async () => {
@@ -39,7 +41,7 @@ describe("Abilities - Imposter", () => {
       Species.DITTO
     ]);
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const player = game.scene.getPlayerPokemon()!;

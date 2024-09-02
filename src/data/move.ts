@@ -6026,6 +6026,7 @@ export class TransformAttr extends MoveEffectAttr {
 
       user.loadAssets(false).then(() => {
         user.playAnim();
+        user.updateInfo();
         resolve(true);
       });
     });

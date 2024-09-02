@@ -4296,7 +4296,7 @@ export class EnemyPokemon extends Pokemon {
               //console.log('damage', damage, 'segment', segmentsBypassed + 1, 'segment size', segmentSize, 'damage needed', Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1)));
             }
 
-            damage = hpRemainder + Math.round(segmentSize * segmentsBypassed);
+            damage = Utils.toDmgValue(this.hp - hpThreshold + segmentSize * segmentsBypassed);
             clearedBossSegmentIndex = s - segmentsBypassed;
           }
           break;
@@ -4361,19 +4361,15 @@ export class EnemyPokemon extends Pokemon {
         }
       }
 
-      // Increment the amount of stages the chosen stat will be raised
       let stages = 1;
-      switch (segmentIndex) {
-      case 1:
-        if (this.bossSegments >= 3) {
-          stages++;
-        }
-        break;
-      case 2:
-        if (this.bossSegments >= 5) {
-          stages++;
-        }
-        break;
+
+      // increase the boost if the boss has at least 3 segments and we passed last shield
+      if (this.bossSegments >= 3 && this.bossSegmentIndex === 1) {
+        stages++;
+      }
+      // increase the boost if the boss has at least 5 segments and we passed the second to last shield
+      if (this.bossSegments >= 5 && this.bossSegmentIndex === 2) {
+        stages++;
       }
 
       this.scene.unshiftPhase(new StatStageChangePhase(this.scene, this.getBattlerIndex(), true, [ boostedStat! ], stages, true, true));

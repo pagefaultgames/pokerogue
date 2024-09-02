@@ -8,6 +8,7 @@ import { Stat, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
+// TODO: Add more tests once Transform is fully implemented
 describe("Moves - Transform", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -29,6 +30,7 @@ describe("Moves - Transform", () => {
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
       .enemyAbility(Abilities.BEAST_BOOST)
+      .enemyPassiveAbility(Abilities.BALL_FETCH)
       .enemyMoveset(SPLASH_ONLY)
       .ability(Abilities.INTIMIDATE)
       .moveset([ Moves.TRANSFORM ]);
