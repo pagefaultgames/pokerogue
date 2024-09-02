@@ -604,6 +604,6 @@
     "DRAGON_MEMORY": "Memória do Dragão",
     "DARK_MEMORY": "Memória Sombria",
     "FAIRY_MEMORY": "Memória de Fada",
-    "BLANK_MEMORY": "Memória Vazia"
+    "NORMAL_MEMORY": "Memória Normal"
   }
 }
