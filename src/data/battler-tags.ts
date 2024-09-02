@@ -98,9 +98,12 @@ export interface TerrainBattlerTag {
 }
 
 /**
- * Base class for tags that disable moves. Descendants can override {@linkcode moveIsDisabled} to disable moves that
- * match a condition. A disabled move gets cancelled before it is used. Players and enemies should not be allowed
- * to select disabled moves.
+ * Base class for tags that restrict the usage of moves. This effect is generally referred to as "disabling" a move
+ * in-game. This is not to be confused with {@linkcode Moves.DISABLE}.
+ *
+ * Descendants can override {@linkcode isMoveRestricted} to restrict moves that
+ * match a condition. A restricted move gets cancelled before it is used. Players and enemies should not be allowed
+ * to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   constructor(tagType: BattlerTagType, turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
@@ -113,7 +116,7 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
       const phase = pokemon.scene.getCurrentPhase() as MovePhase;
       const move = phase.move;
 
-      if (this.moveIsDisabled(move.moveId)) {
+      if (this.isMoveRestricted(move.moveId)) {
         pokemon.scene.queueMessage(this.interruptedText(pokemon, move.moveId));
         phase.cancel();
       }
@@ -124,29 +127,29 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
     return super.lapse(pokemon, lapseType);
   }
 
-  /** Determines whether to disable a move. */
-  abstract moveIsDisabled(move: Moves): boolean;
+  /** Determines whether to restrict a move. */
+  abstract isMoveRestricted(move: Moves): boolean;
 
-  /** The text to display when the player attempts to select a move disabled by this tag. */
+  /** The text to display when the player attempts to select a move that is restricted by this tag. */
   abstract selectionDeniedText(pokemon: Pokemon, move: Moves): string;
 
   /**
-   * The text to display when a move's execution is prevented as a result of the disable.
-   * Because disabling effects also prevent selection of the move, this situation can only arise if a
-   * pokemon first selects a move, then gets outsped by a pokemon using a move that disables the selected move.
+   * The text to display when a move's execution is prevented as a result of the restriction.
+   * Because restriction effects also prevent selection of the move, this situation can only arise if a
+   * pokemon first selects a move, then gets outsped by a pokemon using a move that restricts the selected move.
    */
   abstract interruptedText(pokemon: Pokemon, move: Moves): string;
 }
 
 /**
  * Tag representing the "disabling" effect performed by {@linkcode Moves.DISABLE} and {@linkcode Abilities.CURSED_BODY}.
- * When the tag is added, the last used move of the tag holder is set as the disabled move.
+ * When the tag is added, the last-used move of the tag holder is set as the disabled move.
  */
 export class DisabledTag extends MoveRestrictionBattlerTag {
   /** The move being disabled. Gets set when {@linkcode onAdd} is called for this tag. */
   public moveId: Moves = Moves.NONE;
 
-  public override moveIsDisabled(move: Moves): boolean {
+  public override isMoveRestricted(move: Moves): boolean {
     return move === this.moveId;
   }
 

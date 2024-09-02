@@ -2553,16 +2553,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param moveId {@linkcode Moves} The ID of the move to check
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
-  isMoveDisabled(moveId: Moves): boolean {
-    return this.getDisablingTag(moveId) !== null;
+  isMoveRestricted(moveId: Moves): boolean {
+    return this.getRestrictingTag(moveId) !== null;
   }
 
   /**
-   * Gets the {@link MoveRestrictionBattlerTag} that is disabling the given move, or null if that move is not disabled.
+   * Gets the {@link MoveRestrictionBattlerTag} that is restricting the given move, or null if that move is not restricted.
    */
-  getDisablingTag(moveId: Moves): MoveRestrictionBattlerTag | null {
+  getRestrictingTag(moveId: Moves): MoveRestrictionBattlerTag | null {
     for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
-      if ((tag as MoveRestrictionBattlerTag).moveIsDisabled(moveId)) {
+      if ((tag as MoveRestrictionBattlerTag).isMoveRestricted(moveId)) {
         return tag as MoveRestrictionBattlerTag;
       }
     }
@@ -4434,7 +4434,7 @@ export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | Hit
  * It links to {@linkcode Move} class via the move ID.
  * Compared to {@linkcode Move}, this class also tracks if a move has received.
  * PP Ups, amount of PP used, and things like that.
- * @see {@linkcode isUsable} - checks if move is disabled, out of PP, or not implemented.
+ * @see {@linkcode isUsable} - checks if move is restricted, out of PP, or not implemented.
  * @see {@linkcode getMove} - returns {@linkcode Move} object by looking it up via ID.
  * @see {@linkcode usePp} - removes a point of PP from the move.
  * @see {@linkcode getMovePp} - returns amount of PP a move currently has.
@@ -4456,14 +4456,14 @@ export class PokemonMove {
 
   /**
    * Checks whether the move can be selected or performed by a Pokemon, without consideration for the move's targets.
-   * The move is unusable if it is out of PP, disabled by an effect, or unimplemented.
-   * @param {Pokemon} pokemon The Pokemon that would be using this move
+   * The move is unusable if it is out of PP, restricted by an effect, or unimplemented.
+   * @param pokemon {@linkcode Pokemon} The Pokemon that would be using this move
    * @param ignorePp If true, skips the PP check
-   * @param ignoreDisableTags If true, skips the check for move-disabling tags
+   * @param ignoreRestrictionTags If true, skips the check for move restriction tags
    * @returns True if the move can be selected and used by the Pokemon, otherwise false.
    */
-  isUsable(pokemon: Pokemon, ignorePp?: boolean, ignoreDisableTags?: boolean): boolean {
-    if (this.moveId && !ignoreDisableTags && pokemon.isMoveDisabled(this.moveId)) {
+  isUsable(pokemon: Pokemon, ignorePp?: boolean, ignoreRestrictionTags?: boolean): boolean {
+    if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId)) {
       return false;
     }
 

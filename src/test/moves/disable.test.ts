@@ -64,7 +64,7 @@ describe("Moves - Disable", () => {
     expect(playerMon.getMoveHistory()).toHaveLength(1);
     expect(enemyMon.getMoveHistory()).toHaveLength(1);
     expect(playerMon.getMoveHistory()[0]).toMatchObject({ move: Moves.DISABLE, result: MoveResult.SUCCESS });
-    expect(enemyMon.isMoveDisabled(Moves.SPLASH)).toBe(true);
+    expect(enemyMon.isMoveRestricted(Moves.SPLASH)).toBe(true);
   });
 
   it("fails if enemy has no move history", async() => {
@@ -118,7 +118,7 @@ describe("Moves - Disable", () => {
 
     expect(playerMon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyMon.getLastXMoves()[0].move).toBe(Moves.STRUGGLE);
-    expect(enemyMon.isMoveDisabled(Moves.STRUGGLE)).toBe(false);
+    expect(enemyMon.isMoveRestricted(Moves.STRUGGLE)).toBe(false);
   }, 20000);
 
   it("interrupts target's move when target moves after", async() => {
@@ -157,7 +157,7 @@ describe("Moves - Disable", () => {
     _useMove(Moves.DISABLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
 
-    expect(enemyMon.isMoveDisabled(Moves.NATURE_POWER)).toBe(true);
-    expect(enemyMon.isMoveDisabled(enemyMon.getLastXMoves(2)[1].move)).toBe(false);
+    expect(enemyMon.isMoveRestricted(Moves.NATURE_POWER)).toBe(true);
+    expect(enemyMon.isMoveRestricted(enemyMon.getLastXMoves(2)[1].move)).toBe(false);
   }, 20000);
 });
