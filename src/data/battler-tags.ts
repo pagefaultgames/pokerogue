@@ -643,7 +643,7 @@ export class SeedTag extends BattlerTag {
           const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr, false);
           pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(),
             !reverseDrain ? damage : damage * -1,
-            !reverseDrain ? i18next.t("battlerTags:seededLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }) : i18next.t("battle:battlerTagsSeededLapseShed", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+            !reverseDrain ? i18next.t("battlerTags:seededLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }) : i18next.t("battlerTags:seededLapseShed", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
             false, true));
         }
       }
