@@ -21,7 +21,7 @@
   "infatuatedOnAdd": "¡{{pokemonNameWithAffix}} se ha enamorado\nde {{sourcePokemonName}}!",
   "infatuatedOnOverlap": "¡{{pokemonNameWithAffix}} ya está enamorado!",
   "infatuatedLapse": "¡{{pokemonNameWithAffix}} se ha enamorado\ndebido a {{sourcePokemonName}}!",
-  "infatuatedLapseImmobilize": "¡El enamoramiento impide\nque\n{{pokemonNameWithAffix}}reaccione!",
+  "infatuatedLapseImmobilize": "¡El enamoramiento impide que\n{{pokemonNameWithAffix}} reaccione!",
   "infatuatedOnRemove": "{{pokemonNameWithAffix}} ya no está enamorado.",
   "seededOnAdd": "¡{{pokemonNameWithAffix}} ha sido infectado!",
   "seededLapse": "¡Las drenadoras han restado salud a {{pokemonNameWithAffix}}!",
