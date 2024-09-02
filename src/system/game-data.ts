@@ -983,10 +983,12 @@ export class GameData {
           const sessionData = this.parseSessionData(sessionDataStr);
           sessionData.autoSlot = autoSlot!;
           for (let i = 0; i <= 5; i++) {
-            const speciesToCheck = getPokemonSpecies(sessionData.party[i]?.species);
-            if (sessionData.party[i]?.abilityIndex === 1) {
-              if (speciesToCheck.ability1 === speciesToCheck.ability2 && speciesToCheck.abilityHidden !== Abilities.NONE && speciesToCheck.abilityHidden !== speciesToCheck.ability1) {
-                sessionData.party[i].abilityIndex = 2;
+            if (sessionData.party[i]) {
+              const speciesToCheck = getPokemonSpecies(sessionData.party[i]?.species);
+              if (sessionData.party[i]?.abilityIndex === 1) {
+                if (speciesToCheck.ability1 === speciesToCheck.ability2 && speciesToCheck.abilityHidden !== Abilities.NONE && speciesToCheck.abilityHidden !== speciesToCheck.ability1) {
+                  sessionData.party[i].abilityIndex = 2;
+                }
               }
             }
           }
