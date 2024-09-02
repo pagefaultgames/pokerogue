@@ -9,7 +9,7 @@
       "6": "Allez, c’est parti !",
       "7": "Attention, me voilà !\nTu vas voir comment j’suis fort !",
       "8": "Coucou… Tu veux voir mes bô Pokémon ?",
-      "9": "Trève de mondanités. Ramène-toi quand tu le sens !",
+      "9": "Trêve de mondanités. Ramène-toi quand tu le sens !",
       "10": "Baisse pas ta garde si tu veux pas pleurer d’avoir perdu face à un gamin.",
       "11": "J’ai tout donné pour élever mes Pokémon. Attention à toi si tu leur fait du mal !",
       "12": "Incroyable que t’y sois parvenu ! Mais la suite va pas être une partie de plaisir.",
@@ -68,7 +68,7 @@
       "3": "Hum, t’es pas trop laxiste avec tes Pokémon ?\nTrop les chouchouter n’est pas bon."
     },
     "victory": {
-      "1": "Il est primordial de nourir et développer toutes les caractéristiques de chaque Pokémon.",
+      "1": "Il est primordial de nourrir et développer toutes les caractéristiques de chaque Pokémon.",
       "2": "Contrairement à moi, ces Pokémon ont un bon fond.",
       "3": "Trop d’éloges peut ruiner les Pokémon et les gens."
     },
@@ -229,7 +229,7 @@
     "encounter": {
       "1": "Ne te mets pas en travers de la Team Galaxie !",
       "2": "Sois témoin de la puissance de notre technologie et du futur qui se profile !",
-      "3": "Au nom de la Team Galaxie, j’éliminerai quiconque se mettera sur notre route !",
+      "3": "Au nom de la Team Galaxie, j’éliminerai quiconque se mettra sur notre route !",
       "4": "Prépare ta défaite !",
       "5": "J’espère que t’es prêt à te prendre une raclée de l’espace !",
       "5_female": "J’espère que t’es prête à te prendre une raclée de l’espace !"
@@ -244,7 +244,7 @@
   },
   "plasma_grunt": {
     "encounter": {
-      "1": "Pas de quatiers à ceux qui ne suivent pas notre idéal !",
+      "1": "Pas de quartiers à quiconque ne suit pas notre idéal !",
       "2": "Si je gagne, tu relâches tous tes Pokémon !",
       "3": "Si tu te mets en travers de la Team Plasma, je m’occuperai de toi personnellement !",
       "4": "La Team Plasma va libérer les Pokémon de tous les humains égoïstes dans ton genre !",
@@ -468,7 +468,7 @@
       "4": "Voir un tel jardin rempli de fleurs est si apaisant…"
     },
     "victory": {
-      "1": "Bien joué, c’est mértié.",
+      "1": "Bien joué, c’est mérité.",
       "2": "Dommage, on s’amusait si bien…",
       "3": "Oh non, le combat est terminé…",
       "4": "Aaah, ça fait du bien !\nMerci, j’en avais besoin."
@@ -513,7 +513,7 @@
   },
   "rival_female": {
     "encounter": {
-      "1": "@c{smile_wave}Ah, te voilà ! Je t’ai cherché partout !\n@c{angry_mopen}On oublie de dire au revoir à sa meilleure amie ?\n$@c{smile_ehalf}T’as décidé de réaliser ton rêve, hein ?\nCe jour est donc vraiment arrivé…\n$@c{smile}Je veux bien te pardonner de m’avoir oubliée,\nà une conditon. @c{smile_wave_wink}Que tu m’affronte !\n$@c{angry_mopen}Donne tout ! Ce serait dommage que ton aventure finisse avant d’avoir commencé, hein ?"
+      "1": "@c{smile_wave}Ah, te voilà ! Je t’ai cherché partout !\n@c{angry_mopen}On oublie de dire au revoir à sa meilleure amie ?\n$@c{smile_ehalf}T’as décidé de réaliser ton rêve, hein ?\nCe jour est donc vraiment arrivé…\n$@c{smile}Je veux bien te pardonner de m’avoir oubliée,\nà une condition. @c{smile_wave_wink}Que tu m’affronte !\n$@c{angry_mopen}Donne tout ! Ce serait dommage que ton aventure finisse avant d’avoir commencé, hein ?"
     },
     "victory": {
       "1": "@c{shock}Tu viens de commencer et t’es déjà si fort ?!@d{96}\n@c{angry}T’as triché non ? Avoue !\n$@c{smile_wave_wink}J’déconne !@d{64} @c{smile_eclosed}J’ai perdu dans les règles…\nJ’ai le sentiment que tu vas très bien t’en sortir.\n$@c{smile}D’ailleurs, le prof veut que je te donne ces quelques objets. Ils te seront utiles, pour sûr !\n$@c{smile_wave}Fais de ton mieux, comme toujours !\nJe crois fort en toi !"
