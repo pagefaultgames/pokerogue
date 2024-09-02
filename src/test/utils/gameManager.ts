@@ -1,10 +1,12 @@
 import { updateUserInfo } from "#app/account";
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
+import { BattleStyle } from "#app/enums/battle-style";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
+import overrides from "#app/overrides";
 import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
@@ -39,6 +41,7 @@ import fs from "fs";
 import { vi } from "vitest";
 import { ClassicModeHelper } from "./helpers/classicModeHelper";
 import { DailyModeHelper } from "./helpers/dailyModeHelper";
+import { ChallengeModeHelper } from "./helpers/challengeModeHelper";
 import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
@@ -56,6 +59,7 @@ export default class GameManager {
   public readonly move: MoveHelper;
   public readonly classicMode: ClassicModeHelper;
   public readonly dailyMode: DailyModeHelper;
+  public readonly challengeMode: ChallengeModeHelper;
   public readonly settings: SettingsHelper;
 
   /**
@@ -76,6 +80,7 @@ export default class GameManager {
     this.move = new MoveHelper(this);
     this.classicMode = new ClassicModeHelper(this);
     this.dailyMode = new DailyModeHelper(this);
+    this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
   }
 
@@ -133,8 +138,8 @@ export default class GameManager {
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
     this.scene.enableTutorials = false;
-    this.scene.gameData.gender = PlayerGender.MALE;
-
+    this.scene.gameData.gender = PlayerGender.MALE; // set initial player gender
+    this.scene.battleStyle = this.settings.battleStyle;
   }
 
   /**
@@ -144,32 +149,32 @@ export default class GameManager {
    * @param species
    * @param mode
    */
-  async runToFinalBossEncounter(game: GameManager, species: Species[], mode: GameModes) {
+  async runToFinalBossEncounter(species: Species[], mode: GameModes) {
     console.log("===to final boss encounter===");
-    await game.runToTitle();
+    await this.runToTitle();
 
-    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      game.scene.gameMode = getGameMode(mode);
-      const starters = generateStarter(game.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(game.scene);
-      game.scene.pushPhase(new EncounterPhase(game.scene, false));
+    this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+      this.scene.gameMode = getGameMode(mode);
+      const starters = generateStarter(this.scene, species);
+      const selectStarterPhase = new SelectStarterPhase(this.scene);
+      this.scene.pushPhase(new EncounterPhase(this.scene, false));
       selectStarterPhase.initBattle(starters);
     });
 
-    game.onNextPrompt("EncounterPhase", Mode.MESSAGE, async () => {
-      // This will skip all entry dialogue (I can't figure out a way to sequentially handle the 8 chained messages via 1 prompt handler)
-      game.setMode(Mode.MESSAGE);
-      const encounterPhase = game.scene.getCurrentPhase() as EncounterPhase;
+    // This will consider all battle entry dialog as seens and skip them
+    vi.spyOn(this.scene.ui, "shouldSkipDialogue").mockReturnValue(true);
 
-      // No need to end phase, this will do it for you
-      encounterPhase.doEncounterCommon(false);
-    });
+    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
+      this.removeEnemyHeldItems();
+    }
 
-    await game.phaseInterceptor.to(EncounterPhase, true);
+    await this.phaseInterceptor.to(EncounterPhase);
     console.log("===finished run to final boss encounter===");
   }
 
   /**
+   * @deprecated Use `game.classicMode.startBattle()` or `game.dailyMode.startBattle()` instead
+   *
    * Transitions to the start of a battle.
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
@@ -177,15 +182,17 @@ export default class GameManager {
   async startBattle(species?: Species[]) {
     await this.classicMode.runToSummon(species);
 
-    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.setMode(Mode.MESSAGE);
-      this.endPhase();
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+    if (this.scene.battleStyle === BattleStyle.SWITCH) {
+      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
 
-    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.setMode(Mode.MESSAGE);
-      this.endPhase();
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+    }
 
     await this.phaseInterceptor.to(CommandPhase);
     console.log("==================[New Turn]==================");
@@ -373,7 +380,7 @@ export default class GameManager {
   }
 
   /**
-   * Intercepts `TurnStartPhase` and mocks the getOrder's return value {@linkcode TurnStartPhase.getOrder}
+   * Intercepts `TurnStartPhase` and mocks the getSpeedOrder's return value {@linkcode TurnStartPhase.getSpeedOrder}
    * Used to modify the turn order.
    * @param {BattlerIndex[]} order The turn order to set
    * @example
@@ -384,7 +391,7 @@ export default class GameManager {
   async setTurnOrder(order: BattlerIndex[]): Promise<void> {
     await this.phaseInterceptor.to(TurnStartPhase, false);
 
-    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue(order);
+    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
   }
 
   /**

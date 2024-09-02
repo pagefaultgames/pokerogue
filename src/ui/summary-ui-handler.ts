@@ -716,7 +716,8 @@ export default class SummaryUiHandler extends UiHandler {
       const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
         const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
         const typeIcon = !tera
-          ? this.scene.add.sprite(xCoord, 42, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[type].toLowerCase())          : this.scene.add.sprite(xCoord, 42, "type_tera");
+          ? this.scene.add.sprite(xCoord, 42, Utils.getLocalizedSpriteKey("types"), Type[type].toLowerCase())
+          : this.scene.add.sprite(xCoord, 42, "type_tera");
         if (tera) {
           typeIcon.setScale(0.5);
           const typeRgb = getTypeRgb(type);
@@ -824,10 +825,7 @@ export default class SummaryUiHandler extends UiHandler {
           biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
           level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
         }),
-        natureFragment:
-          i18next.exists(`pokemonSummary:natureFragment.${rawNature}`) ?
-            i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature }) :
-            nature,
+        natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature })
       });
 
       const memoText = addBBCodeTextObject(this.scene, 7, 113, String(memoString), TextStyle.WINDOW_ALT);
@@ -934,10 +932,14 @@ export default class SummaryUiHandler extends UiHandler {
 
       if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
         this.extraMoveRowContainer.setVisible(true);
-        const newMoveTypeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[this.newMove?.type!].toLowerCase()); // TODO: is this bang correct?
-        newMoveTypeIcon.setOrigin(0, 1);
-        this.extraMoveRowContainer.add(newMoveTypeIcon);
 
+        if (this.newMove && this.pokemon) {
+          const spriteKey = Utils.getLocalizedSpriteKey("types");
+          const moveType = this.pokemon.getMoveType(this.newMove);
+          const newMoveTypeIcon = this.scene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
+          newMoveTypeIcon.setOrigin(0, 1);
+          this.extraMoveRowContainer.add(newMoveTypeIcon);
+        }
         const ppOverlay = this.scene.add.image(163, -1, "summary_moves_overlay_pp");
         ppOverlay.setOrigin(0, 1);
         this.extraMoveRowContainer.add(ppOverlay);
@@ -956,8 +958,11 @@ export default class SummaryUiHandler extends UiHandler {
         const moveRowContainer = this.scene.add.container(0, 16 * m);
         this.moveRowsContainer.add(moveRowContainer);
 
-        if (move) {
-          const typeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[move.getMove().type].toLowerCase());          typeIcon.setOrigin(0, 1);
+        if (move && this.pokemon) {
+          const spriteKey = Utils.getLocalizedSpriteKey("types");
+          const moveType = this.pokemon.getMoveType(move.getMove());
+          const typeIcon = this.scene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
+          typeIcon.setOrigin(0, 1);
           moveRowContainer.add(typeIcon);
         }
 

@@ -38,7 +38,7 @@
   "learnMoveNotLearned": "{{pokemonName}}は　{{moveName}}を\n覚えずに　終わった！",
   "learnMoveForgetQuestion": "どの　技を\n忘れさせたい？",
   "learnMoveForgetSuccess": "{{pokemonName}}は　{{moveName}}の\n使い方を　きれいに　忘れた！",
-  "countdownPoof": "@d{32}1 @d{15}2の @d{15}… @d{15}… @d{15}… @d{15}@s{pb_bounce_1}ポカン！",
+  "countdownPoof": "@d{32}1 @d{15}2の @d{15}… @d{15}… @d{15}… @d{15}@s{se/pb_bounce_1}ポカン！",
   "learnMoveAnd": "そして…",
   "levelCapUp": "レベルキャップの\n{{levelCap}}に　上がった！",
   "moveNotImplemented": "{{moveName}}は　まだ　実装されておらず　選択できません。",

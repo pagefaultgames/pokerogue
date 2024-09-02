@@ -1598,7 +1598,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.BLISSEY, 1, null, new SpeciesFriendshipEvolutionCondition(200), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.PICHU]: [
-    new SpeciesEvolution(Species.PIKACHU, 1, null, new SpeciesFriendshipEvolutionCondition(90), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesFormEvolution(Species.PIKACHU, "spiky", "partner", 1, null, new SpeciesFriendshipEvolutionCondition(90), SpeciesWildEvolutionDelay.SHORT),
+    new SpeciesFormEvolution(Species.PIKACHU, "", "", 1, null, new SpeciesFriendshipEvolutionCondition(90), SpeciesWildEvolutionDelay.SHORT),
   ],
   [Species.CLEFFA]: [
     new SpeciesEvolution(Species.CLEFAIRY, 1, null, new SpeciesFriendshipEvolutionCondition(160), SpeciesWildEvolutionDelay.SHORT)

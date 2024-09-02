@@ -7,13 +7,22 @@ import MessageUiHandler from "./message-ui-handler";
 import { addTextObject, TextStyle } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import { ParseKeys } from "i18next";
 import { PlayerGender } from "#enums/player-gender";
 
 enum Page {
   ACHIEVEMENTS,
   VOUCHERS
 }
+
+interface LanguageSetting {
+  TextSize: string,
+}
+
+const languageSettings: { [key: string]: LanguageSetting } = {
+  "de":{
+    TextSize: "80px"
+  }
+};
 
 export default class AchvsUiHandler extends MessageUiHandler {
   private readonly ROWS = 4;
@@ -65,7 +74,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.headerText = addTextObject(this.scene, 0, 0, "", TextStyle.SETTINGS_LABEL);
     this.headerText.setOrigin(0, 0);
     this.headerText.setPositionRelative(this.headerBg, 8, 4);
-    this.headerActionButton = new Phaser.GameObjects.Sprite(this.scene, 0, 0, "keyboard", "SPACE.png");
+    this.headerActionButton = new Phaser.GameObjects.Sprite(this.scene, 0, 0, "keyboard", "ACTION.png");
     this.headerActionButton.setOrigin(0, 0);
     this.headerActionButton.setPositionRelative(this.headerBg, 236, 6);
     this.headerActionText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, {fontSize:"60px"});
@@ -73,13 +82,10 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.headerActionText.setPositionRelative(this.headerBg, 264, 8);
 
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const playerGender = this.scene.gameData.gender;
-    let genderPrefix = "PGM";
-    if (playerGender === PlayerGender.FEMALE) {
-      genderPrefix = "PGF";
-    }
+    const genderIndex = this.scene.gameData.gender ?? PlayerGender.MALE;
+    const genderStr = PlayerGender[genderIndex].toLowerCase();
 
-    this.achvsName = i18next.t(`${genderPrefix}achv:Achievements.name` as ParseKeys);
+    this.achvsName = i18next.t("achv:Achievements.name", { context: genderStr });
     this.vouchersName = i18next.t("voucher:vouchers");
 
     this.iconsBg = addWindow(this.scene, 0, this.headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - this.headerBg.height - 68);
@@ -105,8 +111,13 @@ export default class AchvsUiHandler extends MessageUiHandler {
     titleBg.setOrigin(0, 0);
 
     this.titleText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW);
+    const textSize = languageSettings[i18next.language]?.TextSize ?? this.titleText.style.fontSize;
+    this.titleText.setFontSize(textSize);
     this.titleText.setOrigin(0, 0);
-    this.titleText.setPositionRelative(titleBg, 8, 4);
+    const titleBgCenterX = titleBg.x + titleBg.width / 2;
+    const titleBgCenterY = titleBg.y + titleBg.height / 2;
+    this.titleText.setOrigin(0.5, 0.5);
+    this.titleText.setPosition(titleBgCenterX, titleBgCenterY);
 
     const scoreBg = addWindow(this.scene, titleBg.x + titleBg.width, titleBg.y, 46, 24);
     scoreBg.setOrigin(0, 0);
@@ -174,13 +185,10 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
   protected showAchv(achv: Achv) {
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const playerGender = this.scene.gameData.gender;
-    let genderPrefix = "PGM";
-    if (playerGender === PlayerGender.FEMALE) {
-      genderPrefix = "PGF";
-    }
+    const genderIndex = this.scene.gameData.gender ?? PlayerGender.MALE;
+    const genderStr = PlayerGender[genderIndex].toLowerCase();
 
-    achv.name = i18next.t(`${genderPrefix}achv:${achv.localizationKey}.name` as ParseKeys);
+    achv.name = i18next.t(`achv:${achv.localizationKey}.name`, { context: genderStr });
     achv.description = getAchievementDescription(achv.localizationKey);
     const achvUnlocks = this.scene.gameData.achvUnlocks;
     const unlocked = achvUnlocks.hasOwnProperty(achv.id);
@@ -188,7 +196,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.titleText.setText(unlocked ? achv.name : "???");
     this.showText(!hidden ? achv.description : "");
     this.scoreText.setText(`${achv.score}pt`);
-    this.unlockText.setText(unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t(`${genderPrefix}achv:Locked.name` as ParseKeys));
+    this.unlockText.setText(unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t("achv:Locked.name"));
   }
 
   protected showVoucher(voucher: Voucher) {

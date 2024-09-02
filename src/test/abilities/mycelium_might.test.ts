@@ -1,13 +1,12 @@
 import { BattleStat } from "#app/data/battle-stat";
-import { MovePhase } from "#app/phases/move-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-
 
 describe("Abilities - Mycelium Might", () => {
   let phaserGame: Phaser.Game;
@@ -35,7 +34,7 @@ describe("Abilities - Mycelium Might", () => {
   });
 
   /**
-   * Bulbapedia References:
+   * References:
    * https://bulbapedia.bulbagarden.net/wiki/Mycelium_Might_(Ability)
    * https://bulbapedia.bulbagarden.net/wiki/Priority
    * https://www.smogon.com/forums/threads/scarlet-violet-battle-mechanics-research.3709545/page-24
@@ -44,22 +43,22 @@ describe("Abilities - Mycelium Might", () => {
   it("will move last in its priority bracket and ignore protective abilities", async () => {
     await game.startBattle([Species.REGIELEKI]);
 
-    const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyPokemon = game.scene.getEnemyPokemon();
+    const playerIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
     const enemyIndex = enemyPokemon?.getBattlerIndex();
 
     game.move.select(Moves.BABY_DOLL_EYES);
 
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to(TurnStartPhase, false);
+    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const speedOrder = phase.getSpeedOrder();
+    const commandOrder = phase.getCommandOrder();
     // The opponent Pokemon (without Mycelium Might) goes first despite having lower speed than the player Pokemon.
-    expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(enemyIndex);
-
-    await game.phaseInterceptor.run(MovePhase);
-    await game.phaseInterceptor.to(MovePhase, false);
-
     // The player Pokemon (with Mycelium Might) goes last despite having higher speed than the opponent.
-    expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(leadIndex);
+    expect(speedOrder).toEqual([playerIndex, enemyIndex]);
+    expect(commandOrder).toEqual([enemyIndex, playerIndex]);
     await game.phaseInterceptor.to(TurnEndPhase);
+    // Despite the opponent's ability (Clear Body), its attack stat is still reduced.
     expect(enemyPokemon?.summonData.battleStats[BattleStat.ATK]).toBe(-1);
   }, 20000);
 
@@ -67,39 +66,41 @@ describe("Abilities - Mycelium Might", () => {
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
     await game.startBattle([Species.REGIELEKI]);
 
-    const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyPokemon = game.scene.getEnemyPokemon();
+    const playerIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
     const enemyIndex = enemyPokemon?.getBattlerIndex();
 
     game.move.select(Moves.BABY_DOLL_EYES);
 
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to(TurnStartPhase, false);
+    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const speedOrder = phase.getSpeedOrder();
+    const commandOrder = phase.getCommandOrder();
     // The player Pokemon (with M.M.) goes first because its move is still within a higher priority bracket than its opponent.
-    expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(leadIndex);
-
-    await game.phaseInterceptor.run(MovePhase);
-    await game.phaseInterceptor.to(MovePhase, false);
     // The enemy Pokemon goes second because its move is in a lower priority bracket.
-    expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(enemyIndex);
+    expect(speedOrder).toEqual([playerIndex, enemyIndex]);
+    expect(commandOrder).toEqual([playerIndex, enemyIndex]);
     await game.phaseInterceptor.to(TurnEndPhase);
+    // Despite the opponent's ability (Clear Body), its attack stat is still reduced.
     expect(enemyPokemon?.summonData.battleStats[BattleStat.ATK]).toBe(-1);
   }, 20000);
 
   it("will not affect non-status moves", async () => {
     await game.startBattle([Species.REGIELEKI]);
 
-    const leadIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
+    const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
 
     game.move.select(Moves.QUICK_ATTACK);
 
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to(TurnStartPhase, false);
+    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const speedOrder = phase.getSpeedOrder();
+    const commandOrder = phase.getCommandOrder();
     // The player Pokemon (with M.M.) goes first because it has a higher speed and did not use a status move.
-    expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(leadIndex);
-
-    await game.phaseInterceptor.run(MovePhase);
-    await game.phaseInterceptor.to(MovePhase, false);
     // The enemy Pokemon (without M.M.) goes second because its speed is lower.
-    expect((game.scene.getCurrentPhase() as MovePhase).pokemon.getBattlerIndex()).toBe(enemyIndex);
+    // This means that the commandOrder should be identical to the speedOrder
+    expect(speedOrder).toEqual([playerIndex, enemyIndex]);
+    expect(commandOrder).toEqual([playerIndex, enemyIndex]);
   }, 20000);
 });

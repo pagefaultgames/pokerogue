@@ -18802,6 +18802,85 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 44, Moves.THUNDER ],
       [ 48, Moves.PIKA_PAPOW ],
     ],
+    8: [
+      [ 1, Moves.TAIL_WHIP ],
+      [ 1, Moves.GROWL ],
+      [ 1, Moves.THUNDER_SHOCK ],
+      [ 1, Moves.QUICK_ATTACK ],
+      [ 1, Moves.SWEET_KISS ],
+      [ 1, Moves.CHARM ],
+      [ 1, Moves.NASTY_PLOT ],
+      [ 1, Moves.PLAY_NICE ],
+      [ 1, Moves.NUZZLE ],
+      [ 4, Moves.THUNDER_WAVE ],
+      [ 8, Moves.DOUBLE_TEAM ],
+      [ 12, Moves.ELECTRO_BALL ],
+      [ 16, Moves.FEINT ],
+      [ 20, Moves.ZIPPY_ZAP ], //Custom
+      [ 24, Moves.AGILITY ],
+      [ 28, Moves.IRON_TAIL ],
+      [ 32, Moves.DISCHARGE ],
+      [ 34, Moves.FLOATY_FALL ], //Custom
+      [ 36, Moves.THUNDERBOLT ],
+      [ 40, Moves.LIGHT_SCREEN ],
+      [ 42, Moves.SPLISHY_SPLASH ], //Custom
+      [ 44, Moves.THUNDER ],
+      [ 48, Moves.PIKA_PAPOW ],
+    ],
+  },
+  [Species.EEVEE]: { //Custom
+    1: [
+      [ 1, Moves.TACKLE ],
+      [ 1, Moves.TAIL_WHIP ],
+      [ 1, Moves.GROWL ],
+      [ 1, Moves.HELPING_HAND ],
+      [ 1, Moves.COVET ],
+      [ 5, Moves.SAND_ATTACK ],
+      [ 10, Moves.QUICK_ATTACK ],
+      [ 15, Moves.BABY_DOLL_EYES ],
+      [ 18, Moves.BOUNCY_BUBBLE ], //Custom
+      [ 18, Moves.SIZZLY_SLIDE ], //Custom
+      [ 18, Moves.BUZZY_BUZZ ], //Custom
+      [ 20, Moves.SWIFT ],
+      [ 25, Moves.BITE ],
+      [ 30, Moves.COPYCAT ],
+      [ 33, Moves.BADDY_BAD ], //Custom
+      [ 33, Moves.GLITZY_GLOW ], //Custom
+      [ 35, Moves.BATON_PASS ],
+      [ 40, Moves.VEEVEE_VOLLEY ], //Custom, replaces Take Down
+      [ 43, Moves.FREEZY_FROST ], //Custom
+      [ 43, Moves.SAPPY_SEED ], //Custom
+      [ 45, Moves.CHARM ],
+      [ 50, Moves.DOUBLE_EDGE ],
+      [ 53, Moves.SPARKLY_SWIRL ], //Custom
+      [ 55, Moves.LAST_RESORT ],
+    ],
+    2: [
+      [ 1, Moves.TACKLE ],
+      [ 1, Moves.TAIL_WHIP ],
+      [ 1, Moves.GROWL ],
+      [ 1, Moves.HELPING_HAND ],
+      [ 1, Moves.COVET ],
+      [ 5, Moves.SAND_ATTACK ],
+      [ 10, Moves.QUICK_ATTACK ],
+      [ 15, Moves.BABY_DOLL_EYES ],
+      [ 18, Moves.BOUNCY_BUBBLE ], //Custom
+      [ 18, Moves.SIZZLY_SLIDE ], //Custom
+      [ 18, Moves.BUZZY_BUZZ ], //Custom
+      [ 20, Moves.SWIFT ],
+      [ 25, Moves.BITE ],
+      [ 30, Moves.COPYCAT ],
+      [ 33, Moves.BADDY_BAD ], //Custom
+      [ 33, Moves.GLITZY_GLOW ], //Custom
+      [ 35, Moves.BATON_PASS ],
+      [ 40, Moves.VEEVEE_VOLLEY ], //Custom, replaces Take Down
+      [ 43, Moves.FREEZY_FROST ], //Custom
+      [ 43, Moves.SAPPY_SEED ], //Custom
+      [ 45, Moves.CHARM ],
+      [ 50, Moves.DOUBLE_EDGE ],
+      [ 53, Moves.SPARKLY_SWIRL ], //Custom
+      [ 55, Moves.LAST_RESORT ],
+    ],
   },
   [Species.DEOXYS]: {
     1: [
