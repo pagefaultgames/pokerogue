@@ -6037,6 +6037,57 @@ export class DestinyBondAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute to apply a battler tag to the target if they have had their stats boosted this turn.
+ * @extends AddBattlerTagAttr
+ */
+export class AddBattlerTagIfBoostedAttr extends AddBattlerTagAttr {
+  constructor(tag: BattlerTagType) {
+    super(tag, false, false, 2, 5);
+  }
+
+  /**
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param {any[]} args N/A
+   * @returns true
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (target.turnData.battleStatsIncreased) {
+      super.apply(user, target, move, args);
+    }
+    return true;
+  }
+}
+
+/**
+ * Attribute to apply a status effect to the target if they have had their stats boosted this turn.
+ * @extends MoveEffectAttr
+ */
+export class StatusIfBoostedAttr extends MoveEffectAttr {
+  public effect: StatusEffect;
+
+  constructor(effect: StatusEffect) {
+    super(true, MoveEffectTrigger.HIT);
+    this.effect = effect;
+  }
+
+  /**
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} N/A
+   * @param {any[]} args N/A
+   * @returns true
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (target.turnData.battleStatsIncreased) {
+      target.trySetStatus(this.effect, true, user);
+    }
+    return true;
+  }
+}
+
 export class LastResortAttr extends MoveAttr {
   getCondition(): MoveConditionFunc {
     return (user: Pokemon, target: Pokemon, move: Move) => {
@@ -8694,10 +8745,10 @@ export function initMoves() {
     new AttackMove(Moves.SKITTER_SMACK, Type.BUG, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
     new AttackMove(Moves.BURNING_JEALOUSY, Type.FIRE, MoveCategory.SPECIAL, 70, 100, 5, 100, 0, 8)
-      .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .partial(),
+      .attr(StatusIfBoostedAttr, StatusEffect.BURN)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.LASH_OUT, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.turnData.battleStatsDecreased ? 2 : 1),
     new AttackMove(Moves.POLTERGEIST, Type.GHOST, MoveCategory.PHYSICAL, 110, 90, 5, -1, 0, 8)
       .attr(AttackedByItemAttr)
       .makesContact(false),
@@ -9146,8 +9197,8 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.DRAGON_CHEER, false, true)
       .target(MoveTarget.NEAR_ALLY),
     new AttackMove(Moves.ALLURING_VOICE, Type.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 9)
-      .soundBased()
-      .partial(),
+      .attr(AddBattlerTagIfBoostedAttr, BattlerTagType.CONFUSED)
+      .soundBased(),
     new AttackMove(Moves.TEMPER_FLARE, Type.FIRE, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.getLastXMoves(2)[1]?.result === MoveResult.MISS || user.getLastXMoves(2)[1]?.result === MoveResult.FAIL ? 2 : 1),
     new AttackMove(Moves.SUPERCELL_SLAM, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 95, 15, -1, 0, 9)
