@@ -61,5 +61,6 @@
   "suppressAbilities": "A habilidade de {{pokemonName}}\nfoi suprimida!",
   "revivalBlessing": "{{pokemonName}} foi reanimado!",
   "swapArenaTags": "{{pokemonName}} trocou os efeitos de batalha que afetam cada lado do campo!",
-  "exposedMove": "{{pokemonName}} identificou\n{{targetPokemonName}}!"
+  "exposedMove": "{{pokemonName}} identificou\n{{targetPokemonName}}!",
+  "safeguard": "{{targetName}} está protegido por Safeguard!"
 }

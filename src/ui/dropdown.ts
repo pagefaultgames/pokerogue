@@ -23,6 +23,14 @@ export enum SortDirection {
   DESC = 1
 }
 
+export enum SortCriteria {
+  NUMBER = 0,
+  COST = 1,
+  CANDY = 2,
+  IV = 3,
+  NAME = 4
+}
+
 export class DropDownLabel {
   public state: DropDownState;
   public text: string;

@@ -306,30 +306,33 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  showDialogue(i18nKey: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
+  showDialogue(keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
     const battleScene = this.scene as BattleScene;
-
     // Get localized dialogue (if available)
     let hasi18n = false;
-    if (i18next.exists(i18nKey) ) {
-      const genderIndex = battleScene.gameData.gender ?? PlayerGender.UNSET;
-      const genderStr = PlayerGender[genderIndex].toLowerCase();
-      i18nKey = i18next.t(i18nKey, { context: genderStr });
+    let text = keyOrText;
+    const genderIndex = battleScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderStr = PlayerGender[genderIndex].toLowerCase();
+
+    if (i18next.exists(keyOrText) ) {
+      const i18nKey = keyOrText;
       hasi18n = true;
 
+      text = i18next.t(i18nKey, { context: genderStr }); // override text with translation
+
       // Skip dialogue if the player has enabled the option and the dialogue has been already seen
-      if (battleScene.skipSeenDialogues &&battleScene.gameData.getSeenDialogues()[i18nKey] === true) {
+      if (this.shouldSkipDialogue(i18nKey)) {
         console.log(`Dialogue ${i18nKey} skipped`);
         callback();
         return;
       }
     }
     let showMessageAndCallback = () => {
-      hasi18n && battleScene.gameData.saveSeenDialogue(i18nKey);
+      hasi18n && battleScene.gameData.saveSeenDialogue(keyOrText);
       callback();
     };
-    if (i18nKey.indexOf("$") > -1) {
-      const messagePages = i18nKey.split(/\$/g).map(m => m.trim());
+    if (text.indexOf("$") > -1) {
+      const messagePages = text.split(/\$/g).map(m => m.trim());
       for (let p = messagePages.length - 1; p >= 0; p--) {
         const originalFunc = showMessageAndCallback;
         showMessageAndCallback = () => this.showDialogue(messagePages[p], name, null, originalFunc);
@@ -338,9 +341,9 @@ export default class UI extends Phaser.GameObjects.Container {
     } else {
       const handler = this.getHandler();
       if (handler instanceof MessageUiHandler) {
-        (handler as MessageUiHandler).showDialogue(i18nKey, name, delay, showMessageAndCallback, callbackDelay, true, promptDelay);
+        (handler as MessageUiHandler).showDialogue(text, name, delay, showMessageAndCallback, callbackDelay, true, promptDelay);
       } else {
-        this.getMessageHandler().showDialogue(i18nKey, name, delay, showMessageAndCallback, callbackDelay, true, promptDelay);
+        this.getMessageHandler().showDialogue(text, name, delay, showMessageAndCallback, callbackDelay, true, promptDelay);
       }
     }
   }
