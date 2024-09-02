@@ -58,7 +58,7 @@
   "slowStartOnAdd": "¡{{pokemonNameWithAffix}} no está dando todo de sí!",
   "slowStartOnRemove": "¡{{pokemonNameWithAffix}} ya puede darlo todo!",
   "highestStatBoostOnAdd": "¡{{pokemonNameWithAffix}} ha reforzado su {{statName}}!",
-  "highestStatBoostOnRemove": "¡Los efectos de {{abilityName}} de {{pokemonNameWithAffix}} han desaparecido!",
+  "highestStatBoostOnRemove": "¡Los efectos de {{abilityName}}\nde {{pokemonNameWithAffix}} han desaparecido!",
   "magnetRisenOnAdd": "¡{{pokemonNameWithAffix}} levita gracias a un campo electromagnético!",
   "magnetRisenOnRemove": "¡El campo electromagnético de {{pokemonNameWithAffix}} se ha disipado!",
   "critBoostOnAdd": "¡{{pokemonNameWithAffix}} se está preparando para luchar!",
