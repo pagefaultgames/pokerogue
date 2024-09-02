@@ -1084,7 +1084,7 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         }
         return formChangeItemTriggers;
       }).flat())
-      ].flat().flatMap(fc => fc.item).filter(i => (!!i && i < 100) === rare);
+      ].flat().flatMap(fc => fc.item).filter(i => (i && i < 100) === rare);
       // convert it into a set to remove duplicate values, which can appear when the same species with a potential form change is in the party.
 
       if (!formChangeItemPool.length) {
