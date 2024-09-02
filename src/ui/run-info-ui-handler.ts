@@ -654,6 +654,9 @@ export default class RunInfoUiHandler extends UiHandler {
               break;
             }
             const itemIcon = item?.getIcon(this.scene, true);
+            if (item?.stackCount < item?.getMaxHeldItemCount(pokemon) && itemIcon.list[1] instanceof Phaser.GameObjects.BitmapText) {
+              itemIcon.list[1].clearTint();
+            }
             itemIcon.setScale(heldItemsScale);
             itemIcon.setPosition((index%19) * 10, row * 10);
             heldItemsContainer.add(itemIcon);
