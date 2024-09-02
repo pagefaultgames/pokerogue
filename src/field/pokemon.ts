@@ -4176,7 +4176,7 @@ export class EnemyPokemon extends Pokemon {
               //console.log('damage', damage, 'segment', segmentsBypassed + 1, 'segment size', segmentSize, 'damage needed', Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1)));
             }
 
-            damage = hpRemainder + Math.round(segmentSize * segmentsBypassed);
+            damage = Utils.toDmgValue(this.hp - hpThreshold + segmentSize * segmentsBypassed);
             clearedBossSegmentIndex = s - segmentsBypassed;
           }
           break;
@@ -4241,17 +4241,13 @@ export class EnemyPokemon extends Pokemon {
 
       let statLevels = 1;
 
-      switch (segmentIndex) {
-      case 1:
-        if (this.bossSegments >= 3) {
-          statLevels++;
-        }
-        break;
-      case 2:
-        if (this.bossSegments >= 5) {
-          statLevels++;
-        }
-        break;
+      // increase the boost if the boss has at least 3 segments and we passed last shield
+      if (this.bossSegments >= 3 && this.bossSegmentIndex === 1) {
+        statLevels++;
+      }
+      // increase the boost if the boss has at least 5 segments and we passed the second to last shield
+      if (this.bossSegments >= 5 && this.bossSegmentIndex === 2) {
+        statLevels++;
       }
 
       this.scene.unshiftPhase(new StatChangePhase(this.scene, this.getBattlerIndex(), true, [ boostedStat ], statLevels, true, true));
