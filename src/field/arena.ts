@@ -391,16 +391,16 @@ export class Arena {
     return true;
   }
 
-  isMoveWeatherCancelled(user: Pokemon, move: Move) {
-    return this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(user, move);
+  public isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {
+    return !!this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(user, move);
   }
 
-  isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move) {
-    return this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
+  public isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
+    return !!this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
   }
 
-  getTerrainType() : TerrainType {
-    return this.terrain?.terrainType || TerrainType.NONE;
+  public getTerrainType(): TerrainType {
+    return this.terrain?.terrainType ?? TerrainType.NONE;
   }
 
   getAttackTypeMultiplier(attackType: Type, grounded: boolean): number {
