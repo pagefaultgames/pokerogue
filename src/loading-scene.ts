@@ -132,8 +132,6 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
-    // this.loadImage("pride-update", "events");
-    this.loadImage("august-variant-update", "events");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
@@ -375,7 +373,12 @@ export class LoadingScene extends SceneBase {
     } else {
       this.loadAtlas("types", "");
     }
-
+    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt_BR", "zh_CN"];
+    if (lang && availableLangs.includes(lang)) {
+      this.loadImage("september-update-"+lang, "events");
+    } else {
+      this.loadImage("september-update-en", "events");
+    }
 
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
@@ -471,8 +474,8 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
-    initVouchers();
     initAchievements();
+    initVouchers();
     initStatsKeys();
     initPokemonPrevolutions();
     initBiomes();

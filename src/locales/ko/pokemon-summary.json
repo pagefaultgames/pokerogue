@@ -11,8 +11,8 @@
   "cancel": "그만둔다",
   "memoString": "{{natureFragment}}.\n{{metFragment}}",
   "metFragment": {
-    "normal": "{{biome}}에서\nLv{{level}}일 때 만났다.",
-    "apparently": "{{biome}}에서\nLv{{level}}일 때 만난 것 같다."
+    "normal": "{{biome}}에서\n레벨 {{level}}일 때 만났다.",
+    "apparently": "{{biome}}에서\n레벨 {{level}}일 때 만난 것 같다."
   },
   "natureFragment": {
     "Hardy": "{{nature}}하는 성격",

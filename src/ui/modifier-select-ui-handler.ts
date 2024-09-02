@@ -159,6 +159,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   show(args: any[]): boolean {
     this.args = args
+
+    this.scene.disableMenu = false;
+
     if (this.active) {
       if (args.length >= 3) {
         this.awaitingActionInput = true;

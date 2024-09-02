@@ -12,6 +12,7 @@
   "blockItemTheft": "{{pokemonNameWithAffix}}'s {{abilityName}}\nprevents item theft!",
   "typeImmunityHeal": "{{pokemonNameWithAffix}}'s {{abilityName}}\nrestored its HP a little!",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}} avoided damage\nwith {{abilityName}}!",
+  "fullHpResistType": "{{pokemonNameWithAffix}} made its shell gleam!\nIt's distorting type matchups!",
   "moveImmunity": "It doesn't affect {{pokemonNameWithAffix}}!",
   "reverseDrain": "{{pokemonNameWithAffix}} sucked up the liquid ooze!",
   "postDefendTypeChange": "{{pokemonNameWithAffix}}'s {{abilityName}}\nmade it the {{typeName}} type!",
