@@ -653,7 +653,7 @@ export default class RunInfoUiHandler extends UiHandler {
               heldItemsContainer.add(overflowIcon);
               break;
             }
-            const itemIcon = item?.getIcon(this.scene, false);
+            const itemIcon = item?.getIcon(this.scene, true);
             itemIcon.setScale(heldItemsScale);
             itemIcon.setPosition((index%19) * 10, row * 10);
             heldItemsContainer.add(itemIcon);
