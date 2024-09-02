@@ -1799,6 +1799,7 @@ export default class BattleScene extends SceneBase {
     config = config ?? {};
     try {
       const keyDetails = key.split("/");
+      config["volume"] = config["volume"] ?? 1;
       switch (keyDetails[0]) {
       case "level_up_fanfare":
       case "item_fanfare":
@@ -1808,11 +1809,11 @@ export default class BattleScene extends SceneBase {
       case "evolution_fanfare":
         // These sounds are loaded in as BGM, but played as sound effects
         // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
-        config["volume"] = this.masterVolume * this.bgmVolume;
+        config["volume"] *= (this.masterVolume * this.bgmVolume);
         break;
       case "battle_anims":
       case "cry":
-        config["volume"] = this.masterVolume * this.fieldVolume;
+        config["volume"] *= (this.masterVolume * this.fieldVolume);
         //PRSFX sound files are unusually loud
         if (keyDetails[1].startsWith("PRSFX- ")) {
           config["volume"] *= 0.5;
@@ -1820,10 +1821,10 @@ export default class BattleScene extends SceneBase {
         break;
       case "ui":
         //As of, right now this applies to the "select", "menu_open", "error" sound effects
-        config["volume"] = this.masterVolume * this.uiVolume;
+        config["volume"] *= (this.masterVolume * this.uiVolume);
         break;
       case "se":
-        config["volume"] = this.masterVolume * this.seVolume;
+        config["volume"] *= (this.masterVolume * this.seVolume);
         break;
       }
       this.sound.play(key, config);
