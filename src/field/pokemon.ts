@@ -1513,7 +1513,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits.
    * The XOR of E and F are then compared to the {@linkcode shinyThreshold} (or {@linkcode thresholdOverride} if set) to see whether or not to generate a shiny.
    * The base shiny odds are {@linkcode baseShinyChance} / 65536
-   * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode baseShinyChance} if set
+   * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
    * @returns true if the Pokemon has been set as a shiny, false otherwise
    */
   trySetShiny(thresholdOverride?: integer): boolean {
