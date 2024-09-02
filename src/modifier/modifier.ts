@@ -12,7 +12,7 @@ import { getPokemonNameWithAffix } from "../messages";
 import * as Utils from "../utils";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
-import { BattlerTagType} from "#enums/battler-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
@@ -1625,7 +1625,7 @@ export class TmModifier extends ConsumablePokemonModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as PlayerPokemon;
 
-    pokemon.scene.unshiftPhase(new LearnMovePhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), (this.type as ModifierTypes.TmModifierType).moveId));
+    pokemon.scene.unshiftPhase(new LearnMovePhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), (this.type as ModifierTypes.TmModifierType).moveId, true));
 
     return true;
   }
@@ -2193,7 +2193,7 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value *= Math.pow(2, 2 + this.getStackCount());
+    (args[0] as Utils.IntegerHolder).value *= Math.pow(2, 1 + this.getStackCount());
 
     return true;
   }

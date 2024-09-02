@@ -317,10 +317,11 @@ export default class UI extends Phaser.GameObjects.Container {
     if (i18next.exists(keyOrText) ) {
       const i18nKey = keyOrText;
       hasi18n = true;
+
       text = i18next.t(i18nKey, { context: genderStr }); // override text with translation
 
       // Skip dialogue if the player has enabled the option and the dialogue has been already seen
-      if (battleScene.skipSeenDialogues && battleScene.gameData.getSeenDialogues()[i18nKey] === true) {
+      if (this.shouldSkipDialogue(i18nKey)) {
         console.log(`Dialogue ${i18nKey} skipped`);
         callback();
         return;

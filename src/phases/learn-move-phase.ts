@@ -14,10 +14,12 @@ import Pokemon from "#app/field/pokemon";
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
   private messageMode: Mode;
+  private fromTM: boolean;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves) {
+  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves, fromTM?: boolean) {
     super(scene, partyMemberIndex);
     this.moveId = moveId;
+    this.fromTM = fromTM ?? false;
   }
 
   start() {
@@ -97,15 +99,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
           this.scene.ui.setMode(this.messageMode);
           this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
             this.end();
-          }, null, true);
-        },
-        () => {
-          this.scene.ui.setMode(this.messageMode);
-          this.replaceMoveCheck(move, pokemon);
-        });
-    }, null);
-  }
-
+          });
+      });
+    }
   /**
    * This teaches the Pokemon the new move and ends the phase.
    * When a Pokemon forgets a move and learns a new one, its 'Learn Move' message is significantly longer.
@@ -120,6 +116,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * > [Pokemon] learned [MoveName]!
    */
   learnMove(index: number, move, pokemon, textMessage?: string) {
+    if (this.fromTM) {
+      pokemon.usedTMs.push(this.moveId);
+    }
     pokemon.setMove(index, this.moveId);
     initMoveAnim(this.scene, this.moveId).then(() => {
       loadMoveAnimAssets(this.scene, [this.moveId], true);
