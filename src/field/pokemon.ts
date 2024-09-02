@@ -1506,13 +1506,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Function that tries to set a Pokemon shiny based on the trainer's trainer ID and secret ID
+   * Function that tries to set a Pokemon shiny based on the trainer's trainer ID and secret ID.
    * Endless Pokemon in the end biome are unable to be set to shiny
    *
-   * The exact mechanic is that it calculates E as the XOR of the player's trainer ID and secret ID
-   * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits
-   * The XOR of E and F are then compared to the `shinyThreshold` (or `thresholdOverride` if set) to see whether or not to generate a shiny
-   * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance
+   * The exact mechanic is that it calculates E as the XOR of the player's trainer ID and secret ID.
+   * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits.
+   * The XOR of E and F are then compared to the {@linkcode shinyThreshold} (or {@linkcode thresholdOverride} if set) to see whether or not to generate a shiny.
+   * The base shiny odds are {@linkcode baseShinyChance} / 65536
+   * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode baseShinyChance} if set
    * @returns true if the Pokemon has been set as a shiny, false otherwise
    */
   trySetShiny(thresholdOverride?: integer): boolean {
@@ -1527,7 +1528,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const E = this.scene.gameData.trainerId ^ this.scene.gameData.secretId;
     const F = rand1 ^ rand2;
 
-    /** 64/65536 -> 1/1024 */
+    /** `64/65536 -> 1/1024` */
     const baseShinyChance = 64;
     const shinyThreshold = new Utils.IntegerHolder(baseShinyChance);
     if (thresholdOverride === undefined) {
@@ -1542,9 +1543,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.shiny = (E ^ F) < shinyThreshold.value;
-    if ((E ^ F) < baseShinyChance) {
-      console.log("REAL SHINY!!");
-    }
 
     if (this.shiny) {
       this.initShinySparkle();
