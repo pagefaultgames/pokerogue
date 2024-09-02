@@ -1,9 +1,9 @@
 import BattleScene from "#app/battle-scene.js";
 import { BattlerIndex } from "#app/battle.js";
-import { applyAbAttrs, RedirectMoveAbAttr, BlockRedirectAbAttr, IncreasePpAbAttr, applyPreAttackAbAttrs, PokemonTypeChangeAbAttr, applyPostMoveUsedAbAttrs, PostMoveUsedAbAttr } from "#app/data/ability.js";
+import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr } from "#app/data/ability.js";
 import { CommonAnim } from "#app/data/battle-anims.js";
-import { CenterOfAttentionTag, BattlerTagLapseType } from "#app/data/battler-tags.js";
-import { MoveFlags, BypassRedirectAttr, allMoves, CopyMoveAttr, applyMoveAttrs, BypassSleepAttr, HealStatusEffectAttr, ChargeAttr, PreMoveMessageAttr } from "#app/data/move.js";
+import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags.js";
+import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move.js";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms.js";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect.js";
 import { Type } from "#app/data/type.js";
@@ -13,10 +13,10 @@ import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { Moves } from "#app/enums/moves.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
 import { MoveUsedEvent } from "#app/events/battle-scene.js";
-import Pokemon, { PokemonMove, MoveResult, TurnMove } from "#app/field/pokemon.js";
+import Pokemon, { MoveResult, PokemonMove, TurnMove } from "#app/field/pokemon.js";
 import { getPokemonNameWithAffix } from "#app/messages.js";
-import i18next from "i18next";
 import * as Utils from "#app/utils.js";
+import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 import { CommonAnimPhase } from "./common-anim-phase";
 import { MoveEffectPhase } from "./move-effect-phase";
@@ -38,8 +38,8 @@ export class MovePhase extends BattlePhase {
     this.pokemon = pokemon;
     this.targets = targets;
     this.move = move;
-    this.followUp = !!followUp;
-    this.ignorePp = !!ignorePp;
+    this.followUp = followUp ?? false;
+    this.ignorePp = ignorePp ?? false;
     this.failed = false;
     this.cancelled = false;
   }
@@ -65,7 +65,7 @@ export class MovePhase extends BattlePhase {
 
     if (!this.canMove()) {
       if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
-        this.scene.queueMessage(`${this.move.getName()} is disabled!`);
+        this.scene.queueMessage(i18next.t("battle:moveDisabled", { moveName: this.move.getName() }));
       }
       if (this.pokemon.isActive(true) && this.move.ppUsed >= this.move.getMovePp()) { // if the move PP was reduced from Spite or otherwise, the move fails
         this.fail();
@@ -90,7 +90,7 @@ export class MovePhase extends BattlePhase {
       : null;
     if (moveTarget) {
       const oldTarget = moveTarget.value;
-      this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, this.move.moveId, moveTarget));
+      this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, false, this.move.moveId, moveTarget));
       this.pokemon.getOpponents().forEach(p => {
         const redirectTag = p.getTag(CenterOfAttentionTag) as CenterOfAttentionTag;
         if (redirectTag && (!redirectTag.powder || (!this.pokemon.isOfType(Type.GRASS) && !this.pokemon.hasAbility(Abilities.OVERCOAT)))) {
@@ -194,7 +194,7 @@ export class MovePhase extends BattlePhase {
         return this.end();
       }
 
-      if (!moveQueue.length || !moveQueue.shift()?.ignorePP) { // using .shift here clears out two turn moves once they've been used
+      if ((!moveQueue.length || !moveQueue.shift()?.ignorePP) && !this.ignorePp) { // using .shift here clears out two turn moves once they've been used
         this.move.usePp(ppUsed);
         this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed));
       }

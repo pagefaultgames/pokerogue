@@ -20,7 +20,10 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase.js";
+import { Abilities } from "#app/enums/abilities";
+import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 
 export class Arena {
   public scene: BattleScene;
@@ -331,6 +334,36 @@ export class Arena {
     return true;
   }
 
+  /**
+   * Function to trigger all weather based form changes
+   */
+  triggerWeatherBasedFormChanges(): void {
+    this.scene.getField(true).forEach( p => {
+      const isCastformWithForecast = (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM);
+      const isCherrimWithFlowerGift = (p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM);
+
+      if (isCastformWithForecast || isCherrimWithFlowerGift) {
+        new ShowAbilityPhase(this.scene, p.getBattlerIndex());
+        this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
+      }
+    });
+  }
+
+  /**
+   * Function to trigger all weather based form changes back into their normal forms
+   */
+  triggerWeatherBasedFormChangesToNormal(): void {
+    this.scene.getField(true).forEach( p => {
+      const isCastformWithForecast = (p.hasAbility(Abilities.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM);
+      const isCherrimWithFlowerGift = (p.hasAbility(Abilities.FLOWER_GIFT, false, true) && p.species.speciesId === Species.CHERRIM);
+
+      if (isCastformWithForecast || isCherrimWithFlowerGift) {
+        new ShowAbilityPhase(this.scene, p.getBattlerIndex());
+        return this.scene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
+      }
+    });
+  }
+
   trySetTerrain(terrain: TerrainType, hasPokemonSource: boolean, ignoreAnim: boolean = false): boolean {
     if (this.terrain?.terrainType === (terrain || undefined)) {
       return false;
@@ -339,7 +372,7 @@ export class Arena {
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
     this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
-    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType,this.terrain?.terrainType!, this.terrain?.turnsLeft!)); // TODO: are those bangs correct?
+    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType, this.terrain?.terrainType!, this.terrain?.turnsLeft!)); // TODO: are those bangs correct?
 
     if (this.terrain) {
       if (!ignoreAnim) {
@@ -582,6 +615,10 @@ export class Arena {
 
   getTag(tagType: ArenaTagType | Constructor<ArenaTag>): ArenaTag | undefined {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
+  }
+
+  hasTag(tagType: ArenaTagType) : boolean {
+    return !!this.getTag(tagType);
   }
 
   getTagOnSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide): ArenaTag | undefined {

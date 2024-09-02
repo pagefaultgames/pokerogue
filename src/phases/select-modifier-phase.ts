@@ -69,7 +69,7 @@ export class SelectModifierPhase extends BattlePhase {
               this.scene.updateMoneyText();
               this.scene.animateMoneyChanged(false);
             }
-            this.scene.playSound("buy");
+            this.scene.playSound("se/buy");
           }
           break;
         case 1:
@@ -128,7 +128,7 @@ export class SelectModifierPhase extends BattlePhase {
                 this.scene.updateMoneyText();
                 this.scene.animateMoneyChanged(false);
               }
-              this.scene.playSound("buy");
+              this.scene.playSound("se/buy");
               (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
             } else {
               this.scene.ui.playError();
@@ -205,7 +205,7 @@ export class SelectModifierPhase extends BattlePhase {
     return true;
   }
 
-  getRerollCost(typeOptions: ModifierTypeOption[], lockRarities: boolean): integer {
+  getRerollCost(typeOptions: ModifierTypeOption[], lockRarities: boolean): number {
     let baseValue = 0;
     if (Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
       return baseValue;

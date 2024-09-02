@@ -44,6 +44,7 @@ import { WeatherType } from "#app/enums/weather-type.js";
 import { TerrainType } from "#app/data/terrain.js";
 import { OutdatedPhase } from "#app/phases/outdated-phase.js";
 import { ReloadSessionPhase } from "#app/phases/reload-session-phase.js";
+import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -75,6 +76,8 @@ export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): str
     return "tutorials";
   case GameDataType.SEEN_DIALOGUES:
     return "seenDialogues";
+  case GameDataType.RUN_HISTORY:
+    return "runHistoryData";
   }
 }
 
@@ -182,6 +185,15 @@ export const AbilityAttr = {
   ABILITY_HIDDEN: 4
 };
 
+export type RunHistoryData = Record<number, RunEntry>;
+
+export interface RunEntry {
+  entry: SessionSaveData;
+  isVictory: boolean;
+  /*Automatically set to false at the moment - implementation TBD*/
+  isFavorite: boolean;
+}
+
 export type StarterMoveset = [ Moves ] | [ Moves, Moves ] | [ Moves, Moves, Moves ] | [ Moves, Moves, Moves, Moves ];
 
 export interface StarterFormMoveData {
@@ -231,6 +243,8 @@ export class StarterPrefs {
     if (pStr !== StarterPrefers_private_latest) {
       // something changed, store the update
       localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
+      // update the latest prefs
+      StarterPrefers_private_latest = pStr;
     }
   }
 }
@@ -262,7 +276,7 @@ const systemShortKeys = {
   seenAttr: "$sa",
   caughtAttr: "$ca",
   natureAttr: "$na",
-  seenCount: "$s" ,
+  seenCount: "$s",
   caughtCount: "$c",
   hatchedCount: "$hc",
   ivs: "$i",
@@ -290,6 +304,7 @@ export class GameData {
   public starterData: StarterData;
 
   public gameStats: GameStats;
+  public runHistory: RunHistoryData;
 
   public unlocks: Unlocks;
 
@@ -310,6 +325,7 @@ export class GameData {
     this.secretId = Utils.randInt(65536);
     this.starterData = {};
     this.gameStats = new GameStats();
+    this.runHistory = {};
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
       [Unlockables.MINI_BLACK_HOLE]: false,
@@ -445,6 +461,11 @@ export class GameData {
         if (versions[0] !== versions[1]) {
           const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
         }*/
+        const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
+        const lsItem = localStorage.getItem(lsItemKey);
+        if (!lsItem) {
+          localStorage.setItem(lsItemKey, "");
+        }
 
         this.trainerId = systemData.trainerId;
         this.secretId = systemData.secretId;
@@ -554,6 +575,98 @@ export class GameData {
         resolve(false);
       }
     });
+  }
+
+  /**
+   * Retrieves current run history data, organized by time stamp.
+   * At the moment, only retrievable from locale cache
+   */
+  async getRunHistoryData(scene: BattleScene): Promise<RunHistoryData> {
+    if (!Utils.isLocal) {
+      /**
+       * Networking Code DO NOT DELETE!
+       *
+      const response = await Utils.apiFetch("savedata/runHistory", true);
+      const data = await response.json();
+      */
+      const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
+      const lsItem = localStorage.getItem(lsItemKey);
+      if (lsItem) {
+        const cachedResponse  = lsItem;
+        if (cachedResponse) {
+          const runHistory = JSON.parse(decrypt(cachedResponse, bypassLogin));
+          return runHistory;
+        }
+        return {};
+        // check to see whether cachedData or serverData is more up-to-date
+        /**
+       * Networking Code DO NOT DELETE!
+       *
+        if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
+          return cachedRHData;
+        }
+        */
+      } else {
+        localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, "");
+        return {};
+      }
+    } else {
+      const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
+      const lsItem = localStorage.getItem(lsItemKey);
+      if (lsItem) {
+        const cachedResponse = lsItem;
+        if (cachedResponse) {
+          const runHistory : RunHistoryData = JSON.parse(decrypt(cachedResponse, bypassLogin));
+          return runHistory;
+        }
+        return {};
+      } else {
+        localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, "");
+        return {};
+      }
+    }
+  }
+
+  /**
+   * Saves a new entry to Run History
+   * @param scene: BattleScene object
+   * @param runEntry: most recent SessionSaveData of the run
+   * @param isVictory: result of the run
+   * Arbitrary limit of 25 runs per player - Will delete runs, starting with the oldest one, if needed
+   */
+  async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, isVictory: boolean): Promise<boolean> {
+    const runHistoryData = await this.getRunHistoryData(scene);
+    // runHistoryData should always return run history or {} empty object
+    let timestamps = Object.keys(runHistoryData).map(Number);
+
+    // Arbitrary limit of 25 entries per user --> Can increase or decrease
+    while (timestamps.length >= RUN_HISTORY_LIMIT ) {
+      const oldestTimestamp = (Math.min.apply(Math, timestamps)).toString();
+      delete runHistoryData[oldestTimestamp];
+      timestamps = Object.keys(runHistoryData).map(Number);
+    }
+
+    const timestamp = (runEntry.timestamp).toString();
+    runHistoryData[timestamp] = {
+      entry: runEntry,
+      isVictory: isVictory,
+      isFavorite: false,
+    };
+    localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), bypassLogin));
+    /**
+     * Networking Code DO NOT DELETE
+     *
+    if (!Utils.isLocal) {
+      try {
+        await Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
+        return true;
+      } catch (err) {
+        console.log("savedata/runHistory POST failed : ", err);
+        return false;
+      }
+    }
+    */
+    return true;
   }
 
   parseSystemData(dataStr: string): SystemSaveData {
@@ -1295,6 +1408,15 @@ export class GameData {
               case GameDataType.SESSION:
                 const sessionData = this.parseSessionData(dataStr);
                 valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
+                break;
+              case GameDataType.RUN_HISTORY:
+                const data = JSON.parse(dataStr);
+                const keys = Object.keys(data);
+                dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
+                keys.forEach((key) => {
+                  const entryKeys = Object.keys(data[key]);
+                  valid = ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
+                });
                 break;
               case GameDataType.SETTINGS:
               case GameDataType.TUTORIALS:

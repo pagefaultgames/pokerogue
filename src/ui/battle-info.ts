@@ -713,7 +713,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastLevelExp = pokemon.levelExp;
       }
       if (duration) {
-        (this.scene as BattleScene).playSound("exp");
+        (this.scene as BattleScene).playSound("se/exp");
       }
       this.scene.tweens.add({
         targets: this.expMaskRect,
@@ -725,10 +725,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
             return resolve();
           }
           if (duration) {
-            this.scene.sound.stopByKey("exp");
+            this.scene.sound.stopByKey("se/exp");
           }
           if (ratio === 1) {
-            (this.scene as BattleScene).playSound("level_up");
+            (this.scene as BattleScene).playSound("se/level_up");
             this.setLevel(this.lastLevel);
             this.scene.time.delayedCall(500 * levelDurationMultiplier, () => {
               this.expMaskRect.x = 0;

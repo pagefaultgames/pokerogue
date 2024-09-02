@@ -1,14 +1,14 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { applyPreStatChangeAbAttrs, ProtectStatAbAttr, applyAbAttrs, StatChangeMultiplierAbAttr, StatChangeCopyAbAttr, applyPostStatChangeAbAttrs, PostStatChangeAbAttr } from "#app/data/ability.js";
-import { MistTag, ArenaTagSide } from "#app/data/arena-tag.js";
-import { BattleStat, getBattleStatName, getBattleStatLevelChangeDescription } from "#app/data/battle-stat.js";
-import Pokemon from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { PokemonResetNegativeStatStageModifier } from "#app/modifier/modifier.js";
-import { handleTutorial, Tutorial } from "#app/tutorial.js";
+import { BattlerIndex } from "#app/battle";
+import BattleScene from "#app/battle-scene";
+import { applyAbAttrs, applyPostStatChangeAbAttrs, applyPreStatChangeAbAttrs, PostStatChangeAbAttr, ProtectStatAbAttr, StatChangeCopyAbAttr, StatChangeMultiplierAbAttr } from "#app/data/ability";
+import { ArenaTagSide, MistTag } from "#app/data/arena-tag";
+import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "#app/data/battle-stat";
+import Pokemon from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { PokemonResetNegativeStatStageModifier } from "#app/modifier/modifier";
+import { handleTutorial, Tutorial } from "#app/tutorial";
+import * as Utils from "#app/utils";
 import i18next from "i18next";
-import * as Utils from "#app/utils.js";
 import { PokemonPhase } from "./pokemon-phase";
 
 export type StatChangeCallback = (target: Pokemon | null, changed: BattleStat[], relativeChanges: number[]) => void;
@@ -68,11 +68,11 @@ export class StatChangePhase extends PokemonPhase {
     const levels = new Utils.IntegerHolder(this.levels);
 
     if (!this.ignoreAbilities) {
-      applyAbAttrs(StatChangeMultiplierAbAttr, pokemon, null, levels);
+      applyAbAttrs(StatChangeMultiplierAbAttr, pokemon, null, false, levels);
     }
 
     const battleStats = this.getPokemon().summonData.battleStats;
-    const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats![stat] + levels.value, 6) : Math.max(battleStats![stat] + levels.value, -6)) - battleStats![stat]);
+    const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats[stat] + levels.value, 6) : Math.max(battleStats[stat] + levels.value, -6)) - battleStats[stat]);
 
     this.onChange && this.onChange(this.getPokemon(), filteredStats, relLevels);
 
@@ -85,12 +85,26 @@ export class StatChangePhase extends PokemonPhase {
       }
 
       for (const stat of filteredStats) {
+        if (levels.value > 0 && pokemon.summonData.battleStats[stat] < 6) {
+          if (!pokemon.turnData) {
+            // Temporary fix for missing turn data struct on turn 1
+            pokemon.resetTurnData();
+          }
+          pokemon.turnData.battleStatsIncreased = true;
+        } else if (levels.value < 0 && pokemon.summonData.battleStats[stat] > -6) {
+          if (!pokemon.turnData) {
+            // Temporary fix for missing turn data struct on turn 1
+            pokemon.resetTurnData();
+          }
+          pokemon.turnData.battleStatsDecreased = true;
+        }
+
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
       }
 
       if (levels.value > 0 && this.canBeCopied) {
         for (const opponent of pokemon.getOpponents()) {
-          applyAbAttrs(StatChangeCopyAbAttr, opponent, null, this.stats, levels.value);
+          applyAbAttrs(StatChangeCopyAbAttr, opponent, null, false, this.stats, levels.value);
         }
       }
 
@@ -134,7 +148,7 @@ export class StatChangePhase extends PokemonPhase {
       statSprite.setScale(6);
       statSprite.setOrigin(0.5, 1);
 
-      this.scene.playSound(`stat_${levels.value >= 1 ? "up" : "down"}`);
+      this.scene.playSound(`se/stat_${levels.value >= 1 ? "up" : "down"}`);
 
       statSprite.setMask(new Phaser.Display.Masks.BitmapMask(this.scene, pokemonMaskSprite ?? undefined));
 
@@ -222,10 +236,10 @@ export class StatChangePhase extends PokemonPhase {
         statsFragment = relLevelStats.length >= 5
           ? i18next.t("battle:stats")
           : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(", ")}${relLevelStats.length > 2 ? "," : ""} ${i18next.t("battle:statsAnd")} ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
-        messages.push(getBattleStatLevelChangeDescription(getPokemonNameWithAffix(this.getPokemon()), statsFragment, Math.abs(parseInt(rl)), levels >= 1,relLevelStats.length));
+        messages.push(getBattleStatLevelChangeDescription(getPokemonNameWithAffix(this.getPokemon()), statsFragment, Math.abs(parseInt(rl)), levels >= 1, relLevelStats.length));
       } else {
         statsFragment = getBattleStatName(relLevelStats[0]);
-        messages.push(getBattleStatLevelChangeDescription(getPokemonNameWithAffix(this.getPokemon()), statsFragment, Math.abs(parseInt(rl)), levels >= 1,relLevelStats.length));
+        messages.push(getBattleStatLevelChangeDescription(getPokemonNameWithAffix(this.getPokemon()), statsFragment, Math.abs(parseInt(rl)), levels >= 1, relLevelStats.length));
       }
     });
 

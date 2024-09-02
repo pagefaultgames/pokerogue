@@ -1,15 +1,11 @@
 import { Stat } from "#app/data/pokemon-stat";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { Command } from "#app/ui/command-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { CommandPhase } from "#app/phases/command-phase.js";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
-import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 
 
 describe("Moves - Tackle", () => {
@@ -34,30 +30,24 @@ describe("Moves - Tackle", () => {
     game.override.startingLevel(1);
     game.override.startingWave(97);
     game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.GROWTH,Moves.GROWTH,Moves.GROWTH,Moves.GROWTH]);
+    game.override.enemyMoveset([Moves.GROWTH, Moves.GROWTH, Moves.GROWTH, Moves.GROWTH]);
     game.override.disableCrits();
   });
 
-  it("TACKLE against ghost", async() => {
+  it("TACKLE against ghost", async () => {
     const moveToUse = Moves.TACKLE;
     game.override.enemySpecies(Species.GENGAR);
     await game.startBattle([
       Species.MIGHTYENA,
     ]);
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(moveToUse);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
     const hpLost = hpOpponent - game.scene.currentBattle.enemyParty[0].hp;
     expect(hpLost).toBe(0);
   }, 20000);
 
-  it("TACKLE against not resistant", async() => {
+  it("TACKLE against not resistant", async () => {
     const moveToUse = Moves.TACKLE;
     await game.startBattle([
       Species.MIGHTYENA,
@@ -68,16 +58,10 @@ describe("Moves - Tackle", () => {
 
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, moveToUse);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
+    game.move.select(moveToUse);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
     const hpLost = hpOpponent - game.scene.currentBattle.enemyParty[0].hp;
     expect(hpLost).toBeGreaterThan(0);
-    expect(hpLost).toBe(4);
+    expect(hpLost).toBeLessThan(4);
   }, 20000);
 });

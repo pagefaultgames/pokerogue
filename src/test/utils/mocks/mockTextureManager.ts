@@ -1,12 +1,14 @@
 import MockContainer from "#test/utils/mocks/mocksContainer/mockContainer";
-import MockSprite from "#test/utils/mocks/mocksContainer/mockSprite";
-import MockRectangle from "#test/utils/mocks/mocksContainer/mockRectangle";
-import MockNineslice from "#test/utils/mocks/mocksContainer/mockNineslice";
 import MockImage from "#test/utils/mocks/mocksContainer/mockImage";
-import MockText from "#test/utils/mocks/mocksContainer/mockText";
+import MockNineslice from "#test/utils/mocks/mocksContainer/mockNineslice";
 import MockPolygon from "#test/utils/mocks/mocksContainer/mockPolygon";
-import { MockGameObject } from "./mockGameObject";
+import MockRectangle from "#test/utils/mocks/mocksContainer/mockRectangle";
+import MockSprite from "#test/utils/mocks/mocksContainer/mockSprite";
+import MockText from "#test/utils/mocks/mocksContainer/mockText";
 import MockTexture from "#test/utils/mocks/mocksContainer/mockTexture";
+import { MockGameObject } from "./mockGameObject";
+import { vi } from "vitest";
+import { MockVideoGameObject } from "./mockVideoGameObject";
 
 /**
  * Stub class for Phaser.Textures.TextureManager
@@ -34,6 +36,7 @@ export default class MockTextureManager {
       text: this.text.bind(this),
       bitmapText: this.text.bind(this),
       displayList: this.displayList,
+      video: vi.fn(() => new MockVideoGameObject()),
     };
   }
 
@@ -43,7 +46,7 @@ export default class MockTextureManager {
     return container;
   }
 
-  sprite(x,y, texture) {
+  sprite(x, y, texture) {
     const sprite = new MockSprite(this, x, y, texture);
     this.list.push(sprite);
     return sprite;

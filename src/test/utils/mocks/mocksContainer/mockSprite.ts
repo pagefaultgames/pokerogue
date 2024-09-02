@@ -1,7 +1,7 @@
+import Phaser from "phaser";
 import { MockGameObject } from "../mockGameObject";
 import Sprite = Phaser.GameObjects.Sprite;
 import Frame = Phaser.Textures.Frame;
-import Phaser from "phaser";
 
 
 export default class MockSprite implements MockGameObject {
