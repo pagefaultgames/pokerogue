@@ -88,7 +88,7 @@ export function randSeedInt(range: integer, min: integer = 0): integer {
     return min;
   }
   return Phaser.Math.RND.integerInRange(min, (range - 1) + min);
-}
+} //
 
 /**
 * Returns a random integer between min and max (non-inclusive)
