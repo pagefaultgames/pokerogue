@@ -2230,7 +2230,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, this, source, move, cancelled, false, damage);
     }
 
-    console.log("damage", damage.value, move.name, power, sourceAtk, targetDef);
+    // debug message for when damage is applied (i.e. not simulated)
+    if (!simulated) {
+      console.log("damage", damage.value, move.name, power, sourceAtk, targetDef);
+    }
 
     let hitResult: HitResult;
     if (typeMultiplier < 1) {
@@ -4027,9 +4030,9 @@ export class EnemyPokemon extends Pokemon {
             return false;
           }
           const move = pkmnMove.getMove()!;
-          const activePokemon = this.scene.getField(true);
+          const fieldPokemon = this.scene.getField();
           const moveTargets = getMoveTargets(this, move.id).targets
-            .map(ind => activePokemon[ind])
+            .map(ind => fieldPokemon[ind])
             .filter(p => this.isPlayer() !== p.isPlayer());
           // Only considers critical hits for crit-only moves or when this Pokemon is under the effect of Laser Focus
           const isCritical = move.hasAttr(CritOnlyAttr) || !!this.getTag(BattlerTagType.ALWAYS_CRIT);
