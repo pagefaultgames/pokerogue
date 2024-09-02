@@ -171,6 +171,8 @@ export default class GameManager {
   }
 
   /**
+   * @deprecated Use `game.classicMode.startBattle()` or `game.dailyMode.startBattle()` instead
+   *
    * Transitions to the start of a battle.
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
