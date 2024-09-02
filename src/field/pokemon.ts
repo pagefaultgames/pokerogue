@@ -34,7 +34,7 @@ import { DexAttr, StarterDataEntry, StarterMoveset } from "../system/game-data";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from "../data/pokemon-forms";
-import { TerrainType } from "../data/terrain";
+import { getTerrainName, TerrainType } from "../data/terrain";
 import { TrainerSlot } from "../data/trainer-config";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
@@ -2775,7 +2775,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
-  canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
+  /**
+   * Checks if it is possible for a pokemon to be afflicted with the given status
+   * @param effect {@linkcode StatusEffect} the status effect being checked.
+   * @param quiet a boolean value that is sometimes used as the asPhase boolean which causes unshifting the phase.
+   * @param overrideStatus a boolean value to determine whether a status should be overriden.  If true, the pokemon cannot be statused essentially
+   * @param sourcePokemon {@linkcode Pokemon} The pokemon causing the status.  The target pokemon is 'this'.
+   * @returns true if the pokemon can be affected by the status, false if not.
+   */
+  checkIfCanSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
         return false;
@@ -2827,6 +2835,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       break;
     case StatusEffect.SLEEP:
       if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.ELECTRIC) {
+        if (!quiet) {
+          this.scene.queueMessage(i18next.t("terrain:defaultBlockMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(this), terrainName: getTerrainName(TerrainType.ELECTRIC) }));
+        }
         return false;
       }
       break;
@@ -2841,6 +2852,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       break;
     }
+    return true;
+  }
+
+  /**
+   * Checks if it is possible for a pokemon to be afflicted with the given status
+   * @param effect {@linkcode StatusEffect} the status effect being checked.
+   * @param quiet a boolean value that is sometimes used as the asPhase boolean which in this case affects that.
+   * @param overrideStatus a boolean value to determine whether a status should be overriden.  If true, the pokemon cannot be statused essentially
+   * @param sourcePokemon {@linkcode Pokemon} The pokemon causing the status.  The target pokemon is 'this'.
+   * @returns true if the pokemon can be affected by the status, false if not.
+   */
+  canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
+    const canSetStatus = this.checkIfCanSetStatus(effect, quiet, overrideStatus, sourcePokemon);
 
     const cancelled = new Utils.BooleanHolder(false);
     applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
@@ -2852,7 +2876,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    return true;
+    return canSetStatus;
   }
 
   trySetStatus(effect: StatusEffect | undefined, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, cureTurn: integer | null = 0, sourceText: string | null = null): boolean {
