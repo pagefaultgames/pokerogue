@@ -8,17 +8,15 @@ import * as Utils from "../utils";
 import Move, * as MoveData from "../data/move";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
-import Battle from "#app/battle.js";
 import { Stat } from "#app/data/pokemon-stat.js";
-import { Abilities } from "#app/enums/abilities.js";
 import { WeatherType } from "#app/data/weather.js";
 import { Moves } from "#app/enums/moves.js";
-import { AddSecondStrikeAbAttr, AllyMoveCategoryPowerBoostAbAttr, AlwaysHitAbAttr, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreDefendAbAttrsNoApply, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, ConditionalCritAbAttr, DamageBoostAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentEvasionAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, MultCritAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, TypeImmunityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "#app/data/ability.js";
+import { AddSecondStrikeAbAttr, AllyMoveCategoryPowerBoostAbAttr, AlwaysHitAbAttr, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreDefendAbAttrsNoApply, BattleStatMultiplierAbAttr, BlockCritAbAttr, BypassBurnDamageReductionAbAttr, ConditionalCritAbAttr, DamageBoostAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentEvasionAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MultCritAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, TypeImmunityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "#app/data/ability.js";
 import { ArenaTagType } from "#app/enums/arena-tag-type.js";
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from "#app/data/arena-tag.js";
-import { BattlerTagLapseType, HelpingHandTag, SemiInvulnerableTag, TypeBoostTag } from "#app/data/battler-tags.js";
+import { HelpingHandTag, SemiInvulnerableTag, TypeBoostTag } from "#app/data/battler-tags.js";
 import { TerrainType } from "#app/data/terrain.js";
-import { AttackTypeBoosterModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, TempBattleStatBoosterModifier } from "#app/modifier/modifier.js";
+import { AttackTypeBoosterModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, TempBattleStatBoosterModifier } from "#app/modifier/modifier.js";
 import { BattlerTagType } from "#app/enums/battler-tag-type.js";
 import { TempBattleStat } from "#app/data/temp-battle-stat.js";
 import { StatusEffect } from "#app/data/status-effect.js";
@@ -185,12 +183,11 @@ export default class FightUiHandler extends UiHandler {
 
     const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);
     MoveData.applyMoveAttrs(MoveData.VariableMoveTypeAttr, user, target, move);
-    applyPreAttackAbAttrs(MoveTypeChangeAttr, user, target, move, true, typeChangeMovePowerMultiplier);
     const types = target.getTypes(true, true);
 
     const cancelled = new Utils.BooleanHolder(false);
     const typeless = move.hasAttr(MoveData.TypelessAttr);
-    const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveData.MoveCategory.STATUS || move.getAttrs(MoveData.StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType)))
+    const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveData.MoveCategory.STATUS)
       ? target.getAttackTypeEffectiveness(move.type, user, false, false)
       : 1);
     MoveData.applyMoveAttrs(MoveData.VariableMoveTypeMultiplierAttr, user, target, move, typeMultiplier);

@@ -551,6 +551,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         break;
       case MenuOptions.LINKS:
         ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.legalLinksConfig);
+        break;
       case MenuOptions.RUN_HISTORY:
         ui.setOverlayMode(Mode.RUN_HISTORY);
         success = true;
