@@ -3955,7 +3955,7 @@ export class EnemyPokemon extends Pokemon {
     }
 
     // Filter out any moves this Pokemon cannot use
-    const movePool = this.getMoveset().filter(m => m?.isUsable(this));
+    let movePool = this.getMoveset().filter(m => m?.isUsable(this));
     // If no moves are left, use Struggle. Otherwise, continue with move selection
     if (movePool.length) {
       // If there's only 1 move in the move pool, use it.
@@ -3976,6 +3976,31 @@ export class EnemyPokemon extends Pokemon {
         return { move: moveId, targets: this.getNextTargets(moveId) };
       case AiType.SMART_RANDOM:
       case AiType.SMART:
+        /**
+         * Search this Pokemon's move pool for moves that will KO an opposing target.
+         * If there are any moves that can KO an opponent (i.e. a player Pokemon),
+         * those moves are the only ones considered for selection on this turn.
+         */
+        const killMoves = movePool.filter(pkmnMove => {
+          if (!pkmnMove) {
+            return false;
+          }
+          const move = pkmnMove.getMove()!;
+          const activePokemon = this.scene.getField(true);
+          const moveTargets = getMoveTargets(this, move.id).targets
+            .map(ind => activePokemon[ind])
+            .filter(p => this.isPlayer() !== p.isPlayer());
+          // Only considers critical hits for crit-only moves or when this Pokemon is under the effect of Laser Focus
+          const isCritical = move.hasAttr(CritOnlyAttr) || !!this.getTag(BattlerTagType.ALWAYS_CRIT);
+
+          return move.category !== MoveCategory.STATUS
+            && moveTargets.some(p => p.getAttackDamage(this, move, !p.battleData.abilityRevealed, false, isCritical).damage >= p.hp);
+        }, this);
+
+        if (killMoves.length > 0) {
+          movePool = killMoves;
+        }
+
         /**
          * Move selection is based on the move's calculated "benefit score" against the
          * best possible target(s) (as determined by {@linkcode getNextTargets}).
