@@ -119,6 +119,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public maskEnabled: boolean;
   public maskSprite: Phaser.GameObjects.Sprite | null;
 
+  public usedTMs: Moves[];
+
   private shinySparkle: Phaser.GameObjects.Sprite;
 
   constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
@@ -195,6 +197,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionVariant = dataSource.fusionVariant || 0;
       this.fusionGender = dataSource.fusionGender;
       this.fusionLuck = dataSource.fusionLuck;
+      this.usedTMs = dataSource.usedTMs ?? [];
     } else {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
@@ -935,7 +938,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.metBiome === -1 && !this.scene.gameMode.isFreshStartChallenge() && !this.scene.gameMode.isDaily) {
       levelMoves = this.getUnlockedEggMoves().concat(levelMoves);
     }
-    return levelMoves.filter(lm => !this.moveset.some(m => m?.moveId === lm));
+    if (Array.isArray(this.usedTMs) && this.usedTMs.length > 0) {
+      levelMoves = this.usedTMs.filter(m => !levelMoves.includes(m)).concat(levelMoves);
+    }
+    levelMoves = levelMoves.filter(lm => !this.moveset.some(m => m?.moveId === lm));
+    return levelMoves;
   }
 
   /**
@@ -3357,6 +3364,7 @@ export default interface Pokemon {
 
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
+  public usedTms: Moves[];
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
@@ -3380,6 +3388,7 @@ export class PlayerPokemon extends Pokemon {
       }
     }
     this.generateCompatibleTms();
+    this.usedTms = [];
   }
 
   initBattleInfo(): void {
