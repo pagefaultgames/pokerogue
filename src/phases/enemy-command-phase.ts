@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { Command } from "#app/ui/command-ui-handler.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { Command } from "#app/ui/command-ui-handler";
 import { FieldPhase } from "./field-phase";
 
 /**
