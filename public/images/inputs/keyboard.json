@@ -583,6 +583,14 @@
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":12,"h":12},
 	"sourceSize": {"w":12,"h":12}
+},
+{
+	"filename": "ACTION.png",
+	"frame": {"x":1018,"y":0,"w":28,"h":12},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":28,"h":12},
+	"sourceSize": {"w":28,"h":12}
 }],
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
