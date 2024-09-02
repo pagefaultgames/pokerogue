@@ -133,9 +133,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
     }
 
-    const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value);
-    const randAbilityIndex = Utils.randSeedInt(2);
-
     this.species = species;
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
@@ -146,6 +143,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.abilityIndex = abilityIndex; // Use the provided ability index if it is defined
     } else {
       // If abilityIndex is not provided, determine it based on species and hidden ability
+      const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value);
+      const randAbilityIndex = Utils.randSeedInt(2);
       if (species.abilityHidden && hasHiddenAbility) {
         // If the species has a hidden ability and the hidden ability is present
         this.abilityIndex = 2;
@@ -1526,13 +1525,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Function that tries to set a Pokemon shiny based on the trainer's trainer ID and secret ID
+   * Function that tries to set a Pokemon shiny based on the trainer's trainer ID and secret ID.
    * Endless Pokemon in the end biome are unable to be set to shiny
    *
-   * The exact mechanic is that it calculates E as the XOR of the player's trainer ID and secret ID
-   * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits
-   * The XOR of E and F are then compared to the thresholdOverride (default case 32) to see whether or not to generate a shiny
-   * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance
+   * The exact mechanic is that it calculates E as the XOR of the player's trainer ID and secret ID.
+   * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits.
+   * The XOR of E and F are then compared to the {@linkcode shinyThreshold} (or {@linkcode thresholdOverride} if set) to see whether or not to generate a shiny.
+   * The base shiny odds are {@linkcode baseShinyChance} / 65536
+   * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
    * @returns true if the Pokemon has been set as a shiny, false otherwise
    */
   trySetShiny(thresholdOverride?: integer): boolean {
@@ -1547,7 +1547,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const E = this.scene.gameData.trainerId ^ this.scene.gameData.secretId;
     const F = rand1 ^ rand2;
 
-    const shinyThreshold = new Utils.IntegerHolder(32);
+    /** `64/65536 -> 1/1024` */
+    const baseShinyChance = 64;
+    const shinyThreshold = new Utils.IntegerHolder(baseShinyChance);
     if (thresholdOverride === undefined) {
       if (this.scene.eventManager.isEventActive()) {
         shinyThreshold.value *= this.scene.eventManager.getShinyMultiplier();
@@ -1560,9 +1562,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.shiny = (E ^ F) < shinyThreshold.value;
-    if ((E ^ F) < 32) {
-      console.log("REAL SHINY!!");
-    }
 
     if (this.shiny) {
       this.initShinySparkle();
@@ -2807,6 +2806,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const types = this.getTypes(true, true);
+
+    const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    if (sourcePokemon && sourcePokemon !== this && this.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, defendingSide)) {
+      return false;
+    }
 
     switch (effect) {
     case StatusEffect.POISON:
