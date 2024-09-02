@@ -343,7 +343,7 @@
     "encounter": {
       "1": "Hop hop hop ! Terminus !",
       "2": "T’es un Dresseur n’est-ce pas ?\n$J’ai bien peur ce que ne soit pas une excuse suffisante pour nous interrompre dans notre travail.",
-      "2": "T’es une Dresseuse n’est-ce pas ?\n$J’ai bien peur ce que ne soit pas une excuse suffisante pour nous interrompre dans notre travail.",
+      "2_female": "T’es une Dresseuse n’est-ce pas ?\n$J’ai bien peur ce que ne soit pas une excuse suffisante pour nous interrompre dans notre travail.",
       "3": "Je travaille à Macro Cosmos Assurances !\nBesoin d’une assurance-vie ?"
     },
     "victory": {
