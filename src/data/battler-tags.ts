@@ -1507,6 +1507,25 @@ export class CritBoostTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag for the effects of Dragon Cheer, which boosts the critical hit ratio of the user's allies.
+ * @extends {CritBoostTag}
+ */
+export class DragonCheerTag extends CritBoostTag {
+  /** The types of the user's ally when the tag is added */
+  public typesOnAdd: Type[];
+
+  constructor() {
+    super(BattlerTagType.CRIT_BOOST, Moves.DRAGON_CHEER);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    this.typesOnAdd = pokemon.getTypes(true);
+  }
+}
+
 export class SaltCuredTag extends BattlerTag {
   private sourceIndex: number;
 
@@ -1923,6 +1942,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new TypeBoostTag(tagType, sourceMove, Type.FIRE, 1.5, false);
   case BattlerTagType.CRIT_BOOST:
     return new CritBoostTag(tagType, sourceMove);
+  case BattlerTagType.DRAGON_CHEER:
+    return new DragonCheerTag();
   case BattlerTagType.ALWAYS_CRIT:
   case BattlerTagType.IGNORE_ACCURACY:
     return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
