@@ -3,31 +3,31 @@
     "encounter": {
       "1": "Hey, wanna battle?",
       "2": "Are you a new trainer too?",
-      "2_female": null,
+      "2_female": "Are you a new trainer too?",
       "3": "Hey, I haven't seen you before. Let's battle!",
       "4": "I just lost, so I'm trying to find more Pokémon.\nWait! You look weak! Come on, let's battle!",
-      "4_female": null,
+      "4_female": "I just lost, so I'm trying to find more Pokémon.\nWait! You look weak! Come on, let's battle!",
       "5": "Have we met or not? I don't really remember. Well, I guess it's nice to meet you anyway!",
       "6": "All right! Let's go!",
       "7": "All right! Here I come! I'll show you my power!",
       "8": "Haw haw haw... I'll show you how hawesome my Pokémon are!",
       "9": "No need to waste time saying hello. Bring it on whenever you're ready!",
-      "9_female": null,
+      "9_female": "No need to waste time saying hello. Bring it on whenever you're ready!",
       "10": "Don't let your guard down, or you may be crying when a kid beats you.",
       "11": "I've raised my Pokémon with great care. You're not allowed to hurt them!",
       "12": "Glad you made it! It won't be an easy job from here.",
-      "12_female": null,
+      "12_female": "Glad you made it! It won't be an easy job from here.",
       "13": "The battles continue forever! Welcome to the world with no end!",
-      "13_female": null
+      "13_female": "The battles continue forever! Welcome to the world with no end!"
     },
     "victory": {
       "1": "Wow! You're strong!",
-      "1_female": null,
+      "1_female": "Wow! You're strong!",
       "2": "I didn't stand a chance, huh?",
       "3": "I'll find you again when I'm older and beat you!",
       "4": "Ugh. I don't have any more Pokémon.",
       "5": "No way… NO WAY! How could I lose again…",
-      "5_female": null,
+      "5_female": "No way… NO WAY! How could I lose again…",
       "6": "No! I lost!",
       "7": "Whoa! You are incredible! I'm amazed and surprised!",
       "8": "Could it be… How… My Pokémon and I are the strongest, though…",
@@ -42,12 +42,12 @@
     "encounter": {
       "1": "Let's have a battle, shall we?",
       "2": "You look like a new trainer. Let's have a battle!",
-      "2_female": null,
+      "2_female": "You look like a new trainer. Let's have a battle!",
       "3": "I don't recognize you. How about a battle?",
       "4": "Let's have a fun Pokémon battle!",
       "5": "I'll show you the ropes of how to really use Pokémon!",
       "6": "A serious battle starts from a serious beginning! Are you sure you're ready?",
-      "6_female": null,
+      "6_female": "A serious battle starts from a serious beginning! Are you sure you're ready?",
       "7": "You're only young once. And you only get one shot at a given battle. Soon, you'll be nothing but a memory.",
       "8": "You'd better go easy on me, OK? Though I'll be seriously fighting!",
       "9": "School is boring. I've got nothing to do. Yawn. I'm only battling to kill the time."
@@ -55,15 +55,15 @@
     "victory": {
       "1": "That was impressive! I've got a lot to learn.",
       "2": "I didn't think you'd beat me that bad…",
-      "2_female": null,
+      "2_female": "I didn't think you'd beat me that bad…",
       "3": "I hope we get to have a rematch some day.",
       "4": "That was pretty amazingly fun! You've totally exhausted me…",
       "5": "You actually taught me a lesson! You're pretty amazing!",
       "6": "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
-      "6_female": null,
+      "6_female": "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
       "7": "I don't need memories like this. Deleting memory…",
       "8": "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
-      "8_female": null,
+      "8_female": "Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.",
       "9": "I'm actually getting tired of battling… There's gotta be something new to do…"
     }
   },
@@ -154,7 +154,7 @@
   "ace_trainer": {
     "encounter": {
       "1": "You seem quite confident.",
-      "1_female": null,
+      "1_female": "You seem quite confident.",
       "2": "Your Pokémon… Show them to me…",
       "3": "Because I'm an Ace Trainer, people think I'm strong.",
       "4": "Are you aware of what it takes to be an Ace Trainer?"
@@ -163,9 +163,9 @@
       "1": "Yes… You have good Pokémon…",
       "2": "What?! But I'm a battling genius!",
       "3": "Of course, you are the main character!",
-      "3_female": null,
+      "3_female": "Of course, you are the main character!",
       "4": "OK! OK! You could be an Ace Trainer!",
-      "4_female": null
+      "4_female": "OK! OK! You could be an Ace Trainer!"
     },
     "defeat": {
       "1": "I am devoting my body and soul to Pokémon battles!",
@@ -187,7 +187,7 @@
       "1": "Get ready, because when we team up, it's double the trouble!",
       "2": "Two hearts, one strategy – let's see if you can keep up with our twin power!",
       "3": "Hope you're ready for double trouble, because we're about to bring the heat!",
-      "3_female": null
+      "3_female": "Hope you're ready for double trouble, because we're about to bring the heat!"
     },
     "victory": {
       "1": "We may have lost this round, but our bond remains unbreakable!",
@@ -216,7 +216,7 @@
     "encounter": {
       "1": "I praise your courage in challenging me! For I am the one with the strongest kick!",
       "2": "Oh, I see. Would you like to be cut to pieces? Or do you prefer the role of punching bag?",
-      "2_female": null
+      "2_female": "Oh, I see. Would you like to be cut to pieces? Or do you prefer the role of punching bag?"
     },
     "victory": {
       "1": "Oh. The Pokémon did the fighting. My strong kick didn't help a bit.",
@@ -328,7 +328,7 @@
     "defeat": {
       "1": "New age simply refers to twentieth century classical composers, right?",
       "2": "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself.",
-      "2_female": null
+      "2_female": "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself."
     }
   },
   "psychic": {
@@ -360,7 +360,7 @@
   "baker": {
     "encounter": {
       "1": "Hope you're ready to taste defeat!",
-      "1_female": null
+      "1_female": "Hope you're ready to taste defeat!"
     },
     "victory": {
       "1": "I'll bake a comeback."
@@ -391,7 +391,7 @@
       "1": "Matey, you're walking the plank if you lose!",
       "2": "Come on then! My sailor's pride is at stake!",
       "3": "Ahoy there! Are you seasick?",
-      "3_female": null
+      "3_female": "Ahoy there! Are you seasick?"
     },
     "victory": {
       "1": "Argh! Beaten by a kid!",
@@ -419,7 +419,7 @@
     },
     "victory": {
       "1": "Tch, you really are strong. It's too bad.\n$If you were to join Team Rocket, you could become an Executive.",
-      "1_female": null,
+      "1_female": "Tch, you really are strong. It's too bad.\n$If you were to join Team Rocket, you could become an Executive.",
       "2": "I... I'm shattered...",
       "3": "Aaaieeeee! This can't be happening! I fought hard, but I still lost…"
     }
@@ -458,7 +458,7 @@
       "1": "Hehehe! You might have beaten me, but you don't stand a chance against the boss!\n$If you get lost now, you won't have to face a sound whipping!",
       "2": "Hehehe... So, I lost, too...",
       "3": "Ahya! How could this be? For an Admin like me to lose to some random trainer...",
-      "3_female": null
+      "3_female": "Ahya! How could this be? For an Admin like me to lose to some random trainer..."
     }
   },
   "courtney": {
@@ -478,13 +478,13 @@
       "1": "Ahahahaha! You're going to meddle in Team Aqua's affairs?\n$You're either absolutely fearless, simply ignorant, or both!\n$You're so cute, you're disgusting! I'll put you down",
       "2": "What's this? Who's this spoiled brat?",
       "3": "Cool your jets. Be patient. I'll crush you shortly.",
-      "3_female": null
+      "3_female": "Cool your jets. Be patient. I'll crush you shortly."
     },
     "victory": {
       "1": "Ahahahaha! We got meddled with unexpectedly! We're out of options.\n$We'll have to pull out. But this isn't the last you'll see of Team Aqua!\n$We have other plans! Don't you forget it!",
       "2": "Ahhh?! Did I go too easy on you?!",
       "3": "Uh. Are you telling me you've upped your game even more during the fight?\n$You're a brat with a bright future… My Pokémon and I don't have any strength left to fight…\n$Go on… Go and be destroyed by Archie.",
-      "3_female": null
+      "3_female": "Uh. Are you telling me you've upped your game even more during the fight?\n$You're a brat with a bright future… My Pokémon and I don't have any strength left to fight…\n$Go on… Go and be destroyed by Archie."
     }
   },
   "matt": {
@@ -497,7 +497,7 @@
       "1": "Muwuhahaha! That battle was fun even though I lost!",
       "2": "I can feel it! I can feel it, all right! The strength coming offa you!\n$More! I still want more! But looks like we're outta time...",
       "3": "Oho! That's a loss I can be proud of!",
-      "3_female": null
+      "3_female": "Oho! That's a loss I can be proud of!"
     }
   },
   "mars": {
@@ -505,7 +505,7 @@
       "1": "I'm Mars, one of Team Galactic's top Commanders.",
       "2": "Team Galactic's vision for the future is unwavering. Opposition will be crushed without mercy!",
       "3": "Feeling nervous? You should be!",
-      "3_female": null
+      "3_female": "Feeling nervous? You should be!"
     },
     "victory": {
       "1": "This can't be happening! How did I lose?!",
@@ -540,25 +540,25 @@
   "zinzolin": {
     "encounter": {
       "1": "You could become a threat to Team Plasma, so we will eliminate you here and now!",
-      "1_female": null,
+      "1_female": "You could become a threat to Team Plasma, so we will eliminate you here and now!",
       "2": "You don't have the sense to know when to quit, it seems. It's an act of mercy on my part to bring an end to this now!",
       "3": "You're an impressive Trainer to have made it this far. But it ends here.",
-      "3_female": null
+      "3_female": "You're an impressive Trainer to have made it this far. But it ends here."
     },
     "victory": {
       "1": "Ghetsis... I have failed you...",
       "2": "It's bitter cold. I'm shivering. I'm suffering. Yet, we will stand victorious.",
       "3": "Hmph. You're a smarter Trainer than I expected, but not smart enough.",
-      "3_female": null
+      "3_female": "Hmph. You're a smarter Trainer than I expected, but not smart enough."
     }
   },
   "rood": {
     "encounter": {
       "1": "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
-      "1_female": null,
+      "1_female": "You are a threat to Team Plasma. We cannot let you walk away from here and now!",
       "2": "It seems you don't know when to give up. I'll make sure no one interferes with our plans!",
       "3": "You are a remarkable Trainer to have made it this far. But this is where it ends.",
-      "3_female": null
+      "3_female": "You are a remarkable Trainer to have made it this far. But this is where it ends."
     },
     "victory": {
       "1": "Ghetsis... I have failed my mission...",
@@ -569,15 +569,15 @@
   "xerosic": {
     "encounter": {
       "1": "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
-      "1_female": null,
+      "1_female": "Ah ha ha! It would be my pleasure. Come on, little Trainer! Let's see what you've got!",
       "2": "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
-      "2_female": null,
+      "2_female": "Hmm... You're more powerful than you look. I wonder how much energy there is inside you.",
       "3": "I've been waiting for you! I need to do a little research on you! Come, let us begin!"
     },
     "victory": {
       "1": "Ah, you're quite strong. Oh yes—very strong, indeed.",
       "2": "Ding-ding-ding! You did it! To the victor go the spoils!",
-      "2_female": null,
+      "2_female": "Ding-ding-ding! You did it! To the victor go the spoils!",
       "3": "Wonderful! Amazing! You have tremendous skill and bravery!"
     }
   },
@@ -585,7 +585,7 @@
     "encounter": {
       "1": "I am Bryony, and it would be my pleasure to battle you. Show me what you've got.",
       "2": "Impressive... You're more powerful than you appear. Let's see the true extent of your energy.",
-      "2_female": null,
+      "2_female": "Impressive... You're more powerful than you appear. Let's see the true extent of your energy.",
       "3": "I've anticipated your arrival. It's time for a little test. Shall we begin?"
     },
     "victory": {
@@ -598,11 +598,11 @@
     "encounter": {
       "1": "Prepare for trouble!",
       "2": "We're pulling a big job here! Get lost, kid!",
-      "2_female": null,
+      "2_female": "We're pulling a big job here! Get lost, kid!",
       "3": "Hand over your Pokémon, or face the wrath of Team Rocket!",
       "4": "You're about to experience the true terror of Team Rocket!",
       "5": "Hey, kid! Me am a Team Rocket member kind of guy!",
-      "5_female": null
+      "5_female": "Hey, kid! Me am a Team Rocket member kind of guy!"
     },
     "victory": {
       "1": "Team Rocket blasting off again!",
@@ -624,7 +624,7 @@
       "1": "Huh? I lost?!",
       "2": "I can't believe I lost! I even skipped lunch for this",
       "3": "No way! You're just a kid!",
-      "3_female": null,
+      "3_female": "No way! You're just a kid!",
       "4": "Urrrgh... I should've ducked into our hideout right away...",
       "5": "You beat me... Do you think the boss will dock my pay for this?"
     }
@@ -652,7 +652,7 @@
       "3": "In the name of Team Galactic, I'll eliminate anyone who stands in our way!",
       "4": "Get ready to lose!",
       "5": "Hope you're ready for a cosmic beatdown!",
-      "5_female": null
+      "5_female": "Hope you're ready for a cosmic beatdown!"
     },
     "victory": {
       "1": "Shut down...",
@@ -682,7 +682,7 @@
     "encounter": {
       "1": "Your Pokémon are no match for the elegance of Team Flare.",
       "2": "Hope you brought your sunglasses, because things are about to get bright!",
-      "2_female": null,
+      "2_female": "Hope you brought your sunglasses, because things are about to get bright!",
       "3": "Team Flare will cleanse the world of imperfection!",
       "4": "Prepare to face the brilliance of Team Flare!",
       "5": "Fashion is most important to us!"
@@ -742,7 +742,7 @@
   "plumeria": {
     "encounter": {
       "1": " ...Hmph. You don't look like anything special to me.",
-      "2": "It takes these dumb Grunts way too long to deal with you kids..",
+      "2": "It takes these dumb Grunts way too long to deal with you kids...",
       "3": "Mess with anyone in Team Skull, and I'll show you how serious I can get."
     },
     "victory": {
@@ -784,7 +784,7 @@
     },
     "defeat": {
       "1": "Mark my words. Not being able to measure your own strength shows that you are still a child.",
-      "1_female": null
+      "1_female": "Mark my words. Not being able to measure your own strength shows that you are still a child."
     }
   },
   "rocket_boss_giovanni_2": {
@@ -845,7 +845,7 @@
   "galactic_boss_cyrus_1": {
     "encounter": {
       "1": "You were compelled to come here by such vacuous sentimentality.\n$I will make you regret paying heed to your heart!",
-      "1_female": null
+      "1_female": "You were compelled to come here by such vacuous sentimentality.\n$I will make you regret paying heed to your heart!"
     },
     "victory": {
       "1": "Interesting. And quite curious."
@@ -995,7 +995,7 @@
   "misty": {
     "encounter": {
       "1": "My policy is an all out offensive with Water-type Pokémon!",
-      "1_female": null,
+      "1_female": "My policy is an all out offensive with Water-type Pokémon!",
       "2": "Hiya, I'll show you the strength of my aquatic Pokémon!",
       "3": "My dream was to go on a journey and battle powerful trainers…\nWill you be a sufficient challenge?"
     },
@@ -1013,14 +1013,14 @@
   "lt_surge": {
     "encounter": {
       "1": "My Electric Pokémon saved me during the war! I'll show you how!",
-      "1_female": null,
+      "1_female": "My Electric Pokémon saved me during the war! I'll show you how!",
       "2": "Ten-hut! I'll shock you into surrender!",
       "3": "I'll zap you just like I do to all my enemies in battle!"
     },
     "victory": {
       "1": "Whoa! Your team's the real deal, kid!",
       "2": "Aaargh, you're strong! Even my electric tricks lost against you.",
-      "2_female": null,
+      "2_female": "Aaargh, you're strong! Even my electric tricks lost against you.",
       "3": "That was an absolutely shocking loss!"
     },
     "defeat": {
@@ -1045,7 +1045,7 @@
     "defeat": {
       "1": "I was afraid I would doze off…",
       "2": "Oh my, it seems my Grass Pokémon overwhelmed you.",
-      "2_female": null,
+      "2_female": "Oh my, it seems my Grass Pokémon overwhelmed you.",
       "3": "That battle was such a soothing experience.",
       "4": "Oh… Is that all?"
     }
@@ -1106,7 +1106,7 @@
       "1": "I, the leader of Team Rocket, will make you feel a world of pain!",
       "2": "My training here will be vital before I am to face my old associates again.",
       "3": "I do not think you are prepared for the level of failure you are about to experience!",
-      "3_female": null
+      "3_female": "I do not think you are prepared for the level of failure you are about to experience!"
     },
     "victory": {
       "1": "WHAT! Me, lose?! There is nothing I wish to say to you!",
@@ -1139,7 +1139,7 @@
   "brawly": {
     "encounter": {
       "1": "Oh man, a challenger!\nLet's see what you can do!",
-      "1_female": null,
+      "1_female": "Oh man, a challenger!\nLet's see what you can do!",
       "2": "You seem like a big splash.\nLet's battle!",
       "3": "Time to create a storm!\nLet's go!"
     },
@@ -1167,7 +1167,7 @@
     },
     "defeat": {
       "1": "Recharge your batteries and challenge me again sometime!\nWahahahaha!",
-      "1_female": null,
+      "1_female": "Recharge your batteries and challenge me again sometime!\nWahahahaha!",
       "2": "I hope you found our battle electrifying!\nWahahahaha!",
       "3": "Aren't you shocked I won?\nWahahahaha!"
     }
@@ -1214,7 +1214,7 @@
     },
     "victory": {
       "1": "You're the first Trainer I've seen with more grace than I.\nExcellently played.",
-      "1_female": null,
+      "1_female": "You're the first Trainer I've seen with more grace than I.\nExcellently played.",
       "2": "Oh, my Flying Pokémon have plummeted!\nVery well.",
       "3": "Though I may have fallen, my Pokémon will continue to fly!"
     },
@@ -1227,7 +1227,7 @@
   "tate": {
     "encounter": {
       "1": "Hehehe…\nWere you surprised to see me without my sister?",
-      "1_female": null,
+      "1_female": "Hehehe…\nWere you surprised to see me without my sister?",
       "2": "I can see what you're thinking…\nYou want to battle!",
       "3": "How can you defeat someone…\nWho knows your every move?"
     },
@@ -1245,7 +1245,7 @@
   "liza": {
     "encounter": {
       "1": "Fufufu…\nWere you surprised to see me without my brother?",
-      "1_female": null,
+      "1_female": "Fufufu…\nWere you surprised to see me without my brother?",
       "2": "I can determine what you desire…\nYou want to battle, don't you?",
       "3": "How can you defeat someone…\nWho's one with their Pokémon?"
     },
@@ -1317,10 +1317,10 @@
   "nessa": {
     "encounter": {
       "1": "No matter what kind of plan your refined mind may be plotting, my partner and I will be sure to sink it.",
-      "1_female": null,
+      "1_female": "No matter what kind of plan your refined mind may be plotting, my partner and I will be sure to sink it.",
       "2": "I'm not here to chat. I'm here to win!",
       "3": "This is a little gift from my Pokémon… I hope you can take it!",
-      "3_female": null
+      "3_female": "This is a little gift from my Pokémon… I hope you can take it!"
     },
     "victory": {
       "1": "You and your Pokémon are just too much…",
@@ -1341,7 +1341,7 @@
     },
     "victory": {
       "1": "You… You're pretty good, huh?",
-      "1_female": null,
+      "1_female": "You… You're pretty good, huh?",
       "2": "If you find Gordie around, be sure to give him a right trashing, would you?",
       "3": "I think you took breaking the ice a little too literally…"
     },
@@ -1355,12 +1355,12 @@
     "encounter": {
       "1": "You look strong! Shoots! Let's start!",
       "2": "I'm strong like the ocean's wide. You're gonna get swept away, fo' sho'.",
-      "2_female": null,
+      "2_female": "I'm strong like the ocean's wide. You're gonna get swept away, fo' sho'.",
       "3": "Oh ho, so I'm facing you! That's off the wall."
     },
     "victory": {
       "1": "You totally rocked that! You're raising some wicked Pokémon. You got this Trainer thing down!",
-      "1_female": null,
+      "1_female": "You totally rocked that! You're raising some wicked Pokémon. You got this Trainer thing down!",
       "2": "You don't just look strong, you're strong fo' reals! Eh, I was swept away, too!",
       "3": "You're strong as a gnarly wave!"
     },
@@ -1373,7 +1373,7 @@
   "shauntal": {
     "encounter": {
       "1": "Excuse me. You're a challenger, right?\nI'm the Elite Four's Ghost-type Pokémon user, Shauntal, and I shall be your opponent.",
-      "1_female": null,
+      "1_female": "Excuse me. You're a challenger, right?\nI'm the Elite Four's Ghost-type Pokémon user, Shauntal, and I shall be your opponent.",
       "2": "I absolutely love writing about Trainers who come here and the Pokémon they train.\nCould I use you and your Pokémon as a subject?",
       "3": "Every person who works with Pokémon has a story to tell.\nWhat story is about to be told?"
     },
@@ -1391,7 +1391,7 @@
   "marshal": {
     "encounter": {
       "1": "My mentor, Alder, sees your potential as a Trainer and is taking an interest in you.\nIt is my intention to test you--to take you to the limits of your strength. Kiai!",
-      "1_female": null,
+      "1_female": "My mentor, Alder, sees your potential as a Trainer and is taking an interest in you.\nIt is my intention to test you--to take you to the limits of your strength. Kiai!",
       "2": "Victory, decisive victory, is my intention! Challenger, here I come!",
       "3": "In myself, I seek to develop the strength of a fighter and shatter any weakness in myself!\nPrevailing with the force of my convictions!"
     },
@@ -1411,7 +1411,7 @@
       "1": "You remind me of an old friend. That makes me excited about this Pokémon battle!",
       "2": "Pokémon battles have no meaning if you don't think why you battle.\n$Or better said, it makes battling together with Pokémon meaningless.",
       "3": "My name's Cheren! I'm a Gym Leader and a teacher! Pleasure to meet you.",
-      "3_female": null
+      "3_female": "My name's Cheren! I'm a Gym Leader and a teacher! Pleasure to meet you."
     },
     "victory": {
       "1": "Thank you! I saw what was missing in me.",
@@ -1427,73 +1427,73 @@
   "chili": {
     "encounter": {
       "1": "Yeeeeooow! Time to play with FIRE!! I'm the strongest of us brothers!",
-      "1_female": null,
+      "1_female": "Yeeeeooow! Time to play with FIRE!! I'm the strongest of us brothers!",
       "2": "Ta-da! The Fire-type scorcher Chili--that's me--will be your opponent!",
-      "2_female": null,
+      "2_female": "Ta-da! The Fire-type scorcher Chili--that's me--will be your opponent!",
       "3": "I'm going to show you what me and my blazing Fire types can do!",
-      "3_female": null
+      "3_female": "I'm going to show you what me and my blazing Fire types can do!"
     },
     "victory": {
       "1": "You got me. I am… burned… out…",
-      "1_female": null,
+      "1_female": "You got me. I am… burned… out…",
       "2": "Whoa ho! You're on fire!",
-      "2_female": null,
+      "2_female": "Whoa ho! You're on fire!",
       "3": "Augh! You got me!"
     },
     "defeat": {
       "1": "I'm on fire! Play with me, and you'll get burned!",
-      "1_female": null,
+      "1_female": "I'm on fire! Play with me, and you'll get burned!",
       "2": "When you play with fire, you get burned!",
       "3": "I mean, c'mon, your opponent was me! You didn't have a chance!",
-      "3_female": null
+      "3_female": "I mean, c'mon, your opponent was me! You didn't have a chance!"
     }
   },
   "cilan": {
     "encounter": {
       "1": "Nothing personal... No hard feelings... Me and my Grass-type Pokémon will...\n$Um... We're gonna battle come what may.",
-      "1_female": null,
+      "1_female": "Nothing personal... No hard feelings... Me and my Grass-type Pokémon will...\n$Um... We're gonna battle come what may.",
       "2": "So, um, if you're OK with me, I'll, um, put everything I've got into being, er, you know, your opponent.",
-      "2_female": null,
+      "2_female": "So, um, if you're OK with me, I'll, um, put everything I've got into being, er, you know, your opponent.",
       "3": "OK… So, um, I'm Cilan, I like Grass-type Pokémon.",
-      "3_female": null
+      "3_female": "OK… So, um, I'm Cilan, I like Grass-type Pokémon."
     },
     "victory": {
       "1": "Er… Is it over now?",
-      "1_female": null,
+      "1_female": "Er… Is it over now?",
       "2": "…What a surprise. You are very strong, aren't you? \n$I guess my brothers wouldn't have been able to defeat you either…",
-      "2_female": null,
+      "2_female": "…What a surprise. You are very strong, aren't you? \n$I guess my brothers wouldn't have been able to defeat you either…",
       "3": "…Huh. Looks like my timing was, um, off?"
     },
     "defeat": {
       "1": "Huh? Did I win?",
-      "1_female": null,
+      "1_female": "Huh? Did I win?",
       "2": "I guess… \n$I suppose I won, because I've been competing with my brothers Chili and Cress, and we all were able to get tougher.",
-      "2_female": null,
+      "2_female": "I guess… \n$I suppose I won, because I've been competing with my brothers Chili and Cress, and we all were able to get tougher.",
       "3": "It…it was quite a thrilling experience…",
-      "3_female": null
+      "3_female": "It…it was quite a thrilling experience…"
     }
   },
   "roark": {
     "encounter": {
       "1": "I need to see your potential as a Trainer. And, I'll need to see the toughness of the Pokémon that battle with you!",
-      "1_female": null,
+      "1_female": "I need to see your potential as a Trainer. And, I'll need to see the toughness of the Pokémon that battle with you!",
       "2": "Here goes! These are my rocking Pokémon, my pride and joy!",
       "3": "Rock-type Pokémon are simply the best!",
-      "4": "I need to see your potential as a Trainer. And, I'll need to see the toughness of the Pokémon that battle with you!",
-      "4_female": null
+      "4": "Every day, I toughened up my Pokémon by digging up Fossils nonstop.\n$Could I show you how tough I made them in a battle?",
+      "4_female": "Every day, I toughened up my Pokémon by digging up Fossils nonstop.\n$Could I show you how tough I made them in a battle?"
     },
     "victory": {
       "1": "W-what? That can't be! My buffed-up Pokémon!",
       "2": "…We lost control there. Next time I'd like to challenge you to a Fossil-digging race underground.",
-      "2_female": null,
+      "2_female": "…We lost control there. Next time I'd like to challenge you to a Fossil-digging race underground.",
       "3": "With skill like yours, it's natural for you to win.",
-      "4": "Wh-what?! It can't be! Even that wasn't enough?",
-      "5": "I blew it."
+      "4": "Wh-what?! It can't be! Even that wasn't enough?"
     },
     "defeat": {
       "1": "See? I'm proud of my rocking battle style!",
       "2": "Thanks! The battle gave me confidence that I may be able to beat my dad!",
-      "3": "I feel like I just smashed through a really stubborn boulder!"
+      "3": "See? These are my rocking Pokémon, my pride and joy!",
+      "4": "I knew I would win!"
     }
   },
   "morty": {
@@ -1508,7 +1508,7 @@
     "victory": {
       "1": "I'm not good enough yet…",
       "2": "I see… Your journey has taken you to far-away places and you have witnessed much more than I.\n$I envy you for that…",
-      "2_female": null,
+      "2_female": "I see… Your journey has taken you to far-away places and you have witnessed much more than I.\n$I envy you for that…",
       "3": "How is this possible…",
       "4": "I don't think our potentials are so different.\n$But you seem to have something more than that… So be it.",
       "5": "Guess I need more training.",
@@ -1568,13 +1568,13 @@
     },
     "defeat": {
       "1": "Heh heh! Don't mind me, just scooping up a W over here. I get it if you're upset, but don't go full Kieran on me, OK?",
-      "1_female": null
+      "1_female": "Heh heh! Don't mind me, just scooping up a W over here. I get it if you're upset, but don't go full Kieran on me, OK?"
     }
   },
   "ramos": {
     "encounter": {
       "1": "Did yeh enjoy the garden playground I made with all these sturdy plants o' mine?\n$Their strength is a sign o' my strength as a gardener and a Gym Leader! Yeh sure yer up to facing all that?",
-      "1_female": null
+      "1_female": "Did yeh enjoy the garden playground I made with all these sturdy plants o' mine?\n$Their strength is a sign o' my strength as a gardener and a Gym Leader! Yeh sure yer up to facing all that?"
     },
     "victory": {
       "1": "Yeh believe in yer Pokémon… And they believe in yeh, too… It was a fine battle, sprout."
@@ -1605,7 +1605,7 @@
     "victory": {
       "1": "I must say, I'm warmed up to you! I might even admire you a little.",
       "2": "Wow! You're great! You've earned my respect! \n$I think your focus and will bowled us over totally. ",
-      "2_female": null
+      "2_female": "Wow! You're great! You've earned my respect! \n$I think your focus and will bowled us over totally. "
     },
     "defeat": {
       "1": "I sensed your will to win, but I don't lose!",
@@ -1618,7 +1618,7 @@
     },
     "victory": {
       "1": "Amazing! You're very good, aren't you?",
-      "1_female": null
+      "1_female": "Amazing! You're very good, aren't you?"
     },
     "defeat": {
       "1": "Yes! My Pokémon and I are perfectly good!"
@@ -1660,7 +1660,7 @@
   "clay": {
     "encounter": {
       "1": "Harrumph! Kept me waitin', didn't ya, kid? All right, time to see what ya can do!",
-      "1_female": null
+      "1_female": "Harrumph! Kept me waitin', didn't ya, kid? All right, time to see what ya can do!"
     },
     "victory": {
       "1": "Man oh man… It feels good to go all out and still be defeated!"
@@ -1675,7 +1675,7 @@
     },
     "victory": {
       "1": "Vaultin' Veluza! Yer a lively one, aren't ya! A little TOO lively, if I do say so myself!",
-      "1_female": null
+      "1_female": "Vaultin' Veluza! Yer a lively one, aren't ya! A little TOO lively, if I do say so myself!"
     },
     "defeat": {
       "1": "You come back to see me again now, ya hear?"
@@ -1742,7 +1742,7 @@
     },
     "victory": {
       "1": "Bravo. I realize now your authenticity and magnificence as a Pokémon Trainer. \n$I find much joy in having met you and your Pokémon. You have proven yourself worthy.",
-      "1_female": null
+      "1_female": "Bravo. I realize now your authenticity and magnificence as a Pokémon Trainer. \n$I find much joy in having met you and your Pokémon. You have proven yourself worthy."
     },
     "defeat": {
       "1": "A grand illusion!"
@@ -1751,14 +1751,14 @@
   "lorelei": {
     "encounter": {
       "1": "No one can best me when it comes to icy Pokémon! Freezing moves are powerful!\n$Your Pokémon will be at my mercy when they are frozen solid! Hahaha! Are you ready?",
-      "1_female": null
+      "1_female": "No one can best me when it comes to icy Pokémon! Freezing moves are powerful!\n$Your Pokémon will be at my mercy when they are frozen solid! Hahaha! Are you ready?"
     },
     "victory": {
       "1": "How dare you!"
     },
     "defeat": {
       "1": "There's nothing you can do once you're frozen.",
-      "1_female": null
+      "1_female": "There's nothing you can do once you're frozen."
     }
   },
   "will": {
@@ -1775,11 +1775,11 @@
   "malva": {
     "encounter": {
       "1": "I feel like my heart might just burst into flames. \n$I'm burning up with my hatred for you, runt!",
-      "1_female": null
+      "1_female": "I feel like my heart might just burst into flames. \n$I'm burning up with my hatred for you, runt!"
     },
     "victory": {
       "1": "What news… So a new challenger has defeated Malva!",
-      "1_female": null
+      "1_female": "What news… So a new challenger has defeated Malva!"
     },
     "defeat": {
       "1": "I am delighted! Yes, delighted that I could squash you beneath my heel."
@@ -1802,7 +1802,7 @@
     },
     "victory": {
       "1": "I certainly found an interesting Trainer to face!",
-      "1_female": null
+      "1_female": "I certainly found an interesting Trainer to face!"
     },
     "defeat": {
       "1": "Ahaha. What an interesting battle."
@@ -1814,11 +1814,11 @@
     },
     "victory": {
       "1": "Not bad, kiddo.",
-      "1_female": null
+      "1_female": "Not bad, kiddo."
     },
     "defeat": {
       "1": "Nahahaha! You really are something else, kiddo!",
-      "1_female": null
+      "1_female": "Nahahaha! You really are something else, kiddo!"
     }
   },
   "bruno": {
@@ -1838,7 +1838,7 @@
     },
     "victory": {
       "1": "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win.",
-      "1_female": null
+      "1_female": "Whoa, amazing! You're an expert on Pokémon!\nMy research isn't complete yet. OK, you win."
     },
     "defeat": {
       "1": "Thanks! Thanks to our battle, I was also able to make progress in my research!"
@@ -1869,11 +1869,11 @@
   "lenora": {
     "encounter": {
       "1": "Well then, challenger, I'm going to research how you battle with the Pokémon you've so lovingly raised!",
-      "1_female": null
+      "1_female": "Well then, challenger, I'm going to research how you battle with the Pokémon you've so lovingly raised!"
     },
     "victory": {
       "1": "My theory about you was correct. You're more than just talented… You're motivated! I salute you!",
-      "1_female": null
+      "1_female": "My theory about you was correct. You're more than just talented… You're motivated! I salute you!"
     },
     "defeat": {
       "1": "Ah ha ha! If you lose, make sure to analyze why, and use that knowledge in your next battle!"
@@ -1899,7 +1899,7 @@
     },
     "defeat": {
       "1": "Hey, c'mon! Get serious! You gotta put more out there!",
-      "1_female": null
+      "1_female": "Hey, c'mon! Get serious! You gotta put more out there!"
     }
   },
   "olivia": {
@@ -1938,7 +1938,7 @@
   "flint": {
     "encounter": {
       "1": "Hope you're warmed up, cause here comes the Big Bang!",
-      "1_female": null
+      "1_female": "Hope you're warmed up, cause here comes the Big Bang!"
     },
     "victory": {
       "1": "Incredible! Your moves are so hot, they make mine look lukewarm!"
@@ -1961,7 +1961,7 @@
   "caitlin": {
     "encounter": {
       "1": "It's me who appeared when the flower opened up. You who have been waiting…\n$You look like a Pokémon Trainer with refined strength and deepened kindness. \n$What I look for in my opponent is superb strength… \n$Please unleash your power to the fullest!",
-      "1_female": null
+      "1_female": "It's me who appeared when the flower opened up. You who have been waiting…\n$You look like a Pokémon Trainer with refined strength and deepened kindness. \n$What I look for in my opponent is superb strength… \n$Please unleash your power to the fullest!"
     },
     "victory": {
       "1": "My Pokémon and I learned so much! I offer you my thanks."
@@ -1984,15 +1984,15 @@
   "wikstrom": {
     "encounter": {
       "1": "Well met, young challenger! Verily am I the famed blade of hardened steel, Duke Wikstrom! \n$Let the battle begin! En garde!",
-      "1_female": null
+      "1_female": "Well met, young challenger! Verily am I the famed blade of hardened steel, Duke Wikstrom! \n$Let the battle begin! En garde!"
     },
     "victory": {
       "1": "Glorious! The trust that you share with your honorable Pokémon surpasses even mine!",
-      "1_female": null
+      "1_female": "Glorious! The trust that you share with your honorable Pokémon surpasses even mine!"
     },
     "defeat": {
       "1": "What manner of magic is this? My heart, it doth hammer ceaselessly in my breast! \n$Winning against such a worthy opponent doth give my soul wings--thus do I soar!",
-      "1_female": null
+      "1_female": "What manner of magic is this? My heart, it doth hammer ceaselessly in my breast! \n$Winning against such a worthy opponent doth give my soul wings--thus do I soar!"
     }
   },
   "acerola": {
@@ -2024,14 +2024,14 @@
     },
     "victory": {
       "1": "You got me. You are magnificent!",
-      "1_female": null,
+      "1_female": "You got me. You are magnificent!",
       "2": "I never expected another trainer to beat me… I'm surprised.",
-      "2_female": null
+      "2_female": "I never expected another trainer to beat me… I'm surprised."
     },
     "defeat": {
       "1": "That was close. Want to try again?",
       "2": "It's not that you are weak. Don't let it bother you.",
-      "2_female": null
+      "2_female": "It's not that you are weak. Don't let it bother you."
     }
   },
   "karen": {
@@ -2057,7 +2057,7 @@
     },
     "victory": {
       "1": "The power of Grass has wilted… What an incredible Challenger!",
-      "1_female": null
+      "1_female": "The power of Grass has wilted… What an incredible Challenger!"
     },
     "defeat": {
       "1": "This'll really leave you in shock and awe."
@@ -2077,7 +2077,7 @@
   "drasna": {
     "encounter": {
       "1": "You must be a strong Trainer. Yes, quite strong indeed…\n$That's just wonderful news! Facing opponents like you and your team will make my Pokémon grow like weeds!",
-      "1_female": null
+      "1_female": "You must be a strong Trainer. Yes, quite strong indeed…\n$That's just wonderful news! Facing opponents like you and your team will make my Pokémon grow like weeds!"
     },
     "victory": {
       "1": "Oh, dear me. That sure was a quick battle… I do hope you'll come back again sometime!"
@@ -2111,7 +2111,7 @@
   "blue": {
     "encounter": {
       "1": "You must be pretty good to get this far.",
-      "1_female": null
+      "1_female": "You must be pretty good to get this far."
     },
     "victory": {
       "1": "I've only lost to him and now to you… Him? Hee, hee…"
@@ -2159,7 +2159,7 @@
     },
     "victory": {
       "1": "This is the emergence of a new Champion.",
-      "1_female": null
+      "1_female": "This is the emergence of a new Champion."
     },
     "defeat": {
       "1": "I successfully defended my Championship."
@@ -2248,7 +2248,7 @@
     },
     "victory": {
       "1": "Waaah! Waaah! You're so mean!",
-      "1_female": null
+      "1_female": "Waaah! Waaah! You're so mean!"
     },
     "defeat": {
       "1": "And that's that!"
@@ -2257,7 +2257,7 @@
   "chuck": {
     "encounter": {
       "1": "Hah! You want to challenge me? Are you brave or just ignorant?",
-      "1_female": null
+      "1_female": "Hah! You want to challenge me? Are you brave or just ignorant?"
     },
     "victory": {
       "1": "You're strong! Would you please make me your apprentice?"
@@ -2269,7 +2269,7 @@
   "katy": {
     "encounter": {
       "1": "Don't let your guard down unless you would like to find yourself knocked off your feet!",
-      "1_female": null
+      "1_female": "Don't let your guard down unless you would like to find yourself knocked off your feet!"
     },
     "victory": {
       "1": "All of my sweet little Pokémon dropped like flies!"
@@ -2303,7 +2303,7 @@
   "maylene": {
     "encounter": {
       "1": "I've come to challenge you now, and I won't hold anything back. \n$Please prepare yourself for battle!",
-      "1_female": null
+      "1_female": "I've come to challenge you now, and I won't hold anything back. \n$Please prepare yourself for battle!"
     },
     "victory": {
       "1": "I admit defeat…"
@@ -2326,7 +2326,7 @@
   "byron": {
     "encounter": {
       "1": "Trainer! You're young, just like my son, Roark. \n$With more young Trainers taking charge, the future of Pokémon is bright! \n$So, as a wall for young people, I'll take your challenge!",
-      "1_female": null
+      "1_female": "Trainer! You're young, just like my son, Roark. \n$With more young Trainers taking charge, the future of Pokémon is bright! \n$So, as a wall for young people, I'll take your challenge!"
     },
     "victory": {
       "1": "Hmm! My sturdy Pokémon--defeated!"
@@ -2349,7 +2349,7 @@
   "volkner": {
     "encounter": {
       "1": "Since you've come this far, you must be quite strong…\n$I hope you're the Trainer who'll make me remember how fun it is to battle!",
-      "1_female": null
+      "1_female": "Since you've come this far, you must be quite strong…\n$I hope you're the Trainer who'll make me remember how fun it is to battle!"
     },
     "victory": {
       "1": "You've got me beat…\n$Your desire and the noble way your Pokémon battled for you… \n$I even felt thrilled during our match. That was a very good battle."
@@ -2452,7 +2452,7 @@
   "valerie": {
     "encounter": {
       "1": "Oh, if it isn't a young Trainer… It is lovely to get to meet you like this. \n$Then I suppose you have earned yourself the right to a battle, as a reward for your efforts. \n$The elusive Fairy may appear frail as the breeze and delicate as a bloom, but it is strong.",
-      "1_female": null
+      "1_female": "Oh, if it isn't a young Trainer… It is lovely to get to meet you like this. \n$Then I suppose you have earned yourself the right to a battle, as a reward for your efforts. \n$The elusive Fairy may appear frail as the breeze and delicate as a bloom, but it is strong."
     },
     "victory": {
       "1": "I hope that you will find things worth smiling about tomorrow…"
@@ -2500,7 +2500,7 @@
     },
     "victory": {
       "1": "Your pink is still lacking, but you're an excellent Trainer with excellent Pokémon.",
-      "1_female": null
+      "1_female": "Your pink is still lacking, but you're an excellent Trainer with excellent Pokémon."
     },
     "defeat": {
       "1": "Too bad for you, I guess."
@@ -2509,7 +2509,7 @@
   "bede": {
     "encounter": {
       "1": "I suppose I should prove beyond doubt just how pathetic you are and how strong I am.",
-      "1_female": null
+      "1_female": "I suppose I should prove beyond doubt just how pathetic you are and how strong I am."
     },
     "victory": {
       "1": "I see… Well, that's fine. I wasn't really trying all that hard anyway."
@@ -2554,7 +2554,7 @@
   "brassius": {
     "encounter": {
       "1": "I assume you are ready? Let our collaborative work of art begin!",
-      "1_female": null
+      "1_female": "I assume you are ready? Let our collaborative work of art begin!"
     },
     "victory": {
       "1": "Ahhh…vant-garde!"
@@ -2566,11 +2566,11 @@
   "iono": {
     "encounter": {
       "1": "How're ya feelin' about this battle?\n$...\n$Let's get this show on the road! How strong is our challenger? \n$I 'unno! Let's find out together!",
-      "1_female": null
+      "1_female": "How're ya feelin' about this battle?\n$...\n$Let's get this show on the road! How strong is our challenger? \n$I 'unno! Let's find out together!"
     },
     "victory": {
       "1": "You're as flashy and bright as a 10,000,000-volt Thunderbolt, friendo!",
-      "1_female": null
+      "1_female": "You're as flashy and bright as a 10,000,000-volt Thunderbolt, friendo!"
     },
     "defeat": {
       "1": "Your eyeballs are MINE!"
@@ -2593,7 +2593,7 @@
     },
     "victory": {
       "1": "You're cool, my friend—you move my SOUL!",
-      "1_female": null
+      "1_female": "You're cool, my friend—you move my SOUL!"
     },
     "defeat": {
       "1": "Later, baby!"
@@ -2627,9 +2627,9 @@
   "nessa_elite": {
     "encounter": {
       "1": "The tides are turning in my favor. Ready to get swept away?",
-      "1_female": null,
+      "1_female": "The tides are turning in my favor. Ready to get swept away?",
       "2": "Let's make some waves with this battle! I hope you're prepared!",
-      "2_female": null
+      "2_female": "Let's make some waves with this battle! I hope you're prepared!"
     },
     "victory": {
       "1": "You navigated those waters perfectly... Well done!",
@@ -2657,7 +2657,7 @@
   "allister_elite": {
     "encounter": {
       "1": "Shadows fall... Are you ready to face your fears?",
-      "1_female": null,
+      "1_female": "Shadows fall... Are you ready to face your fears?",
       "2": "Let's see if you can handle the darkness that I command."
     },
     "victory": {
@@ -2681,7 +2681,7 @@
     "defeat": {
       "1": "Another storm weathered, another victory claimed! Well fought!",
       "2": "You got caught in my storm! Better luck next time!",
-      "2_female": null
+      "2_female": "You got caught in my storm! Better luck next time!"
     }
   },
   "alder": {

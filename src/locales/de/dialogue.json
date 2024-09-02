@@ -1403,19 +1403,19 @@
       "1": "Ich muss dein Potenzial als Trainer und die Stärke der Pokémon sehen, die mit dir kämpfen!",
       "2": "Los geht's! Dies sind meine Gesteins-Pokémon, mein ganzer Stolz!",
       "3": "Gesteins-Pokémon sind einfach die besten!",
-      "4": "Ich muss dein Potenzial als Trainer und die Stärke der Pokémon sehen, die mit dir kämpfen!"
+      "4": "Tag für Tag grabe ich hier nach Fossilien.\n$Die viele Arbeit hat meine Pokémon felsenfest gemacht\nund das wirst du jetzt im Kampf zu spüren bekommen!"
     },
     "victory": {
       "1": "W-was? Das kann nicht sein! Meine total tranierten Pokémon!",
       "2": "…Wir haben die Kontrolle verloren. Beim nächsten Mal fordere ich dich\n$zu einem Fossilien-Ausgrabungswettbewerb heraus.",
       "3": "Mit deinem Können ist es nur natürlich, dass du gewinnst.",
-      "4": "W-was?! Das kann nicht sein! Selbst das war nicht genug?",
-      "5": "Ich habe es vermasselt."
+      "4": "W-was?! Das kann nicht sein! Selbst das war nicht genug?"
     },
     "defeat": {
       "1": "Siehst du? Ich bin stolz auf meinen steinigen Kampfstil!",
       "2": "Danke! Der Kampf hat mir Vertrauen gegeben, dass ich vielleicht meinen Vater besiegen kann!",
-      "3": "Ich fühle mich, als hätte ich gerade einen wirklich hartnäckigen Felsen durchbrochen!"
+      "3": "Na, was sagst du jetzt? Meine felsenfesten Pokémon waren hart genug für dich, was?",
+      "4": "Ich wusste, dass ich gewinnen würde!"
     }
   },
   "morty": {
