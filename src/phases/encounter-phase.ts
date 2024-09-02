@@ -1,23 +1,23 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattleType, BattlerIndex } from "#app/battle.js";
-import { applyAbAttrs, SyncEncounterNatureAbAttr } from "#app/data/ability.js";
-import { getCharVariantFromDialogue } from "#app/data/dialogue.js";
-import { TrainerSlot } from "#app/data/trainer-config.js";
-import { getRandomWeatherType } from "#app/data/weather.js";
-import { BattleSpec } from "#app/enums/battle-spec.js";
-import { PlayerGender } from "#app/enums/player-gender.js";
-import { Species } from "#app/enums/species.js";
-import { EncounterPhaseEvent } from "#app/events/battle-scene.js";
-import Pokemon, { FieldPosition } from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { regenerateModifierPoolThresholds, ModifierPoolType } from "#app/modifier/modifier-type.js";
-import { IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier.js";
-import { achvs } from "#app/system/achv.js";
-import { handleTutorial, Tutorial } from "#app/tutorial.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { BattleType, BattlerIndex } from "#app/battle";
+import { applyAbAttrs, SyncEncounterNatureAbAttr } from "#app/data/ability";
+import { getCharVariantFromDialogue } from "#app/data/dialogue";
+import { TrainerSlot } from "#app/data/trainer-config";
+import { getRandomWeatherType } from "#app/data/weather";
+import { BattleSpec } from "#app/enums/battle-spec";
+import { PlayerGender } from "#app/enums/player-gender";
+import { Species } from "#app/enums/species";
+import { EncounterPhaseEvent } from "#app/events/battle-scene";
+import Pokemon, { FieldPosition } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { regenerateModifierPoolThresholds, ModifierPoolType } from "#app/modifier/modifier-type";
+import { IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
+import { achvs } from "#app/system/achv";
+import { handleTutorial, Tutorial } from "#app/tutorial";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
-import * as Utils from "#app/utils.js";
+import * as Utils from "#app/utils";
 import { CheckSwitchPhase } from "./check-switch-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { PostSummonPhase } from "./post-summon-phase";
@@ -358,24 +358,29 @@ export class EncounterPhase extends BattlePhase {
     case BattleSpec.FINAL_BOSS:
       const enemy = this.scene.getEnemyPokemon();
       this.scene.ui.showText(this.getEncounterMessage(), null, () => {
-        const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
-        //The two lines below check if English ordinals (1st, 2nd, 3rd, Xth) are used and determine which one to use.
-        //Otherwise, it defaults to an empty string.
-        //As of 08-07-24: Spanish and Italian default to the English translations
-        const ordinalUse = ["en", "es", "it"];
-        const currentLanguage = i18next.resolvedLanguage ?? "en";
-        const ordinalIndex = (ordinalUse.includes(currentLanguage)) ? ["st", "nd", "rd"][((count + 90) % 100 - 10) % 10 - 1] ?? "th" : "";
-        const cycleCount = count.toLocaleString() + ordinalIndex;
-        const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
-        const genderStr = PlayerGender[genderIndex].toLowerCase();
-        const encounterDialogue = i18next.t("battleSpecDialogue:encounter", { context: genderStr, cycleCount: cycleCount });
-        this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
+        const localizationKey = "battleSpecDialogue:encounter";
+        if (this.scene.ui.shouldSkipDialogue(localizationKey)) {
+          // Logging mirrors logging found in dialogue-ui-handler
+          console.log(`Dialogue ${localizationKey} skipped`);
           this.doEncounterCommon(false);
-        });
+        } else {
+          const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
+          // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
+          const ordinalUsed = !i18next.exists(localizationKey, {fallbackLng: []}) || i18next.resolvedLanguage === "en" ? i18next.t("battleSpecDialogue:key", { count: count, ordinal: true }) : "";
+          const cycleCount = count.toLocaleString() + ordinalUsed;
+          const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+          const genderStr = PlayerGender[genderIndex].toLowerCase();
+          const encounterDialogue = i18next.t(localizationKey, { context: genderStr, cycleCount: cycleCount });
+          if (!this.scene.gameData.getSeenDialogues()[localizationKey]) {
+            this.scene.gameData.saveSeenDialogue(localizationKey);
+          }
+          this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
+            this.doEncounterCommon(false);
+          });
+        }
       }, 1500, true);
       return true;
     }
-
     return false;
   }
 }
