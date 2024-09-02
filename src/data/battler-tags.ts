@@ -102,7 +102,7 @@ export interface TerrainBattlerTag {
  * match a condition. A disabled move gets cancelled before it is used. Players and enemies should not be allowed
  * to select disabled moves.
  */
-export abstract class DisablingBattlerTag extends BattlerTag {
+export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   constructor(tagType: BattlerTagType, turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
     super(tagType, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], turnCount, sourceMove, sourceId);
   }
@@ -142,7 +142,7 @@ export abstract class DisablingBattlerTag extends BattlerTag {
  * Tag representing the "disabling" effect performed by {@linkcode Moves.DISABLE} and {@linkcode Abilities.CURSED_BODY}.
  * When the tag is added, the last used move of the tag holder is set as the disabled move.
  */
-export class DisabledTag extends DisablingBattlerTag {
+export class DisabledTag extends MoveRestrictionBattlerTag {
   /** The move being disabled. Gets set when {@linkcode onAdd} is called for this tag. */
   public moveId: Moves = Moves.NONE;
 

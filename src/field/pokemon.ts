@@ -18,7 +18,7 @@ import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { BattleStat } from "../data/battle-stat";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, DisablingBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
@@ -2549,20 +2549,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Gets whether a move is currently disabled for this Pokemon.
-   * @see {@linkcode DisablingBattlerTag}
+   * Gets whether the given move move is currently disabled for this Pokemon.
+   * @param moveId {@linkcode Moves} The ID of the move to check
+   * @see {@linkcode MoveRestrictionBattlerTag}
    */
   isMoveDisabled(moveId: Moves): boolean {
     return this.getDisablingTag(moveId) !== null;
   }
 
   /**
-   * Gets the {@link DisablingBattlerTag} that is disabling the given move, or null if that move is not disabled.
+   * Gets the {@link MoveRestrictionBattlerTag} that is disabling the given move, or null if that move is not disabled.
    */
-  getDisablingTag(moveId: Moves): DisablingBattlerTag | null {
-    for (const tag of this.findTags(t => t instanceof DisablingBattlerTag)) {
-      if ((tag as DisablingBattlerTag).moveIsDisabled(moveId)) {
-        return tag as DisablingBattlerTag;
+  getDisablingTag(moveId: Moves): MoveRestrictionBattlerTag | null {
+    for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
+      if ((tag as MoveRestrictionBattlerTag).moveIsDisabled(moveId)) {
+        return tag as MoveRestrictionBattlerTag;
       }
     }
     return null;
