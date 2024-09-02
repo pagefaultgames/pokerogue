@@ -58,7 +58,7 @@
   "iris_alder_double": {
     "encounter": {
       "1": "Iris: Welcome Challenger! I am THE Unova Champion!\n$Alder: Iris, aren't you a bit too excited?",
-      "1_female": null
+      "1_female": "Iris: Welcome Challenger! I am THE Unova Champion!\n$Alder: Iris, aren't you a bit too excited?"
     },
     "victory": {
       "1": "Iris: A loss like this is not easy to take...\n$Alder: But we will only get stronger with every loss!"
@@ -75,7 +75,7 @@
   "marnie_piers_double": {
     "encounter": {
       "1": "Piers: Ready for a concert?\n$Marnie: Brother... They are here to fight, not to sing...",
-      "1_female": null
+      "1_female": "Piers: Ready for a concert?\n$Marnie: Brother... They are here to fight, not to sing..."
     },
     "victory": {
       "1": "Piers: Now that was a great concert!\n$Marnie: Brother..."
