@@ -505,8 +505,8 @@
     "BLASTOISINITE": "Blastoisinita",
     "BLAZIKENITE": "Blazikenita",
     "CAMERUPTITE": "Cameruptita",
-    "CHARIZARDITE X": "Charizardita X",
-    "CHARIZARDITE Y": "Charizardita Y",
+    "CHARIZARDITE_X": "Charizardita X",
+    "CHARIZARDITE_Y": "Charizardita Y",
     "DIANCITE": "Diancita",
     "GALLADITE": "Galladita",
     "GARCHOMPITE": "Garchompita",
@@ -525,12 +525,12 @@
     "MAWILITE": "Mawilita",
     "MEDICHAMITE": "Medichamita",
     "METAGROSSITE": "Metagrossita",
-    "MEWTWONITE X": "Mewtwonita X",
-    "MEWTWONITE Y": "Mewtwonita Y",
+    "MEWTWONITE_X": "Mewtwonita X",
+    "MEWTWONITE_Y": "Mewtwonita Y",
     "PIDGEOTITE": "Pidgeotita",
     "PINSIRITE": "Pinsirita",
-    "SABLENITE": "Sablenita",
     "RAYQUAZITE": "Rayquazita",
+    "SABLENITE": "Sablenita",
     "SALAMENCITE": "Salamencita",
     "SCEPTILITE": "Sceptilita",
     "SCIZORITE": "Scizorita",
@@ -604,6 +604,6 @@
     "DRAGON_MEMORY": "Memória do Dragão",
     "DARK_MEMORY": "Memória Sombria",
     "FAIRY_MEMORY": "Memória de Fada",
-    "BLANK_MEMORY": "Memória Vazia"
+    "NORMAL_MEMORY": "Memória Normal"
   }
 }

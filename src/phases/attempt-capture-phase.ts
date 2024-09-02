@@ -54,7 +54,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.pokeball.setOrigin(0.5, 0.625);
     this.scene.field.add(this.pokeball);
 
-    this.scene.playSound("pb_throw");
+    this.scene.playSound("se/pb_throw");
     this.scene.time.delayedCall(300, () => {
       this.scene.field.moveBelow(this.pokeball as Phaser.GameObjects.GameObject, pokemon);
     });
@@ -67,7 +67,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       onComplete: () => {
         this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
         this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
-        this.scene.playSound("pb_rel");
+        this.scene.playSound("se/pb_rel");
         pokemon.tint(getPokeballTintColor(this.pokeballType));
 
         addPokeballOpenParticles(this.scene, this.pokeball.x, this.pokeball.y, this.pokeballType);
@@ -81,7 +81,7 @@ export class AttemptCapturePhase extends PokemonPhase {
           onComplete: () => {
             this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
             pokemon.setVisible(false);
-            this.scene.playSound("pb_catch");
+            this.scene.playSound("se/pb_catch");
             this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}`));
 
             const doShake = () => {
@@ -109,13 +109,13 @@ export class AttemptCapturePhase extends PokemonPhase {
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < 3) {
                     if (pokeballMultiplier === -1 || pokemon.randSeedInt(65536) < y) {
-                      this.scene.playSound("pb_move");
+                      this.scene.playSound("se/pb_move");
                     } else {
                       shakeCounter.stop();
                       this.failCatch(shakeCount);
                     }
                   } else {
-                    this.scene.playSound("pb_lock");
+                    this.scene.playSound("se/pb_lock");
                     addPokeballCaptureStars(this.scene, this.pokeball);
 
                     const pbTint = this.scene.add.sprite(this.pokeball.x, this.pokeball.y, "pb", "pb");
@@ -156,7 +156,7 @@ export class AttemptCapturePhase extends PokemonPhase {
   failCatch(shakeCount: integer) {
     const pokemon = this.getPokemon();
 
-    this.scene.playSound("pb_rel");
+    this.scene.playSound("se/pb_rel");
     pokemon.setY(this.originalY);
     if (pokemon.status?.effect !== StatusEffect.SLEEP) {
       pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });

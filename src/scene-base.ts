@@ -73,7 +73,7 @@ export class SceneBase extends Phaser.Scene {
       filenames = `${key}.wav`;
     }
     if (!folder) {
-      folder = "";
+      folder = "se/";
     } else {
       folder += "/";
     }
@@ -81,7 +81,7 @@ export class SceneBase extends Phaser.Scene {
       filenames = [ filenames ];
     }
     for (const f of filenames as string[]) {
-      this.load.audio(key, this.getCachedUrl(`audio/se/${folder}${f}`));
+      this.load.audio(folder+key, this.getCachedUrl(`audio/${folder}${f}`));
     }
   }
 

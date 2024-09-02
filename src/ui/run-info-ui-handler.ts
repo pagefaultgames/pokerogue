@@ -42,7 +42,6 @@ enum RunInfoUiMode {
 export default class RunInfoUiHandler extends UiHandler {
   protected runInfo: SessionSaveData;
   protected isVictory: boolean;
-  protected isPGF: boolean;
   protected pageMode: RunInfoUiMode;
   protected runContainer: Phaser.GameObjects.Container;
 
@@ -94,7 +93,6 @@ export default class RunInfoUiHandler extends UiHandler {
     // Assigning information necessary for the UI's creation
     this.runInfo = this.scene.gameData.parseSessionData(JSON.stringify(run.entry));
     this.isVictory = run.isVictory;
-    this.isPGF = this.scene.gameData.gender === PlayerGender.FEMALE;
     this.pageMode = RunInfoUiMode.MAIN;
 
     // Creates Header and adds to this.runContainer
@@ -173,8 +171,10 @@ export default class RunInfoUiHandler extends UiHandler {
    *
    */
   private async parseRunResult() {
+    const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+    const genderStr = PlayerGender[genderIndex];
     const runResultTextStyle = this.isVictory ? TextStyle.SUMMARY : TextStyle.SUMMARY_RED;
-    const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : (this.isPGF ? i18next.t("runHistory:defeatedF") : i18next.t("runHistory:defeatedM"));
+    const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated", { context: genderStr });
     const runResultText = addBBCodeTextObject(this.scene, 6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, {fontSize : "65px", lineSpacing: 0.1});
 
     if (this.isVictory) {
@@ -374,23 +374,14 @@ export default class RunInfoUiHandler extends UiHandler {
     case GameModes.CHALLENGE:
       modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
       modeText.appendText(`\t\t${i18next.t("runHistory:challengeRules")}: `);
-      const runChallenges = this.runInfo.challenges;
-      const rules: string[] = [];
-      for (let i = 0; i < runChallenges.length; i++) {
-        if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
-          rules.push(i18next.t(`runHistory:challengeMonoGen${runChallenges[i].value}`));
-        } else if (runChallenges[i].id === Challenges.SINGLE_TYPE && runChallenges[i].value !== 0) {
-          rules.push(i18next.t(`pokemonInfo:Type.${Type[runChallenges[i].value-1]}` as const));
-        } else if (runChallenges[i].id === Challenges.FRESH_START && runChallenges[i].value !== 0) {
-          rules.push(i18next.t("challenges:freshStart.name"));
-        }
-      }
+      const rules: string[] = this.challengeParser();
       if (rules) {
         for (let i = 0; i < rules.length; i++) {
+          const newline = i > 0 && i%2 === 0;
           if (i > 0) {
-            modeText.appendText(" + ", false);
+            modeText.appendText(" + ", newline);
           }
-          modeText.appendText(rules[i], false);
+          modeText.appendText(rules[i], newline);
         }
       }
       break;
@@ -409,10 +400,12 @@ export default class RunInfoUiHandler extends UiHandler {
 
     // Duration + Money
     const runInfoTextContainer = this.scene.add.container(0, 0);
-    const runInfoText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize : "50px", lineSpacing:3});
+    // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
+    const lineSpacing = (i18next.resolvedLanguage === "ja") ? 12 : 3;
+    const runInfoText = addBBCodeTextObject(this.scene, 7, 0, "", TextStyle.WINDOW, {fontSize: "50px", lineSpacing: lineSpacing});
     const runTime = Utils.getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
-    const runMoney = Utils.formatMoney(this.runInfo.money, 1000);
+    const runMoney = Utils.formatMoney(this.scene.moneyFormat, this.runInfo.money);
     runInfoText.appendText(`[color=${getTextColor(TextStyle.MONEY)}]${i18next.t("battleScene:moneyOwned", {formattedMoney : runMoney})}[/color]`);
     runInfoText.setPosition(7, 70);
     runInfoTextContainer.add(runInfoText);
@@ -465,6 +458,34 @@ export default class RunInfoUiHandler extends UiHandler {
   }
 
   /**
+   * This function parses the Challenges section of the Run Entry and returns a list of active challenge.
+   * @return string[] of active challenge names
+   */
+  private challengeParser(): string[] {
+    const rules: string[] = [];
+    for (let i = 0; i < this.runInfo.challenges.length; i++) {
+      if (this.runInfo.challenges[i].value !== 0) {
+        switch (this.runInfo.challenges[i].id) {
+        case Challenges.SINGLE_GENERATION:
+          rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
+          break;
+        case Challenges.SINGLE_TYPE:
+          rules.push(i18next.t(`pokemonInfo:Type.${Type[this.runInfo.challenges[i].value-1]}` as const));
+          break;
+        case Challenges.FRESH_START:
+          rules.push(i18next.t("challenges:freshStart.name"));
+          break;
+        case Challenges.INVERSE_BATTLE:
+          //
+          rules.push(i18next.t("challenges:inverseBattle.shortName").split("").reverse().join(""));
+          break;
+        }
+      }
+    }
+    return rules;
+  }
+
+  /**
    * Parses and displays the run's player party.
    * Default Information: Icon, Level, Nature, Ability, Passive, Shiny Status, Fusion Status, Stats, and Moves.
    * B-Side Information: Icon + Held Items (Can be displayed to the user through pressing the abilityButton)
@@ -513,7 +534,9 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       const pPassiveInfo = pokemon.passive ? passiveLabel+": "+pokemon.getPassiveAbility().name : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
-      const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
+      // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
+      const lineSpacing = (i18next.resolvedLanguage === "ja") ? 12 : 3;
+      const pokeInfoText = addBBCodeTextObject(this.scene, 0, 0, pName, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing: lineSpacing});
       pokeInfoText.appendText(`${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNature}`);
       pokeInfoText.appendText(pAbilityInfo);
       pokeInfoText.appendText(pPassiveInfo);
@@ -537,12 +560,12 @@ export default class RunInfoUiHandler extends UiHandler {
       const speedLabel = (currentLanguage==="es"||currentLanguage==="pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
       const speed = speedLabel+": "+pStats[5];
       // Column 1: HP Atk Def
-      const pokeStatText1 = addBBCodeTextObject(this.scene, -5, 0, hp, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
+      const pokeStatText1 = addBBCodeTextObject(this.scene, -5, 0, hp, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing: lineSpacing});
       pokeStatText1.appendText(atk);
       pokeStatText1.appendText(def);
       pokeStatTextContainer.add(pokeStatText1);
       // Column 2: SpAtk SpDef Speed
-      const pokeStatText2 = addBBCodeTextObject(this.scene, 25, 0, spatk, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing:3});
+      const pokeStatText2 = addBBCodeTextObject(this.scene, 25, 0, spatk, TextStyle.SUMMARY, {fontSize: textContainerFontSize, lineSpacing: lineSpacing});
       pokeStatText2.appendText(spdef);
       pokeStatText2.appendText(speed);
       pokeStatTextContainer.add(pokeStatText2);
@@ -680,7 +703,9 @@ export default class RunInfoUiHandler extends UiHandler {
    */
   private createVictorySplash(): void {
     this.endCardContainer = this.scene.add.container(0, 0);
-    const endCard = this.scene.add.image(0, 0, `end_${this.isPGF ? "f" : "m"}`);
+    const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+    const isFemale = genderIndex === PlayerGender.FEMALE;
+    const endCard = this.scene.add.image(0, 0, `end_${isFemale ? "f" : "m"}`);
     endCard.setOrigin(0);
     endCard.setScale(0.5);
     const text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, i18next.t("battle:congratulations"), TextStyle.SUMMARY, { fontSize: "128px" });
@@ -694,16 +719,19 @@ export default class RunInfoUiHandler extends UiHandler {
    * This could be adapted into a public-facing method for victory screens. Perhaps.
    */
   private createHallofFame(): void {
+    const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+    const isFemale = genderIndex === PlayerGender.FEMALE;
+    const genderStr = PlayerGender[genderIndex].toLowerCase();
     // Issue Note (08-05-2024): It seems as if fused pokemon do not appear with the averaged color b/c pokemonData's loadAsset requires there to be some active battle?
     // As an alternative, the icons of the second/bottom fused Pokemon have been placed next to their fellow fused Pokemon in Hall of Fame
     this.hallofFameContainer = this.scene.add.container(0, 0);
     // Thank you Hayuna for the code
-    const endCard = this.scene.add.image(0, 0, `end_${this.isPGF ? "f" : "m"}`);
+    const endCard = this.scene.add.image(0, 0, `end_${isFemale ? "f" : "m"}`);
     endCard.setOrigin(0);
     endCard.setPosition(-1, -1);
     endCard.setScale(0.5);
     const endCardCoords = endCard.getBottomCenter();
-    const overlayColor = this.isPGF ? "red" : "blue";
+    const overlayColor = isFemale ? "red" : "blue";
     const hallofFameBg = this.scene.add.image(0, 0, "hall_of_fame_"+overlayColor);
     hallofFameBg.setPosition(159, 89);
     hallofFameBg.setSize(this.scene.game.canvas.width, this.scene.game.canvas.height+10);
@@ -711,7 +739,7 @@ export default class RunInfoUiHandler extends UiHandler {
     this.hallofFameContainer.add(endCard);
     this.hallofFameContainer.add(hallofFameBg);
 
-    const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText"+(this.isPGF ? "F" : "M")), TextStyle.WINDOW);
+    const hallofFameText = addTextObject(this.scene, 0, 0, i18next.t("runHistory:hallofFameText", { context: genderStr }), TextStyle.WINDOW);
     hallofFameText.setPosition(endCardCoords.x-(hallofFameText.displayWidth/2), 164);
     this.hallofFameContainer.add(hallofFameText);
     this.runInfo.party.forEach((p, i) => {

@@ -51,21 +51,6 @@ export interface InterfaceConfig {
 
 const repeatInputDelayMillis = 250;
 
-// Phaser.Input.Gamepad.GamepadPlugin#refreshPads
-declare module "phaser" {
-  namespace Input {
-    namespace Gamepad {
-      interface GamepadPlugin {
-        /**
-         * Refreshes the list of connected Gamepads.
-         * This is called automatically when a gamepad is connected or disconnected, and during the update loop.
-         */
-        refreshPads(): void;
-      }
-    }
-  }
-}
-
 /**
  * Manages and handles all input controls for the game, including keyboard and gamepad interactions.
  *

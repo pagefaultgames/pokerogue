@@ -61,5 +61,6 @@
   "suppressAbilities": "L’abilità di {{pokemonName}}\nperde ogni efficacia!",
   "revivalBlessing": "{{pokemonName}} torna in forze!",
   "swapArenaTags": "{{pokemonName}} ha invertito gli effetti attivi\nnelle due metà del campo!",
-  "exposedMove": "{{pokemonName}} ha identificato\n{{targetPokemonName}}!"
+  "exposedMove": "{{pokemonName}} ha identificato\n{{targetPokemonName}}!",
+  "safeguard": "Salvaguardia protegge {{targetName}}!"
 }
