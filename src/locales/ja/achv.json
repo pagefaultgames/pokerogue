@@ -6,7 +6,7 @@
     "name": "なし"
   },
   "MoneyAchv": {
-    "description": "一回の　ランで　₽{{moneyAmount}}を　稼ぐ"
+    "description": "一回の　ランで　{{moneyAmount}}円を　稼ぐ"
   },
   "10K_MONEY": {
     "name": "お金を持つ人"
@@ -21,7 +21,7 @@
     "name": "超富裕層"
   },
   "DamageAchv": {
-    "description": "一撃で　{{damageAmount}}ダメージを　与える"
+    "description": "一撃で　HP{{damageAmount}}の　ダメージを　与える"
   },
   "250_DMG": {
     "name": "力持ち"
@@ -33,10 +33,11 @@
     "name": "カカロット"
   },
   "10000_DMG": {
-    "name": "ワンパンマン"
+    "name": "ワンパンマン",
+    "name_female": "ワンパンウーマン"
   },
   "HealAchv": {
-    "description": "一つの　技や　特性や　持っているアイテムで　{{healAmount}}{{HP}}を　一気に　回復する"
+    "description": "一つの　技や　特性や　持っているアイテムで\n{{healAmount}}{{HP}}を　一気に　回復する"
   },
   "250_HEAL": {
     "name": "回復発見者"
@@ -82,7 +83,7 @@
   },
   "TRANSFER_MAX_BATTLE_STAT": {
     "name": "同力",
-    "description": "少なくとも　一つの　能力を　最大まで　あげて　他の　手持ちポケモンに　バトンタッチする"
+    "description": "少なくとも　一つの　能力を　最大まで　あげて\n他の　手持ちポケモンに　バトンタッチする"
   },
   "MAX_FRIENDSHIP": {
     "name": "マブ達",
@@ -106,7 +107,7 @@
   },
   "SPLICE": {
     "name": "インフィニット・フュジョン",
-    "description": "いでんしのくさびで　二つの　ポケモンを　吸収合体させる"
+    "description": "遺伝子のくさびで　二つの　ポケモンを　吸収合体させる"
   },
   "MINI_BLACK_HOLE": {
     "name": "アイテムホーリック",
@@ -161,8 +162,8 @@
     "description": "クラシックモードを　クリアする"
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
-    "name": "Bring Your Child To Work Day",
-    "description": "Beat the game in Classic Mode with at least one unevolved party member."
+    "name": "はじめてのおつかい",
+    "description": "少なくとも　一つの　進化していない　手持ちポケモンで\nクラシックモードを　クリアする"
   },
   "MONO_GEN_ONE": {
     "name": "原始",
@@ -260,5 +261,9 @@
   "FRESH_START": {
     "name": "一発で！",
     "description": "出直しチャレンジを　クリアする"
+  },
+  "INVERSE_BATTLE": {
+    "name": "カガミよミガカ",
+    "description": "反転バトルチャレンジを　クリアする\nるすアリク　をジンレャチルトバ転反"
   }
 }
