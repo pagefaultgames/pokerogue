@@ -324,7 +324,7 @@ export const achvs = {
   HATCH_SHINY: new Achv("HATCH_SHINY", "",  "HATCH_SHINY.description", "golden_egg", 100).setSecret(),
   HIDDEN_ABILITY: new Achv("HIDDEN_ABILITY", "",  "HIDDEN_ABILITY.description", "ability_charm", 75),
   PERFECT_IVS: new Achv("PERFECT_IVS", "",  "PERFECT_IVS.description", "blunder_policy", 100),
-  CLASSIC_VICTORY: new Achv("CLASSIC_VICTORY", "",  "CLASSIC_VICTORY.description", "relic_crown", 150),
+  CLASSIC_VICTORY: new Achv("CLASSIC_VICTORY", "",  "CLASSIC_VICTORY.description", "relic_crown", 150, c => c.gameData.gameStats.sessionsWon === 0),
   UNEVOLVED_CLASSIC_VICTORY: new Achv("UNEVOLVED_CLASSIC_VICTORY", "", "UNEVOLVED_CLASSIC_VICTORY.description", "eviolite", 175, c => c.getParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)),
   MONO_GEN_ONE_VICTORY: new ChallengeAchv("MONO_GEN_ONE", "",  "MONO_GEN_ONE.description", "ribbon_gen1", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 1 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
   MONO_GEN_TWO_VICTORY: new ChallengeAchv("MONO_GEN_TWO", "",  "MONO_GEN_TWO.description", "ribbon_gen2", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 2 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
