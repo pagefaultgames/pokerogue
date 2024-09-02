@@ -2428,7 +2428,7 @@ export class PostSummonWeatherSuppressedFormChangeAbAttr extends PostSummonAbAtt
 
 /**
  * Triggers weather-based form change when summoned into an active weather.
- * Used by Forecast.
+ * Used by Forecast and Flower Gift.
  * @extends PostSummonAbAttr
  */
 export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
@@ -2451,7 +2451,10 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
    * @returns whether the form change was triggered
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
+    const isCastformWithForecast = (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST);
+    const isCherrimWithFlowerGift = (pokemon.species.speciesId === Species.CHERRIM && this.ability === Abilities.FLOWER_GIFT);
+
+    if (isCastformWithForecast || isCherrimWithFlowerGift) {
       if (simulated) {
         return simulated;
       }
@@ -3124,37 +3127,41 @@ export class PostWeatherChangeAbAttr extends AbAttr {
 
 /**
  * Triggers weather-based form change when weather changes.
- * Used by Forecast.
+ * Used by Forecast and Flower Gift.
  * @extends PostWeatherChangeAbAttr
  */
 export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
   private ability: Abilities;
+  private formRevertingWeathers: WeatherType[];
 
-  constructor(ability: Abilities) {
+  constructor(ability: Abilities, formRevertingWeathers: WeatherType[]) {
     super(false);
 
     this.ability = ability;
+    this.formRevertingWeathers = formRevertingWeathers;
   }
 
   /**
    * Calls {@linkcode Arena.triggerWeatherBasedFormChangesToNormal | triggerWeatherBasedFormChangesToNormal} when the
    * weather changed to form-reverting weather, otherwise calls {@linkcode Arena.triggerWeatherBasedFormChanges | triggerWeatherBasedFormChanges}
-   * @param {Pokemon} pokemon the Pokemon that changed the weather
+   * @param {Pokemon} pokemon the Pokemon with this ability
    * @param passive n/a
    * @param weather n/a
    * @param args n/a
    * @returns whether the form change was triggered
    */
   applyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
-    if (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST) {
+    const isCastformWithForecast = (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST);
+    const isCherrimWithFlowerGift = (pokemon.species.speciesId === Species.CHERRIM && this.ability === Abilities.FLOWER_GIFT);
+
+    if (isCastformWithForecast || isCherrimWithFlowerGift) {
       if (simulated) {
         return simulated;
       }
 
-      const formRevertingWeathers: WeatherType[] = [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG ];
       const weatherType = pokemon.scene.arena.weather?.weatherType;
 
-      if (weatherType && formRevertingWeathers.includes(weatherType)) {
+      if (weatherType && this.formRevertingWeathers.includes(weatherType)) {
         pokemon.scene.arena.triggerWeatherBasedFormChangesToNormal();
       } else {
         pokemon.scene.arena.triggerWeatherBasedFormChanges();
@@ -4744,7 +4751,8 @@ function setAbilityRevealed(pokemon: Pokemon): void {
  */
 function getPokemonWithWeatherBasedForms(scene: BattleScene) {
   return scene.getField(true).filter(p =>
-    p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM
+    (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM)
+    || (p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM)
   );
 }
 
@@ -4943,7 +4951,7 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .attr(PostSummonFormChangeByWeatherAbAttr, Abilities.FORECAST)
-      .attr(PostWeatherChangeFormChangeAbAttr, Abilities.FORECAST),
+      .attr(PostWeatherChangeFormChangeAbAttr, Abilities.FORECAST, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG ]),
     new Ability(Abilities.STICKY_HOLD, 3)
       .attr(BlockItemTheftAbAttr)
       .bypassFaint()
@@ -5136,8 +5144,10 @@ export function initAbilities() {
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), BattleStatMultiplierAbAttr, BattleStat.SPDEF, 1.5)
       .attr(UncopiableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .ignorable()
-      .partial(),
+      .attr(PostSummonFormChangeByWeatherAbAttr, Abilities.FLOWER_GIFT)
+      .attr(PostWeatherChangeFormChangeAbAttr, Abilities.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ])
+      .partial() // Should also boosts stats of ally
+      .ignorable(),
     new Ability(Abilities.BAD_DREAMS, 4)
       .attr(PostTurnHurtIfSleepingAbAttr),
     new Ability(Abilities.PICKPOCKET, 5)

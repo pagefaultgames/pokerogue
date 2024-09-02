@@ -339,7 +339,10 @@ export class Arena {
    */
   triggerWeatherBasedFormChanges(): void {
     this.scene.getField(true).forEach( p => {
-      if (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM) {
+      const isCastformWithForecast = (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM);
+      const isCherrimWithFlowerGift = (p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM);
+
+      if (isCastformWithForecast || isCherrimWithFlowerGift) {
         new ShowAbilityPhase(this.scene, p.getBattlerIndex());
         this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
       }
@@ -351,7 +354,10 @@ export class Arena {
    */
   triggerWeatherBasedFormChangesToNormal(): void {
     this.scene.getField(true).forEach( p => {
-      if (p.hasAbility(Abilities.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM) {
+      const isCastformWithForecast = (p.hasAbility(Abilities.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM);
+      const isCherrimWithFlowerGift = (p.hasAbility(Abilities.FLOWER_GIFT, false, true) && p.species.speciesId === Species.CHERRIM);
+
+      if (isCastformWithForecast || isCherrimWithFlowerGift) {
         new ShowAbilityPhase(this.scene, p.getBattlerIndex());
         return this.scene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
       }
