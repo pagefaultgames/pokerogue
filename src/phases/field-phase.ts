@@ -1,6 +1,4 @@
 import { BattlePhase } from "./battle-phase";
-import * as Utils from "#app/utils.js";
-import * as LoggerTools from "../logger";
 import Pokemon from "#app/field/pokemon";
 
 type PokemonFunc = (pokemon: Pokemon) => void;

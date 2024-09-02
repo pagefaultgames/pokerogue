@@ -23,7 +23,6 @@ import { SummonPhase } from "./summon-phase";
 import { EndCardPhase } from "./end-card-phase";
 import { PostGameOverPhase } from "./post-game-over-phase";
 import { UnlockPhase } from "./unlock-phase";
-import * as LoggerTools from "../logger";
 import { SessionSaveData } from "../system/game-data";
 import TrainerData from "../system/trainer-data";
 import PokemonData from "../system/pokemon-data";
