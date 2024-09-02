@@ -7,7 +7,7 @@ import { Weather, WeatherType } from "./weather";
 import { BattlerTag, GroundedTag, GulpMissileTag, SemiInvulnerableTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, ChargeAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, ChargeAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { BerryModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
@@ -468,6 +468,47 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
     return i18next.t("abilityTriggers:nonSuperEffectiveImmunity", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName
+    });
+  }
+}
+
+/**
+ * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Tera_Shell_(Ability) | Tera Shell}
+ * When the source is at full HP, incoming attacks will have a maximum 0.5x type effectiveness multiplier.
+ * @extends PreDefendAbAttr
+ */
+export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
+  /**
+   * Reduces a type multiplier to 0.5 if the source is at full HP.
+   * @param pokemon {@linkcode Pokemon} the Pokemon with this ability
+   * @param passive n/a
+   * @param simulated n/a (this doesn't change game state)
+   * @param attacker n/a
+   * @param move {@linkcode Move} the move being used on the source
+   * @param cancelled n/a
+   * @param args `[0]` a container for the move's current type effectiveness multiplier
+   * @returns `true` if the move's effectiveness is reduced; `false` otherwise
+   */
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
+    const typeMultiplier = args[0];
+    if (!(typeMultiplier && typeMultiplier instanceof Utils.NumberHolder)) {
+      return false;
+    }
+
+    if (move && move.hasAttr(FixedDamageAttr)) {
+      return false;
+    }
+
+    if (pokemon.isFullHp() && typeMultiplier.value > 0.5) {
+      typeMultiplier.value = 0.5;
+      return true;
+    }
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return i18next.t("abilityTriggers:fullHpResistType", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)
     });
   }
 }
@@ -5748,10 +5789,10 @@ export function initAbilities() {
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.TERA_SHELL, 9)
+      .attr(FullHpResistTypeAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .ignorable()
-      .unimplemented(),
+      .ignorable(),
     new Ability(Abilities.TERAFORM_ZERO, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)

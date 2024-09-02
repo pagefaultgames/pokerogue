@@ -20,7 +20,7 @@ import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
-import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr } from "../data/ability";
+import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -1358,6 +1358,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         typeMultiplier.value = 0;
         break;
       }
+    }
+
+    // Apply Tera Shell's effect to attacks after all immunities are accounted for
+    if (!ignoreAbility && move.category !== MoveCategory.STATUS) {
+      applyPreDefendAbAttrs(FullHpResistTypeAbAttr, this, source, move, cancelledHolder, simulated, typeMultiplier);
     }
 
     return (!cancelledHolder.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
