@@ -34,7 +34,7 @@
   "toxicSpikesActivateTrapPoison": "¡{{pokemonNameWithAffix}} ha sido herido por {{moveName}}!",
   "stealthRockOnAdd": "¡El equipo de {{opponentDesc}} ha sido rodeado por piedras puntiagudas!",
   "stealthRockActivateTrap": "¡Unas piedras puntiagudas han dañado a {{pokemonNameWithAffix}}!",
-  "stickyWebOnAdd": "¡Una {{moveName}} se extiende a los pies del bando rival!\t",
+  "stickyWebOnAdd": "¡Una {{moveName}} se extiende a los pies del bando rival!",
   "stickyWebActivateTrap": "¡{{pokemonName}} ha caído en una red viscosa!",
   "trickRoomOnAdd": "¡{{pokemonNameWithAffix}} ha alterado las dimensiones!",
   "trickRoomOnRemove": "Se han restaurado las dimensiones alteradas.",
