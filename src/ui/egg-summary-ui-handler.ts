@@ -89,8 +89,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.pokemonIconsContainer.removeAll(true);
     this.eggHatchBg.setVisible(false);
     this.getUi().hideTooltip();
-
-
+    // Note: Questions on garbage collection go to @frutescens
     const activeKeys = this.scene.getActiveKeys();
     // Removing unnecessary sprites from animation manager
     const animKeys = Object.keys(this.scene.anims["anims"]["entries"]);
