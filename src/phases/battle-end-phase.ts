@@ -23,12 +23,6 @@ export class BattleEndPhase extends BattlePhase {
       this.scene.unshiftPhase(new GameOverPhase(this.scene, true));
     }
 
-    for (const pokemon of this.scene.getField()) {
-      if (pokemon) {
-        pokemon.resetBattleSummonData();
-      }
-    }
-
     for (const pokemon of this.scene.getParty().filter(p => p.isAllowedInBattle())) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
     }

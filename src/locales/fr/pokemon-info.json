@@ -13,7 +13,8 @@
     "SPD": "Vitesse",
     "SPDshortened": "Vit",
     "ACC": "Précison",
-    "EVA": "Esquive"
+    "EVA": "Esquive",
+    "HPStat": "PV"
   },
   "Type": {
     "UNKNOWN": "Inconnu",

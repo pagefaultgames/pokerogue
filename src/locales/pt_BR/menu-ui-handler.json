@@ -3,7 +3,6 @@
   "ACHIEVEMENTS": "Conquistas",
   "STATS": "Estatísticas",
   "RUN_HISTORY": "Histórico de Jogos",
-  "VOUCHERS": "Vouchers",
   "EGG_LIST": "Incubadora",
   "EGG_GACHA": "Gacha de ovos",
   "MANAGE_DATA": "Gerenciar dados",
@@ -15,8 +14,8 @@
   "importSlotSelect": "Selecione um slot para importar.",
   "exportSession": "Exportar sessão",
   "exportSlotSelect": "Selecione um slot para exportar.",
-  "importRunHistory":"Importar Histórico de Jogos",
-  "exportRunHistory":"Exportar Histórico de Jogos",
+  "importRunHistory": "Importar Histórico de Jogos",
+  "exportRunHistory": "Exportar Histórico de Jogos",
   "importData": "Importar dados",
   "exportData": "Exportar dados",
   "consentPreferences": "Opções de Privacidade",
@@ -26,5 +25,5 @@
   "unlinkGoogle": "Desconectar Google",
   "cancel": "Cancelar",
   "losingProgressionWarning": "Você vai perder todo o progresso desde o início da batalha. Confirmar?",
-  "noEggs": "Você não está chocando\nnenhum ovo no momento!"
+  "noEggs": "Você não está chocando nenhum ovo\nno momento!"
 }

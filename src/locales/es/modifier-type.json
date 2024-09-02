@@ -97,6 +97,10 @@
       "name": "MT{{moveId}} - {{moveName}}",
       "description": "Enseña {{moveName}} a un Pokémon."
     },
+    "TmModifierTypeWithInfo": {
+      "name": "MT{{moveId}} - {{moveName}}",
+      "description": "Enseña {{moveName}} a un Pokémon\n(Mantén pulsado C o Shift para más info)."
+    },
     "EvolutionItemModifierType": {
       "description": "Hace que ciertos Pokémon evolucionen."
     },
@@ -129,12 +133,12 @@
       "name": "Caramelorarísimo"
     },
     "MEGA_BRACELET": {
-      "name": "Mega-aro",
-      "description": "Las Megapiedras están disponibles."
+      "name": "Megapulsera",
+      "description": "Las megapiedras se vuelven disponibles."
     },
     "DYNAMAX_BAND": {
       "name": "Maximuñequera",
-      "description": "Las Maxisetas están disponibles."
+      "description": "Las maxisetas se vuelven disponibles."
     },
     "TERA_ORB": {
       "name": "Orbe Teracristal",
@@ -154,42 +158,42 @@
       "name": "Hiperpoción"
     },
     "MAX_POTION": {
-      "name": "Máx. Poción"
+      "name": "Máx. poción"
     },
     "FULL_RESTORE": {
-      "name": "Restau. Todo"
+      "name": "Restau. todo"
     },
     "REVIVE": {
       "name": "Revivir"
     },
     "MAX_REVIVE": {
-      "name": "Máx. Revivir"
+      "name": "Máx. revivir"
     },
     "FULL_HEAL": {
-      "name": "Cura Total"
+      "name": "Cura total"
     },
     "SACRED_ASH": {
-      "name": "Cen. Sagrada"
+      "name": "Ceniza sagrada"
     },
     "REVIVER_SEED": {
-      "name": "Semilla Revivir",
+      "name": "Semilla revivir",
       "description": "Revive al portador con la mitad de sus PS al debilitarse por un golpe directo."
     },
     "WHITE_HERB": {
-      "name": "White Herb",
-      "description": "An item to be held by a Pokémon. It will restore any lowered stat in battle."
+      "name": "Hierba blanca",
+      "description": "Un objeto que puede llevar un Pokémon. Restaurará cualquier estadística reducida en combate."
     },
     "ETHER": {
       "name": "Éter"
     },
     "MAX_ETHER": {
-      "name": "Éter Máx."
+      "name": "Éter máx."
     },
     "ELIXIR": {
       "name": "Elixir"
     },
     "MAX_ELIXIR": {
-      "name": "Elixir Máx."
+      "name": "Elixir máx."
     },
     "PP_UP": {
       "name": "Más PP"
@@ -204,10 +208,10 @@
       "name": "Superincienso"
     },
     "MAX_LURE": {
-      "name": "Incienso Máximo"
+      "name": "Incienso máximo"
     },
     "MEMORY_MUSHROOM": {
-      "name": "Seta Recuerdo",
+      "name": "Seta recuerdo",
       "description": "Recuerda un movimiento olvidado de un Pokémon."
     },
     "EXP_SHARE": {
@@ -215,8 +219,8 @@
       "description": "Los que no combatan reciben el 20% de la EXP."
     },
     "EXP_BALANCE": {
-      "name": "Equilibrar EXP",
-      "description": "Da mayor parte de la EXP recibida a los miembros del equipo que tengan menos nivel."
+      "name": "Equilibrador EXP",
+      "description": "Da una mayor parte de la EXP recibida a los miembros del equipo que tengan menos nivel."
     },
     "OVAL_CHARM": {
       "name": "Amuleto Oval",
@@ -232,13 +236,13 @@
       "name": "Amuleto EXP Dorado"
     },
     "LUCKY_EGG": {
-      "name": "Huevo Suerte"
+      "name": "Huevo suerte"
     },
     "GOLDEN_EGG": {
-      "name": "Huevo Dorado"
+      "name": "Huevo dorado"
     },
     "SOOTHE_BELL": {
-      "name": "Camp. Alivio"
+      "name": "Camp. alivio"
     },
     "SCOPE_LENS": {
       "name": "Periscopio",
@@ -249,7 +253,7 @@
       "description": "Puerro muy largo y duro que aumenta la probabilidad de asestar un golpe crítico. Debe llevarlo Farfetch'd."
     },
     "EVIOLITE": {
-      "name": "Mineral Evolutivo",
+      "name": "Mineral evolutivo",
       "description": "Roca misteriosa. El Pokémon portador aumentará su Defensa y su Defensa Especial si aún puede evolucionar."
     },
     "SOUL_DEW": {
@@ -266,7 +270,7 @@
       "name": "Real de oro"
     },
     "AMULET_COIN": {
-      "name": "Moneda Amuleto",
+      "name": "Moneda amuleto",
       "description": "Aumenta el dinero ganado en un 20%."
     },
     "GOLDEN_PUNCH": {
@@ -279,10 +283,10 @@
     },
     "LOCK_CAPSULE": {
       "name": "Cápsula candado",
-      "description": "Le permite bloquear las rarezas de los objetos al cambiar de objetos."
+      "description": "Permite bloquear las rarezas de los objetos al refrescar objetos."
     },
     "GRIP_CLAW": {
-      "name": "Garra Garfio"
+      "name": "Garra garfio"
     },
     "WIDE_LENS": {
       "name": "Lupa"
@@ -294,20 +298,24 @@
       "name": "Amuleto curación",
       "description": "Aumenta la efectividad de los movimientos y objetos de curacion de PS en un 10% (excepto revivir)."
     },
+    "CANDY_JAR": {
+      "name": "Tarrón de caramelos",
+      "description": "Aumenta la cantidad de niveles otorgados por los ítems Caramelos Raros en 1."
+    },
     "BERRY_POUCH": {
-      "name": "Saco Bayas",
-      "description": "Agrega un 30% de posibilidades de que una baya usada no se consuma."
+      "name": "Saco bayas",
+      "description": "Añade un 30% de posibilidades de que una baya no se gaste al usarla."
     },
     "FOCUS_BAND": {
-      "name": "Cinta Focus",
+      "name": "Banda aguante",
       "description": "Agrega un 10% de probabilidad de resistir un ataque que lo debilitaría."
     },
     "QUICK_CLAW": {
-      "name": "Garra Rápida",
+      "name": "Garra rápida",
       "description": "Agrega un 10% de probabilidad de atacar primero independientemente de la velocidad (después de la prioridad)."
     },
     "KINGS_ROCK": {
-      "name": "Roca del Rey",
+      "name": "Roca del rey",
       "description": "Agrega un 10% de probabilidad de que un ataque haga que el oponente retroceda."
     },
     "LEFTOVERS": {
@@ -315,7 +323,7 @@
       "description": "Cura 1/16 de los PS máximo de un Pokémon cada turno."
     },
     "SHELL_BELL": {
-      "name": "Camp Concha",
+      "name": "Cascabel concha",
       "description": "Cura 1/8 del daño infligido por un Pokémon."
     },
     "TOXIC_ORB": {
@@ -327,15 +335,15 @@
       "description": "Extraña esfera que causa quemaduras a quien la usa en combate."
     },
     "BATON": {
-      "name": "Relevo",
+      "name": "Testigo",
       "description": "Permite pasar los efectos al cambiar de Pokémon, también evita las trampas."
     },
     "SHINY_CHARM": {
-      "name": "Amuleto Iris",
+      "name": "Amuleto iris",
       "description": "Aumenta drásticamente la posibilidad de que un Pokémon salvaje sea Shiny."
     },
     "ABILITY_CHARM": {
-      "name": "Amuleto Habilidad",
+      "name": "Amuleto habilidad",
       "description": "Aumenta drásticamente la posibilidad de que un Pokémon salvaje tenga una habilidad oculta."
     },
     "IV_SCANNER": {
@@ -346,60 +354,60 @@
       "name": "Punta ADN"
     },
     "MINI_BLACK_HOLE": {
-      "name": "Mini Agujero Negro"
+      "name": "Mini agujero negro"
     },
     "GOLDEN_POKEBALL": {
       "name": "Poké Ball Dorada",
       "description": "Agrega 1 opción de objeto extra al final de cada combate."
     },
     "ENEMY_DAMAGE_BOOSTER": {
-      "name": "Ficha Daño",
+      "name": "Ficha de daño",
       "description": "Aumenta el daño en un 5%."
     },
     "ENEMY_DAMAGE_REDUCTION": {
-      "name": "Ficha Protección",
+      "name": "Ficha de protección",
       "description": "Reduce el daño recibido en un 2,5%."
     },
     "ENEMY_HEAL": {
-      "name": "Ficha Curación",
+      "name": "Ficha de curación",
       "description": "Cura el 2% de los PS máximo en cada turno."
     },
     "ENEMY_ATTACK_POISON_CHANCE": {
-      "name": "Ficha Veneno"
+      "name": "Ficha veneno"
     },
     "ENEMY_ATTACK_PARALYZE_CHANCE": {
-      "name": "Ficha Parálisis"
+      "name": "Ficha parálisis"
     },
     "ENEMY_ATTACK_BURN_CHANCE": {
-      "name": "Ficha Quemadura"
+      "name": "Ficha quemadura"
     },
     "ENEMY_STATUS_EFFECT_HEAL_CHANCE": {
-      "name": "Ficha Cura Total",
+      "name": "Ficha cura total",
       "description": "Agrega un 2.5% de probabilidad cada turno de curar un problema de estado."
     },
     "ENEMY_ENDURE_CHANCE": {
-      "name": "Ficha Aguante"
+      "name": "Ficha aguante"
     },
     "ENEMY_FUSED_CHANCE": {
-      "name": "Ficha Fusión",
+      "name": "Ficha fusión",
       "description": "Agrega un 1% de probabilidad de que un Pokémon salvaje sea una fusión."
     }
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": {
-      "name": "Bola Luminosa",
+      "name": "Bola luminosa",
       "description": "Asombrosa esfera que aumenta el Ataque y el Ataque Especial. Debe llevarla Pikachu."
     },
     "THICK_CLUB": {
-      "name": "Hueso Grueso",
+      "name": "Hueso grueso",
       "description": "Extraño tipo de hueso que potencia los ataques físicos. Debe llevarlo Cubone o Marowak."
     },
     "METAL_POWDER": {
-      "name": "Polvo Metálico",
+      "name": "Polvo metálico",
       "description": "Polvo muy fino, pero a la vez poderoso, que aumenta la Defensa. Debe llevarlo Ditto."
     },
     "QUICK_POWDER": {
-      "name": "Polvo Veloz",
+      "name": "Polvo veloz",
       "description": "Polvo muy fino, pero a la vez poderoso, que aumenta la Velocidad. Debe llevarlo Ditto."
     }
   },
@@ -413,35 +421,35 @@
     "dire_hit": "Crítico X"
   },
   "TempBattleStatBoosterStatName": {
-    "ATK": "Attack",
-    "DEF": "Defense",
-    "SPATK": "Sp. Atk",
-    "SPDEF": "Sp. Def",
-    "SPD": "Speed",
-    "ACC": "Accuracy",
-    "CRIT": "Critical Hit Ratio",
-    "EVA": "Evasiveness",
+    "ATK": "Ataque",
+    "DEF": "Defensa",
+    "SPATK": "Ataq. Esp.",
+    "SPDEF": "Def. Esp.",
+    "SPD": "Velocidad",
+    "ACC": "Precisión",
+    "CRIT": "Tasa de crítico",
+    "EVA": "Evasión",
     "DEFAULT": "???"
   },
   "AttackTypeBoosterItem": {
-    "silk_scarf": "Pañuelo Seda",
-    "black_belt": "Cinturón Negro",
-    "sharp_beak": "Pico Afilado",
-    "poison_barb": "Flecha Venenosa",
-    "soft_sand": "Arena Fina",
-    "hard_stone": "Piedra Dura",
-    "silver_powder": "Polvo Plata",
+    "silk_scarf": "Pañuelo seda",
+    "black_belt": "Cinturón negro",
+    "sharp_beak": "Pico afilado",
+    "poison_barb": "Flecha venenosa",
+    "soft_sand": "Arena fina",
+    "hard_stone": "Piedra dura",
+    "silver_powder": "Polvo plata",
     "spell_tag": "Hechizo",
-    "metal_coat": "Rev. Metálico",
+    "metal_coat": "Revest. metálico",
     "charcoal": "Carbón",
-    "mystic_water": "Agua Mística",
-    "miracle_seed": "Semilla Milagro",
+    "mystic_water": "Agua mística",
+    "miracle_seed": "Semilla milagro",
     "magnet": "Imán",
-    "twisted_spoon": "Cuchara Torcida",
+    "twisted_spoon": "Cuchara torcida",
     "never_melt_ice": "Antiderretir",
-    "dragon_fang": "Colmillo Dragón",
-    "black_glasses": "Gafas de Sol",
-    "fairy_feather": "Pluma Hada"
+    "dragon_fang": "Colmillo dragón",
+    "black_glasses": "Gafas de sol",
+    "fairy_feather": "Pluma feérica"
   },
   "BaseStatBoosterItem": {
     "hp_up": "Más PS",
@@ -452,38 +460,38 @@
     "carbos": "Carburante"
   },
   "EvolutionItem": {
-    "NONE": "None",
-    "LINKING_CORD": "Cordón Unión",
-    "SUN_STONE": "Piedra Solar",
-    "MOON_STONE": "Piedra Lunar",
-    "LEAF_STONE": "Piedra Hoja",
-    "FIRE_STONE": "Piedra Fuego",
-    "WATER_STONE": "Piedra Agua",
-    "THUNDER_STONE": "Piedra Trueno",
-    "ICE_STONE": "Piedra Hielo",
-    "DUSK_STONE": "Piedra Noche",
-    "DAWN_STONE": "Piedra Alba",
-    "SHINY_STONE": "Piedra Día",
-    "CRACKED_POT": "Tetera Agrietada",
-    "SWEET_APPLE": "Manzana Dulce",
-    "TART_APPLE": "Manzana Ácida",
-    "STRAWBERRY_SWEET": "Confite Fresa",
-    "UNREMARKABLE_TEACUP": "Cuenco Mediocre",
-    "CHIPPED_POT": "Tetera Rota",
-    "BLACK_AUGURITE": "Mineral Negro",
-    "GALARICA_CUFF": "Brazal Galanuez",
-    "GALARICA_WREATH": "Corona Galanuez",
-    "PEAT_BLOCK": "Bloque de Turba",
-    "AUSPICIOUS_ARMOR": "Armadura Auspiciosa",
-    "MALICIOUS_ARMOR": "Armadura Maldita",
-    "MASTERPIECE_TEACUP": "Cuenco Exquisito",
-    "METAL_ALLOY": "Metal Compuesto",
-    "SCROLL_OF_DARKNESS": "Manuscrito Sombras",
-    "SCROLL_OF_WATERS": "Manuscrito Aguas",
-    "SYRUPY_APPLE": "Manzana Melosa"
+    "NONE": "Ninguno",
+    "LINKING_CORD": "Cordón unión",
+    "SUN_STONE": "Piedra solar",
+    "MOON_STONE": "Piedra lunar",
+    "LEAF_STONE": "Piedra hoja",
+    "FIRE_STONE": "Piedra fuego",
+    "WATER_STONE": "Piedra agua",
+    "THUNDER_STONE": "Piedra trueno",
+    "ICE_STONE": "Piedra hielo",
+    "DUSK_STONE": "Piedra noche",
+    "DAWN_STONE": "Piedra alba",
+    "SHINY_STONE": "Piedra día",
+    "CRACKED_POT": "Tetera agrietada",
+    "SWEET_APPLE": "Manzana dulce",
+    "TART_APPLE": "Manzana ácida",
+    "STRAWBERRY_SWEET": "Confite fresa",
+    "UNREMARKABLE_TEACUP": "Cuenco mediocre",
+    "CHIPPED_POT": "Tetera rota",
+    "BLACK_AUGURITE": "Mineral negro",
+    "GALARICA_CUFF": "Brazal galanuez",
+    "GALARICA_WREATH": "Corona galanuez",
+    "PEAT_BLOCK": "Bloque de turba",
+    "AUSPICIOUS_ARMOR": "Armadura auspiciosa",
+    "MALICIOUS_ARMOR": "Armadura maldita",
+    "MASTERPIECE_TEACUP": "Cuenco exquisito",
+    "METAL_ALLOY": "Metal compuesto",
+    "SCROLL_OF_DARKNESS": "Manuscrito sombras",
+    "SCROLL_OF_WATERS": "Manuscrito aguas",
+    "SYRUPY_APPLE": "Manzana melosa"
   },
   "FormChangeItem": {
-    "NONE": "None",
+    "NONE": "Ninguno",
     "ABOMASITE": "Abomasnowita",
     "ABSOLITE": "Absolita",
     "AERODACTYLITE": "Aerodactylita",
@@ -532,70 +540,70 @@
     "SWAMPERTITE": "Swampertita",
     "TYRANITARITE": "Tyranitarita",
     "VENUSAURITE": "Venusaurita",
-    "BLUE_ORB": "Prisma Azul",
-    "RED_ORB": "Prisma Rojo",
-    "SHARP_METEORITE": "Meteorito Afilado",
-    "HARD_METEORITE": "Meteorito Duro",
-    "SMOOTH_METEORITE": "Meteorito Suave",
-    "ADAMANT_CRYSTAL": "Gran Diamansfera",
-    "LUSTROUS_GLOBE": "Gran Lustresfera",
-    "GRISEOUS_CORE": "Gran Griseosfera",
-    "REVEAL_GLASS": "Espejo Veraz",
+    "BLUE_ORB": "Prisma azul",
+    "RED_ORB": "Prisma rojo",
+    "SHARP_METEORITE": "Meteorito afilado",
+    "HARD_METEORITE": "Meteorito duro",
+    "SMOOTH_METEORITE": "Meteorito suave",
+    "ADAMANT_CRYSTAL": "Gran diamansfera",
+    "LUSTROUS_GLOBE": "Gran lustresfera",
+    "GRISEOUS_CORE": "Gran griseosfera",
+    "REVEAL_GLASS": "Espejo veraz",
     "GRACIDEA": "Gracídea",
-    "MAX_MUSHROOMS": "MaxiSetas",
-    "DARK_STONE": "Piedra Oscura",
-    "LIGHT_STONE": "Piedra Luminosa",
-    "PRISON_BOTTLE": "Vasija Castigo",
+    "MAX_MUSHROOMS": "Maxisetas",
+    "DARK_STONE": "Orbe oscuro",
+    "LIGHT_STONE": "Orbe claro",
+    "PRISON_BOTTLE": "Vasija castigo",
     "N_LUNARIZER": "Necroluna",
     "N_SOLARIZER": "Necrosol",
-    "RUSTED_SWORD": "Espada Oxidada",
-    "RUSTED_SHIELD": "Escudo Oxidado",
-    "ICY_REINS_OF_UNITY": "Riendas Unión Heladas",
-    "SHADOW_REINS_OF_UNITY": "Riendas Unión Oscuras",
-    "WELLSPRING_MASK": "Máscara Fuente",
-    "HEARTHFLAME_MASK": "Máscara Horno",
-    "CORNERSTONE_MASK": "Máscara Cimiento",
+    "RUSTED_SWORD": "Espada oxidada",
+    "RUSTED_SHIELD": "Escudo oxidado",
+    "ICY_REINS_OF_UNITY": "Riendas unión heladas",
+    "SHADOW_REINS_OF_UNITY": "Riendas unión oscuras",
+    "WELLSPRING_MASK": "Máscara fuente",
+    "HEARTHFLAME_MASK": "Máscara horno",
+    "CORNERSTONE_MASK": "Máscara cimiento",
     "SHOCK_DRIVE": "FulgoROM",
     "BURN_DRIVE": "PiroROM",
     "CHILL_DRIVE": "CrioROM",
     "DOUSE_DRIVE": "HidroROM",
     "ULTRANECROZIUM_Z": "Ultranecrostal Z",
-    "FIST_PLATE": "Tabla Fuerte",
-    "SKY_PLATE": "Tabla Cielo",
-    "TOXIC_PLATE": "Tabla Tóxica",
-    "EARTH_PLATE": "Tabla Terrax",
-    "STONE_PLATE": "Tabla Pétrea",
-    "INSECT_PLATE": "Tabla Bicho",
-    "SPOOKY_PLATE": "Tabla Terror",
-    "IRON_PLATE": "Tabla Acero",
-    "FLAME_PLATE": "Tabla Llama",
-    "SPLASH_PLATE": "Tabla Linfa",
-    "MEADOW_PLATE": "Tabla Pradal",
-    "ZAP_PLATE": "Tabla Trueno",
-    "MIND_PLATE": "Tabla Mental",
-    "ICICLE_PLATE": "Tabla Helada",
-    "DRACO_PLATE": "Tabla Draco",
-    "DREAD_PLATE": "Tabla Oscura",
-    "PIXIE_PLATE": "Tabla Duende",
-    "BLANK_PLATE": "Tabla Neutra",
-    "LEGEND_PLATE": "Tabla Legendaria",
-    "FIGHTING_MEMORY": "Disco Lucha",
-    "FLYING_MEMORY": "Disco Volador",
-    "POISON_MEMORY": "Disco Veneno",
-    "GROUND_MEMORY": "Disco Tierra",
-    "ROCK_MEMORY": "Disco Roca",
-    "BUG_MEMORY": "Disco Bicho",
-    "GHOST_MEMORY": "Disco Fantasma",
-    "STEEL_MEMORY": "Disco Acero",
-    "FIRE_MEMORY": "Disco Fuego",
-    "WATER_MEMORY": "Disco Agua",
-    "GRASS_MEMORY": "Disco Planta",
-    "ELECTRIC_MEMORY": "Disco Eléctrico",
-    "PSYCHIC_MEMORY": "Disco Psíquico",
-    "ICE_MEMORY": "Disco Hielo",
-    "DRAGON_MEMORY": "Disco Dragón",
-    "DARK_MEMORY": "Disco Siniestro",
-    "FAIRY_MEMORY": "Disco Hada",
-    "BLANK_MEMORY": "Disco Blanco"
+    "FIST_PLATE": "Tabla fuerte",
+    "SKY_PLATE": "Tabla cielo",
+    "TOXIC_PLATE": "Tabla tóxica",
+    "EARTH_PLATE": "Tabla terrax",
+    "STONE_PLATE": "Tabla pétrea",
+    "INSECT_PLATE": "Tabla bicho",
+    "SPOOKY_PLATE": "Tabla terror",
+    "IRON_PLATE": "Tabla acero",
+    "FLAME_PLATE": "Tabla llama",
+    "SPLASH_PLATE": "Tabla linfa",
+    "MEADOW_PLATE": "Tabla pradal",
+    "ZAP_PLATE": "Tabla trueno",
+    "MIND_PLATE": "Tabla mental",
+    "ICICLE_PLATE": "Tabla helada",
+    "DRACO_PLATE": "Tabla draco",
+    "DREAD_PLATE": "Tabla oscura",
+    "PIXIE_PLATE": "Tabla duende",
+    "BLANK_PLATE": "Tabla neutra",
+    "LEGEND_PLATE": "Tabla legendaria",
+    "FIGHTING_MEMORY": "Disco lucha",
+    "FLYING_MEMORY": "Disco volador",
+    "POISON_MEMORY": "Disco veneno",
+    "GROUND_MEMORY": "Disco tierra",
+    "ROCK_MEMORY": "Disco roca",
+    "BUG_MEMORY": "Disco bicho",
+    "GHOST_MEMORY": "Disco fantasma",
+    "STEEL_MEMORY": "Disco acero",
+    "FIRE_MEMORY": "Disco fuego",
+    "WATER_MEMORY": "Disco agua",
+    "GRASS_MEMORY": "Disco planta",
+    "ELECTRIC_MEMORY": "Disco eléctrico",
+    "PSYCHIC_MEMORY": "Disco psíquico",
+    "ICE_MEMORY": "Disco hielo",
+    "DRAGON_MEMORY": "Disco dragón",
+    "DARK_MEMORY": "Disco siniestro",
+    "FAIRY_MEMORY": "Disco hada",
+    "NORMAL_MEMORY": "Disco normal"
   }
 }
