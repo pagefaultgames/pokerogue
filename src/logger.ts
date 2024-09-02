@@ -45,7 +45,7 @@ SECTIONS
 /** The number of enemy actions to log. */
 export const EnemyEventLogCount = 3
 /** The current DRPD version. */
-export const DRPD_Version = "1.1.0a"
+export const DRPD_Version = "1.1.0b"
 /** (Unused / reference only) All the log versions that this mod can keep updated.
  * @see updateLog
 */
@@ -54,6 +54,7 @@ export const acceptedVersions = [
   "1.0.0a",
   "1.1.0",
   "1.1.0a",
+  "1.1.0b",
 ]
 
 // Value holders
@@ -603,9 +604,9 @@ function updateLog(drpd: DRPD): DRPD {
     for (var i = 0; i < drpd.waves.length; i++) {
       if (drpd.waves[i] && drpd.waves[i].pokemon) {
         for (var j = 0; j < drpd.waves[i].pokemon!.length; j++) {
-          drpd.waves[i].pokemon![j].iv_raw = drpd.waves[i].pokemon![j].ivs
+          drpd.waves[i].pokemon![j].iv_raw = drpd.waves[i].pokemon![j].ivs!
           drpd.waves[i].pokemon![j].ivs = undefined
-          drpd.waves[i].pokemon![j].iv = formatIVs(drpd.waves[i].pokemon![j].ivs)
+          drpd.waves[i].pokemon![j].iv = formatIVs(drpd.waves[i].pokemon![j].ivs!)
         }
       }
     }
