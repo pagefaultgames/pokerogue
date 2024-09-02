@@ -23,15 +23,6 @@ body {
   }
 }
 
-#links {
-  width: 90%;
-  text-align: center;
-  position: fixed;
-  bottom: 0;
-  display: flex;
-  justify-content: space-around;
-}
-
 #app {
   display: flex;
   justify-content: center;
@@ -93,7 +84,7 @@ input:-internal-autofill-selected {
 
 @media (orientation: landscape) {
   #touchControls {
-    --controls-size: 20vh; 
+    --controls-size: 20vh;
     --text-shadow-size: 1.3vh;
     --small-button-offset: 4vh;
   }
