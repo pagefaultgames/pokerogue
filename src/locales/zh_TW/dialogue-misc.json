@@ -1,0 +1,4 @@
+{
+  "ending": "@c{shock}你回來了？@d{32} 也就是說…@d{96} 你贏了呀！？\n@c{smile_ehalf}我應該早料到了。\n$@c{smile_eclosed}當然…我一直有這種感覺\n@c{smile}一切都結束了，對麼？ 你打破了循環。\n$@c{smile_ehalf}你也完成了自己的夢想，不是嗎？\n你甚至一次都沒失敗。\n$我是唯一能夠記得你所作所為的人\n@c{angry_mopen}我會努力不忘掉哒！\n$@c{smile_wave_wink}開玩笑啦，@d{64} @c{smile}我才不會忘呢。@d{32}\n你的傳奇將永遠留存於我們心中。\n$@c{smile_wave}不管了，@d{64} 時候不早了@d{96} ，應該吧？\n在這地方還真搞不清楚。\n$一起回家吧。 @c{smile_wave_wink}可能明天，我們再來打一場，為了重溫回憶嘛~",
+  "ending_female": "@c{smile}哦?你贏了？@d{96} @c{smile_eclosed}我應該早猜到了\n你回來了。\n$@c{smile}結束了。@d{64} 你終結了這個循環。\n$@c{serious_smile_fists}你也完成了自己的夢想，不是嗎？\n你甚至一次都沒失敗。\n$@c{neutral}我是唯一能夠記得你所作所為的人@d{96}\n我覺得這應該也還行吧？\n$@c{serious_smile_fists}你的傳奇將永遠留存於我們心中。\n$@c{smile_eclosed}不管了，我真是受夠這個地方了，你也一樣嗎？我們回家吧。\n$@c{serious_smile_fists}可能等我們回家以後，再打一場？\n要是你想的話"
+}

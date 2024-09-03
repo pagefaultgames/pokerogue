@@ -13,8 +13,9 @@ import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-
 import {InterfaceConfig} from "#app/inputs-controller";
 import {addTextObject, TextStyle} from "#app/ui/text";
 import {deleteBind} from "#app/configs/inputs/configHandler";
-import {Device} from "#app/enums/devices";
+import {Device} from "#enums/devices";
 import {NavigationManager} from "#app/ui/settings/navigationMenu";
+import i18next from "i18next";
 
 /**
  * Class representing the settings UI handler for keyboards.
@@ -28,7 +29,7 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
      * @param scene - The BattleScene instance.
      * @param mode - The UI mode, optional.
      */
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
     this.titleSelected = "Keyboard";
     this.setting = SettingKeyboard;
@@ -41,10 +42,10 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
     this.settingBlacklisted = settingKeyboardBlackList;
     this.device = Device.KEYBOARD;
 
-    const deleteEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
-    const restoreDefaultEvent = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.HOME);
-    deleteEvent.on("up", this.onDeleteDown, this);
-    restoreDefaultEvent.on("up", this.onHomeDown, this);
+    const deleteEvent = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
+    const restoreDefaultEvent = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.HOME);
+    deleteEvent && deleteEvent.on("up", this.onDeleteDown, this);
+    restoreDefaultEvent && restoreDefaultEvent.on("up", this.onHomeDown, this);
   }
 
   setSetting = setSettingKeyboard;
@@ -58,7 +59,7 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
     this.layout["noKeyboard"] = new Map();
     const optionsContainer = this.scene.add.container(0, 0);
     optionsContainer.setVisible(false); // Initially hide the container as no gamepads are connected.
-    const label = addTextObject(this.scene, 8, 28, "Please press a key on your keyboard", TextStyle.SETTINGS_LABEL);
+    const label = addTextObject(this.scene, 8, 28, i18next.t("settings:keyboardPleasePress"), TextStyle.SETTINGS_LABEL);
     label.setOrigin(0, 0);
     optionsContainer.add(label);
     this.settingsContainer.add(optionsContainer);
@@ -68,7 +69,7 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
     iconDelete.setPositionRelative(this.actionsBg, this.navigationContainer.width - 260, 4);
     this.navigationIcons["BUTTON_DELETE"] = iconDelete;
 
-    const deleteText = addTextObject(this.scene, 0, 0, "Delete", TextStyle.SETTINGS_LABEL);
+    const deleteText = addTextObject(this.scene, 0, 0, i18next.t("settings:delete"), TextStyle.SETTINGS_LABEL);
     deleteText.setOrigin(0, 0.15);
     deleteText.setPositionRelative(iconDelete, -deleteText.width/6-2, 0);
 

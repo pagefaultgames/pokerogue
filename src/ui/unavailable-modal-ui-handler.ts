@@ -3,9 +3,11 @@ import { ModalConfig, ModalUiHandler } from "./modal-ui-handler";
 import { addTextObject, TextStyle } from "./text";
 import { Mode } from "./ui";
 import { updateUserInfo } from "#app/account";
+import * as Utils from "#app/utils";
+import i18next from "i18next";
 
 export default class UnavailableModalUiHandler extends ModalUiHandler {
-  private reconnectTimer: NodeJS.Timeout;
+  private reconnectTimer: NodeJS.Timeout | null;
   private reconnectDuration: number;
   private reconnectCallback: () => void;
 
@@ -14,7 +16,7 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
 
   private readonly randVarianceTime = 1000 * 10;
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
     this.reconnectDuration = this.minTime;
   }
@@ -42,7 +44,7 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
   setup(): void {
     super.setup();
 
-    const label = addTextObject(this.scene, this.getWidth() / 2, this.getHeight() / 2, "Oops! There was an issue contacting the server.\n\nYou may leave this window open,\nthe game will automatically reconnect.", TextStyle.WINDOW, { fontSize: "48px", align: "center" });
+    const label = addTextObject(this.scene, this.getWidth() / 2, this.getHeight() / 2, i18next.t("menu:errorServerDown"), TextStyle.WINDOW, { fontSize: "48px", align: "center" });
     label.setOrigin(0.5, 0.5);
 
     this.modalContainer.add(label);
@@ -53,8 +55,11 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
       if (response[0] || [200, 400].includes(response[1])) {
         this.reconnectTimer = null;
         this.reconnectDuration = this.minTime;
-        this.scene.playSound("pb_bounce_1");
+        this.scene.playSound("se/pb_bounce_1");
         this.reconnectCallback();
+      } else if (response[1] === 401) {
+        Utils.removeCookie(Utils.sessionIdKey);
+        this.scene.reset(true, true);
       } else {
         this.reconnectDuration = Math.min(this.reconnectDuration * 2, this.maxTime); // Set a max delay so it isn't infinite
         this.reconnectTimer =

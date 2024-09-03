@@ -13,8 +13,9 @@ import pad_dualshock from "#app/configs/inputs/pad_dualshock";
 import pad_unlicensedSNES from "#app/configs/inputs/pad_unlicensedSNES";
 import {InterfaceConfig} from "#app/inputs-controller";
 import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler.js";
-import {Device} from "#app/enums/devices";
+import {Device} from "#enums/devices";
 import {truncateString} from "#app/utils";
+import i18next from "i18next";
 
 /**
  * Class representing the settings UI handler for gamepads.
@@ -30,7 +31,7 @@ export default class SettingsGamepadUiHandler extends AbstractControlSettingsUiH
      * @param scene - The BattleScene instance.
      * @param mode - The UI mode, optional.
      */
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
     this.titleSelected = "Gamepad";
     this.setting = SettingGamepad;
@@ -54,7 +55,7 @@ export default class SettingsGamepadUiHandler extends AbstractControlSettingsUiH
     this.layout["noGamepads"] = new Map();
     const optionsContainer = this.scene.add.container(0, 0);
     optionsContainer.setVisible(false); // Initially hide the container as no gamepads are connected.
-    const label = addTextObject(this.scene, 8, 28, "Please plug a controller or press a button", TextStyle.SETTINGS_LABEL);
+    const label = addTextObject(this.scene, 8, 28, i18next.t("settings:gamepadPleasePlug"), TextStyle.SETTINGS_LABEL);
     label.setOrigin(0, 0);
     optionsContainer.add(label);
     this.settingsContainer.add(optionsContainer);

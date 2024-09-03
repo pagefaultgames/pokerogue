@@ -3,6 +3,8 @@ import Pokemon, { DamageResult, HitResult } from "./pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 
+type TextAndShadowArr = [ string | null, string | null ];
+
 export default class DamageNumberHandler {
   private damageNumbers: Map<BattlerIndex, Phaser.GameObjects.Text[]>;
 
@@ -20,10 +22,11 @@ export default class DamageNumberHandler {
     const battlerIndex = target.getBattlerIndex();
     const baseScale = target.getSpriteScale() / 6;
     const damageNumber = addTextObject(scene, target.x, -(scene.game.canvas.height / 6) + target.y - target.getSprite().height / 2, Utils.formatStat(amount, true), TextStyle.SUMMARY);
+    damageNumber.setName("text-damage-number");
     damageNumber.setOrigin(0.5, 1);
     damageNumber.setScale(baseScale);
 
-    let [ textColor, shadowColor ] = [ null, null ];
+    let [ textColor, shadowColor ] : TextAndShadowArr = [ null, null ];
 
     switch (result) {
     case HitResult.SUPER_EFFECTIVE:
@@ -61,12 +64,12 @@ export default class DamageNumberHandler {
       this.damageNumbers.set(battlerIndex, []);
     }
 
-    const yOffset = this.damageNumbers.get(battlerIndex).length * -10;
+    const yOffset = this.damageNumbers.get(battlerIndex)!.length * -10;
     if (yOffset) {
       damageNumber.y += yOffset;
     }
 
-    this.damageNumbers.get(battlerIndex).push(damageNumber);
+    this.damageNumbers.get(battlerIndex)!.push(damageNumber);
 
     if (scene.damageNumbersMode === 1) {
       scene.tweens.add({
@@ -82,7 +85,7 @@ export default class DamageNumberHandler {
         alpha: 0,
         ease: "Sine.easeIn",
         onComplete: () => {
-          this.damageNumbers.get(battlerIndex).splice(this.damageNumbers.get(battlerIndex).indexOf(damageNumber), 1);
+          this.damageNumbers.get(battlerIndex)!.splice(this.damageNumbers.get(battlerIndex)!.indexOf(damageNumber), 1);
           damageNumber.destroy(true);
         }
       });
@@ -166,7 +169,7 @@ export default class DamageNumberHandler {
           delay: Utils.fixedInt(500),
           alpha: 0,
           onComplete: () => {
-            this.damageNumbers.get(battlerIndex).splice(this.damageNumbers.get(battlerIndex).indexOf(damageNumber), 1);
+            this.damageNumbers.get(battlerIndex)!.splice(this.damageNumbers.get(battlerIndex)!.indexOf(damageNumber), 1);
             damageNumber.destroy(true);
           }
         }

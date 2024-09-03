@@ -3,7 +3,7 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { WindowVariant, addWindow } from "./ui-theme";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 
 export interface ModalConfig {
   buttonActions: Function[];
@@ -16,7 +16,7 @@ export abstract class ModalUiHandler extends UiHandler {
   protected buttonContainers: Phaser.GameObjects.Container[];
   protected buttonBgs: Phaser.GameObjects.NineSlice[];
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
     this.buttonContainers = [];

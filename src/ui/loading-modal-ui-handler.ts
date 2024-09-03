@@ -5,7 +5,7 @@ import { addTextObject, TextStyle } from "./text";
 import { Mode } from "./ui";
 
 export default class LoadingModalUiHandler extends ModalUiHandler {
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
   }
 

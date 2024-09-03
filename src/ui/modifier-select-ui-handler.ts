@@ -1,15 +1,18 @@
 import BattleScene from "../battle-scene";
 import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption, TmModifierType } from "../modifier/modifier-type";
 import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
-import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
+import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
-import {Button} from "../enums/buttons";
+import {Button} from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/move";
 import * as Utils from "./../utils";
+import Overrides from "#app/overrides";
+import i18next from "i18next";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -27,11 +30,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private rowCursor: integer = 0;
   private player: boolean;
   private rerollCost: integer;
+  private transferButtonWidth: integer;
+  private checkButtonWidth: integer;
 
   public options: ModifierOption[];
   public shopOptionsRows: ModifierOption[][];
 
-  private cursorObj: Phaser.GameObjects.Image;
+  private cursorObj: Phaser.GameObjects.Image | null;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.CONFIRM);
@@ -46,32 +51,42 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.modifierContainer = this.scene.add.container(0, 0);
     ui.add(this.modifierContainer);
 
-    this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 71, -64);
-    this.transferButtonContainer.setName("container-transfer-btn");
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    const styleOptions = getTextStyleOptions(TextStyle.PARTY, (this.scene as BattleScene).uiTheme).styleOptions;
+
+    if (context) {
+      context.font = styleOptions.fontSize + "px " + styleOptions.fontFamily;
+      this.transferButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:transfer")).width;
+      this.checkButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:checkTeam")).width;
+    }
+
+    this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width - this.checkButtonWidth) / 6 - 21, -64);
+    this.transferButtonContainer.setName("transfer-btn");
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
 
-    const transferButtonText = addTextObject(this.scene, -4, -2, "Transfer", TextStyle.PARTY);
+    const transferButtonText = addTextObject(this.scene, -4, -2, i18next.t("modifierSelectUiHandler:transfer"), TextStyle.PARTY);
     transferButtonText.setName("text-transfer-btn");
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
 
-    this.checkButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -64);
-    this.checkButtonContainer.setName("container-use-btn");
+    this.checkButtonContainer = this.scene.add.container((this.scene.game.canvas.width) / 6 - 1, -64);
+    this.checkButtonContainer.setName("use-btn");
     this.checkButtonContainer.setVisible(false);
     ui.add(this.checkButtonContainer);
 
-    const checkButtonText = addTextObject(this.scene, -4, -2, "Check Team", TextStyle.PARTY);
+    const checkButtonText = addTextObject(this.scene, -4, -2, i18next.t("modifierSelectUiHandler:checkTeam"), TextStyle.PARTY);
     checkButtonText.setName("text-use-btn");
     checkButtonText.setOrigin(1, 0);
     this.checkButtonContainer.add(checkButtonText);
 
     this.rerollButtonContainer = this.scene.add.container(16, -64);
-    this.rerollButtonContainer.setName("container-reroll-brn");
+    this.rerollButtonContainer.setName("reroll-brn");
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
 
-    const rerollButtonText = addTextObject(this.scene, -4, -2, "Reroll", TextStyle.PARTY);
+    const rerollButtonText = addTextObject(this.scene, -4, -2, i18next.t("modifierSelectUiHandler:reroll"), TextStyle.PARTY);
     rerollButtonText.setName("text-reroll-btn");
     rerollButtonText.setOrigin(0, 0);
     this.rerollButtonContainer.add(rerollButtonText);
@@ -86,7 +101,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonContainer.setVisible(false);
     ui.add(this.lockRarityButtonContainer);
 
-    this.lockRarityButtonText = addTextObject(this.scene, -4, -2, "Lock Rarities", TextStyle.PARTY);
+    this.lockRarityButtonText = addTextObject(this.scene, -4, -2, i18next.t("modifierSelectUiHandler:lockRarities"), TextStyle.PARTY);
     this.lockRarityButtonText.setOrigin(0, 0);
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
 
@@ -107,6 +122,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   }
 
   show(args: any[]): boolean {
+
+    this.scene.disableMenu = false;
+
     if (this.active) {
       if (args.length >= 3) {
         this.awaitingActionInput = true;
@@ -126,7 +144,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.player = args[0];
 
-    const partyHasHeldItem = this.player && !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true)).length;
+    const partyHasHeldItem = this.player && !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferrable).length;
     const canLockRarities = !!this.scene.findModifier(m => m instanceof LockModifierTiersModifier);
 
     this.transferButtonContainer.setVisible(false);
@@ -180,8 +198,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
 
-    this.scene.showFieldOverlay(750);
+    /* Force updateModifiers without pokemonSpecificModifiers */
+    this.scene.getModifierBar().updateModifiers(this.scene.modifiers, true);
+
+    /* Multiplies the appearance duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
+    this.scene.showShopOverlay(750 * this.scene.gameSpeed);
     this.scene.updateAndShowText(750);
+    this.scene.updateBiomeWaveText();
     this.scene.updateMoneyText();
 
     let i = 0;
@@ -230,11 +253,22 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         duration: 250
       });
 
-      this.setCursor(0);
-      this.setRowCursor(1);
+      const updateCursorTarget = () => {
+        if (this.scene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
+          this.setRowCursor(0);
+          this.setCursor(2);
+        } else {
+          this.setRowCursor(this.scene.shopCursorTarget);
+          this.setCursor(0);
+        }
+      };
 
-      handleTutorial(this.scene, Tutorial.Select_Item).then(() => {
-        this.setCursor(0);
+      updateCursorTarget();
+
+      handleTutorial(this.scene, Tutorial.Select_Item).then((res) => {
+        if (res) {
+          updateCursorTarget();
+        }
         this.awaitingActionInput = true;
         this.onActionInput = args[2];
       });
@@ -303,7 +337,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
             success = false;
             break;
           case 1:
-            success = this.rerollButtonContainer.visible && this.setCursor(0);
+            if (this.lockRarityButtonContainer.visible) {
+              success = this.setCursor(3);
+            } else {
+              success = this.rerollButtonContainer.visible && this.setCursor(0);
+            }
             break;
           case 2:
             if (this.transferButtonContainer.visible) {
@@ -336,6 +374,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
             break;
           case 2:
             success = false;
+            break;
+          case 3:
+            if (this.transferButtonContainer.visible) {
+              success = this.setCursor(1);
+            } else {
+              success = this.setCursor(2);
+            }
             break;
           }
         } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
@@ -378,23 +423,23 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
 
       const type = options[this.cursor].modifierTypeOption.type;
-      ui.showText(type.getDescription(this.scene));
+      type && ui.showText(type.getDescription(this.scene));
       if (type instanceof TmModifierType) {
         // prepare the move overlay to be shown with the toggle
         this.moveInfoOverlay.show(allMoves[type.moveId]);
       }
     } else if (cursor === 0) {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
-      ui.showText("Spend money to reroll your item options.");
+      ui.showText(i18next.t("modifierSelectUiHandler:rerollDesc"));
     } else if (cursor === 1) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 120, -60);
-      ui.showText("Transfer a held item from one Pokémon to another.");
+      this.cursorObj.setPosition((this.scene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth)/6 - 30, -60);
+      ui.showText(i18next.t("modifierSelectUiHandler:transferDesc"));
     } else if (cursor === 2) {
-      this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 60, -60);
-      ui.showText("Check your team or use a form changing item.");
+      this.cursorObj.setPosition((this.scene.game.canvas.width - this.checkButtonWidth)/6 - 10, -60);
+      ui.showText(i18next.t("modifierSelectUiHandler:checkTeamDesc"));
     } else {
       this.cursorObj.setPosition(6, -60);
-      ui.showText("Lock item rarities on reroll (affects reroll cost).");
+      ui.showText(i18next.t("modifierSelectUiHandler:lockRaritiesDesc"));
     }
 
     return ret;
@@ -451,7 +496,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const formattedMoney = Utils.formatMoney(this.scene.moneyFormat, this.rerollCost);
 
-    this.rerollCostText.setText(`₽${formattedMoney}`);
+    this.rerollCostText.setText(i18next.t("modifierSelectUiHandler:rerollCost", { formattedMoney }));
     this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
     this.rerollCostText.setShadowColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
   }
@@ -472,8 +517,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.getUi().clearText();
     this.eraseCursor();
 
-    this.scene.hideFieldOverlay(250);
+    /* Multiplies the fade time duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
+    this.scene.hideShopOverlay(750 * this.scene.gameSpeed);
     this.scene.hideLuckText(250);
+
+    /* Normally already called just after the shop, but not sure if it happens in 100% of cases */
+    this.scene.getModifierBar().updateModifiers(this.scene.modifiers);
 
     const options = this.options.concat(this.shopOptionsRows.flat());
     this.options.splice(0, this.options.length);
@@ -554,7 +603,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.add(this.itemContainer);
 
     const getItem = () => {
-      const item = this.scene.add.sprite(0, 0, "items", this.modifierTypeOption.type.iconImage);
+      const item = this.scene.add.sprite(0, 0, "items", this.modifierTypeOption.type?.iconImage);
       return item;
     };
 
@@ -567,10 +616,10 @@ class ModifierOption extends Phaser.GameObjects.Container {
       this.itemContainer.add(this.itemTint);
     }
 
-    this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type.name, TextStyle.PARTY, { align: "center" });
+    this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type?.name!, TextStyle.PARTY, { align: "center" }); // TODO: is this bang correct?
     this.itemText.setOrigin(0.5, 0);
     this.itemText.setAlpha(0);
-    this.itemText.setTint(getModifierTierTextTint(this.modifierTypeOption.type.tier));
+    this.itemText.setTint(this.modifierTypeOption.type?.tier ? getModifierTierTextTint(this.modifierTypeOption.type?.tier) : undefined);
     this.add(this.itemText);
 
     if (this.modifierTypeOption.cost) {
@@ -608,7 +657,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
           }
           const value = t.getValue();
           if (!bounce && value > lastValue) {
-            (this.scene as BattleScene).playSound("pb_bounce_1", { volume: 1 / ++bounceCount });
+            (this.scene as BattleScene).playSound("se/pb_bounce_1", { volume: 1 / ++bounceCount });
             bounce = true;
           } else if (bounce && value < lastValue) {
             bounce = false;
@@ -620,7 +669,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
       for (let u = 0; u < this.modifierTypeOption.upgradeCount; u++) {
         const upgradeIndex = u;
         this.scene.time.delayedCall(remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (upgradeIndex + 1 + upgradeCountOffset)), () => {
-          (this.scene as BattleScene).playSound("upgrade", { rate: 1 + 0.25 * upgradeIndex });
+          (this.scene as BattleScene).playSound("se/upgrade", { rate: 1 + 0.25 * upgradeIndex });
           this.pbTint.setPosition(this.pb.x, this.pb.y);
           this.pbTint.setTintFill(0xFFFFFF);
           this.pbTint.setAlpha(0);
@@ -654,7 +703,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
       if (!this.modifierTypeOption.cost) {
         this.pb.setTexture("pb", `${this.getPbAtlasKey(0)}_open`);
-        (this.scene as BattleScene).playSound("pb_rel");
+        (this.scene as BattleScene).playSound("se/pb_rel");
 
         this.scene.tweens.add({
           targets: this.pb,
@@ -702,16 +751,17 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   getPbAtlasKey(tierOffset: integer = 0) {
-    return getPokeballAtlasKey((this.modifierTypeOption.type.tier + tierOffset) as integer as PokeballType);
+    return getPokeballAtlasKey((this.modifierTypeOption.type?.tier! + tierOffset) as integer as PokeballType); // TODO: is this bang correct?
   }
 
   updateCostText(): void {
     const scene = this.scene as BattleScene;
-    const textStyle = this.modifierTypeOption.cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
+    const cost = Overrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
+    const textStyle = cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
-    const formattedMoney = Utils.formatMoney(scene.moneyFormat, this.modifierTypeOption.cost);
+    const formattedMoney = Utils.formatMoney(scene.moneyFormat, cost);
 
-    this.itemCostText.setText(`₽${formattedMoney}`);
+    this.itemCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney }));
     this.itemCostText.setColor(getTextColor(textStyle, false, scene.uiTheme));
     this.itemCostText.setShadowColor(getTextColor(textStyle, true, scene.uiTheme));
   }
