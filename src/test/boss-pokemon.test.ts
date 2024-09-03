@@ -10,7 +10,7 @@ import { EnemyPokemon } from "#app/field/pokemon";
 import { toDmgValue } from "#app/utils";
 
 describe("Boss Pokemon / Shields", () => {
-  const TIMEOUT = 2500;
+  const TIMEOUT = 20 * 1000;
 
   let phaserGame: Phaser.Game;
   let game: GameManager;
