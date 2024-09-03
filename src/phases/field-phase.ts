@@ -1,5 +1,5 @@
-import { BattlePhase } from "./battle-phase";
 import Pokemon from "#app/field/pokemon";
+import { BattlePhase } from "./battle-phase";
 import { BattlerIndex } from "#app/battle.js";
 import * as Utils from "../utils";
 import { Stat } from "#app/enums/stat.js";
@@ -21,8 +21,8 @@ export abstract class FieldPhase extends BattlePhase {
     }, this.scene.currentBattle.turn, this.scene.waveSeed);
 
     orderedTargets.sort((a: Pokemon, b: Pokemon) => {
-      const aSpeed = a?.getBattleStat(Stat.SPD) || 0;
-      const bSpeed = b?.getBattleStat(Stat.SPD) || 0;
+      const aSpeed = a?.getEffectiveStat(Stat.SPD) || 0;
+      const bSpeed = b?.getEffectiveStat(Stat.SPD) || 0;
 
       return bSpeed - aSpeed;
     });

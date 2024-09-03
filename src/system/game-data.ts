@@ -951,7 +951,7 @@ export class GameData {
     return ret;
   }
 
-  private getSessionSaveData(scene: BattleScene): SessionSaveData {
+  public getSessionSaveData(scene: BattleScene): SessionSaveData {
     return {
       seed: scene.seed,
       playTime: scene.sessionPlayTime,

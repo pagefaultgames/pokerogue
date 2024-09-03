@@ -11,7 +11,6 @@ import Move, { MoveCategory } from "../data/move";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { getLevelRelExp, getLevelTotalExp } from "../data/exp";
-import { Stat, getStatName } from "../data/pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
 import { getBiomeName } from "../data/biomes";
@@ -19,10 +18,11 @@ import { Nature, getNatureName, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
 import { Variant, getVariantTint } from "#app/data/variant";
 import {Button} from "#enums/buttons";
-import { Ability } from "../data/ability.js";
+import { Ability } from "../data/ability";
 import i18next from "i18next";
 import {modifierSortFunc} from "../modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
+import { Stat, PERMANENT_STATS, getStatKey } from "#app/enums/stat";
 
 enum Page {
   PROFILE,
@@ -836,10 +836,8 @@ export default class SummaryUiHandler extends UiHandler {
       const statsContainer = this.scene.add.container(0, -pageBg.height);
       pageContainer.add(statsContainer);
 
-      const stats = Utils.getEnumValues(Stat) as Stat[];
-
-      stats.forEach((stat, s) => {
-        const statName = getStatName(stat);
+      PERMANENT_STATS.forEach((stat, s) => {
+        const statName = i18next.t(getStatKey(stat));
         const rowIndex = s % 3;
         const colIndex = Math.floor(s / 3);
 
@@ -850,7 +848,7 @@ export default class SummaryUiHandler extends UiHandler {
         statsContainer.add(statLabel);
 
         const statValueText = stat !== Stat.HP
-          ? Utils.formatStat(this.pokemon?.stats[s]!) // TODO: is this bang correct?
+          ? Utils.formatStat(this.pokemon?.getStat(stat)!) // TODO: is this bang correct?
           : `${Utils.formatStat(this.pokemon?.hp!, true)}/${Utils.formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
 
         const statValue = addTextObject(this.scene, 120 + 88 * colIndex, 56 + 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);

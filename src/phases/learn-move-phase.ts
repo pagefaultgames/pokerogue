@@ -14,11 +14,13 @@ import * as LoggerTools from "../logger";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
+  private fromTM: boolean;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves) {
+  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves, fromTM?: boolean) {
     super(scene, partyMemberIndex);
 
     this.moveId = moveId;
+    this.fromTM = fromTM ?? false;
   }
 
   start() {
@@ -111,6 +113,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }
     if (emptyMoveIndex > -1) {
       pokemon.setMove(emptyMoveIndex, this.moveId);
+      if (this.fromTM) {
+        pokemon.usedTMs.push(this.moveId);
+      }
       initMoveAnim(this.scene, this.moveId).then(() => {
         loadMoveAnimAssets(this.scene, [this.moveId], true)
           .then(() => {
