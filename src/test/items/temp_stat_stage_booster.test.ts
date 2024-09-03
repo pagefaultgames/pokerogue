@@ -16,6 +16,7 @@ import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target.js";
 
 
 describe("Items - Temporary Stat Stage Boosters", () => {
@@ -154,8 +155,8 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
       // Traverse to first modifier slot
-      handler.processInput(Button.LEFT);
-      handler.processInput(Button.UP);
+      handler.setCursor(0);
+      handler.setRowCursor(ShopCursorTarget.REWARDS);
       handler.processInput(Button.ACTION);
     }, () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(NewBattlePhase), true);
 
