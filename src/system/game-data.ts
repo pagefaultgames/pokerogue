@@ -464,7 +464,7 @@ export class GameData {
         const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
         const lsItem = localStorage.getItem(lsItemKey);
         if (!lsItem) {
-          localStorage.setItem(lsItemKey, encrypt("", true));
+          localStorage.setItem(lsItemKey, "");
         }
 
         this.trainerId = systemData.trainerId;
@@ -594,7 +594,7 @@ export class GameData {
       if (lsItem) {
         const cachedResponse  = lsItem;
         if (cachedResponse) {
-          const runHistory = JSON.parse(decrypt(cachedResponse, true));
+          const runHistory = JSON.parse(decrypt(cachedResponse, bypassLogin));
           return runHistory;
         }
         return {};
@@ -616,7 +616,7 @@ export class GameData {
       if (lsItem) {
         const cachedResponse = lsItem;
         if (cachedResponse) {
-          const runHistory : RunHistoryData = JSON.parse(decrypt(cachedResponse, true));
+          const runHistory : RunHistoryData = JSON.parse(decrypt(cachedResponse, bypassLogin));
           return runHistory;
         }
         return {};
@@ -652,7 +652,7 @@ export class GameData {
       isVictory: isVictory,
       isFavorite: false,
     };
-    localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), true));
+    localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), bypassLogin));
     /**
      * Networking Code DO NOT DELETE
      *
@@ -1368,8 +1368,7 @@ export class GameData {
       } else {
         const data = localStorage.getItem(dataKey);
         if (data) {
-          handleData(decrypt(data, (dataType !== GameDataType.RUN_HISTORY) ? bypassLogin : true));
-          // This conditional is necessary because at the moment, run history is stored locally only so it has to be decoded from Base64 as if it was local
+          handleData(decrypt(data, bypassLogin));
         }
         resolve(!!data);
       }
@@ -1418,9 +1417,6 @@ export class GameData {
                   const entryKeys = Object.keys(data[key]);
                   valid = ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
                 });
-                if (valid) {
-                  localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, dataStr);
-                }
                 break;
               case GameDataType.SETTINGS:
               case GameDataType.TUTORIALS:
@@ -1492,7 +1488,7 @@ export class GameData {
       };
     }
 
-    const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.DEFAULT_VARIANT | DexAttr.DEFAULT_FORM;
+    const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.FEMALE | DexAttr.DEFAULT_VARIANT | DexAttr.DEFAULT_FORM;
 
     const defaultStarterNatures: Nature[] = [];
 
@@ -1923,6 +1919,7 @@ export class GameData {
   fixStarterData(systemData: SystemSaveData): void {
     for (const starterId of defaultStarterSpecies) {
       systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
+      systemData.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
     }
   }
 
