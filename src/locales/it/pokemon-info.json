@@ -13,7 +13,8 @@
     "SPD": "Velocità",
     "SPDshortened": "Vel",
     "ACC": "Precisione",
-    "EVA": "Elusione"
+    "EVA": "Elusione",
+    "HPStat": "PS"
   },
   "Type": {
     "UNKNOWN": "Sconosciuto",
