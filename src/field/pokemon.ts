@@ -3647,6 +3647,9 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.moveset = this.moveset.slice();
         newPokemon.moveset = this.copyMoveset();
         newPokemon.luck = this.luck;
+        newPokemon.metLevel = this.metLevel;
+        newPokemon.metBiome = this.metBiome;
+        newPokemon.metSpecies = this.metSpecies;
         newPokemon.fusionSpecies = this.fusionSpecies;
         newPokemon.fusionFormIndex = this.fusionFormIndex;
         newPokemon.fusionAbilityIndex = this.fusionAbilityIndex;
