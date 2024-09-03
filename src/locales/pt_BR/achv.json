@@ -84,7 +84,7 @@
   "100_RIBBONS": {
     "name": "Fita de Diamante"
   },
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     "name": "Trabalho em Equipe",
     "description": "Use Baton Pass com pelo menos um atributo aumentado ao máximo"
   },

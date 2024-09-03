@@ -1,9 +1,8 @@
 import { BattlerIndex } from "#app/battle";
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/move";
 import { Type } from "#app/data/type";
 import { Abilities } from "#app/enums/abilities";
-import { Stat } from "#app/enums/stat";
 import { HitResult } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -112,7 +111,7 @@ describe("Moves - Tera Blast", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(playerPokemon.summonData.battleStats[BattleStat.SPATK]).toBe(-1);
-    expect(playerPokemon.summonData.battleStats[BattleStat.ATK]).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
   }, 20000);
 });
