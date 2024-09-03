@@ -960,7 +960,6 @@ export default class BattleScene extends SceneBase {
     this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
   }
 
-  // What is the purpose of this function? Why not just use Battle.randSeedInt() directly?
   randBattleSeedInt(range: integer, min: integer = 0): integer {
     return this.currentBattle?.randSeedInt(this, range, min);
   }
