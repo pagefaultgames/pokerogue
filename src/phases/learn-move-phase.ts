@@ -100,7 +100,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
           this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
             this.end();
           }, null, true);
-        }, () => this.replaceMoveCheck());
+        }, () => this.replaceMoveCheck(move, pokemon));
     });
   }
 
