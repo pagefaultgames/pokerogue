@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import GameManager from "#app/test/utils/gameManager";
@@ -35,7 +35,7 @@ describe("Moves - Baton Pass", () => {
       .disableCrits();
   });
 
-  it("passes stat stage buffs when player uses it", async () => {
+  it("transfers all stat stages when player uses it", async() => {
     // arrange
     await game.startBattle([
       Species.RAICHU,
@@ -45,7 +45,10 @@ describe("Moves - Baton Pass", () => {
     // round 1 - buff
     game.move.select(Moves.NASTY_PLOT);
     await game.toNextTurn();
-    expect(game.scene.getPlayerPokemon()!.summonData.battleStats[BattleStat.SPATK]).toEqual(2);
+
+    let playerPokemon = game.scene.getPlayerPokemon()!;
+
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
 
     // round 2 - baton pass
     game.move.select(Moves.BATON_PASS);
@@ -53,9 +56,9 @@ describe("Moves - Baton Pass", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     // assert
-    const playerPkm = game.scene.getPlayerPokemon()!;
-    expect(playerPkm.species.speciesId).toEqual(Species.SHUCKLE);
-    expect(playerPkm.summonData.battleStats[BattleStat.SPATK]).toEqual(2);
+    playerPokemon = game.scene.getPlayerPokemon()!;
+    expect(playerPokemon.species.speciesId).toEqual(Species.SHUCKLE);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
   }, 20000);
 
   it("passes stat stage buffs when AI uses it", async () => {
@@ -80,7 +83,7 @@ describe("Moves - Baton Pass", () => {
 
     // assert
     // check buffs are still there
-    expect(game.scene.getEnemyPokemon()!.summonData.battleStats[BattleStat.SPATK]).toEqual(2);
+    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.SPATK)).toEqual(2);
     // confirm that a switch actually happened. can't use species because I
     // can't find a way to override trainer parties with more than 1 pokemon species
     expect(game.scene.getEnemyPokemon()!.hp).not.toEqual(100);

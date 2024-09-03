@@ -1,7 +1,6 @@
 import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "./battle-anims";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
-import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
 import { ChargeAttr, MoveFlags, allMoves } from "./move";
@@ -9,20 +8,20 @@ import { Type } from "./type";
 import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
-import { BattleStat } from "./battle-stat";
 import { allAbilities } from "./ability";
 import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import i18next from "#app/plugins/i18n.js";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { MovePhase } from "#app/phases/move-phase.js";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
-import { StatChangePhase, StatChangeCallback } from "#app/phases/stat-change-phase.js";
+import i18next from "#app/plugins/i18n";
+import { Stat, type BattleStat, type EffectiveStat, EFFECTIVE_STATS, getStatKey } from "#app/enums/stat";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { MovePhase } from "#app/phases/move-phase";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { StatStageChangePhase, StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -212,7 +211,7 @@ export class TrappedTag extends BattlerTag {
 
   canAdd(pokemon: Pokemon): boolean {
     const isGhost = pokemon.isOfType(Type.GHOST);
-    const isTrapped = pokemon.getTag(BattlerTagType.TRAPPED);
+    const isTrapped = pokemon.getTag(TrappedTag);
 
     return !isTrapped && !isGhost;
   }
@@ -242,6 +241,23 @@ export class TrappedTag extends BattlerTag {
 
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battlerTags:trappedOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
+  }
+}
+
+/**
+ * BattlerTag implementing No Retreat's trapping effect.
+ * This is treated separately from other trapping effects to prevent
+ * Ghost-type Pokemon from being able to reuse the move.
+ * @extends TrappedTag
+ */
+class NoRetreatTag extends TrappedTag {
+  constructor(sourceId: number) {
+    super(BattlerTagType.NO_RETREAT, BattlerTagLapseType.CUSTOM, 0, Moves.NO_RETREAT, sourceId);
+  }
+
+  /** overrides {@linkcode TrappedTag.apply}, removing the Ghost-type condition */
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.getTag(TrappedTag);
   }
 }
 
@@ -345,8 +361,8 @@ export class ConfusedTag extends BattlerTag {
 
       // 1/3 chance of hitting self with a 40 base power move
       if (pokemon.randSeedInt(3) === 0) {
-        const atk = pokemon.getBattleStat(Stat.ATK);
-        const def = pokemon.getBattleStat(Stat.DEF);
+        const atk = pokemon.getEffectiveStat(Stat.ATK);
+        const def = pokemon.getEffectiveStat(Stat.DEF);
         const damage = Utils.toDmgValue(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
         pokemon.scene.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
         pokemon.damageAndUpdate(damage);
@@ -750,7 +766,7 @@ export class OctolockTag extends TrappedTag {
     const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (shouldLapse) {
-      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.DEF, BattleStat.SPDEF], -1));
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [ Stat.DEF, Stat.SPDEF ], -1));
       return true;
     }
 
@@ -864,7 +880,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isOfType(Type.GHOST) && !pokemon.findTag(t => t instanceof DamagingTrapTag);
+    return !pokemon.getTag(TrappedTag);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1076,7 +1092,7 @@ export class ContactDamageProtectedTag extends ProtectedTag {
   }
 }
 
-export class ContactStatChangeProtectedTag extends ProtectedTag {
+export class ContactStatStageChangeProtectedTag extends ProtectedTag {
   private stat: BattleStat;
   private levels: number;
 
@@ -1093,7 +1109,7 @@ export class ContactStatChangeProtectedTag extends ProtectedTag {
   */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
-    this.stat = source.stat as BattleStat;
+    this.stat = source.stat;
     this.levels = source.levels;
   }
 
@@ -1104,7 +1120,7 @@ export class ContactStatChangeProtectedTag extends ProtectedTag {
       const effectPhase = pokemon.scene.getCurrentPhase();
       if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
         const attacker = effectPhase.getPokemon();
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, attacker.getBattlerIndex(), true, [ this.stat ], this.levels));
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, attacker.getBattlerIndex(), true, [ this.stat ], this.levels));
       }
     }
 
@@ -1331,11 +1347,10 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    const stats = [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ];
-    let highestStat: Stat;
-    stats.map(s => pokemon.getBattleStat(s)).reduce((highestValue: number, value: number, i: number) => {
+    let highestStat: EffectiveStat;
+    EFFECTIVE_STATS.map(s => pokemon.getEffectiveStat(s)).reduce((highestValue: number, value: number, i: number) => {
       if (value > highestValue) {
-        highestStat = stats[i];
+        highestStat = EFFECTIVE_STATS[i];
         return value;
       }
       return highestValue;
@@ -1353,7 +1368,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
       break;
     }
 
-    pokemon.scene.queueMessage(i18next.t("battlerTags:highestStatBoostOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), statName: getStatName(highestStat) }), null, false, null, true);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:highestStatBoostOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), statName: i18next.t(getStatKey(highestStat)) }), null, false, null, true);
   }
 
   onRemove(pokemon: Pokemon): void {
@@ -1504,6 +1519,25 @@ export class CritBoostTag extends BattlerTag {
     super.onRemove(pokemon);
 
     pokemon.scene.queueMessage(i18next.t("battlerTags:critBoostOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+}
+
+/**
+ * Tag for the effects of Dragon Cheer, which boosts the critical hit ratio of the user's allies.
+ * @extends {CritBoostTag}
+ */
+export class DragonCheerTag extends CritBoostTag {
+  /** The types of the user's ally when the tag is added */
+  public typesOnAdd: Type[];
+
+  constructor() {
+    super(BattlerTagType.CRIT_BOOST, Moves.DRAGON_CHEER);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    this.typesOnAdd = pokemon.getTypes(true);
   }
 }
 
@@ -1678,25 +1712,25 @@ export class IceFaceBlockDamageTag extends FormBlockDamageTag {
  */
 export class StockpilingTag extends BattlerTag {
   public stockpiledCount: number = 0;
-  public statChangeCounts: { [BattleStat.DEF]: number; [BattleStat.SPDEF]: number } = {
-    [BattleStat.DEF]: 0,
-    [BattleStat.SPDEF]: 0
+  public statChangeCounts: { [Stat.DEF]: number; [Stat.SPDEF]: number } = {
+    [Stat.DEF]: 0,
+    [Stat.SPDEF]: 0
   };
 
   constructor(sourceMove: Moves = Moves.NONE) {
     super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
-  private onStatsChanged: StatChangeCallback = (_, statsChanged, statChanges) => {
-    const defChange = statChanges[statsChanged.indexOf(BattleStat.DEF)] ?? 0;
-    const spDefChange = statChanges[statsChanged.indexOf(BattleStat.SPDEF)] ?? 0;
+  private onStatStagesChanged: StatStageChangeCallback = (_, statsChanged, statChanges) => {
+    const defChange = statChanges[statsChanged.indexOf(Stat.DEF)] ?? 0;
+    const spDefChange = statChanges[statsChanged.indexOf(Stat.SPDEF)] ?? 0;
 
     if (defChange) {
-      this.statChangeCounts[BattleStat.DEF]++;
+      this.statChangeCounts[Stat.DEF]++;
     }
 
     if (spDefChange) {
-      this.statChangeCounts[BattleStat.SPDEF]++;
+      this.statChangeCounts[Stat.SPDEF]++;
     }
   };
 
@@ -1704,8 +1738,8 @@ export class StockpilingTag extends BattlerTag {
     super.loadTag(source);
     this.stockpiledCount = source.stockpiledCount || 0;
     this.statChangeCounts = {
-      [ BattleStat.DEF ]: source.statChangeCounts?.[ BattleStat.DEF ] ?? 0,
-      [ BattleStat.SPDEF ]: source.statChangeCounts?.[ BattleStat.SPDEF ] ?? 0,
+      [ Stat.DEF ]: source.statChangeCounts?.[ Stat.DEF ] ?? 0,
+      [ Stat.SPDEF ]: source.statChangeCounts?.[ Stat.SPDEF ] ?? 0,
     };
   }
 
@@ -1725,9 +1759,9 @@ export class StockpilingTag extends BattlerTag {
       }));
 
       // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
-      pokemon.scene.unshiftPhase(new StatChangePhase(
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(
         pokemon.scene, pokemon.getBattlerIndex(), true,
-        [BattleStat.SPDEF, BattleStat.DEF], 1, true, false, true, this.onStatsChanged
+        [Stat.SPDEF, Stat.DEF], 1, true, false, true, this.onStatStagesChanged
       ));
     }
   }
@@ -1741,15 +1775,15 @@ export class StockpilingTag extends BattlerTag {
    * one stage for each stack which had successfully changed that particular stat during onAdd.
    */
   onRemove(pokemon: Pokemon): void {
-    const defChange = this.statChangeCounts[BattleStat.DEF];
-    const spDefChange = this.statChangeCounts[BattleStat.SPDEF];
+    const defChange = this.statChangeCounts[Stat.DEF];
+    const spDefChange = this.statChangeCounts[Stat.SPDEF];
 
     if (defChange) {
-      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.DEF], -defChange, true, false, true));
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.DEF ], -defChange, true, false, true));
     }
 
     if (spDefChange) {
-      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.SPDEF], -spDefChange, true, false, true));
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.SPDEF ], -spDefChange, true, false, true));
     }
   }
 }
@@ -1864,6 +1898,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new DrowsyTag();
   case BattlerTagType.TRAPPED:
     return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
+  case BattlerTagType.NO_RETREAT:
+    return new NoRetreatTag(sourceId);
   case BattlerTagType.BIND:
     return new BindTag(turnCount, sourceId);
   case BattlerTagType.WRAP:
@@ -1889,11 +1925,11 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.SPIKY_SHIELD:
     return new ContactDamageProtectedTag(sourceMove, 8);
   case BattlerTagType.KINGS_SHIELD:
-    return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.ATK, -1);
+    return new ContactStatStageChangeProtectedTag(sourceMove, tagType, Stat.ATK, -1);
   case BattlerTagType.OBSTRUCT:
-    return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.DEF, -2);
+    return new ContactStatStageChangeProtectedTag(sourceMove, tagType, Stat.DEF, -2);
   case BattlerTagType.SILK_TRAP:
-    return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.SPD, -1);
+    return new ContactStatStageChangeProtectedTag(sourceMove, tagType, Stat.SPD, -1);
   case BattlerTagType.BANEFUL_BUNKER:
     return new ContactPoisonProtectedTag(sourceMove);
   case BattlerTagType.BURNING_BULWARK:
@@ -1923,6 +1959,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new TypeBoostTag(tagType, sourceMove, Type.FIRE, 1.5, false);
   case BattlerTagType.CRIT_BOOST:
     return new CritBoostTag(tagType, sourceMove);
+  case BattlerTagType.DRAGON_CHEER:
+    return new DragonCheerTag();
   case BattlerTagType.ALWAYS_CRIT:
   case BattlerTagType.IGNORE_ACCURACY:
     return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);

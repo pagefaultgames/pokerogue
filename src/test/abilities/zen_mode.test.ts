@@ -1,6 +1,5 @@
+import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
-import { Stat } from "#app/data/pokemon-stat";
-import { Status, StatusEffect } from "#app/data/status-effect";
 import { DamagePhase } from "#app/phases/damage-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { MessagePhase } from "#app/phases/message-phase";
@@ -18,6 +17,7 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { Status, StatusEffect } from "#app/data/status-effect";
 
 const TIMEOUT = 20 * 1000;
 

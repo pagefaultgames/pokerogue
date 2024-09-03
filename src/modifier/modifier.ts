@@ -3,16 +3,14 @@ import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { MAX_PER_TYPE_POKEBALLS, PokeballType } from "../data/pokeball";
 import Pokemon, { PlayerPokemon } from "../field/pokemon";
-import { Stat } from "../data/pokemon-stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from "../data/type";
 import { EvolutionPhase } from "../phases/evolution-phase";
 import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import { getPokemonNameWithAffix } from "../messages";
 import * as Utils from "../utils";
-import { TempBattleStat } from "../data/temp-battle-stat";
 import { getBerryEffectFunc, getBerryPredicate } from "../data/berry";
-import { BattlerTagType} from "#enums/battler-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { StatusEffect, getStatusEffectHealText } from "../data/status-effect";
 import { achvs } from "../system/achv";
@@ -23,6 +21,7 @@ import Overrides from "#app/overrides";
 import { ModifierType, modifierTypes } from "./modifier-type";
 import { Command } from "#app/ui/command-ui-handler";
 import { Species } from "#enums/species";
+import { Stat, type PermanentStat, type TempBattleStat, BATTLE_STATS, TEMP_BATTLE_STATS  } from "#app/enums/stat";
 import i18next from "i18next";
 
 import { allMoves } from "#app/data/move";
@@ -362,41 +361,160 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
   }
 }
 
-export class TempBattleStatBoosterModifier extends LapsingPersistentModifier {
-  private tempBattleStat: TempBattleStat;
+/**
+ * Modifier used for party-wide items, specifically the X items, that
+ * temporarily increases the stat stage multiplier of the corresponding
+ * {@linkcode TempBattleStat}.
+ * @extends LapsingPersistentModifier
+ * @see {@linkcode apply}
+ */
+export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
+  private stat: TempBattleStat;
+  private multiplierBoost: number;
 
-  constructor(type: ModifierTypes.TempBattleStatBoosterModifierType, tempBattleStat: TempBattleStat, battlesLeft?: integer, stackCount?: integer) {
-    super(type, battlesLeft || 5, stackCount);
+  constructor(type: ModifierType, stat: TempBattleStat, battlesLeft?: number, stackCount?: number) {
+    super(type, battlesLeft ?? 5, stackCount);
 
-    this.tempBattleStat = tempBattleStat;
+    this.stat = stat;
+    // Note that, because we want X Accuracy to maintain its original behavior,
+    // it will increment as it did previously, directly to the stat stage.
+    this.multiplierBoost = stat !== Stat.ACC ? 0.3 : 1;
   }
 
   match(modifier: Modifier): boolean {
-    if (modifier instanceof TempBattleStatBoosterModifier) {
-      return (modifier as TempBattleStatBoosterModifier).tempBattleStat === this.tempBattleStat
-        && (modifier as TempBattleStatBoosterModifier).battlesLeft === this.battlesLeft;
+    if (modifier instanceof TempStatStageBoosterModifier) {
+      const modifierInstance = modifier as TempStatStageBoosterModifier;
+      return (modifierInstance.stat === this.stat);
     }
     return false;
   }
 
-  clone(): TempBattleStatBoosterModifier {
-    return new TempBattleStatBoosterModifier(this.type as ModifierTypes.TempBattleStatBoosterModifierType, this.tempBattleStat, this.battlesLeft, this.stackCount);
+  clone() {
+    return new TempStatStageBoosterModifier(this.type, this.stat, this.battlesLeft, this.stackCount);
   }
 
   getArgs(): any[] {
-    return [ this.tempBattleStat, this.battlesLeft ];
+    return [ this.stat, this.battlesLeft ];
   }
 
-  apply(args: any[]): boolean {
-    const tempBattleStat = args[0] as TempBattleStat;
+  /**
+   * Checks if {@linkcode args} contains the necessary elements and if the
+   * incoming stat is matches {@linkcode stat}.
+   * @param args [0] {@linkcode TempBattleStat} being checked at the time
+   *             [1] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the modifier can be applied, false otherwise
+   */
+  shouldApply(args: any[]): boolean {
+    return args && (args.length === 2) && TEMP_BATTLE_STATS.includes(args[0]) && (args[0] === this.stat) && (args[1] instanceof Utils.NumberHolder);
+  }
 
-    if (tempBattleStat === this.tempBattleStat) {
-      const statLevel = args[1] as Utils.IntegerHolder;
-      statLevel.value = Math.min(statLevel.value + 1, 6);
-      return true;
+  /**
+   * Increases the incoming stat stage matching {@linkcode stat} by {@linkcode multiplierBoost}.
+   * @param args [0] {@linkcode TempBattleStat} N/A
+   *             [1] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat stage multiplier
+   */
+  apply(args: any[]): boolean {
+    (args[1] as Utils.NumberHolder).value += this.multiplierBoost;
+    return true;
+  }
+
+  /**
+   * Goes through existing modifiers for any that match the selected modifier,
+   * which will then either add it to the existing modifiers if none were found
+   * or, if one was found, it will refresh {@linkcode battlesLeft}.
+   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
+   * @param _virtual N/A
+   * @param _scene N/A
+   * @returns true if the modifier was successfully added or applied, false otherwise
+   */
+  add(modifiers: PersistentModifier[], _virtual: boolean, _scene: BattleScene): boolean {
+    for (const modifier of modifiers) {
+      if (this.match(modifier)) {
+        const modifierInstance = modifier as TempStatStageBoosterModifier;
+        if (modifierInstance.getBattlesLeft() < 5) {
+          modifierInstance.battlesLeft = 5;
+          return true;
+        }
+        // should never get here
+        return false;
+      }
     }
 
-    return false;
+    modifiers.push(this);
+    return true;
+  }
+
+  getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
+    return 1;
+  }
+}
+
+/**
+ * Modifier used for party-wide items, namely Dire Hit, that
+ * temporarily increments the critical-hit stage
+ * @extends LapsingPersistentModifier
+ * @see {@linkcode apply}
+ */
+export class TempCritBoosterModifier extends LapsingPersistentModifier {
+  constructor(type: ModifierType, battlesLeft?: integer, stackCount?: number) {
+    super(type, battlesLeft || 5, stackCount);
+  }
+
+  clone() {
+    return new TempCritBoosterModifier(this.type, this.stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return (modifier instanceof TempCritBoosterModifier);
+  }
+
+  /**
+   * Checks if {@linkcode args} contains the necessary elements.
+   * @param args [1] {@linkcode Utils.NumberHolder} N/A
+   * @returns true if the critical-hit stage boost applies successfully
+   */
+  shouldApply(args: any[]): boolean {
+    return args && (args.length === 1) && (args[0] instanceof Utils.NumberHolder);
+  }
+
+  /**
+   * Increases the current critical-hit stage value by 1.
+   * @param args [0] {@linkcode Utils.IntegerHolder} that holds the resulting critical-hit level
+   * @returns true if the critical-hit stage boost applies successfully
+   */
+  apply(args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value++;
+    return true;
+  }
+
+  /**
+   * Goes through existing modifiers for any that match the selected modifier,
+   * which will then either add it to the existing modifiers if none were found
+   * or, if one was found, it will refresh {@linkcode battlesLeft}.
+   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
+   * @param _virtual N/A
+   * @param _scene N/A
+   * @returns true if the modifier was successfully added or applied, false otherwise
+   */
+  add(modifiers: PersistentModifier[], _virtual: boolean, _scene: BattleScene): boolean {
+    for (const modifier of modifiers) {
+      if (this.match(modifier)) {
+        const modifierInstance = modifier as TempCritBoosterModifier;
+        if (modifierInstance.getBattlesLeft() < 5) {
+          modifierInstance.battlesLeft = 5;
+          return true;
+        }
+        // should never get here
+        return false;
+      }
+    }
+
+    modifiers.push(this);
+    return true;
+  }
+
+  getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
+    return 1;
   }
 }
 
@@ -663,24 +781,30 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
   }
 }
 
-export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
-  protected stat: Stat;
+/**
+ * Modifier used for held items, specifically vitamins like Carbos, Hp Up, etc., that
+ * increase the value of a given {@linkcode PermanentStat}.
+ * @extends LapsingPersistentModifier
+ * @see {@linkcode apply}
+ */
+export class BaseStatModifier extends PokemonHeldItemModifier {
+  protected stat: PermanentStat;
   readonly isTransferrable: boolean = false;
 
-  constructor(type: ModifierTypes.PokemonBaseStatBoosterModifierType, pokemonId: integer, stat: Stat, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: integer, stat: PermanentStat, stackCount?: integer) {
     super(type, pokemonId, stackCount);
     this.stat = stat;
   }
 
   matchType(modifier: Modifier): boolean {
-    if (modifier instanceof PokemonBaseStatModifier) {
-      return (modifier as PokemonBaseStatModifier).stat === this.stat;
+    if (modifier instanceof BaseStatModifier) {
+      return (modifier as BaseStatModifier).stat === this.stat;
     }
     return false;
   }
 
   clone(): PersistentModifier {
-    return new PokemonBaseStatModifier(this.type as ModifierTypes.PokemonBaseStatBoosterModifierType, this.pokemonId, this.stat, this.stackCount);
+    return new BaseStatModifier(this.type, this.pokemonId, this.stat, this.stackCount);
   }
 
   getArgs(): any[] {
@@ -688,12 +812,12 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   }
 
   shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
+    return super.shouldApply(args) && args.length === 2 && Array.isArray(args[1]);
   }
 
   apply(args: any[]): boolean {
-    args[1][this.stat] = Math.min(Math.floor(args[1][this.stat] * (1 + this.getStackCount() * 0.1)), 999999);
-
+    const baseStats = args[1] as number[];
+    baseStats[this.stat] = Math.floor(baseStats[this.stat] * (1 + this.getStackCount() * 0.1));
     return true;
   }
 
@@ -1398,42 +1522,48 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
 }
 
 /**
- * Modifier used for White Herb, which resets negative {@linkcode Stat} changes
+ * Modifier used for held items, namely White Herb, that restore adverse stat
+ * stages in battle.
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class PokemonResetNegativeStatStageModifier extends PokemonHeldItemModifier {
+export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
   }
 
   matchType(modifier: Modifier) {
-    return modifier instanceof PokemonResetNegativeStatStageModifier;
+    return modifier instanceof ResetNegativeStatStageModifier;
   }
 
   clone() {
-    return new PokemonResetNegativeStatStageModifier(this.type, this.pokemonId, this.stackCount);
+    return new ResetNegativeStatStageModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   /**
-   * Restores any negative stat stages of the mon to 0
-   * @param args args[0] is the {@linkcode Pokemon} whose stat stages are being checked
-   * @returns true if any stat changes were applied (item was used), false otherwise
+   * Goes through the holder's stat stages and, if any are negative, resets that
+   * stat stage back to 0.
+   * @param args [0] {@linkcode Pokemon} that holds the held item
+   * @returns true if any stat stages were reset, false otherwise
    */
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    const loweredStats = pokemon.summonData.battleStats.filter(s => s < 0);
-    if (loweredStats.length) {
-      for (let s = 0; s < pokemon.summonData.battleStats.length; s++) {
-        pokemon.summonData.battleStats[s] = Math.max(0, pokemon.summonData.battleStats[s]);
+    let statRestored = false;
+
+    for (const s of BATTLE_STATS) {
+      if (pokemon.getStatStage(s) < 0) {
+        pokemon.setStatStage(s, 0);
+        statRestored = true;
       }
-      pokemon.scene.queueMessage(i18next.t("modifier:pokemonResetNegativeStatStageApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }));
-      return true;
     }
-    return false;
+
+    if (statRestored) {
+      pokemon.scene.queueMessage(i18next.t("modifier:resetNegativeStatStageApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }));
+    }
+    return statRestored;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): integer {
+  getMaxHeldItemCount(_pokemon: Pokemon): integer {
     return 2;
   }
 }
@@ -1625,7 +1755,7 @@ export class TmModifier extends ConsumablePokemonModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as PlayerPokemon;
 
-    pokemon.scene.unshiftPhase(new LearnMovePhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), (this.type as ModifierTypes.TmModifierType).moveId));
+    pokemon.scene.unshiftPhase(new LearnMovePhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), (this.type as ModifierTypes.TmModifierType).moveId, true));
 
     return true;
   }
@@ -2193,7 +2323,7 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value *= Math.pow(2, 2 + this.getStackCount());
+    (args[0] as Utils.IntegerHolder).value *= Math.pow(2, 1 + this.getStackCount());
 
     return true;
   }
@@ -2745,7 +2875,7 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
  *  - The player
  *  - The enemy
  * @param scene current {@linkcode BattleScene}
- * @param isPlayer {@linkcode boolean} for whether the the player (`true`) or enemy (`false`) is being overridden
+ * @param isPlayer {@linkcode boolean} for whether the player (`true`) or enemy (`false`) is being overridden
  */
 export function overrideModifiers(scene: BattleScene, isPlayer: boolean = true): void {
   const modifiersOverride: ModifierTypes.ModifierOverride[] = isPlayer ? Overrides.STARTING_MODIFIER_OVERRIDE : Overrides.OPP_MODIFIER_OVERRIDE;
@@ -2760,13 +2890,22 @@ export function overrideModifiers(scene: BattleScene, isPlayer: boolean = true):
 
   modifiersOverride.forEach(item => {
     const modifierFunc = modifierTypes[item.name];
-    const modifier = modifierFunc().withIdFromFunc(modifierFunc).newModifier() as PersistentModifier;
-    modifier.stackCount = item.count || 1;
+    let modifierType: ModifierType | null = modifierFunc();
 
-    if (isPlayer) {
-      scene.addModifier(modifier, true, false, false, true);
-    } else {
-      scene.addEnemyModifier(modifier, true, true);
+    if (modifierType instanceof ModifierTypes.ModifierTypeGenerator) {
+      const pregenArgs = ("type" in item) && (item.type !== null) ? [item.type] : undefined;
+      modifierType = modifierType.generateType([], pregenArgs);
+    }
+
+    const modifier = modifierType && modifierType.withIdFromFunc(modifierFunc).newModifier() as PersistentModifier;
+    if (modifier) {
+      modifier.stackCount = item.count || 1;
+
+      if (isPlayer) {
+        scene.addModifier(modifier, true, false, false, true);
+      } else {
+        scene.addEnemyModifier(modifier, true, true);
+      }
     }
   });
 }

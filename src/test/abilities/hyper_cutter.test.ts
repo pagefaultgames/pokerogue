@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -51,7 +51,7 @@ describe("Abilities - Hyper Cutter", () => {
     game.move.select(Moves.STRING_SHOT);
     await game.toNextTurn();
 
-    expect(enemy.summonData.battleStats[BattleStat.ATK]).toEqual(0);
-    [BattleStat.ACC, BattleStat.DEF, BattleStat.EVA, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD].forEach((stat: number) => expect(enemy.summonData.battleStats[stat]).toBeLessThan(0));
+    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+    [Stat.ACC, Stat.DEF, Stat.EVA, Stat.SPATK, Stat.SPDEF, Stat.SPD].forEach((stat: number) => expect(enemy.getStatStage(stat)).toBeLessThan(0));
   });
 });
