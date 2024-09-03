@@ -18,10 +18,42 @@ import { SwitchSummonPhase } from "./switch-summon-phase";
 import { TurnEndPhase } from "./turn-end-phase";
 import { WeatherEffectPhase } from "./weather-effect-phase";
 import * as LoggerTools from "../logger";
+import { TurnCommand } from "#app/battle.js";
 
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {
     super(scene);
+  }
+
+  logTargets(pokemon: Pokemon, mv: PokemonMove, turnCommand: TurnCommand) {
+    var targets = turnCommand.targets || turnCommand.move!.targets
+    if (pokemon.isPlayer()) {
+      console.log(turnCommand.targets, turnCommand.move!.targets)
+      if (turnCommand.args && turnCommand.args[1] && turnCommand.args[1].isContinuing != undefined) {
+        console.log(mv.getName(), targets)
+      } else {
+        LoggerTools.Actions[pokemon.getBattlerIndex()] = mv.getName()
+        if (this.scene.currentBattle.double) {
+          var targIDs = ["Self", "Self", "Ally", "L", "R"]
+          if (pokemon.getBattlerIndex() == 1) targIDs = ["Self", "Ally", "Self", "L", "R"]
+          LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+        } else {
+          var targIDs = ["Self", "", "", "", ""]
+          var myField = this.scene.getField()
+          if (myField[0])
+            targIDs[1] = myField[0].name
+          if (myField[1])
+            targIDs[2] = myField[1].name
+          var eField = this.scene.getEnemyField()
+          if (eField[0])
+            targIDs[3] = eField[0].name
+          if (eField[1])
+            targIDs[4] = eField[1].name
+          //LoggerTools.Actions[pokemon.getBattlerIndex()] += " → " + targets.map(v => targIDs[v+1])
+        }
+        console.log(mv.getName(), targets)
+      }
+    }
   }
 
   start() {
@@ -113,8 +145,10 @@ export class TurnStartPhase extends FieldPhase {
         if (pokemon.isPlayer()) {
           if (turnCommand.cursor === -1) {
             this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
+            this.logTargets(pokemon, move, turnCommand)
           } else {
             const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP);//TODO: is the bang correct here?
+            this.logTargets(pokemon, move, turnCommand)
             this.scene.pushPhase(playerPhase);
           }
         } else {
@@ -126,6 +160,10 @@ export class TurnStartPhase extends FieldPhase {
         break;
       case Command.POKEMON:
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor!, true, turnCommand.args![0] as boolean, pokemon.isPlayer()));//TODO: is the bang correct here?
+        if (pokemon.isPlayer()) {
+          //  " " + LoggerTools.playerPokeName(this.scene, pokemon) + 
+          LoggerTools.Actions[pokemon.getBattlerIndex()] = ((turnCommand.args![0] as boolean) ? "Baton" : "Switch") + " to " + LoggerTools.playerPokeName(this.scene, turnCommand.cursor!)
+        }
         break;
       case Command.RUN:
         let runningPokemon = pokemon;
@@ -163,7 +201,7 @@ export class TurnStartPhase extends FieldPhase {
     this.scene.pushPhase(new BerryPhase(this.scene));
     this.scene.pushPhase(new TurnEndPhase(this.scene));
 
-    this.scene.arenaFlyout.updateFieldText()
+    this.scene.arenaFlyout.updateFieldText();
     
     if (LoggerTools.Actions.length > 1 && !this.scene.currentBattle.double) {
       LoggerTools.Actions.pop() // If this is a single battle, but we somehow have two actions, delete the second

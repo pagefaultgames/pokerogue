@@ -2547,7 +2547,13 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
     return super.getArgs().concat(this.chance * 100);
   }
 
-  getTransferredItemCount(): integer {
+  getTransferredItemCount(simulated?: "PASS" | "FAIL"): integer {
+    if (simulated == "PASS") {
+      return 1;
+    }
+    if (simulated == "FAIL") {
+      return 0;
+    }
     return Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount()) ? 1 : 0;
   }
 
@@ -2784,6 +2790,9 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
 
   apply(args: any[]): boolean {
     const target = (args[0] as Pokemon);
+    if (args[1]) {
+      return false; // No RNG rolls
+    }
     if (target.status && Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
       target.scene.queueMessage(getStatusEffectHealText(target.status.effect, getPokemonNameWithAffix(target)));
       target.resetStatus();
@@ -2823,6 +2832,10 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
 
   apply(args: any[]): boolean {
     const target = (args[0] as Pokemon);
+
+    if (args[1]) {
+      return false;
+    }
 
     if (target.battleData.endured || Phaser.Math.RND.realInRange(0, 1) >= (this.chance * this.getStackCount())) {
       return false;

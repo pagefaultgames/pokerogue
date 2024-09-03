@@ -755,7 +755,7 @@ export default class Move implements Localizable {
    * @param target {@linkcode Pokemon} The Pokémon being targeted by the move.
    * @returns The calculated power of the move.
    */
-  calculateBattlePower(source: Pokemon, target: Pokemon, simulated: boolean = false): number {
+  calculateBattlePower(source: Pokemon, target: Pokemon, simulated: boolean = false, isMin: boolean = false, isMax: boolean = false): number {
     if (this.category === MoveCategory.STATUS) {
       return -1;
     }
@@ -770,7 +770,7 @@ export default class Move implements Localizable {
       power.value = 60;
     }
 
-    applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, target, this, simulated, power);
+    applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, target, this, simulated, power, isMin, isMax);
 
     if (source.getAlly()) {
       applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, source.getAlly(), target, this, simulated, power);
@@ -800,7 +800,7 @@ export default class Move implements Localizable {
       power.value /= 2;
     }
 
-    applyMoveAttrs(VariablePowerAttr, source, target, this, power);
+    applyMoveAttrs(VariablePowerAttr, source, target, this, power, isMin, isMax);
 
     source.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, new Utils.IntegerHolder(0), power);
 
@@ -1162,12 +1162,12 @@ export class FixedDamageAttr extends MoveAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = this.getDamage(user, target, move);
+    (args[0] as Utils.IntegerHolder).value = this.getDamage(user, target, move, args);
 
     return true;
   }
 
-  getDamage(user: Pokemon, target: Pokemon, move: Move): integer {
+  getDamage(user: Pokemon, target: Pokemon, move: Move, args: any[]): integer {
     return this.damage;
   }
 }
@@ -1251,7 +1251,7 @@ export class LevelDamageAttr extends FixedDamageAttr {
     super(0);
   }
 
-  getDamage(user: Pokemon, target: Pokemon, move: Move): number {
+  getDamage(user: Pokemon, target: Pokemon, move: Move, args?: any[]): number {
     return user.level;
   }
 }
@@ -1261,11 +1261,11 @@ export class RandomLevelDamageAttr extends FixedDamageAttr {
     super(0);
   }
 
-  getDamage(user: Pokemon, target: Pokemon, move: Move, isLow?: boolean, isHigh?: boolean): number {
-    if (isLow) {
+  getDamage(user: Pokemon, target: Pokemon, move: Move, args: any[]): number {
+    if (args[1] == "LOW") {
       return Utils.toDmgValue(user.level * 0.5);
     }
-    if (isHigh) {
+    if (args[1] == "HIGH") {
       return Utils.toDmgValue(user.level * 1.5);
     }
     return Utils.toDmgValue(user.level * (user.randSeedIntRange(50, 150, "Random Damage") * 0.01));

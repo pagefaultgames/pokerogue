@@ -9,6 +9,7 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { HitResult } from "#app/field/pokemon.js";
 
 
 describe("Abilities - Sheer Force", () => {
@@ -165,7 +166,7 @@ describe("Abilities - Sheer Force", () => {
 
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, false, chance, move, target, false);
     applyPreAttackAbAttrs(MovePowerBoostAbAttr, user, target, move, false, power);
-    applyPostDefendAbAttrs(PostDefendTypeChangeAbAttr, target, user, move, target.apply(user, move));
+    applyPostDefendAbAttrs(PostDefendTypeChangeAbAttr, target, user, move, (target.apply(user, move) as HitResult));
 
     expect(chance.value).toBe(0);
     expect(power.value).toBe(move.power * 5461 / 4096);

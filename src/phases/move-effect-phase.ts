@@ -181,7 +181,7 @@ export class MoveEffectPhase extends PokemonPhase {
            * made visible to the user until the resulting {@linkcode DamagePhase}
            * is invoked.
            */
-          const hitResult = !isProtected ? target.apply(user, move) : HitResult.NO_EFFECT;
+          const hitResult = !isProtected ? target.apply(user, move) as HitResult : HitResult.NO_EFFECT;
 
           /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
           const dealsDamage = [
