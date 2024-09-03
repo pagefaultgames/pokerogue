@@ -13,7 +13,7 @@ import { Button } from "#app/enums/buttons";
 import { CommandPhase } from "#app/phases/command-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target.js";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 describe("Items - Dire Hit", () => {
   let phaserGame: Phaser.Game;
