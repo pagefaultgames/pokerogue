@@ -841,12 +841,13 @@ export default class BattleScene extends SceneBase {
   }
 
   addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
+    if (Overrides.OPP_LEVEL_OVERRIDE > 0) {
+      level = Overrides.OPP_LEVEL_OVERRIDE;
+    }
     if (Overrides.OPP_SPECIES_OVERRIDE) {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
-    }
-
-    if (Overrides.OPP_LEVEL_OVERRIDE !== 0) {
-      level = Overrides.OPP_LEVEL_OVERRIDE;
+      // The fact that a Pokemon is a boss or not can change based on its Species and level
+      boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
@@ -1327,6 +1328,13 @@ export default class BattleScene extends SceneBase {
   }
 
   getEncounterBossSegments(waveIndex: integer, level: integer, species?: PokemonSpecies, forceBoss: boolean = false): integer {
+    if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE > 1) {
+      return Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE;
+    } else if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE === 1) {
+      // The rest of the code expects to be returned 0 and not 1 if the enemy is not a boss
+      return 0;
+    }
+
     if (this.gameMode.isDaily && this.gameMode.isWaveFinal(waveIndex)) {
       return 5;
     }
@@ -1791,6 +1799,7 @@ export default class BattleScene extends SceneBase {
     config = config ?? {};
     try {
       const keyDetails = key.split("/");
+      config["volume"] = config["volume"] ?? 1;
       switch (keyDetails[0]) {
       case "level_up_fanfare":
       case "item_fanfare":
@@ -1800,11 +1809,11 @@ export default class BattleScene extends SceneBase {
       case "evolution_fanfare":
         // These sounds are loaded in as BGM, but played as sound effects
         // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
-        config["volume"] = this.masterVolume * this.bgmVolume;
+        config["volume"] *= (this.masterVolume * this.bgmVolume);
         break;
       case "battle_anims":
       case "cry":
-        config["volume"] = this.masterVolume * this.fieldVolume;
+        config["volume"] *= (this.masterVolume * this.fieldVolume);
         //PRSFX sound files are unusually loud
         if (keyDetails[1].startsWith("PRSFX- ")) {
           config["volume"] *= 0.5;
@@ -1812,10 +1821,10 @@ export default class BattleScene extends SceneBase {
         break;
       case "ui":
         //As of, right now this applies to the "select", "menu_open", "error" sound effects
-        config["volume"] = this.masterVolume * this.uiVolume;
+        config["volume"] *= (this.masterVolume * this.uiVolume);
         break;
       case "se":
-        config["volume"] = this.masterVolume * this.seVolume;
+        config["volume"] *= (this.masterVolume * this.seVolume);
         break;
       }
       this.sound.play(key, config);

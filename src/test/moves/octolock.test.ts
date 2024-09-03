@@ -61,6 +61,48 @@ describe("Moves - Octolock", () => {
       expect(enemyPokemon[0].summonData.battleStats[BattleStat.SPDEF]).toBe(-2);
     });
 
+    it("If target pokemon has Big Pecks, Octolock should only reduce spdef by 1", { timeout: 10000 }, async () => {
+      game.override.enemyAbility(Abilities.BIG_PECKS);
+      await game.startBattle([Species.GRAPPLOCT]);
+
+      const enemyPokemon = game.scene.getEnemyField();
+
+      // use Octolock and advance to init phase of next turn to check for stat changes
+      game.move.select(Moves.OCTOLOCK);
+      await game.phaseInterceptor.to(TurnInitPhase);
+
+      expect(enemyPokemon[0].summonData.battleStats[BattleStat.DEF]).toBe(0);
+      expect(enemyPokemon[0].summonData.battleStats[BattleStat.SPDEF]).toBe(-1);
+    });
+
+    it("If target pokemon has White Smoke, Octolock should not reduce any stats", { timeout: 10000 }, async () => {
+      game.override.enemyAbility(Abilities.WHITE_SMOKE);
+      await game.startBattle([Species.GRAPPLOCT]);
+
+      const enemyPokemon = game.scene.getEnemyField();
+
+      // use Octolock and advance to init phase of next turn to check for stat changes
+      game.move.select(Moves.OCTOLOCK);
+      await game.phaseInterceptor.to(TurnInitPhase);
+
+      expect(enemyPokemon[0].summonData.battleStats[BattleStat.DEF]).toBe(0);
+      expect(enemyPokemon[0].summonData.battleStats[BattleStat.SPDEF]).toBe(0);
+    });
+
+    it("If target pokemon has Clear Body, Octolock should not reduce any stats", { timeout: 10000 }, async () => {
+      game.override.enemyAbility(Abilities.CLEAR_BODY);
+      await game.startBattle([Species.GRAPPLOCT]);
+
+      const enemyPokemon = game.scene.getEnemyField();
+
+      // use Octolock and advance to init phase of next turn to check for stat changes
+      game.move.select(Moves.OCTOLOCK);
+      await game.phaseInterceptor.to(TurnInitPhase);
+
+      expect(enemyPokemon[0].summonData.battleStats[BattleStat.DEF]).toBe(0);
+      expect(enemyPokemon[0].summonData.battleStats[BattleStat.SPDEF]).toBe(0);
+    });
+
     it("Traps the target pokemon", { timeout: 10000 }, async () => {
       await game.startBattle([Species.GRAPPLOCT]);
 

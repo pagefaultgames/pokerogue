@@ -13,7 +13,6 @@ import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "./nature";
 import { Moves } from "#app/enums/moves.js";
 import { TypeColor, TypeShadow } from "#app/enums/color.js";
-import { Gender } from "./gender";
 import { pokemonEvolutions } from "./pokemon-evolutions";
 import { pokemonFormChanges } from "./pokemon-forms";
 
@@ -659,7 +658,6 @@ export class FreshStartChallenge extends Challenge {
     pokemon.luck = 0; // No luck
     pokemon.shiny = false; // Not shiny
     pokemon.variant = 0; // Not shiny
-    pokemon.gender = Gender.MALE; // Starters default to male
     pokemon.formIndex = 0; // Froakie should be base form
     pokemon.ivs = [10, 10, 10, 10, 10, 10]; // Default IVs of 10 for all stats
     return true;
