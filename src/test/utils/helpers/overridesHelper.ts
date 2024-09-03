@@ -282,6 +282,17 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
+   * Override the items rolled at the end of a battle
+   * @param items the items to be rolled
+   * @returns this
+   */
+  itemRewards(items: ModifierOverride[]) {
+    vi.spyOn(Overrides, "ITEM_REWARD_OVERRIDE", "get").mockReturnValue(items);
+    this.log("Item rewards set to:", items);
+    return this;
+  }
+
+  /**
    * Override the enemy (Pokemon) to have the given amount of health segments
    * @param healthSegments the number of segments to give
    *    default: 0, the health segments will be handled like in the game based on wave, level and species

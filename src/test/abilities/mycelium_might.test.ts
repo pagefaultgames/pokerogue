@@ -1,10 +1,10 @@
-import { BattleStat } from "#app/data/battle-stat";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
+import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
+import { Stat } from "#enums/stat";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -58,8 +58,9 @@ describe("Abilities - Mycelium Might", () => {
     expect(speedOrder).toEqual([playerIndex, enemyIndex]);
     expect(commandOrder).toEqual([enemyIndex, playerIndex]);
     await game.phaseInterceptor.to(TurnEndPhase);
-    // Despite the opponent's ability (Clear Body), its attack stat is still reduced.
-    expect(enemyPokemon?.summonData.battleStats[BattleStat.ATK]).toBe(-1);
+
+    // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
+    expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
   }, 20000);
 
   it("will still go first if a status move that is in a higher priority bracket than the opponent's move is used", async () => {
@@ -81,8 +82,8 @@ describe("Abilities - Mycelium Might", () => {
     expect(speedOrder).toEqual([playerIndex, enemyIndex]);
     expect(commandOrder).toEqual([playerIndex, enemyIndex]);
     await game.phaseInterceptor.to(TurnEndPhase);
-    // Despite the opponent's ability (Clear Body), its attack stat is still reduced.
-    expect(enemyPokemon?.summonData.battleStats[BattleStat.ATK]).toBe(-1);
+    // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
+    expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
   }, 20000);
 
   it("will not affect non-status moves", async () => {
