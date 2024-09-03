@@ -57,16 +57,16 @@ const AUTO_DISABLED: SettingOption[] = [
 
 const SHOP_CURSOR_TARGET_OPTIONS: SettingOption[] = [
   {
+    value: "Rewards",
+    label: i18next.t("settings:rewards")
+  },
+  {
     value: "Shop",
     label: i18next.t("settings:shop")
   },
   {
     value: "Reroll",
     label: i18next.t("settings:reroll")
-  },
-  {
-    value: "Rewards",
-    label: i18next.t("settings:rewards")
   },
   {
     value: "Check Team",
