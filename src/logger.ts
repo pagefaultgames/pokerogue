@@ -614,9 +614,11 @@ function updateLog(drpd: DRPD): DRPD {
     for (var i = 0; i < drpd.waves.length; i++) {
       if (drpd.waves[i] && drpd.waves[i].pokemon) {
         for (var j = 0; j < drpd.waves[i].pokemon!.length; j++) {
-          drpd.waves[i].pokemon![j].iv_raw = drpd.waves[i].pokemon![j].ivs!
-          drpd.waves[i].pokemon![j].ivs = undefined
-          drpd.waves[i].pokemon![j].iv = formatIVs(drpd.waves[i].pokemon![j].ivs!)
+          if (drpd.waves[i].pokemon![j].ivs) {
+            drpd.waves[i].pokemon![j].iv_raw = drpd.waves[i].pokemon![j].ivs!
+            drpd.waves[i].pokemon![j].ivs = undefined
+            drpd.waves[i].pokemon![j].iv = formatIVs(drpd.waves[i].pokemon![j].ivs!)
+          }
         }
       }
     }
