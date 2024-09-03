@@ -1,4 +1,3 @@
-import { BattleStat } from "#app/data/battle-stat";
 import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
 import { allMoves, StealHeldItemChanceAttr } from "#app/data/move";
 import { StatusEffect } from "#app/data/status-effect";
@@ -7,6 +6,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BerryType } from "#app/enums/berry-type";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
+import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
 import GameManager from "#app/test/utils/gameManager";
@@ -14,7 +14,8 @@ import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
+
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
 
@@ -48,7 +49,7 @@ describe("Moves - Substitute", () => {
   it(
     "should cause the user to take damage",
     async () => {
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -65,7 +66,7 @@ describe("Moves - Substitute", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
 
-      await game.startBattle([Species.SKARMORY]);
+      await game.classicMode.startBattle([Species.SKARMORY]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -91,7 +92,7 @@ describe("Moves - Substitute", () => {
       game.override.enemyMoveset(Array(4).fill(Moves.GIGA_IMPACT));
       vi.spyOn(allMoves[Moves.GIGA_IMPACT], "accuracy", "get").mockReturnValue(100);
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -115,7 +116,7 @@ describe("Moves - Substitute", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.CHARM));
 
-      await game.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([Species.MAGIKARP]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -123,7 +124,7 @@ describe("Moves - Substitute", () => {
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
+      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
       expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
     }
   );
@@ -133,7 +134,7 @@ describe("Moves - Substitute", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.ECHOED_VOICE));
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -157,7 +158,7 @@ describe("Moves - Substitute", () => {
       game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
       game.override.enemyAbility(Abilities.INFILTRATOR);
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -178,7 +179,7 @@ describe("Moves - Substitute", () => {
   it(
     "shouldn't block the user's own status moves",
     async () => {
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -191,7 +192,7 @@ describe("Moves - Substitute", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase", false);
 
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
+      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
     }, TIMEOUT
   );
 
@@ -201,7 +202,7 @@ describe("Moves - Substitute", () => {
       game.override.enemyMoveset(Array(4).fill(Moves.FAKE_OUT));
       game.override.startingLevel(1); // Ensures the Substitute will break
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -222,7 +223,7 @@ describe("Moves - Substitute", () => {
       vi.spyOn(allMoves[Moves.SAND_TOMB], "accuracy", "get").mockReturnValue(100);
       game.override.enemyMoveset(Array(4).fill(Moves.SAND_TOMB));
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -242,7 +243,7 @@ describe("Moves - Substitute", () => {
       vi.spyOn(allMoves[Moves.LIQUIDATION], "chance", "get").mockReturnValue(100);
       game.override.enemyMoveset(Array(4).fill(Moves.LIQUIDATION));
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -252,7 +253,7 @@ describe("Moves - Substitute", () => {
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
-      expect(leadPokemon.summonData.battleStats[BattleStat.DEF]).toBe(0);
+      expect(leadPokemon.getStatStage(Stat.DEF)).toBe(0);
     }, TIMEOUT
   );
 
@@ -261,7 +262,7 @@ describe("Moves - Substitute", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.NUZZLE));
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -282,7 +283,7 @@ describe("Moves - Substitute", () => {
       vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]); // give Thief 100% steal rate
       game.override.startingHeldItems([{name: "BERRY", type: BerryType.SITRUS}]);
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -302,7 +303,7 @@ describe("Moves - Substitute", () => {
       game.override.moveset([Moves.KNOCK_OFF]);
       game.override.enemyHeldItems([{name: "BERRY", type: BerryType.SITRUS}]);
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -323,7 +324,7 @@ describe("Moves - Substitute", () => {
       game.override.enemyMoveset(Array(4).fill(Moves.BUG_BITE));
       game.override.startingHeldItems([{name: "BERRY", type: BerryType.SITRUS}]);
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -347,7 +348,7 @@ describe("Moves - Substitute", () => {
     async () => {
       game.override.enemyMoveset(Array(4).fill(Moves.CLEAR_SMOG));
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -357,7 +358,7 @@ describe("Moves - Substitute", () => {
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
+      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
     }, TIMEOUT
   );
 
@@ -367,7 +368,7 @@ describe("Moves - Substitute", () => {
       game.override.enemyMoveset(Array(4).fill(Moves.MAGICAL_TORQUE));
       vi.spyOn(allMoves[Moves.MAGICAL_TORQUE], "chance", "get").mockReturnValue(100);
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -378,7 +379,7 @@ describe("Moves - Substitute", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(leadPokemon.getTag(BattlerTagType.CONFUSED)).toBeUndefined();
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(2);
+      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
     }
   );
 
@@ -387,7 +388,7 @@ describe("Moves - Substitute", () => {
     async () => {
       game.override.moveset([Moves.SUBSTITUTE, Moves.BATON_PASS]);
 
-      await game.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+      await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -413,7 +414,7 @@ describe("Moves - Substitute", () => {
       game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
       game.override.ability(Abilities.ROUGH_SKIN);
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -434,7 +435,7 @@ describe("Moves - Substitute", () => {
       // Make Focus Punch 40 power to avoid a KO
       vi.spyOn(allMoves[Moves.FOCUS_PUNCH], "calculateBattlePower").mockReturnValue(40);
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -456,7 +457,7 @@ describe("Moves - Substitute", () => {
       game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
       game.override.moveset([Moves.SHELL_TRAP]);
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -476,7 +477,7 @@ describe("Moves - Substitute", () => {
       game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
       game.override.moveset([Moves.BEAK_BLAST]);
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -497,7 +498,7 @@ describe("Moves - Substitute", () => {
       game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
       game.override.moveset([Moves.COUNTER]);
 
-      await game.startBattle([Species.BLASTOISE]);
+      await game.classicMode.startBattle([Species.BLASTOISE]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;

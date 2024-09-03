@@ -22,7 +22,7 @@ import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase, StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
-import { PokemonAnimType } from "#app/enums/pokemon-anim-type.js";
+import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 
 export enum BattlerTagLapseType {
   FAINT,
