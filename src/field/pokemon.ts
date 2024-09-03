@@ -3444,6 +3444,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Generates a random number using the current battle's seed, or the global seed if `this.scene.currentBattle` is falsy
    * @param min The minimum integer to generate
    * @param max The maximum integer to generate
    * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
