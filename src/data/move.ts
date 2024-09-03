@@ -2674,7 +2674,7 @@ export class AcupressureStatChangeAttr extends MoveEffectAttr {
     let randStats = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD, BattleStat.ACC, BattleStat.EVA ];
     randStats = randStats.filter(s => target.summonData.battleStats[s] < 6);
     if (randStats.length > 0) {
-      const boostStat = [randStats[Utils.randInt(randStats.length)]];
+      const boostStat = [randStats[Utils.randSeedInt(randStats.length)]];
       user.scene.unshiftPhase(new StatChangePhase(user.scene, target.getBattlerIndex(), this.selfTarget, boostStat, 2));
       return true;
     }

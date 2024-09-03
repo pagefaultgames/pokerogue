@@ -3434,12 +3434,12 @@ export class MoodyAbAttr extends PostTurnAbAttr {
     let decreaseStatArray = selectableStats.filter(s => pokemon.summonData.battleStats[s] > -6);
 
     if (!simulated && increaseStatArray.length > 0) {
-      const increaseStat = increaseStatArray[Utils.randInt(increaseStatArray.length)];
+      const increaseStat = increaseStatArray[Utils.randSeedInt(increaseStatArray.length)];
       decreaseStatArray = decreaseStatArray.filter(s => s !== increaseStat);
       pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [increaseStat], 2));
     }
     if (!simulated && decreaseStatArray.length > 0) {
-      const decreaseStat = decreaseStatArray[Utils.randInt(decreaseStatArray.length)];
+      const decreaseStat = decreaseStatArray[Utils.randSeedInt(decreaseStatArray.length)];
       pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [decreaseStat], -1));
     }
     return true;
