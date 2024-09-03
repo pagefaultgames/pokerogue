@@ -3458,30 +3458,33 @@ export class MoodyAbAttr extends PostTurnAbAttr {
     super(true);
   }
   /**
-   * Randomly increases one BattleStat by 2 stages and decreases a different BattleStat by 1 stage
+   * Randomly increases one stat stage by 2 and decreases a different stat stage by 1
    * @param {Pokemon} pokemon Pokemon that has this ability
    * @param passive N/A
    * @param simulated true if applying in a simulated call.
    * @param args N/A
    * @returns true
    *
-   * Any BattleStats at +6 or -6 are excluded from being increased or decreased, respectively
-   * If the pokemon already has all BattleStats raised to stage 6, it will only decrease one BattleStat by 1 stage
-   * If the pokemon already has all BattleStats lowered to stage -6, it will only increase one BattleStat by 2 stages
+   * Any stat stages at +6 or -6 are excluded from being increased or decreased, respectively
+   * If the pokemon already has all stat stages raised to 6, it will only decrease one stat stage by 1
+   * If the pokemon already has all stat stages lowered to -6, it will only increase one stat stage by 2
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const increaseStatArray = EFFECTIVE_STATS.filter(s => pokemon.getStatStage(s) < 6);
-    let decreaseStatArray = EFFECTIVE_STATS.filter(s => pokemon.getStatStage(s) > -6);
+    const canRaise = EFFECTIVE_STATS.filter(s => pokemon.getStatStage(s) < 6);
+    let canLower = EFFECTIVE_STATS.filter(s => pokemon.getStatStage(s) > -6);
 
-    if (!simulated && increaseStatArray.length > 0) {
-      const increaseStat = increaseStatArray[Utils.randInt(increaseStatArray.length)];
-      decreaseStatArray = decreaseStatArray.filter(s => s !== increaseStat);
-      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [increaseStat], 2));
+    if (!simulated) {
+      if (canRaise.length > 0) {
+        const raisedStat = Utils.randSeedItem(canRaise);
+        canLower = canRaise.filter(s => s !== raisedStat);
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ raisedStat ], 2));
+      }
+      if (canLower.length > 0) {
+        const loweredStat = Utils.randSeedItem(canLower);
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ loweredStat ], -1));
+      }
     }
-    if (!simulated && decreaseStatArray.length > 0) {
-      const decreaseStat = decreaseStatArray[Utils.randInt(EFFECTIVE_STATS.length)];
-      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [decreaseStat], -1));
-    }
+
     return true;
   }
 }
