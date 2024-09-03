@@ -1,5 +1,5 @@
+import { Stat } from "#enums/stat";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { Stat } from "#app/data/pokemon-stat";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
@@ -38,16 +38,16 @@ describe("Moves - Tailwind", () => {
     const magikarpSpd = magikarp.getStat(Stat.SPD);
     const meowthSpd = meowth.getStat(Stat.SPD);
 
-    expect(magikarp.getBattleStat(Stat.SPD)).equal(magikarpSpd);
-    expect(meowth.getBattleStat(Stat.SPD)).equal(meowthSpd);
+    expect(magikarp.getEffectiveStat(Stat.SPD)).equal(magikarpSpd);
+    expect(meowth.getEffectiveStat(Stat.SPD)).equal(meowthSpd);
 
     game.move.select(Moves.TAILWIND);
     game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(magikarp.getBattleStat(Stat.SPD)).toBe(magikarpSpd * 2);
-    expect(meowth.getBattleStat(Stat.SPD)).toBe(meowthSpd * 2);
+    expect(magikarp.getEffectiveStat(Stat.SPD)).toBe(magikarpSpd * 2);
+    expect(meowth.getEffectiveStat(Stat.SPD)).toBe(meowthSpd * 2);
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
   });
 
@@ -86,8 +86,8 @@ describe("Moves - Tailwind", () => {
     const enemySpd = enemy.getStat(Stat.SPD);
 
 
-    expect(ally.getBattleStat(Stat.SPD)).equal(allySpd);
-    expect(enemy.getBattleStat(Stat.SPD)).equal(enemySpd);
+    expect(ally.getEffectiveStat(Stat.SPD)).equal(allySpd);
+    expect(enemy.getEffectiveStat(Stat.SPD)).equal(enemySpd);
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
 
@@ -95,8 +95,8 @@ describe("Moves - Tailwind", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(ally.getBattleStat(Stat.SPD)).toBe(allySpd * 2);
-    expect(enemy.getBattleStat(Stat.SPD)).equal(enemySpd);
+    expect(ally.getEffectiveStat(Stat.SPD)).toBe(allySpd * 2);
+    expect(enemy.getEffectiveStat(Stat.SPD)).equal(enemySpd);
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
   });

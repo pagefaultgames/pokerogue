@@ -14,7 +14,7 @@ import { GrowthRate } from "./exp";
 import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
 import { Type } from "./type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
-import { Stat } from "./pokemon-stat";
+import { Stat } from "#enums/stat";
 import { Variant, VariantSet, variantColorCache, variantData } from "./variant";
 
 export enum Region {

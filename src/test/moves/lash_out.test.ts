@@ -39,7 +39,7 @@ describe("Moves - Lash Out", () => {
 
   });
 
-  it("should deal double damage if the user's stats were lowered this turn", async () => {
+  it("should deal double damage if the user's stat stages were lowered this turn", async () => {
     vi.spyOn(allMoves[Moves.LASH_OUT], "calculateBattlePower");
     await game.classicMode.startBattle();
 

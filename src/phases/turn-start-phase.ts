@@ -43,8 +43,8 @@ export class TurnStartPhase extends FieldPhase {
     }, this.scene.currentBattle.turn, this.scene.waveSeed);
 
     orderedTargets.sort((a: Pokemon, b: Pokemon) => {
-      const aSpeed = a?.getBattleStat(Stat.SPD) || 0;
-      const bSpeed = b?.getBattleStat(Stat.SPD) || 0;
+      const aSpeed = a?.getEffectiveStat(Stat.SPD) || 0;
+      const bSpeed = b?.getEffectiveStat(Stat.SPD) || 0;
 
       return bSpeed - aSpeed;
     });
