@@ -2613,7 +2613,7 @@ export default class BattleScene extends SceneBase {
         if (mods.length < 1) {
           return mods;
         }
-        const rand = Math.floor(Utils.randSeedInt(mods.length)); // Why is there a floor() call around a number that can only be an integer?
+        const rand = Utils.randSeedInt(mods.length);
         return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
       };
       modifiers = shuffleModifiers(modifiers);
