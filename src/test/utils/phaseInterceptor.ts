@@ -1,4 +1,5 @@
 import { Phase } from "#app/phase";
+import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { BerryPhase } from "#app/phases/berry-phase";
@@ -18,7 +19,6 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
-import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { SelectGenderPhase } from "#app/phases/select-gender-phase";
@@ -27,7 +27,7 @@ import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { SelectTargetPhase } from "#app/phases/select-target-phase";
 import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
-import { StatChangePhase } from "#app/phases/stat-change-phase";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SummonPhase } from "#app/phases/summon-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
@@ -38,7 +38,7 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { UnavailablePhase } from "#app/phases/unavailable-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
-import ErrorInterceptor from "#app/test/utils/errorInterceptor";
+import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import UI, { Mode } from "#app/ui/ui";
 
 export default class PhaseInterceptor {
@@ -87,7 +87,7 @@ export default class PhaseInterceptor {
     [NewBattlePhase, this.startPhase],
     [VictoryPhase, this.startPhase],
     [MoveEndPhase, this.startPhase],
-    [StatChangePhase, this.startPhase],
+    [StatStageChangePhase, this.startPhase],
     [ShinySparklePhase, this.startPhase],
     [SelectTargetPhase, this.startPhase],
     [UnavailablePhase, this.startPhase],
