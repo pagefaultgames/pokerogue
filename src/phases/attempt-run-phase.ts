@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { applyAbAttrs, RunSuccessAbAttr } from "#app/data/ability";
 import { Stat } from "#app/enums/stat";
 import { StatusEffect } from "#app/enums/status-effect";
-import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
+import Pokemon, { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
 import * as Utils from "#app/utils";
 import { BattleEndPhase } from "./battle-end-phase";
@@ -20,13 +20,15 @@ export class AttemptRunPhase extends PokemonPhase {
     const playerField = this.scene.getPlayerField();
     const enemyField = this.scene.getEnemyField();
 
+    const playerPokemon = this.getPokemon();
+
     const escapeChance = new Utils.IntegerHolder(0);
 
     this.attemptRunAway(playerField, enemyField, escapeChance);
 
-    applyAbAttrs(RunSuccessAbAttr, playerField, null, false, escapeChance);
+    applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, false, escapeChance);
 
-    if (this.scene.randSeedInt(100) < escapeChance.value) {
+    if (Utils.randSeedInt(100) < escapeChance.value) {
       this.scene.playSound("se/flee");
       this.scene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
