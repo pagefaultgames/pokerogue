@@ -3843,6 +3843,9 @@ export class PlayerPokemon extends Pokemon {
       this.fusionVariant = pokemon.variant;
       this.fusionGender = pokemon.gender;
       this.fusionLuck = pokemon.luck;
+      if ((pokemon.pauseEvolutions) || (this.pauseEvolutions)) {
+        this.pauseEvolutions = true;
+      }
 
       this.scene.validateAchv(achvs.SPLICE);
       this.scene.gameData.gameStats.pokemonFused++;
