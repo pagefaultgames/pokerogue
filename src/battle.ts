@@ -6,7 +6,7 @@ import Trainer, { TrainerVariant } from "./field/trainer";
 import { GameMode } from "./game-mode";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
-import {trainerConfigs} from "#app/data/trainer-config";
+import { trainerConfigs } from "#app/data/trainer-config";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { Moves } from "#enums/moves";
@@ -49,24 +49,26 @@ export default class Battle {
   public battleSpec: BattleSpec;
   public trainer: Trainer | null;
   public enemyLevels: integer[] | undefined;
-  public enemyParty: EnemyPokemon[];
-  public seenEnemyPartyMemberIds: Set<integer>;
+  public enemyParty: EnemyPokemon[] = [];
+  public seenEnemyPartyMemberIds: Set<integer> = new Set<integer>();
   public double: boolean;
-  public started: boolean;
-  public enemySwitchCounter: integer;
-  public turn: integer;
+  public started: boolean = false;
+  public enemySwitchCounter: integer = 0;
+  public turn: integer = 0;
   public turnCommands: TurnCommands;
-  public playerParticipantIds: Set<integer>;
-  public battleScore: integer;
-  public postBattleLoot: PokemonHeldItemModifier[];
-  public escapeAttempts: integer;
+  public playerParticipantIds: Set<integer> = new Set<integer>();
+  public battleScore: integer = 0;
+  public postBattleLoot: PokemonHeldItemModifier[] = [];
+  public escapeAttempts: integer = 0;
   public lastMove: Moves;
-  public battleSeed: string;
-  private battleSeedState: string | null;
-  public moneyScattered: number;
-  public lastUsedPokeball: PokeballType | null;
-  public playerFaints: number; // The amount of times pokemon on the players side have fainted
-  public enemyFaints: number; // The amount of times pokemon on the enemies side have fainted
+  public battleSeed: string = Utils.randomString(16, true);
+  private battleSeedState: string | null = null;
+  public moneyScattered: number = 0;
+  public lastUsedPokeball: PokeballType | null = null;
+  /** The number of times a Pokemon on the player's side has fainted this battle */
+  public playerFaints: number = 0;
+  /** The number of times a Pokemon on the enemy's side has fainted this battle */
+  public enemyFaints: number = 0;
 
   private rngCounter: integer = 0;
 
@@ -79,22 +81,7 @@ export default class Battle {
     this.enemyLevels = battleType !== BattleType.TRAINER
       ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
       : trainer?.getPartyLevels(this.waveIndex);
-    this.enemyParty = [];
-    this.seenEnemyPartyMemberIds = new Set<integer>();
-    this.double = !!double;
-    this.enemySwitchCounter = 0;
-    this.turn = 0;
-    this.playerParticipantIds = new Set<integer>();
-    this.battleScore = 0;
-    this.postBattleLoot = [];
-    this.escapeAttempts = 0;
-    this.started = false;
-    this.battleSeed = Utils.randomString(16, true);
-    this.battleSeedState = null;
-    this.moneyScattered = 0;
-    this.lastUsedPokeball = null;
-    this.playerFaints = 0;
-    this.enemyFaints = 0;
+    this.double = double ?? false;
   }
 
   private initBattleSpec(): void {
