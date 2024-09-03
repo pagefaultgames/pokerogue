@@ -30,6 +30,7 @@ import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encoun
 import { BugTypeSuperfanEncounter } from "#app/data/mystery-encounters/encounters/bug-type-superfan-encounter";
 import { FunAndGamesEncounter } from "#app/data/mystery-encounters/encounters/fun-and-games-encounter";
 import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
+import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encounters/global-trade-system-encounter";
 
 // Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
 export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
@@ -158,7 +159,8 @@ const humanTransitableBiomeEncounters: MysteryEncounterType[] = [
 const civilizationBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.DEPARTMENT_STORE_SALE,
   MysteryEncounterType.PART_TIMER,
-  MysteryEncounterType.FUN_AND_GAMES
+  MysteryEncounterType.FUN_AND_GAMES,
+  MysteryEncounterType.GLOBAL_TRADE_SYSTEM
 ];
 
 /**
@@ -285,6 +287,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.BUG_TYPE_SUPERFAN] = BugTypeSuperfanEncounter;
   allMysteryEncounters[MysteryEncounterType.FUN_AND_GAMES] = FunAndGamesEncounter;
   allMysteryEncounters[MysteryEncounterType.UNCOMMON_BREED] = UncommonBreedEncounter;
+  allMysteryEncounters[MysteryEncounterType.GLOBAL_TRADE_SYSTEM] = GlobalTradeSystemEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {

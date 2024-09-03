@@ -27,6 +27,7 @@ import teleportingHijinks from "#app/locales/en/mystery-encounters/teleporting-h
 import bugTypeSuperfan from "#app/locales/en/mystery-encounters/bug-type-superfan-dialogue.json";
 import funAndGames from "#app/locales/en/mystery-encounters/fun-and-games-dialogue.json";
 import uncommonBreed from "#app/locales/en/mystery-encounters/uncommon-breed-dialogue.json";
+import globalTradeSystem from "#app/locales/en/mystery-encounters/global-trade-system-dialogue.json";
 
 /**
  * Injection patterns that can be used:
@@ -76,4 +77,5 @@ export const mysteryEncounter = {
   bugTypeSuperfan,
   funAndGames,
   uncommonBreed,
+  globalTradeSystem
 } as const;

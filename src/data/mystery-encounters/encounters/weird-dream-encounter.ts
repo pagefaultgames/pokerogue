@@ -7,10 +7,10 @@ import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { leaveEncounterWithoutBattle, setEncounterRewards, } from "../utils/encounter-phase-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { IntegerHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
-import { HiddenAbilityRateBoosterModifier, PokemonBaseStatTotalModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
 import { speciesEggMoves } from "#app/data/egg-moves";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
@@ -247,7 +247,7 @@ function getTeamTransformations(scene: BattleScene): PokemonTransformation[] {
     pokemonTransformations[index].heldItems = removed.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier));
     scene.removePokemonFromPlayerParty(removed, false);
 
-    const bst = getOriginalBst(scene, removed);
+    const bst = removed.calculateBaseStats().reduce((a, b) => a + b, 0);
     let newBstRange;
     if (i < 2) {
       newBstRange = HIGH_BST_TRANSFORM_BASE_VALUES;
@@ -413,22 +413,6 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
   if (atLeastOneNewStarter) {
     scene.playSound("level_up_fanfare");
   }
-}
-
-function getOriginalBst(scene: BattleScene, pokemon: Pokemon) {
-  const baseStats = pokemon.getSpeciesForm().baseStats.slice(0);
-  scene.applyModifiers(PokemonBaseStatTotalModifier, true, pokemon, baseStats);
-  if (pokemon.fusionSpecies) {
-    const fusionBaseStats = pokemon.getFusionSpeciesForm().baseStats;
-    for (let s = 0; s < pokemon.stats.length; s++) {
-      baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
-    }
-  } else if (scene.gameMode.isSplicedOnly) {
-    for (let s = 0; s < pokemon.stats.length; s++) {
-      baseStats[s] = Math.ceil(baseStats[s] / 2);
-    }
-  }
-  return baseStats.reduce((a, b) => a + b, 0);
 }
 
 function getTransformedSpecies(originalBst: number, bstSearchRange: [number, number], hasPokemonBstHigherThan600: boolean, hasPokemonBstBetween570And600: boolean, alreadyUsedSpecies: PokemonSpecies[]): PokemonSpecies {

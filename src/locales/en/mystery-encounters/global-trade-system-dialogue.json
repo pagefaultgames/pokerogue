@@ -1,0 +1,30 @@
+{
+  "intro": "It's an interface for the Global Trade System!",
+  "title": "The GTS",
+  "description": "Ah, the GTS! A technological wonder, you can connect with anyone else around the globe to trade Pokémon with them! Will fortune smile upon your trade today?",
+  "query": "What will you do?",
+  "option": {
+    "1": {
+      "label": "Check Trade Offers",
+      "tooltip": "(+) Select a trade offer for one of your Pokémon",
+      "trade_options_prompt": "Select a Pokémon to receive through trade."
+    },
+    "2": {
+      "label": "Wonder Trade",
+      "tooltip": "(+) Send one of your Pokémon to the GTS and get a random Pokémon in return"
+    },
+    "3": {
+      "label": "Trade an Item",
+      "tooltip": "(+) Send one of your Items to the GTS and get a random new Item"
+    },
+    "4": {
+      "label": "Leave",
+      "tooltip": "(-) No Rewards",
+      "selected": "No time to try your luck today!\nYou continue on."
+    }
+  },
+  "pokemon_trade_selected": "{{tradedPokemon}} will be sent to {{tradeTrainerName}}.",
+  "pokemon_trade_goodbye": "Goodbye, {{tradedPokemon}}!",
+  "item_trade_selected": "{{tradedPokemon}} will be sent to {{tradeTrainerName}}",
+  "trade_received": "@s{evolution_fanfare}{{tradeTrainerName}} sent over {{received}}!"
+}
