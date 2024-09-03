@@ -635,7 +635,7 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Shop_Cursor_Target,
     label: i18next.t("settings:shopCursorTarget"),
     options: SHOP_CURSOR_TARGET_OPTIONS,
-    default: ShopCursorTarget.REWARDS,
+    default: 0,
     type: SettingType.DISPLAY
   },
   {
