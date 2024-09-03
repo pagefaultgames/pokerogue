@@ -311,7 +311,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.partyContainer.setVisible(true);
     this.partyBg.setTexture(`party_bg${this.scene.currentBattle.double ? "_double" : ""}`);
     this.populatePartySlots();
-    this.setCursor(this.cursor < 6 ? this.cursor : 0);
+    this.setCursor(0);
 
     return true;
   }
