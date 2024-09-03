@@ -1,11 +1,11 @@
 {
-  "activeBattleEffects": "バトル効果",
+  "activeBattleEffects": "場の効果",
   "player": "味方",
-  "neutral": "全員",
+  "neutral": "場の全員",
   "enemy": "相手",
 
-  "sunny": "Sunny",
-  "rain": "Rain",
+  "sunny": "晴れ",
+  "rain": "雨",
   "sandstorm": "Sandstorm",
   "hail": "Hail",
   "snow": "Snow",
