@@ -144,10 +144,10 @@ describe("Escape chance calculations", () => {
       game.scene.currentBattle.escapeAttempts = escapeChances[i].escapeAttempts; // sets the number of escape attempts to the required amount
       vi.spyOn(playerPokemon[0], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, Math.floor(escapeChances[i].pokemonSpeedRatio * totalEnemySpeed * playerASpeedPercentage)]); // set the first playerPokemon's speed to a multiple of the enemySpeed
       vi.spyOn(playerPokemon[1], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, escapeChances[i].pokemonSpeedRatio * totalEnemySpeed - playerPokemon[0].stats[5]]); // set the second playerPokemon's speed to the remaining value of speed
-      console.log("Pokemon A speed = " + playerPokemon[0].stats[5] + "; Pokemon B speed = " + playerPokemon[1].stats[5] + "; Total enemy speed = " + totalEnemySpeed + "; Total player speed = " + playerPokemon[0].stats[5] + playerPokemon[1].stats[5]);
+      console.log("Pokemon A speed = " + playerPokemon[0].stats[5] + "; Pokemon B speed = " + playerPokemon[1].stats[5] + "; Total enemy speed = " + Number(escapeChances[i].pokemonSpeedRatio * totalEnemySpeed) + "; Total player speed = " + Number(playerPokemon[0].stats[5] + playerPokemon[1].stats[5]));
       phase.attemptRunAway(playerPokemon, enemyField, escapePercentage);
-      expect(escapePercentage.value).toBe(escapeChances[i].expectedEscapeChance);
-      expect(playerPokemon[0].stats[5] + playerPokemon[1].stats[5]).toBe(totalEnemySpeed);
+      expect(escapePercentage.value).toBe(escapeChances[i].expectedEscapeChance); // checks to make sure the escape values are the same
+      expect(playerPokemon[0].stats[5] + playerPokemon[1].stats[5]).toBe(escapeChances[i].pokemonSpeedRatio * totalEnemySpeed); // checks to make sure the sum of the player's speed for all pokemon is equal to the appropriate ratio of the total enemy speed
       console.log("Escape chance is = " + escapePercentage.value + "; should be " + escapeChances[i].expectedEscapeChance);
     }
   }, 20000);
