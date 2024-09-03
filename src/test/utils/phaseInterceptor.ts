@@ -1,4 +1,5 @@
 import { Phase } from "#app/phase";
+import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
@@ -96,6 +97,7 @@ export default class PhaseInterceptor {
     [PartyHealPhase, this.startPhase],
     [EvolutionPhase, this.startPhase],
     [EndEvolutionPhase, this.startPhase],
+    [AttemptRunPhase, this.startPhase],
   ];
 
   private endBySetMode = [
