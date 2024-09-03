@@ -1423,7 +1423,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
     // Check to see if the Pokemon has an ability that blocks non-direct damage
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
     if (!cancelled.value) {
-      const damage = Utils.toDmgValue(user.getMaxHp()/2);
+      const damage = Utils.toDmgValue(user.getMaxHp() / 2);
       user.damageAndUpdate(damage, HitResult.OTHER, false, true, true);
       const attackResult = { move: move.id, result: HitResult.OTHER as DamageResult, damage: damage, critical: false, sourceId: user.id, sourceBattlerIndex: user.getBattlerIndex() };
       user.turnData.attacksReceived.unshift(attackResult);
