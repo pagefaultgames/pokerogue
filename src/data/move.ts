@@ -2675,7 +2675,7 @@ export class AcupressureStatStageChangeAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
     const randStats = BATTLE_STATS.filter(s => target.getStatStage(s) < 6);
     if (randStats.length > 0) {
-      const boostStat = [randStats[Utils.randInt(randStats.length)]];
+      const boostStat = [randStats[user.randSeedInt(randStats.length)]];
       user.scene.unshiftPhase(new StatStageChangePhase(user.scene, target.getBattlerIndex(), this.selfTarget, boostStat, 2));
       return true;
     }
