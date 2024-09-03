@@ -16,7 +16,7 @@ import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target.js";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 
 describe("Items - Temporary Stat Stage Boosters", () => {
