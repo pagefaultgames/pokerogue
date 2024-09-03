@@ -49,7 +49,7 @@ describe("Escape chance calculations", () => {
     const phase = game.scene.getCurrentPhase() as AttemptRunPhase;
     const escapePercentage = new Utils.IntegerHolder(0);
 
-    // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, and the expectedEscapeChance is the chance it should be escaping
+    // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
     const escapeChances: { pokemonSpeedRatio: number, escapeAttempts: number, expectedEscapeChance: number }[] = [
       { pokemonSpeedRatio: 0.01, escapeAttempts: 0, expectedEscapeChance: 5 },
       { pokemonSpeedRatio: 0.1, escapeAttempts: 0, expectedEscapeChance: 7 },
@@ -108,7 +108,7 @@ describe("Escape chance calculations", () => {
     const phase = game.scene.getCurrentPhase() as AttemptRunPhase;
     const escapePercentage = new Utils.IntegerHolder(0);
 
-    // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, and the expectedEscapeChance is the chance it should be escaping
+    // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
     const escapeChances: { pokemonSpeedRatio: number, escapeAttempts: number, expectedEscapeChance: number }[] = [
       { pokemonSpeedRatio: 0.3, escapeAttempts: 0, expectedEscapeChance: 12 },
       { pokemonSpeedRatio: 0.7, escapeAttempts: 0, expectedEscapeChance: 21 },
@@ -164,7 +164,7 @@ describe("Escape chance calculations", () => {
     const phase = game.scene.getCurrentPhase() as AttemptRunPhase;
     const escapePercentage = new Utils.IntegerHolder(0);
 
-    // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, and the expectedEscapeChance is the chance it should be escaping
+    // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
     const escapeChances: { pokemonSpeedRatio: number, escapeAttempts: number, expectedEscapeChance: number }[] = [
       { pokemonSpeedRatio: 0.01, escapeAttempts: 0, expectedEscapeChance: 5 },
       { pokemonSpeedRatio: 0.1, escapeAttempts: 0, expectedEscapeChance: 5 },
@@ -238,7 +238,7 @@ describe("Escape chance calculations", () => {
     const phase = game.scene.getCurrentPhase() as AttemptRunPhase;
     const escapePercentage = new Utils.IntegerHolder(0);
 
-    // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, and the expectedEscapeChance is the chance it should be escaping
+    // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
     const escapeChances: { pokemonSpeedRatio: number, escapeAttempts: number, expectedEscapeChance: number }[] = [
       { pokemonSpeedRatio: 0.3, escapeAttempts: 0, expectedEscapeChance: 6 },
       { pokemonSpeedRatio: 0.7, escapeAttempts: 0, expectedEscapeChance: 7 },
