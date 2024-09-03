@@ -676,11 +676,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Retrieves the entire set of stats of the {@linkcode Pokemon}.
-   * @param ignoreOverride prefer actual stats (`true` by default) or in-battle overriden stats (`false`)
+   * @param bypassSummonData prefer actual stats (`true` by default) or in-battle overriden stats (`false`)
    * @returns the numeric values of the {@linkcode Pokemon}'s stats
    */
-  getStats(ignoreOverride: boolean = true): number[] {
-    if (!ignoreOverride && this.summonData?.stats) {
+  getStats(bypassSummonData: boolean = true): number[] {
+    if (!bypassSummonData && this.summonData?.stats) {
       return this.summonData.stats;
     }
     return this.stats;
@@ -689,11 +689,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Retrieves the corresponding {@linkcode PermanentStat} of the {@linkcode Pokemon}.
    * @param stat the desired {@linkcode PermanentStat}
-   * @param ignoreOverride prefer actual stats (`true` by default) or in-battle overridden stats (`false`)
+   * @param bypassSummonData prefer actual stats (`true` by default) or in-battle overridden stats (`false`)
    * @returns the numeric value of the desired {@linkcode Stat}
    */
-  getStat(stat: PermanentStat, ignoreOverride: boolean = true): number {
-    if (!ignoreOverride && this.summonData && (this.summonData.stats[stat] !== 0)) {
+  getStat(stat: PermanentStat, bypassSummonData: boolean = true): number {
+    if (!bypassSummonData && this.summonData && (this.summonData.stats[stat] !== 0)) {
       return this.summonData.stats[stat];
     }
     return this.stats[stat];
@@ -705,11 +705,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Note that this does nothing if {@linkcode value} is less than 0.
    * @param stat the desired {@linkcode PermanentStat} to be overwritten
    * @param value the desired numeric value
-   * @param ignoreOverride write to actual stats (`true` by default) or in-battle overridden stats (`false`)
+   * @param bypassSummonData write to actual stats (`true` by default) or in-battle overridden stats (`false`)
    */
-  setStat(stat: PermanentStat, value: number, ignoreOverride: boolean = true): void {
+  setStat(stat: PermanentStat, value: number, bypassSummonData: boolean = true): void {
     if (value >= 0) {
-      if (!ignoreOverride && this.summonData) {
+      if (!bypassSummonData && this.summonData) {
         this.summonData.stats[stat] = value;
       } else {
         this.stats[stat] = value;
