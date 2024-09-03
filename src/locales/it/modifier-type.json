@@ -50,7 +50,7 @@
       "description": "Raddoppia la possibilità di imbattersi in doppie battaglie per {{battleCount}} battaglie."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "Aumenta {{stat}} di un livello a tutti i Pokémon nel gruppo per 5 battaglie."
+      "description": "Aumenta la statistica {{stat}} di un livello\na tutti i Pokémon nel gruppo per 5 battaglie."
     },
     "AttackTypeBoosterModifierType": {
       "description": "Aumenta la potenza delle mosse di tipo {{moveType}} del 20% per un Pokémon."
@@ -59,10 +59,10 @@
       "description": "Aumenta il livello di un Pokémon di {{levels}}."
     },
     "AllPokemonLevelIncrementModifierType": {
-      "description": "Aumenta i livell di tutti i Pokémon della squadra di {{levels}}."
+      "description": "Aumenta il livello di tutti i Pokémon della squadra di {{levels}}."
     },
     "BaseStatBoosterModifierType": {
-      "description": "Aumenta {{stat}} di base del possessore del 10%."
+      "description": "Aumenta l'/la {{stat}} di base del possessore del 10%."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restituisce il 100% dei PS a tutti i Pokémon."
