@@ -57,11 +57,11 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const moveLimitReached = i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) });
     const shouldReplaceQ = i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name });
     const preQText = [learnMovePrompt, moveLimitReached].join("$");
-    this.scene.ui.showText(preQText, null, () => {
-      this.scene.ui.showText(shouldReplaceQ, null, () => {
+    this.scene.ui.showTextPromise(preQText).then(() => {
+      this.scene.ui.showTextPromise(shouldReplaceQ, undefined, false).then(() => {
         this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => this.forgetMoveProcess(move, pokemon), () => this.rejectMoveAndEnd(move, pokemon));
-      }, null);
-    }, null, true);
+      });
+    });
   }
 
   /**
@@ -77,6 +77,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       this.scene.ui.setModeWithoutClear(Mode.SUMMARY, pokemon, SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
         if (moveIndex === 4) {
           this.scene.ui.setMode(this.messageMode).then(() => this.rejectMoveAndEnd(move, pokemon));
+          return;
         }
         const forgetSuccessText = i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex]!.getName() });
         const fullText = [i18next.t("battle:countdownPoof"), forgetSuccessText, i18next.t("battle:learnMoveAnd")].join("$");
@@ -92,15 +93,14 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * If the player reconsiders, it repeats the process for a Pokemon with a full moveset once again.
    */
   rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
-    this.scene.ui.setMode(this.messageMode);
     this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
       this.scene.ui.setModeWithoutClear(Mode.CONFIRM,
         () => {
           this.scene.ui.setMode(this.messageMode);
           this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
             this.end();
-          });
-        });
+          }, null, true);
+        }, () => this.replaceMoveCheck());
     });
   }
 

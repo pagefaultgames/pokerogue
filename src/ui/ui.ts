@@ -286,6 +286,12 @@ export default class UI extends Phaser.GameObjects.Container {
     return handler.processInput(button);
   }
 
+  showTextPromise(text: string, callbackDelay: number = 0, prompt: boolean = true, promptDelay?: integer | null): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.showText(text ?? "", null, () => resolve(), callbackDelay, prompt, promptDelay);
+    });
+  }
+
   showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void {
     if (prompt && text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
