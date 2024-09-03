@@ -124,7 +124,7 @@ describe("Reload", () => {
     game.override
       .battleType("single")
       .startingWave(50);
-    await game.runToFinalBossEncounter(game, [Species.BULBASAUR], GameModes.DAILY);
+    await game.runToFinalBossEncounter([Species.BULBASAUR], GameModes.DAILY);
 
     const preReloadRngState = Phaser.Math.RND.state();
 
