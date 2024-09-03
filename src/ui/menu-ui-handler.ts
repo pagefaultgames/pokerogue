@@ -372,7 +372,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       },
       {
-        label: "Donate",
+        label: i18next.t("menuUiHandler:donate"),
         handler: () => {
           window.open(donateUrl, "_blank")?.focus();
           return true;
