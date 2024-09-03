@@ -961,7 +961,16 @@ export default class BattleScene extends SceneBase {
     this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
   }
 
-  // What is the purpose of this function? Why not just use Battle.randSeedInt() directly?
+  /**
+   * Generates a random number using the current battle's seed
+   *
+   * This calls {@linkcode Battle.randSeedInt}(`scene`, {@linkcode range}, {@linkcode min}) in `src/battle.ts`
+   * which calls {@linkcode Utils.randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts`
+   *
+   * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+   * @param min The minimum integer to pick, default `0`
+   * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+   */
   randBattleSeedInt(range: integer, min: integer = 0): integer {
     return this.currentBattle?.randSeedInt(this, range, min);
   }
