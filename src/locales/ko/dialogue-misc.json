@@ -1,0 +1,6 @@
+{
+  "ending": "@c{shock}돌아왔구나?@d{32} 그 말은…@d{96} 이겼어?!\n@c{smile_ehalf}그럴 줄 알았다니까.\n$@c{smile_eclosed}물론… 언제나 느껴왔지.\n@c{smile}끝난 거, 맞지? 이 굴레를 말이야.\n$@c{smile_ehalf}네 꿈도 이뤘고 말이야.\n어떻게 한번도 안 졌대?\n$네가 한 일은 나만 기억하게 될 모양이지만.\n@c{angry_mopen}나, 안 까먹어볼 테니까!\n$@c{smile_wave_wink}농담이야!@d{64} @c{smile}절대 안 잊어버릴 거야.@d{32}\n마음 속엔 쭉 남아있을 수 있게.\n$@c{smile_wave}어쨌든,@d{64} 시간이 좀 늦었어…@d{96}\n이런 곳에서 할 말은 아닌가?\n$집에 가자. @c{smile_wave_wink}아마 내일은,\n추억을 되짚어보기 위한 배틀을 해볼 수 있을 거야.",
+  "ending_female": "@c{smile}오? 이긴거야?@d{96} @c{smile_eclosed}진즉 알았어야 했는데.\n아무튼, 돌아왔구나.\n$@c{smile}다 끝난거야.@d{64} 네가 굴레를 끝장냈어.\n$@c{serious_smile_fists}네 꿈도 이뤄졌고말야.\n진짜로 한 번도 안 졌잖아.\n$@c{neutral}기억하는 건 우리들 뿐일 모양이지만.@d{96}\n그래도, 괜찮지?\n$@c{serious_smile_fists}오늘의 일은\n너와 나의 마음 속에 항상 함께할 거야.\n$@c{smile_eclosed}여기 구경도 충분히 했으니\n이제 집에 가자.\n$@c{serious_smile_fists}되돌아가서, 다시 배틀을 할 수도 있지 않을까?\n네가 원한다면 말야.",
+  "ending_endless": "끝에 도달하신 것을 축하드립니다!\n더 많은 컨텐츠를 기다려주세요.",
+  "ending_name": "Devs"
+}

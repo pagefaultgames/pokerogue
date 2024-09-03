@@ -1,0 +1,16 @@
+{
+  "misty": "Niebla",
+  "mistyStartMessage": "¡La niebla ha envuelto el terreno de combate!",
+  "mistyClearMessage": "La niebla se ha disipado.",
+  "mistyBlockMessage": "¡El campo de niebla ha protegido a {{pokemonNameWithAffix}} ",
+  "electric": "Eléctrico",
+  "electricStartMessage": "¡Se ha formado un campo de corriente eléctrica en el terreno\nde combate!",
+  "electricClearMessage": "El campo de corriente eléctrica ha desaparecido.\t",
+  "grassy": "Hierba",
+  "grassyStartMessage": "¡El terreno de combate se ha cubierto de hierba!",
+  "grassyClearMessage": "La hierba ha desaparecido.",
+  "psychic": "Psíquico",
+  "psychicStartMessage": "¡El terreno de combate se ha vuelto muy extraño!",
+  "psychicClearMessage": "Ha desaparecido la extraña sensación que se percibía en el terreno\nde combate.",
+  "defaultBlockMessage": "¡El campo {{terrainName}} ha protegido a {{pokemonNameWithAffix}} "
+}

@@ -4,7 +4,6 @@ import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
 import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
-import { CommonAnimPhase } from "../phases";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
 import Move from "../data/move";
@@ -13,7 +12,7 @@ import { BattlerIndex } from "../battle";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
-import * as Overrides from "../overrides";
+import Overrides from "#app/overrides";
 import { WeatherChangedEvent, TerrainChangedEvent, TagAddedEvent, TagRemovedEvent } from "../events/arena";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Biome } from "#enums/biome";
@@ -21,12 +20,16 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import { Abilities } from "#app/enums/abilities";
+import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 
 export class Arena {
   public scene: BattleScene;
   public biomeType: Biome;
-  public weather: Weather;
-  public terrain: Terrain;
+  public weather: Weather | null;
+  public terrain: Terrain | null;
   public tags: ArenaTag[];
   public bgm: string;
   public ignoreAbilities: boolean;
@@ -121,7 +124,7 @@ export class Arena {
         }
       }
 
-      ret = getPokemonSpecies(species);
+      ret = getPokemonSpecies(species!);
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
         switch (true) {
@@ -292,7 +295,7 @@ export class Arena {
   trySetWeatherOverride(weather: WeatherType): boolean {
     this.weather = new Weather(weather, 0);
     this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
-    this.scene.queueMessage(getWeatherStartMessage(weather));
+    this.scene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     return true;
   }
 
@@ -314,13 +317,13 @@ export class Arena {
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
-    this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType, this.weather?.turnsLeft));
+    this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!)); // TODO: is this bang correct?
 
     if (this.weather) {
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
-      this.scene.queueMessage(getWeatherStartMessage(weather));
+      this.scene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     } else {
-      this.scene.queueMessage(getWeatherClearMessage(oldWeatherType));
+      this.scene.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
     }
 
     this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
@@ -331,6 +334,36 @@ export class Arena {
     return true;
   }
 
+  /**
+   * Function to trigger all weather based form changes
+   */
+  triggerWeatherBasedFormChanges(): void {
+    this.scene.getField(true).forEach( p => {
+      const isCastformWithForecast = (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM);
+      const isCherrimWithFlowerGift = (p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM);
+
+      if (isCastformWithForecast || isCherrimWithFlowerGift) {
+        new ShowAbilityPhase(this.scene, p.getBattlerIndex());
+        this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
+      }
+    });
+  }
+
+  /**
+   * Function to trigger all weather based form changes back into their normal forms
+   */
+  triggerWeatherBasedFormChangesToNormal(): void {
+    this.scene.getField(true).forEach( p => {
+      const isCastformWithForecast = (p.hasAbility(Abilities.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM);
+      const isCherrimWithFlowerGift = (p.hasAbility(Abilities.FLOWER_GIFT, false, true) && p.species.speciesId === Species.CHERRIM);
+
+      if (isCastformWithForecast || isCherrimWithFlowerGift) {
+        new ShowAbilityPhase(this.scene, p.getBattlerIndex());
+        return this.scene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
+      }
+    });
+  }
+
   trySetTerrain(terrain: TerrainType, hasPokemonSource: boolean, ignoreAnim: boolean = false): boolean {
     if (this.terrain?.terrainType === (terrain || undefined)) {
       return false;
@@ -339,15 +372,15 @@ export class Arena {
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
     this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
-    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType,this.terrain?.terrainType, this.terrain?.turnsLeft));
+    this.eventTarget.dispatchEvent(new TerrainChangedEvent(oldTerrainType, this.terrain?.terrainType!, this.terrain?.turnsLeft!)); // TODO: are those bangs correct?
 
     if (this.terrain) {
       if (!ignoreAnim) {
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
       }
-      this.scene.queueMessage(getTerrainStartMessage(terrain));
+      this.scene.queueMessage(getTerrainStartMessage(terrain)!); // TODO: is this bang correct?
     } else {
-      this.scene.queueMessage(getTerrainClearMessage(oldTerrainType));
+      this.scene.queueMessage(getTerrainClearMessage(oldTerrainType)!); // TODO: is this bang correct?
     }
 
     this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
@@ -384,6 +417,10 @@ export class Arena {
     return weatherMultiplier * terrainMultiplier;
   }
 
+  /**
+   * Gets the denominator for the chance for a trainer spawn
+   * @returns n where 1/n is the chance of a trainer battle
+   */
   getTrainerChance(): integer {
     switch (this.biomeType) {
     case Biome.METROPOLIS:
@@ -550,7 +587,7 @@ export class Arena {
     this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
   }
 
-  addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide = ArenaTagSide.BOTH, quiet: boolean = false, targetIndex?: BattlerIndex): boolean {
+  addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves | undefined, sourceId: integer, side: ArenaTagSide = ArenaTagSide.BOTH, quiet: boolean = false, targetIndex?: BattlerIndex): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
       existingTag.onOverlap(this);
@@ -564,21 +601,27 @@ export class Arena {
     }
 
     const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
-    this.tags.push(newTag);
-    newTag.onAdd(this, quiet);
+    if (newTag) {
+      this.tags.push(newTag);
+      newTag.onAdd(this, quiet);
 
-    const { layers = 0, maxLayers = 0 } = newTag instanceof ArenaTrapTag ? newTag : {};
+      const { layers = 0, maxLayers = 0 } = newTag instanceof ArenaTrapTag ? newTag : {};
 
-    this.eventTarget.dispatchEvent(new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, layers, maxLayers));
+      this.eventTarget.dispatchEvent(new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, layers, maxLayers));
+    }
 
     return true;
   }
 
-  getTag(tagType: ArenaTagType | Constructor<ArenaTag>): ArenaTag {
+  getTag(tagType: ArenaTagType | Constructor<ArenaTag>): ArenaTag | undefined {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }
 
-  getTagOnSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide): ArenaTag {
+  hasTag(tagType: ArenaTagType) : boolean {
+    return !!this.getTag(tagType);
+  }
+
+  getTagOnSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide): ArenaTag | undefined {
     return typeof(tagType) === "string"
       ? this.tags.find(t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side))
       : this.tags.find(t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
@@ -634,6 +677,18 @@ export class Arena {
     }
   }
 
+  /**
+   * Clears weather, terrain and arena tags when entering new biome or trainer battle.
+   */
+  resetArenaEffects(): void {
+    // Don't reset weather if a Biome's permanent weather is active
+    if (this.weather?.turnsLeft !== 0) {
+      this.trySetWeather(WeatherType.NONE, false);
+    }
+    this.trySetTerrain(TerrainType.NONE, false, true);
+    this.removeAllTags();
+  }
+
   preloadBgm(): void {
     this.scene.loadBgm(this.bgm);
   }
@@ -653,7 +708,7 @@ export class Arena {
     case Biome.FOREST:
       return 4.294;
     case Biome.SEA:
-      return 1.672;
+      return 0.024;
     case Biome.SWAMP:
       return 4.461;
     case Biome.BEACH:
@@ -661,7 +716,7 @@ export class Arena {
     case Biome.LAKE:
       return 5.350;
     case Biome.SEABED:
-      return 2.629;
+      return 2.600;
     case Biome.MOUNTAIN:
       return 4.018;
     case Biome.BADLANDS:
@@ -691,7 +746,7 @@ export class Arena {
     case Biome.ABYSS:
       return 5.130;
     case Biome.SPACE:
-      return 21.347;
+      return 20.036;
     case Biome.CONSTRUCTION_SITE:
       return 1.222;
     case Biome.JUNGLE:
@@ -705,9 +760,12 @@ export class Arena {
     case Biome.LABORATORY:
       return 114.862;
     case Biome.SLUM:
-      return 1.221;
+      return 0.000;
     case Biome.SNOWY_FOREST:
       return 3.047;
+    default:
+      console.warn(`missing bgm loop-point for biome "${Biome[this.biomeType]}" (=${this.biomeType})`);
+      return 0;
     }
   }
 }
@@ -761,12 +819,12 @@ export class ArenaBase extends Phaser.GameObjects.Container {
 
     this.player = player;
 
-    this.base = scene.addFieldSprite(0, 0, "plains_a", null, 1);
+    this.base = scene.addFieldSprite(0, 0, "plains_a", undefined, 1);
     this.base.setOrigin(0, 0);
 
     this.props = !player ?
       new Array(3).fill(null).map(() => {
-        const ret = scene.addFieldSprite(0, 0, "plains_b", null, 1);
+        const ret = scene.addFieldSprite(0, 0, "plains_b", undefined, 1);
         ret.setOrigin(0, 0);
         ret.setVisible(false);
         return ret;

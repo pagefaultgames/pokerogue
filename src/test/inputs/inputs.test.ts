@@ -1,9 +1,9 @@
-import {afterEach, beforeAll, beforeEach, describe, expect, it} from "vitest";
-import Phaser from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
 import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
-import InputsHandler from "#app/test/utils/inputsHandler";
+import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
+import GameManager from "#test/utils/gameManager";
+import InputsHandler from "#test/utils/inputsHandler";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
 describe("Inputs", () => {

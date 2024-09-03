@@ -1,13 +1,18 @@
 import UI from "#app/ui/ui";
+import { vi } from "vitest";
+import { MockGameObject } from "../mockGameObject";
 
-export default class MockText {
+export default class MockText implements MockGameObject {
   private phaserText;
   private wordWrapWidth;
   private splitRegExp;
   private scene;
   private textureManager;
-  public list = [];
+  public list: MockGameObject[] = [];
   public style;
+  public text = "";
+  private name?: string;
+  public color?: string;
 
   constructor(textureManager, x, y, content, styleOptions) {
     this.scene = textureManager.scene;
@@ -17,6 +22,8 @@ export default class MockText {
     // Phaser.GameObjects.Text.prototype.updateText = () => null;
     // Phaser.Textures.TextureManager.prototype.addCanvas = () => {};
     UI.prototype.showText = this.showText;
+    this.text = "";
+    this.phaserText = "";
     // super(scene, x, y);
     // this.phaserText = new Phaser.GameObjects.Text(scene, x, y, content, styleOptions);
   }
@@ -150,7 +157,8 @@ export default class MockText {
 
   setText(text) {
     // Sets the text this Game Object will display.
-    // return this.phaserText.setText(text);
+    // return this.phaserText.setText\(text);
+    this.text = text;
   }
 
   setAngle(angle) {
@@ -185,10 +193,9 @@ export default class MockText {
     };
   }
 
-  setColor(color) {
-    // Sets the tint of this Game Object.
-    // return this.phaserText.setColor(color);
-  }
+  setColor = vi.fn((color: string) => {
+    this.color = color;
+  });
 
   setShadowColor(color) {
     // Sets the shadow color.
@@ -214,9 +221,9 @@ export default class MockText {
     // return this.phaserText.setAlpha(alpha);
   }
 
-  setName(name) {
-    // return this.phaserText.setName(name);
-  }
+  setName = vi.fn((name: string) => {
+    this.name = name;
+  });
 
   setAlign(align) {
     // return this.phaserText.setAlign(align);

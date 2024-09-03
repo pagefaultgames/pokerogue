@@ -1,0 +1,32 @@
+name: Deploy Beta
+
+on:
+  push:
+    branches:
+      - beta
+
+jobs:
+  deploy:
+    if: github.repository == 'pagefaultgames/pokerogue'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build:beta
+        env:
+          NODE_ENV: production
+      - name: Set up SSH
+        run: |
+          mkdir ~/.ssh
+          echo "${{ secrets.BETA_SSH_PUBLIC_KEY }}" > ~/.ssh/id_ed25519.pub
+          echo "${{ secrets.BETA_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/*
+          ssh-keyscan -H ${{ secrets.BETA_SSH_HOST }} >> ~/.ssh/known_hosts
+      - name: Deploy build on server
+        run: | 
+          rsync --del --no-times --checksum -vrm dist/* ${{ secrets.BETA_SSH_USER }}@${{ secrets.BETA_SSH_HOST }}:${{ secrets.BETA_DESTINATION_DIR }}

@@ -1,13 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Phase from "phaser";
-import GameManager from "#app/test/utils/gameManager";
-import * as overrides from "#app/overrides";
-import { Stat } from "#app/data/pokemon-stat";
+import { Stat } from "#enums/stat";
 import { EvolutionStatBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import * as Utils from "#app/utils";
 import i18next from "#app/plugins/i18n";
+import * as Utils from "#app/utils";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import Phase from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Eviolite", () => {
   let phaserGame: Phaser.Game;
@@ -26,11 +25,11 @@ describe("Items - Eviolite", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    vi.spyOn(overrides, "SINGLE_BATTLE_OVERRIDE", "get").mockReturnValue(true);
+    game.override.battleType("single");
   });
 
   it("EVIOLITE activates in battle correctly", async() => {
-    vi.spyOn(overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue([{ name: "EVIOLITE" }]);
+    game.override.startingHeldItems([{ name: "EVIOLITE" }]);
     const consoleSpy = vi.spyOn(console, "log");
     await game.startBattle([
       Species.PICHU
@@ -38,29 +37,29 @@ describe("Items - Eviolite", () => {
 
     const partyMember = game.scene.getParty()[0];
 
-    // Checking consoe log to make sure Eviolite is applied when getBattleStat (with the appropriate stat) is called
-    partyMember.getBattleStat(Stat.DEF);
+    // Checking console log to make sure Eviolite is applied when getEffectiveStat (with the appropriate stat) is called
+    partyMember.getEffectiveStat(Stat.DEF);
     expect(consoleSpy).toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
 
     // Printing dummy console messages along the way so subsequent checks don't pass because of the first
     console.log("");
 
-    partyMember.getBattleStat(Stat.SPDEF);
+    partyMember.getEffectiveStat(Stat.SPDEF);
     expect(consoleSpy).toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
 
     console.log("");
 
-    partyMember.getBattleStat(Stat.ATK);
+    partyMember.getEffectiveStat(Stat.ATK);
     expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
 
     console.log("");
 
-    partyMember.getBattleStat(Stat.SPATK);
+    partyMember.getEffectiveStat(Stat.SPATK);
     expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
 
     console.log("");
 
-    partyMember.getBattleStat(Stat.SPD);
+    partyMember.getEffectiveStat(Stat.SPD);
     expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:ModifierType.EVIOLITE.name"), "");
   });
 

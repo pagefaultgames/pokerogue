@@ -1,0 +1,14 @@
+{
+  "mega": "Mega {{pokemonName}}",
+  "mega-x": "Mega {{pokemonName}} X",
+  "mega-y": "Mega {{pokemonName}} Y",
+  "primal": "Archeo {{pokemonName}}",
+  "gigantamax": "GigaMax {{pokemonName}}",
+  "eternamax": "EternaMax {{pokemonName}}",
+  "megaChange": "{{preName}} si evolve\nin {{pokemonName}}!",
+  "gigantamaxChange": "{{preName}} si Gigamaxxizza\nin {{pokemonName}}!",
+  "eternamaxChange": "{{preName}} si Dynamaxxa infinitamente\nin {{pokemonName}}!",
+  "revertChange": "{{pokemonName}} è tornato\nalla sua forma originaria!",
+  "formChange": "{{preName}} ha cambiato forma!",
+  "disguiseChange": "Il costume ha assorbito l’attacco!"
+}
