@@ -221,6 +221,15 @@ export class TurnStartPhase extends FieldPhase {
     this.scene.pushPhase(new BerryPhase(this.scene));
     this.scene.pushPhase(new TurnEndPhase(this.scene));
 
+    this.scene.arenaFlyout.updateFieldText();
+    
+    if (LoggerTools.Actions.length > 1 && !this.scene.currentBattle.double) {
+      LoggerTools.Actions.pop() // If this is a single battle, but we somehow have two actions, delete the second
+    }
+    if (LoggerTools.Actions.length > 1 && (LoggerTools.Actions[0] == "" || LoggerTools.Actions[0] == undefined || LoggerTools.Actions[0] == null))
+      LoggerTools.Actions.shift() // If the left slot isn't doing anything, delete its entry
+    LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, LoggerTools.Actions.join(" & "))
+
     /**
        * this.end() will call shiftPhase(), which dumps everything from PrependQueue (aka everything that is unshifted()) to the front
        * of the queue and dequeues to start the next phase

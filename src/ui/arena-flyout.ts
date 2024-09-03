@@ -11,8 +11,7 @@ import TimeOfDayWidget from "./time-of-day-widget";
 import * as Utils from "../utils";
 import i18next, {ParseKeys} from "i18next";
 import { getNatureDecrease, getNatureIncrease, getNatureName } from "#app/data/nature.js";
-import * as LoggerTools from "../logger"
-import { BattleEndPhase } from "#app/phases.js";
+import * as LoggerTools from "../logger";
 import { Gender } from "#app/data/gender.js";
 import { getBiomeName } from "#app/data/biomes.js";
 import { getLuckString } from "#app/modifier/modifier-type.js";
