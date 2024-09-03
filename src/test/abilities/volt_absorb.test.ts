@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -41,12 +41,14 @@ describe("Abilities - Volt Absorb", () => {
 
     await game.startBattle();
 
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+
     game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.getParty()[0].summonData.battleStats[BattleStat.SPDEF]).toBe(1);
-    expect(game.scene.getParty()[0].getTag(BattlerTagType.CHARGED)).toBeDefined();
+    expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(1);
+    expect(playerPokemon.getTag(BattlerTagType.CHARGED)).toBeDefined();
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 });
