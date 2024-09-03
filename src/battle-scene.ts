@@ -974,6 +974,7 @@ export default class BattleScene extends SceneBase {
 
     this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
     console.log("Seed:", this.seed);
+    this.resetSeed(); // Properly resets RNG after saving and quitting a session
 
     this.disableMenu = false;
 
