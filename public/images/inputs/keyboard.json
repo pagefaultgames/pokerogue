@@ -97,7 +97,7 @@
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 11 },
     "sourceSize": { "w": 24, "h": 11 }
    },
-   "c.png": {
+   "C.png": {
     "frame": { "x": 88, "y": 33, "w": 12, "h": 11 },
     "rotated": false,
     "trimmed": true,
