@@ -63,6 +63,7 @@
   "bgmVolume": "Hintergrundmusik",
   "fieldVolume": "Rufe & Attacken",
   "seVolume": "Spezialeffekte",
+  "uiVolume": "Benutzeroberfläche",
   "musicPreference": "Musik Präferenz",
   "mixed": "Gemischt",
   "gamepadPleasePlug": "Bitte einen Controller anschließen oder eine Taste drücken.",

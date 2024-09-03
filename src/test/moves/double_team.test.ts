@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import { Abilities } from "#app/enums/abilities";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
@@ -32,20 +32,20 @@ describe("Moves - Double Team", () => {
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
-  it("increases the user's evasion by one stage.", async () => {
+  it("raises the user's EVA stat stage by 1", async () => {
     await game.startBattle([Species.MAGIKARP]);
 
     const ally = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(enemy, "getAccuracyMultiplier");
-    expect(ally.summonData.battleStats[BattleStat.EVA]).toBe(0);
+    expect(ally.getStatStage(Stat.EVA)).toBe(0);
 
     game.move.select(Moves.DOUBLE_TEAM);
     await game.phaseInterceptor.to(TurnEndPhase);
     await game.toNextTurn();
 
-    expect(ally.summonData.battleStats[BattleStat.EVA]).toBe(1);
+    expect(ally.getStatStage(Stat.EVA)).toBe(1);
     expect(enemy.getAccuracyMultiplier).toHaveReturnedWith(.75);
   });
 });

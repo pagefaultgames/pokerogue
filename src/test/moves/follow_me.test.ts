@@ -1,5 +1,5 @@
+import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
-import { Stat } from "#app/data/pokemon-stat";
 import { Abilities } from "#app/enums/abilities";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
@@ -66,7 +66,7 @@ describe("Moves - Follow Me", () => {
       game.move.select(Moves.FOLLOW_ME, 1);
       await game.phaseInterceptor.to(TurnEndPhase, false);
 
-      playerPokemon.sort((a, b) => a.getBattleStat(Stat.SPD) - b.getBattleStat(Stat.SPD));
+      playerPokemon.sort((a, b) => a.getEffectiveStat(Stat.SPD) - b.getEffectiveStat(Stat.SPD));
 
       expect(playerPokemon[1].hp).toBeLessThan(playerStartingHp[1]);
       expect(playerPokemon[0].hp).toBe(playerStartingHp[0]);

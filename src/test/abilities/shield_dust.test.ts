@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { applyAbAttrs, applyPreDefendAbAttrs, IgnoreMoveEffectsAbAttr, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
-import { Stat } from "#app/data/pokemon-stat";
+import { Stat } from "#enums/stat";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import * as Utils from "#app/utils";
 import { Abilities } from "#enums/abilities";

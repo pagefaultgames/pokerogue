@@ -1,13 +1,13 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "../utils/gameManager";
+import { Species } from "#enums/species";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Stat } from "#enums/stat";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { CommandPhase } from "#app/phases/command-phase";
 
 const TIMEOUT = 20 * 1000;
 
@@ -55,7 +55,7 @@ describe("Moves - Crafty Shield", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.summonData.battleStats[BattleStat.ATK]).toBe(0));
+      leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
     }, TIMEOUT
   );
 
@@ -117,8 +117,8 @@ describe("Moves - Crafty Shield", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(leadPokemon[0].summonData.battleStats[BattleStat.ATK]).toBe(0);
-      expect(leadPokemon[1].summonData.battleStats[BattleStat.ATK]).toBe(2);
+      expect(leadPokemon[0].getStatStage(Stat.ATK)).toBe(0);
+      expect(leadPokemon[1].getStatStage(Stat.ATK)).toBe(2);
     }
   );
 });

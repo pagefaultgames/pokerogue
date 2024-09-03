@@ -71,7 +71,7 @@ export class SwitchSummonPhase extends SummonPhase {
       i18next.t("battle:playerComeBack", { pokemonName: getPokemonNameWithAffix(pokemon) }) :
       i18next.t("battle:trainerComeBack", {
         trainerName: this.scene.currentBattle.trainer?.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
-        pokemonName: getPokemonNameWithAffix(pokemon)
+        pokemonName: pokemon.getNameToRender()
       })
     );
     this.scene.playSound("se/pb_rel");
