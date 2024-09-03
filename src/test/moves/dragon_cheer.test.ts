@@ -31,7 +31,6 @@ describe("Moves - Dragon Cheer", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(SPLASH_ONLY)
       .enemyLevel(20)
-      .startingWave(4)
       .moveset([Moves.DRAGON_CHEER, Moves.TACKLE, Moves.SPLASH]);
   });
 
