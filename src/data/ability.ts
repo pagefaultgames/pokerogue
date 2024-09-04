@@ -3475,12 +3475,12 @@ export class MoodyAbAttr extends PostTurnAbAttr {
 
     if (!simulated) {
       if (canRaise.length > 0) {
-        const raisedStat = Utils.randSeedItem(canRaise);
+        const raisedStat = canRaise[pokemon.randSeedInt(canRaise.length)];
         canLower = canRaise.filter(s => s !== raisedStat);
         pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ raisedStat ], 2));
       }
       if (canLower.length > 0) {
-        const loweredStat = Utils.randSeedItem(canLower);
+        const loweredStat = canLower[pokemon.randSeedInt(canLower.length)];
         pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ loweredStat ], -1));
       }
     }

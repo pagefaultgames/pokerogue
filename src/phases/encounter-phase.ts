@@ -161,9 +161,11 @@ export class EncounterPhase extends BattlePhase {
               return this.scene.reset(true);
             }
             this.doEncounter();
+            this.scene.resetSeed();
           });
         } else {
           this.doEncounter();
+          this.scene.resetSeed();
         }
       });
     });
