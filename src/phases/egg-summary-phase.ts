@@ -11,7 +11,6 @@ import { EggHatchData } from "#app/data/egg-hatch-data";
  */
 export class EggSummaryPhase extends Phase {
   private eggHatchData: EggHatchData[];
-
   private eggHatchHandler: EggHatchSceneHandler;
 
   constructor(scene: BattleScene, eggHatchData: EggHatchData[]) {

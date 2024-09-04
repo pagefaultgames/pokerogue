@@ -7,12 +7,17 @@ import { DexEntry, StarterDataEntry } from "#app/system/game-data";
  * Allows hatch info to be stored at hatch then retrieved for display during egg summary
  */
 export class EggHatchData {
-  // the pokemon that hatched from the file (including shiny, IVs, ability)
+  /** the pokemon that hatched from the file (including shiny, IVs, ability) */
   public pokemon: PlayerPokemon;
+  /** index of the egg move from the hatched pokemon (not stored in PlayerPokemon) */
   public eggMoveIndex: number;
+  /** boolean indicating if the egg move for the hatch is new */
   public eggMoveUnlocked: boolean;
+  /** stored copy of the hatched pokemon's dex entry before it was updated due to hatch */
   public dexEntryBeforeUpdate: DexEntry;
+  /** stored copy of the hatched pokemon's starter entry before it was updated due to hatch */
   public starterDataEntryBeforeUpdate: StarterDataEntry;
+  /** reference to the battle scene to get gamedata and update dex */
   private scene: BattleScene;
 
   constructor(scene: BattleScene, pokemon: PlayerPokemon, eggMoveIndex: number) {

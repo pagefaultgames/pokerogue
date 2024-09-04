@@ -2742,15 +2742,15 @@ export default class BattleScene extends SceneBase {
     const keys: string[] = [];
     const playerParty = this.getParty();
     playerParty.forEach(p => {
-      keys.push("pkmn__"+p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
-      keys.push("pkmn__"+p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant, true));
-      keys.push("cry/"+p.species.getCryKey(p.species.formIndex));
+      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
+      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant, true));
+      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
     });
     // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
     const enemyParty = this.getEnemyParty();
     enemyParty.forEach(p => {
       keys.push(p.species.getSpriteKey(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
-      keys.push("cry/"+p.species.getCryKey(p.species.formIndex));
+      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
     });
     return keys;
   }
