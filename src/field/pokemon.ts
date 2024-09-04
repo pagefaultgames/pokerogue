@@ -2132,7 +2132,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * A multiplier for random damage spread in the range [0.85, 1]
      * This is always 1 for simulated calls.
      */
-    const randomMultiplier = simulated ? 1 : ((this.scene.randBattleSeedInt(16) + 85) / 100);
+    const randomMultiplier = simulated ? 1 : ((this.randSeedIntRange(85, 100)) / 100);
 
     const sourceTypes = source.getTypes();
     const matchesSourceType = sourceTypes.includes(moveType);
