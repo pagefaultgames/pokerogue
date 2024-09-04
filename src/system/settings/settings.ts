@@ -76,12 +76,12 @@ const SHOP_CURSOR_TARGET_OPTIONS: SettingOption[] = [
 
 const shopCursorTargetIndexMap = SHOP_CURSOR_TARGET_OPTIONS.map(option => {
   switch (option.value) {
+  case "Rewards":
+    return ShopCursorTarget.REWARDS;
   case "Shop":
     return ShopCursorTarget.SHOP;
   case "Reroll":
     return ShopCursorTarget.REROLL;
-  case "Rewards":
-    return ShopCursorTarget.REWARDS;
   case "Check Team":
     return ShopCursorTarget.CHECK_TEAM;
   default:
