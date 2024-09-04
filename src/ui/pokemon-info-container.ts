@@ -208,7 +208,6 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.setVisible(false);
   }
 
-  // TODO neaten up boolean calls
   show(pokemon: Pokemon, showMoves: boolean = false, speedMultiplier: number = 1, dexEntry?: DexEntry, starterEntry?: StarterDataEntry, eggInfo = false): Promise<void> {
     return new Promise<void>(resolve => {
       if (!dexEntry) {
@@ -379,8 +378,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage?.includes(lang))!; // TODO: is this bang correct?
     const textSettings = languageSettings[langSettingKey];
 
-    const infoContainerLabelXPos = (textSettings?.infoContainerLabelXPos || -18) + 43;
-    const infoContainerTextXPos = (textSettings?.infoContainerTextXPos || -14) + 43;
+    const eggLabelTextOffset = 43;
+    const infoContainerLabelXPos = (textSettings?.infoContainerLabelXPos || -18) + eggLabelTextOffset;
+    const infoContainerTextXPos = (textSettings?.infoContainerTextXPos || -14) + eggLabelTextOffset;
 
     this.x = this.initialX - this.infoWindowWidth;
 

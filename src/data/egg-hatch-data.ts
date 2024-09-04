@@ -1,8 +1,13 @@
-import BattleScene from "#app/battle-scene.js";
-import { PlayerPokemon } from "#app/field/pokemon.js";
-import { DexEntry, StarterDataEntry } from "#app/system/game-data.js";
+import BattleScene from "#app/battle-scene";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { DexEntry, StarterDataEntry } from "#app/system/game-data";
 
+/**
+ * Stores data associated with a specific egg and the hatched pokemon
+ * Allows hatch info to be stored at hatch then retrieved for display during egg summary
+ */
 export class EggHatchData {
+  // the pokemon that hatched from the file (including shiny, IVs, ability)
   public pokemon: PlayerPokemon;
   public eggMoveIndex: number;
   public eggMoveUnlocked: boolean;
@@ -31,7 +36,6 @@ export class EggHatchData {
   setDex() {
     const currDexEntry = this.scene.gameData.dexData[this.pokemon.species.speciesId];
     const currStarterDataEntry = this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()];
-    // this.prevDexEntry = this.scene.gameData.dexData[this.pokemon.species.speciesId];
     this.dexEntryBeforeUpdate = {
       seenAttr: currDexEntry.seenAttr,
       caughtAttr: currDexEntry.caughtAttr,

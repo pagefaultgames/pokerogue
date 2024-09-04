@@ -1,19 +1,19 @@
-import BattleScene, { AnySound } from "#app/battle-scene.js";
-import { Egg } from "#app/data/egg.js";
-import { EggCountChangedEvent } from "#app/events/egg.js";
-import { PlayerPokemon } from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { Phase } from "#app/phase.js";
-import { achvs } from "#app/system/achv.js";
-import EggCounterContainer from "#app/ui/egg-counter-container.js";
-import EggHatchSceneHandler from "#app/ui/egg-hatch-scene-handler.js";
-import PokemonInfoContainer from "#app/ui/pokemon-info-container.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene, { AnySound } from "#app/battle-scene";
+import { Egg } from "#app/data/egg";
+import { EggCountChangedEvent } from "#app/events/egg";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { Phase } from "#app/phase";
+import { achvs } from "#app/system/achv";
+import EggCounterContainer from "#app/ui/egg-counter-container";
+import EggHatchSceneHandler from "#app/ui/egg-hatch-scene-handler";
+import PokemonInfoContainer from "#app/ui/pokemon-info-container";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import * as Utils from "#app/utils.js";
+import * as Utils from "#app/utils";
 import { EggLapsePhase } from "./egg-lapse-phase";
-import { EggHatchData } from "#app/data/egg-hatch-data.js";
+import { EggHatchData } from "#app/data/egg-hatch-data";
 
 
 /**
@@ -22,6 +22,7 @@ import { EggHatchData } from "#app/data/egg-hatch-data.js";
 export class EggHatchPhase extends Phase {
   /** The egg that is hatching */
   private egg: Egg;
+  /** The new EggHatchData for the egg/pokemon that hatches */
   private eggHatchData: EggHatchData;
 
   /** The number of eggs that are hatching */
@@ -63,11 +64,11 @@ export class EggHatchPhase extends Phase {
   private skipped: boolean;
   /** The sound effect being played when the egg is hatched */
   private evolutionBgm: AnySound;
-  private hatchScene: EggLapsePhase;
+  private eggLapsePhase: EggLapsePhase;
 
   constructor(scene: BattleScene, hatchScene: EggLapsePhase, egg: Egg, eggsToHatchCount: integer) {
     super(scene);
-    this.hatchScene = hatchScene;
+    this.eggLapsePhase = hatchScene;
     this.egg = egg;
     this.eggsToHatchCount = eggsToHatchCount;
   }
@@ -446,7 +447,7 @@ export class EggHatchPhase extends Phase {
    * @returns the hatched PlayerPokemon
    */
   generatePokemon(): PlayerPokemon {
-    this.eggHatchData = this.hatchScene.generatePokemon(this.egg);
+    this.eggHatchData = this.eggLapsePhase.generatePokemon(this.egg);
     return this.eggHatchData.pokemon;
   }
 }

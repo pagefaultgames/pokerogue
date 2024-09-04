@@ -1,8 +1,8 @@
-import BattleScene from "#app/battle-scene.js";
-import { Phase } from "#app/phase.js";
-import { Mode } from "#app/ui/ui.js";
-import EggHatchSceneHandler from "#app/ui/egg-hatch-scene-handler.js";
-import { EggHatchData } from "#app/data/egg-hatch-data.js";
+import BattleScene from "#app/battle-scene";
+import { Phase } from "#app/phase";
+import { Mode } from "#app/ui/ui";
+import EggHatchSceneHandler from "#app/ui/egg-hatch-scene-handler";
+import { EggHatchData } from "#app/data/egg-hatch-data";
 
 /**
  * Class that represents the egg summary phase
@@ -22,13 +22,12 @@ export class EggSummaryPhase extends Phase {
   start() {
     super.start();
 
-    const updateNextPokemon = (i: integer) => {
+    // updates next pokemon once the current update has been completed
+    const updateNextPokemon = (i: number) => {
       if (i >= this.eggHatchData.length) {
-
         this.scene.ui.setModeForceTransition(Mode.EGG_HATCH_SUMMARY, this.eggHatchData).then(() => {
           this.scene.fadeOutBgm(undefined, false);
           this.eggHatchHandler = this.scene.ui.getHandler() as EggHatchSceneHandler;
-
         });
 
       } else {
@@ -46,8 +45,7 @@ export class EggSummaryPhase extends Phase {
 
   end() {
     this.eggHatchHandler.clear();
-    this.scene.ui.setModeForceTransition(Mode.MESSAGE).then(() => {
-    });
+    this.scene.ui.setModeForceTransition(Mode.MESSAGE).then(() => {});
     super.end();
   }
 }

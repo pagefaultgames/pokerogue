@@ -1,23 +1,22 @@
-
 import PokemonInfoContainer from "./pokemon-info-container";
 import BattleScene from "../battle-scene";
 import { Gender } from "../data/gender";
 import { Type } from "../data/type";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
-import { speciesEggMoves } from "#app/data/egg-moves.js";
-import { allMoves } from "#app/data/move.js";
-import { Species } from "#app/enums/species.js";
-import { getEggTierForSpecies } from "#app/data/egg.js";
+import { speciesEggMoves } from "#app/data/egg-moves";
+import { allMoves } from "#app/data/move";
+import { Species } from "#app/enums/species";
+import { getEggTierForSpecies } from "#app/data/egg";
 import { starterColors } from "../battle-scene";
 import { argbFromRgba } from "@material/material-color-utilities";
-import { EggHatchData } from "#app/data/egg-hatch-data.js";
-import { PlayerPokemon } from "#app/field/pokemon.js";
-import { getPokemonSpeciesForm } from "#app/data/pokemon-species.js";
+import { EggHatchData } from "#app/data/egg-hatch-data";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { getPokemonSpeciesForm } from "#app/data/pokemon-species";
 
 /**
  * Class for the hatch info summary of each pokemon
- * Holds an info container aswell as an additional egg sprite, name, egg moves and main sprite
+ * Holds an info container as well as an additional egg sprite, name, egg moves and main sprite
  */
 export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
   private currentPokemonSprite: Phaser.GameObjects.Sprite;
@@ -118,7 +117,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
 
   /**
    * Display a given pokemon sprite with animations
-   * @precondition the specific pokemon sprite has already been loaded
+   * assumes the specific pokemon sprite has already been loaded
    */
   displayPokemon(pokemon: PlayerPokemon) {
     const species = pokemon.species;

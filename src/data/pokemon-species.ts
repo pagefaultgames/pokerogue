@@ -498,7 +498,6 @@ export abstract class PokemonSpeciesForm {
           populateVariantColors(spriteKey).then(() => resolve());
           return;
         }
-
         resolve();
       });
       if (startLoad) {
