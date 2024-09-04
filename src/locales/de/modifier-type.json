@@ -49,8 +49,8 @@
     "DoubleBattleChanceBoosterModifierType": {
       "description": "Verdoppelt die Wahrscheinlichkeit, dass die nächsten {{battleCount}} Begegnungen mit wilden Pokémon ein Doppelkampf sind."
     },
-    "TempBattleStatBoosterModifierType": {
-      "description": "Erhöht die {{tempBattleStatName}} aller Teammitglieder für 5 Kämpfe um eine Stufe."
+    "TempStatStageBoosterModifierType": {
+      "description": "Erhöht die {{stat}} aller Teammitglieder für 5 Kämpfe um eine Stufe."
     },
     "AttackTypeBoosterModifierType": {
       "description": "Erhöht die Stärke aller {{moveType}}-Attacken eines Pokémon um 20%."
@@ -61,8 +61,8 @@
     "AllPokemonLevelIncrementModifierType": {
       "description": "Erhöht das Level aller Teammitglieder um {{levels}}."
     },
-    "PokemonBaseStatBoosterModifierType": {
-      "description": "Erhöht den {{statName}} Basiswert des Trägers um 10%. Das Stapellimit erhöht sich, je höher dein IS-Wert ist."
+    "BaseStatBoosterModifierType": {
+      "description": "Erhöht den {{stat}} Basiswert des Trägers um 10%. Das Stapellimit erhöht sich, je höher dein IS-Wert ist."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Stellt 100% der KP aller Pokémon her."
@@ -248,6 +248,12 @@
       "name": "Scope-Linse",
       "description": "Ein Item zum Tragen. Es erhöht die Volltrefferquote."
     },
+    "DIRE_HIT": {
+      "name": "X-Volltreffer",
+      "extra": {
+        "raises": "Volltrefferquote"
+      }
+    },
     "LEEK": {
       "name": "Lauchstange",
       "description": "Ein Item, das von Porenta getragen werden kann. Diese lange Lauchstange erhöht die Volltrefferquote stark."
@@ -411,25 +417,13 @@
       "description": "Ein Item, das Ditto zum Tragen gegeben werden kann. Fein und doch hart, erhöht dieses sonderbare Pulver die Initiative."
     }
   },
-  "TempBattleStatBoosterItem": {
+  "TempStatStageBoosterItem": {
     "x_attack": "X-Angriff",
     "x_defense": "X-Verteidigung",
     "x_sp_atk": "X-Sp.-Ang.",
     "x_sp_def": "X-Sp.-Vert.",
     "x_speed": "X-Tempo",
-    "x_accuracy": "X-Treffer",
-    "dire_hit": "X-Volltreffer"
-  },
-  "TempBattleStatBoosterStatName": {
-    "ATK": "Angriff",
-    "DEF": "Verteidigung",
-    "SPATK": "Sp. Ang",
-    "SPDEF": "Sp. Vert",
-    "SPD": "Initiative",
-    "ACC": "Genauigkeit",
-    "CRIT": "Volltrefferquote",
-    "EVA": "Fluchtwert",
-    "DEFAULT": "???"
+    "x_accuracy": "X-Treffer"
   },
   "AttackTypeBoosterItem": {
     "silk_scarf": "Seidenschal",

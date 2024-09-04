@@ -1,9 +1,9 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { StatusEffect } from "#app/data/status-effect";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#app/data/status-effect";
+import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
@@ -68,7 +68,7 @@ describe("Abilities - Disguise", () => {
   }, TIMEOUT);
 
   it("takes no damage from the first hit of a multihit move and transforms to Busted form, then takes damage from the second hit", async () => {
-    game.override.moveset([Moves.SURGING_STRIKES]);
+    game.override.moveset([ Moves.SURGING_STRIKES ]);
     game.override.enemyLevel(5);
     await game.classicMode.startBattle();
 
@@ -103,7 +103,7 @@ describe("Abilities - Disguise", () => {
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
     expect(mimikyu.status?.effect).toBe(StatusEffect.POISON);
-    expect(mimikyu.summonData.battleStats[BattleStat.SPD]).toBe(-1);
+    expect(mimikyu.getStatStage(Stat.SPD)).toBe(-1);
     expect(mimikyu.hp).toBeLessThan(mimikyu.getMaxHp());
   }, TIMEOUT);
 
@@ -111,7 +111,7 @@ describe("Abilities - Disguise", () => {
     game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
     game.override.starterSpecies(0);
 
-    await game.classicMode.startBattle([Species.MIMIKYU, Species.FURRET]);
+    await game.classicMode.startBattle([ Species.MIMIKYU, Species.FURRET ]);
 
     const mimikyu = game.scene.getPlayerPokemon()!;
     const maxHp = mimikyu.getMaxHp();
@@ -137,7 +137,7 @@ describe("Abilities - Disguise", () => {
     game.override.starterForms({
       [Species.MIMIKYU]: bustedForm
     });
-    await game.classicMode.startBattle([Species.FURRET, Species.MIMIKYU]);
+    await game.classicMode.startBattle([ Species.FURRET, Species.MIMIKYU ]);
 
     const mimikyu = game.scene.getParty()[1]!;
     expect(mimikyu.formIndex).toBe(bustedForm);
@@ -176,7 +176,7 @@ describe("Abilities - Disguise", () => {
       [Species.MIMIKYU]: bustedForm
     });
 
-    await game.classicMode.startBattle([Species.MIMIKYU, Species.FURRET]);
+    await game.classicMode.startBattle([ Species.MIMIKYU, Species.FURRET ]);
 
     const mimikyu1 = game.scene.getPlayerPokemon()!;
 
