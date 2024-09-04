@@ -31,14 +31,14 @@ describe("Battle Mechanics - Damage Calculation", () => {
       .enemyMoveset(SPLASH_ONLY)
       .startingLevel(100)
       .enemyLevel(100)
-      .disableCrits();
+      .disableCrits()
+      .moveset([Moves.TACKLE, Moves.DRAGON_RAGE, Moves.FISSURE, Moves.JUMP_KICK]);
   });
 
   it("Attacks deal 1 damage at minimum", async () => {
     game.override
       .startingLevel(1)
-      .enemySpecies(Species.AGGRON)
-      .moveset([Moves.TACKLE]);
+      .enemySpecies(Species.AGGRON);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -55,8 +55,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
   it("Fixed-damage moves ignore damage multipliers", async () => {
     game.override
       .enemySpecies(Species.DRAGONITE)
-      .enemyAbility(Abilities.MULTISCALE)
-      .moveset([Moves.DRAGON_RAGE]);
+      .enemyAbility(Abilities.MULTISCALE);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -69,8 +68,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
   it("One-hit KO moves ignore damage multipliers", async () => {
     game.override
       .enemySpecies(Species.AGGRON)
-      .enemyAbility(Abilities.MULTISCALE)
-      .moveset([Moves.FISSURE]);
+      .enemyAbility(Abilities.MULTISCALE);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -83,7 +81,6 @@ describe("Battle Mechanics - Damage Calculation", () => {
   it("When the user fails to use Jump Kick with Wonder Guard ability, the damage should be 1.", async () => {
     game.override
       .enemySpecies(Species.GASTLY)
-      .moveset([Moves.JUMP_KICK])
       .ability(Abilities.WONDER_GUARD);
 
     await game.classicMode.startBattle([Species.SHEDINJA]);
