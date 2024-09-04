@@ -31,7 +31,7 @@ export enum BattlerIndex {
 
 export interface TurnCommand {
     command: Command;
-    cursor?: integer;
+    cursor?: number;
     move?: QueuedMove;
     targets?: BattlerIndex[];
     skip?: boolean;
@@ -39,27 +39,27 @@ export interface TurnCommand {
 }
 
 interface TurnCommands {
-    [key: integer]: TurnCommand | null
+    [key: number]: TurnCommand | null
 }
 
 export default class Battle {
   protected gameMode: GameMode;
-  public waveIndex: integer;
+  public waveIndex: number;
   public battleType: BattleType;
   public battleSpec: BattleSpec;
   public trainer: Trainer | null;
-  public enemyLevels: integer[] | undefined;
+  public enemyLevels: number[] | undefined;
   public enemyParty: EnemyPokemon[] = [];
-  public seenEnemyPartyMemberIds: Set<integer> = new Set<integer>();
+  public seenEnemyPartyMemberIds: Set<number> = new Set<number>();
   public double: boolean;
   public started: boolean = false;
-  public enemySwitchCounter: integer = 0;
-  public turn: integer = 0;
+  public enemySwitchCounter: number = 0;
+  public turn: number = 0;
   public turnCommands: TurnCommands;
-  public playerParticipantIds: Set<integer> = new Set<integer>();
-  public battleScore: integer = 0;
+  public playerParticipantIds: Set<number> = new Set<number>();
+  public battleScore: number = 0;
   public postBattleLoot: PokemonHeldItemModifier[] = [];
-  public escapeAttempts: integer = 0;
+  public escapeAttempts: number = 0;
   public lastMove: Moves;
   public battleSeed: string = Utils.randomString(16, true);
   private battleSeedState: string | null = null;
@@ -70,9 +70,9 @@ export default class Battle {
   /** The number of times a Pokemon on the enemy's side has fainted this battle */
   public enemyFaints: number = 0;
 
-  private rngCounter: integer = 0;
+  private rngCounter: number = 0;
 
-  constructor(gameMode: GameMode, waveIndex: integer, battleType: BattleType, trainer?: Trainer, double?: boolean) {
+  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double?: boolean) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
@@ -92,7 +92,7 @@ export default class Battle {
     this.battleSpec = spec;
   }
 
-  private getLevelForWave(): integer {
+  private getLevelForWave(): number {
     const levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
     const baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
     const bossMultiplier = 1.2;
@@ -125,7 +125,7 @@ export default class Battle {
     return rand / value;
   }
 
-  getBattlerCount(): integer {
+  getBattlerCount(): number {
     return this.double ? 2 : 1;
   }
 
@@ -354,7 +354,7 @@ export default class Battle {
     return null;
   }
 
-  randSeedInt(scene: BattleScene, range: integer, min: integer = 0): integer {
+  randSeedInt(scene: BattleScene, range: number, min: number = 0): number {
     if (range <= 1) {
       return min;
     }
@@ -379,7 +379,7 @@ export default class Battle {
 }
 
 export class FixedBattle extends Battle {
-  constructor(scene: BattleScene, waveIndex: integer, config: FixedBattleConfig) {
+  constructor(scene: BattleScene, waveIndex: number, config: FixedBattleConfig) {
     super(scene.gameMode, waveIndex, config.battleType, config.battleType === BattleType.TRAINER ? config.getTrainer(scene) : undefined, config.double);
     if (config.getEnemyParty) {
       this.enemyParty = config.getEnemyParty(scene);
@@ -395,7 +395,7 @@ export class FixedBattleConfig {
   public double: boolean;
   public getTrainer: GetTrainerFunc;
   public getEnemyParty: GetEnemyPartyFunc;
-  public seedOffsetWaveIndex: integer;
+  public seedOffsetWaveIndex: number;
 
   setBattleType(battleType: BattleType): FixedBattleConfig {
     this.battleType = battleType;
@@ -417,7 +417,7 @@ export class FixedBattleConfig {
     return this;
   }
 
-  setSeedOffsetWave(seedOffsetWaveIndex: integer): FixedBattleConfig {
+  setSeedOffsetWave(seedOffsetWaveIndex: number): FixedBattleConfig {
     this.seedOffsetWaveIndex = seedOffsetWaveIndex;
     return this;
   }
@@ -463,7 +463,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], rand
 }
 
 export interface FixedBattleConfigs {
-    [key: integer]: FixedBattleConfig
+    [key: number]: FixedBattleConfig
 }
 /**
  * Youngster/Lass on 5
