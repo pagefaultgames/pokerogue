@@ -236,7 +236,6 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
     this.setCursor(0);
 
-    // TODO nice animation reveal for all eggs hatching at once
     this.scene.playSoundWithoutBgm("evolution_fanfare");
 
     return true;

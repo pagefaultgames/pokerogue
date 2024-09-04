@@ -24,7 +24,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     infoContainerTextSize: "64px"
   },
   "de": {
-    infoContainerTextSize: "64px"
+    infoContainerTextSize: "64px",
   },
   "es": {
     infoContainerTextSize: "64px"
@@ -374,31 +374,27 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   }
 
   changeToEggSummaryLayout() {
-    // The position should be set per language
-    // const currentLanguage = i18next.resolvedLanguage;
-    // const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang));
-    // const textSettings = languageSettings[langSettingKey];
-    const infoContainerLabelXPos = 25;
-    const infoContainerTextXPos = 29;
+    // The position should be set per language (and shifted for new layout)
+    const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage?.includes(lang))!; // TODO: is this bang correct?
+    const textSettings = languageSettings[langSettingKey];
+
+    const infoContainerLabelXPos = (textSettings?.infoContainerLabelXPos || -18) + 43;
+    const infoContainerTextXPos = (textSettings?.infoContainerTextXPos || -14) + 43;
+
     this.x = this.initialX - this.infoWindowWidth;
-
-    // The font size should be set by language
-    // const infoContainerTextSize = textSettings?.infoContainerTextSize || "64px";
-
 
     this.pokemonGenderText.setPosition(89, -2);
     this.pokemonGenderNewText.setPosition(79, -2);
     this.pokemonShinyIcon.setPosition(82, 87);
     this.pokemonShinyNewIcon.setPosition(72, 87);
 
-
     this.pokemonFormLabelText.setPosition(infoContainerLabelXPos, 152);
     this.pokemonFormText.setPosition(infoContainerTextXPos, 152);
-    this.pokemonAbilityLabelText.setPosition(infoContainerLabelXPos, 110); // originally 29
-    this.pokemonAbilityText.setPosition(infoContainerTextXPos, 110); // originally 29
-    this.pokemonNatureLabelText.setPosition(infoContainerLabelXPos, 125); // originally 39
-    this.pokemonNatureText.setPosition(infoContainerTextXPos, 125); // originally 39
-
+    this.pokemonAbilityLabelText.setPosition(infoContainerLabelXPos, 110);
+    this.pokemonAbilityText.setPosition(infoContainerTextXPos, 110);
+    this.pokemonNatureLabelText.setPosition(infoContainerLabelXPos, 125);
+    this.pokemonNatureText.setPosition(infoContainerTextXPos, 125);
 
     this.statsContainer.setScale(0.7);
     this.statsContainer.setPosition(30, -3);
