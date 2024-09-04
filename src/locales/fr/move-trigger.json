@@ -5,6 +5,7 @@
   "switchedStatChanges": "{{pokemonName}} permute\nles changements de stats avec ceux de sa cible !",
   "switchedTwoStatChanges": "{{pokemonName}} permute les changements de {{firstStat} et de {{secondStat}} avec ceux de sa cible !",
   "switchedStat": "{{pokemonName}} et sa cible échangent leur {{stat}} !",
+  "selfSwitchedStat": "{{pokemonName}} échange\nson {{firstStat}} et sa {{secondStat}} !",
   "sharedGuard": "{{pokemonName}} additionne sa garde à celle de sa cible et redistribue le tout équitablement !",
   "sharedPower": "{{pokemonName}} additionne sa force à celle de sa cible et redistribue le tout équitablement !",
   "goingAllOutForAttack": "{{pokemonName}} a pris\ncette capacité au sérieux !",

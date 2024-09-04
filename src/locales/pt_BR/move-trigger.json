@@ -6,6 +6,7 @@
   "goingAllOutForAttack": "{{pokemonName}} está arriscando tudo nesse ataque!",
   "regainedHealth": "{{pokemonName}} recuperou/nsaúde!",
   "keptGoingAndCrashed": "{{pokemonName}} errou o alvo/ne se arrebentou!",
+  "selfSwitchedStat": "{{pokemonName}} trocou seu atributo de {{firstStat}} pela sua {{secondStat}}!",
   "fled": "{{pokemonName}} fugiu!",
   "cannotBeSwitchedOut": "{{pokemonName}} não pode ser trocado!",
   "swappedAbilitiesWithTarget": "{{pokemonName}} trocou/nde habilidades com o alvo!",
