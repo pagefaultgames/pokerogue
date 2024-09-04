@@ -699,6 +699,7 @@
     "encounter": {
       "1": "I'll fight you with all I have to wipe you out!",
       "2": "I don't care if you're a kid or what. I'll send you flying if you threaten us!",
+      "2_female": "I don't care if you're a kid or what. I'll send you flying if you threaten us!",
       "3": "I was told to turn away Trainers, whomever they might be!",
       "4": "I'll show you the power of Aether Paradise!",
       "5": "Now that you've learned of the darkness at the heart of Aether Paradise, we'll need you to conveniently disappear!"
@@ -715,11 +716,13 @@
     "encounter": {
       "1": "I, Branch Chief Faba, shall show you the harshness of the real world!",
       "2": "The man who is called Aether Paradise's last line of defense is to battle a mere child?",
+      "2_female": "The man who is called Aether Paradise's last line of defense is to battle a mere child?",
       "3": "I, Faba, am the Aether Branch Chief. The only one in the world, I'm irreplaceable."
     },
     "victory": {
       "1": "Aiyee!",
       "2": "H-h-how can this be?! How could this child...",
+      "2_female": "H-h-how can this be?! How could this child...",
       "3": "This is why... This is why I can't bring myself to like children."
     }
   },
@@ -727,9 +730,12 @@
     "encounter": {
       "1": "We're not bad-we're just hard!",
       "2": "You want some? That's how we say hello! Nice knowing you, punks!",
+      "2_female": "You want some? That's how we say hello! Nice knowing you, punks!",
       "3": "We're just a bunch of guys and gals with a great interest in other people's Pokémon!",
       "4": "Why you trying to act hard when we're already hard as bones out here, homie?",
-      "5": "Team Skull represent! We can't pay the rent! Had a lot of fun, but our youth was misspent!"
+      "4_female": "Why you trying to act hard when we're already hard as bones out here, homie?",
+      "5": "Team Skull represent! We can't pay the rent! Had a lot of fun, but our youth was misspent!",
+      "5_female": "Team Skull represent! We can't pay the rent! Had a lot of fun, but our youth was misspent!"
     },
     "victory": {
       "1": "Huh? Is it over already?",
@@ -742,11 +748,13 @@
   "plumeria": {
     "encounter": {
       "1": " ...Hmph. You don't look like anything special to me.",
+      "1_female": " ...Hmph. You don't look like anything special to me.",
       "2": "It takes these dumb Grunts way too long to deal with you kids...",
       "3": "Mess with anyone in Team Skull, and I'll show you how serious I can get."
     },
     "victory": {
       "1": "Hmmph! You're pretty strong. I'll give you that.",
+      "1_female": "Hmmph! You're pretty strong. I'll give you that.",
       "2": "Hmmph. Guess you are pretty tough. Now I understand why my Grunts waste so much time battling kids.",
       "3": "Hmmph! I guess I just have to hold that loss."
     }
@@ -755,6 +763,7 @@
     "encounter": {
       "1": "It looks like this is the end of the line for you!",
       "2": "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
+      "2_female": "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
       "3": "I'm from Macro Cosmos Insurance! Do you have a life insurance policy?"
     },
     "victory": {
@@ -772,6 +781,7 @@
     "victory": {
       "1": "*sigh* I wasn't able to win... Oleana...you really are a hopeless woman.",
       "2": "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover..",
+      "2_female": "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover..",
       "3": "*sigh* I am one tired Oleana..."
     }
   },
