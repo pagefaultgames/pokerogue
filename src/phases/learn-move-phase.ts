@@ -72,12 +72,14 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
 
   /**
    * This facilitates the process in which an old move is chosen to be forgotten.
+   *
    * > Which move should be forgotten?
-   * The game then goes Mode.SUMMARY to select a move to be forgotten.
-   * If a player does not select a move or chooses the new move (moveIndex === 4), the game goes to this.rejectMoveAndEnd()
-   * If an old move is selected, the function then passes the moveIndex to this.learnMove()
-   * @param move - the Move to be learned
-   * @param Pokemon - the Pokemon learning the move
+   *
+   * The game then goes `Mode.SUMMARY` to select a move to be forgotten.
+   * If a player does not select a move or chooses the new move (`moveIndex === 4`), the game goes to `this.rejectMoveAndEnd()`.
+   * If an old move is selected, the function then passes the `moveIndex` to `this.learnMove()`
+   * @param move The Move to be learned
+   * @param Pokemon The Pokemon learning the move
    */
   forgetMoveProcess(move: Move, pokemon: Pokemon) {
     this.scene.ui.setMode(this.messageMode);
@@ -96,11 +98,13 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
 
   /**
    * This asks the player if they wish to end the current move learning process.
-   * > Stop trying to teach [MoveName]? --> Mode.CONFIRM --> Yes: > [Pokemon] did not learn the move [MoveName], No: this.replaceMoveCheck()
+   *
+   * > Stop trying to teach [MoveName]? --> `Mode.CONFIRM` --> Yes: > [Pokemon] did not learn the move [MoveName], No: `this.replaceMoveCheck()`
+   *
    * If the player wishes to not teach the Pokemon the move, it displays a message and ends the phase.
    * If the player reconsiders, it repeats the process for a Pokemon with a full moveset once again.
-   * @param move - the Move to be learned
-   * @param Pokemon - the Pokemon learning the move
+   * @param move The Move to be learned
+   * @param Pokemon The Pokemon learning the move
    */
   rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
     this.scene.ui.showTextPromise(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), undefined, false).then(()=> {
@@ -121,16 +125,16 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * This teaches the Pokemon the new move and ends the phase.
    * When a Pokemon forgets a move and learns a new one, its 'Learn Move' message is significantly longer.
    *
-   * Pokemon with a moveset.length < 4
+   * Pokemon with a `moveset.length < 4`
    * > [Pokemon] learned [MoveName]
    *
-   * Pokemon with a moveset.length > 4
+   * Pokemon with a `moveset.length > 4`
    * > 1... 2... and 3... and Poof!
    * > [Pokemon] forgot how to use [MoveName]
    * > And...
    * > [Pokemon] learned [MoveName]!
-   * @param move - the Move to be learned
-   * @param Pokemon - the Pokemon learning the move
+   * @param move The Move to be learned
+   * @param Pokemon The Pokemon learning the move
    */
   learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
     if (this.fromTM) {

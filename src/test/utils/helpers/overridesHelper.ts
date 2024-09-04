@@ -51,7 +51,7 @@ export class OverridesHelper extends GameManagerHelper {
   /**
    * Override the XP Multiplier
    * @param value the XP multiplier to set
-   * @returns this
+   * @returns `this`
    */
   xpMultiplier(value: number): this {
     vi.spyOn(Overrides, "XP_MULTIPLIER_OVERRIDE", "get").mockReturnValue(value);
