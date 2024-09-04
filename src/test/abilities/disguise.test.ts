@@ -1,6 +1,7 @@
 import { BattleStat } from "#app/data/battle-stat";
 import { StatusEffect } from "#app/data/status-effect";
 import { toDmgValue } from "#app/utils";
+import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
@@ -36,7 +37,7 @@ describe("Abilities - Disguise", () => {
   }, TIMEOUT);
 
   it("takes no damage from attacking move and transforms to Busted form, takes 1/8 max HP damage from the disguise breaking", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const mimikyu = game.scene.getEnemyPokemon()!;
     const maxHp = mimikyu.getMaxHp();
@@ -53,7 +54,7 @@ describe("Abilities - Disguise", () => {
   }, TIMEOUT);
 
   it("doesn't break disguise when attacked with ineffective move", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const mimikyu = game.scene.getEnemyPokemon()!;
 
@@ -69,7 +70,7 @@ describe("Abilities - Disguise", () => {
   it("takes no damage from the first hit of a multihit move and transforms to Busted form, then takes damage from the second hit", async () => {
     game.override.moveset([Moves.SURGING_STRIKES]);
     game.override.enemyLevel(5);
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const mimikyu = game.scene.getEnemyPokemon()!;
     const maxHp = mimikyu.getMaxHp();
@@ -91,7 +92,7 @@ describe("Abilities - Disguise", () => {
   }, TIMEOUT);
 
   it("takes effects from status moves and damage from status effects", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const mimikyu = game.scene.getEnemyPokemon()!;
     expect(mimikyu.hp).toBe(mimikyu.getMaxHp());
@@ -110,7 +111,7 @@ describe("Abilities - Disguise", () => {
     game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
     game.override.starterSpecies(0);
 
-    await game.startBattle([Species.MIMIKYU, Species.FURRET]);
+    await game.classicMode.startBattle([Species.MIMIKYU, Species.FURRET]);
 
     const mimikyu = game.scene.getPlayerPokemon()!;
     const maxHp = mimikyu.getMaxHp();
@@ -136,7 +137,7 @@ describe("Abilities - Disguise", () => {
     game.override.starterForms({
       [Species.MIMIKYU]: bustedForm
     });
-    await game.startBattle([Species.FURRET, Species.MIMIKYU]);
+    await game.classicMode.startBattle([Species.FURRET, Species.MIMIKYU]);
 
     const mimikyu = game.scene.getParty()[1]!;
     expect(mimikyu.formIndex).toBe(bustedForm);
@@ -155,7 +156,7 @@ describe("Abilities - Disguise", () => {
       [Species.MIMIKYU]: bustedForm
     });
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const mimikyu = game.scene.getPlayerPokemon()!;
 
@@ -175,7 +176,7 @@ describe("Abilities - Disguise", () => {
       [Species.MIMIKYU]: bustedForm
     });
 
-    await game.startBattle([Species.MIMIKYU, Species.FURRET]);
+    await game.classicMode.startBattle([Species.MIMIKYU, Species.FURRET]);
 
     const mimikyu1 = game.scene.getPlayerPokemon()!;
 
@@ -194,7 +195,7 @@ describe("Abilities - Disguise", () => {
 
   it("doesn't faint twice when fainting due to Disguise break damage, nor prevent faint from Disguise break damage if using Endure", async () => {
     game.override.enemyMoveset(Array(4).fill(Moves.ENDURE));
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const mimikyu = game.scene.getEnemyPokemon()!;
     mimikyu.hp = 1;
@@ -204,5 +205,23 @@ describe("Abilities - Disguise", () => {
 
     expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
+  }, TIMEOUT);
+
+  it("activates when Aerilate circumvents immunity to the move's base type", async () => {
+    game.override.ability(Abilities.AERILATE);
+    game.override.moveset([Moves.TACKLE]);
+
+    await game.classicMode.startBattle();
+
+    const mimikyu = game.scene.getEnemyPokemon()!;
+    const maxHp = mimikyu.getMaxHp();
+    const disguiseDamage = toDmgValue(maxHp / 8);
+
+    game.move.select(Moves.TACKLE);
+
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    expect(mimikyu.formIndex).toBe(bustedForm);
+    expect(mimikyu.hp).toBe(maxHp - disguiseDamage);
   }, TIMEOUT);
 });
