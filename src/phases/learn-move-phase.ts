@@ -48,11 +48,12 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
 
   /**
    * This displays a chain of messages (listed below) and asks if the user wishes to forget a move.
+   *
    * > [Pokemon] wants to learn the move [MoveName]
-   * > However, [Pokemon] alreadyknows four moves.
-   * > Should a move be forgotten and replaced with [MoveName]? --> Mode.CONFIRM -> Yes: Go to this.forgetMoveProcess(), No: Go to this.rejectMoveAndEnd()
-   * @param move - the Move to be learned
-   * @param Pokemon - the Pokemon learning the move
+   * > However, [Pokemon] already knows four moves.
+   * > Should a move be forgotten and replaced with [MoveName]? --> `Mode.CONFIRM` -> Yes: Go to `this.forgetMoveProcess()`, No: Go to `this.rejectMoveAndEnd()`
+   * @param move The Move to be learned
+   * @param Pokemon The Pokemon learning the move
    */
   replaceMoveCheck(move: Move, pokemon: Pokemon) {
     const learnMovePrompt = i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
