@@ -4769,44 +4769,6 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
 }
 
 /**
- * Swap the Pokémon's base Attack stat with its base Defense stat.
- * Pokémon with the Power Trick Tag will have their altered base stat values.
- * @extends AddBattlerTagAttr
- */
-export class PowerTrickAttr extends AddBattlerTagAttr {
-  constructor() {
-    super(BattlerTagType.POWER_TRICK, true);
-  }
-
-  /**
-   * Add battler tag to swap attack stat and defense stat.
-   * Remove battler tag to reset stat change
-   * @param user {@linkcode Pokemon} Pokémon that used the move
-   * @param target {@linkcode Pokemon} N/A
-   * @param move {@linkcode Move} N/A
-   * @param args N/A
-   * @returns true if the function succeeds
-   */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.canApply(user, target, move, args)) {
-      return false;
-    }
-
-    if (user.getTag(BattlerTagType.POWER_TRICK)) {
-      user.removeTag(BattlerTagType.POWER_TRICK);
-    } else {
-      super.apply(user, target, move, args);
-    }
-
-    user.calculateStats();
-
-    user.scene.queueMessage(i18next.t("battle:battlerTagsPowerTrickApply", { pokemonNameWithAffix: getPokemonNameWithAffix(user) }));
-
-    return true;
-  }
-}
-
-/**
  * Attribute used when a move hits a {@linkcode BattlerTagType} for double damage
  * @extends MoveAttr
 */
@@ -6106,6 +6068,51 @@ export class SwapStatAttr extends MoveEffectAttr {
       user.scene.queueMessage(i18next.t("moveTriggers:switchedStat", {
         pokemonName: getPokemonNameWithAffix(user),
         stat: i18next.t(getStatKey(this.stat)),
+      }));
+
+      return true;
+    }
+    return false;
+  }
+}
+
+
+/**
+ * Attribute used for status moves, namely Power Trick,
+ * that swaps user's own stat.
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ */
+export class SelfSwapStatAttr extends MoveEffectAttr {
+  /** Swaps the values of two specified stats */
+  private firstStat: EffectiveStat;
+  private secondStat: EffectiveStat;
+
+  constructor(firstStat: EffectiveStat, secondStat: EffectiveStat) {
+    super();
+
+    this.firstStat = firstStat;
+    this.secondStat = secondStat;
+  }
+
+  /**
+   * Swap user's {@linkcode firstStat} value with {@linkcode secondStat} value.
+   * @param user the {@linkcode Pokemon} that used the move
+   * @param target N/A
+   * @param move N/A
+   * @param args N/A
+   * @returns true if attribute application succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (super.apply(user, target, move, args)) {
+      const temp = user.getStat(this.firstStat, false);
+      user.setStat(this.firstStat, target.getStat(this.secondStat, false), false);
+      user.setStat(this.secondStat, temp, false);
+
+      user.scene.queueMessage(i18next.t("moveTriggers:selfSwitchedStat", {
+        pokemonName: getPokemonNameWithAffix(user),
+        firstStat:i18next.t(getStatKey(this.firstStat)),
+        secondStat:i18next.t(getStatKey(this.secondStat)),
       }));
 
       return true;
@@ -7652,7 +7659,7 @@ export function initMoves() {
       .attr(OpponentHighHpPowerAttr, 120)
       .makesContact(),
     new SelfStatusMove(Moves.POWER_TRICK, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .attr(PowerTrickAttr),
+      .attr(SelfSwapStatAttr, Stat.ATK, Stat.DEF),
     new StatusMove(Moves.GASTRO_ACID, Type.POISON, 100, 10, -1, 0, 4)
       .attr(SuppressAbilitiesAttr),
     new StatusMove(Moves.LUCKY_CHANT, Type.NORMAL, -1, 30, -1, 0, 4)
