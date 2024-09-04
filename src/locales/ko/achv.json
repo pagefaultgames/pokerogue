@@ -80,7 +80,7 @@
   "100_RIBBONS": {
     "name": "마스터 리그 챔피언"
   },
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     "name": "팀워크",
     "description": "한 개 이상의 능력치가 최대 랭크일 때 배턴터치 사용"
   },
@@ -225,7 +225,7 @@
     "name": "독침붕처럼 쏴라"
   },
   "MONO_GHOST": {
-    "name": "누굴 부를 거야?"
+    "name": "무서운 게 딱 좋아!"
   },
   "MONO_STEEL": {
     "name": "강철 심장"
@@ -260,5 +260,9 @@
   "FRESH_START": {
     "name": "첫트!",
     "description": "새 출발 챌린지 모드 클리어."
+  },
+  "INVERSE_BATTLE": {
+    "name": "상성 전문가(였던 것)",
+    "description": "거꾸로 배틀 챌린지 모드 클리어."
   }
 }

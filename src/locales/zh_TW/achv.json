@@ -80,7 +80,7 @@
   "100_RIBBONS": {
     "name": "大師球聯盟冠軍"
   },
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     "name": "團隊協作",
     "description": "在一項屬性強化至最大時用接力棒傳遞給其他寶可夢"
   },
@@ -252,5 +252,9 @@
   },
   "MONO_FAIRY": {
     "name": "林克，醒醒！"
+  },
+  "INVERSE_BATTLE": {
+    "name": "鏡子子鏡",
+    "description": "完成逆轉之戰挑戰\n戰挑戰之轉逆成完"
   }
 }

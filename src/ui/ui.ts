@@ -37,7 +37,7 @@ import UnavailableModalUiHandler from "./unavailable-modal-ui-handler";
 import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
 import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
 import { Button } from "#enums/buttons";
-import i18next, { ParseKeys } from "i18next";
+import i18next from "i18next";
 import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
@@ -49,6 +49,9 @@ import RenameFormUiHandler from "./rename-form-ui-handler";
 import AdminUiHandler from "./admin-ui-handler";
 import RunHistoryUiHandler from "./run-history-ui-handler";
 import RunInfoUiHandler from "./run-info-ui-handler";
+import EggSummaryUiHandler from "./egg-summary-ui-handler";
+import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
+import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -64,6 +67,7 @@ export enum Mode {
   STARTER_SELECT,
   EVOLUTION_SCENE,
   EGG_HATCH_SCENE,
+  EGG_HATCH_SUMMARY,
   CONFIRM,
   OPTION_SELECT,
   MENU,
@@ -89,6 +93,8 @@ export enum Mode {
   RENAME_POKEMON,
   RUN_HISTORY,
   RUN_INFO,
+  TEST_DIALOGUE,
+  AUTO_COMPLETE,
   ADMIN,
 }
 
@@ -127,6 +133,8 @@ const noTransitionModes = [
   Mode.UNAVAILABLE,
   Mode.OUTDATED,
   Mode.RENAME_POKEMON,
+  Mode.TEST_DIALOGUE,
+  Mode.AUTO_COMPLETE,
   Mode.ADMIN,
 ];
 
@@ -165,6 +173,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene),
       new EggHatchSceneHandler(scene),
+      new EggSummaryUiHandler(scene),
       new ConfirmUiHandler(scene),
       new OptionSelectUiHandler(scene),
       new MenuUiHandler(scene),
@@ -191,6 +200,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new RenameFormUiHandler(scene),
       new RunHistoryUiHandler(scene),
       new RunInfoUiHandler(scene),
+      new TestDialogueUiHandler(scene, Mode.TEST_DIALOGUE),
+      new AutoCompleteUiHandler(scene),
       new AdminUiHandler(scene),
     ];
   }
@@ -298,30 +309,29 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  showDialogue(text: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
-    // First get the gender of the player (default male) (also used if UNSET)
-    let playerGenderPrefix = "PGM";
-    if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
-      playerGenderPrefix = "PGF";
-    }
-    // Add the prefix to the text
-    const localizationKey: string = playerGenderPrefix + text;
-
+  showDialogue(keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
+    const battleScene = this.scene as BattleScene;
     // Get localized dialogue (if available)
     let hasi18n = false;
-    if (i18next.exists(localizationKey) ) {
-      text = i18next.t(localizationKey as ParseKeys);
+    let text = keyOrText;
+    const genderIndex = battleScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderStr = PlayerGender[genderIndex].toLowerCase();
+
+    if (i18next.exists(keyOrText) ) {
+      const i18nKey = keyOrText;
       hasi18n = true;
 
+      text = i18next.t(i18nKey, { context: genderStr }); // override text with translation
+
       // Skip dialogue if the player has enabled the option and the dialogue has been already seen
-      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[localizationKey] === true) {
-        console.log(`Dialogue ${localizationKey} skipped`);
+      if (this.shouldSkipDialogue(i18nKey)) {
+        console.log(`Dialogue ${i18nKey} skipped`);
         callback();
         return;
       }
     }
     let showMessageAndCallback = () => {
-      hasi18n && (this.scene as BattleScene).gameData.saveSeenDialogue(localizationKey);
+      hasi18n && battleScene.gameData.saveSeenDialogue(keyOrText);
       callback();
     };
     if (text.indexOf("$") > -1) {
@@ -341,16 +351,11 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  shouldSkipDialogue(text): boolean {
-    let playerGenderPrefix = "PGM";
-    if ((this.scene as BattleScene).gameData.gender === PlayerGender.FEMALE) {
-      playerGenderPrefix = "PGF";
-    }
+  shouldSkipDialogue(i18nKey: string): boolean {
+    const battleScene = this.scene as BattleScene;
 
-    const key = playerGenderPrefix + text;
-
-    if (i18next.exists(key) ) {
-      if ((this.scene as BattleScene).skipSeenDialogues && (this.scene as BattleScene).gameData.getSeenDialogues()[key] === true) {
+    if (i18next.exists(i18nKey) ) {
+      if (battleScene.skipSeenDialogues && battleScene.gameData.getSeenDialogues()[i18nKey] === true) {
         return true;
       }
     }

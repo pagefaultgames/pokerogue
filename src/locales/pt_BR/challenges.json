@@ -25,5 +25,12 @@
     "desc": "Você só pode usar os iniciais originais, como se tivesse acabado de começar o PokéRogue.",
     "value.0": "Desligado",
     "value.1": "Ligado"
+  },
+  "inverseBattle": {
+    "name": "Batalha Inversa",
+    "shortName": "Inversa",
+    "desc": "Fraquezas e resistências de tipos são invertidas e nenhum tipo é imune a outro tipo.\nDesativa as conquistas de outros desafios.",
+    "value.0": "Desligado",
+    "value.1": "Ligado"
   }
 }

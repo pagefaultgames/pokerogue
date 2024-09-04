@@ -91,7 +91,7 @@
     "name": "Campeón Liga Master",
     "name_female": "Campeona Liga Master"
   },
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     "name": "Trabajo en Equipo",
     "description": "Haz relevo a otro miembro del equipo con al menos una estadística al máximo."
   },
@@ -170,5 +170,9 @@
   "CLASSIC_VICTORY": {
     "name": "Imbatible",
     "description": "Completa el juego en modo clásico."
+  },
+  "INVERSE_BATTLE": {
+    "name": "Espejo ojepsE",
+    "description": "Completa el reto de Combate Inverso.\n.osrevnI etabmoC ed oter le atelpmoC"
   }
 }

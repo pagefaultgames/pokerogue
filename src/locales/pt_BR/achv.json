@@ -84,7 +84,7 @@
   "100_RIBBONS": {
     "name": "Fita de Diamante"
   },
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     "name": "Trabalho em Equipe",
     "description": "Use Baton Pass com pelo menos um atributo aumentado ao máximo"
   },
@@ -264,5 +264,9 @@
   "FRESH_START": {
     "name": "De Primeira!",
     "description": "Complete o desafio de novo começo."
+  },
+  "INVERSE_BATTLE": {
+    "name": "A torre da derrotA",
+    "description": "Complete o desafio da Batalha Inversa.\n.asrevnI ahlataB ad oifased o etelpmoC"
   }
 }
