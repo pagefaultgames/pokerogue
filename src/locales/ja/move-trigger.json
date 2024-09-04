@@ -61,6 +61,5 @@
   "suppressAbilities": "{{pokemonName}}の　とくせいが　きかなくなった！",
   "revivalBlessing": "{{pokemonName}}は\n復活して　戦えるようになった！",
   "swapArenaTags": "{{pokemonName}}は\nおたがいの　ばのこうかを　いれかえた！",
-  "chillyReception": "{{pokemonName}}は\nさむい　ギャグを　かました！",
-  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!"
+  "chillyReception": "{{pokemonName}}は\nさむい　ギャグを　かました！"
 }
