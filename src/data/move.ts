@@ -7979,14 +7979,15 @@ export function initMoves() {
     new StatusMove(Moves.REFLECT_TYPE, Type.NORMAL, -1, 15, -1, 0, 5)
       .attr(CopyTypeAttr),
     new AttackMove(Moves.RETALIATE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 5, -1, 0, 5)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => (
-        user.scene.currentBattle.playerFaintsHistory.at(-1) !== undefined &&
-        user.scene.currentBattle.turn - user.scene.currentBattle.playerFaintsHistory.at(-1)!.turn === 1 &&
-        user.isPlayer() ||
-        user.scene.currentBattle.enemyFaintsHistory.at(-1) !== undefined &&
-        user.scene.currentBattle.turn - user.scene.currentBattle.enemyFaintsHistory.at(-1)!.turn === 1 &&
-        !user.isPlayer()
-      ) ? 2 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => {
+        const turn = user.scene.currentBattle.turn;
+        const lastPlayerFaint = user.scene.currentBattle.playerFaintsHistory[user.scene.currentBattle.playerFaintsHistory.length -1];
+        const lastEnemyFaint = user.scene.currentBattle.enemyFaintsHistory[user.scene.currentBattle.enemyFaintsHistory.length -1];
+        return (
+          lastPlayerFaint !== undefined && turn - lastPlayerFaint.turn === 1 && user.isPlayer() ||
+        lastEnemyFaint !== undefined && turn - lastEnemyFaint.turn === 1 && !user.isPlayer()
+        ) ? 2 : 1;
+      }),
     new AttackMove(Moves.FINAL_GAMBIT, Type.FIGHTING, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 5)
       .attr(UserHpDamageAttr)
       .attr(SacrificialAttrOnHit),

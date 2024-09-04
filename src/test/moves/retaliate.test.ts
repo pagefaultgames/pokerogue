@@ -43,7 +43,6 @@ describe("Moves - Retaliate", () => {
 
     await game.toNextTurn();
     game.move.select(Moves.RETALIATE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
     expect(retaliate.calculateBattlePower).toHaveReturnedWith(140);
   });
