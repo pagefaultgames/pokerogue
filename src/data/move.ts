@@ -761,8 +761,7 @@ export default class Move implements Localizable {
         .flat(),
     );
     for (const aura of fieldAuras) {
-      // The only relevant values are `move` and the `power` holder
-      aura.applyPreAttack(null, null, simulated, null, this, [power]);
+      aura.applyPreAttack(source, null, simulated, target, this, [power]);
     }
 
     const alliedField: Pokemon[] = source instanceof PlayerPokemon ? source.scene.getPlayerField() : source.scene.getEnemyField();
