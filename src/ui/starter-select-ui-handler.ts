@@ -1926,14 +1926,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             } while (newAbilityIndex !== this.abilityCursor);
             starterAttributes.ability = newAbilityIndex; // store the selected ability
 
-            const { visible: tooltipVisible, content: oldTooltip } = (this.scene as BattleScene).ui.getTooltip();
+            const { visible: tooltipVisible, content: oldTooltip } = this.scene.ui.getTooltip();
 
             if (tooltipVisible) {
               const oldAbility = allAbilities[this.lastSpecies.getAbility(this.abilityCursor)];
               const newAbility = allAbilities[this.lastSpecies.getAbility(newAbilityIndex)];
 
               if (oldTooltip.replace(/\s/g, "") === oldAbility.description.replace(/\s/g, "")) {
-                (this.scene as BattleScene).ui.editTooltip("", `${newAbility.description}`);
+                this.scene.ui.editTooltip("", `${newAbility.description}`);
               }
             }
 
@@ -2709,8 +2709,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
 
-    if ((this.scene as BattleScene).ui.getTooltip().visible) {
-      (this.scene as BattleScene).ui.hideTooltip();
+    if (this.scene.ui.getTooltip().visible) {
+      this.scene.ui.hideTooltip();
     }
     this.pokemonAbilityText.off("pointerover");
     this.pokemonPassiveText.off("pointerover");
@@ -2838,8 +2838,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
 
           if (this.pokemonCandyDarknessOverlay.visible) {
-            this.pokemonCandyDarknessOverlay.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true));
-            this.pokemonCandyDarknessOverlay.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+            this.pokemonCandyDarknessOverlay.on("pointerover", () => this.scene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true));
+            this.pokemonCandyDarknessOverlay.on("pointerout", () => this.scene.ui.hideTooltip());
           }
 
           this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
@@ -3114,8 +3114,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const passiveAbility = allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]];
 
         if (this.pokemonAbilityText.visible) {
-          this.pokemonAbilityText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", `${ability.description}`, true));
-          this.pokemonAbilityText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+          this.pokemonAbilityText.on("pointerover", () => this.scene.ui.showTooltip("", `${ability.description}`, true));
+          this.pokemonAbilityText.on("pointerout", () => this.scene.ui.hideTooltip());
         }
 
         if (passiveAbility) {
@@ -3135,8 +3135,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonPassiveText.setShadowColor(this.getTextColor(textStyle, true));
 
           if (this.pokemonPassiveText.visible && isUnlocked && isEnabled) {
-            this.pokemonPassiveText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", `${passiveAbility.description}`, true));
-            this.pokemonPassiveText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+            this.pokemonPassiveText.on("pointerover", () => this.scene.ui.showTooltip("", `${passiveAbility.description}`, true));
+            this.pokemonPassiveText.on("pointerout", () => this.scene.ui.hideTooltip());
           }
 
           const iconPosition = {
