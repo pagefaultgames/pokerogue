@@ -4414,6 +4414,12 @@ export class EnemyPokemon extends Pokemon {
     return BattlerIndex.ENEMY + this.getFieldIndex();
   }
 
+  /**
+   * Add a new pokemon to the player's party (at `slotIndex` if set).
+   * @param pokeballType the type of pokeball the pokemon was caught with
+   * @param slotIndex an optional index to place the pokemon in the party
+   * @returns the pokemon that was added or null if the pokemon could not be added
+   */
   addToParty(pokeballType: PokeballType, slotIndex: number = -1) {
     const party = this.scene.getParty();
     let ret: PlayerPokemon | null = null;
