@@ -1,41 +1,41 @@
 {
   "youngster": {
     "encounter": {
-      "1": "Hey, wanna battle?",
-      "2": "Are you a new trainer too?",
-      "2_female": "Are you a new trainer too?",
-      "3": "Hey, I haven't seen you before. Let's battle!",
-      "4": "I just lost, so I'm trying to find more Pokémon.\nWait! You look weak! Come on, let's battle!",
-      "4_female": "I just lost, so I'm trying to find more Pokémon.\nWait! You look weak! Come on, let's battle!",
-      "5": "Have we met or not? I don't really remember. Well, I guess it's nice to meet you anyway!",
-      "6": "All right! Let's go!",
-      "7": "All right! Here I come! I'll show you my power!",
-      "8": "Haw haw haw... I'll show you how hawesome my Pokémon are!",
-      "9": "No need to waste time saying hello. Bring it on whenever you're ready!",
-      "9_female": "No need to waste time saying hello. Bring it on whenever you're ready!",
-      "10": "Don't let your guard down, or you may be crying when a kid beats you.",
-      "11": "I've raised my Pokémon with great care. You're not allowed to hurt them!",
-      "12": "Glad you made it! It won't be an easy job from here.",
-      "12_female": "Glad you made it! It won't be an easy job from here.",
-      "13": "The battles continue forever! Welcome to the world with no end!",
-      "13_female": "The battles continue forever! Welcome to the world with no end!"
+      "1": "よっ　勝負する？",//BW
+      "2": "あっ　君も　駆け出し　トレーナーだね？",//BW
+      "2_female": "あっ　きみも　駆け出し　トレーナーだね？",
+      "3": "あっ 初めてみる 人！　勝負だ！",//BW
+      "4": "さっき　負けて　悔しいから　ポケモン　探してるんだよ。\nでも 君 弱そうだな……　よしっ！　勝負　しようぜ！",//ORAS
+      "4_female": "さっき　負けて　悔しいから　ポケモン　探してるんだよ。\nでも 君 弱そうだな……　よしっ！　勝負　しようぜ！",//ORAS
+      "5": "お久しぶりかな？　初めましてかな？\n覚えてないけど　ヨロシクね！",//BW
+      "6": "よーし　行くぞー！",//ORAS
+      "7": "よっしゃ　行っくぜー！\n僕の　パワー　見せてやる！",//BW
+      "8": "へへへ……　見せて あげるね！\n僕の ポケモンの すごさを！",//BW
+      "9": "挨拶 なんて よかよか！　いつでも かかってきんしゃい！",
+      "9_female": "挨拶 なんて よかよか！　いつでも かかってきんしゃい！",//ORAS
+      "10": "小僧　　だからって　油断してると\n君　泣いちゃう　かもしれないよー.",//B2W2
+      "11": "大事に　育てた　ポケモンだぞー！\n絶対　倒しちゃ　ダメなんだぞ！", //BW
+      "12": "よく来たな！\nこっから　先は　一筋縄じゃ　いかないぞ！",
+      "12_female": "よく来たな！\nこっから　先は　一筋縄じゃ　いかないぞ！",//BW, ORAS, XY
+      "13": "勝負は　続くよ！　いつまでも！\n終わりなき　世界へ　ようこそ！",
+      "13_female": "勝負は　続くよ！\nいつまでも！　終わりなき　世界へ　ようこそ！"//ORAS
     },
     "victory": {
-      "1": "Wow! You're strong!",
-      "1_female": "Wow! You're strong!",
-      "2": "I didn't stand a chance, huh?",
-      "3": "I'll find you again when I'm older and beat you!",
-      "4": "Ugh. I don't have any more Pokémon.",
-      "5": "No way… NO WAY! How could I lose again…",
-      "5_female": "No way… NO WAY! How could I lose again…",
-      "6": "No! I lost!",
-      "7": "Whoa! You are incredible! I'm amazed and surprised!",
-      "8": "Could it be… How… My Pokémon and I are the strongest, though…",
-      "9": "I won't lose next time! Let's battle again sometime!",
-      "10": "Sheesh! Can't you see that I'm just a kid! It wasn't fair of you to go all out like that!",
-      "11": "Your Pokémon are more amazing! Trade with me!",
-      "12": "I got a little carried away earlier, but what job was I talking about?",
-      "13": "Ahaha! There it is! That's right! You're already right at home in this world!"
+      "1": "スゴッ！　君　強いんだ！",//original
+      "1_femal1e": "スゴッ！　君　強いんだ！",
+      "2": "敵わなかったね？", //original
+      "3": "僕　大きくなったら　絶対　君を　倒すよ！",//original
+      "4": "ゲッ　戦えるポケモン　もう　いない…",//original
+      "5": "トホ……　トホホーイ……\nまた　負けちゃったよ……",　//XY
+      "5_female": "トホ……　トホホーイ……\nまた　負けちゃったよ……",
+      "6": "うわー！　負けたー！！", //ORAS
+      "7": "すごいな　君の　パワーは！\nビックリで　ドッキリだよ！",//XY
+      "8": "そんな……　どうして……\n僕の　ポケモンは　サイキョー　なのに……",//ORAS
+      "9": "また　バトルして　くれよな！\n次は　負けないからな！",　//mix Battle Revolution + B2W2
+      "10": "も～！ 僕は　小僧だけ　だよ！\nそんな全力で　戦っちゃ　ひどいぞ！", //original
+      "11": "君の　ポケモンの　方が　すごい！\n僕のと　交換しておくれよ！", //ORAS
+      "12": "さっきは　勢いで　言ったけど\n一筋縄って　どんな縄？",//BW, ORAS, XY
+      "13": "あはは　さすが！　さすがだね！\nもう　君も　この世界の　住人だ！" //ORAS
     }
   },
   "lass": {
@@ -2718,37 +2718,37 @@
   },
   "rival": {
     "encounter": {
-      "1": "@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…$@c{smile_eclosed}So you're really pursuing your dream after all? I almost can't believe it.$@c{serious_smile_fists}Since we're here, how about a battle?\nAfter all, I want to make sure you're ready.$@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!"
+      "1": "@c{smile}あっ、ここに　いたんだ！　旅に　出る前に　「じゃ　またね！」って　くらい　聞きたかったよ……$@c{smile_eclosed}やっぱり　夢を　追ってこうと　しているんだ？　信じられない　ほどね……$@c{serious_smile_fists}じゃあ、　ここまで　来たから　バトルしよっか？　覚悟してるかを　確かめたい　から！$@c{serious_mopen_fists}遠慮せずに　全力で　かかってこいぜ！"
     },
     "victory": {
-      "1": "@c{shock}Wow… You cleaned me out.\nAre you actually a beginner?$@c{smile}Maybe it was a bit of luck but…Who knows you might just be able to go all the way.$By the way, the professor asked me to give you these items. They look pretty cool.$@c{serious_smile_fists}Good luck out there!"
+      "1": "@c{shock}ウワッ、カンゼンに　ぶっ壊したぜ。\n初心者だとは　思えないほど……$@c{smile}たぶん　運が良っかった　だけが……\n最後まで　行ける素質が　あるかもな！$こっちの　アイテムを　あげよう、　博士に そう言いつけたから。　結構　スゴそうな　もんだ！$@c{serious_smile_fists}ここからも　ガンバレ！"
     }
   },
   "rival_female": {
     "encounter": {
-      "1": "@c{smile_wave}There you are! I've been looking everywhere for you!\n@c{angry_mopen}Did you forget to say goodbye to your best friend?\n$@c{smile_ehalf}You're going after your dream, huh?\nThat day is really today isn't it…\n$@c{smile}Anyway, I'll forgive you for forgetting me, but on one condition. @c{smile_wave_wink}You have to battle me!\n$@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?"
+      "1": "@c{smile_wave}あ、ついに　見つけた！　あちこち　探したのよ！ \n@c{angry_mopen}だーい親友に　お別れを　言うまでも　忘れちゃった？$@c{smile_ehalf}大切な　夢を　追っていくのね？\n やっぱり、この日が　来たのね……$@c{smile}とにかく！　アタシを　忘れちゃったのを　許せる　条件は　一つ： \n@c{smile_wave_wink}アタシと　バトルだ!$@c{angry_mopen}全力で　かかってきなさい！\n冒険が　第一歩で　終わっちゃうと　もったいない　でしょう？`																																					 
     },
     "victory": {
-      "1": "@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?\n$@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.\n$@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!\n$@c{smile_wave}Do your best like always! I believe in you!"
+      "1": "@c{shock}始まった　バッカリなのに　そんなに強い？！@d{96}\n@c{angry}完全に　チートだろう？\n$@c{smile_wave_wink}なんちゃって！@d{64} @c{smile_eclosed}正々堂々と　負けたよ。　冒険　上手く行ける　気がするね！\n$@c{smile}ところで、こっち！　博士からの　アイテムを　あげるわ。きっと　便利だと　思うよ！\n$@c{smile_wave}いつも通り　頑張ってね！　信じてるから！"
     }
   },
   "rival_2": {
     "encounter": {
-      "1": "@c{smile}Hey, you're here too?\n@c{smile_eclosed}Still a perfect record, huh…?\n$@c{serious_mopen_fists}I know it kind of looks like I followed you here, but that's mostly not true.\n$@c{serious_smile_fists}Honestly though, I've been itching for a rematch since you beat me back at home.\n$I've been doing a lot of my own training so I'll definitely put up a fight this time.\n$@c{serious_mopen_fists}Don't hold back, just like before!\nLet's go!"
+      "1": "@c{smile}おや、なんと　グウゼン。\n@c{smile_eclosed}今までも　パーフェクトに　勝った　ようだな……\n$@c{serious_mopen_fists}なんか　忍び寄った　みたいだとは　分かるけど、　そんなことない…　ほとんどはな。\n$@c{serious_smile_fists}ぶっちゃけ言うと、　オレが　負けた時から　再戦したくて　ウズウズしてたぜ。\n$張り切って　特訓したから　今は　ちゃんと　勢い　見せるんだ。\n$@c{serious_mopen_fists}今回も　遠慮しな！\n行こうぜ！"
     },
     "victory": {
-      "1": "@c{neutral_eclosed}Oh. I guess I was overconfident.\n$@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n\n$@c{smile}Oh, not that you really need the help, but I had an extra one of each of these lying around and figured you might want them.\n\n$@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all."
+      "1": "@c{neutral_eclosed}あ。　自信過剰かも。\n$@c{smile}いいけどさ、　こうなるのを　見込んだから。\n@c{serious_mopen_fists}次回まで　もっと頑張らなくちゃ　ってことだよな！\n\n$@c{smile}きっと　助け　要らないんだが、　もう一つの　アイテムが　欲しいかと　思ったから　あげるぜ。\n\n$@c{serious_smile_fists}でも　これで　ラストだ！\n相手に　利点を　あげ続けると　行けないんだろう！"
     }
   },
   "rival_2_female": {
     "encounter": {
-      "1": "@c{smile_wave}Oh, fancy meeting you here. Looks like you're still undefeated. @c{angry_mopen}Huh… Not bad!\n$@c{angry_mopen}I know what you're thinking, and no, I wasn't creeping on you. @c{smile_eclosed}I just happened to be in the area.\n$@c{smile_ehalf}I'm happy for you but I just want to let you know that it's OK to lose sometimes.\n$@c{smile}We learn from our mistakes, often more than we would if we kept succeeding.\n$@c{angry_mopen}In any case, I've been training hard for our rematch, so you'd better give it your all!"
+      "1": "@c{smile_wave}あっ、　こんなとこで　偶然だね！　まだ　倒れないようだ。@c{angry_mopen}フム、えらいえらい！\n$@c{angry_mopen}考えてるのは　分かる、　つきまとってるワケ　じゃないから！@c{smile_eclosed}この辺に　いただけよ。\n$@c{smile_ehalf}ここまで　頑張っていて　良かったけど、　時々　負けることも　大丈夫だと　知ってるよね？\n$@c{smile}みんなは　失敗から　学ぶ…　いつまでも　成功し続ける　よりもね。\n$@c{angry_mopen}とにかく！　再戦の　ために　大変　トレーニングしてたから　全・勢・力で 戦おう！"
     },
     "victory": {
-      "1": "@c{neutral}I… wasn't supposed to lose that time…\n$@c{smile}Aw well. That just means I'll have to train even harder for next time!\n$@c{smile_wave}I also got you another two of these!\n@c{smile_wave_wink}No need to thank me~.\n$@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!"
+      "1": "@c{neutral}…今回は　負ける　はずじゃなかった…\n$@c{smile}しょうがないね。　次回まで　もっともっと　トレーニングしなくちゃ　ってこと！\n$@c{smile_wave}そして！　もう二つの　アイテム、　どうぞ！\n@c{smile_wave_wink}「ありがと」なんて　必要ない！\n$@c{angry_mopen}でもね、　これで　最後！ 今から　サービス　一つも　あげないよ～"
     },
     "defeat": {
-      "1": "It's OK to lose sometimes…"
+      "1": "時々　負けることも　いいんだよ…"
     }
   },
   "rival_3": {
@@ -2761,13 +2761,13 @@
   },
   "rival_3_female": {
     "encounter": {
-      "1": "@c{smile_wave}Long time no see! Still haven't lost, huh.\n@c{angry}You're starting to get on my nerves. @c{smile_wave_wink}Just kidding!\n$@c{smile_ehalf}But really, don't you miss home by now? Or… me?\nI… I mean, we've really missed you.\n$@c{smile_eclosed}I support you in your dream and everything, but the reality is you're going to lose sooner or later.\n$@c{smile}And when you do, I'll be there for you like always.\n@c{angry_mopen}Now, let me show you how strong I've become!"
+      "1": "@c{smile_wave}ヒサブリ~！　まだ　負けてないね。\n@c{angry}だんだん　イラッと来る。@c{smile_wave_wink}なんちゃって！\n$@c{smile_ehalf}でもよ、　本当に　ふるさとが　恋しくないの？　それとも…　アタシ…？\nずっと会いたいよ…　あの、みんなはね！\n$@c{smile_eclosed}夢を　叶ってるのを　応援してるけど、　実際は　やがて　負ける。\n$@c{smile}その時が　来たら　アタシは　いつも通り　そばにいるよ。\n@c{angry_mopen}さあ、　ここまで　頑張ってきた　アタシの　力を　見せさせて！"
     },
     "victory": {
-      "1": "@c{shock}After all that… it wasn't enough…?\nYou'll never come back at this rate…"
+      "1": "@c{shock}もう…　足りなかった…？\nこのままで　決して　帰らない　だろう……"
     },
     "defeat": {
-      "1": "You gave it your best, now let's go home."
+      "1": "ベストを　尽くした。　じゃ、　帰りましょう。"
     }
   },
   "rival_4": {
@@ -2780,13 +2780,13 @@
   },
   "rival_4_female": {
     "encounter": {
-      "1": "@c{neutral}It's me! You didn't forget about me again… did you?\n$@c{smile}You should be proud of how far you made it. Congrats!\nBut it looks like it's the end of your journey.\n$@c{smile_eclosed}You've awoken something in me I never knew was there.\nIt seems like all I do now is train.\n$@c{smile_ehalf}I hardly even eat or sleep now, I just train my Pokémon all day, getting stronger every time.\n$@c{neutral}In fact, I… hardly recognize myself.\n$And now, I've finally reached peak performance.\nI don't think anyone could beat me now.\n$And you know what? It's all because of you.\n@c{smile_ehalf}I don't know whether to thank you or hate you.\n$@c{angry_mopen}Prepare yourself."
+      "1": "@c{neutral}アタシよ！　また　忘れちゃった…　のね？\n$@c{smile}こんな　遠くまで　来たのは　鼻が高いことだよ！　おめでと～\nしかし、　ここは　終着点だね。\n$@c{smile_eclosed}アタシの　中にある　全然　知らなかった　部分を　目覚めたよ。\n今は、　トレーニングしか　してないみたい。\n$@c{smile_ehalf}食べたり　寝たりも　しなくて　朝から晩まで　ポケモンを　育って、　毎日　昨日より　強くなってる。\n$@c{neutral}実は…　もう　自分　認識できない。\n$結局、　峠を越して　まるで　カミに　なった。\n今は　誰にも　アタシを　倒せないと　思う。\n$ねえ、分かる？　全ては　アンタの　お陰で。\n@c{smile_ehalf}お礼を言うか　アンタのこと嫌いか　どうしたらいいの　分からない。\n$@c{angry_mopen}覚悟しなさい。"
     },
     "victory": {
-      "1": "@c{neutral}What…@d{64} What are you?"
+      "1": "@c{neutral}一体…@d{64} 何モノか…？"
     },
     "defeat": {
-      "1": "$@c{smile}You should be proud of how far you made it."
+      "1": "$@c{smile}ここまで　頑張ってたのを　誇りに思ってね。"
     }
   },
   "rival_5": {
@@ -2818,10 +2818,10 @@
   },
   "rival_6_female": {
     "encounter": {
-      "1": "@c{smile_ehalf}So it's just us again.\n$@c{smile_eclosed}You know, I keep going around and around in my head…\n$@c{smile_ehalf}There's something to all this, why everything seems so strange now…\n$@c{smile}You have your dream, and I have this ambition in me…\n$I just can't help but feel there's a greater purpose to all this, to what we're doing, you and I.\n$@c{smile_eclosed}I think I'm supposed to push you… to your limits.\n$@c{smile_ehalf}I'm not sure if I've been doing a good job at that, but I've tried my best up to now.\n$It's something about this strange and dreadful place… Everything seems so clear…\n$This… is all the world's known for a long time now.\n$@c{smile_eclosed}It's like I can barely remember the memories we cherished together.\n$@c{smile_ehalf}Were they even real? They seem so far away now…\n$@c{angry_mopen}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.\n$@c{smile_ehalf}I… don't know what all this means… but I feel it's true.\n$@c{neutral}If you can't defeat me here and now, you won't stand a chance."
+      "1": "@c{smile_ehalf}また　アタシたちだけに　なった。\n$@c{smile_eclosed}ねえ、　頭の中に　グルグル　巡ることが　あってよ。\n$@c{smile_ehalf}アタシとアナタの　間に　起こしたことも,　この変な感情も……\n$@c{smile}アナタの夢、　アタシの野心…\n$アタシたちが　し続けることも　全ては…　より高い　目的が　あると思うよ。\n$@c{smile_eclosed}最果ての　限界まで　押すこと…　それは　アタシの　役割だと思う。\n$@c{smile_ehalf}今まで　役割を　上手く果たせたかは　分からないけど……　一生懸命　頑張った。\n$こんな奇妙な　恐ろしい場所で　なんか…　全てが　明らかに　見られるみたい。\n$昔から… これだけしかは　この世界こそ　そのもの。\n$@c{smile_eclosed}アタシたちが　大切にした　心にギュッと　抱いた思い出…　もう　思い出せない。\n$@c{smile_ehalf}本当は　全部　ウソだったの？　今は　遠い彼方に　あるみたい。\n$@c{angry_mopen}アナタは　最後まで　戦い続けなければ　決して　終わらない。　アナタしか　できないのよ。\n$@c{smile_ehalf}この全ての　意味、　全然　分からないけど…　真実だと　感じてる。\n$@c{neutral}今ここで　アタシを　倒せないと　最後に　勝ち目は　ナイ。"
     },
     "victory": {
-      "1": "@c{smile_ehalf}I… I think I fulfilled my purpose…\n$@c{smile_eclosed}Promise me… After you heal the world… Please… come home safe.\n$@c{smile_ehalf}…Thank you."
+      "1": "@c{smile_ehalf}役割…　果たせたと思う。\n$@c{smile_eclosed}ね、　約束して。　この世界を　癒やしたら…　お願い　無事に　帰って。\n$@c{smile_ehalf}……ありがとう。"
     }
   }
 }
