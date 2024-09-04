@@ -785,6 +785,54 @@
       "3": "*sigh* I am one tired Oleana..."
     }
   },
+  "star_grunt": {
+    "encounter": {
+      "1": "…"
+    },
+    "victory": {
+      "1": "…"
+    }
+  },
+  "giacomo": {
+    "encounter": {
+      "1": "…"
+    },
+    "victory": {
+      "1": "…"
+    }
+  },
+  "mela": {
+    "encounter": {
+      "1": "…"
+    },
+    "victory": {
+      "1": "…"
+    }
+  },
+  "atticus": {
+    "encounter": {
+      "1": "…"
+    },
+    "victory": {
+      "1": "…"
+    }
+  },
+  "ortega": {
+    "encounter": {
+      "1": "…"
+    },
+    "victory": {
+      "1": "…"
+    }
+  },
+  "eri": {
+    "encounter": {
+      "1": "…"
+    },
+    "victory": {
+      "1": "…"
+    }
+  },
   "rocket_boss_giovanni_1": {
     "encounter": {
       "1": "So! I must say, I am impressed you got here!"
@@ -983,6 +1031,28 @@
     },
     "defeat": {
       "1": "I suppose it must seem that I am doing something terrible. I don't expect you to understand.\n$But I must provide the Galar region with limitless energy to ensure everlasting prosperity."
+    }
+  },
+  "star_boss_penny_1": {
+    "encounter": {
+      "1": "…"
+    },
+    "victory": {
+      "1": "…"
+    },
+    "defeat": {
+      "1": "…"
+    }
+  },
+  "star_boss_penny_2": {
+    "encounter": {
+      "1": "…"
+    },
+    "victory": {
+      "1": "…"
+    },
+    "defeat": {
+      "1": "…"
     }
   },
   "brock": {
