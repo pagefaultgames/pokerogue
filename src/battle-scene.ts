@@ -2749,6 +2749,29 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * This function retrieves the sprite and audio keys for active Pokemon.
+   * Active Pokemon include both enemy and player Pokemon of the current wave.
+   * Note: Questions on garbage collection go to @frutescens
+   * @returns a string array of active sprite and audio keys that should not be deleted
+   */
+  getActiveKeys(): string[] {
+    const keys: string[] = [];
+    const playerParty = this.getParty();
+    playerParty.forEach(p => {
+      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
+      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant, true));
+      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
+    });
+    // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
+    const enemyParty = this.getEnemyParty();
+    enemyParty.forEach(p => {
+      keys.push(p.species.getSpriteKey(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
+      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
+    });
+    return keys;
+  }
+
+  /**
    * Initialized the 2nd phase of the final boss (e.g. form-change for Eternatus)
    * @param pokemon The (enemy) pokemon
    */
