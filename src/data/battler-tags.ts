@@ -1800,7 +1800,6 @@ export class IceFaceBlockDamageTag extends FormBlockDamageTag {
   }
 }
 
-
 /**
  * Battler tag enabling the Stockpile mechanic. This tag handles:
  * - Stack tracking, including max limit enforcement (which is replicated in Stockpile for redundancy).
