@@ -39,13 +39,15 @@ export class BattlerTag {
   public turnCount: number;
   public sourceMove: Moves;
   public sourceId?: number;
+  public isBatonPassable: boolean;
 
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: number, sourceMove?: Moves, sourceId?: number) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: number, sourceMove?: Moves, sourceId?: number, isBatonPassable: boolean = false) {
     this.tagType = tagType;
     this.lapseTypes = Array.isArray(lapseType) ? lapseType : [ lapseType ];
     this.turnCount = turnCount;
     this.sourceMove = sourceMove!; // TODO: is this bang correct?
     this.sourceId = sourceId;
+    this.isBatonPassable = isBatonPassable;
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -206,7 +208,7 @@ export class ShellTrapTag extends BattlerTag {
 
 export class TrappedTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: number, sourceMove: Moves, sourceId: number) {
-    super(tagType, lapseType, turnCount, sourceMove, sourceId);
+    super(tagType, lapseType, turnCount, sourceMove, sourceId, true);
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -326,7 +328,7 @@ export class InterruptedTag extends BattlerTag {
  */
 export class ConfusedTag extends BattlerTag {
   constructor(turnCount: number, sourceMove: Moves) {
-    super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount, sourceMove);
+    super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount, sourceMove, undefined, true);
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -386,7 +388,7 @@ export class ConfusedTag extends BattlerTag {
  */
 export class DestinyBondTag extends BattlerTag {
   constructor(sourceMove: Moves, sourceId: number) {
-    super(BattlerTagType.DESTINY_BOND, BattlerTagLapseType.PRE_MOVE, 1, sourceMove, sourceId);
+    super(BattlerTagType.DESTINY_BOND, BattlerTagLapseType.PRE_MOVE, 1, sourceMove, sourceId, true);
   }
 
   /**
@@ -505,7 +507,7 @@ export class SeedTag extends BattlerTag {
   private sourceIndex: number;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.SEEDED, BattlerTagLapseType.TURN_END, 1, Moves.LEECH_SEED, sourceId);
+    super(BattlerTagType.SEEDED, BattlerTagLapseType.TURN_END, 1, Moves.LEECH_SEED, sourceId, true);
   }
 
   /**
@@ -776,7 +778,7 @@ export class OctolockTag extends TrappedTag {
 
 export class AquaRingTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.AQUA_RING, BattlerTagLapseType.TURN_END, 1, Moves.AQUA_RING, undefined);
+    super(BattlerTagType.AQUA_RING, BattlerTagLapseType.TURN_END, 1, Moves.AQUA_RING, undefined, true);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -808,7 +810,7 @@ export class AquaRingTag extends BattlerTag {
 /** Tag used to allow moves that interact with {@link Moves.MINIMIZE} to function */
 export class MinimizeTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, Moves.MINIMIZE, undefined);
+    super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, Moves.MINIMIZE);
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -1206,7 +1208,7 @@ export class SturdyTag extends BattlerTag {
 
 export class PerishSongTag extends BattlerTag {
   constructor(turnCount: number) {
-    super(BattlerTagType.PERISH_SONG, BattlerTagLapseType.TURN_END, turnCount, Moves.PERISH_SONG);
+    super(BattlerTagType.PERISH_SONG, BattlerTagLapseType.TURN_END, turnCount, Moves.PERISH_SONG, undefined, true);
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -1262,7 +1264,7 @@ export class AbilityBattlerTag extends BattlerTag {
   public ability: Abilities;
 
   constructor(tagType: BattlerTagType, ability: Abilities, lapseType: BattlerTagLapseType, turnCount: number) {
-    super(tagType, lapseType, turnCount, undefined);
+    super(tagType, lapseType, turnCount);
 
     this.ability = ability;
   }
@@ -1438,7 +1440,7 @@ export class TypeImmuneTag extends BattlerTag {
   public immuneType: Type;
 
   constructor(tagType: BattlerTagType, sourceMove: Moves, immuneType: Type, length: number = 1) {
-    super(tagType, BattlerTagLapseType.TURN_END, length, sourceMove);
+    super(tagType, BattlerTagLapseType.TURN_END, length, sourceMove, undefined, true);
 
     this.immuneType = immuneType;
   }
@@ -1502,7 +1504,7 @@ export class TypeBoostTag extends BattlerTag {
 
 export class CritBoostTag extends BattlerTag {
   constructor(tagType: BattlerTagType, sourceMove: Moves) {
-    super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
+    super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove, undefined, true);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1594,7 +1596,7 @@ export class CursedTag extends BattlerTag {
   private sourceIndex: number;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.CURSED, BattlerTagLapseType.TURN_END, 1, Moves.CURSE, sourceId);
+    super(BattlerTagType.CURSED, BattlerTagLapseType.TURN_END, 1, Moves.CURSE, sourceId, true);
   }
 
   /**
