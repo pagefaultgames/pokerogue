@@ -84,7 +84,7 @@ export class AttemptRunPhase extends PokemonPhase {
 
     const speedRatio = playerSpeed / enemySpeed; // this gets the speed ration between you and the average enemy speed
     const speedCap = isBoss ? 6 : 4; // this gets the speed cap depending whether there's a boss or not in the enemy field
-    const minChance = 5; // this is the minimum chance to escape
+    const minChance = 5; // this is the minimum % chance to escape
     const maxChance = isBoss ? 25 : 95; // this gets the max escape % chance depending whether there's a boss or not in the enemy field
     const escapeBonus = isBoss ? 2 : 10; // this is the bonus per previous escape attempt depending whether there's a boss or not in the enemy field
     const escapeSlope = (maxChance - minChance) / speedCap; // this is just a helper const to help calculate the "slope" of the escape chance
