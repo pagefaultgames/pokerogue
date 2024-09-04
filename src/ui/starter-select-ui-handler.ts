@@ -561,10 +561,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127 + starterInfoYOffset, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityLabelText.setOrigin(0, 0);
     this.pokemonAbilityLabelText.setVisible(false);
+
     this.starterSelectContainer.add(this.pokemonAbilityLabelText);
 
     this.pokemonAbilityText = addTextObject(this.scene, starterInfoXPos, 127 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonAbilityText.setOrigin(0, 0);
+    this.pokemonAbilityText.setInteractive(new Phaser.Geom.Rectangle(0, 0, 250, 55), Phaser.Geom.Rectangle.Contains);
+
     this.starterSelectContainer.add(this.pokemonAbilityText);
 
     this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136 + starterInfoYOffset, i18next.t("starterSelectUiHandler:passive"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
@@ -574,6 +577,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.pokemonPassiveText = addTextObject(this.scene, starterInfoXPos, 136 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
     this.pokemonPassiveText.setOrigin(0, 0);
+    this.pokemonPassiveText.setInteractive(new Phaser.Geom.Rectangle(0, 0, 250, 55), Phaser.Geom.Rectangle.Contains);
     this.starterSelectContainer.add(this.pokemonPassiveText);
 
     this.pokemonPassiveDisabledIcon = this.scene.add.sprite(starterInfoXPos, 137 + starterInfoYOffset, "icon_stop");
@@ -1921,6 +1925,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               }
             } while (newAbilityIndex !== this.abilityCursor);
             starterAttributes.ability = newAbilityIndex; // store the selected ability
+
+            const { visible: tooltipVisible, content: oldTooltip } = (this.scene as BattleScene).ui.getTooltip();
+
+            if (tooltipVisible) {
+              const oldAbility = allAbilities[this.lastSpecies.getAbility(this.abilityCursor)];
+              const newAbility = allAbilities[this.lastSpecies.getAbility(newAbilityIndex)];
+
+              if (oldTooltip.replace(/\s/g, "") === oldAbility.description.replace(/\s/g, "")) {
+                (this.scene as BattleScene).ui.editTooltip("", `${newAbility.description}`);
+              }
+            }
+
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
             success = true;
           }
@@ -2693,6 +2709,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
 
+    if ((this.scene as BattleScene).ui.getTooltip().visible) {
+      (this.scene as BattleScene).ui.hideTooltip();
+    }
+    this.pokemonAbilityText.off("pointerover");
+    this.pokemonPassiveText.off("pointerover");
+
     const starterAttributes : StarterAttributes | null = species ? {...this.starterPreferences[species.speciesId]} : null;
 
     if (starterAttributes?.nature) {
@@ -3081,8 +3103,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       if (dexEntry.caughtAttr) {
-        const ability = this.lastSpecies.getAbility(abilityIndex!); // TODO: is this bang correct?
-        this.pokemonAbilityText.setText(allAbilities[ability].name);
+        const ability = allAbilities[this.lastSpecies.getAbility(abilityIndex!)]; // TODO: is this bang correct?
+        this.pokemonAbilityText.setText(ability.name);
 
         const isHidden = abilityIndex === (this.lastSpecies.ability2 ? 2 : 1);
         this.pokemonAbilityText.setColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD));
@@ -3090,6 +3112,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         const passiveAttr = this.scene.gameData.starterData[species.speciesId].passiveAttr;
         const passiveAbility = allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]];
+
+        if (this.pokemonAbilityText.visible) {
+          this.pokemonAbilityText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", `${ability.description}`, true));
+          this.pokemonAbilityText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+        }
 
         if (passiveAbility) {
           const isUnlocked = !!(passiveAttr & PassiveAttr.UNLOCKED);
@@ -3106,6 +3133,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonPassiveText.setColor(this.getTextColor(textStyle));
           this.pokemonPassiveText.setAlpha(textAlpha);
           this.pokemonPassiveText.setShadowColor(this.getTextColor(textStyle, true));
+
+          if (this.pokemonPassiveText.visible && isUnlocked && isEnabled) {
+            this.pokemonPassiveText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", `${passiveAbility.description}`, true));
+            this.pokemonPassiveText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
+          }
 
           const iconPosition = {
             x: this.pokemonPassiveText.x + this.pokemonPassiveText.displayWidth + 1,

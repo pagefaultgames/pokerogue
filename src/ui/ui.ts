@@ -359,19 +359,27 @@ export default class UI extends Phaser.GameObjects.Container {
     return false;
   }
 
+  getTooltip(): { visible: boolean; title: string; content: string } {
+    return { visible: this.tooltipContainer.visible, title: this.tooltipTitle.text, content: this.tooltipContent.text };
+  }
+
   showTooltip(title: string, content: string, overlap?: boolean): void {
     this.tooltipContainer.setVisible(true);
+    this.editTooltip(title, content);
+    if (overlap) {
+      (this.scene as BattleScene).uiContainer.moveAbove(this.tooltipContainer, this);
+    } else {
+      (this.scene as BattleScene).uiContainer.moveBelow(this.tooltipContainer, this);
+    }
+  }
+
+  editTooltip(title: string, content: string): void {
     this.tooltipTitle.setText(title || "");
     const wrappedContent = this.tooltipContent.runWordWrap(content);
     this.tooltipContent.setText(wrappedContent);
     this.tooltipContent.y = title ? 16 : 4;
     this.tooltipBg.width = Math.min(Math.max(this.tooltipTitle.displayWidth, this.tooltipContent.displayWidth) + 12, 684);
     this.tooltipBg.height = (title ? 31 : 19) + 10.5 * (wrappedContent.split("\n").length - 1);
-    if (overlap) {
-      (this.scene as BattleScene).uiContainer.moveAbove(this.tooltipContainer, this);
-    } else {
-      (this.scene as BattleScene).uiContainer.moveBelow(this.tooltipContainer, this);
-    }
   }
 
   hideTooltip(): void {
