@@ -10,6 +10,7 @@ import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { getPokemonNameWithAffix } from "#app/messages.js";
 import i18next from "i18next";
+import { WeatherType } from "./weather";
 
 export enum FormChangeItem {
   NONE,
@@ -65,34 +66,34 @@ export enum FormChangeItem {
 
   BLUE_ORB = 50,
   RED_ORB,
-  SHARP_METEORITE,
-  HARD_METEORITE,
-  SMOOTH_METEORITE,
   ADAMANT_CRYSTAL,
   LUSTROUS_GLOBE,
   GRISEOUS_CORE,
   REVEAL_GLASS,
-  GRACIDEA,
   MAX_MUSHROOMS,
   DARK_STONE,
   LIGHT_STONE,
   PRISON_BOTTLE,
-  N_LUNARIZER,
-  N_SOLARIZER,
   RUSTED_SWORD,
   RUSTED_SHIELD,
   ICY_REINS_OF_UNITY,
   SHADOW_REINS_OF_UNITY,
-  WELLSPRING_MASK,
-  HEARTHFLAME_MASK,
-  CORNERSTONE_MASK,
+  ULTRANECROZIUM_Z,
+
+  SHARP_METEORITE = 100,
+  HARD_METEORITE,
+  SMOOTH_METEORITE,
+  GRACIDEA,
   SHOCK_DRIVE,
   BURN_DRIVE,
   CHILL_DRIVE,
   DOUSE_DRIVE,
-  ULTRANECROZIUM_Z,
-
-  FIST_PLATE = 100,
+  N_SOLARIZER,
+  N_LUNARIZER,
+  WELLSPRING_MASK,
+  HEARTHFLAME_MASK,
+  CORNERSTONE_MASK,
+  FIST_PLATE,
   SKY_PLATE,
   TOXIC_PLATE,
   EARTH_PLATE,
@@ -128,7 +129,7 @@ export enum FormChangeItem {
   DRAGON_MEMORY,
   DARK_MEMORY,
   FAIRY_MEMORY,
-  BLANK_MEMORY  // TODO: Find a potential use for this
+  NORMAL_MEMORY // TODO: Find a potential use for this
 }
 
 export type SpeciesFormChangeConditionPredicate = (p: Pokemon) => boolean;
@@ -353,6 +354,78 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
 
   canChange(pokemon: Pokemon): boolean {
     return this.formKey === pokemon.species.forms[pokemon.scene.getSpeciesFormIndex(pokemon.species, pokemon.gender, pokemon.getNature(), true)].formKey;
+  }
+}
+
+/**
+ * Class used for triggering form changes based on weather.
+ * Used by Castform and Cherrim.
+ * @extends SpeciesFormChangeTrigger
+ */
+export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
+  /** The ability that  triggers the form change */
+  public ability: Abilities;
+  /** The list of weathers that trigger the form change */
+  public weathers: WeatherType[];
+
+  constructor(ability: Abilities, weathers: WeatherType[]) {
+    super();
+    this.ability = ability;
+    this.weathers = weathers;
+  }
+
+  /**
+   * Checks if the Pokemon has the required ability and is in the correct weather while
+   * the weather or ability is also not suppressed.
+   * @param {Pokemon} pokemon the pokemon that is trying to do the form change
+   * @returns `true` if the Pokemon can change forms, `false` otherwise
+   */
+  canChange(pokemon: Pokemon): boolean {
+    const currentWeather = pokemon.scene.arena.weather?.weatherType ?? WeatherType.NONE;
+    const isWeatherSuppressed = pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene);
+    const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
+
+    return !isAbilitySuppressed && !isWeatherSuppressed && (pokemon.hasAbility(this.ability) && this.weathers.includes(currentWeather));
+  }
+}
+
+/**
+ * Class used for reverting to the original form when the weather runs out
+ * or when the user loses the ability/is suppressed.
+ * Used by Castform and Cherrim.
+ * @extends SpeciesFormChangeTrigger
+ */
+export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChangeTrigger {
+  /** The ability that triggers the form change*/
+  public ability: Abilities;
+  /** The list of weathers that will also trigger a form change to original form */
+  public weathers: WeatherType[];
+
+  constructor(ability: Abilities, weathers: WeatherType[]) {
+    super();
+    this.ability = ability;
+    this.weathers = weathers;
+  }
+
+  /**
+   * Checks if the Pokemon has the required ability and the weather is one that will revert
+   * the Pokemon to its original form or the weather or ability is suppressed
+   * @param {Pokemon} pokemon the pokemon that is trying to do the form change
+   * @returns `true` if the Pokemon will revert to its original form, `false` otherwise
+   */
+  canChange(pokemon: Pokemon): boolean {
+    if (pokemon.hasAbility(this.ability, false, true)) {
+      const currentWeather = pokemon.scene.arena.weather?.weatherType ?? WeatherType.NONE;
+      const isWeatherSuppressed = pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene);
+      const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
+      const summonDataAbility = pokemon.summonData.ability;
+      const isAbilityChanged = summonDataAbility !== this.ability && summonDataAbility !== Abilities.NONE;
+
+      if (this.weathers.includes(currentWeather) || isWeatherSuppressed || isAbilitySuppressed || isAbilityChanged) {
+        return true;
+      }
+    }
+    return false;
   }
 }
 
@@ -839,7 +912,29 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeManualTrigger, true),
     new SpeciesFormChange(Species.CRAMORANT, "gulping", "", new SpeciesFormChangeActiveTrigger(false), true),
     new SpeciesFormChange(Species.CRAMORANT, "gorging", "", new SpeciesFormChangeActiveTrigger(false), true),
-  ]
+  ],
+  [Species.CASTFORM]: [
+    new SpeciesFormChange(Species.CASTFORM, "", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "sunny", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.SUNNY, WeatherType.HARSH_SUN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "rainy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.RAIN, WeatherType.HEAVY_RAIN]), true),
+    new SpeciesFormChange(Species.CASTFORM, "", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "snowy", new SpeciesFormChangeWeatherTrigger(Abilities.FORECAST, [WeatherType.HAIL, WeatherType.SNOW]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FORECAST, [WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG]), true),
+    new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeActiveTrigger(), true),
+    new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeActiveTrigger(), true),
+    new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeActiveTrigger(), true),
+  ],
+  [Species.CHERRIM]: [
+    new SpeciesFormChange(Species.CHERRIM, "overcast", "sunshine", new SpeciesFormChangeWeatherTrigger(Abilities.FLOWER_GIFT, [ WeatherType.SUNNY, WeatherType.HARSH_SUN ]), true),
+    new SpeciesFormChange(Species.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ]), true),
+    new SpeciesFormChange(Species.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeActiveTrigger(), true),
+  ],
 };
 
 export function initPokemonForms() {
