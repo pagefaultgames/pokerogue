@@ -1853,10 +1853,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         switch (button) {
         case Button.CYCLE_SHINY:
           if (this.canCycleShiny) {
-            const newVariant = starterAttributes.variant ? starterAttributes.variant as Variant : props.variant;
-            starterAttributes.shiny = starterAttributes.shiny ? !starterAttributes.shiny : true;
-            this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : newVariant, undefined, undefined);
+            starterAttributes.shiny = starterAttributes.shiny !== undefined ? !starterAttributes.shiny : false;
+
             if (starterAttributes.shiny) {
+              // Change to shiny, we need to get the proper default variant
+              const newProps = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId));
+              const newVariant = starterAttributes.variant ? starterAttributes.variant as Variant : newProps.variant;
+              this.setSpeciesDetails(this.lastSpecies, true, undefined, undefined, newVariant, undefined, undefined);
+
               this.scene.playSound("se/sparkle");
               // Set the variant label to the shiny tint
               const tint = getVariantTint(newVariant);
@@ -1864,6 +1868,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               this.pokemonShinyIcon.setTint(tint);
               this.pokemonShinyIcon.setVisible(true);
             } else {
+              this.setSpeciesDetails(this.lastSpecies, false, undefined, undefined, 0, undefined, undefined);
               this.pokemonShinyIcon.setVisible(false);
               success = true;
             }
@@ -3487,23 +3492,22 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       props += DexAttr.MALE;
     }
     /* This part is very similar to above, but instead of for gender, it checks for shiny within starter preferences.
-     * If they're not there, it checks the caughtAttr for shiny only (i.e. SHINY === true && NON_SHINY === false)
+     * If they're not there, it enables shiny state by default if any shiny was caught
      */
-    if (this.starterPreferences[speciesId]?.shiny || ((caughtAttr & DexAttr.SHINY) > 0n && (caughtAttr & DexAttr.NON_SHINY) === 0n)) {
+    if (this.starterPreferences[speciesId]?.shiny || ((caughtAttr & DexAttr.SHINY) > 0n && this.starterPreferences[speciesId]?.shiny !== false)) {
       props += DexAttr.SHINY;
-      if (this.starterPreferences[speciesId]?.variant) {
+      if (this.starterPreferences[speciesId]?.variant !== undefined) {
         props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.variant)) * DexAttr.DEFAULT_VARIANT;
       } else {
         /*  This calculates the correct variant if there's no starter preferences for it.
-         *  This gets the lowest tier variant that you've caught (in line with other mechanics) and adds it to the temp props
+         *  This gets the highest tier variant that you've caught and adds it to the temp props
          */
-        if ((caughtAttr & DexAttr.DEFAULT_VARIANT) > 0) {
-          props += DexAttr.DEFAULT_VARIANT;
-        }
-        if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
-          props += DexAttr.VARIANT_2;
-        } else if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
+        if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
           props += DexAttr.VARIANT_3;
+        } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
+          props += DexAttr.VARIANT_2;
+        } else {
+          props += DexAttr.DEFAULT_VARIANT;
         }
       }
     } else {
