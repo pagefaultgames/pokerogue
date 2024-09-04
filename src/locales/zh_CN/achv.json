@@ -86,7 +86,7 @@
     "name": "大师球联盟冠军"
   },
 
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     "name": "团队协作",
     "description": "在一项属性强化至最大时用接力棒传递给其他宝可梦"
   },

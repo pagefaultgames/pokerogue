@@ -1,14 +1,14 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex, BattleType } from "#app/battle.js";
-import { applyPostFaintAbAttrs, PostFaintAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr } from "#app/data/ability.js";
-import { BattlerTagLapseType } from "#app/data/battler-tags.js";
-import { battleSpecDialogue } from "#app/data/dialogue.js";
-import { allMoves, PostVictoryStatChangeAttr } from "#app/data/move.js";
-import { BattleSpec } from "#app/enums/battle-spec.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { PokemonMove, EnemyPokemon, PlayerPokemon, HitResult } from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { PokemonInstantReviveModifier } from "#app/modifier/modifier.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex, BattleType } from "#app/battle";
+import { applyPostFaintAbAttrs, PostFaintAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr } from "#app/data/ability";
+import { BattlerTagLapseType } from "#app/data/battler-tags";
+import { battleSpecDialogue } from "#app/data/dialogue";
+import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/move";
+import { BattleSpec } from "#app/enums/battle-spec";
+import { StatusEffect } from "#app/enums/status-effect";
+import { PokemonMove, EnemyPokemon, PlayerPokemon, HitResult } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { DamagePhase } from "./damage-phase";
 import { PokemonPhase } from "./pokemon-phase";
@@ -74,7 +74,7 @@ export class FaintPhase extends PokemonPhase {
       if (defeatSource?.isOnField()) {
         applyPostVictoryAbAttrs(PostVictoryAbAttr, defeatSource);
         const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
-        const pvattrs = pvmove.getAttrs(PostVictoryStatChangeAttr);
+        const pvattrs = pvmove.getAttrs(PostVictoryStatStageChangeAttr);
         if (pvattrs.length) {
           for (const pvattr of pvattrs) {
             pvattr.applyPostVictory(defeatSource, defeatSource, pvmove);

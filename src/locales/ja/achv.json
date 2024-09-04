@@ -81,7 +81,7 @@
   "100_RIBBONS": {
     "name": "マスターリーグチャンピオン"
   },
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     "name": "同力",
     "description": "少なくとも　一つの　能力を　最大まで　あげて\n他の　手持ちポケモンに　バトンタッチする"
   },

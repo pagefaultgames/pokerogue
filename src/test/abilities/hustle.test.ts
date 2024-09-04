@@ -26,7 +26,7 @@ describe("Abilities - Hustle", () => {
     game = new GameManager(phaserGame);
     game.override
       .ability(Abilities.HUSTLE)
-      .moveset([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE])
+      .moveset([ Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE ])
       .disableCrits()
       .battleType("single")
       .enemyMoveset(SPLASH_ONLY)
@@ -39,13 +39,13 @@ describe("Abilities - Hustle", () => {
     const pikachu = game.scene.getPlayerPokemon()!;
     const atk = pikachu.stats[Stat.ATK];
 
-    vi.spyOn(pikachu, "getBattleStat");
+    vi.spyOn(pikachu, "getEffectiveStat");
 
     game.move.select(Moves.TACKLE);
     await game.move.forceHit();
     await game.phaseInterceptor.to("DamagePhase");
 
-    expect(pikachu.getBattleStat).toHaveReturnedWith(Math.floor(atk * 1.5));
+    expect(pikachu.getEffectiveStat).toHaveReturnedWith(Math.floor(atk * 1.5));
   });
 
   it("lowers the accuracy of the user's physical moves by 20%", async () => {
@@ -65,13 +65,13 @@ describe("Abilities - Hustle", () => {
     const pikachu = game.scene.getPlayerPokemon()!;
     const spatk = pikachu.stats[Stat.SPATK];
 
-    vi.spyOn(pikachu, "getBattleStat");
+    vi.spyOn(pikachu, "getEffectiveStat");
     vi.spyOn(pikachu, "getAccuracyMultiplier");
 
     game.move.select(Moves.GIGA_DRAIN);
     await game.phaseInterceptor.to("DamagePhase");
 
-    expect(pikachu.getBattleStat).toHaveReturnedWith(spatk);
+    expect(pikachu.getEffectiveStat).toHaveReturnedWith(spatk);
     expect(pikachu.getAccuracyMultiplier).toHaveReturnedWith(1);
   });
 
