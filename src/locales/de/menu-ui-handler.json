@@ -3,7 +3,6 @@
   "ACHIEVEMENTS": "Erfolge",
   "STATS": "Statistiken",
   "RUN_HISTORY": "Laufhistorie",
-  "VOUCHERS": "Gutscheine",
   "EGG_LIST": "Eierliste",
   "EGG_GACHA": "Eier-Gacha",
   "MANAGE_DATA": "Daten verwalten",
@@ -26,5 +25,6 @@
   "unlinkGoogle": "Google trennen",
   "cancel": "Abbrechen",
   "losingProgressionWarning": "Du wirst jeglichen Fortschritt seit Anfang dieses Kampfes verlieren. Fortfahren?",
-  "noEggs": "Du brütest aktuell keine Eier aus!"
+  "noEggs": "Du brütest aktuell keine Eier aus!",
+  "donate": "Spenden"
 }

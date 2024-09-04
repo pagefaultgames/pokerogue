@@ -257,7 +257,7 @@
   },
   "overgrow": {
     "name": "Overgrow",
-    "description": "Fortalece os movimentos do tipo Planta quando o Pokémon está com poucos PS."
+    "description": "Fortalece os movimentos do tipo Grama quando o Pokémon está com poucos PS."
   },
   "blaze": {
     "name": "Blaze",
@@ -625,7 +625,7 @@
   },
   "sapSipper": {
     "name": "Sap Sipper",
-    "description": "Se for atingido por um movimento do tipo Planta, ao invés de receber dano, aumenta seu Ataque."
+    "description": "Se for atingido por um movimento do tipo Grama, ao invés de receber dano, aumenta seu Ataque."
   },
   "prankster": {
     "name": "Prankster",
@@ -661,7 +661,7 @@
   },
   "flowerVeil": {
     "name": "Flower Veil",
-    "description": "Pokémon aliados do tipo Planta são protegidos de mudanças de estado e diminuição de seus atributos."
+    "description": "Pokémon aliados do tipo Grama são protegidos de mudanças de estado e diminuição de seus atributos."
   },
   "cheekPouch": {
     "name": "Cheek Pouch",
@@ -927,6 +927,10 @@
     "name": "Prism Armor",
     "description": "Reduz o dano recebido por movimentos supereficazes."
   },
+  "neuroforce": {
+    "name": "Neuroforce",
+    "description": "Fortalece movimentos supereficazes."
+  },
   "intrepidSword": {
     "name": "Intrepid Sword",
     "description": "Aumenta o atributo de Ataque ao entrar em batalha."
@@ -1055,9 +1059,9 @@
     "name": "Grim Neigh",
     "description": "Quando o Pokémon derrota um alvo, emite um relincho assustador que aumenta seu Ataque Esp."
   },
-  "asOneGlacier": {
+  "asOneGlastrier": {
     "name": "As One",
-    "description": "Essa Habilidade combina os efeitos das Habilidades Enervar de Calyrex e Relincho Branco de Glastrier."
+    "description": "Esta habilidade combina os efeitos da habilidade Unnerve de Calyrex e da habilidade Chilling Neigh de Glastrier."
   },
   "asOneSpectrier": {
     "name": "As One",

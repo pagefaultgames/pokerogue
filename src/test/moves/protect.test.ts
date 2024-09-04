@@ -1,13 +1,13 @@
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
-import { BattleStat } from "#app/data/battle-stat";
-import { allMoves } from "#app/data/move";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "../utils/gameManager";
+import { Species } from "#enums/species";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Stat } from "#enums/stat";
+import { allMoves } from "#app/data/move";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { BerryPhase } from "#app/phases/berry-phase";
 
 const TIMEOUT = 20 * 1000;
 
@@ -87,7 +87,7 @@ describe("Moves - Protect", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(leadPokemon.summonData.battleStats[BattleStat.ATK]).toBe(0);
+      expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
     }, TIMEOUT
   );
 

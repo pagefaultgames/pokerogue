@@ -1,6 +1,6 @@
+import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
-import { Stat } from "#app/data/pokemon-stat";
 import { DamagePhase } from "#app/phases/damage-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";

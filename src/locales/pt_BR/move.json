@@ -39,9 +39,9 @@
     "name": "Scratch",
     "effect": "Garras duras, pontiagudas e afiadas rasgam o alvo para causar dano."
   },
-  "viceGrip": {
-    "name": "Vice Grip",
-    "effect": "O alvo é agarrado pelos lados e espremido."
+  "viseGrip": {
+    "name": "Vise Grip",
+    "effect": "O alvo é agarrado e espremido de ambos os lados para causar dano."
   },
   "guillotine": {
     "name": "Guillotine",
@@ -2913,7 +2913,7 @@
   },
   "zippyZap": {
     "name": "Zippy Zap",
-    "effect": "O usuário ataca o alvo com rajadas de eletricidade em alta velocidade. Esse movimento sempre vai primeiro e aumenta a Evasão do usuário."
+    "effect": "O usuário ataca o alvo com rajadas de eletricidade em alta velocidade. Esse movimento sempre vai primeiro e resulta em um golpe crítico."
   },
   "splishySplash": {
     "name": "Splishy Splash",

@@ -3,7 +3,6 @@
   "ACHIEVEMENTS": "Achievements",
   "STATS": "Stats",
   "RUN_HISTORY": "Run History",
-  "VOUCHERS": "Vouchers",
   "EGG_LIST": "Egg List",
   "EGG_GACHA": "Egg Gacha",
   "MANAGE_DATA": "Manage Data",
@@ -15,8 +14,8 @@
   "importSlotSelect": "Select a slot to import to.",
   "exportSession": "Export Session",
   "exportSlotSelect": "Select a slot to export from.",
-  "importRunHistory":"Import Run History",
-  "exportRunHistory":"Export Run History",
+  "importRunHistory": "Import Run History",
+  "exportRunHistory": "Export Run History",
   "importData": "Import Data",
   "exportData": "Export Data",
   "consentPreferences": "Consent Preferences",
@@ -25,6 +24,7 @@
   "linkGoogle": "Link Google",
   "unlinkGoogle": "Unlink Google",
   "cancel": "Cancel",
+  "donate": "Donate",
   "losingProgressionWarning": "You will lose any progress since the beginning of the battle. Proceed?",
   "noEggs": "You are not hatching\nany eggs at the moment!"
 }

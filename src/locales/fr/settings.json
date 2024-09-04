@@ -61,7 +61,9 @@
   "typeHints": "Indications de type",
   "masterVolume": "Vol. principal",
   "bgmVolume": "Vol. musique",
+  "fieldVolume": "Vol. combats",
   "seVolume": "Vol. effets",
+  "uiVolume": "Vol. menus",
   "musicPreference": "Préf. musicale",
   "mixed": "Mixte",
   "gamepadPleasePlug": "Veuillez brancher une manette ou appuyer sur un bouton.",
@@ -98,7 +100,7 @@
   "moveTouchControls": "Déplacer les contrôles tactiles",
   "shopOverlayOpacity": "Opacité boutique",
   "shopCursorTarget": "Choix après relance",
-  "items": "Obj. gratuits",
+  "rewards": "Obj. gratuits",
   "reroll": "Relance",
   "shop": "Boutique",
   "checkTeam": "Équipe"

@@ -71,7 +71,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
         this.tween.stop();
       }
 
-      (this.scene as BattleScene).playSound("shing");
+      (this.scene as BattleScene).playSound("se/shing");
 
       this.tween = this.scene.tweens.add({
         targets: this,

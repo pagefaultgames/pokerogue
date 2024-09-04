@@ -18,5 +18,12 @@
     "name": "Monotipo",
     "desc": "Solo puedes usar Pokémon with the {{type}} type.",
     "desc_default": "Solo puedes usar Pokémon del tipo elegido."
+  },
+  "inverseBattle": {
+    "name": "Combate Inverso",
+    "shortName": "Inverso",
+    "desc": "La efectividad de los tipos es invertida. No hay inmunidades entre tipos.\nEste reto deshabilita logros de otros retos.",
+    "value.0": "Desactivado",
+    "value.1": "Activado"
   }
 }
