@@ -2660,7 +2660,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     for (const tag of source.summonData.tags) {
-      if (!tag.isTransferrable) {
+      if (!tag.isBatonPassable) {
         continue;
       }
 

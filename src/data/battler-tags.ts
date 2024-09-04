@@ -39,15 +39,15 @@ export class BattlerTag {
   public turnCount: number;
   public sourceMove: Moves;
   public sourceId?: number;
-  public isTransferrable: boolean;
+  public isBatonPassable: boolean;
 
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: number, sourceMove?: Moves, sourceId?: number, isTransferrable: boolean = false) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: number, sourceMove?: Moves, sourceId?: number, isBatonPassable: boolean = false) {
     this.tagType = tagType;
     this.lapseTypes = Array.isArray(lapseType) ? lapseType : [ lapseType ];
     this.turnCount = turnCount;
     this.sourceMove = sourceMove!; // TODO: is this bang correct?
     this.sourceId = sourceId;
-    this.isTransferrable = isTransferrable;
+    this.isBatonPassable = isBatonPassable;
   }
 
   canAdd(pokemon: Pokemon): boolean {
