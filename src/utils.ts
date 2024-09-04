@@ -583,3 +583,14 @@ export function toDmgValue(value: number, minValue: number = 1) {
 export function getLocalizedSpriteKey(baseKey: string) {
   return `${baseKey}${verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
 }
+
+/**
+ * Check if a number is between two other numbers
+ * @param num the number to check
+ * @param min the minimum value
+ * @param max the maximum value
+ * @returns true if number is between min and max
+ */
+export function isBetween(num: number, min: number, max: number): boolean {
+  return num >= min && num <= max;
+}
