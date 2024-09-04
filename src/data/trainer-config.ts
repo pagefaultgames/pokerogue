@@ -1066,7 +1066,7 @@ export const signatureSpecies: SignatureSpecies = {
   KOGA_GYM: [Species.KOFFING, Species.GRIMER, Species.VENONAT],
   SABRINA: [Species.ABRA, Species.MR_MIME, Species.ESPEON],
   BLAINE: [Species.GROWLITHE, Species.PONYTA, Species.MAGMAR],
-  GIOVANNI: [Species.DIGLETT, Species.NIDORAN_M, Species.NIDOQUEEN, Species.RHYHORN],
+  GIOVANNI: [Species.DIGLETT, Species.NIDORAN_M, Species.NIDORAN_F, Species.RHYHORN],
   FALKNER: [Species.PIDGEY, Species.HOOTHOOT, Species.DODUO],
   BUGSY: [Species.SCYTHER, Species.YANMA, Species.PINECO],
   WHITNEY: [Species.CLEFAIRY, Species.MILTANK],
