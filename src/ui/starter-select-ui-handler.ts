@@ -3134,7 +3134,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonPassiveText.setAlpha(textAlpha);
           this.pokemonPassiveText.setShadowColor(this.getTextColor(textStyle, true));
 
-          if (this.pokemonPassiveText.visible && isUnlocked && isEnabled) {
+          if (this.pokemonPassiveText.visible) {
             this.pokemonPassiveText.on("pointerover", () => this.scene.ui.showTooltip("", `${passiveAbility.description}`, true));
             this.pokemonPassiveText.on("pointerout", () => this.scene.ui.hideTooltip());
           }
