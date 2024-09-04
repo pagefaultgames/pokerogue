@@ -41,7 +41,7 @@ describe("Moves - Burning Jealousy", () => {
 
   });
 
-  it("should burn the opponent if their stats were raised", async () => {
+  it("should burn the opponent if their stat stages were raised", async () => {
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -53,7 +53,7 @@ describe("Moves - Burning Jealousy", () => {
     expect(enemy.status?.effect).toBe(StatusEffect.BURN);
   }, TIMEOUT);
 
-  it("should still burn the opponent if their stats were both raised and lowered in the same turn", async () => {
+  it("should still burn the opponent if their stat stages were both raised and lowered in the same turn", async () => {
     game.override
       .starterSpecies(0)
       .battleType("double");
@@ -69,7 +69,7 @@ describe("Moves - Burning Jealousy", () => {
     expect(enemy.status?.effect).toBe(StatusEffect.BURN);
   }, TIMEOUT);
 
-  it("should ignore stats raised by imposter", async () => {
+  it("should ignore stat stages raised by IMPOSTER", async () => {
     game.override
       .enemySpecies(Species.DITTO)
       .enemyAbility(Abilities.IMPOSTER)
@@ -88,7 +88,7 @@ describe("Moves - Burning Jealousy", () => {
     await game.classicMode.startBattle();
   }, TIMEOUT);
 
-  it("should be boosted by Sheer Force even if opponent didn't raise stats", async () => {
+  it("should be boosted by Sheer Force even if opponent didn't raise stat stages", async () => {
     game.override
       .ability(Abilities.SHEER_FORCE)
       .enemyMoveset(SPLASH_ONLY);

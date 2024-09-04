@@ -40,7 +40,7 @@ describe("Moves - Alluring Voice", () => {
 
   });
 
-  it("should confuse the opponent if their stats were raised", async () => {
+  it("should confuse the opponent if their stat stages were raised", async () => {
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;

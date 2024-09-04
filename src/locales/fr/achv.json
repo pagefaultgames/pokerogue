@@ -92,7 +92,7 @@
     "name": "Master Maitre de la Ligue",
     "name_female": "Master Maitresse de la Ligue"
   },
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     "name": "Travail d’équipe",
     "description": "Utiliser Relais avec au moins une statistique montée à fond."
   },
