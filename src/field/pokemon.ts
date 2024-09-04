@@ -895,9 +895,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       this.setStat(s, value);
     }
-    if (this.getTag(BattlerTagType.POWER_TRICK)) {
-      [this.stats[Stat.ATK], this.stats[Stat.DEF]] = [this.stats[Stat.DEF], this.stats[Stat.ATK]];
-    }
   }
 
   getNature(): Nature {
@@ -3087,7 +3084,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.summonDataPrimer = null;
     }
-    this.calculateStats();
     this.updateInfo();
   }
 
