@@ -2593,7 +2593,11 @@ export class PreStatStageChangeAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Protect one or all {@linkcode BattleStat} from reductions caused by other Pokémon's moves and Abilities
+ */
 export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
+  /** {@linkcode BattleStat} to protect or `undefined` if **all** {@linkcode BattleStat} are protected */
   private protectedStat?: BattleStat;
 
   constructor(protectedStat?: BattleStat) {
@@ -2602,8 +2606,18 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
     this.protectedStat = protectedStat;
   }
 
-  applyPreStatStageChange(_pokemon: Pokemon, _passive: boolean, simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, _args: any[]): boolean {
-    if (Utils.isNullOrUndefined(this.protectedStat) || stat === this.protectedStat) {
+  /**
+   * Apply the {@linkcode ProtectedStatAbAttr} to an interaction
+   * @param pokemon The {@linkcode Pokemon} with the ability
+   * @param _passive
+   * @param simulated
+   * @param stat the {@linkcode BattleStat} being affected
+   * @param cancelled The {@linkcode Utils.BooleanHolder} that will be set to true if the stat is protected
+   * @param _args
+   * @returns true if the stat is protected, false otherwise
+   */
+  applyPreStatStageChange(pokemon: Pokemon, _passive: boolean, _simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, _args: any[]): boolean {
+    if (!this.isStatIncrease(pokemon) && (Utils.isNullOrUndefined(this.protectedStat) || stat === this.protectedStat)) {
       cancelled.value = true;
       return true;
     }
@@ -2617,6 +2631,15 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
       abilityName,
       statName: this.protectedStat ? i18next.t(getStatKey(this.protectedStat)) : i18next.t("battle:stats")
     });
+  }
+
+  /**
+   * Check if the stat is an increase due to an {@linkcode StatStageChangeMultiplierAbAttr} inverting the multiplier
+   * @param pokemon The {@linkcode Pokemon} with the ability
+   * @returns true if the stat is an increase due to an {@linkcode StatStageChangeMultiplierAbAttr} inverting the multiplier
+   */
+  private isStatIncrease(pokemon: Pokemon): boolean {
+    return pokemon.getAbilityAttrs(StatStageChangeMultiplierAbAttr).some(attr => attr.isInvert());
   }
 }
 
@@ -3729,6 +3752,14 @@ export class StatStageChangeMultiplierAbAttr extends AbAttr {
     (args[0] as Utils.IntegerHolder).value *= this.multiplier;
 
     return true;
+  }
+
+  /**
+   * Check if the multiplier is negative/inverts the change
+   * @returns true if the multiplier is negative
+   */
+  isInvert(): boolean {
+    return this.multiplier < 0;
   }
 }
 
