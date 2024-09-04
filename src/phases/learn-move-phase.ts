@@ -51,17 +51,22 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * > [Pokemon] wants to learn the move [MoveName]
    * > However, [Pokemon] alreadyknows four moves.
    * > Should a move be forgotten and replaced with [MoveName]? --> Mode.CONFIRM -> Yes: Go to this.forgetMoveProcess(), No: Go to this.rejectMoveAndEnd()
+   * @param move - the Move to be learned
+   * @param Pokemon - the Pokemon learning the move
    */
   replaceMoveCheck(move: Move, pokemon: Pokemon) {
     const learnMovePrompt = i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
     const moveLimitReached = i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) });
     const shouldReplaceQ = i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name });
     const preQText = [learnMovePrompt, moveLimitReached].join("$");
-    this.scene.ui.showTextPromise(preQText).then(() => {
-      this.scene.ui.showTextPromise(shouldReplaceQ, undefined, false).then(() => {
-        this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => this.forgetMoveProcess(move, pokemon), () => this.rejectMoveAndEnd(move, pokemon));
-      });
-    });
+    this.scene.ui.showTextPromise(preQText)
+      .then(() => this.scene.ui.showTextPromise(shouldReplaceQ, undefined, false))
+      .then(() => this.scene.ui.setModeWithoutClear(Mode.CONFIRM,
+        () => this.forgetMoveProcess(move, pokemon), // Yes
+        () => { // No
+          this.scene.ui.setMode(this.messageMode);
+          this.rejectMoveAndEnd(move, pokemon);
+        }));
   }
 
   /**
@@ -70,6 +75,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * The game then goes Mode.SUMMARY to select a move to be forgotten.
    * If a player does not select a move or chooses the new move (moveIndex === 4), the game goes to this.rejectMoveAndEnd()
    * If an old move is selected, the function then passes the moveIndex to this.learnMove()
+   * @param move - the Move to be learned
+   * @param Pokemon - the Pokemon learning the move
    */
   forgetMoveProcess(move: Move, pokemon: Pokemon) {
     this.scene.ui.setMode(this.messageMode);
@@ -91,16 +98,21 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * > Stop trying to teach [MoveName]? --> Mode.CONFIRM --> Yes: > [Pokemon] did not learn the move [MoveName], No: this.replaceMoveCheck()
    * If the player wishes to not teach the Pokemon the move, it displays a message and ends the phase.
    * If the player reconsiders, it repeats the process for a Pokemon with a full moveset once again.
+   * @param move - the Move to be learned
+   * @param Pokemon - the Pokemon learning the move
    */
   rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
-    this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
+    this.scene.ui.showTextPromise(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), undefined, false).then(()=> {
       this.scene.ui.setModeWithoutClear(Mode.CONFIRM,
         () => {
           this.scene.ui.setMode(this.messageMode);
-          this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
-            this.end();
-          }, null, true);
-        }, () => this.replaceMoveCheck(move, pokemon));
+          this.scene.ui.showTextPromise(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), undefined, true).then(() => this.end());
+        },
+        () => {
+          this.scene.ui.setMode(this.messageMode);
+          this.replaceMoveCheck(move, pokemon);
+        }
+      );
     });
   }
 
@@ -116,6 +128,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * > [Pokemon] forgot how to use [MoveName]
    * > And...
    * > [Pokemon] learned [MoveName]!
+   * @param move - the Move to be learned
+   * @param Pokemon - the Pokemon learning the move
    */
   learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
     if (this.fromTM) {
@@ -129,9 +143,10 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     this.scene.ui.setMode(this.messageMode);
     const learnMoveText = i18next.t("battle:learnMove", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
     textMessage = textMessage ? textMessage+"$"+learnMoveText : learnMoveText;
-    this.scene.ui.showText(textMessage, null, () => {
-      this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
-      this.end();
-    }, this.messageMode === Mode.EVOLUTION_SCENE ? 1000 : null, true);
+    this.scene.ui.showTextPromise(textMessage, this.messageMode === Mode.EVOLUTION_SCENE ? 1000 : undefined, true)
+      .then(() => {
+        this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
+        this.end();
+      });
   }
 }
