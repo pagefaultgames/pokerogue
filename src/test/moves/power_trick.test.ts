@@ -33,7 +33,7 @@ describe("Moves - Power Trick", () => {
       .ability(Abilities.NONE);
   });
 
-  it("swaps users ATK with its DEF stat", async () => {
+  it("swaps user's ATK with it's DEF stat", async () => {
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -46,11 +46,9 @@ describe("Moves - Power Trick", () => {
 
     expect(player.getStat(Stat.ATK, false)).toBe(baseDEF);
     expect(player.getStat(Stat.DEF, false)).toBe(baseATK);
-  },
-  20000
-  );
+  }, 20000);
 
-  it("using power trick again will reset stat change", async () => {
+  it("reset changes when used consecutively", async () => {
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -67,7 +65,5 @@ describe("Moves - Power Trick", () => {
 
     expect(player.getStat(Stat.ATK, false)).toBe(baseATK);
     expect(player.getStat(Stat.DEF, false)).toBe(baseDEF);
-  },
-  20000
-  );
+  }, 20000);
 });
