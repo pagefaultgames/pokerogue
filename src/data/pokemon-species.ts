@@ -14,7 +14,7 @@ import { GrowthRate } from "./exp";
 import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
 import { Type } from "./type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "./pokemon-level-moves";
-import { Stat } from "./pokemon-stat";
+import { Stat } from "#enums/stat";
 import { Variant, VariantSet, variantColorCache, variantData } from "./variant";
 
 export enum Region {
@@ -944,7 +944,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.METAPOD, 1, false, false, false, "Cocoon Pokémon", Type.BUG, null, 0.7, 9.9, Abilities.SHED_SKIN, Abilities.NONE, Abilities.SHED_SKIN, 205, 50, 20, 55, 25, 25, 30, 120, 50, 72, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.BUTTERFREE, 1, false, false, false, "Butterfly Pokémon", Type.BUG, Type.FLYING, 1.1, 32, Abilities.COMPOUND_EYES, Abilities.NONE, Abilities.TINTED_LENS, 395, 60, 45, 50, 90, 80, 70, 45, 50, 198, GrowthRate.MEDIUM_FAST, 50, true, true,
       new PokemonForm("Normal", "", Type.BUG, Type.FLYING, 1.1, 32, Abilities.COMPOUND_EYES, Abilities.NONE, Abilities.TINTED_LENS, 395, 60, 45, 50, 90, 80, 70, 45, 50, 198, true, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.BUG, Type.FLYING, 17, 32, Abilities.TINTED_LENS, Abilities.TINTED_LENS, Abilities.TINTED_LENS, 495, 85, 35, 80, 120, 90, 85, 45, 50, 198, true),
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.BUG, Type.FLYING, 17, 32, Abilities.COMPOUND_EYES, Abilities.COMPOUND_EYES, Abilities.COMPOUND_EYES, 495, 85, 35, 80, 120, 90, 85, 45, 50, 198, true),
     ),
     new PokemonSpecies(Species.WEEDLE, 1, false, false, false, "Hairy Bug Pokémon", Type.BUG, Type.POISON, 0.3, 3.2, Abilities.SHIELD_DUST, Abilities.NONE, Abilities.RUN_AWAY, 195, 40, 35, 30, 20, 20, 50, 255, 70, 39, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.KAKUNA, 1, false, false, false, "Cocoon Pokémon", Type.BUG, Type.POISON, 0.6, 10, Abilities.SHED_SKIN, Abilities.NONE, Abilities.SHED_SKIN, 205, 45, 25, 50, 25, 25, 35, 120, 70, 72, GrowthRate.MEDIUM_FAST, 50, false),

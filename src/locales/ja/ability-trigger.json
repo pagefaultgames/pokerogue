@@ -12,7 +12,6 @@
   "blockItemTheft": "{{pokemonNameWithAffix}}の　{{abilityName}}で\n道具を　うばわれない！",
   "typeImmunityHeal": "{{pokemonNameWithAffix}}は　{{abilityName}}で\n体力を　回復した！",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}}は　{{abilityName}}で\nダメージを　受けない。",
-  "postDefendDisguise": "{{pokemonNameWithAffix}}の\nばけのかわが　はがれた！",
   "moveImmunity": "{{pokemonNameWithAffix}}には\n効果が　ないようだ…",
   "reverseDrain": "{{pokemonNameWithAffix}}は\nヘドロえきを　吸い取った！",
   "postDefendTypeChange": "{{pokemonNameWithAffix}}は　{{abilityName}}で\n{{typeName}}タイプに　なった！",

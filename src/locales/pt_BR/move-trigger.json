@@ -63,5 +63,6 @@
   "swapArenaTags": "{{pokemonName}} trocou os efeitos de batalha que afetam cada lado do campo!",
   "trickOnSwap": "{{pokemonNameWithAffix}} trocou de itens com seu alvo!",
   "trickFoeNewItem": "{{pokemonNameWithAffix}} obteve um(a) {{itemName}}.",
-  "exposedMove": "{{pokemonName}} identificou\n{{targetPokemonName}}!"
+  "exposedMove": "{{pokemonName}} identificou\n{{targetPokemonName}}!",
+  "safeguard": "{{targetName}} está protegido por Safeguard!"
 }

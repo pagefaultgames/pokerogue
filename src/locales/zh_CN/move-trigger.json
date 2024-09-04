@@ -3,6 +3,10 @@
   "cutHpPowerUpMove": "{{pokemonName}}\n削减了体力并提升了招式威力！",
   "absorbedElectricity": "{{pokemonName}}\n吸收了电力！",
   "switchedStatChanges": "{{pokemonName}}和对手互换了\n自己的能力变化！",
+  "switchedTwoStatChanges": "{{pokemonName}} 和对手互换了自己的{{firstStat}}和{{secondStat}}的能力变化！",
+  "switchedStat": "{{pokemonName}} 互换了各自的{{stat}}！",
+  "sharedGuard": "{{pokemonName}} 平分了各自的防守！",
+  "sharedPower": "{{pokemonName}} 平分了各自的力量！",
   "goingAllOutForAttack": "{{pokemonName}}拿出全力了！",
   "regainedHealth": "{{pokemonName}}的\n体力回复了！",
   "keptGoingAndCrashed": "{{pokemonName}}因势头过猛\n而撞到了地面！",
@@ -63,5 +67,6 @@
   "swapArenaTags": "{{pokemonName}}\n交换了双方的场地效果！",
   "trickOnSwap": "{{pokemonNameWithAffix}}\n互换了各自的道具！",
   "trickFoeNewItem": "{{pokemonNameWithAffix}}\n获得了{{itemName}}！",
-  "exposedMove": "{{pokemonName}}识破了\n{{targetPokemonName}}的原型！"
+  "exposedMove": "{{pokemonName}}识破了\n{{targetPokemonName}}的原型！",
+  "safeguard": "{{targetName}}\n正受到神秘之幕的保护！"
 }

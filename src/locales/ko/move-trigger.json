@@ -3,6 +3,10 @@
   "cutHpPowerUpMove": "{{pokemonName}}[[는]]\n체력을 깎아서 자신의 기술을 강화했다!",
   "absorbedElectricity": "{{pokemonName}}는(은)\n전기를 흡수했다!",
   "switchedStatChanges": "{{pokemonName}}[[는]] 상대와 자신의\n능력 변화를 바꿨다!",
+  "switchedTwoStatChanges": "{{pokemonName}} 상대와 자신의 {{firstStat}}과 {{secondStat}}의 능력 변화를 바꿨다!",
+  "switchedStat": "{{pokemonName}} 서로의 {{stat}}를 교체했다!",
+  "sharedGuard": "{{pokemonName}} 서로의 가드를 셰어했다!",
+  "sharedPower": "{{pokemonName}} 서로의 파워를 셰어했다!",
   "goingAllOutForAttack": "{{pokemonName}}[[는]]\n전력을 다하기 시작했다!",
   "regainedHealth": "{{pokemonName}}[[는]]\n기력을 회복했다!",
   "keptGoingAndCrashed": "{{pokemonName}}[[는]]\n의욕이 넘쳐서 땅에 부딪쳤다!",
@@ -63,5 +67,6 @@
   "swapArenaTags": "{{pokemonName}}[[는]]\n서로의 필드 효과를 교체했다!",
   "trickOnSwap": "{{pokemonNameWithAffix}}[[는]] 서로의\n도구를 교체했다!",
   "trickFoeNewItem": "{{pokemonNameWithAffix}}[[는]]\n{{itemName}}[[를]] 손에 넣었다!",
-  "exposedMove": "{{pokemonName}}[[는]]\n{{targetPokemonName}}의 정체를 꿰뚫어 보았다!"
+  "exposedMove": "{{pokemonName}}[[는]]\n{{targetPokemonName}}의 정체를 꿰뚫어 보았다!",
+  "safeguard": "{{targetName}}[[는]] 신비의 베일이 지켜 주고 있다!"
 }

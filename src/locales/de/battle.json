@@ -94,5 +94,6 @@
   "retryBattle": "Möchtest du vom Beginn des Kampfes neustarten?",
   "unlockedSomething": "{{unlockedThing}} wurde freigeschaltet.",
   "congratulations": "Glückwunsch!",
-  "beatModeFirstTime": "{{speciesName}} hat den {{gameMode}} Modus zum ersten Mal beendet! Du erhältst {{newModifier}}!"
+  "beatModeFirstTime": "{{speciesName}} hat den {{gameMode}} Modus zum ersten Mal beendet! Du erhältst {{newModifier}}!",
+  "eggSkipPrompt": "Zur Ei-Zusammenfassung springen?"
 }

@@ -3,6 +3,10 @@
   "cutHpPowerUpMove": "{{pokemonName}} nutzt seine KP um seine Attacke zu verstärken!",
   "absorbedElectricity": "{{pokemonName}} absorbiert elektrische Energie!",
   "switchedStatChanges": "{{pokemonName}} tauschte die Statuswerteveränderungen mit dem Ziel!",
+  "switchedTwoStatChanges": "{{pokemonName}} tauscht Veränderungen an {{firstStat}} und {{secondStat}} mit dem Ziel!",
+  "switchedStat": "{{pokemonName}} tauscht seinen {{stat}}-Wert mit dem des Zieles!",
+  "sharedGuard": "{{pokemonName}} addiert seine Schutzkräfte mit jenen des Zieles und teilt sie gerecht auf!",
+  "sharedPower": "{{pokemonName}} addiert seine Kräfte mit jenen des Zieles und teilt sie gerecht auf!",
   "goingAllOutForAttack": "{{pokemonName}} legt sich ins Zeug!",
   "regainedHealth": "{{pokemonName}} erholt sich!",
   "keptGoingAndCrashed": "{{pokemonName}} springt daneben und verletzt sich!",
@@ -63,5 +67,5 @@
   "swapArenaTags": "{{pokemonName}} hat die Effekte, die auf den beiden Seiten des Kampffeldes wirken, miteinander getauscht!",
   "trickOnSwap": "{{pokemonNameWithAffix}} tauscht Items mit dem Ziel!",
   "trickFoeNewItem": "{{pokemonNameWithAffix}} erhält {{itemName}}.",
-  "exposedMove": "{{pokemonName}} erkennt {{targetPokemonName}}!"
+  "safeguard": "{{targetName}} wird durch Bodyguard geschützt!"
 }

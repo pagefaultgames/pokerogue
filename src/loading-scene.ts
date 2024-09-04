@@ -41,8 +41,6 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
-    // this.loadImage("pride-update", "events");
-    this.loadImage("august-variant-update", "events");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
@@ -100,6 +98,8 @@ export class LoadingScene extends SceneBase {
     this.loadImage("ha_capsule", "ui", "ha_capsule.png");
     this.loadImage("champion_ribbon", "ui", "champion_ribbon.png");
     this.loadImage("icon_spliced", "ui");
+    this.loadImage("icon_lock", "ui", "icon_lock.png");
+    this.loadImage("icon_stop", "ui", "icon_stop.png");
     this.loadImage("icon_tera", "ui");
     this.loadImage("type_tera", "ui");
     this.loadAtlas("type_bgs", "ui");
@@ -246,7 +246,12 @@ export class LoadingScene extends SceneBase {
     } else {
       this.loadAtlas("types", "");
     }
-
+    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"];
+    if (lang && availableLangs.includes(lang)) {
+      this.loadImage("september-update-"+lang, "events");
+    } else {
+      this.loadImage("september-update-en", "events");
+    }
 
     this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
