@@ -3,12 +3,10 @@ import { AttackMove, allMoves, selfStatLowerMoves } from "../data/move";
 import { MAX_PER_TYPE_POKEBALLS, PokeballType, getPokeballCatchMultiplier, getPokeballName } from "../data/pokeball";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { EvolutionItem, pokemonEvolutions } from "../data/pokemon-evolutions";
-import { Stat, getStatName } from "../data/pokemon-stat";
 import { tmPoolTiers, tmSpecies } from "../data/tms";
 import { Type } from "../data/type";
 import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from "../ui/party-ui-handler";
 import * as Utils from "../utils";
-import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from "../data/temp-battle-stat";
 import { getBerryEffectDescription, getBerryName } from "../data/berry";
 import { Unlockables } from "../system/unlockables";
 import { StatusEffect, getStatusEffectDescriptor } from "../data/status-effect";
@@ -28,6 +26,7 @@ import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages.js";
+import { PermanentStat, TEMP_BATTLE_STATS, TempBattleStat, Stat, getStatKey } from "#app/enums/stat";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -447,26 +446,28 @@ export class DoubleBattleChanceBoosterModifierType extends ModifierType {
   }
 }
 
-export class TempBattleStatBoosterModifierType extends ModifierType implements GeneratedPersistentModifierType {
-  public tempBattleStat: TempBattleStat;
+export class TempStatStageBoosterModifierType extends ModifierType implements GeneratedPersistentModifierType {
+  private stat: TempBattleStat;
+  private key: string;
 
-  constructor(tempBattleStat: TempBattleStat) {
-    super("", getTempBattleStatBoosterItemName(tempBattleStat).replace(/\./g, "").replace(/[ ]/g, "_").toLowerCase(),
-      (_type, _args) => new Modifiers.TempBattleStatBoosterModifier(this, this.tempBattleStat));
+  constructor(stat: TempBattleStat) {
+    const key = TempStatStageBoosterModifierTypeGenerator.items[stat];
+    super("", key, (_type, _args) => new Modifiers.TempStatStageBoosterModifier(this, this.stat));
 
-    this.tempBattleStat = tempBattleStat;
+    this.stat = stat;
+    this.key = key;
   }
 
   get name(): string {
-    return i18next.t(`modifierType:TempBattleStatBoosterItem.${getTempBattleStatBoosterItemName(this.tempBattleStat).replace(/\./g, "").replace(/[ ]/g, "_").toLowerCase()}`);
+    return i18next.t(`modifierType:TempStatStageBoosterItem.${this.key}`);
   }
 
-  getDescription(scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.TempBattleStatBoosterModifierType.description", { tempBattleStatName: getTempBattleStatName(this.tempBattleStat) });
+  getDescription(_scene: BattleScene): string {
+    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", { stat: i18next.t(getStatKey(this.stat)) });
   }
 
   getPregenArgs(): any[] {
-    return [ this.tempBattleStat ];
+    return [ this.stat ];
   }
 }
 
@@ -611,40 +612,24 @@ export class AllPokemonLevelIncrementModifierType extends ModifierType {
   }
 }
 
-function getBaseStatBoosterItemName(stat: Stat) {
-  switch (stat) {
-  case Stat.HP:
-    return "HP Up";
-  case Stat.ATK:
-    return "Protein";
-  case Stat.DEF:
-    return "Iron";
-  case Stat.SPATK:
-    return "Calcium";
-  case Stat.SPDEF:
-    return "Zinc";
-  case Stat.SPD:
-    return "Carbos";
-  }
-}
+export class BaseStatBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
+  private stat: PermanentStat;
+  private key: string;
 
-export class PokemonBaseStatBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
-  private localeName: string;
-  private stat: Stat;
+  constructor(stat: PermanentStat) {
+    const key = BaseStatBoosterModifierTypeGenerator.items[stat];
+    super("", key, (_type, args) => new Modifiers.BaseStatModifier(this, (args[0] as Pokemon).id, this.stat));
 
-  constructor(localeName: string, stat: Stat) {
-    super("", localeName.replace(/[ \-]/g, "_").toLowerCase(), (_type, args) => new Modifiers.PokemonBaseStatModifier(this, (args[0] as Pokemon).id, this.stat));
-
-    this.localeName = localeName;
     this.stat = stat;
+    this.key = key;
   }
 
   get name(): string {
-    return i18next.t(`modifierType:BaseStatBoosterItem.${this.localeName.replace(/[ \-]/g, "_").toLowerCase()}`);
+    return i18next.t(`modifierType:BaseStatBoosterItem.${this.key}`);
   }
 
-  getDescription(scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.PokemonBaseStatBoosterModifierType.description", { statName: getStatName(this.stat) });
+  getDescription(_scene: BattleScene): string {
+    return i18next.t("modifierType:ModifierType.BaseStatBoosterModifierType.description", { stat: i18next.t(getStatKey(this.stat)) });
   }
 
   getPregenArgs(): any[] {
@@ -922,6 +907,48 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
+class BaseStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
+  public static readonly items: Record<PermanentStat, string> = {
+    [Stat.HP]: "hp_up",
+    [Stat.ATK]: "protein",
+    [Stat.DEF]: "iron",
+    [Stat.SPATK]: "calcium",
+    [Stat.SPDEF]: "zinc",
+    [Stat.SPD]: "carbos"
+  };
+
+  constructor() {
+    super((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs) {
+        return new BaseStatBoosterModifierType(pregenArgs[0]);
+      }
+      const randStat: PermanentStat = Utils.randSeedInt(Stat.SPD + 1);
+      return new BaseStatBoosterModifierType(randStat);
+    });
+  }
+}
+
+class TempStatStageBoosterModifierTypeGenerator extends ModifierTypeGenerator {
+  public static readonly items: Record<TempBattleStat, string> = {
+    [Stat.ATK]: "x_attack",
+    [Stat.DEF]: "x_defense",
+    [Stat.SPATK]: "x_sp_atk",
+    [Stat.SPDEF]: "x_sp_def",
+    [Stat.SPD]: "x_speed",
+    [Stat.ACC]: "x_accuracy"
+  };
+
+  constructor() {
+    super((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs && (pregenArgs.length === 1) && TEMP_BATTLE_STATS.includes(pregenArgs[0])) {
+        return new TempStatStageBoosterModifierType(pregenArgs[0]);
+      }
+      const randStat: TempBattleStat = Utils.randSeedInt(Stat.ACC, Stat.ATK);
+      return new TempStatStageBoosterModifierType(randStat);
+    });
+  }
+}
+
 /**
  * Modifier type generator for {@linkcode SpeciesStatBoosterModifierType}, which
  * encapsulates the logic for weighting the most useful held item from
@@ -930,7 +957,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
  */
 class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   /** Object comprised of the currently available species-based stat boosting held items */
-  public static items = {
+  public static readonly items = {
     LIGHT_BALL: { stats: [Stat.ATK, Stat.SPATK], multiplier: 2, species: [Species.PIKACHU] },
     THICK_CLUB: { stats: [Stat.ATK], multiplier: 2, species: [Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK] },
     METAL_POWDER: { stats: [Stat.DEF], multiplier: 2, species: [Species.DITTO] },
@@ -1233,7 +1260,7 @@ export type GeneratorModifierOverride = {
       type?: SpeciesStatBoosterItem;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "TEMP_STAT_BOOSTER">;
+      name: keyof Pick<typeof modifierTypes, "TEMP_STAT_STAGE_BOOSTER">;
       type?: TempBattleStat;
     }
   | {
@@ -1306,7 +1333,7 @@ export const modifierTypes = {
   SACRED_ASH: () => new AllPokemonFullReviveModifierType("modifierType:ModifierType.SACRED_ASH", "sacred_ash"),
 
   REVIVER_SEED: () => new PokemonHeldItemModifierType("modifierType:ModifierType.REVIVER_SEED", "reviver_seed", (type, args) => new Modifiers.PokemonInstantReviveModifier(type, (args[0] as Pokemon).id)),
-  WHITE_HERB: () => new PokemonHeldItemModifierType("modifierType:ModifierType.WHITE_HERB", "white_herb", (type, args) => new Modifiers.PokemonResetNegativeStatStageModifier(type, (args[0] as Pokemon).id)),
+  WHITE_HERB: () => new PokemonHeldItemModifierType("modifierType:ModifierType.WHITE_HERB", "white_herb", (type, args) => new Modifiers.ResetNegativeStatStageModifier(type, (args[0] as Pokemon).id)),
 
   ETHER: () => new PokemonPpRestoreModifierType("modifierType:ModifierType.ETHER", "ether", 10),
   MAX_ETHER: () => new PokemonPpRestoreModifierType("modifierType:ModifierType.MAX_ETHER", "max_ether", -1),
@@ -1327,23 +1354,15 @@ export const modifierTypes = {
 
   SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(),
 
-  TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-    if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in TempBattleStat)) {
-      return new TempBattleStatBoosterModifierType(pregenArgs[0] as TempBattleStat);
-    }
-    const randTempBattleStat = Utils.randSeedInt(6) as TempBattleStat;
-    return new TempBattleStatBoosterModifierType(randTempBattleStat);
-  }),
-  DIRE_HIT: () => new TempBattleStatBoosterModifierType(TempBattleStat.CRIT),
+  TEMP_STAT_STAGE_BOOSTER: () => new TempStatStageBoosterModifierTypeGenerator(),
 
-  BASE_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-    if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Stat)) {
-      const stat = pregenArgs[0] as Stat;
-      return new PokemonBaseStatBoosterModifierType(getBaseStatBoosterItemName(stat), stat);
+  DIRE_HIT: () => new class extends ModifierType {
+    getDescription(_scene: BattleScene): string {
+      return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", { stat: i18next.t("modifierType:ModifierType.DIRE_HIT.extra.raises") });
     }
-    const randStat = Utils.randSeedInt(6) as Stat;
-    return new PokemonBaseStatBoosterModifierType(getBaseStatBoosterItemName(randStat), randStat);
-  }),
+  }("modifierType:ModifierType.DIRE_HIT", "dire_hit", (type, _args) => new Modifiers.TempCritBoosterModifier(type)),
+
+  BASE_STAT_BOOSTER: () => new BaseStatBoosterModifierTypeGenerator(),
 
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),
 
@@ -1513,7 +1532,7 @@ const modifierPool: ModifierPool = {
       return thresholdPartyMemberCount;
     }, 3),
     new WeightedModifierType(modifierTypes.LURE, skipInLastClassicWaveOrDefault(2)),
-    new WeightedModifierType(modifierTypes.TEMP_STAT_BOOSTER, 4),
+    new WeightedModifierType(modifierTypes.TEMP_STAT_STAGE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.BERRY, 2),
     new WeightedModifierType(modifierTypes.TM_COMMON, 2),
   ].map(m => {
@@ -1626,7 +1645,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
       const checkedAbilities = [Abilities.WEAK_ARMOR, Abilities.CONTRARY, Abilities.MOODY, Abilities.ANGER_SHELL, Abilities.COMPETITIVE, Abilities.DEFIANT];
       const weightMultiplier = party.filter(
-        p => !p.getHeldItems().some(i => i instanceof Modifiers.PokemonResetNegativeStatStageModifier && i.stackCount >= i.getMaxHeldItemCount(p)) &&
+        p => !p.getHeldItems().some(i => i instanceof Modifiers.ResetNegativeStatStageModifier && i.stackCount >= i.getMaxHeldItemCount(p)) &&
           (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && selfStatLowerMoves.includes(m.moveId)))).length;
       // If a party member has one of the above moves or abilities and doesn't have max herbs, the herb will appear more frequently
       return 0 * (weightMultiplier ? 2 : 1) + (weightMultiplier ? weightMultiplier * 0 : 0);

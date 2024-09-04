@@ -130,7 +130,7 @@ export default class BattleScene extends SceneBase {
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
-  public shopCursorTarget: number = ShopCursorTarget.CHECK_TEAM;
+  public shopCursorTarget: number = ShopCursorTarget.REWARDS;
   public showMovesetFlyout: boolean = true;
   public showArenaFlyout: boolean = true;
   public showTimeOfDayWidget: boolean = true;
@@ -974,6 +974,7 @@ export default class BattleScene extends SceneBase {
 
     this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
     console.log("Seed:", this.seed);
+    this.resetSeed(); // Properly resets RNG after saving and quitting a session
 
     this.disableMenu = false;
 

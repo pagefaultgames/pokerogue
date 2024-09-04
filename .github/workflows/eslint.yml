@@ -11,6 +11,8 @@ on:
     branches:
       - main  # Trigger on pull request events targeting the main branch
       - beta # Trigger on pull request events targeting the beta branch
+  merge_group:
+    types: [checks_requested]
 
 jobs:
   run-linters:  # Define a job named "run-linters"

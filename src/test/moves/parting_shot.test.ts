@@ -1,14 +1,14 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { FaintPhase } from "#app/phases/faint-phase";
-import { MessagePhase } from "#app/phases/message-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, test } from "vitest";
 import GameManager from "../utils/gameManager";
+import { Stat } from "#enums/stat";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { FaintPhase } from "#app/phases/faint-phase";
+import { MessagePhase } from "#app/phases/message-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { SPLASH_ONLY } from "../utils/testUtils";
 
 const TIMEOUT = 20 * 1000;
@@ -51,9 +51,8 @@ describe("Moves - Parting Shot", () => {
       game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      const battleStatsOpponent = enemyPokemon.summonData.battleStats;
-      expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
-      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
+      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
+      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
     }, TIMEOUT
   );
@@ -72,9 +71,8 @@ describe("Moves - Parting Shot", () => {
       game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      const battleStatsOpponent = enemyPokemon.summonData.battleStats;
-      expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
-      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
+      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
+      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
     }, TIMEOUT
   );
@@ -108,16 +106,15 @@ describe("Moves - Parting Shot", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
 
-      const battleStatsOpponent = enemyPokemon.summonData.battleStats;
-      expect(battleStatsOpponent[BattleStat.ATK]).toBe(-6);
-      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(-6);
+      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-6);
+      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-6);
 
       // now parting shot should fail
       game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      expect(battleStatsOpponent[BattleStat.ATK]).toBe(-6);
-      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(-6);
+      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-6);
+      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-6);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
     }, TIMEOUT
   );
@@ -137,9 +134,8 @@ describe("Moves - Parting Shot", () => {
       game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      const battleStatsOpponent = enemyPokemon.summonData.battleStats;
-      expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
-      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
+      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
+      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
     }, TIMEOUT
   );
@@ -158,9 +154,8 @@ describe("Moves - Parting Shot", () => {
       game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      const battleStatsOpponent = enemyPokemon.summonData.battleStats;
-      expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
-      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
+      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
+      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
     }, TIMEOUT
   );
@@ -176,9 +171,8 @@ describe("Moves - Parting Shot", () => {
       game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      const battleStatsOpponent = enemyPokemon.summonData.battleStats;
-      expect(battleStatsOpponent[BattleStat.ATK]).toBe(-1);
-      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(-1);
+      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
+      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-1);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
     }, TIMEOUT
   );
@@ -199,9 +193,9 @@ describe("Moves - Parting Shot", () => {
       game.move.select(Moves.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      const battleStatsOpponent = game.scene.currentBattle.enemyParty[0].summonData.battleStats;
-      expect(battleStatsOpponent[BattleStat.ATK]).toBe(0);
-      expect(battleStatsOpponent[BattleStat.SPATK]).toBe(0);
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
+      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MEOWTH);
     }, TIMEOUT
   );

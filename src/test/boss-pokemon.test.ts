@@ -5,12 +5,12 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { SPLASH_ONLY } from "./utils/testUtils";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
-import { BattleStat } from "#app/data/battle-stat";
+import { EFFECTIVE_STATS } from "#app/enums/stat";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { toDmgValue } from "#app/utils";
 
 describe("Boss Pokemon / Shields", () => {
-  const TIMEOUT = 2500;
+  const TIMEOUT = 20 * 1000;
 
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -80,7 +80,7 @@ describe("Boss Pokemon / Shields", () => {
     expect(boss2.bossSegments).toBe(2);
   }, TIMEOUT);
 
-  it("shields should stop overflow damage and give stat boosts when broken", async () => {
+  it("shields should stop overflow damage and give stat stage boosts when broken", async () => {
     game.override.startingWave(150); // Floor 150 > 2 shields / 3 health segments
 
     await game.classicMode.startBattle([ Species.MEWTWO ]);
@@ -89,7 +89,7 @@ describe("Boss Pokemon / Shields", () => {
     const segmentHp = enemyPokemon.getMaxHp() / enemyPokemon.bossSegments;
     expect(enemyPokemon.isBoss()).toBe(true);
     expect(enemyPokemon.bossSegments).toBe(3);
-    expect(getTotalStatBoosts(enemyPokemon)).toBe(0);
+    expect(getTotalStatStageBoosts(enemyPokemon)).toBe(0);
 
     game.move.select(Moves.SUPER_FANG); // Enough to break the first shield
     await game.toNextTurn();
@@ -98,7 +98,7 @@ describe("Boss Pokemon / Shields", () => {
     expect(enemyPokemon.bossSegmentIndex).toBe(1);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - toDmgValue(segmentHp));
     // Breaking the shield gives a +1 boost to ATK, DEF, SP ATK, SP DEF or SPD
-    expect(getTotalStatBoosts(enemyPokemon)).toBe(1);
+    expect(getTotalStatStageBoosts(enemyPokemon)).toBe(1);
 
     game.move.select(Moves.FALSE_SWIPE); // Enough to break last shield but not kill
     await game.toNextTurn();
@@ -106,7 +106,7 @@ describe("Boss Pokemon / Shields", () => {
     expect(enemyPokemon.bossSegmentIndex).toBe(0);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - toDmgValue(2 * segmentHp));
     // Breaking the last shield gives a +2 boost to ATK, DEF, SP ATK, SP DEF or SPD
-    expect(getTotalStatBoosts(enemyPokemon)).toBe(3);
+    expect(getTotalStatStageBoosts(enemyPokemon)).toBe(3);
 
   }, TIMEOUT);
 
@@ -146,7 +146,7 @@ describe("Boss Pokemon / Shields", () => {
 
   }, TIMEOUT);
 
-  it("the number of stats boosts is consistent when several shields are broken at once", async () => {
+  it("the number of stat stage boosts is consistent when several shields are broken at once", async () => {
     const shieldsToBreak = 4;
 
     game.override
@@ -161,22 +161,22 @@ describe("Boss Pokemon / Shields", () => {
     expect(boss1.isBoss()).toBe(true);
     expect(boss1.bossSegments).toBe(shieldsToBreak + 1);
     expect(boss1.bossSegmentIndex).toBe(shieldsToBreak);
-    expect(getTotalStatBoosts(boss1)).toBe(0);
+    expect(getTotalStatStageBoosts(boss1)).toBe(0);
 
 
-    let totalStats = 0;
+    let totalStatStages = 0;
 
     // Break the shields one by one
     for (let i = 1; i <= shieldsToBreak; i++) {
       boss1.damageAndUpdate(singleShieldDamage);
       expect(boss1.bossSegmentIndex).toBe(shieldsToBreak - i);
       expect(boss1.hp).toBe(boss1.getMaxHp() - toDmgValue(boss1SegmentHp * i));
-      // Do nothing and go to next turn so that the StatChangePhase gets applied
+      // Do nothing and go to next turn so that the StatStageChangePhase gets applied
       game.move.select(Moves.SPLASH);
       await game.toNextTurn();
       // All broken shields give +1 stat boost, except the last two that gives +2
-      totalStats += i >= shieldsToBreak -1? 2 : 1;
-      expect(getTotalStatBoosts(boss1)).toBe(totalStats);
+      totalStatStages += i >= shieldsToBreak -1? 2 : 1;
+      expect(getTotalStatStageBoosts(boss1)).toBe(totalStatStages);
     }
 
     const boss2: EnemyPokemon = game.scene.getEnemyParty()[1]!;
@@ -186,35 +186,30 @@ describe("Boss Pokemon / Shields", () => {
     expect(boss2.isBoss()).toBe(true);
     expect(boss2.bossSegments).toBe(shieldsToBreak + 1);
     expect(boss2.bossSegmentIndex).toBe(shieldsToBreak);
-    expect(getTotalStatBoosts(boss2)).toBe(0);
+    expect(getTotalStatStageBoosts(boss2)).toBe(0);
 
     // Enough damage to break all shields at once
     boss2.damageAndUpdate(Math.ceil(requiredDamage));
     expect(boss2.bossSegmentIndex).toBe(0);
     expect(boss2.hp).toBe(boss2.getMaxHp() - toDmgValue(boss2SegmentHp * shieldsToBreak));
-    // Do nothing and go to next turn so that the StatChangePhase gets applied
+    // Do nothing and go to next turn so that the StatStageChangePhase gets applied
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
-    expect(getTotalStatBoosts(boss2)).toBe(totalStats);
+    expect(getTotalStatStageBoosts(boss2)).toBe(totalStatStages);
 
   }, TIMEOUT);
 
   /**
-   * Gets the sum of the ATK, DEF, SP ATK, SP DEF and SPD boosts for the given Pokemon
+   * Gets the sum of the effective stat stage boosts for the given Pokemon
    * @param enemyPokemon the pokemon to get stats from
    * @returns the total stats boosts
    */
-  function getTotalStatBoosts(enemyPokemon: EnemyPokemon): number {
-    const enemyBattleStats = enemyPokemon.summonData.battleStats;
-    return enemyBattleStats?.reduce(statsSum, 0);
-  }
-
-  function statsSum(total: number, value: number, index: number) {
-    if (index <= BattleStat.SPD) {
-      return total + value;
+  function getTotalStatStageBoosts(enemyPokemon: EnemyPokemon): number {
+    let boosts = 0;
+    for (const s of EFFECTIVE_STATS) {
+      boosts += enemyPokemon.getStatStage(s);
     }
-    return total;
+    return boosts;
   }
-
 });
 

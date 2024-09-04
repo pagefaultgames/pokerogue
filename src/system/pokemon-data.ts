@@ -42,6 +42,7 @@ export default class PokemonData {
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
+  public usedTMs: Moves[];
   public evoCounter: integer;
 
   public fusionSpecies: Species;
@@ -101,6 +102,7 @@ export default class PokemonData {
     this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
+    this.usedTMs = source.usedTMs ?? [];
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
@@ -125,7 +127,8 @@ export default class PokemonData {
 
       this.summonData = new PokemonSummonData();
       if (!forHistory && source.summonData) {
-        this.summonData.battleStats = source.summonData.battleStats;
+        this.summonData.stats = source.summonData.stats;
+        this.summonData.statStages = source.summonData.statStages;
         this.summonData.moveQueue = source.summonData.moveQueue;
         this.summonData.disabledMove = source.summonData.disabledMove;
         this.summonData.disabledTurns = source.summonData.disabledTurns;

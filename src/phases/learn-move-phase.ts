@@ -12,11 +12,13 @@ import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-pha
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
+  private fromTM: boolean;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves) {
+  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves, fromTM?: boolean) {
     super(scene, partyMemberIndex);
 
     this.moveId = moveId;
+    this.fromTM = fromTM ?? false;
   }
 
   start() {
@@ -41,6 +43,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
 
     if (emptyMoveIndex > -1) {
       pokemon.setMove(emptyMoveIndex, this.moveId);
+      if (this.fromTM) {
+        pokemon.usedTMs.push(this.moveId);
+      }
       initMoveAnim(this.scene, this.moveId).then(() => {
         loadMoveAnimAssets(this.scene, [this.moveId], true)
           .then(() => {
@@ -85,6 +90,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
                       this.scene.ui.showText(i18next.t("battle:countdownPoof"), null, () => {
                         this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex]!.getName() }), null, () => { // TODO: is the bang correct?
                           this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
+                            if (this.fromTM) {
+                              pokemon.usedTMs.push(this.moveId);
+                            }
                             pokemon.setMove(moveIndex, Moves.NONE);
                             this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
                             this.end();

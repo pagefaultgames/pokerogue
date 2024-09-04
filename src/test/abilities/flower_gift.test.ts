@@ -49,16 +49,16 @@ describe("Abilities - Flower Gift", () => {
   });
 
   // TODO: Uncomment expect statements when the ability is implemented - currently does not increase stats of allies
-  it("increases the Attack and Special Defense stats of the Pokémon with this Ability and its allies by 1.5× during Harsh Sunlight", async () => {
+  it("increases the ATK and SPDEF stat stages of the Pokémon with this Ability and its allies by 1.5× during Harsh Sunlight", async () => {
     game.override.battleType("double");
     await game.classicMode.startBattle([Species.CHERRIM, Species.MAGIKARP]);
 
     const [ cherrim ] = game.scene.getPlayerField();
-    const cherrimAtkStat = cherrim.getBattleStat(Stat.ATK);
-    const cherrimSpDefStat = cherrim.getBattleStat(Stat.SPDEF);
+    const cherrimAtkStat = cherrim.getEffectiveStat(Stat.ATK);
+    const cherrimSpDefStat = cherrim.getEffectiveStat(Stat.SPDEF);
 
-    // const magikarpAtkStat = magikarp.getBattleStat(Stat.ATK);;
-    // const magikarpSpDefStat = magikarp.getBattleStat(Stat.SPDEF);
+    // const magikarpAtkStat = magikarp.getEffectiveStat(Stat.ATK);;
+    // const magikarpSpDefStat = magikarp.getEffectiveStat(Stat.SPDEF);
 
     game.move.select(Moves.SUNNY_DAY, 0);
     game.move.select(Moves.SPLASH, 1);
@@ -67,10 +67,10 @@ describe("Abilities - Flower Gift", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
-    expect(cherrim.getBattleStat(Stat.ATK)).toBe(Math.floor(cherrimAtkStat * 1.5));
-    expect(cherrim.getBattleStat(Stat.SPDEF)).toBe(Math.floor(cherrimSpDefStat * 1.5));
-    // expect(magikarp.getBattleStat(Stat.ATK)).toBe(Math.floor(magikarpAtkStat * 1.5));
-    // expect(magikarp.getBattleStat(Stat.SPDEF)).toBe(Math.floor(magikarpSpDefStat * 1.5));
+    expect(cherrim.getEffectiveStat(Stat.ATK)).toBe(Math.floor(cherrimAtkStat * 1.5));
+    expect(cherrim.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(cherrimSpDefStat * 1.5));
+    // expect(magikarp.getEffectiveStat(Stat.ATK)).toBe(Math.floor(magikarpAtkStat * 1.5));
+    // expect(magikarp.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(magikarpSpDefStat * 1.5));
   });
 
   it("changes the Pokemon's form during Harsh Sunlight", async () => {
