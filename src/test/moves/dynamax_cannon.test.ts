@@ -1,10 +1,10 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
-import { DamagePhase, MoveEffectPhase, TurnStartPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -27,7 +27,7 @@ describe("Moves - Dynamax Cannon", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.moveset([ dynamaxCannon.id ]);
+    game.override.moveset([dynamaxCannon.id]);
     game.override.startingLevel(200);
 
     // Note that, for Waves 1-10, the level cap is 10
@@ -36,18 +36,18 @@ describe("Moves - Dynamax Cannon", () => {
     game.override.disableCrits();
 
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
 
     vi.spyOn(dynamaxCannon, "calculateBattlePower");
   });
 
-  it("should return 100 power against an enemy below level cap", async() => {
+  it("should return 100 power against an enemy below level cap", async () => {
     game.override.enemyLevel(1);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.move.select(dynamaxCannon.id);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(dynamaxCannon.id);
@@ -55,13 +55,13 @@ describe("Moves - Dynamax Cannon", () => {
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(100);
   }, 20000);
 
-  it("should return 100 power against an enemy at level cap", async() => {
+  it("should return 100 power against an enemy at level cap", async () => {
     game.override.enemyLevel(10);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.move.select(dynamaxCannon.id);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(dynamaxCannon.id);
@@ -69,13 +69,13 @@ describe("Moves - Dynamax Cannon", () => {
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(100);
   }, 20000);
 
-  it("should return 120 power against an enemy 1% above level cap", async() => {
+  it("should return 120 power against an enemy 1% above level cap", async () => {
     game.override.enemyLevel(101);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.move.select(dynamaxCannon.id);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -86,13 +86,13 @@ describe("Moves - Dynamax Cannon", () => {
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(120);
   }, 20000);
 
-  it("should return 140 power against an enemy 2% above level capp", async() => {
+  it("should return 140 power against an enemy 2% above level capp", async () => {
     game.override.enemyLevel(102);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.move.select(dynamaxCannon.id);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -103,13 +103,13 @@ describe("Moves - Dynamax Cannon", () => {
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(140);
   }, 20000);
 
-  it("should return 160 power against an enemy 3% above level cap", async() => {
+  it("should return 160 power against an enemy 3% above level cap", async () => {
     game.override.enemyLevel(103);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.move.select(dynamaxCannon.id);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -120,13 +120,13 @@ describe("Moves - Dynamax Cannon", () => {
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(160);
   }, 20000);
 
-  it("should return 180 power against an enemy 4% above level cap", async() => {
+  it("should return 180 power against an enemy 4% above level cap", async () => {
     game.override.enemyLevel(104);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.move.select(dynamaxCannon.id);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -137,13 +137,13 @@ describe("Moves - Dynamax Cannon", () => {
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(180);
   }, 20000);
 
-  it("should return 200 power against an enemy 5% above level cap", async() => {
+  it("should return 200 power against an enemy 5% above level cap", async () => {
     game.override.enemyLevel(105);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
+    game.move.select(dynamaxCannon.id);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
@@ -154,17 +154,14 @@ describe("Moves - Dynamax Cannon", () => {
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 
-  it("should return 200 power against an enemy way above level cap", async() => {
+  it("should return 200 power against an enemy way above level cap", async () => {
     game.override.enemyLevel(999);
     await game.startBattle([
       Species.ETERNATUS,
     ]);
 
-    game.doAttack(getMovePosition(game.scene, 0, dynamaxCannon.id));
-
-    await game.phaseInterceptor.to(TurnStartPhase, false);
-    // Force user to act before enemy
-    vi.spyOn((game.scene.getCurrentPhase() as TurnStartPhase), "getOrder").mockReturnValue([ BattlerIndex.PLAYER, BattlerIndex. ENEMY]);
+    game.move.select(dynamaxCannon.id);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(dynamaxCannon.id);

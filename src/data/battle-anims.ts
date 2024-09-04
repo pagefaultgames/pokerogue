@@ -1,6 +1,6 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "../battle-scene";
-import { AttackMove, ChargeAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
+import { AttackMove, BeakBlastHeaderAttr, ChargeAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
 import Pokemon from "../field/pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
@@ -325,11 +325,11 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
     const soundConfig = { rate: (this.pitch * 0.01), volume: (this.volume * 0.01) };
     if (this.resourceName) {
       try {
-        scene.playSound(this.resourceName, soundConfig);
+        scene.playSound(`battle_anims/${this.resourceName}`, soundConfig);
       } catch (err) {
         console.error(err);
       }
-      return Math.ceil((scene.sound.get(this.resourceName).totalDuration * 1000) / 33.33);
+      return Math.ceil((scene.sound.get(`battle_anims/${this.resourceName}`).totalDuration * 1000) / 33.33);
     } else {
       return Math.ceil((battleAnim.user!.cry(soundConfig).totalDuration * 1000) / 33.33); // TODO: is the bang behind user correct?
     }
@@ -485,7 +485,8 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
       const fetchAnimAndResolve = (move: Moves) => {
         scene.cachedFetch(`./battle-anims/${moveName}.json`)
           .then(response => {
-            if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            if (!response.ok || contentType?.indexOf("application/json") === -1) {
               console.error(`Could not load animation file for move '${moveName}'`, response.status, response.statusText);
               populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
               return resolve();
@@ -499,7 +500,9 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
             } else {
               populateMoveAnim(move, ba);
             }
-            const chargeAttr = allMoves[move].getAttrs(ChargeAttr)[0] || allMoves[move].getAttrs(DelayedAttackAttr)[0];
+            const chargeAttr = allMoves[move].getAttrs(ChargeAttr)[0]
+                            || allMoves[move].getAttrs(DelayedAttackAttr)[0]
+                            || allMoves[move].getAttrs(BeakBlastHeaderAttr)[0];
             if (chargeAttr) {
               initMoveChargeAnim(scene, chargeAttr.chargeAnim).then(() => resolve());
             } else {
@@ -570,7 +573,9 @@ export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLo
   return new Promise(resolve => {
     const moveAnimations = moveIds.map(m => moveAnims.get(m) as AnimConfig).flat();
     for (const moveId of moveIds) {
-      const chargeAttr = allMoves[moveId].getAttrs(ChargeAttr)[0] || allMoves[moveId].getAttrs(DelayedAttackAttr)[0];
+      const chargeAttr = allMoves[moveId].getAttrs(ChargeAttr)[0]
+                      || allMoves[moveId].getAttrs(DelayedAttackAttr)[0]
+                      || allMoves[moveId].getAttrs(BeakBlastHeaderAttr)[0];
       if (chargeAttr) {
         const moveChargeAnims = chargeAnims.get(chargeAttr.chargeAnim);
         moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims![0]); // TODO: is the bang correct?
@@ -678,8 +683,8 @@ export abstract class BattleAnim {
   private dstLine: number[];
 
   constructor(user?: Pokemon, target?: Pokemon) {
-    this.user = user!; // TODO: is this bang correct?
-    this.target = target!; // TODO: is this bang correct?
+    this.user = user ?? null;
+    this.target = target ?? null;
     this.sprites = [];
   }
 
@@ -783,10 +788,10 @@ export abstract class BattleAnim {
         targetSprite.pipelineData["tone"] = [ 0.0, 0.0, 0.0, 0.0 ];
         targetSprite.setAngle(0);
         if (!this.isHideUser() && userSprite) {
-          userSprite.setVisible(true);
+          this.user?.getSprite().setVisible(true); // using this.user to fix context loss due to isOppAnim swap (#481)
         }
         if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser())) {
-          targetSprite.setVisible(true);
+          this.target?.getSprite().setVisible(true); // using this.target to fix context loss due to isOppAnim swap (#481)
         }
         for (const ms of Object.values(spriteCache).flat()) {
           if (ms) {

@@ -5,7 +5,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodete
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BattleScene from "../battle-scene";
 import { ModifierTier } from "../modifier/modifier-tier";
-import i18next from "#app/plugins/i18n.js";
+import i18next from "#app/plugins/i18n";
 
 export enum TextStyle {
   MESSAGE,
@@ -37,7 +37,8 @@ export enum TextStyle {
   MOVE_PP_NEAR_EMPTY,
   MOVE_PP_EMPTY,
   SMALLER_WINDOW_ALT,
-  BGM_BAR
+  BGM_BAR,
+  PERFECT_IV
 }
 
 export interface TextStyleOptions {
@@ -107,6 +108,7 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
 }
 
 export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): TextStyleOptions {
+  const lang = i18next.resolvedLanguage;
   let shadowXpos = 4;
   let shadowYpos = 5;
   let scale = 0.1666666667;
@@ -137,11 +139,37 @@ export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraSty
   case TextStyle.SUMMARY_GREEN:
   case TextStyle.WINDOW:
   case TextStyle.WINDOW_ALT:
-  case TextStyle.STATS_VALUE:
     shadowXpos = 3;
     shadowYpos = 3;
     break;
   case TextStyle.STATS_LABEL:
+    let fontSizeLabel = "96px";
+    switch (lang) {
+    case "de":
+      shadowXpos = 3;
+      shadowYpos = 3;
+      fontSizeLabel = "80px";
+      break;
+    default:
+      fontSizeLabel = "96px";
+      break;
+    }
+    styleOptions.fontSize =  fontSizeLabel;
+    break;
+  case TextStyle.STATS_VALUE:
+    shadowXpos = 3;
+    shadowYpos = 3;
+    let fontSizeValue = "96px";
+    switch (lang) {
+    case "de":
+      fontSizeValue = "80px";
+      break;
+    default:
+      fontSizeValue = "96px";
+      break;
+    }
+    styleOptions.fontSize =  fontSizeValue;
+    break;
   case TextStyle.MESSAGE:
   case TextStyle.SETTINGS_LABEL:
   case TextStyle.SETTINGS_LOCKED:
@@ -199,6 +227,7 @@ export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: Ui
 }
 
 export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: UiTheme = UiTheme.DEFAULT): string {
+  const isLegacyTheme = uiTheme === UiTheme.LEGACY;
   switch (textStyle) {
   case TextStyle.MESSAGE:
     return !shadow ? "#f8f8f8" : "#6b5a73";
@@ -207,29 +236,29 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.MOVE_PP_FULL:
   case TextStyle.TOOLTIP_CONTENT:
   case TextStyle.SETTINGS_VALUE:
-    if (uiTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#484848" : "#d0d0c8";
     }
     return !shadow ? "#f8f8f8" : "#6b5a73";
   case TextStyle.MOVE_PP_HALF_FULL:
-    if (uiTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#a68e17" : "#ebd773";
     }
     return !shadow ? "#ccbe00" : "#6e672c";
   case TextStyle.MOVE_PP_NEAR_EMPTY:
-    if (uiTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#d64b00" : "#f7b18b";
     }
     return !shadow ? "#d64b00" : "#69402a";
   case TextStyle.MOVE_PP_EMPTY:
-    if (uiTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#e13d3d" : "#fca2a2";
     }
     return !shadow ? "#e13d3d" : "#632929";
   case TextStyle.WINDOW_ALT:
     return !shadow ? "#484848" : "#d0d0c8";
   case TextStyle.BATTLE_INFO:
-    if (uiTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#404040" : "#ded6b5";
     }
     return !shadow ? "#f8f8f8" : "#6b5a73";
@@ -240,7 +269,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.SUMMARY:
     return !shadow ? "#f8f8f8" : "#636363";
   case TextStyle.SUMMARY_ALT:
-    if (uiTheme) {
+    if (isLegacyTheme) {
       return !shadow ? "#f8f8f8" : "#636363";
     }
     return !shadow ? "#484848" : "#d0d0c8";
@@ -260,10 +289,14 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   case TextStyle.STATS_LABEL:
     return !shadow ? "#f8b050" : "#c07800";
   case TextStyle.STATS_VALUE:
+    if (isLegacyTheme) {
+      return !shadow ? "#484848" : "#d0d0c8";
+    }
     return !shadow ? "#f8f8f8" : "#6b5a73";
   case TextStyle.SUMMARY_GREEN:
     return !shadow ? "#78c850" : "#306850";
   case TextStyle.SETTINGS_LABEL:
+  case TextStyle.PERFECT_IV:
     return !shadow ? "#f8b050" : "#c07800";
   case TextStyle.SETTINGS_SELECTED:
     return !shadow ? "#f88880" : "#f83018";

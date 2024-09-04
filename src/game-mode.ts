@@ -8,6 +8,7 @@ import Overrides from "#app/overrides";
 import * as Utils from "./utils";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
+import { Challenges } from "./enums/challenges";
 
 export enum GameModes {
   CLASSIC,
@@ -53,6 +54,23 @@ export class GameMode implements GameModeConfig {
       this.challenges = allChallenges.map(c => copyChallenge(c));
     }
     this.battleConfig = battleConfig || {};
+  }
+
+  /**
+   * Helper function to see if a GameMode has a specific challenge type
+   * @param challenge the Challenges it looks for
+   * @returns true if the game mode has that challenge
+   */
+  hasChallenge(challenge: Challenges): boolean {
+    return this.challenges.some(c => c.id === challenge && c.value !== 0);
+  }
+
+  /**
+   * Helper function to see if the game mode is using fresh start
+   * @returns true if a fresh start challenge is being applied
+   */
+  isFreshStartChallenge(): boolean {
+    return this.hasChallenge(Challenges.FRESH_START);
   }
 
   /**

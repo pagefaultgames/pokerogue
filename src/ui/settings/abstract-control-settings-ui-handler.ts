@@ -73,8 +73,8 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
    * @param scene - The BattleScene instance.
    * @param mode - The UI mode.
    */
-  constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode!); // TODO: is this bang correct?
+  constructor(scene: BattleScene, mode: Mode | null = null) {
+    super(scene, mode);
     this.rowsToDisplay = 8;
   }
 

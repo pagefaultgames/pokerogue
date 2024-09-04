@@ -1,13 +1,15 @@
-import { allMoves } from "#app/data/move.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { BerryPhase, CommandPhase, MoveEndPhase, TurnEndPhase } from "#app/phases.js";
+import { allMoves } from "#app/data/move";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 const TIMEOUT = 20 * 1000;
 
@@ -47,7 +49,7 @@ describe("Moves - Astonish", () => {
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.ASTONISH));
+      game.move.select(Moves.ASTONISH);
 
       await game.phaseInterceptor.to(MoveEndPhase, false);
 
@@ -60,7 +62,7 @@ describe("Moves - Astonish", () => {
 
       await game.phaseInterceptor.to(CommandPhase, false);
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.SPLASH));
+      game.move.select(Moves.SPLASH);
 
       await game.phaseInterceptor.to(BerryPhase, false);
 

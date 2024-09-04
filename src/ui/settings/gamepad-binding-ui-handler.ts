@@ -8,7 +8,7 @@ import {addTextObject, TextStyle} from "#app/ui/text";
 
 export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
 
-  constructor(scene: BattleScene, mode?: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
     this.scene.input.gamepad?.on("down", this.gamepadButtonDown, this);
   }

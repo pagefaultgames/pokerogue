@@ -1,6 +1,6 @@
 import { BattleSpec } from "#enums/battle-spec";
 import { TrainerType } from "#enums/trainer-type";
-import {trainerConfigs} from "./trainer-config";
+import { trainerConfigs } from "./trainer-config";
 
 export interface TrainerTypeMessages {
     encounter?: string | string[],
@@ -452,10 +452,18 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
   [TrainerType.ROCKET_GRUNT]: [
     {
       encounter: [
-        "dialogue:rocket_grunt.encounter.1"
+        "dialogue:rocket_grunt.encounter.1",
+        "dialogue:rocket_grunt.encounter.2",
+        "dialogue:rocket_grunt.encounter.3",
+        "dialogue:rocket_grunt.encounter.4",
+        "dialogue:rocket_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:rocket_grunt.victory.1"
+        "dialogue:rocket_grunt.victory.1",
+        "dialogue:rocket_grunt.victory.2",
+        "dialogue:rocket_grunt.victory.3",
+        "dialogue:rocket_grunt.victory.4",
+        "dialogue:rocket_grunt.victory.5",
       ]
     }
   ],
@@ -518,10 +526,18 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
   [TrainerType.MAGMA_GRUNT]: [
     {
       encounter: [
-        "dialogue:magma_grunt.encounter.1"
+        "dialogue:magma_grunt.encounter.1",
+        "dialogue:magma_grunt.encounter.2",
+        "dialogue:magma_grunt.encounter.3",
+        "dialogue:magma_grunt.encounter.4",
+        "dialogue:magma_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:magma_grunt.victory.1"
+        "dialogue:magma_grunt.victory.1",
+        "dialogue:magma_grunt.victory.2",
+        "dialogue:magma_grunt.victory.3",
+        "dialogue:magma_grunt.victory.4",
+        "dialogue:magma_grunt.victory.5",
       ]
     }
   ],
@@ -556,10 +572,18 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
   [TrainerType.AQUA_GRUNT]: [
     {
       encounter: [
-        "dialogue:aqua_grunt.encounter.1"
+        "dialogue:aqua_grunt.encounter.1",
+        "dialogue:aqua_grunt.encounter.2",
+        "dialogue:aqua_grunt.encounter.3",
+        "dialogue:aqua_grunt.encounter.4",
+        "dialogue:aqua_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:aqua_grunt.victory.1"
+        "dialogue:aqua_grunt.victory.1",
+        "dialogue:aqua_grunt.victory.2",
+        "dialogue:aqua_grunt.victory.3",
+        "dialogue:aqua_grunt.victory.4",
+        "dialogue:aqua_grunt.victory.5",
       ]
     }
   ],
@@ -594,10 +618,18 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
   [TrainerType.GALACTIC_GRUNT]: [
     {
       encounter: [
-        "dialogue:galactic_grunt.encounter.1"
+        "dialogue:galactic_grunt.encounter.1",
+        "dialogue:galactic_grunt.encounter.2",
+        "dialogue:galactic_grunt.encounter.3",
+        "dialogue:galactic_grunt.encounter.4",
+        "dialogue:galactic_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:galactic_grunt.victory.1"
+        "dialogue:galactic_grunt.victory.1",
+        "dialogue:galactic_grunt.victory.2",
+        "dialogue:galactic_grunt.victory.3",
+        "dialogue:galactic_grunt.victory.4",
+        "dialogue:galactic_grunt.victory.5",
       ]
     }
   ],
@@ -646,10 +678,18 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
   [TrainerType.PLASMA_GRUNT]: [
     {
       encounter: [
-        "dialogue:plasma_grunt.encounter.1"
+        "dialogue:plasma_grunt.encounter.1",
+        "dialogue:plasma_grunt.encounter.2",
+        "dialogue:plasma_grunt.encounter.3",
+        "dialogue:plasma_grunt.encounter.4",
+        "dialogue:plasma_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:plasma_grunt.victory.1"
+        "dialogue:plasma_grunt.victory.1",
+        "dialogue:plasma_grunt.victory.2",
+        "dialogue:plasma_grunt.victory.3",
+        "dialogue:plasma_grunt.victory.4",
+        "dialogue:plasma_grunt.victory.5",
       ]
     }
   ],
@@ -667,13 +707,35 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.ROOD]: [
+    {
+      encounter: [
+        "dialogue:rood.encounter.1",
+        "dialogue:rood.encounter.2",
+        "dialogue:rood.encounter.3",
+      ],
+      victory: [
+        "dialogue:rood.victory.1",
+        "dialogue:rood.victory.2",
+        "dialogue:rood.victory.3",
+      ]
+    }
+  ],
   [TrainerType.FLARE_GRUNT]: [
     {
       encounter: [
-        "dialogue:flare_grunt.encounter.1"
+        "dialogue:flare_grunt.encounter.1",
+        "dialogue:flare_grunt.encounter.2",
+        "dialogue:flare_grunt.encounter.3",
+        "dialogue:flare_grunt.encounter.4",
+        "dialogue:flare_grunt.encounter.5",
       ],
       victory: [
-        "dialogue:flare_grunt.victory.1"
+        "dialogue:flare_grunt.victory.1",
+        "dialogue:flare_grunt.victory.2",
+        "dialogue:flare_grunt.victory.3",
+        "dialogue:flare_grunt.victory.4",
+        "dialogue:flare_grunt.victory.5",
       ]
     }
   ],
@@ -702,6 +764,98 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:xerosic.victory.1",
         "dialogue:xerosic.victory.2",
         "dialogue:xerosic.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.AETHER_GRUNT]: [
+    {
+      encounter: [
+        "dialogue:aether_grunt.encounter.1",
+        "dialogue:aether_grunt.encounter.2",
+        "dialogue:aether_grunt.encounter.3",
+        "dialogue:aether_grunt.encounter.4",
+        "dialogue:aether_grunt.encounter.5",
+      ],
+      victory: [
+        "dialogue:aether_grunt.victory.1",
+        "dialogue:aether_grunt.victory.2",
+        "dialogue:aether_grunt.victory.3",
+        "dialogue:aether_grunt.victory.4",
+        "dialogue:aether_grunt.victory.5",
+      ]
+    }
+  ],
+  [TrainerType.FABA]: [
+    {
+      encounter: [
+        "dialogue:faba.encounter.1",
+        "dialogue:faba.encounter.2",
+        "dialogue:faba.encounter.3",
+      ],
+      victory: [
+        "dialogue:faba.victory.1",
+        "dialogue:faba.victory.2",
+        "dialogue:faba.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.SKULL_GRUNT]: [
+    {
+      encounter: [
+        "dialogue:skull_grunt.encounter.1",
+        "dialogue:skull_grunt.encounter.2",
+        "dialogue:skull_grunt.encounter.3",
+        "dialogue:skull_grunt.encounter.4",
+        "dialogue:skull_grunt.encounter.5",
+      ],
+      victory: [
+        "dialogue:skull_grunt.victory.1",
+        "dialogue:skull_grunt.victory.2",
+        "dialogue:skull_grunt.victory.3",
+        "dialogue:skull_grunt.victory.4",
+        "dialogue:skull_grunt.victory.5",
+      ]
+    }
+  ],
+  [TrainerType.PLUMERIA]: [
+    {
+      encounter: [
+        "dialogue:plumeria.encounter.1",
+        "dialogue:plumeria.encounter.2",
+        "dialogue:plumeria.encounter.3",
+      ],
+      victory: [
+        "dialogue:plumeria.victory.1",
+        "dialogue:plumeria.victory.2",
+        "dialogue:plumeria.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.MACRO_GRUNT]: [
+    {
+      encounter: [
+        "dialogue:macro_grunt.encounter.1",
+        "dialogue:macro_grunt.encounter.2",
+        "dialogue:macro_grunt.encounter.3",
+      ],
+      victory: [
+        "dialogue:macro_grunt.victory.1",
+        "dialogue:macro_grunt.victory.2",
+        "dialogue:macro_grunt.victory.3",
+      ]
+    }
+  ],
+  [TrainerType.OLEANA]: [
+    {
+      encounter: [
+        "dialogue:oleana.encounter.1",
+        "dialogue:oleana.encounter.2",
+        "dialogue:oleana.encounter.3",
+      ],
+      victory: [
+        "dialogue:oleana.victory.1",
+        "dialogue:oleana.victory.2",
+        "dialogue:oleana.victory.3",
       ]
     }
   ],
@@ -858,6 +1012,84 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ],
       defeat: [
         "dialogue:flare_boss_lysandre_2.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.LUSAMINE]: [
+    {
+      encounter: [
+        "dialogue:aether_boss_lusamine_1.encounter.1"
+      ],
+      victory: [
+        "dialogue:aether_boss_lusamine_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:aether_boss_lusamine_1.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.LUSAMINE_2]: [
+    {
+      encounter: [
+        "dialogue:aether_boss_lusamine_2.encounter.1"
+      ],
+      victory: [
+        "dialogue:aether_boss_lusamine_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:aether_boss_lusamine_2.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.GUZMA]: [
+    {
+      encounter: [
+        "dialogue:skull_boss_guzma_1.encounter.1"
+      ],
+      victory: [
+        "dialogue:skull_boss_guzma_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:skull_boss_guzma_1.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.GUZMA_2]: [
+    {
+      encounter: [
+        "dialogue:skull_boss_guzma_2.encounter.1"
+      ],
+      victory: [
+        "dialogue:skull_boss_guzma_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:skull_boss_guzma_2.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.ROSE]: [
+    {
+      encounter: [
+        "dialogue:macro_boss_rose_1.encounter.1"
+      ],
+      victory: [
+        "dialogue:macro_boss_rose_1.victory.1"
+      ],
+      defeat: [
+        "dialogue:macro_boss_rose_1.defeat.1"
+      ]
+    }
+  ],
+  [TrainerType.ROSE_2]: [
+    {
+      encounter: [
+        "dialogue:macro_boss_rose_2.encounter.1"
+      ],
+      victory: [
+        "dialogue:macro_boss_rose_2.victory.1"
+      ],
+      defeat: [
+        "dialogue:macro_boss_rose_2.defeat.1"
       ]
     }
   ],

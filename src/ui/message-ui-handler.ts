@@ -11,7 +11,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   public message: Phaser.GameObjects.Text;
   public prompt: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, mode: Mode) {
+  constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
     this.pendingPrompt = false;

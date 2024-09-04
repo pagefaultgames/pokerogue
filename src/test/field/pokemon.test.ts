@@ -1,4 +1,4 @@
-import { Species } from "#app/enums/species.js";
+import { Species } from "#app/enums/species";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
 
@@ -21,7 +21,7 @@ describe("Spec - Pokemon", () => {
   });
 
   it("should not crash when trying to set status of undefined", async () => {
-    await game.runToSummon([Species.ABRA]);
+    await game.classicMode.runToSummon([Species.ABRA]);
 
     const pkm = game.scene.getPlayerPokemon()!;
     expect(pkm).toBeDefined();

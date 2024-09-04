@@ -7,7 +7,7 @@ import { addWindow } from "../ui-theme";
 import {Button} from "#enums/buttons";
 import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler.js";
 import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
-import { Setting, SettingKeys } from "#app/system/settings/settings";
+import { Setting, SettingKeys, SettingType } from "#app/system/settings/settings";
 import i18next from "i18next";
 
 
@@ -40,9 +40,9 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   protected settings: Array<Setting>;
   protected localStorageKey: string;
 
-  constructor(scene: BattleScene, mode?: Mode) {
-    super(scene, mode!); // TODO: is this bang correct?
-
+  constructor(scene: BattleScene, type: SettingType, mode: Mode | null = null) {
+    super(scene, mode);
+    this.settings = Setting.filter(s => s.type === type && !s?.isHidden?.());
     this.reloadRequired = false;
     this.rowsToDisplay = 8;
   }
@@ -264,6 +264,12 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       case Button.CYCLE_SHINY:
         success = this.navigationContainer.navigate(button);
         break;
+      case Button.ACTION:
+        const setting: Setting = this.settings[cursor];
+        if (setting?.activatable) {
+          success = this.activateSetting(setting);
+        }
+        break;
       }
     }
 
@@ -273,6 +279,20 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     }
 
     return success;
+  }
+
+  /**
+   * Activate the specified setting if it is activatable.
+   * @param setting The setting to activate.
+   * @returns Whether the setting was successfully activated.
+   */
+  activateSetting(setting: Setting): boolean {
+    switch (setting.key) {
+    case SettingKeys.Move_Touch_Controls:
+      this.scene.inputController.moveTouchControlsHandler.enableConfigurationMode(this.getUi(), this.scene);
+      return true;
+    }
+    return false;
   }
 
   /**

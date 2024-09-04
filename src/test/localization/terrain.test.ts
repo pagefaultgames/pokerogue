@@ -1,11 +1,11 @@
 import { TerrainType, getTerrainName } from "#app/data/terrain";
 import { getTerrainBlockMessage, getTerrainClearMessage, getTerrainStartMessage } from "#app/data/weather";
-import GameManager from "#test/utils/gameManager";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { mockI18next } from "#test/utils/testUtils";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { mockI18next } from "#test/utils/testUtils";
 
 describe("terrain", () => {
   let phaserGame: Phaser.Game;

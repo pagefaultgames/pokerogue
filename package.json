@@ -13,11 +13,13 @@
 		"test:cov": "vitest run --project pre && vitest run --project main --coverage",
 		"test:watch": "vitest run --project pre && vitest watch --project main --coverage",
 		"test:silent": "vitest run --project pre && vitest run --project main --silent",
+		"typecheck": "tsc --noEmit",
 		"eslint": "eslint --fix .",
 		"eslint-ci": "eslint .",
 		"docs": "typedoc",
 		"depcruise": "depcruise src",
-		"depcruise:graph": "depcruise src --output-type dot | node dependency-graph.js > dependency-graph.svg"
+		"depcruise:graph": "depcruise src --output-type dot | node dependency-graph.js > dependency-graph.svg",
+		"create-test": "node ./create-test-boilerplate.js"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.3.0",

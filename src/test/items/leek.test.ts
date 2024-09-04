@@ -1,14 +1,10 @@
-import { BattlerIndex } from "#app/battle";
-import { CritBoosterModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { MoveEffectPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import * as Utils from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { changeTurnOrder } from "#test/utils/testUtils";
 
 describe("Items - Leek", () => {
   let phaserGame: Phaser.Game;
@@ -27,102 +23,73 @@ describe("Items - Leek", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
-    game.override.disableCrits();
-
-    game.override.battleType("single");
+    game.override
+      .enemySpecies(Species.MAGIKARP)
+      .enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH])
+      .startingHeldItems([{ name: "LEEK" }])
+      .moveset([ Moves.TACKLE ])
+      .disableCrits()
+      .battleType("single");
   });
 
-  it("LEEK activates in battle correctly", async() => {
-    game.override.startingHeldItems([{ name: "LEEK" }]);
-    game.override.moveset([ Moves.POUND ]);
-    const consoleSpy = vi.spyOn(console, "log");
+  it("should raise CRIT stage by 2 when held by FARFETCHD", async () => {
     await game.startBattle([
       Species.FARFETCHD
     ]);
 
-    game.doAttack(0);
+    const enemyMember = game.scene.getEnemyPokemon()!;
 
-    await changeTurnOrder(game, [BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    vi.spyOn(enemyMember, "getCritStage");
 
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    game.move.select(Moves.TACKLE);
 
-    expect(consoleSpy).toHaveBeenCalledWith("Applied", "Leek", "");
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(enemyMember.getCritStage).toHaveReturnedWith(2);
   }, 20000);
 
-  it("LEEK held by FARFETCHD", async() => {
-    await game.startBattle([
-      Species.FARFETCHD
-    ]);
-
-    const partyMember = game.scene.getPlayerPokemon()!;
-
-    // Making sure modifier is not applied without holding item
-    const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
-
-    expect(critLevel.value).toBe(0);
-
-    // Giving Leek to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.LEEK().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
-
-    expect(critLevel.value).toBe(2);
-  }, 20000);
-
-  it("LEEK held by GALAR_FARFETCHD", async() => {
+  it("should raise CRIT stage by 2 when held by GALAR_FARFETCHD", async () => {
     await game.startBattle([
       Species.GALAR_FARFETCHD
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon()!;
+    const enemyMember = game.scene.getEnemyPokemon()!;
 
-    // Making sure modifier is not applied without holding item
-    const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
+    vi.spyOn(enemyMember, "getCritStage");
 
-    expect(critLevel.value).toBe(0);
+    game.move.select(Moves.TACKLE);
 
-    // Giving Leek to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.LEEK().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(critLevel.value).toBe(2);
+    expect(enemyMember.getCritStage).toHaveReturnedWith(2);
   }, 20000);
 
-  it("LEEK held by SIRFETCHD", async() => {
+  it("should raise CRIT stage by 2 when held by SIRFETCHD", async () => {
     await game.startBattle([
       Species.SIRFETCHD
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon()!;
+    const enemyMember = game.scene.getEnemyPokemon()!;
 
-    // Making sure modifier is not applied without holding item
-    const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
+    vi.spyOn(enemyMember, "getCritStage");
 
-    expect(critLevel.value).toBe(0);
+    game.move.select(Moves.TACKLE);
 
-    // Giving Leek to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.LEEK().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(critLevel.value).toBe(2);
+    expect(enemyMember.getCritStage).toHaveReturnedWith(2);
   }, 20000);
 
-  it("LEEK held by fused FARFETCHD line (base)", async() => {
+  it("should raise CRIT stage by 2 when held by FARFETCHD line fused with Pokemon", async () => {
     // Randomly choose from the Farfetch'd line
-    const species = [ Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD ];
+    const species = [Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD];
 
     await game.startBattle([
       species[Utils.randInt(species.length)],
       Species.PIKACHU,
     ]);
 
-    const party = game.scene.getParty();
-    const partyMember = party[0];
-    const ally = party[1];
+    const [ partyMember, ally ] = game.scene.getParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -133,31 +100,27 @@ describe("Items - Leek", () => {
     partyMember.fusionGender = ally.gender;
     partyMember.fusionLuck = ally.luck;
 
-    // Making sure modifier is not applied without holding item
-    const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
+    const enemyMember = game.scene.getEnemyPokemon()!;
 
-    expect(critLevel.value).toBe(0);
+    vi.spyOn(enemyMember, "getCritStage");
 
-    // Giving Leek to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.LEEK().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
+    game.move.select(Moves.TACKLE);
 
-    expect(critLevel.value).toBe(2);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(enemyMember.getCritStage).toHaveReturnedWith(2);
   }, 20000);
 
-  it("LEEK held by fused FARFETCHD line (part)", async() => {
+  it("should raise CRIT stage by 2 when held by Pokemon fused with FARFETCHD line", async () => {
     // Randomly choose from the Farfetch'd line
-    const species = [ Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD ];
+    const species = [Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD];
 
     await game.startBattle([
       Species.PIKACHU,
       species[Utils.randInt(species.length)]
     ]);
 
-    const party = game.scene.getParty();
-    const partyMember = party[0];
-    const ally = party[1];
+    const [ partyMember, ally ] = game.scene.getParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -168,36 +131,31 @@ describe("Items - Leek", () => {
     partyMember.fusionGender = ally.gender;
     partyMember.fusionLuck = ally.luck;
 
-    // Making sure modifier is not applied without holding item
-    const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
 
-    expect(critLevel.value).toBe(0);
+    const enemyMember = game.scene.getEnemyPokemon()!;
 
-    // Giving Leek to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.LEEK().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
+    vi.spyOn(enemyMember, "getCritStage");
 
-    expect(critLevel.value).toBe(2);
+    game.move.select(Moves.TACKLE);
+
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(enemyMember.getCritStage).toHaveReturnedWith(2);
   }, 20000);
 
-  it("LEEK not held by FARFETCHD line", async() => {
+  it("should not raise CRIT stage when held by a Pokemon outside of FARFETCHD line", async () => {
     await game.startBattle([
       Species.PIKACHU
     ]);
 
-    const partyMember = game.scene.getPlayerPokemon()!;
+    const enemyMember = game.scene.getEnemyPokemon()!;
 
-    // Making sure modifier is not applied without holding item
-    const critLevel = new Utils.IntegerHolder(0);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
+    vi.spyOn(enemyMember, "getCritStage");
 
-    expect(critLevel.value).toBe(0);
+    game.move.select(Moves.TACKLE);
 
-    // Giving Leek to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.LEEK().newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(CritBoosterModifier, true, partyMember, critLevel);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(critLevel.value).toBe(0);
+    expect(enemyMember.getCritStage).toHaveReturnedWith(0);
   }, 20000);
 });

@@ -7,7 +7,8 @@ import i18next from "i18next";
 export enum DropDownState {
     ON = 0,
     OFF = 1,
-    EXCLUDE = 2
+    EXCLUDE = 2,
+    UNLOCKABLE = 3
 }
 
 export enum DropDownType {
@@ -20,6 +21,14 @@ export enum DropDownType {
 export enum SortDirection {
   ASC = -1,
   DESC = 1
+}
+
+export enum SortCriteria {
+  NUMBER = 0,
+  COST = 1,
+  CANDY = 2,
+  IV = 3,
+  NAME = 4
 }
 
 export class DropDownLabel {
@@ -46,6 +55,7 @@ export class DropDownOption extends Phaser.GameObjects.Container {
   private onColor = 0x33bbff;
   private offColor = 0x272727;
   private excludeColor = 0xff5555;
+  private unlockableColor = 0xffff00;
 
   constructor(scene: SceneBase, val: any, labels: DropDownLabel | DropDownLabel[]) {
     super(scene);
@@ -113,6 +123,9 @@ export class DropDownOption extends Phaser.GameObjects.Container {
       break;
     case DropDownState.EXCLUDE:
       this.toggle.setTint(this.excludeColor);
+      break;
+    case DropDownState.UNLOCKABLE:
+      this.toggle.setTint(this.unlockableColor);
       break;
     }
   }
@@ -467,7 +480,7 @@ export class DropDown extends Phaser.GameObjects.Container {
   private getSettings(): any[] {
     const settings : any[] = [];
     for (let i = 0; i < this.options.length; i++) {
-      settings.push({ val: this.options[i].val, state: this.options[i].state , cursor: (this.cursor === i), dir: this.options[i].dir });
+      settings.push({ val: this.options[i].val, state: this.options[i].state, cursor: (this.cursor === i), dir: this.options[i].dir });
     }
     return settings;
   }

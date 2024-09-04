@@ -13,7 +13,6 @@ import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "./nature";
 import { Moves } from "#app/enums/moves.js";
 import { TypeColor, TypeShadow } from "#app/enums/color.js";
-import { Gender } from "./gender";
 import { pokemonEvolutions } from "./pokemon-evolutions";
 import { pokemonFormChanges } from "./pokemon-forms";
 
@@ -55,6 +54,11 @@ export enum ChallengeType {
    * @see {@link Challenge.applyFixedBattle}
   */
   FIXED_BATTLES,
+  /**
+   * Modifies the effectiveness of Type matchups in battle
+   * @see {@linkcode Challenge.applyTypeEffectiveness}
+  */
+  TYPE_EFFECTIVENESS,
   /**
    * Modifies what level the AI pokemon are. UNIMPLEMENTED.
    */
@@ -273,11 +277,9 @@ export abstract class Challenge {
    * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
    * @param dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
    * @param soft {@link boolean} If true, allow it if it could become a valid pokemon.
-   * @param checkEvolutions {@link boolean} If true, check the pokemon's future evolutions
-   * @param checkForms {@link boolean} If true, check the pokemon's alternative forms
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false, checkEvolutions?: boolean, checkForms?: boolean): boolean {
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
     return false;
   }
 
@@ -326,6 +328,15 @@ export abstract class Challenge {
    * @returns {@link boolean} Whether this function did anything.
    */
   applyFixedBattle(waveIndex: Number, battleConfig: FixedBattleConfig): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for TYPE_EFFECTIVENESS challenges. Derived classes should alter this.
+   * @param effectiveness {@linkcode Utils.NumberHolder} The current effectiveness of the move.
+   * @returns Whether this function did anything.
+   */
+  applyTypeEffectiveness(effectiveness: Utils.NumberHolder): boolean {
     return false;
   }
 
@@ -405,14 +416,13 @@ export class SingleGenerationChallenge extends Challenge {
     super(Challenges.SINGLE_GENERATION, 9);
   }
 
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false, checkEvolutions?: boolean): boolean {
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
     const generations = [pokemon.generation];
-    const checkPokemonEvolutions = checkEvolutions ?? true as boolean;
     if (soft) {
       const speciesToCheck = [pokemon.speciesId];
       while (speciesToCheck.length) {
         const checking = speciesToCheck.pop();
-        if (checking && pokemonEvolutions.hasOwnProperty(checking) && checkPokemonEvolutions) {
+        if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
           pokemonEvolutions[checking].forEach(e => {
             speciesToCheck.push(e.speciesId);
             generations.push(getPokemonSpecies(e.speciesId).generation);
@@ -442,13 +452,13 @@ export class SingleGenerationChallenge extends Challenge {
     let trainerTypes: TrainerType[] = [];
     switch (waveIndex) {
     case 182:
-      trainerTypes = [ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, Utils.randSeedItem([ TrainerType.HALA, TrainerType.MOLAYNE ]),TrainerType.MARNIE_ELITE, TrainerType.RIKA ];
+      trainerTypes = [ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, Utils.randSeedItem([ TrainerType.HALA, TrainerType.MOLAYNE ]), TrainerType.MARNIE_ELITE, TrainerType.RIKA ];
       break;
     case 184:
       trainerTypes = [ TrainerType.BRUNO, TrainerType.KOGA, TrainerType.PHOEBE, TrainerType.BERTHA, TrainerType.MARSHAL, TrainerType.SIEBOLD, TrainerType.OLIVIA, TrainerType.NESSA_ELITE, TrainerType.POPPY ];
       break;
     case 186:
-      trainerTypes = [ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA, Utils.randSeedItem([TrainerType.BEA_ELITE,TrainerType.ALLISTER_ELITE]), TrainerType.LARRY_ELITE ];
+      trainerTypes = [ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA, Utils.randSeedItem([TrainerType.BEA_ELITE, TrainerType.ALLISTER_ELITE]), TrainerType.LARRY_ELITE ];
       break;
     case 188:
       trainerTypes = [ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI, TrainerType.RAIHAN_ELITE, TrainerType.HASSEL ];
@@ -533,22 +543,20 @@ export class SingleTypeChallenge extends Challenge {
     super(Challenges.SINGLE_TYPE, 18);
   }
 
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false, checkEvolutions?: boolean, checkForms?: boolean): boolean {
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
     const speciesForm = getPokemonSpeciesForm(pokemon.speciesId, dexAttr.formIndex);
     const types = [speciesForm.type1, speciesForm.type2];
-    const checkPokemonEvolutions = checkEvolutions ?? true as boolean;
-    const checkPokemonForms = checkForms ?? true as boolean;
     if (soft) {
       const speciesToCheck = [pokemon.speciesId];
       while (speciesToCheck.length) {
         const checking = speciesToCheck.pop();
-        if (checking && pokemonEvolutions.hasOwnProperty(checking) && checkPokemonEvolutions) {
+        if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
           pokemonEvolutions[checking].forEach(e => {
             speciesToCheck.push(e.speciesId);
             types.push(getPokemonSpecies(e.speciesId).type1, getPokemonSpecies(e.speciesId).type2);
           });
         }
-        if (checking && pokemonFormChanges.hasOwnProperty(checking) && checkPokemonForms) {
+        if (checking && pokemonFormChanges.hasOwnProperty(checking)) {
           pokemonFormChanges[checking].forEach(f1 => {
             getPokemonSpecies(checking).forms.forEach(f2 => {
               if (f1.formKey === f2.formKey) {
@@ -635,8 +643,8 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterCost(species: Species, cost: Utils.NumberHolder): boolean {
-    if (defaultStarterSpecies.includes(species) && cost.value !== 3) {
-      cost.value = 3;
+    if (defaultStarterSpecies.includes(species)) {
+      cost.value = speciesStarters[species];
       return true;
     }
     return false;
@@ -650,16 +658,12 @@ export class FreshStartChallenge extends Challenge {
     pokemon.luck = 0; // No luck
     pokemon.shiny = false; // Not shiny
     pokemon.variant = 0; // Not shiny
-    pokemon.gender = Gender.MALE; // Starters default to male
     pokemon.formIndex = 0; // Froakie should be base form
     pokemon.ivs = [10, 10, 10, 10, 10, 10]; // Default IVs of 10 for all stats
     return true;
   }
 
-  /**
-   * @overrides
-   */
-  getDifficulty(): number {
+  override getDifficulty(): number {
     return 0;
   }
 
@@ -668,6 +672,38 @@ export class FreshStartChallenge extends Challenge {
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
     return newChallenge;
+  }
+}
+
+/**
+ * Implements an inverse battle challenge.
+ */
+export class InverseBattleChallenge extends Challenge {
+  constructor() {
+    super(Challenges.INVERSE_BATTLE, 1);
+  }
+
+  static loadChallenge(source: InverseBattleChallenge | any): InverseBattleChallenge {
+    const newChallenge = new InverseBattleChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+
+  override getDifficulty(): number {
+    return 0;
+  }
+
+  applyTypeEffectiveness(effectiveness: Utils.NumberHolder): boolean {
+    if (effectiveness.value < 1) {
+      effectiveness.value = 2;
+      return true;
+    } else if (effectiveness.value > 1) {
+      effectiveness.value = 0.5;
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -746,7 +782,7 @@ export class LowerStarterPointsChallenge extends Challenge {
  * @param soft {@link boolean} If true, allow it if it could become a valid pokemon.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_CHOICE, pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean, checkEvolutions?: boolean, checkForms?: boolean): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_CHOICE, pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean): boolean;
 /**
  * Apply all challenges that modify available total starter points.
  * @param gameMode {@link GameMode} The current gameMode
@@ -790,6 +826,14 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.FIXED_BATTLES, waveIndex: Number, battleConfig: FixedBattleConfig): boolean;
+/**
+ * Apply all challenges that modify type effectiveness.
+ * @param gameMode {@linkcode GameMode} The current gameMode
+ * @param challengeType {@linkcode ChallengeType} ChallengeType.TYPE_EFFECTIVENESS
+ * @param effectiveness {@linkcode Utils.NumberHolder} The current effectiveness of the move.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.TYPE_EFFECTIVENESS, effectiveness: Utils.NumberHolder): boolean;
 /**
  * Apply all challenges that modify what level AI are.
  * @param gameMode {@link GameMode} The current gameMode
@@ -854,7 +898,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
     if (c.value !== 0) {
       switch (challengeType) {
       case ChallengeType.STARTER_CHOICE:
-        ret ||= c.applyStarterChoice(args[0], args[1], args[2], args[3], args[4], args[5]);
+        ret ||= c.applyStarterChoice(args[0], args[1], args[2], args[3]);
         break;
       case ChallengeType.STARTER_POINTS:
         ret ||= c.applyStarterPoints(args[0]);
@@ -870,6 +914,9 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
         break;
       case ChallengeType.FIXED_BATTLES:
         ret ||= c.applyFixedBattle(args[0], args[1]);
+        break;
+      case ChallengeType.TYPE_EFFECTIVENESS:
+        ret ||= c.applyTypeEffectiveness(args[0]);
         break;
       case ChallengeType.AI_LEVEL:
         ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
@@ -912,6 +959,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
     return LowerStarterPointsChallenge.loadChallenge(source);
   case Challenges.FRESH_START:
     return FreshStartChallenge.loadChallenge(source);
+  case Challenges.INVERSE_BATTLE:
+    return InverseBattleChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -923,5 +972,6 @@ export function initChallenges() {
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
     new FreshStartChallenge(),
+    new InverseBattleChallenge(),
   );
 }
