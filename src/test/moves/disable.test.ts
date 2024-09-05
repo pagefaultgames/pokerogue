@@ -16,7 +16,7 @@ describe("Moves - Disable", () => {
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
-      type: Phaser.HEADLESS,
+      type: Phaser.HEADLESS
     });
   });
 
