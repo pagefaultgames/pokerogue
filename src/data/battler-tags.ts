@@ -1985,18 +1985,13 @@ export class ExposedTag extends BattlerTag {
 }
 
 /**
- * Tag that doubles the type effectiveness of a move.
+ * Tag that doubles the type effectiveness of a Fire-type moves.
  * This is used by Tar Shot.
  * @extends BattlerTag
  */
-export class DoubleMoveTypeEffectivenessTag extends BattlerTag {
-  /** The move's type effectiveness to be doubled. */
-  public moveType: Type;
-
-  constructor(moveType: Type, tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
-    super(tagType, lapseType, 1, sourceMove);
-
-    this.moveType = moveType;
+export class TarShotTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.TAR_SHOT, BattlerTagLapseType.CUSTOM, 0);
   }
 
   /**
@@ -2006,6 +2001,10 @@ export class DoubleMoveTypeEffectivenessTag extends BattlerTag {
    */
   canAdd(pokemon: Pokemon): boolean {
     return !pokemon.isTerastallized();
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    pokemon.scene.queueMessage(i18next.t("battlerTags:tarShotOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 }
 
@@ -2151,7 +2150,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.GULP_MISSILE_PIKACHU:
     return new GulpMissileTag(tagType, sourceMove);
   case BattlerTagType.TAR_SHOT:
-    return new DoubleMoveTypeEffectivenessTag(Type.FIRE, tagType, BattlerTagLapseType.CUSTOM, sourceMove);
+    return new TarShotTag();
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
