@@ -3,9 +3,6 @@ import GameManager from "../utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Mode } from "#app/ui/ui.js";
-import { getMovePosition } from "../utils/gameManagerUtils";
-import { Command } from "#app/ui/command-ui-handler";
 import { MoveResult } from "#app/field/pokemon.js";
 import { SPLASH_ONLY } from "../utils/testUtils";
 import { CommandPhase } from "#app/phases/command-phase.js";
@@ -16,18 +13,6 @@ import { Stat } from "#app/enums/stat.js";
 describe("Moves - Disable", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-
-  const _useMove = (move?: Moves) => {
-    move ??= Moves.DISABLE;
-
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      game.scene.ui.setMode(Mode.FIGHT, (game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-    });
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
-      const movePosition = getMovePosition(game.scene, 0, move);
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
-    });
-  };
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -50,15 +35,15 @@ describe("Moves - Disable", () => {
     game.override.enemySpecies(Species.SHUCKLE);
   });
 
-  it("disables moves", async () => {
-    await game.startBattle();
+  it("restricts moves", async () => {
+    await game.classicMode.startBattle();
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
 
     playerMon.stats[Stat.SPD] = 1;
     enemyMon.stats[Stat.SPD] = 2;
 
-    _useMove();
+    game.move.select(Moves.DISABLE);
     await game.phaseInterceptor.to(CommandPhase);
 
     expect(playerMon.getMoveHistory()).toHaveLength(1);
@@ -68,14 +53,14 @@ describe("Moves - Disable", () => {
   });
 
   it("fails if enemy has no move history", async() => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
 
     playerMon.stats[Stat.SPD] = 2;
     enemyMon.stats[Stat.SPD] = 1;
 
-    _useMove();
+    game.move.select(Moves.DISABLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
 
     expect(playerMon.getMoveHistory()).toHaveLength(1);
@@ -83,7 +68,7 @@ describe("Moves - Disable", () => {
   }, 20000);
 
   it("causes STRUGGLE if all usable moves are disabled", async() => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
 
@@ -91,11 +76,11 @@ describe("Moves - Disable", () => {
     enemyMon.stats[Stat.SPD] = 2;
 
     // Enemy will use SPLASH, we will disable it
-    _useMove();
+    game.move.select(Moves.DISABLE);
     await game.phaseInterceptor.to(CommandPhase);
 
     // Enemy will use STRUGGLE
-    _useMove();
+    game.move.select(Moves.DISABLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
 
     const enemyHistory = enemyMon.getMoveHistory();
@@ -106,14 +91,14 @@ describe("Moves - Disable", () => {
 
   it("cannot disable STRUGGLE", async() => {
     game.override.enemyMoveset(Array(4).fill(Moves.STRUGGLE));
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
 
     playerMon.stats[Stat.SPD] = 1;
     enemyMon.stats[Stat.SPD] = 2;
 
-    _useMove();
+    game.move.select(Moves.DISABLE);
     await game.phaseInterceptor.to(CommandPhase);
 
     expect(playerMon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
@@ -122,7 +107,7 @@ describe("Moves - Disable", () => {
   }, 20000);
 
   it("interrupts target's move when target moves after", async() => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
 
@@ -130,11 +115,11 @@ describe("Moves - Disable", () => {
     enemyMon.stats[Stat.SPD] = 1;
 
     // Waste a turn to let the target make move history
-    _useMove(Moves.SPLASH);
+    game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
 
     // Both mons just used Splash last turn; now have player use Disable.
-    _useMove(Moves.DISABLE);
+    game.move.select(Moves.DISABLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
 
     const enemyHistory = enemyMon.getMoveHistory();
@@ -144,7 +129,7 @@ describe("Moves - Disable", () => {
   }, 20000);
 
   it("disables NATURE POWER, not the move invoked by it", async() => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
 
@@ -154,7 +139,7 @@ describe("Moves - Disable", () => {
     playerMon.stats[Stat.SPD] = 1;
     enemyMon.stats[Stat.SPD] = 2;
 
-    _useMove(Moves.DISABLE);
+    game.move.select(Moves.DISABLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
 
     expect(enemyMon.isMoveRestricted(Moves.NATURE_POWER)).toBe(true);
