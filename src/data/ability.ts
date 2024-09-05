@@ -5334,7 +5334,9 @@ export function initAbilities() {
     new Ability(Abilities.AURA_BREAK, 6)
       .ignorable()
       .conditionalAttr(pokemon => pokemon.scene.getField(true).some(p => p.hasAbility(Abilities.DARK_AURA)), FieldMoveTypePowerBoostAbAttr, Type.DARK, 9 / 16)
-      .conditionalAttr(pokemon => pokemon.scene.getField(true).some(p => p.hasAbility(Abilities.FAIRY_AURA)), FieldMoveTypePowerBoostAbAttr, Type.FAIRY, 9 / 16),
+      .conditionalAttr(pokemon => pokemon.scene.getField(true).some(p => p.hasAbility(Abilities.FAIRY_AURA)), FieldMoveTypePowerBoostAbAttr, Type.FAIRY, 9 / 16)
+      .conditionalAttr(pokemon => pokemon.scene.getField(true).some(p => p.hasAbility(Abilities.DARK_AURA) || p.hasAbility(Abilities.FAIRY_AURA)),
+        PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonAuraBreak", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) })),
     new Ability(Abilities.PRIMORDIAL_SEA, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
