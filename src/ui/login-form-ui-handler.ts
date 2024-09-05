@@ -58,7 +58,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
 
     const usernameInfoImage = this.scene.add.image(20, 0, "settings_icon");
     usernameInfoImage.setOrigin(0, 0);
-    usernameInfoImage.setScale(0.25);
+    usernameInfoImage.setScale(0.5);
     usernameInfoImage.setInteractive();
     usernameInfoImage.setName("username-info-icon");
     this.usernameInfoImage = usernameInfoImage;
