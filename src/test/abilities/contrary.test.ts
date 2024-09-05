@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
-import { Moves } from "#app/enums/moves.js";
+import { Moves } from "#app/enums/moves";
 
 describe("Abilities - Contrary", () => {
   let phaserGame: Phaser.Game;
