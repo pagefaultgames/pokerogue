@@ -2243,7 +2243,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * This Pokemon's defensive stat for the given move's category.
      * Critical hits ignore positive stat stages.
      */
-    const targetDef = new Utils.IntegerHolder(this.getEffectiveStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, ignoreAbility, ignoreSourceAbility, isCritical, simulated));
+    const targetDef = new Utils.NumberHolder(this.getEffectiveStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, ignoreAbility, ignoreSourceAbility, isCritical, simulated));
     applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
 
     /**
@@ -2296,9 +2296,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs(StabBoostAbAttr, source, null, simulated, stabMultiplier);
     }
 
-    if (sourceTeraType !== Type.UNKNOWN && matchesSourceType) {
-      stabMultiplier.value = Math.min(stabMultiplier.value + 0.5, 2.25);
-    }
+    stabMultiplier.value = Math.min(stabMultiplier.value, 2.25);
 
     /** Halves damage if the attacker is using a physical attack while burned */
     const burnMultiplier = new Utils.NumberHolder(1);

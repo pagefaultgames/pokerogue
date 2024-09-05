@@ -73,7 +73,7 @@ export default class GameManager {
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean = true) {
     localStorage.clear();
     ErrorInterceptor.getInstance().clear();
-    BattleScene.prototype.randBattleSeedInt = (arg) => arg-1;
+    BattleScene.prototype.randBattleSeedInt = (range, min) => (min ?? 0) + range - 1;
     this.gameWrapper = new GameWrapper(phaserGame, bypassLogin);
     this.scene = new BattleScene();
     this.phaseInterceptor = new PhaseInterceptor(this.scene);
