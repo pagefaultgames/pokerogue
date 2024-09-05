@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "../utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -8,7 +8,6 @@ import { SPLASH_ONLY } from "../utils/testUtils";
 import { CommandPhase } from "#app/phases/command-phase.js";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase.js";
 import { TurnInitPhase } from "#app/phases/turn-init-phase.js";
-import { Stat } from "#app/enums/stat.js";
 
 describe("Moves - Disable", () => {
   let phaserGame: Phaser.Game;
@@ -40,8 +39,8 @@ describe("Moves - Disable", () => {
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
 
-    playerMon.stats[Stat.SPD] = 1;
-    enemyMon.stats[Stat.SPD] = 2;
+    vi.spyOn(playerMon, "stats", "get").mockReturnValue([1, 1, 1, 1, 1, 1]);
+    vi.spyOn(enemyMon, "stats", "get").mockReturnValue([1, 1, 1, 1, 1, 2]);
 
     game.move.select(Moves.DISABLE);
     await game.phaseInterceptor.to(CommandPhase);
@@ -57,8 +56,8 @@ describe("Moves - Disable", () => {
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
 
-    playerMon.stats[Stat.SPD] = 2;
-    enemyMon.stats[Stat.SPD] = 1;
+    vi.spyOn(playerMon, "stats", "get").mockReturnValue([1, 1, 1, 1, 1, 2]);
+    vi.spyOn(enemyMon, "stats", "get").mockReturnValue([1, 1, 1, 1, 1, 1]);
 
     game.move.select(Moves.DISABLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
@@ -72,8 +71,8 @@ describe("Moves - Disable", () => {
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
 
-    playerMon.stats[Stat.SPD] = 1;
-    enemyMon.stats[Stat.SPD] = 2;
+    vi.spyOn(playerMon, "stats", "get").mockReturnValue([1, 1, 1, 1, 1, 1]);
+    vi.spyOn(enemyMon, "stats", "get").mockReturnValue([1, 1, 1, 1, 1, 2]);
 
     // Enemy will use SPLASH, we will disable it
     game.move.select(Moves.DISABLE);
@@ -95,8 +94,8 @@ describe("Moves - Disable", () => {
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
 
-    playerMon.stats[Stat.SPD] = 1;
-    enemyMon.stats[Stat.SPD] = 2;
+    vi.spyOn(playerMon, "stats", "get").mockReturnValue([1, 1, 1, 1, 1, 1]);
+    vi.spyOn(enemyMon, "stats", "get").mockReturnValue([1, 1, 1, 1, 1, 2]);
 
     game.move.select(Moves.DISABLE);
     await game.phaseInterceptor.to(CommandPhase);
@@ -111,8 +110,8 @@ describe("Moves - Disable", () => {
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
 
-    playerMon.stats[Stat.SPD] = 2;
-    enemyMon.stats[Stat.SPD] = 1;
+    vi.spyOn(playerMon, "stats", "get").mockReturnValue([1, 1, 1, 1, 1, 2]);
+    vi.spyOn(enemyMon, "stats", "get").mockReturnValue([1, 1, 1, 1, 1, 1]);
 
     // Waste a turn to let the target make move history
     game.move.select(Moves.SPLASH);
@@ -136,8 +135,8 @@ describe("Moves - Disable", () => {
     game.override.moveset(Array(4).fill(Moves.DISABLE));
     game.override.enemyMoveset(Array(4).fill(Moves.NATURE_POWER));
 
-    playerMon.stats[Stat.SPD] = 1;
-    enemyMon.stats[Stat.SPD] = 2;
+    vi.spyOn(playerMon, "stats", "get").mockReturnValue([1, 1, 1, 1, 1, 1]);
+    vi.spyOn(enemyMon, "stats", "get").mockReturnValue([1, 1, 1, 1, 1, 2]);
 
     game.move.select(Moves.DISABLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(CommandPhase);
