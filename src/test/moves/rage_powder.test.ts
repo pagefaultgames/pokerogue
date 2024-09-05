@@ -25,7 +25,6 @@ describe("Moves - Rage Powder", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleType("double");
-    game.override.starterSpecies(Species.AMOONGUSS);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
@@ -68,6 +67,10 @@ describe("Moves - Rage Powder", () => {
 
       game.move.select(Moves.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
       game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
+
+      await game.forceEnemyMove(Moves.RAGE_POWDER);
+      await game.forceEnemyMove(Moves.SPLASH);
+
       await game.phaseInterceptor.to("BerryPhase", false);
 
       // If redirection was bypassed, both enemies should be damaged
