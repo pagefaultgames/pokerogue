@@ -87,5 +87,5 @@
   "retryBattle": "你要从对战开始时重试么？",
   "unlockedSomething": "{{unlockedThing}}\n已解锁。",
   "congratulations": "恭喜！",
-  "beatModeFirstTime": "{{speciesName}}首次击败了{{gameMode}}！\n你获得了{{newModifier}}！",
+  "beatModeFirstTime": "{{speciesName}}首次击败了{{gameMode}}！\n你获得了{{newModifier}}！"
 }
