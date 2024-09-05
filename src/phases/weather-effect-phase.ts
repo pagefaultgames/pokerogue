@@ -1,6 +1,7 @@
 import BattleScene from "#app/battle-scene.js";
 import { applyPreWeatherEffectAbAttrs, SuppressWeatherEffectAbAttr, PreWeatherDamageAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPostWeatherLapseAbAttrs, PostWeatherLapseAbAttr } from "#app/data/ability.js";
 import { CommonAnim } from "#app/data/battle-anims.js";
+import { SemiInvulnerableTag } from "#app/data/battler-tags.js";
 import { Weather, getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weather.js";
 import { WeatherType } from "#app/enums/weather-type.js";
 import Pokemon, { HitResult } from "#app/field/pokemon.js";
@@ -39,7 +40,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
           applyPreWeatherEffectAbAttrs(PreWeatherDamageAbAttr, pokemon, this.weather, cancelled);
           applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
-          if (cancelled.value) {
+          if (cancelled.value || pokemon.getTag(SemiInvulnerableTag)) {
             return;
           }
 
