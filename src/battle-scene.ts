@@ -15,7 +15,7 @@ import { TextStyle, addTextObject, getTextColor } from "./ui/text";
 import { allMoves } from "./data/move";
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, modifierTypes } from "./modifier/modifier-type";
 import AbilityBar from "./ui/ability-bar";
-import { BlockItemTheftAbAttr, BonusItemChance, DoubleBattleChanceAbAttr, ChangeMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
+import { BlockItemTheftAbAttr, BonusItemChanceAbAttr, DoubleBattleChanceAbAttr, ChangeMovePriorityAbAttr, PostBattleInitAbAttr, applyAbAttrs, applyPostBattleInitAbAttrs } from "./data/ability";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig } from "./battle";
 import { GameMode, GameModes, getGameMode } from "./game-mode";
@@ -2467,7 +2467,7 @@ export default class BattleScene extends SceneBase {
       const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(this.currentBattle.waveIndex);
       const isFinalBoss = this.gameMode.isWaveFinal(this.currentBattle.waveIndex);
       let chances = Math.ceil(difficultyWaveIndex / 10);
-      if (this.getPlayerPokemon().getAbility().hasAttr(BonusItemChance) || this.getPlayerPokemon().getPassiveAbility().hasAttr(BonusItemChance)) {
+      if (this.getPlayerPokemon()?.getAbility().hasAttr(BonusItemChanceAbAttr) || this.getPlayerPokemon()?.getPassiveAbility().hasAttr(BonusItemChanceAbAttr)) {
         chances += Math.floor(chances * 1.2);
       }
       if (isFinalBoss) {

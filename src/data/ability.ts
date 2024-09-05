@@ -2794,12 +2794,12 @@ export class BonusCritAbAttr extends AbAttr {
  * If an ability has this tag, it will increase the chance of items by 20%.
  * This is used in battle-scene.ts in generateEnemyModifiers.
  */
-export class BonusItemChance extends AbAttr {
+export class BonusItemChanceAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
 
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
     return true;
   }
 }
@@ -4817,7 +4817,7 @@ export function initAbilities() {
       .attr(PostFaintUnsuppressedWeatherFormChangeAbAttr)
       .bypassFaint(),
     new Ability(Abilities.COMPOUND_EYES, 3)
-      .attr(BonusItemChance)
+      .attr(BonusItemChanceAbAttr)
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.3),
     new Ability(Abilities.INSOMNIA, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
@@ -5103,7 +5103,7 @@ export function initAbilities() {
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.SUPER_LUCK, 4)
       .attr(BonusCritAbAttr)
-      .attr(BonusItemChance),
+      .attr(BonusItemChanceAbAttr),
     new Ability(Abilities.AFTERMATH, 4)
       .attr(PostFaintContactDamageAbAttr, 4)
       .bypassFaint(),
