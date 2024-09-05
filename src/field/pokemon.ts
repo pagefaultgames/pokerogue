@@ -4483,7 +4483,8 @@ export interface AttackMoveResult {
 }
 
 export class PokemonSummonData {
-  public statStages: number[] = [ 0, 0, 0, 0, 0, 0, 0 ]; // [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva]
+  /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
+  public statStages: number[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public moveQueue: QueuedMove[] = [];
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
