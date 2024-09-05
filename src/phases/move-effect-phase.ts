@@ -123,7 +123,6 @@ export class MoveEffectPhase extends PokemonPhase {
       new MoveAnim(move.id as Moves, user, this.getTarget()?.getBattlerIndex()!).play(this.scene, () => { // TODO: is the bang correct here?
         /** Has the move successfully hit a target (for damage) yet? */
         let hasHit: boolean = false;
-
         for (const target of targets) {
           /**
              * If the move missed a target, stop all future hits against that target
