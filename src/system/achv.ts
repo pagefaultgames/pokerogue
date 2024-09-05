@@ -5,9 +5,10 @@ import { pokemonEvolutions } from "#app/data/pokemon-evolutions";
 import i18next from "i18next";
 import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
-import { Challenge, FreshStartChallenge, InverseBattleChallenge, SingleGenerationChallenge, SingleTypeChallenge } from "#app/data/challenge";
-import { Challenges } from "#app/enums/challenges";
+import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge, InverseBattleChallenge } from "#app/data/challenge";
 import { ConditionFn } from "#app/@types/common";
+import { Stat, getShortenedStatKey  } from "#app/enums/stat";
+import { Challenges } from "#app/enums/challenges";
 
 export enum AchvTier {
   COMMON,
@@ -172,13 +173,13 @@ export function getAchievementDescription(localizationKey: string): string {
   case "10000_DMG":
     return i18next.t("achv:DamageAchv.description", {context: genderStr, "damageAmount": achvs._10000_DMG.damageAmount.toLocaleString("en-US")});
   case "250_HEAL":
-    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._250_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._250_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP))});
   case "1000_HEAL":
-    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._1000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._1000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP))});
   case "2500_HEAL":
-    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._2500_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._2500_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP))});
   case "10000_HEAL":
-    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._10000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t("pokemonInfo:Stat.HPshortened")});
+    return i18next.t("achv:HealAchv.description", {context: genderStr, "healAmount": achvs._10000_HEAL.healAmount.toLocaleString("en-US"), "HP": i18next.t(getShortenedStatKey(Stat.HP))});
   case "LV_100":
     return i18next.t("achv:LevelAchv.description", {context: genderStr, "level": achvs.LV_100.level});
   case "LV_250":
@@ -195,7 +196,7 @@ export function getAchievementDescription(localizationKey: string): string {
     return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._75_RIBBONS.ribbonAmount.toLocaleString("en-US")});
   case "100_RIBBONS":
     return i18next.t("achv:RibbonAchv.description", {context: genderStr, "ribbonAmount": achvs._100_RIBBONS.ribbonAmount.toLocaleString("en-US")});
-  case "TRANSFER_MAX_BATTLE_STAT":
+  case "TRANSFER_MAX_STAT_STAGE":
     return i18next.t("achv:TRANSFER_MAX_BATTLE_STAT.description", { context: genderStr });
   case "MAX_FRIENDSHIP":
     return i18next.t("achv:MAX_FRIENDSHIP.description", { context: genderStr });
@@ -305,7 +306,7 @@ export const achvs = {
   _50_RIBBONS: new RibbonAchv("50_RIBBONS", "", 50, "ultra_ribbon", 50).setSecret(true),
   _75_RIBBONS: new RibbonAchv("75_RIBBONS", "", 75, "rogue_ribbon", 75).setSecret(true),
   _100_RIBBONS: new RibbonAchv("100_RIBBONS", "", 100, "master_ribbon", 100).setSecret(true),
-  TRANSFER_MAX_BATTLE_STAT: new Achv("TRANSFER_MAX_BATTLE_STAT", "",  "TRANSFER_MAX_BATTLE_STAT.description", "baton", 20),
+  TRANSFER_MAX_STAT_STAGE: new Achv("TRANSFER_MAX_STAT_STAGE", "",  "TRANSFER_MAX_STAT_STAGE.description", "baton", 20),
   MAX_FRIENDSHIP: new Achv("MAX_FRIENDSHIP", "", "MAX_FRIENDSHIP.description", "soothe_bell", 25),
   MEGA_EVOLVE: new Achv("MEGA_EVOLVE", "", "MEGA_EVOLVE.description", "mega_bracelet", 50),
   GIGANTAMAX: new Achv("GIGANTAMAX", "", "GIGANTAMAX.description", "dynamax_band", 50),
@@ -324,7 +325,7 @@ export const achvs = {
   HATCH_SHINY: new Achv("HATCH_SHINY", "",  "HATCH_SHINY.description", "golden_egg", 100).setSecret(),
   HIDDEN_ABILITY: new Achv("HIDDEN_ABILITY", "",  "HIDDEN_ABILITY.description", "ability_charm", 75),
   PERFECT_IVS: new Achv("PERFECT_IVS", "",  "PERFECT_IVS.description", "blunder_policy", 100),
-  CLASSIC_VICTORY: new Achv("CLASSIC_VICTORY", "",  "CLASSIC_VICTORY.description", "relic_crown", 150),
+  CLASSIC_VICTORY: new Achv("CLASSIC_VICTORY", "",  "CLASSIC_VICTORY.description", "relic_crown", 150, c => c.gameData.gameStats.sessionsWon === 0),
   UNEVOLVED_CLASSIC_VICTORY: new Achv("UNEVOLVED_CLASSIC_VICTORY", "", "UNEVOLVED_CLASSIC_VICTORY.description", "eviolite", 175, c => c.getParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)),
   MONO_GEN_ONE_VICTORY: new ChallengeAchv("MONO_GEN_ONE", "",  "MONO_GEN_ONE.description", "ribbon_gen1", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 1 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
   MONO_GEN_TWO_VICTORY: new ChallengeAchv("MONO_GEN_TWO", "",  "MONO_GEN_TWO.description", "ribbon_gen2", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 2 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),

@@ -13,5 +13,32 @@
   "metFragment": {
     "normal": "encontrado no Nv.{{level}},\n{{biome}}.",
     "apparently": "aparentemente encontrado no Nv.{{level}},\n{{biome}}."
+  },
+  "natureFragment": {
+    "Hardy": "{{nature}}",
+    "Lonely": "{{nature}}",
+    "Brave": "{{nature}}",
+    "Adamant": "{{nature}}",
+    "Naughty": "{{nature}}",
+    "Bold": "{{nature}}",
+    "Docile": "{{nature}}",
+    "Relaxed": "{{nature}}",
+    "Impish": "{{nature}}",
+    "Lax": "{{nature}}",
+    "Timid": "{{nature}}",
+    "Hasty": "{{nature}}",
+    "Serious": "{{nature}}",
+    "Jolly": "{{nature}}",
+    "Naive": "{{nature}}",
+    "Modest": "{{nature}}",
+    "Mild": "{{nature}}",
+    "Quiet": "{{nature}}",
+    "Bashful": "{{nature}}",
+    "Rash": "{{nature}}",
+    "Calm": "{{nature}}",
+    "Gentle": "{{nature}}",
+    "Sassy": "{{nature}}",
+    "Careful": "{{nature}}",
+    "Quirky": "{{nature}}"
   }
 }
