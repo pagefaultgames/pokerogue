@@ -32,7 +32,7 @@
   "levelUp": "{{pokemonName}} subiu para \nNv. {{level}}!",
   "learnMove": "{{pokemonName}} aprendeu {{moveName}}!",
   "learnMovePrompt": "{{pokemonName}} quer aprender\n{{moveName}}.",
-  "learnMoveLimitReached": "Porém, {{pokemonName}} já sabe\nquatro movimentos.",
+  "learnMoveLimitReached": "Porém, {{pokemonName}} já sabe\nquatro movimentos.",d
   "learnMoveReplaceQuestion": "Quer substituir um de seus movimentos por {{moveName}}?",
   "learnMoveStopTeaching": "Você não quer aprender\n{{moveName}}?",
   "learnMoveNotLearned": "{{pokemonName}} não aprendeu {{moveName}}.",
@@ -43,7 +43,7 @@
   "levelCapUp": "O nível máximo aumentou\npara {{levelCap}}!",
   "moveNotImplemented": "{{moveName}} ainda não foi implementado e não pode ser usado.",
   "moveNoPP": "Não há mais PP\npara esse movimento!",
-  "moveDisabled": "Não se pode usar {{moveName}} porque foi desabilitado!"
+  "moveDisabled": "Não se pode usar {{moveName}} porque foi desabilitado!",
   "noPokeballForce": "Uma força misteriosa\nte impede de usar Poké Bolas.",
   "noPokeballTrainer": "Não se pode capturar\nPokémon dos outros!",
   "noPokeballMulti": "Não se pode lançar Poké Bolas\nquando há mais de um Pokémon!",
