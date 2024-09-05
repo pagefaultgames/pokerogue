@@ -31,7 +31,7 @@ describe("Abilities - Contrary", () => {
   });
 
   it("should invert stat changes when applied", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.SLOWBRO
     ]);
 
