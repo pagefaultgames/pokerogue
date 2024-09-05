@@ -41,7 +41,7 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
-    if (pokemon.getTag(BattlerTagType.FRENZY)) {
+    if (pokemon.getTag(BattlerTagType.FRENZY) || pokemon.getTag(BattlerTagType.NONSTOP)) {
       super.end();
       return;
     }
