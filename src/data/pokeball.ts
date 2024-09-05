@@ -1,4 +1,5 @@
 import { PokeballType } from "#enums/pokeball";
+import Pokemon from "../field/pokemon";
 import BattleScene from "../battle-scene";
 import i18next from "i18next";
 
@@ -48,7 +49,8 @@ export function getPokeballName(type: PokeballType): string {
   return ret;
 }
 
-export function getPokeballCatchMultiplier(type: PokeballType): number {
+export function getPokeballCatchMultiplier(type: PokeballType, enemyPokemon?: Pokemon): number {
+  const pokemon = enemyPokemon ?? null;
   switch (type) {
   case PokeballType.POKEBALL:
     return 1;
@@ -57,6 +59,7 @@ export function getPokeballCatchMultiplier(type: PokeballType): number {
   case PokeballType.ULTRA_BALL:
     return 2;
   case PokeballType.ROGUE_BALL:
+    console.log(pokemon);
     return 3;
   case PokeballType.MASTER_BALL:
     return -1;
