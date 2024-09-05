@@ -8,14 +8,24 @@ import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
+import { getIsInitialized, initI18n } from "#app/plugins/i18n.js";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+
+function getTranslation(key: string): string {
+  if (!getIsInitialized()) {
+    initI18n();
+  }
+  return i18next.t(key);
+}
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i ? {
   value: (i * 10).toString(),
   label: (i * 10).toString(),
 } : {
   value: "Mute",
-  label: i18next.t("settings:mute")
+  label: getTranslation("settings:mute")
 });
+
 const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {
   const value = ((i + 1) * 10).toString();
   return {
@@ -23,6 +33,7 @@ const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).ma
     label: value,
   };
 });
+
 const OFF_ON: SettingOption[] = [
   {
     value: "Off",
@@ -43,6 +54,40 @@ const AUTO_DISABLED: SettingOption[] = [
     label: i18next.t("settings:disabled")
   }
 ];
+
+const SHOP_CURSOR_TARGET_OPTIONS: SettingOption[] = [
+  {
+    value: "Rewards",
+    label: i18next.t("settings:rewards")
+  },
+  {
+    value: "Shop",
+    label: i18next.t("settings:shop")
+  },
+  {
+    value: "Reroll",
+    label: i18next.t("settings:reroll")
+  },
+  {
+    value: "Check Team",
+    label: i18next.t("settings:checkTeam")
+  }
+];
+
+const shopCursorTargetIndexMap = SHOP_CURSOR_TARGET_OPTIONS.map(option => {
+  switch (option.value) {
+  case "Rewards":
+    return ShopCursorTarget.REWARDS;
+  case "Shop":
+    return ShopCursorTarget.SHOP;
+  case "Reroll":
+    return ShopCursorTarget.REROLL;
+  case "Check Team":
+    return ShopCursorTarget.CHECK_TEAM;
+  default:
+    throw new Error(`Unknown value: ${option.value}`);
+  }
+});
 
 /**
  * Types for helping separate settings to different menus
@@ -94,6 +139,7 @@ export const SettingKeys = {
   Damage_Numbers: "DAMAGE_NUMBERS",
   Move_Animations: "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
+  Shop_Cursor_Target: "SHOP_CURSOR_TARGET",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
   Move_Info: "MOVE_INFO",
@@ -107,7 +153,9 @@ export const SettingKeys = {
   Type_Hints: "TYPE_HINTS",
   Master_Volume: "MASTER_VOLUME",
   BGM_Volume: "BGM_VOLUME",
+  Field_Volume: "FIELD_VOLUME",
   SE_Volume: "SE_VOLUME",
+  UI_Volume: "UI_SOUND_EFFECTS",
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
@@ -532,8 +580,22 @@ export const Setting: Array<Setting> = [
     type: SettingType.AUDIO
   },
   {
+    key: SettingKeys.Field_Volume,
+    label: i18next.t("settings:fieldVolume"),
+    options: VOLUME_OPTIONS,
+    default: 10,
+    type: SettingType.AUDIO
+  },
+  {
     key: SettingKeys.SE_Volume,
     label: i18next.t("settings:seVolume"),
+    options: VOLUME_OPTIONS,
+    default: 10,
+    type: SettingType.AUDIO
+  },
+  {
+    key: SettingKeys.UI_Volume,
+    label: i18next.t("settings:uiVolume"),
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO
@@ -568,6 +630,13 @@ export const Setting: Array<Setting> = [
     type: SettingType.GENERAL,
     activatable: true,
     isHidden: () => !hasTouchscreen()
+  },
+  {
+    key: SettingKeys.Shop_Cursor_Target,
+    label: i18next.t("settings:shopCursorTarget"),
+    options: SHOP_CURSOR_TARGET_OPTIONS,
+    default: 0,
+    type: SettingType.DISPLAY
   },
   {
     key: SettingKeys.Shop_Overlay_Opacity,
@@ -620,9 +689,16 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.bgmVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     scene.updateSoundVolume();
     break;
+  case SettingKeys.Field_Volume:
+    scene.fieldVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+    scene.updateSoundVolume();
+    break;
   case SettingKeys.SE_Volume:
     scene.seVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     scene.updateSoundVolume();
+    break;
+  case SettingKeys.UI_Volume:
+    scene.uiVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     break;
   case SettingKeys.Music_Preference:
     scene.musicPreference = value;
@@ -700,6 +776,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Show_Stats_on_Level_Up:
     scene.showLevelUpStats = Setting[index].options[value].value === "On";
+    break;
+  case SettingKeys.Shop_Cursor_Target:
+    const selectedValue = shopCursorTargetIndexMap[value];
+    scene.shopCursorTarget = selectedValue;
     break;
   case SettingKeys.EXP_Gains_Speed:
     scene.expGainsSpeed = value;

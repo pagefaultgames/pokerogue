@@ -1,4 +1,3 @@
-import { CommandPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
@@ -7,6 +6,7 @@ import UiHandler from "./ui-handler";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
 import { getPokemonNameWithAffix } from "#app/messages.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
 
 export enum Command {
   FIGHT = 0,
@@ -68,7 +68,11 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(1110);
     messageHandler.showText(i18next.t("commandUiHandler:actionMessage", {pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon())}), 0);
-    this.setCursor(this.getCursor());
+    if (this.getCursor() === Command.POKEMON) {
+      this.setCursor(Command.FIGHT);
+    } else {
+      this.setCursor(this.getCursor());
+    }
 
     return true;
   }
@@ -85,7 +89,7 @@ export default class CommandUiHandler extends UiHandler {
       if (button === Button.ACTION) {
         switch (cursor) {
         // Fight
-        case 0:
+        case Command.FIGHT:
           if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
             return true;
           }
@@ -93,17 +97,17 @@ export default class CommandUiHandler extends UiHandler {
           success = true;
           break;
           // Ball
-        case 1:
+        case Command.BALL:
           ui.setModeWithoutClear(Mode.BALL);
           success = true;
           break;
           // Pokemon
-        case 2:
+        case Command.POKEMON:
           ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
           success = true;
           break;
           // Run
-        case 3:
+        case Command.RUN:
           (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
           success = true;
           break;

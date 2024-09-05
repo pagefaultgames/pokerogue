@@ -1,4 +1,4 @@
-import { Species } from "#app/enums/species.js";
+import { Species } from "#app/enums/species";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
 

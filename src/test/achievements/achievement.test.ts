@@ -1,7 +1,7 @@
-import { TurnHeldItemTransferModifier } from "#app/modifier/modifier.js";
+import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { Achv, AchvTier, DamageAchv, HealAchv, LevelAchv, ModifierAchv, MoneyAchv, RibbonAchv, achvs } from "#app/system/achv";
+import { IntegerHolder, NumberHolder } from "#app/utils";
 import GameManager from "#test/utils/gameManager";
-import { IntegerHolder, NumberHolder } from "#app/utils.js";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import BattleScene from "../../battle-scene";
@@ -224,7 +224,7 @@ describe("achvs", () => {
     expect(achvs._50_RIBBONS).toBeInstanceOf(RibbonAchv);
     expect(achvs._75_RIBBONS).toBeInstanceOf(RibbonAchv);
     expect(achvs._100_RIBBONS).toBeInstanceOf(RibbonAchv);
-    expect(achvs.TRANSFER_MAX_BATTLE_STAT).toBeInstanceOf(Achv);
+    expect(achvs.TRANSFER_MAX_STAT_STAGE).toBeInstanceOf(Achv);
     expect(achvs.MAX_FRIENDSHIP).toBeInstanceOf(Achv);
     expect(achvs.MEGA_EVOLVE).toBeInstanceOf(Achv);
     expect(achvs.GIGANTAMAX).toBeInstanceOf(Achv);

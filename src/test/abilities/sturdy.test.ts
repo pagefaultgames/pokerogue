@@ -1,10 +1,10 @@
-import { EnemyPokemon } from "#app/field/pokemon.js";
-import { DamagePhase, MoveEndPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { EnemyPokemon } from "#app/field/pokemon";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -41,7 +41,7 @@ describe("Abilities - Sturdy", () => {
     "Sturdy activates when user is at full HP",
     async () => {
       await game.startBattle();
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLOSE_COMBAT));
+      game.move.select(Moves.CLOSE_COMBAT);
       await game.phaseInterceptor.to(MoveEndPhase);
       expect(game.scene.getEnemyParty()[0].hp).toBe(1);
     },
@@ -56,7 +56,7 @@ describe("Abilities - Sturdy", () => {
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
       enemyPokemon.hp = enemyPokemon.getMaxHp() - 1;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLOSE_COMBAT));
+      game.move.select(Moves.CLOSE_COMBAT);
       await game.phaseInterceptor.to(DamagePhase);
 
       expect(enemyPokemon.hp).toBe(0);
@@ -69,7 +69,7 @@ describe("Abilities - Sturdy", () => {
     "Sturdy pokemon should be immune to OHKO moves",
     async () => {
       await game.startBattle();
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FISSURE));
+      game.move.select(Moves.FISSURE);
       await game.phaseInterceptor.to(MoveEndPhase);
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
@@ -84,7 +84,7 @@ describe("Abilities - Sturdy", () => {
       game.override.ability(Abilities.MOLD_BREAKER);
 
       await game.startBattle();
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CLOSE_COMBAT));
+      game.move.select(Moves.CLOSE_COMBAT);
       await game.phaseInterceptor.to(DamagePhase);
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];

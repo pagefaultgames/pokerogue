@@ -53,6 +53,7 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
   - Pokémon Sun/Moon
   - Pokémon Ultra Sun/Ultra Moon
   - Pokémon Sword/Shield
+  - Pokémon Legends: Arceus
   - Pokémon Scarlet/Violet
   - Firel (Custom Laboratory, Metropolis, Seabed, and Space biome music)
   - Lmz (Custom Jungle biome music)

@@ -85,6 +85,17 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
+   * Override the player's starting modifiers
+   * @param modifiers the modifiers to set
+   * @returns this
+   */
+  startingModifier(modifiers: ModifierOverride[]): this {
+    vi.spyOn(Overrides, "STARTING_MODIFIER_OVERRIDE", "get").mockReturnValue(modifiers);
+    this.log(`Player starting modifiers set to: ${modifiers}`);
+    return this;
+  }
+
+  /**
    * Override the player (pokemon) {@linkcode Abilities | ability}
    * @param ability the (pokemon) {@linkcode Abilities | ability} to set
    * @returns this
@@ -267,6 +278,31 @@ export class OverridesHelper extends GameManagerHelper {
   enemyHeldItems(items: ModifierOverride[]) {
     vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
     this.log("Enemy Pokemon held items set to:", items);
+    return this;
+  }
+
+  /**
+   * Override the items rolled at the end of a battle
+   * @param items the items to be rolled
+   * @returns this
+   */
+  itemRewards(items: ModifierOverride[]) {
+    vi.spyOn(Overrides, "ITEM_REWARD_OVERRIDE", "get").mockReturnValue(items);
+    this.log("Item rewards set to:", items);
+    return this;
+  }
+
+  /**
+   * Override the enemy (Pokemon) to have the given amount of health segments
+   * @param healthSegments the number of segments to give
+   *    default: 0, the health segments will be handled like in the game based on wave, level and species
+   *    1: the Pokemon will not be a boss
+   *    2+: the Pokemon will be a boss with the given number of health segments
+   * @returns this
+   */
+  enemyHealthSegments(healthSegments: number) {
+    vi.spyOn(Overrides, "OPP_HEALTH_SEGMENTS_OVERRIDE", "get").mockReturnValue(healthSegments);
+    this.log("Enemy Pokemon health segments set to:", healthSegments);
     return this;
   }
 
