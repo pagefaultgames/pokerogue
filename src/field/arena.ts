@@ -289,8 +289,8 @@ export class Arena {
 
   /**
    * Sets weather to the override specified in overrides.ts
-   * @param weather {@linkcode WeatherType} new weather to set of type WeatherType
-   * @returns boolean - true to force trySetWeather to return true
+   * @param weather new {@linkcode WeatherType} to set
+   * @returns true to force trySetWeather to return true
    */
   trySetWeatherOverride(weather: WeatherType): boolean {
     this.weather = new Weather(weather, 0);
@@ -301,7 +301,7 @@ export class Arena {
 
   /**
    * Attempts to set a new weather to the battle
-   * @param weather {@linkcode WeatherType} new weather to set of type WeatherType
+   * @param weather {@linkcode WeatherType} new {@linkcode WeatherType} to set
    * @param hasPokemonSource boolean if the new weather is from a pokemon
    * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
    */
