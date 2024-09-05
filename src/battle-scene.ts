@@ -3009,6 +3009,7 @@ export default class BattleScene extends SceneBase {
 
     // If absolutely no encounters are available, spawn 0th encounter
     if (availableEncounters.length === 0) {
+      console.log("No Mystery Encounters found, falling back to Mysterious Challengers.");
       return allMysteryEncounters[MysteryEncounterType.MYSTERIOUS_CHALLENGERS];
     }
     encounter = availableEncounters[Utils.randSeedInt(availableEncounters.length)];
