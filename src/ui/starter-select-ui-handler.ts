@@ -266,6 +266,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonPassiveDisabledIcon: Phaser.GameObjects.Sprite;
   private pokemonPassiveLockedIcon: Phaser.GameObjects.Sprite;
 
+  private activeTooltip: "ABILITY" | "PASSIVE" | "CANDY" | undefined;
   private instructionsContainer: Phaser.GameObjects.Container;
   private filterInstructionsContainer: Phaser.GameObjects.Container;
   private shinyIconElement: Phaser.GameObjects.Sprite;
@@ -1926,15 +1927,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             } while (newAbilityIndex !== this.abilityCursor);
             starterAttributes.ability = newAbilityIndex; // store the selected ability
 
-            const { visible: tooltipVisible, content: oldTooltip } = this.scene.ui.getTooltip();
+            const { visible: tooltipVisible } = this.scene.ui.getTooltip();
 
-            if (tooltipVisible) {
-              const oldAbility = allAbilities[this.lastSpecies.getAbility(this.abilityCursor)];
+            if (tooltipVisible && this.activeTooltip === "ABILITY") {
               const newAbility = allAbilities[this.lastSpecies.getAbility(newAbilityIndex)];
-
-              if (oldTooltip.replace(/\s/g, "") === oldAbility.description.replace(/\s/g, "")) {
-                this.scene.ui.editTooltip("", `${newAbility.description}`);
-              }
+              this.scene.ui.editTooltip(`${newAbility.name}`, `${newAbility.description}`);
             }
 
             this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
@@ -2703,15 +2700,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
+  getFriendship(speciesId: number) {
+    let currentFriendship = this.scene.gameData.starterData[speciesId].friendship;
+    if (!currentFriendship || currentFriendship === undefined) {
+      currentFriendship = 0;
+    }
+
+    const friendshipCap = getStarterValueFriendshipCap(speciesStarters[speciesId]);
+
+    return { currentFriendship, friendshipCap };
+  }
+
   setSpecies(species: PokemonSpecies | null) {
     this.speciesStarterDexEntry = species ? this.scene.gameData.dexData[species.speciesId] : null;
     this.dexAttrCursor = species ? this.getCurrentDexProps(species.speciesId) : 0n;
     this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(species) : 0;
 
-    if (this.scene.ui.getTooltip().visible) {
+    if (!species && this.scene.ui.getTooltip().visible) {
       this.scene.ui.hideTooltip();
     }
+
     this.pokemonAbilityText.off("pointerover");
     this.pokemonPassiveText.off("pointerover");
 
@@ -2829,17 +2838,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonHatchedIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);
 
-          let currentFriendship = this.scene.gameData.starterData[this.lastSpecies.speciesId].friendship;
-          if (!currentFriendship || currentFriendship === undefined) {
-            currentFriendship = 0;
-          }
-
-          const friendshipCap = getStarterValueFriendshipCap(speciesStarters[this.lastSpecies.speciesId]);
+          const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
           const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
 
           if (this.pokemonCandyDarknessOverlay.visible) {
-            this.pokemonCandyDarknessOverlay.on("pointerover", () => this.scene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true));
-            this.pokemonCandyDarknessOverlay.on("pointerout", () => this.scene.ui.hideTooltip());
+            this.pokemonCandyDarknessOverlay.on("pointerover", () => {
+              this.scene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true);
+              this.activeTooltip = "CANDY";
+            });
+            this.pokemonCandyDarknessOverlay.on("pointerout", () => {
+              this.scene.ui.hideTooltip();
+              this.activeTooltip = undefined;
+            });
           }
 
           this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
@@ -2953,6 +2963,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = 0n;
     this.abilityCursor = -1;
     this.natureCursor = -1;
+
+    if (this.activeTooltip === "CANDY") {
+      const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
+      this.scene.ui.editTooltip("", `${currentFriendship}/${friendshipCap}`);
+    }
 
     if (species?.forms?.find(f => f.formKey === "female")) {
       if (female !== undefined) {
@@ -3114,8 +3129,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const passiveAbility = allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]];
 
         if (this.pokemonAbilityText.visible) {
-          this.pokemonAbilityText.on("pointerover", () => this.scene.ui.showTooltip("", `${ability.description}`, true));
-          this.pokemonAbilityText.on("pointerout", () => this.scene.ui.hideTooltip());
+          if (this.activeTooltip === "ABILITY") {
+            this.scene.ui.editTooltip(`${ability.name}`, `${ability.description}`);
+          }
+
+          this.pokemonAbilityText.on("pointerover", () => {
+            this.scene.ui.showTooltip(`${ability.name}`, `${ability.description}`, true);
+            this.activeTooltip = "ABILITY";
+          });
+          this.pokemonAbilityText.on("pointerout", () => {
+            this.scene.ui.hideTooltip();
+            this.activeTooltip = undefined;
+          });
         }
 
         if (passiveAbility) {
@@ -3134,9 +3159,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonPassiveText.setAlpha(textAlpha);
           this.pokemonPassiveText.setShadowColor(this.getTextColor(textStyle, true));
 
+          if (this.activeTooltip === "PASSIVE") {
+            this.scene.ui.editTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`);
+          }
+
           if (this.pokemonPassiveText.visible) {
-            this.pokemonPassiveText.on("pointerover", () => this.scene.ui.showTooltip("", `${passiveAbility.description}`, true));
-            this.pokemonPassiveText.on("pointerout", () => this.scene.ui.hideTooltip());
+            this.pokemonPassiveText.on("pointerover", () => {
+              this.scene.ui.showTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`, true);
+              this.activeTooltip = "PASSIVE";
+            });
+            this.pokemonPassiveText.on("pointerout", () => {
+              this.scene.ui.hideTooltip();
+              this.activeTooltip = undefined;
+            });
           }
 
           const iconPosition = {
