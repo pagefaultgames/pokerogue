@@ -293,59 +293,100 @@ export class AddVoucherModifier extends ConsumableModifier {
 }
 
 export abstract class LapsingPersistentModifier extends PersistentModifier {
-  protected battlesLeft: integer;
+  private maxBattles: number;
+  private battleCount: number;
 
-  constructor(type: ModifierTypes.ModifierType, battlesLeft?: integer, stackCount?: integer) {
+  constructor(type: ModifierTypes.ModifierType, maxBattles: number, battleCount?: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.battlesLeft = battlesLeft!; // TODO: is this bang correct?
+    this.maxBattles = maxBattles;
+    this.battleCount = battleCount ?? this.maxBattles;
   }
 
-  lapse(args: any[]): boolean {
-    return !!--this.battlesLeft;
+  /**
+   * Goes through existing modifiers for any that match the selected modifier,
+   * which will then either add it to the existing modifiers if none were found
+   * or, if one was found, it will refresh {@linkcode battleCount}.
+   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
+   * @param _virtual N/A
+   * @param _scene N/A
+   * @returns true if the modifier was successfully added or applied, false otherwise
+   */
+  add(modifiers: PersistentModifier[], _virtual: boolean, scene: BattleScene): boolean {
+    for (const modifier of modifiers) {
+      if (this.match(modifier)) {
+        const modifierInstance = modifier as LapsingPersistentModifier;
+        if (modifierInstance.getBattleCount() < modifierInstance.getMaxBattles()) {
+          modifierInstance.resetBattleCount();
+          scene.playSound("se/restore");
+          return true;
+        }
+        // should never get here
+        return false;
+      }
+    }
+
+    modifiers.push(this);
+    return true;
+  }
+
+  lapse(_args: any[]): boolean {
+    this.battleCount--;
+    return this.battleCount > 0;
   }
 
   getIcon(scene: BattleScene): Phaser.GameObjects.Container {
     const container = super.getIcon(scene);
 
-    const battleCountText = addTextObject(scene, 27, 0, this.battlesLeft.toString(), TextStyle.PARTY, { fontSize: "66px", color: "#f89890" });
+    // Linear interpolation on hue
+    const hue = Math.floor(120 * (this.battleCount / this.maxBattles) + 5);
+
+    const typeHex = Utils.hslToHex(hue, 0.50, 0.90);
+    const strokeHex = Utils.hslToHex(hue, 0.70, 0.30);
+
+    const battleCountText = addTextObject(scene, 27, 0, this.battleCount.toString(), TextStyle.PARTY, { fontSize: "66px", color: typeHex });
     battleCountText.setShadow(0, 0);
-    battleCountText.setStroke("#984038", 16);
+    battleCountText.setStroke(strokeHex, 16);
     battleCountText.setOrigin(1, 0);
     container.add(battleCountText);
 
     return container;
   }
 
-  getBattlesLeft(): integer {
-    return this.battlesLeft;
+  getBattleCount(): number {
+    return this.battleCount;
   }
 
-  getMaxStackCount(scene: BattleScene, forThreshold?: boolean): number {
-    return 99;
+  resetBattleCount(): void {
+    this.battleCount = this.maxBattles;
+  }
+
+  getMaxBattles(): number {
+    return this.maxBattles;
+  }
+
+  getArgs(): any[] {
+    return [ this.maxBattles, this.battleCount ];
+  }
+
+  getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
+    return 1;
   }
 }
 
 export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier {
-  constructor(type: ModifierTypes.DoubleBattleChanceBoosterModifierType, battlesLeft: integer, stackCount?: integer) {
-    super(type, battlesLeft, stackCount);
+  constructor(type: ModifierType, maxBattles:number, battleCount?: number, stackCount?: integer) {
+    super(type, maxBattles, battleCount, stackCount);
   }
 
   match(modifier: Modifier): boolean {
-    if (modifier instanceof DoubleBattleChanceBoosterModifier) {
-      // Check type id to not match different tiers of lures
-      return modifier.type.id === this.type.id && modifier.battlesLeft === this.battlesLeft;
-    }
-    return false;
+    return (modifier instanceof DoubleBattleChanceBoosterModifier) && (modifier.getMaxBattles() === this.getMaxBattles());
   }
 
   clone(): DoubleBattleChanceBoosterModifier {
-    return new DoubleBattleChanceBoosterModifier(this.type as ModifierTypes.DoubleBattleChanceBoosterModifierType, this.battlesLeft, this.stackCount);
+    return new DoubleBattleChanceBoosterModifier(this.type as ModifierTypes.DoubleBattleChanceBoosterModifierType, this.getMaxBattles(), this.getBattleCount(), this.stackCount);
   }
 
-  getArgs(): any[] {
-    return [ this.battlesLeft ];
-  }
   /**
    * Modifies the chance of a double battle occurring
    * @param args A single element array containing the double battle chance as a NumberHolder
@@ -372,14 +413,15 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
   private stat: TempBattleStat;
   private multiplierBoost: number;
 
-  constructor(type: ModifierType, stat: TempBattleStat, battlesLeft?: number, stackCount?: number) {
-    super(type, battlesLeft ?? 5, stackCount);
+  constructor(type: ModifierType, stat: TempBattleStat, maxBattles: number, battleCount?: number, stackCount?: number) {
+    super(type, maxBattles, battleCount, stackCount);
 
     this.stat = stat;
     // Note that, because we want X Accuracy to maintain its original behavior,
     // it will increment as it did previously, directly to the stat stage.
     this.multiplierBoost = stat !== Stat.ACC ? 0.3 : 1;
   }
+
 
   match(modifier: Modifier): boolean {
     if (modifier instanceof TempStatStageBoosterModifier) {
@@ -390,11 +432,11 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
   }
 
   clone() {
-    return new TempStatStageBoosterModifier(this.type, this.stat, this.battlesLeft, this.stackCount);
+    return new TempStatStageBoosterModifier(this.type, this.stat, this.getMaxBattles(), this.getBattleCount(), this.stackCount);
   }
 
   getArgs(): any[] {
-    return [ this.stat, this.battlesLeft ];
+    return [ this.stat, ...super.getArgs() ];
   }
 
   /**
@@ -417,36 +459,6 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
     (args[1] as Utils.NumberHolder).value += this.multiplierBoost;
     return true;
   }
-
-  /**
-   * Goes through existing modifiers for any that match the selected modifier,
-   * which will then either add it to the existing modifiers if none were found
-   * or, if one was found, it will refresh {@linkcode battlesLeft}.
-   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
-   * @param _virtual N/A
-   * @param _scene N/A
-   * @returns true if the modifier was successfully added or applied, false otherwise
-   */
-  add(modifiers: PersistentModifier[], _virtual: boolean, _scene: BattleScene): boolean {
-    for (const modifier of modifiers) {
-      if (this.match(modifier)) {
-        const modifierInstance = modifier as TempStatStageBoosterModifier;
-        if (modifierInstance.getBattlesLeft() < 5) {
-          modifierInstance.battlesLeft = 5;
-          return true;
-        }
-        // should never get here
-        return false;
-      }
-    }
-
-    modifiers.push(this);
-    return true;
-  }
-
-  getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
-    return 1;
-  }
 }
 
 /**
@@ -456,12 +468,12 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
  * @see {@linkcode apply}
  */
 export class TempCritBoosterModifier extends LapsingPersistentModifier {
-  constructor(type: ModifierType, battlesLeft?: integer, stackCount?: number) {
-    super(type, battlesLeft || 5, stackCount);
+  constructor(type: ModifierType, maxBattles: number, battleCount?: number, stackCount?: number) {
+    super(type, maxBattles, battleCount, stackCount);
   }
 
   clone() {
-    return new TempCritBoosterModifier(this.type, this.stackCount);
+    return new TempCritBoosterModifier(this.type, this.getMaxBattles(), this.getBattleCount(), this.stackCount);
   }
 
   match(modifier: Modifier): boolean {
@@ -485,36 +497,6 @@ export class TempCritBoosterModifier extends LapsingPersistentModifier {
   apply(args: any[]): boolean {
     (args[0] as Utils.NumberHolder).value++;
     return true;
-  }
-
-  /**
-   * Goes through existing modifiers for any that match the selected modifier,
-   * which will then either add it to the existing modifiers if none were found
-   * or, if one was found, it will refresh {@linkcode battlesLeft}.
-   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
-   * @param _virtual N/A
-   * @param _scene N/A
-   * @returns true if the modifier was successfully added or applied, false otherwise
-   */
-  add(modifiers: PersistentModifier[], _virtual: boolean, _scene: BattleScene): boolean {
-    for (const modifier of modifiers) {
-      if (this.match(modifier)) {
-        const modifierInstance = modifier as TempCritBoosterModifier;
-        if (modifierInstance.getBattlesLeft() < 5) {
-          modifierInstance.battlesLeft = 5;
-          return true;
-        }
-        // should never get here
-        return false;
-      }
-    }
-
-    modifiers.push(this);
-    return true;
-  }
-
-  getMaxStackCount(_scene: BattleScene, _forThreshold?: boolean): number {
-    return 1;
   }
 }
 

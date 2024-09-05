@@ -433,15 +433,17 @@ export class RememberMoveModifierType extends PokemonModifierType {
 }
 
 export class DoubleBattleChanceBoosterModifierType extends ModifierType {
-  public battleCount: integer;
+  private maxBattles: number;
+  public battleCount: number;
 
-  constructor(localeKey: string, iconImage: string, battleCount: integer) {
-    super(localeKey, iconImage, (_type, _args) => new Modifiers.DoubleBattleChanceBoosterModifier(this, this.battleCount), "lure");
+  constructor(localeKey: string, iconImage: string, maxBattles: number, battleCount?: number) {
+    super(localeKey, iconImage, (_type, _args) => new Modifiers.DoubleBattleChanceBoosterModifier(this, maxBattles), "lure");
 
-    this.battleCount = battleCount;
+    this.maxBattles = maxBattles;
+    this.battleCount = battleCount ?? this.maxBattles;
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(_scene: BattleScene): string {
     return i18next.t("modifierType:ModifierType.DoubleBattleChanceBoosterModifierType.description", { battleCount: this.battleCount });
   }
 }
@@ -452,7 +454,7 @@ export class TempStatStageBoosterModifierType extends ModifierType implements Ge
 
   constructor(stat: TempBattleStat) {
     const key = TempStatStageBoosterModifierTypeGenerator.items[stat];
-    super("", key, (_type, _args) => new Modifiers.TempStatStageBoosterModifier(this, this.stat));
+    super("", key, (_type, _args) => new Modifiers.TempStatStageBoosterModifier(this, this.stat, 5));
 
     this.stat = stat;
     this.key = key;
@@ -1360,7 +1362,7 @@ export const modifierTypes = {
     getDescription(_scene: BattleScene): string {
       return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", { stat: i18next.t("modifierType:ModifierType.DIRE_HIT.extra.raises") });
     }
-  }("modifierType:ModifierType.DIRE_HIT", "dire_hit", (type, _args) => new Modifiers.TempCritBoosterModifier(type)),
+  }("modifierType:ModifierType.DIRE_HIT", "dire_hit", (type, _args) => new Modifiers.TempCritBoosterModifier(type, 5)),
 
   BASE_STAT_BOOSTER: () => new BaseStatBoosterModifierTypeGenerator(),
 
