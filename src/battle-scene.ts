@@ -130,7 +130,7 @@ export default class BattleScene extends SceneBase {
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
-  public shopCursorTarget: number = ShopCursorTarget.CHECK_TEAM;
+  public shopCursorTarget: number = ShopCursorTarget.REWARDS;
   public showMovesetFlyout: boolean = true;
   public showArenaFlyout: boolean = true;
   public showTimeOfDayWidget: boolean = true;
@@ -2751,6 +2751,35 @@ export default class BattleScene extends SceneBase {
       modeChain: this.ui?.getModeChain() ?? [],
     };
     (window as any).gameInfo = gameInfo;
+  }
+
+  /**
+   * This function retrieves the sprite and audio keys for active Pokemon.
+   * Active Pokemon include both enemy and player Pokemon of the current wave.
+   * Note: Questions on garbage collection go to @frutescens
+   * @returns a string array of active sprite and audio keys that should not be deleted
+   */
+  getActiveKeys(): string[] {
+    const keys: string[] = [];
+    const playerParty = this.getParty();
+    playerParty.forEach(p => {
+      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
+      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant, true));
+      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
+      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
+        keys.push("cry/"+p.getFusionSpeciesForm().getCryKey(p.fusionSpecies.formIndex));
+      }
+    });
+    // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
+    const enemyParty = this.getEnemyParty();
+    enemyParty.forEach(p => {
+      keys.push(p.species.getSpriteKey(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
+      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
+      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
+        keys.push("cry/"+p.getFusionSpeciesForm().getCryKey(p.fusionSpecies.formIndex));
+      }
+    });
+    return keys;
   }
 
   /**

@@ -2,6 +2,8 @@ import { updateUserInfo } from "#app/account";
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import { BattleStyle } from "#app/enums/battle-style";
+import { Moves } from "#app/enums/moves";
+import { getMoveTargets } from "#app/data/move";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { GameModes, getGameMode } from "#app/game-mode";
@@ -9,6 +11,7 @@ import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
 import overrides from "#app/overrides";
 import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MovePhase } from "#app/phases/move-phase";
@@ -45,6 +48,8 @@ import { ChallengeModeHelper } from "./helpers/challengeModeHelper";
 import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
+import { ReloadHelper } from "./helpers/reloadHelper";
+import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -61,6 +66,7 @@ export default class GameManager {
   public readonly dailyMode: DailyModeHelper;
   public readonly challengeMode: ChallengeModeHelper;
   public readonly settings: SettingsHelper;
+  public readonly reload: ReloadHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -82,6 +88,7 @@ export default class GameManager {
     this.dailyMode = new DailyModeHelper(this);
     this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
+    this.reload = new ReloadHelper(this);
   }
 
   /**
@@ -231,15 +238,42 @@ export default class GameManager {
     this.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
       handler.processInput(Button.CANCEL);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase), true);
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase) || this.isCurrentPhase(CheckSwitchPhase), true);
 
     this.onNextPrompt("SelectModifierPhase", Mode.CONFIRM, () => {
       const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
       handler.processInput(Button.ACTION);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase));
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase) || this.isCurrentPhase(CheckSwitchPhase));
   }
 
-  forceOpponentToSwitch() {
+  /**
+   * Forces the next enemy selecting a move to use the given move in its moveset against the
+   * given target (if applicable).
+   * @param moveId {@linkcode Moves} the move the enemy will use
+   * @param target {@linkcode BattlerIndex} the target on which the enemy will use the given move
+   */
+  async forceEnemyMove(moveId: Moves, target?: BattlerIndex) {
+    // Wait for the next EnemyCommandPhase to start
+    await this.phaseInterceptor.to(EnemyCommandPhase, false);
+    const enemy = this.scene.getEnemyField()[(this.scene.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()];
+    const legalTargets = getMoveTargets(enemy, moveId);
+
+    vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
+      move: moveId,
+      targets: (target && !legalTargets.multiple && legalTargets.targets.includes(target))
+        ? [target]
+        : enemy.getNextTargets(moveId)
+    });
+
+    /**
+     * Run the EnemyCommandPhase to completion.
+     * This allows this function to be called consecutively to
+     * force a move for each enemy in a double battle.
+     */
+    await this.phaseInterceptor.to(EnemyCommandPhase);
+  }
+
+  forceEnemyToSwitch() {
     const originalMatchupScore = Trainer.prototype.getPartyMemberMatchupScores;
     Trainer.prototype.getPartyMemberMatchupScores = () => {
       Trainer.prototype.getPartyMemberMatchupScores = originalMatchupScore;

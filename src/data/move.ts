@@ -761,8 +761,7 @@ export default class Move implements Localizable {
         .flat(),
     );
     for (const aura of fieldAuras) {
-      // The only relevant values are `move` and the `power` holder
-      aura.applyPreAttack(null, null, simulated, null, this, [power]);
+      aura.applyPreAttack(source, null, simulated, target, this, [power]);
     }
 
     const alliedField: Pokemon[] = source instanceof PlayerPokemon ? source.scene.getPlayerField() : source.scene.getEnemyField();
@@ -2675,7 +2674,7 @@ export class AcupressureStatStageChangeAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
     const randStats = BATTLE_STATS.filter(s => target.getStatStage(s) < 6);
     if (randStats.length > 0) {
-      const boostStat = [randStats[Utils.randInt(randStats.length)]];
+      const boostStat = [randStats[user.randSeedInt(randStats.length)]];
       user.scene.unshiftPhase(new StatStageChangePhase(user.scene, target.getBattlerIndex(), this.selfTarget, boostStat, 2));
       return true;
     }
@@ -4333,72 +4332,6 @@ export class TypelessAttr extends MoveAttr { }
 */
 export class BypassRedirectAttr extends MoveAttr { }
 
-export class DisableMoveAttr extends MoveEffectAttr {
-  constructor() {
-    super(false);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    const moveQueue = target.getLastXMoves();
-    let turnMove: TurnMove | undefined;
-    while (moveQueue.length) {
-      turnMove = moveQueue.shift();
-      if (turnMove?.virtual) {
-        continue;
-      }
-
-      const moveIndex = target.getMoveset().findIndex(m => m?.moveId === turnMove?.move);
-      if (moveIndex === -1) {
-        return false;
-      }
-
-      const disabledMove = target.getMoveset()[moveIndex];
-      target.summonData.disabledMove = disabledMove?.moveId!; // TODO: is this bang correct?
-      target.summonData.disabledTurns = 4;
-
-      user.scene.queueMessage(i18next.t("abilityTriggers:postDefendMoveDisable", { pokemonNameWithAffix: getPokemonNameWithAffix(target), moveName: disabledMove?.getName()}));
-
-      return true;
-    }
-
-    return false;
-  }
-
-  getCondition(): MoveConditionFunc {
-    return (user, target, move): boolean => { // TODO: Not sure what to do here
-      if (target.summonData.disabledMove || target.isMax()) {
-        return false;
-      }
-
-      const moveQueue = target.getLastXMoves();
-      let turnMove: TurnMove | undefined;
-      while (moveQueue.length) {
-        turnMove = moveQueue.shift();
-        if (turnMove?.virtual) {
-          continue;
-        }
-
-        const move = target.getMoveset().find(m => m?.moveId === turnMove?.move);
-        if (!move) {
-          continue;
-        }
-
-        return true;
-      }
-
-      return false;
-    };
-  }
-
-  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    return -5;
-  }
-}
-
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
     super(true, MoveEffectTrigger.HIT, false, true);
@@ -4489,6 +4422,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     case BattlerTagType.INFATUATED:
     case BattlerTagType.NIGHTMARE:
     case BattlerTagType.DROWSY:
+    case BattlerTagType.DISABLED:
       return -5;
     case BattlerTagType.SEEDED:
     case BattlerTagType.SALT_CURED:
@@ -6674,7 +6608,8 @@ export function initMoves() {
     new AttackMove(Moves.SONIC_BOOM, Type.NORMAL, MoveCategory.SPECIAL, -1, 90, 20, -1, 0, 1)
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
-      .attr(DisableMoveAttr)
+      .attr(AddBattlerTagAttr, BattlerTagType.DISABLED, false, true)
+      .condition((user, target, move) => target.getMoveHistory().reverse().find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual) !== undefined)
       .condition(failOnMaxCondition),
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -1)

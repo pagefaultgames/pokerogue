@@ -65,5 +65,6 @@
   "suppressAbilities": "{{pokemonName}}'s ability\nwas suppressed!",
   "revivalBlessing": "{{pokemonName}} was revived!",
   "swapArenaTags": "{{pokemonName}} swapped the battle effects affecting each side of the field!",
-  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!"
+  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
+  "safeguard": "{{targetName}} is protected by Safeguard!"
 }
