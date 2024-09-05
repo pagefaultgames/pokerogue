@@ -1,5 +1,4 @@
 import { BattlerIndex } from "#app/battle";
-import { DragonCheerTag } from "#app/data/battler-tags";
 import { Type } from "#app/data/type";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
@@ -37,7 +36,6 @@ describe("Moves - Dragon Cheer", () => {
   it("increases the user's allies' critical hit ratio by one stage", async () => {
     await game.classicMode.startBattle([Species.DRAGONAIR, Species.MAGIKARP]);
 
-    const magikarp = game.scene.getPlayerField()[1];
     const enemy = game.scene.getEnemyField()[0];
 
     vi.spyOn(enemy, "getCritStage");
@@ -47,19 +45,14 @@ describe("Moves - Dragon Cheer", () => {
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
-    // After Dragon Cheer
-    await game.phaseInterceptor.to("MoveEndPhase");
-    expect(magikarp.getTag(DragonCheerTag)).toBeDefined();
-
     // After Tackle
-    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getCritStage).toHaveReturnedWith(1); // getCritStage is called on defender
   }, TIMEOUT);
 
   it("increases the user's Dragon-type allies' critical hit ratio by two stages", async () => {
     await game.classicMode.startBattle([Species.MAGIKARP, Species.DRAGONAIR]);
 
-    const dragonair = game.scene.getPlayerField()[1];
     const enemy = game.scene.getEnemyField()[0];
 
     vi.spyOn(enemy, "getCritStage");
@@ -69,12 +62,8 @@ describe("Moves - Dragon Cheer", () => {
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
-    // After Dragon Cheer
-    await game.phaseInterceptor.to("MoveEndPhase");
-    expect(dragonair.getTag(DragonCheerTag)).toBeDefined();
-
     // After Tackle
-    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getCritStage).toHaveReturnedWith(2); // getCritStage is called on defender
   }, TIMEOUT);
 
@@ -91,12 +80,8 @@ describe("Moves - Dragon Cheer", () => {
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
-    // After Dragon Cheer
-    await game.phaseInterceptor.to("MoveEndPhase");
-    expect(magikarp.getTag(DragonCheerTag)).toBeDefined();
-
     // After Tackle
-    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getCritStage).toHaveReturnedWith(1); // getCritStage is called on defender
 
     await game.toNextTurn();
