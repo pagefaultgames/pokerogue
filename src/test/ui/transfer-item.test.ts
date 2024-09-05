@@ -2,15 +2,15 @@ import { BerryType } from "#app/enums/berry-type";
 import { Button } from "#app/enums/buttons";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import { BattleEndPhase, SelectModifierPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
+import { BattleEndPhase } from "#app/phases/battle-end-phase";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
+import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
 
 
 describe("UI - Transfer Items", () => {
@@ -43,7 +43,7 @@ describe("UI - Transfer Items", () => {
 
     await game.startBattle([Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA]);
 
-    game.doAttack(getMovePosition(game.scene, 0, Moves.DRAGON_CLAW));
+    game.move.select(Moves.DRAGON_CLAW);
 
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);

@@ -1,12 +1,15 @@
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "#test/utils/gameManager";
-import { Species } from "#enums/species";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { MessagePhase } from "#app/phases/message-phase";
+import { MoveHeaderPhase } from "#app/phases/move-header-phase";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
+import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { BerryPhase, MessagePhase, MoveHeaderPhase, SwitchSummonPhase, TurnStartPhase } from "#app/phases";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const TIMEOUT = 20 * 1000;
 
@@ -47,7 +50,7 @@ describe("Moves - Focus Punch", () => {
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
+      game.move.select(Moves.FOCUS_PUNCH);
 
       await game.phaseInterceptor.to(MessagePhase);
 
@@ -74,7 +77,7 @@ describe("Moves - Focus Punch", () => {
 
       const enemyStartingHp = enemyPokemon.hp;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
+      game.move.select(Moves.FOCUS_PUNCH);
 
       await game.phaseInterceptor.to(MessagePhase);
 
@@ -99,7 +102,7 @@ describe("Moves - Focus Punch", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
+      game.move.select(Moves.FOCUS_PUNCH);
 
       await game.phaseInterceptor.to(MessagePhase); // Header message
 
@@ -120,8 +123,8 @@ describe("Moves - Focus Punch", () => {
 
       await game.startBattle([Species.CHARIZARD]);
 
-      game.forceOpponentToSwitch();
-      game.doAttack(getMovePosition(game.scene, 0, Moves.FOCUS_PUNCH));
+      game.forceEnemyToSwitch();
+      game.move.select(Moves.FOCUS_PUNCH);
 
       await game.phaseInterceptor.to(TurnStartPhase);
 

@@ -1,0 +1,14 @@
+{
+  "mega": "メガ{{pokemonName}}",
+  "mega-x": "メガ{{pokemonName}}X",
+  "mega-y": "メガ{{pokemonName}}Y",
+  "primal": "ゲンシ{{pokemonName}}",
+  "gigantamax": "キョダイ{{pokemonName}}",
+  "eternamax": "E・{{pokemonName}}",
+  "megaChange": "{{preName}}は\nメガ{{pokemonName}}に　メガシンカした！",
+  "gigantamaxChange": "{{preName}}は\nキョダイマックスした！",
+  "eternamaxChange": "{{preName}}は\nムゲンダイマックスした！",
+  "revertChange": "{{pokemonName}}は\n元の姿に　戻った！",
+  "formChange": "{{preName}}は\n姿を　変えた！",
+  "disguiseChange": "ばけのかわが　みがわりに　なった！"
+}
