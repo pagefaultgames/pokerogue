@@ -1863,6 +1863,30 @@ export class ExposedTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag that doubles the type effectiveness of a move.
+ * @extends BattlerTag
+ */
+export class DoubleMoveTypeEffectivenessTag extends BattlerTag {
+  /** The move's type effectiveness to be doubled. */
+  public moveType: Type;
+
+  constructor(moveType: Type, tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
+    super(tagType, lapseType, 1, sourceMove);
+
+    this.moveType = moveType;
+  }
+
+  /**
+   * If the Pokemon is terastallized, the tag cannot be added.
+   * @param pokemon the pokemon to which the tag is added
+   * @returns whether the tag is applied
+   */
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.isTerastallized();
+  }
+}
+
 
 export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
@@ -2002,6 +2026,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.GULP_MISSILE_ARROKUDA:
   case BattlerTagType.GULP_MISSILE_PIKACHU:
     return new GulpMissileTag(tagType, sourceMove);
+  case BattlerTagType.TAR_SHOT:
+    return new DoubleMoveTypeEffectivenessTag(Type.FIRE, tagType, BattlerTagLapseType.CUSTOM, sourceMove);
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

@@ -17,7 +17,7 @@ import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
 import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, DoubleMoveTypeEffectivenessTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
 import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr } from "../data/ability";
@@ -1348,7 +1348,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Calculates the effectiveness of a move against the Pokémon.
-   *
+   * This includes modifiers from move and ability attributes.
    * @param source {@linkcode Pokemon} The attacking Pokémon.
    * @param move {@linkcode Move} The move being used by the attacking Pokémon.
    * @param ignoreAbility Whether to ignore abilities that might affect type effectiveness or immunity (defaults to `false`).
@@ -1370,6 +1370,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
     if (this.getTypes().find(t => move.isTypeImmune(source, this, t))) {
       typeMultiplier.value = 0;
+    }
+
+    const doubleMoveTypeEffectiveness = this.getTag(DoubleMoveTypeEffectivenessTag);
+    if (doubleMoveTypeEffectiveness && doubleMoveTypeEffectiveness.moveType === this.getMoveType(move)) {
+      typeMultiplier.value *= 2;
     }
 
     const cancelledHolder = cancelled ?? new Utils.BooleanHolder(false);
@@ -1403,7 +1408,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculates the type effectiveness multiplier for an attack type
+   * Calculates the move's type effectiveness multiplier based on the target's type/s.
    * @param moveType {@linkcode Type} the type of the move being used
    * @param source {@linkcode Pokemon} the Pokemon using the move
    * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
