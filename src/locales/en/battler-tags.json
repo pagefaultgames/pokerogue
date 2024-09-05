@@ -70,5 +70,5 @@
   "stockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
   "disabledOnAdd": "{{pokemonNameWithAffix}}'s {{moveName}}\nwas disabled!",
   "disabledLapse": "{{pokemonNameWithAffix}}'s {{moveName}}\nis no longer disabled.",
-  "tarShotOnAdd": "The {{pokemonNameWithAffix}} became weaker to fire!"
+  "tarShotOnAdd": "{{pokemonNameWithAffix}} became weaker to fire!"
 }
