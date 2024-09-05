@@ -28,7 +28,7 @@ export default class GameChallengesUiHandler extends UiHandler {
 
   private descriptionText: BBCodeText;
 
-  private challengeLabels: Array<{ label: Phaser.GameObjects.Text, value: Phaser.GameObjects.Text }>;
+  private challengeLabels: Array<{ label: Phaser.GameObjects.Text, value: Phaser.GameObjects.Text, leftArrow: Phaser.GameObjects.Image, rightArrow: Phaser.GameObjects.Image }>;
   private monoTypeValue: Phaser.GameObjects.Sprite;
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
@@ -135,14 +135,31 @@ export default class GameChallengesUiHandler extends UiHandler {
 
       this.valuesContainer.add(label);
 
+      const leftArrow = this.scene.add.image(0, 0, "cursor_reverse");
+      leftArrow.setName(`challenge-left-arrow-${i}`);
+      leftArrow.setOrigin(0, 0);
+      leftArrow.setVisible(false);
+      leftArrow.setScale(0.75);
+      this.valuesContainer.add(leftArrow);
+
+      const rightArrow = this.scene.add.image(0, 0, "cursor");
+      rightArrow.setName(`challenge-right-arrow-${i}`);
+      rightArrow.setOrigin(0, 0);
+      rightArrow.setScale(0.75);
+      rightArrow.setVisible(false);
+      this.valuesContainer.add(rightArrow);
+
       const value = addTextObject(this.scene, 0, 28 + i * 16, "", TextStyle.SETTINGS_LABEL);
       value.setName(`challenge-value-text-${i}`);
+      value.setX((rightArrow.x - (leftArrow.x + leftArrow.width)) / 2);
       value.setPositionRelative(label, 100, 0);
       this.valuesContainer.add(value);
 
       this.challengeLabels[i] = {
         label: label,
-        value: value
+        value: value,
+        leftArrow: leftArrow,
+        rightArrow: rightArrow
       };
     }
 
@@ -191,6 +208,8 @@ export default class GameChallengesUiHandler extends UiHandler {
       if (i < this.scene.gameMode.challenges.length) {
         this.challengeLabels[i].label.setVisible(true);
         this.challengeLabels[i].value.setVisible(true);
+        this.challengeLabels[i].leftArrow.setVisible(true);
+        this.challengeLabels[i].rightArrow.setVisible(true);
       }
     }
   }
@@ -204,14 +223,20 @@ export default class GameChallengesUiHandler extends UiHandler {
     for (let i = 0; i < Math.min(9, this.scene.gameMode.challenges.length); i++) {
       const challenge = this.scene.gameMode.challenges[this.scrollCursor + i];
       this.challengeLabels[i].label.setText(challenge.getName());
+      this.challengeLabels[i].leftArrow.setPositionRelative(this.challengeLabels[i].label, 90, 4.5);
+      this.challengeLabels[i].leftArrow.setVisible(challenge.value !== 0);
+      this.challengeLabels[i].rightArrow.setPositionRelative(this.challengeLabels[i].label, 130, 4.5);
+      this.challengeLabels[i].rightArrow.setVisible(challenge.value !== challenge.maxValue);
       if (challenge.id === Challenges.SINGLE_TYPE) {
-        this.monoTypeValue.setPositionRelative(this.challengeLabels[i].label, 113, 8);
+        this.monoTypeValue.setPositionRelative(this.challengeLabels[i].label, 112, 8);
         this.monoTypeValue.setFrame(challenge.getValue());
         this.monoTypeValue.setVisible(true);
         this.challengeLabels[i].value.setVisible(false);
         monoTypeVisible = true;
       } else {
         this.challengeLabels[i].value.setText(challenge.getValue());
+        this.challengeLabels[i].value.setX(this.challengeLabels[i].rightArrow.x - (this.challengeLabels[i].rightArrow.x - (this.challengeLabels[i].leftArrow.x + this.challengeLabels[i].leftArrow.width)) / 2 - 0.5);
+        this.challengeLabels[i].value.setOrigin(0.5, 0);
         this.challengeLabels[i].value.setVisible(true);
       }
     }
