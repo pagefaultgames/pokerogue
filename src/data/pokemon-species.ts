@@ -579,15 +579,15 @@ export abstract class PokemonSpeciesForm {
 
 export default class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   public name: string;
-  public subLegendary: boolean;
-  public legendary: boolean;
-  public mythical: boolean;
-  public species: string;
-  public growthRate: GrowthRate;
-  public malePercent: number | null;
-  public genderDiffs: boolean;
-  public canChangeForm: boolean;
-  public forms: PokemonForm[];
+  readonly subLegendary: boolean;
+  readonly legendary: boolean;
+  readonly mythical: boolean;
+  readonly species: string;
+  readonly growthRate: GrowthRate;
+  readonly malePercent: number | null;
+  readonly genderDiffs: boolean;
+  readonly canChangeForm: boolean;
+  readonly forms: PokemonForm[];
 
   constructor(id: Species, generation: integer, subLegendary: boolean, legendary: boolean, mythical: boolean, species: string,
     type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
