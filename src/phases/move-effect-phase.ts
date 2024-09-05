@@ -14,7 +14,6 @@ import { PokemonMultiHitModifier, FlinchChanceModifier, EnemyAttackStatusEffectC
 import i18next from "i18next";
 import * as Utils from "#app/utils.js";
 import { PokemonPhase } from "./pokemon-phase";
-import { Abilities } from "#enums/abilities";
 
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
@@ -125,10 +124,6 @@ export class MoveEffectPhase extends PokemonPhase {
         /** Has the move successfully hit a target (for damage) yet? */
         let hasHit: boolean = false;
 
-        /** Hazards bounce if any opposing Pokémon has the ability **/
-        /** TODO: Update to support future Magic Coat / Magic Bounce implementation **/
-        let hazardBounce: boolean = false;
-
         for (const target of targets) {
           /**
              * If the move missed a target, stop all future hits against that target
@@ -162,17 +157,6 @@ export class MoveEffectPhase extends PokemonPhase {
 
           /** Does this phase represent the invoked move's first strike? */
           const firstHit = (user.turnData.hitsLeft === user.turnData.hitCount);
-
-          /** Check if current target is affected by Magic Bounce or used Magic Coat
-           *  If they did, then field hazards should be bounced back in their entirety
-           */
-          const bounceStatus = target.hasAbility(Abilities.MAGIC_BOUNCE) || (this.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move === Moves.MAGIC_COAT);
-          hazardBounce = hazardBounce && bounceStatus;
-
-          // Prevent ENEMY_SIDE targeted moves from occurring twice in double battles
-          if (move.moveTarget === MoveTarget.ENEMY_SIDE && target !== targets[targets.length-1]) {
-            continue;
-          }
 
           // Only log the move's result on the first strike
           if (firstHit) {
