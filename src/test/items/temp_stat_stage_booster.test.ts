@@ -148,7 +148,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     await game.phaseInterceptor.to(BattleEndPhase);
 
     const modifier = game.scene.findModifier(m => m instanceof TempStatStageBoosterModifier) as TempStatStageBoosterModifier;
-    expect(modifier.getBattlesLeft()).toBe(4);
+    expect(modifier.getBattleCount()).toBe(4);
 
     // Forced X_ATTACK to spawn in the first slot with override
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
@@ -166,7 +166,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     for (const m of game.scene.modifiers) {
       if (m instanceof TempStatStageBoosterModifier) {
         count++;
-        expect((m as TempStatStageBoosterModifier).getBattlesLeft()).toBe(5);
+        expect((m as TempStatStageBoosterModifier).getBattleCount()).toBe(5);
       }
     }
     expect(count).toBe(1);
