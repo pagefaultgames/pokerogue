@@ -222,6 +222,8 @@
     "TOXIC_ORB": { "name": "Toxic Orb", "description": "It's a bizarre orb that exudes toxins when touched and will badly poison the holder during battle." },
     "FLAME_ORB": { "name": "Flame Orb", "description": "It's a bizarre orb that gives off heat when touched and will affect the holder with a burn during battle." },
 
+    "EVOLUTION_TRACKER_GIMMIGHOUL": { "name": "Treasures", "description": "This Pokémon loves treasure! Keep collecting treasure and something might happen!"},
+
     "BATON": { "name": "Baton", "description": "Allows passing along effects when switching Pokémon, which also bypasses traps." },
 
     "SHINY_CHARM": { "name": "Shiny Charm", "description": "Dramatically increases the chance of a wild Pokémon being Shiny." },

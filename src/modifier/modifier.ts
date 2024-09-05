@@ -830,6 +830,41 @@ export class BaseStatModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class EvoTrackerModifier extends PokemonHeldItemModifier {
+  protected species: Species;
+  protected required: integer;
+  readonly isTransferrable: boolean = false;
+
+  constructor(type: ModifierType, pokemonId: integer, species: Species, required: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+    this.species = species;
+    this.required = required;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    if (modifier instanceof EvoTrackerModifier) {
+      return (modifier as EvoTrackerModifier).species === this.species;
+    }
+    return false;
+  }
+
+  clone(): PersistentModifier {
+    return new EvoTrackerModifier(this.type, this.pokemonId, this.species, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.species);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
+  }
+
+  getMaxHeldItemCount(_pokemon: Pokemon): integer {
+    return this.required;
+  }
+}
+
 /**
  * Modifier used for held items that apply {@linkcode Stat} boost(s)
  * using a multiplier.
@@ -2202,6 +2237,9 @@ export class MoneyRewardModifier extends ConsumableModifier {
     scene.getParty().map(p => {
       if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
         p.evoCounter++;
+        const modifierType: ModifierType = modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL();
+        const modifier = modifierType!.newModifier(p);
+        scene.addModifier(modifier);
       }
     });
 

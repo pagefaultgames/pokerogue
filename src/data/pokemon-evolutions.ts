@@ -992,8 +992,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.COSMOEM, 23, null, null)
   ],
   [Species.COSMOEM]: [
-    new SpeciesEvolution(Species.SOLGALEO, 53, EvolutionItem.SUN_FLUTE, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAWN || p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesEvolution(Species.LUNALA, 53, EvolutionItem.MOON_FLUTE, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.SOLGALEO, 53, EvolutionItem.SUN_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(Species.LUNALA, 53, EvolutionItem.MOON_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MELTAN]: [
     new SpeciesEvolution(Species.MELMETAL, 48, null, null)
