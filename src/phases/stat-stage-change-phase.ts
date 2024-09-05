@@ -6,7 +6,7 @@ import Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ResetNegativeStatStageModifier } from "#app/modifier/modifier";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import * as Utils from "#app/utils";
+import { NumberHolder, BooleanHolder } from "#app/utils";
 import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
@@ -42,7 +42,7 @@ export class StatStageChangePhase extends PokemonPhase {
       return this.end();
     }
 
-    const stages = new Utils.IntegerHolder(this.stages);
+    const stages = new NumberHolder(this.stages);
 
     if (!this.ignoreAbilities) {
       applyAbAttrs(StatStageChangeMultiplierAbAttr, pokemon, null, false, stages);
@@ -51,7 +51,7 @@ export class StatStageChangePhase extends PokemonPhase {
     let simulate = false;
 
     const filteredStats = this.stats.filter(stat => {
-      const cancelled = new Utils.BooleanHolder(false);
+      const cancelled = new BooleanHolder(false);
 
       if (!this.selfTarget && stages.value < 0) {
         // TODO: Include simulate boolean when tag applications can be simulated
