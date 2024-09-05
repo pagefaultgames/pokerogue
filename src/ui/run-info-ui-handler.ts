@@ -22,6 +22,8 @@ import { PokemonHeldItemModifier, TerastallizeModifier } from "../modifier/modif
 import {modifierSortFunc} from "../modifier/modifier";
 import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
+import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
+import { Device } from "#enums/devices";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -152,7 +154,13 @@ export default class RunInfoUiHandler extends UiHandler {
       const headerBgCoords = headerBg.getTopRight();
       const abilityButtonContainer = this.scene.add.container(0, 0);
       const abilityButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {fontSize:"34px"});
-      const abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "E.png");
+      const gamepadType = this.getGamepadType();
+      let abilityButtonElement: Phaser.GameObjects.Sprite;
+      if (gamepadType === "touch") {
+        abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "E.png");
+      } else {
+        abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, gamepadType, this.scene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability));
+      }
       abilityButtonContainer.add([abilityButtonText, abilityButtonElement]);
       abilityButtonContainer.setPosition(headerBgCoords.x - abilityButtonText.displayWidth - abilityButtonElement.displayWidth - 8, 10);
       this.runContainer.add(abilityButtonContainer);
@@ -181,11 +189,19 @@ export default class RunInfoUiHandler extends UiHandler {
     if (this.isVictory) {
       const hallofFameInstructionContainer = this.scene.add.container(0, 0);
       const shinyButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHallOfFame"), TextStyle.WINDOW, {fontSize:"65px"});
-      const shinyButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, "keyboard", "R.png");
+      const formButtonText = addTextObject(this.scene, 8, 12, i18next.t("runHistory:viewEndingSplash"), TextStyle.WINDOW, {fontSize:"65px"});
+      const gamepadType = this.getGamepadType();
+      let shinyButtonElement: Phaser.GameObjects.Sprite;
+      let formButtonElement: Phaser.GameObjects.Sprite;
+      if (gamepadType === "touch") {
+        shinyButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, "keyboard", "R.png");
+        formButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 16, "keyboard", "F.png");
+      } else {
+        shinyButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 4, gamepadType, this.scene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny));
+        formButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 16, gamepadType, this.scene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Form));
+      }
       hallofFameInstructionContainer.add([shinyButtonText, shinyButtonElement]);
 
-      const formButtonText = addTextObject(this.scene, 8, 12, i18next.t("runHistory:viewEndingSplash"), TextStyle.WINDOW, {fontSize:"65px"});
-      const formButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 16, "keyboard", "F.png");
       hallofFameInstructionContainer.add([formButtonText, formButtonElement]);
 
       hallofFameInstructionContainer.setPosition(12, 25);
@@ -881,6 +897,21 @@ export default class RunInfoUiHandler extends UiHandler {
         this.showParty(true);
       }
       break;
+    }
+  }
+
+  /**
+   * getGamepadType - returns the type of gamepad being used
+   * inputMethod could be "keyboard" or "touch" or "gamepad"
+   * if inputMethod is "keyboard" or "touch", then the inputMethod is returned
+   * if inputMethod is "gamepad", then the gamepad type is returned it could be "xbox" or "duelshock"
+   * @returns gamepad type
+   */
+  private getGamepadType(): string {
+    if (this.scene.inputMethod === "gamepad") {
+      return this.scene.inputController.getConfig(this.scene.inputController.selectedDevice[Device.GAMEPAD]).padType;
+    } else {
+      return this.scene.inputMethod;
     }
   }
 }
