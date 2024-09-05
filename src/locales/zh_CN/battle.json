@@ -44,6 +44,7 @@
   "moveNotImplemented": "{{moveName}}尚未实装，无法选择。",
   "moveNoPP": "这个技能的PP用完了",
   "moveDisabled": "{{moveName}}被禁用！",
+  "disableInterruptedMove": "{{pokemonNameWithAffix}}'s {{moveName}}\nis disabled!",
   "noPokeballForce": "一股无形的力量阻止了你使用精灵球。",
   "noPokeballTrainer": "你不能捕捉其他训练家的宝可梦！",
   "noPokeballMulti": "只能在剩下一只宝可梦时才能扔出精灵球！",
@@ -87,5 +88,4 @@
   "unlockedSomething": "{{unlockedThing}}\n已解锁。",
   "congratulations": "恭喜！",
   "beatModeFirstTime": "{{speciesName}}首次击败了{{gameMode}}！\n你获得了{{newModifier}}！",
-  "disableInterruptedMove": "{{pokemonNameWithAffix}}'s {{moveName}}\nis disabled!",
 }
