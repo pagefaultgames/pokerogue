@@ -6,7 +6,7 @@ import { getNatureName } from "../data/nature";
 import { Type } from "../data/type";
 import Pokemon from "../field/pokemon";
 import i18next from "i18next";
-import { DexAttr } from "../system/game-data";
+import { DexAttr, DexEntry, StarterDataEntry } from "../system/game-data";
 import * as Utils from "../utils";
 import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
@@ -24,7 +24,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     infoContainerTextSize: "64px"
   },
   "de": {
-    infoContainerTextSize: "64px"
+    infoContainerTextSize: "64px",
   },
   "es": {
     infoContainerTextSize: "64px"
@@ -63,6 +63,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private pokemonMovesContainers: Phaser.GameObjects.Container[];
   private pokemonMoveBgs: Phaser.GameObjects.NineSlice[];
   private pokemonMoveLabels: Phaser.GameObjects.Text[];
+  private infoBg;
 
   private numCharsBeforeCutoff = 16;
 
@@ -83,9 +84,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage?.includes(lang))!; // TODO: is this bang correct?
     const textSettings = languageSettings[langSettingKey];
-    const infoBg = addWindow(this.scene, 0, 0, this.infoWindowWidth, 132);
-    infoBg.setOrigin(0.5, 0.5);
-    infoBg.setName("window-info-bg");
+    this.infoBg = addWindow(this.scene, 0, 0, this.infoWindowWidth, 132);
+    this.infoBg.setOrigin(0.5, 0.5);
+    this.infoBg.setName("window-info-bg");
 
     this.pokemonMovesContainer = this.scene.add.container(6, 14);
     this.pokemonMovesContainer.setName("pkmn-moves");
@@ -133,7 +134,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
     this.statsContainer = new StatsContainer(this.scene, -48, -64, true);
 
-    this.add(infoBg);
+    this.add(this.infoBg);
     this.add(this.statsContainer);
 
     // The position should be set per language
@@ -207,9 +208,16 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.setVisible(false);
   }
 
-  show(pokemon: Pokemon, showMoves: boolean = false, speedMultiplier: number = 1): Promise<void> {
+  show(pokemon: Pokemon, showMoves: boolean = false, speedMultiplier: number = 1, dexEntry?: DexEntry, starterEntry?: StarterDataEntry, eggInfo = false): Promise<void> {
     return new Promise<void>(resolve => {
-      const caughtAttr = BigInt(pokemon.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr);
+      if (!dexEntry) {
+        dexEntry = pokemon.scene.gameData.dexData[pokemon.species.speciesId];
+      }
+      if (!starterEntry) {
+        starterEntry = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()];
+      }
+
+      const caughtAttr = BigInt(dexEntry.caughtAttr);
       if (pokemon.gender > Gender.GENDERLESS) {
         this.pokemonGenderText.setText(getGenderSymbol(pokemon.gender));
         this.pokemonGenderText.setColor(getGenderColor(pokemon.gender));
@@ -268,7 +276,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       const opponentPokemonAbilityIndex = (opponentPokemonOneNormalAbility && pokemon.abilityIndex === 1) ? 2 : pokemon.abilityIndex;
       const opponentPokemonAbilityAttr = 1 << opponentPokemonAbilityIndex;
 
-      const rootFormHasHiddenAbility = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & opponentPokemonAbilityAttr;
+      const rootFormHasHiddenAbility = starterEntry.abilityAttr & opponentPokemonAbilityAttr;
 
       if (!rootFormHasHiddenAbility) {
         this.pokemonAbilityLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
@@ -280,7 +288,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       this.pokemonNatureText.setText(getNatureName(pokemon.getNature(), true, false, false, this.scene.uiTheme));
 
-      const dexNatures = pokemon.scene.gameData.dexData[pokemon.species.speciesId].natureAttr;
+      const dexNatures = dexEntry.natureAttr;
       const newNature = 1 << (pokemon.nature + 1);
 
       if (!(dexNatures & newNature)) {
@@ -324,31 +332,31 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       }
 
       const starterSpeciesId = pokemon.species.getRootSpeciesId();
-      const originalIvs: integer[] | null = this.scene.gameData.dexData[starterSpeciesId].caughtAttr
-        ? this.scene.gameData.dexData[starterSpeciesId].ivs
-        : null;
+      const originalIvs: integer[] | null = eggInfo ? (dexEntry.caughtAttr ? dexEntry.ivs : null) : (this.scene.gameData.dexData[starterSpeciesId].caughtAttr
+        ? this.scene.gameData.dexData[starterSpeciesId].ivs : null);
 
       this.statsContainer.updateIvs(pokemon.ivs, originalIvs!); // TODO: is this bang correct?
-
-      this.scene.tweens.add({
-        targets: this,
-        duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
-        ease: "Cubic.easeInOut",
-        x: this.initialX - this.infoWindowWidth,
-        onComplete: () => {
-          resolve();
-        }
-      });
-
-      if (showMoves) {
+      if (!eggInfo) {
         this.scene.tweens.add({
-          delay: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
-          targets: this.pokemonMovesContainer,
-          duration: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
+          targets: this,
+          duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
           ease: "Cubic.easeInOut",
-          x: this.movesContainerInitialX - 57,
-          onComplete: () => resolve()
+          x: this.initialX - this.infoWindowWidth,
+          onComplete: () => {
+            resolve();
+          }
         });
+
+        if (showMoves) {
+          this.scene.tweens.add({
+            delay: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
+            targets: this.pokemonMovesContainer,
+            duration: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
+            ease: "Cubic.easeInOut",
+            x: this.movesContainerInitialX - 57,
+            onComplete: () => resolve()
+          });
+        }
       }
 
       for (let m = 0; m < 4; m++) {
@@ -362,6 +370,36 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.shown = true;
       this.scene.hideEnemyModifierBar();
     });
+  }
+
+  changeToEggSummaryLayout() {
+    // The position should be set per language (and shifted for new layout)
+    const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage?.includes(lang))!; // TODO: is this bang correct?
+    const textSettings = languageSettings[langSettingKey];
+
+    const eggLabelTextOffset = 43;
+    const infoContainerLabelXPos = (textSettings?.infoContainerLabelXPos || -18) + eggLabelTextOffset;
+    const infoContainerTextXPos = (textSettings?.infoContainerTextXPos || -14) + eggLabelTextOffset;
+
+    this.x = this.initialX - this.infoWindowWidth;
+
+    this.pokemonGenderText.setPosition(89, -2);
+    this.pokemonGenderNewText.setPosition(79, -2);
+    this.pokemonShinyIcon.setPosition(82, 87);
+    this.pokemonShinyNewIcon.setPosition(72, 87);
+
+    this.pokemonFormLabelText.setPosition(infoContainerLabelXPos, 152);
+    this.pokemonFormText.setPosition(infoContainerTextXPos, 152);
+    this.pokemonAbilityLabelText.setPosition(infoContainerLabelXPos, 110);
+    this.pokemonAbilityText.setPosition(infoContainerTextXPos, 110);
+    this.pokemonNatureLabelText.setPosition(infoContainerLabelXPos, 125);
+    this.pokemonNatureText.setPosition(infoContainerTextXPos, 125);
+
+    this.statsContainer.setScale(0.7);
+    this.statsContainer.setPosition(30, -3);
+    this.infoBg.setVisible(false);
+    this.pokemonMovesContainer.setVisible(false);
   }
 
   makeRoomForConfirmUi(speedMultiplier: number = 1, fromCatch: boolean = false): Promise<void> {

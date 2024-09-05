@@ -17,7 +17,7 @@ import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
 import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
 import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr } from "../data/ability";
@@ -2662,11 +2662,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     for (const tag of source.summonData.tags) {
-
-      // bypass those can not be passed via Baton Pass
-      const excludeTagTypes = new Set([BattlerTagType.DROWSY, BattlerTagType.INFATUATED, BattlerTagType.FIRE_BOOST]);
-
-      if (excludeTagTypes.has(tag.tagType)) {
+      if (!tag.isBatonPassable) {
         continue;
       }
 
@@ -2674,6 +2670,33 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.updateInfo();
+  }
+
+  /**
+   * Gets whether the given move is currently disabled for this Pokemon.
+   *
+   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
+   * @returns {boolean} `true` if the move is disabled for this Pokemon, otherwise `false`
+   *
+   * @see {@linkcode MoveRestrictionBattlerTag}
+   */
+  isMoveRestricted(moveId: Moves): boolean {
+    return this.getRestrictingTag(moveId) !== null;
+  }
+
+  /**
+   * Gets the {@link MoveRestrictionBattlerTag} that is restricting a move, if it exists.
+   *
+   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
+   * @returns {MoveRestrictionBattlerTag | null} the first tag on this Pokemon that restricts the move, or `null` if the move is not restricted.
+   */
+  getRestrictingTag(moveId: Moves): MoveRestrictionBattlerTag | null {
+    for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
+      if ((tag as MoveRestrictionBattlerTag).isMoveRestricted(moveId)) {
+        return tag as MoveRestrictionBattlerTag;
+      }
+    }
+    return null;
   }
 
   getMoveHistory(): TurnMove[] {
@@ -4464,8 +4487,6 @@ export interface AttackMoveResult {
 export class PokemonSummonData {
   public statStages: number[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public moveQueue: QueuedMove[] = [];
-  public disabledMove: Moves = Moves.NONE;
-  public disabledTurns: number = 0;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
   public abilitiesApplied: Abilities[] = [];
@@ -4546,7 +4567,7 @@ export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | Hit
  * It links to {@linkcode Move} class via the move ID.
  * Compared to {@linkcode Move}, this class also tracks if a move has received.
  * PP Ups, amount of PP used, and things like that.
- * @see {@linkcode isUsable} - checks if move is disabled, out of PP, or not implemented.
+ * @see {@linkcode isUsable} - checks if move is restricted, out of PP, or not implemented.
  * @see {@linkcode getMove} - returns {@linkcode Move} object by looking it up via ID.
  * @see {@linkcode usePp} - removes a point of PP from the move.
  * @see {@linkcode getMovePp} - returns amount of PP a move currently has.
@@ -4566,11 +4587,25 @@ export class PokemonMove {
     this.virtual = !!virtual;
   }
 
-  isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
-    if (this.moveId && pokemon.summonData?.disabledMove === this.moveId) {
+  /**
+   * Checks whether the move can be selected or performed by a Pokemon, without consideration for the move's targets.
+   * The move is unusable if it is out of PP, restricted by an effect, or unimplemented.
+   *
+   * @param {Pokemon} pokemon {@linkcode Pokemon} that would be using this move
+   * @param {boolean} ignorePp If `true`, skips the PP check
+   * @param {boolean} ignoreRestrictionTags If `true`, skips the check for move restriction tags (see {@link MoveRestrictionBattlerTag})
+   * @returns `true` if the move can be selected and used by the Pokemon, otherwise `false`.
+   */
+  isUsable(pokemon: Pokemon, ignorePp?: boolean, ignoreRestrictionTags?: boolean): boolean {
+    if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId)) {
       return false;
     }
-    return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(" (N)");
+
+    if (this.getMove().name.endsWith(" (N)")) {
+      return false;
+    }
+
+    return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1);
   }
 
   getMove(): Move {
