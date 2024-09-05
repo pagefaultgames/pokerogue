@@ -396,7 +396,7 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
     const doubleBattleChance = args[0] as Utils.NumberHolder;
     // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using Utils.randSeedInt
     // A double battle will initiate if the generated number is 0
-    doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 2);
+    doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 4);
 
     return true;
   }
@@ -419,9 +419,8 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
     this.stat = stat;
     // Note that, because we want X Accuracy to maintain its original behavior,
     // it will increment as it did previously, directly to the stat stage.
-    this.multiplierBoost = stat !== Stat.ACC ? 0.3 : 1;
+    this.multiplierBoost = (stat !== Stat.ACC) ? 0.3 : 1;
   }
-
 
   match(modifier: Modifier): boolean {
     if (modifier instanceof TempStatStageBoosterModifier) {
