@@ -5,6 +5,20 @@ import { Mode } from "./ui";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
 
+
+interface LanguageSetting {
+  inputFieldFontSize?: string,
+  warningMessageFontSize?: string,
+  errorMessageFontSize?: string,
+}
+
+const languageSettings: { [key: string]: LanguageSetting } = {
+  "es":{
+    inputFieldFontSize: "50px",
+    errorMessageFontSize: "40px",
+  }
+};
+
 export default class RegistrationFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
     return i18next.t("menu:register");
@@ -50,7 +64,17 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
   setup(): void {
     super.setup();
 
-    const label = addTextObject(this.scene, 10, 87, i18next.t("menu:registrationAgeWarning"), TextStyle.TOOLTIP_CONTENT, { fontSize: "42px" });
+    this.modalContainer.list.forEach((child: Phaser.GameObjects.GameObject) => {
+      if (child instanceof Phaser.GameObjects.Text && child !== this.titleText) {
+        const inputFieldFontSize = languageSettings[i18next.resolvedLanguage!]?.inputFieldFontSize;
+        if (inputFieldFontSize) {
+          child.setFontSize(inputFieldFontSize);
+        }
+      }
+    });
+
+    const warningMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.warningMessageFontSize ?? "42px";
+    const label = addTextObject(this.scene, 10, 87, i18next.t("menu:registrationAgeWarning"), TextStyle.TOOLTIP_CONTENT, { fontSize: warningMessageFontSize});
 
     this.modalContainer.add(label);
   }
@@ -68,6 +92,10 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
         const onFail = error => {
           this.scene.ui.setMode(Mode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
           this.scene.ui.playError();
+          const errorMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.errorMessageFontSize;
+          if (errorMessageFontSize) {
+            this.errorMessage.setFontSize(errorMessageFontSize);
+          }
         };
         if (!this.inputs[0].text) {
           return onFail(i18next.t("menu:emptyUsername"));

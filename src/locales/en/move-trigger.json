@@ -66,6 +66,6 @@
   "revivalBlessing": "{{pokemonName}} was revived!",
   "swapArenaTags": "{{pokemonName}} swapped the battle effects affecting each side of the field!",
   "trickOnSwap": "{{pokemonNameWithAffix}} switched items with its target!",
-  "trickFoeNewItem": "{{pokemonNameWithAffix}} obtained one {{itemName}}.",
-  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!"
+  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
+  "safeguard": "{{targetName}} is protected by Safeguard!"
 }
