@@ -3,26 +3,24 @@ import BattleScene, { AnySound } from "../battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, StatusMoveTypeImmunityAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, OneHitKOAccuracyAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
-import { Stat } from "../data/pokemon-stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
+import { Stat, type PermanentStat, type BattleStat, type EffectiveStat, PERMANENT_STATS, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
+import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier } from "../modifier/modifier";
 import { PokeballType } from "../data/pokeball";
 import { Gender } from "../data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "../data/battle-anims";
 import { Status, StatusEffect, getRandomStatus } from "../data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "../data/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "../data/tms";
-import { BattleStat } from "../data/battle-stat";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag } from "../data/battler-tags";
 import { WeatherType } from "../data/weather";
-import { TempBattleStat } from "../data/temp-battle-stat";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "../data/arena-tag";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldBattleStatMultiplierAbAttrs, FieldMultiplyBattleStatAbAttr, AddSecondStrikeAbAttr, IgnoreOpponentEvasionAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr } from "../data/ability";
+import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr } from "../data/ability";
 import PokemonData from "../system/pokemon-data";
 import { BattlerIndex } from "../battle";
 import { Mode } from "../ui/ui";
@@ -40,7 +38,7 @@ import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { speciesEggMoves } from "../data/egg-moves";
 import { ModifierTier } from "../modifier/modifier-tier";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
@@ -49,16 +47,17 @@ import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { DamagePhase } from "#app/phases/damage-phase.js";
-import { FaintPhase } from "#app/phases/faint-phase.js";
-import { LearnMovePhase } from "#app/phases/learn-move-phase.js";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { MoveEndPhase } from "#app/phases/move-end-phase.js";
-import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase.js";
-import { StatChangePhase } from "#app/phases/stat-change-phase.js";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase.js";
-import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase.js";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { DamagePhase } from "#app/phases/damage-phase";
+import { FaintPhase } from "#app/phases/faint-phase";
+import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
+import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
+import { Challenges } from "#enums/challenges";
 
 export enum FieldPosition {
   CENTER,
@@ -118,6 +117,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public maskEnabled: boolean;
   public maskSprite: Phaser.GameObjects.Sprite | null;
 
+  public usedTMs: Moves[];
+
   private shinySparkle: Phaser.GameObjects.Sprite;
 
   constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
@@ -132,9 +133,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
     }
 
-    const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value);
-    const randAbilityIndex = Utils.randSeedInt(2);
-
     this.species = species;
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
@@ -145,6 +143,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.abilityIndex = abilityIndex; // Use the provided ability index if it is defined
     } else {
       // If abilityIndex is not provided, determine it based on species and hidden ability
+      const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value);
+      const randAbilityIndex = Utils.randSeedInt(2);
       if (species.abilityHidden && hasHiddenAbility) {
         // If the species has a hidden ability and the hidden ability is present
         this.abilityIndex = 2;
@@ -195,6 +195,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionVariant = dataSource.fusionVariant || 0;
       this.fusionGender = dataSource.fusionGender;
       this.fusionLuck = dataSource.fusionLuck;
+      this.usedTMs = dataSource.usedTMs ?? [];
     } else {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
@@ -250,7 +251,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.shiny = false;
     }
 
-    this.calculateStats();
+    if (!dataSource) {
+      this.calculateStats();
+    }
   }
 
 
@@ -671,49 +674,139 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  getStat(stat: Stat): integer {
+  /**
+   * Retrieves the entire set of stats of the {@linkcode Pokemon}.
+   * @param bypassSummonData prefer actual stats (`true` by default) or in-battle overriden stats (`false`)
+   * @returns the numeric values of the {@linkcode Pokemon}'s stats
+   */
+  getStats(bypassSummonData: boolean = true): number[] {
+    if (!bypassSummonData && this.summonData?.stats) {
+      return this.summonData.stats;
+    }
+    return this.stats;
+  }
+
+  /**
+   * Retrieves the corresponding {@linkcode PermanentStat} of the {@linkcode Pokemon}.
+   * @param stat the desired {@linkcode PermanentStat}
+   * @param bypassSummonData prefer actual stats (`true` by default) or in-battle overridden stats (`false`)
+   * @returns the numeric value of the desired {@linkcode Stat}
+   */
+  getStat(stat: PermanentStat, bypassSummonData: boolean = true): number {
+    if (!bypassSummonData && this.summonData && (this.summonData.stats[stat] !== 0)) {
+      return this.summonData.stats[stat];
+    }
     return this.stats[stat];
   }
 
-  getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
-    if (stat === Stat.HP) {
-      return this.getStat(Stat.HP);
-    }
-    const battleStat = (stat - 1) as BattleStat;
-    const statLevel = new Utils.IntegerHolder(this.summonData.battleStats[battleStat]);
-    if (opponent) {
-      if (isCritical) {
-        switch (stat) {
-        case Stat.ATK:
-        case Stat.SPATK:
-          statLevel.value = Math.max(statLevel.value, 0);
-          break;
-        case Stat.DEF:
-        case Stat.SPDEF:
-          statLevel.value = Math.min(statLevel.value, 0);
-          break;
-        }
-      }
-      applyAbAttrs(IgnoreOpponentStatChangesAbAttr, opponent, null, false, statLevel);
-      if (move) {
-        applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, opponent, move, statLevel);
+  /**
+   * Writes the value to the corrseponding {@linkcode PermanentStat} of the {@linkcode Pokemon}.
+   *
+   * Note that this does nothing if {@linkcode value} is less than 0.
+   * @param stat the desired {@linkcode PermanentStat} to be overwritten
+   * @param value the desired numeric value
+   * @param bypassSummonData write to actual stats (`true` by default) or in-battle overridden stats (`false`)
+   */
+  setStat(stat: PermanentStat, value: number, bypassSummonData: boolean = true): void {
+    if (value >= 0) {
+      if (!bypassSummonData && this.summonData) {
+        this.summonData.stats[stat] = value;
+      } else {
+        this.stats[stat] = value;
       }
     }
-    if (this.isPlayer()) {
-      this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
+  }
+
+  /**
+   * Retrieves the entire set of in-battle stat stages of the {@linkcode Pokemon}.
+   * @returns the numeric values of the {@linkcode Pokemon}'s in-battle stat stages if available, a fresh stat stage array otherwise
+   */
+  getStatStages(): number[] {
+    return this.summonData ? this.summonData.statStages : [ 0, 0, 0, 0, 0, 0, 0 ];
+  }
+
+  /**
+   * Retrieves the in-battle stage of the specified {@linkcode BattleStat}.
+   * @param stat the {@linkcode BattleStat} whose stage is desired
+   * @returns the stage of the desired {@linkcode BattleStat} if available, 0 otherwise
+   */
+  getStatStage(stat: BattleStat): number {
+    return this.summonData ? this.summonData.statStages[stat - 1] : 0;
+  }
+
+  /**
+   * Writes the value to the in-battle stage of the corresponding {@linkcode BattleStat} of the {@linkcode Pokemon}.
+   *
+   * Note that, if the value is not within a range of [-6, 6], it will be forced to the closest range bound.
+   * @param stat the {@linkcode BattleStat} whose stage is to be overwritten
+   * @param value the desired numeric value
+   */
+  setStatStage(stat: BattleStat, value: number): void {
+    if (this.summonData) {
+      if (value >= -6) {
+        this.summonData.statStages[stat - 1] = Math.min(value, 6);
+      } else {
+        this.summonData.statStages[stat - 1] = Math.max(value, -6);
+      }
     }
-    const statValue = new Utils.NumberHolder(this.getStat(stat));
+  }
+
+  /**
+   * Retrieves the critical-hit stage considering the move used and the Pokemon
+   * who used it.
+   * @param source the {@linkcode Pokemon} who using the move
+   * @param move the {@linkcode Move} being used
+   * @returns the final critical-hit stage value
+   */
+  getCritStage(source: Pokemon, move: Move): number {
+    const critStage = new Utils.IntegerHolder(0);
+    applyMoveAttrs(HighCritAttr, source, this, move, critStage);
+    this.scene.applyModifiers(CritBoosterModifier, source.isPlayer(), source, critStage);
+    this.scene.applyModifiers(TempCritBoosterModifier, source.isPlayer(), critStage);
+    const bonusCrit = new Utils.BooleanHolder(false);
+    //@ts-ignore
+    if (applyAbAttrs(BonusCritAbAttr, source, null, false, bonusCrit)) { // TODO: resolve ts-ignore. This is a promise. Checking a promise is bogus.
+      if (bonusCrit.value) {
+        critStage.value += 1;
+      }
+    }
+    const critBoostTag = source.getTag(CritBoostTag);
+    if (critBoostTag) {
+      if (critBoostTag instanceof DragonCheerTag) {
+        critStage.value += critBoostTag.typesOnAdd.includes(Type.DRAGON) ? 2 : 1;
+      } else {
+        critStage.value += 2;
+      }
+    }
+
+    console.log(`crit stage: +${critStage.value}`);
+    return critStage.value;
+  }
+
+  /**
+   * Calculates and retrieves the final value of a stat considering any held
+   * items, move effects, opponent abilities, and whether there was a critical
+   * hit.
+   * @param stat the desired {@linkcode EffectiveStat}
+   * @param opponent the target {@linkcode Pokemon}
+   * @param move the {@linkcode Move} being used
+   * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
+   * @returns the final in-battle value of a stat
+   */
+  getEffectiveStat(stat: EffectiveStat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
+    const statValue = new Utils.NumberHolder(this.getStat(stat, false));
     this.scene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
 
     const fieldApplied = new Utils.BooleanHolder(false);
     for (const pokemon of this.scene.getField(true)) {
-      applyFieldBattleStatMultiplierAbAttrs(FieldMultiplyBattleStatAbAttr, pokemon, stat, statValue, this, fieldApplied);
+      applyFieldStatMultiplierAbAttrs(FieldMultiplyStatAbAttr, pokemon, stat, statValue, this, fieldApplied);
       if (fieldApplied.value) {
         break;
       }
     }
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue);
-    let ret = statValue.value * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
+    applyStatMultiplierAbAttrs(StatMultiplierAbAttr, this, stat, statValue);
+    let ret = statValue.value * this.getStatStageMultiplier(stat, opponent, move, isCritical);
+
     switch (stat) {
     case Stat.ATK:
       if (this.getTag(BattlerTagType.SLOW_START)) {
@@ -760,24 +853,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.stats) {
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
     }
-    const baseStats = this.getSpeciesForm().baseStats.slice(0);
-    if (this.fusionSpecies) {
-      const fusionBaseStats = this.getFusionSpeciesForm().baseStats;
-      for (let s = 0; s < this.stats.length; s++) {
+
+    // Get and manipulate base stats
+    const baseStats = this.getSpeciesForm(true).baseStats.slice();
+    if (this.isFusion()) {
+      const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
+      for (const s of PERMANENT_STATS) {
         baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
       }
     } else if (this.scene.gameMode.isSplicedOnly) {
-      for (let s = 0; s < this.stats.length; s++) {
+      for (const s of PERMANENT_STATS) {
         baseStats[s] = Math.ceil(baseStats[s] / 2);
       }
     }
-    this.scene.applyModifiers(PokemonBaseStatModifier, this.isPlayer(), this, baseStats);
-    const stats = Utils.getEnumValues(Stat);
-    for (const s of stats) {
-      const isHp = s === Stat.HP;
-      const baseStat = baseStats[s];
-      let value = Math.floor(((2 * baseStat + this.ivs[s]) * this.level) * 0.01);
-      if (isHp) {
+    this.scene.applyModifiers(BaseStatModifier, this.isPlayer(), this, baseStats);
+
+    // Using base stats, calculate and store stats one by one
+    for (const s of PERMANENT_STATS) {
+      let value = Math.floor(((2 * baseStats[s] + this.ivs[s]) * this.level) * 0.01);
+      if (s === Stat.HP) {
         value = value + this.level + 10;
         if (this.hasAbility(Abilities.WONDER_GUARD, false, true)) {
           value = 1;
@@ -798,7 +892,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           value = Math.max(Math[natureStatMultiplier.value > 1 ? "ceil" : "floor"](value * natureStatMultiplier.value), 1);
         }
       }
-      this.stats[s] = value;
+
+      this.setStat(s, value);
     }
   }
 
@@ -933,7 +1028,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.metBiome === -1 && !this.scene.gameMode.isFreshStartChallenge() && !this.scene.gameMode.isDaily) {
       levelMoves = this.getUnlockedEggMoves().concat(levelMoves);
     }
-    return levelMoves.filter(lm => !this.moveset.some(m => m?.moveId === lm));
+    if (Array.isArray(this.usedTMs) && this.usedTMs.length > 0) {
+      levelMoves = this.usedTMs.filter(m => !levelMoves.includes(m)).concat(levelMoves);
+    }
+    levelMoves = levelMoves.filter(lm => !this.moveset.some(m => m?.moveId === lm));
+    return levelMoves;
   }
 
   /**
@@ -1140,7 +1239,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * effects which can affect whether an ability will be present or in effect, and both passive and
    * non-passive. This is the primary way to check whether a pokemon has a particular ability.
    * @param {Abilities} ability The ability to check for
-   * @param {boolean} canApply If false, it doesn't check whether the abiltiy is currently active
+   * @param {boolean} canApply If false, it doesn't check whether the ability is currently active
    * @param {boolean} ignoreOverride If true, it ignores ability changing effects
    * @returns {boolean} Whether the ability is present and active
    */
@@ -1208,60 +1307,110 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculates the effectiveness of a move against the Pokémon.
-   *
-   * @param source - The Pokémon using the move.
-   * @param move - The move being used.
-   * @returns The type damage multiplier or 1 if it's a status move
+   * Determines whether this Pokemon is prevented from running or switching due
+   * to effects from moves and/or abilities.
+   * @param trappedAbMessages `string[]` If defined, ability trigger messages
+   * (e.g. from Shadow Tag) are forwarded through this array.
+   * @param simulated `boolean` if `true`, applies abilities via simulated calls.
+   * @returns
    */
-  getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
-    if (move.getMove().category === MoveCategory.STATUS) {
-      return 1;
+  isTrapped(trappedAbMessages: string[] = [], simulated: boolean = true): boolean {
+    if (this.isOfType(Type.GHOST)) {
+      return false;
     }
 
-    return this.getAttackMoveEffectiveness(source, move, !this.battleData?.abilityRevealed);
+    const trappedByAbility = new Utils.BooleanHolder(false);
+
+    this.scene.getEnemyField()!.forEach(enemyPokemon =>
+      applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trappedByAbility, this, trappedAbMessages, simulated)
+    );
+
+    return (trappedByAbility.value || !!this.getTag(TrappedTag));
   }
 
   /**
-   * Calculates the effectiveness of an attack move against the Pokémon.
+   * Calculates the type of a move when used by this Pokemon after
+   * type-changing move and ability attributes have applied.
+   * @param move {@linkcode Move} The move being used.
+   * @param simulated If `true`, prevents showing abilities applied in this calculation.
+   * @returns the {@linkcode Type} of the move after attributes are applied
+   */
+  getMoveType(move: Move, simulated: boolean = true): Type {
+    const moveTypeHolder = new Utils.NumberHolder(move.type);
+
+    applyMoveAttrs(VariableMoveTypeAttr, this, null, move, moveTypeHolder);
+    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, this, null, move, simulated, moveTypeHolder);
+
+    return moveTypeHolder.value as Type;
+  }
+
+
+
+  /**
+   * Calculates the effectiveness of a move against the Pokémon.
    *
-   * @param source - The attacking Pokémon.
-   * @param pokemonMove - The move being used by the attacking Pokémon.
-   * @param ignoreAbility - Whether to check for abilities that might affect type effectiveness or immunity.
+   * @param source {@linkcode Pokemon} The attacking Pokémon.
+   * @param move {@linkcode Move} The move being used by the attacking Pokémon.
+   * @param ignoreAbility Whether to ignore abilities that might affect type effectiveness or immunity (defaults to `false`).
+   * @param simulated Whether to apply abilities via simulated calls (defaults to `true`)
+   * @param cancelled {@linkcode Utils.BooleanHolder} Stores whether the move was cancelled by a non-type-based immunity.
+   * Currently only used by {@linkcode Pokemon.apply} to determine whether a "No effect" message should be shown.
    * @returns The type damage multiplier, indicating the effectiveness of the move
    */
-  getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove, ignoreAbility: boolean = false): TypeDamageMultiplier {
-    const move = pokemonMove.getMove();
-    const typeless = move.hasAttr(TypelessAttr);
-    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move, source));
-    const cancelled = new Utils.BooleanHolder(false);
-    applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
-    if (!typeless && !ignoreAbility) {
-      applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, true, typeMultiplier);
+  getMoveEffectiveness(source: Pokemon, move: Move, ignoreAbility: boolean = false, simulated: boolean = true, cancelled?: Utils.BooleanHolder): TypeDamageMultiplier {
+    if (move.hasAttr(TypelessAttr)) {
+      return 1;
     }
-    if (!cancelled.value && !ignoreAbility) {
-      applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, true, typeMultiplier);
+    const moveType = source.getMoveType(move);
+
+    const typeMultiplier = new Utils.NumberHolder((move.category !== MoveCategory.STATUS || move.hasAttr(RespectAttackTypeImmunityAttr))
+      ? this.getAttackTypeEffectiveness(moveType, source, false, simulated)
+      : 1);
+
+    applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
+    if (this.getTypes().find(t => move.isTypeImmune(source, this, t))) {
+      typeMultiplier.value = 0;
     }
 
-    return (!cancelled.value ? Number(typeMultiplier.value) : 0) as TypeDamageMultiplier;
+    const cancelledHolder = cancelled ?? new Utils.BooleanHolder(false);
+    if (!ignoreAbility) {
+      applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelledHolder, simulated, typeMultiplier);
+
+      if (!cancelledHolder.value) {
+        applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelledHolder, simulated, typeMultiplier);
+      }
+
+      if (!cancelledHolder.value) {
+        const defendingSidePlayField = this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField();
+        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelledHolder));
+      }
+    }
+
+    const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
+    for (const tag of immuneTags) {
+      if (move && !move.getAttrs(HitsTagAttr).some(attr => attr.tagType === tag.tagType)) {
+        typeMultiplier.value = 0;
+        break;
+      }
+    }
+
+    // Apply Tera Shell's effect to attacks after all immunities are accounted for
+    if (!ignoreAbility && move.category !== MoveCategory.STATUS) {
+      applyPreDefendAbAttrs(FullHpResistTypeAbAttr, this, source, move, cancelledHolder, simulated, typeMultiplier);
+    }
+
+    return (!cancelledHolder.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
   }
 
   /**
    * Calculates the type effectiveness multiplier for an attack type
-   * @param moveOrType The move being used, or a type if the move is unknown
-   * @param source the Pokemon using the move
+   * @param moveType {@linkcode Type} the type of the move being used
+   * @param source {@linkcode Pokemon} the Pokemon using the move
    * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
    * @param simulated tag to only apply the strong winds effect message when the move is used
    * @returns a multiplier for the type effectiveness
    */
-  getAttackTypeEffectiveness(moveOrType: Move | Type, source?: Pokemon, ignoreStrongWinds: boolean = false, simulated: boolean = true): TypeDamageMultiplier {
-    const move = (moveOrType instanceof Move)
-      ? moveOrType
-      : undefined;
-    const moveType = (moveOrType instanceof Move)
-      ? move!.type // TODO: is this bang correct?
-      : moveOrType;
-
+  getAttackTypeEffectiveness(moveType: Type, source?: Pokemon, ignoreStrongWinds: boolean = false, simulated: boolean = true): TypeDamageMultiplier {
     if (moveType === Type.STELLAR) {
       return this.isTerastallized() ? 2 : 1;
     }
@@ -1281,7 +1430,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (source) {
         const ignoreImmunity = new Utils.BooleanHolder(false);
         if (source.isActive(true) && source.hasAbilityWithAttr(IgnoreTypeImmunityAbAttr)) {
-          applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, false, moveType, defType);
+          applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, simulated, moveType, defType);
         }
         if (ignoreImmunity.value) {
           return 1;
@@ -1292,26 +1441,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           return 1;
         }
       }
-
-      return getTypeDamageMultiplier(moveType, defType);
+      const multiplier = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, defType));
+      applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
+      return multiplier.value;
     }).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
 
+    const typeMultiplierAgainstFlying = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, Type.FLYING));
+    applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, typeMultiplierAgainstFlying);
     // Handle strong winds lowering effectiveness of types super effective against pure flying
-    if (!ignoreStrongWinds && arena.weather?.weatherType === WeatherType.STRONG_WINDS && !arena.weather.isEffectSuppressed(this.scene) && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(moveType, Type.FLYING) === 2) {
+    if (!ignoreStrongWinds && arena.weather?.weatherType === WeatherType.STRONG_WINDS && !arena.weather.isEffectSuppressed(this.scene) && this.isOfType(Type.FLYING) && typeMultiplierAgainstFlying.value === 2) {
       multiplier /= 2;
       if (!simulated) {
         this.scene.queueMessage(i18next.t("weather:strongWindsEffectMessage"));
       }
     }
-
-    const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
-    for (const tag of immuneTags) {
-      if (move && !move.getAttrs(HitsTagAttr).some(attr => attr.tagType === tag.tagType)) {
-        multiplier = 0;
-        break;
-      }
-    }
-
     return multiplier as TypeDamageMultiplier;
   }
 
@@ -1325,7 +1468,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const types = this.getTypes(true);
     const enemyTypes = opponent.getTypes(true, true);
     /** Is this Pokemon faster than the opponent? */
-    const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, opponent) : this.getStat(Stat.SPD)) >= opponent.getBattleStat(Stat.SPD, this);
+    const outspeed = (this.isActive(true) ? this.getEffectiveStat(Stat.SPD, opponent) : this.getStat(Stat.SPD, false)) >= opponent.getEffectiveStat(Stat.SPD, this);
     /**
      * Based on how effective this Pokemon's types are offensively against the opponent's types.
      * This score is increased by 25 percent if this Pokemon is faster than the opponent.
@@ -1481,13 +1624,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Function that tries to set a Pokemon shiny based on the trainer's trainer ID and secret ID
+   * Function that tries to set a Pokemon shiny based on the trainer's trainer ID and secret ID.
    * Endless Pokemon in the end biome are unable to be set to shiny
    *
-   * The exact mechanic is that it calculates E as the XOR of the player's trainer ID and secret ID
-   * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits
-   * The XOR of E and F are then compared to the thresholdOverride (default case 32) to see whether or not to generate a shiny
-   * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance
+   * The exact mechanic is that it calculates E as the XOR of the player's trainer ID and secret ID.
+   * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits.
+   * The XOR of E and F are then compared to the {@linkcode shinyThreshold} (or {@linkcode thresholdOverride} if set) to see whether or not to generate a shiny.
+   * The base shiny odds are {@linkcode baseShinyChance} / 65536
+   * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
    * @returns true if the Pokemon has been set as a shiny, false otherwise
    */
   trySetShiny(thresholdOverride?: integer): boolean {
@@ -1502,7 +1646,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const E = this.scene.gameData.trainerId ^ this.scene.gameData.secretId;
     const F = rand1 ^ rand2;
 
-    const shinyThreshold = new Utils.IntegerHolder(32);
+    /** `64/65536 -> 1/1024` */
+    const baseShinyChance = 64;
+    const shinyThreshold = new Utils.IntegerHolder(baseShinyChance);
     if (thresholdOverride === undefined) {
       if (this.scene.eventManager.isEventActive()) {
         shinyThreshold.value *= this.scene.eventManager.getShinyMultiplier();
@@ -1515,9 +1661,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.shiny = (E ^ F) < shinyThreshold.value;
-    if ((E ^ F) < 32) {
-      console.log("REAL SHINY!!");
-    }
 
     if (this.shiny) {
       this.initShinySparkle();
@@ -1704,7 +1847,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].hasAttr(SacrificialAttr) ? 0.5 : 1)]);
       movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].hasAttr(SacrificialAttrOnHit) ? 0.5 : 1)]);
       // Trainers get a weight bump to stat buffing moves
-      movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].getAttrs(StatChangeAttr).some(a => a.levels > 1 && a.selfTarget) ? 1.25 : 1)]);
+      movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].getAttrs(StatStageChangeAttr).some(a => a.stages > 1 && a.selfTarget) ? 1.25 : 1)]);
       // Trainers get a weight decrease to multiturn moves
       movePool = movePool.map(m => [m[0], m[1] * (!!allMoves[m[0]].hasAttr(ChargeAttr) || !!allMoves[m[0]].hasAttr(RechargeAttr) ? 0.7 : 1)]);
     }
@@ -1716,8 +1859,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power/maxPower, 1), 0.5))]);
 
     // Weight damaging moves against the lower stat
-    const worseCategory: MoveCategory = this.stats[Stat.ATK] > this.stats[Stat.SPATK] ? MoveCategory.SPECIAL : MoveCategory.PHYSICAL;
-    const statRatio = worseCategory === MoveCategory.PHYSICAL ? this.stats[Stat.ATK]/this.stats[Stat.SPATK] : this.stats[Stat.SPATK]/this.stats[Stat.ATK];
+    const atk = this.getStat(Stat.ATK);
+    const spAtk = this.getStat(Stat.SPATK);
+    const worseCategory: MoveCategory = atk > spAtk ? MoveCategory.SPECIAL : MoveCategory.PHYSICAL;
+    const statRatio = worseCategory === MoveCategory.PHYSICAL ? atk / spAtk : spAtk / atk;
     movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === worseCategory ? statRatio : 1)]);
 
     let weightMultiplier = 0.9; // The higher this is the more the game weights towards higher level moves. At 0 all moves are equal weight.
@@ -1904,6 +2049,48 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Calculates the stat stage multiplier of the user against an opponent.
+   *
+   * Note that this does not apply to evasion or accuracy
+   * @see {@linkcode getAccuracyMultiplier}
+   * @param stat the desired {@linkcode EffectiveStat}
+   * @param opponent the target {@linkcode Pokemon}
+   * @param move the {@linkcode Move} being used
+   * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
+   * @return the stat stage multiplier to be used for effective stat calculation
+   */
+  getStatStageMultiplier(stat: EffectiveStat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): number {
+    const statStage = new Utils.IntegerHolder(this.getStatStage(stat));
+    const ignoreStatStage = new Utils.BooleanHolder(false);
+
+    if (opponent) {
+      if (isCritical) {
+        switch (stat) {
+        case Stat.ATK:
+        case Stat.SPATK:
+          statStage.value = Math.max(statStage.value, 0);
+          break;
+        case Stat.DEF:
+        case Stat.SPDEF:
+          statStage.value = Math.min(statStage.value, 0);
+          break;
+        }
+      }
+      applyAbAttrs(IgnoreOpponentStatStagesAbAttr, opponent, null, false, stat, ignoreStatStage);
+      if (move) {
+        applyMoveAttrs(IgnoreOpponentStatStagesAttr, this, opponent, move, ignoreStatStage);
+      }
+    }
+
+    if (!ignoreStatStage.value) {
+      const statStageMultiplier = new Utils.NumberHolder(Math.max(2, 2 + statStage.value) / Math.max(2, 2 - statStage.value));
+      this.scene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), stat, statStageMultiplier);
+      return Math.min(statStageMultiplier.value, 4);
+    }
+    return 1;
+  }
+
+  /**
    * Calculates the accuracy multiplier of the user against a target.
    *
    * This method considers various factors such as the user's accuracy level, the target's evasion level,
@@ -1919,34 +2106,38 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return 1;
     }
 
-    const userAccuracyLevel = new Utils.IntegerHolder(this.summonData.battleStats[BattleStat.ACC]);
-    const targetEvasionLevel = new Utils.IntegerHolder(target.summonData.battleStats[BattleStat.EVA]);
+    const userAccStage = new Utils.IntegerHolder(this.getStatStage(Stat.ACC));
+    const targetEvaStage = new Utils.IntegerHolder(target.getStatStage(Stat.EVA));
 
-    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, false, userAccuracyLevel);
-    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, this, null, false, targetEvasionLevel);
-    applyAbAttrs(IgnoreOpponentEvasionAbAttr, this, null, false, targetEvasionLevel);
-    applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, target, sourceMove, targetEvasionLevel);
-    this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), TempBattleStat.ACC, userAccuracyLevel);
+    const ignoreAccStatStage = new Utils.BooleanHolder(false);
+    const ignoreEvaStatStage = new Utils.BooleanHolder(false);
+
+    applyAbAttrs(IgnoreOpponentStatStagesAbAttr, target, null, false, Stat.ACC, ignoreAccStatStage);
+    applyAbAttrs(IgnoreOpponentStatStagesAbAttr, this, null, false, Stat.EVA, ignoreEvaStatStage);
+    applyMoveAttrs(IgnoreOpponentStatStagesAttr, this, target, sourceMove, ignoreEvaStatStage);
+
+    this.scene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), Stat.ACC, userAccStage);
+
+    userAccStage.value = ignoreAccStatStage.value ? 0 : Math.min(userAccStage.value, 6);
+    targetEvaStage.value = ignoreEvaStatStage.value ? 0 : targetEvaStage.value;
 
     if (target.findTag(t => t instanceof ExposedTag)) {
-      targetEvasionLevel.value = Math.min(0, targetEvasionLevel.value);
+      targetEvaStage.value = Math.min(0, targetEvaStage.value);
     }
 
     const accuracyMultiplier = new Utils.NumberHolder(1);
-    if (userAccuracyLevel.value !== targetEvasionLevel.value) {
-      accuracyMultiplier.value = userAccuracyLevel.value > targetEvasionLevel.value
-        ? (3 + Math.min(userAccuracyLevel.value - targetEvasionLevel.value, 6)) / 3
-        : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
+    if (userAccStage.value !== targetEvaStage.value) {
+      accuracyMultiplier.value = userAccStage.value > targetEvaStage.value
+        ? (3 + Math.min(userAccStage.value - targetEvaStage.value, 6)) / 3
+        : 3 / (3 + Math.min(targetEvaStage.value - userAccStage.value, 6));
     }
 
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, BattleStat.ACC, accuracyMultiplier, false, sourceMove);
+    applyStatMultiplierAbAttrs(StatMultiplierAbAttr, this, Stat.ACC, accuracyMultiplier, false, sourceMove);
 
     const evasionMultiplier = new Utils.NumberHolder(1);
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, target, BattleStat.EVA, evasionMultiplier);
+    applyStatMultiplierAbAttrs(StatMultiplierAbAttr, target, Stat.EVA, evasionMultiplier);
 
-    accuracyMultiplier.value /= evasionMultiplier.value;
-
-    return accuracyMultiplier.value;
+    return accuracyMultiplier.value / evasionMultiplier.value;
   }
 
   /**
@@ -1959,29 +2150,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let result: HitResult;
     const damage = new Utils.NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    const defendingSidePlayField = this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField();
 
-    const variableCategory = new Utils.IntegerHolder(move.category);
+    const variableCategory = new Utils.NumberHolder(move.category);
     applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, variableCategory);
     const moveCategory = variableCategory.value as MoveCategory;
 
-    applyMoveAttrs(VariableMoveTypeAttr, source, this, move);
-    const types = this.getTypes(true, true);
+    /** The move's type after type-changing effects are applied */
+    const moveType = source.getMoveType(move);
 
+    /** If `value` is `true`, cancels the move and suppresses "No Effect" messages */
     const cancelled = new Utils.BooleanHolder(false);
-    const power = move.calculateBattlePower(source, this);
-    const typeless = move.hasAttr(TypelessAttr);
 
-    const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes(attr.immuneType)))
-      ? this.getAttackTypeEffectiveness(move, source, false, false)
-      : 1);
-    applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
-    if (typeless) {
-      typeMultiplier.value = 1;
-    }
-    if (types.find(t => move.isTypeImmune(source, this, t))) {
-      typeMultiplier.value = 0;
-    }
+    /**
+     * The effectiveness of the move being used. Along with type matchups, this
+     * accounts for changes in effectiveness from the move's attributes and the
+     * abilities of both the source and this Pokemon.
+     */
+    const typeMultiplier = this.getMoveEffectiveness(source, move, false, false, cancelled);
 
     switch (moveCategory) {
     case MoveCategory.PHYSICAL:
@@ -1989,26 +2174,43 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const isPhysical = moveCategory === MoveCategory.PHYSICAL;
       const sourceTeraType = source.getTeraType();
 
-      if (!typeless) {
-        applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
-        applyMoveAttrs(NeutralDamageAgainstFlyingTypeMultiplierAttr, source, this, move, typeMultiplier);
-      }
-      if (!cancelled.value) {
-        applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
-        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, false, typeMultiplier));
-      }
+      const power = move.calculateBattlePower(source, this);
 
       if (cancelled.value) {
+        // Cancelled moves fail silently
         source.stopMultiHit(this);
-        result = HitResult.NO_EFFECT;
+        return HitResult.NO_EFFECT;
       } else {
-        const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === move.type) as TypeBoostTag;
+        const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === moveType) as TypeBoostTag;
         if (typeBoost?.oneUse) {
           source.removeTag(typeBoost.tagType);
         }
 
-        const arenaAttackTypeMultiplier = new Utils.NumberHolder(this.scene.arena.getAttackTypeMultiplier(move.type, source.isGrounded()));
+        /** Combined damage multiplier from field effects such as weather, terrain, etc. */
+        const arenaAttackTypeMultiplier = new Utils.NumberHolder(this.scene.arena.getAttackTypeMultiplier(moveType, source.isGrounded()));
         applyMoveAttrs(IgnoreWeatherTypeDebuffAttr, source, this, move, arenaAttackTypeMultiplier);
+
+        /**
+         * Whether or not this Pokemon is immune to the incoming move.
+         * Note that this isn't fully resolved in `getMoveEffectiveness` because
+         * of possible type-suppressing field effects (e.g. Desolate Land's effect on Water-type attacks).
+         */
+        const isTypeImmune = (typeMultiplier * arenaAttackTypeMultiplier.value) === 0;
+        if (isTypeImmune) {
+          // Moves with no effect that were not cancelled queue a "no effect" message before failing
+          source.stopMultiHit(this);
+          result = (move.id === Moves.SHEER_COLD)
+            ? HitResult.IMMUNE
+            : HitResult.NO_EFFECT;
+
+          if (result === HitResult.IMMUNE) {
+            this.scene.queueMessage(i18next.t("battle:hitResultImmune", { pokemonName: this.name }));
+          } else {
+            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
+          }
+
+          return result;
+        }
 
         const glaiveRushModifier = new Utils.IntegerHolder(1);
         if (this.getTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE)) {
@@ -2022,22 +2224,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (critOnly.value || critAlways) {
           isCritical = true;
         } else {
-          const critLevel = new Utils.IntegerHolder(0);
-          applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
-          this.scene.applyModifiers(CritBoosterModifier, source.isPlayer(), source, critLevel);
-          this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
-          const bonusCrit = new Utils.BooleanHolder(false);
-          //@ts-ignore
-          if (applyAbAttrs(BonusCritAbAttr, source, null, false, bonusCrit)) { // TODO: resolve ts-ignore. This is a promise. Checking a promise is bogus.
-            if (bonusCrit.value) {
-              critLevel.value += 1;
-            }
-          }
-          if (source.getTag(BattlerTagType.CRIT_BOOST)) {
-            critLevel.value += 2;
-          }
-          console.log(`crit stage: +${critLevel.value}`);
-          const critChance = [24, 8, 2, 1][Math.max(0, Math.min(critLevel.value, 3))];
+          const critChance = [24, 8, 2, 1][Math.max(0, Math.min(this.getCritStage(source, move), 3))];
           isCritical = critChance === 1 || !this.scene.randBattleSeedInt(critChance);
           if (Overrides.NEVER_CRIT_OVERRIDE) {
             isCritical = false;
@@ -2051,21 +2238,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             isCritical = false;
           }
         }
-        const sourceAtk = new Utils.IntegerHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, isCritical));
-        const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, isCritical));
+        const sourceAtk = new Utils.IntegerHolder(source.getEffectiveStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, isCritical));
+        const targetDef = new Utils.IntegerHolder(this.getEffectiveStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, isCritical));
         const criticalMultiplier = new Utils.NumberHolder(isCritical ? 1.5 : 1);
         applyAbAttrs(MultCritAbAttr, source, null, false, criticalMultiplier);
         const screenMultiplier = new Utils.NumberHolder(1);
         if (!isCritical) {
           this.scene.arena.applyTagsForSide(WeakenMoveScreenTag, defendingSide, move.category, this.scene.currentBattle.double, screenMultiplier);
         }
-        const isTypeImmune = (typeMultiplier.value * arenaAttackTypeMultiplier.value) === 0;
         const sourceTypes = source.getTypes();
-        const matchesSourceType = sourceTypes[0] === move.type || (sourceTypes.length > 1 && sourceTypes[1] === move.type);
+        const matchesSourceType = sourceTypes[0] === moveType || (sourceTypes.length > 1 && sourceTypes[1] === moveType);
         const stabMultiplier = new Utils.NumberHolder(1);
         if (sourceTeraType === Type.UNKNOWN && matchesSourceType) {
           stabMultiplier.value += 0.5;
-        } else if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type) {
+        } else if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === moveType) {
           stabMultiplier.value += 0.5;
         }
 
@@ -2075,8 +2261,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           stabMultiplier.value = Math.min(stabMultiplier.value + 0.5, 2.25);
         }
 
-        const targetCount = getMoveTargets(source, move.id).targets.length;
-        const targetMultiplier = targetCount > 1 ? 0.75 : 1; // 25% damage debuff on multi-target hits (even if it's immune)
+        // 25% damage debuff on moves hitting more than one non-fainted target (regardless of immunities)
+        const { targets, multiple } = getMoveTargets(source, move.id);
+        const targetMultiplier = (multiple && targets.length > 1) ? 0.75 : 1;
 
         applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
         applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
@@ -2094,7 +2281,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           const randomMultiplier = ((this.scene.randBattleSeedInt(16) + 85) / 100);
           damage.value = Utils.toDmgValue((((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2)
                                    * stabMultiplier.value
-                                   * typeMultiplier.value
+                                   * typeMultiplier
                                    * arenaAttackTypeMultiplier.value
                                    * screenMultiplier.value
                                    * twoStrikeMultiplier.value
@@ -2128,7 +2315,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           });
         }
 
-        if (this.scene.arena.terrain?.terrainType === TerrainType.MISTY && this.isGrounded() && move.type === Type.DRAGON) {
+        if (this.scene.arena.terrain?.terrainType === TerrainType.MISTY && this.isGrounded() && moveType === Type.DRAGON) {
           damage.value = Utils.toDmgValue(damage.value / 2);
         }
 
@@ -2142,22 +2329,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         result = result!; // telling TS compiler that result is defined!
 
         if (!result) {
-          if (!typeMultiplier.value) {
-            result = move.id === Moves.SHEER_COLD ? HitResult.IMMUNE : HitResult.NO_EFFECT;
+          const isOneHitKo = new Utils.BooleanHolder(false);
+          applyMoveAttrs(OneHitKOAttr, source, this, move, isOneHitKo);
+          if (isOneHitKo.value) {
+            result = HitResult.ONE_HIT_KO;
+            isCritical = false;
+            damage.value = this.hp;
+          } else if (typeMultiplier >= 2) {
+            result = HitResult.SUPER_EFFECTIVE;
+          } else if (typeMultiplier >= 1) {
+            result = HitResult.EFFECTIVE;
           } else {
-            const isOneHitKo = new Utils.BooleanHolder(false);
-            applyMoveAttrs(OneHitKOAttr, source, this, move, isOneHitKo);
-            if (isOneHitKo.value) {
-              result = HitResult.ONE_HIT_KO;
-              isCritical = false;
-              damage.value = this.hp;
-            } else if (typeMultiplier.value >= 2) {
-              result = HitResult.SUPER_EFFECTIVE;
-            } else if (typeMultiplier.value >= 1) {
-              result = HitResult.EFFECTIVE;
-            } else {
-              result = HitResult.NOT_VERY_EFFECTIVE;
-            }
+            result = HitResult.NOT_VERY_EFFECTIVE;
           }
         }
 
@@ -2224,14 +2407,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           case HitResult.NOT_VERY_EFFECTIVE:
             this.scene.queueMessage(i18next.t("battle:hitResultNotVeryEffective"));
             break;
-          case HitResult.NO_EFFECT:
-            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
-            break;
-          case HitResult.IMMUNE:
-            this.scene.queueMessage(i18next.t("battle:hitResultImmune", { pokemonName: this.name }));
-            break;
           case HitResult.ONE_HIT_KO:
             this.scene.queueMessage(i18next.t("battle:hitResultOneHitKO"));
+            break;
+          case HitResult.IMMUNE:
+          case HitResult.NO_EFFECT:
+            console.error("Unhandled move immunity!");
             break;
           }
         }
@@ -2244,23 +2425,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         if (damage) {
-          const attacker = this.scene.getPokemonById(source.id)!; // TODO: is this bang correct?
-          destinyTag?.lapse(attacker, BattlerTagLapseType.CUSTOM);
+          destinyTag?.lapse(source, BattlerTagLapseType.CUSTOM);
         }
       }
       break;
     case MoveCategory.STATUS:
-      if (!typeless) {
-        applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
-      }
-      if (!cancelled.value) {
-        applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, false, typeMultiplier);
-        defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, move, cancelled, false, typeMultiplier));
-      }
-      if (!typeMultiplier.value) {
+      if (!cancelled.value && typeMultiplier === 0) {
         this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
       }
-      result = cancelled.value || !typeMultiplier.value ? HitResult.NO_EFFECT : HitResult.STATUS;
+      result = (typeMultiplier === 0) ? HitResult.NO_EFFECT : HitResult.STATUS;
       break;
     }
 
@@ -2477,24 +2650,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param source {@linkcode Pokemon} the pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
    */
   transferSummon(source: Pokemon): void {
-    const battleStats = Utils.getEnumValues(BattleStat);
-    for (const stat of battleStats) {
-      this.summonData.battleStats[stat] = source.summonData.battleStats[stat];
+    // Copy all stat stages
+    for (const s of BATTLE_STATS) {
+      const sourceStage = source.getStatStage(s);
+      if ((this instanceof PlayerPokemon) && (sourceStage === 6)) {
+        this.scene.validateAchv(achvs.TRANSFER_MAX_STAT_STAGE);
+      }
+      this.setStatStage(s, sourceStage);
     }
+
     for (const tag of source.summonData.tags) {
-
-      // bypass those can not be passed via Baton Pass
-      const excludeTagTypes = new Set([BattlerTagType.DROWSY, BattlerTagType.INFATUATED, BattlerTagType.FIRE_BOOST]);
-
-      if (excludeTagTypes.has(tag.tagType)) {
+      if (!tag.isBatonPassable) {
         continue;
       }
 
       this.summonData.tags.push(tag);
     }
-    if (this instanceof PlayerPokemon && source.summonData.battleStats.find(bs => bs === 6)) {
-      this.scene.validateAchv(achvs.TRANSFER_MAX_BATTLE_STAT);
-    }
+
     this.updateInfo();
   }
 
@@ -2572,7 +2744,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return this.fusionFaintCry(callback);
     }
 
-    const key = this.getSpeciesForm().getCryKey(this.formIndex);
+    const key = `cry/${this.getSpeciesForm().getCryKey(this.formIndex)}`;
     //eslint-disable-next-line @typescript-eslint/no-unused-vars
     let i = 0;
     let rate = 0.85;
@@ -2630,7 +2802,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   private fusionFaintCry(callback: Function): void {
-    const key = this.getSpeciesForm().getCryKey(this.formIndex);
+    const key = `cry/${this.getSpeciesForm().getCryKey(this.formIndex)}`;
     let i = 0;
     let rate = 0.85;
     const cry = this.scene.playSound(key, { rate: rate }) as AnySound;
@@ -2638,7 +2810,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const tintSprite = this.getTintSprite();
     let duration = cry.totalDuration * 1000;
 
-    let fusionCry = this.scene.playSound(this.getFusionSpeciesForm().getCryKey(this.fusionFormIndex), { rate: rate }) as AnySound;
+    const fusionCryKey = `cry/${this.getFusionSpeciesForm().getCryKey(this.fusionFormIndex)}`;
+    let fusionCry = this.scene.playSound(fusionCryKey, { rate: rate }) as AnySound;
     fusionCry.stop();
     duration = Math.min(duration, fusionCry.totalDuration * 1000);
     fusionCry.destroy();
@@ -2682,7 +2855,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         if (i === transitionIndex) {
           SoundFade.fadeOut(this.scene, cry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)));
-          fusionCry = this.scene.playSound(this.getFusionSpeciesForm().getCryKey(this.fusionFormIndex), Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0), rate: rate }));
+          fusionCry = this.scene.playSound(fusionCryKey, Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0), rate: rate }));
           SoundFade.fadeIn(this.scene, fusionCry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)), this.scene.masterVolume * this.scene.seVolume, 0);
         }
         rate *= 0.99;
@@ -2735,6 +2908,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const types = this.getTypes(true, true);
+
+    const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    if (sourcePokemon && sourcePokemon !== this && this.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, defendingSide)) {
+      return false;
+    }
 
     switch (effect) {
     case StatusEffect.POISON:
@@ -2997,7 +3175,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   sparkle(): void {
     if (this.shinySparkle) {
       this.shinySparkle.play(`sparkle${this.variant ? `_${this.variant + 1}` : ""}`);
-      this.scene.playSound("sparkle");
+      this.scene.playSound("se/sparkle");
     }
   }
 
@@ -3301,6 +3479,7 @@ export default interface Pokemon {
 
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
+  public usedTms: Moves[];
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
@@ -3324,6 +3503,7 @@ export class PlayerPokemon extends Pokemon {
       }
     }
     this.generateCompatibleTms();
+    this.usedTms = [];
   }
 
   initBattleInfo(): void {
@@ -3582,6 +3762,9 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.moveset = this.moveset.slice();
         newPokemon.moveset = this.copyMoveset();
         newPokemon.luck = this.luck;
+        newPokemon.metLevel = this.metLevel;
+        newPokemon.metBiome = this.metBiome;
+        newPokemon.metSpecies = this.metSpecies;
         newPokemon.fusionSpecies = this.fusionSpecies;
         newPokemon.fusionFormIndex = this.fusionFormIndex;
         newPokemon.fusionAbilityIndex = this.fusionAbilityIndex;
@@ -3661,16 +3844,17 @@ export class PlayerPokemon extends Pokemon {
       this.scene.gameData.gameStats.pokemonFused++;
 
       // Store the average HP% that each Pokemon has
-      const newHpPercent = ((pokemon.hp / pokemon.stats[Stat.HP]) + (this.hp / this.stats[Stat.HP])) / 2;
+      const maxHp = this.getMaxHp();
+      const newHpPercent = ((pokemon.hp / pokemon.getMaxHp()) + (this.hp / maxHp)) / 2;
 
       this.generateName();
       this.calculateStats();
 
       // Set this Pokemon's HP to the average % of both fusion components
-      this.hp = Math.round(this.stats[Stat.HP] * newHpPercent);
+      this.hp = Math.round(maxHp * newHpPercent);
       if (!this.isFainted()) {
         // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
-        this.hp = Math.min(this.hp, this.stats[Stat.HP]);
+        this.hp = Math.min(this.hp, maxHp);
         this.status = getRandomStatus(this.status, pokemon.status); // Get a random valid status between the two
       } else if (!pokemon.isFainted()) {
         // If this Pokemon fainted but the other hasn't, make sure the HP wasn't set to zero
@@ -3746,6 +3930,18 @@ export class EnemyPokemon extends Pokemon {
       this.status = new Status(Overrides.OPP_STATUS_OVERRIDE);
     }
 
+    if (Overrides.OPP_GENDER_OVERRIDE) {
+      this.gender = Overrides.OPP_GENDER_OVERRIDE;
+    }
+
+    const speciesId = this.species.speciesId;
+
+    if (speciesId in Overrides.OPP_FORM_OVERRIDES
+      && Overrides.OPP_FORM_OVERRIDES[speciesId]
+      && this.species.forms[Overrides.OPP_FORM_OVERRIDES[speciesId]]) {
+      this.formIndex = Overrides.OPP_FORM_OVERRIDES[speciesId] ?? 0;
+    }
+
     if (!dataSource) {
       this.generateAndPopulateMoveset();
 
@@ -3818,7 +4014,7 @@ export class EnemyPokemon extends Pokemon {
       this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
         ? [
           new PokemonMove(Moves.DYNAMAX_CANNON),
-          new PokemonMove(Moves.SLUDGE_BOMB),
+          new PokemonMove(Moves.CROSS_POISON),
           new PokemonMove(Moves.FLAMETHROWER),
           new PokemonMove(Moves.RECOVER, 0, -4)
         ]
@@ -3828,6 +4024,9 @@ export class EnemyPokemon extends Pokemon {
           new PokemonMove(Moves.FLAMETHROWER),
           new PokemonMove(Moves.COSMIC_POWER)
         ];
+      if (this.scene.gameMode.hasChallenge(Challenges.INVERSE_BATTLE)) {
+        this.moveset[2] = new PokemonMove(Moves.THUNDERBOLT);
+      }
       break;
     default:
       super.generateAndPopulateMoveset();
@@ -3917,7 +4116,7 @@ export class EnemyPokemon extends Pokemon {
                * Attack moves are given extra multipliers to their base benefit score based on
                * the move's type effectiveness against the target and whether the move is a STAB move.
                */
-              const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove);
+              const effectiveness = target.getMoveEffectiveness(this, move, !target.battleData?.abilityRevealed);
               if (target.isPlayer() !== this.isPlayer()) {
                 targetScore *= effectiveness;
                 if (this.isOfType(move.type)) {
@@ -4105,7 +4304,7 @@ export class EnemyPokemon extends Pokemon {
               //console.log('damage', damage, 'segment', segmentsBypassed + 1, 'segment size', segmentSize, 'damage needed', Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1)));
             }
 
-            damage = hpRemainder + Math.round(segmentSize * segmentsBypassed);
+            damage = Utils.toDmgValue(this.hp - hpThreshold + segmentSize * segmentsBypassed);
             clearedBossSegmentIndex = s - segmentsBypassed;
           }
           break;
@@ -4148,43 +4347,40 @@ export class EnemyPokemon extends Pokemon {
 
   handleBossSegmentCleared(segmentIndex: integer): void {
     while (segmentIndex - 1 < this.bossSegmentIndex) {
-      let boostedStat = BattleStat.RAND;
+      // Filter out already maxed out stat stages and weigh the rest based on existing stats
+      const leftoverStats = EFFECTIVE_STATS.filter((s: EffectiveStat) => this.getStatStage(s) < 6);
+      const statWeights = leftoverStats.map((s: EffectiveStat) => this.getStat(s, false));
 
-      const battleStats = Utils.getEnumValues(BattleStat).slice(0, -3);
-      const statWeights = new Array().fill(battleStats.length).filter((bs: BattleStat) => this.summonData.battleStats[bs] < 6).map((bs: BattleStat) => this.getStat(bs + 1));
-      const statThresholds: integer[] = [];
+      let boostedStat: EffectiveStat;
+      const statThresholds: number[] = [];
       let totalWeight = 0;
-      for (const bs of battleStats) {
-        totalWeight += statWeights[bs];
+
+      for (const i in statWeights) {
+        totalWeight += statWeights[i];
         statThresholds.push(totalWeight);
       }
 
+      // Pick a random stat from the leftover stats to increase its stages
       const randInt = Utils.randSeedInt(totalWeight);
-
-      for (const bs of battleStats) {
-        if (randInt < statThresholds[bs]) {
-          boostedStat = bs;
+      for (const i in statThresholds) {
+        if (randInt < statThresholds[i]) {
+          boostedStat = leftoverStats[i];
           break;
         }
       }
 
-      let statLevels = 1;
+      let stages = 1;
 
-      switch (segmentIndex) {
-      case 1:
-        if (this.bossSegments >= 3) {
-          statLevels++;
-        }
-        break;
-      case 2:
-        if (this.bossSegments >= 5) {
-          statLevels++;
-        }
-        break;
+      // increase the boost if the boss has at least 3 segments and we passed last shield
+      if (this.bossSegments >= 3 && this.bossSegmentIndex === 1) {
+        stages++;
+      }
+      // increase the boost if the boss has at least 5 segments and we passed the second to last shield
+      if (this.bossSegments >= 5 && this.bossSegmentIndex === 2) {
+        stages++;
       }
 
-      this.scene.unshiftPhase(new StatChangePhase(this.scene, this.getBattlerIndex(), true, [ boostedStat ], statLevels, true, true));
-
+      this.scene.unshiftPhase(new StatStageChangePhase(this.scene, this.getBattlerIndex(), true, [ boostedStat! ], stages, true, true));
       this.bossSegmentIndex--;
     }
   }
@@ -4241,7 +4437,7 @@ export interface TurnMove {
   targets?: BattlerIndex[];
   result: MoveResult;
   virtual?: boolean;
-  turn?: integer;
+  turn?: number;
 }
 
 export interface QueuedMove {
@@ -4253,17 +4449,17 @@ export interface QueuedMove {
 export interface AttackMoveResult {
   move: Moves;
   result: DamageResult;
-  damage: integer;
+  damage: number;
   critical: boolean;
-  sourceId: integer;
+  sourceId: number;
   sourceBattlerIndex: BattlerIndex;
 }
 
 export class PokemonSummonData {
-  public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
+  public statStages: number[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public moveQueue: QueuedMove[] = [];
   public disabledMove: Moves = Moves.NONE;
-  public disabledTurns: integer = 0;
+  public disabledTurns: number = 0;
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
   public abilitiesApplied: Abilities[] = [];
@@ -4273,14 +4469,14 @@ export class PokemonSummonData {
   public ability: Abilities = Abilities.NONE;
   public gender: Gender;
   public fusionGender: Gender;
-  public stats: integer[];
+  public stats: number[] = [ 0, 0, 0, 0, 0, 0 ];
   public moveset: (PokemonMove | null)[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = [];
 }
 
 export class PokemonBattleData {
-  public hitCount: integer = 0;
+  public hitCount: number = 0;
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];
@@ -4289,21 +4485,23 @@ export class PokemonBattleData {
 
 export class PokemonBattleSummonData {
   /** The number of turns the pokemon has passed since entering the battle */
-  public turnCount: integer = 1;
+  public turnCount: number = 1;
   /** The list of moves the pokemon has used since entering the battle */
   public moveHistory: TurnMove[] = [];
 }
 
 export class PokemonTurnData {
-  public flinched: boolean;
-  public acted: boolean;
-  public hitCount: integer;
-  public hitsLeft: integer;
-  public damageDealt: integer = 0;
-  public currDamageDealt: integer = 0;
-  public damageTaken: integer = 0;
+  public flinched: boolean = false;
+  public acted: boolean = false;
+  public hitCount: number;
+  public hitsLeft: number;
+  public damageDealt: number = 0;
+  public currDamageDealt: number = 0;
+  public damageTaken: number = 0;
   public attacksReceived: AttackMoveResult[] = [];
   public order: number;
+  public statStagesIncreased: boolean = false;
+  public statStagesDecreased: boolean = false;
 }
 
 export enum AiType {

@@ -38,7 +38,7 @@
   "learnMoveNotLearned": "{{pokemonName}} hat {{moveName}} nicht erlernt.",
   "learnMoveForgetQuestion": "Welche Attacke soll vergessen werden?",
   "learnMoveForgetSuccess": "{{pokemonName}} hat {{moveName}} vergessen.",
-  "countdownPoof": "@d{32}Eins, @d{15}zwei @d{15}und@d{15}… @d{15}… @d{15}… @d{15}@s{pb_bounce_1}schwupp!",
+  "countdownPoof": "@d{32}Eins, @d{15}zwei @d{15}und@d{15}… @d{15}… @d{15}… @d{15}@s{se/pb_bounce_1}schwupp!",
   "learnMoveAnd": "Und…",
   "levelCapUp": "Die Levelbeschränkung wurde auf {{levelCap}} erhöht!",
   "moveNotImplemented": "{{moveName}} ist noch nicht implementiert und kann nicht ausgewählt werden.",
@@ -94,5 +94,6 @@
   "retryBattle": "Möchtest du vom Beginn des Kampfes neustarten?",
   "unlockedSomething": "{{unlockedThing}} wurde freigeschaltet.",
   "congratulations": "Glückwunsch!",
-  "beatModeFirstTime": "{{speciesName}} hat den {{gameMode}} Modus zum ersten Mal beendet! Du erhältst {{newModifier}}!"
+  "beatModeFirstTime": "{{speciesName}} hat den {{gameMode}} Modus zum ersten Mal beendet! Du erhältst {{newModifier}}!",
+  "eggSkipPrompt": "Zur Ei-Zusammenfassung springen?"
 }

@@ -1,13 +1,13 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { BattlerIndex } from "#app/battle";
 import GameManager from "#app/test/utils/gameManager";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SPLASH_ONLY } from "../utils/testUtils";
-
 
 describe("Moves - Baton Pass", () => {
   let phaserGame: Phaser.Game;
@@ -27,35 +27,35 @@ describe("Moves - Baton Pass", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
-      .enemySpecies(Species.DUGTRIO)
-      .startingLevel(1)
-      .startingWave(97)
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.BATON_PASS, Moves.NASTY_PLOT, Moves.SPLASH])
+      .ability(Abilities.BALL_FETCH)
       .enemyMoveset(SPLASH_ONLY)
       .disableCrits();
   });
 
-  it("passes stat stage buffs when player uses it", async () => {
+  it("transfers all stat stages when player uses it", async() => {
     // arrange
-    await game.startBattle([
-      Species.RAICHU,
-      Species.SHUCKLE
-    ]);
+    await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
 
     // round 1 - buff
     game.move.select(Moves.NASTY_PLOT);
     await game.toNextTurn();
-    expect(game.scene.getPlayerPokemon()!.summonData.battleStats[BattleStat.SPATK]).toEqual(2);
+
+    let playerPokemon = game.scene.getPlayerPokemon()!;
+
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
 
     // round 2 - baton pass
     game.move.select(Moves.BATON_PASS);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     // assert
-    const playerPkm = game.scene.getPlayerPokemon()!;
-    expect(playerPkm.species.speciesId).toEqual(Species.SHUCKLE);
-    expect(playerPkm.summonData.battleStats[BattleStat.SPATK]).toEqual(2);
+    playerPokemon = game.scene.getPlayerPokemon()!;
+    expect(playerPokemon.species.speciesId).toEqual(Species.SHUCKLE);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
   }, 20000);
 
   it("passes stat stage buffs when AI uses it", async () => {
@@ -63,10 +63,7 @@ describe("Moves - Baton Pass", () => {
     game.override
       .startingWave(5)
       .enemyMoveset(new Array(4).fill([Moves.NASTY_PLOT]));
-    await game.startBattle([
-      Species.RAICHU,
-      Species.SHUCKLE
-    ]);
+    await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
 
     // round 1 - ai buffs
     game.move.select(Moves.SPLASH);
@@ -76,11 +73,11 @@ describe("Moves - Baton Pass", () => {
     game.scene.getEnemyPokemon()!.hp = 100;
     game.override.enemyMoveset(new Array(4).fill(Moves.BATON_PASS));
     game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to(PostSummonPhase, false);
+    await game.phaseInterceptor.to("PostSummonPhase", false);
 
     // assert
     // check buffs are still there
-    expect(game.scene.getEnemyPokemon()!.summonData.battleStats[BattleStat.SPATK]).toEqual(2);
+    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.SPATK)).toEqual(2);
     // confirm that a switch actually happened. can't use species because I
     // can't find a way to override trainer parties with more than 1 pokemon species
     expect(game.scene.getEnemyPokemon()!.hp).not.toEqual(100);
@@ -90,5 +87,21 @@ describe("Moves - Baton Pass", () => {
       "SummonPhase",
       "PostSummonPhase"
     ]);
+  }, 20000);
+
+  it("doesn't transfer effects that aren't transferrable", async() => {
+    game.override.enemyMoveset(Array(4).fill(Moves.SALT_CURE));
+    await game.classicMode.startBattle([Species.PIKACHU, Species.FEEBAS]);
+
+    const [player1, player2] = game.scene.getParty();
+
+    game.move.select(Moves.BATON_PASS);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(player1.findTag((t) => t.tagType === BattlerTagType.SALT_CURED)).toBeTruthy();
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    expect(player2.findTag((t) => t.tagType === BattlerTagType.SALT_CURED)).toBeUndefined();
   }, 20000);
 });

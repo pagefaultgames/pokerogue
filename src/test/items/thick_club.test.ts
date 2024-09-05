@@ -1,4 +1,4 @@
-import { Stat } from "#app/data/pokemon-stat";
+import { Stat } from "#enums/stat";
 import { SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";
@@ -37,29 +37,29 @@ describe("Items - Thick Club", () => {
 
     const partyMember = game.scene.getParty()[0];
 
-    // Checking consoe log to make sure Thick Club is applied when getBattleStat (with the appropriate stat) is called
-    partyMember.getBattleStat(Stat.DEF);
+    // Checking console log to make sure Thick Club is applied when getEffectiveStat (with the appropriate stat) is called
+    partyMember.getEffectiveStat(Stat.DEF);
     expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:SpeciesBoosterItem.THICK_CLUB.name"), "");
 
     // Printing dummy console messages along the way so subsequent checks don't pass because of the first
     console.log("");
 
-    partyMember.getBattleStat(Stat.SPDEF);
+    partyMember.getEffectiveStat(Stat.SPDEF);
     expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:SpeciesBoosterItem.THICK_CLUB.name"), "");
 
     console.log("");
 
-    partyMember.getBattleStat(Stat.ATK);
+    partyMember.getEffectiveStat(Stat.ATK);
     expect(consoleSpy).toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:SpeciesBoosterItem.THICK_CLUB.name"), "");
 
     console.log("");
 
-    partyMember.getBattleStat(Stat.SPATK);
+    partyMember.getEffectiveStat(Stat.SPATK);
     expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:SpeciesBoosterItem.THICK_CLUB.name"), "");
 
     console.log("");
 
-    partyMember.getBattleStat(Stat.SPD);
+    partyMember.getEffectiveStat(Stat.SPD);
     expect(consoleSpy).not.toHaveBeenLastCalledWith("Applied", i18next.t("modifierType:SpeciesBoosterItem.THICK_CLUB.name"), "");
   });
 
