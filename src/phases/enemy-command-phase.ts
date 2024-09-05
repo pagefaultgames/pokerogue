@@ -1,9 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { applyCheckTrappedAbAttrs, CheckTrappedAbAttr } from "#app/data/ability.js";
-import { TrappedTag } from "#app/data/battler-tags.js";
-import { Command } from "#app/ui/command-ui-handler.js";
-import * as Utils from "#app/utils.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { Command } from "#app/ui/command-ui-handler";
 import { FieldPhase } from "./field-phase";
 
 /**
@@ -49,10 +46,7 @@ export class EnemyCommandPhase extends FieldPhase {
     if (trainer && !enemyPokemon.getMoveQueue().length) {
       const opponents = enemyPokemon.getOpponents();
 
-      const trapTag = enemyPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
-      const trapped = new Utils.BooleanHolder(false);
-      opponents.forEach(playerPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, playerPokemon, trapped, enemyPokemon, [], true));
-      if (!trapTag && !trapped.value) {
+      if (!enemyPokemon.isTrapped()) {
         const partyMemberScores = trainer.getPartyMemberMatchupScores(enemyPokemon.trainerSlot, true);
 
         if (partyMemberScores.length) {

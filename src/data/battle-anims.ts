@@ -837,10 +837,10 @@ export abstract class BattleAnim {
         targetSprite.pipelineData["tone"] = [ 0.0, 0.0, 0.0, 0.0 ];
         targetSprite.setAngle(0);
         if (!this.isHideUser() && userSprite) {
-          userSprite.setVisible(true);
+          this.user?.getSprite().setVisible(true); // using this.user to fix context loss due to isOppAnim swap (#481)
         }
         if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser())) {
-          targetSprite.setVisible(true);
+          this.target?.getSprite().setVisible(true); // using this.target to fix context loss due to isOppAnim swap (#481)
         }
         for (const ms of Object.values(spriteCache).flat()) {
           if (ms) {

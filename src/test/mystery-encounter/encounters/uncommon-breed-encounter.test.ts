@@ -130,7 +130,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
-      expect(enemyField[0].summonData.battleStats).toEqual([1, 1, 1, 1, 1, 0, 0]);
+      expect(enemyField[0].summonData.statStages).toEqual([1, 1, 1, 1, 1, 0, 0]);
 
       // Should have used its egg move pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
@@ -159,9 +159,9 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     });
 
     it("should NOT be selectable if the player doesn't have enough berries", async () => {
-      game.override.startingHeldItems([{name: "BERRY", count: 2, type: BerryType.SITRUS}]);
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      game.scene.modifiers = [];
 
       const encounterPhase = scene.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);

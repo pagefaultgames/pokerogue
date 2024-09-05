@@ -15,7 +15,6 @@ import { Biome } from "#enums/biome";
 import { EncounterAnim, EncounterBattleAnim } from "#app/data/battle-anims";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { BattleStat } from "#app/data/battle-stat";
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { DANCING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -23,8 +22,9 @@ import { BattlerIndex } from "#app/battle";
 import { catchPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { PokeballType } from "#enums/pokeball";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { StatChangePhase } from "#app/phases/stat-change-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { Stat } from "#enums/stat";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:dancingLessons";
@@ -132,9 +132,12 @@ export const DancingLessonsEncounter: MysteryEncounter =
 
       const oricorioData = new PokemonData(enemyPokemon);
       const oricorio = scene.addEnemyPokemon(species, scene.currentBattle.enemyLevels![0], TrainerSlot.NONE, false, oricorioData);
+      oricorio.setVisible(false);
+      oricorio.loadAssets().then(() => oricorio.setVisible(true));
 
       // Adds a real Pokemon sprite to the field (required for the animation)
-      scene.currentBattle.enemyParty[0] = oricorio;
+      scene.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
+      scene.currentBattle.enemyParty = [oricorio];
       scene.field.add(oricorio);
 
       const config: EnemyPartyConfig = {
@@ -147,7 +150,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(pokemon.scene, `${namespace}.option.1.boss_enraged`);
-            pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF], 1));
+            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF], 1));
           }
         }],
       };

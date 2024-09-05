@@ -1,4 +1,3 @@
-import { BattleStat } from "#app/data/battle-stat";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import {
   EnemyPartyConfig, generateModifierType, generateModifierTypeOption,
@@ -29,8 +28,8 @@ import PokemonData from "#app/system/pokemon-data";
 import { BerryModifier } from "#app/modifier/modifier";
 import i18next from "#app/plugins/i18n";
 import { BerryType } from "#enums/berry-type";
-import { Stat } from "#enums/stat";
-import { StatChangePhase } from "#app/phases/stat-change-phase";
+import { PERMANENT_STATS, Stat } from "#enums/stat";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:berriesAbound";
@@ -103,7 +102,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
       ];
 
       // Get fastest party pokemon for option 2
-      const fastestPokemon = getHighestStatPlayerPokemon(scene, Stat.SPD, true);
+      const fastestPokemon = getHighestStatPlayerPokemon(scene, PERMANENT_STATS[Stat.SPD], true);
       encounter.misc.fastestPokemon = fastestPokemon;
       encounter.misc.enemySpeed = bossPokemon.getStat(Stat.SPD);
       encounter.setDialogueToken("fastestPokemon", fastestPokemon.getNameToRender());
@@ -195,7 +194,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
             config.pokemonConfigs![0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
             config.pokemonConfigs![0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
               queueEncounterMessage(pokemon.scene, `${namespace}.option.2.boss_enraged`);
-              pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
+              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1));
             };
             setEncounterRewards(scene, { guaranteedModifierTypeOptions: shopOptions, fillRemaining: false }, undefined, doBerryRewards);
             await showEncounterText(scene, `${namespace}.option.2.selected_bad`);

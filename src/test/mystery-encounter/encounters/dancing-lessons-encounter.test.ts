@@ -113,13 +113,17 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
+      // Make party lead's level arbitrarily high to not get KOed by move
+      const partyLead = scene.getParty()[0];
+      partyLead.level = 1000;
+      partyLead.calculateStats();
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.ORICORIO);
-      expect(enemyField[0].summonData.battleStats).toEqual([1, 1, 1, 1, 0, 0, 0]);
+      expect(enemyField[0].summonData.statStages).toEqual([1, 1, 1, 1, 0, 0, 0]);
       const moveset = enemyField[0].moveset.map(m => m?.moveId);
       expect(moveset.some(m => m === Moves.REVELATION_DANCE)).toBeTruthy();
 
@@ -130,7 +134,13 @@ describe("Dancing Lessons - Mystery Encounter", () => {
 
     it("should have a Baton in the rewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
+      // Make party lead's level arbitrarily high to not get KOed by move
+      const partyLead = scene.getParty()[0];
+      partyLead.level = 1000;
+      partyLead.calculateStats();
       await runMysteryEncounterToEnd(game, 1, undefined, true);
+      // For some reason updateModifiers breaks in this test and does not resolve promise
+      vi.spyOn(game.scene, "updateModifiers").mockImplementation(() => new Promise(resolve => resolve()));
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);

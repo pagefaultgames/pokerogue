@@ -4,7 +4,7 @@
   "intro_dialogue": ".@d{16}.@d{16}.@d{16}$I've got the goods if you've got the money.$Make sure your Pokémon can handle it though.",
   "title": "The Vitamin Dealer",
   "description": "The man opens his jacket to reveal some Pokémon vitamins. The numbers he quotes seem like a really good deal. Almost too good...\nHe offers two package deals to choose from.",
-  "query": "Which deal will choose?",
+  "query": "Which deal will you choose?",
   "invalid_selection": "Pokémon must be healthy enough.",
   "option": {
     "1": {

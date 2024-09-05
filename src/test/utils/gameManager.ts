@@ -6,6 +6,7 @@ import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
+import overrides from "#app/overrides";
 import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
@@ -40,9 +41,12 @@ import fs from "fs";
 import { vi } from "vitest";
 import { ClassicModeHelper } from "./helpers/classicModeHelper";
 import { DailyModeHelper } from "./helpers/dailyModeHelper";
+import { ChallengeModeHelper } from "./helpers/challengeModeHelper";
 import { MoveHelper } from "./helpers/moveHelper";
 import { OverridesHelper } from "./helpers/overridesHelper";
 import { SettingsHelper } from "./helpers/settingsHelper";
+import { ReloadHelper } from "./helpers/reloadHelper";
+import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { expect } from "vitest";
@@ -62,7 +66,9 @@ export default class GameManager {
   public readonly move: MoveHelper;
   public readonly classicMode: ClassicModeHelper;
   public readonly dailyMode: DailyModeHelper;
+  public readonly challengeMode: ChallengeModeHelper;
   public readonly settings: SettingsHelper;
+  public readonly reload: ReloadHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -82,7 +88,9 @@ export default class GameManager {
     this.move = new MoveHelper(this);
     this.classicMode = new ClassicModeHelper(this);
     this.dailyMode = new DailyModeHelper(this);
+    this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
+    this.reload = new ReloadHelper(this);
   }
 
   /**
@@ -139,8 +147,8 @@ export default class GameManager {
     this.scene.expParty = ExpNotification.SKIP;
     this.scene.hpBarSpeed = 3;
     this.scene.enableTutorials = false;
-    this.scene.gameData.gender = PlayerGender.MALE;
-
+    this.scene.gameData.gender = PlayerGender.MALE; // set initial player gender
+    this.scene.battleStyle = this.settings.battleStyle;
   }
 
   /**
@@ -150,28 +158,26 @@ export default class GameManager {
    * @param species
    * @param mode
    */
-  async runToFinalBossEncounter(game: GameManager, species: Species[], mode: GameModes) {
+  async runToFinalBossEncounter(species: Species[], mode: GameModes) {
     console.log("===to final boss encounter===");
-    await game.runToTitle();
+    await this.runToTitle();
 
-    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      game.scene.gameMode = getGameMode(mode);
-      const starters = generateStarter(game.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(game.scene);
-      game.scene.pushPhase(new EncounterPhase(game.scene, false));
+    this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+      this.scene.gameMode = getGameMode(mode);
+      const starters = generateStarter(this.scene, species);
+      const selectStarterPhase = new SelectStarterPhase(this.scene);
+      this.scene.pushPhase(new EncounterPhase(this.scene, false));
       selectStarterPhase.initBattle(starters);
     });
 
-    game.onNextPrompt("EncounterPhase", Mode.MESSAGE, async () => {
-      // This will skip all entry dialogue (I can't figure out a way to sequentially handle the 8 chained messages via 1 prompt handler)
-      game.setMode(Mode.MESSAGE);
-      const encounterPhase = game.scene.getCurrentPhase() as EncounterPhase;
+    // This will consider all battle entry dialog as seens and skip them
+    vi.spyOn(this.scene.ui, "shouldSkipDialogue").mockReturnValue(true);
 
-      // No need to end phase, this will do it for you
-      encounterPhase.doEncounterCommon(false);
-    });
+    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
+      this.removeEnemyHeldItems();
+    }
 
-    await game.phaseInterceptor.to(EncounterPhase, true);
+    await this.phaseInterceptor.to(EncounterPhase);
     console.log("===finished run to final boss encounter===");
   }
 
@@ -267,12 +273,12 @@ export default class GameManager {
     this.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
       handler.processInput(Button.CANCEL);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase), true);
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase) || this.isCurrentPhase(CheckSwitchPhase), true);
 
     this.onNextPrompt("SelectModifierPhase", Mode.CONFIRM, () => {
       const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
       handler.processInput(Button.ACTION);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase));
+    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase) || this.isCurrentPhase(CheckSwitchPhase));
   }
 
   forceOpponentToSwitch() {
@@ -416,7 +422,7 @@ export default class GameManager {
   }
 
   /**
-   * Intercepts `TurnStartPhase` and mocks the getOrder's return value {@linkcode TurnStartPhase.getOrder}
+   * Intercepts `TurnStartPhase` and mocks the getSpeedOrder's return value {@linkcode TurnStartPhase.getSpeedOrder}
    * Used to modify the turn order.
    * @param {BattlerIndex[]} order The turn order to set
    * @example
@@ -427,7 +433,7 @@ export default class GameManager {
   async setTurnOrder(order: BattlerIndex[]): Promise<void> {
     await this.phaseInterceptor.to(TurnStartPhase, false);
 
-    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getOrder").mockReturnValue(order);
+    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
   }
 
   /**

@@ -49,8 +49,8 @@
     "DoubleBattleChanceBoosterModifierType": {
       "description": "Duplica la posibilidad de que un encuentro sea una combate doble durante {{battleCount}} combates."
     },
-    "TempBattleStatBoosterModifierType": {
-      "description": "Aumenta la est. {{tempBattleStatName}} de todos los miembros del equipo en 1 nivel durante 5 combates."
+    "TempStatStageBoosterModifierType": {
+      "description": "Aumenta la est. {{stat}} de todos los miembros del equipo en 1 nivel durante 5 combates."
     },
     "AttackTypeBoosterModifierType": {
       "description": "Aumenta la potencia de los movimientos de tipo {{moveType}} de un Pokémon en un 20%."
@@ -61,8 +61,8 @@
     "AllPokemonLevelIncrementModifierType": {
       "description": "Aumenta el nivel de todos los miembros del equipo en {{levels}}."
     },
-    "PokemonBaseStatBoosterModifierType": {
-      "description": "Aumenta la est. {{statName}} base del portador en un 10%.\nCuanto mayores sean tus IVs, mayor será el límite de acumulación."
+    "BaseStatBoosterModifierType": {
+      "description": "Aumenta la est. {{stat}} base del portador en un 10%.\nCuanto mayores sean tus IVs, mayor será el límite de acumulación."
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "Restaura el 100% de los PS de todos los Pokémon."
@@ -248,6 +248,12 @@
       "name": "Periscopio",
       "description": "Aumenta la probabilidad de asestar un golpe crítico."
     },
+    "DIRE_HIT": {
+      "name": "Crítico X",
+      "extra": {
+        "raises": "Critical Hit Ratio"
+      }
+    },
     "LEEK": {
       "name": "Puerro",
       "description": "Puerro muy largo y duro que aumenta la probabilidad de asestar un golpe crítico. Debe llevarlo Farfetch'd."
@@ -411,25 +417,13 @@
       "description": "Polvo muy fino, pero a la vez poderoso, que aumenta la Velocidad. Debe llevarlo Ditto."
     }
   },
-  "TempBattleStatBoosterItem": {
+  "TempStatStageBoosterItem": {
     "x_attack": "Ataque X",
     "x_defense": "Defensa X",
     "x_sp_atk": "Ataq. Esp. X",
     "x_sp_def": "Def. Esp. X",
     "x_speed": "Velocidad X",
-    "x_accuracy": "Precisión X",
-    "dire_hit": "Crítico X"
-  },
-  "TempBattleStatBoosterStatName": {
-    "ATK": "Ataque",
-    "DEF": "Defensa",
-    "SPATK": "Ataq. Esp.",
-    "SPDEF": "Def. Esp.",
-    "SPD": "Velocidad",
-    "ACC": "Precisión",
-    "CRIT": "Tasa de crítico",
-    "EVA": "Evasión",
-    "DEFAULT": "???"
+    "x_accuracy": "Precisión X"
   },
   "AttackTypeBoosterItem": {
     "silk_scarf": "Pañuelo seda",
@@ -604,6 +598,6 @@
     "DRAGON_MEMORY": "Disco dragón",
     "DARK_MEMORY": "Disco siniestro",
     "FAIRY_MEMORY": "Disco hada",
-    "BLANK_MEMORY": "Disco en blanco"
+    "NORMAL_MEMORY": "Disco normal"
   }
 }

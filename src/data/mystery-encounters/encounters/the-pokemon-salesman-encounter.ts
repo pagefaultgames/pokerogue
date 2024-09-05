@@ -71,6 +71,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         const hiddenIndex = species.ability2 ? 2 : 1;
         pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex);
       }
+      pokemon.generateAndPopulateMoveset();
 
       const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(pokemon);
       encounter.spriteConfigs.push({

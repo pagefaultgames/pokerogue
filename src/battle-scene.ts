@@ -861,12 +861,13 @@ export default class BattleScene extends SceneBase {
   }
 
   addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
+    if (Overrides.OPP_LEVEL_OVERRIDE > 0) {
+      level = Overrides.OPP_LEVEL_OVERRIDE;
+    }
     if (Overrides.OPP_SPECIES_OVERRIDE) {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
-    }
-
-    if (Overrides.OPP_LEVEL_OVERRIDE !== 0) {
-      level = Overrides.OPP_LEVEL_OVERRIDE;
+      // The fact that a Pokemon is a boss or not can change based on its Species and level
+      boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
@@ -1007,6 +1008,7 @@ export default class BattleScene extends SceneBase {
 
     this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
     console.log("Seed:", this.seed);
+    this.resetSeed(); // Properly resets RNG after saving and quitting a session
 
     this.disableMenu = false;
 
@@ -1158,7 +1160,9 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard wild battle, waves 10-180
-      if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && newWaveIndex < 180 && newWaveIndex > 10) {
+      const highestMysteryEncounterWave = 180;
+      const lowestMysteryEncounterWave = 10;
+      if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && newWaveIndex < highestMysteryEncounterWave && newWaveIndex > lowestMysteryEncounterWave) {
         const roll = Utils.randSeedInt(256);
 
         // Base spawn weight is 1/256, and increases by 5/256 for each missed attempt at spawning an encounter on a valid floor
@@ -1167,7 +1171,7 @@ export default class BattleScene extends SceneBase {
         // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn
         // Do the reverse as well
         // Reduces occurrence of runs with very few (<6) and a ton (>10) of encounters
-        const expectedEncountersByFloor = AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (180 - 10) * newWaveIndex;
+        const expectedEncountersByFloor = AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave) * (newWaveIndex - lowestMysteryEncounterWave);
         const currentRunDiffFromAvg = expectedEncountersByFloor - (this.mysteryEncounterData?.encounteredEvents?.length || 0);
         const favoredEncounterRate = sessionEncounterRate + currentRunDiffFromAvg * 5;
 
@@ -1406,6 +1410,13 @@ export default class BattleScene extends SceneBase {
   }
 
   getEncounterBossSegments(waveIndex: integer, level: integer, species?: PokemonSpecies, forceBoss: boolean = false): integer {
+    if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE > 1) {
+      return Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE;
+    } else if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE === 1) {
+      // The rest of the code expects to be returned 0 and not 1 if the enemy is not a boss
+      return 0;
+    }
+
     if (this.gameMode.isDaily && this.gameMode.isWaveFinal(waveIndex)) {
       return 5;
     }
@@ -1870,6 +1881,7 @@ export default class BattleScene extends SceneBase {
     config = config ?? {};
     try {
       const keyDetails = key.split("/");
+      config["volume"] = config["volume"] ?? 1;
       switch (keyDetails[0]) {
       case "level_up_fanfare":
       case "item_fanfare":
@@ -1879,11 +1891,11 @@ export default class BattleScene extends SceneBase {
       case "evolution_fanfare":
         // These sounds are loaded in as BGM, but played as sound effects
         // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
-        config["volume"] = this.masterVolume * this.bgmVolume;
+        config["volume"] *= (this.masterVolume * this.bgmVolume);
         break;
       case "battle_anims":
       case "cry":
-        config["volume"] = this.masterVolume * this.fieldVolume;
+        config["volume"] *= (this.masterVolume * this.fieldVolume);
         //PRSFX sound files are unusually loud
         if (keyDetails[1].startsWith("PRSFX- ")) {
           config["volume"] *= 0.5;
@@ -1891,10 +1903,10 @@ export default class BattleScene extends SceneBase {
         break;
       case "ui":
         //As of, right now this applies to the "select", "menu_open", "error" sound effects
-        config["volume"] = this.masterVolume * this.uiVolume;
+        config["volume"] *= (this.masterVolume * this.uiVolume);
         break;
       case "se":
-        config["volume"] = this.masterVolume * this.seVolume;
+        config["volume"] *= (this.masterVolume * this.seVolume);
         break;
       }
       this.sound.play(key, config);
@@ -2899,11 +2911,10 @@ export default class BattleScene extends SceneBase {
     const tierWeights = [MysteryEncounterTier.COMMON, MysteryEncounterTier.GREAT, MysteryEncounterTier.ULTRA, MysteryEncounterTier.ROGUE];
 
     // Adjust tier weights by previously encountered events to lower odds of only common/uncommons in run
-    this.mysteryEncounterData.encounteredEvents.forEach(val => {
-      const tier = val[1];
-      if (tier === MysteryEncounterTier.COMMON) {
+    this.mysteryEncounterData.encounteredEvents.forEach(seenEncounterData => {
+      if (seenEncounterData.tier === MysteryEncounterTier.COMMON) {
         tierWeights[0] = tierWeights[0] - 6;
-      } else if (tier === MysteryEncounterTier.GREAT) {
+      } else if (seenEncounterData.tier === MysteryEncounterTier.GREAT) {
         tierWeights[1] = tierWeights[1] - 4;
       }
     });
@@ -2942,7 +2953,7 @@ export default class BattleScene extends SceneBase {
           }
           if (this.mysteryEncounterData.encounteredEvents?.length > 0 && // Encounter has not exceeded max allowed encounters
             (encounterCandidate.maxAllowedEncounters && encounterCandidate.maxAllowedEncounters > 0)
-            && this.mysteryEncounterData.encounteredEvents.filter(e => e[0] === encounterType).length >= encounterCandidate.maxAllowedEncounters) {
+            && this.mysteryEncounterData.encounteredEvents.filter(e => e.type === encounterType).length >= encounterCandidate.maxAllowedEncounters) {
             return false;
           }
           return true;

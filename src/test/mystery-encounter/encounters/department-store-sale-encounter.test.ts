@@ -188,7 +188,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(modifierSelectHandler.options.length).toEqual(5);
       for (const option of modifierSelectHandler.options) {
         expect(option.modifierTypeOption.type.id.includes("DIRE_HIT") ||
-          option.modifierTypeOption.type.id.includes("TEMP_STAT_BOOSTER")).toBeTruthy();
+          option.modifierTypeOption.type.id.includes("TEMP_STAT_STAGE_BOOSTER")).toBeTruthy();
       }
     });
 

@@ -256,7 +256,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
     this.lockEncounterRewardTiers = true;
     this.dialogueTokens = {};
     this.enemyPartyConfigs = [];
-    // this.startOfBattleEffects = [];
+    this.startOfBattleEffects = [];
     this.introVisuals = undefined;
     this.misc = null;
     this.expMultiplier = 1;

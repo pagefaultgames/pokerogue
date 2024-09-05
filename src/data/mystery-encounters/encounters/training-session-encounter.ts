@@ -1,8 +1,7 @@
 import { Ability, allAbilities } from "#app/data/ability";
-import { EnemyPartyConfig, initBattleWithEnemyConfig, selectPokemonForOption, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getNatureName, Nature } from "#app/data/nature";
 import { speciesStarters } from "#app/data/pokemon-species";
-import { getStatName } from "#app/data/pokemon-stat";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { AbilityAttr } from "#app/system/game-data";
@@ -18,6 +17,8 @@ import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encou
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
+import i18next from "i18next";
+import { getStatKey } from "#enums/stat";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounter:trainingSession";
@@ -129,12 +130,12 @@ export const TrainingSessionEncounter: MysteryEncounter =
               if (improvedCount === 0) {
                 encounter.setDialogueToken(
                   "stat1",
-                  getStatName(ivToChange.index) ?? ""
+                  i18next.t(getStatKey(ivToChange.index)) ?? ""
                 );
               } else {
                 encounter.setDialogueToken(
                   "stat2",
-                  getStatName(ivToChange.index) ?? ""
+                  i18next.t(getStatKey(ivToChange.index)) ?? ""
                 );
               }
 
@@ -379,6 +380,22 @@ export const TrainingSessionEncounter: MysteryEncounter =
           return initBattleWithEnemyConfig(scene, config);
         })
         .build()
+    )
+    .withSimpleOption(
+      {
+        buttonLabel: `${namespace}.option.4.label`,
+        buttonTooltip: `${namespace}.option.4.tooltip`,
+        selected: [
+          {
+            text: `${namespace}.option.4.selected`,
+          },
+        ],
+      },
+      async (scene: BattleScene) => {
+        // Leave encounter with no rewards or exp
+        leaveEncounterWithoutBattle(scene, true);
+        return true;
+      }
     )
     .build();
 
