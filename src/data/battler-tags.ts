@@ -1986,6 +1986,7 @@ export class ExposedTag extends BattlerTag {
 
 /**
  * Tag that doubles the type effectiveness of a move.
+ * This is used by Tar Shot.
  * @extends BattlerTag
  */
 export class DoubleMoveTypeEffectivenessTag extends BattlerTag {
