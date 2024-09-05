@@ -1,6 +1,6 @@
 import { Type } from "./type";
 import * as Utils from "../utils";
-import {pokemonEvolutions, SpeciesFormEvolution} from "./pokemon-evolutions";
+import { pokemonEvolutions, SpeciesFormEvolution } from "./pokemon-evolutions";
 import i18next from "i18next";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
@@ -46,7 +46,7 @@ export const biomeLinks: BiomeLinks = {
   [Biome.SEABED]: [ Biome.CAVE, [ Biome.VOLCANO, 3 ] ],
   [Biome.MOUNTAIN]: [ Biome.VOLCANO, [ Biome.WASTELAND, 2 ], [ Biome.SPACE, 3 ] ],
   [Biome.BADLANDS]: [ Biome.DESERT, Biome.MOUNTAIN ],
-  [Biome.CAVE]: [ Biome.BADLANDS, Biome.LAKE [ Biome.LABORATORY, 2 ] ],
+  [Biome.CAVE]: [ Biome.BADLANDS, Biome.LAKE, [ Biome.LABORATORY, 2 ] ],
   [Biome.DESERT]: [ Biome.RUINS, [ Biome.CONSTRUCTION_SITE, 2 ] ],
   [Biome.ICE_CAVE]: Biome.SNOWY_FOREST,
   [Biome.MEADOW]: [ Biome.PLAINS, Biome.FAIRY_CAVE ],
@@ -7666,7 +7666,7 @@ export function initBiomes() {
     if (biome === Biome.END) {
       const biomeList = Object.keys(Biome).filter(key => !isNaN(Number(key)));
       biomeList.pop(); // Removes Biome.END from the list
-      const randIndex = Utils.randInt(biomeList.length, 2); // Will never be Biome.TOWN or Biome.PLAINS
+      const randIndex = Utils.randInt(biomeList.length, 1); // Will never be Biome.TOWN
       biome = Biome[biomeList[randIndex]];
     }
     const linkedBiomes: (Biome | [ Biome, integer ])[] = Array.isArray(biomeLinks[biome])

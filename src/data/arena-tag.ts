@@ -7,17 +7,17 @@ import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
-import { BattleStat } from "./battle-stat";
+import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import i18next from "i18next";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase.js";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase.js";
-import { StatChangePhase } from "#app/phases/stat-change-phase.js";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 
 export enum ArenaTagSide {
   BOTH,
@@ -804,8 +804,8 @@ class StickyWebTag extends ArenaTrapTag {
       applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
       if (!cancelled.value) {
         pokemon.scene.queueMessage(i18next.t("arenaTag:stickyWebActivateTrap", { pokemonName: pokemon.getNameToRender() }));
-        const statLevels = new Utils.NumberHolder(-1);
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [BattleStat.SPD], statLevels.value));
+        const stages = new Utils.NumberHolder(-1);
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [ Stat.SPD ], stages.value));
       }
     }
 
@@ -893,7 +893,7 @@ class TailwindTag extends ArenaTag {
       // Raise attack by one stage if party member has WIND_RIDER ability
       if (pokemon.hasAbility(Abilities.WIND_RIDER)) {
         pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.getBattlerIndex()));
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK], 1, true));
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.ATK ], 1, true));
       }
     }
   }
@@ -922,6 +922,21 @@ class HappyHourTag extends ArenaTag {
     arena.scene.queueMessage(i18next.t("arenaTag:happyHourOnRemove"));
   }
 }
+
+class SafeguardTag extends ArenaTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.SAFEGUARD, turnCount, Moves.SAFEGUARD, sourceId, side);
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t(`arenaTag:safeguardOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
+  }
+
+  onRemove(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t(`arenaTag:safeguardOnRemove${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`));
+  }
+}
+
 
 class NoneTag extends ArenaTag {
   constructor() {
@@ -974,6 +989,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     return new TailwindTag(turnCount, sourceId, side);
   case ArenaTagType.HAPPY_HOUR:
     return new HappyHourTag(turnCount, sourceId, side);
+  case ArenaTagType.SAFEGUARD:
+    return new SafeguardTag(turnCount, sourceId, side);
   default:
     return null;
   }

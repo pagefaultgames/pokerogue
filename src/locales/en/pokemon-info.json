@@ -1,7 +1,7 @@
 {
   "Stat": {
     "HP": "Max. HP",
-    "HPshortened": "MaxHP",
+    "HPshortened": "HP",
     "ATK": "Attack",
     "ATKshortened": "Atk",
     "DEF": "Defense",
@@ -13,8 +13,7 @@
     "SPD": "Speed",
     "SPDshortened": "Spd",
     "ACC": "Accuracy",
-    "EVA": "Evasiveness",
-    "HPStat": "HP"
+    "EVA": "Evasiveness"
   },
   "Type": {
     "UNKNOWN": "Unknown",
