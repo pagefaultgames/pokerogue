@@ -111,6 +111,7 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
     super(tagType, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], turnCount, sourceMove, sourceId);
   }
 
+  /** @override */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
       // Cancel the affected pokemon's selected move
@@ -128,16 +129,30 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
     return super.lapse(pokemon, lapseType);
   }
 
-  /** Determines whether to restrict a move. */
+  /**
+   * Gets whether this tag is restricting a move.
+   *
+   * @param move {@linkcode Moves} ID to check restriction for.
+   * @returns `true` if the move is restricted by this tag, otherwise `false`.
+   */
   abstract isMoveRestricted(move: Moves): boolean;
 
-  /** The text to display when the player attempts to select a move that is restricted by this tag. */
+  /**
+   * Gets the text to display when the player attempts to select a move that is restricted by this tag.
+   *
+   * @param {Pokemon} pokemon {@linkcode Pokemon} for which the player is attempting to select the restricted move
+   * @param {Moves} move {@linkcode Moves} ID of the move that is having its selection denied
+   */
   abstract selectionDeniedText(pokemon: Pokemon, move: Moves): string;
 
   /**
-   * The text to display when a move's execution is prevented as a result of the restriction.
+   * Gets the text to display when a move's execution is prevented as a result of the restriction.
    * Because restriction effects also prevent selection of the move, this situation can only arise if a
    * pokemon first selects a move, then gets outsped by a pokemon using a move that restricts the selected move.
+   *
+   * @param {Pokemon} pokemon the {@linkcode Pokemon} attempting to use the restricted move
+   * @param {Moves} move the {@linkcode Moves} ID of the move being interrupted
+   * @returns {string} the text to display when the move is interrupted
    */
   abstract interruptedText(pokemon: Pokemon, move: Moves): string;
 }
@@ -148,19 +163,22 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
  */
 export class DisabledTag extends MoveRestrictionBattlerTag {
   /** The move being disabled. Gets set when {@linkcode onAdd} is called for this tag. */
-  public moveId: Moves = Moves.NONE;
-
-  public override isMoveRestricted(move: Moves): boolean {
-    return move === this.moveId;
-  }
+  private moveId: Moves = Moves.NONE;
 
   constructor(sourceId: number) {
     super(BattlerTagType.DISABLED, 4, Moves.DISABLE, sourceId);
   }
 
+  /** @override */
+  override isMoveRestricted(move: Moves): boolean {
+    return move === this.moveId;
+  }
+
   /**
-   * Ensures that move history exists and has a valid move. If so, sets the {@link moveId} and shows a message.
-   * Otherwise, something has gone wrong, so the move ID will not get assigned and this tag will get removed next turn.
+   * @override
+   *
+   * Ensures that move history exists on `pokemon` and has a valid move. If so, sets the {@link moveId} and shows a message.
+   * Otherwise the move ID will not get assigned and this tag will get removed next turn.
    */
   override onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
@@ -176,20 +194,24 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
     pokemon.scene.queueMessage(i18next.t("battlerTags:disabledOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name }));
   }
 
+  /** @override */
   override onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
     pokemon.scene.queueMessage(i18next.t("battlerTags:disabledLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name }));
   }
 
+  /** @override */
   override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
 
+  /** @override */
   override interruptedText(pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
   }
 
+  /** @override */
   override loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.moveId = source.moveId;
