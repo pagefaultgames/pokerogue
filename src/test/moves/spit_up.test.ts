@@ -1,21 +1,23 @@
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import { StockpilingTag } from "#app/data/battler-tags";
 import { allMoves } from "#app/data/move";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { MoveResult, TurnMove } from "#app/field/pokemon";
-import { MovePhase } from "#app/phases/move-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
+import { MovePhase } from "#app/phases/move-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Spit Up", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+
+  const spitUp = allMoves[Moves.SPIT_UP];
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({ type: Phaser.HEADLESS });
@@ -35,8 +37,10 @@ describe("Moves - Spit Up", () => {
     game.override.enemyAbility(Abilities.NONE);
     game.override.enemyLevel(2000);
 
-    game.override.moveset([Moves.SPIT_UP, Moves.SPIT_UP, Moves.SPIT_UP, Moves.SPIT_UP]);
+    game.override.moveset(new Array(4).fill(spitUp.id));
     game.override.ability(Abilities.NONE);
+
+    vi.spyOn(spitUp, "calculateBattlePower");
   });
 
   describe("consumes all stockpile stacks to deal damage (scaling with stacks)", () => {
@@ -53,13 +57,11 @@ describe("Moves - Spit Up", () => {
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
 
-      vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
-
       game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
-      expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveReturnedWith(expectedPower);
+      expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
+      expect(spitUp.calculateBattlePower).toHaveReturnedWith(expectedPower);
 
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
@@ -78,13 +80,11 @@ describe("Moves - Spit Up", () => {
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
 
-      vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
-
       game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
-      expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveReturnedWith(expectedPower);
+      expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
+      expect(spitUp.calculateBattlePower).toHaveReturnedWith(expectedPower);
 
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
@@ -104,13 +104,11 @@ describe("Moves - Spit Up", () => {
       expect(stockpilingTag).toBeDefined();
       expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
 
-      vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
-
       game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
-      expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveReturnedWith(expectedPower);
+      expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
+      expect(spitUp.calculateBattlePower).toHaveReturnedWith(expectedPower);
 
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
@@ -124,14 +122,12 @@ describe("Moves - Spit Up", () => {
     const stockpilingTag = pokemon.getTag(StockpilingTag)!;
     expect(stockpilingTag).toBeUndefined();
 
-    vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
-
     game.move.select(Moves.SPIT_UP);
     await game.phaseInterceptor.to(TurnInitPhase);
 
     expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.FAIL });
 
-    expect(allMoves[Moves.SPIT_UP].calculateBattlePower).not.toHaveBeenCalled();
+    expect(spitUp.calculateBattlePower).not.toHaveBeenCalled();
   });
 
   describe("restores stat boosts granted by stacks", () => {
@@ -144,22 +140,20 @@ describe("Moves - Spit Up", () => {
       const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
 
-      vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
-
       game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(MovePhase);
 
-      expect(pokemon.summonData.battleStats[BattleStat.DEF]).toBe(1);
-      expect(pokemon.summonData.battleStats[BattleStat.SPDEF]).toBe(1);
+      expect(pokemon.getStatStage(Stat.DEF)).toBe(1);
+      expect(pokemon.getStatStage(Stat.SPDEF)).toBe(1);
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS });
 
-      expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
+      expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
 
-      expect(pokemon.summonData.battleStats[BattleStat.DEF]).toBe(0);
-      expect(pokemon.summonData.battleStats[BattleStat.SPDEF]).toBe(0);
+      expect(pokemon.getStatStage(Stat.DEF)).toBe(0);
+      expect(pokemon.getStatStage(Stat.SPDEF)).toBe(0);
 
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
@@ -175,26 +169,19 @@ describe("Moves - Spit Up", () => {
 
       // for the sake of simplicity (and because other tests cover the setup), set boost amounts directly
       stockpilingTag.statChangeCounts = {
-        [BattleStat.DEF]: -1,
-        [BattleStat.SPDEF]: 2,
+        [Stat.DEF]: -1,
+        [Stat.SPDEF]: 2,
       };
-
-      expect(stockpilingTag.statChangeCounts).toMatchObject({
-        [BattleStat.DEF]: -1,
-        [BattleStat.SPDEF]: 2,
-      });
-
-      vi.spyOn(allMoves[Moves.SPIT_UP], "calculateBattlePower");
 
       game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS });
 
-      expect(allMoves[Moves.SPIT_UP].calculateBattlePower).toHaveBeenCalledOnce();
+      expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
 
-      expect(pokemon.summonData.battleStats[BattleStat.DEF]).toBe(1);
-      expect(pokemon.summonData.battleStats[BattleStat.SPDEF]).toBe(-2);
+      expect(pokemon.getStatStage(Stat.DEF)).toBe(1);
+      expect(pokemon.getStatStage(Stat.SPDEF)).toBe(-2);
 
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });

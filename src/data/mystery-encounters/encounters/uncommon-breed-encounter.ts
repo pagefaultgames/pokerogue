@@ -20,9 +20,9 @@ import { SelfStatusMove } from "#app/data/move";
 import { PokeballType } from "#enums/pokeball";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { StatChangePhase } from "#app/phases/stat-change-phase";
-import { BattleStat } from "#app/data/battle-stat";
 import { BerryModifier } from "#app/modifier/modifier";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { Stat } from "#enums/stat";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:uncommonBreed";
@@ -79,7 +79,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(pokemon.scene, `${namespace}.option.1.stat_boost`);
-            pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
+            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1));
           }
         }],
       };

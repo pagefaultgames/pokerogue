@@ -1,7 +1,7 @@
 import Battle, { BattlerIndex, BattleType } from "#app/battle";
 import { biomeLinks, BiomePoolTier } from "#app/data/biomes";
 import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
+import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import Pokemon, { FieldPosition, PlayerPokemon, PokemonMove, PokemonSummonData } from "#app/field/pokemon";
 import { ExpBalanceModifier, ExpShareModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "#app/modifier/modifier";
@@ -908,13 +908,13 @@ export function handleMysteryEncounterTurnStartEffects(scene: BattleScene): bool
 export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: number) {
   const numRuns = 1000;
   let run = 0;
-  const targetEncountersPerRun = 15; // AVERAGE_ENCOUNTERS_PER_RUN_TARGET
   const biomes = Object.keys(Biome).filter(key => isNaN(Number(key)));
   const alwaysPickTheseBiomes = [Biome.ISLAND, Biome.ABYSS, Biome.WASTELAND, Biome.FAIRY_CAVE, Biome.TEMPLE, Biome.LABORATORY, Biome.SPACE, Biome.WASTELAND];
 
   const calculateNumEncounters = (): any[] => {
     let encounterRate = baseSpawnWeight; // BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT
     const numEncounters = [0, 0, 0, 0];
+    let mostRecentEncounterWave = 0;
     const encountersByBiome = new Map<string, number>(biomes.map(b => [b, 0]));
     const validMEfloorsByBiome = new Map<string, number>(biomes.map(b => [b, 0]));
     let currentBiome = Biome.TOWN;
@@ -976,16 +976,20 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
 
       // If total number of encounters is lower than expected for the run, slightly favor a new encounter
       // Do the reverse as well
-      const expectedEncountersByFloor = targetEncountersPerRun / (180 - 10) * i;
+      const expectedEncountersByFloor = AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (180 - 10) * (i - 10);
       const currentRunDiffFromAvg = expectedEncountersByFloor - numEncounters.reduce((a, b) => a + b);
-      const favoredEncounterRate = encounterRate + currentRunDiffFromAvg * 5;
+      const favoredEncounterRate = encounterRate + currentRunDiffFromAvg * 15;
 
-      if (roll < favoredEncounterRate) {
+      // If the most recent ME was 3 or fewer waves ago, can never spawn a ME
+      const canSpawn = (i - mostRecentEncounterWave) > 3;
+
+      if (canSpawn && roll < favoredEncounterRate) {
+        mostRecentEncounterWave = i;
         encounterRate = baseSpawnWeight;
 
         // Calculate encounter rarity
         // Common / Uncommon / Rare / Super Rare (base is out of 128)
-        const tierWeights = [64, 40, 21, 3];
+        const tierWeights = [66, 40, 19, 3];
 
         // Adjust tier weights by currently encountered events (pity system that lowers odds of multiple common/uncommons)
         tierWeights[0] = tierWeights[0] - 6 * numEncounters[0];

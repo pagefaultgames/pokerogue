@@ -158,7 +158,10 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1);
 
       expect(scene.getParty().length).toBe(initialPartySize + 1);
-      expect(scene.getParty().find(p => p.name === pokemonName) instanceof PlayerPokemon).toBeTruthy();
+
+      const newlyPurchasedPokemon = scene.getParty().find(p => p.name === pokemonName);
+      expect(newlyPurchasedPokemon).toBeDefined();
+      expect(newlyPurchasedPokemon!.moveset.length > 0).toBeTruthy();
     });
 
     it("should be disabled if player does not have enough money", async () => {

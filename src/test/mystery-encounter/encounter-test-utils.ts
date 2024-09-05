@@ -32,6 +32,11 @@ export async function runMysteryEncounterToEnd(game: GameManager, optionNo: numb
   }, () => game.isCurrentPhase(MysteryEncounterBattlePhase) || game.isCurrentPhase(MysteryEncounterRewardsPhase));
 
   if (isBattle) {
+    game.onNextPrompt("DamagePhase", Mode.MESSAGE, () => {
+      game.setMode(Mode.MESSAGE);
+      game.endPhase();
+    }, () => game.isCurrentPhase(CommandPhase));
+
     game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
       game.setMode(Mode.MESSAGE);
       game.endPhase();
@@ -162,5 +167,6 @@ export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManage
   });
   game.scene.pushPhase(new VictoryPhase(game.scene, 0));
   game.phaseInterceptor.superEndPhase();
+  game.setMode(Mode.MESSAGE);
   await game.phaseInterceptor.to(MysteryEncounterRewardsPhase, runRewardsPhase);
 }

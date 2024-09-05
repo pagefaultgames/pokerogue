@@ -22,6 +22,11 @@
       "select_prompt": "Select a new ability\nto train your Pokémon in.",
       "finished": "{{selectedPokemon}} returns, feeling\nworn out but accomplished!$Its ability was changed to {{ability}}!"
     },
+    "4": {
+      "label": "Leave",
+      "tooltip": "(-) No Rewards",
+      "selected": "You've no time for training.\nTime to move on."
+    },
     "selected": "{{selectedPokemon}} moves across\nthe clearing to face you..."
   },
   "outro": "That was a successful training session!"

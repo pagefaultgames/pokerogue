@@ -118,7 +118,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter =
           if (roll === 0) {
             modifiers.push(modifierTypes.DIRE_HIT);
           } else {
-            modifiers.push(modifierTypes.TEMP_STAT_BOOSTER);
+            modifiers.push(modifierTypes.TEMP_STAT_STAGE_BOOSTER);
           }
           i++;
         }

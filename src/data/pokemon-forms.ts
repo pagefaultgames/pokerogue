@@ -66,34 +66,34 @@ export enum FormChangeItem {
 
   BLUE_ORB = 50,
   RED_ORB,
-  SHARP_METEORITE,
-  HARD_METEORITE,
-  SMOOTH_METEORITE,
   ADAMANT_CRYSTAL,
   LUSTROUS_GLOBE,
   GRISEOUS_CORE,
   REVEAL_GLASS,
-  GRACIDEA,
   MAX_MUSHROOMS,
   DARK_STONE,
   LIGHT_STONE,
   PRISON_BOTTLE,
-  N_LUNARIZER,
-  N_SOLARIZER,
   RUSTED_SWORD,
   RUSTED_SHIELD,
   ICY_REINS_OF_UNITY,
   SHADOW_REINS_OF_UNITY,
-  WELLSPRING_MASK,
-  HEARTHFLAME_MASK,
-  CORNERSTONE_MASK,
+  ULTRANECROZIUM_Z,
+
+  SHARP_METEORITE = 100,
+  HARD_METEORITE,
+  SMOOTH_METEORITE,
+  GRACIDEA,
   SHOCK_DRIVE,
   BURN_DRIVE,
   CHILL_DRIVE,
   DOUSE_DRIVE,
-  ULTRANECROZIUM_Z,
-
-  FIST_PLATE = 100,
+  N_SOLARIZER,
+  N_LUNARIZER,
+  WELLSPRING_MASK,
+  HEARTHFLAME_MASK,
+  CORNERSTONE_MASK,
+  FIST_PLATE,
   SKY_PLATE,
   TOXIC_PLATE,
   EARTH_PLATE,
@@ -129,7 +129,7 @@ export enum FormChangeItem {
   DRAGON_MEMORY,
   DARK_MEMORY,
   FAIRY_MEMORY,
-  BLANK_MEMORY  // TODO: Find a potential use for this
+  NORMAL_MEMORY // TODO: Find a potential use for this
 }
 
 export type SpeciesFormChangeConditionPredicate = (p: Pokemon) => boolean;
@@ -359,7 +359,7 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
 
 /**
  * Class used for triggering form changes based on weather.
- * Used by Castform.
+ * Used by Castform and Cherrim.
  * @extends SpeciesFormChangeTrigger
  */
 export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
@@ -392,7 +392,7 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
 /**
  * Class used for reverting to the original form when the weather runs out
  * or when the user loses the ability/is suppressed.
- * Used by Castform.
+ * Used by Castform and Cherrim.
  * @extends SpeciesFormChangeTrigger
  */
 export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChangeTrigger {
@@ -929,6 +929,11 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.CASTFORM, "sunny", "", new SpeciesFormChangeActiveTrigger(), true),
     new SpeciesFormChange(Species.CASTFORM, "rainy", "", new SpeciesFormChangeActiveTrigger(), true),
     new SpeciesFormChange(Species.CASTFORM, "snowy", "", new SpeciesFormChangeActiveTrigger(), true),
+  ],
+  [Species.CHERRIM]: [
+    new SpeciesFormChange(Species.CHERRIM, "overcast", "sunshine", new SpeciesFormChangeWeatherTrigger(Abilities.FLOWER_GIFT, [ WeatherType.SUNNY, WeatherType.HARSH_SUN ]), true),
+    new SpeciesFormChange(Species.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeRevertWeatherFormTrigger(Abilities.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ]), true),
+    new SpeciesFormChange(Species.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeActiveTrigger(), true),
   ],
 };
 

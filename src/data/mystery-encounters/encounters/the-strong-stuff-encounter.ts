@@ -11,15 +11,19 @@ import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-enco
 import { modifyPlayerPokemonBST } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
-import { BattleStat } from "#app/data/battle-stat";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
-import { StatChangePhase } from "#app/phases/stat-change-phase";
+import { Stat } from "#enums/stat";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:theStrongStuff";
+
+// Halved for HP stat
+const HIGH_BST_REDUCTION_VALUE = 15;
+const BST_INCREASE_VALUE = 10;
 
 /**
  * The Strong Stuff encounter.
@@ -28,7 +32,7 @@ const namespace = "mysteryEncounter:theStrongStuff";
  */
 export const TheStrongStuffEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_STRONG_STUFF)
-    .withEncounterTier(MysteryEncounterTier.COMMON)
+    .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
     .withScenePartySizeRequirement(3, 6) // Must have at least 3 pokemon in party
     .withHideWildIntroMessage(true)
@@ -39,7 +43,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
         fileRoot: "items",
         hasShadow: true,
         isItem: true,
-        scale: 1.5,
+        scale: 1.25,
         x: -15,
         y: 3,
         disableAnimation: true
@@ -49,7 +53,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
         fileRoot: "pokemon",
         hasShadow: true,
         repeat: true,
-        scale: 1.5,
+        scale: 1.25,
         x: 20,
         y: 10,
         yShadow: 7
@@ -72,7 +76,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             species: getPokemonSpecies(Species.SHUCKLE),
             isBoss: true,
             bossSegments: 5,
-            mysteryEncounterData: new MysteryEncounterPokemonData(1.5),
+            mysteryEncounterData: new MysteryEncounterPokemonData(1.25),
             nature: Nature.BOLD,
             moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
             modifierConfigs: [
@@ -93,7 +97,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
               queueEncounterMessage(pokemon.scene, `${namespace}.option.2.stat_boost`);
-              pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.DEF, BattleStat.SPDEF], 2));
+              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.DEF, Stat.SPDEF], 2));
             }
           }
         ],
@@ -126,24 +130,27 @@ export const TheStrongStuffEncounter: MysteryEncounter =
         });
 
         // -15 to all base stats of highest BST (halved for HP), +10 to all base stats of rest of party (halved for HP)
-        // Sort party by bst (inverted to pop 2 highest off end)
+        // Sort party by bst
         const sortedParty = scene.getParty().slice(0)
           .sort((pokemon1, pokemon2) => {
             const pokemon1Bst = pokemon1.calculateBaseStats().reduce((a, b) => a + b, 0);
             const pokemon2Bst = pokemon2.calculateBaseStats().reduce((a, b) => a + b, 0);
-            return pokemon1Bst - pokemon2Bst;
+            return pokemon2Bst - pokemon1Bst;
           });
 
-        const highestBst = sortedParty.pop()!;
-        const highestBst2 = sortedParty.pop()!;
-        modifyPlayerPokemonBST(highestBst, -15);
-        modifyPlayerPokemonBST(highestBst2, -15);
-        // +10 for the rest
-        for (const pokemon of sortedParty) {
-          modifyPlayerPokemonBST(pokemon, 10);
-        }
+        sortedParty.forEach((pokemon, index) => {
+          if (index < 2) {
+            // -15 to the two highest BST mons
+            modifyPlayerPokemonBST(pokemon, -HIGH_BST_REDUCTION_VALUE);
+            encounter.setDialogueToken("highBstPokemon" + (index + 1), pokemon.getNameToRender());
+          } else {
+            // +10 for the rest
+            modifyPlayerPokemonBST(pokemon, BST_INCREASE_VALUE);
+          }
+        });
 
-        encounter.setDialogueToken("highBstPokemon", highestBst.getNameToRender());
+        encounter.setDialogueToken("reductionValue", HIGH_BST_REDUCTION_VALUE.toString());
+        encounter.setDialogueToken("increaseValue", BST_INCREASE_VALUE.toString());
         await showEncounterText(scene, `${namespace}.option.1.selected_2`, undefined, true);
 
         setEncounterRewards(scene, { fillRemaining: true });

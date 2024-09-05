@@ -7,7 +7,8 @@ import MockSprite from "#test/utils/mocks/mocksContainer/mockSprite";
 import MockText from "#test/utils/mocks/mocksContainer/mockText";
 import MockTexture from "#test/utils/mocks/mocksContainer/mockTexture";
 import { MockGameObject } from "./mockGameObject";
-import MockVideo from "#test/utils/mocks/mocksContainer/mockVideo";
+import { vi } from "vitest";
+import { MockVideoGameObject } from "./mockVideoGameObject";
 
 /**
  * Stub class for Phaser.Textures.TextureManager
@@ -35,7 +36,7 @@ export default class MockTextureManager {
       text: this.text.bind(this),
       bitmapText: this.text.bind(this),
       displayList: this.displayList,
-      video: this.video.bind(this)
+      video: vi.fn(() => new MockVideoGameObject()),
     };
   }
 
@@ -95,11 +96,5 @@ export default class MockTextureManager {
     const polygon = new MockPolygon(this, x, y, content, fillColor, fillAlpha);
     this.list.push(polygon);
     return polygon;
-  }
-
-  video(x: number, y: number, key?: string) {
-    const video = new MockVideo(this, x, y, key);
-    this.list.push(video);
-    return video;
   }
 }

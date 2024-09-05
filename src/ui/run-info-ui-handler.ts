@@ -13,8 +13,9 @@ import { BattleType } from "../battle";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
 import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
-import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle.js";
+import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 import { Type, getTypeRgb } from "../data/type";
+import { TypeColor, TypeShadow } from "#app/enums/color";
 import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/data/variant";
 import { PokemonHeldItemModifier, TerastallizeModifier } from "../modifier/modifier";
@@ -373,18 +374,10 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.CHALLENGE:
       modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
-      modeText.appendText(`\t\t${i18next.t("runHistory:challengeRules")}: `);
-      const runChallenges = this.runInfo.challenges;
-      const rules: string[] = [];
-      for (let i = 0; i < runChallenges.length; i++) {
-        if (runChallenges[i].id === Challenges.SINGLE_GENERATION && runChallenges[i].value !== 0) {
-          rules.push(i18next.t(`runHistory:challengeMonoGen${runChallenges[i].value}`));
-        } else if (runChallenges[i].id === Challenges.SINGLE_TYPE && runChallenges[i].value !== 0) {
-          rules.push(i18next.t(`pokemonInfo:Type.${Type[runChallenges[i].value-1]}` as const));
-        } else if (runChallenges[i].id === Challenges.FRESH_START && runChallenges[i].value !== 0) {
-          rules.push(i18next.t("challenges:freshStart.name"));
-        }
-      }
+      modeText.appendText(`${i18next.t("runHistory:challengeRules")}: `);
+      modeText.setWrapMode(1); // wrap by word
+      modeText.setWrapWidth(500);
+      const rules: string[] = this.challengeParser();
       if (rules) {
         for (let i = 0; i < rules.length; i++) {
           if (i > 0) {
@@ -464,6 +457,38 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runInfoContainer.add(modeText);
     this.runInfoContainer.add(runInfoTextContainer);
     this.runContainer.add(this.runInfoContainer);
+  }
+
+  /**
+   * This function parses the Challenges section of the Run Entry and returns a list of active challenge.
+   * @return string[] of active challenge names
+   */
+  private challengeParser(): string[] {
+    const rules: string[] = [];
+    for (let i = 0; i < this.runInfo.challenges.length; i++) {
+      if (this.runInfo.challenges[i].value !== 0) {
+        switch (this.runInfo.challenges[i].id) {
+        case Challenges.SINGLE_GENERATION:
+          rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
+          break;
+        case Challenges.SINGLE_TYPE:
+          const typeRule = Type[this.runInfo.challenges[i].value-1];
+          const typeTextColor = `[color=${TypeColor[typeRule]}]`;
+          const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
+          const typeText = typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)!+"[/color]"+"[/shadow]";
+          rules.push(typeText);
+          break;
+        case Challenges.FRESH_START:
+          rules.push(i18next.t("challenges:freshStart.name"));
+          break;
+        case Challenges.INVERSE_BATTLE:
+          //
+          rules.push(i18next.t("challenges:inverseBattle.shortName"));
+          break;
+        }
+      }
+    }
+    return rules;
   }
 
   /**
@@ -609,7 +634,7 @@ export default class RunInfoUiHandler extends UiHandler {
       // Pokemon Held Items - not displayed by default
       // Endless/Endless Spliced have a different scale because Pokemon tend to accumulate more items in these runs.
       const heldItemsScale = (this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS) ? 0.25 : 0.5;
-      const heldItemsContainer = this.scene.add.container(-82, 6);
+      const heldItemsContainer = this.scene.add.container(-82, 2);
       const heldItemsList : PokemonHeldItemModifier[] = [];
       if (this.runInfo.modifiers.length) {
         for (const m of this.runInfo.modifiers) {
@@ -629,6 +654,9 @@ export default class RunInfoUiHandler extends UiHandler {
               break;
             }
             const itemIcon = item?.getIcon(this.scene, true);
+            if (item?.stackCount < item?.getMaxHeldItemCount(pokemon) && itemIcon.list[1] instanceof Phaser.GameObjects.BitmapText) {
+              itemIcon.list[1].clearTint();
+            }
             itemIcon.setScale(heldItemsScale);
             itemIcon.setPosition((index%19) * 10, row * 10);
             heldItemsContainer.add(itemIcon);

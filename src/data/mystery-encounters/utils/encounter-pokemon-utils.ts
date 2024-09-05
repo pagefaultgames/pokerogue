@@ -18,7 +18,7 @@ import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-enco
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { Gender } from "#app/data/gender";
-import { Stat } from "#enums/stat";
+import { PermanentStat } from "#enums/stat";
 import { VictoryPhase } from "#app/phases/victory-phase";
 
 export function getSpriteKeysFromSpecies(species: Species, female?: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): { spriteKey: string, fileRoot: string } {
@@ -92,7 +92,7 @@ export function getHighestLevelPlayerPokemon(scene: BattleScene, unfainted: bool
  * @param unfainted - default false. If true, only picks from unfainted mons.
  * @returns
  */
-export function getHighestStatPlayerPokemon(scene: BattleScene, stat: Stat, unfainted: boolean = false): PlayerPokemon {
+export function getHighestStatPlayerPokemon(scene: BattleScene, stat: PermanentStat, unfainted: boolean = false): PlayerPokemon {
   const party = scene.getParty();
   let pokemon: PlayerPokemon | null = null;
 
@@ -680,5 +680,5 @@ export function getGoldenBugNetSpecies(scene: BattleScene, waveIndex: integer, l
   }
 
   // Defaults to Scyther
-  return getPokemonSpecies(GOLDEN_BUG_NET_SPECIES_POOL[0][0]);
+  return getPokemonSpecies(Species.SCYTHER);
 }

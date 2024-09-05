@@ -6,6 +6,7 @@ import { StatusEffect } from "#app/enums/status-effect.js";
 import { PokemonPhase } from "./pokemon-phase";
 import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { BattleType } from "#app/battle";
 
 export class PostSummonPhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
@@ -23,7 +24,7 @@ export class PostSummonPhase extends PokemonPhase {
     this.scene.arena.applyTags(ArenaTrapTag, pokemon);
 
     // If this is mystery encounter and has post summon phase tag, apply post summon effects
-    if (pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag)) {
+    if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag).length > 0) {
       pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
     }
 

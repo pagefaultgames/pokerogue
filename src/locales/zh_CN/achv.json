@@ -86,7 +86,7 @@
     "name": "大师球联盟冠军"
   },
 
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     "name": "团队协作",
     "description": "在一项属性强化至最大时用接力棒传递给其他宝可梦"
   },
@@ -268,5 +268,9 @@
   "FRESH_START": {
     "name": "初次尝试！",
     "description": "完成初次尝试挑战"
+  },
+  "INVERSE_BATTLE": {
+    "name": "镜子子镜",
+    "description": "完成逆转之战挑战\n战挑战之转逆成完"
   }
 }

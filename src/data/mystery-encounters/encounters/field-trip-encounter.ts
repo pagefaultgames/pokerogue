@@ -1,7 +1,6 @@
 import { MoveCategory } from "#app/data/move";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { generateModifierTypeOption, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterExp, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { TempBattleStat } from "#app/data/temp-battle-stat";
 import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -10,6 +9,7 @@ import BattleScene from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { Stat } from "#enums/stat";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fieldTrip";
@@ -126,9 +126,9 @@ export const FieldTripEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           if (encounter.misc.correctMove) {
             const modifiers = [
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.ATK])!,
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.DEF])!,
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPD])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.ATK])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.DEF])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
               generateModifierTypeOption(scene, modifierTypes.DIRE_HIT)!,
             ];
 
@@ -218,9 +218,9 @@ export const FieldTripEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           if (encounter.misc.correctMove) {
             const modifiers = [
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPATK])!,
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPDEF])!,
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPD])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPATK])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPDEF])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
               generateModifierTypeOption(scene, modifierTypes.DIRE_HIT)!,
             ];
 
@@ -304,8 +304,8 @@ export const FieldTripEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           if (encounter.misc.correctMove) {
             const modifiers = [
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.ACC])!,
-              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_BOOSTER, [TempBattleStat.SPD])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.ACC])!,
+              generateModifierTypeOption(scene, modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
               generateModifierTypeOption(scene, modifierTypes.GREAT_BALL)!,
               generateModifierTypeOption(scene, modifierTypes.IV_SCANNER)!,
             ];

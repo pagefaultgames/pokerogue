@@ -95,10 +95,9 @@ import { ToggleDoublePositionPhase } from "./phases/toggle-double-position-phase
 import { TurnInitPhase } from "./phases/turn-init-phase";
 import { ShopCursorTarget } from "./enums/shop-cursor-target";
 import MysteryEncounter from "./data/mystery-encounters/mystery-encounter";
-import { allMysteryEncounters, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, mysteryEncountersByBiome, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "./data/mystery-encounters/mystery-encounters";
+import { allMysteryEncounters, ANTI_VARIANCE_WEIGHT_MODIFIER, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, mysteryEncountersByBiome, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "./data/mystery-encounters/mystery-encounters";
 import { MysteryEncounterData } from "#app/data/mystery-encounters/mystery-encounter-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 
@@ -147,7 +146,7 @@ export default class BattleScene extends SceneBase {
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
-  public shopCursorTarget: number = ShopCursorTarget.CHECK_TEAM;
+  public shopCursorTarget: number = ShopCursorTarget.REWARDS;
   public showMovesetFlyout: boolean = true;
   public showArenaFlyout: boolean = true;
   public showTimeOfDayWidget: boolean = true;
@@ -861,12 +860,13 @@ export default class BattleScene extends SceneBase {
   }
 
   addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
+    if (Overrides.OPP_LEVEL_OVERRIDE > 0) {
+      level = Overrides.OPP_LEVEL_OVERRIDE;
+    }
     if (Overrides.OPP_SPECIES_OVERRIDE) {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
-    }
-
-    if (Overrides.OPP_LEVEL_OVERRIDE !== 0) {
-      level = Overrides.OPP_LEVEL_OVERRIDE;
+      // The fact that a Pokemon is a boss or not can change based on its Species and level
+      boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
@@ -1007,6 +1007,7 @@ export default class BattleScene extends SceneBase {
 
     this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
     console.log("Seed:", this.seed);
+    this.resetSeed(); // Properly resets RNG after saving and quitting a session
 
     this.disableMenu = false;
 
@@ -1149,31 +1150,36 @@ export default class BattleScene extends SceneBase {
       }
 
       // TODO: remove these once ME spawn rates are finalized
-      // let testStartingWeight = 0;
-      // while (testStartingWeight < 3) {
+      // let testStartingWeight = 3;
+      // while (testStartingWeight < 4) {
       //   calculateMEAggregateStats(this, testStartingWeight);
-      //   testStartingWeight += 2;
+      //   testStartingWeight += 1;
       // }
       // calculateRareSpawnAggregateStats(this, 14);
 
       // Check for mystery encounter
-      // Can only occur in place of a standard wild battle, waves 10-180
-      if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && newWaveIndex < 180 && newWaveIndex > 10) {
+      // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
+      const highestMysteryEncounterWave = 180;
+      const lowestMysteryEncounterWave = 10;
+      if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(newWaveIndex) && newWaveIndex < highestMysteryEncounterWave && newWaveIndex > lowestMysteryEncounterWave) {
         const roll = Utils.randSeedInt(256);
 
-        // Base spawn weight is 1/256, and increases by 5/256 for each missed attempt at spawning an encounter on a valid floor
-        const sessionEncounterRate = !isNullOrUndefined(this.mysteryEncounterData?.encounterSpawnChance) ? this.mysteryEncounterData.encounterSpawnChance : BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
+        // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
+        const sessionEncounterRate = this.mysteryEncounterData.encounterSpawnChance;
+        const encounteredEvents = this.mysteryEncounterData.encounteredEvents;
 
-        // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn
-        // Do the reverse as well
-        // Reduces occurrence of runs with very few (<6) and a ton (>10) of encounters
-        const expectedEncountersByFloor = AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (180 - 10) * newWaveIndex;
-        const currentRunDiffFromAvg = expectedEncountersByFloor - (this.mysteryEncounterData?.encounteredEvents?.length || 0);
-        const favoredEncounterRate = sessionEncounterRate + currentRunDiffFromAvg * 5;
+        // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn (reverse as well)
+        // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
+        const expectedEncountersByFloor = AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave) * (newWaveIndex - lowestMysteryEncounterWave);
+        const currentRunDiffFromAvg = expectedEncountersByFloor - encounteredEvents.length;
+        const favoredEncounterRate = sessionEncounterRate + currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER;
 
         const successRate = isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE) ? favoredEncounterRate : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE!;
 
-        if (roll < successRate) {
+        // If the most recent ME was 3 or fewer waves ago, can never spawn a ME
+        const canSpawn = encounteredEvents.length === 0 || (newWaveIndex - encounteredEvents[encounteredEvents.length - 1].waveIndex) > 3 || !isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE);
+
+        if (canSpawn && roll < successRate) {
           newBattleType = BattleType.MYSTERY_ENCOUNTER;
           // Reset base spawn weight
           this.mysteryEncounterData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
@@ -1236,7 +1242,7 @@ export default class BattleScene extends SceneBase {
       const isEndlessFifthWave = this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 5) === 0;
       const isWaveIndexMultipleOfFiftyMinusOne = (lastBattle.waveIndex % 50) === 49;
       const isNewBiome = isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
-      const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+      const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
       this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
       this.trySpreadPokerus();
       if (!isNewBiome && (newWaveIndex % 10) === 5) {
@@ -1244,14 +1250,19 @@ export default class BattleScene extends SceneBase {
       }
       if (resetArenaState) {
         this.arena.resetArenaEffects();
-        if (lastBattle?.mysteryEncounter?.encounterMode !== MysteryEncounterMode.NO_BATTLE) {
-          playerField.forEach((_, p) => this.pushPhase(new ReturnPhase(this, p)));
 
-          for (const pokemon of this.getParty()) {
-            pokemon.resetBattleData();
-            applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
+        playerField.forEach((pokemon, p) => {
+          if (pokemon.isOnField()) {
+            this.pushPhase(new ReturnPhase(this, p));
           }
+        });
 
+        for (const pokemon of this.getParty()) {
+          pokemon.resetBattleData();
+          applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
+        }
+
+        if (!this.trainer.visible) {
           this.pushPhase(new ShowTrainerPhase(this));
         }
       }
@@ -1406,6 +1417,13 @@ export default class BattleScene extends SceneBase {
   }
 
   getEncounterBossSegments(waveIndex: integer, level: integer, species?: PokemonSpecies, forceBoss: boolean = false): integer {
+    if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE > 1) {
+      return Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE;
+    } else if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE === 1) {
+      // The rest of the code expects to be returned 0 and not 1 if the enemy is not a boss
+      return 0;
+    }
+
     if (this.gameMode.isDaily && this.gameMode.isWaveFinal(waveIndex)) {
       return 5;
     }
@@ -1870,6 +1888,7 @@ export default class BattleScene extends SceneBase {
     config = config ?? {};
     try {
       const keyDetails = key.split("/");
+      config["volume"] = config["volume"] ?? 1;
       switch (keyDetails[0]) {
       case "level_up_fanfare":
       case "item_fanfare":
@@ -1879,11 +1898,11 @@ export default class BattleScene extends SceneBase {
       case "evolution_fanfare":
         // These sounds are loaded in as BGM, but played as sound effects
         // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
-        config["volume"] = this.masterVolume * this.bgmVolume;
+        config["volume"] *= (this.masterVolume * this.bgmVolume);
         break;
       case "battle_anims":
       case "cry":
-        config["volume"] = this.masterVolume * this.fieldVolume;
+        config["volume"] *= (this.masterVolume * this.fieldVolume);
         //PRSFX sound files are unusually loud
         if (keyDetails[1].startsWith("PRSFX- ")) {
           config["volume"] *= 0.5;
@@ -1891,10 +1910,10 @@ export default class BattleScene extends SceneBase {
         break;
       case "ui":
         //As of, right now this applies to the "select", "menu_open", "error" sound effects
-        config["volume"] = this.masterVolume * this.uiVolume;
+        config["volume"] *= (this.masterVolume * this.uiVolume);
         break;
       case "se":
-        config["volume"] = this.masterVolume * this.seVolume;
+        config["volume"] *= (this.masterVolume * this.seVolume);
         break;
       }
       this.sound.play(key, config);
@@ -2831,6 +2850,35 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * This function retrieves the sprite and audio keys for active Pokemon.
+   * Active Pokemon include both enemy and player Pokemon of the current wave.
+   * Note: Questions on garbage collection go to @frutescens
+   * @returns a string array of active sprite and audio keys that should not be deleted
+   */
+  getActiveKeys(): string[] {
+    const keys: string[] = [];
+    const playerParty = this.getParty();
+    playerParty.forEach(p => {
+      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
+      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant, true));
+      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
+      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
+        keys.push("cry/"+p.getFusionSpeciesForm().getCryKey(p.fusionSpecies.formIndex));
+      }
+    });
+    // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
+    const enemyParty = this.getEnemyParty();
+    enemyParty.forEach(p => {
+      keys.push(p.species.getSpriteKey(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
+      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
+      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
+        keys.push("cry/"+p.getFusionSpeciesForm().getCryKey(p.fusionSpecies.formIndex));
+      }
+    });
+    return keys;
+  }
+
+  /**
    * Initialized the 2nd phase of the final boss (e.g. form-change for Eternatus)
    * @param pokemon The (enemy) pokemon
    */
@@ -2899,11 +2947,10 @@ export default class BattleScene extends SceneBase {
     const tierWeights = [MysteryEncounterTier.COMMON, MysteryEncounterTier.GREAT, MysteryEncounterTier.ULTRA, MysteryEncounterTier.ROGUE];
 
     // Adjust tier weights by previously encountered events to lower odds of only common/uncommons in run
-    this.mysteryEncounterData.encounteredEvents.forEach(val => {
-      const tier = val[1];
-      if (tier === MysteryEncounterTier.COMMON) {
+    this.mysteryEncounterData.encounteredEvents.forEach(seenEncounterData => {
+      if (seenEncounterData.tier === MysteryEncounterTier.COMMON) {
         tierWeights[0] = tierWeights[0] - 6;
-      } else if (tier === MysteryEncounterTier.GREAT) {
+      } else if (seenEncounterData.tier === MysteryEncounterTier.GREAT) {
         tierWeights[1] = tierWeights[1] - 4;
       }
     });
@@ -2920,8 +2967,8 @@ export default class BattleScene extends SceneBase {
     }
 
     let availableEncounters: MysteryEncounter[] = [];
-    // New encounter will never be the same as the most recent encounter
-    const previousEncounter = this.mysteryEncounterData.encounteredEvents?.length > 0 ? this.mysteryEncounterData.encounteredEvents[this.mysteryEncounterData.encounteredEvents.length - 1][0] : null;
+    // New encounter should never be the same as the most recent encounter
+    const previousEncounter = this.mysteryEncounterData.encounteredEvents.length > 0 ? this.mysteryEncounterData.encounteredEvents[this.mysteryEncounterData.encounteredEvents.length - 1].type : null;
     const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType) ?? [];
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
     while (availableEncounters.length === 0 && tier !== null) {
@@ -2937,12 +2984,12 @@ export default class BattleScene extends SceneBase {
           if (!encounterCandidate.meetsRequirements!(this)) { // Meets encounter requirements
             return false;
           }
-          if (!isNullOrUndefined(previousEncounter) && encounterType === previousEncounter) { // Previous encounter was not this one
+          if (previousEncounter !== null && encounterType === previousEncounter) { // Previous encounter was not this one
             return false;
           }
-          if (this.mysteryEncounterData.encounteredEvents?.length > 0 && // Encounter has not exceeded max allowed encounters
+          if (this.mysteryEncounterData.encounteredEvents.length > 0 && // Encounter has not exceeded max allowed encounters
             (encounterCandidate.maxAllowedEncounters && encounterCandidate.maxAllowedEncounters > 0)
-            && this.mysteryEncounterData.encounteredEvents.filter(e => e[0] === encounterType).length >= encounterCandidate.maxAllowedEncounters) {
+            && this.mysteryEncounterData.encounteredEvents.filter(e => e.type === encounterType).length >= encounterCandidate.maxAllowedEncounters) {
             return false;
           }
           return true;
@@ -2962,6 +3009,7 @@ export default class BattleScene extends SceneBase {
 
     // If absolutely no encounters are available, spawn 0th encounter
     if (availableEncounters.length === 0) {
+      console.log("No Mystery Encounters found, falling back to Mysterious Challengers.");
       return allMysteryEncounters[MysteryEncounterType.MYSTERIOUS_CHALLENGERS];
     }
     encounter = availableEncounters[Utils.randSeedInt(availableEncounters.length)];

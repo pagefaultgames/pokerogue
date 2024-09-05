@@ -32,10 +32,36 @@ import { FunAndGamesEncounter } from "#app/data/mystery-encounters/encounters/fu
 import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
 import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encounters/global-trade-system-encounter";
 
-// Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
-export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 1;
-export const WEIGHT_INCREMENT_ON_SPAWN_MISS = 5;
-export const AVERAGE_ENCOUNTERS_PER_RUN_TARGET = 15;
+/**
+ * Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / 256
+ */
+export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 3;
+/**
+ * When an ME spawn roll fails, WEIGHT_INCREMENT_ON_SPAWN_MISS is added to future rolls for ME spawn checks.
+ * These values are cleared whenever the next ME spawns, and spawn weight returns to BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT
+ */
+export const WEIGHT_INCREMENT_ON_SPAWN_MISS = 3;
+/**
+ * Specifies the target average for total ME spawns in a single Classic run.
+ * Used by anti-variance mechanic to check whether a run is above or below the target on a given wave.
+ */
+export const AVERAGE_ENCOUNTERS_PER_RUN_TARGET = 12;
+/**
+ * Will increase/decrease the chance of spawning a ME based on the current run's total MEs encountered vs AVERAGE_ENCOUNTERS_PER_RUN_TARGET
+ * Example:
+ * AVERAGE_ENCOUNTERS_PER_RUN_TARGET = 17 (expects avg 1 ME every 10 floors)
+ * ANTI_VARIANCE_WEIGHT_MODIFIER = 15
+ *
+ * On wave 20, if 1 ME has been encountered, the difference from expected average is 0 MEs.
+ * So anti-variance adds 0/256 to the spawn weight check for ME spawn.
+ *
+ * On wave 20, if 0 MEs have been encountered, the difference from expected average is 1 ME.
+ * So anti-variance adds 15/256 to the spawn weight check for ME spawn.
+ *
+ * On wave 20, if 2 MEs have been encountered, the difference from expected average is -1 ME.
+ * So anti-variance adds -15/256 to the spawn weight check for ME spawn.
+ */
+export const ANTI_VARIANCE_WEIGHT_MODIFIER = 15;
 
 export const EXTREME_ENCOUNTER_BIOMES = [
   Biome.SEA,

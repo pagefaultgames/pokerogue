@@ -10,19 +10,19 @@
   },
   "10K_MONEY": {
     "name": "Money Haver",
-    "name_female": null
+    "name_female": "Money Haver"
   },
   "100K_MONEY": {
     "name": "Rich",
-    "name_female": null
+    "name_female": "Rich"
   },
   "1M_MONEY": {
     "name": "Millionaire",
-    "name_female": null
+    "name_female": "Millionaire"
   },
   "10M_MONEY": {
     "name": "One Percenter",
-    "name_female": null
+    "name_female": "One Percenter"
   },
   "DamageAchv": {
     "description": "Inflict {{damageAmount}} damage in one hit"
@@ -32,11 +32,11 @@
   },
   "1000_DMG": {
     "name": "Harder Hitter",
-    "name_female": null
+    "name_female": "Harder Hitter"
   },
   "2500_DMG": {
     "name": "That's a Lotta Damage!",
-    "name_female": null
+    "name_female": "That's a Lotta Damage!"
   },
   "10000_DMG": {
     "name": "One Punch Man",
@@ -47,19 +47,19 @@
   },
   "250_HEAL": {
     "name": "Novice Healer",
-    "name_female": null
+    "name_female": "Novice Healer"
   },
   "1000_HEAL": {
     "name": "Big Healer",
-    "name_female": null
+    "name_female": "Big Healer"
   },
   "2500_HEAL": {
     "name": "Cleric",
-    "name_female": null
+    "name_female": "Cleric"
   },
   "10000_HEAL": {
     "name": "Recovery Master",
-    "name_female": null
+    "name_female": "Recovery Master"
   },
   "LevelAchv": {
     "description": "Level up a Pokémon to Lv{{level}}"
@@ -69,7 +69,7 @@
   },
   "LV_250": {
     "name": "Elite",
-    "name_female": null
+    "name_female": "Elite"
   },
   "LV_1000": {
     "name": "To Go Even Further Beyond"
@@ -79,27 +79,27 @@
   },
   "10_RIBBONS": {
     "name": "Pokémon League Champion",
-    "name_female": null
+    "name_female": "Pokémon League Champion"
   },
   "25_RIBBONS": {
     "name": "Great League Champion",
-    "name_female": null
+    "name_female": "Great League Champion"
   },
   "50_RIBBONS": {
     "name": "Ultra League Champion",
-    "name_female": null
+    "name_female": "Ultra League Champion"
   },
   "75_RIBBONS": {
     "name": "Rogue League Champion",
-    "name_female": null
+    "name_female": "Rogue League Champion"
   },
   "100_RIBBONS": {
     "name": "Master League Champion",
-    "name_female": null
+    "name_female": "Master League Champion"
   },
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     "name": "Teamwork",
-    "description": "Baton pass to another party member with at least one stat maxed out"
+    "description": "Baton pass to another party member with at least one stat stage maxed out"
   },
   "MAX_FRIENDSHIP": {
     "name": "Friendmaxxing",
@@ -147,7 +147,7 @@
   },
   "SHINY_PARTY": {
     "name": "That's Dedication",
-    "name_female": null,
+    "name_female": "That's Dedication",
     "description": "Have a full party of shiny Pokémon"
   },
   "HATCH_MYTHICAL": {
@@ -176,7 +176,7 @@
   },
   "CLASSIC_VICTORY": {
     "name": "Undefeated",
-    "name_female": null,
+    "name_female": "Undefeated",
     "description": "Beat the game in classic mode"
   },
   "UNEVOLVED_CLASSIC_VICTORY": {
@@ -279,5 +279,9 @@
   "FRESH_START": {
     "name": "First Try!",
     "description": "Complete the Fresh Start challenge."
+  },
+  "INVERSE_BATTLE": {
+    "name": "Mirror rorriM",
+    "description": "Complete the Inverse Battle challenge.\n.egnellahc elttaB esrevnI eht etelpmoC"
   }
 }

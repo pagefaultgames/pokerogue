@@ -16,9 +16,9 @@ import { Type } from "#app/data/type";
 import { getPartyLuckValue, modifierTypes } from "#app/modifier/modifier-type";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { StatChangePhase } from "#app/phases/stat-change-phase";
-import { BattleStat } from "#app/data/battle-stat";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { Stat } from "#enums/stat";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:teleportingHijinks";
@@ -176,7 +176,7 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
       tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
       mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
         queueEncounterMessage(pokemon.scene, `${namespace}.boss_enraged`);
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD], 1));
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1));
       }
     }],
   };

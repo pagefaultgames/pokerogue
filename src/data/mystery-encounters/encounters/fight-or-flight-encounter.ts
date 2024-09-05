@@ -26,8 +26,8 @@ import { getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/enc
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { StatChangePhase } from "#app/phases/stat-change-phase";
 import { randSeedInt } from "#app/utils";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:fightOrFlight";
@@ -56,6 +56,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
       const level = (scene.currentBattle.enemyLevels?.[0] ?? scene.currentBattle.waveIndex) + Math.max(Math.round((scene.currentBattle.waveIndex / 10)), 0);
       const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
       const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
+      encounter.setDialogueToken("enemyPokemon", bossPokemon.getNameToRender());
       const config: EnemyPartyConfig = {
         levelAdditiveMultiplier: 1,
         pokemonConfigs: [{
@@ -67,7 +68,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(pokemon.scene, `${namespace}.option.1.stat_boost`);
             // Randomly boost 1 stat 2 stages
-            pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [randSeedInt(8)], 2));
+            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [randSeedInt(5)], 2));
           }
         }],
       };
@@ -85,8 +86,8 @@ export const FightOrFlightEncounter: MysteryEncounter =
               : ModifierTier.GREAT;
       regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0);
       let item: ModifierTypeOption | null = null;
-      // TMs excluded from possible rewards as they're too swingy in value for a singular item reward
-      while (!item || item.type.id.includes("TM_")) {
+      // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward
+      while (!item || item.type.id.includes("TM_") || item.type.id === "CANDY_JAR") {
         item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier], allowLuckUpgrades: false })[0];
       }
       encounter.setDialogueToken("itemName", item.type.name);

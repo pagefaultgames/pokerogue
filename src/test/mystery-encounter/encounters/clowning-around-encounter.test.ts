@@ -353,11 +353,15 @@ describe("Clowning Around - Mystery Encounter", () => {
       const thirdTypesAfter = scene.getParty()[2].mysteryEncounterData?.types;
 
       expect(leadTypesAfter.length).toBe(2);
-      expect(leadTypesAfter).not.toBe([Type.ICE, Type.WATER]);
+      expect(leadTypesAfter[0]).toBe(Type.WATER);
+      expect([Type.WATER, Type.ICE].includes(leadTypesAfter[1])).toBeFalsy();
       expect(secondaryTypesAfter.length).toBe(2);
-      expect(secondaryTypesAfter.includes(Type.GRASS)).toBeTruthy();
-      expect(secondaryTypesAfter.includes(Type.ELECTRIC)).toBeTruthy();
-      expect(thirdTypesAfter.length).toBe(1);
+      expect(secondaryTypesAfter[0]).toBe(Type.GHOST);
+      expect([Type.GHOST, Type.POISON].includes(secondaryTypesAfter[1])).toBeFalsy();
+      expect([Type.GRASS, Type.ELECTRIC].includes(secondaryTypesAfter[1])).toBeTruthy();
+      expect(thirdTypesAfter.length).toBe(2);
+      expect(thirdTypesAfter[0]).toBe(Type.PSYCHIC);
+      expect(secondaryTypesAfter[1]).not.toBe(Type.PSYCHIC);
     });
 
     it("should leave encounter without battle", async () => {

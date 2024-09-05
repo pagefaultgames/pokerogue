@@ -90,7 +90,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           const roll = encounter.misc.roll;
           if (roll > 60) {
-            // Choose between 2 COMMON / 2 GREAT tier items (40%)
+            // Choose between 2 COMMON / 2 GREAT tier items (30%)
             setEncounterRewards(scene, {
               guaranteedModifierTiers: [
                 ModifierTier.COMMON,
@@ -115,7 +115,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
             queueEncounterMessage(scene, `${namespace}.option.1.good`);
             leaveEncounterWithoutBattle(scene);
           } else if (roll > 36) {
-            // Choose between 2 ROGUE tier items (4%)
+            // Choose between 2 ROGUE tier items (10%)
             setEncounterRewards(scene, {
               guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE],
             });
@@ -123,7 +123,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
             queueEncounterMessage(scene, `${namespace}.option.1.great`);
             leaveEncounterWithoutBattle(scene);
           } else if (roll > 35) {
-            // Choose 1 MASTER tier item (1%)
+            // Choose 1 MASTER tier item (5%)
             setEncounterRewards(scene, {
               guaranteedModifierTiers: [ModifierTier.MASTER],
             });
