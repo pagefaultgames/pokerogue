@@ -113,8 +113,9 @@ export class CommandPhase extends FieldPhase {
 
         // Decides between a Disabled, Not Implemented, or No PP translation message
         const errorMessage =
-              playerPokemon.summonData.disabledMove === move.moveId ? "battle:moveDisabled" :
-                move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
+          playerPokemon.isMoveRestricted(move.moveId)
+            ? playerPokemon.getRestrictingTag(move.moveId)!.selectionDeniedText(playerPokemon, move.moveId)
+            : move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
         const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
         this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {

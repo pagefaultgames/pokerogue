@@ -1575,14 +1575,22 @@ export class GameData {
    * @param pokemon
    * @param incrementCount
    * @param fromEgg
-   * @param showNewStarterMessage
+   * @param showMessage
    * @returns - true if Pokemon catch unlocked a new starter, false if Pokemon catch did not unlock a starter
    */
-  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false, showNewStarterMessage: boolean = true): Promise<boolean> {
-    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showNewStarterMessage);
+  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<boolean> {
+    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
   }
 
-  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false, showNewStarterMessage: boolean = true): Promise<boolean> {
+  /**
+   *
+   * @param pokemon
+   * @param incrementCount
+   * @param fromEgg
+   * @param showMessage
+   * @returns - true if Pokemon catch unlocked a new starter, false if Pokemon catch did not unlock a starter
+   */
+  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
@@ -1641,13 +1649,17 @@ export class GameData {
       const checkPrevolution = (newStarter: boolean) => {
         if (hasPrevolution) {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
-          return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg, showNewStarterMessage).then(result => resolve(result));
+          this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg, showMessage).then(result => resolve(result));
         } else {
           resolve(newStarter);
         }
       };
 
-      if (newCatch && speciesStarters.hasOwnProperty(species.speciesId) && showNewStarterMessage) {
+      if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
+        if (!showMessage) {
+          resolve(true);
+          return;
+        }
         this.scene.playSound("level_up_fanfare");
         this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(true), null, true);
       } else {
@@ -1693,7 +1705,14 @@ export class GameData {
     this.starterData[species.speciesId].candyCount += count;
   }
 
-  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, prependSpeciesToMessage: boolean = false): Promise<boolean> {
+  /**
+   *
+   * @param species
+   * @param eggMoveIndex
+   * @param showMessage - Default true. If true, will display message for unlocked egg move
+   * @param prependSpeciesToMessage - Default false. If true, will change message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
+   */
+  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, showMessage: boolean = true, prependSpeciesToMessage: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const speciesId = species.speciesId;
       if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
@@ -1713,9 +1732,11 @@ export class GameData {
       }
 
       this.starterData[speciesId].eggMoves |= value;
-
+      if (!showMessage) {
+        resolve(true);
+        return;
+      }
       this.scene.playSound("level_up_fanfare");
-
       const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
       let message = prependSpeciesToMessage ? species.getName() + " " : "";
       message += eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName });
