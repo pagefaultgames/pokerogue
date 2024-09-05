@@ -67,5 +67,7 @@
   "saltCuredLapse": "{{pokemonNameWithAffix}} viene colpito da {{moveName}}!",
   "cursedOnAdd": "{{pokemonNameWithAffix}} ha sacrificato metà dei suoi PS per\nlanciare una maledizione su {{pokemonName}}!",
   "cursedLapse": "{{pokemonNameWithAffix}} subisce la maledizione!",
-  "stockpilingOnAdd": "{{pokemonNameWithAffix}} ha usato Accumulo per la\n{{stockpiledCount}}ª volta!"
+  "stockpilingOnAdd": "{{pokemonNameWithAffix}} ha usato Accumulo per la\n{{stockpiledCount}}ª volta!",
+  "disabledOnAdd": "{{pokemonNameWithAffix}}'s {{moveName}}\nwas disabled!",
+  "disabledLapse": "{{pokemonNameWithAffix}}'s {{moveName}}\nis no longer disabled."
 }
