@@ -891,7 +891,7 @@ export abstract class BattleAnim {
               const isUser = frame.target === AnimFrameTarget.USER;
               if (isUser && target === user) {
                 continue;
-              } else if (this.playOnEmptyField && frame.target === AnimFrameTarget.TARGET) {
+              } else if (this.playOnEmptyField && frame.target === AnimFrameTarget.TARGET && !target.isOnField()) {
                 continue;
               }
               const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];

@@ -15,12 +15,14 @@ import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-d
 import i18next from "i18next";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
   private cursorObj?: Phaser.GameObjects.Image;
 
   private optionsContainer: Phaser.GameObjects.Container;
+  private optionScrollTweens: (Phaser.Tweens.Tween | null)[] = [null, null, null, null];
 
   private tooltipWindow: Phaser.GameObjects.NineSlice;
   private tooltipContainer: Phaser.GameObjects.Container;
@@ -81,7 +83,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.rarityBall.setScale(0.75);
     this.descriptionContainer.add(this.rarityBall);
 
-    const dexProgressIndicator = this.scene.add.sprite(12, 10,  "encounter_radar");
+    const dexProgressIndicator = this.scene.add.sprite(12, 10, "encounter_radar");
     dexProgressIndicator.setScale(0.80);
     this.dexProgressContainer.add(dexProgressIndicator);
     this.dexProgressContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, 24, 28), Phaser.Geom.Rectangle.Contains);
@@ -341,16 +343,17 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     for (let i = 0; i < this.encounterOptions.length; i++) {
       const option = this.encounterOptions[i];
 
-      let optionText;
+      let optionText: BBCodeText;
       switch (this.encounterOptions.length) {
+      default:
       case 2:
-        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
+        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
         break;
       case 3:
-        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
+        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
         break;
       case 4:
-        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { wordWrap: { width: 558 }, fontSize: "80px", lineSpacing: -8 });
+        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
         break;
       }
 
@@ -375,6 +378,38 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       if (this.blockInput) {
         optionText.setAlpha(0.5);
       }
+
+      // Sets up the mask that hides the option text to give an illusion of scrolling
+      const nonScrollWidth = 90;
+      const optionTextMaskRect = this.scene.make.graphics({});
+      optionTextMaskRect.setScale(6);
+      optionTextMaskRect.fillStyle(0xFFFFFF);
+      optionTextMaskRect.beginPath();
+      optionTextMaskRect.fillRect(optionText.x + 11, optionText.y + 140, nonScrollWidth, 18);
+
+      const optionTextMask = optionTextMaskRect.createGeometryMask();
+      optionText.setMask(optionTextMask);
+
+      const optionTextWidth = optionText.displayWidth;
+
+      const tween = this.optionScrollTweens[i];
+      if (tween) {
+        tween.remove();
+        this.optionScrollTweens[i] = null;
+      }
+
+      // Animates the option text scrolling sideways
+      if (optionTextWidth > nonScrollWidth) {
+        this.optionScrollTweens[i] = this.scene.tweens.add({
+          targets: optionText,
+          delay: Utils.fixedInt(2000),
+          loop: -1,
+          hold: Utils.fixedInt(2000),
+          duration: Utils.fixedInt((optionTextWidth - nonScrollWidth) / 15 * 2000),
+          x: `-=${(optionTextWidth - nonScrollWidth)}`
+        });
+      }
+
       this.optionsContainer.add(optionText);
     }
 

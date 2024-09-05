@@ -5,10 +5,10 @@
   "query": "What will you do?",
   "option": {
     "1": {
-      "label": "Touch the Shuckle",
+      "label": "Approach the Shuckle",
       "tooltip": "(?) Something awful or amazing might happen",
       "selected": "You black out.",
-      "selected_2": "@f{150}When you awaken, the Shuckle is gone\nand juice stash completely drained.${{highBstPokemon1}} and {{highBstPokemon2}} feel a terrible lethargy come over them!\nTheir base stats were reduced by {{reductionValue}}!$Your remaining Pokémon feel an incredible vigor, though!\nTheir base stats are increased by {{increaseValue}}!"
+      "selected_2": "@f{150}When you awaken, the Shuckle is gone\nand juice stash completely drained.${{highBstPokemon1}} and {{highBstPokemon2}}\nfeel a terrible lethargy come over them!$Their base stats were reduced by {{reductionValue}}!$Your remaining Pokémon feel an incredible vigor, though!\nTheir base stats are increased by {{increaseValue}}!"
     },
     "2": {
       "label": "Battle the Shuckle",

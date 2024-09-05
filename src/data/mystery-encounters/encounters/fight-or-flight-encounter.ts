@@ -86,8 +86,8 @@ export const FightOrFlightEncounter: MysteryEncounter =
               : ModifierTier.GREAT;
       regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0);
       let item: ModifierTypeOption | null = null;
-      // TMs excluded from possible rewards as they're too swingy in value for a singular item reward
-      while (!item || item.type.id.includes("TM_")) {
+      // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward
+      while (!item || item.type.id.includes("TM_") || item.type.id === "CANDY_JAR") {
         item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier], allowLuckUpgrades: false })[0];
       }
       encounter.setDialogueToken("itemName", item.type.name);

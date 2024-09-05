@@ -294,7 +294,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           // Play animations
           const background = new EncounterBattleAnim(EncounterAnim.SMOKESCREEN, scene.getPlayerPokemon()!, scene.getPlayerPokemon());
           background.playWithoutTargets(scene, 230, 40, 2);
-          await transitionMysteryEncounterIntroVisuals(scene);
+          await transitionMysteryEncounterIntroVisuals(scene, true, true, 200);
         })
         .build()
     )
@@ -358,7 +358,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           // Play animations
           const background = new EncounterBattleAnim(EncounterAnim.SMOKESCREEN, scene.getPlayerPokemon()!, scene.getPlayerPokemon());
           background.playWithoutTargets(scene, 230, 40, 2);
-          await transitionMysteryEncounterIntroVisuals(scene);
+          await transitionMysteryEncounterIntroVisuals(scene, true, true, 200);
         })
         .build()
     )

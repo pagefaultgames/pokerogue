@@ -32,7 +32,7 @@ const BST_INCREASE_VALUE = 10;
  */
 export const TheStrongStuffEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.THE_STRONG_STUFF)
-    .withEncounterTier(MysteryEncounterTier.COMMON)
+    .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
     .withScenePartySizeRequirement(3, 6) // Must have at least 3 pokemon in party
     .withHideWildIntroMessage(true)
@@ -43,7 +43,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
         fileRoot: "items",
         hasShadow: true,
         isItem: true,
-        scale: 1.5,
+        scale: 1.25,
         x: -15,
         y: 3,
         disableAnimation: true
@@ -53,7 +53,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
         fileRoot: "pokemon",
         hasShadow: true,
         repeat: true,
-        scale: 1.5,
+        scale: 1.25,
         x: 20,
         y: 10,
         yShadow: 7
@@ -76,7 +76,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             species: getPokemonSpecies(Species.SHUCKLE),
             isBoss: true,
             bossSegments: 5,
-            mysteryEncounterData: new MysteryEncounterPokemonData(1.5),
+            mysteryEncounterData: new MysteryEncounterPokemonData(1.25),
             nature: Nature.BOLD,
             moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
             modifierConfigs: [
@@ -142,7 +142,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
           if (index < 2) {
             // -15 to the two highest BST mons
             modifyPlayerPokemonBST(pokemon, -HIGH_BST_REDUCTION_VALUE);
-            encounter.setDialogueToken("highBstPokemon" + index, pokemon.getNameToRender());
+            encounter.setDialogueToken("highBstPokemon" + (index + 1), pokemon.getNameToRender());
           } else {
             // +10 for the rest
             modifyPlayerPokemonBST(pokemon, BST_INCREASE_VALUE);
