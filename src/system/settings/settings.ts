@@ -8,7 +8,7 @@ import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
-import { getIsInitialized, initI18n } from "#app/plugins/i18n.js";
+import { getIsInitialized, initI18n, languages, languagesKeys, languagesLabels } from "#app/plugins/i18n.js";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 function getTranslation(key: string): string {
@@ -336,9 +336,12 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Language,
     label: i18next.t("settings:language"),
     options: [
+      /**
+     * Update to current language or return default value.
+     */
       {
-        value: "English",
-        label: "English"
+        value: languages[i18next.resolvedLanguage!] ?? "English",
+        label: languages[i18next.resolvedLanguage!] ?? "English"
       },
       {
         value: "Change",
@@ -837,56 +840,21 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
         };
         scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
           options: [
-            {
-              label: "English",
-              handler: () => changeLocaleHandler("en")
-            },
-            {
-              label: "Español",
-              handler: () => changeLocaleHandler("es")
-            },
-            {
-              label: "Italiano",
-              handler: () => changeLocaleHandler("it")
-            },
-            {
-              label: "Français",
-              handler: () => changeLocaleHandler("fr")
-            },
-            {
-              label: "Deutsch",
-              handler: () => changeLocaleHandler("de")
-            },
-            {
-              label: "Português (BR)",
-              handler: () => changeLocaleHandler("pt-BR")
-            },
-            {
-              label: "简体中文",
-              handler: () => changeLocaleHandler("zh-CN")
-            },
-            {
-              label: "繁體中文",
-              handler: () => changeLocaleHandler("zh-TW")
-            },
-            {
-              label: "한국어",
-              handler: () => changeLocaleHandler("ko")
-            },
-            {
-              label: "日本語",
-              handler: () => changeLocaleHandler("ja")
-            },
-            // {
-            //   label: "Català",
-            //   handler: () => changeLocaleHandler("ca-ES")
-            // },
+            ...languagesLabels.map((lang, index) => {
+              return {
+                label: lang,
+                handler: () => changeLocaleHandler(languagesKeys[index]),
+              };
+            }).filter((lang) => {
+              // Remove active language.
+              return languages[i18next.resolvedLanguage!] !== lang.label;
+            }),
             {
               label: i18next.t("settings:back"),
               handler: () => cancelHandler()
             }
           ],
-          maxOptions: 7
+          maxOptions: 7,
         });
         return false;
       }
