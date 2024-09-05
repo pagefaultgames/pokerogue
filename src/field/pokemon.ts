@@ -2671,8 +2671,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Gets whether the given move move is currently disabled for this Pokemon.
-   * @param moveId {@linkcode Moves} The ID of the move to check
+   * Gets whether the given move is currently disabled for this Pokemon.
+   *
+   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
+   * @returns {boolean} `true` if the move is disabled for this Pokemon, otherwise `false`
+   *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
   isMoveRestricted(moveId: Moves): boolean {
@@ -2680,7 +2683,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Gets the {@link MoveRestrictionBattlerTag} that is restricting the given move, or null if that move is not restricted.
+   * Gets the {@link MoveRestrictionBattlerTag} that is restricting a move, if it exists.
+   *
+   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
+   * @returns {MoveRestrictionBattlerTag | null} the first tag on this Pokemon that restricts the move, or `null` if the move is not restricted.
    */
   getRestrictingTag(moveId: Moves): MoveRestrictionBattlerTag | null {
     for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
@@ -4582,10 +4588,11 @@ export class PokemonMove {
   /**
    * Checks whether the move can be selected or performed by a Pokemon, without consideration for the move's targets.
    * The move is unusable if it is out of PP, restricted by an effect, or unimplemented.
-   * @param pokemon {@linkcode Pokemon} The Pokemon that would be using this move
-   * @param ignorePp If true, skips the PP check
-   * @param ignoreRestrictionTags If true, skips the check for move restriction tags
-   * @returns True if the move can be selected and used by the Pokemon, otherwise false.
+   *
+   * @param {Pokemon} pokemon {@linkcode Pokemon} that would be using this move
+   * @param {boolean} ignorePp If `true`, skips the PP check
+   * @param {boolean} ignoreRestrictionTags If `true`, skips the check for move restriction tags (see {@link MoveRestrictionBattlerTag})
+   * @returns `true` if the move can be selected and used by the Pokemon, otherwise `false`.
    */
   isUsable(pokemon: Pokemon, ignorePp?: boolean, ignoreRestrictionTags?: boolean): boolean {
     if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId)) {

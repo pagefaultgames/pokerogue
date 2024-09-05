@@ -132,8 +132,8 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   /**
    * Gets whether this tag is restricting a move.
    *
-   * @param move {@linkcode Moves} ID to check restriction for.
-   * @returns `true` if the move is restricted by this tag, otherwise `false`.
+   * @param {Moves} move {@linkcode Moves} ID to check restriction for.
+   * @returns {boolean} `true` if the move is restricted by this tag, otherwise `false`.
    */
   abstract isMoveRestricted(move: Moves): boolean;
 
@@ -142,6 +142,7 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
    *
    * @param {Pokemon} pokemon {@linkcode Pokemon} for which the player is attempting to select the restricted move
    * @param {Moves} move {@linkcode Moves} ID of the move that is having its selection denied
+   * @returns {string} text to display when the player attempts to select the restricted move
    */
   abstract selectionDeniedText(pokemon: Pokemon, move: Moves): string;
 
@@ -150,9 +151,9 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
    * Because restriction effects also prevent selection of the move, this situation can only arise if a
    * pokemon first selects a move, then gets outsped by a pokemon using a move that restricts the selected move.
    *
-   * @param {Pokemon} pokemon the {@linkcode Pokemon} attempting to use the restricted move
-   * @param {Moves} move the {@linkcode Moves} ID of the move being interrupted
-   * @returns {string} the text to display when the move is interrupted
+   * @param {Pokemon} pokemon {@linkcode Pokemon} attempting to use the restricted move
+   * @param {Moves} move {@linkcode Moves} ID of the move being interrupted
+   * @returns {string} text to display when the move is interrupted
    */
   abstract interruptedText(pokemon: Pokemon, move: Moves): string;
 }
