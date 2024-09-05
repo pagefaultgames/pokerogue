@@ -99,6 +99,127 @@ export interface TerrainBattlerTag {
 }
 
 /**
+ * Base class for tags that restrict the usage of moves. This effect is generally referred to as "disabling" a move
+ * in-game. This is not to be confused with {@linkcode Moves.DISABLE}.
+ *
+ * Descendants can override {@linkcode isMoveRestricted} to restrict moves that
+ * match a condition. A restricted move gets cancelled before it is used. Players and enemies should not be allowed
+ * to select restricted moves.
+ */
+export abstract class MoveRestrictionBattlerTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
+    super(tagType, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], turnCount, sourceMove, sourceId);
+  }
+
+  /** @override */
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
+      // Cancel the affected pokemon's selected move
+      const phase = pokemon.scene.getCurrentPhase() as MovePhase;
+      const move = phase.move;
+
+      if (this.isMoveRestricted(move.moveId)) {
+        pokemon.scene.queueMessage(this.interruptedText(pokemon, move.moveId));
+        phase.cancel();
+      }
+
+      return true;
+    }
+
+    return super.lapse(pokemon, lapseType);
+  }
+
+  /**
+   * Gets whether this tag is restricting a move.
+   *
+   * @param {Moves} move {@linkcode Moves} ID to check restriction for.
+   * @returns {boolean} `true` if the move is restricted by this tag, otherwise `false`.
+   */
+  abstract isMoveRestricted(move: Moves): boolean;
+
+  /**
+   * Gets the text to display when the player attempts to select a move that is restricted by this tag.
+   *
+   * @param {Pokemon} pokemon {@linkcode Pokemon} for which the player is attempting to select the restricted move
+   * @param {Moves} move {@linkcode Moves} ID of the move that is having its selection denied
+   * @returns {string} text to display when the player attempts to select the restricted move
+   */
+  abstract selectionDeniedText(pokemon: Pokemon, move: Moves): string;
+
+  /**
+   * Gets the text to display when a move's execution is prevented as a result of the restriction.
+   * Because restriction effects also prevent selection of the move, this situation can only arise if a
+   * pokemon first selects a move, then gets outsped by a pokemon using a move that restricts the selected move.
+   *
+   * @param {Pokemon} pokemon {@linkcode Pokemon} attempting to use the restricted move
+   * @param {Moves} move {@linkcode Moves} ID of the move being interrupted
+   * @returns {string} text to display when the move is interrupted
+   */
+  abstract interruptedText(pokemon: Pokemon, move: Moves): string;
+}
+
+/**
+ * Tag representing the "disabling" effect performed by {@linkcode Moves.DISABLE} and {@linkcode Abilities.CURSED_BODY}.
+ * When the tag is added, the last-used move of the tag holder is set as the disabled move.
+ */
+export class DisabledTag extends MoveRestrictionBattlerTag {
+  /** The move being disabled. Gets set when {@linkcode onAdd} is called for this tag. */
+  private moveId: Moves = Moves.NONE;
+
+  constructor(sourceId: number) {
+    super(BattlerTagType.DISABLED, 4, Moves.DISABLE, sourceId);
+  }
+
+  /** @override */
+  override isMoveRestricted(move: Moves): boolean {
+    return move === this.moveId;
+  }
+
+  /**
+   * @override
+   *
+   * Ensures that move history exists on `pokemon` and has a valid move. If so, sets the {@link moveId} and shows a message.
+   * Otherwise the move ID will not get assigned and this tag will get removed next turn.
+   */
+  override onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    const move = pokemon.getLastXMoves()
+      .find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual);
+    if (move === undefined) {
+      return;
+    }
+
+    this.moveId = move.move;
+
+    pokemon.scene.queueMessage(i18next.t("battlerTags:disabledOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name }));
+  }
+
+  /** @override */
+  override onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(i18next.t("battlerTags:disabledLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[this.moveId].name }));
+  }
+
+  /** @override */
+  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
+  }
+
+  /** @override */
+  override interruptedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
+  }
+
+  /** @override */
+  override loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.moveId = source.moveId;
+  }
+}
+
+/**
  * BattlerTag that represents the "recharge" effects of moves like Hyper Beam.
  */
 export class RechargingTag extends BattlerTag {
@@ -2019,6 +2140,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new StockpilingTag(sourceMove);
   case BattlerTagType.OCTOLOCK:
     return new OctolockTag(sourceId);
+  case BattlerTagType.DISABLED:
+    return new DisabledTag(sourceId);
   case BattlerTagType.IGNORE_GHOST:
     return new ExposedTag(tagType, sourceMove, Type.GHOST, [Type.NORMAL, Type.FIGHTING]);
   case BattlerTagType.IGNORE_DARK:
