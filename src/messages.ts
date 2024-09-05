@@ -10,7 +10,8 @@ import i18next from "i18next";
 export function getPokemonNameWithAffix(pokemon: Pokemon | undefined): string {
   if (!pokemon) {
     return "Missigno";
-  } // TODO: little easter-egg, lol
+  }
+
   switch (pokemon.scene.currentBattle.battleSpec) {
   case BattleSpec.DEFAULT:
     return !pokemon.isPlayer()

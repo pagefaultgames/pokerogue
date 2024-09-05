@@ -1,14 +1,13 @@
-import { allAbilities } from "#app/data/ability.js";
-import { allMoves } from "#app/data/move.js";
-import { MoveEffectPhase } from "#app/phases";
-import GameManager from "#test/utils/gameManager";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
+import { allAbilities } from "#app/data/ability";
+import { allMoves } from "#app/data/move";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
+import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 describe("Abilities - Wonder Skin", () => {
   let phaserGame: Phaser.Game;
@@ -40,7 +39,7 @@ describe("Abilities - Wonder Skin", () => {
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
     await game.startBattle([Species.PIKACHU]);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+    game.move.select(Moves.CHARM);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(50);
@@ -52,7 +51,7 @@ describe("Abilities - Wonder Skin", () => {
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
     await game.startBattle([Species.PIKACHU]);
-    game.doAttack(getMovePosition(game.scene, 0, Moves.TACKLE));
+    game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);
@@ -68,7 +67,7 @@ describe("Abilities - Wonder Skin", () => {
       vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
       await game.startBattle([Species.PIKACHU]);
-      game.doAttack(getMovePosition(game.scene, 0, Moves.CHARM));
+      game.move.select(Moves.CHARM);
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);
