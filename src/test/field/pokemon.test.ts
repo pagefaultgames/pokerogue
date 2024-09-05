@@ -1,8 +1,8 @@
 import { Species } from "#app/enums/species";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
-import { PokeballType } from "#app/enums/pokeball.js";
-import BattleScene from "#app/battle-scene.js";
+import { PokeballType } from "#app/enums/pokeball";
+import BattleScene from "#app/battle-scene";
 
 describe("Spec - Pokemon", () => {
   let phaserGame: Phaser.Game;
