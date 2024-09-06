@@ -47,10 +47,14 @@
       "description": "将一只宝可梦的性格改为{{natureName}}并为\n该宝可梦永久解锁该性格。"
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "接下来的{{battleCount}}场战斗是双打的概率翻倍。"
+      "description": "Quadruples the chance of an encounter being a double battle for up to {{battleCount}} battles."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "为所有成员宝可梦提升一级{{stat}}，持续5场战斗。"
+      "description": "Increases the {{stat}} of all party members by {{amount}} for up to 5 battles.",
+      "extra": {
+        "stage": "1 stage",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "一只宝可梦的{{moveType}}系招式威力提升20%。"
