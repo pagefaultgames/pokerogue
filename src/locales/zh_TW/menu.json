@@ -40,5 +40,7 @@
   "loading": "加載中…",
   "playersOnline": "在線玩家",
   "yes": "是",
-  "no": "否"
+  "no": "否",
+  "noSaves": "You don't have any save files on record!",
+  "tooManySaves": "You have too many save files on record!"
 }
