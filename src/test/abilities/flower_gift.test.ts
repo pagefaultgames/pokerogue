@@ -92,7 +92,7 @@ describe("Abilities - Flower Gift", () => {
   });
 
   it("reverts to Overcast Form when the Pokémon loses Flower Gift, changes form under Harsh Sunlight/Sunny when it regains it", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.SKILL_SWAP)).weather(WeatherType.HARSH_SUN);
+    game.override.enemyMoveset([Moves.SKILL_SWAP]).weather(WeatherType.HARSH_SUN);
 
     await game.classicMode.startBattle([Species.CHERRIM]);
 
@@ -111,7 +111,7 @@ describe("Abilities - Flower Gift", () => {
   });
 
   it("reverts to Overcast Form when the Flower Gift is suppressed, changes form under Harsh Sunlight/Sunny when it regains it", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.GASTRO_ACID)).weather(WeatherType.HARSH_SUN);
+    game.override.enemyMoveset([Moves.GASTRO_ACID]).weather(WeatherType.HARSH_SUN);
 
     await game.classicMode.startBattle([Species.CHERRIM, Species.MAGIKARP]);
 

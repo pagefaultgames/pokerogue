@@ -125,7 +125,7 @@ describe("Moves - Parting Shot", () => {
       game.override
         .enemySpecies(Species.ALTARIA)
         .enemyAbility(Abilities.NONE)
-        .enemyMoveset(Array(4).fill(Moves.MIST));
+        .enemyMoveset([Moves.MIST]);
       await game.startBattle([Species.SNORLAX, Species.MEOWTH]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;

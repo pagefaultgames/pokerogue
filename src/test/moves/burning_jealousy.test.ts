@@ -32,7 +32,7 @@ describe("Moves - Burning Jealousy", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.ICE_SCALES)
-      .enemyMoveset(Array(4).fill(Moves.HOWL))
+      .enemyMoveset([Moves.HOWL])
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)

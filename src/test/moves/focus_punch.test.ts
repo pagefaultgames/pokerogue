@@ -68,7 +68,7 @@ describe("Moves - Focus Punch", () => {
   it(
     "should fail if the user is hit",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+      game.override.enemyMoveset([Moves.TACKLE]);
 
       await game.startBattle([Species.CHARIZARD]);
 
@@ -95,7 +95,7 @@ describe("Moves - Focus Punch", () => {
   it(
     "should be cancelled if the user falls asleep mid-turn",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.SPORE));
+      game.override.enemyMoveset([Moves.SPORE]);
 
       await game.startBattle([Species.CHARIZARD]);
 

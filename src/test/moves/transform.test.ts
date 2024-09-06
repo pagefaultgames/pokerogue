@@ -77,7 +77,7 @@ describe("Moves - Transform", () => {
   }, 20000);
 
   it("should copy in-battle overridden stats", async () => {
-    game.override.enemyMoveset(new Array(4).fill(Moves.POWER_SPLIT));
+    game.override.enemyMoveset([Moves.POWER_SPLIT]);
 
     await game.startBattle([
       Species.DITTO

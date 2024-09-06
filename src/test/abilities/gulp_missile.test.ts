@@ -108,7 +108,7 @@ describe("Abilities - Gulp Missile", () => {
   });
 
   it("deals 1/4 of the attacker's maximum HP when hit by a damaging attack", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+    game.override.enemyMoveset([Moves.TACKLE]);
     await game.startBattle([Species.CRAMORANT]);
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -121,7 +121,7 @@ describe("Abilities - Gulp Missile", () => {
   });
 
   it("does not have any effect when hit by non-damaging attack", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.TAIL_WHIP));
+    game.override.enemyMoveset([Moves.TAIL_WHIP]);
     await game.startBattle([Species.CRAMORANT]);
 
     const cramorant = game.scene.getPlayerPokemon()!;
@@ -140,7 +140,7 @@ describe("Abilities - Gulp Missile", () => {
   });
 
   it("lowers attacker's DEF stat stage by 1 when hit in Gulping form", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+    game.override.enemyMoveset([Moves.TACKLE]);
     await game.startBattle([Species.CRAMORANT]);
 
     const cramorant = game.scene.getPlayerPokemon()!;
@@ -164,7 +164,7 @@ describe("Abilities - Gulp Missile", () => {
   });
 
   it("paralyzes the enemy when hit in Gorging form", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.TACKLE));
+    game.override.enemyMoveset([Moves.TACKLE]);
     await game.startBattle([Species.CRAMORANT]);
 
     const cramorant = game.scene.getPlayerPokemon()!;
@@ -188,7 +188,7 @@ describe("Abilities - Gulp Missile", () => {
   });
 
   it("does not activate the ability when underwater", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.SURF));
+    game.override.enemyMoveset([Moves.SURF]);
     await game.startBattle([Species.CRAMORANT]);
 
     const cramorant = game.scene.getPlayerPokemon()!;
@@ -201,7 +201,7 @@ describe("Abilities - Gulp Missile", () => {
   });
 
   it("prevents effect damage but inflicts secondary effect on attacker with Magic Guard", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.TACKLE)).enemyAbility(Abilities.MAGIC_GUARD);
+    game.override.enemyMoveset([Moves.TACKLE]).enemyAbility(Abilities.MAGIC_GUARD);
     await game.startBattle([Species.CRAMORANT]);
 
     const cramorant = game.scene.getPlayerPokemon()!;
@@ -225,7 +225,7 @@ describe("Abilities - Gulp Missile", () => {
   });
 
   it("cannot be suppressed", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.GASTRO_ACID));
+    game.override.enemyMoveset([Moves.GASTRO_ACID]);
     await game.startBattle([Species.CRAMORANT]);
 
     const cramorant = game.scene.getPlayerPokemon()!;
@@ -245,7 +245,7 @@ describe("Abilities - Gulp Missile", () => {
   });
 
   it("cannot be swapped with another ability", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.SKILL_SWAP));
+    game.override.enemyMoveset([Moves.SKILL_SWAP]);
     await game.startBattle([Species.CRAMORANT]);
 
     const cramorant = game.scene.getPlayerPokemon()!;

@@ -92,7 +92,7 @@ describe("Moves - Freeze-Dry", () => {
 
   // enable once Electrify is implemented (and the interaction is fixed, as above)
   it.todo("should deal 2x damage to water types under Electrify", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.ELECTRIFY));
+    game.override.enemyMoveset([Moves.ELECTRIFY]);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;

@@ -71,7 +71,7 @@ describe("Moves - Baton Pass", () => {
 
     // round 2 - baton pass
     game.scene.getEnemyPokemon()!.hp = 100;
-    game.override.enemyMoveset(new Array(4).fill(Moves.BATON_PASS));
+    game.override.enemyMoveset([Moves.BATON_PASS]);
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("PostSummonPhase", false);
 
@@ -90,7 +90,7 @@ describe("Moves - Baton Pass", () => {
   }, 20000);
 
   it("doesn't transfer effects that aren't transferrable", async() => {
-    game.override.enemyMoveset(Array(4).fill(Moves.SALT_CURE));
+    game.override.enemyMoveset([Moves.SALT_CURE]);
     await game.classicMode.startBattle([Species.PIKACHU, Species.FEEBAS]);
 
     const [player1, player2] = game.scene.getParty();

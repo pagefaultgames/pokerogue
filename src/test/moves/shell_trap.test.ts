@@ -33,7 +33,7 @@ describe("Moves - Shell Trap", () => {
       .battleType("double")
       .moveset([Moves.SHELL_TRAP, Moves.SPLASH, Moves.BULLDOZE])
       .enemySpecies(Species.SNORLAX)
-      .enemyMoveset(Array(4).fill(Moves.RAZOR_LEAF))
+      .enemyMoveset([Moves.RAZOR_LEAF])
       .startingLevel(100)
       .enemyLevel(100);
 
@@ -67,7 +67,7 @@ describe("Moves - Shell Trap", () => {
   it(
     "should fail if the user is only hit by special attacks",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.SWIFT));
+      game.override.enemyMoveset([Moves.SWIFT]);
 
       await game.startBattle([Species.CHARIZARD, Species.TURTONATOR]);
 

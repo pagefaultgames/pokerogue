@@ -108,7 +108,7 @@ describe("Abilities - Intimidate", () => {
 
   it("should lower ATK stat stage by 1 for every switch", async () => {
     game.override.moveset([Moves.SPLASH])
-      .enemyMoveset(new Array(4).fill(Moves.VOLT_SWITCH))
+      .enemyMoveset([Moves.VOLT_SWITCH])
       .startingWave(5);
     await game.classicMode.startBattle([ Species.MIGHTYENA, Species.POOCHYENA ]);
 
