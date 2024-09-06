@@ -42,11 +42,11 @@ describe("Weather - Sandstorm", () => {
     });
   });
 
-  it("does not inflict damage to a Pokemon that is in a semi-invulnerable state", async () => {
-    game.override.moveset([Moves.FLY]);
+  it("does not inflict damage to a Pokemon that is underwater (Dive) or underground (Dig)", async () => {
+    game.override.moveset([Moves.DIVE]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.FLY);
+    game.move.select(Moves.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 

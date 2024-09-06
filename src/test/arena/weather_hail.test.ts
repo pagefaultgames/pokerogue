@@ -5,6 +5,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { BattlerIndex } from "#app/battle";
 
 describe("Weather - Hail", () => {
   let phaserGame: Phaser.Game;
@@ -34,6 +35,7 @@ describe("Weather - Hail", () => {
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(Moves.SPLASH);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -42,11 +44,12 @@ describe("Weather - Hail", () => {
     });
   });
 
-  it("does not inflict damage to a Pokemon that is in a semi-invulnerable state", async () => {
-    game.override.moveset([Moves.FLY]);
+  it("does not inflict damage to a Pokemon that is underwater (Dive) or underground (Dig)", async () => {
+    game.override.moveset([Moves.DIG]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.FLY);
+    game.move.select(Moves.DIG);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
