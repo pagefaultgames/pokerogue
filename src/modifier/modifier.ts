@@ -292,8 +292,21 @@ export class AddVoucherModifier extends ConsumableModifier {
   }
 }
 
+/**
+ * Modifier used for party-wide or passive items that start an initial
+ * {@linkcode battleCount} equal to {@linkcode maxBattles} that, for every
+ * battle, decrements. Typically, when {@linkcode battleCount} reaches 0, the
+ * modifier will be removed. If a modifier of the same type is to be added, it
+ * will reset {@linkcode battleCount} back to {@linkcode maxBattles} of the
+ * existing modifier instead of adding that modifier directly.
+ * @extends PersistentModifier
+ * @abstract
+ * @see {@linkcode add}
+ */
 export abstract class LapsingPersistentModifier extends PersistentModifier {
+  /** The maximum amount of battles the modifier will exist for */
   private maxBattles: number;
+  /** The current amount of battles the modifier will exist for */
   private battleCount: number;
 
   constructor(type: ModifierTypes.ModifierType, maxBattles: number, battleCount?: number, stackCount?: integer) {
@@ -341,6 +354,7 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
     // Linear interpolation on hue
     const hue = Math.floor(120 * (this.battleCount / this.maxBattles) + 5);
 
+    // Generates the color hex code with a constant saturation and lightness but varying hue
     const typeHex = Utils.hslToHex(hue, 0.50, 0.90);
     const strokeHex = Utils.hslToHex(hue, 0.70, 0.30);
 
@@ -374,6 +388,12 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
   }
 }
 
+/**
+ * Modifier used for passive items, specifically lures, that
+ * temporarily increases the chance of a double battle.
+ * @extends LapsingPersistentModifier
+ * @see {@linkcode apply}
+ */
 export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier {
   constructor(type: ModifierType, maxBattles:number, battleCount?: number, stackCount?: integer) {
     super(type, maxBattles, battleCount, stackCount);
@@ -389,8 +409,8 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
 
   /**
    * Modifies the chance of a double battle occurring
-   * @param args A single element array containing the double battle chance as a NumberHolder
-   * @returns {boolean} Returns true if the modifier was applied
+   * @param args [0] {@linkcode Utils.NumberHolder} for double battle chance
+   * @returns true if the modifier was applied
    */
   apply(args: any[]): boolean {
     const doubleBattleChance = args[0] as Utils.NumberHolder;
@@ -410,8 +430,10 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
  * @see {@linkcode apply}
  */
 export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
+  /** The stat whose stat stage multiplier will be temporarily increased */
   private stat: TempBattleStat;
-  private multiplierBoost: number;
+  /** The amount by which the stat stage itself or its multiplier will be increased by */
+  private boost: number;
 
   constructor(type: ModifierType, stat: TempBattleStat, maxBattles: number, battleCount?: number, stackCount?: number) {
     super(type, maxBattles, battleCount, stackCount);
@@ -419,7 +441,7 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
     this.stat = stat;
     // Note that, because we want X Accuracy to maintain its original behavior,
     // it will increment as it did previously, directly to the stat stage.
-    this.multiplierBoost = (stat !== Stat.ACC) ? 0.3 : 1;
+    this.boost = (stat !== Stat.ACC) ? 0.3 : 1;
   }
 
   match(modifier: Modifier): boolean {
@@ -450,12 +472,12 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
   }
 
   /**
-   * Increases the incoming stat stage matching {@linkcode stat} by {@linkcode multiplierBoost}.
+   * Increases the incoming stat stage matching {@linkcode stat} by {@linkcode boost}.
    * @param args [0] {@linkcode TempBattleStat} N/A
    *             [1] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat stage multiplier
    */
   apply(args: any[]): boolean {
-    (args[1] as Utils.NumberHolder).value += this.multiplierBoost;
+    (args[1] as Utils.NumberHolder).value += this.boost;
     return true;
   }
 }
