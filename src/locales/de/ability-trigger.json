@@ -12,7 +12,7 @@
   "typeImmunityHeal": "{{abilityName}} von {{pokemonNameWithAffix}} füllte einige KP auf!",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}} vermeidet Schaden mit {{abilityName}}!",
   "disguiseAvoidedDamage": "Die Tarnung von {{pokemonNameWithAffix}} ist aufgeflogen!!",
-  "fullHpResistType": "{{pokemonNameWithAffix}} made its shell gleam!\nIt's distorting type matchups!",
+  "fullHpResistType": "Der Panzer von {{pokemonNameWithAffix}} funkelt und verzerrt die Wechselwirkungen zwischen den Typen!",
   "moveImmunity": "Es hat keine Wirkung auf {{pokemonNameWithAffix}}...",
   "reverseDrain": "{{pokemonNameWithAffix}} saugt Kloakensoße auf!",
   "postDefendTypeChange": "{{abilityName}} von {{pokemonNameWithAffix}} macht es zu einem {{typeName}}-Typ!",
