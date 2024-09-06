@@ -52,6 +52,6 @@
   "rename": "Renombrar",
   "nickname": "Apodo",
   "errorServerDown": "¡Ups! Ha habido un problema al contactar con el servidor.\n\nPuedes mantener esta ventana abierta, el juego se reconectará automáticamente.",
-  "noSaves": "You don't have any save files on record!",
-  "tooManySaves": "You have too many save files on record!"
+  "noSaves": "No tienes ninguna partida guardada registrada!",
+  "tooManySaves": "¡Tienes demasiadas partidas guardadas registradas!"
 }
