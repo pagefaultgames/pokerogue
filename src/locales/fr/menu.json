@@ -51,5 +51,7 @@
   "renamePokemon": "Renommer le Pokémon",
   "rename": "Renommer",
   "nickname": "Surnom",
-  "errorServerDown": "Oupsi ! Un problème de connexion au serveur est survenu.\n\nVous pouvez garder cette fenêtre ouverte,\nle jeu se reconnectera automatiquement."
+  "errorServerDown": "Oupsi ! Un problème de connexion au serveur est survenu.\n\nVous pouvez garder cette fenêtre ouverte,\nle jeu se reconnectera automatiquement.",
+  "noSaves": "Vous n’avez aucune sauvegarde d’enregistrée !",
+  "tooManySaves": "Vous avez trop sauvegardes enregistrées !"
 }
