@@ -72,6 +72,9 @@ describe("Moves - Baton Pass", () => {
     // round 2 - baton pass
     game.scene.getEnemyPokemon()!.hp = 100;
     game.override.enemyMoveset([Moves.BATON_PASS]);
+    // Force moveset to update mid-battle
+    // TODO: replace with enemy ai control function when it's added
+    game.scene.getEnemyParty()[0].getMoveset();
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("PostSummonPhase", false);
 
