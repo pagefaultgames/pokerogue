@@ -4332,72 +4332,6 @@ export class TypelessAttr extends MoveAttr { }
 */
 export class BypassRedirectAttr extends MoveAttr { }
 
-export class DisableMoveAttr extends MoveEffectAttr {
-  constructor() {
-    super(false);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    const moveQueue = target.getLastXMoves();
-    let turnMove: TurnMove | undefined;
-    while (moveQueue.length) {
-      turnMove = moveQueue.shift();
-      if (turnMove?.virtual) {
-        continue;
-      }
-
-      const moveIndex = target.getMoveset().findIndex(m => m?.moveId === turnMove?.move);
-      if (moveIndex === -1) {
-        return false;
-      }
-
-      const disabledMove = target.getMoveset()[moveIndex];
-      target.summonData.disabledMove = disabledMove?.moveId!; // TODO: is this bang correct?
-      target.summonData.disabledTurns = 4;
-
-      user.scene.queueMessage(i18next.t("abilityTriggers:postDefendMoveDisable", { pokemonNameWithAffix: getPokemonNameWithAffix(target), moveName: disabledMove?.getName()}));
-
-      return true;
-    }
-
-    return false;
-  }
-
-  getCondition(): MoveConditionFunc {
-    return (user, target, move): boolean => { // TODO: Not sure what to do here
-      if (target.summonData.disabledMove || target.isMax()) {
-        return false;
-      }
-
-      const moveQueue = target.getLastXMoves();
-      let turnMove: TurnMove | undefined;
-      while (moveQueue.length) {
-        turnMove = moveQueue.shift();
-        if (turnMove?.virtual) {
-          continue;
-        }
-
-        const move = target.getMoveset().find(m => m?.moveId === turnMove?.move);
-        if (!move) {
-          continue;
-        }
-
-        return true;
-      }
-
-      return false;
-    };
-  }
-
-  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    return -5;
-  }
-}
-
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
     super(true, MoveEffectTrigger.HIT, false, true);
@@ -4466,7 +4400,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
-      return (this.selfTarget ? user : target).addTag(this.tagType,  user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, user.id);
+      return (this.selfTarget ? user : target).addTag(this.tagType,  user.randSeedIntRange(this.turnCountMin, this.turnCountMax), move.id, user.id);
     }
 
     return false;
@@ -4488,6 +4422,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     case BattlerTagType.INFATUATED:
     case BattlerTagType.NIGHTMARE:
     case BattlerTagType.DROWSY:
+    case BattlerTagType.DISABLED:
       return -5;
     case BattlerTagType.SEEDED:
     case BattlerTagType.SALT_CURED:
@@ -6299,6 +6234,8 @@ const userSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: 
 
 const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  target.status?.effect === StatusEffect.SLEEP || target.hasAbility(Abilities.COMATOSE);
 
+const failIfLastCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => user.scene.phaseQueue.find(phase => phase instanceof MovePhase) !== undefined;
+
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
 function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon | null, target: Pokemon | null, move: Move, args: any[]): Promise<void> {
@@ -6673,7 +6610,8 @@ export function initMoves() {
     new AttackMove(Moves.SONIC_BOOM, Type.NORMAL, MoveCategory.SPECIAL, -1, 90, 20, -1, 0, 1)
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
-      .attr(DisableMoveAttr)
+      .attr(AddBattlerTagAttr, BattlerTagType.DISABLED, false, true)
+      .condition((user, target, move) => target.getMoveHistory().reverse().find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual) !== undefined)
       .condition(failOnMaxCondition),
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -1)
@@ -7036,7 +6974,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new SelfStatusMove(Moves.PROTECT, Type.NORMAL, -1, 10, -1, 4, 2)
-      .attr(ProtectAttr),
+      .attr(ProtectAttr)
+      .condition(failIfLastCondition),
     new AttackMove(Moves.MACH_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 30, -1, 1, 2)
       .punchingMove(),
     new StatusMove(Moves.SCARY_FACE, Type.NORMAL, 100, 10, -1, 0, 2)
@@ -7087,7 +7026,8 @@ export function initMoves() {
       .windMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new SelfStatusMove(Moves.DETECT, Type.FIGHTING, -1, 5, -1, 4, 2)
-      .attr(ProtectAttr),
+      .attr(ProtectAttr)
+      .condition(failIfLastCondition),
     new AttackMove(Moves.BONE_RUSH, Type.GROUND, MoveCategory.PHYSICAL, 25, 90, 10, -1, 0, 2)
       .attr(MultiHitAttr)
       .makesContact(false),
@@ -7105,7 +7045,8 @@ export function initMoves() {
       .attr(HitHealAttr)
       .triageMove(),
     new SelfStatusMove(Moves.ENDURE, Type.NORMAL, -1, 10, -1, 4, 2)
-      .attr(ProtectAttr, BattlerTagType.ENDURING),
+      .attr(ProtectAttr, BattlerTagType.ENDURING)
+      .condition(failIfLastCondition),
     new StatusMove(Moves.CHARM, Type.FAIRY, 100, 20, -1, 0, 2)
       .attr(StatStageChangeAttr, [ Stat.ATK ], -2),
     new AttackMove(Moves.ROLLOUT, Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, 0, 2)
@@ -7852,7 +7793,8 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.ACC ], 1, true),
     new StatusMove(Moves.WIDE_GUARD, Type.ROCK, -1, 10, -1, 3, 5)
       .target(MoveTarget.USER_SIDE)
-      .attr(AddArenaTagAttr, ArenaTagType.WIDE_GUARD, 1, true, true),
+      .attr(AddArenaTagAttr, ArenaTagType.WIDE_GUARD, 1, true, true)
+      .condition(failIfLastCondition),
     new StatusMove(Moves.GUARD_SPLIT, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .attr(AverageStatsAttr, [ Stat.DEF, Stat.SPDEF ], "moveTriggers:sharedGuard"),
     new StatusMove(Moves.POWER_SPLIT, Type.PSYCHIC, -1, 10, -1, 0, 5)
@@ -7940,7 +7882,8 @@ export function initMoves() {
       .attr(PositiveStatStagePowerAttr),
     new StatusMove(Moves.QUICK_GUARD, Type.FIGHTING, -1, 15, -1, 3, 5)
       .target(MoveTarget.USER_SIDE)
-      .attr(AddArenaTagAttr, ArenaTagType.QUICK_GUARD, 1, true, true),
+      .attr(AddArenaTagAttr, ArenaTagType.QUICK_GUARD, 1, true, true)
+      .condition(failIfLastCondition),
     new SelfStatusMove(Moves.ALLY_SWITCH, Type.PSYCHIC, -1, 15, -1, 2, 5)
       .ignoresProtect()
       .unimplemented(),
@@ -8111,7 +8054,8 @@ export function initMoves() {
     new StatusMove(Moves.MAT_BLOCK, Type.FIGHTING, -1, 10, -1, 0, 6)
       .target(MoveTarget.USER_SIDE)
       .attr(AddArenaTagAttr, ArenaTagType.MAT_BLOCK, 1, true, true)
-      .condition(new FirstMoveCondition()),
+      .condition(new FirstMoveCondition())
+      .condition(failIfLastCondition),
     new AttackMove(Moves.BELCH, Type.POISON, MoveCategory.SPECIAL, 120, 90, 10, -1, 0, 6)
       .condition((user, target, move) => user.battleData.berriesEaten.length > 0),
     new StatusMove(Moves.ROTOTILLER, Type.GROUND, -1, 10, -1, 0, 6)
@@ -8169,7 +8113,8 @@ export function initMoves() {
       .triageMove(),
     new StatusMove(Moves.CRAFTY_SHIELD, Type.FAIRY, -1, 10, -1, 3, 6)
       .target(MoveTarget.USER_SIDE)
-      .attr(AddArenaTagAttr, ArenaTagType.CRAFTY_SHIELD, 1, true, true),
+      .attr(AddArenaTagAttr, ArenaTagType.CRAFTY_SHIELD, 1, true, true)
+      .condition(failIfLastCondition),
     new StatusMove(Moves.FLOWER_SHIELD, Type.FAIRY, -1, 10, -1, 0, 6)
       .target(MoveTarget.ALL)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 1, false, (user, target, move) => target.getTypes().includes(Type.GRASS) && !target.getTag(SemiInvulnerableTag)),
@@ -8194,7 +8139,8 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES)
       .unimplemented(),
     new SelfStatusMove(Moves.KINGS_SHIELD, Type.STEEL, -1, 10, -1, 4, 6)
-      .attr(ProtectAttr, BattlerTagType.KINGS_SHIELD),
+      .attr(ProtectAttr, BattlerTagType.KINGS_SHIELD)
+      .condition(failIfLastCondition),
     new StatusMove(Moves.PLAY_NICE, Type.NORMAL, -1, 20, -1, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.ATK ], -1),
     new StatusMove(Moves.CONFIDE, Type.NORMAL, -1, 20, -1, 0, 6)
@@ -8217,7 +8163,8 @@ export function initMoves() {
     new AttackMove(Moves.MYSTICAL_FIRE, Type.FIRE, MoveCategory.SPECIAL, 75, 100, 10, 100, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1),
     new SelfStatusMove(Moves.SPIKY_SHIELD, Type.GRASS, -1, 10, -1, 4, 6)
-      .attr(ProtectAttr, BattlerTagType.SPIKY_SHIELD),
+      .attr(ProtectAttr, BattlerTagType.SPIKY_SHIELD)
+      .condition(failIfLastCondition),
     new StatusMove(Moves.AROMATIC_MIST, Type.FAIRY, -1, 20, -1, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], 1)
       .target(MoveTarget.NEAR_ALLY),
@@ -8413,7 +8360,8 @@ export function initMoves() {
     new AttackMove(Moves.FIRST_IMPRESSION, Type.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, 2, 7)
       .condition(new FirstMoveCondition()),
     new SelfStatusMove(Moves.BANEFUL_BUNKER, Type.POISON, -1, 10, -1, 4, 7)
-      .attr(ProtectAttr, BattlerTagType.BANEFUL_BUNKER),
+      .attr(ProtectAttr, BattlerTagType.BANEFUL_BUNKER)
+      .condition(failIfLastCondition),
     new AttackMove(Moves.SPIRIT_SHACKLE, Type.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, true)
       .makesContact(false),
@@ -8656,6 +8604,7 @@ export function initMoves() {
     /* Unused */
     new SelfStatusMove(Moves.MAX_GUARD, Type.NORMAL, -1, 10, -1, 4, 8)
       .attr(ProtectAttr)
+      .condition(failIfLastCondition)
       .ignoresVirtual(),
     /* End Unused */
     new AttackMove(Moves.DYNAMAX_CANNON, Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 8)
@@ -8834,7 +8783,8 @@ export function initMoves() {
       .target(MoveTarget.USER_AND_ALLIES)
       .ignoresProtect(),
     new SelfStatusMove(Moves.OBSTRUCT, Type.DARK, 100, 10, -1, 4, 8)
-      .attr(ProtectAttr, BattlerTagType.OBSTRUCT),
+      .attr(ProtectAttr, BattlerTagType.OBSTRUCT)
+      .condition(failIfLastCondition),
     new AttackMove(Moves.FALSE_SURRENDER, Type.DARK, MoveCategory.PHYSICAL, 80, -1, 10, -1, 0, 8),
     new AttackMove(Moves.METEOR_ASSAULT, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 5, -1, 0, 8)
       .attr(RechargeAttr)
@@ -9122,10 +9072,10 @@ export function initMoves() {
       .attr(TeraBlastCategoryAttr)
       .attr(TeraBlastTypeAttr)
       .attr(TeraBlastPowerAttr)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR))
-      .partial(),
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR)),
     new SelfStatusMove(Moves.SILK_TRAP, Type.BUG, -1, 10, -1, 4, 9)
-      .attr(ProtectAttr, BattlerTagType.SILK_TRAP),
+      .attr(ProtectAttr, BattlerTagType.SILK_TRAP)
+      .condition(failIfLastCondition),
     new AttackMove(Moves.AXE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 120, 90, 10, 30, 0, 9)
       .attr(MissEffectAttr, crashDamageFunc)
       .attr(NoEffectAttr, crashDamageFunc)
@@ -9317,7 +9267,8 @@ export function initMoves() {
       .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)
       .attr(DoublePowerChanceAttr),
     new SelfStatusMove(Moves.BURNING_BULWARK, Type.FIRE, -1, 10, -1, 4, 9)
-      .attr(ProtectAttr, BattlerTagType.BURNING_BULWARK),
+      .attr(ProtectAttr, BattlerTagType.BURNING_BULWARK)
+      .condition(failIfLastCondition),
     new AttackMove(Moves.THUNDERCLAP, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 5, -1, 1, 9)
       .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].category !== MoveCategory.STATUS), // TODO: is this bang correct?
     new AttackMove(Moves.MIGHTY_CLEAVE, Type.ROCK, MoveCategory.PHYSICAL, 95, 100, 5, -1, 0, 9)
