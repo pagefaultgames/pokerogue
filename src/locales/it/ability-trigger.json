@@ -11,6 +11,7 @@
   "blockItemTheft": "{{abilityName}} di {{pokemonNameWithAffix}}\nlo rende immune ai furti!",
   "typeImmunityHeal": "{{pokemonName}} recupera alcuni PS\ncon {{abilityName}}!",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}} evita il colpo\ncon {{abilityName}}!",
+  "fullHpResistType": "{{pokemonNameWithAffix}} made its shell gleam!\nIt's distorting type matchups!",
   "disguiseAvoidedDamage": "{{pokemonNameWithAffix}} è stato smascherato!",
   "moveImmunity": "Non ha effetto su {{pokemonNameWithAffix}}!",
   "reverseDrain": "{{pokemonNameWithAffix}} ha assorbito la melma!",
