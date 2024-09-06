@@ -44,7 +44,7 @@
   "moveNotImplemented": "{{moveName}} non è ancora implementata e non può essere selezionata.",
   "moveNoPP": "Non ci sono PP rimanenti\nper questa mossa!",
   "moveDisabled": "{{moveName}} è disabilitata!",
-  "disableInterruptedMove": "{{pokemonNameWithAffix}}'s {{moveName}}\nis disabled!",
+  "disableInterruptedMove": "La mossa {{moveName}} di\n{{pokemonNameWithAffix}} è bloccata!",
   "noPokeballForce": "Una forza misteriosa\nimpedisce l'uso delle Poké Ball.",
   "noPokeballTrainer": "Non puoi catturare\nPokémon di altri allenatori!",
   "noPokeballMulti": "Puoi lanciare una Poké Ball\nsolo quando rimane un singolo Pokémon!",
