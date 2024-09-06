@@ -23,7 +23,6 @@ import {modifierSortFunc} from "../modifier/modifier";
 import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { Device } from "#enums/devices";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -154,7 +153,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const headerBgCoords = headerBg.getTopRight();
       const abilityButtonContainer = this.scene.add.container(0, 0);
       const abilityButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {fontSize:"34px"});
-      const gamepadType = this.getGamepadType();
+      const gamepadType = this.getUi().getGamepadType();
       let abilityButtonElement: Phaser.GameObjects.Sprite;
       if (gamepadType === "touch") {
         abilityButtonElement = new Phaser.GameObjects.Sprite(this.scene, 0, 2, "keyboard", "E.png");
@@ -190,7 +189,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const hallofFameInstructionContainer = this.scene.add.container(0, 0);
       const shinyButtonText = addTextObject(this.scene, 8, 0, i18next.t("runHistory:viewHallOfFame"), TextStyle.WINDOW, {fontSize:"65px"});
       const formButtonText = addTextObject(this.scene, 8, 12, i18next.t("runHistory:viewEndingSplash"), TextStyle.WINDOW, {fontSize:"65px"});
-      const gamepadType = this.getGamepadType();
+      const gamepadType = this.getUi().getGamepadType();
       let shinyButtonElement: Phaser.GameObjects.Sprite;
       let formButtonElement: Phaser.GameObjects.Sprite;
       if (gamepadType === "touch") {
@@ -897,21 +896,6 @@ export default class RunInfoUiHandler extends UiHandler {
         this.showParty(true);
       }
       break;
-    }
-  }
-
-  /**
-   * getGamepadType - returns the type of gamepad being used
-   * inputMethod could be "keyboard" or "touch" or "gamepad"
-   * if inputMethod is "keyboard" or "touch", then the inputMethod is returned
-   * if inputMethod is "gamepad", then the gamepad type is returned it could be "xbox" or "duelshock"
-   * @returns gamepad type
-   */
-  private getGamepadType(): string {
-    if (this.scene.inputMethod === "gamepad") {
-      return this.scene.inputController.getConfig(this.scene.inputController.selectedDevice[Device.GAMEPAD]).padType;
-    } else {
-      return this.scene.inputMethod;
     }
   }
 }
