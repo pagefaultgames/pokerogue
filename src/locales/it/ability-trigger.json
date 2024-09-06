@@ -52,6 +52,7 @@
   "postSummonTeravolt": "{{pokemonNameWithAffix}} emana un’aura repulsiva!",
   "postSummonDarkAura": "L’abilità Auratetra di {{pokemonNameWithAffix}} è attiva.",
   "postSummonFairyAura": "L’abilità Aurafolletto di {{pokemonNameWithAffix}} è attiva.",
+  "postSummonAuraBreak": "{{pokemonNameWithAffix}} reversed all other Pokémon's auras!",
   "postSummonNeutralizingGas": "Il Gas Reagente di {{pokemonNameWithAffix}}\nsi diffonde tutt’intorno!",
   "postSummonAsOneGlastrier": "{{pokemonNameWithAffix}} ha due abilità!",
   "postSummonAsOneSpectrier": "{{pokemonNameWithAffix}} ha due abilità!",
