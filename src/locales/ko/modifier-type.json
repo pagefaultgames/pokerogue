@@ -47,10 +47,14 @@
       "description": "포켓몬의 성격을 {{natureName}}[[로]] 바꾸고 스타팅에도 등록한다."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "{{battleCount}}번의 배틀 동안 더블 배틀이 등장할 확률이 두 배가 된다."
+      "description": "Quadruples the chance of an encounter being a double battle for up to {{battleCount}} battles."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "자신의 모든 포켓몬이 5번의 배틀 동안 {{stat}}[[가]] 한 단계 증가한다."
+      "description": "Increases the {{stat}} of all party members by {{amount}} for up to 5 battles.",
+      "extra": {
+        "stage": "1 stage",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "지니게 하면 {{moveType}}타입 기술의 위력이 20% 상승한다."
