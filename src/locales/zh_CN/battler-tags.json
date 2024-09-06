@@ -68,6 +68,6 @@
   "cursedOnAdd": "{{pokemonNameWithAffix}}削减了自己的体力，\n并诅咒了{{pokemonName}}！",
   "cursedLapse": "{{pokemonNameWithAffix}}\n正受到诅咒！",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}}蓄力了{{stockpiledCount}}次！",
-  "disabledOnAdd": "{{pokemonNameWithAffix}}'s {{moveName}}\nwas disabled!",
-  "disabledLapse": "{{pokemonNameWithAffix}}'s {{moveName}}\nis no longer disabled."
+  "disabledOnAdd": "封住了{{pokemonNameWithAffix}}的\n{{moveName}}！",
+  "disabledLapse": "{{moveName}}的\n定身法解除了！"
 }
