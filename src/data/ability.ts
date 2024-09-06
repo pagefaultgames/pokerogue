@@ -448,7 +448,7 @@ class TypeImmunityAddBattlerTagAbAttr extends TypeImmunityAbAttr {
           pokemon.addTag(this.tagType, this.turnCount, undefined, pokemon.id);
           pokemon.scene.queueMessage(i18next.t("abilityTriggers:flashFire", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: Type[attacker.getMoveType(move)].charAt(0).toUpperCase() + Type[attacker.getMoveType(move)].slice(1).toLowerCase() }));
         } else {
-          pokemon.scene.queueMessage(i18next.t(i18next.t("abilityTriggers:moveImmunity", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) })));
+          pokemon.scene.queueMessage(i18next.t("abilityTriggers:moveImmunity", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
         }
       }
     }
