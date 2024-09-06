@@ -8,5 +8,6 @@
   "disguiseAvoidedDamage": "{{pokemonNameWithAffix}}的畫皮脫落了！",
   "fullHpResistType": "{{pokemonNameWithAffix}} made its shell gleam!\nIt's distorting type matchups!",
   "weatherEffectDisappeared": "天氣的影響消失了！",
+  "postSummonAuraBreak": "{{pokemonNameWithAffix}} reversed all other Pokémon's auras!",
   "preventBerryUse": "{{pokemonNameWithAffix}}因太緊張\n而無法食用樹果！"
 }
