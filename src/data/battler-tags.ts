@@ -107,8 +107,8 @@ export interface TerrainBattlerTag {
  * to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
-    super(tagType, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], turnCount, sourceMove, sourceId);
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
+    super(tagType, lapseType, turnCount, sourceMove, sourceId);
   }
 
   /** @override */
@@ -119,7 +119,9 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
       const move = phase.move;
 
       if (this.isMoveRestricted(move.moveId)) {
-        pokemon.scene.queueMessage(this.interruptedText(pokemon, move.moveId));
+        if (this.interruptedText(pokemon, move.moveId)) {
+          pokemon.scene.queueMessage(this.interruptedText(pokemon, move.moveId));
+        }
         phase.cancel();
       }
 
@@ -155,7 +157,9 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
    * @param {Moves} move {@linkcode Moves} ID of the move being interrupted
    * @returns {string} text to display when the move is interrupted
    */
-  abstract interruptedText(pokemon: Pokemon, move: Moves): string;
+  interruptedText(pokemon: Pokemon, move: Moves): string {
+    return "";
+  }
 }
 
 /**
@@ -167,7 +171,7 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
   private moveId: Moves = Moves.NONE;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.DISABLED, 4, Moves.DISABLE, sourceId);
+    super(BattlerTagType.DISABLED, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 4, Moves.DISABLE, sourceId);
   }
 
   /** @override */
@@ -178,7 +182,7 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
   /**
    * @override
    *
-   * Ensures that move history exists on `pokemon` and has a valid move. If so, sets the {@link moveId} and shows a message.
+   * Ensures that move history exists on `pokemon` and has a valid move. If so, sets the {@linkcode moveId} and shows a message.
    * Otherwise the move ID will not get assigned and this tag will get removed next turn.
    */
   override onAdd(pokemon: Pokemon): void {
@@ -207,8 +211,12 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
     return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
 
-  /** @override */
-  override interruptedText(pokemon: Pokemon, move: Moves): string {
+  /**
+   * @param {Pokemon} pokemon {@linkcode Pokemon} attempting to use the restricted move
+   * @param {Moves} move {@linkcode Moves} ID of the move being interrupted
+   * @returns {string} text to display when the move is interrupted
+   */
+  interruptedText(pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
   }
 
@@ -216,6 +224,73 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
   override loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.moveId = source.moveId;
+  }
+}
+
+/**
+ * Tag used by Gorilla Tactics to restrict the user to using only one move.
+ * @extends MoveRestrictionBattlerTag
+ */
+export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
+  private moveId = Moves.NONE;
+
+  constructor() {
+    super(BattlerTagType.GORILLA_TACTICS, BattlerTagLapseType.CUSTOM, 0);
+  }
+
+  /** @override */
+  override isMoveRestricted(move: Moves): boolean {
+    return move !== this.moveId;
+  }
+
+  /**
+   * @override
+   * @param {Pokemon} pokemon the {@linkcode Pokemon} to check if the tag can be added
+   * @returns `true` if the pokemon has a valid move and no existing {@linkcode GorillaTacticsTag}; `false` otherwise
+   */
+  override canAdd(pokemon: Pokemon): boolean {
+    return (this.getLastValidMove(pokemon) !== undefined) && !pokemon.getTag(GorillaTacticsTag);
+  }
+
+  /**
+   * Ensures that move history exists on {@linkcode Pokemon} and has a valid move.
+   * If so, sets the {@linkcode moveId} and increases the user's Attack by one stage.
+   * @override
+   * @param {Pokemon} pokemon the {@linkcode Pokemon} to add the tag to
+   */
+  override onAdd(pokemon: Pokemon): void {
+    const lastValidMove = this.getLastValidMove(pokemon);
+
+    if (!lastValidMove) {
+      return;
+    }
+
+    this.moveId = lastValidMove;
+    pokemon.setStatStage(Stat.ATK, 1);
+    pokemon.updateInfo();
+  }
+
+  /**
+   *
+   * @override
+   * @param {Pokemon} pokemon n/a
+   * @param {Moves} move {@linkcode Moves} ID of the move being denied
+   * @returns {string} text to display when the move is denied
+  */
+  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:canOnlyUseMove", { moveName: allMoves[this.moveId].name, pokemonName: getPokemonNameWithAffix(pokemon) });
+  }
+
+  /**
+   * Gets the last valid move from the pokemon's move history.
+   * @param {Pokemon} pokemon {@linkcode Pokemon} to get the last valid move from
+   * @returns {Moves | undefined} the last valid move from the pokemon's move history
+   */
+  getLastValidMove(pokemon: Pokemon): Moves | undefined {
+    const move = pokemon.getLastXMoves()
+      .find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual);
+
+    return move?.move;
   }
 }
 
@@ -2125,6 +2200,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.GULP_MISSILE_ARROKUDA:
   case BattlerTagType.GULP_MISSILE_PIKACHU:
     return new GulpMissileTag(tagType, sourceMove);
+  case BattlerTagType.GORILLA_TACTICS:
+    return new GorillaTacticsTag();
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
