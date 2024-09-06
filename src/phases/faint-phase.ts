@@ -17,7 +17,7 @@ import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { SwitchPhase } from "./switch-phase";
 import { VictoryPhase } from "./victory-phase";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms.js";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 
 export class FaintPhase extends PokemonPhase {
   private preventEndure: boolean;
