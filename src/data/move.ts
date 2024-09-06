@@ -757,7 +757,10 @@ export default class Move implements Localizable {
 
     const fieldAuras = new Set(
       source.scene.getField(true)
-        .map((p) => p.getAbilityAttrs(FieldMoveTypePowerBoostAbAttr) as FieldMoveTypePowerBoostAbAttr[])
+        .map((p) => p.getAbilityAttrs(FieldMoveTypePowerBoostAbAttr).filter(attr => {
+          const condition = attr.getCondition();
+          return (!condition || condition(p));
+        }) as FieldMoveTypePowerBoostAbAttr[])
         .flat(),
     );
     for (const aura of fieldAuras) {
