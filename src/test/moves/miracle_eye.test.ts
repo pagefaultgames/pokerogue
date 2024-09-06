@@ -33,18 +33,18 @@ describe("Moves - Miracle Eye", () => {
   });
 
   it("should allow Psychic moves to hit Dark types", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.CONFUSION);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
     expect(enemy.hp).toBe(enemy.getMaxHp());
 
     game.move.select(Moves.MIRACLE_EYE);
     await game.toNextTurn();
     game.move.select(Moves.CONFUSION);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());

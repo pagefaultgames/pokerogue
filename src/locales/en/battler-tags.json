@@ -69,5 +69,7 @@
   "cursedLapse": "{{pokemonNameWithAffix}} is afflicted by the Curse!",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}} stockpiled {{stockpiledCount}}!",
   "rageOnAdd": "{{pokemonNameWithAffix}}'s rage is starting to build.",
-  "rageOnHit": "{{pokemonNameWithAffix}}'s rage is building."
+  "rageOnHit": "{{pokemonNameWithAffix}}'s rage is building.",
+  "disabledOnAdd": "{{pokemonNameWithAffix}}'s {{moveName}}\nwas disabled!",
+  "disabledLapse": "{{pokemonNameWithAffix}}'s {{moveName}}\nis no longer disabled."
 }

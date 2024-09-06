@@ -42,14 +42,14 @@ export class DamagePhase extends PokemonPhase {
   applyDamage() {
     switch (this.damageResult) {
     case HitResult.EFFECTIVE:
-      this.scene.playSound("hit");
+      this.scene.playSound("se/hit");
       break;
     case HitResult.SUPER_EFFECTIVE:
     case HitResult.ONE_HIT_KO:
-      this.scene.playSound("hit_strong");
+      this.scene.playSound("se/hit_strong");
       break;
     case HitResult.NOT_VERY_EFFECTIVE:
-      this.scene.playSound("hit_weak");
+      this.scene.playSound("se/hit_weak");
       break;
     }
 

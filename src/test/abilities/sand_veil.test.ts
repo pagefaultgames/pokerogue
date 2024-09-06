@@ -1,5 +1,5 @@
-import { BattleStatMultiplierAbAttr, allAbilities } from "#app/data/ability";
-import { BattleStat } from "#app/data/battle-stat";
+import { StatMultiplierAbAttr, allAbilities } from "#app/data/ability";
+import { Stat } from "#enums/stat";
 import { WeatherType } from "#app/data/weather";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
@@ -49,10 +49,10 @@ describe("Abilities - Sand Veil", () => {
 
       vi.spyOn(leadPokemon[0], "getAbility").mockReturnValue(allAbilities[Abilities.SAND_VEIL]);
 
-      const sandVeilAttr = allAbilities[Abilities.SAND_VEIL].getAttrs(BattleStatMultiplierAbAttr)[0];
-      vi.spyOn(sandVeilAttr, "applyBattleStat").mockImplementation(
-        (pokemon, passive, simulated, battleStat, statValue, args) => {
-          if (battleStat === BattleStat.EVA && game.scene.arena.weather?.weatherType === WeatherType.SANDSTORM) {
+      const sandVeilAttr = allAbilities[Abilities.SAND_VEIL].getAttrs(StatMultiplierAbAttr)[0];
+      vi.spyOn(sandVeilAttr, "applyStatStage").mockImplementation(
+        (_pokemon, _passive, _simulated, stat, statValue, _args) => {
+          if (stat === Stat.EVA && game.scene.arena.weather?.weatherType === WeatherType.SANDSTORM) {
             statValue.value *= -1; // will make all attacks miss
             return true;
           }

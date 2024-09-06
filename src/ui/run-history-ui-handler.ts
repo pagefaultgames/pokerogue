@@ -278,11 +278,12 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
       const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:victory")}`, TextStyle.WINDOW);
       this.add(gameOutcomeLabel);
     } else { // Run Result: Defeats
-      const genderLabel = (this.scene.gameData.gender === PlayerGender.FEMALE) ? "F" : "M";
+      const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+      const genderStr = PlayerGender[genderIndex].toLowerCase();
       // Defeats from wild Pokemon battles will show the Pokemon responsible by the text of the run result.
       if (data.battleType === BattleType.WILD) {
         const enemyContainer = this.scene.add.container(8, 5);
-        const gameOutcomeLabel = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:defeatedWild"+genderLabel)}`, TextStyle.WINDOW);
+        const gameOutcomeLabel = addTextObject(this.scene, 0, 0, `${i18next.t("runHistory:defeatedWild", { context: genderStr })}`, TextStyle.WINDOW);
         enemyContainer.add(gameOutcomeLabel);
         data.enemyParty.forEach((enemyData, e) => {
           const enemyIconContainer = this.scene.add.container(65+(e*25), -8);
@@ -307,10 +308,10 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
         const RIVAL_TRAINER_ID_THRESHOLD = 375;
         if (data.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
           const rivalName = (tObj.variant === TrainerVariant.FEMALE) ? "trainerNames:rival_female" : "trainerNames:rival";
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival"+genderLabel)} ${i18next.t(rivalName)}`, TextStyle.WINDOW);
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedRival", { context: genderStr })} ${i18next.t(rivalName)}`, TextStyle.WINDOW);
           this.add(gameOutcomeLabel);
         } else {
-          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer"+genderLabel)}${tObj.getName(0, true)}`, TextStyle.WINDOW);
+          const gameOutcomeLabel = addTextObject(this.scene, 8, 5, `${i18next.t("runHistory:defeatedTrainer", { context: genderStr })}${tObj.getName(0, true)}`, TextStyle.WINDOW);
           this.add(gameOutcomeLabel);
         }
       }

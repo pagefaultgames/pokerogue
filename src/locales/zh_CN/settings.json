@@ -61,6 +61,7 @@
   "typeHints": "属性提示",
   "masterVolume": "主音量",
   "bgmVolume": "音乐",
+  "fieldVolume": "场景音量",
   "seVolume": "音效",
   "musicPreference": "音乐偏好",
   "mixed": "全曲混合",
@@ -98,7 +99,7 @@
   "moveTouchControls": "移动触摸控制",
   "shopOverlayOpacity": "商店显示不透明度",
   "shopCursorTarget": "商店指针位置",
-  "items": "道具",
+  "rewards": "道具",
   "reroll": "刷新",
   "shop": "购买",
   "checkTeam": "检查队伍"

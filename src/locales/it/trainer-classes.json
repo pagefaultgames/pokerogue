@@ -117,5 +117,14 @@
   "plasma_grunts": "Seguaci Plasma",
   "flare_grunt": "Recluta Team Flare",
   "flare_grunt_female": "Recluta Team Flare",
-  "flare_grunts": "Reclute Team Flare"
+  "flare_grunts": "Reclute Team Flare",
+  "aether_grunt": "Dipendente (Fondazione Æther)",
+  "aether_grunt_female": "Dipendente (Fondazione Æther)",
+  "aether_grunts": "Dipendenti (Fondazione Æther)",
+  "skull_grunt": "Recluta Team Skull",
+  "skull_grunt_female": "Recluta Team Skull",
+  "skull_grunts": "Reclute Team Skull",
+  "macro_grunt": "Impiegato Macro Cosmos",
+  "macro_grunt_female": "Impiegata Macro Cosmos",
+  "macro_grunts": "Impiegati Macro Cosmos"
 }

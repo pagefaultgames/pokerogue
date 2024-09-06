@@ -7,7 +7,7 @@ import { StatusEffect } from "../data/status-effect";
 import BattleScene from "../battle-scene";
 import { Type, getTypeRgb } from "../data/type";
 import { getVariantTint } from "#app/data/variant";
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import BattleFlyout from "./battle-flyout";
 import { WindowVariant, addWindow } from "./ui-theme";
 import i18next from "i18next";
@@ -30,7 +30,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private lastLevelExp: integer;
   private lastLevel: integer;
   private lastLevelCapped: boolean;
-  private lastBattleStats: string;
+  private lastStats: string;
 
   private box: Phaser.GameObjects.Sprite;
   private nameText: Phaser.GameObjects.Text;
@@ -68,9 +68,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   public flyoutMenu?: BattleFlyout;
 
-  private battleStatOrder: BattleStat[];
-  private battleStatOrderPlayer = [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD];
-  private battleStatOrderEnemy = [BattleStat.HP, BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.ACC, BattleStat.EVA, BattleStat.SPD];
+  private statOrder: Stat[];
+  private readonly statOrderPlayer = [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD ];
+  private readonly statOrderEnemy = [ Stat.HP, Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD ];
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
@@ -229,9 +229,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const startingX = this.player ? -this.statsBox.width + 8 : -this.statsBox.width + 5;
     const paddingX = this.player ? 4 : 2;
     const statOverflow = this.player ? 1 : 0;
-    this.battleStatOrder = this.player ? this.battleStatOrderPlayer : this.battleStatOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
+    this.statOrder = this.player ? this.statOrderPlayer : this.statOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
 
-    this.battleStatOrder.map((s, i) => {
+    this.statOrder.map((s, i) => {
       // we do a check for i > statOverflow to see when the stat labels go onto the next column
       // For enemies, we have HP (i=0) by itself then a new column, so we check for i > 0
       // For players, we don't have HP, so we start with i = 0 and i = 1 for our first column, and so need to check for i > 1
@@ -239,25 +239,25 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
       const baseY = -this.statsBox.height / 2 + 4; // this is the baseline for the y-axis
       let statY: number; // this will be the y-axis placement for the labels
-      if (this.battleStatOrder[i] === BattleStat.SPD || this.battleStatOrder[i] === BattleStat.HP) {
+      if (this.statOrder[i] === Stat.SPD || this.statOrder[i] === Stat.HP) {
         statY = baseY + 5;
       } else {
         statY = baseY + (!!(i % 2) === this.player ? 10 : 0); // we compare i % 2 against this.player to tell us where to place the label; because this.battleStatOrder for enemies has HP, this.battleStatOrder[1]=ATK, but for players this.battleStatOrder[0]=ATK, so this comparing i % 2 to this.player fixes this issue for us
       }
 
-      const statLabel = this.scene.add.sprite(statX, statY, "pbinfo_stat", BattleStat[s]);
+      const statLabel = this.scene.add.sprite(statX, statY, "pbinfo_stat", Stat[s]);
       statLabel.setName("icon_stat_label_" + i.toString());
       statLabel.setOrigin(0, 0);
       statLabels.push(statLabel);
       this.statValuesContainer.add(statLabel);
 
-      const statNumber = this.scene.add.sprite(statX + statLabel.width, statY, "pbinfo_stat_numbers", this.battleStatOrder[i] !== BattleStat.HP ? "3" : "empty");
+      const statNumber = this.scene.add.sprite(statX + statLabel.width, statY, "pbinfo_stat_numbers", this.statOrder[i] !== Stat.HP ? "3" : "empty");
       statNumber.setName("icon_stat_number_" + i.toString());
       statNumber.setOrigin(0, 0);
       this.statNumbers.push(statNumber);
       this.statValuesContainer.add(statNumber);
 
-      if (this.battleStatOrder[i] === BattleStat.HP) {
+      if (this.statOrder[i] === Stat.HP) {
         statLabel.setVisible(false);
         statNumber.setVisible(false);
       }
@@ -433,10 +433,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.statValuesContainer.setPosition(8, 7);
     }
 
-    const battleStats = this.battleStatOrder.map(() => 0);
+    const stats = this.statOrder.map(() => 0);
 
-    this.lastBattleStats = battleStats.join("");
-    this.updateBattleStats(battleStats);
+    this.lastStats = stats.join("");
+    this.updateStats(stats);
   }
 
   getTextureName(): string {
@@ -650,14 +650,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastLevel = pokemon.level;
       }
 
-      const battleStats = pokemon.summonData
-        ? pokemon.summonData.battleStats
-        : this.battleStatOrder.map(() => 0);
-      const battleStatsStr = battleStats.join("");
+      const stats = pokemon.getStatStages();
+      const statsStr = stats.join("");
 
-      if (this.lastBattleStats !== battleStatsStr) {
-        this.updateBattleStats(battleStats);
-        this.lastBattleStats = battleStatsStr;
+      if (this.lastStats !== statsStr) {
+        this.updateStats(stats);
+        this.lastStats = statsStr;
       }
 
       this.shinyIcon.setVisible(pokemon.isShiny());
@@ -713,7 +711,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastLevelExp = pokemon.levelExp;
       }
       if (duration) {
-        (this.scene as BattleScene).playSound("exp");
+        (this.scene as BattleScene).playSound("se/exp");
       }
       this.scene.tweens.add({
         targets: this.expMaskRect,
@@ -725,10 +723,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
             return resolve();
           }
           if (duration) {
-            this.scene.sound.stopByKey("exp");
+            this.scene.sound.stopByKey("se/exp");
           }
           if (ratio === 1) {
-            (this.scene as BattleScene).playSound("level_up");
+            (this.scene as BattleScene).playSound("se/level_up");
             this.setLevel(this.lastLevel);
             this.scene.time.delayedCall(500 * levelDurationMultiplier, () => {
               this.expMaskRect.x = 0;
@@ -769,10 +767,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
   }
 
-  updateBattleStats(battleStats: integer[]): void {
-    this.battleStatOrder.map((s, i) => {
-      if (s !== BattleStat.HP) {
-        this.statNumbers[i].setFrame(battleStats[s].toString());
+  updateStats(stats: integer[]): void {
+    this.statOrder.map((s, i) => {
+      if (s !== Stat.HP) {
+        this.statNumbers[i].setFrame(stats[s - 1].toString());
       }
     });
   }

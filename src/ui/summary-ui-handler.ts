@@ -11,7 +11,6 @@ import Move, { MoveCategory } from "../data/move";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { getLevelRelExp, getLevelTotalExp } from "../data/exp";
-import { Stat, getStatName } from "../data/pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
 import { getBiomeName } from "../data/biomes";
@@ -19,10 +18,11 @@ import { Nature, getNatureName, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
 import { Variant, getVariantTint } from "#app/data/variant";
 import {Button} from "#enums/buttons";
-import { Ability } from "../data/ability.js";
+import { Ability } from "../data/ability";
 import i18next from "i18next";
 import {modifierSortFunc} from "../modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
+import { Stat, PERMANENT_STATS, getStatKey } from "#app/enums/stat";
 
 enum Page {
   PROFILE,
@@ -716,7 +716,8 @@ export default class SummaryUiHandler extends UiHandler {
       const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
         const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
         const typeIcon = !tera
-          ? this.scene.add.sprite(xCoord, 42, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[type].toLowerCase())          : this.scene.add.sprite(xCoord, 42, "type_tera");
+          ? this.scene.add.sprite(xCoord, 42, Utils.getLocalizedSpriteKey("types"), Type[type].toLowerCase())
+          : this.scene.add.sprite(xCoord, 42, "type_tera");
         if (tera) {
           typeIcon.setScale(0.5);
           const typeRgb = getTypeRgb(type);
@@ -824,10 +825,7 @@ export default class SummaryUiHandler extends UiHandler {
           biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
           level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
         }),
-        natureFragment:
-          i18next.exists(`pokemonSummary:natureFragment.${rawNature}`) ?
-            i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature }) :
-            nature,
+        natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature })
       });
 
       const memoText = addBBCodeTextObject(this.scene, 7, 113, String(memoString), TextStyle.WINDOW_ALT);
@@ -838,10 +836,8 @@ export default class SummaryUiHandler extends UiHandler {
       const statsContainer = this.scene.add.container(0, -pageBg.height);
       pageContainer.add(statsContainer);
 
-      const stats = Utils.getEnumValues(Stat) as Stat[];
-
-      stats.forEach((stat, s) => {
-        const statName = getStatName(stat);
+      PERMANENT_STATS.forEach((stat, s) => {
+        const statName = i18next.t(getStatKey(stat));
         const rowIndex = s % 3;
         const colIndex = Math.floor(s / 3);
 
@@ -852,7 +848,7 @@ export default class SummaryUiHandler extends UiHandler {
         statsContainer.add(statLabel);
 
         const statValueText = stat !== Stat.HP
-          ? Utils.formatStat(this.pokemon?.stats[s]!) // TODO: is this bang correct?
+          ? Utils.formatStat(this.pokemon?.getStat(stat)!) // TODO: is this bang correct?
           : `${Utils.formatStat(this.pokemon?.hp!, true)}/${Utils.formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
 
         const statValue = addTextObject(this.scene, 120 + 88 * colIndex, 56 + 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
@@ -934,10 +930,14 @@ export default class SummaryUiHandler extends UiHandler {
 
       if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
         this.extraMoveRowContainer.setVisible(true);
-        const newMoveTypeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[this.newMove?.type!].toLowerCase()); // TODO: is this bang correct?
-        newMoveTypeIcon.setOrigin(0, 1);
-        this.extraMoveRowContainer.add(newMoveTypeIcon);
 
+        if (this.newMove && this.pokemon) {
+          const spriteKey = Utils.getLocalizedSpriteKey("types");
+          const moveType = this.pokemon.getMoveType(this.newMove);
+          const newMoveTypeIcon = this.scene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
+          newMoveTypeIcon.setOrigin(0, 1);
+          this.extraMoveRowContainer.add(newMoveTypeIcon);
+        }
         const ppOverlay = this.scene.add.image(163, -1, "summary_moves_overlay_pp");
         ppOverlay.setOrigin(0, 1);
         this.extraMoveRowContainer.add(ppOverlay);
@@ -956,8 +956,11 @@ export default class SummaryUiHandler extends UiHandler {
         const moveRowContainer = this.scene.add.container(0, 16 * m);
         this.moveRowsContainer.add(moveRowContainer);
 
-        if (move) {
-          const typeIcon = this.scene.add.sprite(0, 0, `types${Utils.verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`, Type[move.getMove().type].toLowerCase());          typeIcon.setOrigin(0, 1);
+        if (move && this.pokemon) {
+          const spriteKey = Utils.getLocalizedSpriteKey("types");
+          const moveType = this.pokemon.getMoveType(move.getMove());
+          const typeIcon = this.scene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
+          typeIcon.setOrigin(0, 1);
           moveRowContainer.add(typeIcon);
         }
 

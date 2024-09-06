@@ -8,6 +8,8 @@ on:
     branches:
       - main
       - beta
+  merge_group:
+    types: [checks_requested]
 
 jobs:
   pages:
