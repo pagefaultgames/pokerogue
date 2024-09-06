@@ -13,6 +13,7 @@ import { Button } from "#app/enums/buttons";
 import { CommandPhase } from "#app/phases/command-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 describe("Items - Dire Hit", () => {
   let phaserGame: Phaser.Game;
@@ -77,8 +78,8 @@ describe("Items - Dire Hit", () => {
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
       // Traverse to first modifier slot
-      handler.processInput(Button.LEFT);
-      handler.processInput(Button.UP);
+      handler.setCursor(0);
+      handler.setRowCursor(ShopCursorTarget.REWARDS);
       handler.processInput(Button.ACTION);
     }, () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(NewBattlePhase), true);
 
