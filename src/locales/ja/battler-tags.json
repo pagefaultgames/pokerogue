@@ -68,6 +68,6 @@
   "cursedOnAdd": "{{pokemonNameWithAffix}}は　自分の　体力を　削って\n{{pokemonName}}に　のろいを　かけた!",
   "cursedLapse": "{{pokemonNameWithAffix}}は　のろわれている！",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}}は　{{stockpiledCount}}つ　たくわえた!",
-  "disabledOnAdd": "{{pokemonNameWithAffix}}'s {{moveName}}\nwas disabled!",
-  "disabledLapse": "{{pokemonNameWithAffix}}'s {{moveName}}\nis no longer disabled."
+  "disabledOnAdd": "{{pokemonNameWithAffix}}の\n{{moveName}}\nを　封じこめた！",
+  "disabledLapse": "{{pokemonNameWithAffix}}の\nかなしばりが　解けた！"
 }
