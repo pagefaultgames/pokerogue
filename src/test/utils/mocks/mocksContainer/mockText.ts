@@ -197,9 +197,7 @@ export default class MockText implements MockGameObject {
     this.color = color;
   });
 
-  setInteractive(hitArea, hitAreaCallback, dropZone) {
-    return null;
-  }
+  setInteractive = vi.fn();
 
   setShadowColor(color) {
     // Sets the shadow color.
