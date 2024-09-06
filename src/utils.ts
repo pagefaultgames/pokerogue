@@ -1,5 +1,5 @@
-import i18next from "i18next";
 import { MoneyFormat } from "#enums/money-format";
+import i18next from "i18next";
 
 export const MissingTextureKey = "__MISSING";
 
@@ -82,6 +82,12 @@ export function randInt(range: integer, min: integer = 0): integer {
   return Math.floor(Math.random() * range) + min;
 }
 
+/**
+ * Generates a random number using the global seed, or the current battle's seed if called via `Battle.randSeedInt`
+ * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+ * @param min The minimum integer to pick, default `0`
+ * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+ */
 export function randSeedInt(range: integer, min: integer = 0): integer {
   if (range <= 1) {
     return min;

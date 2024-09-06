@@ -1,8 +1,8 @@
 {
-  "SEND_OUT": "いれかえる",
-  "SUMMARY": "つよさをみる",
+  "SEND_OUT": "入れ替える",
+  "SUMMARY": "強さを見る",
   "CANCEL": "やめる",
-  "RELEASE": "にがす",
-  "APPLY": "つかう",
-  "TEACH": "おしえる"
+  "RELEASE": "逃がす",
+  "APPLY": "使う",
+  "TEACH": "教える"
 }
