@@ -47,10 +47,14 @@
       "description": "ポケモンのせいかくを {{natureName}}にかえて スターターのせいかくをえいきゅうにかいじょする"
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "バトル{{battleCount}}かいのあいだ ダブルバトルになるかくりつを2ばいにする"
+      "description": "Quadruples the chance of an encounter being a double battle for up to {{battleCount}} battles."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "すべてのパーティメンバーの {{stat}}を5かいのバトルのあいだ 1だんかいあげる"
+      "description": "Increases the {{stat}} of all party members by {{amount}} for up to 5 battles.",
+      "extra": {
+        "stage": "1 stage",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "ポケモンの {{moveType}}タイプのわざのいりょくを20パーセントあげる"
