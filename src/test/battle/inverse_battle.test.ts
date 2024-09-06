@@ -159,6 +159,24 @@ describe("Inverse Battle", () => {
     expect(enemy.status?.effect).not.toBe(StatusEffect.PARALYSIS);
   }, TIMEOUT);
 
+  it("9. Ground type is not immune to Thunder Wave - Thunder Wave against Sandshrew", async () => {
+    game.override
+      .moveset([Moves.THUNDER_WAVE])
+      .enemySpecies(Species.SANDSHREW)
+      .enemyAbility(Abilities.NO_GUARD);
+
+    await game.challengeMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.THUNDER_WAVE);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+
+    await game.phaseInterceptor.to(MoveEndPhase);
+
+    expect(enemy.status?.effect).toBe(StatusEffect.PARALYSIS);
+  }, TIMEOUT);
+
 
   it("10. Anticipation should trigger on 2x effective moves - Anticipation against Thunderbolt", async () => {
     game.override
@@ -199,5 +217,36 @@ describe("Inverse Battle", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     expect(enemy.getMoveEffectiveness(player, allMoves[Moves.FLYING_PRESS])).toBe(0.25);
+  }, TIMEOUT);
+
+  it("13. Scrappy ability has no effect - Tackle against Ghost Type still 2x effective with Scrappy", async () => {
+    game.override
+      .ability(Abilities.SCRAPPY)
+      .enemySpecies(Species.GASTLY);
+
+    await game.challengeMode.startBattle();
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    expect(enemy.getMoveEffectiveness(player, allMoves[Moves.TACKLE])).toBe(2);
+  }, TIMEOUT);
+
+  it("14. FORESIGHT has no effect - Tackle against Ghost Type still 2x effective with Foresight", async () => {
+    game.override
+      .moveset([Moves.FORESIGHT])
+      .enemySpecies(Species.GASTLY)
+      .enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+
+    await game.challengeMode.startBattle();
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.FORESIGHT);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(enemy.getMoveEffectiveness(player, allMoves[Moves.TACKLE])).toBe(2);
   }, TIMEOUT);
 });
