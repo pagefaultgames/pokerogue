@@ -159,7 +159,8 @@ export const SettingKeys = {
   Music_Preference: "MUSIC_PREFERENCE",
   Show_BGM_Bar: "SHOW_BGM_BAR",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
-  Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
+  Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY",
+  Pokemon_Cries: "POKEMON_CRIES",
 };
 
 /**
@@ -618,6 +619,22 @@ export const Setting: Array<Setting> = [
     requireReload: true
   },
   {
+    key: SettingKeys.Pokemon_Cries,
+    label: i18next.t("settings:pokemonCries"),
+    options: [
+      {
+        value: "On",
+        label: i18next.t("settings:on")
+      },
+      {
+        value: "Off",
+        label: i18next.t("settings:off")
+      }
+    ],
+    default: 0,
+    type: SettingType.AUDIO,
+  },
+  {
     key: SettingKeys.Move_Touch_Controls,
     label: i18next.t("settings:moveTouchControls"),
     options: [
@@ -894,6 +911,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     break;
   case SettingKeys.Shop_Overlay_Opacity:
     scene.updateShopOverlayOpacity(parseInt(Setting[index].options[value].value) * .01);
+    break;
+  case SettingKeys.Pokemon_Cries:
+    scene.enablePokemonCries = Setting[index].options[value].value === "On";
     break;
   }
 

@@ -2767,6 +2767,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   faintCry(callback: Function): void {
+    if (!this.scene.enablePokemonCries) {
+      return callback();
+    } //skip cry and callback immediately
+
     if (this.fusionSpecies && this.getSpeciesForm() !== this.getFusionSpeciesForm()) {
       return this.fusionFaintCry(callback);
     }

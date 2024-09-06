@@ -140,6 +140,8 @@ export default class BattleScene extends SceneBase {
   public enableMoveInfo: boolean = true;
   public enableRetries: boolean = false;
   public hideIvs: boolean = false;
+  /** Toggle Pokemon cries */
+  public enablePokemonCries: boolean = true;
   /**
    * Determines the condition for a notification should be shown for Candy Upgrades
    * - 0 = 'Off'

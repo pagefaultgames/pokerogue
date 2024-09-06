@@ -232,7 +232,9 @@ export class EncounterPhase extends BattlePhase {
     if (this.scene.currentBattle.battleType === BattleType.WILD) {
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.untint(100, "Sine.easeOut");
-        enemyPokemon.cry();
+        if (this.scene.enablePokemonCries) {
+          enemyPokemon.cry();
+        }
         enemyPokemon.showInfo();
         if (enemyPokemon.isShiny()) {
           this.scene.validateAchv(achvs.SEE_SHINY);

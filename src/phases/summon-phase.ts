@@ -155,10 +155,12 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               ease: "Sine.easeIn",
               scale: pokemon.getSpriteScale(),
               onComplete: () => {
-                pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
+                if (this.scene.enablePokemonCries) {
+                  pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
+                }
                 pokemon.getSprite().clearTint();
                 pokemon.resetSummonData();
-                this.scene.time.delayedCall(1000, () => this.end());
+                this.scene.time.delayedCall(this.scene.enablePokemonCries ? 1000 : 100, () => this.end());
               }
             });
           }
