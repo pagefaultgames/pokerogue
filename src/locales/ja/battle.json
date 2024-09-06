@@ -44,7 +44,7 @@
   "moveNotImplemented": "{{moveName}}は　まだ　実装されておらず　選択できません。",
   "moveNoPP": "しかし　技の\n残りポイントが　なかった！",
   "moveDisabled": "かなしばりで\n{{moveName}}が　出せない！",
-  "disableInterruptedMove": "{{pokemonNameWithAffix}}'s {{moveName}}\nis disabled!",
+  "disableInterruptedMove": "{{pokemonNameWithAffix}}は　かなしばりで\n{{moveName}}が　だせない！",
   "noPokeballForce": "見えない　力の　せいで\nボールが　投げられない！",
   "noPokeballTrainer": "人の　ものを　取ったら　泥棒！",
   "noPokeballMulti": "相手の　ポケモンが　一つしか\nいない　前に　ボールが　使えない!",
