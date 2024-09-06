@@ -2008,7 +2008,7 @@ export class TarShotTag extends BattlerTag {
 }
 
 /**
- * Retrieves a BattlerTag based on the provided tag type, turn count, source move, and source ID.
+ * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  *
  * @param {BattlerTagType} tagType the type of the {@linkcode BattlerTagType}.
  * @param turnCount the turn count.
