@@ -51,5 +51,7 @@
   "renamePokemon": "Pokémon umbennenen",
   "rename": "Umbenennen",
   "nickname": "Spitzname",
-  "errorServerDown": "Ups! Es gab einen Fehler beim Versuch\nden Server zu kontaktieren\nLasse dieses Fenster offen\nDu wirst automatisch neu verbunden."
+  "errorServerDown": "Ups! Es gab einen Fehler beim Versuch\nden Server zu kontaktieren\nLasse dieses Fenster offen\nDu wirst automatisch neu verbunden.",
+  "noSaves": "You don't have any save files on record!",
+  "tooManySaves": "You have too many save files on record!"
 }
