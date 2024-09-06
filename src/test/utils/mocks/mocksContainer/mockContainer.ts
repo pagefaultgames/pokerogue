@@ -207,4 +207,5 @@ export default class MockContainer implements MockGameObject {
     return this.list;
   }
 
+  disableInteractive = vi.fn();
 }
