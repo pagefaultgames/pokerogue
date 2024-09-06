@@ -29,7 +29,7 @@
       "5": "No way… NO WAY! How could I lose again…",
       "5_female": "No way… NO WAY! How could I lose again…",
       "6": "No! I lost!",
-      "7": "Whoa! You are incredible! I'm amazed and surprised!",
+      "7": "Whoa! You are incredible! I'm amazed!",
       "8": "Could it be… How… My Pokémon and I are the strongest, though…",
       "9": "I won't lose next time! Let's battle again sometime!",
       "10": "Sheesh! Can't you see that I'm just a kid! It wasn't fair of you to go all out like that!",
@@ -56,7 +56,7 @@
       "1": "That was impressive! I've got a lot to learn.",
       "2": "I didn't think you'd beat me that bad…",
       "2_female": "I didn't think you'd beat me that bad…",
-      "3": "I hope we get to have a rematch some day.",
+      "3": "I hope we get to have a rematch someday.",
       "4": "That was pretty amazingly fun! You've totally exhausted me…",
       "5": "You actually taught me a lesson! You're pretty amazing!",
       "6": "Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.",
@@ -228,7 +228,7 @@
       "1": "You don't have to try to impress me. You can lose against me."
     },
     "victory": {
-      "1": "It's hard to say good-bye, but we are running out of time…"
+      "1": "It's hard to say goodbye, but we are running out of time…"
     }
   },
   "hiker": {
@@ -326,7 +326,7 @@
       "2": "Now I can get even stronger. I grow with every grudge."
     },
     "defeat": {
-      "1": "New age simply refers to twentieth century classical composers, right?",
+      "1": "New age simply refers to twentieth-century classical composers, right?",
       "2": "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself.",
       "2_female": "Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself."
     }
@@ -706,7 +706,7 @@
     },
     "victory": {
       "1": "Hmph! You seem to have a lot of skill.",
-      "2": "What does this mean? What does this mean!",
+      "2": "What does this mean? What does this mean!?",
       "3": "Hey! You're so strong that there's no way I can turn you away!",
       "4": "Hmm... It seems as though I may have lost.",
       "5": "Here's an impression for you: Aiyee!"
@@ -762,8 +762,8 @@
   "macro_grunt": {
     "encounter": {
       "1": "It looks like this is the end of the line for you!",
-      "2": "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
-      "2_female": "You are a trainer aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
+      "2": "You are a trainer, aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
+      "2_female": "You are a trainer, aren't you? I'm afraid that doesn't give you the right to interfere in our work.",
       "3": "I'm from Macro Cosmos Insurance! Do you have a life insurance policy?"
     },
     "victory": {
@@ -780,8 +780,8 @@
     },
     "victory": {
       "1": "*sigh* I wasn't able to win... Oleana...you really are a hopeless woman.",
-      "2": "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover..",
-      "2_female": "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover..",
+      "2": "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover...",
+      "2_female": "Arghhh! This is inexcusable... What was I thinking... Any trainer who's made it this far would be no pushover...",
       "3": "*sigh* I am one tired Oleana..."
     }
   },
@@ -932,7 +932,7 @@
   },
   "aether_boss_lusamine_2": {
     "encounter": {
-      "1": "Why must you continue to pester me?! I am sick of you. Sick through and through!\n$Enough with this useless talk.. with Nihilego's power I will show you how wrong you were to come here!"
+      "1": "Why must you continue to pester me?! I am sick of you. Sick through and through!\n$Enough with this useless talk... with Nihilego's power I will show you how wrong you were to come here!"
     },
     "victory": {
       "1": "Aaauuuggghhhhhhhhh!!!"
@@ -987,12 +987,12 @@
   },
   "brock": {
     "encounter": {
-      "1": "My expertise on Rock-type Pokémon will take you down! Come on!",
+      "1": "My expertise in Rock-type Pokémon will take you down! Come on!",
       "2": "My rock-hard willpower will overwhelm you!",
       "3": "Allow me to show you the true strength of my Pokémon!"
     },
     "victory": {
-      "1": "Your Pokémon's strength have overcome my rock-hard defenses!",
+      "1": "Your Pokémon's strength has overcome my rock-hard defenses!",
       "2": "The world is huge! I'm glad to have had a chance to battle you.",
       "3": "Perhaps I should go back to pursuing my dream as a Pokémon Breeder…"
     },
@@ -1004,8 +1004,8 @@
   },
   "misty": {
     "encounter": {
-      "1": "My policy is an all out offensive with Water-type Pokémon!",
-      "1_female": "My policy is an all out offensive with Water-type Pokémon!",
+      "1": "My policy is an all-out offensive with Water-type Pokémon!",
+      "1_female": "My policy is an all-out offensive with Water-type Pokémon!",
       "2": "Hiya, I'll show you the strength of my aquatic Pokémon!",
       "3": "My dream was to go on a journey and battle powerful trainers…\nWill you be a sufficient challenge?"
     },
@@ -1081,7 +1081,7 @@
     "encounter": {
       "1": "Through my psychic ability, I had a vision of your arrival!",
       "2": "I dislike fighting, but if you wish, I will show you my powers!",
-      "3": "I can sense great ambition in you. I shall see if it not unfounded."
+      "3": "I can sense great ambition in you. I shall see if it is not unfounded."
     },
     "victory": {
       "1": "Your power… It far exceeds what I foresaw…",
@@ -1160,7 +1160,7 @@
     },
     "defeat": {
       "1": "Haha, I surfed the big wave!\nChallenge me again sometime.",
-      "2": "Surf with me again some time!",
+      "2": "Surf with me again sometime!",
       "3": "Just like the tides come in and out, I hope you return to challenge me again."
     }
   },
@@ -1412,7 +1412,7 @@
     },
     "defeat": {
       "1": "Hmm.",
-      "2": "That was good battle.",
+      "2": "That was a good battle.",
       "3": "Haaah! Haaah! Haiyaaaah!"
     }
   },
@@ -2135,7 +2135,7 @@
       "1": "Get ready for a mosh pit with me and my party! Spikemuth, it's time to rock!"
     },
     "victory": {
-      "1": "Me an' my team gave it our best. Let's meet up again for a battle some time…"
+      "1": "Me an' my team gave it our best. Let's meet up again for a battle sometime…"
     },
     "defeat": {
       "1": "My throat's ragged from shoutin'… But 'at was an excitin' battle!"
@@ -2726,7 +2726,7 @@
   },
   "rival_female": {
     "encounter": {
-      "1": "@c{smile_wave}There you are! I've been looking everywhere for you!\n@c{angry_mopen}Did you forget to say goodbye to your best friend?\n$@c{smile_ehalf}You're going after your dream, huh?\nThat day is really today isn't it…\n$@c{smile}Anyway, I'll forgive you for forgetting me, but on one condition. @c{smile_wave_wink}You have to battle me!\n$@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?"
+      "1": "@c{smile_wave}There you are! I've been looking everywhere for you!\n@c{angry_mopen}Did you forget to say goodbye to your best friend?\n$@c{smile_ehalf}You're going after your dream, huh?\nThat day is really today, isn't it…\n$@c{smile}Anyway, I'll forgive you for forgetting me, but on one condition. @c{smile_wave_wink}You have to battle me!\n$@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?"
     },
     "victory": {
       "1": "@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?\n$@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.\n$@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!\n$@c{smile_wave}Do your best like always! I believe in you!"
@@ -2745,7 +2745,7 @@
       "1": "@c{smile_wave}Oh, fancy meeting you here. Looks like you're still undefeated. @c{angry_mopen}Huh… Not bad!\n$@c{angry_mopen}I know what you're thinking, and no, I wasn't creeping on you. @c{smile_eclosed}I just happened to be in the area.\n$@c{smile_ehalf}I'm happy for you but I just want to let you know that it's OK to lose sometimes.\n$@c{smile}We learn from our mistakes, often more than we would if we kept succeeding.\n$@c{angry_mopen}In any case, I've been training hard for our rematch, so you'd better give it your all!"
     },
     "victory": {
-      "1": "@c{neutral}I… wasn't supposed to lose that time…\n$@c{smile}Aw well. That just means I'll have to train even harder for next time!\n$@c{smile_wave}I also got you another two of these!\n@c{smile_wave_wink}No need to thank me~.\n$@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!"
+      "1": "@c{neutral}I… wasn't supposed to lose that time…\n$@c{smile}Aw well. That just means I'll have to train even harder for next time!\n$@c{smile_wave}I also got you another two of these!\n@c{smile_wave_wink}No need to thank me~.\n$@c{angry_mopen}This is the last one, though! You won't be getting any more freebies from me after this!"
     },
     "defeat": {
       "1": "It's OK to lose sometimes…"
@@ -2753,7 +2753,7 @@
   },
   "rival_3": {
     "encounter": {
-      "1": "@c{smile}Hey, look who it is! It's been a while.\n@c{neutral}You're… still undefeated? Huh.\n$@c{neutral_eclosed}Things have been kind of… strange.\nIt's not the same back home without you.\n$@c{serious}I know it's selfish, but I need to get this off my chest.\n@c{neutral_eclosed}I think you're in over your head here.\n$@c{serious}Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.\n$@c{neutral_eclosed}You've had a great run but there's still so much ahead, and it only gets harder. @c{neutral}Are you prepared for that?\n$@c{serious_mopen_fists}If so, prove it to me."
+      "1": "@c{smile}Hey, look who it is! It's been a while.\n@c{neutral}You're… still undefeated? Huh?\n$@c{neutral_eclosed}Things have been kind of… strange.\nIt's not the same back home without you.\n$@c{serious}I know it's selfish, but I need to get this off my chest.\n@c{neutral_eclosed}I think you're in over your head here.\n$@c{serious}Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.\n$@c{neutral_eclosed}You've had a great run but there's still so much ahead, and it only gets harder. @c{neutral}Are you prepared for that?\n$@c{serious_mopen_fists}If so, prove it to me."
     },
     "victory": {
       "1": "@c{angry_mhalf}This is ridiculous… I've hardly stopped training…\nHow are we still so far apart?"
