@@ -4,7 +4,8 @@ import { fileURLToPath } from 'url';
 
 /**
  * This script creates a test boilerplate file for a move or ability.
- * @param {string} type - The type of test to create. Either "move" or "ability".
+ * @param {string} type - The type of test to create. Either "move", "ability",
+ * or "item".
  * @param {string} fileName - The name of the file to create.
  * @example npm run create-test move tackle
  */
@@ -19,7 +20,7 @@ const type = args[0]; // "move" or "ability"
 let fileName = args[1]; // The file name
 
 if (!type || !fileName) {
-    console.error('Please provide both a type ("move" or "ability") and a file name.');
+    console.error('Please provide both a type ("move", "ability", or "item") and a file name.');
     process.exit(1);
 }
 
