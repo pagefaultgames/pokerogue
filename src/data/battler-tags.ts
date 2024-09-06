@@ -335,7 +335,7 @@ export class ShellTrapTag extends BattlerTag {
  */
 export class RageTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.RAGE,[BattlerTagLapseType.MOVE_EFFECT],1,Moves.RAGE);
+    super(BattlerTagType.RAGE, [BattlerTagLapseType.MOVE_EFFECT], 1, Moves.RAGE);
   }
 
   /**
@@ -361,7 +361,7 @@ export class RageTag extends BattlerTag {
     if (lapseType === BattlerTagLapseType.MOVE_EFFECT) {
       return (pokemon.scene.getCurrentPhase() as MovePhase).move.getMove().id === Moves.RAGE;
     } else if (lapseType === BattlerTagLapseType.CUSTOM) {
-      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [BattleStat.ATK], 1, false));
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK], 1, false));
       pokemon.scene.queueMessage(i18next.t("battlerTags:rageOnHit", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)}));
       return true;

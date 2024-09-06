@@ -73,5 +73,5 @@ export enum BattlerTagType {
   SHELL_TRAP = "SHELL_TRAP",
   RAGE = "RAGE",
   DRAGON_CHEER = "DRAGON_CHEER",
-  NO_RETREAT = "NO_RETREAT",
+  NO_RETREAT = "NO_RETREAT"
 }
