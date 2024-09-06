@@ -1,10 +1,10 @@
-import BattleScene from "#app/battle-scene.js";
-import { applyPreWeatherEffectAbAttrs, SuppressWeatherEffectAbAttr, PreWeatherDamageAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPostWeatherLapseAbAttrs, PostWeatherLapseAbAttr } from "#app/data/ability.js";
-import { CommonAnim } from "#app/data/battle-anims.js";
-import { Weather, getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weather.js";
-import { WeatherType } from "#app/enums/weather-type.js";
-import Pokemon, { HitResult } from "#app/field/pokemon.js";
-import * as Utils from "#app/utils.js";
+import BattleScene from "#app/battle-scene";
+import { applyPreWeatherEffectAbAttrs, SuppressWeatherEffectAbAttr, PreWeatherDamageAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPostWeatherLapseAbAttrs, PostWeatherLapseAbAttr } from "#app/data/ability";
+import { CommonAnim } from "#app/data/battle-anims";
+import { Weather, getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weather";
+import { WeatherType } from "#app/enums/weather-type";
+import Pokemon, { HitResult } from "#app/field/pokemon";
+import * as Utils from "#app/utils";
 import { CommonAnimPhase } from "./common-anim-phase";
 
 export class WeatherEffectPhase extends CommonAnimPhase {

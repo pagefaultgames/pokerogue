@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class CommonAnimPhase extends PokemonPhase {
