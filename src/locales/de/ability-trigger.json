@@ -3,7 +3,6 @@
   "badDreams": "{{pokemonName}} ist in einem Alptraum gefangen!",
   "costar": "{{pokemonName}} kopiert die Statusveränderungen von {{allyName}}!",
   "iceFaceAvoidedDamage": "{{pokemonNameWithAffix}} wehrt Schaden mit {{abilityName}} ab!",
-  "movePrevented": "{{moveUser}} cannot use {{moveName}}!",
   "perishBody": "Durch {{abilityName}} von {{pokemonName}} werden beide Pokémon nach drei Runden K.O. gehen!",
   "poisonHeal": "{{abilityName}} von {{pokemonName}} füllte einige KP auf!",
   "trace": "{{pokemonName}} kopiert {{abilityName}} von {{targetName}}!",
