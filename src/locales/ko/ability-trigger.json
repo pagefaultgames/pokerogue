@@ -12,7 +12,7 @@
   "blockItemTheft": "{{pokemonNameWithAffix}}의 {{abilityName}}에 의해\n도구를 빼앗기지 않는다!",
   "typeImmunityHeal": "{{pokemonNameWithAffix}}[[는]]\n{{abilityName}}[[로]] 체력이 회복되었다!",
   "nonSuperEffectiveImmunity": "{{pokemonNameWithAffix}}[[는]] {{abilityName}} 때문에\n데미지를 입지 않는다!",
-  "fullHpResistType": "{{pokemonNameWithAffix}} made its shell gleam!\nIt's distorting type matchups!",
+  "fullHpResistType": "{{pokemonNameWithAffix}}[[는]] 등껍질을 빛나게 하여\n타입 상성을 왜곡시켰다!!",
   "moveImmunity": "{{pokemonNameWithAffix}}에게는\n효과가 없는 것 같다...",
   "reverseDrain": "{{pokemonNameWithAffix}}[[는]]\n해감액을 흡수했다!",
   "postDefendTypeChange": "{{pokemonNameWithAffix}}[[는]] {{abilityName}}[[로]] 인해\n{{typeName}}타입이 됐다!",
