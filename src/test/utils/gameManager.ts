@@ -147,6 +147,8 @@ export default class GameManager {
     this.scene.enableTutorials = false;
     this.scene.gameData.gender = PlayerGender.MALE; // set initial player gender
     this.scene.battleStyle = this.settings.battleStyle;
+
+    this.settings.enablePokemonCries(false);
   }
 
   /**

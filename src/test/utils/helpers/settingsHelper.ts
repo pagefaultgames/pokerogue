@@ -38,7 +38,17 @@ export class SettingsHelper extends GameManagerHelper {
     this.log(`Gender set to: ${PlayerGender[gender]} (=${gender})` );
   }
 
+  /**
+   * Toggle Pokemon cries (during battle only)
+   * @param enable true to enable, false to disable
+   */
+  enablePokemonCries(enable: boolean) {
+    this.game.scene.enablePokemonCries = enable;
+    this.log(`Pokemon Cries have been ${enable? "enabled" : "disabled"}!` );
+  }
+
   private log(...params: any[]) {
     console.log("Settings:", ...params);
   }
+
 }
