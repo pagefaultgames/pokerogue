@@ -1998,16 +1998,24 @@ export class TarShotTag extends BattlerTag {
    * @param pokemon the pokemon to which the tag is added
    * @returns whether the tag is applied
    */
-  canAdd(pokemon: Pokemon): boolean {
+  override canAdd(pokemon: Pokemon): boolean {
     return !pokemon.isTerastallized();
   }
 
-  onAdd(pokemon: Pokemon): void {
+  override onAdd(pokemon: Pokemon): void {
     pokemon.scene.queueMessage(i18next.t("battlerTags:tarShotOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 }
 
-
+/**
+ * Retrieves a BattlerTag based on the provided tag type, turn count, source move, and source ID.
+ *
+ * @param {BattlerTagType} tagType - The type of the BattlerTag.
+ * @param {number} turnCount - The turn count.
+ * @param {Moves} sourceMove - The source move.
+ * @param {number} sourceId - The source ID.
+ * @returns {BattlerTag} The corresponding BattlerTag object.
+ */
 export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
   case BattlerTagType.RECHARGING:

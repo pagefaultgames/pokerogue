@@ -1,8 +1,8 @@
-import { BattlerIndex } from "#app/battle.js";
-import { Type } from "#app/data/type.js";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
-import { Stat } from "#app/enums/stat.js";
+import { BattlerIndex } from "#app/battle";
+import { Type } from "#app/data/type";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
+import { Stat } from "#app/enums/stat";
 import { Abilities } from "#enums/abilities";
 import GameManager from "#test/utils/gameManager";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
