@@ -74,8 +74,8 @@ export default class Battle {
   public playerFaints: number = 0;
   /** The number of times a Pokemon on the enemy's side has fainted this battle */
   public enemyFaints: number = 0;
-  public playerFaintsHistory: FaintLogEntry[];
-  public enemyFaintsHistory: FaintLogEntry[];
+  public playerFaintsHistory: FaintLogEntry[] = [];
+  public enemyFaintsHistory: FaintLogEntry[] = [];
 
   private rngCounter: number = 0;
 
@@ -89,8 +89,6 @@ export default class Battle {
       ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
       : trainer?.getPartyLevels(this.waveIndex);
     this.double = double ?? false;
-    this.playerFaintsHistory = [];
-    this.enemyFaintsHistory = [];
   }
 
   private initBattleSpec(): void {
