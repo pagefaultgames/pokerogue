@@ -52,7 +52,7 @@
   "postSummonTeravolt": "{{pokemonNameWithAffix}} dégage\nune aura électrique instable !",
   "postSummonDarkAura": "{{pokemonNameWithAffix}} dégage\nune aura ténébreuse !",
   "postSummonFairyAura": "{{pokemonNameWithAffix}} dégage\nune aura enchanteresse !",
-  "postSummonAuraBreak": "{{pokemonNameWithAffix}} reversed all other Pokémon's auras!",
+  "postSummonAuraBreak": "{{pokemonNameWithAffix}} inverse\ntoutes les auras !",
   "postSummonNeutralizingGas": "Le gaz inhibiteur {{pokemonNameWithAffix}}\nenvahit les lieux !",
   "postSummonAsOneGlastrier": "{{pokemonNameWithAffix}}\na deux talents !",
   "postSummonAsOneSpectrier": "{{pokemonNameWithAffix}}\na deux talents !",
