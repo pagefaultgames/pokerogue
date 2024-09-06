@@ -266,8 +266,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
     }
 
     this.moveId = lastValidMove;
-    pokemon.setStatStage(Stat.ATK, 1);
-    pokemon.updateInfo();
+    pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.ATK, false) * 1.5, false);
   }
 
   /**

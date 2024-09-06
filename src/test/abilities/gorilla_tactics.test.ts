@@ -39,12 +39,13 @@ describe("Abilities - Gorilla Tactics", () => {
     await game.classicMode.startBattle([Species.GALAR_DARMANITAN]);
 
     const darmanitan = game.scene.getPlayerPokemon()!;
+    const initialAtkStat = darmanitan.getStat(Stat.ATK);
 
     game.move.select(Moves.SPLASH);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(darmanitan.getStatStage(Stat.ATK)).toBe(1);
+    expect(darmanitan.getStat(Stat.ATK, false)).toBeCloseTo(initialAtkStat * 1.5);
     // Other moves should be restricted
     expect(darmanitan.isMoveRestricted(Moves.TACKLE)).toBe(true);
     expect(darmanitan.isMoveRestricted(Moves.SPLASH)).toBe(false);
@@ -59,11 +60,6 @@ describe("Abilities - Gorilla Tactics", () => {
     game.move.select(Moves.SPLASH);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(darmanitan.getStatStage(Stat.ATK)).toBe(1);
-    // Other moves should be restricted
-    expect(darmanitan.isMoveRestricted(Moves.TACKLE)).toBe(true);
-    expect(darmanitan.isMoveRestricted(Moves.SPLASH)).toBe(false);
 
     // Turn where Tackle is interrupted by Disable
     await game.toNextTurn();
