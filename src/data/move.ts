@@ -5126,14 +5126,10 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
  * Attr used by parting shot, it is a combo of ForceSwitchOut and StatChange with a special getCondition()
  */
 export class PartingShotAttr extends ForceSwitchOutAttr {
-  private statChange: StatStageChangeAttr;
-  private canLowerStats: boolean;
+  private statChange = new StatStageChangeAttr([ Stat.ATK, Stat.SPATK ], -1, false, null, true, true, MoveEffectTrigger.PRE_APPLY);
+  private canLowerStats = true;
 
-  constructor(user?: boolean, batonPass?: boolean) {
-    super(user, batonPass);
-    this.statChange = new StatStageChangeAttr([ Stat.ATK, Stat.SPATK ], -1, false, null, true, true, MoveEffectTrigger.PRE_APPLY);
-    this.canLowerStats = true;
-  }
+  // using inherited constructor
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     // apply stat change, conditionally apply switch-out
