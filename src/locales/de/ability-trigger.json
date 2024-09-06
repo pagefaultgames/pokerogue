@@ -52,7 +52,7 @@
   "postSummonTeravolt": "{{pokemonNameWithAffix}} strahlt eine knisternde Aura aus!",
   "postSummonDarkAura": "{{pokemonNameWithAffix}} strahlt eine dunkle Aura aus!",
   "postSummonFairyAura": "{{pokemonNameWithAffix}} strahlt eine Feenaura aus!",
-  "postSummonAuraBreak": "{{pokemonNameWithAffix}} reversed all other Pokémon's auras!",
+  "postSummonAuraBreak": "{{pokemonNameWithAffix}} kehrt die Wirkung aller Aura-Fähigkeiten um!",
   "postSummonNeutralizingGas": "Reaktionsgas von {{pokemonNameWithAffix}} hat sich in der Umgebung ausgebreitet!",
   "postSummonAsOneGlastrier": "{{pokemonNameWithAffix}} verfügt über zwei Fähigkeiten!",
   "postSummonAsOneSpectrier": "{{pokemonNameWithAffix}} verfügt über zwei Fähigkeiten!",
