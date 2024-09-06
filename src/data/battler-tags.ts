@@ -1995,7 +1995,7 @@ export class TarShotTag extends BattlerTag {
 
   /**
    * If the Pokemon is terastallized, the tag cannot be added.
-   * @param pokemon the pokemon to which the tag is added
+   * @param {Pokemon} pokemon the {@linkcode Pokemon} to which the tag is added
    * @returns whether the tag is applied
    */
   override canAdd(pokemon: Pokemon): boolean {
@@ -2010,11 +2010,11 @@ export class TarShotTag extends BattlerTag {
 /**
  * Retrieves a BattlerTag based on the provided tag type, turn count, source move, and source ID.
  *
- * @param {BattlerTagType} tagType - The type of the BattlerTag.
- * @param {number} turnCount - The turn count.
- * @param {Moves} sourceMove - The source move.
- * @param {number} sourceId - The source ID.
- * @returns {BattlerTag} The corresponding BattlerTag object.
+ * @param {BattlerTagType} tagType the type of the {@linkcode BattlerTagType}.
+ * @param turnCount the turn count.
+ * @param {Moves} sourceMove the source {@linkcode Moves}.
+ * @param sourceId the source ID.
+ * @returns {BattlerTag} the corresponding {@linkcode BattlerTag} object.
  */
 export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
