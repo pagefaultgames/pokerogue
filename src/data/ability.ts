@@ -444,7 +444,12 @@ class TypeImmunityAddBattlerTagAbAttr extends TypeImmunityAbAttr {
     if (ret) {
       cancelled.value = true; // Suppresses "No Effect" message
       if (!simulated) {
-        pokemon.addTag(this.tagType, this.turnCount, undefined, pokemon.id);
+        if (!pokemon.getTag(this.tagType)) {
+          pokemon.addTag(this.tagType, this.turnCount, undefined, pokemon.id);
+          pokemon.scene.queueMessage(i18next.t("abilityTriggers:flashFire", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: Type[attacker.getMoveType(move)].charAt(0).toUpperCase() + Type[attacker.getMoveType(move)].slice(1).toLowerCase() }));
+        } else {
+          pokemon.scene.queueMessage(i18next.t(i18next.t("abilityTriggers:moveImmunity", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) })));
+        }
       }
     }
 
