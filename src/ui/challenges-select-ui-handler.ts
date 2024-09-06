@@ -40,12 +40,19 @@ export default class GameChallengesUiHandler extends UiHandler {
 
   private optionsWidth: number;
 
+  private widestTextBox: number;
+
+  private readonly leftArrowGap: number = 90; // distance from the label to the left arrow
+  private readonly arrowSpacing: number = 2; // distance between the arrows and the value area
+
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
   }
 
   setup() {
     const ui = this.getUi();
+
+    this.widestTextBox = 0;
 
     this.challengesContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
     this.challengesContainer.setName("challenges");
@@ -151,7 +158,7 @@ export default class GameChallengesUiHandler extends UiHandler {
 
       const value = addTextObject(this.scene, 0, 28 + i * 16, "", TextStyle.SETTINGS_LABEL);
       value.setName(`challenge-value-text-${i}`);
-      value.setX((rightArrow.x - (leftArrow.x + leftArrow.width)) / 2);
+      //value.setX((rightArrow.x - (leftArrow.x + leftArrow.width)) / 2);
       value.setPositionRelative(label, 100, 0);
       this.valuesContainer.add(value);
 
@@ -204,12 +211,26 @@ export default class GameChallengesUiHandler extends UiHandler {
    */
   initLabels(): void {
     this.setDescription(this.scene.gameMode.challenges[0].getDescription());
+    this.widestTextBox = 0;
     for (let i = 0; i < 9; i++) {
       if (i < this.scene.gameMode.challenges.length) {
         this.challengeLabels[i].label.setVisible(true);
         this.challengeLabels[i].value.setVisible(true);
         this.challengeLabels[i].leftArrow.setVisible(true);
         this.challengeLabels[i].rightArrow.setVisible(true);
+
+        const tempText = addTextObject(this.scene, 0, 0, "", TextStyle.SETTINGS_LABEL); // this is added here to get the widest text object for this language, which will be used for the arrow placement
+
+        for (let j = 0; j <= this.scene.gameMode.challenges[i].maxValue; j++) { // this goes through each challenge's value to find out what the max width will be
+          if (this.scene.gameMode.challenges[i].id !== Challenges.SINGLE_TYPE) {
+            tempText.setText(this.scene.gameMode.challenges[i].getValue(j));
+            if (tempText.width > this.widestTextBox) {
+              this.widestTextBox = tempText.width;
+            }
+          }
+        }
+
+        tempText.destroy();
       }
     }
   }
@@ -222,22 +243,34 @@ export default class GameChallengesUiHandler extends UiHandler {
     let monoTypeVisible = false;
     for (let i = 0; i < Math.min(9, this.scene.gameMode.challenges.length); i++) {
       const challenge = this.scene.gameMode.challenges[this.scrollCursor + i];
-      this.challengeLabels[i].label.setText(challenge.getName());
-      this.challengeLabels[i].leftArrow.setPositionRelative(this.challengeLabels[i].label, 90, 4.5);
-      this.challengeLabels[i].leftArrow.setVisible(challenge.value !== 0);
-      this.challengeLabels[i].rightArrow.setPositionRelative(this.challengeLabels[i].label, 130, 4.5);
-      this.challengeLabels[i].rightArrow.setVisible(challenge.value !== challenge.maxValue);
+      const challengeLabel = this.challengeLabels[i];
+      challengeLabel.label.setText(challenge.getName());
+      challengeLabel.leftArrow.setPositionRelative(challengeLabel.label, this.leftArrowGap, 4.5);
+      challengeLabel.leftArrow.setVisible(challenge.value !== 0);
+      challengeLabel.rightArrow.setPositionRelative(challengeLabel.leftArrow, Math.max(this.monoTypeValue.width, this.widestTextBox / 4) + (2 * this.arrowSpacing), 0);
+      challengeLabel.rightArrow.setVisible(challenge.value !== challenge.maxValue);
+
+      // this check looks to make sure that the arrows and value textbox don't take up too much space that they'll clip the right edge of the options background
+      if (challengeLabel.rightArrow.x + challengeLabel.rightArrow.width + this.optionsBg.rightWidth + this.arrowSpacing > this.optionsWidth) {
+        // if we go out of bounds of the box, set the x position as far right as we can without going past the box, with this.arrowSpacing to allow a small gap between the arrow and border
+        challengeLabel.rightArrow.setX(this.optionsWidth - this.arrowSpacing - this.optionsBg.rightWidth - challengeLabel.rightArrow.width);
+      }
+
+      // this line of code gets the center point between the left and right arrows from their left side (Arrow.x gives left point), taking into account the width of the arrows
+      const xLocation = challengeLabel.rightArrow.x - (challengeLabel.rightArrow.x - (challengeLabel.leftArrow.x + challengeLabel.leftArrow.width)) / 2 - 0.5;
       if (challenge.id === Challenges.SINGLE_TYPE) {
-        this.monoTypeValue.setPositionRelative(this.challengeLabels[i].label, 112, 8);
+        this.monoTypeValue.setPositionRelative(challengeLabel.label, 112, 8);
+        this.monoTypeValue.setX(xLocation);
+        this.monoTypeValue.setY(challengeLabel.label.y + 8);
         this.monoTypeValue.setFrame(challenge.getValue());
         this.monoTypeValue.setVisible(true);
-        this.challengeLabels[i].value.setVisible(false);
+        challengeLabel.value.setVisible(false);
         monoTypeVisible = true;
       } else {
-        this.challengeLabels[i].value.setText(challenge.getValue());
-        this.challengeLabels[i].value.setX(this.challengeLabels[i].rightArrow.x - (this.challengeLabels[i].rightArrow.x - (this.challengeLabels[i].leftArrow.x + this.challengeLabels[i].leftArrow.width)) / 2 - 0.5);
-        this.challengeLabels[i].value.setOrigin(0.5, 0);
-        this.challengeLabels[i].value.setVisible(true);
+        challengeLabel.value.setText(challenge.getValue());
+        challengeLabel.value.setX(xLocation);
+        challengeLabel.value.setOrigin(0.5, 0);
+        challengeLabel.value.setVisible(true);
       }
     }
     if (!monoTypeVisible) {
