@@ -31,6 +31,7 @@
   "statusEffectImmunityWithName": "{{pokemonNameWithAffix}}'s {{abilityName}}\nprevents {{statusEffectName}}!",
   "statusEffectImmunity": "{{pokemonNameWithAffix}}'s {{abilityName}}\nprevents status problems!",
   "battlerTagImmunity": "{{pokemonNameWithAffix}}'s {{abilityName}}\nprevents {{battlerTagName}}!",
+  "flashFire": "The power of {{pokemonNameWithAffix}}'s {{typeName}}-type moves rose!",
   "forewarn": "{{pokemonNameWithAffix}} was forewarned about {{moveName}}!",
   "frisk": "{{pokemonNameWithAffix}} frisked {{opponentName}}'s {{opponentAbilityName}}!",
   "postWeatherLapseHeal": "{{pokemonNameWithAffix}}'s {{abilityName}}\nrestored its HP a little!",
