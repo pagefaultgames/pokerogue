@@ -243,6 +243,8 @@ export class StarterPrefs {
     if (pStr !== StarterPrefers_private_latest) {
       // something changed, store the update
       localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
+      // update the latest prefs
+      StarterPrefers_private_latest = pStr;
     }
   }
 }
@@ -462,7 +464,7 @@ export class GameData {
         const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
         const lsItem = localStorage.getItem(lsItemKey);
         if (!lsItem) {
-          localStorage.setItem(lsItemKey, encrypt("", true));
+          localStorage.setItem(lsItemKey, "");
         }
 
         this.trainerId = systemData.trainerId;
@@ -592,7 +594,7 @@ export class GameData {
       if (lsItem) {
         const cachedResponse  = lsItem;
         if (cachedResponse) {
-          const runHistory = JSON.parse(decrypt(cachedResponse, true));
+          const runHistory = JSON.parse(decrypt(cachedResponse, bypassLogin));
           return runHistory;
         }
         return {};
@@ -614,7 +616,7 @@ export class GameData {
       if (lsItem) {
         const cachedResponse = lsItem;
         if (cachedResponse) {
-          const runHistory : RunHistoryData = JSON.parse(decrypt(cachedResponse, true));
+          const runHistory : RunHistoryData = JSON.parse(decrypt(cachedResponse, bypassLogin));
           return runHistory;
         }
         return {};
@@ -635,13 +637,13 @@ export class GameData {
   async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, isVictory: boolean): Promise<boolean> {
     const runHistoryData = await this.getRunHistoryData(scene);
     // runHistoryData should always return run history or {} empty object
-    const timestamps = Object.keys(runHistoryData);
-    const timestampsNo = timestamps.map(Number);
+    let timestamps = Object.keys(runHistoryData).map(Number);
 
     // Arbitrary limit of 25 entries per user --> Can increase or decrease
     while (timestamps.length >= RUN_HISTORY_LIMIT ) {
-      const oldestTimestamp = Math.min.apply(Math, timestampsNo);
+      const oldestTimestamp = (Math.min.apply(Math, timestamps)).toString();
       delete runHistoryData[oldestTimestamp];
+      timestamps = Object.keys(runHistoryData).map(Number);
     }
 
     const timestamp = (runEntry.timestamp).toString();
@@ -650,7 +652,7 @@ export class GameData {
       isVictory: isVictory,
       isFavorite: false,
     };
-    localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), true));
+    localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, encrypt(JSON.stringify(runHistoryData), bypassLogin));
     /**
      * Networking Code DO NOT DELETE
      *
@@ -944,7 +946,7 @@ export class GameData {
     return ret;
   }
 
-  private getSessionSaveData(scene: BattleScene): SessionSaveData {
+  public getSessionSaveData(scene: BattleScene): SessionSaveData {
     return {
       seed: scene.seed,
       playTime: scene.sessionPlayTime,
@@ -1366,8 +1368,7 @@ export class GameData {
       } else {
         const data = localStorage.getItem(dataKey);
         if (data) {
-          handleData(decrypt(data, (dataType !== GameDataType.RUN_HISTORY) ? bypassLogin : true));
-          // This conditional is necessary because at the moment, run history is stored locally only so it has to be decoded from Base64 as if it was local
+          handleData(decrypt(data, bypassLogin));
         }
         resolve(!!data);
       }
@@ -1416,9 +1417,6 @@ export class GameData {
                   const entryKeys = Object.keys(data[key]);
                   valid = ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
                 });
-                if (valid) {
-                  localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, dataStr);
-                }
                 break;
               case GameDataType.SETTINGS:
               case GameDataType.TUTORIALS:
@@ -1490,7 +1488,7 @@ export class GameData {
       };
     }
 
-    const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.DEFAULT_VARIANT | DexAttr.DEFAULT_FORM;
+    const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.FEMALE | DexAttr.DEFAULT_VARIANT | DexAttr.DEFAULT_FORM;
 
     const defaultStarterNatures: Nature[] = [];
 
@@ -1555,11 +1553,11 @@ export class GameData {
     }
   }
 
-  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
-    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg);
+  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<void> {
+    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
   }
 
-  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
+  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false, showMessage: boolean = true): Promise<void> {
     return new Promise<void>(resolve => {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
@@ -1618,13 +1616,17 @@ export class GameData {
       const checkPrevolution = () => {
         if (hasPrevolution) {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
-          return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg).then(() => resolve());
+          this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies), incrementCount, fromEgg, showMessage).then(() => resolve());
         } else {
           resolve();
         }
       };
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
+        if (!showMessage) {
+          resolve();
+          return;
+        }
         this.scene.playSound("level_up_fanfare");
         this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(), null, true);
       } else {
@@ -1670,7 +1672,7 @@ export class GameData {
     this.starterData[species.speciesId].candyCount += count;
   }
 
-  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer): Promise<boolean> {
+  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, showMessage: boolean = true): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const speciesId = species.speciesId;
       if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
@@ -1690,11 +1692,15 @@ export class GameData {
       }
 
       this.starterData[speciesId].eggMoves |= value;
-
+      if (!showMessage) {
+        resolve(true);
+        return;
+      }
       this.scene.playSound("level_up_fanfare");
-
       const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
-      this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, () => resolve(true), null, true);
+      this.scene.ui.showText(eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName }), null, (() => {
+        resolve(true);
+      }), null, true);
     });
   }
 
@@ -1921,6 +1927,7 @@ export class GameData {
   fixStarterData(systemData: SystemSaveData): void {
     for (const starterId of defaultStarterSpecies) {
       systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
+      systemData.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
     }
   }
 

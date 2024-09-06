@@ -1,13 +1,13 @@
-import { BattleStat } from "#app/data/battle-stat";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "../utils/gameManager";
+import { Species } from "#enums/species";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Stat } from "#enums/stat";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { CommandPhase } from "#app/phases/command-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 
 const TIMEOUT = 20 * 1000;
 
@@ -76,7 +76,7 @@ describe("Moves - Mat Block", () => {
 
       await game.phaseInterceptor.to(BerryPhase, false);
 
-      leadPokemon.forEach(p => expect(p.summonData.battleStats[BattleStat.ATK]).toBe(-2));
+      leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(-2));
     }, TIMEOUT
   );
 
