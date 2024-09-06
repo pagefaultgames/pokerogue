@@ -50,7 +50,7 @@
       "description": "Quadruple les chances de tomber sur un combat double pendant {{battleCount}} combats."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "Augmente {{amount}} cran {{stat}} pour toute l’équipe pendant 5 combats.",
+      "description": "Augmente {{amount}} {{stat}} pour toute l’équipe pendant 5 combats.",
       "extra": {
         "stage": "d’un cran",
         "percentage": "de 30%"
