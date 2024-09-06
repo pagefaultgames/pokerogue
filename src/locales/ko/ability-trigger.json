@@ -52,7 +52,7 @@
   "postSummonTeravolt": "{{pokemonNameWithAffix}}[[는]]\n세차게 튀는 오라를 발산하고 있다!",
   "postSummonDarkAura": "{{pokemonNameWithAffix}}[[는]]\n다크오라를 발산하고 있다!",
   "postSummonFairyAura": "{{pokemonNameWithAffix}}[[는]]\n페어리오라를 발산하고 있다!",
-  "postSummonAuraBreak": "{{pokemonNameWithAffix}} reversed all other Pokémon's auras!",
+  "postSummonAuraBreak": "{{pokemonNameWithAffix}}[[는]]\n모든 오라를 제압한다!",
   "postSummonNeutralizingGas": "주위가 화학변화가스로 가득 찼다!",
   "postSummonAsOneGlastrier": "{{pokemonNameWithAffix}}[[는]]\n두 가지 특성을 겸비한다!",
   "postSummonAsOneSpectrier": "{{pokemonNameWithAffix}}[[는]]\n두 가지 특성을 겸비한다!",
