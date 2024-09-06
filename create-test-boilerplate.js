@@ -44,7 +44,7 @@ if (type === 'move') {
     dir = path.join(__dirname, 'src', 'test', 'items');
     description = `Items - ${formattedName}`;
 } else {
-    console.error('Invalid type. Please use "move" or "ability".');
+    console.error('Invalid type. Please use "move", "ability", or "item".');
     process.exit(1);
 }
 
