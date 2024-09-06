@@ -2,7 +2,8 @@
   "ModifierType": {
     "AddPokeballModifierType": {
       "name": "{{modifierCount}}x {{pokeballName}}",
-      "description": "Receive {{pokeballName}} x{{modifierCount}} (Inventory: {{pokeballAmount}}) \nCatch Rate: {{catchRate}}"
+      "description": "Receive {{pokeballName}} x{{modifierCount}} (Inventory: {{pokeballAmount}}) \nCatch Rate: {{catchRate}}",
+      "catchRateGenerator": "{{normalCatchRate}}x ({{boostedCatchRate}}x for uncaught Pokemon)"
     },
     "AddVoucherModifierType": {
       "name": "{{modifierCount}}x {{voucherTypeName}}",

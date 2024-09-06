@@ -181,10 +181,19 @@ class AddPokeballModifierType extends ModifierType {
   }
 
   getDescription(scene: BattleScene): string {
+    let catchRate: String;
+    if (this.pokeballType === PokeballType.ROGUE_BALL) {
+      catchRate = i18next.t("modifierType:ModifierType.AddPokeballModifierType.catchRateGenerator", {
+        "normalCatchRate": getPokeballCatchMultiplier(this.pokeballType),
+        "boostedCatchRate": getPokeballCatchMultiplier(this.pokeballType, null, true),
+      });
+    } else if (this.pokeballType !== PokeballType.MASTER_BALL) {
+      catchRate = `${getPokeballCatchMultiplier(this.pokeballType)}x`;
+    }
     return i18next.t("modifierType:ModifierType.AddPokeballModifierType.description", {
       "modifierCount": this.count,
       "pokeballName": getPokeballName(this.pokeballType),
-      "catchRate": getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : "100%",
+      "catchRate": catchRate,
       "pokeballAmount": `${scene.pokeballCounts[this.pokeballType]}`,
     });
   }

@@ -28,7 +28,7 @@ import PartyUiHandler, { PartyOption, PartyUiMode } from "../ui/party-ui-handler
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { LevelMoves } from "../data/pokemon-level-moves";
 import { DamageAchv, achvs } from "../system/achv";
-import { DexAttr, StarterDataEntry, StarterMoveset } from "../system/game-data";
+import { AbilityAttr, DexAttr, StarterDataEntry, StarterMoveset } from "../system/game-data";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from "../data/pokemon-forms";
@@ -3497,6 +3497,37 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const currentAbilityIndex = this.abilityIndex;
     const rootForm = getPokemonSpecies(this.species.getRootSpeciesId());
     return rootForm.getAbility(abilityIndex) === rootForm.getAbility(currentAbilityIndex);
+  }
+
+  /* Checks whether or not the pokemon's pokeball will be tinted.
+   * This checks the dex attributes (gender, shiny/non shiny, variant and forms)
+   * These values are checked against the exact pokemon you're catching (i.e. catching charizard won't compare against charmander)
+   * It also checks your abilities against the starter version
+   * If any are "new", the pokemon's pokeball is tinted
+   * @returns true if the pokemon's pokeball should be tinted, meaning at least one thing is new
+   */
+  isTintedPokeball(): boolean {
+    const dexEntry = this.scene.gameData.dexData[this.species.speciesId];
+    const opponentPokemonDexAttr = this.getDexAttr();
+
+    // Check if Player owns all genders and forms of the Pokemon
+    const missingDexAttrs = ((dexEntry.caughtAttr & opponentPokemonDexAttr) < opponentPokemonDexAttr);
+
+    const ownedAbilityAttrs = this.scene.gameData.starterData[this.species.getRootSpeciesId()].abilityAttr;
+
+    let playerOwnsThisAbility = false;
+    // Check if the player owns ability for the root form
+    if ((ownedAbilityAttrs & AbilityAttr.ABILITY_1) > 0 && this.hasSameAbilityInRootForm(0)) {
+      playerOwnsThisAbility = true;
+    }
+    if ((ownedAbilityAttrs & AbilityAttr.ABILITY_2) > 0 && this.hasSameAbilityInRootForm(1)) {
+      playerOwnsThisAbility = true;
+    }
+    if ((ownedAbilityAttrs & AbilityAttr.ABILITY_HIDDEN) > 0 && this.hasSameAbilityInRootForm(2)) {
+      playerOwnsThisAbility = true;
+    }
+
+    return (missingDexAttrs || !playerOwnsThisAbility);
   }
 }
 
