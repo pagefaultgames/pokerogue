@@ -7929,8 +7929,8 @@ export function initMoves() {
         const lastPlayerFaint = user.scene.currentBattle.playerFaintsHistory[user.scene.currentBattle.playerFaintsHistory.length -1];
         const lastEnemyFaint = user.scene.currentBattle.enemyFaintsHistory[user.scene.currentBattle.enemyFaintsHistory.length -1];
         return (
-          lastPlayerFaint !== undefined && turn - lastPlayerFaint.turn === 1 && user.isPlayer() ||
-          lastEnemyFaint !== undefined && turn - lastEnemyFaint.turn === 1 && !user.isPlayer()
+          (lastPlayerFaint !== undefined && turn - lastPlayerFaint.turn === 1 && user.isPlayer()) ||
+          (lastEnemyFaint !== undefined && turn - lastEnemyFaint.turn === 1 && !user.isPlayer())
         ) ? 2 : 1;
       }),
     new AttackMove(Moves.FINAL_GAMBIT, Type.FIGHTING, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 5)
