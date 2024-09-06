@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene.js";
 import { BattlerIndex } from "#app/battle.js";
-import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, applyPostDefendAbAttrs, PostDefendAbAttr, applyPostAttackAbAttrs, PostAttackAbAttr, MaxMultiHitAbAttr, AlwaysHitAbAttr } from "#app/data/ability.js";
+import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, applyPostDefendAbAttrs, PostDefendAbAttr, applyPostAttackAbAttrs, PostAttackAbAttr, MaxMultiHitAbAttr, AlwaysHitAbAttr, applyAbAttrs, FieldPreventMovesAbAttr } from "#app/data/ability.js";
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag.js";
 import { MoveAnim } from "#app/data/battle-anims.js";
 import { BattlerTagLapseType, ProtectedTag, SemiInvulnerableTag } from "#app/data/battler-tags.js";
@@ -117,7 +117,7 @@ export class MoveEffectPhase extends PokemonPhase {
       }
 
       const prevented = new Utils.BooleanHolder(false);
-      this.scene.getField(true).forEach(p => applyAbAttrs(FieldPreventMovesAbAttr, p, prevented, move, user));
+      this.scene.getField(true).forEach(p => applyAbAttrs(FieldPreventMovesAbAttr, p, prevented, false, move, user));
       if (prevented.value) {
         moveHistoryEntry.result = MoveResult.FAIL;
         return this.end();

@@ -42,11 +42,11 @@ describe("Abilities - Aftermath", () => {
 
     game.move.select(Moves.TACKLE);
 
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("VictoryPhase");
 
     expect(game.phaseInterceptor.log).toContain("FaintPhase");
     expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
-    expect(player.hp).toBeCloseTo(Math.floor(player.getMaxHp() * 0.75));
+    expect(player.hp).toBe(Math.ceil(player.getMaxHp() * 0.75));
   }, TIMEOUT);
 
   it("does not activate on non-contact moves", async () => {
@@ -59,7 +59,7 @@ describe("Abilities - Aftermath", () => {
 
     game.move.select(Moves.WATER_GUN);
 
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("VictoryPhase");
 
     expect(game.phaseInterceptor.log).toContain("FaintPhase");
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");

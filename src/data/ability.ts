@@ -4053,8 +4053,10 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 export class PreventPostFaintContactDamageAbAttr extends AbAttr {
   showAbility: boolean = false;
 
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    cancelled.value = true;
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
+    if (cancelled) {
+      cancelled.value = true;
+    }
     return true;
   }
 }
@@ -4131,9 +4133,11 @@ export class FieldPreventMovesAbAttr extends AbAttr {
   }
 
   /** @param args See {@linkcode FieldPreventMovesAbAttr}. */
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
     if (this.preventedMoves.includes((args[0] as Move).id)) {
-      cancelled.value = true;
+      if (cancelled) {
+        cancelled.value = true;
+      }
       return true;
     }
 
