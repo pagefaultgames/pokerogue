@@ -40,6 +40,9 @@ if (type === 'move') {
 } else if (type === 'ability') {
     dir = path.join(__dirname, 'src', 'test', 'abilities');
     description = `Abilities - ${formattedName}`;
+} else if (type === "item") {
+    dir = path.join(__dirname, 'src', 'test', 'items');
+    description = `Items - ${formattedName}`;
 } else {
     console.error('Invalid type. Please use "move" or "ability".');
     process.exit(1);
