@@ -52,6 +52,6 @@
   "rename": "Renommer",
   "nickname": "Surnom",
   "errorServerDown": "Oupsi ! Un problème de connexion au serveur est survenu.\n\nVous pouvez garder cette fenêtre ouverte,\nle jeu se reconnectera automatiquement.",
-  "noSaves": "Vous n’avez aucune sauvegarde d’enregistrée !",
+  "noSaves": "Vous n’avez aucune sauvegarde enregistrée !",
   "tooManySaves": "Vous avez trop de sauvegardes enregistrées !"
 }
