@@ -181,7 +181,7 @@ class AddPokeballModifierType extends ModifierType {
   }
 
   getDescription(scene: BattleScene): string {
-    let catchRate: String;
+    let catchRate: String = "";
     if (this.pokeballType === PokeballType.ROGUE_BALL) {
       catchRate = i18next.t("modifierType:ModifierType.AddPokeballModifierType.catchRateGenerator", {
         "normalCatchRate": getPokeballCatchMultiplier(this.pokeballType),
