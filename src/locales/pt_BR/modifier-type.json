@@ -52,7 +52,7 @@
     "TempStatStageBoosterModifierType": {
       "description": "Aumenta o atributo de {{stat}} para todos os membros da equipe em {{amount}} por 5 batalhas.",
       "extra": {
-        "stage": "1 nível",
+        "stage": "um nível",
         "percentage": "30%"
       }
     },
