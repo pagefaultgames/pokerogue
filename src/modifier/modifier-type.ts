@@ -185,7 +185,7 @@ class AddPokeballModifierType extends ModifierType {
     if (this.pokeballType === PokeballType.ROGUE_BALL) {
       catchRate = i18next.t("modifierType:ModifierType.AddPokeballModifierType.catchRateGenerator", {
         "normalCatchRate": getPokeballCatchMultiplier(this.pokeballType),
-        "boostedCatchRate": getPokeballCatchMultiplier(this.pokeballType, null, true),
+        "boostedCatchRate": getPokeballCatchMultiplier(this.pokeballType, undefined, true),
       });
     } else if (this.pokeballType !== PokeballType.MASTER_BALL) {
       catchRate = `${getPokeballCatchMultiplier(this.pokeballType)}x`;

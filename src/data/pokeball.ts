@@ -49,7 +49,7 @@ export function getPokeballName(type: PokeballType): string {
   return ret;
 }
 
-export function getPokeballCatchMultiplier(type: PokeballType, enemyPokemon?: Pokemon | null, getBoostedDescription?: boolean): number {
+export function getPokeballCatchMultiplier(type: PokeballType, enemyPokemon?: Pokemon, getBoostedDescription?: boolean): number {
   const pokemon = enemyPokemon ?? null;
   const description = getBoostedDescription ?? false;
   switch (type) {
