@@ -164,7 +164,7 @@ export class MovePhase extends BattlePhase {
         }
 
         // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
-        this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
+        this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL, targets: this.targets });
 
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
         moveQueue.shift(); // Remove the second turn of charge moves
@@ -183,7 +183,7 @@ export class MovePhase extends BattlePhase {
         this.cancel();
 
         // Record a failed move so Abilities like Truant don't trigger next turn and soft-lock
-        this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
+        this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL, targets: [] });
 
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT); // Remove any tags from moves like Fly/Dive/etc.
 

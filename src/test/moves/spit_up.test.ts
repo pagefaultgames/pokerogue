@@ -125,7 +125,7 @@ describe("Moves - Spit Up", () => {
     game.move.select(Moves.SPIT_UP);
     await game.phaseInterceptor.to(TurnInitPhase);
 
-    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.FAIL });
+    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.FAIL, targets: [ game.scene.getEnemyPokemon()!.getBattlerIndex() ] });
 
     expect(spitUp.calculateBattlePower).not.toHaveBeenCalled();
   });
@@ -148,7 +148,7 @@ describe("Moves - Spit Up", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS });
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS, targets: [ game.scene.getEnemyPokemon()!.getBattlerIndex() ] });
 
       expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
 
@@ -176,7 +176,7 @@ describe("Moves - Spit Up", () => {
       game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS });
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS, targets: [ game.scene.getEnemyPokemon()!.getBattlerIndex() ] });
 
       expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
 
