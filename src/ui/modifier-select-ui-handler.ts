@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption, TmModifierType } from "../modifier/modifier-type";
+import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption, TmModifierType, AddPokeballModifierType } from "../modifier/modifier-type";
 import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
 import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
@@ -426,6 +426,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
 
       const type = options[this.cursor].modifierTypeOption.type;
+
       type && ui.showText(type.getDescription(this.scene));
       if (type instanceof TmModifierType) {
         // prepare the move overlay to be shown with the toggle
@@ -617,6 +618,10 @@ class ModifierOption extends Phaser.GameObjects.Container {
       this.itemTint = getItem();
       this.itemTint.setTintFill(Phaser.Display.Color.GetColor(255, 192, 255));
       this.itemContainer.add(this.itemTint);
+    }
+
+    if (this.modifierTypeOption.type instanceof AddPokeballModifierType) {
+      this.modifierTypeOption.type.addScene(this.scene as BattleScene);
     }
 
     this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type?.name!, TextStyle.PARTY, { align: "center" }); // TODO: is this bang correct?

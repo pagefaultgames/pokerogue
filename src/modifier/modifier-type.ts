@@ -163,9 +163,10 @@ export interface GeneratedPersistentModifierType {
   getPregenArgs(): any[];
 }
 
-class AddPokeballModifierType extends ModifierType {
+export class AddPokeballModifierType extends ModifierType {
   private pokeballType: PokeballType;
   private count: integer;
+  private scene: BattleScene;
 
   constructor(iconImage: string, pokeballType: PokeballType, count: integer) {
     super("", iconImage, (_type, _args) => new Modifiers.AddPokeballModifier(this, pokeballType, count), "pb", "se/pb_bounce_1");
@@ -177,7 +178,12 @@ class AddPokeballModifierType extends ModifierType {
     return i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", {
       "modifierCount": this.count,
       "pokeballName": getPokeballName(this.pokeballType),
+      "pokeballAmount": `${this.scene.pokeballCounts[this.pokeballType]}`,
     });
+  }
+
+  addScene(scene: BattleScene) {
+    this.scene = scene;
   }
 
   getDescription(scene: BattleScene): string {
@@ -194,7 +200,6 @@ class AddPokeballModifierType extends ModifierType {
       "modifierCount": this.count,
       "pokeballName": getPokeballName(this.pokeballType),
       "catchRate": catchRate,
-      "pokeballAmount": `${scene.pokeballCounts[this.pokeballType]}`,
     });
   }
 }
@@ -1982,9 +1987,15 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   const retryCount = Math.min(count * 5, 50);
   new Array(count).fill(0).map((_, i) => {
     let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined);
+    if (candidate?.type instanceof AddPokeballModifierType) {
+      candidate.type.addScene(party[0].scene);
+    }
     let r = 0;
     while (options.length && ++r < retryCount && options.filter(o => o.type?.name === candidate?.type?.name || o.type?.group === candidate?.type?.group).length) {
       candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, candidate?.type?.tier, candidate?.upgradeCount);
+      if (candidate?.type instanceof AddPokeballModifierType) {
+        candidate.type.addScene(party[0].scene);
+      }
     }
     if (candidate) {
       options.push(candidate);
