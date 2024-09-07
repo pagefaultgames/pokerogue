@@ -93,10 +93,10 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
 
       // Load bgm
       if (scene.musicPreference === 0) {
-        scene.loadBgm("mystery_encounter_gts", "mystery_encounter_gen_5_gts.mp3");
+        scene.loadBgm("mystery_encounter_gen_5_gts", "mystery_encounter_gen_5_gts.mp3");
       } else {
         // Mixed option
-        scene.loadBgm("mystery_encounter_gts", "mystery_encounter_gen_6_gts.mp3");
+        scene.loadBgm("mystery_encounter_gen_6_gts", "mystery_encounter_gen_6_gts.mp3");
       }
 
       // Load possible trade options
@@ -113,7 +113,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
       // Change the bgm
       scene.fadeOutBgm(1500, false);
       scene.time.delayedCall(1500, () => {
-        scene.playBgm("mystery_encounter_gts");
+        if (scene.musicPreference === 0) {
+          scene.playBgm("mystery_encounter_gen_5_gts");
+        } else {
+          scene.playBgm("mystery_encounter_gen_6_gts");
+        }
       });
 
       return true;
