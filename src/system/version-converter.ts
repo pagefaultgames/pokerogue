@@ -123,8 +123,6 @@ export function applySettingsDataPatches(settings: Object) {
     case "1.0.2":
     case "1.0.3":
     case "1.0.4":
-      console.log("settings");
-
       // --- PATCHES ---
 
       // Fix Reward Cursor Target
