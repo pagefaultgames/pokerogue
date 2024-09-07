@@ -78,6 +78,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("overlay_hp_boss", "ui");
     this.loadImage("overlay_exp", "ui");
     this.loadImage("icon_owned", "ui");
+    this.loadImage("icon_egg_move", "ui");
     this.loadImage("ability_bar_left", "ui");
     this.loadImage("bgm_bar", "ui");
     this.loadImage("party_exp_bar", "ui");
@@ -164,6 +165,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("saving_icon", "ui");
     this.loadImage("discord", "ui");
     this.loadImage("google", "ui");
+    this.loadImage("settings_icon", "ui");
 
     this.loadImage("default_bg", "arenas");
     // Load arena images
@@ -246,7 +248,7 @@ export class LoadingScene extends SceneBase {
     } else {
       this.loadAtlas("types", "");
     }
-    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt_BR", "zh_CN"];
+    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"];
     if (lang && availableLangs.includes(lang)) {
       this.loadImage("september-update-"+lang, "events");
     } else {
@@ -272,6 +274,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("gacha_knob", "egg");
 
     this.loadImage("egg_list_bg", "ui");
+    this.loadImage("egg_summary_bg", "ui");
 
     this.loadImage("end_m", "cg");
     this.loadImage("end_f", "cg");

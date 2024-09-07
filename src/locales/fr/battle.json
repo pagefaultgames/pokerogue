@@ -94,5 +94,6 @@
   "retryBattle": "Voulez-vous réessayer depuis le début du combat ?",
   "unlockedSomething": "{{unlockedThing}}\na été débloqué.",
   "congratulations": "Félicitations !",
-  "beatModeFirstTime": "{{speciesName}} a battu le mode {{gameMode}} pour la première fois !\nVous avez reçu {{newModifier}} !"
+  "beatModeFirstTime": "{{speciesName}} a battu le mode {{gameMode}} pour la première fois !\nVous avez reçu {{newModifier}} !",
+  "eggSkipPrompt": "Aller directement au résumé des Œufs éclos ?"
 }

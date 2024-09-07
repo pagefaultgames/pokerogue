@@ -95,9 +95,13 @@ export default class FightUiHandler extends UiHandler {
     messageHandler.bg.setVisible(false);
     messageHandler.commandWindow.setVisible(false);
     messageHandler.movesWindowContainer.setVisible(true);
-    this.setCursor(this.getCursor());
+    const pokemon = (this.scene.getCurrentPhase() as CommandPhase).getPokemon();
+    if (pokemon.battleSummonData.turnCount <= 1) {
+      this.setCursor(0);
+    } else {
+      this.setCursor(this.getCursor());
+    }
     this.displayMoves();
-
     return true;
   }
 
