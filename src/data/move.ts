@@ -5264,9 +5264,6 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 
 export class CallMoveAttr extends OverrideMoveEffectAttr {
   protected invalidMoves: Moves[];
-  constructor() {
-    super();
-  }
   async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     const replaceMoveTarget = move.moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
     const moveTargets = getMoveTargets(user, move.id, replaceMoveTarget);
