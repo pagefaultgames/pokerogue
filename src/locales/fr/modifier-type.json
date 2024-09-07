@@ -2,7 +2,7 @@
   "ModifierType": {
     "AddPokeballModifierType": {
       "name": "{{pokeballName}} x{{modifierCount}}",
-      "description": "Recevez {{modifierCount}} {{pokeballName}}·s. (Inventaire : {{pokeballAmount}})\nTaux de capture : {{catchRate}}"
+      "description": "Recevez {{modifierCount}} {{pokeballName}}·s. (Inventaire : {{pokeballAmount}})\nTaux de capture : {{catchRate}}"
     },
     "AddVoucherModifierType": {
       "name": "{{voucherTypeName}} x{{modifierCount}}",
@@ -10,8 +10,8 @@
     },
     "PokemonHeldItemModifierType": {
       "extra": {
-        "inoperable": "{{pokemonName}} ne peut pas\nporter cet objet !",
-        "tooMany": "{{pokemonName}} porte trop\nd’exemplaires de cet objet !"
+        "inoperable": "{{pokemonName}} ne peut pas\nporter cet objet !",
+        "tooMany": "{{pokemonName}} porte trop\nd’exemplaires de cet objet !"
       }
     },
     "PokemonHpRestoreModifierType": {
