@@ -1,5 +1,5 @@
-import i18next from "i18next";
 import { MoneyFormat } from "#enums/money-format";
+import i18next from "i18next";
 
 export const MissingTextureKey = "__MISSING";
 
@@ -82,6 +82,12 @@ export function randInt(range: integer, min: integer = 0): integer {
   return Math.floor(Math.random() * range) + min;
 }
 
+/**
+ * Generates a random number using the global seed, or the current battle's seed if called via `Battle.randSeedInt`
+ * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+ * @param min The minimum integer to pick, default `0`
+ * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+ */
 export function randSeedInt(range: integer, min: integer = 0): integer {
   if (range <= 1) {
     return min;
@@ -447,6 +453,26 @@ export function rgbHexToRgba(hex: string) {
 
 export function rgbaToInt(rgba: integer[]): integer {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
+}
+
+/**
+ * Provided valid HSV values, calculates and stitches together a string of that
+ * HSV color's corresponding hex code.
+ *
+ * Sourced from {@link https://stackoverflow.com/a/44134328}.
+ * @param h Hue in degrees, must be in a range of [0, 360]
+ * @param s Saturation percentage, must be in a range of [0, 1]
+ * @param l Ligthness percentage, must be in a range of [0, 1]
+ * @returns a string of the corresponding color hex code with a "#" prefix
+ */
+export function hslToHex(h: number, s: number, l: number): string {
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const rgb = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+    return Math.round(rgb * 255).toString(16).padStart(2, "0");
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
 }
 
 /*This function returns true if the current lang is available for some functions
