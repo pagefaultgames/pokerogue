@@ -89,7 +89,7 @@
       "description": "Augmente de {{boostPercent}}% le gain de Points d’Exp du porteur."
     },
     "PokemonFriendshipBoosterModifierType": {
-      "description": "Augmente le gain d’amitié de 50% par victoire."
+      "description": "Augmente le gain de bonheur de 50% par victoire."
     },
     "PokemonMoveAccuracyBoosterModifierType": {
       "description": "Augmente de {{accuracyAmount}} la précision des capacités (maximum 100)."
@@ -106,17 +106,17 @@
       "description": "Apprend la capacité {{moveName}} à un Pokémon.\n(Maintenez C ou Maj pour plus d’infos)"
     },
     "EvolutionItemModifierType": {
-      "description": "Permet à certains Pokémon d’évoluer."
+      "description": "Permet à certains Pokémon d’évoluer à son contact."
     },
     "FormChangeItemModifierType": {
-      "description": "Permet à certains Pokémon de changer de forme."
+      "description": "Permet à certains Pokémon de changer de forme à son contact."
     },
     "FusePokemonModifierType": {
       "description": "Fusionne deux Pokémon (transfère le talent, sépare les stats de base et les types, partage les capacités)."
     },
     "TerastallizeModifierType": {
       "name": "Téra-Éclat {{teraType}}",
-      "description": "{{teraType}} Téracristallise son porteur pendant 10 combats."
+      "description": "Téracristallise son porteur en type {{teraType}} pendant 10 combats."
     },
     "ContactHeldItemTransferChanceModifierType": {
       "description": "{{chancePercent}}% de chances de voler un objet de l’adversaire en l’attaquant."
@@ -251,7 +251,7 @@
   },
   "SpeciesBoosterItem": {
     "LIGHT_BALL": { "name": "Balle Lumière", "description": "À faire tenir à Pikachu. Un orbe énigmatique qui double son Attaque et son Atq. Spé. ." },
-    "THICK_CLUB": { "name": "Masse Os", "description": "À faire tenir à Osselait ou Ossatueur. Un os dur qui double leur Attaque." },
+    "THICK_CLUB": { "name": "Masse Os", "description": "À faire tenir à Osselait ou à Ossatueur, formes d’Alola incluses. Un os dur qui double leur Attaque." },
     "METAL_POWDER": { "name": "Poudre Métal", "description": "À faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, double sa Défense." },
     "QUICK_POWDER": { "name": "Poudre Vite", "description": "À faire tenir à Métamorph. Cette poudre étrange, très fine mais résistante, double sa Vitesse." }
   },
