@@ -1,0 +1,52 @@
+{
+  "aether_grunt": {
+    "encounter": {
+      "1": "¡Lucharé con toda mi fuerza para detenerte!",
+      "2": "Me da igual que seas un crío. Eres una amenaza y debes irte.",
+      "3": "Me dijeron que mandara a todos los entrenadores por donde venían, ¡sin excepciones!",
+      "4": "¡Te mostraré el poder del Paraíso Æther!",
+      "5": "Ahora que conoces la oscuridad en lo profundo del Paraíso Æther, es hora de que vayas desapareciendo..."
+    },
+    "victory": {
+      "1": "¡Vaya! Demuestras habilidad.",
+      "2": "¿Qué quiere decir esto? ¿Eh?",
+      "3": "¡Vaya! Con esa fuerza, ¡no creo que pueda detenerte!",
+      "4": "Vaya... parece que puede que haya perdido.",
+      "5": "¡Mira, te hago una mueca!: ¡Aiyee!"
+    }
+  },
+  "faba": {
+    "encounter": {
+      "1": "¡Yo, Subdirector Fabio, te mostraré la cruda realidad del mundo!",
+      "2": "¿Yo, la última línea de defensa de Æther, battallando a un mero crío?",
+      "3": "Yo, Fabio, soy el Subdirector de la Fundación Æther. Soy el único en el mundo, soy irremplazable."
+    },
+    "victory": {
+      "1": "¡Aaaah!",
+      "2": "¿C-c-cómo puede ser? Eres tan solo un niño...",
+      "3": "Este... este es el motivo por el que odio a los niños."
+    }
+  },
+  "aether_boss_lusamine_1": {
+    "encounter": {
+      "1": "¡Vas a asustar a mi pobre criatura! Parece que tendré que silenciarte cuanto antes."
+    },
+    "victory": {
+      "1": "¿Cómo?¿Cómo puedes ser tan terrible?"
+    },
+    "defeat": {
+      "1": "Buff."
+    }
+  },
+  "aether_boss_lusamine_2": {
+    "encounter": {
+      "1": "¡¿Por qué me sigues molestando?! Estoy cansada de ti. ¡Hasta las narices!\n$Se acabó esta charla innecesaria. Este es el poder de Nihilego, ¡te demostraré cuánto te equivocas al venir aquí!"
+    },
+    "victory": {
+      "1": "¡¡¡Aaauuuggghhhhhhhhh!!!"
+    },
+    "defeat": {
+      "1": "¡Todo lo que quiero es a esta preciosa criatura! ¡Los demás no me importáis!"
+    }
+  }
+}

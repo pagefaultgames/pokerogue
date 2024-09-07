@@ -1,7 +1,7 @@
 import { Gender } from "./gender";
 import { PokeballType } from "./pokeball";
 import Pokemon from "../field/pokemon";
-import { Stat } from "./pokemon-stat";
+import { Stat } from "#enums/stat";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { SpeciesFormKey } from "./pokemon-species";
@@ -1582,7 +1582,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.BLISSEY, 1, null, new SpeciesFriendshipEvolutionCondition(200), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.PICHU]: [
-    new SpeciesEvolution(Species.PIKACHU, 1, null, new SpeciesFriendshipEvolutionCondition(90), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesFormEvolution(Species.PIKACHU, "spiky", "partner", 1, null, new SpeciesFriendshipEvolutionCondition(90), SpeciesWildEvolutionDelay.SHORT),
+    new SpeciesFormEvolution(Species.PIKACHU, "", "", 1, null, new SpeciesFriendshipEvolutionCondition(90), SpeciesWildEvolutionDelay.SHORT),
   ],
   [Species.CLEFFA]: [
     new SpeciesEvolution(Species.CLEFAIRY, 1, null, new SpeciesFriendshipEvolutionCondition(160), SpeciesWildEvolutionDelay.SHORT)

@@ -311,8 +311,6 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   end() {
-    const move = this.move.getMove();
-    move.type = move.defaultType;
     const user = this.getUserPokemon();
     /**
        * If this phase isn't for the invoked move's last strike,
@@ -379,16 +377,16 @@ export class MoveEffectPhase extends PokemonPhase {
       return false;
     }
 
-    const moveAccuracy = this.move.getMove().calculateBattleAccuracy(user!, target); // TODO: is the bang correct here?
+    const moveAccuracy = this.move.getMove().calculateBattleAccuracy(user, target);
 
     if (moveAccuracy === -1) {
       return true;
     }
 
     const accuracyMultiplier = user.getAccuracyMultiplier(target, this.move.getMove());
-    const rand = user.randSeedInt(100, 1);
+    const rand = user.randSeedInt(100);
 
-    return rand <= moveAccuracy * (accuracyMultiplier!); // TODO: is this bang correct?
+    return rand < (moveAccuracy * accuracyMultiplier);
   }
 
   /** Returns the {@linkcode Pokemon} using this phase's invoked move */

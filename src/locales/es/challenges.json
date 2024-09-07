@@ -1,0 +1,29 @@
+{
+  "title": "Parámetros de Desafíos",
+  "singleGeneration": {
+    "name": "Monogeneración",
+    "desc": "Solo puedes usar Pokémon de {{gen}} generación.",
+    "desc_default": "Solo puedes usar Pokémon de la generación elegida.",
+    "gen_1": "primera",
+    "gen_2": "segunda",
+    "gen_3": "tercera",
+    "gen_4": "cuarta",
+    "gen_5": "quinta",
+    "gen_6": "sexta",
+    "gen_7": "séptima",
+    "gen_8": "octava",
+    "gen_9": "novena"
+  },
+  "singleType": {
+    "name": "Monotipo",
+    "desc": "Solo puedes usar Pokémon with the {{type}} type.",
+    "desc_default": "Solo puedes usar Pokémon del tipo elegido."
+  },
+  "inverseBattle": {
+    "name": "Combate Inverso",
+    "shortName": "Inverso",
+    "desc": "La efectividad de los tipos es invertida. No hay inmunidades entre tipos.\nEste reto deshabilita logros de otros retos.",
+    "value.0": "Desactivado",
+    "value.1": "Activado"
+  }
+}
