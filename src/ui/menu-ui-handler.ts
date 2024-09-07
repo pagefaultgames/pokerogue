@@ -12,6 +12,7 @@ import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 import AwaitableUiHandler from "./awaitable-ui-handler";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -30,6 +31,7 @@ let wikiUrl = "https://wiki.pokerogue.net/start";
 const discordUrl = "https://discord.gg/uWpTfdKG49";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 const redditUrl = "https://www.reddit.com/r/pokerogue";
+const donateUrl = "https://github.com/sponsors/patapancakes";
 
 export default class MenuUiHandler extends MessageUiHandler {
   private readonly textPadding = 8;
@@ -106,7 +108,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   render() {
     const ui = this.getUi();
     this.excludedMenus = () => [
-      { condition: ![Mode.COMMAND, Mode.TITLE].includes(ui.getModeChain()[0]), options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
+      { condition: this.scene.getCurrentPhase() instanceof SelectModifierPhase, options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST] },
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] }
     ];
 
@@ -368,7 +370,16 @@ export default class MenuUiHandler extends MessageUiHandler {
           return true;
         },
         keepOpen: true
-      }];
+      },
+      {
+        label: i18next.t("menuUiHandler:donate"),
+        handler: () => {
+          window.open(donateUrl, "_blank")?.focus();
+          return true;
+        },
+        keepOpen: true
+      }
+    ];
     if (!bypassLogin && loggedInUser?.hasAdminRole) {
       communityOptions.push({
         label: "Admin",

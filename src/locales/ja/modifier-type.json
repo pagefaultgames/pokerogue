@@ -49,8 +49,8 @@
     "DoubleBattleChanceBoosterModifierType": {
       "description": "バトル{{battleCount}}かいのあいだ ダブルバトルになるかくりつを2ばいにする"
     },
-    "TempBattleStatBoosterModifierType": {
-      "description": "すべてのパーティメンバーの {{tempBattleStatName}}を5かいのバトルのあいだ 1だんかいあげる"
+    "TempStatStageBoosterModifierType": {
+      "description": "すべてのパーティメンバーの {{stat}}を5かいのバトルのあいだ 1だんかいあげる"
     },
     "AttackTypeBoosterModifierType": {
       "description": "ポケモンの {{moveType}}タイプのわざのいりょくを20パーセントあげる"
@@ -61,8 +61,8 @@
     "AllPokemonLevelIncrementModifierType": {
       "description": "すべてのパーティメンバーのレベルを1あげる"
     },
-    "PokemonBaseStatBoosterModifierType": {
-      "description": "ポケモンの{{statName}}のきほんステータスを10パーセントあげる。こたいちがたかいほどスタックのげんかいもたかくなる。"
+    "BaseStatBoosterModifierType": {
+      "description": "ポケモンの{{stat}}のきほんステータスを10パーセントあげる。こたいちがたかいほどスタックのげんかいもたかくなる。"
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "すべてのポケモンのHPを100パーセントかいふくする"
@@ -248,6 +248,12 @@
       "name": "ピントレンズ",
       "description": "弱点が 見える レンズ。持たせた ポケモンの技が 急所に 当たりやすくなる。"
     },
+    "DIRE_HIT": { 
+      "name": "クリティカット", 
+      "extra": { 
+        "raises": "きゅうしょりつ"
+      } 
+    },
     "LEEK": {
       "name": "ながねぎ",
       "description": "とても長くて 硬いクキ。カモネギに 持たせると 技が 急所に 当たりやすくなる。"
@@ -347,7 +353,7 @@
       "description": "やせいのポケモンがかくれとくせいをもつかくりつをおおきくふやす"
     },
     "IV_SCANNER": {
-      "name": "こたいち たんちき",
+      "name": "こたいちスキャナー",
       "description": "やせいのポケモンのこたいちをスキャンできる。スタックごとに2つのこたいちがあきらかになる。もっともたかいこたいちがさいしょにひょうじされる"
     },
     "DNA_SPLICERS": {
@@ -411,25 +417,13 @@
       "description": "メタモンに 持たせると 素早さが あがる 不思議 粉。とても こまかくて 硬い。"
     }
   },
-  "TempBattleStatBoosterItem": {
+  "TempStatStageBoosterItem": {
     "x_attack": "プラスパワー",
     "x_defense": "ディフェンダー",
     "x_sp_atk": "スペシャルアップ",
     "x_sp_def": "スペシャルガード",
     "x_speed": "スピーダー",
-    "x_accuracy": "ヨクアタール",
-    "dire_hit": "クリティカット"
-  },
-  "TempBattleStatBoosterStatName": {
-    "ATK": "こうげき",
-    "DEF": "ぼうぎょ",
-    "SPATK": "とくこう",
-    "SPDEF": "とくぼう",
-    "SPD": "すばやさ",
-    "ACC": "めいちゅう",
-    "CRIT": "きゅうしょりつ",
-    "EVA": "かいひ",
-    "DEFAULT": "???"
+    "x_accuracy": "ヨクアタール"
   },
   "AttackTypeBoosterItem": {
     "silk_scarf": "シルクのスカーフ",
