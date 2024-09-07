@@ -861,6 +861,14 @@ export class GameData {
 
     const settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
 
+    // TODO: Remove this block after save migration is implemented
+    if (settings.hasOwnProperty("REROLL_TARGET") && !settings.hasOwnProperty(SettingKeys.Shop_Cursor_Target)) {
+      settings[SettingKeys.Shop_Cursor_Target] = settings["REROLL_TARGET"];
+      delete settings["REROLL_TARGET"];
+      localStorage.setItem("settings", JSON.stringify(settings));
+    }
+    // End of block to remove
+
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting, settings[setting]);
     }

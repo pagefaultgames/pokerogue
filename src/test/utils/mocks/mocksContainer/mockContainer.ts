@@ -220,4 +220,5 @@ export default class MockContainer implements MockGameObject {
     return this.list.find(v => v.name === key) ?? new MockContainer(this.textureManager, 0, 0);
   }
 
+  disableInteractive = vi.fn();
 }

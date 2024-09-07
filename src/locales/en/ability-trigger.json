@@ -52,6 +52,7 @@
   "postSummonTeravolt": "{{pokemonNameWithAffix}} is radiating a bursting aura!",
   "postSummonDarkAura": "{{pokemonNameWithAffix}} is radiating a Dark Aura!",
   "postSummonFairyAura": "{{pokemonNameWithAffix}} is radiating a Fairy Aura!",
+  "postSummonAuraBreak": "{{pokemonNameWithAffix}} reversed all other Pokémon's auras!",
   "postSummonNeutralizingGas": "{{pokemonNameWithAffix}}'s Neutralizing Gas filled the area!",
   "postSummonAsOneGlastrier": "{{pokemonNameWithAffix}} has two Abilities!",
   "postSummonAsOneSpectrier": "{{pokemonNameWithAffix}} has two Abilities!",

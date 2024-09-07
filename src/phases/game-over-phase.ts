@@ -49,7 +49,9 @@ export class GameOverPhase extends BattlePhase {
     }
 
     if (this.victory && this.scene.gameMode.isEndless) {
-      this.scene.ui.showDialogue(i18next.t("PGMmiscDialogue:ending_endless"), i18next.t("PGMmiscDialogue:ending_name"), 0, () => this.handleGameOver());
+      const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+      const genderStr = PlayerGender[genderIndex].toLowerCase();
+      this.scene.ui.showDialogue(i18next.t("miscDialogue:ending_endless", { context: genderStr }), i18next.t("miscDialogue:ending_name"), 0, () => this.handleGameOver());
     } else if (this.victory || !this.scene.enableRetries) {
       this.handleGameOver();
     } else {
