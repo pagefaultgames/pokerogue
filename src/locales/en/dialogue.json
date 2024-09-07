@@ -991,10 +991,12 @@
       "2": "I can feel my Pokémon shivering inside their Pokéballs!"
     },
     "victory": {
-      "1": "Heeheehee!\nSo hot, you!"
+      "1": "Heeheehee!\nSo hot, you!",
+      "2": "Heeheehee!\nSo hot, you!"
     },
     "defeat": {
-      "1": "Whoa! You're all out of gas, I guess."
+      "1": "Whoa! You're all out of gas, I guess.",
+      "2": "Whoa! You're all out of gas, I guess."
     }
   },
   "stat_trainer_cheryl": {
@@ -1003,10 +1005,12 @@
       "2": "I should warn you, my Pokémon can be quite rambunctious."
     },
     "victory": {
-      "1": "Striking the right balance of offense and defense... It's not easy to do."
+      "1": "Striking the right balance of offense and defense... It's not easy to do.",
+      "2": "Striking the right balance of offense and defense... It's not easy to do."
     },
     "defeat": {
-      "1": "Do your Pokémon need any healing?"
+      "1": "Do your Pokémon need any healing?",
+      "2": "Do your Pokémon need any healing?"
     }
   },
   "stat_trainer_marley": {
@@ -1015,10 +1019,12 @@
       "2": "... OK.\nI... won't lose...!"
     },
     "victory": {
-      "1": "... Awww."
+      "1": "... Awww.",
+      "2": "... Awww."
     },
     "defeat": {
-      "1": "... Goodbye."
+      "1": "... Goodbye.",
+      "2": "... Goodbye."
     }
   },
   "stat_trainer_mira": {
@@ -1027,10 +1033,12 @@
       "2": "Mira will show you that Mira doesn't get lost anymore!"
     },
     "victory": {
-      "1": "Mira wonders if she can get very far in this land."
+      "1": "Mira wonders if she can get very far in this land.",
+      "2": "Mira wonders if she can get very far in this land."
     },
     "defeat": {
-      "1": "Mira knew she would win!"
+      "1": "Mira knew she would win!",
+      "2": "Mira knew she would win!"
     }
   },
   "stat_trainer_riley": {
@@ -1039,10 +1047,12 @@
       "2": "We're pulling out all the stops to put your Pokémon down."
     },
     "victory": {
-      "1": "At times we battle, and sometimes we team up...$It's great how Trainers can interact."
+      "1": "At times we battle, and sometimes we team up...$It's great how Trainers can interact.",
+      "2": "At times we battle, and sometimes we team up...$It's great how Trainers can interact."
     },
     "defeat": {
-      "1": "You put up quite the display.\nBetter luck next time."
+      "1": "You put up quite the display.\nBetter luck next time.",
+      "2": "You put up quite the display.\nBetter luck next time."
     }
   },
   "winstrates_victor": {

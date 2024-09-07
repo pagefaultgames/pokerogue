@@ -9,7 +9,7 @@
     "1": {
       "label": "Accept the Challenge",
       "tooltip": "(-) Brutal Battle\n(+) Special Item Reward",
-      "selected": "That's the spirit! I like you!"
+      "selected": "Let the challenge begin!"
     },
     "2": {
       "label": "Refuse the Challenge",
@@ -17,5 +17,6 @@
       "selected": "That's too bad. Say, your team looks worn out, why don't you stay awhile and rest?"
     }
   },
-  "victory": "Congratulations on beating our challenge!$Our family uses this Macho Brace to strengthen our Pokémon more effectively during their training.$You may not need it, considering that you beat the whole lot of us, but we hope you'll accept it anyway!"
+  "victory": "Congratulations on beating our challenge!$First off, we'd like you to have this Voucher.",
+  "victory_2": "Also, our family uses this Macho Brace to strengthen\nour Pokémon more effectively during training.$You may not need it considering that you beat the whole lot of us, but we hope you'll accept it anyway!"
 }

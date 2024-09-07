@@ -1,5 +1,5 @@
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { leaveEncounterWithoutBattle, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getHighestLevelPlayerPokemon, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { randSeedInt } from "#app/utils.js";
@@ -9,6 +9,9 @@ import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter"
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { Species } from "#enums/species";
+import { Moves } from "#enums/moves";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounter:mysteriousChest";
@@ -23,6 +26,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180) // waves 10 to 180
     .withAutoHideIntroVisuals(false)
+    .withCatchAllowed(true)
     .withIntroSpriteConfigs([
       {
         spriteKey: "chest_blue",
@@ -51,6 +55,29 @@ export const MysteriousChestEncounter: MysteryEncounter =
     .withTitle(`${namespace}.title`)
     .withDescription(`${namespace}.description`)
     .withQuery(`${namespace}.query`)
+    .withOnInit((scene: BattleScene) => {
+      const encounter = scene.currentBattle.mysteryEncounter!;
+
+      // Calculate boss mon
+      const config: EnemyPartyConfig = {
+        levelAdditiveMultiplier: 1,
+        disableSwitch: true,
+        pokemonConfigs: [
+          {
+            species: getPokemonSpecies(Species.GIMMIGHOUL),
+            formIndex: 0,
+            isBoss: true,
+            moveSet: [Moves.NASTY_PLOT, Moves.SHADOW_BALL, Moves.POWER_GEM, Moves.THIEF]
+          }
+        ],
+      };
+
+      encounter.enemyPartyConfigs = [config];
+
+      loadCustomMovesForEncounter(scene, [Moves.CONFUSE_RAY, Moves.ASTONISH]);
+
+      return true;
+    })
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
@@ -139,10 +166,10 @@ export const MysteriousChestEncounter: MysteryEncounter =
             koPlayerPokemon(scene, highestLevelPokemon);
 
             encounter.setDialogueToken("pokeName", highestLevelPokemon.getNameToRender());
-            // Show which Pokemon was KOed, then leave encounter with no rewards
-            // Does this synchronously so that game over doesn't happen over result message
+            // Show which Pokemon was KOed, then start battle against Gimmighoul
             await showEncounterText(scene, `${namespace}.option.1.bad`);
-            leaveEncounterWithoutBattle(scene);
+            transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
+            await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
           }
         })
         .build()

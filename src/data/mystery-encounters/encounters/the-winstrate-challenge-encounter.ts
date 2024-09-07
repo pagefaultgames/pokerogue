@@ -15,11 +15,12 @@ import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
 import { applyPostBattleInitAbAttrs, PostBattleInitAbAttr } from "#app/data/ability";
-import { showEncounterDialogue } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
 import { ReturnPhase } from "#app/phases/return-phase";
+import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounter:theWinstrateChallenge";
@@ -100,7 +101,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
         buttonTooltip: `${namespace}.option.1.tooltip`,
         selected: [
           {
-            speaker: "trainerNames:victor",
+            speaker: `${namespace}.speaker`,
             text: `${namespace}.option.1.selected`,
           },
         ],
@@ -140,6 +141,14 @@ async function spawnNextTrainerOrEndEncounter(scene: BattleScene) {
   if (!nextConfig) {
     await transitionMysteryEncounterIntroVisuals(scene, false, false);
     await showEncounterDialogue(scene, `${namespace}.victory`, `${namespace}.speaker`);
+
+    // Give 10x Voucher
+    const newModifier = modifierTypes.VOUCHER_PREMIUM().newModifier();
+    scene.addModifier(newModifier);
+    scene.playSound("item_fanfare");
+    await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
+
+    await showEncounterDialogue(scene, `${namespace}.victory_2`, `${namespace}.speaker`);
     setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE], fillRemaining: false });
     encounter.doContinueEncounter = undefined;
     leaveEncounterWithoutBattle(scene, false, MysteryEncounterMode.TRAINER_BATTLE);

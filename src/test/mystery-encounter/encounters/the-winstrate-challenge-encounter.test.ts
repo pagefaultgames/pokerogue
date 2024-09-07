@@ -267,7 +267,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         buttonTooltip: `${namespace}.option.1.tooltip`,
         selected: [
           {
-            speaker: "trainerNames:victor",
+            speaker: `${namespace}.speaker`,
             text: `${namespace}.option.1.selected`,
           },
         ],
