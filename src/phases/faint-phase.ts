@@ -17,6 +17,7 @@ import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { SwitchPhase } from "./switch-phase";
 import { VictoryPhase } from "./victory-phase";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 
 export class FaintPhase extends PokemonPhase {
   private preventEndure: boolean;
@@ -61,6 +62,7 @@ export class FaintPhase extends PokemonPhase {
     }
 
     this.scene.queueMessage(i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, true);
+    this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
 
     if (pokemon.turnData?.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
