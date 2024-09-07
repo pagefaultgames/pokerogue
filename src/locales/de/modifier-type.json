@@ -47,7 +47,7 @@
       "description": "Ändert das Wesen zu {{natureName}}. Schaltet dieses Wesen permanent für diesen Starter frei."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "Quadruples the chance of an encounter being a double battle for up to {{battleCount}} battles."
+      "description": "Vervierfacht die Chance, dass ein Kampf ein Doppelkampf wird, für bis zu {{battleCount}} Kämpfe."
     },
     "TempStatStageBoosterModifierType": {
       "description": "Increases the {{stat}} of all party members by {{amount}} for up to 5 battles.",
