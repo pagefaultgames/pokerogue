@@ -2000,7 +2000,7 @@ export class SubstituteTag extends BattlerTag {
   public sourceInFocus: boolean;
 
   constructor(sourceMove: Moves, sourceId: integer) {
-    super(BattlerTagType.SUBSTITUTE, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.HIT], 0, sourceMove, sourceId);
+    super(BattlerTagType.SUBSTITUTE, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.HIT], 0, sourceMove, sourceId, true);
   }
 
   /** Sets the Substitute's HP and queues an on-add battle animation that initializes the Substitute's sprite. */
