@@ -6234,7 +6234,7 @@ export class AfterYouAttr extends MoveEffectAttr {
 
     const nextAttackPhase: MovePhase = target.scene.findPhase((phase: MovePhase) => phase.pokemon === target) as MovePhase;
     if (target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
-      target.scene.unshiftPhase(new MovePhase(target.scene, target, [...nextAttackPhase.targets], nextAttackPhase.move));
+      target.scene.prependToPhase(new MovePhase(target.scene, target, [...nextAttackPhase.targets], nextAttackPhase.move), MovePhase);
     }
 
     return true;
