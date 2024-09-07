@@ -291,7 +291,7 @@ export default class Battle {
             return "battle_legendary_kyurem";
           case Species.XERNEAS:
           case Species.YVELTAL:
-          case Species.XYGARDE:
+          case Species.ZYGARDE:
             return "battle_legendary_xern_yvel";
           case Species.TAPU_KOKO:
           case Species.TAPU_LELE:
