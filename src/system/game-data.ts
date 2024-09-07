@@ -996,8 +996,6 @@ export class GameData {
         const initSessionFromData = async (sessionData: SessionSaveData) => {
           console.debug(sessionData);
 
-          applySessionDataPatches(sessionData);
-
           scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
           if (sessionData.challenges) {
             scene.gameMode.challenges = sessionData.challenges.map(c => c.toChallenge());
@@ -1203,7 +1201,7 @@ export class GameData {
   }
 
   parseSessionData(dataStr: string): SessionSaveData {
-    return JSON.parse(dataStr, (k: string, v: any) => {
+    const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
       /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
 
       if (versions[0] !== versions[1]) {
@@ -1260,6 +1258,10 @@ export class GameData {
 
       return v;
     }) as SessionSaveData;
+
+    applySessionDataPatches(sessionData);
+
+    return sessionData;
   }
 
   saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
