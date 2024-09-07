@@ -50,7 +50,7 @@
       "description": "バトル{{battleCount}}かいのあいだ ダブルバトルになるかくりつを4ばいにする"
     },
     "TempStatStageBoosterModifierType": {
-      "description": "Increases the {{stat}} of all party members by {{amount}} for up to 5 battles.",
+      "description": "全員の　手持ちポケモンの　{{stat}}を　最大５回の　バトルの間に　{{amount}}あげる.",
       "extra": {
         "stage": "1 stage",
         "percentage": "30%"
