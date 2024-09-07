@@ -66,6 +66,6 @@
   "saltCuredOnAdd": "{{pokemonNameWithAffix}} wurde eingepökelt!",
   "saltCuredLapse": "{{pokemonNameWithAffix}} wurde durch {{moveName}} verletzt!",
   "cursedOnAdd": "{{pokemonNameWithAffix}} nimmt einen Teil seiner KP und legt einen Fluch auf {{pokemonName}}!",
-  "stockpilingOnAdd": "{{pokemonNameWithAffix}} hortet {{stockpiledCount}}!",
-  "cursedLapse": "{{pokemonNameWithAffix}} wurde durch den Fluch verletzt!"
+  "cursedLapse": "{{pokemonNameWithAffix}} wurde durch den Fluch verletzt!",
+  "stockpilingOnAdd": "{{pokemonNameWithAffix}} hortet {{stockpiledCount}}!"
 }
