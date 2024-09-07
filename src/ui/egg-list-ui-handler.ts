@@ -3,14 +3,19 @@ import { Mode } from "./ui";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "./text";
 import MessageUiHandler from "./message-ui-handler";
-import { Egg } from "../data/egg";
+import { Egg, wavesHatchingSoon } from "../data/egg";
 import { addWindow } from "./ui-theme";
 import {Button} from "#enums/buttons";
 import i18next from "i18next";
+import { EggSourceType } from "#app/enums/egg-source-types.js";
+
+const iconSize = 18;
+const numCols = 11;
 
 export default class EggListUiHandler extends MessageUiHandler {
   private eggListContainer: Phaser.GameObjects.Container;
   private eggListIconContainer: Phaser.GameObjects.Container;
+  private eggSourceIconContainer: Phaser.GameObjects.Container;
   private eggSprite: Phaser.GameObjects.Sprite;
   private eggNameText: Phaser.GameObjects.Text;
   private eggDateText: Phaser.GameObjects.Text;
@@ -32,6 +37,8 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.eggListContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
     this.eggListContainer.setVisible(false);
     ui.add(this.eggListContainer);
+
+
 
     const bgColor = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0x006860);
     bgColor.setOrigin(0, 0);
@@ -66,6 +73,8 @@ export default class EggListUiHandler extends MessageUiHandler {
 
     this.eggListIconContainer = this.scene.add.container(115, 9);
     this.eggListContainer.add(this.eggListIconContainer);
+    this.eggSourceIconContainer = this.scene.add.container(115, 9);
+    this.eggListContainer.add(this.eggSourceIconContainer);
 
     this.cursorObj = this.scene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
@@ -99,14 +108,40 @@ export default class EggListUiHandler extends MessageUiHandler {
     let e = 0;
 
     for (const egg of this.scene.gameData.eggs) {
-      const x = (e % 11) * 18;
-      const y = Math.floor(e / 11) * 18;
+      const x = (e % numCols) * iconSize;
+      const y = Math.floor(e / numCols) * iconSize;
       const icon = this.scene.add.sprite(x - 2, y + 2, "egg_icons");
       icon.setScale(0.5);
       icon.setOrigin(0, 0);
       icon.setFrame(egg.getKey());
       this.eggListIconContainer.add(icon);
-      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
+      if (egg.hatchWaves <= wavesHatchingSoon) {
+        this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.ACTIVE);
+      } else {
+        this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
+      }
+      if (!egg.hasSourceIcon()) {
+        e++;
+        continue;
+      }
+      const source = this.scene.add.sprite(x + iconSize - 8, y + 2, egg.getSourceIcon(this.scene));
+      source.setOrigin(0, 0);
+      source.setScale(0.5);
+      if (egg.sourceType === EggSourceType.GACHA_LEGENDARY || egg.sourceType === EggSourceType.SAME_SPECIES_EGG) {
+        source.setFrame(egg.getSourcePokemonFrame(this.scene));
+        source.setScale(0.4);
+        source.setPosition(x + 5, y + 1);
+      }
+      if (egg.sourceType === EggSourceType.SAME_SPECIES_EGG) {
+        // add background to differentiate same species from legendary gacha
+        const bg = this.scene.add.image(x+8, y+3, "passive_bg");
+        bg.setOrigin(0, 0);
+        bg.setScale(0.65);
+        bg.setVisible(true);
+        this.eggSourceIconContainer.add(bg);
+      }
+      this.eggSourceIconContainer.add(source);
+
       e++;
     }
 
@@ -125,27 +160,27 @@ export default class EggListUiHandler extends MessageUiHandler {
       ui.revertMode();
       success = true;
     } else {
-      const eggCount = this.eggListIconContainer.getAll().length;
-      const rows = Math.ceil(eggCount / 11);
-      const row = Math.floor(this.cursor / 11);
+      const eggCount = this.scene.gameData.eggs.length;
+      const rows = Math.ceil(eggCount / numCols);
+      const row = Math.floor(this.cursor / numCols);
       switch (button) {
       case Button.UP:
         if (row) {
-          success = this.setCursor(this.cursor - 11);
+          success = this.setCursor(this.cursor - numCols);
         }
         break;
       case Button.DOWN:
-        if (row < rows - 2 || (row < rows - 1 && this.cursor % 11 <= (eggCount - 1) % 11)) {
-          success = this.setCursor(this.cursor + 11);
+        if (row < rows - 2 || (row < rows - 1 && this.cursor % numCols <= (eggCount - 1) % numCols)) {
+          success = this.setCursor(this.cursor + numCols);
         }
         break;
       case Button.LEFT:
-        if (this.cursor % 11) {
+        if (this.cursor % numCols) {
           success = this.setCursor(this.cursor - 1);
         }
         break;
       case Button.RIGHT:
-        if (this.cursor % 11 < (row < rows - 1 ? 10 : (eggCount - 1) % 11)) {
+        if (this.cursor % numCols < (row < rows - 1 ? 10 : (eggCount - 1) % numCols)) {
           success = this.setCursor(this.cursor + 1);
         }
         break;
@@ -184,7 +219,7 @@ export default class EggListUiHandler extends MessageUiHandler {
     changed = super.setCursor(cursor);
 
     if (changed) {
-      this.cursorObj.setPosition(114 + 18 * (cursor % 11), 10 + 18 * Math.floor(cursor / 11));
+      this.cursorObj.setPosition(114 + 18 * (cursor % numCols), 10 + 18 * Math.floor(cursor / numCols));
 
       if (lastCursor > -1) {
         this.iconAnimHandler.addOrUpdate(this.eggListIconContainer.getAt(lastCursor) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.NONE);
@@ -203,5 +238,6 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.eggListContainer.setVisible(false);
     this.iconAnimHandler.removeAll();
     this.eggListIconContainer.removeAll(true);
+    this.eggSourceIconContainer.removeAll(true);
   }
 }

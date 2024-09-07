@@ -25,6 +25,10 @@ const DEFAULT_RARE_EGGMOVE_RATE = 6;
 const SAME_SPECIES_EGG_RARE_EGGMOVE_RATE = 3;
 const GACHA_MOVE_UP_RARE_EGGMOVE_RATE = 3;
 
+export const wavesHatchingSoon = 5;
+const wavesHatchingClose = 15;
+const wavesHatchingNotClose = 50;
+
 /** Egg options to override egg properties */
 export interface IEggOptions {
   /** Id. Used to check if egg type will be manaphy (id % 204 === 0) */
@@ -277,16 +281,60 @@ export class Egg {
   }
 
   public getEggHatchWavesMessage(): string {
-    if (this.hatchWaves <= 5) {
+    if (this.hatchWaves <= wavesHatchingSoon) {
       return i18next.t("egg:hatchWavesMessageSoon");
     }
-    if (this.hatchWaves <= 15) {
+    if (this.hatchWaves <= wavesHatchingClose) {
       return i18next.t("egg:hatchWavesMessageClose");
     }
-    if (this.hatchWaves <= 50) {
+    if (this.hatchWaves <= wavesHatchingNotClose) {
       return i18next.t("egg:hatchWavesMessageNotClose");
     }
     return i18next.t("egg:hatchWavesMessageLongTime");
+  }
+
+  public hasSourceIcon() {
+    if (this.sourceType === EggSourceType.EVENT) {
+      return false;
+    } else if (this.isManaphyEgg() && this.sourceType === EggSourceType.GACHA_LEGENDARY) {
+      // gacha legendary is useless so don't show
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  public getSourceIcon(scene: BattleScene): string {
+    switch (this.sourceType) {
+    case EggSourceType.GACHA_MOVE:
+      return "icon_egg_move";
+    case EggSourceType.GACHA_SHINY:
+      return "shiny_star_small";
+    case EggSourceType.GACHA_LEGENDARY:
+      const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp));
+      return species.getIconAtlasKey(0, false, 0);
+    case EggSourceType.SAME_SPECIES_EGG:
+      return getPokemonSpecies(this._species).getIconAtlasKey(1, false, 0);
+    case EggSourceType.EVENT:
+      return "icon_owned"; // what to use here?
+    default:
+      return "icon_owned";
+    }
+  }
+
+  public getSourcePokemonFrame(scene: BattleScene): string {
+    let species;
+    if (this.sourceType === EggSourceType.SAME_SPECIES_EGG) {
+      species = getPokemonSpecies(this._species);
+    } else if (this.sourceType === EggSourceType.GACHA_LEGENDARY) {
+      species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, this.timestamp));
+    } else {
+      return "";
+    }
+    console.log(species.getName());
+    console.log(species.getIconAtlasKey(1, false, 0));
+    return species.getIconId(false, 0, false, 0);
+
   }
 
   public getEggTypeDescriptor(scene: BattleScene): string {
