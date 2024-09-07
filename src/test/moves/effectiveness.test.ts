@@ -6,6 +6,7 @@ import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import * as Messages from "#app/messages";
+import { TerastallizeModifier } from "#app/modifier/modifier";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -19,6 +20,7 @@ function testMoveEffectiveness(game: GameManager, move: Moves, targetSpecies: Sp
   if (teraType !== undefined) {
     game.override.enemyHeldItems([{ name:"TERA_SHARD", type: teraType }]);
   }
+
   const user = game.scene.addPlayerPokemon(getPokemonSpecies(Species.SNORLAX), 5);
   const target = game.scene.addEnemyPokemon(getPokemonSpecies(targetSpecies), 5, TrainerSlot.NONE);
 
@@ -36,6 +38,8 @@ describe("Moves - Type Effectiveness", () => {
       type: Phaser.HEADLESS,
     });
     game = new GameManager(phaserGame);
+    TerastallizeModifier.prototype.apply = (args) => true;
+
     game.override.ability(Abilities.BALL_FETCH);
   });
 
