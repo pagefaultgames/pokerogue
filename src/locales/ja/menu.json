@@ -52,6 +52,6 @@
   "rename": "変える",
   "nickname": "ニックネーム",
   "errorServerDown": "おや！\nサーバーとの 接続中に 問題が 発生しました。\nゲームは 自動的に 再接続されます から\nウィンドウは 開いたままに しておいても よろしいです。",
-  "noSaves": "You don't have any save files on record!",
-  "tooManySaves": "You have too many save files on record!"
+  "noSaves": "何の　セーブファイルも　ありません！",
+  "tooManySaves": "セーブファイルが　いっぱいです!"
 }
