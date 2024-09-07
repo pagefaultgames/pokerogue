@@ -47,7 +47,7 @@
       "description": "ポケモンのせいかくを {{natureName}}にかえて スターターのせいかくをえいきゅうにかいじょする"
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "Quadruples the chance of an encounter being a double battle for up to {{battleCount}} battles."
+      "description": "バトル{{battleCount}}かいのあいだ ダブルバトルになるかくりつを4ばいにする"
     },
     "TempStatStageBoosterModifierType": {
       "description": "Increases the {{stat}} of all party members by {{amount}} for up to 5 battles.",
