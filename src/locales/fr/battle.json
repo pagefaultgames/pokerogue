@@ -13,7 +13,7 @@
   "trainerDefeated": "Vous avez battu\n{{trainerName}} !",
   "moneyWon": "Vous remportez\n{{moneyAmount}} ₽ !",
   "moneyPickedUp": "Vous obtenez {{moneyAmount}} ₽ !",
-  "pokemonCaught": "Vous avez attrapé {{pokemonName}} !",
+  "pokemonCaught": "Vous avez attrapé\n{{pokemonName}} !",
   "addedAsAStarter": "{{pokemonName}} est ajouté\ncomme starter !",
   "partyFull": "Votre équipe est pleine.\nRelâcher un Pokémon pour {{pokemonName}} ?",
   "pokemon": "de Pokémon",
