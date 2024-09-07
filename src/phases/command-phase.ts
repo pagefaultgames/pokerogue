@@ -8,7 +8,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Biome } from "#app/enums/biome";
 import { Moves } from "#app/enums/moves";
 import { PokeballType } from "#app/enums/pokeball";
-import { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
+import { FieldPosition, PlayerPokemon, TurnMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
@@ -50,7 +50,7 @@ export class CommandPhase extends FieldPhase {
     const moveQueue = playerPokemon.getMoveQueue();
 
     while (moveQueue.length && moveQueue[0]
-        && moveQueue[0].move && (!playerPokemon.getMoveset().find(m => m?.moveId === moveQueue[0].move)
+        && moveQueue[0].move && !moveQueue[0].virtual && (!playerPokemon.getMoveset().find(m => m?.moveId === moveQueue[0].move)
           || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m?.moveId === moveQueue[0].move)]!.isUsable(playerPokemon, moveQueue[0].ignorePP))) { // TODO: is the bang correct?
       moveQueue.shift();
     }
@@ -63,6 +63,8 @@ export class CommandPhase extends FieldPhase {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m?.moveId === queuedMove.move);
         if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex]!.isUsable(playerPokemon, queuedMove.ignorePP)) { // TODO: is the bang correct?
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1 });
+        } else if (moveQueue[0].virtual) {
+          this.handleCommand(Command.FIGHT, moveIndex, queuedMove);
         } else {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
         }
@@ -82,7 +84,9 @@ export class CommandPhase extends FieldPhase {
       if (cursor === -1 ||
             playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
             (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m?.isUsable(playerPokemon)).length)) {
-        const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor]!.moveId : Moves.NONE : Moves.STRUGGLE; // TODO: is the bang correct?
+        const turnMove: TurnMove | undefined = args.length === 1 ? (args[0] as TurnMove) : undefined;
+        /* THIS NEEDS FURTHER TESTING */
+        const moveId = !useStruggle ? !turnMove ? cursor > -1 ? playerPokemon.getMoveset()[cursor]!.moveId : Moves.NONE : turnMove.move : Moves.STRUGGLE; // TODO: is the bang correct?
         const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
         const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
         if (!moveId) {

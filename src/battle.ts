@@ -1,5 +1,5 @@
 import BattleScene from "./battle-scene";
-import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./field/pokemon";
+import { EnemyPokemon, PlayerPokemon, TurnMove } from "./field/pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer, { TrainerVariant } from "./field/trainer";
@@ -32,7 +32,7 @@ export enum BattlerIndex {
 export interface TurnCommand {
     command: Command;
     cursor?: number;
-    move?: QueuedMove;
+    move?: TurnMove;
     targets?: BattlerIndex[];
     skip?: boolean;
     args?: any[];
