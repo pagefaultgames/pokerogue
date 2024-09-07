@@ -1,5 +1,4 @@
 import { generateModifierType, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterExp, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { StatusEffect } from "#app/data/status-effect";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { randSeedInt } from "#app/utils";
@@ -13,6 +12,8 @@ import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encou
 import { applyDamageToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { Nature } from "#enums/nature";
+import { getNatureName } from "#app/data/nature";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounter:shadyVitaminDealer";
@@ -26,8 +27,8 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SHADY_VITAMIN_DEALER)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(10, 180)
-    .withPrimaryPokemonStatusEffectRequirement([StatusEffect.NONE]) // Pokemon must not have status
-    .withPrimaryPokemonHealthRatioRequirement([0.34, 1]) // Pokemon must have above 1/3rd HP
+    .withSceneRequirement(new MoneyRequirement(0, 1.5)) // Must have the money for at least the cheap deal
+    .withPrimaryPokemonHealthRatioRequirement([0.5, 1]) // At least 1 Pokemon must have above half HP
     .withIntroSpriteConfigs([
       {
         spriteKey: Species.KROOKODILE.toString(),
@@ -62,7 +63,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-        .withSceneMoneyRequirement(0, 2) // Wave scaling money multiplier of 2
+        .withSceneMoneyRequirement(0, 1.5)
         .withDialogue({
           buttonLabel: `${namespace}.option.1.label`,
           buttonTooltip: `${namespace}.option.1.tooltip`,
@@ -90,7 +91,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
             };
           };
 
-          // Only Pokemon that can gain benefits are above 1/3rd HP with no status
+          // Only Pokemon that can gain benefits are above half HP with no status
           const selectableFilter = (pokemon: Pokemon) => {
             // If pokemon meets primary pokemon reqs, it can be selected
             const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(scene, pokemon);
@@ -118,26 +119,21 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         .withPostOptionPhase(async (scene: BattleScene) => {
           // Damage and status applied after dealer leaves (to make thematic sense)
           const encounter = scene.currentBattle.mysteryEncounter!;
-          const chosenPokemon = encounter.misc.chosenPokemon;
+          const chosenPokemon = encounter.misc.chosenPokemon as PlayerPokemon;
 
-          // Pokemon takes 1/3 max HP damage
-          applyDamageToPokemon(scene, chosenPokemon, Math.floor(chosenPokemon.getMaxHp() / 3));
+          // Pokemon takes half max HP damage and nature is randomized (does not update dex)
+          applyDamageToPokemon(scene, chosenPokemon, Math.floor(chosenPokemon.getMaxHp() / 2));
 
-          // Roll for poison (80%)
-          if (randSeedInt(10) < 8) {
-            if (chosenPokemon.trySetStatus(StatusEffect.TOXIC)) {
-              // Toxic applied
-              queueEncounterMessage(scene, `${namespace}.bad_poison`);
-            } else {
-              // Pokemon immune or something else prevents status
-              queueEncounterMessage(scene, `${namespace}.damage_only`);
-            }
-          } else {
-            queueEncounterMessage(scene, `${namespace}.damage_only`);
+          const currentNature = chosenPokemon.nature;
+          let newNature = randSeedInt(25) as Nature;
+          while (newNature === currentNature) {
+            newNature = randSeedInt(25) as Nature;
           }
 
+          chosenPokemon.nature = newNature;
+          encounter.setDialogueToken("newNature", getNatureName(newNature));
+          queueEncounterMessage(scene, `${namespace}.cheap_side_effects`);
           setEncounterExp(scene, [chosenPokemon.id], 100);
-
           chosenPokemon.updateInfo();
         })
         .build()
@@ -145,7 +141,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-        .withSceneMoneyRequirement(0, 5) // Wave scaling money multiplier of 5
+        .withSceneMoneyRequirement(0, 3.5)
         .withDialogue({
           buttonLabel: `${namespace}.option.2.label`,
           buttonTooltip: `${namespace}.option.2.tooltip`,
@@ -173,10 +169,10 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
             };
           };
 
-          // Only Pokemon that can gain benefits are above 1/3rd HP with no status
+          // Only Pokemon that can gain benefits are unfainted
           const selectableFilter = (pokemon: Pokemon) => {
-            // If pokemon meets primary pokemon reqs, it can be selected
-            const meetsReqs = encounter.pokemonMeetsPrimaryRequirements(scene, pokemon);
+            // If pokemon is unfainted it can be selected
+            const meetsReqs = !pokemon.isFainted(true);
             if (!meetsReqs) {
               return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
             }
@@ -203,19 +199,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
           const encounter = scene.currentBattle.mysteryEncounter!;
           const chosenPokemon = encounter.misc.chosenPokemon;
 
-          // Roll for poison (20%)
-          if (randSeedInt(10) < 2) {
-            if (chosenPokemon.trySetStatus(StatusEffect.POISON)) {
-              // Poison applied
-              queueEncounterMessage(scene, `${namespace}.poison`);
-            } else {
-              // Pokemon immune or something else prevents status
-              queueEncounterMessage(scene, `${namespace}.no_bad_effects`);
-            }
-          } else {
-            queueEncounterMessage(scene, `${namespace}.no_bad_effects`);
-          }
-
+          queueEncounterMessage(scene, `${namespace}.no_bad_effects`);
           setEncounterExp(scene, [chosenPokemon.id], 100);
 
           chosenPokemon.updateInfo();

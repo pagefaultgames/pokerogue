@@ -74,7 +74,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
       const hardSpriteKey = hardConfig.getSpriteKey(female, hardConfig.doubleOnly);
       encounter.enemyPartyConfigs.push({
         trainerConfig: hardConfig,
-        levelAdditiveMultiplier: 0.5,
+        levelAdditiveMultiplier: 1,
         female: female,
       });
 
@@ -96,7 +96,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
       const brutalSpriteKey = brutalConfig.getSpriteKey(female, brutalConfig.doubleOnly);
       encounter.enemyPartyConfigs.push({
         trainerConfig: brutalConfig,
-        levelAdditiveMultiplier: 1,
+        levelAdditiveMultiplier: 1.5,
         female: female,
       });
 
@@ -163,7 +163,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         const encounter = scene.currentBattle.mysteryEncounter!;
-        // Spawn hard fight with ULTRA/GREAT reward (can improve with luck)
+        // Spawn hard fight
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
 
         setEncounterRewards(scene, { guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT], fillRemaining: true });
@@ -188,7 +188,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
       },
       async (scene: BattleScene) => {
         const encounter = scene.currentBattle.mysteryEncounter!;
-        // Spawn brutal fight with ROGUE/ULTRA/GREAT reward (can improve with luck)
+        // Spawn brutal fight
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[2];
 
         // To avoid player level snowballing from picking this option

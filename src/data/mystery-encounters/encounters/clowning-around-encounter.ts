@@ -275,11 +275,11 @@ export const ClowningAroundEncounter: MysteryEncounter =
             .forEach(m => {
               const type = m.type.withTierFromPool();
               const tier = type.tier ?? ModifierTier.ULTRA;
-              if (type.id === "LUCKY_EGG" || tier === ModifierTier.ULTRA) {
-                numUltra += m.stackCount;
-                scene.removeModifier(m);
-              } else if (type.id === "GOLDEN_EGG" || tier === ModifierTier.ROGUE) {
+              if (type.id === "GOLDEN_EGG" || tier === ModifierTier.ROGUE) {
                 numRogue += m.stackCount;
+                scene.removeModifier(m);
+              } else if (type.id === "LUCKY_EGG" || tier === ModifierTier.ULTRA) {
+                numUltra += m.stackCount;
                 scene.removeModifier(m);
               }
             });

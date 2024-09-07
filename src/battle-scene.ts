@@ -1361,7 +1361,6 @@ export default class BattleScene extends SceneBase {
     case Species.ZARUDE:
     case Species.SQUAWKABILLY:
     case Species.TATSUGIRI:
-    case Species.GIMMIGHOUL:
     case Species.PALDEA_TAUROS:
       return Utils.randSeedInt(species.forms.length);
     case Species.PIKACHU:
@@ -1387,6 +1386,13 @@ export default class BattleScene extends SceneBase {
         return 1;
       }
       return 0;
+    case Species.GIMMIGHOUL:
+      // Chest form can only be found in Mysterious Chest Encounter, if this is a game mode with MEs
+      if (this.gameMode.hasMysteryEncounters) {
+        return 1; // Wandering form
+      } else {
+        return Utils.randSeedInt(species.forms.length);
+      }
     }
 
     if (ignoreArena) {

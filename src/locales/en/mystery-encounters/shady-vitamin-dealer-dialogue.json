@@ -13,7 +13,7 @@
     },
     "2": {
       "label": "The Pricey Deal",
-      "tooltip": "(-) Pay {{option2Money, money}}\n(-) Side Effects?\n(+) Chosen Pokémon Gains 2 Random Vitamins"
+      "tooltip": "(-) Pay {{option2Money, money}}\n(+) Chosen Pokémon Gains 2 Random Vitamins"
     },
     "3": {
       "label": "Leave",
@@ -22,8 +22,6 @@
     },
     "selected": "The man hands you two bottles and quickly disappears.${{selectedPokemon}} gained {{boost1}} and {{boost2}} boosts!"
   },
-  "damage_only": "But the medicine had some side effects!$Your {{selectedPokemon}} takes some damage...",
-  "bad_poison": "But the medicine had some side effects!$Your {{selectedPokemon}} takes some damage\nand becomes badly poisoned...",
-  "poison": "But the medicine had some side effects!$Your {{selectedPokemon}} becomes poisoned...",
-  "no_bad_effects": "Looks like there were no side-effects this time."
+  "cheap_side_effects": "But the medicine had some side effects!$Your {{selectedPokemon}} takes some damage,\nand its Nature is changed to {{newNature}}!",
+  "no_bad_effects": "Looks like there were no side-effects from the medicine!"
 }
