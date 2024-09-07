@@ -50,12 +50,11 @@
       "description": "Vervierfacht die Chance, dass ein Kampf ein Doppelkampf wird, für bis zu {{battleCount}} Kämpfe."
     },
     "TempStatStageBoosterModifierType": {
-  "description": "Erhöht {{stat}} aller Teammitglieder um {{amount}} für bis zu 5 Kämpfe.",
-  "extra": {
-    "stage": "eine Stufe",
-    "percentage": "30%"
-  }
-}
+      "description": "Erhöht {{stat}} aller Teammitglieder um {{amount}} für bis zu 5 Kämpfe.",
+      "extra": {
+        "stage": "eine Stufe",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "Erhöht die Stärke aller {{moveType}}-Attacken eines Pokémon um 20%."
