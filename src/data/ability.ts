@@ -1595,8 +1595,8 @@ export class PostAttackAbAttr extends AbAttr {
   private attackCondition: PokemonAttackCondition;
 
   /** The default attackCondition requires that the selected move is a damaging move */
-  constructor(attackCondition: PokemonAttackCondition = (user, target, move) => (move.category !== MoveCategory.STATUS)) {
-    super();
+  constructor(attackCondition: PokemonAttackCondition = (user, target, move) => (move.category !== MoveCategory.STATUS), showAbility: boolean = true) {
+    super(showAbility);
 
     this.attackCondition = attackCondition;
   }
@@ -1630,7 +1630,7 @@ export class PostAttackAbAttr extends AbAttr {
  */
 export class GorillaTacticsAbAttr extends PostAttackAbAttr {
   constructor() {
-    super((user, target, move) => true);
+    super((user, target, move) => true, false);
   }
 
   /**
