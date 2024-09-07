@@ -706,7 +706,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.uiVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     break;
   case SettingKeys.Music_Preference:
-    scene.musicPreference = MusicPreference[value];
+    scene.musicPreference = value;
     break;
   case SettingKeys.Damage_Numbers:
     scene.damageNumbersMode = value;
