@@ -6,7 +6,7 @@
   "singleWildAppeared": "Un {{pokemonName}} sauvage apparait !",
   "multiWildAppeared": "Un {{pokemonName1}} et un {{pokemonName2}}\nsauvages apparaissent !",
   "playerComeBack": "{{pokemonName}} !\nReviens !",
-  "trainerComeBack": "{{trainerName}} retire {{pokemonName}} !",
+  "trainerComeBack": "{{trainerName}} retire\n{{pokemonName}} !",
   "playerGo": "{{pokemonName}} ! Go !",
   "trainerGo": "{{pokemonName}} est envoyé par\n{{trainerName}} !",
   "switchQuestion": "Voulez-vous changer\n{{pokemonName}} ?",
