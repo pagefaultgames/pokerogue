@@ -52,6 +52,6 @@
   "rename": "Rinomina",
   "nickname": "Nickname",
   "errorServerDown": "Poffarbacco! C'è stato un errore nella comunicazione col server.\n\nPuoi lasciare questa finestra aperta,\nil gioco si riconnetterà automaticamente.",
-  "noSaves": "You don't have any save files on record!",
-  "tooManySaves": "You have too many save files on record!"
+  "noSaves": "Non ci sono file di salvataggio registrati!",
+  "tooManySaves": "Ci sono troppi file di salvataggio registrati!"
 }
