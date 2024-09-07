@@ -20,8 +20,8 @@ const type = args[0]; // "move" or "ability"
 let fileName = args[1]; // The file name
 
 if (!type || !fileName) {
-    console.error('Please provide a type ("move", "ability", or "item") and a file name.');
-    process.exit(1);
+  console.error('Please provide a type ("move", "ability", or "item") and a file name.');
+  process.exit(1);
 }
 
 // Convert fileName from kebab-case or camelCase to snake_case
@@ -42,14 +42,14 @@ if (type === 'move') {
   dir = path.join(__dirname, 'src', 'test', 'moves');
   description = `Moves - ${formattedName}`;
 } else if (type === 'ability') {
-    dir = path.join(__dirname, 'src', 'test', 'abilities');
-    description = `Abilities - ${formattedName}`;
+  dir = path.join(__dirname, 'src', 'test', 'abilities');
+  description = `Abilities - ${formattedName}`;
 } else if (type === "item") {
-    dir = path.join(__dirname, 'src', 'test', 'items');
-    description = `Items - ${formattedName}`;
+  dir = path.join(__dirname, 'src', 'test', 'items');
+  description = `Items - ${formattedName}`;
 } else {
-    console.error('Invalid type. Please use "move", "ability", or "item".');
-    process.exit(1);
+  console.error('Invalid type. Please use "move", "ability", or "item".');
+  process.exit(1);
 }
 
 // Ensure the directory exists
