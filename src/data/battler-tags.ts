@@ -212,11 +212,12 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
   }
 
   /**
+   * @override
    * @param {Pokemon} pokemon {@linkcode Pokemon} attempting to use the restricted move
    * @param {Moves} move {@linkcode Moves} ID of the move being interrupted
    * @returns {string} text to display when the move is interrupted
    */
-  interruptedText(pokemon: Pokemon, move: Moves): string {
+  override interruptedText(pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:disableInterruptedMove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name });
   }
 
@@ -254,7 +255,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
 
   /**
    * Ensures that move history exists on {@linkcode Pokemon} and has a valid move.
-   * If so, sets the {@linkcode moveId} and increases the user's Attack by one stage.
+   * If so, sets the {@linkcode moveId} and increases the user's Attack by 50%.
    * @override
    * @param {Pokemon} pokemon the {@linkcode Pokemon} to add the tag to
    */
