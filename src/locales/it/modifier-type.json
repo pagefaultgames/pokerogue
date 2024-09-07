@@ -47,7 +47,7 @@
       "description": "Cambia la natura del Pokémon in {{natureName}} e sblocca la natura nel menu degli starter."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "Quadruples the chance of an encounter being a double battle for up to {{battleCount}} battles."
+      "description": "Quadruplica la possibilità di imbattersi in doppie battaglie per {{battleCount}} battaglie."
     },
     "TempStatStageBoosterModifierType": {
       "description": "Aumenta la statistica {{stat}} di {{amount}}\na tutti i Pokémon nel gruppo per 5 battaglie",
