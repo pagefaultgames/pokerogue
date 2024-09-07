@@ -49,7 +49,7 @@
     "DoubleBattleChanceBoosterModifierType": {
       "description": "Quadruplica as chances de encontrar uma batalha em dupla por {{battleCount}} batalhas."
     },
-    "TempStatStageBoosterModifierType": {.
+    "TempStatStageBoosterModifierType": {
       "description": "Aumenta o atributo de {{stat}} para todos os membros da equipe em {{amount}} por 5 batalhas.",
       "extra": {
         "stage": "1 nível",
