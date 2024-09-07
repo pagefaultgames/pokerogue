@@ -455,6 +455,26 @@ export function rgbaToInt(rgba: integer[]): integer {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
 }
 
+/**
+ * Provided valid HSV values, calculates and stitches together a string of that
+ * HSV color's corresponding hex code.
+ *
+ * Sourced from {@link https://stackoverflow.com/a/44134328}.
+ * @param h Hue in degrees, must be in a range of [0, 360]
+ * @param s Saturation percentage, must be in a range of [0, 1]
+ * @param l Ligthness percentage, must be in a range of [0, 1]
+ * @returns a string of the corresponding color hex code with a "#" prefix
+ */
+export function hslToHex(h: number, s: number, l: number): string {
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const rgb = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+    return Math.round(rgb * 255).toString(16).padStart(2, "0");
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
 /*This function returns true if the current lang is available for some functions
 If the lang is not in the function, it usually means that lang is going to use the default english version
 This function is used in:
