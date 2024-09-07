@@ -33,7 +33,7 @@ const timedEvents: TimedEvent[] = [
     xPosition: 19,
     yPosition: 115,
     scale: 0.30,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es", "pt_BR", "zh_CN"]
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN"]
   }
 ];
 

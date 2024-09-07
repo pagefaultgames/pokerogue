@@ -80,7 +80,7 @@
   "100_RIBBONS": {
     "name": "大師球聯盟冠軍"
   },
-  "TRANSFER_MAX_BATTLE_STAT": {
+  "TRANSFER_MAX_STAT_STAGE": {
     "name": "團隊協作",
     "description": "在一項屬性強化至最大時用接力棒傳遞給其他寶可夢"
   },
