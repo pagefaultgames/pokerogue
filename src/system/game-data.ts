@@ -45,7 +45,7 @@ import { TerrainType } from "#app/data/terrain.js";
 import { OutdatedPhase } from "#app/phases/outdated-phase.js";
 import { ReloadSessionPhase } from "#app/phases/reload-session-phase.js";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
-import { sessionVersionConverter, settingVersionConverter, systemVersionConverter } from "./version-converter";
+import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "./version-converter";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -463,7 +463,7 @@ export class GameData {
           localStorage.setItem(lsItemKey, "");
         }
 
-        systemVersionConverter(systemData);
+        applySystemDataPatches(systemData);
 
         this.trainerId = systemData.trainerId;
         this.secretId = systemData.secretId;
@@ -727,6 +727,7 @@ export class GameData {
     setSetting(this.scene, setting, valueIndex);
 
     settings[setting] = valueIndex;
+    settings["gameVersion"] = this.scene.game.config.gameVersion;
 
     localStorage.setItem("settings", JSON.stringify(settings));
 
@@ -837,7 +838,7 @@ export class GameData {
 
     const settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
 
-    settingVersionConverter(settings);
+    applySettingsDataPatches(settings);
 
     for (const setting of Object.keys(settings)) {
       setSetting(this.scene, setting, settings[setting]);
@@ -995,7 +996,7 @@ export class GameData {
         const initSessionFromData = async (sessionData: SessionSaveData) => {
           console.debug(sessionData);
 
-          sessionVersionConverter(sessionData);
+          applySessionDataPatches(sessionData);
 
           scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
           if (sessionData.challenges) {

@@ -2,22 +2,73 @@ import { allSpecies } from "#app/data/pokemon-species.js";
 import { AbilityAttr, defaultStarterSpecies, DexAttr, SessionSaveData, SystemSaveData } from "./game-data";
 import { SettingKeys } from "./settings/settings";
 
-const LATEST_VERSION = process.env.npm_package_version!;
+const LATEST_VERSION = "1.0.5";
 
-export function sessionVersionConverter(data: SessionSaveData) {
+export function applySessionDataPatches(data: SessionSaveData) {
   const curVersion = data.gameVersion;
   if (curVersion !== LATEST_VERSION) {
-    switch (data.gameVersion) {
+    switch (curVersion) {
+    case "1.0.0":
+    case "1.0.1":
+    case "1.0.2":
+    case "1.0.3":
     case "1.0.4":
-      // Session data fixing would go here
+      // --- PATCHES ---
+
+      // Fix Battle Items, Vitamins, and Lures
+      data.modifiers.forEach((m) => {
+        if (m.className === "PokemonBaseStatModifier") {
+          m.className = "BaseStatModifier";
+        } else if (m.className === "PokemonResetNegativeStatStageModifier") {
+          m.className = "ResetNegativeStatStageModifier";
+        } else if (m.className === "TempBattleStatBoosterModifier") {
+          m.className = "TempStatStageBoosterModifier";
+          m.typeId = "TEMP_STAT_STAGE_BOOSTER";
+
+          // Migration from TempBattleStat to Stat
+          const newStat = m.typePregenArgs[0] + 1;
+          m.typePregenArgs[0] = newStat;
+
+          // From [ stat, battlesLeft ] to [ stat, maxBattles, battleCount ]
+          m.args = [ newStat, 5, m.args[1] ];
+        } else if (m.className === "DoubleBattleChanceBoosterModifier") {
+          let maxBattles: number;
+          switch (m.typeId) {
+          case "MAX_LURE":
+            maxBattles = 30;
+            break;
+          case "SUPER_LURE":
+            maxBattles = 15;
+            break;
+          default:
+            maxBattles = 10;
+            break;
+          }
+
+          // From [ battlesLeft ] to [ maxBattles, battleCount ]
+          m.args = [ maxBattles, m.args[0] ];
+        }
+      });
+
+      data.enemyModifiers.forEach((m) => {
+        if (m.className === "PokemonBaseStatModifier") {
+          m.className = "BaseStatModifier";
+        }
+      });
     }
+
+    data.gameVersion = LATEST_VERSION;
   }
 }
 
-export function systemVersionConverter(data: SystemSaveData) {
+export function applySystemDataPatches(data: SystemSaveData) {
   const curVersion = data.gameVersion;
   if (curVersion !== LATEST_VERSION) {
-    switch (data.gameVersion) {
+    switch (curVersion) {
+    case "1.0.0":
+    case "1.0.1":
+    case "1.0.2":
+    case "1.0.3":
     case "1.0.4":
       // --- LEGACY PATCHES ---
       if (data.starterData) {
@@ -58,16 +109,31 @@ export function systemVersionConverter(data: SystemSaveData) {
         }
       }
     }
+
+    data.gameVersion = LATEST_VERSION;
   }
-  data.gameVersion = LATEST_VERSION;
 }
 
-export function settingVersionConverter(settings: Object) {
-  // Settings don't have versioning (?), so we can't reference a previous
-  // version.
-  if (settings.hasOwnProperty("REROLL_TARGET") && !settings.hasOwnProperty(SettingKeys.Shop_Cursor_Target)) {
-    settings[SettingKeys.Shop_Cursor_Target] = settings["REROLL_TARGET"];
-    delete settings["REROLL_TARGET"];
-    localStorage.setItem("settings", JSON.stringify(settings));
+export function applySettingsDataPatches(settings: Object) {
+  const curVersion = settings.hasOwnProperty("gameVersion") ? settings["gameVersion"] : "1.0.0";
+  if (curVersion !== LATEST_VERSION) {
+    switch (curVersion) {
+    case "1.0.0":
+    case "1.0.1":
+    case "1.0.2":
+    case "1.0.3":
+    case "1.0.4":
+      console.log("settings");
+
+      // --- PATCHES ---
+
+      // Fix Reward Cursor Target
+      if (settings.hasOwnProperty("REROLL_TARGET") && !settings.hasOwnProperty(SettingKeys.Shop_Cursor_Target)) {
+        settings[SettingKeys.Shop_Cursor_Target] = settings["REROLL_TARGET"];
+        delete settings["REROLL_TARGET"];
+        localStorage.setItem("settings", JSON.stringify(settings));
+      }
+    }
+    // Note that the current game version will be written at `saveSettings`
   }
 }
