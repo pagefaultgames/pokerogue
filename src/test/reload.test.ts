@@ -36,19 +36,19 @@ describe("Reload", () => {
     expect(preReloadRngState).toBe(postReloadRngState);
   }, 20000);
 
-  it("should not have RNG inconsistencies after a biome switch", async () => {
+  it("should not have RNG or weather inconsistencies after a biome switch", async () => {
     game.override
       .startingWave(10)
-      .startingBiome(Biome.CAVE) // Will lead to biomes with randomly generated weather
+      .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
       .battleType("single")
-      .startingLevel(100)
-      .enemyLevel(1000)
+      .startingLevel(100) // Avoid levelling up
+      .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
       .disableTrainerWaves()
       .moveset([Moves.KOWTOW_CLEAVE])
       .enemyMoveset(SPLASH_ONLY);
-    await game.dailyMode.startBattle();
+    await game.classicMode.startBattle(); // Apparently daily mode would override the biome
 
-    // Transition from Daily Run Wave 10 to Wave 11 in order to trigger biome switch
+    // Transition from Wave 10 to Wave 11 in order to trigger biome switch
     game.move.select(Moves.KOWTOW_CLEAVE);
     await game.phaseInterceptor.to("DamagePhase");
     await game.doKillOpponents();
@@ -56,12 +56,15 @@ describe("Reload", () => {
     expect(game.phaseInterceptor.log).toContain("NewBiomeEncounterPhase");
 
     const preReloadRngState = Phaser.Math.RND.state();
+    const preReloadWeather = game.scene.arena.weather;
 
     await game.reload.reloadSession();
 
     const postReloadRngState = Phaser.Math.RND.state();
+    const postReloadWeather = game.scene.arena.weather;
 
     expect(preReloadRngState).toBe(postReloadRngState);
+    expect(preReloadWeather).toStrictEqual(postReloadWeather);
   }, 20000);
 
   it("should not have RNG inconsistencies at a Daily run wild Pokemon fight", async () => {

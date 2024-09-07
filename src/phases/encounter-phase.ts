@@ -154,6 +154,7 @@ export class EncounterPhase extends BattlePhase {
 
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
+          this.trySetWeatherIfNewBiome(); // Set weather before session gets saved
           //@ts-ignore
           this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 10 === 1 || this.scene.lastSavePlayTime >= 300).then(success => { // TODO: get rid of ts-ignore
             this.scene.disableMenu = false;
@@ -186,10 +187,6 @@ export class EncounterPhase extends BattlePhase {
       if (pokemon) {
         pokemon.resetBattleData();
       }
-    }
-
-    if (!this.loaded) {
-      this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
     }
 
     const enemyField = this.scene.getEnemyField();
@@ -386,5 +383,19 @@ export class EncounterPhase extends BattlePhase {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Set biome weather if and only if this encounter is the start of a new biome.
+   *
+   * By using function overrides, this should happen if and only if this phase
+   * is exactly a NewBiomeEncounterPhase or an EncounterPhase (to account for
+   * Wave 1 of a Daily Run), but NOT NextEncounterPhase (which starts the next
+   * wave in the same biome).
+   */
+  trySetWeatherIfNewBiome(): void {
+    if (!this.loaded) {
+      this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
+    }
   }
 }

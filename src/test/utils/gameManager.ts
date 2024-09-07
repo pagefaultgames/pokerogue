@@ -32,7 +32,6 @@ import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Button } from "#enums/buttons";
 import { ExpNotification } from "#enums/exp-notification";
-import { GameDataType } from "#enums/game-data-type";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
@@ -330,13 +329,11 @@ export default class GameManager {
    * @returns A promise that resolves with the exported save data.
    */
   exportSaveToTest(): Promise<string> {
+    const saveKey = "x0i2O7WRiANTqPmZ";
     return new Promise(async (resolve) => {
-      await this.scene.gameData.saveAll(this.scene, true, true, true, true);
-      this.scene.reset(true);
-      await waitUntil(() => this.scene.ui?.getMode() === Mode.TITLE);
-      await this.scene.gameData.tryExportData(GameDataType.SESSION, 0);
-      await waitUntil(() => localStorage.hasOwnProperty("toExport"));
-      return resolve(localStorage.getItem("toExport")!); // TODO: is this bang correct?;
+      const sessionSaveData = this.scene.gameData.getSessionSaveData(this.scene);
+      const encryptedSaveData = AES.encrypt(JSON.stringify(sessionSaveData), saveKey).toString();
+      resolve(encryptedSaveData);
     });
   }
 

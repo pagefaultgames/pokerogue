@@ -17,8 +17,6 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
       }
     }
 
-    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
-
     for (const pokemon of this.scene.getParty().filter(p => p.isOnField())) {
       applyAbAttrs(PostBiomeChangeAbAttr, pokemon, null);
     }
@@ -34,5 +32,12 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
         }
       }
     });
+  }
+
+  /**
+   * Set biome weather.
+   */
+  trySetWeatherIfNewBiome(): void {
+    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
   }
 }

@@ -24,8 +24,9 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPLASH_ONLY } from "../utils/testUtils";
+import { Biome } from "#app/enums/biome";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -291,7 +292,8 @@ describe("Test Battle Phase", () => {
     expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
   }, 20000);
 
-  it("to next wave with pokemon killed, single", async () => {
+  // Made redundant by the "same biome" test, which is copied from this test, should this be removed?
+  it.skip("to next wave with pokemon killed, single", async () => {
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
     game.override.starterSpecies(Species.MEWTWO);
@@ -307,6 +309,30 @@ describe("Test Battle Phase", () => {
     game.move.select(moveToUse);
     await game.doKillOpponents();
     await game.toNextWave();
+    expect(game.scene.currentBattle.waveIndex).toBeGreaterThan(waveIndex);
+  }, 20000);
+
+  it("does not set new weather if staying in same biome", async () => {
+    const moveToUse = Moves.SPLASH;
+    game.override
+      .battleType("single")
+      .starterSpecies(Species.MEWTWO)
+      .enemySpecies(Species.RATTATA)
+      .enemyAbility(Abilities.HYDRATION)
+      .ability(Abilities.ZEN_MODE)
+      .startingLevel(2000)
+      .startingWave(3)
+      .startingBiome(Biome.LAKE)
+      .moveset([moveToUse]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    await game.classicMode.startBattle();
+    const waveIndex = game.scene.currentBattle.waveIndex;
+    game.move.select(moveToUse);
+
+    vi.spyOn(game.scene.arena, "trySetWeather");
+    await game.doKillOpponents();
+    await game.toNextWave();
+    expect(game.scene.arena.trySetWeather).not.toHaveBeenCalled();
     expect(game.scene.currentBattle.waveIndex).toBeGreaterThan(waveIndex);
   }, 20000);
 
