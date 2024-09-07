@@ -103,6 +103,8 @@ export default class PokemonData {
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
     this.usedTMs = source.usedTMs ?? [];
 
+    this.mysteryEncounterData = source.mysteryEncounterData ?? new MysteryEncounterPokemonData();
+
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
       this.bossSegments = source.bossSegments;
@@ -114,7 +116,6 @@ export default class PokemonData {
         this.status = sourcePokemon.status;
         if (this.player) {
           this.summonData = sourcePokemon.summonData;
-          this.mysteryEncounterData = sourcePokemon.mysteryEncounterData;
         }
       }
     } else {
@@ -142,14 +143,6 @@ export default class PokemonData {
         } else {
           this.summonData.tags = [];
         }
-      }
-
-      this.mysteryEncounterData = new MysteryEncounterPokemonData();
-      if (!forHistory && source.mysteryEncounterData) {
-        this.mysteryEncounterData.spriteScale = source.mysteryEncounterData.spriteScale;
-        this.mysteryEncounterData.ability = source.mysteryEncounterData.ability;
-        this.mysteryEncounterData.passive = source.mysteryEncounterData.passive;
-        this.mysteryEncounterData.types = source.mysteryEncounterData.types;
       }
     }
   }

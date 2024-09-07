@@ -53,11 +53,12 @@ export function queueEncounterMessage(scene: BattleScene, contentKey: string): v
  * @param contentKey
  * @param prompt
  * @param callbackDelay
+ * @param promptDelay
  */
-export function showEncounterText(scene: BattleScene, contentKey: string, callbackDelay: number = 0, prompt: boolean = true): Promise<void> {
+export function showEncounterText(scene: BattleScene, contentKey: string, callbackDelay: number = 0, prompt: boolean = true, promptDelay: number | null = null): Promise<void> {
   return new Promise<void>(resolve => {
     const text: string | null = getEncounterText(scene, contentKey);
-    scene.ui.showText(text ?? "", null, () => resolve(), callbackDelay, prompt);
+    scene.ui.showText(text ?? "", null, () => resolve(), callbackDelay, prompt, promptDelay);
   });
 }
 

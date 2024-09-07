@@ -113,10 +113,10 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
     break;
   }
 
-  uiHandler.processInput(Button.ACTION);
-
   if (!isNullOrUndefined(secondaryOptionSelect?.pokemonNo)) {
     await handleSecondaryOptionSelect(game, secondaryOptionSelect!.pokemonNo, secondaryOptionSelect!.optionNo);
+  } else {
+    uiHandler.processInput(Button.ACTION);
   }
 }
 
@@ -124,6 +124,10 @@ async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number,
   // Handle secondary option selections
   const partyUiHandler = game.scene.ui.handlers[Mode.PARTY] as PartyUiHandler;
   vi.spyOn(partyUiHandler, "show");
+
+  const encounterUiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
+  encounterUiHandler.processInput(Button.ACTION);
+
   await vi.waitFor(() => expect(partyUiHandler.show).toHaveBeenCalled());
 
   for (let i = 1; i < pokemonNo; i++) {

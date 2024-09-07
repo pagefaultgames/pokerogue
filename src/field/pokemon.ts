@@ -5,7 +5,7 @@ import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "../ui/battle-info";
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, ChargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
-import { Constructor, isNullOrUndefined } from "#app/utils";
+import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "../utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "../data/type";
 import { getLevelTotalExp } from "../data/exp";
@@ -201,7 +201,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionGender = dataSource.fusionGender;
       this.fusionLuck = dataSource.fusionLuck;
       this.usedTMs = dataSource.usedTMs ?? [];
-      this.mysteryEncounterData = dataSource.mysteryEncounterData;
+      this.mysteryEncounterData = dataSource.mysteryEncounterData ?? new MysteryEncounterPokemonData();
     } else {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
@@ -577,8 +577,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const formKey = this.getFormKey();
     if (formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 || formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1) {
       return 1.5;
-    } else if (!isNullOrUndefined(this.mysteryEncounterData?.spriteScale)) {
-      return this.mysteryEncounterData.spriteScale;
+    } else if (!isNullOrUndefined(this.mysteryEncounterData.spriteScale) && this.mysteryEncounterData.spriteScale !== 0) {
+      return this.mysteryEncounterData.spriteScale!;
     }
     return 1;
   }
@@ -1082,7 +1082,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (!types.length || !includeTeraType) {
-      if (this.mysteryEncounterData?.types && this.mysteryEncounterData.types.length > 0) {
+      if (this.mysteryEncounterData.types && this.mysteryEncounterData.types.length > 0) {
         // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
         this.mysteryEncounterData.types.forEach(t => types.push(t));
       } else if (!ignoreOverride && this.summonData?.types && this.summonData.types.length > 0) {
@@ -1708,6 +1708,42 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.shiny = (E ^ F) < shinyThreshold.value;
+
+    if (this.shiny) {
+      this.initShinySparkle();
+    }
+
+    return this.shiny;
+  }
+
+  /**
+   * Function that tries to set a Pokemon shiny based on seed.
+   * For manual use only, usually to roll a Pokemon's shiny chance a second time.
+   *
+   * The base shiny odds are {@linkcode baseShinyChance} / 65536
+   * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
+   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
+   * @returns true if the Pokemon has been set as a shiny, false otherwise
+   */
+  trySetShinySeed(thresholdOverride?: integer, applyModifiersToOverride?: boolean): boolean {
+    /** `64/65536 -> 1/1024` */
+    const baseShinyChance = 64;
+    const shinyThreshold = new Utils.IntegerHolder(baseShinyChance);
+    if (thresholdOverride === undefined || applyModifiersToOverride) {
+      if (thresholdOverride !== undefined && applyModifiersToOverride) {
+        shinyThreshold.value = thresholdOverride;
+      }
+      if (this.scene.eventManager.isEventActive()) {
+        shinyThreshold.value *= this.scene.eventManager.getShinyMultiplier();
+      }
+      if (!this.hasTrainer()) {
+        this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+      }
+    } else {
+      shinyThreshold.value = thresholdOverride;
+    }
+
+    this.shiny = randSeedInt(65536) < shinyThreshold.value;
 
     if (this.shiny) {
       this.initShinySparkle();

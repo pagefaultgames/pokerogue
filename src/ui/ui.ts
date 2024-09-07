@@ -138,6 +138,7 @@ const noTransitionModes = [
   Mode.TEST_DIALOGUE,
   Mode.AUTO_COMPLETE,
   Mode.ADMIN,
+  Mode.MYSTERY_ENCOUNTER
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
