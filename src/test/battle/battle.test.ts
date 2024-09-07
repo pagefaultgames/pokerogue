@@ -292,26 +292,6 @@ describe("Test Battle Phase", () => {
     expect(game.scene.currentBattle.turn).toBeGreaterThan(turn);
   }, 20000);
 
-  // Made redundant by the "same biome" test, which is copied from this test, should this be removed?
-  it.skip("to next wave with pokemon killed, single", async () => {
-    const moveToUse = Moves.SPLASH;
-    game.override.battleType("single");
-    game.override.starterSpecies(Species.MEWTWO);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(Abilities.HYDRATION);
-    game.override.ability(Abilities.ZEN_MODE);
-    game.override.startingLevel(2000);
-    game.override.startingWave(3);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    await game.startBattle();
-    const waveIndex = game.scene.currentBattle.waveIndex;
-    game.move.select(moveToUse);
-    await game.doKillOpponents();
-    await game.toNextWave();
-    expect(game.scene.currentBattle.waveIndex).toBeGreaterThan(waveIndex);
-  }, 20000);
-
   it("does not set new weather if staying in same biome", async () => {
     const moveToUse = Moves.SPLASH;
     game.override

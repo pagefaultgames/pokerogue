@@ -36,7 +36,34 @@ describe("Reload", () => {
     expect(preReloadRngState).toBe(postReloadRngState);
   }, 20000);
 
-  it("should not have RNG or weather inconsistencies after a biome switch", async () => {
+  it("should not have RNG inconsistencies after a biome switch", async () => {
+    game.override
+      .startingWave(10)
+      .battleType("single")
+      .startingLevel(100) // Avoid levelling up
+      .enemyLevel(1000) // Avoid opponent dying before game.doKillOpponents()
+      .disableTrainerWaves()
+      .moveset([Moves.KOWTOW_CLEAVE])
+      .enemyMoveset(SPLASH_ONLY);
+    await game.dailyMode.startBattle();
+
+    // Transition from Wave 10 to Wave 11 in order to trigger biome switch
+    game.move.select(Moves.KOWTOW_CLEAVE);
+    await game.phaseInterceptor.to("DamagePhase");
+    await game.doKillOpponents();
+    await game.toNextWave();
+    expect(game.phaseInterceptor.log).toContain("NewBiomeEncounterPhase");
+
+    const preReloadRngState = Phaser.Math.RND.state();
+
+    await game.reload.reloadSession();
+
+    const postReloadRngState = Phaser.Math.RND.state();
+
+    expect(preReloadRngState).toBe(postReloadRngState);
+  }, 20000);
+
+  it("should not have weather inconsistencies after a biome switch", async () => {
     game.override
       .startingWave(10)
       .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
@@ -55,16 +82,13 @@ describe("Reload", () => {
     await game.toNextWave();
     expect(game.phaseInterceptor.log).toContain("NewBiomeEncounterPhase");
 
-    const preReloadRngState = Phaser.Math.RND.state();
     const preReloadWeather = game.scene.arena.weather;
 
     await game.reload.reloadSession();
 
-    const postReloadRngState = Phaser.Math.RND.state();
     const postReloadWeather = game.scene.arena.weather;
 
-    expect(preReloadRngState).toBe(postReloadRngState);
-    expect(preReloadWeather).toStrictEqual(postReloadWeather);
+    expect(postReloadWeather).toStrictEqual(preReloadWeather);
   }, 20000);
 
   it("should not have RNG inconsistencies at a Daily run wild Pokemon fight", async () => {
