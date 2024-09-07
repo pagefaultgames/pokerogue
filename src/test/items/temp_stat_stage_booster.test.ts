@@ -10,12 +10,7 @@ import { Abilities } from "#app/enums/abilities";
 import { TempStatStageBoosterModifier } from "#app/modifier/modifier";
 import { Mode } from "#app/ui/ui";
 import { Button } from "#app/enums/buttons";
-import { CommandPhase } from "#app/phases/command-phase";
-import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 
@@ -46,7 +41,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   });
 
   it("should provide a x1.3 stat stage multiplier", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 
@@ -56,7 +51,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     game.move.select(Moves.TACKLE);
 
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.phaseInterceptor.runFrom("EnemyCommandPhase").to(TurnEndPhase);
 
     expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.3);
   }, 20000);
@@ -66,7 +61,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
       .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }])
       .ability(Abilities.SIMPLE);
 
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 
@@ -89,7 +84,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
 
   it("should increase existing stat stage multiplier by 3/10 for the rest of the boosters", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 
@@ -113,7 +108,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   it("should not increase past maximum stat stage multiplier", async() => {
     game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }, { name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
 
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 
@@ -138,7 +133,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
       .startingLevel(200)
       .itemRewards([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
 
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 
@@ -146,10 +141,10 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     await game.doKillOpponents();
 
-    await game.phaseInterceptor.to(BattleEndPhase);
+    await game.phaseInterceptor.to("BattleEndPhase");
 
     const modifier = game.scene.findModifier(m => m instanceof TempStatStageBoosterModifier) as TempStatStageBoosterModifier;
-    expect(modifier.getBattlesLeft()).toBe(4);
+    expect(modifier.getBattleCount()).toBe(4);
 
     // Forced X_ATTACK to spawn in the first slot with override
     game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
@@ -158,16 +153,17 @@ describe("Items - Temporary Stat Stage Boosters", () => {
       handler.setCursor(0);
       handler.setRowCursor(ShopCursorTarget.REWARDS);
       handler.processInput(Button.ACTION);
-    }, () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(NewBattlePhase), true);
+    }, () => game.isCurrentPhase("CommandPhase") || game.isCurrentPhase("NewBattlePhase"), true);
 
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.phaseInterceptor.to("TurnInitPhase");
 
     // Making sure only one booster is in the modifier list even after picking up another
     let count = 0;
     for (const m of game.scene.modifiers) {
       if (m instanceof TempStatStageBoosterModifier) {
         count++;
-        expect((m as TempStatStageBoosterModifier).getBattlesLeft()).toBe(5);
+        const modifierInstance = m as TempStatStageBoosterModifier;
+        expect(modifierInstance.getBattleCount()).toBe(modifierInstance.getMaxBattles());
       }
     }
     expect(count).toBe(1);
