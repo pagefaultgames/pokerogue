@@ -52,8 +52,8 @@
     "TempStatStageBoosterModifierType": {
       "description": "全員の　手持ちポケモンの　{{stat}}を　最大５回の　バトルの間に　{{amount}}あげる.",
       "extra": {
-        "stage": "1 stage",
-        "percentage": "30%"
+        "stage": "１段階",
+        "percentage": "３０％"
       }
     },
     "AttackTypeBoosterModifierType": {
