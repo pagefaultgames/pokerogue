@@ -66,7 +66,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
     await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
 
     expect(TheStrongStuffEncounter.encounterType).toBe(MysteryEncounterType.THE_STRONG_STUFF);
-    expect(TheStrongStuffEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
+    expect(TheStrongStuffEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
     expect(TheStrongStuffEncounter.dialogue).toBeDefined();
     expect(TheStrongStuffEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
     expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
@@ -121,7 +121,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
             species: getPokemonSpecies(Species.SHUCKLE),
             isBoss: true,
             bossSegments: 5,
-            mysteryEncounterData: new MysteryEncounterPokemonData(1.5),
+            mysteryEncounterData: new MysteryEncounterPokemonData(1.25),
             nature: Nature.BOLD,
             moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
             modifierConfigs: expect.any(Array),

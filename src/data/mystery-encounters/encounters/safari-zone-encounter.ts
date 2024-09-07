@@ -256,7 +256,7 @@ async function summonSafariPokemon(scene: BattleScene) {
 
     // Roll shiny twice
     if (!pokemon.shiny) {
-      pokemon.trySetShiny();
+      pokemon.trySetShinySeed();
     }
 
     // Roll HA twice

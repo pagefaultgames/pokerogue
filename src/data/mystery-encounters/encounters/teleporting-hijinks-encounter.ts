@@ -45,7 +45,9 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
         spriteKey: "teleporter",
         fileRoot: "mystery-encounters",
         hasShadow: true,
-        y: 4
+        x: 4,
+        y: 4,
+        yShadow: 1
       }
     ])
     .withIntroDialogue([

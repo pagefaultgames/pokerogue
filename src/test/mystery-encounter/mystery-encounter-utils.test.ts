@@ -287,7 +287,7 @@ describe("Mystery Encounter Utils", () => {
       const spy = vi.spyOn(game.scene.ui, "showText");
 
       await showEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
-      expect(spy).toHaveBeenCalledWith("valuevalue {{testvalue}} {{test1}} {{test}} {{test\\}} {{test\\}} {test}}", null, expect.any(Function), 0, true);
+      expect(spy).toHaveBeenCalledWith("valuevalue {{testvalue}} {{test1}} {{test}} {{test\\}} {{test\\}} {test}}", null, expect.any(Function), 0, true, null);
     });
   });
 

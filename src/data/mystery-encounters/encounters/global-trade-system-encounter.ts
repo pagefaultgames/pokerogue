@@ -1,31 +1,26 @@
-import { generateModifierType, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { TrainerSlot, } from "#app/data/trainer-config";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { getPlayerModifierTypeOptions, ModifierPoolType, ModifierTypeOption, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { Species } from "#enums/species";
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
-import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { getTypeRgb, Type } from "#app/data/type";
+import { getTypeRgb } from "#app/data/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { isNullOrUndefined, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { BerryModifier, PokemonFormChangeItemModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
-import { BerryType } from "#enums/berry-type";
-import { EncounterAnim, EncounterBattleAnim } from "#app/data/battle-anims";
-import { MoveCategory } from "#app/data/move";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { IntegerHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
+import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import PokemonData from "#app/system/pokemon-data";
 import i18next from "i18next";
 import { Gender, getGenderSymbol } from "#app/data/gender";
 import { getNatureName } from "#app/data/nature";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
-import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { trainerNamePools } from "#app/data/trainer-names";
 
 /** the i18n namespace for the encounter */
@@ -184,6 +179,88 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           receivedPokemonData.passive = tradedPokemon.passive;
           receivedPokemonData.pokeball = randSeedInt(5);
           const dataSource = new PokemonData(receivedPokemonData);
+          const newPlayerPokemon = scene.addPlayerPokemon(receivedPokemonData.species, receivedPokemonData.level, dataSource.abilityIndex, dataSource.formIndex, dataSource.gender, dataSource.shiny, dataSource.variant, dataSource.ivs, dataSource.nature, dataSource);
+          scene.getParty().push(newPlayerPokemon);
+          await newPlayerPokemon.loadAssets();
+
+          for (const mod of modifiers) {
+            mod.pokemonId = newPlayerPokemon.id;
+            scene.addModifier(mod, true, false, false, true);
+          }
+
+          // Show the trade animation
+          await showTradeBackground(scene);
+          await doPokemonTradeSequence(scene, tradedPokemon, newPlayerPokemon);
+          await showEncounterText(scene, `${namespace}.trade_received`, 0, true, 4000);
+          scene.playBgm("mystery_encounter_gts");
+          await hideTradeBackground(scene);
+          tradedPokemon.destroy();
+
+          leaveEncounterWithoutBattle(scene, true);
+        })
+        .build()
+    )
+    .withOption(
+      MysteryEncounterOptionBuilder
+        .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
+        .withDialogue({
+          buttonLabel: `${namespace}.option.2.label`,
+          buttonTooltip: `${namespace}.option.2.tooltip`,
+        })
+        .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
+          const encounter = scene.currentBattle.mysteryEncounter!;
+          const onPokemonSelected = (pokemon: PlayerPokemon) => {
+            // Randomly generate a Wonder Trade pokemon
+            const randomTradeOption = generateTradeOption(scene.getParty().map(p => p.species));
+            const tradePokemon = new EnemyPokemon(scene, randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
+            // Extra shiny roll at 1/128 odds (boosted by events and charms)
+            if (!tradePokemon.shiny) {
+              // 512/65536 -> 1/128
+              tradePokemon.trySetShinySeed(512, true);
+            }
+
+            // Extra HA roll at base 1/64 odds (boosted by events and charms)
+            if (pokemon.species.abilityHidden) {
+              const hiddenIndex = pokemon.species.ability2 ? 2 : 1;
+              if (pokemon.abilityIndex < hiddenIndex) {
+                const hiddenAbilityChance = new IntegerHolder(64);
+                scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+
+                const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
+
+                if (hasHiddenAbility) {
+                  pokemon.abilityIndex = hiddenIndex;
+                }
+              }
+            }
+
+            encounter.setDialogueToken("tradedPokemon", pokemon.getNameToRender());
+            encounter.setDialogueToken("received", tradePokemon.getNameToRender());
+            encounter.misc = {
+              tradedPokemon: pokemon,
+              receivedPokemon: tradePokemon,
+            };
+          };
+
+          return selectPokemonForOption(scene, onPokemonSelected);
+        })
+        .withOptionPhase(async (scene: BattleScene) => {
+          const encounter = scene.currentBattle.mysteryEncounter!;
+          const tradedPokemon: PlayerPokemon = encounter.misc.tradedPokemon;
+          const receivedPokemonData: EnemyPokemon = encounter.misc.receivedPokemon;
+          const modifiers = tradedPokemon.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier) && !(m instanceof SpeciesStatBoosterModifier));
+
+          // Generate a trainer name
+          const traderName = generateRandomTraderName();
+          encounter.setDialogueToken("tradeTrainerName", traderName.trim());
+
+          // Remove the original party member from party
+          scene.removePokemonFromPlayerParty(tradedPokemon, false);
+
+          // Set data properly, then generate the new Pokemon's assets
+          receivedPokemonData.passive = tradedPokemon.passive;
+          receivedPokemonData.pokeball = randSeedInt(5);
+          const dataSource = new PokemonData(receivedPokemonData);
           const newPlayerPokemon = scene.addPlayerPokemon(receivedPokemonData.species, receivedPokemonData.level, undefined, undefined, undefined, undefined, undefined, undefined, undefined, dataSource);
           scene.getParty().push(newPlayerPokemon);
           await newPlayerPokemon.loadAssets();
@@ -199,95 +276,9 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           await showEncounterText(scene, `${namespace}.trade_received`, 0, true, 4000);
           scene.playBgm("mystery_encounter_gts");
           await hideTradeBackground(scene);
+          tradedPokemon.destroy();
 
-          setEncounterRewards(scene, { fillRemaining: true });
-          leaveEncounterWithoutBattle(scene);
-        })
-        .build()
-    )
-    .withOption(
-      MysteryEncounterOptionBuilder
-        .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
-        .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
-          selected: [
-            {
-              text: `${namespace}.option.2.selected`,
-              speaker: `${namespace}.speaker`
-            },
-            {
-              text: `${namespace}.option.2.selected_2`,
-            },
-            {
-              text: `${namespace}.option.2.selected_3`,
-              speaker: `${namespace}.speaker`
-            },
-          ],
-        })
-        .withPreOptionPhase(async (scene: BattleScene) => {
-          // Swap player's items on pokemon with the most items
-          // Item comparisons look at whichever Pokemon has the greatest number of TRANSFERABLE, non-berry items
-          // So Vitamins, form change items, etc. are not included
-          const encounter = scene.currentBattle.mysteryEncounter!;
-
-          const party = scene.getParty();
-          let mostHeldItemsPokemon = party[0];
-          let count = mostHeldItemsPokemon.getHeldItems()
-            .filter(m => m.isTransferrable && !(m instanceof BerryModifier))
-            .reduce((v, m) => v + m.stackCount, 0);
-
-          party.forEach(pokemon => {
-            const nextCount = pokemon.getHeldItems()
-              .filter(m => m.isTransferrable && !(m instanceof BerryModifier))
-              .reduce((v, m) => v + m.stackCount, 0);
-            if (nextCount > count) {
-              mostHeldItemsPokemon = pokemon;
-              count = nextCount;
-            }
-          });
-
-          encounter.setDialogueToken("switchPokemon", mostHeldItemsPokemon.getNameToRender());
-
-          const items = mostHeldItemsPokemon.getHeldItems();
-
-          // Shuffles Berries (if they have any)
-          let numBerries = 0;
-          items.filter(m => m instanceof BerryModifier)
-            .forEach(m => {
-              numBerries += m.stackCount;
-              scene.removeModifier(m);
-            });
-
-          generateItemsOfTier(scene, mostHeldItemsPokemon, numBerries, "Berries");
-
-          // Shuffle Transferable held items in the same tier (only shuffles Ultra and Rogue atm)
-          let numUltra = 0;
-          let numRogue = 0;
-          items.filter(m => m.isTransferrable && !(m instanceof BerryModifier))
-            .forEach(m => {
-              const type = m.type.withTierFromPool();
-              const tier = type.tier ?? ModifierTier.ULTRA;
-              if (type.id === "LUCKY_EGG" || tier === ModifierTier.ULTRA) {
-                numUltra += m.stackCount;
-                scene.removeModifier(m);
-              } else if (type.id === "GOLDEN_EGG" || tier === ModifierTier.ROGUE) {
-                numRogue += m.stackCount;
-                scene.removeModifier(m);
-              }
-            });
-
-          generateItemsOfTier(scene, mostHeldItemsPokemon, numUltra, ModifierTier.ULTRA);
-          generateItemsOfTier(scene, mostHeldItemsPokemon, numRogue, ModifierTier.ROGUE);
-        })
-        .withOptionPhase(async (scene: BattleScene) => {
           leaveEncounterWithoutBattle(scene, true);
-        })
-        .withPostOptionPhase(async (scene: BattleScene) => {
-          // Play animations
-          const background = new EncounterBattleAnim(EncounterAnim.SMOKESCREEN, scene.getPlayerPokemon()!, scene.getPlayerPokemon());
-          background.playWithoutTargets(scene, 230, 40, 2);
-          await transitionMysteryEncounterIntroVisuals(scene);
         })
         .build()
     )
@@ -297,74 +288,108 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
         .withDialogue({
           buttonLabel: `${namespace}.option.3.label`,
           buttonTooltip: `${namespace}.option.3.tooltip`,
-          selected: [
-            {
-              text: `${namespace}.option.3.selected`,
-              speaker: `${namespace}.speaker`
-            },
-            {
-              text: `${namespace}.option.3.selected_2`,
-            },
-            {
-              text: `${namespace}.option.3.selected_3`,
-              speaker: `${namespace}.speaker`
-            },
-          ],
+          secondOptionPrompt: `${namespace}.option.3.trade_options_prompt`,
         })
-        .withPreOptionPhase(async (scene: BattleScene) => {
-          // Swap player's types on all party pokemon
-          // If a Pokemon had a single type prior, they will still have a single type after
-          for (const pokemon of scene.getParty()) {
-            const originalTypes = pokemon.getTypes(false, false, true);
+        .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
+          const encounter = scene.currentBattle.mysteryEncounter!;
+          const onPokemonSelected = (pokemon: PlayerPokemon) => {
+            // Get Pokemon held items and filter for valid ones
+            const validItems = pokemon.getHeldItems().filter((it) => {
+              return it.isTransferrable;
+            });
 
-            // If the Pokemon has non-status moves that don't match the Pokemon's type, prioritizes those as the new type
-            // Makes the "randomness" of the shuffle slightly less punishing
-            let priorityTypes = pokemon.moveset
-              .filter(move => move && !originalTypes.includes(move.getMove().type) && move.getMove().category !== MoveCategory.STATUS)
-              .map(move => move!.getMove().type);
-            if (priorityTypes?.length > 0) {
-              priorityTypes = [...new Set(priorityTypes)];
-              randSeedShuffle(priorityTypes);
+            return validItems.map((modifier: PokemonHeldItemModifier) => {
+              const option: OptionSelectItem = {
+                label: modifier.type.name,
+                handler: () => {
+                  // Pokemon and item selected
+                  encounter.setDialogueToken("chosenItem", modifier.type.name);
+                  encounter.misc = {
+                    chosenModifier: modifier,
+                  };
+                  return true;
+                },
+              };
+              return option;
+            });
+          };
+
+          // Only Pokemon that can gain benefits are above 1/3rd HP with no status
+          const selectableFilter = (pokemon: Pokemon) => {
+            // If pokemon has items to trade
+            const meetsReqs = pokemon.getHeldItems().filter((it) => {
+              return it.isTransferrable;
+            }).length > 0;
+            if (!meetsReqs) {
+              return getEncounterText(scene, `${namespace}.option.3.invalid_selection`) ?? null;
             }
 
-            let newTypes: Type[];
-            if (!originalTypes || originalTypes.length < 1) {
-              newTypes = priorityTypes && priorityTypes.length > 0 ? [priorityTypes.pop()!] : [(randSeedInt(18) as Type)];
-            } else {
-              newTypes = originalTypes.map(m => {
-                if (priorityTypes && priorityTypes.length > 0) {
-                  const ret = priorityTypes.pop()!;
-                  randSeedShuffle(priorityTypes);
-                  return ret;
-                }
+            return null;
+          };
 
-                return randSeedInt(18) as Type;
-              });
-            }
-
-            if (!pokemon.mysteryEncounterData) {
-              pokemon.mysteryEncounterData = new MysteryEncounterPokemonData(undefined, undefined, undefined, newTypes);
-            } else {
-              pokemon.mysteryEncounterData.types = newTypes;
-            }
-          }
+          return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async (scene: BattleScene) => {
-          leaveEncounterWithoutBattle(scene, true);
-        })
-        .withPostOptionPhase(async (scene: BattleScene) => {
-          // Play animations
-          const background = new EncounterBattleAnim(EncounterAnim.SMOKESCREEN, scene.getPlayerPokemon()!, scene.getPlayerPokemon());
-          background.playWithoutTargets(scene, 230, 40, 2);
-          await transitionMysteryEncounterIntroVisuals(scene);
+          const encounter = scene.currentBattle.mysteryEncounter!;
+          const modifier = encounter.misc.chosenModifier;
+
+          // Check tier of the traded item, the received item will be one tier up
+          const type = modifier.type.withTierFromPool();
+          let tier = type.tier ?? ModifierTier.GREAT;
+          // Eggs and White Herb are not in the pool
+          if (type.id === "WHITE_HERB") {
+            tier = ModifierTier.GREAT;
+          } else if (type.id === "LUCKY_EGG") {
+            tier = ModifierTier.ULTRA;
+          } else if (type.id === "GOLDEN_EGG") {
+            tier = ModifierTier.ROGUE;
+          }
+          // Increment tier by 1
+          if (tier < ModifierTier.MASTER) {
+            tier++;
+          }
+
+          regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0);
+          let item: ModifierTypeOption | null = null;
+          // TMs excluded from possible rewards
+          while (!item || item.type.id.includes("TM_")) {
+            item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier], allowLuckUpgrades: false })[0];
+          }
+
+          encounter.setDialogueToken("itemName", item.type.name);
+          setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
+
+          // Remove the chosen modifier if its stacks go to 0
+          modifier.stackCount -= 1;
+          if (modifier.stackCount === 0) {
+            scene.removeModifier(modifier);
+          }
+          scene.updateModifiers(true, true);
+
+          // Generate a trainer name
+          const traderName = generateRandomTraderName();
+          encounter.setDialogueToken("tradeTrainerName", traderName.trim());
+          await showEncounterText(scene, `${namespace}.item_trade_selected`);
+          leaveEncounterWithoutBattle(scene);
         })
         .build()
     )
-    .withOutroDialogue([
+    .withSimpleOption(
       {
-        text: `${namespace}.outro`,
+        buttonLabel: `${namespace}.option.4.label`,
+        buttonTooltip: `${namespace}.option.4.tooltip`,
+        selected: [
+          {
+            text: `${namespace}.option.4.selected`,
+          },
+        ],
       },
-    ])
+      async (scene: BattleScene) => {
+        // Leave encounter with no rewards or exp
+        leaveEncounterWithoutBattle(scene, true);
+        return true;
+      }
+    )
     .build();
 
 function getPokemonTradeOptions(scene: BattleScene): Map<number, EnemyPokemon[]> {
@@ -386,7 +411,7 @@ function getPokemonTradeOptions(scene: BattleScene): Map<number, EnemyPokemon[]>
 
       const tradeOptions: PokemonSpecies[] = [];
       for (let i = 0; i < 3; i++) {
-        const speciesTradeOption = generateTradeOption(originalBst, alreadyUsedSpecies);
+        const speciesTradeOption = generateTradeOption(alreadyUsedSpecies, originalBst);
         alreadyUsedSpecies.push(speciesTradeOption);
         tradeOptions.push(speciesTradeOption);
       }
@@ -401,11 +426,15 @@ function getPokemonTradeOptions(scene: BattleScene): Map<number, EnemyPokemon[]>
   return tradeOptionsMap;
 }
 
-function generateTradeOption(originalBst: number, alreadyUsedSpecies: PokemonSpecies[]): PokemonSpecies {
+function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?: number): PokemonSpecies {
   let newSpecies: PokemonSpecies | undefined;
   while (isNullOrUndefined(newSpecies)) {
-    let bstCap = originalBst + 100;
-    let bstMin = originalBst - 100;
+    let bstCap = 9999;
+    let bstMin = 0;
+    if (originalBst) {
+      bstCap = originalBst + 100;
+      bstMin = originalBst - 100;
+    }
 
     // Get all non-legendary species that fall within the Bst range requirements
     let validSpecies = allSpecies
@@ -431,69 +460,6 @@ function generateTradeOption(originalBst: number, alreadyUsedSpecies: PokemonSpe
   }
 
   return newSpecies!;
-}
-
-function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItems: integer, tier: ModifierTier | "Berries") {
-  // These pools have to be defined at runtime so that modifierTypes exist
-  // Pools have instances of the modifier type equal to the max stacks that modifier can be applied to any one pokemon
-  // This is to prevent "over-generating" a random item of a certain type during item swaps
-  const ultraPool = [
-    [modifierTypes.REVIVER_SEED, 1],
-    [modifierTypes.GOLDEN_PUNCH, 5],
-    [modifierTypes.ATTACK_TYPE_BOOSTER, 99],
-    [modifierTypes.QUICK_CLAW, 3],
-    [modifierTypes.WIDE_LENS, 3]
-  ];
-
-  const roguePool = [
-    [modifierTypes.LEFTOVERS, 4],
-    [modifierTypes.SHELL_BELL, 4],
-    [modifierTypes.SOUL_DEW, 10],
-    [modifierTypes.SOOTHE_BELL, 3],
-    [modifierTypes.SCOPE_LENS, 1],
-    [modifierTypes.BATON, 1],
-    [modifierTypes.FOCUS_BAND, 5],
-    [modifierTypes.KINGS_ROCK, 3],
-    [modifierTypes.GRIP_CLAW, 5]
-  ];
-
-  const berryPool = [
-    [BerryType.APICOT, 3],
-    [BerryType.ENIGMA, 2],
-    [BerryType.GANLON, 3],
-    [BerryType.LANSAT, 3],
-    [BerryType.LEPPA, 2],
-    [BerryType.LIECHI, 3],
-    [BerryType.LUM, 2],
-    [BerryType.PETAYA, 3],
-    [BerryType.SALAC, 2],
-    [BerryType.SITRUS, 2],
-    [BerryType.STARF, 3]
-  ];
-
-  let pool: any[];
-  if (tier === "Berries") {
-    pool = berryPool;
-  } else {
-    pool = tier === ModifierTier.ULTRA ? ultraPool : roguePool;
-  }
-
-  for (let i = 0; i < numItems; i++) {
-    const randIndex = randSeedInt(pool.length);
-    const newItemType = pool[randIndex];
-    let newMod;
-    if (tier === "Berries") {
-      newMod = generateModifierType(scene, modifierTypes.BERRY, [newItemType[0]]) as PokemonHeldItemModifierType;
-    } else {
-      newMod = generateModifierType(scene, newItemType[0]) as PokemonHeldItemModifierType;
-    }
-    applyModifierTypeToPlayerPokemon(scene, pokemon, newMod);
-    // Decrement max stacks and remove from pool if at max
-    newItemType[1]--;
-    if (newItemType[1] <= 0) {
-      pool.splice(randIndex, 1);
-    }
-  }
 }
 
 function showTradeBackground(scene: BattleScene) {
@@ -846,7 +812,12 @@ function doTradeReceivedSequence(scene: BattleScene, receivedPokemon: PlayerPoke
 
 function generateRandomTraderName() {
   const length = Object.keys(trainerNamePools).length;
-  const trainerTypePool = trainerNamePools[randInt(length)];
+  // +1 avoids TrainerType.UNKNOWN
+  let trainerTypePool = trainerNamePools[randInt(length) + 1];
+  while (!trainerTypePool) {
+    trainerTypePool = trainerNamePools[randInt(length) + 1];
+  }
+  // Some trainers have 2 gendered pools, some do not
   const genderedPool = trainerTypePool[randInt(trainerTypePool.length)];
   const trainerNameString = genderedPool instanceof Array ? genderedPool[randInt(genderedPool.length)] : genderedPool;
   // Some names have an '&' symbol and need to be trimmed to a single name instead of a double name
