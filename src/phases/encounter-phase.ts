@@ -155,7 +155,7 @@ export class EncounterPhase extends BattlePhase {
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
           this.trySetWeatherIfNewBiome(); // Set weather before session gets saved
-          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 10 === 1 || (this.scene.lastSavePlayTime ?? 0) >= 300).then(success => { // TODO: get rid of ts-ignore
+          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 10 === 1 || (this.scene.lastSavePlayTime ?? 0) >= 300).then(success => {
             this.scene.disableMenu = false;
             if (!success) {
               return this.scene.reset(true);
