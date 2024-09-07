@@ -162,6 +162,11 @@ export const SettingKeys = {
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
 };
 
+export enum MusicPreference {
+  CONSISTENT,
+  MIXED
+}
+
 /**
  * All Settings not related to controls
  */
@@ -701,7 +706,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     scene.uiVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
     break;
   case SettingKeys.Music_Preference:
-    scene.musicPreference = value;
+    scene.musicPreference = MusicPreference[value];
     break;
   case SettingKeys.Damage_Numbers:
     scene.damageNumbersMode = value;

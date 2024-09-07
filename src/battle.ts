@@ -7,10 +7,12 @@ import { GameMode } from "./game-mode";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import { trainerConfigs } from "#app/data/trainer-config";
+import { SpeciesFormKey } from "#app/data/pokemon-species";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
+import { MusicPreference } from "./system/settings/settings";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
@@ -189,12 +191,12 @@ export default class Battle {
   }
 
   getBgmOverride(scene: BattleScene): string | null {
-    const battlers = this.enemyParty.slice(0, this.getBattlerCount());
+
     if (this.battleType === BattleType.TRAINER) {
       if (!this.started && this.trainer?.config.encounterBgm && this.trainer?.getEncounterMessages()?.length) {
         return `encounter_${this.trainer?.getEncounterBgm()}`;
       }
-      if (scene.musicPreference === 0) {
+      if (scene.musicPreference === MusicPreference.CONSISTENT) {
         return this.trainer?.getBattleBgm() ?? null;
       } else {
         return this.trainer?.getMixedBattleBgm() ?? null;
@@ -202,147 +204,163 @@ export default class Battle {
     } else if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS) {
       return "end_summit";
     }
-    for (const pokemon of battlers) {
+    const wildOpponents = scene.getEnemyParty();
+    for (const pokemon of wildOpponents) {
       if (this.battleSpec === BattleSpec.FINAL_BOSS) {
-        if (pokemon.formIndex) {
+        if (pokemon.species.getFormSpriteKey() === SpeciesFormKey.ETERNAMAX) {
           return "battle_final";
         }
         return "battle_final_encounter";
       }
       if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
-        if (scene.musicPreference === 0) {
-          if (pokemon.species.speciesId === Species.REGIROCK || pokemon.species.speciesId === Species.REGICE || pokemon.species.speciesId === Species.REGISTEEL || pokemon.species.speciesId === Species.REGIGIGAS || pokemon.species.speciesId === Species.REGIELEKI || pokemon.species.speciesId === Species.REGIDRAGO) {
+        if (scene.musicPreference === MusicPreference.CONSISTENT) {
+          switch (pokemon.species.speciesId) {
+          case Species.REGIROCK:
+          case Species.REGICE:
+          case Species.REGISTEEL:
+          case Species.REGIGIGAS:
+          case Species.REGIDRAGO:
+          case Species.REGIELEKI:
             return "battle_legendary_regis_g5";
-          }
-          if (pokemon.species.speciesId === Species.COBALION || pokemon.species.speciesId === Species.TERRAKION || pokemon.species.speciesId === Species.VIRIZION || pokemon.species.speciesId === Species.TORNADUS || pokemon.species.speciesId === Species.THUNDURUS || pokemon.species.speciesId === Species.LANDORUS || pokemon.species.speciesId === Species.KELDEO || pokemon.species.speciesId === Species.MELOETTA || pokemon.species.speciesId === Species.GENESECT) {
+          case Species.KYUREM:
+            return "battle_legendary_kyurem";
+          default:
+            if (pokemon.species.legendary) {
+              return "battle_legendary_res_zek";
+            }
             return "battle_legendary_unova";
           }
-          if (pokemon.species.speciesId === Species.KYUREM) {
-            return "battle_legendary_kyurem";
-          }
-          if (pokemon.species.legendary) {
-            return "battle_legendary_res_zek";
-          }
-          return "battle_legendary_unova";
-        } else {
-          if (pokemon.species.speciesId === Species.ARTICUNO || pokemon.species.speciesId === Species.ZAPDOS || pokemon.species.speciesId === Species.MOLTRES || pokemon.species.speciesId === Species.MEWTWO || pokemon.species.speciesId === Species.MEW) {
+        } else if (scene.musicPreference === MusicPreference.MIXED) {
+          switch (pokemon.species.speciesId) {
+          case Species.ARTICUNO:
+          case Species.ZAPDOS:
+          case Species.MOLTRES:
+          case Species.MEWTWO:
+          case Species.MEW:
             return "battle_legendary_kanto";
-          }
-          if (pokemon.species.speciesId === Species.RAIKOU) {
+          case Species.RAIKOU:
             return "battle_legendary_raikou";
-          }
-          if (pokemon.species.speciesId === Species.ENTEI) {
+          case Species.ENTEI:
             return "battle_legendary_entei";
-          }
-          if (pokemon.species.speciesId === Species.SUICUNE) {
+          case Species.SUICUNE:
             return "battle_legendary_suicune";
-          }
-          if (pokemon.species.speciesId === Species.LUGIA) {
+          case Species.LUGIA:
             return "battle_legendary_lugia";
-          }
-          if (pokemon.species.speciesId === Species.HO_OH) {
+          case Species.HO_OH:
             return "battle_legendary_ho_oh";
-          }
-          if (pokemon.species.speciesId === Species.REGIROCK || pokemon.species.speciesId === Species.REGICE || pokemon.species.speciesId === Species.REGISTEEL || pokemon.species.speciesId === Species.REGIGIGAS || pokemon.species.speciesId === Species.REGIELEKI || pokemon.species.speciesId === Species.REGIDRAGO) {
+          case Species.REGIROCK:
+          case Species.REGICE:
+          case Species.REGISTEEL:
+          case Species.REGIGIGAS:
+          case Species.REGIDRAGO:
+          case Species.REGIELEKI:
             return "battle_legendary_regis_g6";
-          }
-          if (pokemon.species.speciesId === Species.GROUDON || pokemon.species.speciesId === Species.KYOGRE) {
+          case Species.GROUDON:
+          case Species.KYOGRE:
             return "battle_legendary_gro_kyo";
-          }
-          if (pokemon.species.speciesId === Species.RAYQUAZA) {
+          case Species.RAYQUAZA:
             return "battle_legendary_rayquaza";
-          }
-          if (pokemon.species.speciesId === Species.DEOXYS) {
+          case Species.DEOXYS:
             return "battle_legendary_deoxys";
-          }
-          if (pokemon.species.speciesId === Species.UXIE || pokemon.species.speciesId === Species.MESPRIT || pokemon.species.speciesId === Species.AZELF) {
-            return "battle_legendary_lake_trio";
-          }
-          if (pokemon.species.speciesId === Species.HEATRAN || pokemon.species.speciesId === Species.CRESSELIA || pokemon.species.speciesId === Species.DARKRAI || pokemon.species.speciesId === Species.SHAYMIN) {
+          case Species.HEATRAN:
+          case Species.CRESSELIA:
+          case Species.DARKRAI:
+          case Species.SHAYMIN:
             return "battle_legendary_sinnoh";
-          }
-          if (pokemon.species.speciesId === Species.DIALGA || pokemon.species.speciesId === Species.PALKIA) {
-            if (pokemon.getFormKey() === "") {
-              return "battle_legendary_dia_pal";
-            }
-            if (pokemon.getFormKey() === "origin") {
+          case Species.DIALGA:
+          case Species.PALKIA:
+            if (pokemon.species.getFormSpriteKey() === SpeciesFormKey.ORIGIN) {
               return "battle_legendary_origin_forme";
             }
-          }
-          if (pokemon.species.speciesId === Species.GIRATINA) {
+            return "battle_legendary_dia_pal";
+          case Species.GIRATINA:
             return "battle_legendary_giratina";
-          }
-          if (pokemon.species.speciesId === Species.ARCEUS) {
+          case Species.ARCEUS:
             return "battle_legendary_arceus";
-          }
-          if (pokemon.species.speciesId === Species.COBALION || pokemon.species.speciesId === Species.TERRAKION || pokemon.species.speciesId === Species.VIRIZION || pokemon.species.speciesId === Species.TORNADUS || pokemon.species.speciesId === Species.THUNDURUS || pokemon.species.speciesId === Species.LANDORUS || pokemon.species.speciesId === Species.KELDEO || pokemon.species.speciesId === Species.MELOETTA || pokemon.species.speciesId === Species.GENESECT) {
+          case Species.COBALION:
+          case Species.TERRAKION:
+          case Species.VIRIZION:
+          case Species.KELDEO:
+          case Species.TORNADUS:
+          case Species.LANDORUS:
+          case Species.THUNDURUS:
+          case Species.MELOETTA:
+          case Species.GENESECT:
             return "battle_legendary_unova";
-          }
-          if (pokemon.species.speciesId === Species.KYUREM) {
+          case Species.KYUREM:
             return "battle_legendary_kyurem";
-          }
-          if (pokemon.species.speciesId === Species.XERNEAS || pokemon.species.speciesId === Species.YVELTAL || pokemon.species.speciesId === Species.ZYGARDE) {
+          case Species.XERNEAS:
+          case Species.YVELTAL:
+          case Species.XYGARDE:
             return "battle_legendary_xern_yvel";
-          }
-          if (pokemon.species.speciesId === Species.TAPU_KOKO || pokemon.species.speciesId === Species.TAPU_LELE || pokemon.species.speciesId === Species.TAPU_BULU || pokemon.species.speciesId === Species.TAPU_FINI) {
+          case Species.TAPU_KOKO:
+          case Species.TAPU_LELE:
+          case Species.TAPU_BULU:
+          case Species.TAPU_FINI:
             return "battle_legendary_tapu";
-          }
-          if ([ Species.COSMOG, Species.COSMOEM, Species.SOLGALEO, Species.LUNALA ].includes(pokemon.species.speciesId)) {
+          case Species.SOLGALEO:
+          case Species.LUNALA:
             return "battle_legendary_sol_lun";
-          }
-          if (pokemon.species.speciesId === Species.NECROZMA) {
-            if (pokemon.getFormKey() === "") {
+          case Species.NECROZMA:
+            switch (pokemon.getFormKey()) {
+            case "dusk-mane":
+            case "dawn-wings":
+              return "battle_legendary_dusk_dawn";
+            case "ultra":
+              return "battle_legendary_ultra_nec";
+            default:
               return "battle_legendary_sol_lun";
             }
-            if (pokemon.getFormKey() === "dusk-mane" || pokemon.getFormKey() === "dawn-wings") {
-              return "battle_legendary_dusk_dawn";
-            }
-            if (pokemon.getFormKey() === "ultra") {
-              return "battle_legendary_ultra_nec";
-            }
-          }
-          if ([ Species.NIHILEGO, Species.BUZZWOLE, Species.PHEROMOSA, Species.XURKITREE, Species.CELESTEELA, Species.KARTANA, Species.GUZZLORD, Species.POIPOLE, Species.NAGANADEL, Species.STAKATAKA, Species.BLACEPHALON ].includes(pokemon.species.speciesId)) {
+          case Species.NIHILEGO:
+          case Species.PHEROMOSA:
+          case Species.BUZZWOLE:
+          case Species.XURKITREE:
+          case Species.CELESTEELA:
+          case Species.GUZZLORD:
+          case Species.POIPOLE:
+          case Species.NAGANADEL:
+          case Species.STAKATAKA:
+          case Species.BLACEPHALON:
             return "battle_legendary_ub";
-          }
-          if (pokemon.species.speciesId === Species.ZACIAN || pokemon.species.speciesId === Species.ZAMAZENTA) {
+          case Species.ZACIAN:
+          case Species.ZAMAZENTA:
             return "battle_legendary_zac_zam";
-          }
-          if (pokemon.species.speciesId === Species.GLASTRIER || pokemon.species.speciesId === Species.SPECTRIER) {
+          case Species.GLASTRIER:
+          case Species.SPECTRIER:
             return "battle_legendary_glas_spec";
-          }
-          if (pokemon.species.speciesId === Species.CALYREX) {
-            if (pokemon.getFormKey() === "") {
-              return "battle_legendary_calyrex";
-            }
+          case Species.CALYREX:
             if (pokemon.getFormKey() === "ice" || pokemon.getFormKey() === "shadow") {
               return "battle_legendary_riders";
             }
-          }
-          if (pokemon.species.speciesId === Species.GALAR_ARTICUNO || pokemon.species.speciesId === Species.GALAR_ZAPDOS || pokemon.species.speciesId === Species.GALAR_MOLTRES) {
+            return "battle_legendary_calyrex";
+          case Species.GALAR_ARTICUNO:
+          case Species.GALAR_ZAPDOS:
+          case Species.GALAR_MOLTRES:
             return "battle_legendary_birds_galar";
-          }
-          if (pokemon.species.speciesId === Species.WO_CHIEN || pokemon.species.speciesId === Species.CHIEN_PAO || pokemon.species.speciesId === Species.TING_LU || pokemon.species.speciesId === Species.CHI_YU) {
+          case Species.WO_CHIEN:
+          case Species.CHIEN_PAO:
+          case Species.TING_LU:
+          case Species.CHI_YU:
             return "battle_legendary_ruinous";
-          }
-          if (pokemon.species.speciesId === Species.KORAIDON || pokemon.species.speciesId === Species.MIRAIDON) {
+          case Species.KORAIDON:
+          case Species.MIRAIDON:
             return "battle_legendary_kor_mir";
-          }
-          if (pokemon.species.speciesId === Species.OKIDOGI || pokemon.species.speciesId === Species.MUNKIDORI || pokemon.species.speciesId === Species.FEZANDIPITI) {
+          case Species.OKIDOGI:
+          case Species.MUNKIDORI:
+          case Species.FEZANDIPITI:
             return "battle_legendary_loyal_three";
-          }
-          if (pokemon.species.speciesId === Species.OGERPON) {
+          case Species.OGERPON:
             return "battle_legendary_ogerpon";
-          }
-          if (pokemon.species.speciesId === Species.TERAPAGOS) {
+          case Species.TERAPAGOS:
             return "battle_legendary_terapagos";
-          }
-          if (pokemon.species.speciesId === Species.PECHARUNT) {
+          case Species.PECHARUNT:
             return "battle_legendary_pecharunt";
+          default:
+            if (pokemon.species.legendary) {
+              return "battle_legendary_res_zek";
+            }
+            return "battle_legendary_unova";
           }
-          if (pokemon.species.legendary) {
-            return "battle_legendary_res_zek";
-          }
-          return "battle_legendary_unova";
         }
       }
     }
