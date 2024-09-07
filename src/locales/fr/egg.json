@@ -4,7 +4,7 @@
   "ultraTier": "Épique",
   "masterTier": "Légendaire",
   "defaultTier": "Commun",
-  "hatchWavesMessageSoon": "Il fait du bruit. Il va éclore !",
+  "hatchWavesMessageSoon": "Il fait du bruit.\nIl va éclore !",
   "hatchWavesMessageClose": "Il bouge de temps en temps. Il devrait bientôt éclore.",
   "hatchWavesMessageNotClose": "Qu’est-ce qui va en sortir ? Ça va mettre du temps.",
   "hatchWavesMessageLongTime": "Cet Œuf va surement mettre du temps à éclore.",
