@@ -5987,9 +5987,8 @@ export class SwapStatAttr extends MoveEffectAttr {
   }
 
   /**
-   * Takes the average of the user's and target's corresponding current
-   * {@linkcode stat} values and sets that stat to the average for both
-   * temporarily.
+   * Swaps the user's and target's corresponding current
+   * {@linkcode EffectiveStat | stat} values
    * @param user the {@linkcode Pokemon} that used the move
    * @param target the {@linkcode Pokemon} that the move was used on
    * @param move N/A
@@ -6010,6 +6009,64 @@ export class SwapStatAttr extends MoveEffectAttr {
       return true;
     }
     return false;
+  }
+}
+
+/**
+ * Attribute used to switch the user's own stats.
+ * Used by Power Shift.
+ * @extends MoveEffectAttr
+ */
+export class ShiftStatAttr extends MoveEffectAttr {
+  /** The stat to switch */
+  private statToSwitch: EffectiveStat;
+  /** The stat to switch with */
+  private statToSwitchWith: EffectiveStat;
+
+  constructor(statToSwitch: EffectiveStat, statToSwitchWith: EffectiveStat) {
+    super();
+
+    this.statToSwitch = statToSwitch;
+    this.statToSwitchWith = statToSwitchWith;
+  }
+
+  /**
+   * Switches the user's stats based on the {@linkcode statToSwitch} and {@linkcode statToSwitchWith} attributes.
+   * @param {Pokemon} user the {@linkcode Pokemon} that used the move
+   * @param target n/a
+   * @param move n/a
+   * @param args n/a
+   * @returns whether the effect was applied
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    const firstStat = user.getStat(this.statToSwitch, false);
+    const secondStat = user.getStat(this.statToSwitchWith, false);
+
+    user.setStat(this.statToSwitch, secondStat, false);
+    user.setStat(this.statToSwitchWith, firstStat, false);
+
+    user.scene.queueMessage(i18next.t("moveTriggers:shiftedStats", {
+      pokemonName: getPokemonNameWithAffix(user),
+      statToSwitch: i18next.t(getStatKey(this.statToSwitch)),
+      statToSwitchWith: i18next.t(getStatKey(this.statToSwitchWith))
+    }));
+
+    return true;
+  }
+
+  /**
+   * Encourages the user to use the move if the stat to switch with is greater than the stat to switch.
+   * @param {Pokemon} user the {@linkcode Pokemon} that used the move
+   * @param target n/a
+   * @param move n/a
+   * @returns number of points to add to the user's benefit score
+   */
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    return user.getStat(this.statToSwitchWith, false) > user.getStat(this.statToSwitch, false) ? 10 : 0;
   }
 }
 
@@ -8894,7 +8951,8 @@ export function initMoves() {
     new AttackMove(Moves.PSYSHIELD_BASH, Type.PSYCHIC, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 1, true),
     new SelfStatusMove(Moves.POWER_SHIFT, Type.NORMAL, -1, 10, -1, 0, 8)
-      .unimplemented(),
+      .target(MoveTarget.USER)
+      .attr(ShiftStatAttr, Stat.ATK, Stat.DEF),
     new AttackMove(Moves.STONE_AXE, Type.ROCK, MoveCategory.PHYSICAL, 65, 90, 15, 100, 0, 8)
       .attr(AddArenaTrapTagHitAttr, ArenaTagType.STEALTH_ROCK)
       .slicingMove(),
