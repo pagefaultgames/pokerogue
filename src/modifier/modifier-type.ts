@@ -433,37 +433,44 @@ export class RememberMoveModifierType extends PokemonModifierType {
 }
 
 export class DoubleBattleChanceBoosterModifierType extends ModifierType {
-  public battleCount: integer;
+  private maxBattles: number;
 
-  constructor(localeKey: string, iconImage: string, battleCount: integer) {
-    super(localeKey, iconImage, (_type, _args) => new Modifiers.DoubleBattleChanceBoosterModifier(this, this.battleCount), "lure");
+  constructor(localeKey: string, iconImage: string, maxBattles: number) {
+    super(localeKey, iconImage, (_type, _args) => new Modifiers.DoubleBattleChanceBoosterModifier(this, maxBattles), "lure");
 
-    this.battleCount = battleCount;
+    this.maxBattles = maxBattles;
   }
 
-  getDescription(scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.DoubleBattleChanceBoosterModifierType.description", { battleCount: this.battleCount });
+  getDescription(_scene: BattleScene): string {
+    return i18next.t("modifierType:ModifierType.DoubleBattleChanceBoosterModifierType.description", {
+      battleCount: this.maxBattles
+    });
   }
 }
 
 export class TempStatStageBoosterModifierType extends ModifierType implements GeneratedPersistentModifierType {
   private stat: TempBattleStat;
-  private key: string;
+  private nameKey: string;
+  private quantityKey: string;
 
   constructor(stat: TempBattleStat) {
-    const key = TempStatStageBoosterModifierTypeGenerator.items[stat];
-    super("", key, (_type, _args) => new Modifiers.TempStatStageBoosterModifier(this, this.stat));
+    const nameKey = TempStatStageBoosterModifierTypeGenerator.items[stat];
+    super("", nameKey, (_type, _args) => new Modifiers.TempStatStageBoosterModifier(this, this.stat, 5));
 
     this.stat = stat;
-    this.key = key;
+    this.nameKey = nameKey;
+    this.quantityKey = (stat !== Stat.ACC) ? "percentage" : "stage";
   }
 
   get name(): string {
-    return i18next.t(`modifierType:TempStatStageBoosterItem.${this.key}`);
+    return i18next.t(`modifierType:TempStatStageBoosterItem.${this.nameKey}`);
   }
 
   getDescription(_scene: BattleScene): string {
-    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", { stat: i18next.t(getStatKey(this.stat)) });
+    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
+      stat: i18next.t(getStatKey(this.stat)),
+      amount: i18next.t(`modifierType:ModifierType.TempStatStageBoosterModifierType.extra.${this.quantityKey}`)
+    });
   }
 
   getPregenArgs(): any[] {
@@ -1348,9 +1355,9 @@ export const modifierTypes = {
   SUPER_REPEL: () => new DoubleBattleChanceBoosterModifierType('Super Repel', 10),
   MAX_REPEL: () => new DoubleBattleChanceBoosterModifierType('Max Repel', 25),*/
 
-  LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.LURE", "lure", 5),
-  SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.SUPER_LURE", "super_lure", 10),
-  MAX_LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.MAX_LURE", "max_lure", 25),
+  LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.LURE", "lure", 10),
+  SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.SUPER_LURE", "super_lure", 15),
+  MAX_LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.MAX_LURE", "max_lure", 30),
 
   SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(),
 
@@ -1358,9 +1365,12 @@ export const modifierTypes = {
 
   DIRE_HIT: () => new class extends ModifierType {
     getDescription(_scene: BattleScene): string {
-      return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", { stat: i18next.t("modifierType:ModifierType.DIRE_HIT.extra.raises") });
+      return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
+        stat: i18next.t("modifierType:ModifierType.DIRE_HIT.extra.raises"),
+        amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.stage")
+      });
     }
-  }("modifierType:ModifierType.DIRE_HIT", "dire_hit", (type, _args) => new Modifiers.TempCritBoosterModifier(type)),
+  }("modifierType:ModifierType.DIRE_HIT", "dire_hit", (type, _args) => new Modifiers.TempCritBoosterModifier(type, 5)),
 
   BASE_STAT_BOOSTER: () => new BaseStatBoosterModifierTypeGenerator(),
 

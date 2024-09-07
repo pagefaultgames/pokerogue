@@ -354,6 +354,12 @@ export default class Battle {
     return null;
   }
 
+  /**
+   * Generates a random number using the current battle's seed. Calls {@linkcode Utils.randSeedInt}
+   * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+   * @param min The minimum integer to pick, default `0`
+   * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+   */
   randSeedInt(scene: BattleScene, range: number, min: number = 0): number {
     if (range <= 1) {
       return min;
