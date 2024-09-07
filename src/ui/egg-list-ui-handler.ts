@@ -8,6 +8,7 @@ import { addWindow } from "./ui-theme";
 import {Button} from "#enums/buttons";
 import i18next from "i18next";
 import { EggSourceType } from "#app/enums/egg-source-types.js";
+import { UiTheme } from "#app/enums/ui-theme.js";
 
 const iconSize = 18;
 const numCols = 11;
@@ -132,16 +133,18 @@ export default class EggListUiHandler extends MessageUiHandler {
         source.setScale(0.4);
         source.setPosition(x + 5, y + 1);
       }
+      // handle special cases (same species, legacy UI)
+
       if (egg.sourceType === EggSourceType.SAME_SPECIES_EGG) {
-        // add background to differentiate same species from legendary gacha
         const bg = this.scene.add.image(x+8, y+3, "passive_bg");
         bg.setOrigin(0, 0);
         bg.setScale(0.65);
         bg.setVisible(true);
         this.eggSourceIconContainer.add(bg);
+      } else if (this.scene.uiTheme === UiTheme.LEGACY && egg.sourceType === EggSourceType.GACHA_SHINY) {
+        source.setTint(0x000000);
       }
       this.eggSourceIconContainer.add(source);
-
       e++;
     }
 
