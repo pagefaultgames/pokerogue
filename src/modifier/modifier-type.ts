@@ -125,12 +125,10 @@ export class ModifierType {
    * @param poolType - Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
    */
   withTierFromPool(poolType: ModifierPoolType = ModifierPoolType.PLAYER): ModifierType {
-    const modifierPool = getModifierPoolForType(poolType);
-
-    for (const weightedModifiers of Object.values(modifierPool)) {
-      for (const mod of weightedModifiers) {
-        if (mod.modifierType.id === this.id) {
-          this.tier = mod.modifierType.tier;
+    for (const tier of Object.values(getModifierPoolForType(poolType))) {
+      for (const modifier of tier) {
+        if (this.id === modifier.modifierType.id) {
+          this.tier = modifier.modifierType.tier;
           return this;
         }
       }
