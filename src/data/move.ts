@@ -5946,15 +5946,15 @@ export class TransformAttr extends MoveEffectAttr {
     user.summonData.gender = target.getGender();
     user.summonData.fusionGender = target.getFusionGender();
 
-      // Copy all stats (except HP)
-      for (const s of EFFECTIVE_STATS) {
+    // Copy all stats (except HP)
+    for (const s of EFFECTIVE_STATS) {
       user.setStat(s, target.getStat(s, false), false);
-      }
+    }
 
-      // Copy all stat stages
-      for (const s of BATTLE_STATS) {
+    // Copy all stat stages
+    for (const s of BATTLE_STATS) {
       user.setStatStage(s, target.getStatStage(s));
-      }
+    }
 
     user.summonData.moveset = target.getMoveset().map(m => {
       const pp = m?.getMove().pp!;
