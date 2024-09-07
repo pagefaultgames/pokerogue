@@ -136,8 +136,6 @@ export class ModifierType {
       }
     }
 
-    // Fallback to COMMON tier if no tier found
-    this.tier = ModifierTier.COMMON;
     return this;
   }
 

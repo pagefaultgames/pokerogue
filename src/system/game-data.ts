@@ -91,7 +91,7 @@ export function encrypt(data: string, bypassLogin: boolean): string {
 
 export function decrypt(data: string, bypassLogin: boolean): string {
   return (bypassLogin
-    ? (data: string) => decodeURIComponent(atob(data))
+    ? (data: string) => atob(data)
     : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(data);
 }
 

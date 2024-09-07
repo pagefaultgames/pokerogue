@@ -346,6 +346,6 @@ export function getGameMode(gameMode: GameModes): GameMode {
   case GameModes.DAILY:
     return new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true });
   case GameModes.CHALLENGE:
-    return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, isChallenge: true, hasMysteryEncounters: true }, classicFixedBattles);
+    return new GameMode(GameModes.CHALLENGE, { isClassic: true, hasTrainers: true, isChallenge: true }, classicFixedBattles);
   }
 }

@@ -124,8 +124,7 @@ export class VictoryPhase extends PokemonPhase {
 
     if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
       handleMysteryEncounterVictory(this.scene, false, this.isExpOnly);
-      this.end();
-      return;
+      return this.end();
     }
 
     if (!this.scene.getEnemyParty().find(p => this.scene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted(true))) {

@@ -991,7 +991,7 @@ export function calculateMEAggregateStats(scene: BattleScene, baseSpawnWeight: n
         // Common / Uncommon / Rare / Super Rare (base is out of 128)
         const tierWeights = [66, 40, 19, 3];
 
-        // Adjust tier weights by currently encountered events (pity system that lowers odds of multiple common/uncommons)
+        // Adjust tier weights by currently encountered events (pity system that lowers odds of multiple Common/Great)
         tierWeights[0] = tierWeights[0] - 6 * numEncounters[0];
         tierWeights[1] = tierWeights[1] - 4 * numEncounters[1];
 

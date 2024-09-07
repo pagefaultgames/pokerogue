@@ -1160,14 +1160,6 @@ export default class BattleScene extends SceneBase {
         this.field.add(newTrainer);
       }
 
-      // TODO: remove these once ME spawn rates are finalized
-      // let testStartingWeight = 3;
-      // while (testStartingWeight < 4) {
-      //   calculateMEAggregateStats(this, testStartingWeight);
-      //   testStartingWeight += 1;
-      // }
-      // calculateRareSpawnAggregateStats(this, 14);
-
       // Check for mystery encounter
       // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
       const highestMysteryEncounterWave = 180;
@@ -2582,19 +2574,18 @@ export default class BattleScene extends SceneBase {
       party.forEach((enemyPokemon: EnemyPokemon, i: integer) => {
         if (heldModifiersConfigs && i < heldModifiersConfigs.length && heldModifiersConfigs[i] && heldModifiersConfigs[i].length > 0) {
           heldModifiersConfigs[i].forEach(mt => {
+            let modifier: PokemonHeldItemModifier;
             if (mt.modifier instanceof PokemonHeldItemModifierType) {
-              const stackCount = mt.stackCount ?? 1;
-              // const isTransferable = mt.isTransferable ?? true;
-              const modifier = mt.modifier.newModifier(enemyPokemon);
-              modifier.stackCount = stackCount;
-              // TODO: set isTransferable
-              // modifier.setIsTransferable(isTransferable);
-              this.addEnemyModifier(modifier, true);
+              modifier = mt.modifier.newModifier(enemyPokemon);
             } else {
-              const modifier = mt.modifier as PokemonHeldItemModifier;
+              modifier = mt.modifier as PokemonHeldItemModifier;
               modifier.pokemonId = enemyPokemon.id;
-              this.addEnemyModifier(modifier, true);
             }
+            const stackCount = mt.stackCount ?? 1;
+            modifier.stackCount = stackCount;
+            // TODO: set isTransferable
+            // modifier.isTransferrable = mt.isTransferable ?? true;
+            this.addEnemyModifier(modifier, true);
           });
         } else {
           const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && !!this.currentBattle.trainer?.config.isBoss);
@@ -2957,7 +2948,7 @@ export default class BattleScene extends SceneBase {
     // See Enum values for base tier weights
     const tierWeights = [MysteryEncounterTier.COMMON, MysteryEncounterTier.GREAT, MysteryEncounterTier.ULTRA, MysteryEncounterTier.ROGUE];
 
-    // Adjust tier weights by previously encountered events to lower odds of only common/uncommons in run
+    // Adjust tier weights by previously encountered events to lower odds of only Common/Great in run
     this.mysteryEncounterData.encounteredEvents.forEach(seenEncounterData => {
       if (seenEncounterData.tier === MysteryEncounterTier.COMMON) {
         tierWeights[0] = tierWeights[0] - 6;
@@ -2969,9 +2960,9 @@ export default class BattleScene extends SceneBase {
     const totalWeight = tierWeights.reduce((a, b) => a + b);
     const tierValue = Utils.randSeedInt(totalWeight);
     const commonThreshold = totalWeight - tierWeights[0];
-    const uncommonThreshold = totalWeight - tierWeights[0] - tierWeights[1];
-    const rareThreshold = totalWeight - tierWeights[0] - tierWeights[1] - tierWeights[2];
-    let tier: MysteryEncounterTier | null = tierValue > commonThreshold ? MysteryEncounterTier.COMMON : tierValue > uncommonThreshold ? MysteryEncounterTier.GREAT : tierValue > rareThreshold ? MysteryEncounterTier.ULTRA : MysteryEncounterTier.ROGUE;
+    const greatThreshold = totalWeight - tierWeights[0] - tierWeights[1];
+    const ultraThreshold = totalWeight - tierWeights[0] - tierWeights[1] - tierWeights[2];
+    let tier: MysteryEncounterTier | null = tierValue > commonThreshold ? MysteryEncounterTier.COMMON : tierValue > greatThreshold ? MysteryEncounterTier.GREAT : tierValue > ultraThreshold ? MysteryEncounterTier.ULTRA : MysteryEncounterTier.ROGUE;
 
     if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE)) {
       tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE!;

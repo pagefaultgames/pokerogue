@@ -335,7 +335,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   isAllowed(): boolean {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
-    return !this.isFainted() && !this.wildFlee && challengeAllowed.value;
+    return !this.wildFlee && challengeAllowed.value;
   }
 
   isActive(onField?: boolean): boolean {

@@ -149,7 +149,7 @@ export class Arena {
       return this.randomSpecies(waveIndex, level, (attempt || 0) + 1);
     }
 
-    const newSpeciesId = ret.getWildSpeciesForLevel(level, true, !!isBoss, this.scene.gameMode);
+    const newSpeciesId = ret.getWildSpeciesForLevel(level, true, isBoss ?? isBossSpecies, this.scene.gameMode);
     if (newSpeciesId !== ret.speciesId) {
       console.log("Replaced", Species[ret.speciesId], "with", Species[newSpeciesId]);
       ret = getPokemonSpecies(newSpeciesId);
