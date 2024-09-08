@@ -812,7 +812,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       applyStatMultiplierAbAttrs(StatMultiplierAbAttr, this, stat, statValue, simulated);
     }
 
-    let ret = statValue.value * this.getStatStageMultiplier(stat, opponent, move, isCritical);
+    let ret = statValue.value * this.getStatStageMultiplier(stat, opponent, move, ignoreOppAbility, isCritical, simulated);
 
     switch (stat) {
     case Stat.ATK:
@@ -2067,10 +2067,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param stat the desired {@linkcode EffectiveStat}
    * @param opponent the target {@linkcode Pokemon}
    * @param move the {@linkcode Move} being used
+   * @param ignoreOppAbility determines whether the effects of the opponent's abilities (i.e. Unaware) should be ignored (`false` by default)
    * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
+   * @param simulated determines whether effects are applied without altering game state (`true` by default)
    * @return the stat stage multiplier to be used for effective stat calculation
    */
-  getStatStageMultiplier(stat: EffectiveStat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): number {
+  getStatStageMultiplier(stat: EffectiveStat, opponent?: Pokemon, move?: Move, ignoreOppAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): number {
     const statStage = new Utils.IntegerHolder(this.getStatStage(stat));
     const ignoreStatStage = new Utils.BooleanHolder(false);
 
@@ -2087,7 +2089,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           break;
         }
       }
-      applyAbAttrs(IgnoreOpponentStatStagesAbAttr, opponent, null, false, stat, ignoreStatStage);
+      if (!ignoreOppAbility) {
+        applyAbAttrs(IgnoreOpponentStatStagesAbAttr, opponent, null, simulated, stat, ignoreStatStage);
+      }
       if (move) {
         applyMoveAttrs(IgnoreOpponentStatStagesAttr, this, opponent, move, ignoreStatStage);
       }
