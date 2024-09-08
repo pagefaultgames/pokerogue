@@ -750,6 +750,14 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Finds the first {@linkcode Pokemon.isActive()} pokemon from the player that isn't also currently switching out
+   * @returns Either the first {@linkcode PlayerPokemon} satisfying, or undefined if no player pokemon on the field satisfy
+   */
+  getPlayerPokemonOnScreen(): PlayerPokemon | undefined {
+    return this.getPlayerField().find(p => p.isActive() && p.switchOutStatus === false);
+  }
+
+  /**
    * Returns an array of PlayerPokemon of length 1 or 2 depending on if double battles or not
    * @returns array of {@linkcode PlayerPokemon}
    */
@@ -764,6 +772,14 @@ export default class BattleScene extends SceneBase {
 
   getEnemyPokemon(): EnemyPokemon | undefined {
     return this.getEnemyField().find(p => p.isActive());
+  }
+
+  /**
+   * Finds the first {@linkcode Pokemon.isActive()} pokemon from the enemy that isn't also currently switching out
+   * @returns Either the first {@linkcode EnemyPokemon} satisfying, or undefined if no player pokemon on the field satisfy
+   */
+  getEnemyPokemonOnScreen(): EnemyPokemon | undefined {
+    return this.getEnemyField().find(p => p.isActive() && p.switchOutStatus === false);
   }
 
   /**

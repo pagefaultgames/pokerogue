@@ -51,7 +51,7 @@ describe("Moves - Dragon Tail", () => {
       await game.phaseInterceptor.to(BerryPhase);
 
       const isVisible = enemyPokemon.visible;
-      const hasFled = enemyPokemon.wildFlee;
+      const hasFled = enemyPokemon.switchOutStatus;
       expect(!isVisible && hasFled).toBe(true);
 
       // simply want to test that the game makes it this far without crashing
@@ -73,7 +73,7 @@ describe("Moves - Dragon Tail", () => {
       await game.phaseInterceptor.to(BerryPhase);
 
       const isVisible = enemyPokemon.visible;
-      const hasFled = enemyPokemon.wildFlee;
+      const hasFled = enemyPokemon.switchOutStatus;
       expect(!isVisible && hasFled).toBe(true);
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
     }, TIMEOUT
@@ -98,9 +98,9 @@ describe("Moves - Dragon Tail", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       const isVisibleLead = enemyLeadPokemon.visible;
-      const hasFledLead = enemyLeadPokemon.wildFlee;
+      const hasFledLead = enemyLeadPokemon.switchOutStatus;
       const isVisibleSec = enemySecPokemon.visible;
-      const hasFledSec = enemySecPokemon.wildFlee;
+      const hasFledSec = enemySecPokemon.switchOutStatus;
       expect(!isVisibleLead && hasFledLead && isVisibleSec && !hasFledSec).toBe(true);
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
 
@@ -134,9 +134,9 @@ describe("Moves - Dragon Tail", () => {
       await game.phaseInterceptor.to(BerryPhase);
 
       const isVisibleLead = enemyLeadPokemon.visible;
-      const hasFledLead = enemyLeadPokemon.wildFlee;
+      const hasFledLead = enemyLeadPokemon.switchOutStatus;
       const isVisibleSec = enemySecPokemon.visible;
-      const hasFledSec = enemySecPokemon.wildFlee;
+      const hasFledSec = enemySecPokemon.switchOutStatus;
       expect(!isVisibleLead && hasFledLead && !isVisibleSec && hasFledSec).toBe(true);
       expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
       expect(secPokemon.hp).toBeLessThan(secPokemon.getMaxHp());
