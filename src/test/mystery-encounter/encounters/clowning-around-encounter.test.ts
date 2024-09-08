@@ -126,11 +126,11 @@ describe("Clowning Around - Mystery Encounter", () => {
     });
     expect(config.pokemonConfigs?.[1]).toEqual({
       species: getPokemonSpecies(Species.BLACEPHALON),
-      mysteryEncounterData: expect.anything(),
+      mysteryEncounterPokemonData: expect.anything(),
       isBoss: true,
       moveSet: [Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN]
     });
-    expect(config.pokemonConfigs?.[1].mysteryEncounterData?.types.length).toBe(2);
+    expect(config.pokemonConfigs?.[1].mysteryEncounterPokemonData?.types.length).toBe(2);
     expect([
       Abilities.STURDY,
       Abilities.PICKUP,
@@ -147,8 +147,8 @@ describe("Clowning Around - Mystery Encounter", () => {
       Abilities.MAGICIAN,
       Abilities.SHEER_FORCE,
       Abilities.PRANKSTER
-    ]).toContain(config.pokemonConfigs?.[1].mysteryEncounterData?.ability);
-    expect(ClowningAroundEncounter.misc.ability).toBe(config.pokemonConfigs?.[1].mysteryEncounterData?.ability);
+    ]).toContain(config.pokemonConfigs?.[1].mysteryEncounterPokemonData?.ability);
+    expect(ClowningAroundEncounter.misc.ability).toBe(config.pokemonConfigs?.[1].mysteryEncounterPokemonData?.ability);
     await vi.waitFor(() => expect(moveInitSpy).toHaveBeenCalled());
     await vi.waitFor(() => expect(moveLoadSpy).toHaveBeenCalled());
     expect(onInitResult).toBe(true);
@@ -227,7 +227,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.phaseInterceptor.to(NewBattlePhase, false);
 
       const leadPokemon = scene.getParty()[0];
-      expect(leadPokemon.mysteryEncounterData?.ability).toBe(abilityToTrain);
+      expect(leadPokemon.mysteryEncounterPokemonData?.ability).toBe(abilityToTrain);
     });
   });
 
@@ -348,9 +348,9 @@ describe("Clowning Around - Mystery Encounter", () => {
       scene.getParty()[2].moveset = [];
       await runMysteryEncounterToEnd(game, 3);
 
-      const leadTypesAfter = scene.getParty()[0].mysteryEncounterData?.types;
-      const secondaryTypesAfter = scene.getParty()[1].mysteryEncounterData?.types;
-      const thirdTypesAfter = scene.getParty()[2].mysteryEncounterData?.types;
+      const leadTypesAfter = scene.getParty()[0].mysteryEncounterPokemonData?.types;
+      const secondaryTypesAfter = scene.getParty()[1].mysteryEncounterPokemonData?.types;
+      const thirdTypesAfter = scene.getParty()[2].mysteryEncounterPokemonData?.types;
 
       expect(leadTypesAfter.length).toBe(2);
       expect(leadTypesAfter[0]).toBe(Type.WATER);

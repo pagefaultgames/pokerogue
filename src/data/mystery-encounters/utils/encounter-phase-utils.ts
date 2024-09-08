@@ -72,7 +72,7 @@ export interface EnemyPokemonConfig {
   isBoss: boolean;
   bossSegments?: number;
   bossSegmentModifier?: number; // Additive to the determined segment number
-  mysteryEncounterData?: MysteryEncounterPokemonData;
+  mysteryEncounterPokemonData?: MysteryEncounterPokemonData;
   formIndex?: number;
   abilityIndex?: number;
   level?: number;
@@ -229,8 +229,8 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       }
 
       // Set custom mystery encounter data fields (such as sprite scale, custom abilities, types, etc.)
-      if (!isNullOrUndefined(config.mysteryEncounterData)) {
-        enemyPokemon.mysteryEncounterData = config.mysteryEncounterData!;
+      if (!isNullOrUndefined(config.mysteryEncounterPokemonData)) {
+        enemyPokemon.mysteryEncounterPokemonData = config.mysteryEncounterPokemonData!;
       }
 
       // Set Boss

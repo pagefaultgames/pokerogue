@@ -369,10 +369,10 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
       newType = randSeedInt(18) as Type;
     }
     newTypes.push(newType);
-    if (!newPokemon.mysteryEncounterData) {
-      newPokemon.mysteryEncounterData = new MysteryEncounterPokemonData(undefined, undefined, undefined, newTypes);
+    if (!newPokemon.mysteryEncounterPokemonData) {
+      newPokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(undefined, undefined, undefined, newTypes);
     } else {
-      newPokemon.mysteryEncounterData.types = newTypes;
+      newPokemon.mysteryEncounterPokemonData.types = newTypes;
     }
 
     for (const item of transformation.heldItems) {

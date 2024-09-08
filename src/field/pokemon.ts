@@ -112,7 +112,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public battleData: PokemonBattleData;
   public battleSummonData: PokemonBattleSummonData;
   public turnData: PokemonTurnData;
-  public mysteryEncounterData: MysteryEncounterPokemonData;
+  public mysteryEncounterPokemonData: MysteryEncounterPokemonData;
 
   /** Used by Mystery Encounters to execute pokemon-specific logic (such as stat boosts) at start of battle */
   public mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
@@ -201,7 +201,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionGender = dataSource.fusionGender;
       this.fusionLuck = dataSource.fusionLuck;
       this.usedTMs = dataSource.usedTMs ?? [];
-      this.mysteryEncounterData = dataSource.mysteryEncounterData ?? new MysteryEncounterPokemonData();
+      this.mysteryEncounterPokemonData = dataSource.mysteryEncounterPokemonData ?? new MysteryEncounterPokemonData();
     } else {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
@@ -249,7 +249,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
       this.fusionLuck = this.luck;
-      this.mysteryEncounterData = new MysteryEncounterPokemonData();
+      this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
     }
 
     this.generateName();
@@ -577,8 +577,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const formKey = this.getFormKey();
     if (formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 || formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1) {
       return 1.5;
-    } else if (!isNullOrUndefined(this.mysteryEncounterData.spriteScale) && this.mysteryEncounterData.spriteScale !== 0) {
-      return this.mysteryEncounterData.spriteScale!;
+    } else if (!isNullOrUndefined(this.mysteryEncounterPokemonData.spriteScale) && this.mysteryEncounterPokemonData.spriteScale !== 0) {
+      return this.mysteryEncounterPokemonData.spriteScale!;
     }
     return 1;
   }
@@ -1082,9 +1082,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (!types.length || !includeTeraType) {
-      if (this.mysteryEncounterData.types && this.mysteryEncounterData.types.length > 0) {
+      if (this.mysteryEncounterPokemonData.types && this.mysteryEncounterPokemonData.types.length > 0) {
         // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
-        this.mysteryEncounterData.types.forEach(t => types.push(t));
+        this.mysteryEncounterPokemonData.types.forEach(t => types.push(t));
       } else if (!ignoreOverride && this.summonData?.types && this.summonData.types.length > 0) {
         this.summonData.types.forEach(t => types.push(t));
       } else {
@@ -1146,8 +1146,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.OPP_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
     }
-    if (this.mysteryEncounterData?.ability) {
-      return allAbilities[this.mysteryEncounterData.ability];
+    if (this.mysteryEncounterPokemonData?.ability) {
+      return allAbilities[this.mysteryEncounterPokemonData.ability];
     }
     if (this.isFusion()) {
       return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
@@ -1173,8 +1173,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE && !this.isPlayer()) {
       return allAbilities[Overrides.OPP_PASSIVE_ABILITY_OVERRIDE];
     }
-    if (this.mysteryEncounterData?.passive) {
-      return allAbilities[this.mysteryEncounterData.passive];
+    if (this.mysteryEncounterPokemonData?.passive) {
+      return allAbilities[this.mysteryEncounterPokemonData.passive];
     }
 
     let starterSpeciesId = this.species.speciesId;

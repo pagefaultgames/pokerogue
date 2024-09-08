@@ -8,7 +8,7 @@
       "label": "Battle the Pokémon",
       "tooltip": "(-) Tricky Battle\n(+) Strong Catchable Foe",
       "selected": "You approach the\n{{enemyPokemon}} without fear.",
-      "stat_boost": "The {{enemyPokemon}} heightened abilities boost its stats!"
+      "stat_boost": "The {{enemyPokemon}}'s heightened abilities boost its stats!"
     },
     "2": {
       "label": "Give It Food",

@@ -57,7 +57,7 @@ export default class PokemonData {
   public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
-  public mysteryEncounterData: MysteryEncounterPokemonData;
+  public mysteryEncounterPokemonData: MysteryEncounterPokemonData;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
@@ -103,7 +103,7 @@ export default class PokemonData {
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
     this.usedTMs = source.usedTMs ?? [];
 
-    this.mysteryEncounterData = source.mysteryEncounterData ?? new MysteryEncounterPokemonData();
+    this.mysteryEncounterPokemonData = source.mysteryEncounterPokemonData ?? new MysteryEncounterPokemonData();
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);

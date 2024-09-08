@@ -45,7 +45,7 @@ import { TerrainType } from "#app/data/terrain.js";
 import { OutdatedPhase } from "#app/phases/outdated-phase.js";
 import { ReloadSessionPhase } from "#app/phases/reload-session-phase.js";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
-import { MysteryEncounterData } from "../data/mystery-encounters/mystery-encounter-data";
+import { MysteryEncounterSaveData } from "../data/mystery-encounters/mystery-encounter-save-data";
 import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 
 export const defaultStarterSpecies: Species[] = [
@@ -132,7 +132,7 @@ export interface SessionSaveData {
   timestamp: integer;
   challenges: ChallengeData[];
   mysteryEncounter: MysteryEncounter;
-  mysteryEncounterData: MysteryEncounterData;
+  mysteryEncounterSaveData: MysteryEncounterSaveData;
 }
 
 interface Unlocks {
@@ -978,7 +978,7 @@ export class GameData {
       timestamp: new Date().getTime(),
       challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
       mysteryEncounter: scene.currentBattle.mysteryEncounter,
-      mysteryEncounterData: scene.mysteryEncounterData
+      mysteryEncounterSaveData: scene.mysteryEncounterSaveData
     } as SessionSaveData;
   }
 
@@ -1069,7 +1069,7 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
-          scene.mysteryEncounterData = sessionData?.mysteryEncounterData ? sessionData?.mysteryEncounterData : new MysteryEncounterData(null);
+          scene.mysteryEncounterSaveData = sessionData?.mysteryEncounterSaveData ?? new MysteryEncounterSaveData(null);
 
           scene.newArena(sessionData.arena.biome);
 
@@ -1294,8 +1294,8 @@ export class GameData {
         return new MysteryEncounter(v);
       }
 
-      if (k === "mysteryEncounterData") {
-        return new MysteryEncounterData(v);
+      if (k === "mysteryEncounterSaveData") {
+        return new MysteryEncounterSaveData(v);
       }
 
       return v;

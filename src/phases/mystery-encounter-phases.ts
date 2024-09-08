@@ -24,7 +24,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { GameOverPhase } from "#app/phases/game-over-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
-import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounter-data";
+import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 
 /**
  * Will handle (in order):
@@ -63,7 +63,7 @@ export class MysteryEncounterPhase extends Phase {
     if (!this.optionSelectSettings) {
       // Sets flag that ME was encountered, only if this is not a followup option select phase
       // Can be used in later MEs to check for requirements to spawn, run history, etc.
-      this.scene.mysteryEncounterData.encounteredEvents.push(new SeenEncounterData(encounter.encounterType, encounter.encounterTier, this.scene.currentBattle.waveIndex));
+      this.scene.mysteryEncounterSaveData.encounteredEvents.push(new SeenEncounterData(encounter.encounterType, encounter.encounterTier, this.scene.currentBattle.waveIndex));
     }
 
     // Initiates encounter dialogue window and option select
@@ -73,6 +73,15 @@ export class MysteryEncounterPhase extends Phase {
   handleOptionSelect(option: MysteryEncounterOption, index: number): boolean {
     // Set option selected flag
     this.scene.currentBattle.mysteryEncounter!.selectedOption = option;
+
+    if (!this.optionSelectSettings) {
+      // Saves the selected option in the ME save data, only if this is not a followup option select phase
+      // Can be used for analytics purposes to track what options are popular on certain encounters
+      const encounterSaveData = this.scene.mysteryEncounterSaveData.encounteredEvents[this.scene.mysteryEncounterSaveData.encounteredEvents.length - 1];
+      if (encounterSaveData.type === this.scene.currentBattle.mysteryEncounter?.encounterType) {
+        encounterSaveData.selectedOption = index;
+      }
+    }
 
     if (!option.onOptionPhase) {
       return false;

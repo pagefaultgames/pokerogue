@@ -7,20 +7,27 @@ export class SeenEncounterData {
   type: MysteryEncounterType;
   tier: MysteryEncounterTier;
   waveIndex: number;
+  selectedOption: number;
 
-  constructor(type: MysteryEncounterType, tier: MysteryEncounterTier, waveIndex: number) {
+  constructor(type: MysteryEncounterType, tier: MysteryEncounterTier, waveIndex: number, selectedOption?: number) {
     this.type = type;
     this.tier = tier;
     this.waveIndex = waveIndex;
+    this.selectedOption = selectedOption ?? -1;
   }
 }
 
-export class MysteryEncounterData {
+export interface QueuedEncounter {
+  type: MysteryEncounterType;
+  spawnPercent: number; // Out of 100
+}
+
+export class MysteryEncounterSaveData {
   encounteredEvents: SeenEncounterData[] = [];
   encounterSpawnChance: number = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
-  nextEncounterQueue: [MysteryEncounterType, integer][] = [];
+  queuedEncounters: QueuedEncounter[] = [];
 
-  constructor(data: MysteryEncounterData | null) {
+  constructor(data: MysteryEncounterSaveData | null) {
     if (!isNullOrUndefined(data)) {
       Object.assign(this, data);
     }

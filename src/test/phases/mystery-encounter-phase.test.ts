@@ -49,9 +49,9 @@ describe("Mystery Encounter Phases", () => {
       });
       await game.phaseInterceptor.run(MysteryEncounterPhase);
 
-      expect(game.scene.mysteryEncounterData.encounteredEvents.length).toBeGreaterThan(0);
-      expect(game.scene.mysteryEncounterData.encounteredEvents[0].type).toEqual(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
-      expect(game.scene.mysteryEncounterData.encounteredEvents[0].tier).toEqual(MysteryEncounterTier.GREAT);
+      expect(game.scene.mysteryEncounterSaveData.encounteredEvents.length).toBeGreaterThan(0);
+      expect(game.scene.mysteryEncounterSaveData.encounteredEvents[0].type).toEqual(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
+      expect(game.scene.mysteryEncounterSaveData.encounteredEvents[0].tier).toEqual(MysteryEncounterTier.GREAT);
       expect(game.scene.ui.getMode()).toBe(Mode.MYSTERY_ENCOUNTER);
     });
 

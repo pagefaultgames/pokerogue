@@ -4,7 +4,7 @@ import Pokemon, { PlayerPokemon, EnemyPokemon } from "./field/pokemon";
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies } from "./data/pokemon-species";
 import { Constructor, isNullOrUndefined } from "#app/utils";
 import * as Utils from "./utils";
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, TurnHeldItemTransferModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems } from "./modifier/modifier";
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, TurnHeldItemTransferModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier, overrideModifiers, overrideHeldItems, PokemonIncrementingStatModifier, ExpShareModifier, ExpBalanceModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier } from "./modifier/modifier";
 import { PokeballType } from "./data/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "./data/battle-anims";
 import { Phase } from "./phase";
@@ -96,10 +96,13 @@ import { TurnInitPhase } from "./phases/turn-init-phase";
 import { ShopCursorTarget } from "./enums/shop-cursor-target";
 import MysteryEncounter from "./data/mystery-encounters/mystery-encounter";
 import { allMysteryEncounters, ANTI_VARIANCE_WEIGHT_MODIFIER, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, mysteryEncountersByBiome, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "./data/mystery-encounters/mystery-encounters";
-import { MysteryEncounterData } from "#app/data/mystery-encounters/mystery-encounter-data";
+import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
+import { ExpPhase } from "#app/phases/exp-phase";
+import { ShowPartyExpBarPhase } from "#app/phases/show-party-exp-bar-phase";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -253,7 +256,7 @@ export default class BattleScene extends SceneBase {
   public money: integer;
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
-  public mysteryEncounterData: MysteryEncounterData = new MysteryEncounterData(null);
+  public mysteryEncounterSaveData: MysteryEncounterSaveData = new MysteryEncounterSaveData(null);
   public lastMysteryEncounter?: MysteryEncounter;
   /** Combined Biome and Wave count text */
   private biomeWaveText: Phaser.GameObjects.Text;
@@ -1168,8 +1171,8 @@ export default class BattleScene extends SceneBase {
         const roll = Utils.randSeedInt(256);
 
         // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
-        const sessionEncounterRate = this.mysteryEncounterData.encounterSpawnChance;
-        const encounteredEvents = this.mysteryEncounterData.encounteredEvents;
+        const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
+        const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
 
         // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn (reverse as well)
         // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
@@ -1185,9 +1188,9 @@ export default class BattleScene extends SceneBase {
         if (canSpawn && roll < successRate) {
           newBattleType = BattleType.MYSTERY_ENCOUNTER;
           // Reset base spawn weight
-          this.mysteryEncounterData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
+          this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
         } else {
-          this.mysteryEncounterData.encounterSpawnChance = sessionEncounterRate + WEIGHT_INCREMENT_ON_SPAWN_MISS;
+          this.mysteryEncounterSaveData.encounterSpawnChance = sessionEncounterRate + WEIGHT_INCREMENT_ON_SPAWN_MISS;
         }
       }
     }
@@ -2917,6 +2920,96 @@ export default class BattleScene extends SceneBase {
     this.shiftPhase();
   }
 
+  applyPartyExp(expValue: number): void {
+    const participantIds = this.currentBattle.playerParticipantIds;
+    const party = this.getParty();
+    const expShareModifier = this.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
+    const expBalanceModifier = this.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
+    const multipleParticipantExpBonusModifier = this.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
+    const nonFaintedPartyMembers = party.filter(p => p.hp);
+    const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < this.getMaxExpLevel());
+    const partyMemberExp: number[] = [];
+
+    if (participantIds.size) {
+      if (this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
+        expValue = Math.floor(expValue * 1.5);
+      } else if (this.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER && this.currentBattle.mysteryEncounter) {
+        expValue = Math.floor(expValue * this.currentBattle.mysteryEncounter.expMultiplier);
+      }
+      for (const partyMember of nonFaintedPartyMembers) {
+        const pId = partyMember.id;
+        const participated = participantIds.has(pId);
+        if (participated) {
+          partyMember.addFriendship(2);
+          const machoBraceModifier = partyMember.getHeldItems().find(m => m instanceof PokemonIncrementingStatModifier);
+          if (machoBraceModifier && machoBraceModifier.stackCount < machoBraceModifier.getMaxStackCount(this)) {
+            machoBraceModifier.stackCount++;
+            this.updateModifiers(true, true);
+            partyMember.updateInfo();
+          }
+        }
+        if (!expPartyMembers.includes(partyMember)) {
+          continue;
+        }
+        if (!participated && !expShareModifier) {
+          partyMemberExp.push(0);
+          continue;
+        }
+        let expMultiplier = 0;
+        if (participated) {
+          expMultiplier += (1 / participantIds.size);
+          if (participantIds.size > 1 && multipleParticipantExpBonusModifier) {
+            expMultiplier += multipleParticipantExpBonusModifier.getStackCount() * 0.2;
+          }
+        } else if (expShareModifier) {
+          expMultiplier += (expShareModifier.getStackCount() * 0.2) / participantIds.size;
+        }
+        if (partyMember.pokerus) {
+          expMultiplier *= 1.5;
+        }
+        if (Overrides.XP_MULTIPLIER_OVERRIDE !== null) {
+          expMultiplier = Overrides.XP_MULTIPLIER_OVERRIDE;
+        }
+        const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
+        this.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
+        partyMemberExp.push(Math.floor(pokemonExp.value));
+      }
+
+      if (expBalanceModifier) {
+        let totalLevel = 0;
+        let totalExp = 0;
+        expPartyMembers.forEach((expPartyMember, epm) => {
+          totalExp += partyMemberExp[epm];
+          totalLevel += expPartyMember.level;
+        });
+
+        const medianLevel = Math.floor(totalLevel / expPartyMembers.length);
+
+        const recipientExpPartyMemberIndexes: number[] = [];
+        expPartyMembers.forEach((expPartyMember, epm) => {
+          if (expPartyMember.level <= medianLevel) {
+            recipientExpPartyMemberIndexes.push(epm);
+          }
+        });
+
+        const splitExp = Math.floor(totalExp / recipientExpPartyMemberIndexes.length);
+
+        expPartyMembers.forEach((_partyMember, pm) => {
+          partyMemberExp[pm] = Phaser.Math.Linear(partyMemberExp[pm], recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0, 0.2 * expBalanceModifier.getStackCount());
+        });
+      }
+
+      for (let pm = 0; pm < expPartyMembers.length; pm++) {
+        const exp = partyMemberExp[pm];
+
+        if (exp) {
+          const partyMemberIndex = party.indexOf(expPartyMembers[pm]);
+          this.unshiftPhase(expPartyMembers[pm].isOnField() ? new ExpPhase(this, partyMemberIndex, exp) : new ShowPartyExpBarPhase(this, partyMemberIndex, exp));
+        }
+      }
+    }
+  }
+
   /**
    * Loads or generates a mystery encounter
    * @param override - used to load session encounter when restarting game, etc.
@@ -2932,13 +3025,13 @@ export default class BattleScene extends SceneBase {
     }
 
     // Check for queued encounters first
-    if (!encounter && this.mysteryEncounterData?.nextEncounterQueue && this.mysteryEncounterData.nextEncounterQueue.length > 0) {
+    if (!encounter && this.mysteryEncounterSaveData?.queuedEncounters && this.mysteryEncounterSaveData.queuedEncounters.length > 0) {
       let i = 0;
-      while (i < this.mysteryEncounterData.nextEncounterQueue.length && !!encounter) {
-        const candidate = this.mysteryEncounterData.nextEncounterQueue[i];
-        const forcedChance = candidate[1];
+      while (i < this.mysteryEncounterSaveData.queuedEncounters.length && !!encounter) {
+        const candidate = this.mysteryEncounterSaveData.queuedEncounters[i];
+        const forcedChance = candidate.spawnPercent;
         if (Utils.randSeedInt(100) < forcedChance) {
-          encounter = allMysteryEncounters[candidate[0]];
+          encounter = allMysteryEncounters[candidate.type];
         }
 
         i++;
@@ -2955,7 +3048,7 @@ export default class BattleScene extends SceneBase {
     const tierWeights = [MysteryEncounterTier.COMMON, MysteryEncounterTier.GREAT, MysteryEncounterTier.ULTRA, MysteryEncounterTier.ROGUE];
 
     // Adjust tier weights by previously encountered events to lower odds of only Common/Great in run
-    this.mysteryEncounterData.encounteredEvents.forEach(seenEncounterData => {
+    this.mysteryEncounterSaveData.encounteredEvents.forEach(seenEncounterData => {
       if (seenEncounterData.tier === MysteryEncounterTier.COMMON) {
         tierWeights[0] = tierWeights[0] - 6;
       } else if (seenEncounterData.tier === MysteryEncounterTier.GREAT) {
@@ -2976,7 +3069,7 @@ export default class BattleScene extends SceneBase {
 
     let availableEncounters: MysteryEncounter[] = [];
     // New encounter should never be the same as the most recent encounter
-    const previousEncounter = this.mysteryEncounterData.encounteredEvents.length > 0 ? this.mysteryEncounterData.encounteredEvents[this.mysteryEncounterData.encounteredEvents.length - 1].type : null;
+    const previousEncounter = this.mysteryEncounterSaveData.encounteredEvents.length > 0 ? this.mysteryEncounterSaveData.encounteredEvents[this.mysteryEncounterSaveData.encounteredEvents.length - 1].type : null;
     const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType) ?? [];
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
     while (availableEncounters.length === 0 && tier !== null) {
@@ -2995,9 +3088,9 @@ export default class BattleScene extends SceneBase {
           if (previousEncounter !== null && encounterType === previousEncounter) { // Previous encounter was not this one
             return false;
           }
-          if (this.mysteryEncounterData.encounteredEvents.length > 0 && // Encounter has not exceeded max allowed encounters
+          if (this.mysteryEncounterSaveData.encounteredEvents.length > 0 && // Encounter has not exceeded max allowed encounters
             (encounterCandidate.maxAllowedEncounters && encounterCandidate.maxAllowedEncounters > 0)
-            && this.mysteryEncounterData.encounteredEvents.filter(e => e.type === encounterType).length >= encounterCandidate.maxAllowedEncounters) {
+            && this.mysteryEncounterSaveData.encounteredEvents.filter(e => e.type === encounterType).length >= encounterCandidate.maxAllowedEncounters) {
             return false;
           }
           return true;
