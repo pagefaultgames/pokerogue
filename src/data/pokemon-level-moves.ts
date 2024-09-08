@@ -2122,11 +2122,11 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 20, Moves.DOUBLE_HIT ],
     [ 24, Moves.SLASH ],
     [ 28, Moves.FOCUS_ENERGY ],
+    [ 30, Moves.STEEL_WING ], //Custom
     [ 32, Moves.AGILITY ],
     [ 36, Moves.AIR_SLASH ],
     [ 40, Moves.X_SCISSOR ],
     [ 44, Moves.SWORDS_DANCE ],
-    [ 48, Moves.STEEL_WING ],
   ],
   [Species.JYNX]: [
     [ 1, Moves.POUND ],
