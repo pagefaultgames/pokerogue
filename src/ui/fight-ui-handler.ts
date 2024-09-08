@@ -247,6 +247,8 @@ export default class FightUiHandler extends UiHandler {
       return undefined;
     }
 
+    return this.calcDamage(pokemon as PlayerPokemon, opponent, pokemonMove)
+
     return `${effectiveness}x`;
   }
 
