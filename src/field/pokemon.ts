@@ -4501,7 +4501,6 @@ export interface AttackMoveResult {
 }
 
 export class PokemonSummonData {
-  /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public moveQueue: QueuedMove[] = [];
   public tags: BattlerTag[] = [];
