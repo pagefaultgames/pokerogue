@@ -331,31 +331,34 @@ export default class FightUiHandler extends UiHandler {
     dmgHigh = out.damageHigh;
     dmgLow = out.damageLow;
     var minHits = 1
-    var maxHits = 1
+    var maxHits = -1
     var mh = move.getMove().getAttrs(MoveData.MultiHitAttr)
     for (var i = 0; i < mh.length; i++) {
       var mh2 = mh[i] as MoveData.MultiHitAttr
       switch (mh2.multiHitType) {
         case MoveData.MultiHitType._2:
           minHits = 2;
-          maxHits = 2;
+          //maxHits = 2;
         case MoveData.MultiHitType._2_TO_5:
           minHits = 2;
-          maxHits = 5;
+          //maxHits = 5;
         case MoveData.MultiHitType._3:
           minHits = 3;
-          maxHits = 3;
+          //maxHits = 3;
         case MoveData.MultiHitType._10:
           minHits = 10;
-          maxHits = 10;
+          //maxHits = 10;
         case MoveData.MultiHitType.BEAT_UP:
           const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
           // No status means the ally pokemon can contribute to Beat Up
           minHits = party.reduce((total, pokemon) => {
             return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
           }, 0);
-          maxHits = minHits
+          //maxHits = minHits
       }
+    }
+    if (maxHits == -1) {
+      maxHits = minHits
     }
     var h = user.getHeldItems()
     for (var i = 0; i < h.length; i++) {
