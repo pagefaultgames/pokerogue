@@ -1,21 +1,21 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr } from "#app/data/ability.js";
-import { CommonAnim } from "#app/data/battle-anims.js";
-import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags.js";
-import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move.js";
-import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms.js";
-import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect.js";
-import { Type } from "#app/data/type.js";
-import { getTerrainBlockMessage } from "#app/data/weather.js";
-import { Abilities } from "#app/enums/abilities.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { Moves } from "#app/enums/moves.js";
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { MoveUsedEvent } from "#app/events/battle-scene.js";
-import Pokemon, { MoveResult, PokemonMove, TurnMove } from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import * as Utils from "#app/utils.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr } from "#app/data/ability";
+import { CommonAnim } from "#app/data/battle-anims";
+import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
+import { allMoves, applyMoveAttrs, BypassRedirectAttr, BypassSleepAttr, ChargeAttr, CopyMoveAttr, HealStatusEffectAttr, MoveFlags, PreMoveMessageAttr } from "#app/data/move";
+import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
+import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
+import { Type } from "#app/data/type";
+import { getTerrainBlockMessage } from "#app/data/weather";
+import { Abilities } from "#app/enums/abilities";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { Moves } from "#app/enums/moves";
+import { StatusEffect } from "#app/enums/status-effect";
+import { MoveUsedEvent } from "#app/events/battle-scene";
+import Pokemon, { MoveResult, PokemonMove, TurnMove } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import * as Utils from "#app/utils";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 import { CommonAnimPhase } from "./common-anim-phase";
@@ -45,8 +45,8 @@ export class MovePhase extends BattlePhase {
     this.cancelled = false;
   }
 
-  canMove(): boolean {
-    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon, this.ignorePp) && !!this.targets.length;
+  canMove(ignoreDisableTags?: boolean): boolean {
+    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon, this.ignorePp, ignoreDisableTags) && !!this.targets.length;
   }
 
   /**Signifies the current move should fail but still use PP */
@@ -64,10 +64,7 @@ export class MovePhase extends BattlePhase {
 
     console.log(Moves[this.move.moveId]);
 
-    if (!this.canMove()) {
-      if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId) {
-        this.scene.queueMessage(i18next.t("battle:moveDisabled", { moveName: this.move.getName() }));
-      }
+    if (!this.canMove(true)) {
       if (this.pokemon.isActive(true) && this.move.ppUsed >= this.move.getMovePp()) { // if the move PP was reduced from Spite or otherwise, the move fails
         this.fail();
         this.showMoveText();

@@ -1,4 +1,5 @@
 import { toDmgValue } from "#app/utils";
+import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#app/data/status-effect";
@@ -204,5 +205,23 @@ describe("Abilities - Disguise", () => {
 
     expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
+  }, TIMEOUT);
+
+  it("activates when Aerilate circumvents immunity to the move's base type", async () => {
+    game.override.ability(Abilities.AERILATE);
+    game.override.moveset([Moves.TACKLE]);
+
+    await game.classicMode.startBattle();
+
+    const mimikyu = game.scene.getEnemyPokemon()!;
+    const maxHp = mimikyu.getMaxHp();
+    const disguiseDamage = toDmgValue(maxHp / 8);
+
+    game.move.select(Moves.TACKLE);
+
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    expect(mimikyu.formIndex).toBe(bustedForm);
+    expect(mimikyu.hp).toBe(maxHp - disguiseDamage);
   }, TIMEOUT);
 });

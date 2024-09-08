@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { TrainerSlot } from "#app/data/trainer-config.js";
-import { Phase } from "#app/phase.js";
+import BattleScene from "#app/battle-scene";
+import { TrainerSlot } from "#app/data/trainer-config";
+import { Phase } from "#app/phase";
 import * as LoggerTools from "../logger";
 
 export class BattlePhase extends Phase {

@@ -1,8 +1,8 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattleStyle } from "#app/enums/battle-style.js";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { BattleStyle } from "#app/enums/battle-style";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 import { PostSummonPhase } from "./post-summon-phase";

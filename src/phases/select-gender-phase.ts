@@ -1,8 +1,8 @@
-import BattleScene from "#app/battle-scene.js";
-import { PlayerGender } from "#app/enums/player-gender.js";
-import { Phase } from "#app/phase.js";
-import { SettingKeys } from "#app/system/settings/settings.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { PlayerGender } from "#app/enums/player-gender";
+import { Phase } from "#app/phase";
+import { SettingKeys } from "#app/system/settings/settings";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import * as LoggerTools from "../logger";
 

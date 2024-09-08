@@ -10,6 +10,7 @@ export const defaultConfig: UserConfig  = {
 	clearScreen: false,
 	appType: "mpa",
 	build: {
+		chunkSizeWarningLimit: 10000,
 		minify: 'esbuild',
 		sourcemap: false,
 		rollupOptions: {

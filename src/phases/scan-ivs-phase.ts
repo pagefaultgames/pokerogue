@@ -1,10 +1,10 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims.js";
-import { Stat } from "#app/enums/stat.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { getTextColor, TextStyle } from "#app/ui/text.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
+import { Stat } from "#app/enums/stat";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { getTextColor, TextStyle } from "#app/ui/text";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import * as LoggerTools from "../logger";

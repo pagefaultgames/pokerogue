@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { Abilities } from "#app/enums/abilities.js";
-import Pokemon from "#app/field/pokemon.js";
+import BattleScene from "#app/battle-scene";
+import { Abilities } from "#app/enums/abilities";
+import Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "./battle-phase";
 import { ShowAbilityPhase } from "./show-ability-phase";
 import * as LoggerTools from "../logger";

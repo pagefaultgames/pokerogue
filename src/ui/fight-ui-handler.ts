@@ -5,14 +5,12 @@ import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
-import * as MoveData from "../data/move";
+import * as MoveData from "#app/data/move";
 import i18next from "i18next";
 import {Button} from "#enums/buttons";
-import Pokemon, { AttackData, EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
+import Pokemon, { AttackData, EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { CommandPhase } from "#app/phases/command-phase";
 import { PokemonMultiHitModifierType } from "#app/modifier/modifier-type.js";
-import { Stat, PermanentStat, PERMANENT_STATS } from "#app/enums/stat.js";
-import { BaseStatModifier } from "#app/modifier/modifier.js";
 import { StatusEffect } from "#app/enums/status-effect.js";
 
 export default class FightUiHandler extends UiHandler {
@@ -99,9 +97,13 @@ export default class FightUiHandler extends UiHandler {
     messageHandler.bg.setVisible(false);
     messageHandler.commandWindow.setVisible(false);
     messageHandler.movesWindowContainer.setVisible(true);
-    this.setCursor(this.getCursor());
+    const pokemon = (this.scene.getCurrentPhase() as CommandPhase).getPokemon();
+    if (pokemon.battleSummonData.turnCount <= 1) {
+      this.setCursor(0);
+    } else {
+      this.setCursor(this.getCursor());
+    }
     this.displayMoves();
-
     return true;
   }
 

@@ -1,8 +1,7 @@
-import BattleScene from "#app/battle-scene.js";
-import { Phase } from "#app/phase.js";
-import { Mode } from "#app/ui/ui.js";
-import * as Utils from "#app/utils.js";
-import * as LoggerTools from "../logger";
+import BattleScene from "#app/battle-scene";
+import { Phase } from "#app/phase";
+import { Mode } from "#app/ui/ui";
+import * as Utils from "#app/utils";
 
 export class ReloadSessionPhase extends Phase {
   private systemDataStr: string | null;

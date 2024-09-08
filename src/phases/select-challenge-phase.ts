@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { Phase } from "#app/phase.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { Phase } from "#app/phase";
+import { Mode } from "#app/ui/ui";
 import * as LoggerTools from "../logger";
 
 export class SelectChallengePhase extends Phase {
