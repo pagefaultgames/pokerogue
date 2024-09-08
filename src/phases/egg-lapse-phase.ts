@@ -9,7 +9,6 @@ import { achvs } from "#app/system/achv";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { EggSummaryPhase } from "./egg-summary-phase";
 import { EggHatchData } from "#app/data/egg-hatch-data";
-import * as LoggerTools from "../logger";
 
 /**
  * Phase that handles updating eggs, and hatching any ready eggs

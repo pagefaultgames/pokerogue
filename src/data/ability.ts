@@ -1085,8 +1085,8 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (!attacker.summonData.disabledMove) {
-      if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance) && !attacker.isMax()) {
+    if (attacker.getTag(BattlerTagType.DISABLED) === null) {
+      if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100, undefined, "Chance to disable a move") < this.chance) && !attacker.isMax()) {
         if (simulated) {
           return true;
         }
@@ -2642,7 +2642,7 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
       if (simulated) {
         return defender.canAddTag(BattlerTagType.CONFUSED);
       } else {
-        return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedInt(3, 2), move.id, defender.id);
+        return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 5, "Duration of Confusion effect"), move.id, defender.id);
       }
     }
     return false;
