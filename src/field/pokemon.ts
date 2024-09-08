@@ -2285,7 +2285,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         } else {
           const critChance = [24, 8, 2, 1][Math.max(0, Math.min(this.getCritStage(source, move), 3))];
           isCritical = critChance === 1;
-          if (simulated) {
+          if (!simulated) {
             isCritical = critChance === 1 || !this.scene.randBattleSeedInt(critChance);
           }
           if (Overrides.NEVER_CRIT_OVERRIDE) {
@@ -2378,7 +2378,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (!isTypeImmune) {
           const levelMultiplier = (2 * source.level / 5 + 2);
-          const randomMultiplier = (this.randSeedIntRange(85, 100, "Random damage roll") / 100);
+          var randRoll = simulated ? 1 : this.randSeedIntRange(85, 100, "Random damage roll")
+          const randomMultiplier = (randRoll / 100);
           damage.value = Utils.toDmgValue((((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2)
                                    * stabMultiplier.value
                                    * typeMultiplier

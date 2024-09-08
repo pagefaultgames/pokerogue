@@ -398,7 +398,8 @@ export default class FightUiHandler extends UiHandler {
     if (this.scene.damageDisplay == "Percent")
       return target.getMoveEffectiveness(user, move.getMove(), false, true) + "x - " + (dmgLowP == dmgHighP ? dmgLowP + "%" + qSuffix : dmgLowP + "%-" + dmgHighP + "%" + qSuffix) + koText
     if (this.scene.damageDisplay == "Value")
-      return target.getMoveEffectiveness(user, move.getMove(), false, true) + "x" + ((Math.floor(dmgLow) >= target.hp) ? " (KO)" : "")
+      return target.getMoveEffectiveness(user, move.getMove(), false, true) + "x - " + (dmgLowP == dmgHighP ? dmgLowP + "%" + qSuffix : dmgLowP + "%-" + dmgHighP + "%" + qSuffix) + koText
+      //return target.getMoveEffectiveness(user, move.getMove(), false, true) + "x" + ((Math.floor(dmgLow) >= target.hp) ? " (KO)" : "")
     if (this.scene.damageDisplay == "Off")
       return target.getMoveEffectiveness(user, move.getMove(), false, true) + "x" + ((Math.floor(dmgLow) >= target.hp) ? " (KO)" : "")
   }
