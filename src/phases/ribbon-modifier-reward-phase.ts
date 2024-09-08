@@ -1,7 +1,7 @@
-import BattleScene from "#app/battle-scene.js";
-import PokemonSpecies from "#app/data/pokemon-species.js";
-import { ModifierTypeFunc } from "#app/modifier/modifier-type.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import PokemonSpecies from "#app/data/pokemon-species";
+import { ModifierTypeFunc } from "#app/modifier/modifier-type";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 
