@@ -448,6 +448,7 @@ export class EggHatchPhase extends Phase {
    */
   generatePokemon(): PlayerPokemon {
     this.eggHatchData = this.eggLapsePhase.generatePokemon(this.egg);
+    this.eggMoveIndex = this.eggHatchData.eggMoveIndex;
     return this.eggHatchData.pokemon;
   }
 }
