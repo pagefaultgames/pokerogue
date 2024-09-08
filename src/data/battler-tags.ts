@@ -169,9 +169,9 @@ export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
   }
 
   /**
-   * Checks if a move is restricted by Throat Chop.
+   * Checks if a {@linkcode Moves | move} is restricted by Throat Chop.
    * @override
-   * @param {Moves} move the move to check for sound-based restriction
+   * @param {Moves} move the {@linkcode Moves | move} to check for sound-based restriction
    * @returns true if the move is sound-based
    */
   override isMoveRestricted(move: Moves): boolean {
@@ -181,8 +181,8 @@ export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
   /**
    * Shows a message when the player attempts to select a move that is restricted by Throat Chop.
    * @override
-   * @param {Pokemon} pokemon the pokemon that is attempting to select the restricted move
-   * @param {Moves} move the move that is being restricted
+   * @param {Pokemon} pokemon the {@linkcode Pokemon} that is attempting to select the restricted move
+   * @param {Moves} move the {@linkcode Moves | move} that is being restricted
    * @returns the message to display when the player attempts to select the restricted move
    */
   override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
@@ -192,8 +192,8 @@ export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
   /**
    * Shows a message when a move is interrupted by Throat Chop.
    * @override
-   * @param {Pokemon} pokemon the interrupted pokemon
-   * @param {Moves} move the move that was interrupted
+   * @param {Pokemon} pokemon the interrupted {@linkcode Pokemon}
+   * @param {Moves} move the {@linkcode Moves | move} that was interrupted
    * @returns the message to display when the move is interrupted
    */
   override interruptedText(pokemon: Pokemon, move: Moves): string {
