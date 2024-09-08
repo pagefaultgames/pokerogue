@@ -102,4 +102,30 @@ describe("Items - Double Battle Chance Boosters", () => {
     }
     expect(count).toBe(1);
   }, TIMEOUT);
+
+  // TODO: Fix this test
+  it.skip("should have the same remaining battle count after a reload", async() => {
+    game.override
+      .startingModifier([{ name: "LURE" }])
+      .moveset(SPLASH_ONLY)
+      .startingLevel(200);
+
+    await game.classicMode.startBattle([
+      Species.PIKACHU
+    ]);
+
+    game.move.select(Moves.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+
+    const preReloadModifier = game.scene.findModifier(m => m instanceof DoubleBattleChanceBoosterModifier) as DoubleBattleChanceBoosterModifier;
+    const preReloadCount = preReloadModifier.getBattleCount();
+
+    await game.reload.reloadSession();
+
+    const postReloadModifier = game.scene.findModifier(m => m instanceof DoubleBattleChanceBoosterModifier) as DoubleBattleChanceBoosterModifier;
+    const postReloadCount = postReloadModifier.getBattleCount();
+
+    expect(postReloadCount).toBe(preReloadCount);
+  }, TIMEOUT);
 });
