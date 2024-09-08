@@ -30,20 +30,20 @@ import { TrainerVariant } from "../field/trainer";
 import { Variant } from "#app/data/variant";
 import {setSettingGamepad, SettingGamepad, settingGamepadDefaults} from "./settings/settings-gamepad";
 import {setSettingKeyboard, SettingKeyboard} from "#app/system/settings/settings-keyboard";
-import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena.js";
-import { EnemyAttackStatusEffectChanceModifier } from "../modifier/modifier";
-import { StatusEffect } from "#app/data/status-effect.js";
+import { TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
+import * as Modifier from "../modifier/modifier";
+import { StatusEffect } from "#app/data/status-effect";
 import ChallengeData from "./challenge-data";
 import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
-import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
-import { WeatherType } from "#app/enums/weather-type.js";
-import { TerrainType } from "#app/data/terrain.js";
-import { OutdatedPhase } from "#app/phases/outdated-phase.js";
-import { ReloadSessionPhase } from "#app/phases/reload-session-phase.js";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { WeatherType } from "#app/enums/weather-type";
+import { TerrainType } from "#app/data/terrain";
+import { OutdatedPhase } from "#app/phases/outdated-phase";
+import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
 import { applySessionDataPatches, applySettingsDataPatches, applySystemDataPatches } from "./version-converter";
 
@@ -1065,10 +1065,8 @@ export class GameData {
           // TODO
           //scene.arena.tags = sessionData.arena.tags;
 
-          const modifiersModule = await import("../modifier/modifier");
-
           for (const modifierData of sessionData.modifiers) {
-            const modifier = modifierData.toModifier(scene, modifiersModule[modifierData.className]);
+            const modifier = modifierData.toModifier(scene, Modifier[modifierData.className]);
             if (modifier) {
               scene.addModifier(modifier, true);
             }
@@ -1077,7 +1075,7 @@ export class GameData {
           scene.updateModifiers(true);
 
           for (const enemyModifierData of sessionData.enemyModifiers) {
-            const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
+            const modifier = enemyModifierData.toModifier(scene, Modifier[enemyModifierData.className]);
             if (modifier) {
               scene.addEnemyModifier(modifier, true);
             }
@@ -1233,7 +1231,7 @@ export class GameData {
           if (md?.className === "ExpBalanceModifier") { // Temporarily limit EXP Balance until it gets reworked
             md.stackCount = Math.min(md.stackCount, 4);
           }
-          if (md instanceof EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
+          if (md instanceof Modifier.EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP) {
             continue;
           }
           ret.push(new PersistentModifierData(md, player));

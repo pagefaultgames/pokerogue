@@ -26,9 +26,9 @@ import i18next from "i18next";
 
 import { allMoves } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
-import { LearnMovePhase } from "#app/phases/learn-move-phase.js";
-import { LevelUpPhase } from "#app/phases/level-up-phase.js";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase.js";
+import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { LevelUpPhase } from "#app/phases/level-up-phase";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 

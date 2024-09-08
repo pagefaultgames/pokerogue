@@ -2,7 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { applyPreWeatherEffectAbAttrs, SuppressWeatherEffectAbAttr, PreWeatherDamageAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPostWeatherLapseAbAttrs, PostWeatherLapseAbAttr } from "#app/data/ability.js";
 import { CommonAnim } from "#app/data/battle-anims";
 import { Weather, getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weather";
-import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { WeatherType } from "#app/enums/weather-type";
 import Pokemon, { HitResult } from "#app/field/pokemon";
 import * as Utils from "#app/utils";

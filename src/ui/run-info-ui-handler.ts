@@ -18,8 +18,7 @@ import { Type, getTypeRgb } from "../data/type";
 import { TypeColor, TypeShadow } from "#app/enums/color";
 import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/data/variant";
-import { PokemonHeldItemModifier, TerastallizeModifier } from "../modifier/modifier";
-import {modifierSortFunc} from "../modifier/modifier";
+import * as Modifier from "../modifier/modifier";
 import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 
@@ -68,7 +67,7 @@ export default class RunInfoUiHandler extends UiHandler {
   override async setup() {
  		this.runContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
     // The import of the modifiersModule is loaded here to sidestep async/await issues.
-    this.modifiersModule = await import("../modifier/modifier");
+    this.modifiersModule = Modifier;
     this.runContainer.setVisible(false);
  	}
 
@@ -303,7 +302,7 @@ export default class RunInfoUiHandler extends UiHandler {
     const teraPokemon = {};
     this.runInfo.enemyModifiers.forEach((m) => {
       const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
-      if (modifier instanceof TerastallizeModifier) {
+      if (modifier instanceof Modifier.TerastallizeModifier) {
         const teraDetails = modifier?.getArgs();
         const pkmnId = teraDetails[0];
         teraPokemon[pkmnId] = teraDetails[1];
@@ -434,7 +433,7 @@ export default class RunInfoUiHandler extends UiHandler {
       modifierIconsContainer.setScale(0.45);
       for (const m of this.runInfo.modifiers) {
         const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
-        if (modifier instanceof PokemonHeldItemModifier) {
+        if (modifier instanceof Modifier.PokemonHeldItemModifier) {
           continue;
         }
         const icon = modifier?.getIcon(this.scene, false);
@@ -635,17 +634,17 @@ export default class RunInfoUiHandler extends UiHandler {
       // Endless/Endless Spliced have a different scale because Pokemon tend to accumulate more items in these runs.
       const heldItemsScale = (this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS) ? 0.25 : 0.5;
       const heldItemsContainer = this.scene.add.container(-82, 2);
-      const heldItemsList : PokemonHeldItemModifier[] = [];
+      const heldItemsList : Modifier.PokemonHeldItemModifier[] = [];
       if (this.runInfo.modifiers.length) {
         for (const m of this.runInfo.modifiers) {
           const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
-          if (modifier instanceof PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
+          if (modifier instanceof Modifier.PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
             modifier.stackCount = m["stackCount"];
             heldItemsList.push(modifier);
           }
         }
         if (heldItemsList.length > 0) {
-          (heldItemsList as PokemonHeldItemModifier[]).sort(modifierSortFunc);
+          (heldItemsList as Modifier.PokemonHeldItemModifier[]).sort(Modifier.modifierSortFunc);
           let row = 0;
           for (const [index, item] of heldItemsList.entries()) {
             if ( index > 36 ) {

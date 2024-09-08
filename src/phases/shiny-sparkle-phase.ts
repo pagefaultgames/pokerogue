@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class ShinySparklePhase extends PokemonPhase {
