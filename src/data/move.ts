@@ -81,6 +81,16 @@ export enum MoveFlags {
   MAKES_CONTACT     = 1 << 0,
   IGNORE_PROTECT    = 1 << 1,
   IGNORE_VIRTUAL    = 1 << 2,
+  /**
+   * Sound-based moves have the following effects:
+   * - Pokemon with the {@linkcode Abilities.SOUNDPROOF Soundproof Ability} are unaffected by other Pokemon's sound-based moves.
+   * - Pokemon affected by {@linkcode Moves.THROAT_CHOP Throat Chop} cannot use sound-based moves for two turns.
+   * - Sound-based moves used by a Pokemon with {@linkcode Abilities.LIQUID_VOICE Liquid Voice} become Water-type moves.
+   * - Sound-based moves used by a Pokemon with {@linkcode Abilities.PUNK_ROCK Punk Rock} are boosted by 30%. Pokemon with Punk Rock also take half damage from sound-based moves.
+   * - All sound-based moves (except Howl) can hit Pokemon behind an active {@linkcode Moves.SUBSTITUTE Substitute}.
+   *
+   * cf https://bulbapedia.bulbagarden.net/wiki/Sound-based_move
+   */
   SOUND_BASED       = 1 << 3,
   HIDE_USER         = 1 << 4,
   HIDE_TARGET       = 1 << 5,
@@ -93,19 +103,20 @@ export enum MoveFlags {
    * @see {@linkcode Move.recklessMove()}
    */
   RECKLESS_MOVE     = 1 << 10,
+  /** Indicates a move should be affected by {@linkcode Abilities.BULLETPROOF} */
   BALLBOMB_MOVE     = 1 << 11,
+  /** Grass types and pokemon with {@linkcode Abilities.OVERCOAT} are immune to powder moves */
   POWDER_MOVE       = 1 << 12,
+  /** Indicates a move should trigger {@linkcode Abilities.DANCER} */
   DANCE_MOVE        = 1 << 13,
+  /** Indicates a move should trigger {@linkcode Abilities.WIND_RIDER} */
   WIND_MOVE         = 1 << 14,
+  /** Indicates a move should trigger {@linkcode Abilities.TRIAGE} */
   TRIAGE_MOVE       = 1 << 15,
   IGNORE_ABILITIES  = 1 << 16,
-  /**
-   * Enables all hits of a multi-hit move to be accuracy checked individually
-   */
+  /** Enables all hits of a multi-hit move to be accuracy checked individually */
   CHECK_ALL_HITS   = 1 << 17,
-  /**
-   * Indicates a move is able to be redirected to allies in a double battle if the attacker faints
-   */
+  /** Indicates a move is able to be redirected to allies in a double battle if the attacker faints */
   REDIRECT_COUNTER = 1 << 18,
 }
 
@@ -118,22 +129,22 @@ export default class Move implements Localizable {
   private _type: Type;
   private _category: MoveCategory;
   public moveTarget: MoveTarget;
-  public power: integer;
-  public accuracy: integer;
-  public pp: integer;
+  public power: number;
+  public accuracy: number;
+  public pp: number;
   public effect: string;
-  public chance: integer;
-  public priority: integer;
-  public generation: integer;
-  public attrs: MoveAttr[];
-  private conditions: MoveCondition[];
-  private flags: integer;
-  private nameAppend: string;
+  /** The chance of a move's secondary effects activating */
+  public chance: number;
+  public priority: number;
+  public generation: number;
+  public attrs: MoveAttr[] = [];
+  private conditions: MoveCondition[] = [];
+  /** The move's {@linkcode MoveFlags} */
+  private flags: number = 0;
+  private nameAppend: string = "";
 
-  constructor(id: Moves, type: Type, category: MoveCategory, defaultMoveTarget: MoveTarget, power: integer, accuracy: integer, pp: integer, chance: integer, priority: integer, generation: integer) {
+  constructor(id: Moves, type: Type, category: MoveCategory, defaultMoveTarget: MoveTarget, power: number, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     this.id = id;
-
-    this.nameAppend = "";
     this._type = type;
     this._category = category;
     this.moveTarget = defaultMoveTarget;
@@ -144,10 +155,6 @@ export default class Move implements Localizable {
     this.priority = priority;
     this.generation = generation;
 
-    this.attrs = [];
-    this.conditions = [];
-
-    this.flags = 0;
     if (defaultMoveTarget === MoveTarget.USER) {
       this.setFlag(MoveFlags.IGNORE_PROTECT, true);
     }
@@ -377,7 +384,7 @@ export default class Move implements Localizable {
    * @param makesContact The value (boolean) to set the flag to
    * @returns The {@linkcode Move} that called this function
    */
-  makesContact(makesContact: boolean = true): this { // TODO: is true the correct default?
+  makesContact(makesContact: boolean = true): this {
     this.setFlag(MoveFlags.MAKES_CONTACT, makesContact);
     return this;
   }
@@ -388,7 +395,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.CURSE}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresProtect(ignoresProtect: boolean = true): this { // TODO: is `true` the correct default?
+  ignoresProtect(ignoresProtect: boolean = true): this {
     this.setFlag(MoveFlags.IGNORE_PROTECT, ignoresProtect);
     return this;
   }
@@ -399,7 +406,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.NATURE_POWER}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresVirtual(ignoresVirtual: boolean = true): this { // TODO: is `true` the correct default?
+  ignoresVirtual(ignoresVirtual: boolean = true): this {
     this.setFlag(MoveFlags.IGNORE_VIRTUAL, ignoresVirtual);
     return this;
   }
@@ -410,7 +417,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.UPROAR}
    * @returns The {@linkcode Move} that called this function
    */
-  soundBased(soundBased: boolean = true): this { // TODO: is `true` the correct default?
+  soundBased(soundBased: boolean = true): this {
     this.setFlag(MoveFlags.SOUND_BASED, soundBased);
     return this;
   }
@@ -421,7 +428,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.TELEPORT}
    * @returns The {@linkcode Move} that called this function
    */
-  hidesUser(hidesUser: boolean = true): this { // TODO: is `true` the correct default?
+  hidesUser(hidesUser: boolean = true): this {
     this.setFlag(MoveFlags.HIDE_USER, hidesUser);
     return this;
   }
@@ -432,7 +439,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.WHIRLWIND}
    * @returns The {@linkcode Move} that called this function
    */
-  hidesTarget(hidesTarget: boolean = true): this { // TODO: is `true` the correct default?
+  hidesTarget(hidesTarget: boolean = true): this {
     this.setFlag(MoveFlags.HIDE_TARGET, hidesTarget);
     return this;
   }
@@ -443,7 +450,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.BITE}
    * @returns The {@linkcode Move} that called this function
    */
-  bitingMove(bitingMove: boolean = true): this { // TODO: is `true` the correct default?
+  bitingMove(bitingMove: boolean = true): this {
     this.setFlag(MoveFlags.BITING_MOVE, bitingMove);
     return this;
   }
@@ -454,7 +461,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.WATER_PULSE}
    * @returns The {@linkcode Move} that called this function
    */
-  pulseMove(pulseMove: boolean = true): this { // TODO: is `true` the correct default?
+  pulseMove(pulseMove: boolean = true): this {
     this.setFlag(MoveFlags.PULSE_MOVE, pulseMove);
     return this;
   }
@@ -465,7 +472,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.DRAIN_PUNCH}
    * @returns The {@linkcode Move} that called this function
    */
-  punchingMove(punchingMove: boolean = true): this { // TODO: is `true` the correct default?
+  punchingMove(punchingMove: boolean = true): this {
     this.setFlag(MoveFlags.PUNCHING_MOVE, punchingMove);
     return this;
   }
@@ -476,7 +483,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.X_SCISSOR}
    * @returns The {@linkcode Move} that called this function
    */
-  slicingMove(slicingMove: boolean = true): this { // TODO: is `true` the correct default?
+  slicingMove(slicingMove: boolean = true): this {
     this.setFlag(MoveFlags.SLICING_MOVE, slicingMove);
     return this;
   }
@@ -487,7 +494,7 @@ export default class Move implements Localizable {
    * @param recklessMove The value to set the flag to
    * @returns The {@linkcode Move} that called this function
    */
-  recklessMove(recklessMove: boolean = true): this { // TODO: is `true` the correct default?
+  recklessMove(recklessMove: boolean = true): this {
     this.setFlag(MoveFlags.RECKLESS_MOVE, recklessMove);
     return this;
   }
@@ -498,7 +505,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.ELECTRO_BALL}
    * @returns The {@linkcode Move} that called this function
    */
-  ballBombMove(ballBombMove: boolean = true): this { // TODO: is `true` the correct default?
+  ballBombMove(ballBombMove: boolean = true): this {
     this.setFlag(MoveFlags.BALLBOMB_MOVE, ballBombMove);
     return this;
   }
@@ -509,7 +516,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.STUN_SPORE}
    * @returns The {@linkcode Move} that called this function
    */
-  powderMove(powderMove: boolean = true): this { // TODO: is `true` the correct default?
+  powderMove(powderMove: boolean = true): this {
     this.setFlag(MoveFlags.POWDER_MOVE, powderMove);
     return this;
   }
@@ -520,7 +527,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.PETAL_DANCE}
    * @returns The {@linkcode Move} that called this function
    */
-  danceMove(danceMove: boolean = true): this { // TODO: is `true` the correct default?
+  danceMove(danceMove: boolean = true): this {
     this.setFlag(MoveFlags.DANCE_MOVE, danceMove);
     return this;
   }
@@ -531,7 +538,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.HURRICANE}
    * @returns The {@linkcode Move} that called this function
    */
-  windMove(windMove: boolean = true): this { // TODO: is `true` the correct default?
+  windMove(windMove: boolean = true): this {
     this.setFlag(MoveFlags.WIND_MOVE, windMove);
     return this;
   }
@@ -542,7 +549,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.ABSORB}
    * @returns The {@linkcode Move} that called this function
    */
-  triageMove(triageMove: boolean = true): this { // TODO: is `true` the correct default?
+  triageMove(triageMove: boolean = true): this {
     this.setFlag(MoveFlags.TRIAGE_MOVE, triageMove);
     return this;
   }
@@ -553,7 +560,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.SUNSTEEL_STRIKE}
    * @returns The {@linkcode Move} that called this function
    */
-  ignoresAbilities(ignoresAbilities: boolean = true): this { // TODO: is `true` the correct default?
+  ignoresAbilities(ignoresAbilities: boolean = true): this {
     this.setFlag(MoveFlags.IGNORE_ABILITIES, ignoresAbilities);
     return this;
   }
@@ -564,7 +571,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.TRIPLE_AXEL}
    * @returns The {@linkcode Move} that called this function
    */
-  checkAllHits(checkAllHits: boolean = true): this { // TODO: is `true` the correct default?
+  checkAllHits(checkAllHits: boolean = true): this {
     this.setFlag(MoveFlags.CHECK_ALL_HITS, checkAllHits);
     return this;
   }
@@ -575,7 +582,7 @@ export default class Move implements Localizable {
    * example: @see {@linkcode Moves.METAL_BURST}
    * @returns The {@linkcode Move} that called this function
    */
-  redirectCounter(redirectCounter: boolean = true): this { // TODO: is `true` the correct default?
+  redirectCounter(redirectCounter: boolean = true): this {
     this.setFlag(MoveFlags.REDIRECT_COUNTER, redirectCounter);
     return this;
   }
