@@ -2767,7 +2767,7 @@ export default class BattleScene extends SceneBase {
       keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant, true));
       keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
       if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
-        keys.push("cry/"+p.getFusionSpeciesForm().getCryKey(p.fusionSpecies.formIndex));
+        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
@@ -2776,7 +2776,7 @@ export default class BattleScene extends SceneBase {
       keys.push(p.species.getSpriteKey(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
       keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
       if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
-        keys.push("cry/"+p.getFusionSpeciesForm().getCryKey(p.fusionSpecies.formIndex));
+        keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     return keys;
