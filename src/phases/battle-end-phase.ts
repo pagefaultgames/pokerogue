@@ -23,6 +23,16 @@ export class BattleEndPhase extends BattlePhase {
       this.scene.unshiftPhase(new GameOverPhase(this.scene, true));
     }
 
+    /**
+     * Allow Fake Out and First Impression to be used at the start of every wild battle
+     * Note: This is specifically a buff to those moves and not normally expected behavior
+     */
+    for (const pokemon of this.scene.getField()) {
+      if (pokemon && pokemon.battleSummonData.turnCount > 1) {
+        pokemon.battleSummonData.turnCount = 1;
+      }
+    }
+
     for (const pokemon of this.scene.getParty().filter(p => p.isAllowedInBattle())) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
     }

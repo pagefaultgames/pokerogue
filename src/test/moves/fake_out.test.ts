@@ -24,14 +24,15 @@ describe("Moves - Fake Out", () => {
     game.override
       .battleType("single")
       .enemySpecies(Species.CORVIKNIGHT)
-      .starterSpecies(Species.FEEBAS)
       .moveset([Moves.FAKE_OUT, Moves.SPLASH])
       .enemyMoveset(SPLASH_ONLY)
+      .enemyLevel(10)
+      .startingLevel(10) // prevent LevelUpPhase from happening
       .disableCrits();
   });
 
-  it("can only be used on the first turn a pokemon is sent out", async() => {
-    await game.classicMode.startBattle();
+  it("can only be used on the first turn a pokemon is sent out in a battle", async() => {
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -45,22 +46,27 @@ describe("Moves - Fake Out", () => {
     await game.toNextTurn();
 
     expect(enemy.hp).toBe(postTurnOneHp);
+  }, 20000);
 
-    game.move.select(Moves.SPLASH);
-    await game.doKillOpponents();
+  // This is a PokeRogue buff to Fake Out
+  it("can be used at the start of every wave even if the pokemon wasn't recalled", async() => {
+    await game.classicMode.startBattle([Species.FEEBAS]);
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    enemy.damageAndUpdate(enemy.getMaxHp() - 1);
+
+    game.move.select(Moves.FAKE_OUT);
     await game.toNextWave();
-
-    const newEnemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.FAKE_OUT);
     await game.toNextTurn();
 
-    expect(newEnemy.hp).toBe(newEnemy.getMaxHp());
+    expect(game.scene.getEnemyPokemon()!.isFullHp()).toBe(false);
   }, 20000);
 
   it("can be used again if recalled and sent back out", async() => {
     game.override.startingWave(4);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyPokemon()!;
 
@@ -76,6 +82,18 @@ describe("Moves - Fake Out", () => {
     await game.toNextTurn();
 
     const enemy2 = game.scene.getEnemyPokemon()!;
+
+    expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
+    enemy2.hp = enemy2.getMaxHp();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    game.move.select(Moves.FAKE_OUT);
+    await game.toNextTurn();
 
     expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
   }, 20000);
