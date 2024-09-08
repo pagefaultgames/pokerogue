@@ -49,6 +49,7 @@ import RenameFormUiHandler from "./rename-form-ui-handler";
 import AdminUiHandler from "./admin-ui-handler";
 import RunHistoryUiHandler from "./run-history-ui-handler";
 import RunInfoUiHandler from "./run-info-ui-handler";
+import EggSummaryUiHandler from "./egg-summary-ui-handler";
 import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
 import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 
@@ -66,6 +67,7 @@ export enum Mode {
   STARTER_SELECT,
   EVOLUTION_SCENE,
   EGG_HATCH_SCENE,
+  EGG_HATCH_SUMMARY,
   CONFIRM,
   OPTION_SELECT,
   MENU,
@@ -171,6 +173,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene),
       new EggHatchSceneHandler(scene),
+      new EggSummaryUiHandler(scene),
       new ConfirmUiHandler(scene),
       new OptionSelectUiHandler(scene),
       new MenuUiHandler(scene),
@@ -317,10 +320,11 @@ export default class UI extends Phaser.GameObjects.Container {
     if (i18next.exists(keyOrText) ) {
       const i18nKey = keyOrText;
       hasi18n = true;
+
       text = i18next.t(i18nKey, { context: genderStr }); // override text with translation
 
       // Skip dialogue if the player has enabled the option and the dialogue has been already seen
-      if (battleScene.skipSeenDialogues && battleScene.gameData.getSeenDialogues()[i18nKey] === true) {
+      if (this.shouldSkipDialogue(i18nKey)) {
         console.log(`Dialogue ${i18nKey} skipped`);
         callback();
         return;

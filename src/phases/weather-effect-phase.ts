@@ -1,10 +1,11 @@
-import BattleScene from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene";
 import { applyPreWeatherEffectAbAttrs, SuppressWeatherEffectAbAttr, PreWeatherDamageAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPostWeatherLapseAbAttrs, PostWeatherLapseAbAttr } from "#app/data/ability.js";
-import { CommonAnim } from "#app/data/battle-anims.js";
-import { Weather, getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weather.js";
-import { WeatherType } from "#app/enums/weather-type.js";
-import Pokemon, { HitResult } from "#app/field/pokemon.js";
-import * as Utils from "#app/utils.js";
+import { CommonAnim } from "#app/data/battle-anims";
+import { Weather, getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weather";
+import { BattlerTagType } from "#app/enums/battler-tag-type.js";
+import { WeatherType } from "#app/enums/weather-type";
+import Pokemon, { HitResult } from "#app/field/pokemon";
+import * as Utils from "#app/utils";
 import { CommonAnimPhase } from "./common-anim-phase";
 
 export class WeatherEffectPhase extends CommonAnimPhase {
@@ -39,7 +40,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
           applyPreWeatherEffectAbAttrs(PreWeatherDamageAbAttr, pokemon, this.weather, cancelled);
           applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
-          if (cancelled.value) {
+          if (cancelled.value || pokemon.getTag(BattlerTagType.UNDERGROUND) || pokemon.getTag(BattlerTagType.UNDERWATER)) {
             return;
           }
 

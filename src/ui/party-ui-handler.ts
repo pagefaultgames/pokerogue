@@ -166,6 +166,8 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
+  private blockInput: boolean;
+
   private static FilterAll = (_pokemon: PlayerPokemon) => null;
 
   public static FilterNonFainted = (pokemon: PlayerPokemon) => {
@@ -309,7 +311,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.partyContainer.setVisible(true);
     this.partyBg.setTexture(`party_bg${this.scene.currentBattle.double ? "_double" : ""}`);
     this.populatePartySlots();
-    this.setCursor(this.cursor < 6 ? this.cursor : 0);
+    this.setCursor(0);
 
     return true;
   }
@@ -317,7 +319,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   processInput(button: Button): boolean {
     const ui = this.getUi();
 
-    if (this.pendingPrompt) {
+    if (this.pendingPrompt || this.blockInput) {
       return false;
     }
 
@@ -485,7 +487,9 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.clearOptions();
           ui.playSelect();
           if (this.cursor >= this.scene.currentBattle.getBattlerCount() || !pokemon.isAllowedInBattle()) {
+            this.blockInput = true;
             this.showText(i18next.t("partyUiHandler:releaseConfirmation", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
+              this.blockInput = false;
               ui.setModeWithoutClear(Mode.CONFIRM, () => {
                 ui.setMode(Mode.PARTY);
                 this.doRelease(this.cursor);
@@ -1317,16 +1321,13 @@ class PartySlot extends Phaser.GameObjects.Container {
       this.slotHpOverlay.setVisible(false);
       this.slotHpText.setVisible(false);
       let slotTmText: string;
-      switch (true) {
-      case (this.pokemon.compatibleTms.indexOf(tmMoveId) === -1):
-        slotTmText = i18next.t("partyUiHandler:notAble");
-        break;
-      case (this.pokemon.getMoveset().filter(m => m?.moveId === tmMoveId).length > 0):
+
+      if (this.pokemon.getMoveset().filter(m => m?.moveId === tmMoveId).length > 0) {
         slotTmText = i18next.t("partyUiHandler:learned");
-        break;
-      default:
+      } else if (this.pokemon.compatibleTms.indexOf(tmMoveId) === -1) {
+        slotTmText = i18next.t("partyUiHandler:notAble");
+      } else {
         slotTmText = i18next.t("partyUiHandler:able");
-        break;
       }
 
       this.slotDescriptionLabel.setText(slotTmText);
