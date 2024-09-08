@@ -1180,6 +1180,8 @@ export class ProtectedTag extends BattlerTag {
   }
 }
 
+export class DamageProtectedTag extends ProtectedTag {}
+
 export class ContactDamageProtectedTag extends ProtectedTag {
   private damageRatio: number;
 
@@ -1215,7 +1217,7 @@ export class ContactDamageProtectedTag extends ProtectedTag {
   }
 }
 
-export class ContactStatStageChangeProtectedTag extends ProtectedTag {
+export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
   private stat: BattleStat;
   private levels: number;
 
@@ -1271,7 +1273,7 @@ export class ContactPoisonProtectedTag extends ProtectedTag {
   }
 }
 
-export class ContactBurnProtectedTag extends ProtectedTag {
+export class ContactBurnProtectedTag extends DamageProtectedTag {
   constructor(sourceMove: Moves) {
     super(sourceMove, BattlerTagType.BURNING_BULWARK);
   }
