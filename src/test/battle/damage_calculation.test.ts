@@ -1,4 +1,4 @@
-import { DamagePhase } from "#app/phases/damage-phase.js";
+import { DamagePhase } from "#app/phases/damage-phase";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
