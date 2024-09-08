@@ -8,7 +8,7 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { getPokemonNameWithAffix } from "#app/messages";
+import { getPokemonNameWithAffix } from "#app/messages.js";
 import i18next from "i18next";
 import { WeatherType } from "./weather";
 

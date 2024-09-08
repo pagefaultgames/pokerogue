@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import BattleScene from "#app/battle-scene.js";
 import { BattlePhase } from "./battle-phase";
 
 export class HidePartyExpBarPhase extends BattlePhase {

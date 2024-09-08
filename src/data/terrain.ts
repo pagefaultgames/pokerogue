@@ -4,7 +4,7 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { ChangeMovePriorityAbAttr, applyAbAttrs } from "./ability";
 import { ProtectAttr } from "./move";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#app/battle.js";
 import i18next from "i18next";
 
 export enum TerrainType {

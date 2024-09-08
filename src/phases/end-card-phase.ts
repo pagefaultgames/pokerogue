@@ -1,7 +1,7 @@
-import BattleScene from "#app/battle-scene";
-import { PlayerGender } from "#app/enums/player-gender";
-import { Phase } from "#app/phase";
-import { addTextObject, TextStyle } from "#app/ui/text";
+import BattleScene from "#app/battle-scene.js";
+import { PlayerGender } from "#app/enums/player-gender.js";
+import { Phase } from "#app/phase.js";
+import { addTextObject, TextStyle } from "#app/ui/text.js";
 import i18next from "i18next";
 
 export class EndCardPhase extends Phase {

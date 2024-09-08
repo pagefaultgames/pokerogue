@@ -1,8 +1,8 @@
-import BattleScene from "#app/battle-scene";
-import { BattlerIndex } from "#app/battle";
-import { BattleSpec } from "#app/enums/battle-spec";
-import { DamageResult, HitResult } from "#app/field/pokemon";
-import * as Utils from "#app/utils";
+import BattleScene from "#app/battle-scene.js";
+import { BattlerIndex } from "#app/battle.js";
+import { BattleSpec } from "#app/enums/battle-spec.js";
+import { DamageResult, HitResult } from "#app/field/pokemon.js";
+import * as Utils from "#app/utils.js";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class DamagePhase extends PokemonPhase {

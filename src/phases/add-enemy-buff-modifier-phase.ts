@@ -1,8 +1,8 @@
-import BattleScene from "#app/battle-scene";
-import { ModifierTier } from "#app/modifier/modifier-tier";
-import { regenerateModifierPoolThresholds, ModifierPoolType, getEnemyBuffModifierForWave } from "#app/modifier/modifier-type";
-import { EnemyPersistentModifier } from "#app/modifier/modifier";
-import { Phase } from "#app/phase";
+import BattleScene from "#app/battle-scene.js";
+import { ModifierTier } from "#app/modifier/modifier-tier.js";
+import { regenerateModifierPoolThresholds, ModifierPoolType, getEnemyBuffModifierForWave } from "#app/modifier/modifier-type.js";
+import { EnemyPersistentModifier } from "#app/modifier/modifier.js";
+import { Phase } from "#app/phase.js";
 
 export class AddEnemyBuffModifierPhase extends Phase {
   constructor(scene: BattleScene) {

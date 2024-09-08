@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene";
-import { BattlerIndex } from "#app/battle";
+import BattleScene from "#app/battle-scene.js";
+import { BattlerIndex } from "#app/battle.js";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class ShowAbilityPhase extends PokemonPhase {

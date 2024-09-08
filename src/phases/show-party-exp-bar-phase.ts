@@ -1,7 +1,7 @@
-import BattleScene from "#app/battle-scene";
-import { ExpNotification } from "#app/enums/exp-notification";
-import { ExpBoosterModifier } from "#app/modifier/modifier";
-import * as Utils from "#app/utils";
+import BattleScene from "#app/battle-scene.js";
+import { ExpNotification } from "#app/enums/exp-notification.js";
+import { ExpBoosterModifier } from "#app/modifier/modifier.js";
+import * as Utils from "#app/utils.js";
 import { HidePartyExpBarPhase } from "./hide-party-exp-bar-phase";
 import { LevelUpPhase } from "./level-up-phase";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
