@@ -1,5 +1,5 @@
 import { Moves } from "#app/enums/moves";
-import { Stat } from "#app/enums/stat.js";
+import { Stat } from "#app/enums/stat";
 import { Abilities } from "#enums/abilities";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
