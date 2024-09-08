@@ -6,6 +6,8 @@
   "trace": "{{pokemonName}} 複製了 {{targetName}} 的\n{{abilityName}}!",
   "windPowerCharged": "受 {{moveName}} 的影響， {{pokemonName}} 提升了能力！",
   "disguiseAvoidedDamage": "{{pokemonNameWithAffix}}的畫皮脫落了！",
+  "fullHpResistType": "{{pokemonNameWithAffix}}讓甲殼綻放光輝，扭曲了屬性相剋關係！",
   "weatherEffectDisappeared": "天氣的影響消失了！",
+  "postSummonAuraBreak": "{{pokemonNameWithAffix}}壓制了所有氣場！",
   "preventBerryUse": "{{pokemonNameWithAffix}}因太緊張\n而無法食用樹果！"
 }
