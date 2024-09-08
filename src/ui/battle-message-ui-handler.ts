@@ -215,12 +215,11 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   getTopIvs(ivs: integer[], shownIvsCount: integer): Stat[] {
     let shownStats: Stat[] = [];
     if (shownIvsCount < 6) {
-      let highestIv = -1;
+      const statsPool = PERMANENT_STATS.slice();
+      // Sort the stats from highest to lowest iv
+      statsPool.sort((s1, s2) => ivs[s2] - ivs[s1]);
       for (let i = 0; i < shownIvsCount; i++) {
-        if (ivs[i] > highestIv) {
-          shownStats.push(PERMANENT_STATS[i]);
-          highestIv = ivs[i];
-        }
+        shownStats.push(statsPool[i]);
       }
     } else {
       shownStats = PERMANENT_STATS.slice();
