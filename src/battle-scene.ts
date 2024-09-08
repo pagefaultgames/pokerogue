@@ -2763,8 +2763,8 @@ export default class BattleScene extends SceneBase {
     const keys: string[] = [];
     const playerParty = this.getParty();
     playerParty.forEach(p => {
-      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
-      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant, true));
+      keys.push(p.getSpriteKey(true));
+      keys.push(p.getBattleSpriteKey(true, true));
       keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
       if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
         keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
@@ -2773,7 +2773,7 @@ export default class BattleScene extends SceneBase {
     // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
     const enemyParty = this.getEnemyParty();
     enemyParty.forEach(p => {
-      keys.push(p.species.getSpriteKey(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
+      keys.push(p.getSpriteKey(true));
       keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
       if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
         keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
