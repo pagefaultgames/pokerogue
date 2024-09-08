@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene";
-import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
-import { Mode } from "#app/ui/ui";
+import BattleScene from "#app/battle-scene.js";
+import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler.js";
+import { Mode } from "#app/ui/ui.js";
 import { BattlePhase } from "./battle-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 

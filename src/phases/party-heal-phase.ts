@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene";
-import * as Utils from "#app/utils";
+import BattleScene from "#app/battle-scene.js";
+import * as Utils from "#app/utils.js";
 import { BattlePhase } from "./battle-phase";
 
 export class PartyHealPhase extends BattlePhase {

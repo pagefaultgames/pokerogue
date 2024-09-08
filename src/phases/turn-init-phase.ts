@@ -1,7 +1,7 @@
-import BattleScene from "#app/battle-scene";
-import { BattlerIndex } from "#app/battle";
-import { TurnInitEvent } from "#app/events/battle-scene";
-import { PlayerPokemon } from "#app/field/pokemon";
+import BattleScene from "#app/battle-scene.js";
+import { BattlerIndex } from "#app/battle.js";
+import { TurnInitEvent } from "#app/events/battle-scene.js";
+import { PlayerPokemon } from "#app/field/pokemon.js";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";

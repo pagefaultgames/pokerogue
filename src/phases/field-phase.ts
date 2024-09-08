@@ -1,4 +1,4 @@
-import Pokemon from "#app/field/pokemon";
+import Pokemon from "#app/field/pokemon.js";
 import { BattlePhase } from "./battle-phase";
 
 type PokemonFunc = (pokemon: Pokemon) => void;

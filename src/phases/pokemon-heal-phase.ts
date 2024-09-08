@@ -1,14 +1,14 @@
-import BattleScene from "#app/battle-scene";
-import { BattlerIndex } from "#app/battle";
-import { CommonAnim } from "#app/data/battle-anims";
-import { getStatusEffectHealText } from "#app/data/status-effect";
-import { StatusEffect } from "#app/enums/status-effect";
-import { HitResult, DamageResult } from "#app/field/pokemon";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { HealingBoosterModifier } from "#app/modifier/modifier";
-import { HealAchv } from "#app/system/achv";
+import BattleScene from "#app/battle-scene.js";
+import { BattlerIndex } from "#app/battle.js";
+import { CommonAnim } from "#app/data/battle-anims.js";
+import { getStatusEffectHealText } from "#app/data/status-effect.js";
+import { StatusEffect } from "#app/enums/status-effect.js";
+import { HitResult, DamageResult } from "#app/field/pokemon.js";
+import { getPokemonNameWithAffix } from "#app/messages.js";
+import { HealingBoosterModifier } from "#app/modifier/modifier.js";
+import { HealAchv } from "#app/system/achv.js";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
+import * as Utils from "#app/utils.js";
 import { CommonAnimPhase } from "./common-anim-phase";
 
 export class PokemonHealPhase extends CommonAnimPhase {

@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#app/battle.js";
 import GameManager from "#app/test/utils/gameManager";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

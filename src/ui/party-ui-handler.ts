@@ -15,15 +15,15 @@ import { addWindow } from "./ui-theme";
 import { SpeciesFormChangeItemTrigger, FormChangeItem } from "../data/pokemon-forms";
 import { getVariantTint } from "#app/data/variant";
 import {Button} from "#enums/buttons";
-import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { applyChallenges, ChallengeType } from "#app/data/challenge.js";
 import MoveInfoOverlay from "./move-info-overlay";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { CommandPhase } from "#app/phases/command-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { getPokemonNameWithAffix } from "#app/messages.js";
+import { CommandPhase } from "#app/phases/command-phase.js";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase.js";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 

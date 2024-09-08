@@ -4,8 +4,8 @@ import InvertPostFX from "./pipelines/invert";
 import { version } from "../package.json";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
-import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
-import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
+import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
+import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js";
 import { LoadingScene } from "./loading-scene";
 
 

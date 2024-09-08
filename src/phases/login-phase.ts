@@ -1,10 +1,10 @@
-import { updateUserInfo } from "#app/account";
-import BattleScene, { bypassLogin } from "#app/battle-scene";
-import { Phase } from "#app/phase";
-import { handleTutorial, Tutorial } from "#app/tutorial";
-import { Mode } from "#app/ui/ui";
+import { updateUserInfo } from "#app/account.js";
+import BattleScene, { bypassLogin } from "#app/battle-scene.js";
+import { Phase } from "#app/phase.js";
+import { handleTutorial, Tutorial } from "#app/tutorial.js";
+import { Mode } from "#app/ui/ui.js";
 import i18next, { t } from "i18next";
-import * as Utils from "#app/utils";
+import * as Utils from "#app/utils.js";
 import { SelectGenderPhase } from "./select-gender-phase";
 import { UnavailablePhase } from "./unavailable-phase";
 

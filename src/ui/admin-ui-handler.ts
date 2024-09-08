@@ -1,9 +1,9 @@
-import BattleScene from "#app/battle-scene";
+import BattleScene from "#app/battle-scene.js";
 import { ModalConfig } from "./modal-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { FormModalUiHandler } from "./form-modal-ui-handler";
-import { Button } from "#app/enums/buttons";
+import { Button } from "#app/enums/buttons.js";
 
 export default class AdminUiHandler extends FormModalUiHandler {
 

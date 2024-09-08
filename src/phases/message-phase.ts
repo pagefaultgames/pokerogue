@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene";
-import { Phase } from "#app/phase";
+import BattleScene from "#app/battle-scene.js";
+import { Phase } from "#app/phase.js";
 
 export class MessagePhase extends Phase {
   private text: string;

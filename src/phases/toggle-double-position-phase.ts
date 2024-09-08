@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene";
-import { FieldPosition } from "#app/field/pokemon";
+import BattleScene from "#app/battle-scene.js";
+import { FieldPosition } from "#app/field/pokemon.js";
 import { BattlePhase } from "./battle-phase";
 
 export class ToggleDoublePositionPhase extends BattlePhase {

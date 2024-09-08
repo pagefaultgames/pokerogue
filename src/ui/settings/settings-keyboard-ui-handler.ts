@@ -9,7 +9,7 @@ import {
   settingKeyboardOptions
 } from "#app/system/settings/settings-keyboard";
 import {reverseValueToKeySetting, truncateString} from "#app/utils";
-import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler";
+import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler.js";
 import {InterfaceConfig} from "#app/inputs-controller";
 import {addTextObject, TextStyle} from "#app/ui/text";
 import {deleteBind} from "#app/configs/inputs/configHandler";

@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene";
-import { EnemyPokemon } from "#app/field/pokemon";
+import BattleScene from "#app/battle-scene.js";
+import { EnemyPokemon } from "#app/field/pokemon.js";
 import { PartyMemberPokemonPhase } from "./party-member-pokemon-phase";
 
 export abstract class EnemyPartyMemberPokemonPhase extends PartyMemberPokemonPhase {

@@ -1,4 +1,4 @@
-import { type enConfig } from "#app/locales/en/config";
+import { type enConfig } from "#app/locales/en/config.js";
 import { TOptions } from "i18next";
 
 //TODO: this needs to be type properly in the future

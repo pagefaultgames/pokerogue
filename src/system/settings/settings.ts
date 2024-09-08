@@ -8,7 +8,7 @@ import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
-import { getIsInitialized, initI18n } from "#app/plugins/i18n";
+import { getIsInitialized, initI18n } from "#app/plugins/i18n.js";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 function getTranslation(key: string): string {

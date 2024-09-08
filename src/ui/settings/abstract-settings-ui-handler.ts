@@ -5,7 +5,7 @@ import { Mode } from "../ui";
 import UiHandler from "../ui-handler";
 import { addWindow } from "../ui-theme";
 import {Button} from "#enums/buttons";
-import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler";
+import {InputsIcons} from "#app/ui/settings/abstract-control-settings-ui-handler.js";
 import NavigationMenu, {NavigationManager} from "#app/ui/settings/navigationMenu";
 import { Setting, SettingKeys, SettingType } from "#app/system/settings/settings";
 import i18next from "i18next";

@@ -6,7 +6,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import {Button} from "#enums/buttons";
-import { CommandPhase } from "#app/phases/command-phase";
+import { CommandPhase } from "#app/phases/command-phase.js";
 
 export default class BallUiHandler extends UiHandler {
   private pokeballSelectContainer: Phaser.GameObjects.Container;
