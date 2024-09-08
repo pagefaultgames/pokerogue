@@ -6018,9 +6018,7 @@ export class SwapStatAttr extends MoveEffectAttr {
  * @extends MoveEffectAttr
  */
 export class ShiftStatAttr extends MoveEffectAttr {
-  /** The stat to switch */
   private statToSwitch: EffectiveStat;
-  /** The stat to switch with */
   private statToSwitchWith: EffectiveStat;
 
   constructor(statToSwitch: EffectiveStat, statToSwitchWith: EffectiveStat) {
@@ -6038,7 +6036,7 @@ export class ShiftStatAttr extends MoveEffectAttr {
    * @param args n/a
    * @returns whether the effect was applied
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
@@ -6065,7 +6063,7 @@ export class ShiftStatAttr extends MoveEffectAttr {
    * @param move n/a
    * @returns number of points to add to the user's benefit score
    */
-  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+  override getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     return user.getStat(this.statToSwitchWith, false) > user.getStat(this.statToSwitch, false) ? 10 : 0;
   }
 }
