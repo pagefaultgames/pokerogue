@@ -1,5 +1,5 @@
-import { StatusEffect } from "#app/enums/status-effect.js";
-import { CommandPhase } from "#app/phases/command-phase.js";
+import { StatusEffect } from "#app/enums/status-effect";
+import { CommandPhase } from "#app/phases/command-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
