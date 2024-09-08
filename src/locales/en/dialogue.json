@@ -413,7 +413,7 @@
   },
   "ariana": {
     "encounter": {
-      "1": "Hold it right there! We can't someone on the loose.\n$It's harmful to Team Rocket's pride, you see.",
+      "1": "Hold it right there!\nWe can't have someone on the loose.\n$It's harmful to Team Rocket's pride, you see.",
       "2": "I don't know or care if what I'm doing is right or wrong...\n$I just put my faith in Giovanni and do as I am told",
       "3": "Your trip ends here. I'm going to take you down!"
     },

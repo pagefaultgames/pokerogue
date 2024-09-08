@@ -47,10 +47,14 @@
       "description": "ポケモンのせいかくを {{natureName}}にかえて スターターのせいかくをえいきゅうにかいじょする"
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "バトル{{battleCount}}かいのあいだ ダブルバトルになるかくりつを2ばいにする"
+      "description": "バトル{{battleCount}}回の間 　ダブルバトルになる　　確率を　4倍に　する"
     },
     "TempStatStageBoosterModifierType": {
-      "description": "すべてのパーティメンバーの {{stat}}を5かいのバトルのあいだ 1だんかいあげる"
+      "description": "全員の　手持ちポケモンの　{{stat}}を　最大５回の　バトルの間に　{{amount}}あげる.",
+      "extra": {
+        "stage": "１段階",
+        "percentage": "３０％"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "ポケモンの {{moveType}}タイプのわざのいりょくを20パーセントあげる"
@@ -353,7 +357,7 @@
       "description": "やせいのポケモンがかくれとくせいをもつかくりつをおおきくふやす"
     },
     "IV_SCANNER": {
-      "name": "こたいち たんちき",
+      "name": "こたいちスキャナー",
       "description": "やせいのポケモンのこたいちをスキャンできる。スタックごとに2つのこたいちがあきらかになる。もっともたかいこたいちがさいしょにひょうじされる"
     },
     "DNA_SPLICERS": {

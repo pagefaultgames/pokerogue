@@ -52,6 +52,15 @@ export default abstract class UiHandler {
     return changed;
   }
 
+  /**
+   * Changes the style of the mouse cursor.
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor}
+   * @param cursorStyle cursor style to apply
+   */
+  protected setMouseCursorStyle(cursorStyle: "pointer" | "default") {
+    this.scene.input.manager.canvas.style.cursor = cursorStyle;
+  }
+
   clear() {
     this.active = false;
   }

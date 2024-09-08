@@ -1,12 +1,12 @@
-import BattleScene from "#app/battle-scene.js";
-import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims.js";
-import { allMoves } from "#app/data/move.js";
-import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms.js";
-import { Moves } from "#app/enums/moves.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import EvolutionSceneHandler from "#app/ui/evolution-scene-handler.js";
-import { SummaryUiMode } from "#app/ui/summary-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
+import { allMoves } from "#app/data/move";
+import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
+import { Moves } from "#app/enums/moves";
+import { getPokemonNameWithAffix } from "#app/messages";
+import EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
+import { SummaryUiMode } from "#app/ui/summary-ui-handler";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
 
