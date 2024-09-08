@@ -1429,22 +1429,26 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     let multiplier = types.map(defType => {
+      const multiplier = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, defType));
+      applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
       if (source) {
         const ignoreImmunity = new Utils.BooleanHolder(false);
         if (source.isActive(true) && source.hasAbilityWithAttr(IgnoreTypeImmunityAbAttr)) {
           applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, simulated, moveType, defType);
         }
         if (ignoreImmunity.value) {
-          return 1;
+          if (multiplier.value === 0) {
+            return 1;
+          }
         }
 
         const exposedTags = this.findTags(tag => tag instanceof ExposedTag) as ExposedTag[];
         if (exposedTags.some(t => t.ignoreImmunity(defType, moveType))) {
-          return 1;
+          if (multiplier.value === 0) {
+            return 1;
+          }
         }
       }
-      const multiplier = new Utils.NumberHolder(getTypeDamageMultiplier(moveType, defType));
-      applyChallenges(this.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
       return multiplier.value;
     }).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
 
@@ -1722,7 +1726,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       };
 
     this.fusionSpecies = this.scene.randomSpecies(this.scene.currentBattle?.waveIndex || 0, this.level, false, filter, true);
-    this.fusionAbilityIndex = (this.fusionSpecies.abilityHidden && hasHiddenAbility ? this.fusionSpecies.ability2 ? 2 : 1 : this.fusionSpecies.ability2 ? randAbilityIndex : 0);
+    this.fusionAbilityIndex = (this.fusionSpecies.abilityHidden && hasHiddenAbility ? 2 : this.fusionSpecies.ability2 !== this.fusionSpecies.ability1 ? randAbilityIndex : 0);
     this.fusionShiny = this.shiny;
     this.fusionVariant = this.variant;
 
@@ -2280,7 +2284,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (!isTypeImmune) {
           const levelMultiplier = (2 * source.level / 5 + 2);
-          const randomMultiplier = ((this.scene.randBattleSeedInt(16) + 85) / 100);
+          const randomMultiplier = (this.randSeedIntRange(85, 100) / 100);
           damage.value = Utils.toDmgValue((((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2)
                                    * stabMultiplier.value
                                    * typeMultiplier
@@ -3450,12 +3454,30 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     fusionCanvas.remove();
   }
 
+  /**
+   * Generates a random number using the current battle's seed, or the global seed if `this.scene.currentBattle` is falsy
+   * <!-- @import "../battle".Battle -->
+   * This calls either {@linkcode BattleScene.randBattleSeedInt}({@linkcode range}, {@linkcode min}) in `src/battle-scene.ts`
+   * which calls {@linkcode Battle.randSeedInt}(`scene`, {@linkcode range}, {@linkcode min}) in `src/battle.ts`
+   * which calls {@linkcode Utils.randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts`,
+   * or it directly calls {@linkcode Utils.randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts` if there is no current battle
+   *
+   * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+   * @param min The minimum integer to pick, default `0`
+   * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+   */
   randSeedInt(range: integer, min: integer = 0): integer {
     return this.scene.currentBattle
       ? this.scene.randBattleSeedInt(range, min)
       : Utils.randSeedInt(range, min);
   }
 
+  /**
+   * Generates a random number using the current battle's seed, or the global seed if `this.scene.currentBattle` is falsy
+   * @param min The minimum integer to generate
+   * @param max The maximum integer to generate
+   * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
+   */
   randSeedIntRange(min: integer, max: integer): integer {
     return this.randSeedInt((max - min) + 1, min);
   }
@@ -4491,6 +4513,7 @@ export interface AttackMoveResult {
 }
 
 export class PokemonSummonData {
+  /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public moveQueue: QueuedMove[] = [];
   public tags: BattlerTag[] = [];

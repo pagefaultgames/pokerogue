@@ -47,10 +47,14 @@
       "description": "Changes a Pokémon's nature to {{natureName}} and permanently unlocks the nature for the starter."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "Doubles the chance of an encounter being a double battle for {{battleCount}} battles."
+      "description": "Quadruples the chance of an encounter being a double battle for up to {{battleCount}} battles."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "Increases the {{stat}} of all party members by 1 stage for 5 battles."
+      "description": "Increases the {{stat}} of all party members by {{amount}} for up to 5 battles.",
+      "extra": {
+        "stage": "1 stage",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "Increases the power of a Pokémon's {{moveType}}-type moves by 20%."

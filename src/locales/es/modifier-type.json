@@ -47,10 +47,14 @@
       "description": "Cambia la naturaleza de un Pokémon a {{natureName}} y desbloquea permanentemente dicha naturaleza para el inicial."
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "Duplica la posibilidad de que un encuentro sea una combate doble durante {{battleCount}} combates."
+      "description": "Cuadruplica la posibilidad de que un encuentro sea una combate doble durante {{battleCount}} combates."
     },
     "TempStatStageBoosterModifierType": {
-      "description": "Aumenta la est. {{stat}} de todos los miembros del equipo en 1 nivel durante 5 combates."
+      "description": "Aumenta la est. {{stat}} de todos los miembros del equipo en {{amount}} durante 5 combates.",
+      "extra": {
+        "stage": "1 nivel",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "Aumenta la potencia de los movimientos de tipo {{moveType}} de un Pokémon en un 20%."
