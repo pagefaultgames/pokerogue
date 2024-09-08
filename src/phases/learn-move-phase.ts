@@ -135,7 +135,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param move The Move to be learned
    * @param Pokemon The Pokemon learning the move
    */
-  learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
+  async learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
     if (this.fromTM) {
       pokemon.usedTMs.push(this.moveId);
     }
@@ -147,10 +147,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     this.scene.ui.setMode(this.messageMode);
     const learnMoveText = i18next.t("battle:learnMove", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
     textMessage = textMessage ? textMessage+"$"+learnMoveText : learnMoveText;
-    this.scene.ui.showTextPromise(textMessage, this.messageMode === Mode.EVOLUTION_SCENE ? 1000 : undefined, true)
-      .then(() => {
-        this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
-        this.end();
-      });
+    await this.scene.ui.showTextPromise(textMessage, this.messageMode === Mode.EVOLUTION_SCENE ? 1000 : undefined, true);
+    this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
+    this.end();
   }
 }
