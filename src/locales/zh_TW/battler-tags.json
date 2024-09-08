@@ -66,5 +66,7 @@
   "saltCuredOnAdd": "{{pokemonNameWithAffix}} 陷入了鹽腌狀態！",
   "saltCuredLapse": "{{pokemonNameWithAffix}} 受到了{{moveName}}的傷害！",
   "cursedOnAdd": "{{pokemonNameWithAffix}}削減了自己的體力，並詛咒了{{pokemonName}}！",
-  "cursedLapse": "{{pokemonNameWithAffix}}正受到詛咒！"
+  "cursedLapse": "{{pokemonNameWithAffix}}正受到詛咒！",
+  "rageOnAdd": "{{pokemonNameWithAffix}}的\n怒氣開始上升了。",
+  "rageOnHit": "{{pokemonNameWithAffix}}的\n怒氣正在上升！"
 }

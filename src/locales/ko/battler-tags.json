@@ -67,5 +67,7 @@
   "saltCuredLapse": "{{pokemonNameWithAffix}}[[는]] 소금절이의\n데미지를 입고 있다.",
   "cursedOnAdd": "{{pokemonNameWithAffix}}[[는]] 자신의 체력을 깎아서\n{{pokemonName}}에게 저주를 걸었다!",
   "cursedLapse": "{{pokemonNameWithAffix}}[[는]]\n저주받고 있다!",
-  "stockpilingOnAdd": "{{pokemonNameWithAffix}}[[는]]\n{{stockpiledCount}}개 비축했다!"
+  "stockpilingOnAdd": "{{pokemonNameWithAffix}}[[는]]\n{{stockpiledCount}}개 비축했다!",
+  "rageOnAdd": "{{pokemonNameWithAffix}}[[는]]\n분노 볼티지를 쌓기 시작했다.",
+  "rageOnHit": "{{pokemonNameWithAffix}}의\n분노 볼티지가 올라가고 있다!"
 }

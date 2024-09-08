@@ -262,6 +262,9 @@ export class MoveEffectPhase extends PokemonPhase {
                           if (move.category === MoveCategory.PHYSICAL && user.isPlayer() !== target.isPlayer()) {
                             target.lapseTag(BattlerTagType.SHELL_TRAP);
                           }
+                          if (hitResult < HitResult.NO_EFFECT && move.category !== MoveCategory.STATUS) {
+                            target.lapseTag(BattlerTagType.RAGE);
+                          }
                           if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
                             user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
                           }

@@ -327,6 +327,49 @@ export class ShellTrapTag extends BattlerTag {
   }
 }
 
+/**
+ * BattlerTag implementing Rage
+ * Pokémon with this tag will recieve an attack boost when successfully damaged by an attacking move
+ * This tag will be lost if a target reaches the MOVE_EFFECT lapse condition with a move other than Rage
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Rage_(move) | Rage}
+ */
+export class RageTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.RAGE, [BattlerTagLapseType.MOVE_EFFECT], 1, Moves.RAGE);
+  }
+
+  /**
+   * Displays a message to show that the user has started Raging.
+   * This is message isn't displayed on cartridge, and was included for clarity during gameplay and while testing.
+   * @param pokemon {@linkcode Pokemon} the Pokémon this tag is being added to.
+   */
+  onAdd(pokemon: Pokemon) {
+    super.onAdd(pokemon);
+    /* This message might not exist on cartridge */
+    pokemon.scene.queueMessage(i18next.t("battlerTags:rageOnAdd", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)}));
+  }
+
+  /**
+   * Checks to maintain a Pokémon should maintain their rage, and provides an attack boost when hit.
+   * @param pokemon {@linkcode Pokemon} The owner of this tag
+   * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
+   * @returns `true` if invoked with the MOVE_EFFECT lapse type and {@linkcode pokemon} most recently used Rage,
+   * or if invoked with the CUSTOM lapse type. false otherwise.
+   */
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.MOVE_EFFECT) {
+      return (pokemon.scene.getCurrentPhase() as MovePhase).move.getMove().id === Moves.RAGE;
+    } else if (lapseType === BattlerTagLapseType.CUSTOM) {
+      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK], 1, false));
+      pokemon.scene.queueMessage(i18next.t("battlerTags:rageOnHit", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon)}));
+      return true;
+    }
+    return false;
+  }
+}
+
 export class TrappedTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: number, sourceMove: Moves, sourceId: number) {
     super(tagType, lapseType, turnCount, sourceMove, sourceId, true);
@@ -2125,6 +2168,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
   case BattlerTagType.GULP_MISSILE_ARROKUDA:
   case BattlerTagType.GULP_MISSILE_PIKACHU:
     return new GulpMissileTag(tagType, sourceMove);
+  case BattlerTagType.RAGE:
+    return new RageTag();
   case BattlerTagType.NONE:
   default:
     return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
