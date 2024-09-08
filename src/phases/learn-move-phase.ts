@@ -44,6 +44,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     if (emptyMoveIndex > -1) {
       pokemon.setMove(emptyMoveIndex, this.moveId);
       if (this.fromTM) {
+        pokemon.usedTMs ??= [];
         pokemon.usedTMs.push(this.moveId);
       }
       initMoveAnim(this.scene, this.moveId).then(() => {
