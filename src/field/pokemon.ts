@@ -2292,7 +2292,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (matchesSourceType) {
       stabMultiplier.value += 0.5;
     }
-    if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type) {
+    if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === moveType) {
       stabMultiplier.value += 0.5;
     }
 
