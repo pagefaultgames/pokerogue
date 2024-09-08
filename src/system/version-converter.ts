@@ -1,8 +1,9 @@
 import { allSpecies } from "#app/data/pokemon-species.js";
 import { AbilityAttr, defaultStarterSpecies, DexAttr, SessionSaveData, SystemSaveData } from "./game-data";
 import { SettingKeys } from "./settings/settings";
+import { version } from "../../package.json";
 
-const LATEST_VERSION = "1.0.5";
+const LATEST_VERSION = version;
 
 export function applySessionDataPatches(data: SessionSaveData) {
   const curVersion = data.gameVersion;
