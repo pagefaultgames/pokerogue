@@ -4086,15 +4086,17 @@ export class EnemyPokemon extends Pokemon {
    */
   getNextMove(): TurnMove {
     // If this Pokemon has a move already queued, return it.
-    const queuedMove = this.getMoveQueue().length
-      ? this.getMoveset().find(m => m?.moveId === this.getMoveQueue()[0].move)
-      : null;
-    if (queuedMove) {
-      if (queuedMove.isUsable(this, this.getMoveQueue()[0].ignorePP)) {
-        return { move: queuedMove.moveId, targets: this.getMoveQueue()[0].targets, ignorePP: this.getMoveQueue()[0].ignorePP };
-      } else {
-        this.getMoveQueue().shift();
-        return this.getNextMove();
+    const moveQueue = this.getMoveQueue();
+    if (moveQueue.length !== 0) {
+      const queuedMove = moveQueue[0];
+      if (queuedMove) {
+        const moveIndex = this.getMoveset().findIndex(m => m?.moveId === moveQueue[0].move);
+        if ((moveIndex > -1 && this.getMoveset()[moveIndex]!.isUsable(this, queuedMove.ignorePP)) || queuedMove.virtual) {
+          return queuedMove;
+        } else {
+          this.getMoveQueue().shift();
+          return this.getNextMove();
+        }
       }
     }
 

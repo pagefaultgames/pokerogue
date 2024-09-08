@@ -55,7 +55,7 @@ export class CommandPhase extends FieldPhase {
       moveQueue.shift();
     }
 
-    if (moveQueue.length) {
+    if (moveQueue.length !== 0) {
       const queuedMove = moveQueue[0];
       if (!queuedMove.move) {
         this.handleCommand(Command.FIGHT, -1, false);
@@ -63,7 +63,7 @@ export class CommandPhase extends FieldPhase {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m?.moveId === queuedMove.move);
         if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex]!.isUsable(playerPokemon, queuedMove.ignorePP)) { // TODO: is the bang correct?
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1 });
-        } else if (moveQueue[0].virtual) {
+        } else if (queuedMove.virtual) {
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove);
         } else {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
