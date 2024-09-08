@@ -330,6 +330,7 @@ export default class FightUiHandler extends UiHandler {
     var dmgHigh = 0;
     var dmgLow = 0;
     var out = target.apply(user, move.getMove(), true) as AttackData
+    //console.log(out)
     dmgHigh = out.damageHigh;
     dmgLow = out.damageLow;
     var minHits = 1
@@ -369,8 +370,8 @@ export default class FightUiHandler extends UiHandler {
         maxHits += h[i].getStackCount()
       }
     }
-    dmgLow = out[0] * minHits
-    dmgHigh = out[1] * maxHits
+    dmgLow = dmgLow * minHits
+    dmgHigh = dmgHigh * maxHits
     var qSuffix = ""
     if (target.isBoss()) {
       var bossSegs = (target as EnemyPokemon).bossSegments
@@ -378,8 +379,8 @@ export default class FightUiHandler extends UiHandler {
       //dmgHigh /= bossSegs
       //qSuffix = "?"
     }
-    var dmgLowP = Math.round((dmgLow)/target.getMaxHp())
-    var dmgHighP = Math.round((dmgHigh)/target.getMaxHp())
+    var dmgLowP = Math.round((dmgLow)/target.getMaxHp() * 100)
+    var dmgHighP = Math.round((dmgHigh)/target.getMaxHp() * 100)
     /*
     if (user.hasAbility(Abilities.PARENTAL_BOND)) {
       // Second hit deals 0.25x damage
@@ -394,6 +395,7 @@ export default class FightUiHandler extends UiHandler {
       var percentChance = Utils.rangemap(target.hp, dmgLow, dmgHigh, 0, 1)
       koText = " (" + Math.round(percentChance * 100) + "% KO)"
     }
+    //console.log(target.getMoveEffectiveness(user, move.getMove(), false, true) + "x - " + ((dmgLowP == dmgHighP) ? (dmgLowP + "%" + qSuffix) : (dmgLowP + "%-" + dmgHighP + "%" + qSuffix)) + koText)
     if (target.getMoveEffectiveness(user, move.getMove(), false, true) == undefined) {
       return "---"
     }

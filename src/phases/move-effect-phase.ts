@@ -385,7 +385,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     const accuracyMultiplier = user.getAccuracyMultiplier(target, this.move.getMove());
-    const rand = user.randSeedInt(100, 1, "Accuracy roll");
+    const rand = user.randSeedInt(100, undefined, "Accuracy roll");
 
     return rand < (moveAccuracy * accuracyMultiplier);
   }

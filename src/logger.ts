@@ -1852,8 +1852,7 @@ export function logShop(scene: BattleScene, floor: integer = scene.currentBattle
  * @param floor The wave index to write to. Defaults to the current floor.
  */
 export function logTrainer(scene: BattleScene, floor: integer = scene.currentBattle.waveIndex) {
-  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))!) as DRPD;
-  drpd = updateLog(drpd);
+  var drpd: DRPD = getDRPD(scene)
   console.log(`Logging trainer: ${scene.currentBattle.trainer!.getTitleOnly()} ${scene.currentBattle.trainer!.getNameOnly()}`)
   var wv: Wave = getWave(drpd, floor, scene)
   var t: LogTrainerData = exportTrainer(scene.currentBattle.trainer!)
