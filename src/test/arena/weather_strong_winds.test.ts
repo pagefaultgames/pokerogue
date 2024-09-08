@@ -1,4 +1,6 @@
 import { allMoves } from "#app/data/move";
+import { StatusEffect } from "#app/enums/status-effect.js";
+import { TurnEndPhase } from "#app/phases/turn-end-phase.js";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -74,5 +76,22 @@ describe("Weather - Strong Winds", () => {
 
     await game.phaseInterceptor.to(TurnStartPhase);
     expect(enemy.getAttackTypeEffectiveness(allMoves[Moves.ROCK_SLIDE].type, pikachu)).toBe(1);
+  });
+  it("weather goes away when last trainer pokemon dies to indirect damage", async () => {
+
+    game.override.enemyStatusEffect(StatusEffect.POISON);
+
+    await game.startBattle([Species.MAGIKARP]);
+
+    const enemy = game.scene.getEnemyPokemon()!;
+
+
+    enemy["hp"] = 0.0001;
+
+
+    game.move.select(Moves.SPLASH);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(game.scene.arena.weather?.weatherType).toBeUndefined();
   });
 });
