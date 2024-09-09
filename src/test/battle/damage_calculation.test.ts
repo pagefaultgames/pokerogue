@@ -1,11 +1,10 @@
-import { DamagePhase } from "#app/phases/damage-phase.js";
+import { DamagePhase } from "#app/phases/damage-phase";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -31,7 +30,7 @@ describe("Round Down and Minimun 1 test in Damage Calculation", () => {
 
   it("When the user fails to use Jump Kick with Wonder Guard ability, the damage should be 1.", async () => {
     game.override.enemySpecies(Species.GASTLY);
-    game.override.enemyMoveset(SPLASH_ONLY);
+    game.override.enemyMoveset(Moves.SPLASH);
     game.override.starterSpecies(Species.SHEDINJA);
     game.override.moveset([Moves.JUMP_KICK]);
     game.override.ability(Abilities.WONDER_GUARD);

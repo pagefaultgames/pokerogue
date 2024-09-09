@@ -7,6 +7,7 @@
   "switchedStat": "{{pokemonName}} switched {{stat}} with its target!",
   "sharedGuard": "{{pokemonName}} shared its guard with the target!",
   "sharedPower": "{{pokemonName}} shared its power with the target!",
+  "shiftedStats": "{{pokemonName}} switched its {{statToSwitch}} and {{statToSwitchWith}}!",
   "goingAllOutForAttack": "{{pokemonName}} is going all out for this attack!",
   "regainedHealth": "{{pokemonName}} regained\nhealth!",
   "keptGoingAndCrashed": "{{pokemonName}} kept going\nand crashed!",
