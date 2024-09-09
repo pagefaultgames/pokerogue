@@ -4,7 +4,6 @@ import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { Abilities } from "#enums/abilities";
 import GameManager from "#test/utils/gameManager";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -28,7 +27,7 @@ describe("Moves - Dragon Cheer", () => {
     game.override
       .battleType("double")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .enemyLevel(20)
       .moveset([Moves.DRAGON_CHEER, Moves.TACKLE, Moves.SPLASH]);
   });

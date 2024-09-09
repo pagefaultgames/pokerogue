@@ -163,6 +163,49 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
 }
 
 /**
+ * Tag representing the "Throat Chop" effect. Pokemon with this tag cannot use sound-based moves.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Throat_Chop_(move) | Throat Chop}
+ * @extends MoveRestrictionBattlerTag
+ */
+export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
+  constructor() {
+    super(BattlerTagType.THROAT_CHOPPED, [ BattlerTagLapseType.TURN_END, BattlerTagLapseType.PRE_MOVE ], 2, Moves.THROAT_CHOP);
+  }
+
+  /**
+   * Checks if a {@linkcode Moves | move} is restricted by Throat Chop.
+   * @override
+   * @param {Moves} move the {@linkcode Moves | move} to check for sound-based restriction
+   * @returns true if the move is sound-based
+   */
+  override isMoveRestricted(move: Moves): boolean {
+    return allMoves[move].hasFlag(MoveFlags.SOUND_BASED);
+  }
+
+  /**
+   * Shows a message when the player attempts to select a move that is restricted by Throat Chop.
+   * @override
+   * @param {Pokemon} pokemon the {@linkcode Pokemon} that is attempting to select the restricted move
+   * @param {Moves} move the {@linkcode Moves | move} that is being restricted
+   * @returns the message to display when the player attempts to select the restricted move
+   */
+  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
+  }
+
+  /**
+   * Shows a message when a move is interrupted by Throat Chop.
+   * @override
+   * @param {Pokemon} pokemon the interrupted {@linkcode Pokemon}
+   * @param {Moves} move the {@linkcode Moves | move} that was interrupted
+   * @returns the message to display when the move is interrupted
+   */
+  override interruptedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:throatChopInterruptedMove", { pokemonName: getPokemonNameWithAffix(pokemon) });
+  }
+}
+
+/**
  * Tag representing the "disabling" effect performed by {@linkcode Moves.DISABLE} and {@linkcode Abilities.CURSED_BODY}.
  * When the tag is added, the last-used move of the tag holder is set as the disabled move.
  */
@@ -171,6 +214,7 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
   private moveId: Moves = Moves.NONE;
 
   constructor(sourceId: number) {
+    super(BattlerTagType.DISABLED, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 4, Moves.DISABLE, sourceId);
     super(BattlerTagType.DISABLED, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 4, Moves.DISABLE, sourceId);
   }
 
