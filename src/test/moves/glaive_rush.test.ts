@@ -29,7 +29,7 @@ describe("Moves - Glaive Rush", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Array(4).fill(Moves.GLAIVE_RUSH))
+      .enemyMoveset([Moves.GLAIVE_RUSH])
       .starterSpecies(Species.KLINK)
       .ability(Abilities.BALL_FETCH)
       .moveset([Moves.SHADOW_SNEAK, Moves.AVALANCHE, Moves.SPLASH, Moves.GLAIVE_RUSH]);
@@ -67,7 +67,7 @@ describe("Moves - Glaive Rush", () => {
   it("interacts properly with multi-lens", async () => {
     game.override
       .startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
-      .enemyMoveset(Array(4).fill(Moves.AVALANCHE));
+      .enemyMoveset([Moves.AVALANCHE]);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -88,7 +88,7 @@ describe("Moves - Glaive Rush", () => {
   }, TIMEOUT);
 
   it("secondary effects only last until next move", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK));
+    game.override.enemyMoveset([Moves.SHADOW_SNEAK]);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -115,7 +115,7 @@ describe("Moves - Glaive Rush", () => {
 
   it("secondary effects are removed upon switching", async () => {
     game.override
-      .enemyMoveset(Array(4).fill(Moves.SHADOW_SNEAK))
+      .enemyMoveset([Moves.SHADOW_SNEAK])
       .starterSpecies(0);
     await game.classicMode.startBattle([Species.KLINK, Species.FEEBAS]);
 
@@ -152,7 +152,7 @@ describe("Moves - Glaive Rush", () => {
 
     game.move.select(Moves.SHADOW_SNEAK);
     await game.phaseInterceptor.to("TurnEndPhase");
-    game.override.enemyMoveset(Array(4).fill(Moves.SPLASH));
+    game.override.enemyMoveset([Moves.SPLASH]);
     const damagedHP1 = 1000 - enemy.hp;
     enemy.hp = 1000;
 
