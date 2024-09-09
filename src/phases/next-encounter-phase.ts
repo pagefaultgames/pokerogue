@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene";
 import { EncounterPhase } from "./encounter-phase";
 
 export class NextEncounterPhase extends EncounterPhase {
