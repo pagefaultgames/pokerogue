@@ -69,8 +69,5 @@
   "cursedLapse": "{{pokemonNameWithAffix}}は　のろわれている！",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}}は　{{stockpiledCount}}つ　たくわえた!",
   "disabledOnAdd": "{{pokemonNameWithAffix}}の\n{{moveName}}\nを　封じこめた！",
-  "disabledLapse": "{{pokemonNameWithAffix}}の\nかなしばりが　解けた！",
-  "substituteOnAdd": "{{pokemonNameWithAffix}} put in a substitute!",
-  "substituteOnHit": "The substitute took damage for {{pokemonNameWithAffix}}!",
-  "substituteOnRemove": "{{pokemonNameWithAffix}}'s substitute faded!"
+  "disabledLapse": "{{pokemonNameWithAffix}}の\nかなしばりが　解けた！"
 }

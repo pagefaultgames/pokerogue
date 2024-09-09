@@ -14,7 +14,6 @@ import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { SPLASH_ONLY } from "#test/utils/testUtils";
 
 
 const TIMEOUT = 20 * 1000; // 20 sec timeout
@@ -41,7 +40,7 @@ describe("Moves - Substitute", () => {
       .moveset([Moves.SUBSTITUTE, Moves.SWORDS_DANCE, Moves.TACKLE, Moves.SPLASH])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .startingLevel(100)
       .enemyLevel(100);
   });
