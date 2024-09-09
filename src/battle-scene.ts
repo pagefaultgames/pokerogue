@@ -977,15 +977,15 @@ export default class BattleScene extends SceneBase {
 
     return container;
   }
-  addPkIcon(pokemon: PokemonSpecies, form: integer = 0, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false): Phaser.GameObjects.Container {
+  addPkIcon(pokemon: PokemonSpecies, form: integer = 0, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false, shiny?: boolean, variant?: integer): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
     container.setName(`${pokemon.name}-icon`);
 
-    const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(form));
+    const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(form, shiny, variant));
     icon.setName(`sprite-${pokemon.name}-icon`);
-    icon.setFrame(pokemon.getIconId(true));
+    icon.setFrame(pokemon.getIconId(true, form, shiny, variant));
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
-    if (icon.frame.name !== pokemon.getIconId(true)) {
+    if (icon.frame.name !== pokemon.getIconId(true, form, shiny, variant)) {
       console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
       icon.setTexture(pokemon.getIconAtlasKey(0));
       icon.setFrame(pokemon.getIconId(true));

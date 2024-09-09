@@ -255,7 +255,7 @@ export default class LogSelectUiHandler extends MessageUiHandler {
 }
 
 class SessionSlot extends Phaser.GameObjects.Container {
-  public slotId: integer;
+  public slotId?: integer;
   public autoSlot: integer;
   public hasData: boolean;
   public wv: integer;
@@ -285,10 +285,12 @@ class SessionSlot extends Phaser.GameObjects.Container {
     this.remove(this.loadingLabel, true);
     var lbl = `???`
     lbl = data.title!
+    var matchesFile = 0
     if (this.slotId != undefined) {
       lbl = `[${this.slotId + 1}] ${lbl}`
+      matchesFile = this.slotId + 1
     }
-    console.log(data, this.slotId, this.autoSlot, lbl)
+    //console.log(data, this.slotId, this.autoSlot, lbl)
     const gameModeLabel = addTextObject(this.scene, 8, 5, lbl, TextStyle.WINDOW);
     this.add(gameModeLabel);
 
@@ -297,49 +299,96 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
     const playTimeLabel = addTextObject(this.scene, 8, 33, data.version + " / Path: " + (data.label || ""), TextStyle.WINDOW);
     this.add(playTimeLabel);
-
-    if (data.starters && data.starters![0] == null) {
-      const timestampLabel = addTextObject(this.scene, 144, 10, "No Starter data", TextStyle.WINDOW);
-      this.add(timestampLabel);
-    }
+    
+    var wavecount = 0
+    data.waves.forEach((wv, idx) => {
+      if (wv) {
+        if (wv.id != 0) {
+          wavecount++
+        }
+      }
+    })
+    const waveLabel = addTextObject(this.scene, 185, 33, wavecount + " wv" + (wavecount == 1 ? "" : "s"), TextStyle.WINDOW);
+    this.add(waveLabel);
     const fileSizeLabel = addTextObject(this.scene, 255, 33, LoggerTools.getSize(JSON.stringify(data)), TextStyle.WINDOW);
-    fileSizeLabel.setAlign("right")
+    //fileSizeLabel.setAlign("right")
     this.add(fileSizeLabel);
 
     const pokemonIconsContainer = this.scene.add.container(144, 4);
-    if (false || data.starters)
-    data.starters.forEach((p: LoggerTools.PokeData, i: integer) => {
-      if (p == undefined)
-        return;
-      const iconContainer = this.scene.add.container(26 * i, 0);
-      iconContainer.setScale(0.75);
+    if (data.starters && data.starters![0] != null) {
+      data.starters.forEach((p: LoggerTools.PokeData, i: integer) => {
+        if (p == undefined)
+          return;
+        const iconContainer = this.scene.add.container(26 * i, 0);
+        iconContainer.setScale(0.75);
 
-      //if (Utils.getEnumValues(Species)[p.id] == undefined)
-        //return;
+        //if (Utils.getEnumValues(Species)[p.id] == undefined)
+          //return;
 
-      //if (getPokemonSpecies(Utils.getEnumValues(Species)[p.id]) == undefined)
-        //return;
+        //if (getPokemonSpecies(Utils.getEnumValues(Species)[p.id]) == undefined)
+          //return;
 
-      if (allSpecies[Utils.getEnumValues(Species).indexOf(p.id)] == undefined) {
-        // Do nothing
-        console.log(p.id)
-        const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[p.id]), 0, 0, 0, 0, 0);
-        iconContainer.add(icon);
-      } else {
-        const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[p.id]), 0, 0, 0, 0, 0);
-        //const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[allSpecies[Utils.getEnumValues(Species).indexOf(p.id)].speciesId]), 0, 0, 0, 0, 0);
-        iconContainer.add(icon);
-      }
+        if (allSpecies[Utils.getEnumValues(Species).indexOf(p.id)] == undefined) {
+          // Do nothing
+          //console.log(p.id)
+          const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[p.id]), 0, 0, 0, 0, 0);
+          iconContainer.add(icon);
+        } else {
+          const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[p.id]), 0, 0, 0, 0, 0);
+          //const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[allSpecies[Utils.getEnumValues(Species).indexOf(p.id)].speciesId]), 0, 0, 0, 0, 0);
+          iconContainer.add(icon);
+        }
 
-      const text = addTextObject(this.scene, 32, 20, ``, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
-      text.setShadow(0, 0, undefined);
-      text.setStroke("#424242", 14);
-      text.setOrigin(1, 0);
+        const text = addTextObject(this.scene, 32, 20, ``, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+        text.setShadow(0, 0, undefined);
+        text.setStroke("#424242", 14);
+        text.setOrigin(1, 0);
 
-      iconContainer.add(text);
+        iconContainer.add(text);
 
-      pokemonIconsContainer.add(iconContainer);
-    });
+        pokemonIconsContainer.add(iconContainer);
+      });
+    } else if (this.slotId != undefined) {
+      var gamedata = LoggerTools.parseSlotData(this.slotId)!
+      //console.log(gamedata)
+      gamedata.party.forEach((pk: PokemonData, i: integer) => {
+        if (pk == undefined)
+          return;
+        var p = LoggerTools.exportPokemonFromData(pk)
+        const iconContainer = this.scene.add.container(26 * i, 0);
+        iconContainer.setScale(0.75);
+
+        //if (Utils.getEnumValues(Species)[p.id] == undefined)
+          //return;
+
+        //if (getPokemonSpecies(Utils.getEnumValues(Species)[p.id]) == undefined)
+          //return;
+
+        var sp = getPokemonSpecies(pk.species);
+        if (allSpecies[Utils.getEnumValues(Species).indexOf(p.id)] == undefined) {
+          // Do nothing
+          const icon = this.scene.addPkIcon(sp, pk.formIndex, 0, 0, 0, 0, undefined, pk.shiny, pk.variant);
+          iconContainer.add(icon);
+        } else {
+          //console.log(p.id, Utils.getEnumValues(Species)[p.id])
+          const icon = this.scene.addPkIcon(sp, pk.formIndex, 0, 0, 0, 0, undefined, pk.shiny, pk.variant);
+          //const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[allSpecies[Utils.getEnumValues(Species).indexOf(p.id)].speciesId]), 0, 0, 0, 0, 0);
+          iconContainer.add(icon);
+        }
+
+        const text = addTextObject(this.scene, 32, 20, ``, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+        text.setShadow(0, 0, undefined);
+        text.setStroke("#424242", 14);
+        text.setOrigin(1, 0);
+
+        iconContainer.add(text);
+
+        pokemonIconsContainer.add(iconContainer);
+      });
+    } else {
+      const timestampLabel = addTextObject(this.scene, 144, 10, "No Starter data", TextStyle.WINDOW);
+      this.add(timestampLabel);
+    }
 
     this.add(pokemonIconsContainer);
 
@@ -367,6 +416,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
       this.setupWithData(JSON.parse(localStorage.getItem(l)!))
       resolve(true);
     });
+    /*
     return new Promise<boolean>(resolve => {
       this.scene.gameData.getSession(this.slotId, this.autoSlot).then(async sessionData => {
         if (!sessionData) {
@@ -376,10 +426,11 @@ class SessionSlot extends Phaser.GameObjects.Container {
           return;
         }
         this.hasData = true;
-        //await this.setupWithData(undefined);
+        await this.setupWithData(undefined);
         resolve(true);
       });
     });
+    */
   }
 }
 
