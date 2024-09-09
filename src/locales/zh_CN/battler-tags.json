@@ -69,5 +69,6 @@
   "cursedLapse": "{{pokemonNameWithAffix}}\n正受到诅咒！",
   "stockpilingOnAdd": "{{pokemonNameWithAffix}}蓄力了{{stockpiledCount}}次！",
   "disabledOnAdd": "封住了{{pokemonNameWithAffix}}的\n{{moveName}}！",
-  "disabledLapse": "{{pokemonNameWithAffix}}的\n定身法解除了！"
+  "disabledLapse": "{{pokemonNameWithAffix}}的\n定身法解除了！",
+  "tarShotOnAdd": "{{pokemonNameWithAffix}} became weaker to fire!"
 }
