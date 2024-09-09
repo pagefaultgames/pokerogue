@@ -403,7 +403,7 @@ export default class Battle {
     scene.rngCounter = this.rngCounter++;
     scene.rngSeedOverride = this.battleSeed;
     const ret = Utils.randSeedInt(range, min);
-    console.log(reason, ret)
+    console.log("[RNG] " + reason, ret)
     this.battleSeedState = Phaser.Math.RND.state();
     Phaser.Math.RND.state(state);
     //scene.setScoreText("RNG: " + tempRngCounter + " (Last sim: " + this.rngCounter + ")")

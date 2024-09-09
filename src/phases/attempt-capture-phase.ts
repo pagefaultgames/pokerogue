@@ -63,6 +63,8 @@ export class AttemptCapturePhase extends PokemonPhase {
     const y = Math.round(65536 / Math.sqrt(Math.sqrt(255 / x)));
     const fpOffset = pokemon.getFieldPositionOffset();
 
+    LoggerTools.logActions(this.scene, this.scene.currentBattle.waveIndex, "Poké Ball Throw")
+
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
     this.pokeball = this.scene.addFieldSprite(16, 80, "pb", pokeballAtlasKey);
     this.pokeball.setOrigin(0.5, 0.625);

@@ -2231,7 +2231,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return result;
       } else {
         const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === moveType) as TypeBoostTag;
-        if (typeBoost?.oneUse) {
+        if (typeBoost?.oneUse && !simulated) {
           source.removeTag(typeBoost.tagType);
         }
 
@@ -2378,19 +2378,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (!isTypeImmune) {
           const levelMultiplier = (2 * source.level / 5 + 2);
-          var randRoll = simulated ? 1 : this.randSeedIntRange(85, 100, "Random damage roll")
-          const randomMultiplier = (randRoll / 100);
-          damage.value = Utils.toDmgValue((((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2)
-                                   * stabMultiplier.value
-                                   * typeMultiplier
-                                   * arenaAttackTypeMultiplier.value
-                                   * screenMultiplier.value
-                                   * twoStrikeMultiplier.value
-                                   * targetMultiplier
-                                   * criticalMultiplier.value
-                                   * glaiveRushModifier.value
-                                   * randomMultiplier);
-          damageMin.value = Utils.toDmgValue((((levelMultiplier * powerLow * sourceAtkN.value / targetDefN.value) / 50) + 2)
+          if (simulated) {
+            damageMin.value = Utils.toDmgValue((((levelMultiplier * powerLow * sourceAtkN.value / targetDefN.value) / 50) + 2)
                                    * stabMultiplier.value
                                    * typeMultiplier
                                    * arenaAttackTypeMultiplier.value
@@ -2400,7 +2389,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                                    * criticalMultiplierN.value
                                    * glaiveRushModifier.value
                                    * 0.85);
-          damageMax.value = Utils.toDmgValue((((levelMultiplier * powerHigh * sourceAtkC.value / targetDefC.value) / 50) + 2)
+            damageMax.value = Utils.toDmgValue((((levelMultiplier * powerHigh * sourceAtkC.value / targetDefC.value) / 50) + 2)
                                    * stabMultiplier.value
                                    * typeMultiplier
                                    * arenaAttackTypeMultiplier.value
@@ -2409,7 +2398,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                                    * targetMultiplier
                                    * criticalMultiplierC.value
                                    * glaiveRushModifier.value);
-
+          } else {
+            var randRoll = simulated ? 1 : this.randSeedIntRange(85, 100, "Random damage roll")
+            const randomMultiplier = (randRoll / 100);
+            damage.value = Utils.toDmgValue((((levelMultiplier * power * sourceAtk.value / targetDef.value) / 50) + 2)
+                                   * stabMultiplier.value
+                                   * typeMultiplier
+                                   * arenaAttackTypeMultiplier.value
+                                   * screenMultiplier.value
+                                   * twoStrikeMultiplier.value
+                                   * targetMultiplier
+                                   * criticalMultiplier.value
+                                   * glaiveRushModifier.value
+                                   * randomMultiplier);
+          }
           if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
             if (!move.hasAttr(BypassBurnDamageReductionAttr)) {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
@@ -2578,39 +2580,36 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (source.isPlayer() && !this.isPlayer()) {
               this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage);
             }
+            // want to include is.Fainted() in case multi hit move ends early, still want to render message
+            if (source.turnData.hitsLeft === 1 || this.isFainted()) {
+              switch (result.hitResult) {
+              case HitResult.SUPER_EFFECTIVE:
+                this.scene.queueMessage(i18next.t("battle:hitResultSuperEffective"));
+                break;
+              case HitResult.NOT_VERY_EFFECTIVE:
+                this.scene.queueMessage(i18next.t("battle:hitResultNotVeryEffective"));
+                break;
+              case HitResult.ONE_HIT_KO:
+                this.scene.queueMessage(i18next.t("battle:hitResultOneHitKO"));
+                break;
+              case HitResult.IMMUNE:
+              case HitResult.NO_EFFECT:
+                console.error("Unhandled move immunity!");
+                break;
+              }
+            }
+
+            if (this.isFainted()) {
+              // set splice index here, so future scene queues happen before FaintedPhase
+              this.scene.setPhaseQueueSplice();
+              this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo));
+              this.resetSummonData();
+            }
+
+            if (damage) {
+              destinyTag?.lapse(source, BattlerTagLapseType.CUSTOM);
+            }
           }
-        }
-
-        // want to include is.Fainted() in case multi hit move ends early, still want to render message
-        if (simulated) {
-          // Don't show text
-        } else if (source.turnData.hitsLeft === 1 || this.isFainted()) {
-          switch (result.hitResult) {
-          case HitResult.SUPER_EFFECTIVE:
-            this.scene.queueMessage(i18next.t("battle:hitResultSuperEffective"));
-            break;
-          case HitResult.NOT_VERY_EFFECTIVE:
-            this.scene.queueMessage(i18next.t("battle:hitResultNotVeryEffective"));
-            break;
-          case HitResult.ONE_HIT_KO:
-            this.scene.queueMessage(i18next.t("battle:hitResultOneHitKO"));
-            break;
-          case HitResult.IMMUNE:
-          case HitResult.NO_EFFECT:
-            console.error("Unhandled move immunity!");
-            break;
-          }
-        }
-
-        if (this.isFainted() && !simulated) {
-          // set splice index here, so future scene queues happen before FaintedPhase
-          this.scene.setPhaseQueueSplice();
-          this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo));
-          this.resetSummonData();
-        }
-
-        if (!simulated && damage) {
-          destinyTag?.lapse(source, BattlerTagLapseType.CUSTOM);
         }
       }
       break;
