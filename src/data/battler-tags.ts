@@ -2277,6 +2277,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     return new GulpMissileTag(tagType, sourceMove);
   case BattlerTagType.TAR_SHOT:
     return new TarShotTag();
+  case BattlerTagType.THROAT_CHOPPED:
+    return new ThroatChoppedTag();
   case BattlerTagType.GORILLA_TACTICS:
     return new GorillaTacticsTag();
   case BattlerTagType.NONE:
