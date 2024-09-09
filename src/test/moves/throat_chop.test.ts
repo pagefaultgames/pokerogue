@@ -36,12 +36,14 @@ describe("Moves - Throat Chop", () => {
   it("prevents the target from using sound-based moves for two turns", async () => {
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
+    const enemy = game.scene.getEnemyPokemon()!;
+
     game.move.select(Moves.GROWL);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     // First turn, move is interrupted
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.ATK)).toBe(0);
+    expect(enemy.getStatStage(Stat.ATK)).toBe(0);
 
     // Second turn, struggle if no valid moves
     await game.toNextTurn();
@@ -50,6 +52,6 @@ describe("Moves - Throat Chop", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(game.scene.getEnemyPokemon()!.isFullHp()).toBe(false);
+    expect(enemy.isFullHp()).toBe(false);
   }, TIMEOUT);
 });
