@@ -63,11 +63,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
-<<<<<<< HEAD
 import { TimedEventManager } from "#app/timed-event-manager";
-=======
-import { TimedEventManager } from "#app/timed-event-manager.js";
->>>>>>> d8b8fb49fb3 (returned main)
 import i18next from "i18next";
 import { TrainerType } from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
@@ -2767,28 +2763,19 @@ export default class BattleScene extends SceneBase {
     const keys: string[] = [];
     const playerParty = this.getParty();
     playerParty.forEach(p => {
-<<<<<<< HEAD
       keys.push(p.getSpriteKey(true));
       keys.push(p.getBattleSpriteKey(true, true));
-=======
-      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
-      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant, true));
->>>>>>> d8b8fb49fb3 (returned main)
-      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
-      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
+      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      if (p.fusionSpecies) {
         keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
     const enemyParty = this.getEnemyParty();
     enemyParty.forEach(p => {
-<<<<<<< HEAD
       keys.push(p.getSpriteKey(true));
-=======
-      keys.push(p.species.getSpriteKey(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
->>>>>>> d8b8fb49fb3 (returned main)
-      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
-      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
+      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      if (p.fusionSpecies) {
         keys.push("cry/"+p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
