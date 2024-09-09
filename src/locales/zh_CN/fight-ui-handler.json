@@ -3,5 +3,6 @@
   "power": "威力",
   "accuracy": "命中",
   "abilityFlyInText": " {{pokemonName}} 的 {{passive}}{{abilityName}}",
-  "passive": "被动 "
+  "passive": "被动 ",
+  "teraHover": "{{type}} Terastallized"
 }
