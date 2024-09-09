@@ -28,8 +28,8 @@ describe("Moves - Chilly Reception", () => {
     game.override.battleType("single")
       .moveset([Moves.CHILLY_RECEPTION, Moves.SNOWSCAPE])
       .enemyMoveset(SPLASH_ONLY)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .ability(Abilities.BALL_FETCH);
+      .enemyAbility(Abilities.NONE)
+      .ability(Abilities.NONE);
 
   });
 
@@ -50,6 +50,18 @@ describe("Moves - Chilly Reception", () => {
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
 
     await game.phaseInterceptor.to("TurnInitPhase", false);
+    game.move.select(Moves.CHILLY_RECEPTION);
+    game.doSelectPartyPokemon(1);
+
+    await game.phaseInterceptor.to("BerryPhase", false);
+    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
+    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MEOWTH);
+  }, TIMEOUT);
+
+  it("happy case - switch out and weather changes", async () => {
+
+    await game.classicMode.startBattle([Species.SLOWKING, Species.MEOWTH]);
+
     game.move.select(Moves.CHILLY_RECEPTION);
     game.doSelectPartyPokemon(1);
 
