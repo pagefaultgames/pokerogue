@@ -197,6 +197,8 @@ export default class MockText implements MockGameObject {
     this.color = color;
   });
 
+  setInteractive = vi.fn();
+
   setShadowColor(color) {
     // Sets the shadow color.
     // return this.phaserText.setShadowColor(color);
