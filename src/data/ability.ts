@@ -1595,8 +1595,8 @@ export class PostAttackAbAttr extends AbAttr {
   private attackCondition: PokemonAttackCondition;
 
   /** The default attackCondition requires that the selected move is a damaging move */
-  constructor(attackCondition: PokemonAttackCondition = (user, target, move) => (move.category !== MoveCategory.STATUS)) {
-    super();
+  constructor(attackCondition: PokemonAttackCondition = (user, target, move) => (move.category !== MoveCategory.STATUS), showAbility: boolean = true) {
+    super(showAbility);
 
     this.attackCondition = attackCondition;
   }
@@ -1621,6 +1621,40 @@ export class PostAttackAbAttr extends AbAttr {
    */
   applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
     return false;
+  }
+}
+
+/**
+ * Ability attribute for Gorilla Tactics
+ * @extends PostAttackAbAttr
+ */
+export class GorillaTacticsAbAttr extends PostAttackAbAttr {
+  constructor() {
+    super((user, target, move) => true, false);
+  }
+
+  /**
+   *
+   * @param {Pokemon} pokemon the {@linkcode Pokemon} with this ability
+   * @param passive n/a
+   * @param simulated whether the ability is being simulated
+   * @param defender n/a
+   * @param move n/a
+   * @param hitResult n/a
+   * @param args n/a
+   * @returns `true` if the ability is applied
+   */
+  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
+    if (simulated) {
+      return simulated;
+    }
+
+    if (pokemon.getTag(BattlerTagType.GORILLA_TACTICS)) {
+      return false;
+    }
+
+    pokemon.addTag(BattlerTagType.GORILLA_TACTICS);
+    return true;
   }
 }
 
@@ -5597,7 +5631,7 @@ export function initAbilities() {
       .bypassFaint()
       .partial(),
     new Ability(Abilities.GORILLA_TACTICS, 8)
-      .unimplemented(),
+      .attr(GorillaTacticsAbAttr),
     new Ability(Abilities.NEUTRALIZING_GAS, 8)
       .attr(SuppressFieldAbilitiesAbAttr)
       .attr(UncopiableAbilityAbAttr)
