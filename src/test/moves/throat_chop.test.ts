@@ -29,7 +29,8 @@ describe("Moves - Throat Chop", () => {
       .battleType("single")
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Array(4).fill(Moves.THROAT_CHOP));
+      .enemyMoveset(Array(4).fill(Moves.THROAT_CHOP))
+      .enemySpecies(Species.MAGIKARP);
   });
 
   it("prevents the target from using sound-based moves for two turns", async () => {
