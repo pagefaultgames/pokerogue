@@ -1755,18 +1755,13 @@ export class PostSetStatusAbAttr extends AbAttr {
   /**
    * Does nothing after a status condition is set.
    * @param pokemon {@linkcode Pokemon} that status condition was set on.
-   * @param sourcePokemon {@linkcode Pokemon} that that set the status condition. Is null if status was not set by a Pokemon.
+   * @param sourcePokemon {@linkcode Pokemon} that that set the status condition. Is `null` if status was not set by a Pokemon.
    * @param passive Whether this ability is a passive.
    * @param effect {@linkcode StatusEffect} that was set.
    * @param args Set of unique arguments needed by this attribute.
-   * @returns true if application of the ability succeeds.
+   * @returns `true` if application of the ability succeeds.
    */
-  applyPostSetStatus(
-    pokemon: Pokemon,
-    sourcePokemon: Pokemon | null = null,
-    passive: boolean,
-    effect: StatusEffect,
-    args: any[]) : boolean | Promise<boolean> {
+  applyPostSetStatus(pokemon: Pokemon, sourcePokemon: Pokemon | null = null, passive: boolean, effect: StatusEffect, args: any[]) : boolean | Promise<boolean> {
     return false;
   }
 }
@@ -1778,22 +1773,17 @@ export class PostSetStatusAbAttr extends AbAttr {
  */
 export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
   /**
-   * If the StatusEffect that was set is Burn, Paralysis, Poison, or Toxic, and the status
-   * was set by a source Pokemon, set the source Pokemon's status to the same StatusEffect.
+   * If the `StatusEffect` that was set is Burn, Paralysis, Poison, or Toxic, and the status
+   * was set by a source Pokemon, set the source Pokemon's status to the same `StatusEffect`.
    * @param pokemon {@linkcode Pokemon} that status condition was set on.
    * @param sourcePokemon {@linkcode Pokemon} that that set the status condition. Is null if status was not set by a Pokemon.
    * @param passive Whether this ability is a passive.
    * @param effect {@linkcode StatusEffect} that was set.
    * @param args Set of unique arguments needed by this attribute.
-   * @returns true if application of the ability succeeds.
+   * @returns `true` if application of the ability succeeds.
    */
-  applyPostSetStatus(
-    pokemon: Pokemon,
-    sourcePokemon: Pokemon | null = null,
-    passive: boolean,
-    effect: StatusEffect,
-    args: any[]): boolean {
-    // Synchronizable statuses
+  override applyPostSetStatus(pokemon: Pokemon, sourcePokemon: Pokemon | null = null, passive: boolean, effect: StatusEffect, args: any[]): boolean {
+    /** Synchronizable statuses */
     const syncStatuses = new Set<StatusEffect>([
       StatusEffect.BURN,
       StatusEffect.PARALYSIS,
