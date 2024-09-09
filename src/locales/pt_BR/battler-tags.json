@@ -67,5 +67,6 @@
   "saltCuredLapse": "{{pokemonNameWithAffix}} foi ferido pelo {{moveName}}!",
   "cursedOnAdd": "{{pokemonNameWithAffix}} cortou seus PS pela metade e amaldiçoou {{pokemonName}}!",
   "cursedLapse": "{{pokemonNameWithAffix}} foi ferido pelo Curse!",
-  "stockpilingOnAdd": "{{pokemonNameWithAffix}} estocou {{stockpiledCount}}!"
+  "stockpilingOnAdd": "{{pokemonNameWithAffix}} estocou {{stockpiledCount}}!",
+  "tarShotOnAdd": "{{pokemonNameWithAffix}} became weaker to fire!"
 }
