@@ -1,12 +1,12 @@
-import { StatusEffect } from "#app/data/status-effect.js";
+import { StatusEffect } from "#app/data/status-effect";
 import { Weather, WeatherType } from "#app/data/weather";
-import { Abilities } from "#app/enums/abilities.js";
+import { Abilities } from "#app/enums/abilities";
 import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { ModifierOverride } from "#app/modifier/modifier-type.js";
+import { ModifierOverride } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
 import { MockInstance, vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";

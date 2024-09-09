@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex, BattleType } from "#app/battle.js";
-import { modifierTypes } from "#app/modifier/modifier-type.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex, BattleType } from "#app/battle";
+import { modifierTypes } from "#app/modifier/modifier-type";
 import { BattleEndPhase } from "./battle-end-phase";
 import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";

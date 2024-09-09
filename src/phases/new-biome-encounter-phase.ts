@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { applyAbAttrs, PostBiomeChangeAbAttr } from "#app/data/ability.js";
-import { getRandomWeatherType } from "#app/data/weather.js";
+import BattleScene from "#app/battle-scene";
+import { applyAbAttrs, PostBiomeChangeAbAttr } from "#app/data/ability";
+import { getRandomWeatherType } from "#app/data/weather";
 import { NextEncounterPhase } from "./next-encounter-phase";
 
 export class NewBiomeEncounterPhase extends NextEncounterPhase {
