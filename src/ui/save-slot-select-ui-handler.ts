@@ -372,6 +372,8 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
     this.add(pokemonIconsContainer);
 
+    const modifiersModule = await import("../modifier/modifier");
+
     const modifierIconsContainer = this.scene.add.container(148, 30);
     modifierIconsContainer.setScale(0.5);
     let visibleModifierIndex = 0;
@@ -379,13 +381,13 @@ class SessionSlot extends Phaser.GameObjects.Container {
     const itemDisplayLimit = 9
     for (const m of data.modifiers) {
       const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
-      if (modifier instanceof PokemonHeldItemModifier) {
+      if (modifier instanceof Modifier.PokemonHeldItemModifier) {
         continue;
       }
       numberOfModifiers++;
     }
     for (const m of data.modifiers) {
-      const modifier = m.toModifier(this.scene, Modifier[m.className]);
+      const modifier = m.toModifier(this.scene, modifiersModule[m.className]);
       if (modifier instanceof Modifier.PokemonHeldItemModifier) {
         continue;
       }
