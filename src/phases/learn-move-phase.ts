@@ -114,6 +114,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     if (emptyMoveIndex > -1) {
       pokemon.setMove(emptyMoveIndex, this.moveId);
       if (this.fromTM) {
+        if (!pokemon.usedTMs) {
+          pokemon.usedTMs = [];
+        }
         pokemon.usedTMs.push(this.moveId);
       }
       initMoveAnim(this.scene, this.moveId).then(() => {
@@ -130,11 +133,54 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       });
     } else if (move.isUnimplemented() && false) {
       this.scene.ui.setMode(messageMode).then(() => {
-        this.scene.ui.showText(`${getPokemonNameWithAffix(pokemon)} wants to learn ${move.name}, but this move does nothing.`, null, () => {
-          this.scene.ui.showText(`Would you like to teach ${move.name} anyways? (This will be logged as normal)`, null, () => {
-            this.scene.ui.setModeWithoutClear(Mode.CONFIRM, movesFullHandler, noHandler)
-          })
-        })
+        this.scene.ui.showText(i18next.t("battle:learnMovePrompt", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => {
+          this.scene.ui.showText(i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
+            this.scene.ui.showText(i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name }), null, () => {
+              const noHandler = () => {
+                this.scene.ui.setMode(messageMode).then(() => {
+                  this.scene.ui.showText(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), null, () => {
+                    this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
+                      this.scene.ui.setMode(messageMode);
+                      this.scene.ui.showText(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), null, () => this.end(), null, true);
+                    }, () => {
+                      this.scene.ui.setMode(messageMode);
+                      this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
+                      this.end();
+                    });
+                  });
+                });
+              };
+              this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
+                this.scene.ui.setMode(messageMode);
+                this.scene.ui.showText(i18next.t("battle:learnMoveForgetQuestion"), null, () => {
+                  this.scene.ui.setModeWithoutClear(Mode.SUMMARY, this.getPokemon(), SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
+                    if (moveIndex === 4) {
+                      noHandler();
+                      return;
+                    }
+                    this.scene.ui.setMode(messageMode).then(() => {
+                      this.scene.ui.showText(i18next.t("battle:countdownPoof"), null, () => {
+                        this.scene.ui.showText(i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex]!.getName() }), null, () => { // TODO: is the bang correct?
+                          this.scene.ui.showText(i18next.t("battle:learnMoveAnd"), null, () => {
+                            if (this.fromTM) {
+                              if (!pokemon.usedTMs) {
+                                pokemon.usedTMs = [];
+                              }
+                              pokemon.usedTMs.push(this.moveId);
+                            }
+                            pokemon.setMove(moveIndex, Moves.NONE);
+                            this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
+                            this.end();
+                          }, null, true);
+                        }, null, true);
+                      }, null, true);
+                    });
+                  });
+                }, null, true);
+              }, noHandler);
+            });
+          }, null, true);
+        }, null, true);
       });
     } else {
       this.scene.ui.setMode(messageMode).then(movesFullHandler);
