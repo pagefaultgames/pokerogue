@@ -1,12 +1,12 @@
-import { StatusEffect } from "#app/data/status-effect.js";
+import { StatusEffect } from "#app/data/status-effect";
 import { Weather, WeatherType } from "#app/data/weather";
-import { Abilities } from "#app/enums/abilities.js";
+import { Abilities } from "#app/enums/abilities";
 import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves.js";
-import { Species } from "#app/enums/species.js";
+import { Moves } from "#app/enums/moves";
+import { Species } from "#app/enums/species";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { ModifierOverride } from "#app/modifier/modifier-type.js";
+import { ModifierOverride } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
 import { vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
@@ -278,6 +278,31 @@ export class OverridesHelper extends GameManagerHelper {
   enemyHeldItems(items: ModifierOverride[]) {
     vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
     this.log("Enemy Pokemon held items set to:", items);
+    return this;
+  }
+
+  /**
+   * Override the items rolled at the end of a battle
+   * @param items the items to be rolled
+   * @returns this
+   */
+  itemRewards(items: ModifierOverride[]) {
+    vi.spyOn(Overrides, "ITEM_REWARD_OVERRIDE", "get").mockReturnValue(items);
+    this.log("Item rewards set to:", items);
+    return this;
+  }
+
+  /**
+   * Override the enemy (Pokemon) to have the given amount of health segments
+   * @param healthSegments the number of segments to give
+   *    default: 0, the health segments will be handled like in the game based on wave, level and species
+   *    1: the Pokemon will not be a boss
+   *    2+: the Pokemon will be a boss with the given number of health segments
+   * @returns this
+   */
+  enemyHealthSegments(healthSegments: number) {
+    vi.spyOn(Overrides, "OPP_HEALTH_SEGMENTS_OVERRIDE", "get").mockReturnValue(healthSegments);
+    this.log("Enemy Pokemon health segments set to:", healthSegments);
     return this;
   }
 

@@ -47,10 +47,14 @@
       "description": "將一隻寶可夢的性格改爲{{natureName}}併爲該寶可\n夢永久解鎖該性格。"
     },
     "DoubleBattleChanceBoosterModifierType": {
-      "description": "接下來的{{battleCount}}場戰鬥是雙打的概率翻倍。"
+      "description": "遭遇雙打機率提升四倍，持續{{battleCount}}場戰鬥。"
     },
-    "TempBattleStatBoosterModifierType": {
-      "description": "爲所有成員寶可夢提升一級{{tempBattleStatName}}，持續5場戰鬥。"
+    "TempStatStageBoosterModifierType": {
+      "description": "提升全隊的{{stat}}{{amount}}級，持續5場戰鬥。",
+      "extra": {
+        "stage": "1階",
+        "percentage": "30%"
+      }
     },
     "AttackTypeBoosterModifierType": {
       "description": "一隻寶可夢的{{moveType}}系招式威力提升20%。"
@@ -61,8 +65,8 @@
     "AllPokemonLevelIncrementModifierType": {
       "description": "Increases all party members' level by {{levels}}."
     },
-    "PokemonBaseStatBoosterModifierType": {
-      "description": "增加持有者的{{statName}}10%，個體值越高堆疊\n上限越高。"
+    "BaseStatBoosterModifierType": {
+      "description": "增加持有者的{{stat}}10%，個體值越高堆疊\n上限越高。"
     },
     "AllPokemonFullHpRestoreModifierType": {
       "description": "所有寶可夢完全恢復HP。"
@@ -244,6 +248,12 @@
       "name": "焦點鏡",
       "description": "能看見弱點的鏡片。攜帶它的寶可夢的招式 會變得容易擊中要害。"
     },
+    "DIRE_HIT": {
+      "name": "要害攻擊",
+      "extra": {
+        "raises": "會心"
+      }
+    },
     "LEEK": {
       "name": "大蔥",
       "description": "非常長且堅硬的莖。讓大蔥鴨攜帶後，招式會 變得容易擊中要害。"
@@ -407,25 +417,13 @@
       "description": "讓百變怪攜帶後，速度就會提高的神奇粉末。非常細緻堅硬。"
     }
   },
-  "TempBattleStatBoosterItem": {
+  "TempStatStageBoosterItem": {
     "x_attack": "力量強化",
     "x_defense": "防禦強化",
     "x_sp_atk": "特攻強化",
     "x_sp_def": "特防強化",
     "x_speed": "速度強化",
-    "x_accuracy": "命中強化",
-    "dire_hit": "要害攻擊"
-  },
-  "TempBattleStatBoosterStatName": {
-    "ATK": "攻擊",
-    "DEF": "防禦",
-    "SPATK": "特攻",
-    "SPDEF": "特防",
-    "SPD": "速度",
-    "ACC": "命中",
-    "CRIT": "會心",
-    "EVA": "閃避",
-    "DEFAULT": "???"
+    "x_accuracy": "命中強化"
   },
   "AttackTypeBoosterItem": {
     "silk_scarf": "絲綢圍巾",
@@ -600,6 +598,6 @@
     "DRAGON_MEMORY": "龍記憶碟",
     "DARK_MEMORY": "黑暗記憶碟",
     "FAIRY_MEMORY": "妖精記憶碟",
-    "BLANK_MEMORY": "空白記憶碟"
+    "NORMAL_MEMORY": "一般記憶碟"
   }
 }

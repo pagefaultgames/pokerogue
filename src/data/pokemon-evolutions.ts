@@ -1,7 +1,7 @@
 import { Gender } from "./gender";
 import { PokeballType } from "./pokeball";
 import Pokemon from "../field/pokemon";
-import { Stat } from "./pokemon-stat";
+import { Stat } from "#enums/stat";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { SpeciesFormKey } from "./pokemon-species";

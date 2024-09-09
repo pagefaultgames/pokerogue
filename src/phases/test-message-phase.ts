@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene.js";
+import BattleScene from "#app/battle-scene";
 import { MessagePhase } from "./message-phase";
 import * as LoggerTools from "../logger";
 

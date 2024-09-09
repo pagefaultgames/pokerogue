@@ -1,10 +1,11 @@
 {
+  "noneSelected": "Keine ausgewählt",
   "title": "Herausforderungsmodifikatoren",
   "illegalEvolution": "{{pokemon}} hat sich in ein Pokémon verwandelt, dass für diese Herausforderung nicht zulässig ist!",
   "singleGeneration": {
     "name": "Mono-Generation",
     "desc": "Du kannst nur Pokémon aus der {{gen}} Generation verwenden.",
-    "desc_default": "Du kannst nur Pokémon gewählten Generation verwenden.",
+    "desc_default": "Du kannst nur Pokémon aus der gewählten Generation verwenden.",
     "gen_1": "ersten",
     "gen_2": "zweiten",
     "gen_3": "dritten",

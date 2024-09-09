@@ -46,6 +46,7 @@ function goToWebpage(urlIndex: integer) {
   link.click();
   link.remove();
 }
+const donateUrl = "https://github.com/sponsors/patapancakes";
 
 export default class MenuUiHandler extends MessageUiHandler {
   private readonly textPadding = 8;
@@ -459,7 +460,16 @@ export default class MenuUiHandler extends MessageUiHandler {
           return true;
         },
         keepOpen: true
-      }];
+      },
+      {
+        label: i18next.t("menuUiHandler:donate"),
+        handler: () => {
+          window.open(donateUrl, "_blank")?.focus();
+          return true;
+        },
+        keepOpen: true
+      }
+    ];
     if (!bypassLogin && loggedInUser?.hasAdminRole) {
       communityOptions.push({
         label: "Admin",

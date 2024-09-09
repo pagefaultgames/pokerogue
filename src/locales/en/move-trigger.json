@@ -3,6 +3,10 @@
   "cutHpPowerUpMove": "{{pokemonName}} cut its own HP to power up its move!",
   "absorbedElectricity": "{{pokemonName}} absorbed electricity!",
   "switchedStatChanges": "{{pokemonName}} switched stat changes with the target!",
+  "switchedTwoStatChanges": "{{pokemonName}} switched all changes to its {{firstStat}}\nand {{secondStat}} with its target!",
+  "switchedStat": "{{pokemonName}} switched {{stat}} with its target!",
+  "sharedGuard": "{{pokemonName}} shared its guard with the target!",
+  "sharedPower": "{{pokemonName}} shared its power with the target!",
   "goingAllOutForAttack": "{{pokemonName}} is going all out for this attack!",
   "regainedHealth": "{{pokemonName}} regained\nhealth!",
   "keptGoingAndCrashed": "{{pokemonName}} kept going\nand crashed!",
@@ -61,5 +65,6 @@
   "suppressAbilities": "{{pokemonName}}'s ability\nwas suppressed!",
   "revivalBlessing": "{{pokemonName}} was revived!",
   "swapArenaTags": "{{pokemonName}} swapped the battle effects affecting each side of the field!",
-  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!"
+  "exposedMove": "{{pokemonName}} identified\n{{targetPokemonName}}!",
+  "safeguard": "{{targetName}} is protected by Safeguard!"
 }

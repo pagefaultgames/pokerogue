@@ -1,17 +1,14 @@
-import BattleScene from "#app/battle-scene.js";
-import { applyPostTurnAbAttrs, PostTurnAbAttr } from "#app/data/ability.js";
-import { BattlerTagLapseType } from "#app/data/battler-tags.js";
-import { allMoves } from "#app/data/move.js";
-import { TerrainType } from "#app/data/terrain.js";
-import { Moves } from "#app/enums/moves.js";
-import { WeatherType } from "#app/enums/weather-type.js";
-import { TurnEndEvent } from "#app/events/battle-scene.js";
-import Pokemon from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import { TurnHealModifier, EnemyTurnHealModifier, EnemyStatusEffectHealChanceModifier, TurnStatusEffectModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier.js";
+import BattleScene from "#app/battle-scene";
+import { applyPostTurnAbAttrs, PostTurnAbAttr } from "#app/data/ability";
+import { BattlerTagLapseType } from "#app/data/battler-tags";
+import { TerrainType } from "#app/data/terrain";
+import { WeatherType } from "#app/enums/weather-type";
+import { TurnEndEvent } from "#app/events/battle-scene";
+import Pokemon from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { TurnHealModifier, EnemyTurnHealModifier, EnemyStatusEffectHealChanceModifier, TurnStatusEffectModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
-import { MessagePhase } from "./message-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";
 import * as LoggerTools from "../logger";
 
@@ -30,11 +27,6 @@ export class TurnEndPhase extends FieldPhase {
 
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
-
-      if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
-        this.scene.pushPhase(new MessagePhase(this.scene, i18next.t("battle:notDisabled", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: allMoves[pokemon.summonData.disabledMove].name })));
-        pokemon.summonData.disabledMove = Moves.NONE;
-      }
 
       this.scene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 

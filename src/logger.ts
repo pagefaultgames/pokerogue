@@ -14,7 +14,7 @@ import Trainer from "./field/trainer";
 import { Species } from "./enums/species";
 import { GameMode, GameModes } from "./game-mode";
 import PersistentModifierData from "./system/modifier-data";
-import PokemonSpecies from "./data/pokemon-species";
+import PokemonSpecies, { getPokemonSpecies, starterPassiveAbilities } from "./data/pokemon-species";
 import { getStatusEffectCatchRateMultiplier, StatusEffect } from "./data/status-effect";
 import { decrypt, SessionSaveData } from "./system/game-data";
 import { loggedInUser } from "./account";
@@ -24,6 +24,9 @@ import ArenaData from "./system/arena-data";
 import ChallengeData from "./system/challenge-data";
 import { Challenges } from "./enums/challenges";
 import { getPlayerModifierTypeOptions, ModifierPoolType, ModifierTypeOption, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { Ability, allAbilities } from "./data/ability";
+import { pokemonPrevolutions } from "./data/pokemon-evolutions";
+import { Abilities } from "./enums/abilities";
 
 /*
 SECTIONS
@@ -1075,6 +1078,30 @@ export function exportPokemon(pokemon: Pokemon, encounterRarity?: string): PokeD
   }
 }
 /**
+ * Exports a Pokemon's data as `PokeData`, using `PokemonData` rather than the Pokemon object.
+ * @param pokemon The Pokemon to store.
+ * @param encounterRarity The rarity tier of the Pokemon for this biome.
+ * @returns The Pokemon data.
+ */
+export function exportPokemonFromData(pokemon: PokemonData, encounterRarity?: string): PokeData {
+  var P = getPokemonSpecies(pokemon.species)
+  return {
+    id: pokemon.species,
+    name: P.species,
+    ability: Utils.getEnumKeys(Abilities)[P.getAbility(pokemon.abilityIndex)],
+    isHiddenAbility: P.getAbility(pokemon.abilityIndex) === P.abilityHidden,
+    passiveAbility: "Cannot pull Passive or Held Items from raw file data",
+    nature: exportNature(pokemon.nature),
+    gender: pokemon.gender == 0 ? "Male" : (pokemon.gender == 1 ? "Female" : "Genderless"),
+    rarity: encounterRarity!,
+    captured: false,
+    level: pokemon.level,
+    items: [],
+    iv_raw: exportIVs(pokemon.ivs),
+    iv: formatIVs(pokemon.ivs)
+  }
+}
+/**
  * Prints a Pokemon as a string, for saving a DRPD to your device.
  * @param inData The data to add on to.
  * @param indent The indent string (just a bunch of spaces).
@@ -1852,8 +1879,7 @@ export function logShop(scene: BattleScene, floor: integer = scene.currentBattle
  * @param floor The wave index to write to. Defaults to the current floor.
  */
 export function logTrainer(scene: BattleScene, floor: integer = scene.currentBattle.waveIndex) {
-  var drpd: DRPD = JSON.parse(localStorage.getItem(getLogID(scene))!) as DRPD;
-  drpd = updateLog(drpd);
+  var drpd: DRPD = getDRPD(scene)
   console.log(`Logging trainer: ${scene.currentBattle.trainer!.getTitleOnly()} ${scene.currentBattle.trainer!.getNameOnly()}`)
   var wv: Wave = getWave(drpd, floor, scene)
   var t: LogTrainerData = exportTrainer(scene.currentBattle.trainer!)

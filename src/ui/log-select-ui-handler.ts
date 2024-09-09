@@ -20,7 +20,7 @@ import { allSpecies, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/
 const sessionSlotCount = 5;
 const gap = 20;
 
-export type LogSelectCallback = (key: string) => void;
+export type LogSelectCallback = (key?: string) => void;
 
 export default class LogSelectUiHandler extends MessageUiHandler {
 
@@ -30,12 +30,12 @@ export default class LogSelectUiHandler extends MessageUiHandler {
   private saveSlotSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private sessionSlots: SessionSlot[];
 
-  private selectCallback: LogSelectCallback;
+  private selectCallback?: LogSelectCallback;
   private quitCallback: LogSelectCallback;
 
   private scrollCursor: integer = 0;
 
-  private cursorObj: Phaser.GameObjects.NineSlice;
+  private cursorObj?: Phaser.GameObjects.NineSlice;
 
   private sessionSlotsContainerInitialY: number;
 
@@ -107,20 +107,20 @@ export default class LogSelectUiHandler extends MessageUiHandler {
     let error = false;
 
     if (button === Button.ACTION) {
-      const originalCallback = this.selectCallback;
+      const originalCallback = this.selectCallback!;
       const cursor = this.cursor + this.scrollCursor;
       var k = this.sessionSlots[cursor].key
       if (k != undefined) {
-        var file = JSON.parse(localStorage.getItem(k)) as LoggerTools.DRPD;
+        var file = JSON.parse(localStorage.getItem(k)!) as LoggerTools.DRPD;
         console.log(k, file)
         LoggerTools.generateEditHandlerForLog(this.scene, this.sessionSlots[cursor].logIndex, () => {
-          this.selectCallback = null;
+          this.selectCallback = undefined;
           originalCallback(k)
         })()
         success = true;
       }
     } else if (button === Button.CANCEL) {
-      this.quitCallback(undefined);
+      this.quitCallback!(undefined);
     } else {
       switch (button) {
       case Button.UP:
@@ -207,7 +207,7 @@ export default class LogSelectUiHandler extends MessageUiHandler {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", null, 296, 44, 6, 6, 6, 6);
+      this.cursorObj = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
       this.cursorObj.setOrigin(0, 0);
       this.sessionSlotsContainer.add(this.cursorObj);
     }
@@ -237,7 +237,7 @@ export default class LogSelectUiHandler extends MessageUiHandler {
     super.clear();
     this.saveSlotSelectContainer.setVisible(false);
     this.eraseCursor();
-    this.selectCallback = null;
+    this.selectCallback = undefined;
     this.clearSessionSlots();
   }
 
@@ -245,7 +245,7 @@ export default class LogSelectUiHandler extends MessageUiHandler {
     if (this.cursorObj) {
       this.cursorObj.destroy();
     }
-    this.cursorObj = null;
+    this.cursorObj = undefined;
   }
 
   clearSessionSlots() {
@@ -255,7 +255,7 @@ export default class LogSelectUiHandler extends MessageUiHandler {
 }
 
 class SessionSlot extends Phaser.GameObjects.Container {
-  public slotId: integer;
+  public slotId?: integer;
   public autoSlot: integer;
   public hasData: boolean;
   public wv: integer;
@@ -263,11 +263,11 @@ class SessionSlot extends Phaser.GameObjects.Container {
   private loadingLabel: Phaser.GameObjects.Text;
   public logIndex: integer;
 
-  constructor(scene: BattleScene, slotId: integer = undefined, ypos: integer, autoSlot?: integer) {
+  constructor(scene: BattleScene, slotId: integer | undefined = undefined, ypos: integer, autoSlot?: integer) {
     super(scene, 0, ypos * 56 + (ypos > 4 ? gap : 0));
 
-    this.slotId = slotId;
-    this.autoSlot = autoSlot
+    this.slotId = slotId!;
+    this.autoSlot = autoSlot!
 
     this.setup();
   }
@@ -284,11 +284,13 @@ class SessionSlot extends Phaser.GameObjects.Container {
   async setupWithData(data: LoggerTools.DRPD) {
     this.remove(this.loadingLabel, true);
     var lbl = `???`
-    lbl = data.title
+    lbl = data.title!
+    var matchesFile = 0
     if (this.slotId != undefined) {
       lbl = `[${this.slotId + 1}] ${lbl}`
+      matchesFile = this.slotId + 1
     }
-    console.log(data, this.slotId, this.autoSlot, lbl)
+    //console.log(data, this.slotId, this.autoSlot, lbl)
     const gameModeLabel = addTextObject(this.scene, 8, 5, lbl, TextStyle.WINDOW);
     this.add(gameModeLabel);
 
@@ -297,46 +299,96 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
     const playTimeLabel = addTextObject(this.scene, 8, 33, data.version + " / Path: " + (data.label || ""), TextStyle.WINDOW);
     this.add(playTimeLabel);
+    
+    var wavecount = 0
+    data.waves.forEach((wv, idx) => {
+      if (wv) {
+        if (wv.id != 0) {
+          wavecount++
+        }
+      }
+    })
+    const waveLabel = addTextObject(this.scene, 185, 33, wavecount + " wv" + (wavecount == 1 ? "" : "s"), TextStyle.WINDOW);
+    this.add(waveLabel);
+    const fileSizeLabel = addTextObject(this.scene, 255, 33, LoggerTools.getSize(JSON.stringify(data)), TextStyle.WINDOW);
+    //fileSizeLabel.setAlign("right")
+    this.add(fileSizeLabel);
 
-    if (data.starters[0] == null) {
+    const pokemonIconsContainer = this.scene.add.container(144, 4);
+    if (data.starters && data.starters![0] != null) {
+      data.starters.forEach((p: LoggerTools.PokeData, i: integer) => {
+        if (p == undefined)
+          return;
+        const iconContainer = this.scene.add.container(26 * i, 0);
+        iconContainer.setScale(0.75);
+
+        //if (Utils.getEnumValues(Species)[p.id] == undefined)
+          //return;
+
+        //if (getPokemonSpecies(Utils.getEnumValues(Species)[p.id]) == undefined)
+          //return;
+
+        if (allSpecies[Utils.getEnumValues(Species).indexOf(p.id)] == undefined) {
+          // Do nothing
+          //console.log(p.id)
+          const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[p.id]), 0, 0, 0, 0, 0);
+          iconContainer.add(icon);
+        } else {
+          const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[p.id]), 0, 0, 0, 0, 0);
+          //const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[allSpecies[Utils.getEnumValues(Species).indexOf(p.id)].speciesId]), 0, 0, 0, 0, 0);
+          iconContainer.add(icon);
+        }
+
+        const text = addTextObject(this.scene, 32, 20, ``, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+        text.setShadow(0, 0, undefined);
+        text.setStroke("#424242", 14);
+        text.setOrigin(1, 0);
+
+        iconContainer.add(text);
+
+        pokemonIconsContainer.add(iconContainer);
+      });
+    } else if (this.slotId != undefined) {
+      var gamedata = LoggerTools.parseSlotData(this.slotId)!
+      //console.log(gamedata)
+      gamedata.party.forEach((pk: PokemonData, i: integer) => {
+        if (pk == undefined)
+          return;
+        var p = LoggerTools.exportPokemonFromData(pk)
+        const iconContainer = this.scene.add.container(26 * i, 0);
+        iconContainer.setScale(0.75);
+
+        //if (Utils.getEnumValues(Species)[p.id] == undefined)
+          //return;
+
+        //if (getPokemonSpecies(Utils.getEnumValues(Species)[p.id]) == undefined)
+          //return;
+
+        var sp = getPokemonSpecies(pk.species);
+        if (allSpecies[Utils.getEnumValues(Species).indexOf(p.id)] == undefined) {
+          // Do nothing
+          const icon = this.scene.addPkIcon(sp, pk.formIndex, 0, 0, 0, 0, undefined, pk.shiny, pk.variant);
+          iconContainer.add(icon);
+        } else {
+          //console.log(p.id, Utils.getEnumValues(Species)[p.id])
+          const icon = this.scene.addPkIcon(sp, pk.formIndex, 0, 0, 0, 0, undefined, pk.shiny, pk.variant);
+          //const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[allSpecies[Utils.getEnumValues(Species).indexOf(p.id)].speciesId]), 0, 0, 0, 0, 0);
+          iconContainer.add(icon);
+        }
+
+        const text = addTextObject(this.scene, 32, 20, ``, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+        text.setShadow(0, 0, undefined);
+        text.setStroke("#424242", 14);
+        text.setOrigin(1, 0);
+
+        iconContainer.add(text);
+
+        pokemonIconsContainer.add(iconContainer);
+      });
+    } else {
       const timestampLabel = addTextObject(this.scene, 144, 10, "No Starter data", TextStyle.WINDOW);
       this.add(timestampLabel);
     }
-
-    const pokemonIconsContainer = this.scene.add.container(144, 4);
-    if (false || data.starters)
-    data.starters.forEach((p: LoggerTools.PokeData, i: integer) => {
-      if (p == undefined)
-        return;
-      const iconContainer = this.scene.add.container(26 * i, 0);
-      iconContainer.setScale(0.75);
-
-      //if (Utils.getEnumValues(Species)[p.id] == undefined)
-        //return;
-
-      //if (getPokemonSpecies(Utils.getEnumValues(Species)[p.id]) == undefined)
-        //return;
-
-      if (allSpecies[Utils.getEnumValues(Species).indexOf(p.id)] == undefined) {
-        // Do nothing
-        console.log(p.id)
-        const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[p.id]), 0, 0, 0, 0, 0);
-        iconContainer.add(icon);
-      } else {
-        const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[p.id]), 0, 0, 0, 0, 0);
-        //const icon = this.scene.addPkIcon(getPokemonSpecies(Utils.getEnumValues(Species)[allSpecies[Utils.getEnumValues(Species).indexOf(p.id)].speciesId]), 0, 0, 0, 0, 0);
-        iconContainer.add(icon);
-      }
-
-      const text = addTextObject(this.scene, 32, 20, ``, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
-      text.setShadow(0, 0, null);
-      text.setStroke("#424242", 14);
-      text.setOrigin(1, 0);
-
-      iconContainer.add(text);
-
-      pokemonIconsContainer.add(iconContainer);
-    });
 
     this.add(pokemonIconsContainer);
 
@@ -361,9 +413,10 @@ class SessionSlot extends Phaser.GameObjects.Container {
       if (slot) {
         this.slotId = slot
       }
-      this.setupWithData(JSON.parse(localStorage.getItem(l)))
+      this.setupWithData(JSON.parse(localStorage.getItem(l)!))
       resolve(true);
     });
+    /*
     return new Promise<boolean>(resolve => {
       this.scene.gameData.getSession(this.slotId, this.autoSlot).then(async sessionData => {
         if (!sessionData) {
@@ -377,6 +430,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
         resolve(true);
       });
     });
+    */
   }
 }
 

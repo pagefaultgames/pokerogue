@@ -1,4 +1,4 @@
-import { BattleStat } from "#app/data/battle-stat";
+import { Stat } from "#enums/stat";
 import { Species } from "#app/enums/species";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { DamagePhase } from "#app/phases/damage-phase";
@@ -52,7 +52,7 @@ describe("Moves - Fissure", () => {
     game.scene.clearEnemyHeldItemModifiers();
   });
 
-  it("ignores damage modification from abilities such as fur coat", async () => {
+  it("ignores damage modification from abilities, for example FUR_COAT", async () => {
     game.override.ability(Abilities.NO_GUARD);
     game.override.enemyAbility(Abilities.FUR_COAT);
 
@@ -62,10 +62,10 @@ describe("Moves - Fissure", () => {
     expect(enemyPokemon.isFainted()).toBe(true);
   });
 
-  it("ignores accuracy stat", async () => {
+  it("ignores user's ACC stat stage", async () => {
     vi.spyOn(partyPokemon, "getAccuracyMultiplier");
 
-    enemyPokemon.summonData.battleStats[BattleStat.ACC] = -6;
+    partyPokemon.setStatStage(Stat.ACC, -6);
 
     game.move.select(Moves.FISSURE);
 
@@ -75,10 +75,10 @@ describe("Moves - Fissure", () => {
     expect(partyPokemon.getAccuracyMultiplier).toHaveReturnedWith(1);
   });
 
-  it("ignores evasion stat", async () => {
+  it("ignores target's EVA stat stage", async () => {
     vi.spyOn(partyPokemon, "getAccuracyMultiplier");
 
-    enemyPokemon.summonData.battleStats[BattleStat.EVA] = 6;
+    enemyPokemon.setStatStage(Stat.EVA, 6);
 
     game.move.select(Moves.FISSURE);
 

@@ -1,5 +1,5 @@
-import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/ability.js";
-import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier.js";
+import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/ability";
+import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
 import { GameOverPhase } from "./game-over-phase";
 import * as LoggerTools from "../logger";

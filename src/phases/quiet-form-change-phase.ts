@@ -1,10 +1,10 @@
-import BattleScene from "#app/battle-scene.js";
-import { SemiInvulnerableTag } from "#app/data/battler-tags.js";
-import { SpeciesFormChange, getSpeciesFormChangeMessage } from "#app/data/pokemon-forms.js";
-import { getTypeRgb } from "#app/data/type.js";
-import { BattleSpec } from "#app/enums/battle-spec.js";
-import Pokemon, { EnemyPokemon } from "#app/field/pokemon.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
+import BattleScene from "#app/battle-scene";
+import { SemiInvulnerableTag } from "#app/data/battler-tags";
+import { SpeciesFormChange, getSpeciesFormChangeMessage } from "#app/data/pokemon-forms";
+import { getTypeRgb } from "#app/data/type";
+import { BattleSpec } from "#app/enums/battle-spec";
+import Pokemon, { EnemyPokemon } from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlePhase } from "./battle-phase";
 import { MovePhase } from "./move-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";

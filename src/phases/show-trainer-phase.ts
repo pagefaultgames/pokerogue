@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene.js";
-import { PlayerGender } from "#app/enums/player-gender.js";
+import BattleScene from "#app/battle-scene";
+import { PlayerGender } from "#app/enums/player-gender";
 import { BattlePhase } from "./battle-phase";
 import * as LoggerTools from "../logger";
 

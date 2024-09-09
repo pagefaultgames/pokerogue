@@ -1,12 +1,12 @@
-import BattleScene from "#app/battle-scene.js";
-import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims.js";
-import { allMoves } from "#app/data/move.js";
-import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms.js";
-import { Moves } from "#app/enums/moves.js";
-import { getPokemonNameWithAffix } from "#app/messages.js";
-import EvolutionSceneHandler from "#app/ui/evolution-scene-handler.js";
-import { SummaryUiMode } from "#app/ui/summary-ui-handler.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
+import { allMoves } from "#app/data/move";
+import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
+import { Moves } from "#app/enums/moves";
+import { getPokemonNameWithAffix } from "#app/messages";
+import EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
+import { SummaryUiMode } from "#app/ui/summary-ui-handler";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
 import { PokemonMove } from "#app/field/pokemon.js";
@@ -14,11 +14,13 @@ import * as LoggerTools from "../logger";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
+  private fromTM: boolean;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves) {
+  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves, fromTM?: boolean) {
     super(scene, partyMemberIndex);
 
     this.moveId = moveId;
+    this.fromTM = fromTM ?? false;
   }
 
   start() {
@@ -111,6 +113,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }
     if (emptyMoveIndex > -1) {
       pokemon.setMove(emptyMoveIndex, this.moveId);
+      if (this.fromTM) {
+        pokemon.usedTMs.push(this.moveId);
+      }
       initMoveAnim(this.scene, this.moveId).then(() => {
         loadMoveAnimAssets(this.scene, [this.moveId], true)
           .then(() => {

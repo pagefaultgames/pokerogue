@@ -13,12 +13,12 @@ import { BattleType } from "../battle";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
 import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
-import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle.js";
+import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 import { Type, getTypeRgb } from "../data/type";
+import { TypeColor, TypeShadow } from "#app/enums/color";
 import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/data/variant";
-import { PokemonHeldItemModifier, TerastallizeModifier } from "../modifier/modifier";
-import {modifierSortFunc} from "../modifier/modifier";
+import * as Modifier from "../modifier/modifier";
 import { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 
@@ -67,7 +67,7 @@ export default class RunInfoUiHandler extends UiHandler {
   override async setup() {
  		this.runContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
     // The import of the modifiersModule is loaded here to sidestep async/await issues.
-    this.modifiersModule = await import("../modifier/modifier");
+    this.modifiersModule = Modifier;
     this.runContainer.setVisible(false);
  	}
 
@@ -302,7 +302,7 @@ export default class RunInfoUiHandler extends UiHandler {
     const teraPokemon = {};
     this.runInfo.enemyModifiers.forEach((m) => {
       const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
-      if (modifier instanceof TerastallizeModifier) {
+      if (modifier instanceof Modifier.TerastallizeModifier) {
         const teraDetails = modifier?.getArgs();
         const pkmnId = teraDetails[0];
         teraPokemon[pkmnId] = teraDetails[1];
@@ -373,15 +373,16 @@ export default class RunInfoUiHandler extends UiHandler {
       break;
     case GameModes.CHALLENGE:
       modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
-      modeText.appendText(`\t\t${i18next.t("runHistory:challengeRules")}: `);
+      modeText.appendText(`${i18next.t("runHistory:challengeRules")}: `);
+      modeText.setWrapMode(1); // wrap by word
+      modeText.setWrapWidth(500);
       const rules: string[] = this.challengeParser();
       if (rules) {
         for (let i = 0; i < rules.length; i++) {
-          const newline = i > 0 && i%2 === 0;
           if (i > 0) {
-            modeText.appendText(" + ", newline);
+            modeText.appendText(" + ", false);
           }
-          modeText.appendText(rules[i], newline);
+          modeText.appendText(rules[i], false);
         }
       }
       break;
@@ -432,7 +433,7 @@ export default class RunInfoUiHandler extends UiHandler {
       modifierIconsContainer.setScale(0.45);
       for (const m of this.runInfo.modifiers) {
         const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
-        if (modifier instanceof PokemonHeldItemModifier) {
+        if (modifier instanceof Modifier.PokemonHeldItemModifier) {
           continue;
         }
         const icon = modifier?.getIcon(this.scene, false);
@@ -470,14 +471,18 @@ export default class RunInfoUiHandler extends UiHandler {
           rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
           break;
         case Challenges.SINGLE_TYPE:
-          rules.push(i18next.t(`pokemonInfo:Type.${Type[this.runInfo.challenges[i].value-1]}` as const));
+          const typeRule = Type[this.runInfo.challenges[i].value-1];
+          const typeTextColor = `[color=${TypeColor[typeRule]}]`;
+          const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
+          const typeText = typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)!+"[/color]"+"[/shadow]";
+          rules.push(typeText);
           break;
         case Challenges.FRESH_START:
           rules.push(i18next.t("challenges:freshStart.name"));
           break;
         case Challenges.INVERSE_BATTLE:
           //
-          rules.push(i18next.t("challenges:inverseBattle.shortName").split("").reverse().join(""));
+          rules.push(i18next.t("challenges:inverseBattle.shortName"));
           break;
         }
       }
@@ -628,18 +633,18 @@ export default class RunInfoUiHandler extends UiHandler {
       // Pokemon Held Items - not displayed by default
       // Endless/Endless Spliced have a different scale because Pokemon tend to accumulate more items in these runs.
       const heldItemsScale = (this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS) ? 0.25 : 0.5;
-      const heldItemsContainer = this.scene.add.container(-82, 6);
-      const heldItemsList : PokemonHeldItemModifier[] = [];
+      const heldItemsContainer = this.scene.add.container(-82, 2);
+      const heldItemsList : Modifier.PokemonHeldItemModifier[] = [];
       if (this.runInfo.modifiers.length) {
         for (const m of this.runInfo.modifiers) {
           const modifier = m.toModifier(this.scene, this.modifiersModule[m.className]);
-          if (modifier instanceof PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
+          if (modifier instanceof Modifier.PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
             modifier.stackCount = m["stackCount"];
             heldItemsList.push(modifier);
           }
         }
         if (heldItemsList.length > 0) {
-          (heldItemsList as PokemonHeldItemModifier[]).sort(modifierSortFunc);
+          (heldItemsList as Modifier.PokemonHeldItemModifier[]).sort(Modifier.modifierSortFunc);
           let row = 0;
           for (const [index, item] of heldItemsList.entries()) {
             if ( index > 36 ) {
@@ -648,6 +653,9 @@ export default class RunInfoUiHandler extends UiHandler {
               break;
             }
             const itemIcon = item?.getIcon(this.scene, true);
+            if (item?.stackCount < item?.getMaxHeldItemCount(pokemon) && itemIcon.list[1] instanceof Phaser.GameObjects.BitmapText) {
+              itemIcon.list[1].clearTint();
+            }
             itemIcon.setScale(heldItemsScale);
             itemIcon.setPosition((index%19) * 10, row * 10);
             heldItemsContainer.add(itemIcon);

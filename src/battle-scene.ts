@@ -63,7 +63,7 @@ import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
-import { TimedEventManager } from "#app/timed-event-manager.js";
+import { TimedEventManager } from "#app/timed-event-manager";
 import i18next from "i18next";
 import { TrainerType } from "#enums/trainer-type";
 import { battleSpecDialogue } from "./data/dialogue";
@@ -132,7 +132,7 @@ export default class BattleScene extends SceneBase {
   public gameSpeed: integer = 1;
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
-  public shopCursorTarget: number = ShopCursorTarget.CHECK_TEAM;
+  public shopCursorTarget: number = ShopCursorTarget.REWARDS;
   public showMovesetFlyout: boolean = true;
   public showTeams: boolean = true;
   public showTeamSprites: boolean = false;
@@ -865,12 +865,13 @@ export default class BattleScene extends SceneBase {
   }
 
   addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
+    if (Overrides.OPP_LEVEL_OVERRIDE > 0) {
+      level = Overrides.OPP_LEVEL_OVERRIDE;
+    }
     if (Overrides.OPP_SPECIES_OVERRIDE) {
       species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
-    }
-
-    if (Overrides.OPP_LEVEL_OVERRIDE !== 0) {
-      level = Overrides.OPP_LEVEL_OVERRIDE;
+      // The fact that a Pokemon is a boss or not can change based on its Species and level
+      boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
     const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
@@ -878,7 +879,7 @@ export default class BattleScene extends SceneBase {
     overrideModifiers(this, false);
     overrideHeldItems(this, pokemon, false);
     if (boss && !dataSource) {
-      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
+      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967296));
 
       for (let s = 0; s < pokemon.ivs.length; s++) {
         pokemon.ivs[s] = Math.round(Phaser.Math.Linear(Math.min(pokemon.ivs[s], secondaryIvs[s]), Math.max(pokemon.ivs[s], secondaryIvs[s]), 0.75));
@@ -976,15 +977,15 @@ export default class BattleScene extends SceneBase {
 
     return container;
   }
-  addPkIcon(pokemon: PokemonSpecies, form: integer = 0, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false): Phaser.GameObjects.Container {
+  addPkIcon(pokemon: PokemonSpecies, form: integer = 0, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false, shiny?: boolean, variant?: integer): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
     container.setName(`${pokemon.name}-icon`);
 
-    const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(form));
+    const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(form, shiny, variant));
     icon.setName(`sprite-${pokemon.name}-icon`);
-    icon.setFrame(pokemon.getIconId(true));
+    icon.setFrame(pokemon.getIconId(true, form, shiny, variant));
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
-    if (icon.frame.name !== pokemon.getIconId(true)) {
+    if (icon.frame.name !== pokemon.getIconId(true, form, shiny, variant)) {
       console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
       icon.setTexture(pokemon.getIconAtlasKey(0));
       icon.setFrame(pokemon.getIconId(true));
@@ -1011,6 +1012,16 @@ export default class BattleScene extends SceneBase {
     this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
   }
 
+  /**
+   * Generates a random number using the current battle's seed
+   *
+   * This calls {@linkcode Battle.randSeedInt}(`scene`, {@linkcode range}, {@linkcode min}) in `src/battle.ts`
+   * which calls {@linkcode Utils.randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts`
+   *
+   * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+   * @param min The minimum integer to pick, default `0`
+   * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+   */
   randBattleSeedInt(range: integer, min: integer = 0, reason?: string): integer {
     return this.currentBattle?.randSeedInt(this, range, min, reason);
   }
@@ -1024,6 +1035,7 @@ export default class BattleScene extends SceneBase {
 
     this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
     console.log("Seed:", this.seed);
+    this.resetSeed(); // Properly resets RNG after saving and quitting a session
 
     this.disableMenu = false;
 
@@ -1231,7 +1243,8 @@ export default class BattleScene extends SceneBase {
             doubleTrainer = false;
           }
         }
-        newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, doubleTrainer ? TrainerVariant.DOUBLE : Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+        const variant = doubleTrainer ? TrainerVariant.DOUBLE : (Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+        newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, variant);
         this.field.add(newTrainer);
       }
     }
@@ -1452,6 +1465,13 @@ export default class BattleScene extends SceneBase {
   }
 
   getEncounterBossSegments(waveIndex: integer, level: integer, species?: PokemonSpecies, forceBoss: boolean = false): integer {
+    if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE > 1) {
+      return Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE;
+    } else if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE === 1) {
+      // The rest of the code expects to be returned 0 and not 1 if the enemy is not a boss
+      return 0;
+    }
+
     if (this.gameMode.isDaily && this.gameMode.isWaveFinal(waveIndex)) {
       return 5;
     }
@@ -2770,7 +2790,7 @@ export default class BattleScene extends SceneBase {
         if (mods.length < 1) {
           return mods;
         }
-        const rand = Math.floor(Utils.randSeedInt(mods.length));
+        const rand = Utils.randSeedInt(mods.length);
         return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
       };
       modifiers = shuffleModifiers(modifiers);
@@ -2890,6 +2910,35 @@ export default class BattleScene extends SceneBase {
       modeChain: this.ui?.getModeChain() ?? [],
     };
     (window as any).gameInfo = gameInfo;
+  }
+
+  /**
+   * This function retrieves the sprite and audio keys for active Pokemon.
+   * Active Pokemon include both enemy and player Pokemon of the current wave.
+   * Note: Questions on garbage collection go to @frutescens
+   * @returns a string array of active sprite and audio keys that should not be deleted
+   */
+  getActiveKeys(): string[] {
+    const keys: string[] = [];
+    const playerParty = this.getParty();
+    playerParty.forEach(p => {
+      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
+      keys.push("pkmn__" + p.species.getSpriteId(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant, true));
+      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
+      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
+        keys.push("cry/"+p.getFusionSpeciesForm().getCryKey(p.fusionSpecies.formIndex));
+      }
+    });
+    // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
+    const enemyParty = this.getEnemyParty();
+    enemyParty.forEach(p => {
+      keys.push(p.species.getSpriteKey(p.gender === Gender.FEMALE, p.species.formIndex, p.shiny, p.variant));
+      keys.push("cry/" + p.species.getCryKey(p.species.formIndex));
+      if (p.fusionSpecies && p.getSpeciesForm() !== p.getFusionSpeciesForm()) {
+        keys.push("cry/"+p.getFusionSpeciesForm().getCryKey(p.fusionSpecies.formIndex));
+      }
+    });
+    return keys;
   }
 
   /**

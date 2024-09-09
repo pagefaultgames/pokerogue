@@ -8,7 +8,7 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { getPokemonNameWithAffix } from "#app/messages.js";
+import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { WeatherType } from "./weather";
 
@@ -66,34 +66,34 @@ export enum FormChangeItem {
 
   BLUE_ORB = 50,
   RED_ORB,
-  SHARP_METEORITE,
-  HARD_METEORITE,
-  SMOOTH_METEORITE,
   ADAMANT_CRYSTAL,
   LUSTROUS_GLOBE,
   GRISEOUS_CORE,
   REVEAL_GLASS,
-  GRACIDEA,
   MAX_MUSHROOMS,
   DARK_STONE,
   LIGHT_STONE,
   PRISON_BOTTLE,
-  N_LUNARIZER,
-  N_SOLARIZER,
   RUSTED_SWORD,
   RUSTED_SHIELD,
   ICY_REINS_OF_UNITY,
   SHADOW_REINS_OF_UNITY,
-  WELLSPRING_MASK,
-  HEARTHFLAME_MASK,
-  CORNERSTONE_MASK,
+  ULTRANECROZIUM_Z,
+
+  SHARP_METEORITE = 100,
+  HARD_METEORITE,
+  SMOOTH_METEORITE,
+  GRACIDEA,
   SHOCK_DRIVE,
   BURN_DRIVE,
   CHILL_DRIVE,
   DOUSE_DRIVE,
-  ULTRANECROZIUM_Z,
-
-  FIST_PLATE = 100,
+  N_SOLARIZER,
+  N_LUNARIZER,
+  WELLSPRING_MASK,
+  HEARTHFLAME_MASK,
+  CORNERSTONE_MASK,
+  FIST_PLATE,
   SKY_PLATE,
   TOXIC_PLATE,
   EARTH_PLATE,
@@ -129,7 +129,7 @@ export enum FormChangeItem {
   DRAGON_MEMORY,
   DARK_MEMORY,
   FAIRY_MEMORY,
-  BLANK_MEMORY  // TODO: Find a potential use for this
+  NORMAL_MEMORY // TODO: Find a potential use for this
 }
 
 export type SpeciesFormChangeConditionPredicate = (p: Pokemon) => boolean;

@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene.js";
-import { BattlerIndex } from "#app/battle.js";
-import { BattlerTagLapseType } from "#app/data/battler-tags.js";
+import BattleScene from "#app/battle-scene";
+import { BattlerIndex } from "#app/battle";
+import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { PokemonPhase } from "./pokemon-phase";
 import * as LoggerTools from "../logger";
 

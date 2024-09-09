@@ -1,13 +1,13 @@
 import { default as Pokemon } from "../field/pokemon";
 import { addTextObject, setTextStyle, TextStyle } from "./text";
 import * as Utils from "../utils";
-import BattleScene from "#app/battle-scene.js";
-import Move from "#app/data/move.js";
+import BattleScene from "#app/battle-scene";
+import Move from "#app/data/move";
 import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { UiTheme } from "#enums/ui-theme";
-import { getPokemonNameWithAffix } from "#app/messages.js";
+import { getPokemonNameWithAffix } from "#app/messages";
 import * as LoggerTools from "../logger";
 
 /** Container for info about a {@linkcode Move} */

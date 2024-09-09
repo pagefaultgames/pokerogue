@@ -1,7 +1,7 @@
-import BattleScene from "#app/battle-scene.js";
-import { Phase } from "#app/phase.js";
-import { Unlockables, getUnlockableName } from "#app/system/unlockables.js";
-import { Mode } from "#app/ui/ui.js";
+import BattleScene from "#app/battle-scene";
+import { Phase } from "#app/phase";
+import { Unlockables, getUnlockableName } from "#app/system/unlockables";
+import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import * as LoggerTools from "../logger";
 
