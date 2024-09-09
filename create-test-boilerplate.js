@@ -20,54 +20,59 @@ const type = args[0]; // "move" or "ability"
 let fileName = args[1]; // The file name
 
 if (!type || !fileName) {
-    console.error('Please provide both a type ("move", "ability", or "item") and a file name.');
-    process.exit(1);
+  console.error('Please provide a type ("move", "ability", or "item") and a file name.');
+  process.exit(1);
 }
 
-// Convert fileName from to snake_case if camelCase is given
-fileName = fileName.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+// Convert fileName from kebab-case or camelCase to snake_case
+fileName = fileName
+  .replace(/-+/g, '_') // Convert kebab-case (dashes) to underscores
+  .replace(/([a-z])([A-Z])/g, '$1_$2') // Convert camelCase to snake_case
+  .toLowerCase(); // Ensure all lowercase
 
 // Format the description for the test case
 const formattedName = fileName
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, char => char.toUpperCase());
+  .replace(/_/g, ' ')
+  .replace(/\b\w/g, char => char.toUpperCase());
 
 // Determine the directory based on the type
 let dir;
 let description;
 if (type === 'move') {
-    dir = path.join(__dirname, 'src', 'test', 'moves');
-    description = `Moves - ${formattedName}`;
+  dir = path.join(__dirname, 'src', 'test', 'moves');
+  description = `Moves - ${formattedName}`;
 } else if (type === 'ability') {
-    dir = path.join(__dirname, 'src', 'test', 'abilities');
-    description = `Abilities - ${formattedName}`;
+  dir = path.join(__dirname, 'src', 'test', 'abilities');
+  description = `Abilities - ${formattedName}`;
 } else if (type === "item") {
-    dir = path.join(__dirname, 'src', 'test', 'items');
-    description = `Items - ${formattedName}`;
+  dir = path.join(__dirname, 'src', 'test', 'items');
+  description = `Items - ${formattedName}`;
 } else {
-    console.error('Invalid type. Please use "move", "ability", or "item".');
-    process.exit(1);
+  console.error('Invalid type. Please use "move", "ability", or "item".');
+  process.exit(1);
 }
 
 // Ensure the directory exists
 if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+  fs.mkdirSync(dir, { recursive: true });
 }
 
 // Create the file with the given name
 const filePath = path.join(dir, `${fileName}.test.ts`);
 
 if (fs.existsSync(filePath)) {
-    console.error(`File "${fileName}.test.ts" already exists.`);
-    process.exit(1);
+  console.error(`File "${fileName}.test.ts" already exists.`);
+  process.exit(1);
 }
 
 // Define the content template
 const content = `import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import { SPLASH_ONLY } from "#test/utils/testUtils";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
 
 describe("${description}", () => {
   let phaserGame: Phaser.Game;
@@ -87,14 +92,15 @@ describe("${description}", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
+      .moveset([Moves.SPLASH])
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(SPLASH_ONLY);
   });
 
   it("test case", async () => {
-    // await game.classicMode.startBattle();
-    // game.move.select();
+    // await game.classicMode.startBattle([Species.MAGIKARP]);
+    // game.move.select(Moves.SPLASH);
   }, TIMEOUT);
 });
 `;

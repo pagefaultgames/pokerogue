@@ -6,7 +6,6 @@ import { FaintPhase } from "#app/phases/faint-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import GameManager from "#app/test/utils/gameManager";
-import { SPLASH_ONLY } from "#app/test/utils/testUtils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
@@ -35,7 +34,7 @@ describe("Moves - Jaw Lock", () => {
       .battleType("single")
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(SPLASH_ONLY)
+      .enemyMoveset(Moves.SPLASH)
       .moveset([Moves.JAW_LOCK, Moves.SPLASH])
       .startingLevel(100)
       .enemyLevel(100)
@@ -153,7 +152,7 @@ describe("Moves - Jaw Lock", () => {
   it(
     "should not trap either pokemon if the target is protected",
     async () => {
-      game.override.enemyMoveset(Array(4).fill(Moves.PROTECT));
+      game.override.enemyMoveset([Moves.PROTECT]);
 
       await game.startBattle([Species.BULBASAUR]);
 
